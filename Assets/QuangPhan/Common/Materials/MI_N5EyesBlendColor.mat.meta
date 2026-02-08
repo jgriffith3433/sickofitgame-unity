@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b0b593e16df07ae4aa94166192c82cee
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/Materials/MI_N5EyesBlendColor.mat
+  uploadId: 802866

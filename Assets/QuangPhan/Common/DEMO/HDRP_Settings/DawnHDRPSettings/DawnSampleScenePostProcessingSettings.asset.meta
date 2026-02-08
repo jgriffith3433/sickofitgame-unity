@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e50a73acccfc9f74e87ab7ace8c01b66
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/DEMO/HDRP_Settings/DawnHDRPSettings/DawnSampleScenePostProcessingSettings.asset
+  uploadId: 802866

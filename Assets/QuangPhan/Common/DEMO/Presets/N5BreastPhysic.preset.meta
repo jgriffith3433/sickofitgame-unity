@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 251c95d5454ba05468b94f6a2cdbb82d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2655988077585873504
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/DEMO/Presets/N5BreastPhysic.preset
+  uploadId: 802866

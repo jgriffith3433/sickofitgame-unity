@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: af429609e31e2b745af58b00c3dd4be9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/DEMO/HDRP_Settings/HDRPDefaultResources/HDRenderPipelineGlobalSettings.asset
+  uploadId: 802866

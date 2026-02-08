@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b1536e0f3e83d88418f24ede4ceccd15
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/DEMO/HDRP_Settings/DawnHDRPSettings/DawnSampleSceneSkyandFogSettings.asset
+  uploadId: 802866

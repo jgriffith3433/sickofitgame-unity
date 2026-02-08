@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6451caf8c2f878a449ffceee5b208bce
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/DEMO/HDRP_Settings/HDRPDefaultResources/DefaultVFXResources.asset
+  uploadId: 802866

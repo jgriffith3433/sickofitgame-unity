@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c3788cfbd2751cc48948258f7a710677
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/Materials/MI_N5Teeth.mat
+  uploadId: 802866

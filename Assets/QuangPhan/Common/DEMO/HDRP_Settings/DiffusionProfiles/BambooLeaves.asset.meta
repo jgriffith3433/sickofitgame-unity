@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1ce8e449be105b04fa89f5adb8bcdab6
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/DEMO/HDRP_Settings/DiffusionProfiles/BambooLeaves.asset
+  uploadId: 802866

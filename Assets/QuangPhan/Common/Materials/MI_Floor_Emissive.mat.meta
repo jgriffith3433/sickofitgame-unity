@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2e569425d10595d47b979a2725c8936e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/Materials/MI_Floor_Emissive.mat
+  uploadId: 802866

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 821030e6336dc934d8bccd49e5ffc76f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 112000000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/N5_Pirates/Scenes/Overview/LightingData.asset
+  uploadId: 802866

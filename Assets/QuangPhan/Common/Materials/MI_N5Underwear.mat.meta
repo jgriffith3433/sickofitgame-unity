@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d848184fb9f19244a95f1919c4c9f1cf
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/Materials/MI_N5Underwear.mat
+  uploadId: 802866

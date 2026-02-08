@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a74e7ed64abe57c43af4addc549ae3d0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/Materials/MI_N5HairWave_DyeingA.mat
+  uploadId: 802866

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: beb23b0e640157040b32559a30da4952
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2655988077585873504
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/DEMO/Presets/ClothNormal.preset
+  uploadId: 802866

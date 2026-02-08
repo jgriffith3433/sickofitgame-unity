@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 179b16faa34ef904da6f5bd3adc9908f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/Materials/MI_N5HairsHighlight.mat
+  uploadId: 802866

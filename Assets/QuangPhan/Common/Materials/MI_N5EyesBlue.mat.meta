@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d1c1b9f2baea0db46b5a959c6e639ef4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 339002
+  packageName: 'N5: Pirates'
+  packageVersion: 1.0
+  assetPath: Assets/QuangPhan/Common/Materials/MI_N5EyesBlue.mat
+  uploadId: 802866
