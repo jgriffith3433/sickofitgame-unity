@@ -12,7 +12,10 @@ namespace MobileControllerFramework
         public Vector2 speed = Vector2.one;
         public float dashSpeed = 25f;
         public float dashDuration = 0.2f; // how long the dash lasts
-        public float placeRadius = 3f;
+        
+        [Header("Shooting")]
+        public float ballSpeed = 10f;
+        public float fireRate = 0.25f; // Time between shots
 
         [Header("References")]
         public GameObject swordIn;
@@ -20,6 +23,7 @@ namespace MobileControllerFramework
         public GameObject ballObj;
         public GameObject dustPrt;
         public Analog analog;
+        public Analog moveAnalog; // Use analog stick for smooth movement
         public Dpad dpad;
         public ArrowKeys arrowKeys;
         public Animator anim;
@@ -38,13 +42,14 @@ namespace MobileControllerFramework
         private Rigidbody2D rb;
         private Vector2Int input;
         private Vector2 keyboardInput;
-        private GameObject ballRef;
-        private Vector2 ballMousePosition;
+        private Vector2 analogInput; // Smooth analog input
+        private Vector2 shootDirection; // Direction to shoot
 
         private bool canWalk = true;
-        private bool moveBall = false;
         private bool isDashing = false;
         private bool swordShown = false;
+        private bool isFiring = false; // PC fire button held
+        private float lastFireTime = 0f;
 
 
         /**/
@@ -93,8 +98,10 @@ namespace MobileControllerFramework
                 
                 if (placeBallAction != null && placeBallAction.action != null)
                 {
-                    placeBallAction.action.performed -= OnPlaceBall;
-                    placeBallAction.action.performed += OnPlaceBall;
+                    placeBallAction.action.started -= OnPlaceBallStarted;
+                    placeBallAction.action.canceled -= OnPlaceBallCanceled;
+                    placeBallAction.action.started += OnPlaceBallStarted;
+                    placeBallAction.action.canceled += OnPlaceBallCanceled;
                     placeBallAction.action.Enable();
                 }
             }
@@ -131,7 +138,8 @@ namespace MobileControllerFramework
             
             if (placeBallAction != null && placeBallAction.action != null)
             {
-                placeBallAction.action.performed -= OnPlaceBall;
+                placeBallAction.action.started -= OnPlaceBallStarted;
+                placeBallAction.action.canceled -= OnPlaceBallCanceled;
                 placeBallAction.action.Disable();
             }
         }
@@ -146,9 +154,7 @@ namespace MobileControllerFramework
             HandleInput();
             HandleFacing();
             HandleAnimation();
-
-            if (moveBall)
-                UpdateBallPosition();
+            HandleShooting();
         }
 
 
@@ -156,7 +162,12 @@ namespace MobileControllerFramework
         {
             if (canWalk && !isDashing)
             {
-                rb.linearVelocity = new Vector2(input.x * speed.x, input.y * speed.y);
+                // Use analog input if available (smooth movement), otherwise use discrete input
+                Vector2 movement = analogInput.magnitude > 0.1f 
+                    ? new Vector2(analogInput.x * speed.x, analogInput.y * speed.y)
+                    : new Vector2(input.x * speed.x, input.y * speed.y);
+                
+                rb.linearVelocity = movement;
             }
         }
 
@@ -165,12 +176,22 @@ namespace MobileControllerFramework
         {
             input = Vector2Int.zero;
             keyboardInput = Vector2.zero;
+            analogInput = Vector2.zero;
 
-            // Read from mobile widgets
-            if (dpad != null && dpad.gameObject.activeSelf)
+            // Read from move analog (smooth movement)
+            if (moveAnalog != null && moveAnalog.gameObject.activeSelf)
+            {
+                analogInput = moveAnalog.GetStickPosition();
+            }
+            // Otherwise read from dpad/arrow keys (discrete movement)
+            else if (dpad != null && dpad.gameObject.activeSelf)
+            {
                 input = dpad.GetDpadDirection();
+            }
             else if (arrowKeys != null && arrowKeys.gameObject.activeSelf)
+            {
                 input = arrowKeys.GetDirection();
+            }
             
             // Read from New Input System (keyboard/gamepad)
             if (moveAction != null && moveAction.action != null && moveAction.action.enabled)
@@ -179,7 +200,7 @@ namespace MobileControllerFramework
             }
             
             // Combine inputs - use whichever has magnitude (simultaneous support)
-            if (input == Vector2Int.zero && keyboardInput.magnitude > 0.1f)
+            if (analogInput.magnitude < 0.1f && input == Vector2Int.zero && keyboardInput.magnitude > 0.1f)
             {
                 input = new Vector2Int(
                     Mathf.RoundToInt(keyboardInput.x),
@@ -191,14 +212,18 @@ namespace MobileControllerFramework
 
         private void HandleFacing()
         {
-            if (input.x > 0) transform.localScale = facingRight;
-            else if (input.x < 0) transform.localScale = facingLeft;
+            // Check analog input first, then fall back to discrete input
+            float horizontalInput = analogInput.magnitude > 0.1f ? analogInput.x : input.x;
+            
+            if (horizontalInput > 0.1f) transform.localScale = facingRight;
+            else if (horizontalInput < -0.1f) transform.localScale = facingLeft;
         }
 
 
         private void HandleAnimation()
         {
-            bool isMoving = input.x != 0 || input.y != 0;
+            // Check both analog and discrete input
+            bool isMoving = analogInput.magnitude > 0.1f || input.x != 0 || input.y != 0;
 
             if (anim != null)
                 anim.Play(isMoving ? "Walk" : "Idle");
@@ -271,44 +296,73 @@ namespace MobileControllerFramework
         #endregion
 
 
-        #region Ball
+        #region Shooting
 
-        public void InstantiateBall()
+        private void HandleShooting()
         {
-            if (ballObj == null) return;
+            shootDirection = Vector2.zero;
 
-            ballRef = Instantiate(ballObj, transform.position, Quaternion.identity);
-            moveBall = true;
-        }
-
-
-        private void UpdateBallPosition()
-        {
-            if (ballRef == null) return;
-
-            // Use analog stick if available
-            if (analog != null && analog.GetStickPosition().magnitude > 0.1f)
+            // Get shoot direction from analog stick (mobile) - only if it has actual input
+            if (analog != null && analog != moveAnalog && analog.gameObject.activeSelf)
             {
-                ballRef.transform.position = transform.position +
-                                             (Vector3)analog.GetStickPosition() * placeRadius;
+                Vector2 analogStickPos = analog.GetStickPosition();
+                if (analogStickPos.magnitude > 0.1f)
+                {
+                    shootDirection = analogStickPos;
+                }
             }
-            // Otherwise use mouse position for keyboard players
-            else if (mainCamera != null && Mouse.current != null)
+            
+            // If no analog input, use mouse position when PC fire button is held
+            if (shootDirection.magnitude < 0.1f && isFiring && mainCamera != null && Mouse.current != null)
             {
                 Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
                 Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, mainCamera.nearClipPlane));
                 mouseWorldPos.z = 0;
-                Vector3 direction = (mouseWorldPos - transform.position).normalized;
-                float distance = Mathf.Min((mouseWorldPos - transform.position).magnitude, placeRadius);
-                ballRef.transform.position = transform.position + direction * distance;
+                shootDirection = (mouseWorldPos - transform.position).normalized;
             }
+
+            // Fire if there's a direction
+            if (shootDirection.magnitude > 0.1f)
+            {
+                FireBall(shootDirection);
+            }
+        }
+
+
+        private void FireBall(Vector2 direction)
+        {
+            if (ballObj == null) return;
+            if (Time.time - lastFireTime < fireRate) return; // Rate limiting
+
+            lastFireTime = Time.time;
+
+            // Spawn ball at player position
+            GameObject ball = Instantiate(ballObj, transform.position, Quaternion.identity);
+            
+            // Add velocity to the ball
+            Rigidbody2D ballRb = ball.GetComponent<Rigidbody2D>();
+            if (ballRb != null)
+            {
+                ballRb.linearVelocity = direction.normalized * ballSpeed;
+            }
+
+            // Optional: Destroy ball after a few seconds
+            Destroy(ball, 5f);
+        }
+
+
+        public void InstantiateBall()
+        {
+            // Legacy method - now just fires in facing direction
+            Vector2 direction = transform.localScale.x > 0 ? Vector2.right : Vector2.left;
+            FireBall(direction);
         }
 
 
         public void PlaceBall()
         {
-            ballRef = null;
-            moveBall = false;
+            // Legacy method for UI button compatibility
+            InstantiateBall();
         }
 
         #endregion
@@ -347,16 +401,16 @@ namespace MobileControllerFramework
             // swordShown = false;
         }
 
-        private void OnPlaceBall(InputAction.CallbackContext context)
+        private void OnPlaceBallStarted(InputAction.CallbackContext context)
         {
-            if (!moveBall)
-            {
-                InstantiateBall();
-            }
-            else
-            {
-                PlaceBall();
-            }
+            // Start firing toward mouse
+            isFiring = true;
+        }
+
+        private void OnPlaceBallCanceled(InputAction.CallbackContext context)
+        {
+            // Stop firing
+            isFiring = false;
         }
 
         #endregion
