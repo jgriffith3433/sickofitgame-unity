@@ -21,7 +21,7 @@ namespace MobileControllerFramework
         [Tooltip("Auto-play the first song on start")]
         public bool autoPlayOnStart = true;
 
-        private int currentSongIndex = -1;
+        private int currentSongIndex = 0;
 
         private void Start()
         {
@@ -134,7 +134,7 @@ namespace MobileControllerFramework
                     song.Stop();
                 }
             }
-            currentSongIndex = -1;
+            currentSongIndex = 0;
         }
     }
 }
