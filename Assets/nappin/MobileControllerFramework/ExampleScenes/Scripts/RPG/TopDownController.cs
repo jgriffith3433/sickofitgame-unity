@@ -2,458 +2,520 @@
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
-
 namespace MobileControllerFramework
 {
+    /// <summary>
+    /// Controller for Yooba character - 3D model in a 2D game with Kirby-like jump mechanics
+    /// </summary>
     [RequireComponent(typeof(Collider2D))]
     [RequireComponent(typeof(Rigidbody2D))]
     public class TopDownController : MonoBehaviour
     {
-        [Header("Movement")]
-        public Vector2 speed = Vector2.one;
-        public float dashSpeed = 25f;
-        public float dashDuration = 0.2f; // how long the dash lasts
+        #region Serialized Fields
         
-        [Header("Shooting")]
-        public float ballSpeed = 10f;
-        public float fireRate = 0.25f; // Time between shots
+        [Header("Movement Settings")]
+        [SerializeField] private float moveSpeed = 5f;
         
-        [Header("Sword")]
-        public float swingDuration = 0.5f; // How long the sword swing animation lasts
-
+        [Header("Jump Settings")]
+        [SerializeField] private float jumpForce = 15f;
+        [SerializeField] private int maxAirJumps = 3; // Kirby-style air jumps
+        [Tooltip("How fast the character falls (higher = faster). Try 3-5 for faster falling.")]
+        [SerializeField] private float gravityScale = 1.8f;
+        [Tooltip("Distance below collider to check for ground")]
+        [SerializeField] private float groundCheckDistance = 0.2f;
+        [Tooltip("Width of ground check box (smaller than collider)")]
+        [SerializeField] private float groundCheckWidth = 0.8f;
+        [Tooltip("Layers that count as ground (exclude player layer!)")]
+        [SerializeField] private LayerMask groundLayer = ~0;
+        [Tooltip("Minimum upward velocity needed to trigger jump animation (prevents false triggers)")]
+        [SerializeField] private float jumpDetectVelocityThreshold = 0.3f;
+        
+        [Header("Projectile Settings")]
+        [SerializeField] private GameObject projectilePrefab;
+        [Tooltip("Optional: Transform where projectiles spawn. If null, spawns at player position.")]
+        [SerializeField] private Transform projectileSpawnPoint;
+        [SerializeField] private float projectileSpeed = 10f;
+        [SerializeField] private float fireRate = 0.25f;
+        [SerializeField] private float projectileLifetime = 5f;
+        
+        [Header("Mobile Input")]
+        [Tooltip("Analog stick for movement. Add AnalogTapJump component for tap-to-jump.")]
+        [SerializeField] private Analog moveAnalog;
+        [Tooltip("Analog stick for aiming/firing. Movement beyond threshold automatically fires.")]
+        [SerializeField] private Analog fireAnalog;
+        [SerializeField] private Dpad dpad;
+        [SerializeField] private ArrowKeys arrowKeys;
+        
+        [Header("PC Input Actions")]
+        [Tooltip("WASD/Arrow keys movement action")]
+        [SerializeField] private InputActionReference moveAction;
+        [Tooltip("Space key - bind to 'Player/Jump' action")]
+        [SerializeField] private InputActionReference jumpAction;
+        [Tooltip("Left mouse button - bind to 'Player/Fire' action")]
+        [SerializeField] private InputActionReference fireAction;
+        
         [Header("References")]
-        public GameObject swordIn;
-        public GameObject swordOut;
-        public GameObject ballObj;
-        public GameObject dustPrt;
-        public Analog analog;
-        public Analog moveAnalog; // Use analog stick for smooth movement
-        public Dpad dpad;
-        public ArrowKeys arrowKeys;
-        public Animator anim;
-
-        [Header("Input System (Optional)")]
-        public InputActionReference moveAction;
-        public InputActionReference dashLeftAction;
-        public InputActionReference dashRightAction;
-        public InputActionReference attackAction;
-        public InputActionReference placeBallAction;
-        public Camera mainCamera;
-
+        [SerializeField] private Animator animator;
+        [SerializeField] private Camera mainCamera;
+        
+        #endregion
+        
+        #region Animator Parameter Hashes
+        
+        private static readonly int OnGroundHash = Animator.StringToHash("OnGround");
+        private static readonly int VelocityXHash = Animator.StringToHash("Velocity_X");
+        private static readonly int VelocityZHash = Animator.StringToHash("Velocity_Z");
+        private static readonly int JumpHash = Animator.StringToHash("Jump");
+        private static readonly int FireHash = Animator.StringToHash("Fire");
+        
+        #endregion
+        
+        #region Private Fields
+        
+        private Rigidbody2D rb;
+        private Collider2D col;
+        
+        // Movement
+        private Vector2 moveInput;
         private Vector3 facingRight = Vector3.one;
         private Vector3 facingLeft = new Vector3(-1, 1, 1);
-
-        private Rigidbody2D rb;
-        private Vector2Int input;
-        private Vector2 keyboardInput;
-        private Vector2 analogInput; // Smooth analog input
-        private Vector2 shootDirection; // Direction to shoot
-
-        private bool canWalk = true;
-        private bool isDashing = false;
-        private bool swordShown = false;
-        private bool isFiring = false; // PC fire button held
-        private float lastFireTime = 0f;
-        private bool isSwinging = false; // Prevent sword swing spam
-
-
-        /**/
-
-
-        #region Setup
-
-        private void Start()
+        
+        // Jump
+        private bool isGrounded;
+        private int airJumpsRemaining;
+        private bool jumpRequested;
+        
+        // Firing
+        private Vector2 fireDirection;
+        private bool isFiring;
+        private float lastFireTime;
+        
+        // Input dead zone
+        private const float InputDeadzone = 0.1f;
+        
+        #endregion
+        
+        #region Unity Lifecycle
+        
+        private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
+            col = GetComponent<Collider2D>();
+            rb.gravityScale = gravityScale;
             
             if (mainCamera == null)
                 mainCamera = Camera.main;
         }
-
+        
         private void OnEnable()
         {
-            // Enable Input System actions with safe null checks
-            try
-            {
-                if (moveAction != null && moveAction.action != null)
-                    moveAction.action.Enable();
-                
-                if (dashLeftAction != null && dashLeftAction.action != null)
-                {
-                    dashLeftAction.action.performed -= OnDashLeft; // Remove first to prevent duplicates
-                    dashLeftAction.action.performed += OnDashLeft;
-                    dashLeftAction.action.Enable();
-                }
-                
-                if (dashRightAction != null && dashRightAction.action != null)
-                {
-                    dashRightAction.action.performed -= OnDashRight;
-                    dashRightAction.action.performed += OnDashRight;
-                    dashRightAction.action.Enable();
-                }
-                
-                if (attackAction != null && attackAction.action != null)
-                {
-                    attackAction.action.performed -= OnAttackPressed;
-                    attackAction.action.canceled -= OnAttackReleased;
-                    attackAction.action.performed += OnAttackPressed;
-                    attackAction.action.canceled += OnAttackReleased;
-                    attackAction.action.Enable();
-                }
-                
-                if (placeBallAction != null && placeBallAction.action != null)
-                {
-                    placeBallAction.action.started -= OnPlaceBallStarted;
-                    placeBallAction.action.canceled -= OnPlaceBallCanceled;
-                    placeBallAction.action.started += OnPlaceBallStarted;
-                    placeBallAction.action.canceled += OnPlaceBallCanceled;
-                    placeBallAction.action.Enable();
-                }
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning($"Failed to enable input actions: {e.Message}");
-            }
-        }
-
-        private void OnDisable()
-        {
-            // Disable Input System actions
-            if (moveAction != null && moveAction.action != null)
-                moveAction.action.Disable();
-            
-            if (dashLeftAction != null && dashLeftAction.action != null)
-            {
-                dashLeftAction.action.performed -= OnDashLeft;
-                dashLeftAction.action.Disable();
-            }
-            
-            if (dashRightAction != null && dashRightAction.action != null)
-            {
-                dashRightAction.action.performed -= OnDashRight;
-                dashRightAction.action.Disable();
-            }
-            
-            if (attackAction != null && attackAction.action != null)
-            {
-                attackAction.action.performed -= OnAttackPressed;
-                attackAction.action.canceled -= OnAttackReleased;
-                attackAction.action.Disable();
-            }
-            
-            if (placeBallAction != null && placeBallAction.action != null)
-            {
-                placeBallAction.action.started -= OnPlaceBallStarted;
-                placeBallAction.action.canceled -= OnPlaceBallCanceled;
-                placeBallAction.action.Disable();
-            }
-        }
-
-        #endregion
-
-
-        #region Update & Movement
-
-        private void Update()
-        {
-            HandleInput();
-            HandleFacing();
-            HandleAnimation();
-            HandleShooting();
-        }
-
-
-        private void FixedUpdate()
-        {
-            if (canWalk && !isDashing)
-            {
-                // Use analog input if available (smooth movement), otherwise use discrete input
-                Vector2 movement = analogInput.magnitude > 0.1f 
-                    ? new Vector2(analogInput.x * speed.x, analogInput.y * speed.y)
-                    : new Vector2(input.x * speed.x, input.y * speed.y);
-                
-                rb.linearVelocity = movement;
-            }
-        }
-
-
-        private void HandleInput()
-        {
-            input = Vector2Int.zero;
-            keyboardInput = Vector2.zero;
-            analogInput = Vector2.zero;
-
-            // Read from move analog (smooth movement)
-            if (moveAnalog != null && moveAnalog.gameObject.activeSelf)
-            {
-                analogInput = moveAnalog.GetStickPosition();
-            }
-            // Otherwise read from dpad/arrow keys (discrete movement)
-            else if (dpad != null && dpad.gameObject.activeSelf)
-            {
-                input = dpad.GetDpadDirection();
-            }
-            else if (arrowKeys != null && arrowKeys.gameObject.activeSelf)
-            {
-                input = arrowKeys.GetDirection();
-            }
-            
-            // Read from New Input System (keyboard/gamepad)
-            if (moveAction != null && moveAction.action != null && moveAction.action.enabled)
-            {
-                keyboardInput = moveAction.action.ReadValue<Vector2>();
-            }
-            
-            // Combine inputs - use whichever has magnitude (simultaneous support)
-            if (analogInput.magnitude < 0.1f && input == Vector2Int.zero && keyboardInput.magnitude > 0.1f)
-            {
-                input = new Vector2Int(
-                    Mathf.RoundToInt(keyboardInput.x),
-                    Mathf.RoundToInt(keyboardInput.y)
-                );
-            }
-        }
-
-
-        private void HandleFacing()
-        {
-            // Check analog input first, then fall back to discrete input
-            float horizontalInput = analogInput.magnitude > 0.1f ? analogInput.x : input.x;
-            
-            if (horizontalInput > 0.1f) transform.localScale = facingRight;
-            else if (horizontalInput < -0.1f) transform.localScale = facingLeft;
-        }
-
-
-        private void HandleAnimation()
-        {
-            // Check both analog and discrete input
-            bool isMoving = analogInput.magnitude > 0.1f || input.x != 0 || input.y != 0;
-
-            if (anim != null)
-                anim.Play(isMoving ? "Walk" : "Idle");
-
-            if (dustPrt != null)
-                dustPrt.SetActive(isMoving);
-        }
-
-        #endregion
-
-
-        #region Dash
-
-        public void DashLeft()
-        {
-            if (!canWalk || isDashing) return;
-            StartCoroutine(Dash(Vector2.left, facingLeft));
-        }
-
-
-        public void DashRight()
-        {
-            if (!canWalk || isDashing) return;
-            StartCoroutine(Dash(Vector2.right, facingRight));
-        }
-
-
-        private System.Collections.IEnumerator Dash(Vector2 direction, Vector3 facing)
-        {
-            isDashing = true;
-            canWalk = false;
-
-            // Face the right way
-            transform.localScale = facing;
-
-            // Reset velocity for consistent dash
-            rb.linearVelocity = Vector2.zero;
-
-            // Apply dash force
-            rb.AddForce(direction * dashSpeed, ForceMode2D.Impulse);
-
-            // Dash duration
-            yield return new WaitForSeconds(dashDuration);
-
-            // Stop dash movement smoothly
-            rb.linearVelocity = Vector2.zero;
-
-            isDashing = false;
-            canWalk = true;
-        }
-
-        #endregion
-
-
-        #region Sword
-
-        public void ShowSword()
-        {
-            if (swordIn != null) swordIn.SetActive(false);
-            if (swordOut != null) swordOut.SetActive(true);
-        }
-
-
-        public void HideSword()
-        {
-            if (swordIn != null) swordIn.SetActive(true);
-            if (swordOut != null) swordOut.SetActive(false);
+            EnableInputActions();
         }
         
-        private System.Collections.IEnumerator SwingSword()
+        private void OnDisable()
         {
-            isSwinging = true;
-            
-            // Show sword
-            ShowSword();
-            swordShown = true;
-            
-            // Wait for swing animation to complete
-            yield return new WaitForSeconds(swingDuration);
-            
-            // Hide sword
-            HideSword();
-            swordShown = false;
-            isSwinging = false;
+            DisableInputActions();
+            ResetAnimatorState();
         }
-
-        #endregion
-
-
-        #region Shooting
-
-        private void HandleShooting()
+        
+        private void Update()
         {
-            shootDirection = Vector2.zero;
-
-            // Get shoot direction from analog stick (mobile) - only if it has actual input
-            if (analog != null && analog != moveAnalog && analog.gameObject.activeSelf)
+            ReadMovementInput();
+            ReadFireInput();
+            CheckGroundedState();
+            UpdateFacingDirection();
+            HandleFiring();
+            UpdateAnimator();
+        }
+        
+        private void FixedUpdate()
+        {
+            // Ensure gravity scale is synced (allows runtime adjustment in inspector)
+            if (rb.gravityScale != gravityScale)
             {
-                Vector2 analogStickPos = analog.GetStickPosition();
-                if (analogStickPos.magnitude > 0.1f)
+                rb.gravityScale = gravityScale;
+            }
+            
+            ApplyMovement();
+            ApplyJump();
+        }
+        
+        #endregion
+        
+        #region Input System Setup
+        
+        private void EnableInputActions()
+        {
+            if (moveAction?.action != null)
+            {
+                moveAction.action.Enable();
+            }
+            
+            if (jumpAction?.action != null)
+            {
+                jumpAction.action.performed -= OnJumpPerformed;
+                jumpAction.action.performed += OnJumpPerformed;
+                jumpAction.action.Enable();
+            }
+            
+            if (fireAction?.action != null)
+            {
+                fireAction.action.started -= OnFireStarted;
+                fireAction.action.canceled -= OnFireCanceled;
+                fireAction.action.started += OnFireStarted;
+                fireAction.action.canceled += OnFireCanceled;
+                fireAction.action.Enable();
+            }
+        }
+        
+        private void DisableInputActions()
+        {
+            if (moveAction?.action != null)
+            {
+                moveAction.action.Disable();
+            }
+            
+            if (jumpAction?.action != null)
+            {
+                jumpAction.action.performed -= OnJumpPerformed;
+                jumpAction.action.Disable();
+            }
+            
+            if (fireAction?.action != null)
+            {
+                fireAction.action.started -= OnFireStarted;
+                fireAction.action.canceled -= OnFireCanceled;
+                fireAction.action.Disable();
+            }
+        }
+        
+        #endregion
+        
+        #region Input Reading
+        
+        private void ReadMovementInput()
+        {
+            moveInput = Vector2.zero;
+            
+            // Mobile analog stick
+            if (moveAnalog != null && moveAnalog.gameObject.activeSelf)
+            {
+                moveInput = moveAnalog.GetStickPosition();
+            }
+            // Mobile D-pad
+            else if (dpad != null && dpad.gameObject.activeSelf)
+            {
+                moveInput = dpad.GetDpadDirection();
+            }
+            // Arrow keys
+            else if (arrowKeys != null && arrowKeys.gameObject.activeSelf)
+            {
+                moveInput = arrowKeys.GetDirection();
+            }
+            
+            // PC keyboard/gamepad input (can work simultaneously with mobile)
+            if (moveAction?.action != null && moveAction.action.enabled)
+            {
+                Vector2 keyboardInput = moveAction.action.ReadValue<Vector2>();
+                if (keyboardInput.magnitude > InputDeadzone && moveInput.magnitude < InputDeadzone)
                 {
-                    shootDirection = analogStickPos;
+                    moveInput = keyboardInput;
+                }
+            }
+        }
+        
+        private void ReadFireInput()
+        {
+            fireDirection = Vector2.zero;
+            
+            // Mobile fire analog stick
+            if (fireAnalog != null && fireAnalog.gameObject.activeSelf)
+            {
+                Vector2 analogInput = fireAnalog.GetStickPosition();
+                if (analogInput.magnitude > InputDeadzone)
+                {
+                    fireDirection = analogInput.normalized;
                 }
             }
             
-            // If no analog input, use mouse position when PC fire button is held
-            if (shootDirection.magnitude < 0.1f && isFiring && mainCamera != null && Mouse.current != null)
+            // PC mouse aiming (when fire button is held)
+            if (isFiring && fireDirection.magnitude < InputDeadzone)
             {
-                Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
-                Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, mainCamera.nearClipPlane));
-                mouseWorldPos.z = 0;
-                shootDirection = (mouseWorldPos - transform.position).normalized;
-            }
-
-            // Fire if there's a direction
-            if (shootDirection.magnitude > 0.1f)
-            {
-                FireBall(shootDirection);
+                fireDirection = GetMouseDirectionFromPlayer();
             }
         }
-
-
-        private void FireBall(Vector2 direction)
+        
+        private Vector2 GetMouseDirectionFromPlayer()
         {
-            if (ballObj == null) return;
-            if (Time.time - lastFireTime < fireRate) return; // Rate limiting
-
-            lastFireTime = Time.time;
-
-            // Spawn ball at player position
-            GameObject ball = Instantiate(ballObj, transform.position, Quaternion.identity);
+            if (mainCamera == null || Mouse.current == null)
+                return Vector2.zero;
             
-            // Ignore collision between ball and player
-            Collider2D ballCollider = ball.GetComponent<Collider2D>();
-            Collider2D playerCollider = GetComponent<Collider2D>();
-            if (ballCollider != null && playerCollider != null)
-            {
-                Physics2D.IgnoreCollision(ballCollider, playerCollider);
-            }
+            Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
+            Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, mainCamera.nearClipPlane));
+            mouseWorldPos.z = transform.position.z;
             
-            // Add velocity to the ball
-            Rigidbody2D ballRb = ball.GetComponent<Rigidbody2D>();
-            if (ballRb != null)
-            {
-                ballRb.linearVelocity = direction.normalized * ballSpeed;
-            }
-
-            // Optional: Destroy ball after a few seconds
-            Destroy(ball, 5f);
+            Vector2 direction = (mouseWorldPos - transform.position).normalized;
+            return direction.magnitude > InputDeadzone ? direction : Vector2.zero;
         }
-
-
-        public void InstantiateBall()
-        {
-            // Legacy method - now just fires in facing direction
-            Vector2 direction = transform.localScale.x > 0 ? Vector2.right : Vector2.left;
-            FireBall(direction);
-        }
-
-
-        public void PlaceBall()
-        {
-            // Legacy method for UI button compatibility
-            InstantiateBall();
-        }
-
+        
         #endregion
-
-
-        #region Input System Callbacks
-
-        private void OnDashLeft(InputAction.CallbackContext context)
+        
+        #region Movement & Physics
+        
+        private void ApplyMovement()
         {
-            DashLeft();
+            // Apply horizontal movement, preserve vertical velocity
+            Vector2 velocity = rb.linearVelocity;
+            velocity.x = moveInput.x * moveSpeed;
+            rb.linearVelocity = velocity;
         }
-
-        private void OnDashRight(InputAction.CallbackContext context)
+        
+        private void CheckGroundedState()
         {
-            DashRight();
-        }
-
-        private void OnAttackPressed(InputAction.CallbackContext context)
-        {
-            // Don't attack if clicking on UI
-            if (IsPointerOverUI()) return;
+            // Calculate check position at bottom of collider
+            Vector2 checkPosition = new Vector2(
+                col.bounds.center.x,
+                col.bounds.min.y - groundCheckDistance
+            );
             
-            // Prevent spam - only swing if not already swinging
-            if (isSwinging) return;
+            // Create smaller box for ground check
+            Vector2 boxSize = new Vector2(
+                col.bounds.size.x * groundCheckWidth,
+                groundCheckDistance * 2f
+            );
             
-            StartCoroutine(SwingSword());
-        }
-
-        private void OnAttackReleased(InputAction.CallbackContext context)
-        {
-            // Optional: Auto-hide sword on release
-            // HideSword();
-            // swordShown = false;
-        }
-
-        private void OnPlaceBallStarted(InputAction.CallbackContext context)
-        {
-            // Don't fire if clicking on UI
-            if (IsPointerOverUI()) return;
+            // Check for ground using overlap box (more reliable than boxcast)
+            Collider2D groundHit = Physics2D.OverlapBox(
+                checkPosition,
+                boxSize,
+                0f,
+                groundLayer
+            );
             
-            // Start firing toward mouse
-            isFiring = true;
+            bool wasGrounded = isGrounded;
+            isGrounded = groundHit != null;
+            
+            // Reset air jumps when landing
+            if (isGrounded && !wasGrounded)
+            {
+                airJumpsRemaining = maxAirJumps;
+            }
         }
-
-        private void OnPlaceBallCanceled(InputAction.CallbackContext context)
+        
+        private void UpdateFacingDirection()
         {
-            // Stop firing
+            // Prioritize fire direction when actively firing
+            if (fireDirection.magnitude > InputDeadzone && Mathf.Abs(fireDirection.x) > InputDeadzone)
+            {
+                // Face the direction we're firing
+                transform.localScale = fireDirection.x > 0 ? facingRight : facingLeft;
+            }
+            // Otherwise face movement direction
+            else if (Mathf.Abs(moveInput.x) > InputDeadzone)
+            {
+                // Flip character based on horizontal movement
+                transform.localScale = moveInput.x > 0 ? facingRight : facingLeft;
+            }
+        }
+        
+        #endregion
+        
+        #region Jump
+        
+        public void RequestJump()
+        {
+            if (isGrounded || airJumpsRemaining > 0)
+            {
+                jumpRequested = true;
+            }
+        }
+        
+        private void ApplyJump()
+        {
+            if (!jumpRequested) return;
+            
+            jumpRequested = false;
+            
+            if (isGrounded)
+            {
+                // Ground jump
+                PerformJump();
+                airJumpsRemaining = maxAirJumps;
+            }
+            else if (airJumpsRemaining > 0)
+            {
+                // Air jump (Kirby-style)
+                PerformJump();
+                airJumpsRemaining--;
+            }
+        }
+        
+        private void PerformJump()
+        {
+            // Reset vertical velocity for consistent jump height
+            Vector2 velocity = rb.linearVelocity;
+            velocity.y = 0f;
+            rb.linearVelocity = velocity;
+            
+            // Apply jump force
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            
+            // Trigger animator
+            if (animator != null && rb.linearVelocity.y >= jumpDetectVelocityThreshold)
+            {
+                animator.SetTrigger(JumpHash);
+            }
+        }
+        
+        #endregion
+        
+        #region Projectile Firing
+        
+        private void HandleFiring()
+        {
+            if (fireDirection.magnitude < InputDeadzone) return;
+            if (Time.time - lastFireTime < fireRate) return;
+            
+            FireProjectile(fireDirection);
+        }
+        
+        private void FireProjectile(Vector2 direction)
+        {
+            if (projectilePrefab == null) return;
+            
+            lastFireTime = Time.time;
+            
+            // Spawn projectile at spawn point (or player position if not set)
+            Vector3 spawnPosition = projectileSpawnPoint != null ? projectileSpawnPoint.position : transform.position;
+            GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
+            
+            // Ignore collision with player
+            Collider2D projectileCollider = projectile.GetComponent<Collider2D>();
+            if (projectileCollider != null)
+            {
+                Physics2D.IgnoreCollision(projectileCollider, col);
+            }
+            
+            // Apply velocity
+            Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
+            if (projectileRb != null)
+            {
+                projectileRb.linearVelocity = direction * projectileSpeed;
+            }
+            
+            // Trigger fire animation
+            if (animator != null)
+            {
+                animator.SetTrigger(FireHash);
+            }
+            
+            // Clean up after lifetime
+            Destroy(projectile, projectileLifetime);
+        }
+        
+        #endregion
+        
+        #region Animation
+        
+        private void UpdateAnimator()
+        {
+            if (animator == null) return;
+            
+            animator.SetBool(OnGroundHash, isGrounded);
+            animator.SetFloat(VelocityXHash, Mathf.Abs(rb.linearVelocity.x));
+            animator.SetFloat(VelocityZHash, Mathf.Abs(rb.linearVelocity.y));
+        }
+        
+        private void ResetAnimatorState()
+        {
+            if (animator == null) return;
+            
+            animator.SetBool(OnGroundHash, true);
+            animator.SetFloat(VelocityXHash, 0f);
+            animator.SetFloat(VelocityZHash, 0f);
+        }
+        
+        #endregion
+        
+        #region Input Callbacks
+        
+        private void OnJumpPerformed(InputAction.CallbackContext context)
+        {
+            RequestJump();
+        }
+        
+        private void OnFireStarted(InputAction.CallbackContext context)
+        {
+            if (!IsPointerOverUI())
+            {
+                isFiring = true;
+            }
+        }
+        
+        private void OnFireCanceled(InputAction.CallbackContext context)
+        {
             isFiring = false;
         }
         
-        /// <summary>
-        /// Check if the pointer/touch is over a UI element
-        /// </summary>
+        #endregion
+        
+        #region Utility
+        
         private bool IsPointerOverUI()
         {
-            if (EventSystem.current == null) return false;
-            
-            // Check mouse/touch over UI
-            return EventSystem.current.IsPointerOverGameObject();
+            return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
         }
-
+        
+        #endregion
+        
+        #region Public API (for UI buttons)
+        
+        /// <summary>
+        /// Public method for UI button to trigger jump
+        /// </summary>
+        public void OnJumpButtonPressed()
+        {
+            RequestJump();
+        }
+        
+        /// <summary>
+        /// Public method for UI button to initiate firing
+        /// </summary>
+        public void OnFireButtonPressed()
+        {
+            if (projectilePrefab == null) return;
+            
+            // Fire in facing direction when using UI button
+            Vector2 direction = transform.localScale.x > 0 ? Vector2.right : Vector2.left;
+            if (Time.time - lastFireTime >= fireRate)
+            {
+                FireProjectile(direction);
+            }
+        }
+        
+        #endregion
+        
+        #region Debug Visualization
+        
+        private void OnDrawGizmos()
+        {
+            if (col == null) return;
+            
+            // Visualize ground check box
+            Vector2 checkPosition = new Vector2(
+                col.bounds.center.x,
+                col.bounds.min.y - groundCheckDistance
+            );
+            
+            Vector2 boxSize = new Vector2(
+                col.bounds.size.x * groundCheckWidth,
+                groundCheckDistance * 2f
+            );
+            
+            Gizmos.color = isGrounded ? Color.green : Color.red;
+            Gizmos.DrawWireCube(checkPosition, boxSize);
+        }
+        
         #endregion
     }
 }
