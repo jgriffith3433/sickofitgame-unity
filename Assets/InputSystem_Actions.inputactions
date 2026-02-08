@@ -348,6 +348,17 @@
                 },
                 {
                     "name": "",
+                    "id": "f1a2b3c4-d5e6-4a5b-9c8d-112233445566",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "cbac6039-9c09-46a1-b5f2-4e5124ccb5ed",
                     "path": "<Keyboard>/2",
                     "interactions": "",
@@ -541,17 +552,6 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "DashRight",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b5c6d7e8-f9a1-4b2c-3d4e-555657585960",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "PlaceBall",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 
 namespace MobileControllerFramework
@@ -16,6 +17,9 @@ namespace MobileControllerFramework
         [Header("Shooting")]
         public float ballSpeed = 10f;
         public float fireRate = 0.25f; // Time between shots
+        
+        [Header("Sword")]
+        public float swingDuration = 0.5f; // How long the sword swing animation lasts
 
         [Header("References")]
         public GameObject swordIn;
@@ -50,6 +54,7 @@ namespace MobileControllerFramework
         private bool swordShown = false;
         private bool isFiring = false; // PC fire button held
         private float lastFireTime = 0f;
+        private bool isSwinging = false; // Prevent sword swing spam
 
 
         /**/
@@ -292,6 +297,23 @@ namespace MobileControllerFramework
             if (swordIn != null) swordIn.SetActive(true);
             if (swordOut != null) swordOut.SetActive(false);
         }
+        
+        private System.Collections.IEnumerator SwingSword()
+        {
+            isSwinging = true;
+            
+            // Show sword
+            ShowSword();
+            swordShown = true;
+            
+            // Wait for swing animation to complete
+            yield return new WaitForSeconds(swingDuration);
+            
+            // Hide sword
+            HideSword();
+            swordShown = false;
+            isSwinging = false;
+        }
 
         #endregion
 
@@ -339,6 +361,14 @@ namespace MobileControllerFramework
             // Spawn ball at player position
             GameObject ball = Instantiate(ballObj, transform.position, Quaternion.identity);
             
+            // Ignore collision between ball and player
+            Collider2D ballCollider = ball.GetComponent<Collider2D>();
+            Collider2D playerCollider = GetComponent<Collider2D>();
+            if (ballCollider != null && playerCollider != null)
+            {
+                Physics2D.IgnoreCollision(ballCollider, playerCollider);
+            }
+            
             // Add velocity to the ball
             Rigidbody2D ballRb = ball.GetComponent<Rigidbody2D>();
             if (ballRb != null)
@@ -382,16 +412,13 @@ namespace MobileControllerFramework
 
         private void OnAttackPressed(InputAction.CallbackContext context)
         {
-            if (!swordShown)
-            {
-                ShowSword();
-                swordShown = true;
-            }
-            else
-            {
-                HideSword();
-                swordShown = false;
-            }
+            // Don't attack if clicking on UI
+            if (IsPointerOverUI()) return;
+            
+            // Prevent spam - only swing if not already swinging
+            if (isSwinging) return;
+            
+            StartCoroutine(SwingSword());
         }
 
         private void OnAttackReleased(InputAction.CallbackContext context)
@@ -403,6 +430,9 @@ namespace MobileControllerFramework
 
         private void OnPlaceBallStarted(InputAction.CallbackContext context)
         {
+            // Don't fire if clicking on UI
+            if (IsPointerOverUI()) return;
+            
             // Start firing toward mouse
             isFiring = true;
         }
@@ -411,6 +441,17 @@ namespace MobileControllerFramework
         {
             // Stop firing
             isFiring = false;
+        }
+        
+        /// <summary>
+        /// Check if the pointer/touch is over a UI element
+        /// </summary>
+        private bool IsPointerOverUI()
+        {
+            if (EventSystem.current == null) return false;
+            
+            // Check mouse/touch over UI
+            return EventSystem.current.IsPointerOverGameObject();
         }
 
         #endregion

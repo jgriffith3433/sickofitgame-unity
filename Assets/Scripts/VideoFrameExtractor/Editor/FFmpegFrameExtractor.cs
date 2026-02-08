@@ -1,0 +1,332 @@
+#if UNITY_EDITOR
+using UnityEngine;
+using UnityEngine.Video;
+using UnityEditor;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+
+public class FFmpegFrameExtractorWindow : EditorWindow
+{
+    private VideoClip videoClip;
+    private float targetFPS = 30f;
+    private string outputFolderPath = "";
+    private bool isExtracting = false;
+
+    [MenuItem("Tools/Video Frame Extractor")]
+    public static void ShowWindow()
+    {
+        GetWindow<FFmpegFrameExtractorWindow>("Frame Extractor");
+    }
+
+    private void OnGUI()
+    {
+        GUILayout.Label("Video Frame Extraction", EditorStyles.boldLabel);
+        GUILayout.Space(10);
+
+        // Video selection
+        videoClip = (VideoClip)EditorGUILayout.ObjectField("Video Clip", videoClip, typeof(VideoClip), false);
+
+        // FPS setting
+        targetFPS = EditorGUILayout.FloatField("Target FPS", targetFPS);
+        targetFPS = Mathf.Clamp(targetFPS, 1f, 60f);
+
+        GUILayout.Space(5);
+        EditorGUILayout.HelpBox($"Higher FPS = More frames = More memory usage\n15-24 FPS recommended for long videos", MessageType.Info);
+
+        GUILayout.Space(10);
+
+        // Output folder
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("Output Folder", GUILayout.Width(100));
+        
+        if (string.IsNullOrEmpty(outputFolderPath) && videoClip != null)
+        {
+            outputFolderPath = GetDefaultOutputPath();
+        }
+        
+        EditorGUILayout.LabelField(outputFolderPath, EditorStyles.wordWrappedLabel);
+        EditorGUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Choose Output Folder"))
+        {
+            string path = EditorUtility.OpenFolderPanel("Select Output Folder", "Assets", "");
+            if (!string.IsNullOrEmpty(path))
+            {
+                if (path.StartsWith(Application.dataPath))
+                {
+                    outputFolderPath = "Assets" + path.Substring(Application.dataPath.Length);
+                }
+                else
+                {
+                    EditorUtility.DisplayDialog("Invalid Path", "Please select a folder inside the Assets directory.", "OK");
+                }
+            }
+        }
+
+        GUI.enabled = videoClip != null && !isExtracting;
+
+        GUILayout.Space(10);
+
+        if (GUILayout.Button("Extract Frames", GUILayout.Height(40)))
+        {
+            ExtractFrames();
+        }
+
+        GUI.enabled = true;
+
+        if (isExtracting)
+        {
+            GUILayout.Space(10);
+            EditorGUILayout.HelpBox("Extracting frames... This may take a while. Check the Console for progress.", MessageType.Warning);
+        }
+
+        GUILayout.Space(20);
+        
+        // Memory estimation
+        if (videoClip != null)
+        {
+            float duration = (float)videoClip.length;
+            int estimatedFrames = Mathf.CeilToInt(duration * targetFPS);
+            EditorGUILayout.HelpBox($"Estimated frames: {estimatedFrames}\nVideo duration: {duration:F1}s", MessageType.None);
+        }
+    }
+
+    private string GetDefaultOutputPath()
+    {
+        if (videoClip == null) return "";
+        
+        string videoPath = AssetDatabase.GetAssetPath(videoClip);
+        string directory = Path.GetDirectoryName(videoPath);
+        string videoName = Path.GetFileNameWithoutExtension(videoPath);
+        
+        return $"{directory}/{videoName}_frames";
+    }
+
+    private void ExtractFrames()
+    {
+        if (!FFmpegHelper.IsFFmpegAvailable())
+        {
+            EditorUtility.DisplayDialog("FFmpeg Not Found", 
+                "FFmpeg not found on your system.\n\n" +
+                "Please install FFmpeg:\n" +
+                "1. Open PowerShell/Command Prompt as Administrator\n" +
+                "2. Run: winget install ffmpeg\n" +
+                "3. Restart Unity after installation", 
+                "OK");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(outputFolderPath))
+        {
+            outputFolderPath = GetDefaultOutputPath();
+        }
+
+        isExtracting = true;
+        
+        string videoPath = AssetDatabase.GetAssetPath(videoClip);
+        
+        // Convert Unity asset path to absolute file system path
+        string fullOutputPath;
+        if (outputFolderPath.StartsWith("Assets"))
+        {
+            // Remove "Assets" or "Assets/" or "Assets\" from the beginning
+            string relativePath = outputFolderPath.Substring(6).TrimStart('/', '\\');
+            fullOutputPath = Path.Combine(Application.dataPath, relativePath);
+        }
+        else
+        {
+            fullOutputPath = outputFolderPath;
+        }
+        
+        FFmpegHelper.ExtractFrames(videoPath, targetFPS, fullOutputPath, (success, message) =>
+        {
+            isExtracting = false;
+            
+            if (success)
+            {
+                AssetDatabase.Refresh();
+                EditorUtility.DisplayDialog("Success", message, "OK");
+                UnityEngine.Debug.Log($"Frames extracted to: {outputFolderPath}");
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("Error", message, "OK");
+            }
+            
+            Repaint();
+        });
+    }
+}
+
+public static class FFmpegHelper
+{
+    private static string ffmpegPath = null;
+
+    public static bool IsFFmpegAvailable()
+    {
+        if (ffmpegPath != null)
+            return true;
+
+        // Check hardcoded path first
+        string hardcodedPath = @"C:\ffmpeg\bin\ffmpeg.exe";
+        if (File.Exists(hardcodedPath))
+        {
+            ffmpegPath = hardcodedPath;
+            UnityEngine.Debug.Log($"Found FFmpeg at hardcoded path: {ffmpegPath}");
+            return true;
+        }
+
+        // Try to find ffmpeg in PATH using 'where' command
+        try
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = "/c where ffmpeg",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+
+            using (Process process = Process.Start(startInfo))
+            {
+                string output = process.StandardOutput.ReadToEnd().Trim();
+                process.WaitForExit(2000);
+
+                if (process.ExitCode == 0 && !string.IsNullOrEmpty(output))
+                {
+                    string[] lines = output.Split(new[] { '\r', '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
+                    if (lines.Length > 0)
+                    {
+                        ffmpegPath = lines[0].Trim();
+                        UnityEngine.Debug.Log($"Found FFmpeg at: {ffmpegPath}");
+                        return true;
+                    }
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            UnityEngine.Debug.LogError($"FFmpeg PATH search exception: {e.Message}");
+        }
+
+        // Check WinGet installation paths
+        string[] possiblePaths = new string[]
+        {
+            Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
+                "Microsoft\\WinGet\\Links\\ffmpeg.exe"),
+            Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles),
+                "ffmpeg\\bin\\ffmpeg.exe")
+        };
+
+        foreach (string path in possiblePaths)
+        {
+            if (File.Exists(path))
+            {
+                ffmpegPath = path;
+                UnityEngine.Debug.Log($"Found FFmpeg at: {ffmpegPath}");
+                return true;
+            }
+        }
+
+        // Search WinGet packages directory
+        string wingetPackages = Path.Combine(
+            System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
+            "Microsoft\\WinGet\\Packages");
+
+        if (Directory.Exists(wingetPackages))
+        {
+            string[] ffmpegDirs = Directory.GetDirectories(wingetPackages, "Gyan.FFmpeg*");
+            foreach (string dir in ffmpegDirs)
+            {
+                string[] binDirs = Directory.GetDirectories(dir, "*", SearchOption.AllDirectories)
+                    .Where(d => d.EndsWith("\\bin")).ToArray();
+
+                foreach (string binDir in binDirs)
+                {
+                    string exePath = Path.Combine(binDir, "ffmpeg.exe");
+                    if (File.Exists(exePath))
+                    {
+                        ffmpegPath = exePath;
+                        UnityEngine.Debug.Log($"Found FFmpeg at: {ffmpegPath}");
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static void ExtractFrames(string videoPath, float fps, string outputPath, System.Action<bool, string> onComplete)
+    {
+        if (!IsFFmpegAvailable())
+        {
+            onComplete?.Invoke(false, "FFmpeg not found.");
+            return;
+        }
+
+        // Create output directory
+        if (!Directory.Exists(outputPath))
+        {
+            Directory.CreateDirectory(outputPath);
+        }
+
+        // Convert to absolute paths
+        string absoluteVideoPath = Path.GetFullPath(videoPath);
+        string absoluteOutputPath = Path.GetFullPath(outputPath);
+
+        // FFmpeg command - extract as PNG files
+        string outputPattern = Path.Combine(absoluteOutputPath, "frame_%05d.png");
+        string arguments = $"-i \"{absoluteVideoPath}\" -vf fps={fps} -start_number 0 \"{outputPattern}\"";
+
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            FileName = ffmpegPath,
+            Arguments = arguments,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            CreateNoWindow = true
+        };
+
+        try
+        {
+            UnityEngine.Debug.Log($"FFmpeg command: {ffmpegPath} {arguments}");
+            UnityEngine.Debug.Log($"Video path: {absoluteVideoPath}");
+            UnityEngine.Debug.Log($"Output path: {absoluteOutputPath}");
+            
+            Process process = Process.Start(startInfo);
+            process.WaitForExit();
+
+            int exitCode = process.ExitCode;
+            string output = process.StandardOutput.ReadToEnd();
+            string error = process.StandardError.ReadToEnd();
+
+            UnityEngine.Debug.Log($"FFmpeg exit code: {exitCode}");
+            if (!string.IsNullOrEmpty(output))
+                UnityEngine.Debug.Log($"FFmpeg output: {output}");
+            if (!string.IsNullOrEmpty(error))
+                UnityEngine.Debug.Log($"FFmpeg stderr: {error}");
+
+            if (exitCode == 0)
+            {
+                string[] pngFiles = Directory.GetFiles(absoluteOutputPath, "frame_*.png");
+                UnityEngine.Debug.Log($"Found {pngFiles.Length} frames in {absoluteOutputPath}");
+                onComplete?.Invoke(true, $"Successfully extracted {pngFiles.Length} frames!");
+            }
+            else
+            {
+                UnityEngine.Debug.LogError($"FFmpeg extraction failed with exit code {exitCode}");
+                onComplete?.Invoke(false, $"FFmpeg extraction failed. Check console for details.");
+            }
+        }
+        catch (System.Exception e)
+        {
+            onComplete?.Invoke(false, $"Failed to start FFmpeg: {e.Message}");
+        }
+    }
+}
+#endif
