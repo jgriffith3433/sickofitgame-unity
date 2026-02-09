@@ -54,6 +54,11 @@ public class SpriteFramePlayer : MonoBehaviour
     private bool audioLoaded = false;
     private bool hasFinished = false;
 
+    /// <summary>
+    /// Public property to check if all assets are loaded
+    /// </summary>
+    public bool IsLoaded => isLoaded;
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -338,14 +343,6 @@ public class SpriteFramePlayer : MonoBehaviour
     public bool IsPlaying()
     {
         return isPlaying;
-    }
-
-    /// <summary>
-    /// Check if frames are loaded
-    /// </summary>
-    public bool IsLoaded()
-    {
-        return isLoaded;
     }
 
     /// <summary>

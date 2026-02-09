@@ -58,7 +58,30 @@ public class LevelSelectionManager : MonoBehaviour
 
     private void OnLevelClicked(int levelNumber)
     {
-        SceneTransitionManager.Instance.LoadLevel(levelNumber);
+        // For Level 1, check if it's the first time visiting
+        if (levelNumber == 1 && !HasVisitedLevel(1))
+        {
+            // Mark as visited and play Video1 first
+            MarkLevelAsVisited(1);
+            PlayerPrefs.SetInt("ReturnToLevel", 1);
+            PlayerPrefs.Save();
+            SceneTransitionManager.Instance.LoadVideo(1);
+        }
+        else
+        {
+            SceneTransitionManager.Instance.LoadLevel(levelNumber);
+        }
+    }
+    
+    private bool HasVisitedLevel(int levelNumber)
+    {
+        return PlayerPrefs.GetInt($"Level_{levelNumber}_Visited", 0) == 1;
+    }
+    
+    private void MarkLevelAsVisited(int levelNumber)
+    {
+        PlayerPrefs.SetInt($"Level_{levelNumber}_Visited", 1);
+        PlayerPrefs.Save();
     }
 
     private void OnBackClicked()

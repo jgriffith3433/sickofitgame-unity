@@ -37,6 +37,11 @@ namespace MobileControllerFramework
         
         private AudioSource audioSource;
 
+        /// <summary>
+        /// Public property to check if music is loaded
+        /// </summary>
+        public bool IsLoaded => isLoaded;
+
         private void Awake()
         {
             // Create an AudioSource component if we don't have one
@@ -268,14 +273,6 @@ namespace MobileControllerFramework
                 return loadedClips[currentSongIndex]?.name ?? "Unknown";
             }
             return "No song loaded";
-        }
-
-        /// <summary>
-        /// Check if music is loaded
-        /// </summary>
-        public bool IsLoaded()
-        {
-            return isLoaded;
         }
 
         /// <summary>

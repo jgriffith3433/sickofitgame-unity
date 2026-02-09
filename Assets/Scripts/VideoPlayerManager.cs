@@ -81,12 +81,19 @@ public class VideoPlayerManager : MonoBehaviour
 
     private void ReturnToGame()
     {
-        if (returnToLevelAfterVideo && PlayerPrefs.HasKey("ReturnToLevel"))
+        // Check if there's a specific level to return to
+        if (PlayerPrefs.HasKey("ReturnToLevel"))
         {
             int levelToReturn = PlayerPrefs.GetInt("ReturnToLevel");
             PlayerPrefs.DeleteKey("ReturnToLevel");
             PlayerPrefs.Save();
             SceneTransitionManager.Instance.LoadLevel(levelToReturn);
+        }
+        else if (returnToLevelAfterVideo)
+        {
+            // Legacy path: no specific level set but returnToLevel flag is true
+            // This shouldn't happen in normal flow, return to main menu as fallback
+            SceneTransitionManager.Instance.LoadMainMenu();
         }
         else
         {

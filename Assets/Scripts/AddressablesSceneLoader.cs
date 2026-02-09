@@ -83,13 +83,10 @@ public class AddressablesSceneLoader : MonoBehaviour
         // Show loading screen
         ShowLoadingScreen();
 
-        // Unload previous scene if there was one
-        if (currentLoadOperation.IsValid())
-        {
-            yield return Addressables.UnloadSceneAsync(currentLoadOperation);
-        }
+        // Note: Using LoadSceneMode.Single automatically unloads the previous scene
+        // Manual unloading is not needed and causes "last scene" warnings
 
-        // Load the new scene
+        // Load the new scene (replaces current scene automatically)
         currentLoadOperation = Addressables.LoadSceneAsync(sceneName, LoadSceneMode.Single);
 
         // Wait for scene to load with progress updates

@@ -68,7 +68,14 @@ public class MainMenuManager : MonoBehaviour
         // Reset all progress and start from level 1
         GameProgressManager.Instance.ResetAllProgress();
         GameProgressManager.Instance.InitializeNewPlayer();
-        SceneTransitionManager.Instance.LoadLevel(1);
+        
+        // Mark Level1 as visited to prevent auto-play loop
+        PlayerPrefs.SetInt("Level_1_Visited", 1);
+        
+        // Play Video1 first, then load Level1
+        PlayerPrefs.SetInt("ReturnToLevel", 1);
+        PlayerPrefs.Save();
+        SceneTransitionManager.Instance.LoadVideo(1);
     }
 
     private void OnLevelSelectClicked()
