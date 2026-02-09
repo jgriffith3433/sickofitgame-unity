@@ -31,6 +31,13 @@ public class LevelManager : MonoBehaviour
     [Tooltip("GameObjects to deactivate once all assets are loaded (e.g., loading indicators)")]
     [SerializeField] private List<GameObject> objectsToDeactivateAfterLoading = new List<GameObject>();
     
+    [Header("Scene Transition Loading")]
+    [Tooltip("GameObjects to activate when transitioning to next scene (e.g., 'Loading...' UI)")]
+    [SerializeField] private List<GameObject> objectsToActivateOnSceneTransition = new List<GameObject>();
+    
+    [Tooltip("GameObjects to deactivate when transitioning to next scene (e.g., player controls, game UI)")]
+    [SerializeField] private List<GameObject> objectsToDeactivateOnSceneTransition = new List<GameObject>();
+    
     [Header("Loading Debug")]
     [SerializeField] private bool isLoading = false;
     [SerializeField] private bool allAssetsLoaded = false;
@@ -123,6 +130,9 @@ public class LevelManager : MonoBehaviour
         int nextLevel = levelNumber + 1;
         int nextLevelVideo = levelNumber + 1;
         
+        // Show loading UI before transitioning
+        ShowSceneTransitionUI();
+        
         // Play the next level's video (if it exists and hasn't been seen)
         if (GameProgressManager.Instance.IsVideoUnlocked(nextLevelVideo))
         {
@@ -141,16 +151,19 @@ public class LevelManager : MonoBehaviour
 
     public void ReturnToLevelSelect()
     {
+        ShowSceneTransitionUI();
         SceneTransitionManager.Instance.LoadLevelSelection();
     }
 
     public void ReturnToMainMenu()
     {
+        ShowSceneTransitionUI();
         SceneTransitionManager.Instance.LoadMainMenu();
     }
 
     public void RestartLevel()
     {
+        ShowSceneTransitionUI();
         SceneTransitionManager.Instance.LoadLevel(levelNumber);
     }
 
@@ -160,6 +173,7 @@ public class LevelManager : MonoBehaviour
         PlayerPrefs.SetInt("ReturnToLevel", levelNumber);
         PlayerPrefs.Save();
         
+        ShowSceneTransitionUI();
         SceneTransitionManager.Instance.LoadVideo(videoToPlay);
     }
 
@@ -263,6 +277,40 @@ public class LevelManager : MonoBehaviour
                 {
                     obj.SetActive(false);
                     Debug.Log($"Deactivated: {obj.name}");
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Show loading UI when transitioning to another scene
+    /// </summary>
+    private void ShowSceneTransitionUI()
+    {
+        Debug.Log("LevelManager: Showing scene transition loading UI");
+        
+        // Activate loading indicators
+        if (objectsToActivateOnSceneTransition != null)
+        {
+            foreach (var obj in objectsToActivateOnSceneTransition)
+            {
+                if (obj != null)
+                {
+                    obj.SetActive(true);
+                    Debug.Log($"Activated for transition: {obj.name}");
+                }
+            }
+        }
+        
+        // Deactivate game UI/controls
+        if (objectsToDeactivateOnSceneTransition != null)
+        {
+            foreach (var obj in objectsToDeactivateOnSceneTransition)
+            {
+                if (obj != null)
+                {
+                    obj.SetActive(false);
+                    Debug.Log($"Deactivated for transition: {obj.name}");
                 }
             }
         }

@@ -20,6 +20,15 @@ public class LevelManagerEditor : Editor
         {
             ScanForLoadingComponents();
         }
+        
+        EditorGUILayout.Space(5);
+        EditorGUILayout.HelpBox(
+            "LOADING SYSTEM:\n" +
+            "• Initial Loading: For addressable assets at scene start\n" +
+            "• Scene Transition: For loading UI when level completes\n\n" +
+            "Add loading screens, player controls, and UI to the appropriate lists.",
+            MessageType.Info
+        );
     }
     
     /// <summary>

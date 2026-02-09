@@ -13,6 +13,9 @@ public class VideoSelectionManager : MonoBehaviour
     [SerializeField] private Transform videoButtonContainer; // Parent object for video buttons
     [SerializeField] private GameObject videoButtonPrefab; // Prefab for video buttons
     [SerializeField] private Button backButton;
+    
+    [Header("Scene Loading")]
+    [SerializeField] private SceneLoadingManager sceneLoadingManager;
 
     private void Start()
     {
@@ -60,11 +63,15 @@ public class VideoSelectionManager : MonoBehaviour
         PlayerPrefs.DeleteKey("ReturnToLevel");
         PlayerPrefs.Save();
         
-        SceneTransitionManager.Instance.LoadVideo(videoNumber);
+        if (sceneLoadingManager != null)
+            sceneLoadingManager.LoadVideo(videoNumber);
+        else
+            SceneTransitionManager.Instance.LoadVideo(videoNumber);
     }
 
     private void OnBackClicked()
     {
+        SceneLoadingManager.ShowLoadingUI();
         SceneTransitionManager.Instance.LoadMainMenu();
     }
 }

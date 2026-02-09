@@ -16,6 +16,9 @@ public class MainMenuManager : MonoBehaviour
     
     [Header("Optional UI Elements")]
     [SerializeField] private TextMeshProUGUI continueButtonText;
+    
+    [Header("Scene Loading")]
+    [SerializeField] private SceneLoadingManager sceneLoadingManager;
 
     private void Start()
     {
@@ -60,7 +63,10 @@ public class MainMenuManager : MonoBehaviour
 
     private void OnContinueClicked()
     {
-        SceneTransitionManager.Instance.ContinueGame();
+        if (sceneLoadingManager != null)
+            sceneLoadingManager.ContinueGame();
+        else
+            SceneTransitionManager.Instance.ContinueGame();
     }
 
     private void OnNewGameClicked()
@@ -75,16 +81,22 @@ public class MainMenuManager : MonoBehaviour
         // Play Video1 first, then load Level1
         PlayerPrefs.SetInt("ReturnToLevel", 1);
         PlayerPrefs.Save();
-        SceneTransitionManager.Instance.LoadVideo(1);
+        
+        if (sceneLoadingManager != null)
+            sceneLoadingManager.LoadVideo(1);
+        else
+            SceneTransitionManager.Instance.LoadVideo(1);
     }
 
     private void OnLevelSelectClicked()
     {
+        SceneLoadingManager.ShowLoadingUI();
         SceneTransitionManager.Instance.LoadLevelSelection();
     }
 
     private void OnVideosClicked()
     {
+        SceneLoadingManager.ShowLoadingUI();
         SceneTransitionManager.Instance.LoadVideoSelection();
     }
 

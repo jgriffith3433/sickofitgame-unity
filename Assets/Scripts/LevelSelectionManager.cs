@@ -13,6 +13,9 @@ public class LevelSelectionManager : MonoBehaviour
     [SerializeField] private Transform levelButtonContainer; // Parent object for level buttons
     [SerializeField] private GameObject levelButtonPrefab; // Prefab for level buttons
     [SerializeField] private Button backButton;
+    
+    [Header("Scene Loading")]
+    [SerializeField] private SceneLoadingManager sceneLoadingManager;
 
     private void Start()
     {
@@ -65,11 +68,18 @@ public class LevelSelectionManager : MonoBehaviour
             MarkLevelAsVisited(1);
             PlayerPrefs.SetInt("ReturnToLevel", 1);
             PlayerPrefs.Save();
-            SceneTransitionManager.Instance.LoadVideo(1);
+            
+            if (sceneLoadingManager != null)
+                sceneLoadingManager.LoadVideo(1);
+            else
+                SceneTransitionManager.Instance.LoadVideo(1);
         }
         else
         {
-            SceneTransitionManager.Instance.LoadLevel(levelNumber);
+            if (sceneLoadingManager != null)
+                sceneLoadingManager.LoadLevel(levelNumber);
+            else
+                SceneTransitionManager.Instance.LoadLevel(levelNumber);
         }
     }
     
