@@ -3,7 +3,7 @@ using System.Collections;
 
 /// <summary>
 /// Handles scene loading using Addressables for optimized WebGL builds
-/// Now delegates to AddressablesOperationManager for deduplication
+/// Delegates to AddressablesOperationManager for deduplication
 /// </summary>
 public class AddressablesSceneLoader : MonoBehaviour
 {
@@ -78,7 +78,7 @@ public class AddressablesSceneLoader : MonoBehaviour
         // Show loading screen
         ShowLoadingScreen();
 
-        // Delegate to AddressablesOperationManager (handles deduplication)
+        // Delegate to AddressablesOperationManager
         bool loadCompleted = false;
         bool loadSuccess = false;
         
@@ -112,21 +112,19 @@ public class AddressablesSceneLoader : MonoBehaviour
     }
 
     /// <summary>
-    /// Preload and cache a scene's assets into RAM
+    /// Preload a scene's assets into RAM for instant loading later
     /// Good for preloading next level during gameplay
     /// </summary>
     public void CacheSceneAssets(string sceneName)
     {
-        // Delegate to PreloadManager - this downloads AND loads assets into RAM for instant access
         PreloadManager.Instance.PreloadLabel(sceneName, null);
     }
 
     /// <summary>
-    /// Get the download size for a scene (useful for showing download progress to player)
+    /// Get the download size for a scene (0 = already cached)
     /// </summary>
     public void GetSceneDownloadSize(string sceneName, System.Action<long> onSizeRetrieved)
     {
-        // Delegate to AddressablesOperationManager
         AddressablesOperationManager.Instance.GetLabelDownloadSize(sceneName, onSizeRetrieved);
     }
 

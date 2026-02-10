@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// Manages loading prefabs and assets at runtime using Addressables
@@ -54,9 +53,6 @@ public class AddressablesAssetLoader : MonoBehaviour
 
     private System.Collections.IEnumerator InstantiatePrefabAsync(string address, System.Action<GameObject> onComplete, Transform parent)
     {
-        // Note: InstantiateAsync can trigger downloads if the asset isn't cached
-        // If you're instantiating from a label that should be preloaded, use PreloadAssetsByLabel first
-        
         var handle = Addressables.InstantiateAsync(address, parent);
         yield return handle;
 
@@ -83,9 +79,6 @@ public class AddressablesAssetLoader : MonoBehaviour
     private System.Collections.IEnumerator InstantiatePrefabAtPositionAsync(string address, Vector3 position, 
         Quaternion rotation, System.Action<GameObject> onComplete, Transform parent)
     {
-        // Note: InstantiateAsync can trigger downloads if the asset isn't cached
-        // If you're instantiating from a label that should be preloaded, use PreloadAssetsByLabel first
-        
         var handle = Addressables.InstantiateAsync(address, position, rotation, parent);
         yield return handle;
 
@@ -115,10 +108,6 @@ public class AddressablesAssetLoader : MonoBehaviour
 
     private System.Collections.IEnumerator LoadAssetAsync<T>(string address, System.Action<T> onComplete) where T : Object
     {
-        // Note: LoadAssetAsync can trigger downloads if the asset isn't cached
-        // This is for individual assets by address (not labels)
-        // For label-based loading, use LoadAssetsByLabel which coordinates with AddressablesOperationManager
-        
         // Check if already loaded
         if (loadedAssets.ContainsKey(address))
         {
@@ -179,21 +168,6 @@ public class AddressablesAssetLoader : MonoBehaviour
 
     private System.Collections.IEnumerator LoadAssetsByLabelAsync<T>(string label, System.Action<IList<T>> onComplete) where T : Object
     {
-        // CRITICAL: Wait for any in-progress downloads to complete first
-        // This prevents starting a load while the download is still happening
-        if (AddressablesOperationManager.Instance.IsDownloading(label))
-        {
-            Debug.Log($"[DEDUP] Label '{label}' is being downloaded, waiting before loading typed assets...");
-            
-            // Wait for download to finish
-            while (AddressablesOperationManager.Instance.IsDownloading(label))
-            {
-                yield return null;
-            }
-            
-            Debug.Log($"[DEDUP] Download completed for '{label}', now loading typed assets");
-        }
-
         // Load with specific type (critical for Sprites - loading as Object loads Texture2D instead!)
         var handle = Addressables.LoadAssetsAsync<T>(label, null);
         yield return handle;
@@ -226,9 +200,6 @@ public class AddressablesAssetLoader : MonoBehaviour
 
     private System.Collections.IEnumerator PreloadAssetAsync<T>(string address) where T : Object
     {
-        // Note: This can trigger downloads for individual assets
-        // For label-based preloading, use PreloadAssetsByLabel which coordinates with AddressablesOperationManager
-        
         var handle = Addressables.LoadAssetAsync<T>(address);
         yield return handle;
 
@@ -248,7 +219,6 @@ public class AddressablesAssetLoader : MonoBehaviour
     /// </summary>
     public void PreloadAssetsByLabel(string label)
     {
-        // Delegate to AddressablesOperationManager to handle deduplication
         AddressablesOperationManager.Instance.LoadLabel(label, (success) =>
         {
             if (success)

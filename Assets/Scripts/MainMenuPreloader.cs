@@ -111,29 +111,29 @@ public class MainMenuPreloader : MonoBehaviour
     private void PreloadAppropriateLevel()
     {
         int currentLevel = GameProgressManager.Instance.GetCurrentLevel();
-        string levelLabel = $"Level{currentLevel}";
-        string videoLabel = $"Video{currentLevel}";
+        string levelLabel = $"Level{currentLevel}_Assets";
+        string videoLabel = $"Video{currentLevel}_Assets";
         
         Debug.Log($"[MainMenu] Background preloading content for Level {currentLevel}...");
         
-        // Preload the video if they haven't seen it yet
+        // Preload the video assets if they haven't seen it yet
         if (ShouldPlayVideoBeforeLevel(currentLevel))
         {
             PreloadManager.Instance.PreloadLabel(videoLabel, (success) =>
             {
                 if (success)
                 {
-                    Debug.Log($"[MainMenu] Video {currentLevel} ready!");
+                    Debug.Log($"[MainMenu] Video {currentLevel} assets ready!");
                 }
             });
         }
         
-        // Also preload the level itself
+        // Also preload the level assets
         PreloadManager.Instance.PreloadLabel(levelLabel, (success) =>
         {
             if (success)
             {
-                Debug.Log($"[MainMenu] Level {currentLevel} ready!");
+                Debug.Log($"[MainMenu] Level {currentLevel} assets ready!");
             }
         });
     }
@@ -184,7 +184,7 @@ public class MainMenuPreloader : MonoBehaviour
     /// </summary>
     private void PreloadVideoThenLevel(int levelNumber)
     {
-        string videoLabel = $"Video{levelNumber}";
+        string videoLabel = $"Video{levelNumber}_Assets";
         
         PreloadManager.Instance.PreloadLabel(videoLabel, (success) =>
         {
@@ -213,7 +213,7 @@ public class MainMenuPreloader : MonoBehaviour
     /// </summary>
     private void LoadLevelDirectly(int levelNumber)
     {
-        string levelLabel = $"Level{levelNumber}";
+        string levelLabel = $"Level{levelNumber}_Assets";
         
         PreloadManager.Instance.PreloadLabel(levelLabel, (success) =>
         {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Central manager for ALL Addressables operations in the game.
-/// Prevents duplicate concurrent downloads/loads of the same asset.
+/// Prevents duplicate concurrent loads of the same asset.
 /// All systems (PreloadManager, SceneLoader, etc.) should use this.
 /// </summary>
 public class AddressablesOperationManager : MonoBehaviour
@@ -32,10 +32,7 @@ public class AddressablesOperationManager : MonoBehaviour
     [SerializeField] private bool showDebugLogs = true;
     [SerializeField] private List<string> activeOperations = new List<string>();
 
-    // Track in-progress operations
-    private Dictionary<string, bool> inProgressDownloads = new Dictionary<string, bool>();
-    private Dictionary<string, List<System.Action<bool>>> pendingDownloadCallbacks = new Dictionary<string, List<System.Action<bool>>>();
-    
+    // Track in-progress operations to prevent duplicate concurrent loads
     private Dictionary<string, bool> inProgressLabelLoads = new Dictionary<string, bool>();
     private Dictionary<string, List<System.Action<bool>>> pendingLabelLoadCallbacks = new Dictionary<string, List<System.Action<bool>>>();
     
@@ -44,7 +41,6 @@ public class AddressablesOperationManager : MonoBehaviour
 
     // Track completed loads
     private Dictionary<string, AsyncOperationHandle<IList<Object>>> loadedLabels = new Dictionary<string, AsyncOperationHandle<IList<Object>>>();
-    private HashSet<string> downloadedLabels = new HashSet<string>();
 
     private void Awake()
     {
@@ -60,17 +56,8 @@ public class AddressablesOperationManager : MonoBehaviour
     #region Public API
 
     /// <summary>
-    /// Download a label to disk cache (doesn't load into RAM)
-    /// If already downloading, queues the callback.
-    /// </summary>
-    public void DownloadLabel(string label, System.Action<bool> onComplete = null)
-    {
-        StartCoroutine(DownloadLabelAsync(label, onComplete));
-    }
-
-    /// <summary>
-    /// Load a label into RAM (downloads first if needed)
-    /// If already loading, queues the callback.
+    /// Preload a label into RAM (downloads bundle if needed and loads assets into memory)
+    /// If already loading, queues the callback to avoid duplicate operations.
     /// </summary>
     public void LoadLabel(string label, System.Action<bool> onComplete = null)
     {
@@ -78,8 +65,8 @@ public class AddressablesOperationManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Load a scene using Addressables
-    /// If already loading, queues the callback.
+    /// Load a scene using Addressables (downloads if needed)
+    /// If already loading, queues the callback to avoid duplicate operations.
     /// </summary>
     public void LoadScene(string sceneName, System.Action<bool> onComplete = null)
     {
@@ -87,19 +74,11 @@ public class AddressablesOperationManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Get download size for a label
+    /// Get download size for a label (0 = already cached)
     /// </summary>
     public void GetLabelDownloadSize(string label, System.Action<long> onComplete)
     {
         StartCoroutine(GetDownloadSizeAsync(label, onComplete));
-    }
-
-    /// <summary>
-    /// Check if a label is currently being downloaded
-    /// </summary>
-    public bool IsDownloading(string label)
-    {
-        return inProgressDownloads.ContainsKey(label) && inProgressDownloads[label];
     }
 
     /// <summary>
@@ -143,7 +122,7 @@ public class AddressablesOperationManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Release a label from memory (keeps it cached on disk)
+    /// Release a label from memory
     /// </summary>
     public void ReleaseLabel(string label)
     {
@@ -179,83 +158,6 @@ public class AddressablesOperationManager : MonoBehaviour
 
     #region Internal Implementation
 
-    private IEnumerator DownloadLabelAsync(string label, System.Action<bool> onComplete)
-    {
-        // Check if already downloading - queue the callback
-        if (inProgressDownloads.ContainsKey(label) && inProgressDownloads[label])
-        {
-            Log($"[DEDUP] Label '{label}' download already in progress, queuing callback...");
-            if (!pendingDownloadCallbacks.ContainsKey(label))
-            {
-                pendingDownloadCallbacks[label] = new List<System.Action<bool>>();
-            }
-            pendingDownloadCallbacks[label].Add(onComplete);
-            yield break;
-        }
-        
-        // Check if already downloaded
-        var sizeHandle = Addressables.GetDownloadSizeAsync(label);
-        yield return sizeHandle;
-
-        long downloadSize = sizeHandle.Result;
-        Addressables.Release(sizeHandle);
-
-        if (downloadSize == 0)
-        {
-            Log($"Label '{label}' already cached on disk");
-            downloadedLabels.Add(label);
-            onComplete?.Invoke(true);
-            yield break;
-        }
-
-        // Mark as in-progress
-        inProgressDownloads[label] = true;
-        activeOperations.Add($"Download: {label}");
-        
-        // Download the label
-        Log($"Downloading label '{label}': {FormatBytes(downloadSize)}");
-        
-        var downloadHandle = Addressables.DownloadDependenciesAsync(label);
-        
-        while (!downloadHandle.IsDone)
-        {
-            float progress = downloadHandle.PercentComplete;
-            yield return null;
-        }
-
-        bool success = downloadHandle.Status == AsyncOperationStatus.Succeeded;
-        
-        if (success)
-        {
-            Log($"Successfully downloaded label: {label}");
-            downloadedLabels.Add(label);
-        }
-        else
-        {
-            Debug.LogError($"Failed to download label '{label}': {downloadHandle.OperationException}");
-        }
-        
-        Addressables.Release(downloadHandle);
-        
-        // Mark as complete
-        inProgressDownloads[label] = false;
-        activeOperations.Remove($"Download: {label}");
-        
-        // Call the original callback
-        onComplete?.Invoke(success);
-        
-        // Call all queued callbacks
-        if (pendingDownloadCallbacks.ContainsKey(label))
-        {
-            Log($"[DEDUP] Calling {pendingDownloadCallbacks[label].Count} queued download callbacks for '{label}'");
-            foreach (var callback in pendingDownloadCallbacks[label])
-            {
-                callback?.Invoke(success);
-            }
-            pendingDownloadCallbacks.Remove(label);
-        }
-    }
-
     private IEnumerator LoadLabelAsync(string label, System.Action<bool> onComplete)
     {
         // Check if already loading - queue the callback
@@ -282,29 +184,7 @@ public class AddressablesOperationManager : MonoBehaviour
         inProgressLabelLoads[label] = true;
         activeOperations.Add($"Load: {label}");
 
-        // First download to disk cache if not already there
-        bool downloaded = false;
-        yield return DownloadLabelAsync(label, (success) => downloaded = success);
-        
-        if (!downloaded)
-        {
-            inProgressLabelLoads[label] = false;
-            activeOperations.Remove($"Load: {label}");
-            onComplete?.Invoke(false);
-            
-            // Call queued callbacks
-            if (pendingLabelLoadCallbacks.ContainsKey(label))
-            {
-                foreach (var callback in pendingLabelLoadCallbacks[label])
-                {
-                    callback?.Invoke(false);
-                }
-                pendingLabelLoadCallbacks.Remove(label);
-            }
-            yield break;
-        }
-
-        // Now load into memory
+        // Load into memory (downloads bundle if needed)
         Log($"Loading label '{label}' into memory...");
         
         var loadHandle = Addressables.LoadAssetsAsync<Object>(label, null);
@@ -354,29 +234,6 @@ public class AddressablesOperationManager : MonoBehaviour
             pendingSceneLoadCallbacks[sceneName].Add(onComplete);
             yield break;
         }
-
-        // CRITICAL: Check if the scene is currently being downloaded
-        // If so, wait for download to complete before loading the scene
-        // This prevents Unity from starting a duplicate download inside LoadSceneAsync
-        if (inProgressDownloads.ContainsKey(sceneName) && inProgressDownloads[sceneName])
-        {
-            Log($"[DEDUP] Scene '{sceneName}' is currently being downloaded, waiting for download to complete before loading...");
-            
-            // Wait for download to finish
-            while (inProgressDownloads.ContainsKey(sceneName) && inProgressDownloads[sceneName])
-            {
-                yield return null;
-            }
-            
-            Log($"[DEDUP] Download completed for '{sceneName}', now proceeding with scene load");
-        }
-
-        // DEBUG: Check if scene is actually cached after waiting
-        var checkHandle = Addressables.GetDownloadSizeAsync(sceneName);
-        yield return checkHandle;
-        long sizeAfterWait = checkHandle.Result;
-        Addressables.Release(checkHandle);
-        Log($"[DEBUG] Scene '{sceneName}' download size after wait: {FormatBytes(sizeAfterWait)} (0 = cached)");
 
         // Mark as in-progress
         inProgressSceneLoads[sceneName] = true;

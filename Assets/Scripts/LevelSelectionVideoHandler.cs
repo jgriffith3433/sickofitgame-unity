@@ -48,7 +48,7 @@ public class LevelSelectionVideoHandler : MonoBehaviour
     /// </summary>
     private void PreloadVideoThenLevel(int levelNumber)
     {
-        string videoLabel = $"Video{levelNumber}";
+        string videoLabel = $"Video{levelNumber}_Assets";
         
         PreloadManager.Instance.PreloadLabel(videoLabel, (success) =>
         {
@@ -76,7 +76,7 @@ public class LevelSelectionVideoHandler : MonoBehaviour
     /// </summary>
     private void LoadLevelDirectly(int levelNumber)
     {
-        string levelLabel = $"Level{levelNumber}";
+        string levelLabel = $"Level{levelNumber}_Assets";
         
         PreloadManager.Instance.PreloadLabel(levelLabel, (success) =>
         {

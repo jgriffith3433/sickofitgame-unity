@@ -4,7 +4,7 @@ using TMPro;
 
 /// <summary>
 /// Optional: Shows download progress and size for scenes before loading
-/// Useful for levels that are large downloads
+/// Useful for large content that users may want to be warned about
 /// </summary>
 public class SceneDownloadPrompt : MonoBehaviour
 {
@@ -33,7 +33,7 @@ public class SceneDownloadPrompt : MonoBehaviour
     }
 
     /// <summary>
-    /// Show a prompt asking user if they want to download the scene
+    /// Show a prompt asking user if they want to preload the scene
     /// Good for mobile data or slow connections
     /// </summary>
     public void ShowDownloadPrompt(string sceneName, System.Action onConfirm, System.Action onCancel = null)
@@ -70,10 +70,10 @@ public class SceneDownloadPrompt : MonoBehaviour
         {
             // Already cached
             if (sizeText != null)
-                sizeText.text = "Cached ✓";
+                sizeText.text = "Ready ✓";
 
             if (statusText != null)
-                statusText.text = "Level is ready to play!";
+                statusText.text = "Level is cached and ready!";
 
             // Auto-confirm if already downloaded
             Invoke(nameof(OnConfirmClicked), 0.5f);
@@ -97,7 +97,7 @@ public class SceneDownloadPrompt : MonoBehaviour
     }
 
     /// <summary>
-    /// Download the scene with progress feedback (without loading it)
+    /// Preload the scene with progress feedback
     /// </summary>
     public void PredownloadWithProgress(string sceneName, System.Action onComplete)
     {
@@ -110,9 +110,9 @@ public class SceneDownloadPrompt : MonoBehaviour
             promptPanel.SetActive(true);
 
         if (statusText != null)
-            statusText.text = "Downloading...";
+            statusText.text = "Loading...";
 
-        // Start caching
+        // Start preloading
         AddressablesSceneLoader.Instance.CacheSceneAssets(sceneName);
 
         // Simulate progress (actual progress from Addressables is more complex)
@@ -125,13 +125,13 @@ public class SceneDownloadPrompt : MonoBehaviour
                 progressBar.value = progress;
 
             if (statusText != null)
-                statusText.text = $"Downloading... {progress * 100f:F0}%";
+                statusText.text = $"Loading... {progress * 100f:F0}%";
 
             yield return null;
         }
 
         if (statusText != null)
-            statusText.text = "Download Complete!";
+            statusText.text = "Ready!";
 
         yield return new WaitForSeconds(0.5f);
 

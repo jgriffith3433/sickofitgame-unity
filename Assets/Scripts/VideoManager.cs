@@ -91,18 +91,18 @@ public class VideoManager : MonoBehaviour
         // Wait a bit to let video start smoothly
         yield return new WaitForSeconds(1f);
         
-        // If configured, preload the next level
+        // If configured, preload the next level assets
         if (preloadNextLevel)
         {
             int nextLevel = videoNumber; // Video N leads to Level N
-            string nextLevelLabel = $"Level{nextLevel}";
+            string nextLevelLabel = $"Level{nextLevel}_Assets";
             
             Debug.Log($"VideoManager: Preloading {nextLevelLabel} during video playback...");
             PreloadManager.Instance.PreloadLabel(nextLevelLabel, (success) =>
             {
                 if (success)
                 {
-                    Debug.Log($"VideoManager: Next level ready for seamless transition!");
+                    Debug.Log($"VideoManager: Next level assets ready for seamless transition!");
                 }
             });
         }

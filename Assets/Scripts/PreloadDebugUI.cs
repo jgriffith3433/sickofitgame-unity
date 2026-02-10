@@ -66,7 +66,7 @@ public class PreloadDebugUI : MonoBehaviour
         
         displayText.AppendLine();
         displayText.AppendLine("Note: Check Console for detailed preload logs");
-        displayText.AppendLine("Enable 'Show Debug Logs' on PreloadManager");
+        displayText.AppendLine("Enable 'Show Debug Logs' on AddressablesOperationManager");
     }
 
     private void OnGUI()
