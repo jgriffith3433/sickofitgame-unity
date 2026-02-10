@@ -119,7 +119,7 @@ public class MainMenuPreloader : MonoBehaviour
         // Preload the video if they haven't seen it yet
         if (ShouldPlayVideoBeforeLevel(currentLevel))
         {
-            PreloadManager.Instance.DownloadLabel(videoLabel, (success) =>
+            PreloadManager.Instance.PreloadLabel(videoLabel, (success) =>
             {
                 if (success)
                 {
@@ -129,7 +129,7 @@ public class MainMenuPreloader : MonoBehaviour
         }
         
         // Also preload the level itself
-        PreloadManager.Instance.DownloadLabel(levelLabel, (success) =>
+        PreloadManager.Instance.PreloadLabel(levelLabel, (success) =>
         {
             if (success)
             {
@@ -186,7 +186,7 @@ public class MainMenuPreloader : MonoBehaviour
     {
         string videoLabel = $"Video{levelNumber}";
         
-        PreloadManager.Instance.DownloadLabel(videoLabel, (success) =>
+        PreloadManager.Instance.PreloadLabel(videoLabel, (success) =>
         {
             HidePreloadingUI();
             if (success)
@@ -215,7 +215,7 @@ public class MainMenuPreloader : MonoBehaviour
     {
         string levelLabel = $"Level{levelNumber}";
         
-        PreloadManager.Instance.DownloadLabel(levelLabel, (success) =>
+        PreloadManager.Instance.PreloadLabel(levelLabel, (success) =>
         {
             HidePreloadingUI();
             if (success)

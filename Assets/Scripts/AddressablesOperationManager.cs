@@ -43,7 +43,7 @@ public class AddressablesOperationManager : MonoBehaviour
     private Dictionary<string, List<System.Action<bool>>> pendingSceneLoadCallbacks = new Dictionary<string, List<System.Action<bool>>>();
 
     // Track completed loads
-    private Dictionary<string, AsyncOperationHandle> loadedLabels = new Dictionary<string, AsyncOperationHandle>();
+    private Dictionary<string, AsyncOperationHandle<IList<Object>>> loadedLabels = new Dictionary<string, AsyncOperationHandle<IList<Object>>>();
     private HashSet<string> downloadedLabels = new HashSet<string>();
 
     private void Awake()
@@ -124,6 +124,22 @@ public class AddressablesOperationManager : MonoBehaviour
     public bool IsLabelLoaded(string label)
     {
         return loadedLabels.ContainsKey(label);
+    }
+
+    /// <summary>
+    /// Get loaded assets for a label (returns null if not loaded)
+    /// </summary>
+    public List<Object> GetLoadedAssets(string label)
+    {
+        if (loadedLabels.ContainsKey(label))
+        {
+            var handle = loadedLabels[label];
+            if (handle.IsValid() && handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                return new List<Object>(handle.Result);
+            }
+        }
+        return null;
     }
 
     /// <summary>
@@ -338,6 +354,29 @@ public class AddressablesOperationManager : MonoBehaviour
             pendingSceneLoadCallbacks[sceneName].Add(onComplete);
             yield break;
         }
+
+        // CRITICAL: Check if the scene is currently being downloaded
+        // If so, wait for download to complete before loading the scene
+        // This prevents Unity from starting a duplicate download inside LoadSceneAsync
+        if (inProgressDownloads.ContainsKey(sceneName) && inProgressDownloads[sceneName])
+        {
+            Log($"[DEDUP] Scene '{sceneName}' is currently being downloaded, waiting for download to complete before loading...");
+            
+            // Wait for download to finish
+            while (inProgressDownloads.ContainsKey(sceneName) && inProgressDownloads[sceneName])
+            {
+                yield return null;
+            }
+            
+            Log($"[DEDUP] Download completed for '{sceneName}', now proceeding with scene load");
+        }
+
+        // DEBUG: Check if scene is actually cached after waiting
+        var checkHandle = Addressables.GetDownloadSizeAsync(sceneName);
+        yield return checkHandle;
+        long sizeAfterWait = checkHandle.Result;
+        Addressables.Release(checkHandle);
+        Log($"[DEBUG] Scene '{sceneName}' download size after wait: {FormatBytes(sizeAfterWait)} (0 = cached)");
 
         // Mark as in-progress
         inProgressSceneLoads[sceneName] = true;

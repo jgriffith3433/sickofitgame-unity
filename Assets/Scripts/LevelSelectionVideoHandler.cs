@@ -50,7 +50,7 @@ public class LevelSelectionVideoHandler : MonoBehaviour
     {
         string videoLabel = $"Video{levelNumber}";
         
-        PreloadManager.Instance.DownloadLabel(videoLabel, (success) =>
+        PreloadManager.Instance.PreloadLabel(videoLabel, (success) =>
         {
             if (success)
             {
@@ -78,7 +78,7 @@ public class LevelSelectionVideoHandler : MonoBehaviour
     {
         string levelLabel = $"Level{levelNumber}";
         
-        PreloadManager.Instance.DownloadLabel(levelLabel, (success) =>
+        PreloadManager.Instance.PreloadLabel(levelLabel, (success) =>
         {
             if (success)
             {

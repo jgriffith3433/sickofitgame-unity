@@ -112,13 +112,13 @@ public class AddressablesSceneLoader : MonoBehaviour
     }
 
     /// <summary>
-    /// Download and cache a scene's assets without loading it
+    /// Preload and cache a scene's assets into RAM
     /// Good for preloading next level during gameplay
     /// </summary>
     public void CacheSceneAssets(string sceneName)
     {
-        // Delegate to AddressablesOperationManager (via PreloadManager for backward compatibility)
-        PreloadManager.Instance.DownloadScene(sceneName, null);
+        // Delegate to PreloadManager - this downloads AND loads assets into RAM for instant access
+        PreloadManager.Instance.PreloadLabel(sceneName, null);
     }
 
     /// <summary>

@@ -98,7 +98,7 @@ public class VideoManager : MonoBehaviour
             string nextLevelLabel = $"Level{nextLevel}";
             
             Debug.Log($"VideoManager: Preloading {nextLevelLabel} during video playback...");
-            PreloadManager.Instance.DownloadLabel(nextLevelLabel, (success) =>
+            PreloadManager.Instance.PreloadLabel(nextLevelLabel, (success) =>
             {
                 if (success)
                 {

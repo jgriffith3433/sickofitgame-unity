@@ -29,7 +29,7 @@ public class LevelPreloader : MonoBehaviour
         
         foreach (string label in labelsToPreload)
         {
-            PreloadManager.Instance.DownloadLabel(label, (success) => {
+            PreloadManager.Instance.PreloadLabel(label, (success) => {
                 if (success)
                 {
                     Debug.Log($"[{gameObject.scene.name}] Successfully preloaded: {label}");
