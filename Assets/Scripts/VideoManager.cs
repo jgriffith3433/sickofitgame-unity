@@ -4,9 +4,18 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Manager for video scenes. Handles loading of SpriteFramePlayer and manages scene activation.
+/// Also preloads next level during video playback for seamless transitions.
 /// </summary>
 public class VideoManager : MonoBehaviour
 {
+    [Header("Video Info")]
+    [SerializeField] private int videoNumber = 1;
+    
+    [Header("Preload Next Content")]
+    [SerializeField] private bool preloadDuringPlayback = true;
+    [Tooltip("Preload the next level while video is playing")]
+    [SerializeField] private bool preloadNextLevel = true;
+    
     [Header("Loading System")]
     [Tooltip("Video sprite player that needs to finish loading")]
     [SerializeField] private SpriteFramePlayer videoPlayer;
@@ -64,6 +73,38 @@ public class VideoManager : MonoBehaviour
         {
             videoPlayer.Play();
             Debug.Log("VideoManager: Started video playback");
+            
+            // Preload next content while video is playing
+            if (preloadDuringPlayback)
+            {
+                StartCoroutine(PreloadNextContentDuringVideo());
+            }
+        }
+    }
+
+    /// <summary>
+    /// Preload the next level/video during video playback
+    /// This uses the video playback time to download assets in the background
+    /// </summary>
+    private IEnumerator PreloadNextContentDuringVideo()
+    {
+        // Wait a bit to let video start smoothly
+        yield return new WaitForSeconds(1f);
+        
+        // If configured, preload the next level
+        if (preloadNextLevel)
+        {
+            int nextLevel = videoNumber + 1; // Typically video N leads to level N+1
+            string nextLevelLabel = $"Level{nextLevel}";
+            
+            Debug.Log($"VideoManager: Preloading {nextLevelLabel} during video playback...");
+            PreloadManager.Instance.DownloadLabel(nextLevelLabel, (success) =>
+            {
+                if (success)
+                {
+                    Debug.Log($"VideoManager: Next level ready for seamless transition!");
+                }
+            });
         }
     }
 

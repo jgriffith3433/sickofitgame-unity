@@ -10,13 +10,6 @@ public class LevelManager : MonoBehaviour
 {
     [Header("Level Settings")]
     [SerializeField] private int levelNumber = 1;
-    
-    [Header("Optional: Auto-play video on first visit")]
-    [SerializeField] private bool playVideoOnFirstVisit = true;
-    [SerializeField] private int videoToPlay = 0; // Which video to play (usually matches level number)
-
-    [Header("Performance: Preload next level")]
-    [SerializeField] private bool preloadNextLevel = true; // Preload next level during gameplay for instant transitions
 
     [Header("Loading System")]
     [Tooltip("Background sprite players that need to finish loading")]
@@ -42,8 +35,6 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private bool isLoading = false;
     [SerializeField] private bool allAssetsLoaded = false;
 
-    private bool hasPlayedVideo = false;
-
     private void Awake()
     {
         // Start in loading state if we have assets to wait for
@@ -61,28 +52,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
-        // Preload the next level in the background for faster transitions (if using Addressables)
-        if (preloadNextLevel)
-        {
-            SceneTransitionManager.Instance.PreloadNextLevel(levelNumber);
-        }
-
-        // Check if we should play the intro video for this level
-        if (playVideoOnFirstVisit && !hasPlayedVideo)
-        {
-            if (!HasVisitedLevelBefore())
-            {
-                // Mark as visited before playing video so we don't loop
-                MarkLevelAsVisited();
-                
-                // Play the video if it's unlocked
-                if (GameProgressManager.Instance.IsVideoUnlocked(videoToPlay))
-                {
-                    PlayLevelVideo();
-                    return; // Video manager will return to this level after video
-                }
-            }
-        }
+        // Level loads directly now - videos are played from MainMenu/LevelSelection before entering
     }
 
     /// <summary>
@@ -167,26 +137,7 @@ public class LevelManager : MonoBehaviour
         SceneTransitionManager.Instance.LoadLevel(levelNumber);
     }
 
-    private void PlayLevelVideo()
-    {
-        // Store which level to return to after video
-        PlayerPrefs.SetInt("ReturnToLevel", levelNumber);
-        PlayerPrefs.Save();
-        
-        ShowSceneTransitionUI();
-        SceneTransitionManager.Instance.LoadVideo(videoToPlay);
-    }
 
-    private bool HasVisitedLevelBefore()
-    {
-        return PlayerPrefs.GetInt($"Level_{levelNumber}_Visited", 0) == 1;
-    }
-
-    private void MarkLevelAsVisited()
-    {
-        PlayerPrefs.SetInt($"Level_{levelNumber}_Visited", 1);
-        PlayerPrefs.Save();
-    }
 
     /// <summary>
     /// Check if there are any assets that need to be loaded

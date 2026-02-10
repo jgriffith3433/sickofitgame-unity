@@ -4,7 +4,7 @@ A simple Unity system for extracting video frames and playing them back on a spr
 
 ## 🎬 What This Does
 
-1. **Extract Frames**: Uses FFmpeg to extract video frames from an MP4 file into individual PNG images
+1. **Extract Frames**: Uses FFmpeg to extract video frames from an MP4 file into individual JPG images
 2. **Load Frames**: Loads all frames into memory when the game starts
 3. **Play Back**: Plays the frame sequence on a SpriteRenderer at your desired FPS
 
@@ -169,8 +169,8 @@ Assets/
   Videos/                            ← Your videos
     MyVideo.mp4
     MyVideo_frames/                  ← Auto-generated frames folder
-      frame_00000.png
-      frame_00001.png
+      frame_00000.jpg
+      frame_00001.jpg
       ...
 ```
 
@@ -206,7 +206,7 @@ Assets/
 
 ❌ **DON'T:**
 - Extract 60+ second videos at 60 FPS (huge memory!)
-- Mix frame formats (PNG/JPG) in the same folder
+- Mix frame formats (JPG/PNG) in the same folder
 - Rename frame files manually (breaks sequential loading)
 - Use this for videos longer than 2-3 minutes
 

@@ -278,9 +278,9 @@ public static class FFmpegHelper
         string absoluteVideoPath = Path.GetFullPath(videoPath);
         string absoluteOutputPath = Path.GetFullPath(outputPath);
 
-        // FFmpeg command - extract as PNG files
-        string outputPattern = Path.Combine(absoluteOutputPath, "frame_%05d.png");
-        string arguments = $"-i \"{absoluteVideoPath}\" -vf fps={fps} -start_number 0 \"{outputPattern}\"";
+        // FFmpeg command - extract as JPG files with high quality
+        string outputPattern = Path.Combine(absoluteOutputPath, "frame_%05d.jpg");
+        string arguments = $"-i \"{absoluteVideoPath}\" -vf fps={fps} -q:v 3 -start_number 0 \"{outputPattern}\"";
 
         ProcessStartInfo startInfo = new ProcessStartInfo
         {
@@ -313,9 +313,9 @@ public static class FFmpegHelper
 
             if (exitCode == 0)
             {
-                string[] pngFiles = Directory.GetFiles(absoluteOutputPath, "frame_*.png");
-                UnityEngine.Debug.Log($"Found {pngFiles.Length} frames in {absoluteOutputPath}");
-                onComplete?.Invoke(true, $"Successfully extracted {pngFiles.Length} frames!");
+                string[] jpgFiles = Directory.GetFiles(absoluteOutputPath, "frame_*.jpg");
+                UnityEngine.Debug.Log($"Found {jpgFiles.Length} frames in {absoluteOutputPath}");
+                onComplete?.Invoke(true, $"Successfully extracted {jpgFiles.Length} frames!");
             }
             else
             {

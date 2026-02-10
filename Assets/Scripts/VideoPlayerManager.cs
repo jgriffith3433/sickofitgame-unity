@@ -85,9 +85,34 @@ public class VideoPlayerManager : MonoBehaviour
         if (PlayerPrefs.HasKey("ReturnToLevel"))
         {
             int levelToReturn = PlayerPrefs.GetInt("ReturnToLevel");
+            string returnScene = PlayerPrefs.GetString("ReturnScene", "Level");
+            
             PlayerPrefs.DeleteKey("ReturnToLevel");
+            PlayerPrefs.DeleteKey("ReturnScene");
             PlayerPrefs.Save();
-            SceneTransitionManager.Instance.LoadLevel(levelToReturn);
+            
+            // Determine where to return based on ReturnScene
+            if (returnScene == "Level")
+            {
+                SceneTransitionManager.Instance.LoadLevel(levelToReturn);
+            }
+            else if (returnScene == "MainMenu")
+            {
+                SceneTransitionManager.Instance.LoadMainMenu();
+            }
+            else if (returnScene == "LevelSelection")
+            {
+                SceneTransitionManager.Instance.LoadLevelSelection();
+            }
+            else if (returnScene == "VideoSelection")
+            {
+                SceneTransitionManager.Instance.LoadVideoSelection();
+            }
+            else
+            {
+                // Fallback
+                SceneTransitionManager.Instance.LoadLevel(levelToReturn);
+            }
         }
         else if (returnToLevelAfterVideo)
         {
