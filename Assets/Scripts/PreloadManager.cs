@@ -1,14 +1,11 @@
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.ResourceManagement.ResourceLocations;
 using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// Manages preloading of Addressable labels, scenes, and assets
-/// Supports both downloading (to disk cache) and loading (into RAM) for fast access
-/// This is a utility singleton - call it from per-scene components (LevelPreloader, MainMenuPreloader, etc.)
+/// User-facing API for preloading Addressable labels, scenes, and assets
+/// This is a thin wrapper around AddressablesOperationManager for backward compatibility
+/// Call from per-scene components (LevelPreloader, MainMenuPreloader, etc.)
 /// </summary>
 public class PreloadManager : MonoBehaviour
 {
@@ -27,14 +24,7 @@ public class PreloadManager : MonoBehaviour
         }
     }
 
-    [Header("Debug")]
-    [SerializeField] private bool showDebugLogs = true;
-    [SerializeField] private List<string> currentlyPreloaded = new List<string>();
-
-    // Track what's currently loaded in memory
-    private Dictionary<string, AsyncOperationHandle> loadedLabels = new Dictionary<string, AsyncOperationHandle>();
-    private Dictionary<string, AsyncOperationHandle> loadedAssets = new Dictionary<string, AsyncOperationHandle>();
-    private HashSet<string> downloadedLabels = new HashSet<string>();
+    // All operations are now delegated to AddressablesOperationManager
 
     private void Awake()
     {
@@ -55,7 +45,7 @@ public class PreloadManager : MonoBehaviour
     /// </summary>
     public void DownloadLabel(string label, System.Action<bool> onComplete = null)
     {
-        StartCoroutine(DownloadLabelAsync(label, onComplete));
+        AddressablesOperationManager.Instance.DownloadLabel(label, onComplete);
     }
 
     /// <summary>
@@ -64,7 +54,7 @@ public class PreloadManager : MonoBehaviour
     /// </summary>
     public void PreloadLabel(string label, System.Action<bool> onComplete = null)
     {
-        StartCoroutine(PreloadLabelAsync(label, onComplete));
+        AddressablesOperationManager.Instance.LoadLabel(label, onComplete);
     }
 
     /// <summary>
@@ -96,7 +86,7 @@ public class PreloadManager : MonoBehaviour
     /// </summary>
     public void GetLabelDownloadSize(string label, System.Action<long> onComplete)
     {
-        StartCoroutine(GetLabelSizeAsync(label, onComplete));
+        AddressablesOperationManager.Instance.GetLabelDownloadSize(label, onComplete);
     }
 
     /// <summary>
@@ -104,17 +94,7 @@ public class PreloadManager : MonoBehaviour
     /// </summary>
     public void ReleaseLabel(string label)
     {
-        if (loadedLabels.ContainsKey(label))
-        {
-            var handle = loadedLabels[label];
-            if (handle.IsValid())
-            {
-                Addressables.Release(handle);
-                Log($"Released label from memory: {label}");
-            }
-            loadedLabels.Remove(label);
-            currentlyPreloaded.Remove(label);
-        }
+        AddressablesOperationManager.Instance.ReleaseLabel(label);
     }
 
     /// <summary>
@@ -123,125 +103,31 @@ public class PreloadManager : MonoBehaviour
     /// </summary>
     public void ReleaseAll()
     {
-        foreach (var kvp in loadedLabels)
-        {
-            if (kvp.Value.IsValid())
-            {
-                Addressables.Release(kvp.Value);
-            }
-        }
-        loadedLabels.Clear();
-        
-        foreach (var kvp in loadedAssets)
-        {
-            if (kvp.Value.IsValid())
-            {
-                Addressables.Release(kvp.Value);
-            }
-        }
-        loadedAssets.Clear();
-        
-        currentlyPreloaded.Clear();
-        Log("Released all preloaded content from memory");
+        AddressablesOperationManager.Instance.ReleaseAll();
     }
 
     #endregion
 
     #region Internal Implementation
 
-    private IEnumerator DownloadLabelAsync(string label, System.Action<bool> onComplete)
-    {
-        // Check if already downloaded
-        var sizeHandle = Addressables.GetDownloadSizeAsync(label);
-        yield return sizeHandle;
-
-        long downloadSize = sizeHandle.Result;
-        Addressables.Release(sizeHandle);
-
-        if (downloadSize == 0)
-        {
-            Log($"Label '{label}' already cached on disk");
-            downloadedLabels.Add(label);
-            onComplete?.Invoke(true);
-            yield break;
-        }
-
-        // Download the label
-        Log($"Downloading label '{label}': {FormatBytes(downloadSize)}");
-        
-        var downloadHandle = Addressables.DownloadDependenciesAsync(label);
-        
-        while (!downloadHandle.IsDone)
-        {
-            float progress = downloadHandle.PercentComplete;
-            Log($"Download progress '{label}': {progress * 100:F0}%");
-            yield return null;
-        }
-
-        if (downloadHandle.Status == AsyncOperationStatus.Succeeded)
-        {
-            Log($"Successfully downloaded label: {label}");
-            downloadedLabels.Add(label);
-            Addressables.Release(downloadHandle);
-            onComplete?.Invoke(true);
-        }
-        else
-        {
-            Debug.LogError($"Failed to download label '{label}': {downloadHandle.OperationException}");
-            Addressables.Release(downloadHandle);
-            onComplete?.Invoke(false);
-        }
-    }
-
-    private IEnumerator PreloadLabelAsync(string label, System.Action<bool> onComplete)
-    {
-        // Check if already loaded in memory
-        if (loadedLabels.ContainsKey(label))
-        {
-            Log($"Label '{label}' already loaded in memory");
-            onComplete?.Invoke(true);
-            yield break;
-        }
-
-        // First download to disk cache if not already there
-        bool downloaded = false;
-        yield return DownloadLabelAsync(label, (success) => downloaded = success);
-        
-        if (!downloaded)
-        {
-            onComplete?.Invoke(false);
-            yield break;
-        }
-
-        // Now load into memory
-        Log($"Loading label '{label}' into memory...");
-        
-        var loadHandle = Addressables.LoadAssetsAsync<Object>(label, null);
-        yield return loadHandle;
-
-        if (loadHandle.Status == AsyncOperationStatus.Succeeded)
-        {
-            loadedLabels[label] = loadHandle;
-            currentlyPreloaded.Add(label);
-            Log($"Successfully preloaded label '{label}' ({loadHandle.Result.Count} assets in RAM)");
-            onComplete?.Invoke(true);
-        }
-        else
-        {
-            Debug.LogError($"Failed to preload label '{label}': {loadHandle.OperationException}");
-            onComplete?.Invoke(false);
-        }
-    }
-
     private IEnumerator DownloadMultipleLabelsAsync(List<string> labels, System.Action<bool> onComplete)
     {
         bool allSucceeded = true;
+        int remaining = labels.Count;
         
         foreach (string label in labels)
         {
-            bool success = false;
-            yield return DownloadLabelAsync(label, (result) => success = result);
-            if (!success) allSucceeded = false;
+            AddressablesOperationManager.Instance.DownloadLabel(label, (success) =>
+            {
+                if (!success) allSucceeded = false;
+                remaining--;
+            });
+        }
+        
+        // Wait for all downloads to complete
+        while (remaining > 0)
+        {
+            yield return null;
         }
         
         onComplete?.Invoke(allSucceeded);
@@ -250,12 +136,21 @@ public class PreloadManager : MonoBehaviour
     private IEnumerator PreloadMultipleLabelsAsync(List<string> labels, System.Action<bool> onComplete)
     {
         bool allSucceeded = true;
+        int remaining = labels.Count;
         
         foreach (string label in labels)
         {
-            bool success = false;
-            yield return PreloadLabelAsync(label, (result) => success = result);
-            if (!success) allSucceeded = false;
+            AddressablesOperationManager.Instance.LoadLabel(label, (success) =>
+            {
+                if (!success) allSucceeded = false;
+                remaining--;
+            });
+        }
+        
+        // Wait for all loads to complete
+        while (remaining > 0)
+        {
+            yield return null;
         }
         
         onComplete?.Invoke(allSucceeded);
@@ -263,69 +158,21 @@ public class PreloadManager : MonoBehaviour
 
     private IEnumerator DownloadSceneAsync(string sceneName, System.Action<bool> onComplete)
     {
-        // Check size first
-        var sizeHandle = Addressables.GetDownloadSizeAsync(sceneName);
-        yield return sizeHandle;
-
-        long downloadSize = sizeHandle.Result;
-        Addressables.Release(sizeHandle);
-
-        if (downloadSize == 0)
+        bool completed = false;
+        bool result = false;
+        
+        AddressablesOperationManager.Instance.DownloadLabel(sceneName, (success) =>
         {
-            Log($"Scene '{sceneName}' already cached");
-            onComplete?.Invoke(true);
-            yield break;
-        }
-
-        Log($"Downloading scene '{sceneName}': {FormatBytes(downloadSize)}");
+            result = success;
+            completed = true;
+        });
         
-        var downloadHandle = Addressables.DownloadDependenciesAsync(sceneName);
-        
-        while (!downloadHandle.IsDone)
+        while (!completed)
         {
             yield return null;
         }
-
-        if (downloadHandle.Status == AsyncOperationStatus.Succeeded)
-        {
-            Log($"Successfully downloaded scene: {sceneName}");
-            Addressables.Release(downloadHandle);
-            onComplete?.Invoke(true);
-        }
-        else
-        {
-            Debug.LogError($"Failed to download scene '{sceneName}': {downloadHandle.OperationException}");
-            Addressables.Release(downloadHandle);
-            onComplete?.Invoke(false);
-        }
-    }
-
-    private IEnumerator GetLabelSizeAsync(string label, System.Action<long> onComplete)
-    {
-        var sizeHandle = Addressables.GetDownloadSizeAsync(label);
-        yield return sizeHandle;
         
-        onComplete?.Invoke(sizeHandle.Result);
-        Addressables.Release(sizeHandle);
-    }
-
-    #endregion
-
-    #region Utility
-
-    private void Log(string message)
-    {
-        if (showDebugLogs)
-        {
-            Debug.Log($"[PreloadManager] {message}");
-        }
-    }
-
-    private string FormatBytes(long bytes)
-    {
-        if (bytes < 1024) return $"{bytes} B";
-        if (bytes < 1024 * 1024) return $"{bytes / 1024f:F2} KB";
-        return $"{bytes / 1024f / 1024f:F2} MB";
+        onComplete?.Invoke(result);
     }
 
     #endregion
