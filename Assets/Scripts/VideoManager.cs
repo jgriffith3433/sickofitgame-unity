@@ -94,7 +94,7 @@ public class VideoManager : MonoBehaviour
         // If configured, preload the next level
         if (preloadNextLevel)
         {
-            int nextLevel = videoNumber + 1; // Typically video N leads to level N+1
+            int nextLevel = videoNumber; // Video N leads to Level N
             string nextLevelLabel = $"Level{nextLevel}";
             
             Debug.Log($"VideoManager: Preloading {nextLevelLabel} during video playback...");
