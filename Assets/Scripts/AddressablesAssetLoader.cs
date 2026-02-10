@@ -108,31 +108,33 @@ public class AddressablesAssetLoader : MonoBehaviour
 
     private System.Collections.IEnumerator LoadAssetAsync<T>(string address, System.Action<T> onComplete) where T : Object
     {
-        // Check if already loaded
-        if (loadedAssets.ContainsKey(address))
+        // Delegate to AddressablesOperationManager for centralized tracking and deduplication
+        bool callbackInvoked = false;
+        T result = null;
+        
+        AddressablesOperationManager.Instance.LoadAsset<T>(address, (asset) =>
         {
-            var cachedHandle = loadedAssets[address];
-            if (cachedHandle.IsValid() && cachedHandle.IsDone)
+            result = asset;
+            callbackInvoked = true;
+        });
+        
+        // Wait for callback
+        while (!callbackInvoked)
+        {
+            yield return null;
+        }
+        
+        // Update local cache reference
+        if (result != null)
+        {
+            // Note: The manager handles the actual caching
+            if (!loadedAssets.ContainsKey(address))
             {
-                onComplete?.Invoke(cachedHandle.Result as T);
-                yield break;
+                loadedAssets[address] = default; // Placeholder for compatibility
             }
         }
-
-        // Load new
-        var handle = Addressables.LoadAssetAsync<T>(address);
-        yield return handle;
-
-        if (handle.Status == AsyncOperationStatus.Succeeded)
-        {
-            loadedAssets[address] = handle;
-            onComplete?.Invoke(handle.Result);
-        }
-        else
-        {
-            Debug.LogError($"Failed to load asset: {address}. Error: {handle.OperationException}");
-            onComplete?.Invoke(null);
-        }
+        
+        onComplete?.Invoke(result);
     }
 
     /// <summary>
@@ -168,19 +170,29 @@ public class AddressablesAssetLoader : MonoBehaviour
 
     private System.Collections.IEnumerator LoadAssetsByLabelAsync<T>(string label, System.Action<IList<T>> onComplete) where T : Object
     {
-        // Load with specific type (critical for Sprites - loading as Object loads Texture2D instead!)
-        var handle = Addressables.LoadAssetsAsync<T>(label, null);
-        yield return handle;
-
-        if (handle.Status == AsyncOperationStatus.Succeeded)
+        // Delegate to AddressablesOperationManager for centralized tracking and deduplication
+        // The manager handles:
+        // - Preventing duplicate concurrent loads
+        // - Type-specific loading (critical for Sprites)
+        // - Caching results
+        // - Queueing callbacks if already loading
+        
+        bool callbackInvoked = false;
+        IList<T> result = null;
+        
+        AddressablesOperationManager.Instance.LoadLabel<T>(label, (assets) =>
         {
-            onComplete?.Invoke(handle.Result);
-        }
-        else
+            result = assets;
+            callbackInvoked = true;
+        });
+        
+        // Wait for callback from manager
+        while (!callbackInvoked)
         {
-            Debug.LogError($"Failed to load assets with label: {label}. Error: {handle.OperationException}");
-            onComplete?.Invoke(null);
+            yield return null;
         }
+        
+        onComplete?.Invoke(result);
     }
 
     #endregion
@@ -200,17 +212,23 @@ public class AddressablesAssetLoader : MonoBehaviour
 
     private System.Collections.IEnumerator PreloadAssetAsync<T>(string address) where T : Object
     {
-        var handle = Addressables.LoadAssetAsync<T>(address);
-        yield return handle;
-
-        if (handle.Status == AsyncOperationStatus.Succeeded)
+        // Delegate to AddressablesOperationManager for centralized tracking
+        AddressablesOperationManager.Instance.LoadAsset<T>(address, (asset) =>
         {
-            loadedAssets[address] = handle;
-            Debug.Log($"Preloaded asset: {address}");
-        }
-        else
+            if (asset != null)
+            {
+                Debug.Log($"Preloaded asset: {address}");
+            }
+            else
+            {
+                Debug.LogError($"Failed to preload asset: {address}");
+            }
+        });
+        
+        // Wait for load to complete
+        while (AddressablesOperationManager.Instance.IsLoading(address))
         {
-            Debug.LogError($"Failed to preload asset: {address}");
+            yield return null;
         }
     }
 

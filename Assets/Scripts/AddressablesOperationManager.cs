@@ -33,14 +33,26 @@ public class AddressablesOperationManager : MonoBehaviour
     [SerializeField] private List<string> activeOperations = new List<string>();
 
     // Track in-progress operations to prevent duplicate concurrent loads
+    // Untyped (Object) loads
     private Dictionary<string, bool> inProgressLabelLoads = new Dictionary<string, bool>();
     private Dictionary<string, List<System.Action<bool>>> pendingLabelLoadCallbacks = new Dictionary<string, List<System.Action<bool>>>();
     
+    // Typed loads (e.g., Sprite, AudioClip, etc.)
+    private Dictionary<string, bool> inProgressTypedLabelLoads = new Dictionary<string, bool>();
+    private Dictionary<string, object> pendingTypedLabelLoadCallbacks = new Dictionary<string, object>(); // Value is List<Action<IList<T>>>
+    
+    // Single asset loads by key
+    private Dictionary<string, bool> inProgressAssetLoads = new Dictionary<string, bool>();
+    private Dictionary<string, object> pendingAssetLoadCallbacks = new Dictionary<string, object>(); // Value is List<Action<T>>
+    
+    // Scene loads
     private Dictionary<string, bool> inProgressSceneLoads = new Dictionary<string, bool>();
     private Dictionary<string, List<System.Action<bool>>> pendingSceneLoadCallbacks = new Dictionary<string, List<System.Action<bool>>>();
 
     // Track completed loads
     private Dictionary<string, AsyncOperationHandle<IList<Object>>> loadedLabels = new Dictionary<string, AsyncOperationHandle<IList<Object>>>();
+    private Dictionary<string, object> loadedTypedLabels = new Dictionary<string, object>(); // Value is AsyncOperationHandle<IList<T>>
+    private Dictionary<string, AsyncOperationHandle> loadedAssets = new Dictionary<string, AsyncOperationHandle>(); // Single assets by key
 
     private void Awake()
     {
@@ -74,6 +86,25 @@ public class AddressablesOperationManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Load multiple assets by label with specific type (e.g., Sprite, AudioClip)
+    /// This is CRITICAL for Sprites - loading as Object loads Texture2D instead!
+    /// If already loading, queues the callback to avoid duplicate operations.
+    /// </summary>
+    public void LoadLabel<T>(string label, System.Action<IList<T>> onComplete) where T : Object
+    {
+        StartCoroutine(LoadLabelAsync<T>(label, onComplete));
+    }
+
+    /// <summary>
+    /// Load a single asset by key/address with specific type
+    /// If already loading, queues the callback to avoid duplicate operations.
+    /// </summary>
+    public void LoadAsset<T>(string address, System.Action<T> onComplete) where T : Object
+    {
+        StartCoroutine(LoadAssetAsync<T>(address, onComplete));
+    }
+
+    /// <summary>
     /// Get download size for a label (0 = already cached)
     /// </summary>
     public void GetLabelDownloadSize(string label, System.Action<long> onComplete)
@@ -82,11 +113,14 @@ public class AddressablesOperationManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Check if a label is currently being loaded
+    /// Check if a label is currently being loaded (checks both typed and untyped loads)
     /// </summary>
     public bool IsLoading(string label)
     {
-        return inProgressLabelLoads.ContainsKey(label) && inProgressLabelLoads[label];
+        bool untypedLoading = inProgressLabelLoads.ContainsKey(label) && inProgressLabelLoads[label];
+        bool typedLoading = inProgressTypedLabelLoads.ContainsKey(label) && inProgressTypedLabelLoads[label];
+        bool assetLoading = inProgressAssetLoads.ContainsKey(label) && inProgressAssetLoads[label];
+        return untypedLoading || typedLoading || assetLoading;
     }
 
     /// <summary>
@@ -275,6 +309,146 @@ public class AddressablesOperationManager : MonoBehaviour
                 callback?.Invoke(success);
             }
             pendingSceneLoadCallbacks.Remove(sceneName);
+        }
+    }
+
+    private IEnumerator LoadLabelAsync<T>(string label, System.Action<IList<T>> onComplete) where T : Object
+    {
+        string key = $"{label}+{typeof(T).Name}"; // Unique key for typed loads
+        
+        // Check if already loading - queue the callback
+        if (inProgressTypedLabelLoads.ContainsKey(key) && inProgressTypedLabelLoads[key])
+        {
+            Log($"[DEDUP] Typed label '{label}<{typeof(T).Name}>' load already in progress, queuing callback...");
+            if (!pendingTypedLabelLoadCallbacks.ContainsKey(key))
+            {
+                pendingTypedLabelLoadCallbacks[key] = new List<System.Action<IList<T>>>();
+            }
+            ((List<System.Action<IList<T>>>)pendingTypedLabelLoadCallbacks[key]).Add(onComplete);
+            yield break;
+        }
+        
+        // Check if already loaded in memory
+        if (loadedTypedLabels.ContainsKey(key))
+        {
+            var cachedHandle = (AsyncOperationHandle<IList<T>>)loadedTypedLabels[key];
+            if (cachedHandle.IsValid() && cachedHandle.Status == AsyncOperationStatus.Succeeded)
+            {
+                Log($"Typed label '{label}<{typeof(T).Name}>' already loaded in memory ({cachedHandle.Result.Count} assets)");
+                onComplete?.Invoke(cachedHandle.Result);
+                yield break;
+            }
+        }
+
+        // Mark as in-progress
+        inProgressTypedLabelLoads[key] = true;
+        activeOperations.Add($"LoadTyped: {label}<{typeof(T).Name}>");
+
+        // Load into memory with specific type
+        Log($"Loading typed label '{label}' as <{typeof(T).Name}> into memory...");
+        
+        var loadHandle = Addressables.LoadAssetsAsync<T>(label, null);
+        yield return loadHandle;
+
+        bool success = loadHandle.Status == AsyncOperationStatus.Succeeded;
+        
+        if (success)
+        {
+            loadedTypedLabels[key] = loadHandle;
+            Log($"Successfully loaded typed label '{label}<{typeof(T).Name}>' ({loadHandle.Result.Count} assets in RAM)");
+        }
+        else
+        {
+            Debug.LogError($"Failed to load typed label '{label}<{typeof(T).Name}>': {loadHandle.OperationException}");
+        }
+        
+        // Mark as complete
+        inProgressTypedLabelLoads[key] = false;
+        activeOperations.Remove($"LoadTyped: {label}<{typeof(T).Name}>");
+        
+        // Call the original callback
+        onComplete?.Invoke(success ? loadHandle.Result : null);
+        
+        // Call all queued callbacks
+        if (pendingTypedLabelLoadCallbacks.ContainsKey(key))
+        {
+            var callbacks = (List<System.Action<IList<T>>>)pendingTypedLabelLoadCallbacks[key];
+            Log($"[DEDUP] Calling {callbacks.Count} queued typed load callbacks for '{label}<{typeof(T).Name}>'");
+            foreach (var callback in callbacks)
+            {
+                callback?.Invoke(success ? loadHandle.Result : null);
+            }
+            pendingTypedLabelLoadCallbacks.Remove(key);
+        }
+    }
+
+    private IEnumerator LoadAssetAsync<T>(string address, System.Action<T> onComplete) where T : Object
+    {
+        string key = $"{address}+{typeof(T).Name}"; // Unique key for typed assets
+        
+        // Check if already loading - queue the callback
+        if (inProgressAssetLoads.ContainsKey(key) && inProgressAssetLoads[key])
+        {
+            Log($"[DEDUP] Asset '{address}<{typeof(T).Name}>' load already in progress, queuing callback...");
+            if (!pendingAssetLoadCallbacks.ContainsKey(key))
+            {
+                pendingAssetLoadCallbacks[key] = new List<System.Action<T>>();
+            }
+            ((List<System.Action<T>>)pendingAssetLoadCallbacks[key]).Add(onComplete);
+            yield break;
+        }
+        
+        // Check if already loaded in cache
+        if (loadedAssets.ContainsKey(key))
+        {
+            var cachedHandle = loadedAssets[key];
+            if (cachedHandle.IsValid() && cachedHandle.Status == AsyncOperationStatus.Succeeded)
+            {
+                Log($"Asset '{address}<{typeof(T).Name}>' already loaded in memory");
+                onComplete?.Invoke(cachedHandle.Result as T);
+                yield break;
+            }
+        }
+
+        // Mark as in-progress
+        inProgressAssetLoads[key] = true;
+        activeOperations.Add($"LoadAsset: {address}<{typeof(T).Name}>");
+
+        // Load asset
+        Log($"Loading asset '{address}' as <{typeof(T).Name}>...");
+        
+        var loadHandle = Addressables.LoadAssetAsync<T>(address);
+        yield return loadHandle;
+
+        bool success = loadHandle.Status == AsyncOperationStatus.Succeeded;
+        
+        if (success)
+        {
+            loadedAssets[key] = loadHandle;
+            Log($"Successfully loaded asset '{address}<{typeof(T).Name}>'");
+        }
+        else
+        {
+            Debug.LogError($"Failed to load asset '{address}<{typeof(T).Name}>': {loadHandle.OperationException}");
+        }
+        
+        // Mark as complete
+        inProgressAssetLoads[key] = false;
+        activeOperations.Remove($"LoadAsset: {address}<{typeof(T).Name}>");
+        
+        // Call the original callback
+        onComplete?.Invoke(success ? loadHandle.Result : default(T));
+        
+        // Call all queued callbacks
+        if (pendingAssetLoadCallbacks.ContainsKey(key))
+        {
+            var callbacks = (List<System.Action<T>>)pendingAssetLoadCallbacks[key];
+            Log($"[DEDUP] Calling {callbacks.Count} queued asset load callbacks for '{address}<{typeof(T).Name}>'");
+            foreach (var callback in callbacks)
+            {
+                callback?.Invoke(success ? loadHandle.Result : default(T));
+            }
+            pendingAssetLoadCallbacks.Remove(key);
         }
     }
 
