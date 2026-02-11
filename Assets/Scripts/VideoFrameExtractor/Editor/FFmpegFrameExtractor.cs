@@ -5,11 +5,13 @@ using UnityEditor;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 
 public class FFmpegFrameExtractorWindow : EditorWindow
 {
     private VideoClip videoClip;
     private float targetFPS = 30f;
+    private int frameSkip = 0;
     private string outputFolderPath = "";
     private bool isExtracting = false;
 
@@ -33,6 +35,22 @@ public class FFmpegFrameExtractorWindow : EditorWindow
 
         GUILayout.Space(5);
         EditorGUILayout.HelpBox($"Higher FPS = More frames = More memory usage\n15-24 FPS recommended for long videos", MessageType.Info);
+
+        GUILayout.Space(10);
+        
+        // Frame skip setting
+        frameSkip = EditorGUILayout.IntField("Frame Skip", frameSkip);
+        frameSkip = Mathf.Max(0, frameSkip);
+        
+        GUILayout.Space(5);
+        if (frameSkip > 0)
+        {
+            EditorGUILayout.HelpBox($"Skipping {frameSkip} frame(s) - extracting every {frameSkip + 1}{GetOrdinalSuffix(frameSkip + 1)} frame\nOutput will be numbered sequentially (frame00000, frame00001, etc.)", MessageType.Info);
+        }
+        else
+        {
+            EditorGUILayout.HelpBox("Frame Skip: 0 (extract all frames at target FPS)", MessageType.Info);
+        }
 
         GUILayout.Space(10);
 
@@ -88,7 +106,14 @@ public class FFmpegFrameExtractorWindow : EditorWindow
         {
             float duration = (float)videoClip.length;
             int estimatedFrames = Mathf.CeilToInt(duration * targetFPS);
-            EditorGUILayout.HelpBox($"Estimated frames: {estimatedFrames}\nVideo duration: {duration:F1}s", MessageType.None);
+            
+            // Adjust for frame skipping
+            if (frameSkip > 0)
+            {
+                estimatedFrames = estimatedFrames / (frameSkip + 1);
+            }
+            
+            EditorGUILayout.HelpBox($"Estimated frames: ~{estimatedFrames}\nVideo duration: {duration:F1}s", MessageType.None);
         }
     }
 
@@ -101,6 +126,25 @@ public class FFmpegFrameExtractorWindow : EditorWindow
         string videoName = Path.GetFileNameWithoutExtension(videoPath);
         
         return $"{directory}/{videoName}_frames";
+    }
+    
+    private string GetOrdinalSuffix(int number)
+    {
+        if (number <= 0) return "th";
+        
+        int lastDigit = number % 10;
+        int lastTwoDigits = number % 100;
+        
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 13)
+            return "th";
+            
+        switch (lastDigit)
+        {
+            case 1: return "st";
+            case 2: return "nd";
+            case 3: return "rd";
+            default: return "th";
+        }
     }
 
     private void ExtractFrames()
@@ -139,7 +183,7 @@ public class FFmpegFrameExtractorWindow : EditorWindow
             fullOutputPath = outputFolderPath;
         }
         
-        FFmpegHelper.ExtractFrames(videoPath, targetFPS, fullOutputPath, (success, message) =>
+        FFmpegHelper.ExtractFrames(videoPath, targetFPS, frameSkip, fullOutputPath, (success, message) =>
         {
             isExtracting = false;
             
@@ -260,7 +304,7 @@ public static class FFmpegHelper
         return false;
     }
 
-    public static void ExtractFrames(string videoPath, float fps, string outputPath, System.Action<bool, string> onComplete)
+    public static void ExtractFrames(string videoPath, float fps, int frameSkip, string outputPath, System.Action<bool, string> onComplete)
     {
         if (!IsFFmpegAvailable())
         {
@@ -280,7 +324,24 @@ public static class FFmpegHelper
 
         // FFmpeg command - extract as JPG files with high quality
         string outputPattern = Path.Combine(absoluteOutputPath, "frame_%05d.jpg");
-        string arguments = $"-i \"{absoluteVideoPath}\" -vf fps={fps} -q:v 3 -start_number 0 \"{outputPattern}\"";
+        
+        // Build video filter
+        string videoFilter;
+        if (frameSkip > 0)
+        {
+            // First apply fps filter, then select every (frameSkip+1)th frame
+            // This ensures we skip frames from the target fps, not the source fps
+            videoFilter = $"fps={fps},select='not(mod(n\\,{frameSkip + 1}))',setpts=N/TB";
+        }
+        else
+        {
+            // No frame skipping, just use fps filter
+            videoFilter = $"fps={fps}";
+        }
+        
+        // Use -vsync vfr to prevent frame duplication when using select
+        string vsyncParam = frameSkip > 0 ? "-vsync vfr" : "";
+        string arguments = $"-i \"{absoluteVideoPath}\" {vsyncParam} -vf {videoFilter} -q:v 3 -start_number 0 \"{outputPattern}\"";
 
         ProcessStartInfo startInfo = new ProcessStartInfo
         {
@@ -315,6 +376,10 @@ public static class FFmpegHelper
             {
                 string[] jpgFiles = Directory.GetFiles(absoluteOutputPath, "frame_*.jpg");
                 UnityEngine.Debug.Log($"Found {jpgFiles.Length} frames in {absoluteOutputPath}");
+                
+                // Set import settings for all extracted frames
+                SetFrameImportSettings(outputPath, jpgFiles.Length);
+                
                 onComplete?.Invoke(true, $"Successfully extracted {jpgFiles.Length} frames!");
             }
             else
@@ -326,6 +391,50 @@ public static class FFmpegHelper
         catch (System.Exception e)
         {
             onComplete?.Invoke(false, $"Failed to start FFmpeg: {e.Message}");
+        }
+    }
+    
+    private static void SetFrameImportSettings(string outputPath, int frameCount)
+    {
+        try
+        {
+            // Convert absolute path to Unity asset path
+            string unityPath;
+            if (outputPath.StartsWith(Application.dataPath))
+            {
+                unityPath = "Assets" + outputPath.Substring(Application.dataPath.Length);
+            }
+            else
+            {
+                unityPath = outputPath;
+            }
+            
+            // Ensure path uses forward slashes
+            unityPath = unityPath.Replace("\\", "/");
+            
+            UnityEngine.Debug.Log($"Setting import settings for frames in: {unityPath}");
+            
+            // Find all frame files and set import settings
+            string[] guids = AssetDatabase.FindAssets("frame_* t:Texture2D", new[] { unityPath });
+            
+            foreach (string guid in guids)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+                
+                if (importer != null)
+                {
+                    importer.textureType = TextureImporterType.Sprite;
+                    importer.spriteImportMode = SpriteImportMode.Single;
+                    importer.SaveAndReimport();
+                }
+            }
+            
+            UnityEngine.Debug.Log($"Import settings updated for {guids.Length} frames");
+        }
+        catch (System.Exception e)
+        {
+            UnityEngine.Debug.LogError($"Failed to set import settings: {e.Message}");
         }
     }
 }

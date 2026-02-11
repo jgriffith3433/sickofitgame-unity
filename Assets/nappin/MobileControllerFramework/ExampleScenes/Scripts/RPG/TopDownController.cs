@@ -321,8 +321,20 @@ namespace MobileControllerFramework
             velocity.x = moveInput.x * moveSpeed;
             rb.linearVelocity = velocity;
             
-            // Flip sprite based on movement
-            if (moveInput.x > InputDeadzone)
+            // Flip sprite based on shooting direction (priority) or movement
+            if (isFiring && fireDirection.magnitude > InputDeadzone)
+            {
+                // Face the direction we're shooting
+                if (fireDirection.x > 0)
+                {
+                    transform.localScale = facingRight;
+                }
+                else if (fireDirection.x < 0)
+                {
+                    transform.localScale = facingLeft;
+                }
+            }
+            else if (moveInput.x > InputDeadzone)
             {
                 transform.localScale = facingRight;
             }
