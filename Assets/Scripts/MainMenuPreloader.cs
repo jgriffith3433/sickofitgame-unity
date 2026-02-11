@@ -106,36 +106,36 @@ public class MainMenuPreloader : MonoBehaviour
     }
 
     /// <summary>
-    /// Automatically preload the appropriate level and video in the background when menu loads
+    /// Automatically preload Video1 in background when menu loads
     /// </summary>
     private void PreloadAppropriateLevel()
     {
         int currentLevel = GameProgressManager.Instance.GetCurrentLevel();
-        string levelLabel = $"Level{currentLevel}_Assets";
-        string videoLabel = $"Video{currentLevel}_Assets";
         
-        Debug.Log($"[MainMenu] Background preloading content for Level {currentLevel}...");
-        
-        // Preload the video assets if they haven't seen it yet
-        if (ShouldPlayVideoBeforeLevel(currentLevel))
+        if (currentLevel == 1)
         {
-            PreloadManager.Instance.PreloadLabel(videoLabel, (success) =>
+            // New player - preload Video1
+            Debug.Log($"[MainMenu] Preloading Video1 in background...");
+            AddressablesSceneLoader.Instance.PreloadVideo(1, (success) =>
             {
                 if (success)
-                {
-                    Debug.Log($"[MainMenu] Video {currentLevel} assets ready!");
-                }
+                    Debug.Log($"[MainMenu] Video1 preloaded - ready for instant transition!");
+                else
+                    Debug.LogError($"[MainMenu] Failed to preload Video1");
             });
         }
-        
-        // Also preload the level assets
-        PreloadManager.Instance.PreloadLabel(levelLabel, (success) =>
+        else
         {
-            if (success)
+            // Returning player - preload their current level
+            Debug.Log($"[MainMenu] Preloading Level{currentLevel} in background...");
+            AddressablesSceneLoader.Instance.PreloadLevel(currentLevel, (success) =>
             {
-                Debug.Log($"[MainMenu] Level {currentLevel} assets ready!");
-            }
-        });
+                if (success)
+                    Debug.Log($"[MainMenu] Level{currentLevel} preloaded - ready for instant transition!");
+                else
+                    Debug.LogError($"[MainMenu] Failed to preload Level{currentLevel}");
+            });
+        }
     }
 
     private void ShowPreloadingUI(string message)

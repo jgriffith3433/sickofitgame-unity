@@ -1,21 +1,20 @@
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections.Generic;
 
 /// <summary>
-/// ADDRESSABLES VERSION - Loads sprite frames via Addressables for WebGL optimization
-/// Sprites are loaded by label (e.g., "Video1_Frames") instead of direct references
+/// ADDRESSABLES VERSION - Loads sprite frames via Addressables using chunked loading for WebGL optimization
+/// Requires SpriteFramesData ScriptableObject to define chunks for progressive loading
 /// </summary>
 [RequireComponent(typeof(SpriteRenderer))]
 public class SpriteFramePlayer : MonoBehaviour
 {
-    [Header("Addressables Settings")]
-    [Tooltip("Label for sprite frames in Addressables (e.g., 'Video1_Frames', 'Character_Walk')")]
-    [SerializeField] private string framesLabel = "";
+    [Header("Chunked Loading Configuration")]
+    [Tooltip("SpriteFramesData asset defining chunks and playback settings (REQUIRED)")]
+    [SerializeField] private SpriteFramesData spriteFramesData;
     
-    [Tooltip("Optional: Label for audio clip in Addressables (e.g., 'Video1_Audio'). Leave empty for no audio.")]
-    [SerializeField] private string audioLabel = "";
-    
-    [Tooltip("Preload frames immediately on Awake (recommended for smooth playback)")]
+    [Tooltip("Preload all chunks immediately on Awake (recommended for smooth playback)")]
     [SerializeField] private bool preloadOnAwake = true;
     
     [Header("Playback Settings")]
@@ -43,6 +42,9 @@ public class SpriteFramePlayer : MonoBehaviour
     [SerializeField] private bool isPlaying = false;
     [SerializeField] private bool isLoaded = false;
     [SerializeField] private bool isAudioLoaded = false;
+    [SerializeField] private int currentChunkIndex = -1;
+    [SerializeField] private List<int> loadedChunks = new List<int>();
+    [SerializeField] private bool allChunksPreloaded = false; // True when all chunks are cached
     
     private SpriteRenderer spriteRenderer;
     private AudioSource audioSource;
@@ -53,19 +55,32 @@ public class SpriteFramePlayer : MonoBehaviour
     private bool framesLoaded = false;
     private bool audioLoaded = false;
     private bool hasFinished = false;
+    private Dictionary<int, List<Sprite>> chunkFrames = new Dictionary<int, List<Sprite>>(); // Chunk index -> frames
+    private Dictionary<int, AsyncOperationHandle<IList<Sprite>>> chunkHandles = new Dictionary<int, AsyncOperationHandle<IList<Sprite>>>(); // For proper cleanup
 
     /// <summary>
     /// Public property to check if all assets are loaded
+    /// True when all chunks are cached in browser AND first chunk is in RAM AND audio is loaded
     /// </summary>
     public bool IsLoaded => isLoaded;
 
     private void Awake()
     {
+        if (spriteFramesData == null)
+        {
+            Debug.LogError("SpriteFramePlayer: spriteFramesData is required! Please assign a SpriteFramesData asset in the Inspector.");
+            return;
+        }
+        
         spriteRenderer = GetComponent<SpriteRenderer>();
+        
+        // Setup playback settings from SpriteFramesData
+        playbackFPS = spriteFramesData.playbackFPS;
+        loop = spriteFramesData.loop;
         frameDuration = 1f / playbackFPS;
         
         // Setup AudioSource if audio is needed
-        hasAudio = !string.IsNullOrEmpty(audioLabel);
+        hasAudio = !string.IsNullOrEmpty(spriteFramesData.audioLabel);
         if (hasAudio)
         {
             audioSource = GetComponent<AudioSource>();
@@ -78,110 +93,230 @@ public class SpriteFramePlayer : MonoBehaviour
             audioSource.volume = audioVolume;
         }
         
-        // Preload frames and audio for smooth playback
-        if (preloadOnAwake && !string.IsNullOrEmpty(framesLabel))
+        // Preload all chunks for smooth playback
+        if (preloadOnAwake)
         {
-            LoadFrames();
-            if (hasAudio)
-            {
-                LoadAudio();
-            }
+            PreloadAllChunks();
         }
     }
 
     /// <summary>
-    /// Load all sprite frames from Addressables by label
-    /// Call this manually if preloadOnAwake is false
+    /// Load only the first chunk - marks player as "loaded" once first chunk is ready
+    /// Used for preloading and initial playback
     /// </summary>
-    public void LoadFrames()
+    public void LoadFirstChunk()
     {
-        if (string.IsNullOrEmpty(framesLabel))
+        if (spriteFramesData == null || spriteFramesData.chunks.Count == 0)
         {
-            Debug.LogError("SpriteFramePlayer: framesLabel is not set! Please set it in the Inspector.");
+            Debug.LogError("SpriteFramePlayer: No spriteFramesData or chunks defined!");
             return;
         }
         
-        if (framesLoaded)
-        {
-            Debug.Log($"Frames already loaded for label: {framesLabel}");
-            return;
-        }
-        
-        Debug.Log($"Loading sprite frames with label: {framesLabel}");
-        
-        AddressablesAssetLoader.Instance.LoadAssetsByLabel<Sprite>(framesLabel, (loadedSprites) =>
-        {
-            if (loadedSprites != null && loadedSprites.Count > 0)
-            {
-                frames.Clear();
-                frames.AddRange(loadedSprites);
-                
-                // Sort frames by name to ensure correct order (frame_0001, frame_0002, etc.)
-                frames.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
-                
-                framesLoaded = true;
-                CheckIfFullyLoaded();
-                Debug.Log($"Loaded {frames.Count} frames for: {framesLabel}");
-            }
-            else
-            {
-                Debug.LogError($"Failed to load frames with label: {framesLabel}. Make sure sprites are marked as Addressable with this label.");
-            }
-        });
+        Debug.Log($"Loading first chunk for {spriteFramesData.videoName}...");
+        LoadChunk(0);
     }
     
     /// <summary>
-    /// Load audio clip from Addressables by label
-    /// Call this manually if preloadOnAwake is false
+    /// Load a specific chunk by index
     /// </summary>
-    public void LoadAudio()
+    public void LoadChunk(int chunkIndex, System.Action<bool> onComplete = null)
     {
-        if (string.IsNullOrEmpty(audioLabel))
+        if (spriteFramesData == null || chunkIndex < 0 || chunkIndex >= spriteFramesData.chunks.Count)
         {
-            Debug.LogWarning("SpriteFramePlayer: audioLabel is not set. Skipping audio load.");
-            audioLoaded = true; // Mark as loaded so it doesn't block playback
+            Debug.LogError($"Invalid chunk index: {chunkIndex}");
+            onComplete?.Invoke(false);
             return;
         }
         
-        if (audioLoaded)
+        if (loadedChunks.Contains(chunkIndex))
         {
-            Debug.Log($"Audio already loaded for label: {audioLabel}");
+            Debug.Log($"Chunk {chunkIndex} already loaded");
+            onComplete?.Invoke(true);
             return;
         }
         
-        Debug.Log($"Loading audio with label: {audioLabel}");
+        var chunk = spriteFramesData.chunks[chunkIndex];
+        Debug.Log($"Loading chunk {chunkIndex}: {chunk}");
         
-        AddressablesAssetLoader.Instance.LoadAssetsByLabel<AudioClip>(audioLabel, (clips) =>
-        {
-            if (clips != null && clips.Count > 0)
+        StartCoroutine(LoadChunkCoroutine(chunkIndex, chunk, onComplete));
+    }
+    
+    private System.Collections.IEnumerator LoadChunkCoroutine(int chunkIndex, SpriteFramesData.FrameChunk chunk, System.Action<bool> onComplete)
+    {
+        bool loadComplete = false;
+        bool loadSuccess = false;
+        AsyncOperationHandle<IList<Sprite>> resultHandle = default;
+        
+        // Use AddressablesOperationManager for deduplication and centralized tracking
+        AddressablesOperationManager.Instance.LoadLabelWithHandle<Sprite>(
+            chunk.addressableLabel, 
+            (handle, sprites) =>
             {
-                audioClip = clips[0]; // Take first audio clip
-                if (audioSource != null)
+                if (sprites != null && sprites.Count > 0)
                 {
-                    audioSource.clip = audioClip;
+                    // Sort frames by name
+                    var sortedSprites = new List<Sprite>(sprites);
+                    sortedSprites.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
+                    
+                    // Store chunk frames and handle
+                    chunkFrames[chunkIndex] = sortedSprites;
+                    chunkHandles[chunkIndex] = handle;
+                    loadedChunks.Add(chunkIndex);
+                    
+                    Debug.Log($"Loaded chunk {chunkIndex}: {sortedSprites.Count} frames");
+                    
+                    // If this is the first chunk, set up for playback
+                    if (chunkIndex == 0)
+                    {
+                        frames.Clear();
+                        frames.AddRange(sortedSprites);
+                        currentChunkIndex = 0;
+                        framesLoaded = true;
+                        // DON'T call CheckIfFullyLoaded() here - wait for PreloadAllChunks to complete
+                    }
+                    
+                    loadSuccess = true;
+                }
+                else
+                {
+                    Debug.LogError($"Failed to load chunk {chunkIndex} with label: {chunk.addressableLabel}");
+                    loadSuccess = false;
                 }
                 
-                audioLoaded = true;
-                isAudioLoaded = true;
-                CheckIfFullyLoaded();
-                Debug.Log($"Loaded audio clip: {audioClip.name}");
+                loadComplete = true;
             }
-            else
-            {
-                Debug.LogError($"Failed to load audio with label: {audioLabel}. Make sure audio clip is marked as Addressable with this label.");
-                audioLoaded = true; // Mark as loaded so it doesn't block playback
-            }
-        });
+        );
+        
+        // Wait for load to complete
+        yield return new WaitUntil(() => loadComplete);
+        
+        onComplete?.Invoke(loadSuccess);
     }
     
     /// <summary>
-    /// Check if both frames and audio (if needed) are loaded, then auto-play if enabled
+    /// Unload a specific chunk to free memory
+    /// </summary>
+    public void UnloadChunk(int chunkIndex)
+    {
+        if (!loadedChunks.Contains(chunkIndex))
+        {
+            return;
+        }
+        
+        var chunk = spriteFramesData.chunks[chunkIndex];
+        Debug.Log($"Unloading chunk {chunkIndex}: {chunk.addressableLabel}");
+        
+        // Release the addressables handle if we have it
+        if (chunkHandles.ContainsKey(chunkIndex))
+        {
+            Addressables.Release(chunkHandles[chunkIndex]);
+            chunkHandles.Remove(chunkIndex);
+        }
+        
+        chunkFrames.Remove(chunkIndex);
+        loadedChunks.Remove(chunkIndex);
+    }
+    
+    /// <summary>
+    /// Preload all chunks sequentially (for caching in browser)
+    /// </summary>
+    public void PreloadAllChunks(System.Action<bool> onComplete = null)
+    {
+        if (spriteFramesData == null)
+        {
+            Debug.LogError("No spriteFramesData assigned");
+            onComplete?.Invoke(false);
+            return;
+        }
+        
+        StartCoroutine(PreloadAllChunksCoroutine(onComplete));
+    }
+    
+    private System.Collections.IEnumerator PreloadAllChunksCoroutine(System.Action<bool> onComplete)
+    {
+        Debug.Log($"Preloading all {spriteFramesData.chunks.Count} chunks for caching...");
+        
+        // Load all chunks first
+        for (int i = 0; i < spriteFramesData.chunks.Count; i++)
+        {
+            bool loaded = false;
+            bool success = false;
+            
+            LoadChunk(i, (result) =>
+            {
+                success = result;
+                loaded = true;
+            });
+            
+            // Wait for chunk to load
+            yield return new WaitUntil(() => loaded);
+            
+            if (!success)
+            {
+                Debug.LogError($"Failed to preload chunk {i}");
+                onComplete?.Invoke(false);
+                yield break;
+            }
+            
+            // Keep first TWO chunks in RAM for smooth playback start
+            // Unload chunks 2 onwards (they're cached in browser)
+            if (i > 1)
+            {
+                yield return new WaitForSeconds(0.1f); // Brief delay
+                UnloadChunk(i);
+            }
+        }
+        
+        allChunksPreloaded = true;
+        Debug.Log($"All chunks preloaded and cached! Chunks 0 and 1 kept in RAM.");
+        
+        // Load audio if needed
+        if (hasAudio && !string.IsNullOrEmpty(spriteFramesData.audioLabel))
+        {
+            bool audioLoadComplete = false;
+            
+            AddressablesAssetLoader.Instance.LoadAssetsByLabel<AudioClip>(spriteFramesData.audioLabel, (clips) =>
+            {
+                if (clips != null && clips.Count > 0)
+                {
+                    audioClip = clips[0];
+                    if (audioSource != null)
+                    {
+                        audioSource.clip = audioClip;
+                    }
+                    audioLoaded = true;
+                    isAudioLoaded = true;
+                    Debug.Log($"Loaded audio clip: {audioClip.name}");
+                }
+                else
+                {
+                    Debug.LogError($"Failed to load audio with label: {spriteFramesData.audioLabel}");
+                    audioLoaded = true; // Mark as loaded so it doesn't block
+                }
+                audioLoadComplete = true;
+            });
+            
+            yield return new WaitUntil(() => audioLoadComplete);
+        }
+        else
+        {
+            audioLoaded = true; // No audio needed
+        }
+        
+        // Check if we're now fully loaded
+        CheckIfFullyLoaded();
+        
+        onComplete?.Invoke(true);
+    }
+    
+    /// <summary>
+    /// Check if all assets are loaded (all chunks cached + first chunk in RAM + audio loaded)
     /// </summary>
     private void CheckIfFullyLoaded()
     {
-        bool allLoaded = framesLoaded && (!hasAudio || audioLoaded);
+        bool assetsReady = allChunksPreloaded && framesLoaded && (!hasAudio || audioLoaded);
         
-        if (allLoaded && !isLoaded)
+        if (assetsReady && !isLoaded)
         {
             isLoaded = true;
             Debug.Log("SpriteFramePlayer: All assets loaded and ready!");
@@ -207,22 +342,85 @@ public class SpriteFramePlayer : MonoBehaviour
             
             currentFrameIndex++;
             
-            if (currentFrameIndex >= frames.Count)
-            {
-                if (loop)
-                {
-                    currentFrameIndex = 0;
-                }
-                else
-                {
-                    currentFrameIndex = frames.Count - 1;
-                    isPlaying = false;
-                    OnVideoFinished();
-                    return;
-                }
-            }
+            // Handle chunked playback
+            HandleChunkedPlayback();
 
             UpdateSprite();
+        }
+    }
+    
+    /// <summary>
+    /// Handle progressive chunk loading during playback
+    /// Uses sliding window: always keeps current + next chunk in RAM
+    /// </summary>
+    private void HandleChunkedPlayback()
+    {
+        int totalFrames = spriteFramesData.GetTotalFrames();
+        
+        if (currentFrameIndex >= totalFrames)
+        {
+            if (loop)
+            {
+                currentFrameIndex = 0;
+                // Reload first chunk if needed
+                if (!loadedChunks.Contains(0))
+                {
+                    LoadChunk(0);
+                }
+            }
+            else
+            {
+                currentFrameIndex = totalFrames - 1;
+                isPlaying = false;
+                OnVideoFinished();
+                return;
+            }
+        }
+        
+        // Check if we need to switch to next chunk
+        int targetChunkIndex = spriteFramesData.GetChunkIndexForFrame(currentFrameIndex);
+        if (targetChunkIndex != currentChunkIndex)
+        {
+            // Switch to next chunk (should already be loaded from sliding window)
+            if (loadedChunks.Contains(targetChunkIndex))
+            {
+                currentChunkIndex = targetChunkIndex;
+                frames = chunkFrames[targetChunkIndex];
+                Debug.Log($"Switched to chunk {targetChunkIndex}");
+                
+                // Sliding window: Load next chunk if exists
+                int nextChunkIndex = targetChunkIndex + 1;
+                if (nextChunkIndex < spriteFramesData.chunks.Count && !loadedChunks.Contains(nextChunkIndex))
+                {
+                    Debug.Log($"Loading next chunk {nextChunkIndex} for sliding window");
+                    LoadChunk(nextChunkIndex);
+                }
+                
+                // Unload chunks outside the sliding window (keep current and next only)
+                for (int i = 0; i < targetChunkIndex; i++)
+                {
+                    if (loadedChunks.Contains(i))
+                    {
+                        UnloadChunk(i);
+                    }
+                }
+            }
+            else
+            {
+                // CRITICAL ERROR: Next chunk not in sliding window
+                Debug.LogError($"CRITICAL: Chunk {targetChunkIndex} not in sliding window! This means PreloadAllChunks didn't work correctly.");
+                isPlaying = false;
+                LoadChunk(targetChunkIndex, (success) =>
+                {
+                    if (success)
+                    {
+                        currentChunkIndex = targetChunkIndex;
+                        frames = chunkFrames[targetChunkIndex];
+                        isPlaying = true;
+                        Debug.Log($"Emergency loaded chunk {targetChunkIndex}, resuming playback");
+                    }
+                });
+            }
         }
     }
 
@@ -233,18 +431,13 @@ public class SpriteFramePlayer : MonoBehaviour
     {
         if (!isLoaded)
         {
-            Debug.LogWarning("Assets not loaded yet. Loading now...");
-            LoadFrames();
-            if (hasAudio)
-            {
-                LoadAudio();
-            }
+            Debug.LogWarning("Assets not loaded yet. Call PreloadAllChunks() first.");
             return;
         }
         
         if (frames.Count == 0)
         {
-            Debug.LogWarning($"No frames loaded for label: {framesLabel}");
+            Debug.LogWarning("No frames loaded yet.");
             return;
         }
         
@@ -315,9 +508,16 @@ public class SpriteFramePlayer : MonoBehaviour
 
     private void UpdateSprite()
     {
-        if (spriteRenderer != null && currentFrameIndex >= 0 && currentFrameIndex < frames.Count)
+        if (spriteRenderer == null || currentChunkIndex < 0)
+            return;
+            
+        // Calculate local frame index within current chunk
+        var chunk = spriteFramesData.chunks[currentChunkIndex];
+        int localFrameIndex = currentFrameIndex - chunk.startFrame;
+        
+        if (localFrameIndex >= 0 && localFrameIndex < frames.Count)
         {
-            spriteRenderer.sprite = frames[currentFrameIndex];
+            spriteRenderer.sprite = frames[localFrameIndex];
         }
     }
 
@@ -352,6 +552,14 @@ public class SpriteFramePlayer : MonoBehaviour
     {
         if (frames.Count == 0) return 0f;
         return (float)currentFrameIndex / frames.Count;
+    }
+    
+    /// <summary>
+    /// Check if all chunks have been preloaded (cached in browser)
+    /// </summary>
+    public bool AreAllChunksPreloaded()
+    {
+        return allChunksPreloaded;
     }
     
     /// <summary>
@@ -445,5 +653,21 @@ public class SpriteFramePlayer : MonoBehaviour
             Stop();
             ReturnToGame();
         }
+    }
+    
+    /// <summary>
+    /// Clean up addressables handles when component is destroyed
+    /// </summary>
+    private void OnDestroy()
+    {
+        // Release all loaded chunk handles
+        foreach (var handle in chunkHandles.Values)
+        {
+            if (handle.IsValid())
+            {
+                Addressables.Release(handle);
+            }
+        }
+        chunkHandles.Clear();
     }
 }

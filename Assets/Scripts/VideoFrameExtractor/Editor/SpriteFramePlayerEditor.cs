@@ -6,18 +6,22 @@ using UnityEditor;
 public class SpriteFramePlayerEditor : Editor
 {
     private SpriteFramePlayer player;
-    private SerializedProperty framesLabelProp;
+    private SerializedProperty spriteFramesDataProp;
     private SerializedProperty preloadOnAwakeProp;
     private SerializedProperty framesProp;
     private SerializedProperty isLoadedProp;
+    private SerializedProperty allChunksPreloadedProp;
+    private SerializedProperty loadedChunksProp;
 
     private void OnEnable()
     {
         player = (SpriteFramePlayer)target;
-        framesLabelProp = serializedObject.FindProperty("framesLabel");
+        spriteFramesDataProp = serializedObject.FindProperty("spriteFramesData");
         preloadOnAwakeProp = serializedObject.FindProperty("preloadOnAwake");
         framesProp = serializedObject.FindProperty("frames");
         isLoadedProp = serializedObject.FindProperty("isLoaded");
+        allChunksPreloadedProp = serializedObject.FindProperty("allChunksPreloaded");
+        loadedChunksProp = serializedObject.FindProperty("loadedChunks");
     }
 
     public override void OnInspectorGUI()
@@ -27,21 +31,34 @@ public class SpriteFramePlayerEditor : Editor
         DrawDefaultInspector();
 
         GUILayout.Space(10);
-        EditorGUILayout.LabelField("Addressables Info", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Chunked Loading Info", EditorStyles.boldLabel);
 
-        // Show loaded frame count
+        // Show loaded frame count and chunk info
         int frameCount = framesProp.arraySize;
         bool isLoaded = isLoadedProp.boolValue;
+        bool allChunksPreloaded = allChunksPreloadedProp.boolValue;
+        int loadedChunksCount = loadedChunksProp.arraySize;
         
-        string status = isLoaded ? $"✓ Loaded: {frameCount} frames" : "Not loaded yet";
-        MessageType messageType = isLoaded ? MessageType.Info : MessageType.Warning;
+        string status;
+        MessageType messageType;
+        
+        if (isLoaded)
+        {
+            status = $"✓ Ready: {frameCount} frames in current chunk\nAll chunks cached: {(allChunksPreloaded ? "Yes" : "No")}\nLoaded chunks: {loadedChunksCount}";
+            messageType = MessageType.Info;
+        }
+        else
+        {
+            status = "Not loaded yet - call PreloadAllChunks()";
+            messageType = MessageType.Warning;
+        }
         
         EditorGUILayout.HelpBox(status, messageType);
 
         // Manual load button (if not preloading on awake)
         if (!Application.isPlaying && !preloadOnAwakeProp.boolValue)
         {
-            EditorGUILayout.HelpBox("Preload On Awake is disabled. Frames will load on first Play() call.", MessageType.Info);
+            EditorGUILayout.HelpBox("Preload On Awake is disabled. Call PreloadAllChunks() manually.", MessageType.Info);
         }
 
         // Runtime controls
@@ -50,10 +67,10 @@ public class SpriteFramePlayerEditor : Editor
             GUILayout.Space(10);
             EditorGUILayout.LabelField("Playback Controls (Runtime)", EditorStyles.boldLabel);
 
-            // Manual load button if not loaded
-            if (!isLoaded && GUILayout.Button("Load Frames Now", GUILayout.Height(30)))
+            // Manual preload button if not loaded
+            if (!isLoaded && GUILayout.Button("Preload All Chunks Now", GUILayout.Height(30)))
             {
-                player.LoadFrames();
+                player.PreloadAllChunks();
             }
 
             if (isLoaded)
@@ -99,15 +116,16 @@ public class SpriteFramePlayerEditor : Editor
 
         GUILayout.Space(10);
 
-        // Updated help box for Addressables workflow
+        // Updated help box for chunked loading
         EditorGUILayout.HelpBox(
-            "ADDRESSABLES WORKFLOW:\n\n" +
-            "1. Select your sprite frames in Project window\n" +
-            "2. Check 'Addressable' on all frames\n" +
-            "3. Assign them all the SAME label (e.g., 'Video1_Frames')\n" +
-            "4. Set 'Frames Label' above to match that label\n" +
-            "5. Build Addressables before testing\n\n" +
-            "Frames will auto-load at runtime via Addressables!",
+            "CHUNKED LOADING SYSTEM:\n\n" +
+            "1. Create a SpriteFramesData asset (Right-click → Create → Video → Sprite Frames Data)\n" +
+            "2. Open Tools → Sprite Frames Manager\n" +
+            "3. Select all your frames in Project window\n" +
+            "4. Auto-chunk them (e.g., 250 frames per chunk)\n" +
+            "5. Apply Addressable Labels\n" +
+            "6. Assign the SpriteFramesData asset above\n\n" +
+            "See CHUNKED_LOADING_GUIDE.md for details!",
             MessageType.Info
         );
         

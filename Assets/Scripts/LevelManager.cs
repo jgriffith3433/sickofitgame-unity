@@ -48,11 +48,34 @@ public class LevelManager : MonoBehaviour
             // No assets to load, activate everything immediately
             ActivateGameObjects();
         }
+        
+        // Preload next video in background while player plays
+        StartCoroutine(PreloadNextVideoInBackground());
     }
 
     private void Start()
     {
         // Level loads directly now - videos are played from MainMenu/LevelSelection before entering
+    }
+    
+    /// <summary>
+    /// Preload the next video during gameplay
+    /// </summary>
+    private IEnumerator PreloadNextVideoInBackground()
+    {
+        // Wait a moment for level to fully initialize
+        yield return new WaitForSeconds(2f);
+        
+        int nextVideo = levelNumber + 1;
+        Debug.Log($"[LevelManager] Preloading Video{nextVideo} in background...");
+        
+        AddressablesSceneLoader.Instance.PreloadVideo(nextVideo, (success) =>
+        {
+            if (success)
+                Debug.Log($"[LevelManager] Video{nextVideo} preloaded - ready for instant transition!");
+            else
+                Debug.LogWarning($"[LevelManager] Failed to preload Video{nextVideo} (might not exist)");
+        });
     }
 
     /// <summary>

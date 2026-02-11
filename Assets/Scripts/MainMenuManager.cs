@@ -20,6 +20,12 @@ public class MainMenuManager : MonoBehaviour
     [Header("Scene Loading")]
     [SerializeField] private SceneLoadingManager sceneLoadingManager;
 
+    private void Awake()
+    {
+        // Preload common shaders/materials to prevent pink shader bug
+        PreloadManager.Instance.PreloadLabel("Common");
+    }
+
     private void Start()
     {
         // Initialize game progress for first-time players
@@ -71,6 +77,8 @@ public class MainMenuManager : MonoBehaviour
 
     private void OnNewGameClicked()
     {
+        Debug.Log("[MOBILE DEBUG] New Game button clicked!");
+        
         // Reset all progress and start from level 1
         GameProgressManager.Instance.ResetAllProgress();
         GameProgressManager.Instance.InitializeNewPlayer();
@@ -81,6 +89,9 @@ public class MainMenuManager : MonoBehaviour
         // Play Video1 first, then load Level1
         PlayerPrefs.SetInt("ReturnToLevel", 1);
         PlayerPrefs.Save();
+        
+        Debug.Log("[MOBILE DEBUG] Attempting to load Video1...");
+        Debug.Log($"[MOBILE DEBUG] SceneLoadingManager present: {sceneLoadingManager != null}");
         
         if (sceneLoadingManager != null)
             sceneLoadingManager.LoadVideo(1);

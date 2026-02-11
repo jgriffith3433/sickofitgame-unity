@@ -49,10 +49,27 @@ public class SceneTransitionManager : MonoBehaviour
     public void LoadLevel(int levelNumber)
     {
         string sceneName = $"Level{levelNumber}";
+        Debug.Log($"[SceneTransitionManager] LoadLevel({levelNumber}) called. SceneName: {sceneName}");
+        Debug.Log($"[SceneTransitionManager] useAddressables: {useAddressables}");
+        
+        // Set current scene for memory management
         if (useAddressables)
+        {
+            AddressablesOperationManager.Instance.SetCurrentScene(sceneName);
+        }
+        
+        if (useAddressables)
+        {
+            Debug.Log($"[SceneTransitionManager] Using Addressables to load level {levelNumber}");
             AddressablesSceneLoader.Instance.LoadScene(sceneName);
+        }
         else
+        {
+            Debug.Log($"[SceneTransitionManager] Using SceneManager to load level {levelNumber}");
             SceneManager.LoadScene(sceneName);
+        }
+        
+        Debug.Log($"[SceneTransitionManager] LoadLevel({levelNumber}) completed (load initiated)");
     }
 
     public void LoadLevelSelection()
@@ -70,10 +87,25 @@ public class SceneTransitionManager : MonoBehaviour
     public void LoadVideo(int videoNumber)
     {
         string sceneName = $"Video{videoNumber}";
+        Debug.Log($"[MOBILE DEBUG] SceneTransitionManager.LoadVideo({videoNumber})");
+        Debug.Log($"[MOBILE DEBUG] Scene name: {sceneName}, UseAddressables: {useAddressables}");
+        
+        // Set current scene for memory management
         if (useAddressables)
+        {
+            AddressablesOperationManager.Instance.SetCurrentScene(sceneName);
+        }
+        
+        if (useAddressables)
+        {
+            Debug.Log($"[MOBILE DEBUG] Calling AddressablesSceneLoader.LoadScene({sceneName})");
             AddressablesSceneLoader.Instance.LoadScene(sceneName);
+        }
         else
+        {
+            Debug.Log($"[MOBILE DEBUG] Calling SceneManager.LoadScene({sceneName})");
             SceneManager.LoadScene(sceneName);
+        }
     }
 
     public void ContinueGame()

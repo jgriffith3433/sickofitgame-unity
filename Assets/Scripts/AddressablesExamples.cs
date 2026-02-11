@@ -138,12 +138,14 @@ public class AddressablesExamples : MonoBehaviour
         AddressablesAssetLoader.Instance.PreloadAssetsByLabel("Powerup");
     }
 
-    // ===== EXAMPLE 8: Clean Up When Done =====
+    // ===== EXAMPLE 8: Memory Management =====
     void OnLevelComplete()
     {
-        // Release all loaded assets to free memory
-        // Good to call when transitioning to a new level
-        AddressablesAssetLoader.Instance.ReleaseAllAssets();
+        // Unity's Addressables handles cleanup automatically via GC
+        // Downloaded bundles are cached on disk by the browser
+        // No manual release needed - prevents accidental shared dependency unload (pink shaders)
+        // Assets will be unloaded by Unity's GC when no longer referenced
+        Debug.Log("Level complete - Unity will handle asset cleanup automatically");
     }
 
     // ===== EXAMPLE 9: Load Material at Runtime =====

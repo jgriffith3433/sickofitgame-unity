@@ -83,29 +83,23 @@ public class VideoManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Preload the next level/video during video playback
-    /// This uses the video playback time to download assets in the background
+    /// Preload the next level during video playback
     /// </summary>
     private IEnumerator PreloadNextContentDuringVideo()
     {
         // Wait a bit to let video start smoothly
         yield return new WaitForSeconds(1f);
         
-        // If configured, preload the next level assets
-        if (preloadNextLevel)
+        int nextLevel = videoNumber;
+        Debug.Log($"VideoManager: Preloading Level{nextLevel} during video playback...");
+        
+        AddressablesSceneLoader.Instance.PreloadLevel(nextLevel, (success) =>
         {
-            int nextLevel = videoNumber; // Video N leads to Level N
-            string nextLevelLabel = $"Level{nextLevel}_Assets";
-            
-            Debug.Log($"VideoManager: Preloading {nextLevelLabel} during video playback...");
-            PreloadManager.Instance.PreloadLabel(nextLevelLabel, (success) =>
-            {
-                if (success)
-                {
-                    Debug.Log($"VideoManager: Next level assets ready for seamless transition!");
-                }
-            });
-        }
+            if (success)
+                Debug.Log($"VideoManager: Level{nextLevel} preloaded successfully!");
+            else
+                Debug.LogError($"VideoManager: Failed to preload Level{nextLevel}");
+        });
     }
 
     /// <summary>

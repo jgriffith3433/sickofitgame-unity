@@ -2,14 +2,12 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// Central manager for ALL Addressables operations in the game.
-/// Prevents duplicate concurrent loads of the same asset.
-/// All systems (PreloadManager, SceneLoader, etc.) should use this.
+/// Coordinates Addressables operations to prevent duplicate concurrent loads.
+/// Unity's Addressables system handles caching - we only provide deduplication.
 /// </summary>
 public class AddressablesOperationManager : MonoBehaviour
 {
@@ -31,28 +29,28 @@ public class AddressablesOperationManager : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
     [SerializeField] private List<string> activeOperations = new List<string>();
+    
+    [Header("Load Settings")]
+    [Tooltip("Timeout for loading labels (seconds). Increase for large video assets.")]
+    [SerializeField] private float labelLoadTimeout = 180f; // Increased from 90s for large video frames
+    
+    [Tooltip("Timeout for loading scenes (seconds).")]
+    [SerializeField] private float sceneLoadTimeout = 120f;
 
-    // Track in-progress operations to prevent duplicate concurrent loads
-    // Untyped (Object) loads
+    [Header("Scene Tracking")]
+    [SerializeField] private string currentSceneName = "";
+    [SerializeField] private string previousSceneName = "";
+
     private Dictionary<string, bool> inProgressLabelLoads = new Dictionary<string, bool>();
     private Dictionary<string, List<System.Action<bool>>> pendingLabelLoadCallbacks = new Dictionary<string, List<System.Action<bool>>>();
     
-    // Typed loads (e.g., Sprite, AudioClip, etc.)
     private Dictionary<string, bool> inProgressTypedLabelLoads = new Dictionary<string, bool>();
-    private Dictionary<string, object> pendingTypedLabelLoadCallbacks = new Dictionary<string, object>(); // Value is List<Action<IList<T>>>
-    
-    // Single asset loads by key
     private Dictionary<string, bool> inProgressAssetLoads = new Dictionary<string, bool>();
-    private Dictionary<string, object> pendingAssetLoadCallbacks = new Dictionary<string, object>(); // Value is List<Action<T>>
     
-    // Scene loads
     private Dictionary<string, bool> inProgressSceneLoads = new Dictionary<string, bool>();
     private Dictionary<string, List<System.Action<bool>>> pendingSceneLoadCallbacks = new Dictionary<string, List<System.Action<bool>>>();
-
-    // Track completed loads
-    private Dictionary<string, AsyncOperationHandle<IList<Object>>> loadedLabels = new Dictionary<string, AsyncOperationHandle<IList<Object>>>();
-    private Dictionary<string, object> loadedTypedLabels = new Dictionary<string, object>(); // Value is AsyncOperationHandle<IList<T>>
-    private Dictionary<string, AsyncOperationHandle> loadedAssets = new Dictionary<string, AsyncOperationHandle>(); // Single assets by key
+    
+    private Dictionary<string, AsyncOperationHandle<SceneInstance>> activeSceneHandles = new Dictionary<string, AsyncOperationHandle<SceneInstance>>();
 
     private void Awake()
     {
@@ -65,391 +63,385 @@ public class AddressablesOperationManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    #region Public API
+    #region Loading Operations
 
-    /// <summary>
-    /// Preload a label into RAM (downloads bundle if needed and loads assets into memory)
-    /// If already loading, queues the callback to avoid duplicate operations.
-    /// </summary>
     public void LoadLabel(string label, System.Action<bool> onComplete = null)
     {
         StartCoroutine(LoadLabelAsync(label, onComplete));
     }
 
-    /// <summary>
-    /// Load a scene using Addressables (downloads if needed)
-    /// If already loading, queues the callback to avoid duplicate operations.
-    /// </summary>
-    public void LoadScene(string sceneName, System.Action<bool> onComplete = null)
-    {
-        StartCoroutine(LoadSceneAsync(sceneName, onComplete));
-    }
-
-    /// <summary>
-    /// Load multiple assets by label with specific type (e.g., Sprite, AudioClip)
-    /// This is CRITICAL for Sprites - loading as Object loads Texture2D instead!
-    /// If already loading, queues the callback to avoid duplicate operations.
-    /// </summary>
-    public void LoadLabel<T>(string label, System.Action<IList<T>> onComplete) where T : Object
+    public void LoadLabel<T>(string label, System.Action<IList<T>> onComplete) where T : UnityEngine.Object
     {
         StartCoroutine(LoadLabelAsync<T>(label, onComplete));
     }
+    
+    public void LoadLabelWithHandle<T>(string label, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete) where T : UnityEngine.Object
+    {
+        StartCoroutine(LoadLabelWithHandleAsync<T>(label, onComplete));
+    }
 
-    /// <summary>
-    /// Load a single asset by key/address with specific type
-    /// If already loading, queues the callback to avoid duplicate operations.
-    /// </summary>
-    public void LoadAsset<T>(string address, System.Action<T> onComplete) where T : Object
+    public void LoadAsset<T>(string address, System.Action<T> onComplete) where T : UnityEngine.Object
     {
         StartCoroutine(LoadAssetAsync<T>(address, onComplete));
     }
 
-    /// <summary>
-    /// Get download size for a label (0 = already cached)
-    /// </summary>
+    public void LoadScene(string sceneName, System.Action<bool> onComplete = null, UnityEngine.SceneManagement.LoadSceneMode mode = UnityEngine.SceneManagement.LoadSceneMode.Additive)
+    {
+        StartCoroutine(LoadSceneAsync(sceneName, mode, onComplete));
+    }
+    
+    public void UnloadScene(string sceneName, System.Action<bool> onComplete = null)
+    {
+        StartCoroutine(UnloadSceneAsync(sceneName, onComplete));
+    }
+
     public void GetLabelDownloadSize(string label, System.Action<long> onComplete)
     {
         StartCoroutine(GetDownloadSizeAsync(label, onComplete));
     }
 
-    /// <summary>
-    /// Check if a label is currently being loaded (checks both typed and untyped loads)
-    /// </summary>
+    #endregion
+
+    #region Status & Info
+
     public bool IsLoading(string label)
     {
-        bool untypedLoading = inProgressLabelLoads.ContainsKey(label) && inProgressLabelLoads[label];
-        bool typedLoading = inProgressTypedLabelLoads.ContainsKey(label) && inProgressTypedLabelLoads[label];
-        bool assetLoading = inProgressAssetLoads.ContainsKey(label) && inProgressAssetLoads[label];
-        return untypedLoading || typedLoading || assetLoading;
+        return (inProgressLabelLoads.ContainsKey(label) && inProgressLabelLoads[label]) ||
+               (inProgressTypedLabelLoads.ContainsKey(label) && inProgressTypedLabelLoads[label]) ||
+               (inProgressAssetLoads.ContainsKey(label) && inProgressAssetLoads[label]);
     }
 
-    /// <summary>
-    /// Check if a scene is currently being loaded
-    /// </summary>
     public bool IsLoadingScene(string sceneName)
     {
         return inProgressSceneLoads.ContainsKey(sceneName) && inProgressSceneLoads[sceneName];
     }
-
-    /// <summary>
-    /// Check if a label is already loaded in memory
-    /// </summary>
-    public bool IsLabelLoaded(string label)
+    
+    public float GetCurrentSceneLoadProgress(string sceneName)
     {
-        return loadedLabels.ContainsKey(label);
-    }
-
-    /// <summary>
-    /// Get loaded assets for a label (returns null if not loaded)
-    /// </summary>
-    public List<Object> GetLoadedAssets(string label)
-    {
-        if (loadedLabels.ContainsKey(label))
+        if (activeSceneHandles.ContainsKey(sceneName))
         {
-            var handle = loadedLabels[label];
-            if (handle.IsValid() && handle.Status == AsyncOperationStatus.Succeeded)
-            {
-                return new List<Object>(handle.Result);
-            }
+            var handle = activeSceneHandles[sceneName];
+            if (handle.IsValid()) return handle.PercentComplete;
         }
-        return null;
+        return 0f;
     }
+    
+    public List<string> GetActiveOperations() => new List<string>(activeOperations);
+    
+    public int GetActiveOperationsCount() => activeOperations.Count;
 
-    /// <summary>
-    /// Release a label from memory
-    /// </summary>
-    public void ReleaseLabel(string label)
+    public void GetMemoryInfo(out long totalMemoryMB, out long usedMemoryMB, out long monoUsedMB, out long monoHeapMB)
     {
-        if (loadedLabels.ContainsKey(label))
-        {
-            var handle = loadedLabels[label];
-            if (handle.IsValid())
-            {
-                Addressables.Release(handle);
-                Log($"Released label from memory: {label}");
-            }
-            loadedLabels.Remove(label);
-        }
-    }
-
-    /// <summary>
-    /// Release all loaded labels from memory
-    /// </summary>
-    public void ReleaseAll()
-    {
-        foreach (var kvp in loadedLabels)
-        {
-            if (kvp.Value.IsValid())
-            {
-                Addressables.Release(kvp.Value);
-            }
-        }
-        loadedLabels.Clear();
-        Log("Released all loaded content from memory");
+        totalMemoryMB = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024 * 1024);
+        usedMemoryMB = UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong() / (1024 * 1024);
+        monoUsedMB = UnityEngine.Profiling.Profiler.GetMonoUsedSizeLong() / (1024 * 1024);
+        monoHeapMB = UnityEngine.Profiling.Profiler.GetMonoHeapSizeLong() / (1024 * 1024);
     }
 
     #endregion
 
-    #region Internal Implementation
+    #region Scene Tracking
+
+    public void SetCurrentScene(string sceneName)
+    {
+        if (currentSceneName == sceneName) return;
+        Log($"[SCENE] {currentSceneName} -> {sceneName}");
+        previousSceneName = currentSceneName;
+        currentSceneName = sceneName;
+    }
+    
+    public void CompleteSceneTransition()
+    {
+        Log($"[SCENE] Transition complete: {currentSceneName}");
+    }
+
+    #endregion
+
+    #region Implementation
 
     private IEnumerator LoadLabelAsync(string label, System.Action<bool> onComplete)
     {
-        // Check if already loading - queue the callback
         if (inProgressLabelLoads.ContainsKey(label) && inProgressLabelLoads[label])
         {
-            Log($"[DEDUP] Label '{label}' load already in progress, queuing callback...");
+            Log($"[DEDUP] Label '{label}' already loading, queuing callback");
             if (!pendingLabelLoadCallbacks.ContainsKey(label))
-            {
                 pendingLabelLoadCallbacks[label] = new List<System.Action<bool>>();
-            }
             pendingLabelLoadCallbacks[label].Add(onComplete);
             yield break;
         }
-        
-        // Check if already loaded in memory
-        if (loadedLabels.ContainsKey(label))
-        {
-            Log($"Label '{label}' already loaded in memory");
-            onComplete?.Invoke(true);
-            yield break;
-        }
 
-        // Mark as in-progress
         inProgressLabelLoads[label] = true;
         activeOperations.Add($"Load: {label}");
-
-        // Load into memory (downloads bundle if needed)
-        Log($"Loading label '{label}' into memory...");
+        Log($"Loading label '{label}'...");
         
-        var loadHandle = Addressables.LoadAssetsAsync<Object>(label, null);
-        yield return loadHandle;
+        var loadHandle = Addressables.LoadAssetsAsync<UnityEngine.Object>(label, null);
+        
+        float elapsed = 0f;
+        float lastProgress = 0f;
+        
+        while (!loadHandle.IsDone)
+        {
+            if (loadHandle.PercentComplete > lastProgress + 0.1f)
+            {
+                lastProgress = loadHandle.PercentComplete;
+                Log($"Label '{label}' progress: {(loadHandle.PercentComplete * 100f):F1}%");
+            }
+            
+            elapsed += Time.unscaledDeltaTime;
+            if (elapsed > labelLoadTimeout)
+            {
+                Debug.LogError($"Label '{label}' load timeout after {labelLoadTimeout}s! Consider increasing labelLoadTimeout in AddressablesOperationManager.");
+                break;
+            }
+            
+            yield return null;
+        }
 
         bool success = loadHandle.Status == AsyncOperationStatus.Succeeded;
+        if (success) Log($"Loaded label '{label}' ({loadHandle.Result.Count} assets)");
+        else Debug.LogError($"Failed to load label '{label}': {loadHandle.OperationException}");
         
-        if (success)
-        {
-            loadedLabels[label] = loadHandle;
-            Log($"Successfully loaded label '{label}' ({loadHandle.Result.Count} assets in RAM)");
-        }
-        else
-        {
-            Debug.LogError($"Failed to load label '{label}': {loadHandle.OperationException}");
-        }
-        
-        // Mark as complete
         inProgressLabelLoads[label] = false;
         activeOperations.Remove($"Load: {label}");
-        
-        // Call the original callback
         onComplete?.Invoke(success);
         
-        // Call all queued callbacks
         if (pendingLabelLoadCallbacks.ContainsKey(label))
         {
-            Log($"[DEDUP] Calling {pendingLabelLoadCallbacks[label].Count} queued load callbacks for '{label}'");
+            Log($"[DEDUP] Calling {pendingLabelLoadCallbacks[label].Count} queued callbacks for '{label}'");
             foreach (var callback in pendingLabelLoadCallbacks[label])
-            {
                 callback?.Invoke(success);
-            }
             pendingLabelLoadCallbacks.Remove(label);
         }
     }
 
-    private IEnumerator LoadSceneAsync(string sceneName, System.Action<bool> onComplete)
+    private IEnumerator LoadLabelAsync<T>(string label, System.Action<IList<T>> onComplete) where T : UnityEngine.Object
     {
-        // Check if already loading - queue the callback
-        if (inProgressSceneLoads.ContainsKey(sceneName) && inProgressSceneLoads[sceneName])
+        string key = $"{label}+{typeof(T).Name}";
+        
+        if (inProgressTypedLabelLoads.ContainsKey(key) && inProgressTypedLabelLoads[key])
         {
-            Log($"[DEDUP] Scene '{sceneName}' load already in progress, queuing callback...");
-            if (!pendingSceneLoadCallbacks.ContainsKey(sceneName))
-            {
-                pendingSceneLoadCallbacks[sceneName] = new List<System.Action<bool>>();
-            }
-            pendingSceneLoadCallbacks[sceneName].Add(onComplete);
-            yield break;
+            Log($"[DEDUP] Typed label '{label}<{typeof(T).Name}>' already loading");
+            yield return new WaitUntil(() => !inProgressTypedLabelLoads.ContainsKey(key) || !inProgressTypedLabelLoads[key]);
         }
 
-        // Mark as in-progress
-        inProgressSceneLoads[sceneName] = true;
-        activeOperations.Add($"Scene: {sceneName}");
+        inProgressTypedLabelLoads[key] = true;
+        activeOperations.Add($"LoadTyped: {label}<{typeof(T).Name}>");
+        Log($"Loading typed label '{label}' as <{typeof(T).Name}>...");
         
-        Log($"Loading scene '{sceneName}'...");
+        var loadHandle = Addressables.LoadAssetsAsync<T>(label, null);
         
-        var sceneHandle = Addressables.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+        float elapsed = 0f;
+        float lastProgress = 0f;
         
-        while (!sceneHandle.IsDone)
+        while (!loadHandle.IsDone)
         {
+            if (loadHandle.PercentComplete > lastProgress + 0.1f)
+            {
+                lastProgress = loadHandle.PercentComplete;
+                Log($"Label<{typeof(T).Name}> '{label}' progress: {(loadHandle.PercentComplete * 100f):F1}%");
+            }
+            
+            elapsed += Time.unscaledDeltaTime;
+            if (elapsed > labelLoadTimeout)
+            {
+                Debug.LogError($"Label<{typeof(T).Name}> '{label}' load timeout after {labelLoadTimeout}s!");
+                break;
+            }
+            
             yield return null;
         }
 
-        bool success = sceneHandle.Status == AsyncOperationStatus.Succeeded;
-        
-        if (success)
-        {
-            Log($"Successfully loaded scene: {sceneName}");
-        }
-        else
-        {
-            Debug.LogError($"Failed to load scene '{sceneName}': {sceneHandle.OperationException}");
-        }
-        
-        // Mark as complete
-        inProgressSceneLoads[sceneName] = false;
-        activeOperations.Remove($"Scene: {sceneName}");
-        
-        // Call the original callback
-        onComplete?.Invoke(success);
-        
-        // Call all queued callbacks
-        if (pendingSceneLoadCallbacks.ContainsKey(sceneName))
-        {
-            Log($"[DEDUP] Calling {pendingSceneLoadCallbacks[sceneName].Count} queued scene load callbacks for '{sceneName}'");
-            foreach (var callback in pendingSceneLoadCallbacks[sceneName])
-            {
-                callback?.Invoke(success);
-            }
-            pendingSceneLoadCallbacks.Remove(sceneName);
-        }
-    }
-
-    private IEnumerator LoadLabelAsync<T>(string label, System.Action<IList<T>> onComplete) where T : Object
-    {
-        string key = $"{label}+{typeof(T).Name}"; // Unique key for typed loads
-        
-        // Check if already loading - queue the callback
-        if (inProgressTypedLabelLoads.ContainsKey(key) && inProgressTypedLabelLoads[key])
-        {
-            Log($"[DEDUP] Typed label '{label}<{typeof(T).Name}>' load already in progress, queuing callback...");
-            if (!pendingTypedLabelLoadCallbacks.ContainsKey(key))
-            {
-                pendingTypedLabelLoadCallbacks[key] = new List<System.Action<IList<T>>>();
-            }
-            ((List<System.Action<IList<T>>>)pendingTypedLabelLoadCallbacks[key]).Add(onComplete);
-            yield break;
-        }
-        
-        // Check if already loaded in memory
-        if (loadedTypedLabels.ContainsKey(key))
-        {
-            var cachedHandle = (AsyncOperationHandle<IList<T>>)loadedTypedLabels[key];
-            if (cachedHandle.IsValid() && cachedHandle.Status == AsyncOperationStatus.Succeeded)
-            {
-                Log($"Typed label '{label}<{typeof(T).Name}>' already loaded in memory ({cachedHandle.Result.Count} assets)");
-                onComplete?.Invoke(cachedHandle.Result);
-                yield break;
-            }
-        }
-
-        // Mark as in-progress
-        inProgressTypedLabelLoads[key] = true;
-        activeOperations.Add($"LoadTyped: {label}<{typeof(T).Name}>");
-
-        // Load into memory with specific type
-        Log($"Loading typed label '{label}' as <{typeof(T).Name}> into memory...");
-        
-        var loadHandle = Addressables.LoadAssetsAsync<T>(label, null);
-        yield return loadHandle;
-
         bool success = loadHandle.Status == AsyncOperationStatus.Succeeded;
+        if (success) Log($"Loaded typed label '{label}<{typeof(T).Name}>' ({loadHandle.Result.Count} assets)");
+        else Debug.LogError($"Failed to load typed label '{label}<{typeof(T).Name}>': {loadHandle.OperationException}");
         
-        if (success)
-        {
-            loadedTypedLabels[key] = loadHandle;
-            Log($"Successfully loaded typed label '{label}<{typeof(T).Name}>' ({loadHandle.Result.Count} assets in RAM)");
-        }
-        else
-        {
-            Debug.LogError($"Failed to load typed label '{label}<{typeof(T).Name}>': {loadHandle.OperationException}");
-        }
-        
-        // Mark as complete
         inProgressTypedLabelLoads[key] = false;
         activeOperations.Remove($"LoadTyped: {label}<{typeof(T).Name}>");
-        
-        // Call the original callback
         onComplete?.Invoke(success ? loadHandle.Result : null);
+    }
+    
+    private IEnumerator LoadLabelWithHandleAsync<T>(string label, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete) where T : UnityEngine.Object
+    {
+        string key = $"{label}+{typeof(T).Name}";
         
-        // Call all queued callbacks
-        if (pendingTypedLabelLoadCallbacks.ContainsKey(key))
+        if (inProgressTypedLabelLoads.ContainsKey(key) && inProgressTypedLabelLoads[key])
         {
-            var callbacks = (List<System.Action<IList<T>>>)pendingTypedLabelLoadCallbacks[key];
-            Log($"[DEDUP] Calling {callbacks.Count} queued typed load callbacks for '{label}<{typeof(T).Name}>'");
-            foreach (var callback in callbacks)
-            {
-                callback?.Invoke(success ? loadHandle.Result : null);
-            }
-            pendingTypedLabelLoadCallbacks.Remove(key);
+            Log($"[DEDUP] Typed label '{label}<{typeof(T).Name}>' already loading with handle");
+            yield return new WaitUntil(() => !inProgressTypedLabelLoads.ContainsKey(key) || !inProgressTypedLabelLoads[key]);
         }
+
+        inProgressTypedLabelLoads[key] = true;
+        activeOperations.Add($"LoadTypedWithHandle: {label}<{typeof(T).Name}>");
+        Log($"Loading typed label '{label}' as <{typeof(T).Name}> (returning handle)...");
+        
+        var loadHandle = Addressables.LoadAssetsAsync<T>(label, null);
+        
+        float elapsed = 0f;
+        float lastProgress = 0f;
+        
+        while (!loadHandle.IsDone)
+        {
+            if (loadHandle.PercentComplete > lastProgress + 0.1f)
+            {
+                lastProgress = loadHandle.PercentComplete;
+                Log($"Label<{typeof(T).Name}> '{label}' progress: {(loadHandle.PercentComplete * 100f):F1}%");
+            }
+            
+            elapsed += Time.unscaledDeltaTime;
+            if (elapsed > labelLoadTimeout)
+            {
+                Debug.LogError($"Label<{typeof(T).Name}> '{label}' load timeout after {labelLoadTimeout}s!");
+                break;
+            }
+            
+            yield return null;
+        }
+
+        bool success = loadHandle.Status == AsyncOperationStatus.Succeeded;
+        if (success) Log($"Loaded typed label '{label}<{typeof(T).Name}>' ({loadHandle.Result.Count} assets) - returning handle");
+        else Debug.LogError($"Failed to load typed label '{label}<{typeof(T).Name}>': {loadHandle.OperationException}");
+        
+        inProgressTypedLabelLoads[key] = false;
+        activeOperations.Remove($"LoadTypedWithHandle: {label}<{typeof(T).Name}>");
+        
+        // Return both handle and result
+        onComplete?.Invoke(loadHandle, success ? loadHandle.Result : null);
     }
 
-    private IEnumerator LoadAssetAsync<T>(string address, System.Action<T> onComplete) where T : Object
+    private IEnumerator LoadAssetAsync<T>(string address, System.Action<T> onComplete) where T : UnityEngine.Object
     {
-        string key = $"{address}+{typeof(T).Name}"; // Unique key for typed assets
+        string key = $"{address}+{typeof(T).Name}";
         
-        // Check if already loading - queue the callback
         if (inProgressAssetLoads.ContainsKey(key) && inProgressAssetLoads[key])
         {
-            Log($"[DEDUP] Asset '{address}<{typeof(T).Name}>' load already in progress, queuing callback...");
-            if (!pendingAssetLoadCallbacks.ContainsKey(key))
-            {
-                pendingAssetLoadCallbacks[key] = new List<System.Action<T>>();
-            }
-            ((List<System.Action<T>>)pendingAssetLoadCallbacks[key]).Add(onComplete);
-            yield break;
-        }
-        
-        // Check if already loaded in cache
-        if (loadedAssets.ContainsKey(key))
-        {
-            var cachedHandle = loadedAssets[key];
-            if (cachedHandle.IsValid() && cachedHandle.Status == AsyncOperationStatus.Succeeded)
-            {
-                Log($"Asset '{address}<{typeof(T).Name}>' already loaded in memory");
-                onComplete?.Invoke(cachedHandle.Result as T);
-                yield break;
-            }
+            Log($"[DEDUP] Asset '{address}<{typeof(T).Name}>' already loading");
+            yield return new WaitUntil(() => !inProgressAssetLoads.ContainsKey(key) || !inProgressAssetLoads[key]);
         }
 
-        // Mark as in-progress
         inProgressAssetLoads[key] = true;
         activeOperations.Add($"LoadAsset: {address}<{typeof(T).Name}>");
-
-        // Load asset
         Log($"Loading asset '{address}' as <{typeof(T).Name}>...");
         
         var loadHandle = Addressables.LoadAssetAsync<T>(address);
         yield return loadHandle;
 
         bool success = loadHandle.Status == AsyncOperationStatus.Succeeded;
+        if (success) Log($"Loaded asset '{address}<{typeof(T).Name}>'");
+        else Debug.LogError($"Failed to load asset '{address}<{typeof(T).Name}>': {loadHandle.OperationException}");
         
-        if (success)
-        {
-            loadedAssets[key] = loadHandle;
-            Log($"Successfully loaded asset '{address}<{typeof(T).Name}>'");
-        }
-        else
-        {
-            Debug.LogError($"Failed to load asset '{address}<{typeof(T).Name}>': {loadHandle.OperationException}");
-        }
-        
-        // Mark as complete
         inProgressAssetLoads[key] = false;
         activeOperations.Remove($"LoadAsset: {address}<{typeof(T).Name}>");
-        
-        // Call the original callback
         onComplete?.Invoke(success ? loadHandle.Result : default(T));
-        
-        // Call all queued callbacks
-        if (pendingAssetLoadCallbacks.ContainsKey(key))
+    }
+
+    private IEnumerator LoadSceneAsync(string sceneName, UnityEngine.SceneManagement.LoadSceneMode mode, System.Action<bool> onComplete)
+    {
+        if (inProgressSceneLoads.ContainsKey(sceneName) && inProgressSceneLoads[sceneName])
         {
-            var callbacks = (List<System.Action<T>>)pendingAssetLoadCallbacks[key];
-            Log($"[DEDUP] Calling {callbacks.Count} queued asset load callbacks for '{address}<{typeof(T).Name}>'");
-            foreach (var callback in callbacks)
-            {
-                callback?.Invoke(success ? loadHandle.Result : default(T));
-            }
-            pendingAssetLoadCallbacks.Remove(key);
+            Log($"[DEDUP] Scene '{sceneName}' already loading, queuing callback");
+            if (!pendingSceneLoadCallbacks.ContainsKey(sceneName))
+                pendingSceneLoadCallbacks[sceneName] = new List<System.Action<bool>>();
+            pendingSceneLoadCallbacks[sceneName].Add(onComplete);
+            yield break;
         }
+
+        inProgressSceneLoads[sceneName] = true;
+        activeOperations.Add($"Scene: {sceneName}");
+        Log($"Loading scene '{sceneName}' ({mode})...");
+        
+        var sceneHandle = Addressables.LoadSceneAsync(sceneName, mode);
+        activeSceneHandles[sceneName] = sceneHandle;
+        
+        float lastProgress = 0f;
+        float elapsed = 0f;
+        
+        while (!sceneHandle.IsDone)
+        {
+            if (sceneHandle.PercentComplete > lastProgress + 0.1f)
+            {
+                lastProgress = sceneHandle.PercentComplete;
+                Log($"Scene '{sceneName}' progress: {(sceneHandle.PercentComplete * 100f):F1}%");
+            }
+            
+            elapsed += Time.unscaledDeltaTime;
+            if (elapsed > sceneLoadTimeout)
+            {
+                Debug.LogError($"Scene '{sceneName}' load timeout after {sceneLoadTimeout}s!");
+                Debug.LogError($"Status: {sceneHandle.Status}, Progress: {sceneHandle.PercentComplete}");
+                if (sceneHandle.OperationException != null)
+                    Debug.LogError($"Exception: {sceneHandle.OperationException}");
+                break;
+            }
+            
+            yield return null;
+        }
+
+        bool success = sceneHandle.Status == AsyncOperationStatus.Succeeded;
+        if (success) Log($"Loaded scene '{sceneName}'");
+        else Debug.LogError($"Failed to load scene '{sceneName}': {sceneHandle.OperationException}");
+        
+        inProgressSceneLoads[sceneName] = false;
+        activeOperations.Remove($"Scene: {sceneName}");
+        // DON'T remove handle - keep it for unloading later
+        onComplete?.Invoke(success);
+        
+        if (pendingSceneLoadCallbacks.ContainsKey(sceneName))
+        {
+            Log($"[DEDUP] Calling {pendingSceneLoadCallbacks[sceneName].Count} queued scene callbacks for '{sceneName}'");
+            foreach (var callback in pendingSceneLoadCallbacks[sceneName])
+                callback?.Invoke(success);
+            pendingSceneLoadCallbacks.Remove(sceneName);
+        }
+    }
+    
+    private IEnumerator UnloadSceneAsync(string sceneName, System.Action<bool> onComplete)
+    {
+        if (!activeSceneHandles.ContainsKey(sceneName))
+        {
+            Debug.LogWarning($"Cannot unload scene '{sceneName}' - not tracked as loaded");
+            onComplete?.Invoke(false);
+            yield break;
+        }
+
+        Log($"Unloading scene '{sceneName}'...");
+        var sceneHandle = activeSceneHandles[sceneName];
+        
+        // Validate handle before attempting unload
+        if (!sceneHandle.IsValid())
+        {
+            Debug.LogWarning($"Scene handle for '{sceneName}' is invalid - may have been unloaded already");
+            activeSceneHandles.Remove(sceneName);
+            onComplete?.Invoke(true); // Consider this success since scene is already gone
+            yield break;
+        }
+        
+        activeSceneHandles.Remove(sceneName);
+        
+        var unloadHandle = Addressables.UnloadSceneAsync(sceneHandle);
+        
+        // Check if the unload operation handle is valid before waiting on it
+        if (!unloadHandle.IsValid())
+        {
+            Debug.LogWarning($"Unload handle for scene '{sceneName}' is invalid - scene may have been unloaded already");
+            onComplete?.Invoke(true); // Consider this success since scene is gone
+            yield break;
+        }
+        
+        yield return unloadHandle;
+        
+        // Check again if handle became invalid during the wait (race condition)
+        if (!unloadHandle.IsValid())
+        {
+            Debug.LogWarning($"Unload handle for scene '{sceneName}' became invalid during unload - scene may have been unloaded already");
+            onComplete?.Invoke(true); // Consider success since scene is gone
+            yield break;
+        }
+        
+        bool success = unloadHandle.Status == AsyncOperationStatus.Succeeded;
+        if (success) Log($"Unloaded scene '{sceneName}'");
+        else Debug.LogError($"Failed to unload scene '{sceneName}': {unloadHandle.OperationException}");
+        
+        onComplete?.Invoke(success);
     }
 
     private IEnumerator GetDownloadSizeAsync(string label, System.Action<long> onComplete)
@@ -460,23 +452,9 @@ public class AddressablesOperationManager : MonoBehaviour
         Addressables.Release(handle);
     }
 
-    #endregion
-
-    #region Utilities
-
     private void Log(string message)
     {
-        if (showDebugLogs)
-        {
-            Debug.Log($"[AddressablesOp] {message}");
-        }
-    }
-
-    private string FormatBytes(long bytes)
-    {
-        if (bytes < 1024) return $"{bytes} B";
-        if (bytes < 1024 * 1024) return $"{bytes / 1024f:F2} KB";
-        return $"{bytes / 1024f / 1024f:F2} MB";
+        if (showDebugLogs) Debug.Log($"[AddressablesOp] {message}");
     }
 
     #endregion

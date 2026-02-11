@@ -3,10 +3,6 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections.Generic;
 
-/// <summary>
-/// Manages loading prefabs and assets at runtime using Addressables
-/// Use this instead of Resources.Load or direct prefab references for WebGL optimization
-/// </summary>
 public class AddressablesAssetLoader : MonoBehaviour
 {
     private static AddressablesAssetLoader _instance;
@@ -24,9 +20,6 @@ public class AddressablesAssetLoader : MonoBehaviour
         }
     }
 
-    // Cache of loaded assets to avoid reloading
-    private Dictionary<string, AsyncOperationHandle> loadedAssets = new Dictionary<string, AsyncOperationHandle>();
-
     private void Awake()
     {
         if (_instance != null && _instance != this)
@@ -38,14 +31,8 @@ public class AddressablesAssetLoader : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    #region Load and Instantiate
+    #region Instantiate
 
-    /// <summary>
-    /// Load and instantiate a prefab by its Addressable address
-    /// </summary>
-    /// <param name="address">Addressable address/name of the prefab</param>
-    /// <param name="onComplete">Callback with instantiated GameObject</param>
-    /// <param name="parent">Optional parent transform</param>
     public void InstantiatePrefab(string address, System.Action<GameObject> onComplete, Transform parent = null)
     {
         StartCoroutine(InstantiatePrefabAsync(address, onComplete, parent));
@@ -57,9 +44,7 @@ public class AddressablesAssetLoader : MonoBehaviour
         yield return handle;
 
         if (handle.Status == AsyncOperationStatus.Succeeded)
-        {
             onComplete?.Invoke(handle.Result);
-        }
         else
         {
             Debug.LogError($"Failed to instantiate prefab: {address}. Error: {handle.OperationException}");
@@ -67,9 +52,6 @@ public class AddressablesAssetLoader : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Load and instantiate a prefab at a specific position and rotation
-    /// </summary>
     public void InstantiatePrefabAtPosition(string address, Vector3 position, Quaternion rotation, 
         System.Action<GameObject> onComplete, Transform parent = null)
     {
@@ -83,9 +65,7 @@ public class AddressablesAssetLoader : MonoBehaviour
         yield return handle;
 
         if (handle.Status == AsyncOperationStatus.Succeeded)
-        {
             onComplete?.Invoke(handle.Result);
-        }
         else
         {
             Debug.LogError($"Failed to instantiate prefab: {address}. Error: {handle.OperationException}");
@@ -95,12 +75,8 @@ public class AddressablesAssetLoader : MonoBehaviour
 
     #endregion
 
-    #region Load Assets (No Instantiation)
+    #region Load Assets
 
-    /// <summary>
-    /// Load an asset (prefab, scriptable object, material, etc.) without instantiating
-    /// Useful when you want to instantiate multiple times or access data
-    /// </summary>
     public void LoadAsset<T>(string address, System.Action<T> onComplete) where T : Object
     {
         StartCoroutine(LoadAssetAsync(address, onComplete));
@@ -108,7 +84,6 @@ public class AddressablesAssetLoader : MonoBehaviour
 
     private System.Collections.IEnumerator LoadAssetAsync<T>(string address, System.Action<T> onComplete) where T : Object
     {
-        // Delegate to AddressablesOperationManager for centralized tracking and deduplication
         bool callbackInvoked = false;
         T result = null;
         
@@ -118,28 +93,12 @@ public class AddressablesAssetLoader : MonoBehaviour
             callbackInvoked = true;
         });
         
-        // Wait for callback
         while (!callbackInvoked)
-        {
             yield return null;
-        }
-        
-        // Update local cache reference
-        if (result != null)
-        {
-            // Note: The manager handles the actual caching
-            if (!loadedAssets.ContainsKey(address))
-            {
-                loadedAssets[address] = default; // Placeholder for compatibility
-            }
-        }
         
         onComplete?.Invoke(result);
     }
 
-    /// <summary>
-    /// Load a prefab and instantiate it manually (gives you more control)
-    /// </summary>
     public void LoadPrefabThenInstantiate(string address, System.Action<GameObject> onComplete, Transform parent = null)
     {
         LoadAsset<GameObject>(address, (prefab) =>
@@ -150,19 +109,10 @@ public class AddressablesAssetLoader : MonoBehaviour
                 onComplete?.Invoke(instance);
             }
             else
-            {
                 onComplete?.Invoke(null);
-            }
         });
     }
 
-    #endregion
-
-    #region Load Multiple Assets
-
-    /// <summary>
-    /// Load multiple assets by label (e.g., all enemies, all powerups)
-    /// </summary>
     public void LoadAssetsByLabel<T>(string label, System.Action<IList<T>> onComplete) where T : Object
     {
         StartCoroutine(LoadAssetsByLabelAsync(label, onComplete));
@@ -170,13 +120,6 @@ public class AddressablesAssetLoader : MonoBehaviour
 
     private System.Collections.IEnumerator LoadAssetsByLabelAsync<T>(string label, System.Action<IList<T>> onComplete) where T : Object
     {
-        // Delegate to AddressablesOperationManager for centralized tracking and deduplication
-        // The manager handles:
-        // - Preventing duplicate concurrent loads
-        // - Type-specific loading (critical for Sprites)
-        // - Caching results
-        // - Queueing callbacks if already loading
-        
         bool callbackInvoked = false;
         IList<T> result = null;
         
@@ -186,111 +129,33 @@ public class AddressablesAssetLoader : MonoBehaviour
             callbackInvoked = true;
         });
         
-        // Wait for callback from manager
         while (!callbackInvoked)
-        {
             yield return null;
-        }
         
         onComplete?.Invoke(result);
     }
 
     #endregion
 
-    #region Preload Assets
+    #region Preload
 
-    /// <summary>
-    /// Preload an asset into memory without using it yet (for faster access later)
-    /// </summary>
     public void PreloadAsset<T>(string address) where T : Object
     {
-        if (!loadedAssets.ContainsKey(address))
-        {
-            StartCoroutine(PreloadAssetAsync<T>(address));
-        }
-    }
-
-    private System.Collections.IEnumerator PreloadAssetAsync<T>(string address) where T : Object
-    {
-        // Delegate to AddressablesOperationManager for centralized tracking
         AddressablesOperationManager.Instance.LoadAsset<T>(address, (asset) =>
         {
-            if (asset != null)
-            {
-                Debug.Log($"Preloaded asset: {address}");
-            }
-            else
-            {
-                Debug.LogError($"Failed to preload asset: {address}");
-            }
+            if (asset != null) Debug.Log($"Preloaded asset: {address}");
+            else Debug.LogError($"Failed to preload asset: {address}");
         });
-        
-        // Wait for load to complete
-        while (AddressablesOperationManager.Instance.IsLoading(address))
-        {
-            yield return null;
-        }
     }
 
-    /// <summary>
-    /// Preload multiple assets by label
-    /// </summary>
     public void PreloadAssetsByLabel(string label)
     {
         AddressablesOperationManager.Instance.LoadLabel(label, (success) =>
         {
-            if (success)
-            {
-                Debug.Log($"Preloaded assets with label: {label}");
-            }
-            else
-            {
-                Debug.LogError($"Failed to preload assets with label: {label}");
-            }
+            if (success) Debug.Log($"Preloaded label: {label}");
+            else Debug.LogError($"Failed to preload label: {label}");
         });
     }
 
     #endregion
-
-    #region Release/Unload
-
-    /// <summary>
-    /// Release a loaded asset from memory
-    /// </summary>
-    public void ReleaseAsset(string address)
-    {
-        if (loadedAssets.ContainsKey(address))
-        {
-            var handle = loadedAssets[address];
-            if (handle.IsValid())
-            {
-                Addressables.Release(handle);
-            }
-            loadedAssets.Remove(address);
-        }
-    }
-
-    /// <summary>
-    /// Release all loaded assets
-    /// Call this when transitioning between major sections (e.g., leaving a level)
-    /// </summary>
-    public void ReleaseAllAssets()
-    {
-        foreach (var kvp in loadedAssets)
-        {
-            if (kvp.Value.IsValid())
-            {
-                Addressables.Release(kvp.Value);
-            }
-        }
-        loadedAssets.Clear();
-        Debug.Log("Released all loaded assets");
-    }
-
-    #endregion
-
-    private void OnDestroy()
-    {
-        ReleaseAllAssets();
-    }
 }

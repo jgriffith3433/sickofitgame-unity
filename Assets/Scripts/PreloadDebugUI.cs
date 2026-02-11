@@ -22,9 +22,10 @@ public class PreloadDebugUI : MonoBehaviour
         "Video2"
     };
 
-    private StringBuilder displayText = new StringBuilder();
+    private StringBuilder displayText = new System.Text.StringBuilder(500);
+    private string cachedText = "";
     private GUIStyle guiStyle;
-    private float updateInterval = 0.5f;
+    private float updateInterval = 1.0f; // Update every 1 second instead of 0.5
     private float lastUpdateTime;
 
     private void Start()
@@ -67,6 +68,9 @@ public class PreloadDebugUI : MonoBehaviour
         displayText.AppendLine();
         displayText.AppendLine("Note: Check Console for detailed preload logs");
         displayText.AppendLine("Enable 'Show Debug Logs' on AddressablesOperationManager");
+        
+        // Cache the string to avoid ToString() allocations on every OnGUI
+        cachedText = displayText.ToString();
     }
 
     private void OnGUI()
@@ -79,6 +83,7 @@ public class PreloadDebugUI : MonoBehaviour
         // Set GUI to lowest depth so it doesn't block any UI interactions
         GUI.depth = int.MaxValue;
         
-        GUI.Label(new Rect(position.x, position.y, 400, 600), displayText.ToString(), guiStyle);
+        // Use cached string instead of calling ToString() every frame
+        GUI.Label(new Rect(position.x, position.y, 400, 600), cachedText, guiStyle);
     }
 }
