@@ -36,7 +36,7 @@ public class VideoManagerEditor : Editor
         SerializedProperty videoPlayerProperty = so.FindProperty("videoPlayer");
         
         // Scan for SpriteFramePlayer component in the scene
-        SpriteFramePlayer foundPlayer = FindObjectOfType<SpriteFramePlayer>();
+        SpriteFramePlayer foundPlayer = FindObjectOfType<SpriteFramePlayer>(true);
         
         if (foundPlayer != null)
         {

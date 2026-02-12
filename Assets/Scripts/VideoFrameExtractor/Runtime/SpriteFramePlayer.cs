@@ -25,12 +25,9 @@ public class SpriteFramePlayer : MonoBehaviour
     public bool playOnLoad = true; // Play automatically after frames are loaded
     public bool loop = true;
     
-    [Header("Level Auto-Play (Video System)")]
-    [Tooltip("If true, automatically loads the level after video finishes (non-looping only)")]
-    [SerializeField] private bool autoPlayLevelAfterVideo = false;
-    
-    [Tooltip("If true, returns to the level that triggered this video (uses PlayerPrefs 'ReturnToLevel')")]
-    [SerializeField] private bool returnToLevelAfterVideo = false;
+    [Header("Completion Callback")]
+    [Tooltip("Called when playback finishes (non-looping videos only)")]
+    public System.Action onPlaybackComplete;
     
     [Header("Audio Settings")]
     [Tooltip("Volume for audio playback (0-1)")]
@@ -80,7 +77,7 @@ public class SpriteFramePlayer : MonoBehaviour
         frameDuration = 1f / playbackFPS;
         
         // Setup AudioSource if audio is needed
-        hasAudio = !string.IsNullOrEmpty(spriteFramesData.audioLabel);
+        hasAudio = !string.IsNullOrEmpty(spriteFramesData.audioAddress);
         if (hasAudio)
         {
             audioSource = GetComponent<AudioSource>();
@@ -112,7 +109,7 @@ public class SpriteFramePlayer : MonoBehaviour
             return;
         }
         
-        Debug.Log($"Loading first chunk for {spriteFramesData.videoName}...");
+        // Loading first chunk
         LoadChunk(0);
     }
     
@@ -130,13 +127,13 @@ public class SpriteFramePlayer : MonoBehaviour
         
         if (loadedChunks.Contains(chunkIndex))
         {
-            Debug.Log($"Chunk {chunkIndex} already loaded");
+            // Chunk already loaded
             onComplete?.Invoke(true);
             return;
         }
         
         var chunk = spriteFramesData.chunks[chunkIndex];
-        Debug.Log($"Loading chunk {chunkIndex}: {chunk}");
+        // Loading chunk
         
         StartCoroutine(LoadChunkCoroutine(chunkIndex, chunk, onComplete));
     }
@@ -163,7 +160,7 @@ public class SpriteFramePlayer : MonoBehaviour
                     chunkHandles[chunkIndex] = handle;
                     loadedChunks.Add(chunkIndex);
                     
-                    Debug.Log($"Loaded chunk {chunkIndex}: {sortedSprites.Count} frames");
+                    // Chunk loaded
                     
                     // If this is the first chunk, set up for playback
                     if (chunkIndex == 0)
@@ -204,7 +201,7 @@ public class SpriteFramePlayer : MonoBehaviour
         }
         
         var chunk = spriteFramesData.chunks[chunkIndex];
-        Debug.Log($"Unloading chunk {chunkIndex}: {chunk.addressableLabel}");
+        // Unloading chunk
         
         // Release the addressables handle if we have it
         if (chunkHandles.ContainsKey(chunkIndex))
@@ -234,7 +231,7 @@ public class SpriteFramePlayer : MonoBehaviour
     
     private System.Collections.IEnumerator PreloadAllChunksCoroutine(System.Action<bool> onComplete)
     {
-        Debug.Log($"Preloading all {spriteFramesData.chunks.Count} chunks for caching...");
+        // Preloading chunks...
         
         // Load all chunks first
         for (int i = 0; i < spriteFramesData.chunks.Count; i++)
@@ -268,29 +265,29 @@ public class SpriteFramePlayer : MonoBehaviour
         }
         
         allChunksPreloaded = true;
-        Debug.Log($"All chunks preloaded and cached! Chunks 0 and 1 kept in RAM.");
+        // All chunks preloaded
         
         // Load audio if needed
-        if (hasAudio && !string.IsNullOrEmpty(spriteFramesData.audioLabel))
+        if (hasAudio && !string.IsNullOrEmpty(spriteFramesData.audioAddress))
         {
             bool audioLoadComplete = false;
             
-            AddressablesAssetLoader.Instance.LoadAssetsByLabel<AudioClip>(spriteFramesData.audioLabel, (clips) =>
+            AddressablesAssetLoader.Instance.LoadAsset<AudioClip>(spriteFramesData.audioAddress, (clip) =>
             {
-                if (clips != null && clips.Count > 0)
+                if (clip != null)
                 {
-                    audioClip = clips[0];
+                    audioClip = clip;
                     if (audioSource != null)
                     {
                         audioSource.clip = audioClip;
                     }
                     audioLoaded = true;
                     isAudioLoaded = true;
-                    Debug.Log($"Loaded audio clip: {audioClip.name}");
+                    // Audio clip loaded
                 }
                 else
                 {
-                    Debug.LogError($"Failed to load audio with label: {spriteFramesData.audioLabel}");
+                    Debug.LogError($"Failed to load audio with address: {spriteFramesData.audioAddress}");
                     audioLoaded = true; // Mark as loaded so it doesn't block
                 }
                 audioLoadComplete = true;
@@ -319,7 +316,7 @@ public class SpriteFramePlayer : MonoBehaviour
         if (assetsReady && !isLoaded)
         {
             isLoaded = true;
-            Debug.Log("SpriteFramePlayer: All assets loaded and ready!");
+            // All assets loaded
             
             // Auto-play if enabled
             if (playOnLoad)
@@ -386,13 +383,13 @@ public class SpriteFramePlayer : MonoBehaviour
             {
                 currentChunkIndex = targetChunkIndex;
                 frames = chunkFrames[targetChunkIndex];
-                Debug.Log($"Switched to chunk {targetChunkIndex}");
+                // Switched to chunk
                 
                 // Sliding window: Load next chunk if exists
                 int nextChunkIndex = targetChunkIndex + 1;
                 if (nextChunkIndex < spriteFramesData.chunks.Count && !loadedChunks.Contains(nextChunkIndex))
                 {
-                    Debug.Log($"Loading next chunk {nextChunkIndex} for sliding window");
+                    // Loading next chunk
                     LoadChunk(nextChunkIndex);
                 }
                 
@@ -417,7 +414,7 @@ public class SpriteFramePlayer : MonoBehaviour
                         currentChunkIndex = targetChunkIndex;
                         frames = chunkFrames[targetChunkIndex];
                         isPlaying = true;
-                        Debug.Log($"Emergency loaded chunk {targetChunkIndex}, resuming playback");
+                        // Emergency loaded chunk
                     }
                 });
             }
@@ -615,43 +612,23 @@ public class SpriteFramePlayer : MonoBehaviour
     /// </summary>
     private void OnVideoFinished()
     {
-        if (!hasFinished && autoPlayLevelAfterVideo)
+        if (!hasFinished)
         {
             hasFinished = true;
-            Debug.Log("SpriteFramePlayer: Video finished, loading level...");
-            ReturnToGame();
+            onPlaybackComplete?.Invoke();
         }
     }
     
     /// <summary>
-    /// Returns to the game level or main menu after video finishes
+    /// Manually trigger playback completion (can be called by a skip button)
     /// </summary>
-    private void ReturnToGame()
-    {
-        if (returnToLevelAfterVideo && PlayerPrefs.HasKey("ReturnToLevel"))
-        {
-            int levelToReturn = PlayerPrefs.GetInt("ReturnToLevel");
-            PlayerPrefs.DeleteKey("ReturnToLevel");
-            PlayerPrefs.Save();
-            SceneTransitionManager.Instance.LoadLevel(levelToReturn);
-        }
-        else
-        {
-            // Return to main menu or level selection
-            SceneTransitionManager.Instance.LoadMainMenu();
-        }
-    }
-    
-    /// <summary>
-    /// Manually trigger level load (can be called by a skip button)
-    /// </summary>
-    public void SkipToLevel()
+    public void SkipToEnd()
     {
         if (!hasFinished)
         {
             hasFinished = true;
             Stop();
-            ReturnToGame();
+            onPlaybackComplete?.Invoke();
         }
     }
     

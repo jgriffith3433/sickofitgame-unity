@@ -18,8 +18,8 @@ public class SpriteFramesData : ScriptableObject
     public bool loop = false;
     
     [Header("Audio")]
-    [Tooltip("Addressables label for audio clip (optional)")]
-    public string audioLabel = "";
+    [Tooltip("Addressables address for audio clip (optional)")]
+    public string audioAddress = "";
     
     [Header("Chunk Configuration")]
     [Tooltip("List of frame chunks - each chunk has its own addressables label")]

@@ -104,6 +104,11 @@ public class AddressablesOperationManager : MonoBehaviour
 
     #region Status & Info
 
+    public bool IsSceneLoadedThroughAddressables(string sceneName)
+    {
+        return activeSceneHandles.ContainsKey(sceneName);
+    }
+
     public bool IsLoading(string label)
     {
         return (inProgressLabelLoads.ContainsKey(label) && inProgressLabelLoads[label]) ||

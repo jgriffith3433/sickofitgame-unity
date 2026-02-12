@@ -11,7 +11,7 @@ public class GameSystemExamples : MonoBehaviour
     public void OnPlayerWins()
     {
         // This is the main method you'll use in your levels
-        LevelManager levelManager = FindObjectOfType<LevelManager>();
+        LevelManager levelManager = FindObjectOfType<LevelManager>(true);
         if (levelManager != null)
         {
             levelManager.CompleteLevel();

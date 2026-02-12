@@ -10,6 +10,12 @@ public class LevelManager : MonoBehaviour
 {
     [Header("Level Settings")]
     [SerializeField] private int levelNumber = 1;
+    
+    [Header("Death Scene Preloading")]
+    [Tooltip("Name of the death scene to preload (e.g., 'Death1')")]
+    [SerializeField] private string deathSceneName = "Death1";
+    [Tooltip("Whether to preload the death scene during gameplay")]
+    [SerializeField] private bool preloadDeathScene = true;
 
     [Header("Loading System")]
     [Tooltip("Background sprite players that need to finish loading")]
@@ -67,15 +73,16 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
         
         int nextVideo = levelNumber + 1;
-        Debug.Log($"[LevelManager] Preloading Video{nextVideo} in background...");
         
-        AddressablesSceneLoader.Instance.PreloadVideo(nextVideo, (success) =>
+        AddressablesSceneLoader.Instance.PreloadVideo(nextVideo, null);
+        
+        // Also preload death scene if enabled
+        if (preloadDeathScene && !string.IsNullOrEmpty(deathSceneName))
         {
-            if (success)
-                Debug.Log($"[LevelManager] Video{nextVideo} preloaded - ready for instant transition!");
-            else
-                Debug.LogWarning($"[LevelManager] Failed to preload Video{nextVideo} (might not exist)");
-        });
+            yield return new WaitForSeconds(1f); // Stagger preloads slightly
+            
+            AddressablesSceneLoader.Instance.PreloadScene(deathSceneName, null);
+        }
     }
 
     /// <summary>
@@ -83,8 +90,6 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void CompleteLevel()
     {
-        Debug.Log($"Level {levelNumber} completed!");
-        
         // Mark level as complete
         GameProgressManager.Instance.SetLevelCompleted(levelNumber);
         
@@ -103,8 +108,6 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void CompleteLevelAndReturnToMainMenu()
     {
-        Debug.Log($"Level {levelNumber} completed! Returning to main menu...");
-        
         // Mark level as complete
         GameProgressManager.Instance.SetLevelCompleted(levelNumber);
         
@@ -156,8 +159,25 @@ public class LevelManager : MonoBehaviour
 
     public void RestartLevel()
     {
+        // Go through death scene instead of direct reload
+        
+        // Store which scene to reload after death animation
+        UnityEngine.SceneManagement.Scene currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+        PlayerPrefs.SetString("DeathSceneToReload", currentScene.name);
+        PlayerPrefs.Save();
+        
         ShowSceneTransitionUI();
-        SceneTransitionManager.Instance.LoadLevel(levelNumber);
+        
+        // Load death scene (or directly load the level if no death scene configured)
+        if (!string.IsNullOrEmpty(deathSceneName))
+        {
+            SceneTransitionManager.Instance.LoadDeathScene(deathSceneName);
+        }
+        else
+        {
+            Debug.LogWarning("[LevelManager] No death scene configured, loading level directly");
+            SceneTransitionManager.Instance.LoadLevel(levelNumber);
+        }
     }
 
 
@@ -175,8 +195,6 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private IEnumerator WaitForAssetsToLoad()
     {
-        Debug.Log("LevelManager: Waiting for assets to load...");
-        
         // Wait until all assets are loaded
         while (!AreAllAssetsLoaded())
         {
@@ -185,7 +203,6 @@ public class LevelManager : MonoBehaviour
         
         allAssetsLoaded = true;
         isLoading = false;
-        Debug.Log("LevelManager: All assets loaded!");
         
         // Deactivate loading indicators
         DeactivateGameObjects();
@@ -232,7 +249,6 @@ public class LevelManager : MonoBehaviour
                 if (obj != null)
                 {
                     obj.SetActive(true);
-                    Debug.Log($"Activated: {obj.name}");
                 }
             }
         }
@@ -250,7 +266,6 @@ public class LevelManager : MonoBehaviour
                 if (obj != null)
                 {
                     obj.SetActive(false);
-                    Debug.Log($"Deactivated: {obj.name}");
                 }
             }
         }
@@ -259,10 +274,8 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Show loading UI when transitioning to another scene
     /// </summary>
-    private void ShowSceneTransitionUI()
+    public void ShowSceneTransitionUI()
     {
-        Debug.Log("LevelManager: Showing scene transition loading UI");
-        
         // Activate loading indicators
         if (objectsToActivateOnSceneTransition != null)
         {
@@ -271,7 +284,6 @@ public class LevelManager : MonoBehaviour
                 if (obj != null)
                 {
                     obj.SetActive(true);
-                    Debug.Log($"Activated for transition: {obj.name}");
                 }
             }
         }
@@ -284,7 +296,6 @@ public class LevelManager : MonoBehaviour
                 if (obj != null)
                 {
                     obj.SetActive(false);
-                    Debug.Log($"Deactivated for transition: {obj.name}");
                 }
             }
         }

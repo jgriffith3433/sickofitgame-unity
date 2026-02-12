@@ -58,6 +58,13 @@ public class MainMenuPreloader : MonoBehaviour
         if (!PlayerPrefs.HasKey("GameInitialized"))
             return false;
         
+        // Check if player has beaten the game (no more levels to play)
+        if (GameProgressManager.Instance.HasBeatenGame())
+        {
+            Debug.Log("[MainMenu] Player has beaten all levels - Continue button hidden");
+            return false;
+        }
+        
         // Check if player has reached beyond level 1
         int highestLevel = GameProgressManager.Instance.GetHighestLevelReached();
         if (highestLevel > 1)

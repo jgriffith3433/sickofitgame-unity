@@ -88,7 +88,7 @@ public class AspectRatioController : MonoBehaviour
             
             cam.rect = new Rect(viewportX, 0f, viewportWidth, 1f);
             
-            Debug.Log($"AspectRatioController: Pillarboxing applied. Screen: {screenAspect:F2}, Target: {targetAspect:F2}");
+            // Pillarboxing applied
         }
         else if (screenAspect < targetAspect)
         {
@@ -98,14 +98,14 @@ public class AspectRatioController : MonoBehaviour
             
             cam.rect = new Rect(0f, viewportY, 1f, viewportHeight);
             
-            Debug.Log($"AspectRatioController: Letterboxing applied. Screen: {screenAspect:F2}, Target: {targetAspect:F2}");
+            // Letterboxing applied
         }
         else
         {
             // Perfect match
             cam.rect = new Rect(0f, 0f, 1f, 1f);
             
-            Debug.Log($"AspectRatioController: Perfect aspect ratio match!");
+            // Perfect aspect ratio match
         }
     }
 

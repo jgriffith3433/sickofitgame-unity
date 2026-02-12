@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 /// <summary>
 /// Handles scene loading and transitions
@@ -49,8 +50,6 @@ public class SceneTransitionManager : MonoBehaviour
     public void LoadLevel(int levelNumber)
     {
         string sceneName = $"Level{levelNumber}";
-        Debug.Log($"[SceneTransitionManager] LoadLevel({levelNumber}) called. SceneName: {sceneName}");
-        Debug.Log($"[SceneTransitionManager] useAddressables: {useAddressables}");
         
         // Set current scene for memory management
         if (useAddressables)
@@ -60,16 +59,12 @@ public class SceneTransitionManager : MonoBehaviour
         
         if (useAddressables)
         {
-            Debug.Log($"[SceneTransitionManager] Using Addressables to load level {levelNumber}");
             AddressablesSceneLoader.Instance.LoadScene(sceneName);
         }
         else
         {
-            Debug.Log($"[SceneTransitionManager] Using SceneManager to load level {levelNumber}");
             SceneManager.LoadScene(sceneName);
         }
-        
-        Debug.Log($"[SceneTransitionManager] LoadLevel({levelNumber}) completed (load initiated)");
     }
 
     public void LoadLevelSelection()
@@ -87,8 +82,6 @@ public class SceneTransitionManager : MonoBehaviour
     public void LoadVideo(int videoNumber)
     {
         string sceneName = $"Video{videoNumber}";
-        Debug.Log($"[MOBILE DEBUG] SceneTransitionManager.LoadVideo({videoNumber})");
-        Debug.Log($"[MOBILE DEBUG] Scene name: {sceneName}, UseAddressables: {useAddressables}");
         
         // Set current scene for memory management
         if (useAddressables)
@@ -98,13 +91,29 @@ public class SceneTransitionManager : MonoBehaviour
         
         if (useAddressables)
         {
-            Debug.Log($"[MOBILE DEBUG] Calling AddressablesSceneLoader.LoadScene({sceneName})");
             AddressablesSceneLoader.Instance.LoadScene(sceneName);
         }
         else
         {
-            Debug.Log($"[MOBILE DEBUG] Calling SceneManager.LoadScene({sceneName})");
             SceneManager.LoadScene(sceneName);
+        }
+    }
+    
+    public void LoadDeathScene(string deathSceneName)
+    {
+        // Set current scene for memory management
+        if (useAddressables)
+        {
+            AddressablesOperationManager.Instance.SetCurrentScene(deathSceneName);
+        }
+        
+        if (useAddressables)
+        {
+            AddressablesSceneLoader.Instance.LoadScene(deathSceneName);
+        }
+        else
+        {
+            SceneManager.LoadScene(deathSceneName);
         }
     }
 
@@ -113,6 +122,9 @@ public class SceneTransitionManager : MonoBehaviour
         int currentLevel = GameProgressManager.Instance.GetCurrentLevel();
         LoadLevel(currentLevel);
     }
+    
+    // Reload methods removed - use Death scene flow instead
+    // Call LevelManager.RestartLevel() or trigger player death to reload a level
 
     /// <summary>
     /// Preload the next level's assets during gameplay (only works with Addressables)
@@ -130,6 +142,22 @@ public class SceneTransitionManager : MonoBehaviour
 
     public void QuitGame()
     {
+        StartCoroutine(QuitGameCoroutine());
+    }
+
+    private IEnumerator QuitGameCoroutine()
+    {
+        // Exit fullscreen before quitting
+        Screen.fullScreen = false;
+        
+        // Wait 2 seconds for fullscreen transition
+        yield return new WaitForSeconds(2f);
+        
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // Close browser window/tab for WebGL builds
+        Application.ExternalEval("window.close();");
+#endif
+        
         Application.Quit();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

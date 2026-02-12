@@ -102,11 +102,11 @@ namespace MobileControllerFramework
             
             if (isLoaded)
             {
-                Debug.Log($"Music already loaded for label: {musicLabel}");
+                // Music already loaded
                 return;
             }
             
-            Debug.Log($"Loading music with label: {musicLabel}");
+            // Loading music
             
             AddressablesAssetLoader.Instance.LoadAssetsByLabel<AudioClip>(musicLabel, (clips) =>
             {
@@ -119,7 +119,7 @@ namespace MobileControllerFramework
                     loadedClips.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
                     
                     isLoaded = true;
-                    Debug.Log($"Loaded {loadedClips.Count} music clips for: {musicLabel}");
+                    // Music loaded
                     
                     // Auto-play if enabled
                     if (autoPlayOnStart)
@@ -194,7 +194,7 @@ namespace MobileControllerFramework
             audioSource.time = 0f;
             audioSource.Play();
 
-            Debug.Log($"MusicCycler: Now playing '{clip.name}' ({index + 1}/{loadedClips.Count})");
+            // Now playing
         }
 
         /// <summary>

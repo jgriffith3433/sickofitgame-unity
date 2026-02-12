@@ -44,6 +44,24 @@ public class AddressablesSceneLoader : MonoBehaviour
         _instance = this;
         DontDestroyOnLoad(gameObject);
     }
+    
+    private void Start()
+    {
+        // Initialize currentGameplayScene if empty (for editor testing)
+        if (string.IsNullOrEmpty(currentGameplayScene))
+        {
+            Scene activeScene = SceneManager.GetActiveScene();
+            // Only set for gameplay scenes, not base menu scenes
+            if (activeScene.isLoaded && !System.Array.Exists(BASE_SCENES, s => s == activeScene.name))
+            {
+                currentGameplayScene = activeScene.name;
+                if (!loadedScenes.Contains(activeScene.name))
+                {
+                    loadedScenes.Add(activeScene.name);
+                }
+            }
+        }
+    }
 
     /// <summary>
     /// Load and activate a scene, unloading the previous gameplay scene
@@ -53,7 +71,6 @@ public class AddressablesSceneLoader : MonoBehaviour
         // If scene is preloading, wait for it to finish then activate
         if (preloadingScenes.Contains(sceneName))
         {
-            Debug.Log($"[AddressablesSceneLoader] Scene '{sceneName}' is preloading, will activate when ready");
             StartCoroutine(WaitForPreloadThenActivate(sceneName, onComplete));
             return;
         }
@@ -67,6 +84,9 @@ public class AddressablesSceneLoader : MonoBehaviour
         StartCoroutine(LoadSceneAsync(sceneName, true, onComplete));
     }
     
+    // REMOVED: ReloadCurrentScene() - Use Death scene flow instead
+    // Trigger player death or call LevelManager.RestartLevel() to reload a level
+    
     /// <summary>
     /// Preload a scene additively in the background without activating it
     /// </summary>
@@ -74,7 +94,7 @@ public class AddressablesSceneLoader : MonoBehaviour
     {
         if (preloadingScenes.Contains(sceneName) || loadedScenes.Contains(sceneName))
         {
-            Debug.Log($"Scene '{sceneName}' already loaded or preloading");
+            // Scene already loaded
             onComplete?.Invoke(true);
             return;
         }
@@ -121,7 +141,6 @@ public class AddressablesSceneLoader : MonoBehaviour
                     shouldHideLoadingScreen = true;
                 }
                 
-                Debug.Log($"[AddressablesSceneLoader] Loading scene '{sceneName}' (not preloaded)");
                 bool loadCompleted = false;
                 bool loadSuccess = false;
                 float currentProgress = 0f;
@@ -156,7 +175,6 @@ public class AddressablesSceneLoader : MonoBehaviour
             else
             {
                 // Scene was preloaded - activate immediately (no loading UI needed)
-                Debug.Log($"[AddressablesSceneLoader] Scene '{sceneName}' was preloaded, activating immediately");
             }
 
             // Activate the scene
@@ -164,7 +182,6 @@ public class AddressablesSceneLoader : MonoBehaviour
             if (scene.isLoaded)
             {
                 SceneManager.SetActiveScene(scene);
-                Debug.Log($"[AddressablesSceneLoader] Activated scene '{sceneName}'");
                 
                 // Show the scene's content
                 ActivateSceneContent(scene);
@@ -176,41 +193,13 @@ public class AddressablesSceneLoader : MonoBehaviour
                 Scene baseScene = SceneManager.GetSceneByName(baseSceneName);
                 if (baseScene.isLoaded && baseScene.name != sceneName)
                 {
-                    Debug.Log($"[AddressablesSceneLoader] Unloading base scene '{baseSceneName}'");
                     SceneManager.UnloadSceneAsync(baseScene);
                 }
             }
             
-            // Clean up orphaned preloaded scenes (scenes preloaded by menu but not used)
-            List<string> scenesToUnload = new List<string>();
-            foreach (string loadedScene in loadedScenes)
-            {
-                if (loadedScene != sceneName && loadedScene != currentGameplayScene)
-                {
-                    // This is an orphaned preload - unload it
-                    scenesToUnload.Add(loadedScene);
-                }
-            }
-            
-            foreach (string orphanedScene in scenesToUnload)
-            {
-                Debug.Log($"[AddressablesSceneLoader] Unloading orphaned preloaded scene '{orphanedScene}'");
-                // Don't remove from loadedScenes here - UnloadSceneAsync will handle it after unload completes
-                
-                Scene orphanScene = SceneManager.GetSceneByName(orphanedScene);
-                if (orphanScene.isLoaded)
-                {
-                    DeactivateSceneContent(orphanScene);
-                    // Start cleanup in background without blocking - don't yield
-                    StartCoroutine(UnloadSceneAsync(orphanedScene));
-                }
-            }
-            
-            // Unload previous gameplay scene if it exists
+            // Simple rule: Unload the previous scene (whatever we came from)
             if (!string.IsNullOrEmpty(currentGameplayScene) && currentGameplayScene != sceneName)
             {
-                Debug.Log($"[AddressablesSceneLoader] Unloading previous scene '{currentGameplayScene}'");
-                
                 // Hide previous scene's content before unloading
                 Scene previousScene = SceneManager.GetSceneByName(currentGameplayScene);
                 if (previousScene.isLoaded)
@@ -218,11 +207,13 @@ public class AddressablesSceneLoader : MonoBehaviour
                     DeactivateSceneContent(previousScene);
                 }
                 
-                // Start unload in background without blocking - don't yield
+                // Unload in background
                 StartCoroutine(UnloadSceneAsync(currentGameplayScene));
             }
             
+            // Update current scene (Video, Death, and Level scenes all become "current")
             currentGameplayScene = sceneName;
+            
             AddressablesOperationManager.Instance.SetCurrentScene(sceneName);
             AddressablesOperationManager.Instance.CompleteSceneTransition();
 
@@ -244,8 +235,6 @@ public class AddressablesSceneLoader : MonoBehaviour
             yield return null;
         }
         
-        Debug.Log($"[AddressablesSceneLoader] Preload complete for '{sceneName}', activating now");
-        
         // Now activate the preloaded scene
         StartCoroutine(LoadSceneAsync(sceneName, false, onComplete));
     }
@@ -254,20 +243,17 @@ public class AddressablesSceneLoader : MonoBehaviour
     {
         if (loadedScenes.Contains(sceneName))
         {
-            Debug.Log($"[AddressablesSceneLoader] Scene '{sceneName}' already preloaded");
             onComplete?.Invoke(true);
             yield break;
         }
         
         if (preloadingScenes.Contains(sceneName))
         {
-            Debug.Log($"[AddressablesSceneLoader] Scene '{sceneName}' already preloading");
             onComplete?.Invoke(true);
             yield break;
         }
 
         preloadingScenes.Add(sceneName);
-        Debug.Log($"[AddressablesSceneLoader] Preloading scene '{sceneName}' in background...");
         
         bool loadCompleted = false;
         bool loadSuccess = false;
@@ -286,7 +272,6 @@ public class AddressablesSceneLoader : MonoBehaviour
         if (loadSuccess)
         {
             loadedScenes.Add(sceneName);
-            Debug.Log($"[AddressablesSceneLoader] Scene '{sceneName}' preloaded successfully");
         }
         else
         {
@@ -304,17 +289,32 @@ public class AddressablesSceneLoader : MonoBehaviour
             yield break;
         }
 
-        bool unloadCompleted = false;
-        AddressablesOperationManager.Instance.UnloadScene(sceneName, (success) =>
-        {
-            unloadCompleted = true;
-        });
+        // Check if scene was loaded through Addressables or directly (editor testing)
+        bool isAddressablesLoaded = AddressablesOperationManager.Instance.IsSceneLoadedThroughAddressables(sceneName);
         
-        while (!unloadCompleted)
-            yield return null;
+        if (isAddressablesLoaded)
+        {
+            // Use Addressables to unload
+            bool unloadCompleted = false;
+            AddressablesOperationManager.Instance.UnloadScene(sceneName, (success) =>
+            {
+                unloadCompleted = true;
+            });
+            
+            while (!unloadCompleted)
+                yield return null;
+        }
+        else
+        {
+            // Scene was loaded directly (e.g., in editor) - use Unity's SceneManager
+            Scene scene = SceneManager.GetSceneByName(sceneName);
+            if (scene.isLoaded)
+            {
+                yield return SceneManager.UnloadSceneAsync(scene);
+            }
+        }
 
         loadedScenes.Remove(sceneName);
-        Debug.Log($"[AddressablesSceneLoader] Unloaded scene '{sceneName}'");
     }
 
     public void CacheSceneAssets(string sceneName)

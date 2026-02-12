@@ -21,9 +21,19 @@ public class SceneContentController : MonoBehaviour
 
     private void Awake()
     {
-        // Start with content hidden (scene might be preloaded before being shown)
+        // Always start inactive (scene might be preloaded before being shown)
+        isActive = false;
         HideContent();
         ShowLoadingIndicators();
+    }
+
+    private void Start()
+    {
+        // If this is the active scene (e.g., opened directly in editor), activate immediately
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene() == gameObject.scene)
+        {
+            ActivateScene();
+        }
     }
 
     /// <summary>
@@ -31,13 +41,16 @@ public class SceneContentController : MonoBehaviour
     /// </summary>
     public void ActivateScene()
     {
-        if (isActive) return;
+        
+        if (isActive) 
+        {
+            Debug.LogWarning($"[SceneContent] Already active, skipping");
+            return;
+        }
         
         isActive = true;
         ShowContent();
         HideLoadingIndicators();
-        
-        Debug.Log($"[SceneContent] Activated scene: {gameObject.scene.name}");
     }
 
     /// <summary>
@@ -50,16 +63,27 @@ public class SceneContentController : MonoBehaviour
         isActive = false;
         HideContent();
         ShowLoadingIndicators();
-        
-        Debug.Log($"[SceneContent] Deactivated scene: {gameObject.scene.name}");
     }
 
     private void ShowContent()
     {
-        foreach (var root in contentRoots)
+        if (contentRoots != null)
         {
-            if (root != null)
-                root.SetActive(true);
+            foreach (var root in contentRoots)
+            {
+                if (root != null)
+                {
+                    root.SetActive(true);
+                }
+                else
+                {
+                    Debug.LogWarning("[SceneContent] Found null content root in list");
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[SceneContent] contentRoots list is null!");
         }
     }
 

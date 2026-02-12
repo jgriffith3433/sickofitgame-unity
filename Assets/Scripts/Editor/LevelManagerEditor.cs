@@ -62,7 +62,7 @@ public class LevelManagerEditor : Editor
         }
         
         // Scan for MusicCycler component in the scene
-        MusicCycler foundMusicCycler = FindObjectOfType<MusicCycler>();
+        MusicCycler foundMusicCycler = FindObjectOfType<MusicCycler>(true);
         if (foundMusicCycler != null)
         {
             musicCyclerProperty.objectReferenceValue = foundMusicCycler;

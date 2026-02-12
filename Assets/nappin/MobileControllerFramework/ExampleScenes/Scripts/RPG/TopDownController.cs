@@ -140,7 +140,7 @@ namespace MobileControllerFramework
                 {
                     cachedProjectilePrefab = prefab;
                     isProjectileReady = true;
-                    Debug.Log($"Projectile prefab preloaded: {projectileAddress}");
+                    // Projectile prefab preloaded
                 }
                 else
                 {

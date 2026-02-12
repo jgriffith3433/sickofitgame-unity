@@ -59,8 +59,8 @@ public class VideoSelectionManager : MonoBehaviour
 
     private void OnVideoClicked(int videoNumber)
     {
-        // Don't set returnToLevel flag when watching from gallery
-        PlayerPrefs.DeleteKey("ReturnToLevel");
+        // When watching from gallery, return to main menu after video completes
+        PlayerPrefs.SetInt("ReturnToLevel", -1);
         PlayerPrefs.Save();
         
         if (sceneLoadingManager != null)

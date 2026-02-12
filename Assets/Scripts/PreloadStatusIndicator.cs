@@ -97,7 +97,7 @@ public class PreloadStatusIndicator : MonoBehaviour
             indicatorPanel.SetActive(false);
         }
         
-        Debug.Log("[PreloadStatusIndicator] Initialized");
+        // Initialized
         
         // Cache platform limit string (never changes)
         cachedPlatformLimit = GetPlatformMemoryLimit();
@@ -111,7 +111,7 @@ public class PreloadStatusIndicator : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.O))
         {
             ToggleVisibility();
-            Debug.Log($"[PreloadStatusIndicator] Toggled visibility: {showIndicator}");
+            // Toggled visibility
         }
         
         // Update at intervals to avoid performance issues

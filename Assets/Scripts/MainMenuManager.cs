@@ -58,6 +58,18 @@ public class MainMenuManager : MonoBehaviour
         if (continueButton != null)
         {
             int currentLevel = GameProgressManager.Instance.GetCurrentLevel();
+            int totalLevels = GameProgressManager.Instance.GetTotalLevels();
+            
+            // Hide continue button if player has beaten the game
+            if (currentLevel > totalLevels)
+            {
+                continueButton.gameObject.SetActive(false);
+                Debug.Log("[MainMenu] Player has beaten all levels - Continue button hidden");
+                return;
+            }
+            
+            // Show button and update text
+            continueButton.gameObject.SetActive(true);
             
             // Update button text if available
             if (continueButtonText != null)

@@ -5,6 +5,8 @@ using UnityEngine;
 /// </summary>
 public class GameProgressManager : MonoBehaviour
 {
+    [Header("Game Configuration")]
+    [SerializeField] private int totalLevels = 4; // Total number of levels in the game
     private static GameProgressManager _instance;
     public static GameProgressManager Instance
     {
@@ -91,6 +93,17 @@ public class GameProgressManager : MonoBehaviour
         // The current level is the highest level that hasn't been completed yet
         int highestReached = GetHighestLevelReached();
         return highestReached;
+    }
+
+    public int GetTotalLevels()
+    {
+        return totalLevels;
+    }
+
+    public bool HasBeatenGame()
+    {
+        // Player has beaten the game if their current level exceeds total levels
+        return GetCurrentLevel() > totalLevels;
     }
 
     // Reset Progress (useful for testing)

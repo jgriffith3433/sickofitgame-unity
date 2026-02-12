@@ -32,9 +32,10 @@ public class VideoManager : MonoBehaviour
 
     private void Awake()
     {
-        // Start in loading state if we have a video player to wait for
+        // Subscribe to video completion callback
         if (videoPlayer != null)
         {
+            videoPlayer.onPlaybackComplete += OnVideoComplete;
             isLoading = true;
             StartCoroutine(WaitForVideoToLoad());
         }
@@ -44,14 +45,50 @@ public class VideoManager : MonoBehaviour
             ActivateGameObjects();
         }
     }
+    
+    private void OnDestroy()
+    {
+        // Unsubscribe from callback
+        if (videoPlayer != null)
+        {
+            videoPlayer.onPlaybackComplete -= OnVideoComplete;
+        }
+    }
+    
+    /// <summary>
+    /// Called when video playback completes
+    /// </summary>
+    private void OnVideoComplete()
+    {
+        // Check if we should return to a specific level (set by main menu or video selection)
+        if (PlayerPrefs.HasKey("ReturnToLevel"))
+        {
+            int levelToLoad = PlayerPrefs.GetInt("ReturnToLevel");
+            PlayerPrefs.DeleteKey("ReturnToLevel");
+            PlayerPrefs.Save();
+            
+            // Special case: -1 means return to main menu (from video gallery)
+            if (levelToLoad == -1)
+            {
+                SceneTransitionManager.Instance.LoadMainMenu();
+            }
+            else
+            {
+                SceneTransitionManager.Instance.LoadLevel(levelToLoad);
+            }
+        }
+        else
+        {
+            // Default behavior: Load the level matching this video number
+            SceneTransitionManager.Instance.LoadLevel(videoNumber);
+        }
+    }
 
     /// <summary>
     /// Wait for video assets to finish loading
     /// </summary>
     private IEnumerator WaitForVideoToLoad()
     {
-        Debug.Log("VideoManager: Waiting for video to load...");
-        
         // Wait until video is loaded
         while (videoPlayer != null && !videoPlayer.IsLoaded)
         {
@@ -60,7 +97,6 @@ public class VideoManager : MonoBehaviour
         
         videoLoaded = true;
         isLoading = false;
-        Debug.Log("VideoManager: Video loaded!");
         
         // Deactivate loading indicators
         DeactivateGameObjects();
@@ -72,7 +108,6 @@ public class VideoManager : MonoBehaviour
         if (videoPlayer != null)
         {
             videoPlayer.Play();
-            Debug.Log("VideoManager: Started video playback");
             
             // Preload next content while video is playing
             if (preloadDuringPlayback)

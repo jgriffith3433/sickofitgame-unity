@@ -25,14 +25,14 @@ public class LevelPreloader : MonoBehaviour
 
     private void StartPreloading()
     {
-        Debug.Log($"[{gameObject.scene.name}] Preloading {labelsToPreload.Count} labels...");
+        // Preloading labels
         
         foreach (string label in labelsToPreload)
         {
             PreloadManager.Instance.PreloadLabel(label, (success) => {
                 if (success)
                 {
-                    Debug.Log($"[{gameObject.scene.name}] Successfully preloaded: {label}");
+                    // Successfully preloaded
                 }
             });
         }

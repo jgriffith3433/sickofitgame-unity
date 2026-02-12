@@ -64,7 +64,7 @@ public class PauseMenu : MonoBehaviour
     private void Restart()
     {
         Time.timeScale = 1f;
-        LevelManager levelManager = FindObjectOfType<LevelManager>();
+        LevelManager levelManager = FindObjectOfType<LevelManager>(true);
         if (levelManager != null)
             levelManager.RestartLevel();
     }
