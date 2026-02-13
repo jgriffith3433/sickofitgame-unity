@@ -47,16 +47,16 @@ namespace MobileControllerFramework
             
             if (target == null)
             {
-                // Try to find the TopDownController automatically
-                TopDownController controller = FindFirstObjectByType<TopDownController>();
-                if (controller != null)
+                // Try to find the player by tag
+                GameObject player = GameObject.FindGameObjectWithTag("Player");
+                if (player != null)
                 {
-                    target = controller.transform;
+                    target = player.transform;
                     Debug.Log("CameraFollow: Automatically found target - " + target.name);
                 }
                 else
                 {
-                    Debug.LogWarning("CameraFollow: No target assigned and couldn't find TopDownController!");
+                    Debug.LogWarning("CameraFollow: No target assigned and couldn't find GameObject tagged 'Player'!");
                 }
             }
         }
