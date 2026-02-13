@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using TMPro;
 using MobileControllerFramework;
@@ -23,6 +25,12 @@ namespace SickOfIt.Core.Progression
 
         [Header("Scene Loading")]
         [SerializeField] private SceneLoadingManager sceneLoadingManager;
+
+        [Header("Transition Animation")]
+        [Tooltip("The SpriteFramePlayer to deactivate when Continue/New Game is pressed (e.g. idle menu animation)")]
+        [SerializeField] private MonoBehaviour idleSpriteFramePlayer;
+        [Tooltip("The SpriteFramePlayer to play as a transition before loading the next scene")]
+        [SerializeField] private MonoBehaviour transitionSpriteFramePlayer;
 
         private void Awake()
         {
@@ -85,10 +93,13 @@ namespace SickOfIt.Core.Progression
 
         private void OnContinueClicked()
         {
-            if (sceneLoadingManager != null)
-                sceneLoadingManager.ContinueGame();
-            else
-                SceneTransitionManager.Instance.ContinueGame();
+            StartCoroutine(PlayTransitionThenExecute(() =>
+            {
+                if (sceneLoadingManager != null)
+                    sceneLoadingManager.ContinueGame();
+                else
+                    SceneTransitionManager.Instance.ContinueGame();
+            }));
         }
 
         private void OnNewGameClicked()
@@ -109,10 +120,74 @@ namespace SickOfIt.Core.Progression
             Debug.Log("[MOBILE DEBUG] Attempting to load Video1...");
             Debug.Log($"[MOBILE DEBUG] SceneLoadingManager present: {sceneLoadingManager != null}");
 
-            if (sceneLoadingManager != null)
-                sceneLoadingManager.LoadVideo(1);
-            else
-                SceneTransitionManager.Instance.LoadVideo(1);
+            StartCoroutine(PlayTransitionThenExecute(() =>
+            {
+                if (sceneLoadingManager != null)
+                    sceneLoadingManager.LoadVideo(1);
+                else
+                    SceneTransitionManager.Instance.LoadVideo(1);
+            }));
+        }
+
+        /// <summary>
+        /// Deactivates the idle SpriteFramePlayer, plays the transition SpriteFramePlayer,
+        /// waits for it to finish, then invokes the provided action.
+        /// Falls back to invoking the action immediately if the transition player is not assigned.
+        /// </summary>
+        private IEnumerator PlayTransitionThenExecute(Action onComplete)
+        {
+            // Deactivate the idle player
+            if (idleSpriteFramePlayer != null)
+            {
+                idleSpriteFramePlayer.gameObject.SetActive(false);
+                Debug.Log("[MainMenu] Deactivated idle SpriteFramePlayer");
+            }
+
+            // If no transition player is assigned, just proceed immediately
+            if (transitionSpriteFramePlayer == null)
+            {
+                onComplete?.Invoke();
+                yield break;
+            }
+
+            var player = transitionSpriteFramePlayer as IFrameSequencePlayer;
+            if (player == null)
+            {
+                Debug.LogWarning("[MainMenu] Transition SpriteFramePlayer does not implement IFrameSequencePlayer, skipping transition");
+                onComplete?.Invoke();
+                yield break;
+            }
+
+            // Make sure the transition player's GameObject is active
+            transitionSpriteFramePlayer.gameObject.SetActive(true);
+
+            // Wait until loaded
+            while (!player.IsLoaded)
+            {
+                yield return null;
+            }
+
+            // Subscribe to completion and play
+            bool finished = false;
+            void OnFinished()
+            {
+                finished = true;
+            }
+
+            player.PlaybackCompleted += OnFinished;
+            player.Play();
+            Debug.Log("[MainMenu] Playing transition SpriteFramePlayer");
+
+            // Wait for playback to complete
+            while (!finished)
+            {
+                yield return null;
+            }
+
+            player.PlaybackCompleted -= OnFinished;
+            Debug.Log("[MainMenu] Transition SpriteFramePlayer finished, proceeding");
+
+            onComplete?.Invoke();
         }
 
         private void OnLevelSelectClicked()
