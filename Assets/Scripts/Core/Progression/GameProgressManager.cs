@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SickOfIt.Core.Progression
+namespace SickOfIt.Core
 {
     /// <summary>
     /// Manages game progression, level completion, and video unlocks using PlayerPrefs
@@ -8,7 +8,7 @@ namespace SickOfIt.Core.Progression
     public class GameProgressManager : MonoBehaviour
     {
         [Header("Game Configuration")]
-        [SerializeField] private int totalLevels = 4; // Total number of levels in the game
+        [SerializeField] private int totalLevels = 1; // Total number of levels in the game
         private static GameProgressManager _instance;
         public static GameProgressManager Instance
         {

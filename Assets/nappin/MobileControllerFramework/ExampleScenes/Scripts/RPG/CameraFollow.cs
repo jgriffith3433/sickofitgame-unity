@@ -29,11 +29,17 @@ namespace MobileControllerFramework
         [Tooltip("Enable to clamp camera position within bounds")]
         public bool useBounds = false;
         
-        [Tooltip("Minimum world position for camera")]
-        public Vector2 minBounds = new Vector2(-50, -50);
+        [Tooltip("Minimum world position for camera when zoomed in (min zoom)")]
+        public Vector2 minBoundsZoomedIn = new Vector2(-50, -50);
         
-        [Tooltip("Maximum world position for camera")]
-        public Vector2 maxBounds = new Vector2(50, 50);
+        [Tooltip("Maximum world position for camera when zoomed in (min zoom)")]
+        public Vector2 maxBoundsZoomedIn = new Vector2(50, 50);
+        
+        [Tooltip("Minimum world position for camera when zoomed out (max zoom)")]
+        public Vector2 minBoundsZoomedOut = new Vector2(-50, -50);
+        
+        [Tooltip("Maximum world position for camera when zoomed out (max zoom)")]
+        public Vector2 maxBoundsZoomedOut = new Vector2(50, 50);
 
         [Header("Zoom")]
         [Tooltip("Minimum camera size (fully zoomed in, follows target with bounds)")]
@@ -135,18 +141,24 @@ namespace MobileControllerFramework
                 followPosition.y = targetY;
             }
 
-            // Apply bounds if enabled
+            // Apply bounds if enabled - lerp between zoomed in and zoomed out bounds
             if (useBounds)
             {
-                followPosition.x = Mathf.Clamp(followPosition.x, minBounds.x, maxBounds.x);
-                followPosition.y = Mathf.Clamp(followPosition.y, minBounds.y, maxBounds.y);
+                // Interpolate between min and max zoom bounds based on current zoom level
+                float minX = Mathf.Lerp(minBoundsZoomedIn.x, minBoundsZoomedOut.x, zoomT);
+                float maxX = Mathf.Lerp(maxBoundsZoomedIn.x, maxBoundsZoomedOut.x, zoomT);
+                float minY = Mathf.Lerp(minBoundsZoomedIn.y, minBoundsZoomedOut.y, zoomT);
+                float maxY = Mathf.Lerp(maxBoundsZoomedIn.y, maxBoundsZoomedOut.y, zoomT);
+                
+                followPosition.x = Mathf.Clamp(followPosition.x, minX, maxX);
+                followPosition.y = Mathf.Clamp(followPosition.y, minY, maxY);
             }
 
             // Keep the Z position unchanged
             followPosition.z = currentPos.z;
 
-            // --- Lerp between follow position and zoom-out center based on zoom factor ---
-            Vector3 desiredPosition = Vector3.Lerp(followPosition, ZoomOutCenter, zoomT);
+            // Use the follow position (already has bounds applied)
+            Vector3 desiredPosition = followPosition;
 
             // Smooth camera movement
             if (smoothSpeed > 0)
@@ -197,18 +209,33 @@ namespace MobileControllerFramework
             // Draw bounds if enabled
             if (useBounds)
             {
-                Gizmos.color = Color.red;
-                Vector3 boundsCenter = new Vector3(
-                    (minBounds.x + maxBounds.x) * 0.5f,
-                    (minBounds.y + maxBounds.y) * 0.5f,
+                // Draw zoomed in bounds (green)
+                Gizmos.color = Color.green;
+                Vector3 boundsZoomedInCenter = new Vector3(
+                    (minBoundsZoomedIn.x + maxBoundsZoomedIn.x) * 0.5f,
+                    (minBoundsZoomedIn.y + maxBoundsZoomedIn.y) * 0.5f,
                     transform.position.z
                 );
-                Vector3 boundsSize = new Vector3(
-                    maxBounds.x - minBounds.x,
-                    maxBounds.y - minBounds.y,
+                Vector3 boundsZoomedInSize = new Vector3(
+                    maxBoundsZoomedIn.x - minBoundsZoomedIn.x,
+                    maxBoundsZoomedIn.y - minBoundsZoomedIn.y,
                     0.1f
                 );
-                Gizmos.DrawWireCube(boundsCenter, boundsSize);
+                Gizmos.DrawWireCube(boundsZoomedInCenter, boundsZoomedInSize);
+                
+                // Draw zoomed out bounds (red)
+                Gizmos.color = Color.red;
+                Vector3 boundsZoomedOutCenter = new Vector3(
+                    (minBoundsZoomedOut.x + maxBoundsZoomedOut.x) * 0.5f,
+                    (minBoundsZoomedOut.y + maxBoundsZoomedOut.y) * 0.5f,
+                    transform.position.z
+                );
+                Vector3 boundsZoomedOutSize = new Vector3(
+                    maxBoundsZoomedOut.x - minBoundsZoomedOut.x,
+                    maxBoundsZoomedOut.y - minBoundsZoomedOut.y,
+                    0.1f
+                );
+                Gizmos.DrawWireCube(boundsZoomedOutCenter, boundsZoomedOutSize);
             }
 
             // Draw line to target

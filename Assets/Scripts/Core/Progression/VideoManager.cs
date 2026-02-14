@@ -20,6 +20,10 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Preload the next level while video is playing")]
         [SerializeField] private bool preloadNextLevel = true;
 
+        [Header("Scene Transition")]
+        [Tooltip("If enabled, returns to main menu after video instead of loading next level")]
+        [SerializeField] private bool returnToMainMenu = false;
+
         [Header("Loading System")]
         [Tooltip("Video sprite player that needs to finish loading")]
         [SerializeField] private MonoBehaviour videoPlayerBehaviour;
@@ -68,6 +72,13 @@ namespace SickOfIt.Core.Progression
         /// </summary>
         private void OnVideoComplete()
         {
+            // Check if configured to return to main menu
+            if (returnToMainMenu)
+            {
+                SceneTransitionManager.Instance.LoadMainMenu();
+                return;
+            }
+
             // Check if we should return to a specific level (set by main menu or video selection)
             if (PlayerPrefs.HasKey("ReturnToLevel"))
             {

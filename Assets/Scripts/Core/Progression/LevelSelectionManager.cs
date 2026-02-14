@@ -2,6 +2,7 @@ using UnityEngine;
 using MobileControllerFramework;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.UI;
+using SickOfIt.Data;
 
 namespace SickOfIt.Core.Progression
 {
@@ -11,12 +12,12 @@ namespace SickOfIt.Core.Progression
     public class LevelSelectionManager : MonoBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private int totalLevels = 10; // Set this to your total number of levels
+        [SerializeField] private int totalLevels = 1; // Set this to your total number of levels
 
         [Header("UI References")]
         [SerializeField] private Transform levelButtonContainer; // Parent object for level buttons
         [SerializeField] private GameObject levelButtonPrefab; // Prefab for level buttons
-        [SerializeField] private Button backButton;
+        [SerializeField] private MobileControllerFramework.Button backButton;
 
         [Header("Scene Loading")]
         [SerializeField] private SceneLoadingManager sceneLoadingManager;

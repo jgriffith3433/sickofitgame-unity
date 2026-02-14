@@ -56,6 +56,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         private bool framesLoaded = false;
         private bool audioLoaded = false;
         private bool hasFinished = false;
+        private bool audioHasStartedPlaying = false;
         private Dictionary<int, List<Sprite>> chunkFrames = new Dictionary<int, List<Sprite>>(); // Chunk index -> frames
         private Dictionary<int, AsyncOperationHandle<IList<Sprite>>> chunkHandles = new Dictionary<int, AsyncOperationHandle<IList<Sprite>>>(); // For proper cleanup
 
@@ -96,7 +97,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                     audioSource = gameObject.AddComponent<AudioSource>();
                 }
                 audioSource.playOnAwake = false;
-                audioSource.loop = loop;
+                audioSource.loop = false; // Never loop audio - use it for completion detection
                 audioSource.volume = audioVolume;
             }
 
@@ -341,6 +342,21 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             if (!isPlaying || frames.Count == 0)
                 return;
 
+            // Track when audio starts playing
+            if (hasAudio && audioSource != null && audioSource.isPlaying && !audioHasStartedPlaying)
+            {
+                audioHasStartedPlaying = true;
+            }
+
+            // Check if audio has finished (only after it started playing)
+            if (hasAudio && audioHasStartedPlaying && audioSource != null && !audioSource.isPlaying)
+            {
+                // Audio has finished playing
+                isPlaying = false;
+                OnVideoFinished();
+                return;
+            }
+
             frameTimer += Time.deltaTime;
 
             if (frameTimer >= frameDuration)
@@ -377,9 +393,19 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 }
                 else
                 {
-                    currentFrameIndex = totalFrames - 1;
-                    isPlaying = false;
-                    OnVideoFinished();
+                    // Only stop due to frames if there's no audio
+                    // If there's audio, let audio completion handle it
+                    if (!hasAudio)
+                    {
+                        currentFrameIndex = totalFrames - 1;
+                        isPlaying = false;
+                        OnVideoFinished();
+                    }
+                    else
+                    {
+                        // Keep on last frame while audio finishes
+                        currentFrameIndex = totalFrames - 1;
+                    }
                     return;
                 }
             }
@@ -448,6 +474,10 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 return;
             }
 
+            // Reset audio tracking flag
+            audioHasStartedPlaying = false;
+            hasFinished = false; // Reset completion flag for replays
+
             // Start audio playback synchronized with video
             if (hasAudio && audioSource != null && audioClip != null)
             {
@@ -483,6 +513,8 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             isPlaying = false;
             currentFrameIndex = 0;
             frameTimer = 0f;
+            audioHasStartedPlaying = false;
+            hasFinished = false; // Reset completion flag
             UpdateSprite();
 
             // Stop audio as well

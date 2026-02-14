@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using SickOfIt.Core.Addressables;
 using SickOfIt.Core.Flow;
-using SickOfIt.Core.Input;
+using SickOfIt.Combat.Enemies.Spawning;
+using SickOfIt.VideoFrameExtractor.Runtime;
+using SickOfIt.Data;
 
 namespace SickOfIt.Core.Progression
 {
@@ -25,9 +27,6 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Background sprite players that need to finish loading")]
         [SerializeField] private List<MonoBehaviour> backgroundPlayerBehaviours = new List<MonoBehaviour>();
 
-        [Tooltip("Music cycler that needs to finish loading")]
-        [SerializeField] private MusicCycler musicCycler;
-
         [Tooltip("GameObjects to activate once all assets are loaded (they should start deactivated)")]
         [SerializeField] private List<GameObject> objectsToActivateAfterLoading = new List<GameObject>();
 
@@ -41,11 +40,20 @@ namespace SickOfIt.Core.Progression
         [Tooltip("GameObjects to deactivate when transitioning to next scene (e.g., player controls, game UI)")]
         [SerializeField] private List<GameObject> objectsToDeactivateOnSceneTransition = new List<GameObject>();
 
+        [Header("Spawner Control")]
+        [Tooltip("SpriteFramePlayer that when finished, will kill all spawners")]
+        [SerializeField] private MonoBehaviour spawnerKillTriggerPlayer;
+        
+        [Tooltip("Automatically find and kill all spawners when trigger player finishes")]
+        [SerializeField] private bool autoKillSpawnersOnComplete = false;
+
         [Header("Loading Debug")]
         [SerializeField] private bool isLoading = false;
         [SerializeField] private bool allAssetsLoaded = false;
 
         private readonly List<IFrameSequencePlayer> backgroundPlayers = new List<IFrameSequencePlayer>();
+        private IFrameSequencePlayer triggerPlayer;
+        private List<EnemySpawner> levelSpawners = new List<EnemySpawner>();
 
         private void Awake()
         {
@@ -56,6 +64,19 @@ namespace SickOfIt.Core.Progression
                 {
                     backgroundPlayers.Add(player);
                 }
+            }
+
+            // Setup spawner kill trigger
+            if (spawnerKillTriggerPlayer != null && spawnerKillTriggerPlayer is IFrameSequencePlayer framePlayer)
+            {
+                triggerPlayer = framePlayer;
+                triggerPlayer.PlaybackCompleted += OnSpawnerKillTriggerComplete;
+            }
+
+            // Find all spawners in the level
+            if (autoKillSpawnersOnComplete)
+            {
+                levelSpawners.AddRange(FindObjectsOfType<EnemySpawner>());
             }
 
             // Start in loading state if we have assets to wait for
@@ -202,7 +223,7 @@ namespace SickOfIt.Core.Progression
         /// </summary>
         private bool HasAssetsToLoad()
         {
-            return (backgroundPlayers != null && backgroundPlayers.Count > 0) || musicCycler != null;
+            return backgroundPlayers != null && backgroundPlayers.Count > 0;
         }
 
         /// <summary>
@@ -241,12 +262,6 @@ namespace SickOfIt.Core.Progression
                         return false; // Still waiting for this one
                     }
                 }
-            }
-
-            // Check music cycler
-            if (musicCycler != null && !musicCycler.IsLoaded)
-            {
-                return false;
             }
 
             return true; // Everything is loaded
@@ -313,6 +328,35 @@ namespace SickOfIt.Core.Progression
                         obj.SetActive(false);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Called when the spawner kill trigger SpriteFramePlayer finishes playback
+        /// </summary>
+        private void OnSpawnerKillTriggerComplete()
+        {
+            if (!autoKillSpawnersOnComplete)
+                return;
+
+            Debug.Log($"[LevelManager] Spawner kill trigger complete - killing {levelSpawners.Count} spawners");
+
+            // Kill all spawners
+            foreach (var spawner in levelSpawners)
+            {
+                if (spawner != null)
+                {
+                    spawner.KillSpawner();
+                }
+            }
+        }
+
+        private void OnDestroy()
+        {
+            // Unsubscribe from trigger player event
+            if (triggerPlayer != null)
+            {
+                triggerPlayer.PlaybackCompleted -= OnSpawnerKillTriggerComplete;
             }
         }
     }

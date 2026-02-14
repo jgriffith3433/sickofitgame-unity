@@ -2,6 +2,7 @@
   "name": "SickOfIt.Core",
   "rootNamespace": "SickOfIt.Core",
   "references": [
+    "SickOfIt.Data",
     "nappin.MobileControllerFramework",
     "Unity.TextMeshPro",
     "Unity.Addressables",

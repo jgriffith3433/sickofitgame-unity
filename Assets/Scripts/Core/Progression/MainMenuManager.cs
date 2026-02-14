@@ -6,6 +6,7 @@ using TMPro;
 using MobileControllerFramework;
 using SickOfIt.Core.Addressables;
 using SickOfIt.Core.Flow;
+using SickOfIt.Data;
 
 namespace SickOfIt.Core.Progression
 {
@@ -15,11 +16,11 @@ namespace SickOfIt.Core.Progression
     public class MainMenuManager : MonoBehaviour
     {
         [Header("UI References")]
-        [SerializeField] private Button continueButton;
-        [SerializeField] private Button newGameButton;
-        [SerializeField] private Button levelSelectButton;
-        [SerializeField] private Button videosButton;
-        [SerializeField] private Button quitButton;
+        [SerializeField] private MobileControllerFramework.Button continueButton;
+        [SerializeField] private MobileControllerFramework.Button newGameButton;
+        [SerializeField] private MobileControllerFramework.Button levelSelectButton;
+        [SerializeField] private MobileControllerFramework.Button videosButton;
+        [SerializeField] private MobileControllerFramework.Button quitButton;
 
         [Header("Optional UI Elements")]
         [SerializeField] private TextMeshProUGUI continueButtonText;

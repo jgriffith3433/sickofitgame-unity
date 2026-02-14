@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using SickOfIt.Core.Addressables;
-using SickOfIt.Core.Progression;
+using SickOfIt.Data;
 
 namespace SickOfIt.Core.Flow
 {

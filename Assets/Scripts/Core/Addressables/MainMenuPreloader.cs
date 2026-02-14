@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using SickOfIt.Core.Flow;
-using SickOfIt.Core.Progression;
+using SickOfIt.Data;
 
 namespace SickOfIt.Core.Addressables
 {

@@ -2,6 +2,7 @@ using UnityEngine;
 using MobileControllerFramework;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.UI;
+using SickOfIt.Data;
 
 namespace SickOfIt.Core.Progression
 {
@@ -11,12 +12,12 @@ namespace SickOfIt.Core.Progression
     public class VideoSelectionManager : MonoBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private int totalVideos = 10; // Set this to your total number of videos (1 = intro, 2-X = level videos)
+        [SerializeField] private int totalVideos = 2; // Set this to your total number of videos (1 = intro, 2-X = level videos)
 
         [Header("UI References")]
         [SerializeField] private Transform videoButtonContainer; // Parent object for video buttons
         [SerializeField] private GameObject videoButtonPrefab; // Prefab for video buttons
-        [SerializeField] private Button backButton;
+        [SerializeField] private MobileControllerFramework.Button backButton;
 
         [Header("Scene Loading")]
         [SerializeField] private SceneLoadingManager sceneLoadingManager;

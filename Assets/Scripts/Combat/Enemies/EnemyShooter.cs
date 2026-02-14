@@ -25,6 +25,9 @@ namespace SickOfIt.Combat.Enemies
         {
             base.Awake();
 
+            // Shooter enemies should not move
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;
+
             // Load projectile prefab
             LoadProjectilePrefab();
 

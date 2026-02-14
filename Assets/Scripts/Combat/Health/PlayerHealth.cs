@@ -1,7 +1,6 @@
 using UnityEngine;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.Input;
-using SickOfIt.Core.Progression;
 
 namespace SickOfIt.Combat.Health
 {
@@ -16,12 +15,10 @@ namespace SickOfIt.Combat.Health
         [SerializeField] private string deathSceneName = "Death1";
 
         private HealthSystem healthSystem;
-        private LevelManager levelManager;
 
         private void Awake()
         {
             healthSystem = GetComponent<HealthSystem>();
-            levelManager = FindObjectOfType<LevelManager>(true);
         }
 
         private void OnEnable()
@@ -55,19 +52,13 @@ namespace SickOfIt.Combat.Health
 
         private void PlayDeathScene()
         {
-            if (levelManager != null)
-            {
-                // Store which scene to reload after death animation
-                UnityEngine.SceneManagement.Scene currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-                PlayerPrefs.SetString("DeathSceneToReload", currentScene.name);
-                PlayerPrefs.Save();
+            // Store which scene to reload after death animation
+            UnityEngine.SceneManagement.Scene currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            PlayerPrefs.SetString("DeathSceneToReload", currentScene.name);
+            PlayerPrefs.Save();
 
-                // Show loading UI before transitioning
-                levelManager.ShowSceneTransitionUI();
-
-                // Load the death scene
-                SceneTransitionManager.Instance.LoadDeathScene(deathSceneName);
-            }
+            // Load the death scene
+            SceneTransitionManager.Instance.LoadDeathScene(deathSceneName);
         }
     }
 }
