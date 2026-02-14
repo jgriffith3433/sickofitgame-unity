@@ -40,7 +40,7 @@ namespace SickOfIt.Combat.Health
         private void OnPlayerDeath()
         {
             // Disable player controls
-            var controller = GetComponent<TopDownController>();
+            var controller = GetComponentInParent<TopDownController>();
             if (controller != null)
             {
                 controller.enabled = false;

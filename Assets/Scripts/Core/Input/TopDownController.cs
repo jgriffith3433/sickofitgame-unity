@@ -9,7 +9,7 @@ namespace SickOfIt.Core.Input
     /// 2D top-down player controller with mobile and PC input support.
     /// Loads projectile prefab via Addressables for WebGL optimization.
     /// </summary>
-    [RequireComponent(typeof(Collider2D))]
+    [RequireComponent(typeof(CircleCollider2D))]
     [RequireComponent(typeof(Rigidbody2D))]
     public class TopDownController : MonoBehaviour
     {
@@ -40,6 +40,14 @@ namespace SickOfIt.Core.Input
         [SerializeField] private float projectileSpeed = 10f;
         [SerializeField] private float fireRate = 0.25f;
         [SerializeField] private float projectileLifetime = 5f;
+        
+        [Header("Platform Interaction")]
+        [Tooltip("Layer to ignore collision with when moving down (e.g., 'Platform' layer)")]
+        [SerializeField] private LayerMask platformLayer;
+        [Tooltip("How far down the player must press to drop through platforms (-1 = full down)")]
+        [SerializeField] private float dropThroughThreshold = -0.5f;
+        [Tooltip("Downward force applied when dropping through platforms (helps fall faster)")]
+        [SerializeField] private float dropThroughForce = 5f;
         
         [Header("Mobile Input")]
         [Tooltip("Analog stick for movement. Add AnalogTapJump component for tap-to-jump.")]
@@ -98,8 +106,16 @@ namespace SickOfIt.Core.Input
         private GameObject cachedProjectilePrefab;
         private bool isProjectileReady = false;
         
-        // Input dead zone
+        // Platform collision
+        private int playerLayer;
+        private bool isIgnoringPlatformCollision = false;
+        private bool isDroppingThrough = false;
+        private System.Collections.Generic.List<DropThroughPlatform> registeredPlatforms = new System.Collections.Generic.List<DropThroughPlatform>();
+        
+        // Input tracking
+        private bool isUsingMobileInput = false;
         private const float InputDeadzone = 0.1f;
+        private const float MobileDropThreshold = -0.4f; // More lenient for analog sticks
         
         #endregion
         
@@ -109,6 +125,7 @@ namespace SickOfIt.Core.Input
         {
             rb = GetComponent<Rigidbody2D>();
             col = GetComponent<Collider2D>();
+            playerLayer = gameObject.layer;
             
             if (rb != null)
             {
@@ -156,6 +173,12 @@ namespace SickOfIt.Core.Input
 
             if (gameInputManager != null)
                 gameInputManager.OnJumpPressed += OnJumpRequested;
+            
+            // Subscribe to analog stick release event for immediate platform re-enable
+            if (moveAnalog != null)
+            {
+                moveAnalog.StickExitEvent.AddListener(OnAnalogReleased);
+            }
         }
         
         private void Update()
@@ -164,6 +187,7 @@ namespace SickOfIt.Core.Input
             ReadJumpInput();
             ReadFireInput();
             CheckGrounded();
+            HandlePlatformCollision();
             HandleJump();
             HandleFiring();
             UpdateAnimator();
@@ -185,6 +209,11 @@ namespace SickOfIt.Core.Input
 
             if (gameInputManager != null)
                 gameInputManager.OnJumpPressed -= OnJumpRequested;
+            
+            if (moveAnalog != null)
+            {
+                moveAnalog.StickExitEvent.RemoveListener(OnAnalogReleased);
+            }
         }
         
         #endregion
@@ -197,7 +226,10 @@ namespace SickOfIt.Core.Input
             Vector2 boxCenter = (Vector2)transform.position + col.offset + Vector2.down * (col.bounds.extents.y + groundCheckDistance * 0.5f);
             
             bool wasGrounded = isGrounded;
-            isGrounded = Physics2D.OverlapBox(boxCenter, boxSize, 0f, groundLayer);
+            
+            // If ignoring platform collision, exclude platform layer from ground check
+            LayerMask checkLayer = isIgnoringPlatformCollision ? (groundLayer & ~platformLayer) : groundLayer;
+            isGrounded = Physics2D.OverlapBox(boxCenter, boxSize, 0f, checkLayer);
             
             if (isGrounded && !wasGrounded)
             {
@@ -223,28 +255,42 @@ namespace SickOfIt.Core.Input
         private void ReadMoveInput()
         {
             moveInput = Vector2.zero;
+            Vector2 mobileInput = Vector2.zero;
+            Vector2 keyboardInput = Vector2.zero;
+            bool usingMobileInput = false;
             
             if (moveAnalog != null && moveAnalog.gameObject.activeSelf)
             {
-                moveInput = moveAnalog.GetStickPosition();
+                mobileInput = moveAnalog.GetStickPosition();
+                moveInput = mobileInput;
+                usingMobileInput = true;
             }
             else if (dpad != null && dpad.gameObject.activeSelf)
             {
-                moveInput = dpad.GetDpadDirection();
+                mobileInput = dpad.GetDpadDirection();
+                moveInput = mobileInput;
+                usingMobileInput = true;
             }
             else if (arrowKeys != null && arrowKeys.gameObject.activeSelf)
             {
-                moveInput = arrowKeys.GetDirection();
+                mobileInput = arrowKeys.GetDirection();
+                moveInput = mobileInput;
+                usingMobileInput = true;
             }
             
+            // Always check keyboard/gamepad input and use it if mobile input is idle
             if (moveAction?.action != null && moveAction.action.enabled)
             {
-                Vector2 keyboardInput = moveAction.action.ReadValue<Vector2>();
+                keyboardInput = moveAction.action.ReadValue<Vector2>();
                 if (keyboardInput.magnitude > InputDeadzone && moveInput.magnitude < InputDeadzone)
                 {
                     moveInput = keyboardInput;
+                    usingMobileInput = false;
                 }
             }
+            
+            // Store whether we're using mobile input for platform threshold adjustment
+            isUsingMobileInput = usingMobileInput;
         }
         
         private void ReadJumpInput()
@@ -295,6 +341,123 @@ namespace SickOfIt.Core.Input
             Vector2 direction = ((Vector2)worldMousePos - (Vector2)transform.position).normalized;
             
             return direction;
+        }
+        
+        #endregion
+        
+        #region Platform Collision
+        
+        private void HandlePlatformCollision()
+        {
+            // Use more lenient threshold for mobile analog sticks
+            float threshold = isUsingMobileInput ? MobileDropThreshold : dropThroughThreshold;
+            bool pressingDown = moveInput.y < threshold;
+            
+            // Only change state when transitioning
+            if (pressingDown && !isDroppingThrough)
+            {
+                StartDroppingThrough();
+            }
+            else if (!pressingDown && isDroppingThrough)
+            {
+                StopDroppingThrough();
+            }
+        }
+        
+        private void StartDroppingThrough()
+        {
+            isDroppingThrough = true;
+            
+            // Disable all platform colliders
+            foreach (var platform in registeredPlatforms)
+            {
+                if (platform != null)
+                {
+                    platform.DisablePlatform();
+                }
+            }
+            
+            int platformLayerIndex = GetLayerIndexFromMask(platformLayer);
+            if (platformLayerIndex >= 0)
+            {
+                Physics2D.IgnoreLayerCollision(playerLayer, platformLayerIndex, true);
+                isIgnoringPlatformCollision = true;
+            }
+            
+            // Apply downward force to help player fall through faster (only if grounded)
+            if (isGrounded && rb != null && dropThroughForce > 0)
+            {
+                rb.AddForce(Vector2.down * dropThroughForce, ForceMode2D.Impulse);
+            }
+        }
+        
+        private void StopDroppingThrough()
+        {
+            isDroppingThrough = false;
+            
+            // Re-enable all platforms
+            foreach (var platform in registeredPlatforms)
+            {
+                if (platform != null)
+                {
+                    platform.EnablePlatform();
+                }
+            }
+            
+            int platformLayerIndex = GetLayerIndexFromMask(platformLayer);
+            if (platformLayerIndex >= 0)
+            {
+                Physics2D.IgnoreLayerCollision(playerLayer, platformLayerIndex, false);
+                isIgnoringPlatformCollision = false;
+            }
+        }
+        
+        private void OnAnalogReleased()
+        {
+            // When analog is released, immediately re-enable platforms
+            if (isDroppingThrough)
+            {
+                StopDroppingThrough();
+            }
+        }
+        
+        private int GetLayerIndexFromMask(LayerMask mask)
+        {
+            // Convert LayerMask to layer index
+            // LayerMask value is a bitmask, so we need to find which bit is set
+            int layerNumber = 0;
+            int layer = mask.value;
+            
+            if (layer == 0)
+                return -1; // No layer selected
+            
+            // Find the first set bit
+            while (layer > 1)
+            {
+                layer = layer >> 1;
+                layerNumber++;
+            }
+            
+            return layer == 1 ? layerNumber : -1;
+        }
+        
+        /// <summary>
+        /// Called by DropThroughPlatform components to register themselves
+        /// </summary>
+        public void RegisterPlatform(DropThroughPlatform platform)
+        {
+            if (!registeredPlatforms.Contains(platform))
+            {
+                registeredPlatforms.Add(platform);
+            }
+        }
+        
+        /// <summary>
+        /// Called by DropThroughPlatform components when destroyed
+        /// </summary>
+        public void UnregisterPlatform(DropThroughPlatform platform)
+        {
+            registeredPlatforms.Remove(platform);
         }
         
         #endregion
