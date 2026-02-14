@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using MobileControllerFramework;
@@ -31,6 +32,12 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private MonoBehaviour idleSpriteFramePlayer;
         [Tooltip("The SpriteFramePlayer to play as a transition before loading the next scene")]
         [SerializeField] private MonoBehaviour transitionSpriteFramePlayer;
+
+        [Header("Delayed Hide")]
+        [Tooltip("How long to wait before hiding the objects (in seconds)")]
+        [SerializeField] private float hideDelay = 1.5f;
+        [Tooltip("GameObjects to hide after Continue/New Game is pressed")]
+        [SerializeField] private List<GameObject> objectsToHideOnStart;
 
         private void Awake()
         {
@@ -93,6 +100,7 @@ namespace SickOfIt.Core.Progression
 
         private void OnContinueClicked()
         {
+            StartCoroutine(DelayedHideObjects(hideDelay));
             StartCoroutine(PlayTransitionThenExecute(() =>
             {
                 if (sceneLoadingManager != null)
@@ -120,6 +128,7 @@ namespace SickOfIt.Core.Progression
             Debug.Log("[MOBILE DEBUG] Attempting to load Video1...");
             Debug.Log($"[MOBILE DEBUG] SceneLoadingManager present: {sceneLoadingManager != null}");
 
+            StartCoroutine(DelayedHideObjects(hideDelay));
             StartCoroutine(PlayTransitionThenExecute(() =>
             {
                 if (sceneLoadingManager != null)
@@ -127,6 +136,24 @@ namespace SickOfIt.Core.Progression
                 else
                     SceneTransitionManager.Instance.LoadVideo(1);
             }));
+        }
+
+        /// <summary>
+        /// Waits for the specified delay then deactivates all GameObjects in the objectsToHideOnStart list.
+        /// </summary>
+        private IEnumerator DelayedHideObjects(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            if (objectsToHideOnStart != null)
+            {
+                foreach (var obj in objectsToHideOnStart)
+                {
+                    if (obj != null)
+                        obj.SetActive(false);
+                }
+                Debug.Log($"[MainMenu] Hidden {objectsToHideOnStart.Count} objects after {delay}s delay");
+            }
         }
 
         /// <summary>
