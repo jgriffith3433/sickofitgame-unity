@@ -27,17 +27,19 @@ namespace SickOfIt.Combat.Enemies
         [SerializeField] [Range(0f, 0.3f)] [Tooltip("Random pitch variation for audio variety")]
         private float pitchVariation = 0.1f;
 
+        [SerializeField] protected SpriteRenderer spriteRenderer;
         protected Transform player;
         protected Rigidbody2D rb;
         protected HealthSystem healthSystem;
-        protected SpriteRenderer spriteRenderer;
         protected AudioSource audioSource;
 
         protected virtual void Awake()
         {
+            if (spriteRenderer == null)
+                spriteRenderer = GetComponent<SpriteRenderer>();
+
             rb = GetComponent<Rigidbody2D>();
             healthSystem = GetComponent<HealthSystem>();
-            spriteRenderer = GetComponent<SpriteRenderer>();
             audioSource = GetComponent<AudioSource>();
 
             // Setup rigidbody for 2D movement

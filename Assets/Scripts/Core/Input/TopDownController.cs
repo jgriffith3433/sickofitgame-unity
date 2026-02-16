@@ -70,6 +70,16 @@ namespace SickOfIt.Core.Input
         [SerializeField] private Camera mainCamera;
         [SerializeField] private GameInputManager gameInputManager;
         
+        [Header("Shadow Settings")]
+        [Tooltip("The shadow sprite transform that follows the character")]
+        [SerializeField] private Transform shadowSprite;
+        [Tooltip("Maximum height at which shadow is still visible (shadow scale = 0 at this height)")]
+        [SerializeField] private float shadowMaxHeight = 10f;
+        [Tooltip("Minimum scale of shadow when at max height (0 = invisible)")]
+        [SerializeField] private float shadowMinScale = 0.2f;
+        [Tooltip("How far down to raycast for ground detection")]
+        [SerializeField] private float shadowRaycastDistance = 20f;
+        
         #endregion
         
         #region Animator Parameter Hashes
@@ -117,6 +127,10 @@ namespace SickOfIt.Core.Input
         private const float InputDeadzone = 0.1f;
         private const float MobileDropThreshold = -0.4f; // More lenient for analog sticks
         
+        // Shadow
+        private Vector3 shadowInitialScale;
+        private Vector3 shadowInitialLocalPosition;
+        
         #endregion
         
         #region Unity Lifecycle
@@ -135,6 +149,13 @@ namespace SickOfIt.Core.Input
             if (mainCamera == null)
             {
                 mainCamera = Camera.main;
+            }
+            
+            // Store initial shadow values
+            if (shadowSprite != null)
+            {
+                shadowInitialScale = shadowSprite.localScale;
+                shadowInitialLocalPosition = shadowSprite.localPosition;
             }
             
             PreloadProjectilePrefab();
@@ -191,6 +212,7 @@ namespace SickOfIt.Core.Input
             HandleJump();
             HandleFiring();
             UpdateAnimator();
+            UpdateShadow();
         }
         
         private void FixedUpdate()
@@ -586,6 +608,48 @@ namespace SickOfIt.Core.Input
             {
                 float verticalVelocity = rb.linearVelocity.y;
                 animator.SetFloat(VelocityZHash, verticalVelocity);
+            }
+        }
+        
+        #endregion
+        
+        #region Shadow
+        
+        private void UpdateShadow()
+        {
+            if (shadowSprite == null) return;
+            
+            // When grounded, restore initial position and scale
+            if (isGrounded)
+            {
+                shadowSprite.localPosition = shadowInitialLocalPosition;
+                shadowSprite.localScale = shadowInitialScale;
+                return;
+            }
+            
+            // Raycast down to find ground
+            LayerMask checkLayer = isIgnoringPlatformCollision ? (groundLayer & ~platformLayer) : groundLayer;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, shadowRaycastDistance, checkLayer);
+            
+            if (hit.collider != null)
+            {
+                // Calculate distance from character to ground
+                float distanceToGround = hit.distance;
+                
+                // Position shadow at ground level (world space)
+                Vector3 shadowWorldPosition = new Vector3(transform.position.x, hit.point.y, transform.position.z);
+                shadowSprite.position = shadowWorldPosition;
+                
+                // Calculate scale based on distance using lerp
+                // At distance 0, scale = initial scale; at shadowMaxHeight, scale = initial * shadowMinScale
+                float heightRatio = Mathf.Clamp01(distanceToGround / shadowMaxHeight);
+                float scaleFactor = Mathf.Lerp(1f, shadowMinScale, heightRatio);
+                shadowSprite.localScale = shadowInitialScale * scaleFactor;
+            }
+            else
+            {
+                // No ground found, make shadow very small or hide it
+                shadowSprite.localScale = shadowInitialScale * shadowMinScale;
             }
         }
         

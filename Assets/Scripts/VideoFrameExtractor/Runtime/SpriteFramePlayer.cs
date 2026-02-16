@@ -57,8 +57,8 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         private bool audioLoaded = false;
         private bool hasFinished = false;
         private bool audioHasStartedPlaying = false;
-        private Dictionary<int, List<Sprite>> chunkFrames = new Dictionary<int, List<Sprite>>(); // Chunk index -> frames
-        private Dictionary<int, AsyncOperationHandle<IList<Sprite>>> chunkHandles = new Dictionary<int, AsyncOperationHandle<IList<Sprite>>>(); // For proper cleanup
+        private Dictionary<int, List<Sprite>> chunkFrames = new Dictionary<int, List<Sprite>>(); // Chunk index -> created sprites
+        private Dictionary<int, AsyncOperationHandle<IList<Texture2D>>> chunkHandles = new Dictionary<int, AsyncOperationHandle<IList<Texture2D>>>(); // Texture2D handles for proper cleanup
 
         /// <summary>
         /// Public property to check if all assets are loaded
@@ -153,31 +153,31 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         {
             bool loadComplete = false;
             bool loadSuccess = false;
-            AsyncOperationHandle<IList<Sprite>> resultHandle = default;
 
-            // Use AddressablesOperationManager for deduplication and centralized tracking
-            AddressablesOperationManager.Instance.LoadLabelWithHandle<Sprite>(
+            // Load sprite sheet Texture2D assets by label
+            AddressablesOperationManager.Instance.LoadLabelWithHandle<Texture2D>(
                 chunk.addressableLabel, 
-                (handle, sprites) =>
+                (handle, textures) =>
                 {
-                    if (sprites != null && sprites.Count > 0)
+                    if (textures != null && textures.Count > 0)
                     {
-                        // Sort frames by name
-                        var sortedSprites = new List<Sprite>(sprites);
-                        sortedSprites.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
+                        // Sort sheet textures by name for correct frame ordering
+                        var sortedTextures = new List<Texture2D>(textures);
+                        sortedTextures.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
 
-                        // Store chunk frames and handle
-                        chunkFrames[chunkIndex] = sortedSprites;
+                        // Create sprites from sprite sheet regions
+                        var sprites = CreateSpritesFromSheets(sortedTextures, chunk);
+
+                        // Store chunk frames and texture handle
+                        chunkFrames[chunkIndex] = sprites;
                         chunkHandles[chunkIndex] = handle;
                         loadedChunks.Add(chunkIndex);
-
-                        // Chunk loaded
 
                         // If this is the first chunk, set up for playback
                         if (chunkIndex == 0)
                         {
                             frames.Clear();
-                            frames.AddRange(sortedSprites);
+                            frames.AddRange(sprites);
                             currentChunkIndex = 0;
                             framesLoaded = true;
                             // DON'T call CheckIfFullyLoaded() here - wait for PreloadAllChunks to complete
@@ -202,7 +202,49 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         }
 
         /// <summary>
-        /// Unload a specific chunk to free memory
+        /// Create Sprite objects from loaded sprite sheet textures using Sprite.Create().
+        /// Each sheet contains framesPerSheet frames arranged in a grid (sheetColumns x sheetRows).
+        /// Frame order: left-to-right, top-to-bottom within each sheet.
+        /// </summary>
+        private List<Sprite> CreateSpritesFromSheets(List<Texture2D> sheetTextures, SpriteFramesData.FrameChunk chunk)
+        {
+            var sprites = new List<Sprite>();
+            int framesPerSheet = spriteFramesData.framesPerSheet;
+            int cols = spriteFramesData.sheetColumns;
+            int rows = spriteFramesData.sheetRows;
+            int fw = spriteFramesData.frameWidth;
+            int fh = spriteFramesData.frameHeight;
+            float ppu = spriteFramesData.spritePixelsPerUnit;
+            int totalFramesInChunk = chunk.frameCount;
+            int framesCreated = 0;
+
+            foreach (var tex in sheetTextures)
+            {
+                int texH = tex.height; // Actual PoT texture height
+                for (int cell = 0; cell < framesPerSheet && framesCreated < totalFramesInChunk; cell++)
+                {
+                    int col = cell % cols;
+                    int row = cell / cols;
+                    // Frames are packed from the top of the PoT texture downward
+                    // In Unity texture coords, Y=0 is bottom, so top row = texH - fh
+                    float x = col * fw;
+                    float y = texH - (row + 1) * fh;
+
+                    Rect rect = new Rect(x, y, fw, fh);
+                    Vector2 pivot = new Vector2(0.5f, 0.5f);
+                    Sprite sprite = Sprite.Create(tex, rect, pivot, ppu);
+                    sprite.name = $"frame_{chunk.startFrame + framesCreated:D5}";
+                    sprites.Add(sprite);
+                    framesCreated++;
+                }
+            }
+
+            return sprites;
+        }
+
+        /// <summary>
+        /// Unload a specific chunk to free memory.
+        /// Destroys dynamically created sprites and releases the Texture2D addressable handles.
         /// </summary>
         public void UnloadChunk(int chunkIndex)
         {
@@ -211,17 +253,24 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 return;
             }
 
-            var chunk = spriteFramesData.chunks[chunkIndex];
-            // Unloading chunk
+            // Destroy dynamically created Sprite objects to free memory
+            if (chunkFrames.ContainsKey(chunkIndex))
+            {
+                foreach (var sprite in chunkFrames[chunkIndex])
+                {
+                    if (sprite != null)
+                        Destroy(sprite);
+                }
+                chunkFrames.Remove(chunkIndex);
+            }
 
-            // Release the addressables handle if we have it
+            // Release the Texture2D addressables handle (frees GPU texture memory)
             if (chunkHandles.ContainsKey(chunkIndex))
             {
                 Addressables.Release(chunkHandles[chunkIndex]);
                 chunkHandles.Remove(chunkIndex);
             }
 
-            chunkFrames.Remove(chunkIndex);
             loadedChunks.Remove(chunkIndex);
         }
 
@@ -675,11 +724,22 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         }
 
         /// <summary>
-        /// Clean up addressables handles when component is destroyed
+        /// Clean up all created sprites and addressable handles when component is destroyed
         /// </summary>
         private void OnDestroy()
         {
-            // Release all loaded chunk handles
+            // Destroy all dynamically created sprites
+            foreach (var spriteList in chunkFrames.Values)
+            {
+                foreach (var sprite in spriteList)
+                {
+                    if (sprite != null)
+                        Destroy(sprite);
+                }
+            }
+            chunkFrames.Clear();
+
+            // Release all loaded texture handles
             foreach (var handle in chunkHandles.Values)
             {
                 if (handle.IsValid())

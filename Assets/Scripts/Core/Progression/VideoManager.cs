@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using MobileControllerFramework;
 using SickOfIt.Core.Addressables;
 using SickOfIt.Core.Flow;
 
@@ -24,6 +25,10 @@ namespace SickOfIt.Core.Progression
         [Tooltip("If enabled, returns to main menu after video instead of loading next level")]
         [SerializeField] private bool returnToMainMenu = false;
 
+        [Header("Skip Settings")]
+        [Tooltip("Optional skip button using MobileControllerFramework")]
+        [SerializeField] private MobileControllerFramework.Button skipButton;
+
         [Header("Loading System")]
         [Tooltip("Video sprite player that needs to finish loading")]
         [SerializeField] private MonoBehaviour videoPlayerBehaviour;
@@ -43,6 +48,12 @@ namespace SickOfIt.Core.Progression
         private void Awake()
         {
             videoPlayer = videoPlayerBehaviour as IFrameSequencePlayer;
+
+            // Subscribe to skip button
+            if (skipButton != null)
+            {
+                skipButton.TapEndEvent.AddListener(SkipVideo);
+            }
 
             // Subscribe to video completion callback
             if (videoPlayer != null)
@@ -64,6 +75,12 @@ namespace SickOfIt.Core.Progression
             if (videoPlayer != null)
             {
                 videoPlayer.PlaybackCompleted -= OnVideoComplete;
+            }
+
+            // Unsubscribe from skip button
+            if (skipButton != null)
+            {
+                skipButton.TapEndEvent.RemoveListener(SkipVideo);
             }
         }
 
@@ -133,6 +150,18 @@ namespace SickOfIt.Core.Progression
                 {
                     StartCoroutine(PreloadNextContentDuringVideo());
                 }
+            }
+        }
+
+        /// <summary>
+        /// Skip the currently playing video
+        /// </summary>
+        public void SkipVideo()
+        {
+            if (videoPlayer != null)
+            {
+                Debug.Log("VideoManager: Video skipped by player");
+                videoPlayer.SkipToEnd();
             }
         }
 

@@ -6,6 +6,7 @@ namespace SickOfIt.Core.Flow
     {
         bool IsLoaded { get; }
         void Play();
+        void SkipToEnd();
         event Action PlaybackCompleted;
     }
 }

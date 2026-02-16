@@ -12,12 +12,11 @@ namespace SickOfIt.Combat.Enemies
     {
         [Header("Shooter Settings")]
         [SerializeField] private string projectileAddress = "Projectile_Enemy";
-        [SerializeField] private float fireRate = 2f; // Shots per second
         [SerializeField] private float projectileSpeed = 5f;
-        [SerializeField] private Transform firePoint;
-        [SerializeField] private bool rotateToFacePlayer = false;
+        [SerializeField] private Transform leftFirePoint;
+        [SerializeField] private Transform rightFirePoint;
+        [SerializeField] private bool flipToFacePlayer = true;
 
-        private float nextFireTime = 0f;
         private GameObject cachedProjectilePrefab;
         private bool isProjectileReady = false;
 
@@ -30,15 +29,6 @@ namespace SickOfIt.Combat.Enemies
 
             // Load projectile prefab
             LoadProjectilePrefab();
-
-            // Create fire point if not assigned
-            if (firePoint == null)
-            {
-                GameObject firePointObj = new GameObject("FirePoint");
-                firePointObj.transform.SetParent(transform);
-                firePointObj.transform.localPosition = Vector3.zero;
-                firePoint = firePointObj.transform;
-            }
         }
 
         private void LoadProjectilePrefab()
@@ -59,27 +49,24 @@ namespace SickOfIt.Combat.Enemies
 
         protected override void UpdateBehavior()
         {
-            if (player == null || !isProjectileReady)
+            if (player == null)
                 return;
 
-            // Rotate to face player
-            if (rotateToFacePlayer)
+            if (flipToFacePlayer)
             {
-                Vector2 direction = (player.position - transform.position).normalized;
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.Euler(0, 0, angle);
-            }
-
-            // Shoot at player
-            if (Time.time >= nextFireTime)
-            {
-                Shoot();
-                nextFireTime = Time.time + (1f / fireRate);
+                // Flip sprite to face player
+                if (player.position.x < transform.position.x)
+                    spriteRenderer.flipX = true;
+                else
+                    spriteRenderer.flipX = false;
             }
         }
 
         private void Shoot()
         {
+            // Choose fire point based on facing direction
+            Transform firePoint = spriteRenderer.flipX ? leftFirePoint : rightFirePoint;
+            
             if (cachedProjectilePrefab == null || firePoint == null)
                 return;
 
@@ -105,6 +92,18 @@ namespace SickOfIt.Combat.Enemies
 
             // Auto-destroy after a while
             Destroy(projectile, 5f);
+        }
+
+        /// <summary>
+        /// Public method to be called by animation events (via AnimationEventRelay)
+        /// </summary>
+        /// <param name="spawnPoint">Optional spawn location. If null, uses the default firePoint.</param>
+        public void FireProjectile()
+        {
+            if (isProjectileReady)
+            {
+                Shoot();
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using MobileControllerFramework;
 using SickOfIt.Core.Addressables;
 
 namespace SickOfIt.Core.Flow
@@ -22,6 +23,10 @@ namespace SickOfIt.Core.Flow
         [Tooltip("GameObjects to deactivate once death assets are loaded (e.g., loading indicators)")]
         [SerializeField] private List<GameObject> objectsToDeactivateAfterLoading = new List<GameObject>();
 
+        [Header("Skip Settings")]
+        [Tooltip("Optional skip button using MobileControllerFramework")]
+        [SerializeField] private MobileControllerFramework.Button skipButton;
+
         [Header("Playback Settings")]
         [Tooltip("How long to wait after death animation finishes before reloading level")]
         [SerializeField] private float delayBeforeReload = 1f;
@@ -36,6 +41,12 @@ namespace SickOfIt.Core.Flow
         private void Awake()
         {
             deathPlayer = deathPlayerBehaviour as IFrameSequencePlayer;
+
+            // Subscribe to skip button
+            if (skipButton != null)
+            {
+                skipButton.TapEndEvent.AddListener(SkipDeathAnimation);
+            }
 
             // Subscribe to death animation completion callback
             if (deathPlayer != null)
@@ -58,6 +69,12 @@ namespace SickOfIt.Core.Flow
             if (deathPlayer != null)
             {
                 deathPlayer.PlaybackCompleted -= OnDeathAnimationComplete;
+            }
+
+            // Unsubscribe from skip button
+            if (skipButton != null)
+            {
+                skipButton.TapEndEvent.RemoveListener(SkipDeathAnimation);
             }
         }
 
@@ -109,6 +126,18 @@ namespace SickOfIt.Core.Flow
             }
 
             yield break;
+        }
+
+        /// <summary>
+        /// Skip the currently playing death animation
+        /// </summary>
+        public void SkipDeathAnimation()
+        {
+            if (deathPlayer != null)
+            {
+                Debug.Log("DeathManager: Death animation skipped by player");
+                deathPlayer.SkipToEnd();
+            }
         }
 
         /// <summary>
