@@ -407,6 +407,28 @@ namespace SickOfIt.Core.Addressables
             loadedScenes.Remove(sceneName);
         }
 
+        /// <summary>
+        /// Unload all preloaded scenes that aren't the current gameplay scene.
+        /// Useful when the player's intent changes (e.g., New Game after a preload for Continue).
+        /// </summary>
+        public void UnloadAllPreloadedScenes()
+        {
+            // Copy the list since we'll modify it during iteration
+            List<string> scenesToUnload = new List<string>(loadedScenes);
+
+            foreach (string sceneName in scenesToUnload)
+            {
+                // Don't unload the current gameplay scene or base menu scenes
+                if (sceneName == currentGameplayScene)
+                    continue;
+                if (System.Array.Exists(BASE_SCENES, s => s == sceneName))
+                    continue;
+
+                Debug.Log($"[AddressablesSceneLoader] Unloading stale preloaded scene: {sceneName}");
+                StartCoroutine(UnloadSceneAsync(sceneName));
+            }
+        }
+
         public void CacheSceneAssets(string sceneName)
         {
             PreloadManager.Instance.PreloadLabel(sceneName, null);

@@ -70,6 +70,12 @@ namespace SickOfIt.Core.Input
         [SerializeField] private Camera mainCamera;
         [SerializeField] private GameInputManager gameInputManager;
         
+        [Header("Rotation Settings")]
+        [Tooltip("Speed of rotation when moving (smooth rotation to show front/back/sides)")]
+        [SerializeField] private float normalRotationSpeed = 900f;
+        [Tooltip("Speed of rotation when firing (fast snap to left/right)")]
+        [SerializeField] private float firingRotationSpeed = 1800f;
+        
         [Header("Shadow Settings")]
         [Tooltip("The shadow sprite transform that follows the character")]
         [SerializeField] private Transform shadowSprite;
@@ -99,8 +105,8 @@ namespace SickOfIt.Core.Input
         
         // Movement
         private Vector2 moveInput;
-        private Vector3 facingRight = Vector3.one;
-        private Vector3 facingLeft = new Vector3(-1, 1, 1);
+        private float currentYRotation;
+        private float targetYRotation;
         
         // Jump
         private bool isGrounded;
@@ -150,6 +156,10 @@ namespace SickOfIt.Core.Input
             {
                 mainCamera = Camera.main;
             }
+            
+            // Initialize rotation to face right by default
+            currentYRotation = 0f;
+            targetYRotation = 0f;
             
             // Store initial shadow values
             if (shadowSprite != null)
@@ -490,29 +500,68 @@ namespace SickOfIt.Core.Input
         {
             if (rb == null) return;
             
+            // Clamp horizontal input to [-1, 1] to prevent diagonal slowdown
+            // This preserves analog magnitude control while ensuring diagonals don't reduce horizontal speed
+            float horizontalInput = Mathf.Clamp(moveInput.x, -1f, 1f);
+            
             Vector2 velocity = rb.linearVelocity;
-            velocity.x = moveInput.x * moveSpeed;
+            velocity.x = horizontalInput * moveSpeed;
             rb.linearVelocity = velocity;
             
-            if (isFiring && fireDirection.magnitude > InputDeadzone)
+            // Determine target rotation and rotation speed
+            float rotationSpeed = normalRotationSpeed;
+            
+            // Priority 1: Firing direction (fast rotation to pure left/right)
+            if (isFiring && Mathf.Abs(fireDirection.x) > InputDeadzone)
             {
+                rotationSpeed = firingRotationSpeed;
                 if (fireDirection.x > 0)
                 {
-                    transform.localScale = facingRight;
+                    targetYRotation = 0f;  // Right (side view)
                 }
                 else if (fireDirection.x < 0)
                 {
-                    transform.localScale = facingLeft;
+                    targetYRotation = 180f; // Left (side view)
                 }
             }
-            else if (moveInput.x > InputDeadzone)
+            // Priority 2: Movement direction (4 cardinal directions only)
+            else if (moveInput.magnitude > InputDeadzone)
             {
-                transform.localScale = facingRight;
+                // Use the dominant axis to determine facing
+                // Horizontal (left/right) takes priority over vertical
+                float absX = Mathf.Abs(moveInput.x);
+                float absY = Mathf.Abs(moveInput.y);
+                
+                if (absX >= absY)
+                {
+                    // Horizontal movement is dominant - face left or right
+                    if (moveInput.x > 0)
+                    {
+                        targetYRotation = 0f;   // Right (side view)
+                    }
+                    else
+                    {
+                        targetYRotation = 180f; // Left (side view)
+                    }
+                }
+                else
+                {
+                    // Vertical movement is dominant - face front or back
+                    if (moveInput.y > 0)
+                    {
+                        targetYRotation = 270f; // Up/Back (away from camera)
+                    }
+                    else
+                    {
+                        targetYRotation = 90f;  // Down/Front (facing camera)
+                    }
+                }
             }
-            else if (moveInput.x < -InputDeadzone)
-            {
-                transform.localScale = facingLeft;
-            }
+            // If no input, maintain current facing direction
+            
+            // Smoothly rotate towards target
+            currentYRotation = Mathf.MoveTowardsAngle(currentYRotation, targetYRotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
         }
         
         private void HandleJump()

@@ -111,6 +111,9 @@ namespace SickOfIt.Core.Addressables
             // Reset progress for new game
             GameProgressManager.Instance.ResetAllProgress();
 
+            // Unload any preloaded scenes that are no longer needed (e.g., Level2 preloaded for a returning player)
+            AddressablesSceneLoader.Instance.UnloadAllPreloadedScenes();
+
             // New game should play Video1 first
             ShowPreloadingUI("Loading Video 1...");
             PreloadVideoThenLevel(1);
@@ -121,6 +124,20 @@ namespace SickOfIt.Core.Addressables
         /// </summary>
         private void PreloadAppropriateLevel()
         {
+            // If player has beaten the game or is a new player, preload Video1
+            if (GameProgressManager.Instance.HasBeatenGame())
+            {
+                Debug.Log($"[MainMenu] Player has beaten all levels - preloading Video1 for New Game...");
+                AddressablesSceneLoader.Instance.PreloadVideo(1, (success) =>
+                {
+                    if (success)
+                        Debug.Log($"[MainMenu] Video1 preloaded - ready for instant transition!");
+                    else
+                        Debug.LogError($"[MainMenu] Failed to preload Video1");
+                });
+                return;
+            }
+
             int currentLevel = GameProgressManager.Instance.GetCurrentLevel();
 
             if (currentLevel == 1)
