@@ -50,8 +50,8 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         private SpriteRenderer spriteRenderer;
         private AudioSource audioSource;
         private AudioClip audioClip;
-        private float frameTimer = 0f;
         private float frameDuration = 0f;
+        private double playbackElapsedTime = 0.0; // Accumulated elapsed time for frame calculation
         private bool hasAudio = false;
         private bool framesLoaded = false;
         private bool audioLoaded = false;
@@ -406,15 +406,30 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 return;
             }
 
-            frameTimer += Time.deltaTime;
-
-            if (frameTimer >= frameDuration)
+            // Determine the correct frame based on elapsed time, not incremental counting.
+            // When audio is playing, sync directly to audio time for perfect A/V sync.
+            // This ensures hitches cause frame skips rather than cumulative drift.
+            double currentTime;
+            if (hasAudio && audioHasStartedPlaying && audioSource != null && audioSource.isPlaying)
             {
-                frameTimer -= frameDuration;
+                // Sync to audio clock — the single source of truth
+                currentTime = audioSource.time;
+                playbackElapsedTime = currentTime; // keep elapsed in sync for fallback
+            }
+            else
+            {
+                // No audio or audio hasn't started yet — use accumulated deltaTime
+                playbackElapsedTime += Time.deltaTime;
+                currentTime = playbackElapsedTime;
+            }
 
-                currentFrameIndex++;
+            int targetFrame = (int)(currentTime * playbackFPS);
 
-                // Handle chunked playback
+            if (targetFrame != currentFrameIndex)
+            {
+                currentFrameIndex = targetFrame;
+
+                // Handle chunked playback (bounds, looping, chunk switching)
                 HandleChunkedPlayback();
 
                 UpdateSprite();
@@ -535,7 +550,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             }
 
             isPlaying = true;
-            frameTimer = 0f;
+            playbackElapsedTime = 0.0;
             currentFrameIndex = 0;
             UpdateSprite();
         }
@@ -561,7 +576,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         {
             isPlaying = false;
             currentFrameIndex = 0;
-            frameTimer = 0f;
+            playbackElapsedTime = 0.0;
             audioHasStartedPlaying = false;
             hasFinished = false; // Reset completion flag
             UpdateSprite();
