@@ -8,7 +8,8 @@ namespace SickOfIt.Data
     public class GameProgressManager : MonoBehaviour
     {
         [Header("Game Configuration")]
-        [SerializeField] private int totalLevels = 1; // Total number of levels in the game
+        [SerializeField] private GameConfiguration gameConfiguration;
+        
         private static GameProgressManager _instance;
         public static GameProgressManager Instance
         {
@@ -99,13 +100,18 @@ namespace SickOfIt.Data
 
         public int GetTotalLevels()
         {
-            return totalLevels;
+            if (gameConfiguration == null)
+            {
+                Debug.LogError("[GameProgressManager] GameConfiguration is not assigned!");
+                return 1;
+            }
+            return gameConfiguration.TotalLevels;
         }
 
         public bool HasBeatenGame()
         {
             // Player has beaten the game if their current level exceeds total levels
-            return GetCurrentLevel() > totalLevels;
+            return GetCurrentLevel() > GetTotalLevels();
         }
 
         // Reset Progress (useful for testing)

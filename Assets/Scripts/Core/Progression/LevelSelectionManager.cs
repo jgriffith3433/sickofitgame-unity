@@ -12,7 +12,7 @@ namespace SickOfIt.Core.Progression
     public class LevelSelectionManager : MonoBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private int totalLevels = 1; // Set this to your total number of levels
+        [SerializeField] private GameConfiguration gameConfiguration;
 
         [Header("UI References")]
         [SerializeField] private Transform levelButtonContainer; // Parent object for level buttons
@@ -38,6 +38,12 @@ namespace SickOfIt.Core.Progression
                 return;
             }
 
+            if (gameConfiguration == null)
+            {
+                Debug.LogError("LevelSelectionManager: GameConfiguration is not assigned!");
+                return;
+            }
+
             // Clear existing buttons
             foreach (Transform child in levelButtonContainer)
             {
@@ -47,7 +53,7 @@ namespace SickOfIt.Core.Progression
             int highestReached = GameProgressManager.Instance.GetHighestLevelReached();
 
             // Create buttons for each level
-            for (int i = 1; i <= totalLevels; i++)
+            for (int i = 1; i <= gameConfiguration.TotalLevels; i++)
             {
                 int levelNumber = i; // Capture for lambda
 

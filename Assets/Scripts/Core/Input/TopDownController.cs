@@ -33,6 +33,8 @@ namespace SickOfIt.Core.Input
         [SerializeField] private float jumpDetectVelocityThreshold = 0.3f;
         
         [Header("Projectile Settings")]
+        [Tooltip("Enable or disable shooting")]
+        [SerializeField] private bool enableShooting = true;
         [Tooltip("Addressable address of the projectile prefab (e.g., 'Projectile_Player')")]
         [SerializeField] private string projectileAddress = "Projectile_Player";
         [Tooltip("Optional: Transform where projectiles spawn. If null, spawns at player position.")]
@@ -66,6 +68,8 @@ namespace SickOfIt.Core.Input
         [SerializeField] private InputActionReference fireAction;
         
         [Header("References")]
+        [Tooltip("Child transform containing the graphics/visuals to rotate")]
+        [SerializeField] private Transform graphicsTransform;
         [SerializeField] private Animator animator;
         [SerializeField] private Camera mainCamera;
         [SerializeField] private GameInputManager gameInputManager;
@@ -157,9 +161,15 @@ namespace SickOfIt.Core.Input
                 mainCamera = Camera.main;
             }
             
-            // Initialize rotation to face right by default
-            currentYRotation = 0f;
-            targetYRotation = 0f;
+            // Initialize rotation to face camera (front view)
+            currentYRotation = 90f;
+            targetYRotation = 90f;
+            
+            // Apply initial rotation to graphics transform
+            if (graphicsTransform != null)
+            {
+                graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+            }
             
             // Store initial shadow values
             if (shadowSprite != null)
@@ -221,6 +231,7 @@ namespace SickOfIt.Core.Input
             HandlePlatformCollision();
             HandleJump();
             HandleFiring();
+            UpdateRotationTarget();
             UpdateAnimator();
             UpdateShadow();
         }
@@ -228,6 +239,12 @@ namespace SickOfIt.Core.Input
         private void FixedUpdate()
         {
             HandleMovement();
+        }
+        
+        private void LateUpdate()
+        {
+            // Apply rotation after Animator updates to prevent override
+            ApplyRotation();
         }
         
         private void OnDisable()
@@ -507,8 +524,11 @@ namespace SickOfIt.Core.Input
             Vector2 velocity = rb.linearVelocity;
             velocity.x = horizontalInput * moveSpeed;
             rb.linearVelocity = velocity;
-            
-            // Determine target rotation and rotation speed
+        }
+        
+        private void UpdateRotationTarget()
+        {
+            // Determine target rotation and rotation speed based on firing or movement
             float rotationSpeed = normalRotationSpeed;
             
             // Priority 1: Firing direction (fast rotation to pure left/right)
@@ -561,7 +581,19 @@ namespace SickOfIt.Core.Input
             
             // Smoothly rotate towards target
             currentYRotation = Mathf.MoveTowardsAngle(currentYRotation, targetYRotation, rotationSpeed * Time.deltaTime);
-            transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+        }
+        
+        private void ApplyRotation()
+        {
+            // Apply rotation to graphics child if assigned, otherwise rotate the entire transform
+            if (graphicsTransform != null)
+            {
+                graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+            }
+            else
+            {
+                transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+            }
         }
         
         private void HandleJump()
@@ -601,6 +633,7 @@ namespace SickOfIt.Core.Input
         
         private void HandleFiring()
         {
+            if (!enableShooting) return;
             if (fireDirection.magnitude < InputDeadzone) return;
             if (Time.time - lastFireTime < fireRate) return;
             if (!isProjectileReady) return;

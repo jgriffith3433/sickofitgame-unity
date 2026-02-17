@@ -7,6 +7,7 @@ namespace SickOfIt.Core.Flow
         bool IsLoaded { get; }
         void Play();
         void SkipToEnd();
+        void SetSpriteRendererEnabled(bool enabled);
         event Action PlaybackCompleted;
     }
 }

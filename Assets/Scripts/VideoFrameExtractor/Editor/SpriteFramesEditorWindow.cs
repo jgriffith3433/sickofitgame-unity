@@ -369,6 +369,8 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 spriteFramesData.SetTotalSpriteSheetCount(totalSheets);
                 EditorUtility.SetDirty(spriteFramesData);
                 AssetDatabase.SaveAssets();
+                
+                Debug.Log($"[SpriteFramesEditor] Set total frames to {textures.Count} (from {textures.Count} input textures)");
             }
             finally
             {
@@ -454,13 +456,30 @@ namespace SickOfIt.VideoFrameExtractor.Editor
             sheetTextures.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
 
             int framesPerSheet = spriteFramesData.framesPerSheet;
-            int totalFrames = spriteFramesData.GetTotalFrames();
-
-            // If totalFrames wasn't set by packing step, estimate from sheet count
-            if (totalFrames == 0)
+            
+            // Get stored totalFrames (set during packing step) without recalculating from chunks
+            int storedTotalFrames = spriteFramesData.GetStoredTotalFrames();
+            
+            // Validate stored value against selected sheet count
+            int estimatedMaxFrames = sheetTextures.Count * framesPerSheet;
+            int estimatedMinFrames = (sheetTextures.Count - 1) * framesPerSheet + 1;
+            
+            int totalFrames;
+            if (storedTotalFrames >= estimatedMinFrames && storedTotalFrames <= estimatedMaxFrames)
             {
-                totalFrames = sheetTextures.Count * framesPerSheet;
+                // Stored value is valid, use it
+                totalFrames = storedTotalFrames;
+            }
+            else
+            {
+                // Estimate from sheet count (assume all sheets full, will clamp in loop)
+                totalFrames = estimatedMaxFrames;
                 spriteFramesData.SetTotalFrameCount(totalFrames);
+                
+                if (storedTotalFrames != 0)
+                {
+                    Debug.LogWarning($"Stored frame count ({storedTotalFrames}) doesn't match sheet count. Estimating {totalFrames} frames from {sheetTextures.Count} sheets.");
+                }
             }
 
             // Calculate sheets per chunk
@@ -517,7 +536,20 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 EditorGUILayout.EndVertical();
             }
 
-            EditorGUILayout.LabelField($"Total Frames: {spriteFramesData.GetTotalFrames()}", EditorStyles.boldLabel);
+            // Display and edit totalFrames
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Total Frames:", GUILayout.Width(100));
+            int currentTotal = spriteFramesData.GetStoredTotalFrames();
+            int newTotal = EditorGUILayout.IntField(currentTotal, GUILayout.Width(60));
+            if (newTotal != currentTotal)
+            {
+                spriteFramesData.SetTotalFrameCount(newTotal);
+                EditorUtility.SetDirty(spriteFramesData);
+                AssetDatabase.SaveAssets();
+                Debug.Log($"[SpriteFramesEditor] Manually set total frames to {newTotal}");
+            }
+            EditorGUILayout.LabelField($"(Calculated from chunks: {spriteFramesData.GetTotalFrames()})", EditorStyles.miniLabel);
+            EditorGUILayout.EndHorizontal();
         }
 
         // =====================================================================

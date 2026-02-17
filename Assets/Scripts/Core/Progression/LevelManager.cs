@@ -10,206 +10,216 @@ using SickOfIt.Data;
 namespace SickOfIt.Core.Progression
 {
     /// <summary>
-    /// Base manager for individual level scenes. Add this to each level scene and call CompleteLevel() when the player wins.
+    /// Base manager for individual level scenes.
+    /// Handles asset loading, spawner lifecycle, scene transitions, and multi-stage sequences.
     /// </summary>
     public class LevelManager : MonoBehaviour
     {
+        #region Serialized Fields
+
         [Header("Level Settings")]
         [SerializeField] private int levelNumber = 1;
 
         [Header("Background Preloading")]
-        [Tooltip("Enable preloading next video during gameplay (may cause OOM on low-memory platforms)")]
         [SerializeField] private bool enableVideoPreloading = true;
-        [Tooltip("Delay before starting video preload (seconds). Increase on low-memory platforms.")]
         [SerializeField] private float videoPreloadDelay = 2f;
-        [Tooltip("Disable preloading on WebGL to prevent memory issues")]
         [SerializeField] private bool disablePreloadOnWebGL = true;
 
-        [Header("Death Scene Preloading")]
-        [Tooltip("Name of the death scene to preload (e.g., 'Death1')")]
+        [Header("Death Scene")]
         [SerializeField] private string deathSceneName = "Death1";
-        [Tooltip("Whether to preload the death scene during gameplay")]
         [SerializeField] private bool preloadDeathScene = true;
 
-        [Header("Loading System")]
-        [Tooltip("Background sprite players that need to finish loading")]
+        [Header("Asset Loading")]
+        [Tooltip("Background sprite players that must finish loading before gameplay begins")]
         [SerializeField] private List<MonoBehaviour> backgroundPlayerBehaviours = new List<MonoBehaviour>();
-
-        [Tooltip("GameObjects to activate once all assets are loaded (they should start deactivated)")]
+        [Tooltip("Activated once all assets are loaded (start deactivated)")]
         [SerializeField] private List<GameObject> objectsToActivateAfterLoading = new List<GameObject>();
-
-        [Tooltip("GameObjects to deactivate once all assets are loaded (e.g., loading indicators)")]
+        [Tooltip("Deactivated once all assets are loaded (e.g. loading indicators)")]
         [SerializeField] private List<GameObject> objectsToDeactivateAfterLoading = new List<GameObject>();
 
-        [Header("Scene Transition Loading")]
-        [Tooltip("GameObjects to activate when transitioning to next scene (e.g., 'Loading...' UI)")]
+        [Header("Scene Transition UI")]
+        [Tooltip("Activated when transitioning to another scene (e.g. 'Loading...' overlay)")]
         [SerializeField] private List<GameObject> objectsToActivateOnSceneTransition = new List<GameObject>();
-
-        [Tooltip("GameObjects to deactivate when transitioning to next scene (e.g., player controls, game UI)")]
+        [Tooltip("Deactivated when transitioning (e.g. player controls, game HUD)")]
         [SerializeField] private List<GameObject> objectsToDeactivateOnSceneTransition = new List<GameObject>();
 
         [Header("Spawner Control")]
-        [Tooltip("SpriteFramePlayer that when finished, will kill all spawners")]
+        [Tooltip("SpriteFramePlayer whose completion kills all spawners")]
         [SerializeField] private MonoBehaviour spawnerKillTriggerPlayer;
-        
-        [Tooltip("Automatically find and kill all spawners when trigger player finishes")]
-        [SerializeField] private bool autoKillSpawnersOnComplete = false;
+        [SerializeField] private bool autoKillSpawnersOnComplete;
 
-        [Header("Loading Debug")]
-        [SerializeField] private bool isLoading = false;
-        [SerializeField] private bool allAssetsLoaded = false;
+        [Header("Two-Stage Sequence")]
+        [SerializeField] private bool enableTwoStageSequence;
+        [SerializeField] private MonoBehaviour firstSequencePlayer;
+        [SerializeField] private MonoBehaviour secondSequencePlayer;
+        [SerializeField] private List<GameObject> objectsToActivateAfterFirstSequence = new List<GameObject>();
+        [SerializeField] private List<GameObject> objectsToDeactivateAfterFirstSequence = new List<GameObject>();
+
+        [Header("Debug")]
+        [SerializeField] private bool isLoading;
+        [SerializeField] private bool allAssetsLoaded;
+
+        #endregion
+
+        #region Private State
 
         private readonly List<IFrameSequencePlayer> backgroundPlayers = new List<IFrameSequencePlayer>();
         private IFrameSequencePlayer triggerPlayer;
+        private IFrameSequencePlayer firstPlayer;
+        private IFrameSequencePlayer secondPlayer;
         private List<EnemySpawner> levelSpawners = new List<EnemySpawner>();
+
+        #endregion
+
+        #region Lifecycle
 
         private void Awake()
         {
-            backgroundPlayers.Clear();
+            // Resolve MonoBehaviour references to interfaces
             foreach (var behaviour in backgroundPlayerBehaviours)
             {
                 if (behaviour is IFrameSequencePlayer player)
-                {
                     backgroundPlayers.Add(player);
-                }
             }
 
-            // Setup spawner kill trigger
-            if (spawnerKillTriggerPlayer != null && spawnerKillTriggerPlayer is IFrameSequencePlayer framePlayer)
+            if (spawnerKillTriggerPlayer is IFrameSequencePlayer trigger)
             {
-                triggerPlayer = framePlayer;
+                triggerPlayer = trigger;
                 triggerPlayer.PlaybackCompleted += OnSpawnerKillTriggerComplete;
             }
 
-            // Find all spawners in the level
-            if (autoKillSpawnersOnComplete)
+            if (enableTwoStageSequence)
             {
-                levelSpawners.AddRange(FindObjectsOfType<EnemySpawner>());
+                if (firstSequencePlayer is IFrameSequencePlayer first)
+                {
+                    firstPlayer = first;
+                    firstPlayer.PlaybackCompleted += OnFirstSequenceComplete;
+                }
+                if (secondSequencePlayer is IFrameSequencePlayer second)
+                    secondPlayer = second;
             }
 
-            // Start in loading state if we have assets to wait for
-            if (HasAssetsToLoad())
+            if (autoKillSpawnersOnComplete)
+                levelSpawners.AddRange(FindObjectsOfType<EnemySpawner>());
+
+            // Begin loading or activate immediately
+            if (backgroundPlayers.Count > 0)
             {
                 isLoading = true;
                 StartCoroutine(WaitForAssetsToLoad());
             }
             else
             {
-                // No assets to load, activate everything immediately
                 ActivateGameObjects();
             }
 
-            // Preload next video in background while player plays
             StartCoroutine(PreloadNextVideoInBackground());
         }
 
-        private void Start()
+        private void OnDestroy()
         {
-            // Level loads directly now - videos are played from MainMenu/LevelSelection before entering
+            if (triggerPlayer != null)
+                triggerPlayer.PlaybackCompleted -= OnSpawnerKillTriggerComplete;
+            if (firstPlayer != null)
+                firstPlayer.PlaybackCompleted -= OnFirstSequenceComplete;
         }
 
-        /// <summary>
-        /// Preload the next video during gameplay
-        /// </summary>
+        #endregion
+
+        #region Asset Loading
+
+        private IEnumerator WaitForAssetsToLoad()
+        {
+            while (!AreAllAssetsLoaded())
+                yield return null;
+
+            allAssetsLoaded = true;
+            isLoading = false;
+
+            SetGameObjectsActive(objectsToDeactivateAfterLoading, false);
+            ActivateGameObjects();
+        }
+
+        private bool AreAllAssetsLoaded()
+        {
+            foreach (var player in backgroundPlayers)
+            {
+                if (player != null && !player.IsLoaded)
+                    return false;
+            }
+            return true;
+        }
+
+        private void ActivateGameObjects()
+        {
+            SetGameObjectsActive(objectsToActivateAfterLoading, true);
+            AnalyticsManager.Instance.TrackLevelStart(levelNumber);
+        }
+
         private IEnumerator PreloadNextVideoInBackground()
         {
 #if UNITY_WEBGL
-            // Skip video preloading on WebGL to prevent Out of Memory crashes
             if (disablePreloadOnWebGL)
-            {
-                Debug.Log($"[LevelManager] Skipping video preload on WebGL to conserve memory");
                 yield break;
-            }
 #endif
-
             if (!enableVideoPreloading)
-            {
-                Debug.Log($"[LevelManager] Video preloading disabled");
                 yield break;
-            }
 
-            // Wait for level to fully initialize and give time for memory to stabilize
             yield return new WaitForSeconds(videoPreloadDelay);
 
             int nextVideo = levelNumber + 1;
-
-            Debug.Log($"[LevelManager] Starting background preload of Video{nextVideo}");
             AddressablesSceneLoader.Instance.PreloadVideo(nextVideo, null);
 
-            // Also preload death scene if enabled
             if (preloadDeathScene && !string.IsNullOrEmpty(deathSceneName))
             {
-                yield return new WaitForSeconds(1f); // Stagger preloads slightly
-
+                yield return new WaitForSeconds(1f);
                 AddressablesSceneLoader.Instance.PreloadScene(deathSceneName, null);
             }
         }
 
-        /// <summary>
-        /// Call this method when the player completes the level's win condition
-        /// </summary>
+        #endregion
+
+        #region Level Completion
+
         public void CompleteLevel()
         {
-            // Mark level as complete
-            GameProgressManager.Instance.SetLevelCompleted(levelNumber);
-
-            // Track level completion
-            AnalyticsManager.Instance.TrackLevelComplete(levelNumber);
-
-            // Unlock the NEXT level's video
-            int nextLevelVideo = levelNumber + 1;
-            GameProgressManager.Instance.UnlockVideo(nextLevelVideo);
-
-            // You can add completion effects here (particles, sounds, etc.)
-
-            // After a short delay, play next level's video OR go to next level
+            MarkLevelComplete();
             Invoke(nameof(ProceedToNextLevel), 2f);
         }
 
-        /// <summary>
-        /// Clla this method when the player completes the level but wants to return to the main menu instead of proceeding
-        /// </summary>
         public void CompleteLevelAndReturnToMainMenu()
         {
-            // Mark level as complete
-            GameProgressManager.Instance.SetLevelCompleted(levelNumber);
-
-            // Track level completion
-            AnalyticsManager.Instance.TrackLevelComplete(levelNumber);
-
-            // Unlock the NEXT level's video
-            int nextLevelVideo = levelNumber + 1;
-            GameProgressManager.Instance.UnlockVideo(nextLevelVideo);
-
-            // You can add completion effects here (particles, sounds, etc.)
-
-            // After a short delay, return to main menu
+            MarkLevelComplete();
             Invoke(nameof(ReturnToMainMenu), 2f);
+        }
+
+        private void MarkLevelComplete()
+        {
+            GameProgressManager.Instance.SetLevelCompleted(levelNumber);
+            AnalyticsManager.Instance.TrackLevelComplete(levelNumber);
+            GameProgressManager.Instance.UnlockVideo(levelNumber + 1);
         }
 
         private void ProceedToNextLevel()
         {
             int nextLevel = levelNumber + 1;
-            int nextLevelVideo = levelNumber + 1;
-
-            // Show loading UI before transitioning
             ShowSceneTransitionUI();
 
-            // Play the next level's video (if it exists and hasn't been seen)
-            if (GameProgressManager.Instance.IsVideoUnlocked(nextLevelVideo))
+            if (GameProgressManager.Instance.IsVideoUnlocked(nextLevel))
             {
-                // Store which level to load after the video
                 PlayerPrefs.SetInt("ReturnToLevel", nextLevel);
                 PlayerPrefs.Save();
-
-                SceneTransitionManager.Instance.LoadVideo(nextLevelVideo);
+                SceneTransitionManager.Instance.LoadVideo(nextLevel);
             }
             else
             {
-                // No video, go directly to next level or level select
                 SceneTransitionManager.Instance.LoadLevelSelection();
             }
         }
+
+        #endregion
+
+        #region Navigation
 
         public void ReturnToLevelSelect()
         {
@@ -225,16 +235,12 @@ namespace SickOfIt.Core.Progression
 
         public void RestartLevel()
         {
-            // Go through death scene instead of direct reload
-
-            // Store which scene to reload after death animation
-            UnityEngine.SceneManagement.Scene currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            var currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             PlayerPrefs.SetString("DeathSceneToReload", currentScene.name);
             PlayerPrefs.Save();
 
             ShowSceneTransitionUI();
 
-            // Load death scene (or directly load the level if no death scene configured)
             if (!string.IsNullOrEmpty(deathSceneName))
             {
                 SceneTransitionManager.Instance.LoadDeathScene(deathSceneName);
@@ -246,151 +252,64 @@ namespace SickOfIt.Core.Progression
             }
         }
 
-
-
-        /// <summary>
-        /// Check if there are any assets that need to be loaded
-        /// </summary>
-        private bool HasAssetsToLoad()
-        {
-            return backgroundPlayers != null && backgroundPlayers.Count > 0;
-        }
-
-        /// <summary>
-        /// Wait for all addressable assets to finish loading
-        /// </summary>
-        private IEnumerator WaitForAssetsToLoad()
-        {
-            // Wait until all assets are loaded
-            while (!AreAllAssetsLoaded())
-            {
-                yield return null; // Wait one frame
-            }
-
-            allAssetsLoaded = true;
-            isLoading = false;
-
-            // Deactivate loading indicators
-            DeactivateGameObjects();
-
-            // Activate game objects now that loading is complete
-            ActivateGameObjects();
-        }
-
-        /// <summary>
-        /// Check if all registered assets have finished loading
-        /// </summary>
-        private bool AreAllAssetsLoaded()
-        {
-            // Check all background players
-            if (backgroundPlayers != null)
-            {
-                foreach (var player in backgroundPlayers)
-                {
-                    if (player != null && !player.IsLoaded)
-                    {
-                        return false; // Still waiting for this one
-                    }
-                }
-            }
-
-            return true; // Everything is loaded
-        }
-
-        /// <summary>
-        /// Activate all game objects that were waiting for loading to complete
-        /// </summary>
-        private void ActivateGameObjects()
-        {
-            if (objectsToActivateAfterLoading != null)
-            {
-                foreach (var obj in objectsToActivateAfterLoading)
-                {
-                    if (obj != null)
-                    {
-                        obj.SetActive(true);
-                    }
-                }
-            }
-
-            // Track level start event when player gains control
-            AnalyticsManager.Instance.TrackLevelStart(levelNumber);
-        }
-
-        /// <summary>
-        /// Deactivate loading indicators after loading is complete
-        /// </summary>
-        private void DeactivateGameObjects()
-        {
-            if (objectsToDeactivateAfterLoading != null)
-            {
-                foreach (var obj in objectsToDeactivateAfterLoading)
-                {
-                    if (obj != null)
-                    {
-                        obj.SetActive(false);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Show loading UI when transitioning to another scene
-        /// </summary>
         public void ShowSceneTransitionUI()
         {
-            // Activate loading indicators
-            if (objectsToActivateOnSceneTransition != null)
-            {
-                foreach (var obj in objectsToActivateOnSceneTransition)
-                {
-                    if (obj != null)
-                    {
-                        obj.SetActive(true);
-                    }
-                }
-            }
-
-            // Deactivate game UI/controls
-            if (objectsToDeactivateOnSceneTransition != null)
-            {
-                foreach (var obj in objectsToDeactivateOnSceneTransition)
-                {
-                    if (obj != null)
-                    {
-                        obj.SetActive(false);
-                    }
-                }
-            }
+            SetGameObjectsActive(objectsToActivateOnSceneTransition, true);
+            SetGameObjectsActive(objectsToDeactivateOnSceneTransition, false);
         }
 
-        /// <summary>
-        /// Called when the spawner kill trigger SpriteFramePlayer finishes playback
-        /// </summary>
+        #endregion
+
+        #region Spawner & Sequence Callbacks
+
         private void OnSpawnerKillTriggerComplete()
         {
             if (!autoKillSpawnersOnComplete)
                 return;
 
-            Debug.Log($"[LevelManager] Spawner kill trigger complete - killing {levelSpawners.Count} spawners");
-
-            // Kill all spawners
             foreach (var spawner in levelSpawners)
             {
                 if (spawner != null)
-                {
                     spawner.KillSpawner();
-                }
             }
         }
 
-        private void OnDestroy()
+        private void OnFirstSequenceComplete()
         {
-            // Unsubscribe from trigger player event
-            if (triggerPlayer != null)
+            if (!enableTwoStageSequence)
+                return;
+
+            // Disable first player's SpriteRenderer before enabling the second one
+            firstPlayer?.SetSpriteRendererEnabled(false);
+
+            SetGameObjectsActive(objectsToDeactivateAfterFirstSequence, false);
+            SetGameObjectsActive(objectsToActivateAfterFirstSequence, true);
+
+            firstPlayer?.SetSpriteRendererEnabled(true);
+
+            if (secondPlayer != null)
             {
-                triggerPlayer.PlaybackCompleted -= OnSpawnerKillTriggerComplete;
+                if (!secondPlayer.IsLoaded)
+                    Debug.LogError("[LevelManager] Second sequence player is not loaded! Check preload settings.");
+
+                secondPlayer.Play();
             }
         }
+
+        #endregion
+
+        #region Helpers
+
+        private static void SetGameObjectsActive(List<GameObject> objects, bool active)
+        {
+            if (objects == null) return;
+            foreach (var obj in objects)
+            {
+                if (obj != null)
+                    obj.SetActive(active);
+            }
+        }
+
+        #endregion
     }
 }

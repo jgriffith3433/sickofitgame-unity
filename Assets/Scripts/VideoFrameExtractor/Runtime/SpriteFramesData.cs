@@ -107,6 +107,14 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         }
 
         /// <summary>
+        /// Get the stored total frame count without recalculating from chunks
+        /// </summary>
+        public int GetStoredTotalFrames()
+        {
+            return totalFrames;
+        }
+
+        /// <summary>
         /// Set total frame count (called by editor when packing sprite sheets)
         /// </summary>
         public void SetTotalFrameCount(int count)
