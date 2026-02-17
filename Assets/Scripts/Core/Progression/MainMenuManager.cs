@@ -48,6 +48,9 @@ namespace SickOfIt.Core.Progression
 
         private void Start()
         {
+            // Track game start when main menu loads
+            SickOfIt.Core.AnalyticsManager.Instance.TrackGameStart();
+
             // Initialize game progress for first-time players
             GameProgressManager.Instance.InitializeNewPlayer();
 

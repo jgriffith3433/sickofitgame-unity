@@ -44,6 +44,7 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private bool videoLoaded = false;
 
         private IFrameSequencePlayer videoPlayer;
+        private bool videoWasSkipped = false;
 
         private void Awake()
         {
@@ -89,6 +90,12 @@ namespace SickOfIt.Core.Progression
         /// </summary>
         private void OnVideoComplete()
         {
+            // Track video completion (only if not skipped)
+            if (!videoWasSkipped)
+            {
+                SickOfIt.Core.AnalyticsManager.Instance.TrackVideoComplete(videoNumber);
+            }
+
             // Check if configured to return to main menu
             if (returnToMainMenu)
             {
@@ -145,6 +152,9 @@ namespace SickOfIt.Core.Progression
             {
                 videoPlayer.Play();
 
+                // Track video start
+                SickOfIt.Core.AnalyticsManager.Instance.TrackVideoStart(videoNumber);
+
                 // Preload next content while video is playing
                 if (preloadDuringPlayback)
                 {
@@ -161,6 +171,11 @@ namespace SickOfIt.Core.Progression
             if (videoPlayer != null)
             {
                 Debug.Log("VideoManager: Video skipped by player");
+
+                // Track video skip
+                videoWasSkipped = true;
+                SickOfIt.Core.AnalyticsManager.Instance.TrackVideoSkip(videoNumber);
+
                 videoPlayer.SkipToEnd();
             }
         }

@@ -39,6 +39,9 @@ namespace SickOfIt.Combat.Health
 
         private void OnPlayerDeath()
         {
+            // Track player death event
+            SickOfIt.Core.AnalyticsManager.Instance.TrackPlayerDeath("combat");
+
             // Disable player controls
             var controller = GetComponentInParent<TopDownController>();
             if (controller != null)

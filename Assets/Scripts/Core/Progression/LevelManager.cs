@@ -129,6 +129,9 @@ namespace SickOfIt.Core.Progression
             // Mark level as complete
             GameProgressManager.Instance.SetLevelCompleted(levelNumber);
 
+            // Track level completion
+            AnalyticsManager.Instance.TrackLevelComplete(levelNumber);
+
             // Unlock the NEXT level's video
             int nextLevelVideo = levelNumber + 1;
             GameProgressManager.Instance.UnlockVideo(nextLevelVideo);
@@ -146,6 +149,9 @@ namespace SickOfIt.Core.Progression
         {
             // Mark level as complete
             GameProgressManager.Instance.SetLevelCompleted(levelNumber);
+
+            // Track level completion
+            AnalyticsManager.Instance.TrackLevelComplete(levelNumber);
 
             // Unlock the NEXT level's video
             int nextLevelVideo = levelNumber + 1;
@@ -282,6 +288,9 @@ namespace SickOfIt.Core.Progression
                     }
                 }
             }
+
+            // Track level start event when player gains control
+            AnalyticsManager.Instance.TrackLevelStart(levelNumber);
         }
 
         /// <summary>
