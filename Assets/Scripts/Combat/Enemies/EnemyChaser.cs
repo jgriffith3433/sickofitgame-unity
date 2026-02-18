@@ -11,9 +11,6 @@ namespace SickOfIt.Combat.Enemies
         [SerializeField] private float stopDistance = 0.5f; // How close before stopping
         [SerializeField] private bool faceMovementDirection = true;
 
-        private Vector3 facingRight = Vector3.one;
-        private Vector3 facingLeft = new Vector3(-1, 1, 1);
-
         protected override void UpdateBehavior()
         {
             if (player == null)
@@ -24,26 +21,28 @@ namespace SickOfIt.Combat.Enemies
             // Only move if not too close
             if (distanceToPlayer > stopDistance)
             {
-                // Move toward player
-                Vector2 direction = (player.position - transform.position).normalized;
+                // Move toward player (ignoring Z for 2D)
+                Vector2 playerPos2D = new Vector2(player.position.x, player.position.y);
+                Vector2 currentPos2D = new Vector2(transform.position.x, transform.position.y);
+                Vector2 direction = (playerPos2D - currentPos2D).normalized;
                 Vector2 newPosition = Vector2.MoveTowards(
-                    transform.position,
-                    player.position,
+                    currentPos2D,
+                    playerPos2D,
                     moveSpeed * Time.deltaTime
                 );
 
                 rb.MovePosition(newPosition);
 
-                // Face the direction of movement
+                // Face the direction of movement using sprite flip (doesn't affect child objects like health bars)
                 if (faceMovementDirection && spriteRenderer != null)
                 {
                     if (direction.x > 0)
                     {
-                        transform.localScale = facingRight;
+                        spriteRenderer.flipX = false;
                     }
                     else if (direction.x < 0)
                     {
-                        transform.localScale = facingLeft;
+                        spriteRenderer.flipX = true;
                     }
                 }
             }

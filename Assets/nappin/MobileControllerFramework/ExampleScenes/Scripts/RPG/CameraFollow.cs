@@ -25,6 +25,10 @@ namespace MobileControllerFramework
         [Range(0f, 1f)]
         public float smoothSpeed = 0.125f;
 
+        [Header("Camera Offset")]
+        [Tooltip("Offset from the target position. Positive Y looks above player, negative Y looks below player")]
+        public Vector2 cameraOffset = new Vector2(0f, -1f);
+
         [Header("Constraints")]
         [Tooltip("Enable to clamp camera position within bounds")]
         public bool useBounds = false;
@@ -114,6 +118,10 @@ namespace MobileControllerFramework
             // --- Follow position (dead zone logic) ---
             Vector3 currentPos = transform.position;
             Vector3 targetPos = target.position;
+            
+            // Apply camera offset (shift the target position to look above/below player)
+            targetPos.x += cameraOffset.x;
+            targetPos.y += cameraOffset.y;
             
             // Calculate dead zone boundaries (in world space)
             float halfDeadZoneWidth = deadZoneWidth * 0.5f;

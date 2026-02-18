@@ -240,12 +240,13 @@ namespace SickOfIt.Core.Addressables
                 _instance.UpdateStatus();
             }
         }
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void AutoInitialize()
-        {
-            // Automatically create indicator on game start
-            var instance = Instance;
-        }
+        
+        // Uncomment the following lines to auto-create the indicator on game start without needing to reference it in a scene
+        // [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        // private static void AutoInitialize()
+        // {
+        //     // Automatically create indicator on game start
+        //     var instance = Instance;
+        // }
     }
 }

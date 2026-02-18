@@ -54,6 +54,8 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private MonoBehaviour secondSequencePlayer;
         [SerializeField] private List<GameObject> objectsToActivateAfterFirstSequence = new List<GameObject>();
         [SerializeField] private List<GameObject> objectsToDeactivateAfterFirstSequence = new List<GameObject>();
+        [Tooltip("Optional button to skip the first sequence")]
+        [SerializeField] private MobileControllerFramework.Button skipFirstSequenceButton;
 
         [Header("Debug")]
         [SerializeField] private bool isLoading;
@@ -97,10 +99,16 @@ namespace SickOfIt.Core.Progression
                 }
                 if (secondSequencePlayer is IFrameSequencePlayer second)
                     secondPlayer = second;
+
+                // Wire up skip button if provided
+                if (skipFirstSequenceButton != null)
+                {
+                    skipFirstSequenceButton.TapEndEvent.AddListener(SkipFirstSequence);
+                }
             }
 
             if (autoKillSpawnersOnComplete)
-                levelSpawners.AddRange(FindObjectsOfType<EnemySpawner>());
+                levelSpawners.AddRange(FindObjectsOfType<EnemySpawner>(true));
 
             // Begin loading or activate immediately
             if (backgroundPlayers.Count > 0)
@@ -122,6 +130,8 @@ namespace SickOfIt.Core.Progression
                 triggerPlayer.PlaybackCompleted -= OnSpawnerKillTriggerComplete;
             if (firstPlayer != null)
                 firstPlayer.PlaybackCompleted -= OnFirstSequenceComplete;
+            if (skipFirstSequenceButton != null)
+                skipFirstSequenceButton.TapEndEvent.RemoveListener(SkipFirstSequence);
         }
 
         #endregion
@@ -294,6 +304,23 @@ namespace SickOfIt.Core.Progression
 
                 secondPlayer.Play();
             }
+
+            // Hide skip button after first sequence completes
+            if (skipFirstSequenceButton != null)
+                skipFirstSequenceButton.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Skip the first sequence and immediately trigger the second sequence.
+        /// Called by the skip button.
+        /// </summary>
+        public void SkipFirstSequence()
+        {
+            if (!enableTwoStageSequence || firstPlayer == null)
+                return;
+
+            // Skip to end will trigger OnFirstSequenceComplete via the PlaybackCompleted event
+            firstPlayer.SkipToEnd();
         }
 
         #endregion

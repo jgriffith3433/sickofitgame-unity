@@ -66,6 +66,8 @@ namespace SickOfIt.Core.Input
         [SerializeField] private InputActionReference jumpAction;
         [Tooltip("Left mouse button - bind to 'Player/Fire' action")]
         [SerializeField] private InputActionReference fireAction;
+        [Tooltip("Gamepad right stick / mouse delta - bind to 'Character/Look' action")]
+        [SerializeField] private InputActionReference lookAction;
         
         [Header("References")]
         [Tooltip("Child transform containing the graphics/visuals to rotate")]
@@ -211,6 +213,8 @@ namespace SickOfIt.Core.Input
                 jumpAction.action.Enable();
             if (fireAction?.action != null)
                 fireAction.action.Enable();
+            if (lookAction?.action != null)
+                lookAction.action.Enable();
 
             if (gameInputManager != null)
                 gameInputManager.OnJumpPressed += OnJumpRequested;
@@ -255,6 +259,8 @@ namespace SickOfIt.Core.Input
                 jumpAction.action.Disable();
             if (fireAction?.action != null)
                 fireAction.action.Disable();
+            if (lookAction?.action != null)
+                lookAction.action.Disable();
 
             if (gameInputManager != null)
                 gameInputManager.OnJumpPressed -= OnJumpRequested;
@@ -369,6 +375,19 @@ namespace SickOfIt.Core.Input
                 if (analogInput.magnitude > InputDeadzone)
                 {
                     fireDirection = analogInput.normalized;
+                    isFiring = true;
+                }
+            }
+            
+            // Check gamepad right stick (Look action) - only accept gamepad input, not mouse
+            if (lookAction?.action != null && !isFiring)
+            {
+                Vector2 lookInput = lookAction.action.ReadValue<Vector2>();
+                // Only fire if input is from a gamepad device
+                if (lookInput.magnitude > InputDeadzone && 
+                    lookAction.action.activeControl?.device is Gamepad)
+                {
+                    fireDirection = lookInput.normalized;
                     isFiring = true;
                 }
             }

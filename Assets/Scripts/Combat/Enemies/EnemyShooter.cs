@@ -70,8 +70,10 @@ namespace SickOfIt.Combat.Enemies
             if (cachedProjectilePrefab == null || firePoint == null)
                 return;
 
-            // Calculate direction to player
-            Vector2 direction = (player.position - firePoint.position).normalized;
+            // Calculate direction to player (ignoring Z for 2D)
+            Vector2 playerPos2D = new Vector2(player.position.x, player.position.y);
+            Vector2 firePointPos2D = new Vector2(firePoint.position.x, firePoint.position.y);
+            Vector2 direction = (playerPos2D - firePointPos2D).normalized;
 
             // Spawn projectile
             GameObject projectile = Instantiate(cachedProjectilePrefab, firePoint.position, Quaternion.identity);

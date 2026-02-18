@@ -159,12 +159,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             audioHasStartedPlaying = false;
             hasFinished = false;
 
-            if (hasAudio && audioSource != null && audioClip != null)
-            {
-                audioSource.time = 0f;
-                audioSource.Play();
-            }
-
+            // Initialize playback state BEFORE starting audio to ensure sync
             isPlaying = true;
             playbackElapsedTime = 0.0;
             currentFrameIndex = 0;
@@ -173,6 +168,13 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             // Enable renderer AFTER setting the sprite to avoid a blank frame
             if (spriteRenderer != null && !spriteRenderer.enabled)
                 spriteRenderer.enabled = true;
+
+            // Start audio AFTER visual playback is initialized
+            if (hasAudio && audioSource != null && audioClip != null)
+            {
+                audioSource.time = 0f;
+                audioSource.Play();
+            }
         }
 
         /// <summary>
