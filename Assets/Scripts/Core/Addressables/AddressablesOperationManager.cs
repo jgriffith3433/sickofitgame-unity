@@ -246,6 +246,16 @@ namespace SickOfIt.Core.Addressables
                     callback?.Invoke(success);
                 pendingLabelLoadCallbacks.Remove(label);
             }
+
+            // Release the handle to free memory. On WebGL, the asset bundles are already
+            // cached in the browser cache (UnityCache), so subsequent loads will hit the
+            // local cache. Keeping the handle alive pins assets in WASM memory unnecessarily.
+            // On other platforms, preloaded assets will be re-loaded from disk cache quickly.
+            if (loadHandle.IsValid())
+            {
+                AddressablesAPI.Release(loadHandle);
+                Log($"Released preload handle for label '{label}' to free memory");
+            }
         }
 
         private IEnumerator LoadLabelAsync<T>(string label, System.Action<IList<T>> onComplete) where T : UnityEngine.Object

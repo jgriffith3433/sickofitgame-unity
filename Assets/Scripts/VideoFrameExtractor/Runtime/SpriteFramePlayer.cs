@@ -24,6 +24,11 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         [Tooltip("Preload all chunks immediately on Awake (recommended for smooth playback)")]
         [SerializeField] private bool preloadOnAwake = true;
 
+        [Header("WebGL Memory")]
+        [Tooltip("On WebGL, limit how many chunks are preloaded upfront. 0 = no limit (preload all). " +
+                 "Remaining chunks load via the sliding window during playback.")]
+        [SerializeField] private int webGLMaxPreloadChunks = 3;
+
         [Header("Playback")]
         [Tooltip("Target playback FPS")]
         public float playbackFPS = 30f;
@@ -501,7 +506,20 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
         private IEnumerator PreloadAllChunksCoroutine(System.Action<bool> onComplete)
         {
-            for (int i = 0; i < spriteFramesData.chunks.Count; i++)
+            int totalChunks = spriteFramesData.chunks.Count;
+            int chunksToPreload = totalChunks;
+
+#if UNITY_WEBGL
+            // On WebGL, limit upfront chunk loading to reduce peak memory.
+            // Remaining chunks will be loaded on-demand via the sliding window in HandleChunkedPlayback().
+            if (webGLMaxPreloadChunks > 0 && totalChunks > webGLMaxPreloadChunks)
+            {
+                chunksToPreload = webGLMaxPreloadChunks;
+                Debug.Log($"[SpriteFramePlayer] WebGL: Limiting preload to {chunksToPreload}/{totalChunks} chunks to save memory");
+            }
+#endif
+
+            for (int i = 0; i < chunksToPreload; i++)
             {
                 bool loaded = false;
                 bool success = false;

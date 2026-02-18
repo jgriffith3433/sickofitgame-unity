@@ -103,8 +103,9 @@ namespace SickOfIt.Core.Flow
             {
                 deathPlayer.Play();
 
-                // Preload level while animation plays (callback will handle transition)
-                StartCoroutine(PreloadLevelDuringAnimation());
+                // Preloading disabled — the level loads on-demand after death animation completes.
+                // This avoids holding both death scene textures AND level scene in memory simultaneously.
+                // StartCoroutine(PreloadLevelDuringAnimation());
             }
             else
             {

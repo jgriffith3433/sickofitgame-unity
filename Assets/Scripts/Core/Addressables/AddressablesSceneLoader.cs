@@ -224,14 +224,11 @@ namespace SickOfIt.Core.Addressables
                     // Scene was preloaded - activate immediately (no loading UI needed)
                 }
 
-                // Activate the scene
+                // Get scene reference - don't activate content yet (free old scene memory first)
                 Scene scene = SceneManager.GetSceneByName(sceneName);
                 if (scene.isLoaded)
                 {
                     SceneManager.SetActiveScene(scene);
-
-                    // Show the scene's content
-                    ActivateSceneContent(scene);
                 }
                 else if (wasPreloaded)
                 {
@@ -270,7 +267,6 @@ namespace SickOfIt.Core.Addressables
                     if (scene.isLoaded)
                     {
                         SceneManager.SetActiveScene(scene);
-                        ActivateSceneContent(scene);
                     }
                 }
 
@@ -284,7 +280,8 @@ namespace SickOfIt.Core.Addressables
                     }
                 }
 
-                // Simple rule: Unload the previous scene (whatever we came from)
+                // Unload the previous scene and WAIT for completion before activating new content.
+                // This prevents old + new scene textures from coexisting in memory (critical for WebGL OOM).
                 if (!string.IsNullOrEmpty(currentGameplayScene) && currentGameplayScene != sceneName)
                 {
                     // Hide previous scene's content before unloading
@@ -294,8 +291,21 @@ namespace SickOfIt.Core.Addressables
                         DeactivateSceneContent(previousScene);
                     }
 
-                    // Unload in background
-                    StartCoroutine(UnloadSceneAsync(currentGameplayScene));
+                    // Wait for unload to fully complete (was fire-and-forget, caused OOM)
+                    yield return StartCoroutine(UnloadSceneAsync(currentGameplayScene));
+
+                    // Force cleanup of released assets to reclaim memory before loading new content
+                    yield return Resources.UnloadUnusedAssets();
+                    System.GC.Collect();
+
+                    Debug.Log($"[AddressablesSceneLoader] Previous scene fully unloaded and memory cleaned before activating '{sceneName}'");
+                }
+
+                // NOW activate new scene content (after old scene memory is freed).
+                // This triggers SpriteFramePlayer.Awake() → PreloadAllChunks() which loads textures.
+                if (scene.isLoaded)
+                {
+                    ActivateSceneContent(scene);
                 }
 
                 // Update current scene (Video, Death, and Level scenes all become "current")

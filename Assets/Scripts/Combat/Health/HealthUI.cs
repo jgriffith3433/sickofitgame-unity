@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace SickOfIt.Combat.Health
@@ -19,11 +20,30 @@ namespace SickOfIt.Combat.Health
         [SerializeField] private Color fullHealthColor = Color.white;
         [SerializeField] private Color emptyHealthColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
 
+        [Header("Auto-Find Retry")]
+        [Tooltip("How long to keep retrying to find the player (seconds)")]
+        [SerializeField] private float findPlayerTimeout = 10f;
+
         private List<Image> heartImages = new List<Image>();
 
         private void Start()
         {
             if (autoFindPlayer && playerHealth == null)
+            {
+                // Player may not be activated yet (LevelManager activates it after assets load).
+                // Start a coroutine that retries until the player is found or we time out.
+                StartCoroutine(FindPlayerAndInitialize());
+                return;
+            }
+
+            Initialize();
+        }
+
+        private IEnumerator FindPlayerAndInitialize()
+        {
+            float elapsed = 0f;
+
+            while (playerHealth == null && elapsed < findPlayerTimeout)
             {
                 var allObjects = FindObjectsOfType<GameObject>(true);
                 GameObject player = System.Array.Find(allObjects, obj => obj.CompareTag("Player"));
@@ -31,8 +51,25 @@ namespace SickOfIt.Combat.Health
                 {
                     playerHealth = player.GetComponent<HealthSystem>();
                 }
+
+                if (playerHealth != null)
+                    break;
+
+                elapsed += 0.25f;
+                yield return new WaitForSeconds(0.25f);
             }
 
+            if (playerHealth == null)
+            {
+                Debug.LogError("HealthUI: No player health found after waiting!");
+                yield break;
+            }
+
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             if (playerHealth == null)
             {
                 Debug.LogError("HealthUI: No player health found!");

@@ -155,11 +155,13 @@ namespace SickOfIt.Core.Progression
                 // Track video start
                 SickOfIt.Core.AnalyticsManager.Instance.TrackVideoStart(videoNumber);
 
-                // Preload next content while video is playing
-                if (preloadDuringPlayback)
-                {
-                    StartCoroutine(PreloadNextContentDuringVideo());
-                }
+                // Preloading disabled — the next level loads on-demand after video completes.
+                // This avoids holding both video textures AND level scene in memory simultaneously,
+                // which caused OOM on WebGL.
+                // if (preloadDuringPlayback)
+                // {
+                //     StartCoroutine(PreloadNextContentDuringVideo());
+                // }
             }
         }
 
