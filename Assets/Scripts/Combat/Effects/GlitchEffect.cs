@@ -1,95 +1,107 @@
+using System.Collections;
 using UnityEngine;
+using SickOfIt.Combat.Health;
 
 namespace SickOfIt.Combat.Effects
 {
     /// <summary>
-    /// Creates a glitchy visual effect by flickering opacity and color
-    /// Perfect for "AI glitch" aesthetic
+    /// Triggers a glitchy visual effect whenever the attached HealthSystem takes damage.
+    /// Automatically finds all active SpriteRenderers in children each frame of the effect,
+    /// so it works correctly with enemies that swap animator GameObjects (e.g. EnemyFighter).
+    /// 
+    /// Usage: Add this component alongside a HealthSystem. No other wiring needed.
+    /// Can also be triggered manually via TriggerGlitch() on objects without a HealthSystem.
     /// </summary>
     public class GlitchEffect : MonoBehaviour
     {
-        [Header("Flicker Settings")]
-        [SerializeField] private bool enableFlicker = true;
-        [SerializeField] private float flickerSpeed = 10f;
-        [SerializeField] private float minAlpha = 0.3f;
-        [SerializeField] private float maxAlpha = 1f;
+        [Header("Flash Settings")]
+        [Tooltip("Color to flash when hit")]
+        [SerializeField] private Color flashColor = new Color(1f, 0.2f, 0.2f, 1f);
+        [Tooltip("How many times the flash blinks")]
+        [SerializeField] private int flashCount = 2;
+        [Tooltip("Duration of each flash (on)")]
+        [SerializeField] private float flashOnDuration = 0.08f;
+        [Tooltip("Duration between flashes (off)")]
+        [SerializeField] private float flashOffDuration = 0.06f;
+        [Tooltip("How strongly the flash color overrides the original (0 = none, 1 = full)")]
+        [SerializeField] [Range(0f, 1f)] private float flashIntensity = 0.5f;
 
-        [Header("Color Glitch")]
-        [SerializeField] private bool enableColorGlitch = true;
-        [SerializeField] private float colorGlitchSpeed = 5f;
-        [SerializeField] private Color glitchColor1 = Color.cyan;
-        [SerializeField] private Color glitchColor2 = Color.magenta;
-
-        [Header("Position Jitter")]
-        [SerializeField] private bool enableJitter = false;
-        [SerializeField] private float jitterAmount = 0.05f;
-        [SerializeField] private float jitterSpeed = 20f;
-
-        private SpriteRenderer spriteRenderer;
-        private Material material;
-        private Vector3 originalPosition;
-        private Color originalColor;
-        private float flickerTimer = 0f;
-        private float colorTimer = 0f;
+        private HealthSystem healthSystem;
+        private Coroutine activeGlitch;
 
         private void Awake()
         {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-
-            if (spriteRenderer != null)
-            {
-                // Create a material instance so each object has its own
-                material = new Material(spriteRenderer.material);
-                spriteRenderer.material = material;
-                originalColor = spriteRenderer.color;
-            }
-
-            originalPosition = transform.localPosition;
+            healthSystem = GetComponent<HealthSystem>();
         }
 
-        private void Update()
+        private void OnEnable()
         {
-            if (spriteRenderer == null)
+            if (healthSystem != null)
+                healthSystem.onDamaged.AddListener(TriggerGlitch);
+        }
+
+        private void OnDisable()
+        {
+            if (healthSystem != null)
+                healthSystem.onDamaged.RemoveListener(TriggerGlitch);
+
+            // Restore visuals if we get disabled mid-glitch
+            RestoreAllRenderers();
+        }
+
+        /// <summary>
+        /// Trigger the glitch effect. Called automatically on damage, but can also be invoked manually.
+        /// </summary>
+        public void TriggerGlitch()
+        {
+            if (!isActiveAndEnabled)
                 return;
 
-            // Flicker effect
-            if (enableFlicker)
-            {
-                flickerTimer += Time.deltaTime * flickerSpeed;
-                float alpha = Mathf.Lerp(minAlpha, maxAlpha, (Mathf.Sin(flickerTimer) + 1f) * 0.5f);
+            // Restart if already running
+            if (activeGlitch != null)
+                StopCoroutine(activeGlitch);
 
-                Color currentColor = spriteRenderer.color;
-                currentColor.a = alpha;
-                spriteRenderer.color = currentColor;
-            }
-
-            // Color glitch
-            if (enableColorGlitch)
-            {
-                colorTimer += Time.deltaTime * colorGlitchSpeed;
-                Color glitchColor = Color.Lerp(glitchColor1, glitchColor2, (Mathf.Sin(colorTimer) + 1f) * 0.5f);
-                spriteRenderer.color = Color.Lerp(originalColor, glitchColor, 0.5f);
-            }
-
-            // Position jitter
-            if (enableJitter)
-            {
-                Vector3 jitter = new Vector3(
-                    Mathf.PerlinNoise(Time.time * jitterSpeed, 0) - 0.5f,
-                    Mathf.PerlinNoise(0, Time.time * jitterSpeed) - 0.5f,
-                    0
-                ) * jitterAmount;
-
-                transform.localPosition = originalPosition + jitter;
-            }
+            activeGlitch = StartCoroutine(GlitchCoroutine());
         }
 
-        private void OnDestroy()
+        private IEnumerator GlitchCoroutine()
         {
-            // Clean up material instance
-            if (material != null)
+            for (int i = 0; i < flashCount; i++)
             {
-                Destroy(material);
+                // Flash on — tint all active renderers toward the flash color
+                SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(false);
+                foreach (SpriteRenderer sr in renderers)
+                {
+                    if (sr == null) continue;
+                    sr.color = Color.Lerp(Color.white, flashColor, flashIntensity);
+                }
+
+                yield return new WaitForSeconds(flashOnDuration);
+
+                // Flash off — restore to normal
+                RestoreAllRenderers();
+
+                if (i < flashCount - 1)
+                    yield return new WaitForSeconds(flashOffDuration);
+            }
+
+            // Final safety restore
+            RestoreAllRenderers();
+            activeGlitch = null;
+        }
+
+        /// <summary>
+        /// Resets all active child SpriteRenderers to full white (alpha 1).
+        /// This works because sprite renderers default to Color.white as their tint,
+        /// and the actual sprite colors come from the sprite texture itself.
+        /// </summary>
+        private void RestoreAllRenderers()
+        {
+            SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(false);
+            foreach (SpriteRenderer sr in renderers)
+            {
+                if (sr == null) continue;
+                sr.color = Color.white;
             }
         }
     }

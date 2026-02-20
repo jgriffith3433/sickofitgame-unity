@@ -127,23 +127,6 @@ namespace SickOfIt.Core.Flow
             LoadLevel(currentLevel);
         }
 
-        // Reload methods removed - use Death scene flow instead
-        // Call LevelManager.RestartLevel() or trigger player death to reload a level
-
-        /// <summary>
-        /// Preload the next level's assets during gameplay (only works with Addressables)
-        /// Call this while player is playing to cache the next level
-        /// </summary>
-        public void PreloadNextLevel(int currentLevel)
-        {
-            if (useAddressables)
-            {
-                int nextLevel = currentLevel + 1;
-                string nextSceneName = $"Level{nextLevel}";
-                AddressablesSceneLoader.Instance.CacheSceneAssets(nextSceneName);
-            }
-        }
-
         public void QuitGame()
         {
             StartCoroutine(QuitGameCoroutine());

@@ -32,7 +32,6 @@ namespace SickOfIt.Core.Addressables
 
         private GameObject currentLoadingScreen;
         private bool isLoading = false;
-        private HashSet<string> preloadingScenes = new HashSet<string>();
 
         // Base scenes that should be unloaded when entering gameplay
         private static readonly string[] BASE_SCENES = { "MainMenu", "LevelSelection", "VideoSelection" };
@@ -72,8 +71,6 @@ namespace SickOfIt.Core.Addressables
 
             if (loadedScenes.Remove(sceneName))
             {
-                preloadingScenes.Remove(sceneName);
-
                 // If the Addressables handle is still tracked, this was a force-unload.
                 // Our intentional UnloadSceneAsync path removes the handle before the scene
                 // finishes unloading, so it won't be present here for intentional unloads.
@@ -114,13 +111,6 @@ namespace SickOfIt.Core.Addressables
         /// </summary>
         public void LoadScene(string sceneName, System.Action onComplete = null)
         {
-            // If scene is preloading, wait for it to finish then activate
-            if (preloadingScenes.Contains(sceneName))
-            {
-                StartCoroutine(WaitForPreloadThenActivate(sceneName, onComplete));
-                return;
-            }
-
             if (isLoading)
             {
                 Debug.LogWarning($"Already loading a scene. Rejecting request for: {sceneName}");
@@ -129,24 +119,6 @@ namespace SickOfIt.Core.Addressables
             }
 
             StartCoroutine(LoadSceneAsync(sceneName, true, onComplete));
-        }
-
-        // REMOVED: ReloadCurrentScene() - Use Death scene flow instead
-        // Trigger player death or call LevelManager.RestartLevel() to reload a level
-
-        /// <summary>
-        /// Preload a scene additively in the background without activating it
-        /// </summary>
-        public void PreloadScene(string sceneName, System.Action<bool> onComplete = null)
-        {
-            if (preloadingScenes.Contains(sceneName) || loadedScenes.Contains(sceneName))
-            {
-                // Scene already loaded
-                onComplete?.Invoke(true);
-                return;
-            }
-
-            StartCoroutine(PreloadSceneAsync(sceneName, onComplete));
         }
 
         public void LoadLevel(int levelNumber, System.Action onComplete = null)
@@ -159,16 +131,6 @@ namespace SickOfIt.Core.Addressables
             LoadScene($"Video{videoNumber}", onComplete);
         }
 
-        public void PreloadLevel(int levelNumber, System.Action<bool> onComplete = null)
-        {
-            PreloadScene($"Level{levelNumber}", onComplete);
-        }
-
-        public void PreloadVideo(int videoNumber, System.Action<bool> onComplete = null)
-        {
-            PreloadScene($"Video{videoNumber}", onComplete);
-        }
-
         private IEnumerator LoadSceneAsync(string sceneName, bool showLoadingUI, System.Action onComplete)
         {
             isLoading = true;
@@ -176,98 +138,49 @@ namespace SickOfIt.Core.Addressables
 
             try
             {
-                // Check if already preloaded
-                bool wasPreloaded = loadedScenes.Contains(sceneName);
-
-                if (!wasPreloaded)
+                // Load scene with loading UI
+                if (showLoadingUI)
                 {
-                    // Scene not preloaded - load it now with loading UI
-                    if (showLoadingUI)
-                    {
-                        ShowLoadingScreen();
-                        shouldHideLoadingScreen = true;
-                    }
-
-                    bool loadCompleted = false;
-                    bool loadSuccess = false;
-                    float currentProgress = 0f;
-
-                    AddressablesOperationManager.Instance.LoadScene(sceneName, (success) =>
-                    {
-                        loadSuccess = success;
-                        loadCompleted = true;
-                    }, LoadSceneMode.Additive);
-
-                    while (!loadCompleted)
-                    {
-                        float progress = AddressablesOperationManager.Instance.GetCurrentSceneLoadProgress(sceneName);
-                        if (progress != currentProgress)
-                        {
-                            currentProgress = progress;
-                            if (showLoadingUI) UpdateLoadingProgress(currentProgress);
-                        }
-                        yield return null;
-                    }
-
-                    if (!loadSuccess)
-                    {
-                        Debug.LogError($"Failed to load scene: {sceneName}");
-                        if (shouldHideLoadingScreen) HideLoadingScreen();
-                        onComplete?.Invoke();
-                        yield break;
-                    }
-
-                    loadedScenes.Add(sceneName);
+                    ShowLoadingScreen();
+                    shouldHideLoadingScreen = true;
                 }
-                else
+
+                bool loadCompleted = false;
+                bool loadSuccess = false;
+                float currentProgress = 0f;
+
+                AddressablesOperationManager.Instance.LoadScene(sceneName, (success) =>
                 {
-                    // Scene was preloaded - activate immediately (no loading UI needed)
+                    loadSuccess = success;
+                    loadCompleted = true;
+                }, LoadSceneMode.Additive);
+
+                while (!loadCompleted)
+                {
+                    float progress = AddressablesOperationManager.Instance.GetCurrentSceneLoadProgress(sceneName);
+                    if (progress != currentProgress)
+                    {
+                        currentProgress = progress;
+                        if (showLoadingUI) UpdateLoadingProgress(currentProgress);
+                    }
+                    yield return null;
                 }
+
+                if (!loadSuccess)
+                {
+                    Debug.LogError($"Failed to load scene: {sceneName}");
+                    if (shouldHideLoadingScreen) HideLoadingScreen();
+                    onComplete?.Invoke();
+                    yield break;
+                }
+
+                loadedScenes.Add(sceneName);
 
                 // Get scene reference - don't activate content yet (free old scene memory first)
                 Scene scene = SceneManager.GetSceneByName(sceneName);
                 if (scene.isLoaded)
                 {
                     SceneManager.SetActiveScene(scene);
-                }
-                else if (wasPreloaded)
-                {
-                    // Scene was tracked as preloaded but is no longer loaded (edge case)
-                    Debug.LogWarning($"[AddressablesSceneLoader] Scene '{sceneName}' was tracked as preloaded but is not loaded. Loading fresh.");
-                    loadedScenes.Remove(sceneName);
-
-                    if (showLoadingUI)
-                    {
-                        ShowLoadingScreen();
-                        shouldHideLoadingScreen = true;
-                    }
-
-                    bool loadCompleted = false;
-                    bool loadSuccess = false;
-
-                    AddressablesOperationManager.Instance.LoadScene(sceneName, (success) =>
-                    {
-                        loadSuccess = success;
-                        loadCompleted = true;
-                    }, LoadSceneMode.Additive);
-
-                    while (!loadCompleted)
-                        yield return null;
-
-                    if (!loadSuccess)
-                    {
-                        Debug.LogError($"Failed to load scene: {sceneName}");
-                        if (shouldHideLoadingScreen) HideLoadingScreen();
-                        onComplete?.Invoke();
-                        yield break;
-                    }
-
-                    loadedScenes.Add(sceneName);
-                    scene = SceneManager.GetSceneByName(sceneName);
-                    if (scene.isLoaded)
-                    {
-                        SceneManager.SetActiveScene(scene);
-                    }
                 }
 
                 // Unload base menu scenes when entering gameplay
@@ -284,17 +197,31 @@ namespace SickOfIt.Core.Addressables
                 // This prevents old + new scene textures from coexisting in memory (critical for WebGL OOM).
                 if (!string.IsNullOrEmpty(currentGameplayScene) && currentGameplayScene != sceneName)
                 {
-                    // Hide previous scene's content before unloading
                     Scene previousScene = SceneManager.GetSceneByName(currentGameplayScene);
                     if (previousScene.isLoaded)
                     {
+                        // CRITICAL: Release all IFrameSequencePlayer resources BEFORE scene unload.
+                        // SpriteFramePlayer creates Sprite objects that reference Addressable Texture2Ds.
+                        // If we rely on OnDestroy() → Destroy(sprite), destruction is deferred to end of frame,
+                        // meaning sprites still hold texture references when Resources.UnloadUnusedAssets() runs.
+                        // ReleaseAllResources() uses DestroyImmediate to sever references immediately.
+                        ReleaseFrameSequencePlayerResources(previousScene);
+
+                        // Hide previous scene's content
                         DeactivateSceneContent(previousScene);
                     }
+
+                    // Release tracked asset handles (audio clips, prefabs, etc.) for the outgoing scene.
+                    // These are handles from LoadAsset/LoadLabel that the caller doesn't own.
+                    AddressablesOperationManager.Instance.ReleaseAllSceneAssetHandles(currentGameplayScene);
+                    // Also release any handles from before the first scene transition (e.g., MainMenu assets)
+                    AddressablesOperationManager.Instance.ReleaseAllSceneAssetHandles("");
 
                     // Wait for unload to fully complete (was fire-and-forget, caused OOM)
                     yield return StartCoroutine(UnloadSceneAsync(currentGameplayScene));
 
-                    // Force cleanup of released assets to reclaim memory before loading new content
+                    // Force cleanup of released assets to reclaim memory before loading new content.
+                    // Sprites are already DestroyImmediate'd, so textures are truly unreferenced now.
                     yield return Resources.UnloadUnusedAssets();
                     System.GC.Collect();
 
@@ -302,7 +229,7 @@ namespace SickOfIt.Core.Addressables
                 }
 
                 // NOW activate new scene content (after old scene memory is freed).
-                // This triggers SpriteFramePlayer.Awake() → PreloadAllChunks() which loads textures.
+                // This triggers SpriteFramePlayer.Awake() which starts loading texture chunks.
                 if (scene.isLoaded)
                 {
                     ActivateSceneContent(scene);
@@ -322,60 +249,6 @@ namespace SickOfIt.Core.Addressables
                 // Always reset the loading flag, even if an exception occurs
                 isLoading = false;
             }
-        }
-
-        private IEnumerator WaitForPreloadThenActivate(string sceneName, System.Action onComplete)
-        {
-            // Wait for preload to finish
-            while (preloadingScenes.Contains(sceneName))
-            {
-                yield return null;
-            }
-
-            // Now activate the preloaded scene
-            StartCoroutine(LoadSceneAsync(sceneName, false, onComplete));
-        }
-
-        private IEnumerator PreloadSceneAsync(string sceneName, System.Action<bool> onComplete)
-        {
-            if (loadedScenes.Contains(sceneName))
-            {
-                onComplete?.Invoke(true);
-                yield break;
-            }
-
-            if (preloadingScenes.Contains(sceneName))
-            {
-                onComplete?.Invoke(true);
-                yield break;
-            }
-
-            preloadingScenes.Add(sceneName);
-
-            bool loadCompleted = false;
-            bool loadSuccess = false;
-
-            AddressablesOperationManager.Instance.LoadScene(sceneName, (success) =>
-            {
-                loadSuccess = success;
-                loadCompleted = true;
-            }, LoadSceneMode.Additive);
-
-            while (!loadCompleted)
-                yield return null;
-
-            preloadingScenes.Remove(sceneName);
-
-            if (loadSuccess)
-            {
-                loadedScenes.Add(sceneName);
-            }
-            else
-            {
-                Debug.LogError($"[AddressablesSceneLoader] Failed to preload scene '{sceneName}'");
-            }
-
-            onComplete?.Invoke(loadSuccess);
         }
 
         private IEnumerator UnloadSceneAsync(string sceneName)
@@ -415,33 +288,6 @@ namespace SickOfIt.Core.Addressables
 
             // OnSceneUnloaded handles loadedScenes cleanup, but remove here too as a safety net
             loadedScenes.Remove(sceneName);
-        }
-
-        /// <summary>
-        /// Unload all preloaded scenes that aren't the current gameplay scene.
-        /// Useful when the player's intent changes (e.g., New Game after a preload for Continue).
-        /// </summary>
-        public void UnloadAllPreloadedScenes()
-        {
-            // Copy the list since we'll modify it during iteration
-            List<string> scenesToUnload = new List<string>(loadedScenes);
-
-            foreach (string sceneName in scenesToUnload)
-            {
-                // Don't unload the current gameplay scene or base menu scenes
-                if (sceneName == currentGameplayScene)
-                    continue;
-                if (System.Array.Exists(BASE_SCENES, s => s == sceneName))
-                    continue;
-
-                Debug.Log($"[AddressablesSceneLoader] Unloading stale preloaded scene: {sceneName}");
-                StartCoroutine(UnloadSceneAsync(sceneName));
-            }
-        }
-
-        public void CacheSceneAssets(string sceneName)
-        {
-            PreloadManager.Instance.PreloadLabel(sceneName, null);
         }
 
         public void GetSceneDownloadSize(string sceneName, System.Action<long> onSizeRetrieved)
@@ -501,6 +347,34 @@ namespace SickOfIt.Core.Addressables
                     controller.DeactivateScene();
                     return;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Find all IFrameSequencePlayer instances in the given scene and release their resources
+        /// BEFORE the scene is unloaded. This ensures DestroyImmediate is used for sprites so
+        /// texture references are severed immediately, allowing Resources.UnloadUnusedAssets() to
+        /// actually reclaim the texture memory on WebGL.
+        /// </summary>
+        private void ReleaseFrameSequencePlayerResources(Scene scene)
+        {
+            int released = 0;
+            foreach (GameObject rootObj in scene.GetRootGameObjects())
+            {
+                // Search all MonoBehaviours including inactive ones
+                var behaviours = rootObj.GetComponentsInChildren<MonoBehaviour>(true);
+                foreach (var behaviour in behaviours)
+                {
+                    if (behaviour is IFrameSequencePlayer player)
+                    {
+                        player.ReleaseAllResources();
+                        released++;
+                    }
+                }
+            }
+            if (released > 0)
+            {
+                Debug.Log($"[AddressablesSceneLoader] Released resources for {released} IFrameSequencePlayer(s) in scene '{scene.name}'");
             }
         }
     }

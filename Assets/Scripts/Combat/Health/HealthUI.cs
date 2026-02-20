@@ -21,8 +21,8 @@ namespace SickOfIt.Combat.Health
         [SerializeField] private Color emptyHealthColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
 
         [Header("Auto-Find Retry")]
-        [Tooltip("How long to keep retrying to find the player (seconds)")]
-        [SerializeField] private float findPlayerTimeout = 10f;
+        [Tooltip("How long to keep retrying to find the player (seconds). On WebGL, asset loading can take 30+ seconds.")]
+        [SerializeField] private float findPlayerTimeout = 60f;
 
         private List<Image> heartImages = new List<Image>();
 
@@ -45,12 +45,10 @@ namespace SickOfIt.Combat.Health
 
             while (playerHealth == null && elapsed < findPlayerTimeout)
             {
-                var allObjects = FindObjectsOfType<GameObject>(true);
-                GameObject player = System.Array.Find(allObjects, obj => obj.CompareTag("Player"));
-                if (player != null)
-                {
-                    playerHealth = player.GetComponent<HealthSystem>();
-                }
+                // Search for HealthSystem directly instead of by tag,
+                // because multiple GameObjects may share the "Player" tag
+                // and the one found first might not have a HealthSystem.
+                playerHealth = FindObjectOfType<HealthSystem>(true);
 
                 if (playerHealth != null)
                     break;

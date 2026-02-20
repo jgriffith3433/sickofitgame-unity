@@ -29,6 +29,9 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                  "Remaining chunks load via the sliding window during playback.")]
         [SerializeField] private int webGLMaxPreloadChunks = 3;
 
+        [Tooltip("How many chunks ahead to preload during playback (sliding window lookahead)")]
+        [SerializeField] private int chunksAheadToPreload = 2;
+
         [Header("Playback")]
         [Tooltip("Target playback FPS")]
         public float playbackFPS = 30f;
@@ -72,6 +75,8 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         private bool audioHasStartedPlaying;
         private readonly Dictionary<int, List<Sprite>> chunkFrames = new Dictionary<int, List<Sprite>>();
         private readonly Dictionary<int, AsyncOperationHandle<IList<Texture2D>>> chunkHandles = new Dictionary<int, AsyncOperationHandle<IList<Texture2D>>>();
+        private readonly HashSet<int> loadingChunks = new HashSet<int>();
+        private bool isResourcesReleased;
 
         #endregion
 
@@ -122,6 +127,13 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
         private void OnDestroy()
         {
+            // If ReleaseAllResources() was already called (explicit cleanup before scene unload),
+            // skip to avoid double-release which can cause errors.
+            if (isResourcesReleased)
+                return;
+
+            // Fallback cleanup for cases where the object is destroyed without explicit cleanup.
+            // Uses Destroy (deferred) since DestroyImmediate may not be safe in all OnDestroy contexts.
             foreach (var spriteList in chunkFrames.Values)
             {
                 foreach (var sprite in spriteList)
@@ -138,6 +150,59 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                     Addressables.Release(handle);
             }
             chunkHandles.Clear();
+        }
+
+        /// <summary>
+        /// Immediately release ALL resources: sprites (via DestroyImmediate), Addressable texture handles,
+        /// and audio references. This MUST be called before scene unload so that Resources.UnloadUnusedAssets()
+        /// can actually reclaim the texture memory. Using Destroy() alone defers sprite destruction to end of
+        /// frame, leaving sprite→texture references alive when the cleanup runs.
+        /// </summary>
+        public void ReleaseAllResources()
+        {
+            if (isResourcesReleased)
+                return;
+
+            isResourcesReleased = true;
+            isPlaying = false;
+            isLoaded = false;
+
+            // Stop audio immediately
+            if (audioSource != null)
+            {
+                audioSource.Stop();
+                audioSource.clip = null;
+            }
+            audioClip = null;
+
+            // DestroyImmediate sprites so texture references are gone RIGHT NOW,
+            // not deferred to end of frame. This is critical for WebGL memory.
+            foreach (var spriteList in chunkFrames.Values)
+            {
+                foreach (var sprite in spriteList)
+                {
+                    if (sprite != null)
+                        DestroyImmediate(sprite);
+                }
+            }
+            chunkFrames.Clear();
+            frames.Clear();
+            loadedChunks.Clear();
+
+            // Release Addressable texture handles to decrement ref counts.
+            // With sprites already destroyed, nothing references the textures anymore.
+            foreach (var handle in chunkHandles.Values)
+            {
+                if (handle.IsValid())
+                    Addressables.Release(handle);
+            }
+            chunkHandles.Clear();
+
+            // Clear sprite renderer reference
+            if (spriteRenderer != null)
+                spriteRenderer.sprite = null;
+
+            Debug.Log($"[SpriteFramePlayer] Released all resources for '{gameObject.name}'");
         }
 
         #endregion
@@ -415,38 +480,55 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 return;
             }
 
+            // Don't start a new coroutine if this chunk is already being loaded
+            if (loadingChunks.Contains(chunkIndex))
+            {
+                // If caller needs a callback, wait for the existing load to finish
+                if (onComplete != null)
+                    StartCoroutine(WaitForChunkLoaded(chunkIndex, onComplete));
+                return;
+            }
+
+            loadingChunks.Add(chunkIndex);
             StartCoroutine(LoadChunkCoroutine(chunkIndex, spriteFramesData.chunks[chunkIndex], onComplete));
+        }
+
+        /// <summary>
+        /// Wait for an already-in-flight chunk load to finish, then invoke the callback.
+        /// Used when emergency loading requests a chunk that preloading already started.
+        /// </summary>
+        private IEnumerator WaitForChunkLoaded(int chunkIndex, System.Action<bool> onComplete)
+        {
+            yield return new WaitUntil(() => loadedChunks.Contains(chunkIndex) || !loadingChunks.Contains(chunkIndex));
+            onComplete.Invoke(loadedChunks.Contains(chunkIndex));
         }
 
         private IEnumerator LoadChunkCoroutine(int chunkIndex, SpriteFramesData.FrameChunk chunk, System.Action<bool> onComplete)
         {
             bool loadComplete = false;
             bool loadSuccess = false;
+            List<Texture2D> loadedTextures = null;
+            AsyncOperationHandle<IList<Texture2D>> loadedHandle = default;
 
             AddressablesOperationManager.Instance.LoadLabelWithHandle<Texture2D>(
                 chunk.addressableLabel,
                 (handle, textures) =>
                 {
+                    // Guard: if resources were released while this chunk was loading
+                    // (e.g., player died mid-load), release the handle immediately
+                    if (isResourcesReleased)
+                    {
+                        if (handle.IsValid())
+                            Addressables.Release(handle);
+                        loadComplete = true;
+                        return;
+                    }
+
                     if (textures != null && textures.Count > 0)
                     {
-                        var sortedTextures = new List<Texture2D>(textures);
-                        sortedTextures.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
-
-                        var sprites = CreateSpritesFromSheets(sortedTextures, chunk);
-
-                        chunkFrames[chunkIndex] = sprites;
-                        chunkHandles[chunkIndex] = handle;
-                        loadedChunks.Add(chunkIndex);
-
-                        // First chunk initializes the active frame list
-                        if (chunkIndex == 0)
-                        {
-                            frames.Clear();
-                            frames.AddRange(sprites);
-                            currentChunkIndex = 0;
-                            framesLoaded = true;
-                        }
-
+                        loadedTextures = new List<Texture2D>(textures);
+                        loadedTextures.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
+                        loadedHandle = handle;
                         loadSuccess = true;
                     }
                     else
@@ -459,6 +541,28 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             );
 
             yield return new WaitUntil(() => loadComplete);
+
+            // If textures loaded successfully, create sprites asynchronously across multiple frames
+            if (loadSuccess && loadedTextures != null)
+            {
+                var sprites = new List<Sprite>();
+                yield return CreateSpritesFromSheetsAsync(loadedTextures, chunk, sprites);
+
+                chunkFrames[chunkIndex] = sprites;
+                chunkHandles[chunkIndex] = loadedHandle;
+                loadedChunks.Add(chunkIndex);
+
+                // First chunk initializes the active frame list
+                if (chunkIndex == 0)
+                {
+                    frames.Clear();
+                    frames.AddRange(sprites);
+                    currentChunkIndex = 0;
+                    framesLoaded = true;
+                }
+            }
+
+            loadingChunks.Remove(chunkIndex);
             onComplete?.Invoke(loadSuccess);
         }
 
@@ -588,11 +692,15 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
         /// <summary>
         /// Sliding window chunk management during playback.
-        /// Switches to the correct chunk, preloads the next one, and unloads previous chunks.
+        /// Switches to the correct chunk, preloads upcoming chunks, and unloads previous chunks.
         /// </summary>
         private void HandleChunkedPlayback()
         {
             int targetChunkIndex = spriteFramesData.GetChunkIndexForFrame(currentFrameIndex);
+
+            // Always preload upcoming chunks regardless of whether we switched chunks
+            PreloadUpcomingChunks(targetChunkIndex);
+
             if (targetChunkIndex == currentChunkIndex)
                 return;
 
@@ -600,11 +708,6 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             {
                 currentChunkIndex = targetChunkIndex;
                 frames = chunkFrames[targetChunkIndex];
-
-                // Preload next chunk (no-op if already loaded via the guard in LoadChunk)
-                int nextChunk = targetChunkIndex + 1;
-                if (nextChunk < spriteFramesData.chunks.Count && !loadedChunks.Contains(nextChunk))
-                    LoadChunk(nextChunk);
 
                 // Unload chunks we've moved past
                 for (int i = 0; i < targetChunkIndex; i++)
@@ -629,6 +732,20 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             }
         }
 
+        /// <summary>
+        /// Preload multiple chunks ahead of the current playback position.
+        /// </summary>
+        private void PreloadUpcomingChunks(int fromChunkIndex)
+        {
+            int totalChunks = spriteFramesData.chunks.Count;
+            for (int offset = 1; offset <= chunksAheadToPreload; offset++)
+            {
+                int futureChunk = fromChunkIndex + offset;
+                if (futureChunk < totalChunks && !loadedChunks.Contains(futureChunk) && !loadingChunks.Contains(futureChunk))
+                    LoadChunk(futureChunk);
+            }
+        }
+
         #endregion
 
         #region Sprite Creation
@@ -637,9 +754,12 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         /// Creates Sprite objects from loaded sprite sheet textures using grid layout.
         /// Frames are arranged left-to-right, top-to-bottom within each sheet.
         /// </summary>
-        private List<Sprite> CreateSpritesFromSheets(List<Texture2D> sheetTextures, SpriteFramesData.FrameChunk chunk)
+        /// <summary>
+        /// Creates sprites from texture sheets asynchronously across multiple frames to prevent frame drops.
+        /// Yields every 2 sprites to spread work more evenly.
+        /// </summary>
+        private IEnumerator CreateSpritesFromSheetsAsync(List<Texture2D> sheetTextures, SpriteFramesData.FrameChunk chunk, List<Sprite> sprites)
         {
-            var sprites = new List<Sprite>();
             int framesPerSheet = spriteFramesData.framesPerSheet;
             int cols = spriteFramesData.sheetColumns;
             int fw = spriteFramesData.frameWidth;
@@ -647,6 +767,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             float ppu = spriteFramesData.spritePixelsPerUnit;
             int totalFramesInChunk = chunk.frameCount;
             int framesCreated = 0;
+            const int spritesPerFrame = 4; // Create 4 sprites per yield to finish chunks faster (~16 yields per chunk instead of 66)
 
             foreach (var tex in sheetTextures)
             {
@@ -666,10 +787,12 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                     sprite.name = $"frame_{chunk.startFrame + framesCreated:D5}";
                     sprites.Add(sprite);
                     framesCreated++;
+
+                    // Yield every N sprites to spread work across more frames
+                    if (framesCreated % spritesPerFrame == 0)
+                        yield return null;
                 }
             }
-
-            return sprites;
         }
 
         #endregion

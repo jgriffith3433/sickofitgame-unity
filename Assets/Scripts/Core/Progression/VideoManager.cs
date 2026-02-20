@@ -2,24 +2,17 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using MobileControllerFramework;
-using SickOfIt.Core.Addressables;
 using SickOfIt.Core.Flow;
 
 namespace SickOfIt.Core.Progression
 {
     /// <summary>
     /// Manager for video scenes. Handles loading of SpriteFramePlayer and manages scene activation.
-    /// Also preloads next level during video playback for seamless transitions.
     /// </summary>
     public class VideoManager : MonoBehaviour
     {
         [Header("Video Info")]
         [SerializeField] private int videoNumber = 1;
-
-        [Header("Preload Next Content")]
-        [SerializeField] private bool preloadDuringPlayback = true;
-        [Tooltip("Preload the next level while video is playing")]
-        [SerializeField] private bool preloadNextLevel = true;
 
         [Header("Scene Transition")]
         [Tooltip("If enabled, returns to main menu after video instead of loading next level")]
@@ -154,14 +147,6 @@ namespace SickOfIt.Core.Progression
 
                 // Track video start
                 SickOfIt.Core.AnalyticsManager.Instance.TrackVideoStart(videoNumber);
-
-                // Preloading disabled — the next level loads on-demand after video completes.
-                // This avoids holding both video textures AND level scene in memory simultaneously,
-                // which caused OOM on WebGL.
-                // if (preloadDuringPlayback)
-                // {
-                //     StartCoroutine(PreloadNextContentDuringVideo());
-                // }
             }
         }
 
@@ -180,26 +165,6 @@ namespace SickOfIt.Core.Progression
 
                 videoPlayer.SkipToEnd();
             }
-        }
-
-        /// <summary>
-        /// Preload the next level during video playback
-        /// </summary>
-        private IEnumerator PreloadNextContentDuringVideo()
-        {
-            // Wait a bit to let video start smoothly
-            yield return new WaitForSeconds(1f);
-
-            int nextLevel = videoNumber;
-            Debug.Log($"VideoManager: Preloading Level{nextLevel} during video playback...");
-
-            AddressablesSceneLoader.Instance.PreloadLevel(nextLevel, (success) =>
-            {
-                if (success)
-                    Debug.Log($"VideoManager: Level{nextLevel} preloaded successfully!");
-                else
-                    Debug.LogError($"VideoManager: Failed to preload Level{nextLevel}");
-            });
         }
 
         /// <summary>

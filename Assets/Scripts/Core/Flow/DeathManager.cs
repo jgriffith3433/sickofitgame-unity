@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using MobileControllerFramework;
-using SickOfIt.Core.Addressables;
 
 namespace SickOfIt.Core.Flow
 {
@@ -102,31 +101,12 @@ namespace SickOfIt.Core.Flow
             if (deathPlayer != null)
             {
                 deathPlayer.Play();
-
-                // Preloading disabled — the level loads on-demand after death animation completes.
-                // This avoids holding both death scene textures AND level scene in memory simultaneously.
-                // StartCoroutine(PreloadLevelDuringAnimation());
             }
             else
             {
                 // No player, just reload
                 StartCoroutine(ReloadLevelAfterDelay());
             }
-        }
-
-        /// <summary>
-        /// Preload the level while animation plays
-        /// </summary>
-        private IEnumerator PreloadLevelDuringAnimation()
-        {
-            // Preload the level while animation plays
-            string sceneName = PlayerPrefs.GetString("DeathSceneToReload", "");
-            if (!string.IsNullOrEmpty(sceneName))
-            {
-                AddressablesSceneLoader.Instance.PreloadScene(sceneName, null);
-            }
-
-            yield break;
         }
 
         /// <summary>

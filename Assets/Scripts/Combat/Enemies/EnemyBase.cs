@@ -29,6 +29,7 @@ namespace SickOfIt.Combat.Enemies
 
         [SerializeField] protected SpriteRenderer spriteRenderer;
         protected Transform player;
+        protected HealthSystem playerHealthSystem;
         protected Rigidbody2D rb;
         protected HealthSystem healthSystem;
         protected AudioSource audioSource;
@@ -59,6 +60,12 @@ namespace SickOfIt.Combat.Enemies
             if (playerObj != null)
             {
                 player = playerObj.transform;
+
+                // HealthSystem may be on the player root or a child (e.g. Hitbox),
+                // so search the hierarchy to get a reliable reference.
+                playerHealthSystem = playerObj.GetComponentInChildren<HealthSystem>(true);
+                if (playerHealthSystem == null)
+                    playerHealthSystem = playerObj.GetComponentInParent<HealthSystem>();
             }
         }
 
@@ -72,7 +79,7 @@ namespace SickOfIt.Combat.Enemies
             }
         }
 
-        protected virtual void Update()
+        protected virtual void FixedUpdate()
         {
             if (player == null || !healthSystem.IsAlive)
                 return;
@@ -97,7 +104,13 @@ namespace SickOfIt.Combat.Enemies
         {
             if (collision.gameObject.CompareTag("Player"))
             {
-                HealthSystem playerHealth = collision.gameObject.GetComponent<HealthSystem>();
+                // Use cached reference first; fall back to searching the collided hierarchy
+                HealthSystem playerHealth = playerHealthSystem;
+                if (playerHealth == null)
+                    playerHealth = collision.gameObject.GetComponentInChildren<HealthSystem>(true);
+                if (playerHealth == null)
+                    playerHealth = collision.gameObject.GetComponentInParent<HealthSystem>();
+
                 if (playerHealth != null)
                 {
                     playerHealth.TakeDamage(contactDamage);

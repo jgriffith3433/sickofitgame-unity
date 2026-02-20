@@ -20,14 +20,8 @@ namespace SickOfIt.Core.Progression
         [Header("Level Settings")]
         [SerializeField] private int levelNumber = 1;
 
-        [Header("Background Preloading")]
-        [SerializeField] private bool enableVideoPreloading = true;
-        [SerializeField] private float videoPreloadDelay = 2f;
-        [SerializeField] private bool disablePreloadOnWebGL = true;
-
         [Header("Death Scene")]
         [SerializeField] private string deathSceneName = "Death1";
-        [SerializeField] private bool preloadDeathScene = true;
 
         [Header("Asset Loading")]
         [Tooltip("Background sprite players that must finish loading before gameplay begins")]
@@ -60,6 +54,7 @@ namespace SickOfIt.Core.Progression
         [Header("Debug")]
         [SerializeField] private bool isLoading;
         [SerializeField] private bool allAssetsLoaded;
+        private bool levelCompleted;
 
         #endregion
 
@@ -120,8 +115,6 @@ namespace SickOfIt.Core.Progression
             {
                 ActivateGameObjects();
             }
-
-            StartCoroutine(PreloadNextVideoInBackground());
         }
 
         private void OnDestroy()
@@ -166,39 +159,22 @@ namespace SickOfIt.Core.Progression
             AnalyticsManager.Instance.TrackLevelStart(levelNumber);
         }
 
-        private IEnumerator PreloadNextVideoInBackground()
-        {
-#if UNITY_WEBGL
-            if (disablePreloadOnWebGL)
-                yield break;
-#endif
-            if (!enableVideoPreloading)
-                yield break;
-
-            yield return new WaitForSeconds(videoPreloadDelay);
-
-            int nextVideo = levelNumber + 1;
-            AddressablesSceneLoader.Instance.PreloadVideo(nextVideo, null);
-
-            if (preloadDeathScene && !string.IsNullOrEmpty(deathSceneName))
-            {
-                yield return new WaitForSeconds(1f);
-                AddressablesSceneLoader.Instance.PreloadScene(deathSceneName, null);
-            }
-        }
-
         #endregion
 
         #region Level Completion
 
         public void CompleteLevel()
         {
+            if (levelCompleted) return;
+            levelCompleted = true;
             MarkLevelComplete();
             Invoke(nameof(ProceedToNextLevel), 2f);
         }
 
         public void CompleteLevelAndReturnToMainMenu()
         {
+            if (levelCompleted) return;
+            levelCompleted = true;
             MarkLevelComplete();
             Invoke(nameof(ReturnToMainMenu), 2f);
         }
@@ -299,15 +275,32 @@ namespace SickOfIt.Core.Progression
 
             if (secondPlayer != null)
             {
-                if (!secondPlayer.IsLoaded)
-                    Debug.LogError("[LevelManager] Second sequence player is not loaded! Check preload settings.");
-
-                secondPlayer.Play();
+                if (secondPlayer.IsLoaded)
+                {
+                    secondPlayer.Play();
+                }
+                else
+                {
+                    Debug.LogWarning("[LevelManager] Second sequence player is not loaded yet — waiting for it...");
+                    StartCoroutine(WaitForSecondPlayerAndPlay());
+                }
             }
 
             // Hide skip button after first sequence completes
             if (skipFirstSequenceButton != null)
                 skipFirstSequenceButton.gameObject.SetActive(false);
+        }
+
+        private IEnumerator WaitForSecondPlayerAndPlay()
+        {
+            while (secondPlayer != null && !secondPlayer.IsLoaded)
+                yield return null;
+
+            if (secondPlayer != null)
+            {
+                Debug.Log("[LevelManager] Second sequence player loaded — starting playback.");
+                secondPlayer.Play();
+            }
         }
 
         /// <summary>

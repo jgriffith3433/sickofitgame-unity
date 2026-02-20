@@ -5,6 +5,7 @@ namespace SickOfIt.Core.Progression
     public class LevelWinTrigger : MonoBehaviour
     {
         private LevelManager _levelManager;
+        private bool hasTriggered;
 
         private void Awake()
         {
@@ -19,8 +20,11 @@ namespace SickOfIt.Core.Progression
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            if (hasTriggered) return;
+
             if (other.CompareTag("Player") && _levelManager != null)
             {
+                hasTriggered = true;
                 _levelManager.CompleteLevel();
             }
         }

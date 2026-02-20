@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using MobileControllerFramework;
-using SickOfIt.Core.Addressables;
 using SickOfIt.Core.Flow;
 using SickOfIt.Data;
 
@@ -28,6 +27,10 @@ namespace SickOfIt.Core.Progression
         [Header("Scene Loading")]
         [SerializeField] private SceneLoadingManager sceneLoadingManager;
 
+        [Header("Bundle Download Manager")]
+        [Tooltip("Reference to the BundleDownloadManager to disable buttons during bundle downloads")]
+        [SerializeField] private BundleDownloadManager bundleDownloadManager;
+
         [Header("Transition Animation")]
         [Tooltip("The SpriteFramePlayer to deactivate when Continue/New Game is pressed (e.g. idle menu animation)")]
         [SerializeField] private MonoBehaviour idleSpriteFramePlayer;
@@ -40,10 +43,13 @@ namespace SickOfIt.Core.Progression
         [Tooltip("GameObjects to hide after Continue/New Game is pressed")]
         [SerializeField] private List<GameObject> objectsToHideOnStart;
 
+        /// <summary>
+        /// Prevents multiple button presses from firing duplicate scene load requests.
+        /// </summary>
+        private bool isTransitioning = false;
+
         private void Awake()
         {
-            // Preload common shaders/materials to prevent pink shader bug
-            PreloadManager.Instance.PreloadLabel("Common");
         }
 
         private void Start()
@@ -56,6 +62,7 @@ namespace SickOfIt.Core.Progression
 
             SetupButtons();
             UpdateContinueButton();
+            SetupBundleDownloadManager();
         }
 
         private void SetupButtons()
@@ -104,6 +111,9 @@ namespace SickOfIt.Core.Progression
 
         private void OnContinueClicked()
         {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
             StartCoroutine(DelayedHideObjects(hideDelay));
             StartCoroutine(PlayTransitionThenExecute(() =>
             {
@@ -116,6 +126,9 @@ namespace SickOfIt.Core.Progression
 
         private void OnNewGameClicked()
         {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
             Debug.Log("[MOBILE DEBUG] New Game button clicked!");
 
             // Reset all progress and start from level 1
@@ -223,12 +236,18 @@ namespace SickOfIt.Core.Progression
 
         private void OnLevelSelectClicked()
         {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
             SceneLoadingManager.ShowLoadingUI();
             SceneTransitionManager.Instance.LoadLevelSelection();
         }
 
         private void OnVideosClicked()
         {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
             SceneLoadingManager.ShowLoadingUI();
             SceneTransitionManager.Instance.LoadVideoSelection();
         }
@@ -236,6 +255,67 @@ namespace SickOfIt.Core.Progression
         private void OnQuitClicked()
         {
             SceneTransitionManager.Instance.QuitGame();
+        }
+
+        /// <summary>
+        /// Setup bundle download manager to disable buttons during downloads
+        /// </summary>
+        private void SetupBundleDownloadManager()
+        {
+            if (bundleDownloadManager == null)
+            {
+                // Try to find it in the scene
+                bundleDownloadManager = FindObjectOfType<BundleDownloadManager>();
+            }
+
+            if (bundleDownloadManager != null)
+            {
+                // Check if downloading
+                if (bundleDownloadManager.IsDownloading)
+                {
+                    DisableAllButtons();
+                }
+
+                // Subscribe to download complete event
+                bundleDownloadManager.OnDownloadComplete.AddListener(OnBundleDownloadComplete);
+            }
+        }
+
+        /// <summary>
+        /// Called when bundle downloads complete
+        /// </summary>
+        private void OnBundleDownloadComplete()
+        {
+            EnableAllButtons();
+        }
+
+        /// <summary>
+        /// Disable all menu buttons
+        /// </summary>
+        private void DisableAllButtons()
+        {
+            if (continueButton != null) continueButton.Disable();
+            if (newGameButton != null) newGameButton.Disable();
+            if (levelSelectButton != null) levelSelectButton.Disable();
+            if (videosButton != null) videosButton.Disable();
+            if (quitButton != null) quitButton.Disable();
+        }
+
+        /// <summary>
+        /// Enable all menu buttons (respecting continue button visibility)
+        /// </summary>
+        private void EnableAllButtons()
+        {
+            // Enable continue button only if it should be visible
+            if (continueButton != null && continueButton.gameObject.activeSelf)
+            {
+                continueButton.Enable();
+            }
+            
+            if (newGameButton != null) newGameButton.Enable();
+            if (levelSelectButton != null) levelSelectButton.Enable();
+            if (videosButton != null) videosButton.Enable();
+            if (quitButton != null) quitButton.Enable();
         }
     }
 }

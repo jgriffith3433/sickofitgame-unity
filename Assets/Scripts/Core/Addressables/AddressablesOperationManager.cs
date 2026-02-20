@@ -55,6 +55,10 @@ namespace SickOfIt.Core.Addressables
 
         private Dictionary<string, AsyncOperationHandle<SceneInstance>> activeSceneHandles = new Dictionary<string, AsyncOperationHandle<SceneInstance>>();
 
+        // Per-scene tracking of asset handles (audio, prefabs, etc.) that callers don't own.
+        // Released during scene transitions to prevent memory leaks on WebGL.
+        private Dictionary<string, List<AsyncOperationHandle>> sceneAssetHandles = new Dictionary<string, List<AsyncOperationHandle>>();
+
         private void Awake()
         {
             if (_instance != null && _instance != this)
@@ -138,6 +142,48 @@ namespace SickOfIt.Core.Addressables
             inProgressSceneLoads.Remove(sceneName);
         }
 
+        /// <summary>
+        /// Track an asset handle under the current scene for cleanup during scene transitions.
+        /// Used for handles from LoadAsset/LoadLabel where the caller receives the asset
+        /// but doesn't own the handle (and therefore can't release it).
+        /// </summary>
+        private void TrackAssetHandleForCurrentScene(AsyncOperationHandle handle)
+        {
+            string scene = currentSceneName ?? "";
+            if (!sceneAssetHandles.ContainsKey(scene))
+                sceneAssetHandles[scene] = new List<AsyncOperationHandle>();
+            sceneAssetHandles[scene].Add(handle);
+        }
+
+        /// <summary>
+        /// Release all tracked asset handles for a given scene. Call this during scene transitions
+        /// to free audio clips, prefabs, and other assets that were loaded via LoadAsset/LoadLabel.
+        /// </summary>
+        public void ReleaseAllSceneAssetHandles(string sceneName)
+        {
+            string key = sceneName ?? "";
+            if (!sceneAssetHandles.ContainsKey(key))
+                return;
+
+            var handles = sceneAssetHandles[key];
+            int released = 0;
+            foreach (var handle in handles)
+            {
+                if (handle.IsValid())
+                {
+                    try { AddressablesAPI.Release(handle); }
+                    catch (System.Exception e)
+                    {
+                        Log($"Warning releasing tracked handle for scene '{key}': {e.Message}");
+                    }
+                    released++;
+                }
+            }
+            sceneAssetHandles.Remove(key);
+            if (released > 0)
+                Log($"Released {released} tracked asset handle(s) for scene '{key}'");
+        }
+
         public bool IsLoading(string label)
         {
             return (inProgressLabelLoads.ContainsKey(label) && inProgressLabelLoads[label]) ||
@@ -208,7 +254,25 @@ namespace SickOfIt.Core.Addressables
             activeOperations.Add($"Load: {label}");
             Log($"Loading label '{label}'...");
 
-            var loadHandle = AddressablesAPI.LoadAssetsAsync<UnityEngine.Object>(label, null);
+            AsyncOperationHandle<IList<UnityEngine.Object>> loadHandle;
+            try
+            {
+                loadHandle = AddressablesAPI.LoadAssetsAsync<UnityEngine.Object>(label, null);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"Label '{label}' not found in Addressables catalog: {e.Message}");
+                inProgressLabelLoads[label] = false;
+                activeOperations.Remove($"Load: {label}");
+                onComplete?.Invoke(false);
+                if (pendingLabelLoadCallbacks.ContainsKey(label))
+                {
+                    foreach (var callback in pendingLabelLoadCallbacks[label])
+                        callback?.Invoke(false);
+                    pendingLabelLoadCallbacks.Remove(label);
+                }
+                yield break;
+            }
 
             float elapsed = 0f;
             float lastProgress = 0f;
@@ -250,11 +314,10 @@ namespace SickOfIt.Core.Addressables
             // Release the handle to free memory. On WebGL, the asset bundles are already
             // cached in the browser cache (UnityCache), so subsequent loads will hit the
             // local cache. Keeping the handle alive pins assets in WASM memory unnecessarily.
-            // On other platforms, preloaded assets will be re-loaded from disk cache quickly.
             if (loadHandle.IsValid())
             {
                 AddressablesAPI.Release(loadHandle);
-                Log($"Released preload handle for label '{label}' to free memory");
+                Log($"Released label handle for '{label}' to free memory");
             }
         }
 
@@ -301,6 +364,11 @@ namespace SickOfIt.Core.Addressables
 
             inProgressTypedLabelLoads[key] = false;
             activeOperations.Remove($"LoadTyped: {label}<{typeof(T).Name}>");
+
+            // Track handle for per-scene cleanup (caller doesn't receive the handle)
+            if (loadHandle.IsValid())
+                TrackAssetHandleForCurrentScene(loadHandle);
+
             onComplete?.Invoke(success ? loadHandle.Result : null);
         }
 
@@ -375,6 +443,12 @@ namespace SickOfIt.Core.Addressables
 
             inProgressAssetLoads[key] = false;
             activeOperations.Remove($"LoadAsset: {address}<{typeof(T).Name}>");
+
+            // Track handle for per-scene cleanup (caller doesn't receive the handle,
+            // so we must release it when the scene transitions to prevent memory leaks)
+            if (loadHandle.IsValid())
+                TrackAssetHandleForCurrentScene(loadHandle);
+
             onComplete?.Invoke(success ? loadHandle.Result : default(T));
         }
 
@@ -494,6 +568,55 @@ namespace SickOfIt.Core.Addressables
             yield return handle;
             onComplete?.Invoke(handle.Result);
             AddressablesAPI.Release(handle);
+        }
+
+        /// <summary>
+        /// Download and cache the bundle(s) for a label WITHOUT loading assets into memory.
+        /// On WebGL this populates the browser cache so subsequent LoadAssetsAsync calls are instant.
+        /// Returns download size of 0 if already cached.
+        /// </summary>
+        public void DownloadDependencies(string label, System.Action<bool> onComplete, System.Action<float> onProgress = null)
+        {
+            StartCoroutine(DownloadDependenciesAsync(label, onComplete, onProgress));
+        }
+
+        private IEnumerator DownloadDependenciesAsync(string label, System.Action<bool> onComplete, System.Action<float> onProgress)
+        {
+            // First check if we even need to download
+            var sizeHandle = AddressablesAPI.GetDownloadSizeAsync(label);
+            yield return sizeHandle;
+            long downloadSize = sizeHandle.Result;
+            AddressablesAPI.Release(sizeHandle);
+
+            if (downloadSize == 0)
+            {
+                Log($"[Download] '{label}' already cached (0 bytes to download)");
+                onProgress?.Invoke(1f);
+                onComplete?.Invoke(true);
+                yield break;
+            }
+
+            Log($"[Download] Downloading dependencies for '{label}' ({downloadSize / 1024f / 1024f:F2} MB)...");
+            activeOperations.Add($"Download: {label}");
+
+            var downloadHandle = AddressablesAPI.DownloadDependenciesAsync(label);
+
+            while (!downloadHandle.IsDone)
+            {
+                onProgress?.Invoke(downloadHandle.PercentComplete);
+                yield return null;
+            }
+
+            bool success = downloadHandle.Status == AsyncOperationStatus.Succeeded;
+            if (success)
+                Log($"[Download] '{label}' cached successfully");
+            else
+                Debug.LogError($"[Download] Failed to cache '{label}': {downloadHandle.OperationException}");
+
+            AddressablesAPI.Release(downloadHandle);
+            activeOperations.Remove($"Download: {label}");
+            onProgress?.Invoke(1f);
+            onComplete?.Invoke(success);
         }
 
         private void Log(string message)
