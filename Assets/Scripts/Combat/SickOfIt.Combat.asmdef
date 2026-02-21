@@ -3,6 +3,7 @@
   "rootNamespace": "SickOfIt.Combat",
   "references": [
     "SickOfIt.Core",
+    "SickOfIt.Data",
     "Unity.TextMeshPro",
     "Unity.Addressables",
     "Unity.ResourceManager"

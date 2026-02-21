@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Runtime.InteropServices;
 using SickOfIt.Core.Addressables;
 using SickOfIt.Data;
 
@@ -12,6 +13,11 @@ namespace SickOfIt.Core.Flow
     /// </summary>
     public class SceneTransitionManager : MonoBehaviour
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void CloseWindow();
+#endif
+
         [Header("Loading Mode")]
         [SerializeField] private bool useAddressables = true; // Set to true for optimized WebGL builds
         private static SceneTransitionManager _instance;
@@ -44,6 +50,7 @@ namespace SickOfIt.Core.Flow
         public const string MAIN_MENU_SCENE = "MainMenu";
         public const string LEVEL_SELECTION_SCENE = "LevelSelection";
         public const string VIDEO_SELECTION_SCENE = "VideoSelection";
+        public const string UPGRADE_SHOP_SCENE = "UpgradeShop";
 
         public void LoadMainMenu()
         {
@@ -81,6 +88,12 @@ namespace SickOfIt.Core.Flow
         {
             // Always load VideoSelection normally (not via Addressables) as it's part of the base build
             SceneManager.LoadScene(VIDEO_SELECTION_SCENE);
+        }
+
+        public void LoadUpgradeShop()
+        {
+            // Always load UpgradeShop normally (not via Addressables) as it's part of the base build
+            SceneManager.LoadScene(UPGRADE_SHOP_SCENE);
         }
 
         public void LoadVideo(int videoNumber)
@@ -137,18 +150,18 @@ namespace SickOfIt.Core.Flow
             // Exit fullscreen before quitting
             Screen.fullScreen = false;
 
-            // Wait 2 seconds for fullscreen transition
-            yield return new WaitForSeconds(2f);
+            // Wait briefly for fullscreen transition
+            yield return new WaitForSeconds(0.5f);
 
-    #if UNITY_WEBGL && !UNITY_EDITOR
-            // Close browser window/tab for WebGL builds
-            Application.ExternalEval("window.close();");
-    #endif
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // Close browser window/tab for WebGL builds using modern JavaScript interop
+            CloseWindow();
+#endif
 
             Application.Quit();
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-    #endif
+#endif
         }
     }
 }

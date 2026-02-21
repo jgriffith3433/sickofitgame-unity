@@ -1,5 +1,6 @@
 using UnityEngine;
 using SickOfIt.Combat.Health;
+using SickOfIt.Data;
 
 namespace SickOfIt.Combat.Enemies
 {
@@ -26,6 +27,10 @@ namespace SickOfIt.Combat.Enemies
         private float hurtSoundHealthThreshold = 1f;
         [SerializeField] [Range(0f, 0.3f)] [Tooltip("Random pitch variation for audio variety")]
         private float pitchVariation = 0.1f;
+
+        [Header("Roguelite Rewards")]
+        [Tooltip("Points awarded to the player when this enemy is killed")]
+        [SerializeField] private int pointsOnKill = 2;
 
         [SerializeField] protected SpriteRenderer spriteRenderer;
         protected Transform player;
@@ -144,6 +149,12 @@ namespace SickOfIt.Combat.Enemies
         private void OnDeath()
         {
             PlayRandomSound(deathSounds);
+
+            // Award points to the player
+            if (pointsOnKill > 0)
+            {
+                RogueliteManager.Instance.AddPoints(pointsOnKill);
+            }
         }
 
         /// <summary>

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using MobileControllerFramework;
 using SickOfIt.Core.Addressables;
+using SickOfIt.Data;
 
 namespace SickOfIt.Core.Input
 {
@@ -20,7 +21,10 @@ namespace SickOfIt.Core.Input
         
         [Header("Jump Settings")]
         [SerializeField] private float jumpForce = 15f;
-        [SerializeField] private int maxAirJumps = 3;
+        [Tooltip("Base air jumps (before roguelite upgrades). Set to 0 for roguelite mode where jumps are purchased.")]
+        [SerializeField] private int maxAirJumps = 0;
+        [Tooltip("If true, maxAirJumps will be overridden by roguelite upgrade purchases.")]
+        [SerializeField] private bool useRogueliteJumps = true;
         [Tooltip("How fast the character falls (higher = faster). Try 3-5 for faster falling.")]
         [SerializeField] private float gravityScale = 1.8f;
         [Tooltip("Distance below collider to check for ground")]
@@ -207,6 +211,14 @@ namespace SickOfIt.Core.Input
         
         private void Start()
         {
+            // Apply roguelite jump upgrades
+            if (useRogueliteJumps)
+            {
+                int purchasedJumps = RogueliteManager.Instance.GetExtraJumpsPurchased();
+                maxAirJumps = purchasedJumps;
+                Debug.Log($"[TopDownController] Roguelite jumps applied: {maxAirJumps} air jumps.");
+            }
+
             if (moveAction?.action != null)
                 moveAction.action.Enable();
             if (jumpAction?.action != null)

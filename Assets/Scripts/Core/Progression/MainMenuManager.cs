@@ -20,9 +20,16 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private MobileControllerFramework.Button levelSelectButton;
         [SerializeField] private MobileControllerFramework.Button videosButton;
         [SerializeField] private MobileControllerFramework.Button quitButton;
+        [SerializeField] private MobileControllerFramework.Button upgradeShopButton;
 
         [Header("Optional UI Elements")]
         [SerializeField] private TextMeshProUGUI continueButtonText;
+
+        [Header("Roguelite UI")]
+        [Tooltip("Displays Yooba's cumulative health on the main menu.")]
+        [SerializeField] private TextMeshProUGUI cumulativeHealthText;
+        [Tooltip("Displays the player's current points.")]
+        [SerializeField] private TextMeshProUGUI pointsText;
 
         [Header("Scene Loading")]
         [SerializeField] private SceneLoadingManager sceneLoadingManager;
@@ -62,6 +69,7 @@ namespace SickOfIt.Core.Progression
 
             SetupButtons();
             UpdateContinueButton();
+            UpdateRogueliteUI();
             SetupBundleDownloadManager();
         }
 
@@ -81,6 +89,9 @@ namespace SickOfIt.Core.Progression
 
             if (quitButton != null)
                 quitButton.TapEndEvent.AddListener(OnQuitClicked);
+
+            if (upgradeShopButton != null)
+                upgradeShopButton.TapEndEvent.AddListener(OnUpgradeShopClicked);
         }
 
         private void UpdateContinueButton()
@@ -109,6 +120,25 @@ namespace SickOfIt.Core.Progression
             }
         }
 
+        /// <summary>
+        /// Update the roguelite UI elements (cumulative health, points).
+        /// </summary>
+        private void UpdateRogueliteUI()
+        {
+            int totalLevels = GameProgressManager.Instance.GetTotalLevels();
+            int cumulativeHealth = RogueliteManager.Instance.GetCumulativeHealth(totalLevels);
+
+            if (cumulativeHealthText != null)
+            {
+                cumulativeHealthText.text = $"Yooba's Health: {cumulativeHealth} / {RogueliteManager.DEFAULT_MAX_HEALTH}";
+            }
+
+            if (pointsText != null)
+            {
+                pointsText.text = $"Points: {RogueliteManager.Instance.GetPoints()}";
+            }
+        }
+
         private void OnContinueClicked()
         {
             if (isTransitioning) return;
@@ -134,6 +164,9 @@ namespace SickOfIt.Core.Progression
             // Reset all progress and start from level 1
             GameProgressManager.Instance.ResetAllProgress();
             GameProgressManager.Instance.InitializeNewPlayer();
+
+            // Reset roguelite data
+            RogueliteManager.Instance.ResetAllRogueliteData();
 
             // Mark Level1 as visited to prevent auto-play loop
             PlayerPrefs.SetInt("Level_1_Visited", 1);
@@ -257,6 +290,15 @@ namespace SickOfIt.Core.Progression
             SceneTransitionManager.Instance.QuitGame();
         }
 
+        private void OnUpgradeShopClicked()
+        {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            SceneLoadingManager.ShowLoadingUI();
+            SceneTransitionManager.Instance.LoadUpgradeShop();
+        }
+
         /// <summary>
         /// Setup bundle download manager to disable buttons during downloads
         /// </summary>
@@ -299,6 +341,7 @@ namespace SickOfIt.Core.Progression
             if (levelSelectButton != null) levelSelectButton.Disable();
             if (videosButton != null) videosButton.Disable();
             if (quitButton != null) quitButton.Disable();
+            if (upgradeShopButton != null) upgradeShopButton.Disable();
         }
 
         /// <summary>
@@ -316,6 +359,7 @@ namespace SickOfIt.Core.Progression
             if (levelSelectButton != null) levelSelectButton.Enable();
             if (videosButton != null) videosButton.Enable();
             if (quitButton != null) quitButton.Enable();
+            if (upgradeShopButton != null) upgradeShopButton.Enable();
         }
     }
 }

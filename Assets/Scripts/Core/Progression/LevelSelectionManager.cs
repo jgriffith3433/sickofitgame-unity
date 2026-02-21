@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 using MobileControllerFramework;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.UI;
@@ -8,6 +9,7 @@ namespace SickOfIt.Core.Progression
 {
     /// <summary>
     /// Manages the Level Selection scene. Dynamically creates or updates level buttons.
+    /// Displays per-level health info and cumulative health for the roguelite system.
     /// </summary>
     public class LevelSelectionManager : MonoBehaviour
     {
@@ -19,15 +21,29 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private GameObject levelButtonPrefab; // Prefab for level buttons
         [SerializeField] private MobileControllerFramework.Button backButton;
 
+        [Header("Roguelite UI")]
+        [Tooltip("Displays cumulative health on the level selection screen.")]
+        [SerializeField] private TextMeshProUGUI cumulativeHealthText;
+
         [Header("Scene Loading")]
         [SerializeField] private SceneLoadingManager sceneLoadingManager;
 
         private void Start()
         {
             GenerateLevelButtons();
+            UpdateCumulativeHealthDisplay();
 
             if (backButton != null)
                 backButton.TapEndEvent.AddListener(OnBackClicked);
+        }
+
+        private void UpdateCumulativeHealthDisplay()
+        {
+            if (cumulativeHealthText != null && gameConfiguration != null)
+            {
+                int cumulativeHealth = RogueliteManager.Instance.GetCumulativeHealth(gameConfiguration.TotalLevels);
+                cumulativeHealthText.text = $"Yooba's Health: {cumulativeHealth} / {RogueliteManager.DEFAULT_MAX_HEALTH}";
+            }
         }
 
         private void GenerateLevelButtons()
@@ -65,7 +81,11 @@ namespace SickOfIt.Core.Progression
                     bool isCompleted = GameProgressManager.Instance.IsLevelCompleted(levelNumber);
                     bool isUnlocked = levelNumber <= highestReached;
 
-                    levelButton.Setup(levelNumber, isCompleted, isUnlocked, () => OnLevelClicked(levelNumber));
+                    // Get roguelite health data for this level
+                    int endHealth = RogueliteManager.Instance.GetLevelEndHealth(levelNumber);
+                    int maxHealth = RogueliteManager.Instance.GetLevelMaxHealth(levelNumber);
+
+                    levelButton.Setup(levelNumber, isCompleted, isUnlocked, () => OnLevelClicked(levelNumber), endHealth, maxHealth);
                 }
             }
         }

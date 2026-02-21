@@ -187,6 +187,18 @@ namespace SickOfIt.Combat.Health
         }
 
         /// <summary>
+        /// Set current health to a specific value (clamped to 1..maxHealth).
+        /// Used by the roguelite system to apply cumulative health at level start.
+        /// </summary>
+        public void SetCurrentHealth(int health)
+        {
+            currentHealth = Mathf.Clamp(health, 1, maxHealth);
+            invincibilityTimer = 0f;
+            onHealthChanged?.Invoke(currentHealth);
+            UpdateHealthBar();
+        }
+
+        /// <summary>
         /// Handle death
         /// </summary>
         private void Die()

@@ -1,10 +1,8 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using SickOfIt.Core.Addressables;
 using SickOfIt.VideoFrameExtractor.Runtime;
 using UnityEngine.Events;
@@ -28,28 +26,19 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Additional Addressable labels to pre-cache (scenes, audio, prefabs, etc.)")]
         [SerializeField] private List<string> additionalLabels = new List<string>();
 
-        [Header("UI References")]
-        [Tooltip("Fill image for the overall download progress bar (Image.Type.Filled or horizontal)")]
-        [SerializeField] private Image progressBarFill;
-
-        [Tooltip("Text showing download status (e.g., '45% - Downloading Video3_Part5...')")]
-        [SerializeField] private TextMeshProUGUI statusText;
-
-        [Tooltip("Text showing total download size (e.g., '150 MB remaining')")]
-        [SerializeField] private TextMeshProUGUI sizeText;
-
-        [Tooltip("Root GameObject for the download UI. Hidden when everything is cached.")]
-        [SerializeField] private GameObject downloadUIRoot;
-
         [Header("Settings")]
         [Tooltip("Start downloading automatically on Awake")]
         [SerializeField] private bool autoStartOnAwake = true;
 
-        [Tooltip("Hide the download UI when all bundles are already cached")]
-        [SerializeField] private bool hideWhenFullyCached = true;
+        [Tooltip("Maximum concurrent download size checks to avoid overwhelming the server")]
+        [SerializeField] private int maxConcurrentChecks = 3;
 
         [Header("Debug")]
         [SerializeField] private bool showDebugLogs = true;
+
+        // Singleton
+        private static BundleDownloadManager _instance;
+        public static BundleDownloadManager Instance => _instance;
 
         // State
         private List<string> allLabels = new List<string>();
@@ -59,7 +48,6 @@ namespace SickOfIt.Core.Progression
         private long totalDownloadBytes = 0;
         private long completedDownloadBytes = 0;
         private string currentLabel = "";
-        private Coroutine uiUpdateCoroutine = null;
 
         /// <summary>Event fired when all downloads complete (success or failure).</summary>
         public UnityEvent OnDownloadComplete = new UnityEvent();
@@ -73,33 +61,34 @@ namespace SickOfIt.Core.Progression
         /// <summary>Overall progress from 0 to 1.</summary>
         public float Progress { get; private set; }
 
+        /// <summary>Current status text describing what the manager is doing.</summary>
+        public string StatusText { get; private set; } = "";
+
+        /// <summary>Formatted string for remaining download size, or empty if not applicable.</summary>
+        public string SizeText { get; private set; } = "";
+
+        /// <summary>Total bytes that need downloading (may include cached content due to WebGL revalidation).</summary>
+        public long TotalDownloadBytes => totalDownloadBytes;
+
+        /// <summary>Bytes completed so far.</summary>
+        public long CompletedDownloadBytes => completedDownloadBytes;
+
         private void Awake()
         {
+            if (_instance != null && _instance != this)
+            {
+                // Already running from a previous scene - destroy this duplicate
+                Destroy(gameObject);
+                return;
+            }
+
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+
             BuildLabelList();
-            InitializeUI();
 
             if (autoStartOnAwake)
                 StartCoroutine(CheckAndDownload());
-        }
-
-        /// <summary>
-        /// Initialize UI to default state
-        /// </summary>
-        private void InitializeUI()
-        {
-            Progress = 0f;
-            
-            if (progressBarFill != null)
-                progressBarFill.fillAmount = 0f;
-
-            if (statusText != null)
-                statusText.text = "Checking downloads...";
-
-            if (sizeText != null)
-                sizeText.text = "";
-
-            if (downloadUIRoot != null)
-                downloadUIRoot.SetActive(true);
         }
 
         /// <summary>
@@ -150,42 +139,61 @@ namespace SickOfIt.Core.Progression
         /// </summary>
         private IEnumerator CheckAndDownload()
         {
-            isDownloading = true;
             completedLabels = 0;
             completedDownloadBytes = 0;
             totalDownloadBytes = 0;
             Progress = 0f;
-            
-            // Ensure UI is visible and reset
-            if (downloadUIRoot != null)
-                downloadUIRoot.SetActive(true);
-            
-            UpdateUI();
+            isDownloading = true;
+            currentLabel = "Verifying cache...";
+            UpdateStatus();
 
-            // Phase 1: Check download sizes for all labels to determine what's cached
-            Log("Phase 1: Checking download sizes...");
+            // Phase 1: Check download sizes in batches to avoid overwhelming the server
+            // Batch checking is much faster than sequential while respecting server limits
+            Log($"Phase 1: Verifying cached content (max {maxConcurrentChecks} concurrent checks)...");
             var labelsToDownload = new List<string>();
             var labelSizes = new Dictionary<string, long>();
+            var sizeResults = new Dictionary<string, long>();
+            int checksCompleted = 0;
+            int checksStarted = 0;
+            int activeChecks = 0;
 
-            foreach (var label in allLabels)
+            // Process labels in batches
+            while (checksCompleted < allLabels.Count)
             {
-                bool sizeChecked = false;
-                long size = 0;
-
-                AddressablesOperationManager.Instance.GetLabelDownloadSize(label, downloadSize =>
+                // Launch new checks up to the concurrent limit
+                while (activeChecks < maxConcurrentChecks && checksStarted < allLabels.Count)
                 {
-                    size = downloadSize;
-                    sizeChecked = true;
-                });
+                    int index = checksStarted;
+                    string capturedLabel = allLabels[index];
+                    checksStarted++;
+                    activeChecks++;
 
-                yield return new WaitUntil(() => sizeChecked);
+                    AddressablesOperationManager.Instance.GetLabelDownloadSize(capturedLabel, downloadSize =>
+                    {
+                        sizeResults[capturedLabel] = downloadSize;
+                        checksCompleted++;
+                        activeChecks--;
+                    });
+                }
 
-                if (size > 0)
+                // Update progress
+                float checkProgress = checksCompleted / (float)allLabels.Count;
+                Progress = checkProgress * 0.1f; // Reserve 10% for checking phase
+                currentLabel = $"Verifying cache ({checksCompleted}/{allLabels.Count})...";
+                UpdateStatus();
+                
+                yield return null;
+            }
+
+            // Process results
+            foreach (var kvp in sizeResults)
+            {
+                if (kvp.Value > 0)
                 {
-                    labelsToDownload.Add(label);
-                    labelSizes[label] = size;
-                    totalDownloadBytes += size;
-                    Log($"  '{label}': {FormatBytes(size)} needs download");
+                    labelsToDownload.Add(kvp.Key);
+                    labelSizes[kvp.Key] = kvp.Value;
+                    totalDownloadBytes += kvp.Value;
+                    Log($"  '{kvp.Key}': {FormatBytes(kvp.Value)} needs download");
                 }
             }
 
@@ -197,143 +205,117 @@ namespace SickOfIt.Core.Progression
                 Progress = 1f;
                 isDownloading = false;
 
-                if (hideWhenFullyCached && downloadUIRoot != null)
-                    downloadUIRoot.SetActive(false);
-
-                UpdateUI();
+                UpdateStatus();
                 OnDownloadComplete?.Invoke();
                 yield break;
             }
 
-            Log($"Phase 2: Downloading {labelsToDownload.Count} bundles ({FormatBytes(totalDownloadBytes)} total)");
+            Log($"Phase 2: Preparing {labelsToDownload.Count} bundles ({FormatBytes(totalDownloadBytes)} total)");
             IsFullyCached = false;
+            UpdateStatus();
 
-            if (downloadUIRoot != null)
-                downloadUIRoot.SetActive(true);
+            // Phase 2: Download bundles with batched concurrency (respects maxConcurrentChecks)
+            int downloadStarted = 0;
+            int downloadsFinished = 0;
+            int activeDownloads = 0;
+            var labelProgress = new Dictionary<string, float>();
 
-            UpdateUI();
-            
-            // Start continuous UI updates
-            if (uiUpdateCoroutine != null)
-                StopCoroutine(uiUpdateCoroutine);
-            uiUpdateCoroutine = StartCoroutine(ContinuousUIUpdate());
-
-            // Phase 2: Download each bundle sequentially
-            foreach (var label in labelsToDownload)
+            while (downloadsFinished < labelsToDownload.Count)
             {
-                currentLabel = label;
-                long labelSize = labelSizes[label];
-                bool downloadComplete = false;
-                bool downloadSuccess = false;
-
-                AddressablesOperationManager.Instance.DownloadDependencies(
-                    label,
-                    success =>
-                    {
-                        downloadSuccess = success;
-                        downloadComplete = true;
-                    },
-                    progress =>
-                    {
-                        // Calculate overall progress: completed bytes + current label partial progress
-                        long currentLabelProgress = (long)(progress * labelSize);
-                        float overall = (completedDownloadBytes + currentLabelProgress) / (float)totalDownloadBytes;
-                        Progress = Mathf.Clamp01(overall);
-                        UpdateUI();
-                    }
-                );
-
-                yield return new WaitUntil(() => downloadComplete);
-
-                if (downloadSuccess)
+                // Launch new downloads up to the concurrent limit
+                while (activeDownloads < maxConcurrentChecks && downloadStarted < labelsToDownload.Count)
                 {
-                    completedLabels++;
-                    completedDownloadBytes += labelSize;
-                    Progress = completedDownloadBytes / (float)totalDownloadBytes;
-                    Log($"  Downloaded '{label}' ({completedLabels}/{labelsToDownload.Count})");
-                }
-                else
-                {
-                    Debug.LogError($"[BundleDownloadManager] Failed to download '{label}'. Continuing with remaining bundles.");
+                    string capturedLabel = labelsToDownload[downloadStarted];
+                    long labelSize = labelSizes[capturedLabel];
+                    downloadStarted++;
+                    activeDownloads++;
+                    labelProgress[capturedLabel] = 0f;
+
+                    AddressablesOperationManager.Instance.DownloadDependencies(
+                        capturedLabel,
+                        success =>
+                        {
+                            if (success)
+                            {
+                                completedLabels++;
+                                completedDownloadBytes += labelSize;
+                                Log($"  Prepared '{capturedLabel}' ({completedLabels}/{labelsToDownload.Count})");
+                            }
+                            else
+                            {
+                                Debug.LogError($"[BundleDownloadManager] Failed to download '{capturedLabel}'. Continuing with remaining bundles.");
+                            }
+                            labelProgress[capturedLabel] = 1f;
+                            downloadsFinished++;
+                            activeDownloads--;
+                        },
+                        progress =>
+                        {
+                            labelProgress[capturedLabel] = progress;
+                        }
+                    );
                 }
 
-                UpdateUI();
+                // Calculate overall progress from individual label progress
+                long progressBytes = 0;
+                foreach (var kvp in labelProgress)
+                {
+                    if (labelSizes.ContainsKey(kvp.Key))
+                        progressBytes += (long)(kvp.Value * labelSizes[kvp.Key]);
+                }
+                Progress = Mathf.Clamp01(progressBytes / (float)totalDownloadBytes);
+                currentLabel = $"Preparing content ({downloadsFinished}/{labelsToDownload.Count})...";
+                UpdateStatus();
+                yield return null;
             }
 
             // Done
             IsFullyCached = completedLabels == labelsToDownload.Count;
             Progress = 1f;
             isDownloading = false;
-            
-            // Stop continuous UI updates
-            if (uiUpdateCoroutine != null)
-            {
-                StopCoroutine(uiUpdateCoroutine);
-                uiUpdateCoroutine = null;
-            }
 
             if (IsFullyCached)
             {
                 Log($"All downloads complete! ({FormatBytes(totalDownloadBytes)} total)");
-
-                if (hideWhenFullyCached && downloadUIRoot != null)
-                    downloadUIRoot.SetActive(false);
             }
             else
             {
                 Log($"Downloads finished with errors. {completedLabels}/{labelsToDownload.Count} succeeded.");
             }
 
-            UpdateUI();
+            UpdateStatus();
             OnDownloadComplete?.Invoke();
         }
 
         /// <summary>
-        /// Continuously update UI while downloading to ensure smooth progress display
+        /// Update the StatusText and SizeText properties based on current state.
         /// </summary>
-        private IEnumerator ContinuousUIUpdate()
+        private void UpdateStatus()
         {
-            while (isDownloading)
+            // Status text
+            if (IsFullyCached)
+                StatusText = "All content ready!";
+            else if (isDownloading)
             {
-                UpdateUI();
-                yield return null; // Update every frame
-            }
-        }
-
-        private void UpdateUI()
-        {
-            if (progressBarFill != null)
-            {
-                progressBarFill.fillAmount = Progress;
-                Canvas.ForceUpdateCanvases();
-            }
-
-            if (statusText != null)
-            {
-                if (IsFullyCached)
-                    statusText.text = "All content downloaded!";
-                else if (isDownloading)
-                {
-                    if (string.IsNullOrEmpty(currentLabel))
-                        statusText.text = "Checking bundles...";
-                    else
-                        statusText.text = $"{(Progress * 100f):F0}% - Downloading {currentLabel}...";
-                }
+                if (string.IsNullOrEmpty(currentLabel))
+                    StatusText = "Verifying cache...";
+                else if (currentLabel.Contains("Verifying") || currentLabel.Contains("Preparing"))
+                    StatusText = currentLabel;
                 else
-                    statusText.text = "";
+                    StatusText = $"{(Progress * 100f):F0}% - Preparing {currentLabel}...";
             }
+            else
+                StatusText = "";
 
-            if (sizeText != null)
+            // Size text
+            if (isDownloading && totalDownloadBytes > 0)
             {
-                if (isDownloading && totalDownloadBytes > 0)
-                {
-                    long remaining = totalDownloadBytes - completedDownloadBytes;
-                    sizeText.text = $"{FormatBytes(remaining)} remaining";
-                }
-                else if (IsFullyCached)
-                {
-                    sizeText.text = "";
-                }
+                long remaining = totalDownloadBytes - completedDownloadBytes;
+                SizeText = $"{FormatBytes(remaining)} remaining";
+            }
+            else
+            {
+                SizeText = "";
             }
         }
 
@@ -382,6 +364,19 @@ namespace SickOfIt.Core.Progression
             Debug.Log($"[BundleDownloadManager] === {allLabels.Count} labels would be checked ===");
             for (int i = 0; i < allLabels.Count; i++)
                 Debug.Log($"  [{i + 1}] {allLabels[i]}");
+        }
+
+        [ContextMenu("Force Re-check Cache")]
+        private void ForceRecheckCache()
+        {
+            if (Application.isPlaying)
+            {
+                StartDownload();
+            }
+            else
+            {
+                Debug.LogWarning("[BundleDownloadManager] Force re-check only works in play mode");
+            }
         }
 #endif
     }
