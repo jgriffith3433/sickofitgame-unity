@@ -28,9 +28,15 @@ namespace SickOfIt.Combat.Enemies
         [SerializeField] [Range(0f, 0.3f)] [Tooltip("Random pitch variation for audio variety")]
         private float pitchVariation = 0.1f;
 
-        [Header("Roguelite Rewards")]
-        [Tooltip("Points awarded to the player when this enemy is killed")]
-        [SerializeField] private int pointsOnKill = 2;
+        [Header("Point Drops")]
+        [Tooltip("Prefab of the PointsPickup to spawn on death. Leave null to disable drops.")]
+        [SerializeField] private GameObject pointsPickupPrefab;
+        [Tooltip("Chance (0-1) that a point pickup drops on death")]
+        [SerializeField] [Range(0f, 1f)] private float dropChance = 0.35f;
+        [Tooltip("Points value of each dropped pickup")]
+        [SerializeField] private int dropPointsValue = 1;
+        [Tooltip("How many pickups to drop (each rolls independently)")]
+        [SerializeField] private int dropCount = 1;
 
         [SerializeField] protected SpriteRenderer spriteRenderer;
         protected Transform player;
@@ -150,10 +156,30 @@ namespace SickOfIt.Combat.Enemies
         {
             PlayRandomSound(deathSounds);
 
-            // Award points to the player
-            if (pointsOnKill > 0)
+            // Roll for point drops
+            SpawnPointDrops();
+        }
+
+        /// <summary>
+        /// Spawn point pickup(s) at the enemy's position based on drop chance.
+        /// </summary>
+        private void SpawnPointDrops()
+        {
+            if (pointsPickupPrefab == null || dropChance <= 0f)
+                return;
+
+            for (int i = 0; i < dropCount; i++)
             {
-                RogueliteManager.Instance.AddPoints(pointsOnKill);
+                if (Random.value <= dropChance)
+                {
+                    GameObject drop = Instantiate(pointsPickupPrefab, transform.position, Quaternion.identity);
+                    var pickup = drop.GetComponent<PointsPickup>();
+                    if (pickup != null)
+                    {
+                        pickup.SetPointsValue(dropPointsValue);
+                        pickup.SetSettledY(transform.position.y);
+                    }
+                }
             }
         }
 

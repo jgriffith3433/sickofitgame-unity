@@ -166,6 +166,11 @@ namespace SickOfIt.Data
         // =========================================================================
 
         /// <summary>
+        /// Fired whenever the player's points change. Passes the new total.
+        /// </summary>
+        public event System.Action<int> OnPointsChanged;
+
+        /// <summary>
         /// Get the player's current points.
         /// </summary>
         public int GetPoints()
@@ -179,8 +184,10 @@ namespace SickOfIt.Data
         public void AddPoints(int amount)
         {
             int current = GetPoints();
-            PlayerPrefs.SetInt(KEY_PLAYER_POINTS, current + amount);
+            int newTotal = current + amount;
+            PlayerPrefs.SetInt(KEY_PLAYER_POINTS, newTotal);
             PlayerPrefs.Save();
+            OnPointsChanged?.Invoke(newTotal);
         }
 
         /// <summary>
@@ -192,8 +199,10 @@ namespace SickOfIt.Data
             if (current < amount)
                 return false;
 
-            PlayerPrefs.SetInt(KEY_PLAYER_POINTS, current - amount);
+            int newTotal = current - amount;
+            PlayerPrefs.SetInt(KEY_PLAYER_POINTS, newTotal);
             PlayerPrefs.Save();
+            OnPointsChanged?.Invoke(newTotal);
             return true;
         }
 
