@@ -4,8 +4,8 @@ using SickOfIt.Combat.Health;
 namespace SickOfIt.Combat.Damage
 {
     /// <summary>
-    /// Deals damage on collision with objects that have HealthSystem
-    /// Use this on projectiles, enemies, etc.
+    /// Deals damage on collision with objects that implement IDamageable
+    /// (PlayerHealth, EnemyHealth). Use this on projectiles, enemies, etc.
     /// </summary>
     public class DamageDealer : MonoBehaviour
     {
@@ -40,11 +40,11 @@ namespace SickOfIt.Combat.Damage
             if (!isValidTarget)
                 return;
 
-            // Try to deal damage
-            HealthSystem healthSystem = other.GetComponent<HealthSystem>();
-            if (healthSystem != null && healthSystem.IsAlive)
+            // Try to deal damage via IDamageable (works for both PlayerHealth and EnemyHealth)
+            IDamageable damageable = other.GetComponent<IDamageable>();
+            if (damageable != null && damageable.IsAlive)
             {
-                healthSystem.TakeDamage(damageAmount);
+                damageable.TakeDamage(damageAmount);
                 hasDealtDamage = true;
 
                 if (destroyOnHit)

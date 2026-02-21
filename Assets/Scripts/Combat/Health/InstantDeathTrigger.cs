@@ -36,28 +36,25 @@ namespace SickOfIt.Combat.Health
             if (!other.CompareTag("Player"))
                 return;
 
-            // Get the player's health system
-            HealthSystem playerHealth = other.GetComponent<HealthSystem>();
-            if (playerHealth == null)
+            // Get the player's damageable component
+            IDamageable damageable = other.GetComponent<IDamageable>();
+            if (damageable == null)
             {
-                Debug.LogError($"[InstantDeathTrigger] Player '{other.name}' does not have a HealthSystem component!");
+                Debug.LogError($"[InstantDeathTrigger] Player '{other.name}' does not have an IDamageable component!");
                 return;
             }
 
-            // Only damage if player is alive
-            if (!playerHealth.IsAlive)
+            if (!damageable.IsAlive)
                 return;
 
             Debug.Log($"[InstantDeathTrigger] Player entered death trigger '{gameObject.name}'. Triggering instant death.");
 
-            // Track the death cause if analytics is available
             if (!string.IsNullOrEmpty(deathCause))
             {
                 SickOfIt.Core.AnalyticsManager.Instance.TrackPlayerDeath(deathCause);
             }
 
-            // Deal lethal damage (9999 should be enough to kill any player)
-            playerHealth.TakeDamage(9999);
+            damageable.TakeDamage(9999);
         }
 
         private void OnDrawGizmos()

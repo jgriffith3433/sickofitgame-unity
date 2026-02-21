@@ -5,7 +5,10 @@ using UnityEngine.UI;
 namespace SickOfIt.Combat.Health
 {
     /// <summary>
-    /// Generic health system that can be used by player, enemies, or spawners
+    /// Generic health system used by player and enemies.
+    /// For the player, max health and current health are set by RogueliteManager
+    /// via SetHealthValues() — the serialized maxHealth is only used as a fallback
+    /// for enemies and other non-player entities.
     /// </summary>
     public class HealthSystem : MonoBehaviour
     {
@@ -20,23 +23,21 @@ namespace SickOfIt.Combat.Health
         [Header("Invincibility")]
         [SerializeField] private bool hasInvincibilityFrames = false;
         [SerializeField] private float invincibilityDuration = 0.5f;
-        private float invincibilityTimer = 0f;
+        private float invincibilityTimer;
 
         [Header("Events")]
-        public UnityEvent<int> onHealthChanged; // Passes current health
+        public UnityEvent<int> onHealthChanged;
         public UnityEvent onDamaged;
-        public UnityEvent onHealed;
         public UnityEvent onDeath;
 
         [Header("Health Bar (Optional)")]
-        [Tooltip("Drag in a UI transform (e.g., Canvas child) to auto-generate a health bar")]
+        [Tooltip("Drag in a UI transform to auto-generate a health bar (used by enemies)")]
         [SerializeField] private Transform healthBarContainer;
         [SerializeField] private Color healthBarColor = Color.red;
         [SerializeField] private Vector2 healthBarSize = new Vector2(35f, 3f);
         [SerializeField] private bool hideWhenFull = false;
 
         private GameObject healthBarBackground;
-        private GameObject healthBarFill;
         private Image healthBarFillImage;
 
         public int CurrentHealth => currentHealth;
@@ -53,69 +54,99 @@ namespace SickOfIt.Combat.Health
         private void Update()
         {
             if (invincibilityTimer > 0)
-            {
                 invincibilityTimer -= Time.deltaTime;
-            }
+        }
+
+        public void TakeDamage(int damage)
+        {
+            if (!IsAlive || IsInvincible)
+                return;
+
+            currentHealth = Mathf.Max(0, currentHealth - damage);
+            onDamaged?.Invoke();
+            onHealthChanged?.Invoke(currentHealth);
+            UpdateHealthBar();
+
+            if (hasInvincibilityFrames)
+                invincibilityTimer = invincibilityDuration;
+
+            if (currentHealth <= 0)
+                Die();
         }
 
         /// <summary>
-        /// Creates a simple health bar UI if a container is assigned
+        /// Override both max health and current health atomically.
+        /// Used by PlayerHealth to apply roguelite values from RogueliteManager.
         /// </summary>
+        public void SetHealthValues(int newMaxHealth, int newCurrentHealth)
+        {
+            maxHealth = Mathf.Max(1, newMaxHealth);
+            currentHealth = Mathf.Clamp(newCurrentHealth, 0, maxHealth);
+            invincibilityTimer = 0f;
+            onHealthChanged?.Invoke(currentHealth);
+            UpdateHealthBar();
+        }
+
+        private void Die()
+        {
+            onDeath?.Invoke();
+
+            if (destroyOnDeath)
+            {
+                if (deathDelay > 0)
+                    Destroy(gameObject, deathDelay);
+                else
+                    Destroy(gameObject);
+            }
+        }
+
+        #region Health Bar
+
         private void CreateHealthBar()
         {
             if (healthBarContainer == null)
                 return;
 
-            // Create background
             healthBarBackground = new GameObject("HealthBar_Background");
             healthBarBackground.transform.SetParent(healthBarContainer, false);
-            
-            Image bgImage = healthBarBackground.AddComponent<Image>();
-            bgImage.color = new Color(0.2f, 0.2f, 0.2f, 0.8f); // Dark gray background
-            bgImage.sprite = CreateWhiteSprite(); // Need a sprite for rendering
-            
-            RectTransform bgRect = healthBarBackground.GetComponent<RectTransform>();
+
+            var bgImage = healthBarBackground.AddComponent<Image>();
+            bgImage.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+            bgImage.sprite = CreateWhiteSprite();
+
+            var bgRect = healthBarBackground.GetComponent<RectTransform>();
             bgRect.sizeDelta = healthBarSize;
-            bgRect.anchorMin = new Vector2(0.5f, 0.5f);
-            bgRect.anchorMax = new Vector2(0.5f, 0.5f);
-            bgRect.pivot = new Vector2(0.5f, 0.5f);
+            bgRect.anchorMin = bgRect.anchorMax = bgRect.pivot = new Vector2(0.5f, 0.5f);
             bgRect.anchoredPosition = Vector2.zero;
 
-            // Create fill (red bar)
-            healthBarFill = new GameObject("HealthBar_Fill");
+            var healthBarFill = new GameObject("HealthBar_Fill");
             healthBarFill.transform.SetParent(healthBarBackground.transform, false);
-            
+
             healthBarFillImage = healthBarFill.AddComponent<Image>();
             healthBarFillImage.color = healthBarColor;
-            healthBarFillImage.sprite = CreateWhiteSprite(); // Need a sprite for rendering
+            healthBarFillImage.sprite = CreateWhiteSprite();
             healthBarFillImage.type = Image.Type.Filled;
             healthBarFillImage.fillMethod = Image.FillMethod.Horizontal;
             healthBarFillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
-            
-            RectTransform fillRect = healthBarFill.GetComponent<RectTransform>();
-            fillRect.anchorMin = new Vector2(0f, 0f);
-            fillRect.anchorMax = new Vector2(1f, 1f);
+
+            var fillRect = healthBarFill.GetComponent<RectTransform>();
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = Vector2.one;
             fillRect.pivot = new Vector2(0.5f, 0.5f);
             fillRect.anchoredPosition = Vector2.zero;
-            fillRect.sizeDelta = Vector2.zero; // Fill the parent
+            fillRect.sizeDelta = Vector2.zero;
 
             UpdateHealthBar();
         }
 
-        /// <summary>
-        /// Creates a simple white 1x1 sprite for UI rendering
-        /// </summary>
-        private Sprite CreateWhiteSprite()
+        private static Sprite CreateWhiteSprite()
         {
-            Texture2D texture = new Texture2D(1, 1);
+            var texture = new Texture2D(1, 1);
             texture.SetPixel(0, 0, Color.white);
             texture.Apply();
             return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
         }
 
-        /// <summary>
-        /// Updates the health bar fill amount
-        /// </summary>
         private void UpdateHealthBar()
         {
             if (healthBarFillImage == null)
@@ -124,98 +155,10 @@ namespace SickOfIt.Combat.Health
             float fillAmount = maxHealth > 0 ? (float)currentHealth / maxHealth : 0f;
             healthBarFillImage.fillAmount = fillAmount;
 
-            // Hide when full if option is enabled
             if (hideWhenFull && healthBarBackground != null)
-            {
                 healthBarBackground.SetActive(fillAmount < 1f);
-            }
         }
 
-        /// <summary>
-        /// Take damage
-        /// </summary>
-        public void TakeDamage(int damage)
-        {
-            if (!IsAlive || IsInvincible)
-                return;
-
-            currentHealth = Mathf.Max(0, currentHealth - damage);
-
-            onDamaged?.Invoke();
-            onHealthChanged?.Invoke(currentHealth);
-            UpdateHealthBar();
-
-            if (hasInvincibilityFrames)
-            {
-                invincibilityTimer = invincibilityDuration;
-            }
-
-            if (currentHealth <= 0)
-            {
-                Die();
-            }
-        }
-
-        /// <summary>
-        /// Heal
-        /// </summary>
-        public void Heal(int amount)
-        {
-            if (!IsAlive)
-                return;
-
-            int oldHealth = currentHealth;
-            currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
-
-            if (currentHealth > oldHealth)
-            {
-                onHealed?.Invoke();
-                onHealthChanged?.Invoke(currentHealth);
-                UpdateHealthBar();
-            }
-        }
-
-        /// <summary>
-        /// Reset health to max
-        /// </summary>
-        public void ResetHealth()
-        {
-            currentHealth = maxHealth;
-            invincibilityTimer = 0f;
-            onHealthChanged?.Invoke(currentHealth);
-            UpdateHealthBar();
-        }
-
-        /// <summary>
-        /// Set current health to a specific value (clamped to 1..maxHealth).
-        /// Used by the roguelite system to apply cumulative health at level start.
-        /// </summary>
-        public void SetCurrentHealth(int health)
-        {
-            currentHealth = Mathf.Clamp(health, 1, maxHealth);
-            invincibilityTimer = 0f;
-            onHealthChanged?.Invoke(currentHealth);
-            UpdateHealthBar();
-        }
-
-        /// <summary>
-        /// Handle death
-        /// </summary>
-        private void Die()
-        {
-            onDeath?.Invoke();
-
-            if (destroyOnDeath)
-            {
-                if (deathDelay > 0)
-                {
-                    Destroy(gameObject, deathDelay);
-                }
-                else
-                {
-                    Destroy(gameObject);
-                }
-            }
-        }
+        #endregion
     }
 }

@@ -202,10 +202,9 @@ namespace SickOfIt.Core.Progression
         /// </summary>
         private void SavePlayerHealthForRoguelite()
         {
-            if (playerHealth != null && playerHealth.HealthSystem != null)
+            if (playerHealth != null)
             {
-                var hs = playerHealth.HealthSystem;
-                RogueliteManager.Instance.SaveLevelEndHealth(levelNumber, hs.CurrentHealth, hs.MaxHealth);
+                RogueliteManager.Instance.SaveLevelEndHealth(levelNumber, playerHealth.CurrentHealth, playerHealth.MaxHealth);
             }
             else
             {

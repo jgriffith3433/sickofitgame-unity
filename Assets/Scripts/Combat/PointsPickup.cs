@@ -15,7 +15,7 @@ namespace SickOfIt.Combat
         [SerializeField] private int pointsValue = 1;
 
         [Tooltip("How long the pickup stays before despawning (0 = forever)")]
-        [SerializeField] private float lifetime = 2f;
+        [SerializeField] private float lifetime = 1f;
 
         [Header("Movement")]
         [Tooltip("Initial upward pop force when spawned")]

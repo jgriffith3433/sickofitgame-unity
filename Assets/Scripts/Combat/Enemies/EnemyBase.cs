@@ -7,7 +7,7 @@ namespace SickOfIt.Combat.Enemies
     /// <summary>
     /// Base class for all enemy types
     /// </summary>
-    [RequireComponent(typeof(HealthSystem))]
+    [RequireComponent(typeof(EnemyHealth))]
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(AudioSource))]
     public abstract class EnemyBase : MonoBehaviour
@@ -40,9 +40,9 @@ namespace SickOfIt.Combat.Enemies
 
         [SerializeField] protected SpriteRenderer spriteRenderer;
         protected Transform player;
-        protected HealthSystem playerHealthSystem;
+        protected IDamageable playerDamageable;
         protected Rigidbody2D rb;
-        protected HealthSystem healthSystem;
+        protected EnemyHealth enemyHealth;
         protected AudioSource audioSource;
 
         protected virtual void Awake()
@@ -51,7 +51,7 @@ namespace SickOfIt.Combat.Enemies
                 spriteRenderer = GetComponent<SpriteRenderer>();
 
             rb = GetComponent<Rigidbody2D>();
-            healthSystem = GetComponent<HealthSystem>();
+            enemyHealth = GetComponent<EnemyHealth>();
             audioSource = GetComponent<AudioSource>();
 
             // Setup rigidbody for 2D movement
@@ -59,10 +59,10 @@ namespace SickOfIt.Combat.Enemies
             rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
             // Subscribe to health events
-            if (healthSystem != null)
+            if (enemyHealth != null)
             {
-                healthSystem.onDamaged.AddListener(OnDamaged);
-                healthSystem.onDeath.AddListener(OnDeath);
+                enemyHealth.onDamaged.AddListener(OnDamaged);
+                enemyHealth.onDeath.AddListener(OnDeath);
             }
 
             // Find player (including inactive)
@@ -71,28 +71,23 @@ namespace SickOfIt.Combat.Enemies
             if (playerObj != null)
             {
                 player = playerObj.transform;
-
-                // HealthSystem may be on the player root or a child (e.g. Hitbox),
-                // so search the hierarchy to get a reliable reference.
-                playerHealthSystem = playerObj.GetComponentInChildren<HealthSystem>(true);
-                if (playerHealthSystem == null)
-                    playerHealthSystem = playerObj.GetComponentInParent<HealthSystem>();
+                playerDamageable = playerObj.GetComponentInChildren<IDamageable>(true);
             }
         }
 
         protected virtual void OnDestroy()
         {
             // Unsubscribe from health events
-            if (healthSystem != null)
+            if (enemyHealth != null)
             {
-                healthSystem.onDamaged.RemoveListener(OnDamaged);
-                healthSystem.onDeath.RemoveListener(OnDeath);
+                enemyHealth.onDamaged.RemoveListener(OnDamaged);
+                enemyHealth.onDeath.RemoveListener(OnDeath);
             }
         }
 
         protected virtual void FixedUpdate()
         {
-            if (player == null || !healthSystem.IsAlive)
+            if (player == null || !enemyHealth.IsAlive)
                 return;
 
             // Check if player is in range
@@ -115,17 +110,12 @@ namespace SickOfIt.Combat.Enemies
         {
             if (collision.gameObject.CompareTag("Player"))
             {
-                // Use cached reference first; fall back to searching the collided hierarchy
-                HealthSystem playerHealth = playerHealthSystem;
-                if (playerHealth == null)
-                    playerHealth = collision.gameObject.GetComponentInChildren<HealthSystem>(true);
-                if (playerHealth == null)
-                    playerHealth = collision.gameObject.GetComponentInParent<HealthSystem>();
+                IDamageable target = playerDamageable;
+                if (target == null)
+                    target = collision.gameObject.GetComponentInChildren<IDamageable>(true);
 
-                if (playerHealth != null)
-                {
-                    playerHealth.TakeDamage(contactDamage);
-                }
+                if (target != null)
+                    target.TakeDamage(contactDamage);
             }
         }
 
@@ -142,7 +132,7 @@ namespace SickOfIt.Combat.Enemies
         private void OnDamaged()
         {
             // Check if health is below threshold
-            float healthPercent = (float)healthSystem.CurrentHealth / healthSystem.MaxHealth;
+            float healthPercent = (float)enemyHealth.CurrentHealth / enemyHealth.MaxHealth;
             if (healthPercent <= hurtSoundHealthThreshold)
             {
                 PlayRandomSound(hurtSounds);

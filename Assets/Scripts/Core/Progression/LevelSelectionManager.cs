@@ -41,8 +41,9 @@ namespace SickOfIt.Core.Progression
         {
             if (cumulativeHealthText != null && gameConfiguration != null)
             {
+                int maxHealth = RogueliteManager.Instance.GetMaxHealth();
                 int cumulativeHealth = RogueliteManager.Instance.GetCumulativeHealth(gameConfiguration.TotalLevels);
-                cumulativeHealthText.text = $"Yooba's Health: {cumulativeHealth} / {RogueliteManager.DEFAULT_MAX_HEALTH}";
+                cumulativeHealthText.text = $"Yooba's Health: {cumulativeHealth} / {maxHealth}";
             }
         }
 

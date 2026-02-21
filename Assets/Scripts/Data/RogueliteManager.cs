@@ -30,11 +30,12 @@ namespace SickOfIt.Data
         private const string KEY_PLAYER_POINTS = "Rogue_Player_Points";
         private const string KEY_UPGRADE_PURCHASED = "Rogue_Upgrade_{0}_Purchased"; // int 0/1
         private const string KEY_EXTRA_JUMPS_PURCHASED = "Rogue_ExtraJumps_Purchased"; // int: count of extra jumps bought
+        private const string KEY_MAX_HEALTH = "Rogue_MaxHealth"; // int: player's current max health
 
         /// <summary>
-        /// Default max health for the player (should match HealthSystem's maxHealth).
+        /// The starting max health for a brand new player.
         /// </summary>
-        public const int DEFAULT_MAX_HEALTH = 3;
+        public const int BASE_MAX_HEALTH = 3;
 
         /// <summary>
         /// Maximum number of extra jumps that can be purchased.
@@ -58,19 +59,88 @@ namespace SickOfIt.Data
         }
 
         // =========================================================================
+        // MAX HEALTH (single source of truth)
+        // =========================================================================
+
+        /// <summary>
+        /// Get the player's current max health. This is the single source of truth
+        /// used by PlayerHealth, all UIs, and level health tracking.
+        /// </summary>
+        public int GetMaxHealth()
+        {
+            return PlayerPrefs.GetInt(KEY_MAX_HEALTH, BASE_MAX_HEALTH);
+        }
+
+        /// <summary>
+        /// Set the player's max health (e.g. after purchasing a health upgrade).
+        /// </summary>
+        public void SetMaxHealth(int maxHealth)
+        {
+            PlayerPrefs.SetInt(KEY_MAX_HEALTH, Mathf.Max(1, maxHealth));
+            PlayerPrefs.Save();
+            Debug.Log($"[RogueliteManager] Max health set to {maxHealth}");
+        }
+
+        /// <summary>
+        /// Increase max health by an amount. Returns the new max.
+        /// </summary>
+        public int IncreaseMaxHealth(int amount)
+        {
+            int newMax = GetMaxHealth() + amount;
+            SetMaxHealth(newMax);
+            return newMax;
+        }
+
+        // =========================================================================
         // HEALTH TRACKING
         // =========================================================================
 
         /// <summary>
         /// Save the player's health at the end of a level.
         /// Called when a level is completed (not when dying).
+        /// If the player improved compared to a previous completion of this level,
+        /// the health improvement cascades forward to all subsequent levels
+        /// that already have saved data.
         /// </summary>
         public void SaveLevelEndHealth(int levelNumber, int endHealth, int maxHealth)
         {
-            PlayerPrefs.SetInt(string.Format(KEY_LEVEL_END_HEALTH, levelNumber), endHealth);
+            int oldEndHealth = GetLevelEndHealth(levelNumber);
+            int clampedEndHealth = Mathf.Min(endHealth, maxHealth);
+
+            // Save this level's data
+            PlayerPrefs.SetInt(string.Format(KEY_LEVEL_END_HEALTH, levelNumber), clampedEndHealth);
             PlayerPrefs.SetInt(string.Format(KEY_LEVEL_MAX_HEALTH, levelNumber), maxHealth);
+
+            // Cascade improvement to subsequent levels
+            if (oldEndHealth >= 0 && clampedEndHealth > oldEndHealth)
+            {
+                int delta = clampedEndHealth - oldEndHealth;
+                CascadeHealthImprovement(levelNumber + 1, delta, maxHealth);
+            }
+
             PlayerPrefs.Save();
-            Debug.Log($"[RogueliteManager] Level {levelNumber} end health saved: {endHealth}/{maxHealth}");
+            Debug.Log($"[RogueliteManager] Level {levelNumber} end health saved: {clampedEndHealth}/{maxHealth}");
+        }
+
+        /// <summary>
+        /// Propagate a health improvement forward through all subsequent levels
+        /// that already have saved completion data.
+        /// Each level's stored end health is increased by the delta, clamped to max health.
+        /// </summary>
+        private void CascadeHealthImprovement(int fromLevel, int delta, int maxHealth)
+        {
+            // Walk forward through levels that have data and apply the delta
+            for (int level = fromLevel; ; level++)
+            {
+                int storedHealth = GetLevelEndHealth(level);
+                if (storedHealth < 0)
+                    break; // No data for this level — stop cascading
+
+                int newHealth = Mathf.Min(storedHealth + delta, maxHealth);
+                PlayerPrefs.SetInt(string.Format(KEY_LEVEL_END_HEALTH, level), newHealth);
+                PlayerPrefs.SetInt(string.Format(KEY_LEVEL_MAX_HEALTH, level), maxHealth);
+                Debug.Log($"[RogueliteManager] Cascaded +{delta} to level {level}: {storedHealth} → {newHealth}/{maxHealth}");
+            }
         }
 
         /// <summary>
@@ -87,12 +157,12 @@ namespace SickOfIt.Data
 
         /// <summary>
         /// Get the max health recorded for a level completion.
-        /// Returns DEFAULT_MAX_HEALTH if not recorded.
+        /// Returns current max health if not recorded.
         /// </summary>
         public int GetLevelMaxHealth(int levelNumber)
         {
             string key = string.Format(KEY_LEVEL_MAX_HEALTH, levelNumber);
-            return PlayerPrefs.GetInt(key, DEFAULT_MAX_HEALTH);
+            return PlayerPrefs.GetInt(key, GetMaxHealth());
         }
 
         /// <summary>
@@ -106,32 +176,37 @@ namespace SickOfIt.Data
         /// <summary>
         /// Calculate the starting health for a given level based on the chain of previous level completions.
         /// Level 1 always starts with max health.
-        /// Level N starts with whatever health the player ended Level N-1 with.
+        /// Level N starts with whatever health the player ended Level N-1 with,
+        /// clamped to current max health (in case max health was upgraded since).
         /// </summary>
         public int GetStartingHealthForLevel(int levelNumber)
         {
+            int maxHealth = GetMaxHealth();
+
             if (levelNumber <= 1)
-                return DEFAULT_MAX_HEALTH;
+                return maxHealth;
 
             int previousLevelEndHealth = GetLevelEndHealth(levelNumber - 1);
             if (previousLevelEndHealth < 0)
             {
                 // Previous level hasn't been completed, start with max
-                return DEFAULT_MAX_HEALTH;
+                return maxHealth;
             }
 
-            return previousLevelEndHealth;
+            // Clamp to current max (could have increased since the save)
+            return Mathf.Min(previousLevelEndHealth, maxHealth);
         }
 
         /// <summary>
         /// Get the cumulative health — the health Yooba would start the next unplayed level with.
-        /// This is the end health of the last completed level in sequence.
+        /// This is the end health of the last completed level in sequence,
+        /// clamped to current max health.
         /// If no levels completed, returns max health.
         /// </summary>
         public int GetCumulativeHealth(int totalLevels)
         {
-            // Walk the chain from level 1 forward
-            int health = DEFAULT_MAX_HEALTH;
+            int maxHealth = GetMaxHealth();
+            int health = maxHealth;
 
             for (int i = 1; i <= totalLevels; i++)
             {
@@ -141,7 +216,7 @@ namespace SickOfIt.Data
                     // This level hasn't been completed — cumulative health is what we'd start it with
                     break;
                 }
-                health = endHealth;
+                health = Mathf.Min(endHealth, maxHealth);
             }
 
             return health;
@@ -321,9 +396,10 @@ namespace SickOfIt.Data
                 PlayerPrefs.DeleteKey(string.Format(KEY_LEVEL_MAX_HEALTH, i));
             }
 
-            // Clear points and upgrades
+            // Clear points, upgrades, and max health
             PlayerPrefs.DeleteKey(KEY_PLAYER_POINTS);
             PlayerPrefs.DeleteKey(KEY_EXTRA_JUMPS_PURCHASED);
+            PlayerPrefs.DeleteKey(KEY_MAX_HEALTH);
 
             PlayerPrefs.Save();
             Debug.Log("[RogueliteManager] All roguelite data reset.");

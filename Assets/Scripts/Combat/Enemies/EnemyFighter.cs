@@ -130,14 +130,14 @@ namespace SickOfIt.Combat.Enemies
 
         private void DealDamageToPlayer()
         {
-            if (player == null || playerHealthSystem == null)
+            if (player == null || playerDamageable == null)
                 return;
 
             // Check if player is still in range
             float distanceToPlayer = Vector2.Distance(transform.position, player.position);
             if (distanceToPlayer <= attackRange)
             {
-                playerHealthSystem.TakeDamage(attackDamage);
+                playerDamageable.TakeDamage(attackDamage);
             }
         }
 

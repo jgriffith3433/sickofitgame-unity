@@ -58,12 +58,10 @@ namespace SickOfIt.Combat.Enemies.Spawning
 
         private void OnEnable()
         {
-            // No longer using HealthSystem events
         }
 
         private void OnDisable()
         {
-            // No longer using HealthSystem events
         }
 
         private void OnDestroy()

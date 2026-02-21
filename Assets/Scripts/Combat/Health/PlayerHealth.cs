@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.Input;
 using SickOfIt.Data;
@@ -6,91 +7,101 @@ using SickOfIt.Data;
 namespace SickOfIt.Combat.Health
 {
     /// <summary>
-    /// Player-specific health management with game over handling.
-    /// Integrates with RogueliteManager for cumulative health.
+    /// Self-contained player health component.
+    /// All health values come from RogueliteManager — no serialized max health.
+    /// Implements IDamageable so DamageDealer/InstantDeathTrigger work generically.
     /// </summary>
-    [RequireComponent(typeof(HealthSystem))]
-    public class PlayerHealth : MonoBehaviour
+    public class PlayerHealth : MonoBehaviour, IDamageable
     {
         [Header("Death Scene Settings")]
         [Tooltip("Name of the death scene to load (e.g., 'Death1', 'DeathAnimation', etc.)")]
         [SerializeField] private string deathSceneName = "Death1";
 
         [Header("Roguelite Settings")]
-        [Tooltip("The level number this player is in (used for cumulative health). Set by LevelManager.")]
+        [Tooltip("The level number this player is in. Set by LevelManager.")]
         [SerializeField] private int currentLevelNumber = 1;
 
-        private HealthSystem healthSystem;
+        [Header("Invincibility")]
+        [SerializeField] private bool hasInvincibilityFrames = true;
+        [SerializeField] private float invincibilityDuration = 0.5f;
+        private float invincibilityTimer;
 
-        public HealthSystem HealthSystem => healthSystem;
+        [Header("Events")]
+        public UnityEvent<int> onHealthChanged;
+        public UnityEvent onDamaged;
+        public UnityEvent onDeath;
+
+        private int maxHealth;
+        private int currentHealth;
+
+        public int CurrentHealth => currentHealth;
+        public int MaxHealth => maxHealth;
+        public bool IsAlive => currentHealth > 0;
+        public bool IsInvincible => invincibilityTimer > 0;
 
         private void Awake()
         {
-            healthSystem = GetComponent<HealthSystem>();
+            // Initialise to RogueliteManager defaults; InitializeForLevel() overrides this properly.
+            maxHealth = RogueliteManager.Instance.GetMaxHealth();
+            currentHealth = maxHealth;
         }
 
-        private void OnEnable()
+        private void Update()
         {
-            if (healthSystem != null)
-            {
-                healthSystem.onDeath.AddListener(OnPlayerDeath);
-            }
-        }
-
-        private void OnDisable()
-        {
-            if (healthSystem != null)
-            {
-                healthSystem.onDeath.RemoveListener(OnPlayerDeath);
-            }
+            if (invincibilityTimer > 0)
+                invincibilityTimer -= Time.deltaTime;
         }
 
         /// <summary>
-        /// Set the level number and apply cumulative health from RogueliteManager.
-        /// Called by LevelManager during level initialization.
+        /// Set the level number and apply roguelite health values.
+        /// Called by LevelManager during level initialisation.
         /// </summary>
         public void InitializeForLevel(int levelNumber)
         {
             currentLevelNumber = levelNumber;
-            ApplyCumulativeHealth();
+            maxHealth = RogueliteManager.Instance.GetMaxHealth();
+            currentHealth = Mathf.Clamp(
+                RogueliteManager.Instance.GetStartingHealthForLevel(currentLevelNumber),
+                0, maxHealth);
+            invincibilityTimer = 0f;
+            onHealthChanged?.Invoke(currentHealth);
+            Debug.Log($"[PlayerHealth] Level {currentLevelNumber}: Max={maxHealth}, Starting={currentHealth}");
         }
 
-        /// <summary>
-        /// Apply the cumulative health from previous levels.
-        /// </summary>
-        private void ApplyCumulativeHealth()
+        public void TakeDamage(int damage)
         {
-            if (healthSystem == null) return;
+            if (!IsAlive || IsInvincible)
+                return;
 
-            int startingHealth = RogueliteManager.Instance.GetStartingHealthForLevel(currentLevelNumber);
-            healthSystem.SetCurrentHealth(startingHealth);
-            Debug.Log($"[PlayerHealth] Level {currentLevelNumber}: Starting with {startingHealth}/{healthSystem.MaxHealth} health (cumulative).");
+            currentHealth = Mathf.Max(0, currentHealth - damage);
+            onDamaged?.Invoke();
+            onHealthChanged?.Invoke(currentHealth);
+
+            if (hasInvincibilityFrames)
+                invincibilityTimer = invincibilityDuration;
+
+            if (currentHealth <= 0)
+                Die();
         }
 
-        private void OnPlayerDeath()
+        private void Die()
         {
-            // Track player death event
+            onDeath?.Invoke();
+
             SickOfIt.Core.AnalyticsManager.Instance.TrackPlayerDeath("combat");
 
-            // Disable player controls
             var controller = GetComponentInParent<TopDownController>();
             if (controller != null)
-            {
                 controller.enabled = false;
-            }
 
-            // Play death scene which will reload the level after animation
             PlayDeathScene();
         }
 
         private void PlayDeathScene()
         {
-            // Store which scene to reload after death animation
-            UnityEngine.SceneManagement.Scene currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            var currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             PlayerPrefs.SetString("DeathSceneToReload", currentScene.name);
             PlayerPrefs.Save();
-
-            // Load the death scene
             SceneTransitionManager.Instance.LoadDeathScene(deathSceneName);
         }
     }

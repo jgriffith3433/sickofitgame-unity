@@ -6,12 +6,13 @@ using System.Collections.Generic;
 namespace SickOfIt.Combat.Health
 {
     /// <summary>
-    /// Simple health UI that shows hearts/squares for player health
+    /// Heart-based HUD for player health in levels.
+    /// References PlayerHealth directly — not EnemyHealth.
     /// </summary>
     public class HealthUI : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private HealthSystem playerHealth;
+        [SerializeField] private PlayerHealth playerHealth;
         [SerializeField] private Transform heartsContainer;
         [SerializeField] private GameObject heartPrefab;
 
@@ -30,8 +31,6 @@ namespace SickOfIt.Combat.Health
         {
             if (autoFindPlayer && playerHealth == null)
             {
-                // Player may not be activated yet (LevelManager activates it after assets load).
-                // Start a coroutine that retries until the player is found or we time out.
                 StartCoroutine(FindPlayerAndInitialize());
                 return;
             }
@@ -45,10 +44,7 @@ namespace SickOfIt.Combat.Health
 
             while (playerHealth == null && elapsed < findPlayerTimeout)
             {
-                // Search for HealthSystem directly instead of by tag,
-                // because multiple GameObjects may share the "Player" tag
-                // and the one found first might not have a HealthSystem.
-                playerHealth = FindObjectOfType<HealthSystem>(true);
+                playerHealth = FindObjectOfType<PlayerHealth>(true);
 
                 if (playerHealth != null)
                     break;
@@ -59,7 +55,7 @@ namespace SickOfIt.Combat.Health
 
             if (playerHealth == null)
             {
-                Debug.LogError("HealthUI: No player health found after waiting!");
+                Debug.LogError("HealthUI: No PlayerHealth found after waiting!");
                 yield break;
             }
 
@@ -70,37 +66,37 @@ namespace SickOfIt.Combat.Health
         {
             if (playerHealth == null)
             {
-                Debug.LogError("HealthUI: No player health found!");
+                Debug.LogError("HealthUI: No PlayerHealth found!");
                 return;
             }
 
-            // Listen to health changes
-            playerHealth.onHealthChanged.AddListener(UpdateHealthDisplay);
-
-            // Create hearts (initialized to full health)
+            playerHealth.onHealthChanged.AddListener(OnHealthChanged);
             CreateHearts();
+            UpdateHealthDisplay(playerHealth.CurrentHealth);
+        }
 
-            // Don't call UpdateHealthDisplay here - the hearts are already white/full
-            // They'll update correctly when health changes via the event listener
+        private void OnHealthChanged(int currentHealth)
+        {
+            if (heartImages.Count != playerHealth.MaxHealth)
+                CreateHearts();
+
+            UpdateHealthDisplay(currentHealth);
         }
 
         private void CreateHearts()
         {
-            // Clear existing hearts
             foreach (Transform child in heartsContainer)
-            {
                 Destroy(child.gameObject);
-            }
+
             heartImages.Clear();
 
-            // Create new hearts with full health color initially
             for (int i = 0; i < playerHealth.MaxHealth; i++)
             {
                 GameObject heart = Instantiate(heartPrefab, heartsContainer);
                 Image heartImage = heart.GetComponent<Image>();
                 if (heartImage != null)
                 {
-                    heartImage.color = fullHealthColor; // Initialize to full health
+                    heartImage.color = fullHealthColor;
                     heartImages.Add(heartImage);
                 }
             }
@@ -109,18 +105,7 @@ namespace SickOfIt.Combat.Health
         private void UpdateHealthDisplay(int currentHealth)
         {
             for (int i = 0; i < heartImages.Count; i++)
-            {
-                if (i < currentHealth)
-                {
-                    // Full heart
-                    heartImages[i].color = fullHealthColor;
-                }
-                else
-                {
-                    // Empty heart
-                    heartImages[i].color = emptyHealthColor;
-                }
-            }
+                heartImages[i].color = i < currentHealth ? fullHealthColor : emptyHealthColor;
         }
     }
 }

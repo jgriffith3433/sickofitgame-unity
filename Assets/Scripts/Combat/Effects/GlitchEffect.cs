@@ -5,12 +5,9 @@ using SickOfIt.Combat.Health;
 namespace SickOfIt.Combat.Effects
 {
     /// <summary>
-    /// Triggers a glitchy visual effect whenever the attached HealthSystem takes damage.
-    /// Automatically finds all active SpriteRenderers in children each frame of the effect,
-    /// so it works correctly with enemies that swap animator GameObjects (e.g. EnemyFighter).
-    /// 
-    /// Usage: Add this component alongside a HealthSystem. No other wiring needed.
-    /// Can also be triggered manually via TriggerGlitch() on objects without a HealthSystem.
+    /// Triggers a glitchy visual effect whenever the attached health component takes damage.
+    /// Works with both PlayerHealth and EnemyHealth — auto-detects which is present.
+    /// Can also be triggered manually via TriggerGlitch().
     /// </summary>
     public class GlitchEffect : MonoBehaviour
     {
@@ -26,26 +23,27 @@ namespace SickOfIt.Combat.Effects
         [Tooltip("How strongly the flash color overrides the original (0 = none, 1 = full)")]
         [SerializeField] [Range(0f, 1f)] private float flashIntensity = 0.5f;
 
-        private HealthSystem healthSystem;
+        private EnemyHealth enemyHealth;
+        private PlayerHealth playerHealth;
         private Coroutine activeGlitch;
 
         private void Awake()
         {
-            healthSystem = GetComponent<HealthSystem>();
+            enemyHealth = GetComponent<EnemyHealth>();
+            playerHealth = GetComponent<PlayerHealth>();
         }
 
         private void OnEnable()
         {
-            if (healthSystem != null)
-                healthSystem.onDamaged.AddListener(TriggerGlitch);
+            if (enemyHealth != null) enemyHealth.onDamaged.AddListener(TriggerGlitch);
+            if (playerHealth != null) playerHealth.onDamaged.AddListener(TriggerGlitch);
         }
 
         private void OnDisable()
         {
-            if (healthSystem != null)
-                healthSystem.onDamaged.RemoveListener(TriggerGlitch);
+            if (enemyHealth != null) enemyHealth.onDamaged.RemoveListener(TriggerGlitch);
+            if (playerHealth != null) playerHealth.onDamaged.RemoveListener(TriggerGlitch);
 
-            // Restore visuals if we get disabled mid-glitch
             RestoreAllRenderers();
         }
 
