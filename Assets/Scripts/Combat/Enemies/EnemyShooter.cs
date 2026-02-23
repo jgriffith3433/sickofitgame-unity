@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -26,6 +27,16 @@ namespace SickOfIt.Combat.Enemies
         private GameObject cachedProjectilePrefab;
         private bool isProjectileReady = false;
 
+        [Header("Attack")]
+        [SerializeField] private float attackInterval = 2f;
+
+        [Header("Animation")]
+        [SerializeField] private Animator animator;
+
+        private float lastAttackTime = -Mathf.Infinity;
+
+        private static readonly int ParamIsAttacking = Animator.StringToHash("IsAttacking");
+
         protected override void Awake()
         {
             base.Awake();
@@ -34,6 +45,8 @@ namespace SickOfIt.Combat.Enemies
             rb.constraints = RigidbodyConstraints2D.FreezeAll;
 
             // Load projectile prefab
+            if (animator == null)
+                animator = GetComponentInChildren<Animator>();
             LoadProjectilePrefab();
         }
 
@@ -62,6 +75,8 @@ namespace SickOfIt.Combat.Enemies
                     // Flip sprite to match the fixed shoot direction
                     spriteRenderer.flipX = fixedShootDirection.x < 0f;
                 }
+                // Even when shooting in a fixed direction, attacker should periodically enter Attack state
+                TryTriggerAttack();
                 return;
             }
 
@@ -76,6 +91,29 @@ namespace SickOfIt.Combat.Enemies
                 else
                     spriteRenderer.flipX = false;
             }
+
+            // If player is present, periodically trigger attack animation
+            TryTriggerAttack();
+        }
+
+        private void TryTriggerAttack()
+        {
+            if (animator == null)
+                return;
+
+            if (Time.time >= lastAttackTime + attackInterval)
+            {
+                lastAttackTime = Time.time;
+                animator.SetBool(ParamIsAttacking, true);
+                StartCoroutine(ClearAttackBoolNextFrame());
+            }
+        }
+
+        private IEnumerator ClearAttackBoolNextFrame()
+        {
+            yield return null;
+            if (animator != null)
+                animator.SetBool(ParamIsAttacking, false);
         }
 
         private void Shoot()
