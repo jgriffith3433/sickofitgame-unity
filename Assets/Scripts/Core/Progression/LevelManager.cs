@@ -55,6 +55,10 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Spawners to kill when the first sequence completes (does not check win condition)")]
         [SerializeField] private List<EnemySpawner> firstSequenceSpawners = new List<EnemySpawner>();
 
+        [Header("Player")]
+        [Tooltip("Reference to the PlayerHealth component in this level scene.")]
+        [SerializeField] private SickOfIt.Combat.Health.PlayerHealth playerHealth;
+
         [Header("Debug")]
         [SerializeField] private bool isLoading;
         [SerializeField] private bool allAssetsLoaded;
@@ -68,11 +72,6 @@ namespace SickOfIt.Core.Progression
         private IFrameSequencePlayer triggerPlayer;
         private IFrameSequencePlayer firstPlayer;
         private IFrameSequencePlayer secondPlayer;
-
-        /// <summary>
-        /// Cached reference to the player's health for roguelite health saving.
-        /// </summary>
-        private SickOfIt.Combat.Health.PlayerHealth playerHealth;
 
         #endregion
 
@@ -121,8 +120,7 @@ namespace SickOfIt.Core.Progression
                 ActivateGameObjects();
             }
 
-            // Find and initialize player health for roguelite system
-            StartCoroutine(InitializePlayerHealth());
+
         }
 
         private void OnDestroy()
@@ -164,6 +162,7 @@ namespace SickOfIt.Core.Progression
         private void ActivateGameObjects()
         {
             SetGameObjectsActive(objectsToActivateAfterLoading, true);
+            playerHealth?.InitializeForLevel(levelNumber);
             AnalyticsManager.Instance.TrackLevelStart(levelNumber);
         }
 
@@ -209,36 +208,6 @@ namespace SickOfIt.Core.Progression
             else
             {
                 Debug.LogWarning($"[LevelManager] Could not save roguelite health — PlayerHealth not found.");
-            }
-        }
-
-        /// <summary>
-        /// Find the PlayerHealth component and initialize it with the correct level number.
-        /// Uses a coroutine because the player may not be active yet (waiting for assets to load).
-        /// </summary>
-        private System.Collections.IEnumerator InitializePlayerHealth()
-        {
-            // Wait until player is available (LevelManager may activate it after asset loading)
-            float timeout = 60f;
-            float elapsed = 0f;
-
-            while (playerHealth == null && elapsed < timeout)
-            {
-                playerHealth = FindObjectOfType<SickOfIt.Combat.Health.PlayerHealth>(true);
-                if (playerHealth != null)
-                    break;
-
-                elapsed += 0.25f;
-                yield return new WaitForSeconds(0.25f);
-            }
-
-            if (playerHealth != null)
-            {
-                playerHealth.InitializeForLevel(levelNumber);
-            }
-            else
-            {
-                Debug.LogWarning($"[LevelManager] PlayerHealth not found after {timeout}s timeout.");
             }
         }
 

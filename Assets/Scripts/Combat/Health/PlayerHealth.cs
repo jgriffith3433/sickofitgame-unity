@@ -39,13 +39,6 @@ namespace SickOfIt.Combat.Health
         public bool IsAlive => currentHealth > 0;
         public bool IsInvincible => invincibilityTimer > 0;
 
-        private void Awake()
-        {
-            // Initialise to RogueliteManager defaults; InitializeForLevel() overrides this properly.
-            maxHealth = RogueliteManager.Instance.GetMaxHealth();
-            currentHealth = maxHealth;
-        }
-
         private void Update()
         {
             if (invincibilityTimer > 0)
