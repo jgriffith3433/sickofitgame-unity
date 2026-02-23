@@ -114,13 +114,6 @@ namespace SickOfIt.Data
             return GetCurrentLevel() > GetTotalLevels();
         }
 
-        // Reset Progress (useful for testing)
-        public void ResetAllProgress()
-        {
-            PlayerPrefs.DeleteAll();
-            PlayerPrefs.Save();
-        }
-
         // Initialize first time player
         public void InitializeNewPlayer()
         {

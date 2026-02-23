@@ -389,20 +389,28 @@ namespace SickOfIt.Data
         /// </summary>
         public void ResetAllRogueliteData()
         {
-            // Clear level health data (support up to 100 levels)
+            // Clear roguelite level health data (support up to 100 levels)
             for (int i = 1; i <= 100; i++)
             {
                 PlayerPrefs.DeleteKey(string.Format(KEY_LEVEL_END_HEALTH, i));
                 PlayerPrefs.DeleteKey(string.Format(KEY_LEVEL_MAX_HEALTH, i));
             }
 
-            // Clear points, upgrades, and max health
-            PlayerPrefs.DeleteKey(KEY_PLAYER_POINTS);
+            // Clear upgrades and max health (points are preserved across new games)
             PlayerPrefs.DeleteKey(KEY_EXTRA_JUMPS_PURCHASED);
             PlayerPrefs.DeleteKey(KEY_MAX_HEALTH);
 
+            // Clear game progress data (level completions, video unlocks, highest level)
+            for (int i = 1; i <= 100; i++)
+            {
+                PlayerPrefs.DeleteKey($"Level_{i}_Completed");
+                PlayerPrefs.DeleteKey($"Video_{i}_Unlocked");
+            }
+            PlayerPrefs.DeleteKey("HighestLevelReached");
+            PlayerPrefs.DeleteKey("GameInitialized");
+
             PlayerPrefs.Save();
-            Debug.Log("[RogueliteManager] All roguelite data reset.");
+            Debug.Log("[RogueliteManager] All game and roguelite data reset.");
         }
     }
 }

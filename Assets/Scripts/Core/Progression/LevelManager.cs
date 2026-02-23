@@ -38,9 +38,11 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private List<GameObject> objectsToDeactivateOnSceneTransition = new List<GameObject>();
 
         [Header("Spawner Control")]
-        [Tooltip("SpriteFramePlayer whose completion kills all spawners")]
+        [Tooltip("SpriteFramePlayer whose completion kills all level spawners (checks win condition)")]
         [SerializeField] private MonoBehaviour spawnerKillTriggerPlayer;
         [SerializeField] private bool autoKillSpawnersOnComplete;
+        [Tooltip("Spawners to kill when the trigger player completes")]
+        [SerializeField] private List<EnemySpawner> levelSpawners = new List<EnemySpawner>();
 
         [Header("Two-Stage Sequence")]
         [SerializeField] private bool enableTwoStageSequence;
@@ -50,6 +52,8 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private List<GameObject> objectsToDeactivateAfterFirstSequence = new List<GameObject>();
         [Tooltip("Optional button to skip the first sequence")]
         [SerializeField] private MobileControllerFramework.Button skipFirstSequenceButton;
+        [Tooltip("Spawners to kill when the first sequence completes (does not check win condition)")]
+        [SerializeField] private List<EnemySpawner> firstSequenceSpawners = new List<EnemySpawner>();
 
         [Header("Debug")]
         [SerializeField] private bool isLoading;
@@ -64,7 +68,6 @@ namespace SickOfIt.Core.Progression
         private IFrameSequencePlayer triggerPlayer;
         private IFrameSequencePlayer firstPlayer;
         private IFrameSequencePlayer secondPlayer;
-        private List<EnemySpawner> levelSpawners = new List<EnemySpawner>();
 
         /// <summary>
         /// Cached reference to the player's health for roguelite health saving.
@@ -106,9 +109,6 @@ namespace SickOfIt.Core.Progression
                     skipFirstSequenceButton.TapEndEvent.AddListener(SkipFirstSequence);
                 }
             }
-
-            if (autoKillSpawnersOnComplete)
-                levelSpawners.AddRange(FindObjectsOfType<EnemySpawner>(true));
 
             // Begin loading or activate immediately
             if (backgroundPlayers.Count > 0)
@@ -312,7 +312,7 @@ namespace SickOfIt.Core.Progression
             foreach (var spawner in levelSpawners)
             {
                 if (spawner != null)
-                    spawner.KillSpawner();
+                    spawner.KillSpawner(checkWinCondition: true);
             }
         }
 
@@ -320,6 +320,13 @@ namespace SickOfIt.Core.Progression
         {
             if (!enableTwoStageSequence)
                 return;
+
+            // Kill first-sequence spawners — does not check win condition since second sequence follows
+            foreach (var spawner in firstSequenceSpawners)
+            {
+                if (spawner != null)
+                    spawner.KillSpawner(checkWinCondition: false);
+            }
 
             // Disable first player's SpriteRenderer before enabling the second one
             firstPlayer?.SetSpriteRendererEnabled(false);

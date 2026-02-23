@@ -16,7 +16,7 @@ namespace SickOfIt.Combat.Health
 
         [Header("Display")]
         [Tooltip("Format string for points display. {0} is replaced with the point count.")]
-        [SerializeField] private string displayFormat = "Points: {0}";
+        [SerializeField] private string displayFormat = "Diamonds: {0}";
 
         private void Start()
         {

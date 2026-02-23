@@ -136,7 +136,7 @@ namespace SickOfIt.Core.Progression
 
             if (pointsText != null)
             {
-                pointsText.text = $"Points: {RogueliteManager.Instance.GetPoints()}";
+                pointsText.text = $"Diamonds: {RogueliteManager.Instance.GetPoints()}";
             }
         }
 
@@ -163,11 +163,8 @@ namespace SickOfIt.Core.Progression
             Debug.Log("[MOBILE DEBUG] New Game button clicked!");
 
             // Reset all progress and start from level 1
-            GameProgressManager.Instance.ResetAllProgress();
-            GameProgressManager.Instance.InitializeNewPlayer();
-
-            // Reset roguelite data
             RogueliteManager.Instance.ResetAllRogueliteData();
+            GameProgressManager.Instance.InitializeNewPlayer();
 
             // Mark Level1 as visited to prevent auto-play loop
             PlayerPrefs.SetInt("Level_1_Visited", 1);

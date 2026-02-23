@@ -64,7 +64,7 @@ namespace SickOfIt.Core.Progression
         {
             if (pointsText != null)
             {
-                pointsText.text = $"Points: {RogueliteManager.Instance.GetPoints()}";
+                pointsText.text = $"Diamonds: {RogueliteManager.Instance.GetPoints()}";
             }
         }
 

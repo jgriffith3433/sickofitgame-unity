@@ -17,6 +17,12 @@ namespace SickOfIt.Combat.Enemies
         [SerializeField] private Transform rightFirePoint;
         [SerializeField] private bool flipToFacePlayer = true;
 
+        [Header("Fixed Direction Shooting")]
+        [Tooltip("When enabled, shoots in a fixed direction instead of targeting the player.")]
+        [SerializeField] private bool shootInFixedDirection = false;
+        [Tooltip("The direction to shoot in when 'Shoot In Fixed Direction' is enabled. Does not need to be normalized.")]
+        [SerializeField] private Vector2 fixedShootDirection = Vector2.right;
+
         private GameObject cachedProjectilePrefab;
         private bool isProjectileReady = false;
 
@@ -49,6 +55,16 @@ namespace SickOfIt.Combat.Enemies
 
         protected override void UpdateBehavior()
         {
+            if (shootInFixedDirection)
+            {
+                if (flipToFacePlayer)
+                {
+                    // Flip sprite to match the fixed shoot direction
+                    spriteRenderer.flipX = fixedShootDirection.x < 0f;
+                }
+                return;
+            }
+
             if (player == null)
                 return;
 
@@ -70,10 +86,24 @@ namespace SickOfIt.Combat.Enemies
             if (cachedProjectilePrefab == null || firePoint == null)
                 return;
 
-            // Calculate direction to player (ignoring Z for 2D)
-            Vector2 playerPos2D = new Vector2(player.position.x, player.position.y);
-            Vector2 firePointPos2D = new Vector2(firePoint.position.x, firePoint.position.y);
-            Vector2 direction = (playerPos2D - firePointPos2D).normalized;
+            // Calculate shoot direction
+            Vector2 direction;
+            if (shootInFixedDirection)
+            {
+                direction = fixedShootDirection.normalized;
+                if (direction == Vector2.zero)
+                    direction = Vector2.right;
+            }
+            else
+            {
+                if (player == null)
+                    return;
+
+                // Calculate direction to player (ignoring Z for 2D)
+                Vector2 playerPos2D = new Vector2(player.position.x, player.position.y);
+                Vector2 firePointPos2D = new Vector2(firePoint.position.x, firePoint.position.y);
+                direction = (playerPos2D - firePointPos2D).normalized;
+            }
 
             // Spawn projectile
             GameObject projectile = Instantiate(cachedProjectilePrefab, firePoint.position, Quaternion.identity);
@@ -97,7 +127,7 @@ namespace SickOfIt.Combat.Enemies
         }
 
         /// <summary>
-        /// Public method to be called by animation events (via AnimationEventRelay)
+        /// Public method to be called by animation events (via AnimationEventRelayShooter)
         /// </summary>
         /// <param name="spawnPoint">Optional spawn location. If null, uses the default firePoint.</param>
         public void FireProjectile()

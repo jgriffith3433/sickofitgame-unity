@@ -17,6 +17,12 @@ namespace SickOfIt.Combat.Enemies.Spawning
         
         [Tooltip("Delay before this wave starts")]
         public float delayBeforeStart = 0f;
+
+        [Tooltip("When enabled, this wave advances to the next wave after waveDuration seconds, regardless of how many enemies have spawned. Waves stack - enemies from this wave remain alive while the next wave begins.")]
+        public bool progressOnTimer = false;
+
+        [Tooltip("How long (seconds) this wave lasts before advancing to the next one. Only used when progressOnTimer is enabled.")]
+        public float waveDuration = 10f;
     }
 
     /// <summary>
@@ -31,6 +37,8 @@ namespace SickOfIt.Combat.Enemies.Spawning
         
         [Header("Spawn Settings")]
         [SerializeField] private int maxEnemies = 5; // Max alive at once
+        [Tooltip("Automatically kill this spawner after this many seconds. 0 = never auto-kill.")]
+        [SerializeField] private float autoKillAfterSeconds = 0f;
         
         [Header("Wave Configuration")]
         [SerializeField] private List<SpawnWave> waves = new List<SpawnWave>();
@@ -47,6 +55,7 @@ namespace SickOfIt.Combat.Enemies.Spawning
         private bool waveStarted = false;
         private bool isActive = true;
         private bool isKilled = false;
+        private float activatedTime = 0f;
 
         // Static tracking for win condition
         private static List<EnemySpawner> allSpawners = new List<EnemySpawner>();
@@ -54,6 +63,7 @@ namespace SickOfIt.Combat.Enemies.Spawning
         private void Awake()
         {
             allSpawners.Add(this);
+            activatedTime = Time.time;
         }
 
         private void OnEnable()
@@ -73,6 +83,13 @@ namespace SickOfIt.Combat.Enemies.Spawning
         {
             if (!isActive || isKilled || waves.Count == 0)
                 return;
+
+            // Auto-kill after duration if configured
+            if (autoKillAfterSeconds > 0f && Time.time >= activatedTime + autoKillAfterSeconds)
+            {
+                KillSpawner();
+                return;
+            }
 
             // Clean up dead enemies from list
             aliveEnemies.RemoveAll(enemy => enemy == null);
@@ -114,8 +131,18 @@ namespace SickOfIt.Combat.Enemies.Spawning
             if (Time.time < waveStartTime)
                 return;
 
-            // Check if wave is complete
-            if (currentWave.enemiesToSpawn >= 0 && enemiesSpawnedInWave >= currentWave.enemiesToSpawn)
+            // Advance wave if timer-based progression is enabled and duration has elapsed
+            if (currentWave.progressOnTimer && Time.time >= waveStartTime + currentWave.waveDuration)
+            {
+                currentWaveIndex++;
+                enemiesSpawnedInWave = 0;
+                waveStarted = false;
+                return;
+            }
+
+            // Check if wave is complete (all enemies spawned).
+            // Skipped when progressOnTimer is on - the timer is the sole authority for advancing.
+            if (!currentWave.progressOnTimer && currentWave.enemiesToSpawn >= 0 && enemiesSpawnedInWave >= currentWave.enemiesToSpawn)
             {
                 currentWaveIndex++;
                 enemiesSpawnedInWave = 0;
@@ -160,7 +187,8 @@ namespace SickOfIt.Combat.Enemies.Spawning
         /// <summary>
         /// Manually kill this spawner - called by LevelManager
         /// </summary>
-        public void KillSpawner()
+        /// <param name="checkWinCondition">If false, skips the win condition check (e.g. mid-level sequence transitions).</param>
+        public void KillSpawner(bool checkWinCondition = true)
         {
             if (isKilled)
                 return;
@@ -179,7 +207,8 @@ namespace SickOfIt.Combat.Enemies.Spawning
             aliveEnemies.Clear();
 
             // Check if all spawners are killed
-            CheckWinCondition();
+            if (checkWinCondition)
+                CheckWinCondition();
         }
 
         private void OnSpawnerDestroyed()

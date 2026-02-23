@@ -1,87 +1,81 @@
-using UnityEngine;
-using SickOfIt.Combat.Health;
+﻿using UnityEngine;
 
 namespace SickOfIt.Combat.Enemies
 {
     /// <summary>
-    /// Enemy that walks to the player and performs melee attacks
-    /// Switches between idle and walk states randomly
+    /// Enemy that walks to the player and performs melee attacks.
+    /// Randomly switches between idle and walk, always attacks when in range.
+    ///
+    /// Animator Controller setup:
+    ///   Parameters: IsWalking (bool), IsAttacking (bool)
+    ///
+    ///   Transitions:
+    ///     Idle   -> Walk   : IsWalking = true
+    ///     Walk   -> Idle   : IsWalking = false
+    ///     Any    -> Attack : IsAttacking = true
+    ///     Attack -> Idle   : Has Exit Time, IsAttacking = false
+    ///     Attack -> Walk   : Has Exit Time, IsAttacking = false, IsWalking = true
+    ///
+    /// Animation events:
+    ///   Attack clip - hit frame : OnAttackFrame  (on AnimationEventRelayFighter)
     /// </summary>
     public class EnemyFighter : EnemyBase
     {
         [Header("Fighter Settings")]
         [SerializeField] private float attackRange = 1.5f;
-        [SerializeField] private float attackCooldown = 2f;
         [SerializeField] private int attackDamage = 2;
         [SerializeField] private float minStateChangeTime = 5f;
         [SerializeField] private float maxStateChangeTime = 10f;
         [SerializeField] private bool faceMovementDirection = true;
 
-        [Header("Animation - Separate Animators")]
-        [SerializeField] private GameObject idleAnimator;
-        [SerializeField] private GameObject walkAnimator;
-        [SerializeField] private GameObject attackAnimator;
-        
-        // Animation parameter names
-        private const string ANIM_IDLE = "Idle";
-        private const string ANIM_WALK = "Walk";
-        private const string ANIM_ATTACK = "Attack";
+        [Header("Animation")]
+        [SerializeField] private Animator animator;
 
-        // State management
-        private enum MovementState { Idle, Walk }
-        private MovementState currentState = MovementState.Idle;
+        // â”€â”€ Animator parameter hashes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+        private static readonly int ParamIsWalking   = Animator.StringToHash("IsWalking");
+        private static readonly int ParamIsAttacking = Animator.StringToHash("IsAttacking");
+
+        // â”€â”€ Private state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+        private bool isWalking = false;
         private float nextStateChangeTime;
-        private float nextAttackTime;
-        private bool isAttacking = false;
-        private GameObject currentActiveAnimator;
 
         protected override void Awake()
         {
             base.Awake();
 
-            // Disable all animators initially
-            if (idleAnimator != null) idleAnimator.SetActive(false);
-            if (walkAnimator != null) walkAnimator.SetActive(false);
-            if (attackAnimator != null) attackAnimator.SetActive(false);
+            if (animator == null)
+                animator = GetComponentInChildren<Animator>();
 
-            // Start with a random state
-            currentState = Random.value > 0.5f ? MovementState.Idle : MovementState.Walk;
+            // Start in a random state
+            isWalking = Random.value > 0.5f;
             SetRandomStateChangeTime();
-            
-            // Enable the appropriate animator based on starting state
-            ActivateAnimator(currentState == MovementState.Idle ? idleAnimator : walkAnimator);
         }
 
         protected override void UpdateBehavior()
         {
-            if (player == null || isAttacking)
+            if (player == null)
                 return;
 
             float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+            bool isAttacking = distanceToPlayer <= attackRange;
 
-            // Always attack if player is close enough and cooldown is ready
-            if (distanceToPlayer <= attackRange && Time.time >= nextAttackTime)
+            if (!isAttacking)
             {
-                PerformAttack();
-                return;
+                // Randomly switch between idle and walk
+                if (Time.time >= nextStateChangeTime)
+                {
+                    isWalking = !isWalking;
+                    SetRandomStateChangeTime();
+                }
+
+                if (isWalking)
+                    MoveTowardsPlayer();
             }
 
-            // Switch between idle and walk states based on timer
-            if (Time.time >= nextStateChangeTime)
-            {
-                SwitchMovementState();
-            }
-
-            // Movement and animation based on current state
-            if (currentState == MovementState.Walk)
-            {
-                MoveTowardsPlayer();
-                PlayAnimation(ANIM_WALK);
-            }
-            else
-            {
-                PlayAnimation(ANIM_IDLE);
-            }
+            animator.SetBool(ParamIsWalking, isWalking && !isAttacking);
+            animator.SetBool(ParamIsAttacking, isAttacking);
         }
 
         private void MoveTowardsPlayer()
@@ -89,7 +83,6 @@ namespace SickOfIt.Combat.Enemies
             if (player == null)
                 return;
 
-            // Move toward player (ignoring Z for 2D)
             Vector2 playerPos2D = new Vector2(player.position.x, player.position.y);
             Vector2 currentPos2D = new Vector2(transform.position.x, transform.position.y);
             Vector2 direction = (playerPos2D - currentPos2D).normalized;
@@ -101,31 +94,13 @@ namespace SickOfIt.Combat.Enemies
 
             rb.MovePosition(newPosition);
 
-            // Face the direction of movement using sprite flip (doesn't affect child objects like health bars)
             if (faceMovementDirection && spriteRenderer != null)
             {
                 if (direction.x > 0)
-                {
                     spriteRenderer.flipX = false;
-                }
                 else if (direction.x < 0)
-                {
                     spriteRenderer.flipX = true;
-                }
             }
-        }
-
-        private void PerformAttack()
-        {
-            isAttacking = true;
-            nextAttackTime = Time.time + attackCooldown;
-            PlayAnimation(ANIM_ATTACK);
-
-            // Deal damage immediately (can be changed to use animation event if needed)
-            DealDamageToPlayer();
-
-            // Reset attack state after animation (approximate time, adjust as needed)
-            Invoke(nameof(ResetAttackState), 1f);
         }
 
         private void DealDamageToPlayer()
@@ -133,95 +108,24 @@ namespace SickOfIt.Combat.Enemies
             if (player == null || playerDamageable == null)
                 return;
 
-            // Check if player is still in range
-            float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-            if (distanceToPlayer <= attackRange)
-            {
+            if (Vector2.Distance(transform.position, player.position) <= attackRange)
                 playerDamageable.TakeDamage(attackDamage);
-            }
-        }
-
-        private void ResetAttackState()
-        {
-            isAttacking = false;
-        }
-
-        private void SwitchMovementState()
-        {
-            // Toggle between idle and walk
-            currentState = currentState == MovementState.Idle ? MovementState.Walk : MovementState.Idle;
-            SetRandomStateChangeTime();
         }
 
         private void SetRandomStateChangeTime()
         {
-            float randomTime = Random.Range(minStateChangeTime, maxStateChangeTime);
-            nextStateChangeTime = Time.time + randomTime;
-        }
-
-        private void PlayAnimation(string animationName)
-        {
-            GameObject targetAnimator = null;
-
-            // Determine which animator to activate
-            switch (animationName)
-            {
-                case ANIM_IDLE:
-                    targetAnimator = idleAnimator;
-                    break;
-                case ANIM_WALK:
-                    targetAnimator = walkAnimator;
-                    break;
-                case ANIM_ATTACK:
-                    targetAnimator = attackAnimator;
-                    break;
-            }
-
-            // Only switch if different from current
-            if (targetAnimator != null && targetAnimator != currentActiveAnimator)
-            {
-                ActivateAnimator(targetAnimator);
-            }
-        }
-
-        private void ActivateAnimator(GameObject animatorToActivate)
-        {
-            if (animatorToActivate == null)
-                return;
-
-            // Deactivate all animators
-            if (idleAnimator != null) idleAnimator.SetActive(false);
-            if (walkAnimator != null) walkAnimator.SetActive(false);
-            if (attackAnimator != null) attackAnimator.SetActive(false);
-
-            // Activate the target animator
-            animatorToActivate.SetActive(true);
-            currentActiveAnimator = animatorToActivate;
-            
-            // Update the spriteRenderer reference to the active one (optional, for compatibility)
-            SpriteRenderer activeSpriteRenderer = animatorToActivate.GetComponent<SpriteRenderer>();
-            if (activeSpriteRenderer != null)
-            {
-                spriteRenderer = activeSpriteRenderer;
-            }
+            nextStateChangeTime = Time.time + Random.Range(minStateChangeTime, maxStateChangeTime);
         }
 
         protected override void OnDrawGizmosSelected()
         {
             base.OnDrawGizmosSelected();
 
-            // Draw attack range
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, attackRange);
         }
 
-        /// <summary>
-        /// Public method that can be called by animation events to deal damage
-        /// This allows for precise timing with the attack animation
-        /// </summary>
-        public void OnAttackFrame()
-        {
-            DealDamageToPlayer();
-        }
+        /// <summary>Called by AnimationEventRelayFighter on the hit frame of the Attack clip.</summary>
+        public void OnAttackFrame() => DealDamageToPlayer();
     }
 }
