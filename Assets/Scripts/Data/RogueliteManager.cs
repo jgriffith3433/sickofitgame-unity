@@ -35,7 +35,7 @@ namespace SickOfIt.Data
         /// <summary>
         /// The starting max health for a brand new player.
         /// </summary>
-        public const int BASE_MAX_HEALTH = 3;
+        public const int BASE_MAX_HEALTH = 5;
 
         /// <summary>
         /// Maximum number of extra jumps that can be purchased.

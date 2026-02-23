@@ -214,59 +214,51 @@ namespace SickOfIt.Core.Progression
             IsFullyCached = false;
             UpdateStatus();
 
-            // Phase 2: Download bundles with batched concurrency (respects maxConcurrentChecks)
-            int downloadStarted = 0;
-            int downloadsFinished = 0;
-            int activeDownloads = 0;
-            var labelProgress = new Dictionary<string, float>();
-
-            while (downloadsFinished < labelsToDownload.Count)
+            // Phase 2: Download each bundle sequentially.
+            // MUST be sequential on WebGL - concurrent downloads of bundles that share the same
+            // underlying asset bundle (e.g., 14 Level3 labels all map to one 106 MB bundle) cause
+            // Unity to decompress the same bundle multiple times simultaneously, causing OOM.
+            // Sequential also means after the first label downloads the shared bundle, subsequent
+            // labels in the same group see download size = 0 and skip instantly.
+            foreach (var label in labelsToDownload)
             {
-                // Launch new downloads up to the concurrent limit
-                while (activeDownloads < maxConcurrentChecks && downloadStarted < labelsToDownload.Count)
-                {
-                    string capturedLabel = labelsToDownload[downloadStarted];
-                    long labelSize = labelSizes[capturedLabel];
-                    downloadStarted++;
-                    activeDownloads++;
-                    labelProgress[capturedLabel] = 0f;
+                currentLabel = label;
+                long labelSize = labelSizes[label];
+                bool downloadComplete = false;
+                bool downloadSuccess = false;
 
-                    AddressablesOperationManager.Instance.DownloadDependencies(
-                        capturedLabel,
-                        success =>
-                        {
-                            if (success)
-                            {
-                                completedLabels++;
-                                completedDownloadBytes += labelSize;
-                                Log($"  Prepared '{capturedLabel}' ({completedLabels}/{labelsToDownload.Count})");
-                            }
-                            else
-                            {
-                                Debug.LogError($"[BundleDownloadManager] Failed to download '{capturedLabel}'. Continuing with remaining bundles.");
-                            }
-                            labelProgress[capturedLabel] = 1f;
-                            downloadsFinished++;
-                            activeDownloads--;
-                        },
-                        progress =>
-                        {
-                            labelProgress[capturedLabel] = progress;
-                        }
-                    );
+                AddressablesOperationManager.Instance.DownloadDependencies(
+                    label,
+                    success =>
+                    {
+                        downloadSuccess = success;
+                        downloadComplete = true;
+                    },
+                    progress =>
+                    {
+                        // Calculate overall progress: completed bytes + current label partial progress
+                        long currentLabelProgress = (long)(progress * labelSize);
+                        float overall = (completedDownloadBytes + currentLabelProgress) / (float)totalDownloadBytes;
+                        Progress = Mathf.Clamp01(overall);
+                        UpdateStatus();
+                    }
+                );
+
+                yield return new WaitUntil(() => downloadComplete);
+
+                if (downloadSuccess)
+                {
+                    completedLabels++;
+                    completedDownloadBytes += labelSize;
+                    Progress = completedDownloadBytes / (float)totalDownloadBytes;
+                    Log($"  Prepared '{label}' ({completedLabels}/{labelsToDownload.Count})");
+                }
+                else
+                {
+                    Debug.LogError($"[BundleDownloadManager] Failed to download '{label}'. Continuing with remaining bundles.");
                 }
 
-                // Calculate overall progress from individual label progress
-                long progressBytes = 0;
-                foreach (var kvp in labelProgress)
-                {
-                    if (labelSizes.ContainsKey(kvp.Key))
-                        progressBytes += (long)(kvp.Value * labelSizes[kvp.Key]);
-                }
-                Progress = Mathf.Clamp01(progressBytes / (float)totalDownloadBytes);
-                currentLabel = $"Preparing content ({downloadsFinished}/{labelsToDownload.Count})...";
                 UpdateStatus();
-                yield return null;
             }
 
             // Done
