@@ -16,7 +16,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
     public class SpriteFramesEditorWindow : EditorWindow
     {
         private SpriteFramesData spriteFramesData;
-        private SpriteFramePlayer spriteFramePlayer;
+        private SpriteFrameRenderer spriteFrameRenderer;
         private Vector2 scrollPosition;
         private int framesPerChunk = 64;
         private string lastOutputFolder = "";
@@ -415,11 +415,11 @@ namespace SickOfIt.VideoFrameExtractor.Editor
             EditorGUILayout.LabelField("Step 3: Auto-Chunk Sprite Sheets", EditorStyles.boldLabel);
 
             int sheetsPerChunk = Mathf.CeilToInt((float)framesPerChunk / spriteFramesData.framesPerSheet);
-            float secondsPerChunk = (float)framesPerChunk / spriteFramesData.playbackFPS;
+            float secondsPerChunk = framesPerChunk / 30f; // Estimate at default 30 FPS (actual FPS controlled by Timeline)
 
             EditorGUILayout.HelpBox(
                 $"Select sprite sheet textures in the Project window, then auto-chunk them.\n\n" +
-                $"At {framesPerChunk} frames/chunk = {sheetsPerChunk} sheets/chunk ≈ {secondsPerChunk:F1}s per chunk\n" +
+                $"At {framesPerChunk} frames/chunk = {sheetsPerChunk} sheets/chunk ≈ {secondsPerChunk:F1}s per chunk (at 30 FPS)\n" +
                 $"Labels: '{spriteFramesData.name}_Part1', '{spriteFramesData.name}_Part2', etc.",
                 MessageType.Info
             );
@@ -499,12 +499,18 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 int startFrame = startSheetIndex * framesPerSheet;
                 int endFrame = Mathf.Min((endSheetIndex + 1) * framesPerSheet - 1, totalFrames - 1);
 
+                // Collect the texture references for this chunk (editor-only preview)
+                var chunkTextures = new List<Texture2D>();
+                for (int s = startSheetIndex; s <= endSheetIndex; s++)
+                    chunkTextures.Add(sheetTextures[s]);
+
                 var chunk = new SpriteFramesData.FrameChunk
                 {
                     chunkName = $"Part{i + 1}",
                     addressableLabel = $"{assetPrefix}_Part{i + 1}",
                     startFrame = startFrame,
-                    endFrame = endFrame
+                    endFrame = endFrame,
+                    editorTextures = chunkTextures
                 };
 
                 spriteFramesData.chunks.Add(chunk);
@@ -536,6 +542,12 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 EditorGUILayout.EndVertical();
             }
 
+            EditorGUILayout.Space(4);
+            if (GUILayout.Button("Fill Editor Textures from Addressable Labels"))
+            {
+                FillEditorTexturesFromLabels();
+            }
+
             // Display and edit totalFrames
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Total Frames:", GUILayout.Width(100));
@@ -550,6 +562,56 @@ namespace SickOfIt.VideoFrameExtractor.Editor
             }
             EditorGUILayout.LabelField($"(Calculated from chunks: {spriteFramesData.GetTotalFrames()})", EditorStyles.miniLabel);
             EditorGUILayout.EndHorizontal();
+        }
+
+        /// <summary>
+        /// Populates editorTextures on every chunk by querying the Addressables settings
+        /// for entries matching each chunk's addressableLabel.
+        /// </summary>
+        private void FillEditorTexturesFromLabels()
+        {
+            var settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null)
+            {
+                EditorUtility.DisplayDialog("Error",
+                    "Addressables not initialized. Please set up Addressables first.", "OK");
+                return;
+            }
+
+            int totalFilled = 0;
+
+            foreach (var chunk in spriteFramesData.chunks)
+            {
+                string label = chunk.addressableLabel;
+                if (string.IsNullOrEmpty(label)) continue;
+
+                // Collect all Addressable entries that carry this chunk's label
+                var textures = new List<Texture2D>();
+                foreach (var group in settings.groups)
+                {
+                    if (group == null) continue;
+                    foreach (var entry in group.entries)
+                    {
+                        if (entry.labels.Contains(label))
+                        {
+                            var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(entry.AssetPath);
+                            if (tex != null)
+                                textures.Add(tex);
+                        }
+                    }
+                }
+
+                // Sort by name so sheet order is deterministic
+                textures.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
+
+                chunk.editorTextures = textures;
+                totalFilled += textures.Count;
+            }
+
+            EditorUtility.SetDirty(spriteFramesData);
+            AssetDatabase.SaveAssets();
+
+            Debug.Log($"[SpriteFramesEditor] Filled editorTextures on {spriteFramesData.chunks.Count} chunks ({totalFilled} textures total) from Addressable labels.");
         }
 
         // =====================================================================
@@ -655,27 +717,27 @@ namespace SickOfIt.VideoFrameExtractor.Editor
         }
 
         // =====================================================================
-        // Step 6: Extract first frame & setup SpriteFramePlayer
+        // Step 6: Extract first frame & setup SpriteFrameRenderer
         // =====================================================================
 
         private void DrawStep6_SetupPlayer()
         {
-            EditorGUILayout.LabelField("Step 6: Setup Player with First Frame", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Step 6: Setup Renderer with First Frame", EditorStyles.boldLabel);
 
-            spriteFramePlayer = (SpriteFramePlayer)EditorGUILayout.ObjectField(
-                "Sprite Frame Player",
-                spriteFramePlayer,
-                typeof(SpriteFramePlayer),
+            spriteFrameRenderer = (SpriteFrameRenderer)EditorGUILayout.ObjectField(
+                "Sprite Frame Renderer",
+                spriteFrameRenderer,
+                typeof(SpriteFrameRenderer),
                 true
             );
 
             EditorGUILayout.HelpBox(
-                "Drag in the first sprite sheet texture and the SpriteFramePlayer from the scene.\n\n" +
+                "Drag in the first sprite sheet texture and the SpriteFrameRenderer from the scene.\n\n" +
                 "This will:\n" +
                 "• Extract the first frame from the sprite sheet\n" +
                 "• Save it as a standalone sprite next to the SpriteFramesData asset\n" +
-                "• Set the SpriteRenderer sprite on the player\n" +
-                "• Scale the player GameObject to match the original source aspect ratio",
+                "• Set the SpriteRenderer sprite on the renderer\n" +
+                "• Scale the renderer GameObject to match the original source aspect ratio",
                 MessageType.Info
             );
 
@@ -693,9 +755,9 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 return;
             }
 
-            if (spriteFramePlayer == null)
+            if (spriteFrameRenderer == null)
             {
-                EditorUtility.DisplayDialog("Error", "Please drag in a SpriteFramePlayer from the scene.", "OK");
+                EditorUtility.DisplayDialog("Error", "Please drag in a SpriteFrameRenderer from the scene.", "OK");
                 return;
             }
 
@@ -784,11 +846,11 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 return;
             }
 
-            // Apply to SpriteFramePlayer's SpriteRenderer
-            SpriteRenderer sr = spriteFramePlayer.GetComponent<SpriteRenderer>();
+            // Apply to SpriteFrameRenderer's SpriteRenderer
+            SpriteRenderer sr = spriteFrameRenderer.GetComponent<SpriteRenderer>();
             if (sr == null)
             {
-                Debug.LogError("SpriteFramePlayer has no SpriteRenderer component!");
+                Debug.LogError("SpriteFrameRenderer has no SpriteRenderer component!");
                 return;
             }
 
@@ -802,22 +864,22 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 float scaleX = (float)spriteFramesData.sourceFrameWidth / spriteFramesData.frameWidth;
                 float scaleY = (float)spriteFramesData.sourceFrameHeight / spriteFramesData.frameHeight;
 
-                Undo.RecordObject(spriteFramePlayer.transform, "Scale Player to Source Aspect Ratio");
-                Vector3 currentScale = spriteFramePlayer.transform.localScale;
-                spriteFramePlayer.transform.localScale = new Vector3(
+                Undo.RecordObject(spriteFrameRenderer.transform, "Scale Renderer to Source Aspect Ratio");
+                Vector3 currentScale = spriteFrameRenderer.transform.localScale;
+                spriteFrameRenderer.transform.localScale = new Vector3(
                     scaleX,
                     scaleY,
                     currentScale.z
                 );
-                EditorUtility.SetDirty(spriteFramePlayer.transform);
+                EditorUtility.SetDirty(spriteFrameRenderer.transform);
             }
 
             AssetDatabase.SaveAssets();
 
-            Debug.Log($"First frame extracted to {firstFramePath}, applied to {spriteFramePlayer.name}, and scaled to match source aspect ratio.");
+            Debug.Log($"First frame extracted to {firstFramePath}, applied to {spriteFrameRenderer.name}, and scaled to match source aspect ratio.");
             EditorUtility.DisplayDialog("Success",
                 $"First frame saved to: {firstFramePath}\n\n" +
-                $"SpriteRenderer sprite set on: {spriteFramePlayer.name}\n" +
+                $"SpriteRenderer sprite set on: {spriteFrameRenderer.name}\n" +
                 $"Scale adjusted for source aspect ratio.",
                 "OK");
         }

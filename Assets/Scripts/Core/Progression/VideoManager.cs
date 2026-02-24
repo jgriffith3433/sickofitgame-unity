@@ -1,13 +1,12 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.Playables;
 using MobileControllerFramework;
 using SickOfIt.Core.Flow;
 
 namespace SickOfIt.Core.Progression
 {
     /// <summary>
-    /// Manager for video scenes. Handles loading of SpriteFramePlayer and manages scene activation.
+    /// Manager for video scenes. Handles video playback and scene transitions.
     /// </summary>
     public class VideoManager : MonoBehaviour
     {
@@ -22,26 +21,14 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Optional skip button using MobileControllerFramework")]
         [SerializeField] private MobileControllerFramework.Button skipButton;
 
-        [Header("Loading System")]
-        [Tooltip("Video sprite player that needs to finish loading")]
-        [SerializeField] private MonoBehaviour videoPlayerBehaviour;
+        [Header("Playback")]
+        [Tooltip("PlayableDirector for the video")]
+        [SerializeField] private PlayableDirector videoDirector;
 
-        [Tooltip("GameObjects to activate once video assets are loaded (they should start deactivated)")]
-        [SerializeField] private List<GameObject> objectsToActivateAfterLoading = new List<GameObject>();
-
-        [Tooltip("GameObjects to deactivate once video assets are loaded (e.g., loading indicators)")]
-        [SerializeField] private List<GameObject> objectsToDeactivateAfterLoading = new List<GameObject>();
-
-        [Header("Loading Debug")]
-        [SerializeField] private bool isLoading = false;
-        [SerializeField] private bool videoLoaded = false;
-
-        private IFrameSequencePlayer videoPlayer;
         private bool videoWasSkipped = false;
 
         private void Awake()
         {
-            videoPlayer = videoPlayerBehaviour as IFrameSequencePlayer;
 
             // Subscribe to skip button
             if (skipButton != null)
@@ -49,33 +36,31 @@ namespace SickOfIt.Core.Progression
                 skipButton.TapEndEvent.AddListener(SkipVideo);
             }
 
-            // Subscribe to video completion callback
-            if (videoPlayer != null)
+            // Subscribe to director completion callback
+            if (videoDirector != null)
             {
-                videoPlayer.PlaybackCompleted += OnVideoComplete;
-                isLoading = true;
-                StartCoroutine(WaitForVideoToLoad());
-            }
-            else
-            {
-                // No video player, activate everything immediately
-                ActivateGameObjects();
+                videoDirector.stopped += OnDirectorStopped;
+
+                // Play the video
+                videoDirector.time = 0;
+                videoDirector.Play();
+
+                SickOfIt.Core.AnalyticsManager.Instance.TrackVideoStart(videoNumber);
             }
         }
 
         private void OnDestroy()
         {
-            // Unsubscribe from callback
-            if (videoPlayer != null)
-            {
-                videoPlayer.PlaybackCompleted -= OnVideoComplete;
-            }
+            if (videoDirector != null)
+                videoDirector.stopped -= OnDirectorStopped;
 
-            // Unsubscribe from skip button
             if (skipButton != null)
-            {
                 skipButton.TapEndEvent.RemoveListener(SkipVideo);
-            }
+        }
+
+        private void OnDirectorStopped(PlayableDirector director)
+        {
+            OnVideoComplete();
         }
 
         /// <summary>
@@ -121,41 +106,11 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>
-        /// Wait for video assets to finish loading
-        /// </summary>
-        private IEnumerator WaitForVideoToLoad()
-        {
-            // Wait until video is loaded
-            while (videoPlayer != null && !videoPlayer.IsLoaded)
-            {
-                yield return null; // Wait one frame
-            }
-
-            videoLoaded = true;
-            isLoading = false;
-
-            // Deactivate loading indicators
-            DeactivateGameObjects();
-
-            // Activate game objects now that loading is complete
-            ActivateGameObjects();
-
-            // Play the video automatically
-            if (videoPlayer != null)
-            {
-                videoPlayer.Play();
-
-                // Track video start
-                SickOfIt.Core.AnalyticsManager.Instance.TrackVideoStart(videoNumber);
-            }
-        }
-
-        /// <summary>
         /// Skip the currently playing video
         /// </summary>
         public void SkipVideo()
         {
-            if (videoPlayer != null)
+            if (videoDirector != null)
             {
                 Debug.Log("VideoManager: Video skipped by player");
 
@@ -163,44 +118,11 @@ namespace SickOfIt.Core.Progression
                 videoWasSkipped = true;
                 SickOfIt.Core.AnalyticsManager.Instance.TrackVideoSkip(videoNumber);
 
-                videoPlayer.SkipToEnd();
+                videoDirector.time = videoDirector.duration;
+                videoDirector.Evaluate();
+                videoDirector.Stop();
             }
         }
 
-        /// <summary>
-        /// Activate all game objects that were waiting for loading to complete
-        /// </summary>
-        private void ActivateGameObjects()
-        {
-            if (objectsToActivateAfterLoading != null)
-            {
-                foreach (var obj in objectsToActivateAfterLoading)
-                {
-                    if (obj != null)
-                    {
-                        obj.SetActive(true);
-                        Debug.Log($"VideoManager: Activated {obj.name}");
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Deactivate loading indicators after loading is complete
-        /// </summary>
-        private void DeactivateGameObjects()
-        {
-            if (objectsToDeactivateAfterLoading != null)
-            {
-                foreach (var obj in objectsToDeactivateAfterLoading)
-                {
-                    if (obj != null)
-                    {
-                        obj.SetActive(false);
-                        Debug.Log($"VideoManager: Deactivated {obj.name}");
-                    }
-                }
-            }
-        }
     }
 }

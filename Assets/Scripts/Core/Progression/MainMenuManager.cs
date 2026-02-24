@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 using TMPro;
 using MobileControllerFramework;
 using SickOfIt.Core.Flow;
@@ -39,10 +40,10 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private BundleDownloadManager bundleDownloadManager;
 
         [Header("Transition Animation")]
-        [Tooltip("The SpriteFramePlayer to deactivate when Continue/New Game is pressed (e.g. idle menu animation)")]
-        [SerializeField] private MonoBehaviour idleSpriteFramePlayer;
-        [Tooltip("The SpriteFramePlayer to play as a transition before loading the next scene")]
-        [SerializeField] private MonoBehaviour transitionSpriteFramePlayer;
+        [Tooltip("The PlayableDirector to deactivate when Continue/New Game is pressed (e.g. idle menu animation)")]
+        [SerializeField] private PlayableDirector idleDirector;
+        [Tooltip("The PlayableDirector to play as a transition before loading the next scene")]
+        [SerializeField] private PlayableDirector transitionDirector;
 
         [Header("Delayed Hide")]
         [Tooltip("How long to wait before hiding the objects (in seconds)")]
@@ -205,53 +206,40 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>
-        /// Deactivates the idle SpriteFramePlayer, plays the transition SpriteFramePlayer,
+        /// Deactivates the idle SpriteFramePlayer, plays the transition via PlayableDirector,
         /// waits for it to finish, then invokes the provided action.
         /// Falls back to invoking the action immediately if the transition player is not assigned.
         /// </summary>
         private IEnumerator PlayTransitionThenExecute(Action onComplete)
         {
-            // Deactivate the idle player
-            if (idleSpriteFramePlayer != null)
+            // Deactivate the idle director
+            if (idleDirector != null)
             {
-                idleSpriteFramePlayer.gameObject.SetActive(false);
-                Debug.Log("[MainMenu] Deactivated idle SpriteFramePlayer");
+                idleDirector.gameObject.SetActive(false);
+                Debug.Log("[MainMenu] Deactivated idle PlayableDirector");
             }
 
-            // If no transition player is assigned, just proceed immediately
-            if (transitionSpriteFramePlayer == null)
+            // If no transition director is assigned, just proceed immediately
+            if (transitionDirector == null)
             {
                 onComplete?.Invoke();
                 yield break;
             }
 
-            var player = transitionSpriteFramePlayer as IFrameSequencePlayer;
-            if (player == null)
-            {
-                Debug.LogWarning("[MainMenu] Transition SpriteFramePlayer does not implement IFrameSequencePlayer, skipping transition");
-                onComplete?.Invoke();
-                yield break;
-            }
+            // Make sure the transition director's GameObject is active
+            transitionDirector.gameObject.SetActive(true);
 
-            // Make sure the transition player's GameObject is active
-            transitionSpriteFramePlayer.gameObject.SetActive(true);
-
-            // Wait until loaded
-            while (!player.IsLoaded)
-            {
-                yield return null;
-            }
-
-            // Subscribe to completion and play
+            // Subscribe to director completion and play
             bool finished = false;
-            void OnFinished()
+            void OnDirectorStopped(PlayableDirector d)
             {
                 finished = true;
             }
 
-            player.PlaybackCompleted += OnFinished;
-            player.Play();
-            Debug.Log("[MainMenu] Playing transition SpriteFramePlayer");
+            transitionDirector.stopped += OnDirectorStopped;
+            transitionDirector.time = 0;
+            transitionDirector.Play();
+            Debug.Log("[MainMenu] Playing transition via PlayableDirector");
 
             // Wait for playback to complete
             while (!finished)
@@ -259,8 +247,8 @@ namespace SickOfIt.Core.Progression
                 yield return null;
             }
 
-            player.PlaybackCompleted -= OnFinished;
-            Debug.Log("[MainMenu] Transition SpriteFramePlayer finished, proceeding");
+            transitionDirector.stopped -= OnDirectorStopped;
+            Debug.Log("[MainMenu] Transition finished, proceeding");
 
             onComplete?.Invoke();
         }

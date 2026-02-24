@@ -4,7 +4,8 @@
   "references": [
     "SickOfIt.Core",
     "Unity.Addressables",
-    "Unity.ResourceManager"
+    "Unity.ResourceManager",
+    "Unity.Timeline"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

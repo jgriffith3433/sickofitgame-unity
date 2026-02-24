@@ -1,17 +1,14 @@
 using UnityEngine;
-using System.Collections;
+using UnityEngine.Playables;
 using System.Collections.Generic;
-using SickOfIt.Core.Addressables;
 using SickOfIt.Core.Flow;
-using SickOfIt.Combat.Enemies.Spawning;
-using SickOfIt.VideoFrameExtractor.Runtime;
 using SickOfIt.Data;
 
 namespace SickOfIt.Core.Progression
 {
     /// <summary>
     /// Base manager for individual level scenes.
-    /// Handles asset loading, spawner lifecycle, scene transitions, and multi-stage sequences.
+    /// Handles scene transitions and multi-stage sequences.
     /// </summary>
     public class LevelManager : MonoBehaviour
     {
@@ -23,13 +20,9 @@ namespace SickOfIt.Core.Progression
         [Header("Death Scene")]
         [SerializeField] private string deathSceneName = "Death1";
 
-        [Header("Asset Loading")]
-        [Tooltip("Background sprite players that must finish loading before gameplay begins")]
-        [SerializeField] private List<MonoBehaviour> backgroundPlayerBehaviours = new List<MonoBehaviour>();
-        [Tooltip("Activated once all assets are loaded (start deactivated)")]
-        [SerializeField] private List<GameObject> objectsToActivateAfterLoading = new List<GameObject>();
-        [Tooltip("Deactivated once all assets are loaded (e.g. loading indicators)")]
-        [SerializeField] private List<GameObject> objectsToDeactivateAfterLoading = new List<GameObject>();
+        [Header("Backgrounds")]
+        [Tooltip("Background PlayableDirectors")]
+        [SerializeField] private List<PlayableDirector> backgroundDirectors = new List<PlayableDirector>();
 
         [Header("Scene Transition UI")]
         [Tooltip("Activated when transitioning to another scene (e.g. 'Loading...' overlay)")]
@@ -37,41 +30,23 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Deactivated when transitioning (e.g. player controls, game HUD)")]
         [SerializeField] private List<GameObject> objectsToDeactivateOnSceneTransition = new List<GameObject>();
 
-        [Header("Spawner Control")]
-        [Tooltip("SpriteFramePlayer whose completion kills all level spawners (checks win condition)")]
-        [SerializeField] private MonoBehaviour spawnerKillTriggerPlayer;
-        [SerializeField] private bool autoKillSpawnersOnComplete;
-        [Tooltip("Spawners to kill when the trigger player completes")]
-        [SerializeField] private List<EnemySpawner> levelSpawners = new List<EnemySpawner>();
-
         [Header("Two-Stage Sequence")]
         [SerializeField] private bool enableTwoStageSequence;
-        [SerializeField] private MonoBehaviour firstSequencePlayer;
-        [SerializeField] private MonoBehaviour secondSequencePlayer;
+        [SerializeField] private PlayableDirector firstSequenceDirector;
+        [SerializeField] private PlayableDirector secondSequenceDirector;
         [SerializeField] private List<GameObject> objectsToActivateAfterFirstSequence = new List<GameObject>();
         [SerializeField] private List<GameObject> objectsToDeactivateAfterFirstSequence = new List<GameObject>();
         [Tooltip("Optional button to skip the first sequence")]
         [SerializeField] private MobileControllerFramework.Button skipFirstSequenceButton;
-        [Tooltip("Spawners to kill when the first sequence completes (does not check win condition)")]
-        [SerializeField] private List<EnemySpawner> firstSequenceSpawners = new List<EnemySpawner>();
+        [Header("Level Completion")]
+        [Tooltip("When this director finishes playing, the level is completed.")]
+        [SerializeField] private PlayableDirector levelCompletionDirector;
 
         [Header("Player")]
         [Tooltip("Reference to the PlayerHealth component in this level scene.")]
         [SerializeField] private SickOfIt.Combat.Health.PlayerHealth playerHealth;
 
-        [Header("Debug")]
-        [SerializeField] private bool isLoading;
-        [SerializeField] private bool allAssetsLoaded;
         private bool levelCompleted;
-
-        #endregion
-
-        #region Private State
-
-        private readonly List<IFrameSequencePlayer> backgroundPlayers = new List<IFrameSequencePlayer>();
-        private IFrameSequencePlayer triggerPlayer;
-        private IFrameSequencePlayer firstPlayer;
-        private IFrameSequencePlayer secondPlayer;
 
         #endregion
 
@@ -79,28 +54,13 @@ namespace SickOfIt.Core.Progression
 
         private void Awake()
         {
-            // Resolve MonoBehaviour references to interfaces
-            foreach (var behaviour in backgroundPlayerBehaviours)
-            {
-                if (behaviour is IFrameSequencePlayer player)
-                    backgroundPlayers.Add(player);
-            }
-
-            if (spawnerKillTriggerPlayer is IFrameSequencePlayer trigger)
-            {
-                triggerPlayer = trigger;
-                triggerPlayer.PlaybackCompleted += OnSpawnerKillTriggerComplete;
-            }
-
+            // Resolve serialized references
             if (enableTwoStageSequence)
             {
-                if (firstSequencePlayer is IFrameSequencePlayer first)
+                if (firstSequenceDirector != null)
                 {
-                    firstPlayer = first;
-                    firstPlayer.PlaybackCompleted += OnFirstSequenceComplete;
+                    firstSequenceDirector.stopped += OnFirstDirectorStopped;
                 }
-                if (secondSequencePlayer is IFrameSequencePlayer second)
-                    secondPlayer = second;
 
                 // Wire up skip button if provided
                 if (skipFirstSequenceButton != null)
@@ -109,66 +69,33 @@ namespace SickOfIt.Core.Progression
                 }
             }
 
-            // Begin loading or activate immediately
-            if (backgroundPlayers.Count > 0)
-            {
-                isLoading = true;
-                StartCoroutine(WaitForAssetsToLoad());
-            }
-            else
-            {
-                ActivateGameObjects();
-            }
+            if (levelCompletionDirector != null)
+                levelCompletionDirector.stopped += OnLevelCompletionDirectorStopped;
 
-
+            playerHealth?.InitializeForLevel(levelNumber);
+            AnalyticsManager.Instance.TrackLevelStart(levelNumber);
         }
 
         private void OnDestroy()
         {
-            if (triggerPlayer != null)
-                triggerPlayer.PlaybackCompleted -= OnSpawnerKillTriggerComplete;
-            if (firstPlayer != null)
-                firstPlayer.PlaybackCompleted -= OnFirstSequenceComplete;
+            if (levelCompletionDirector != null)
+                levelCompletionDirector.stopped -= OnLevelCompletionDirectorStopped;
+            if (firstSequenceDirector != null)
+                firstSequenceDirector.stopped -= OnFirstDirectorStopped;
             if (skipFirstSequenceButton != null)
                 skipFirstSequenceButton.TapEndEvent.RemoveListener(SkipFirstSequence);
         }
 
         #endregion
 
-        #region Asset Loading
 
-        private IEnumerator WaitForAssetsToLoad()
-        {
-            while (!AreAllAssetsLoaded())
-                yield return null;
-
-            allAssetsLoaded = true;
-            isLoading = false;
-
-            SetGameObjectsActive(objectsToDeactivateAfterLoading, false);
-            ActivateGameObjects();
-        }
-
-        private bool AreAllAssetsLoaded()
-        {
-            foreach (var player in backgroundPlayers)
-            {
-                if (player != null && !player.IsLoaded)
-                    return false;
-            }
-            return true;
-        }
-
-        private void ActivateGameObjects()
-        {
-            SetGameObjectsActive(objectsToActivateAfterLoading, true);
-            playerHealth?.InitializeForLevel(levelNumber);
-            AnalyticsManager.Instance.TrackLevelStart(levelNumber);
-        }
-
-        #endregion
 
         #region Level Completion
+
+        private void OnLevelCompletionDirectorStopped(PlayableDirector director)
+        {
+            CompleteLevel();
+        }
 
         public void CompleteLevel()
         {
@@ -271,18 +198,11 @@ namespace SickOfIt.Core.Progression
 
         #endregion
 
-        #region Spawner & Sequence Callbacks
+        #region Sequence Callbacks
 
-        private void OnSpawnerKillTriggerComplete()
+        private void OnFirstDirectorStopped(PlayableDirector director)
         {
-            if (!autoKillSpawnersOnComplete)
-                return;
-
-            foreach (var spawner in levelSpawners)
-            {
-                if (spawner != null)
-                    spawner.KillSpawner(checkWinCondition: true);
-            }
+            OnFirstSequenceComplete();
         }
 
         private void OnFirstSequenceComplete()
@@ -290,49 +210,25 @@ namespace SickOfIt.Core.Progression
             if (!enableTwoStageSequence)
                 return;
 
-            // Kill first-sequence spawners — does not check win condition since second sequence follows
-            foreach (var spawner in firstSequenceSpawners)
-            {
-                if (spawner != null)
-                    spawner.KillSpawner(checkWinCondition: false);
-            }
-
-            // Disable first player's SpriteRenderer before enabling the second one
-            firstPlayer?.SetSpriteRendererEnabled(false);
+            // Hide first sequence director
+            if (firstSequenceDirector != null)
+                firstSequenceDirector.gameObject.SetActive(false);
 
             SetGameObjectsActive(objectsToDeactivateAfterFirstSequence, false);
             SetGameObjectsActive(objectsToActivateAfterFirstSequence, true);
 
-            firstPlayer?.SetSpriteRendererEnabled(true);
+            if (firstSequenceDirector != null)
+                firstSequenceDirector.gameObject.SetActive(true);
 
-            if (secondPlayer != null)
+            if (secondSequenceDirector != null)
             {
-                if (secondPlayer.IsLoaded)
-                {
-                    secondPlayer.Play();
-                }
-                else
-                {
-                    Debug.LogWarning("[LevelManager] Second sequence player is not loaded yet — waiting for it...");
-                    StartCoroutine(WaitForSecondPlayerAndPlay());
-                }
+                secondSequenceDirector.time = 0;
+                secondSequenceDirector.Play();
             }
 
             // Hide skip button after first sequence completes
             if (skipFirstSequenceButton != null)
                 skipFirstSequenceButton.gameObject.SetActive(false);
-        }
-
-        private IEnumerator WaitForSecondPlayerAndPlay()
-        {
-            while (secondPlayer != null && !secondPlayer.IsLoaded)
-                yield return null;
-
-            if (secondPlayer != null)
-            {
-                Debug.Log("[LevelManager] Second sequence player loaded — starting playback.");
-                secondPlayer.Play();
-            }
         }
 
         /// <summary>
@@ -341,11 +237,13 @@ namespace SickOfIt.Core.Progression
         /// </summary>
         public void SkipFirstSequence()
         {
-            if (!enableTwoStageSequence || firstPlayer == null)
+            if (!enableTwoStageSequence || firstSequenceDirector == null)
                 return;
 
-            // Skip to end will trigger OnFirstSequenceComplete via the PlaybackCompleted event
-            firstPlayer.SkipToEnd();
+            // Skip to end — the director's stopped event will trigger OnFirstSequenceComplete
+            firstSequenceDirector.time = firstSequenceDirector.duration;
+            firstSequenceDirector.Evaluate();
+            firstSequenceDirector.Stop();
         }
 
         #endregion

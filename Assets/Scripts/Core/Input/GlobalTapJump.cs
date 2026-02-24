@@ -69,11 +69,9 @@ namespace SickOfIt.Core.Input
                 foreach (Touch touch in UnityEngine.Input.touches)
                     ProcessPointerInput(touch.fingerId, touch.position, touch.phase);
             }
-            else if (UnityEngine.Input.GetMouseButtonDown(0) || UnityEngine.Input.GetMouseButtonUp(0))
-            {
-                TouchPhase phase = UnityEngine.Input.GetMouseButtonDown(0) ? TouchPhase.Began : TouchPhase.Ended;
-                ProcessPointerInput(0, UnityEngine.Input.mousePosition, phase);
-            }
+            // Mouse-click fallback removed: on PC, mouse clicks should never
+            // trigger tap-to-jump. Real touch input on mobile is already handled
+            // by the touchCount > 0 branch above, so no fallback is needed.
         }
 
         private void ProcessPointerInput(int pointerId, Vector2 position, TouchPhase phase)

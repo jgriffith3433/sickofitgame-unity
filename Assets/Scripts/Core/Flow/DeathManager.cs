@@ -1,26 +1,19 @@
 using UnityEngine;
+using UnityEngine.Playables;
 using System.Collections;
-using System.Collections.Generic;
 using MobileControllerFramework;
 
 namespace SickOfIt.Core.Flow
 {
     /// <summary>
-    /// Manager for death scenes. Handles loading of death animation and automatically
+    /// Manager for death scenes. Handles death animation playback and automatically
     /// reloads the level after animation completes.
-    /// Works similarly to VideoManager but for death sequences.
     /// </summary>
     public class DeathManager : MonoBehaviour
     {
-        [Header("Loading System")]
-        [Tooltip("Death animation sprite player that needs to finish loading")]
-        [SerializeField] private MonoBehaviour deathPlayerBehaviour;
-
-        [Tooltip("GameObjects to activate once death assets are loaded (they should start deactivated)")]
-        [SerializeField] private List<GameObject> objectsToActivateAfterLoading = new List<GameObject>();
-
-        [Tooltip("GameObjects to deactivate once death assets are loaded (e.g., loading indicators)")]
-        [SerializeField] private List<GameObject> objectsToDeactivateAfterLoading = new List<GameObject>();
+        [Header("Playback")]
+        [Tooltip("PlayableDirector for the death animation")]
+        [SerializeField] private PlayableDirector deathDirector;
 
         [Header("Skip Settings")]
         [Tooltip("Optional skip button using MobileControllerFramework")]
@@ -30,16 +23,10 @@ namespace SickOfIt.Core.Flow
         [Tooltip("How long to wait after death animation finishes before reloading level")]
         [SerializeField] private float delayBeforeReload = 1f;
 
-        [Header("Loading Debug")]
-        [SerializeField] private bool isLoading = false;
-        [SerializeField] private bool animationLoaded = false;
-        [SerializeField] private bool animationComplete = false;
-
-        private IFrameSequencePlayer deathPlayer;
+        private bool animationComplete;
 
         private void Awake()
         {
-            deathPlayer = deathPlayerBehaviour as IFrameSequencePlayer;
 
             // Subscribe to skip button
             if (skipButton != null)
@@ -47,66 +34,34 @@ namespace SickOfIt.Core.Flow
                 skipButton.TapEndEvent.AddListener(SkipDeathAnimation);
             }
 
-            // Subscribe to death animation completion callback
-            if (deathPlayer != null)
+            // Subscribe to director completion callback
+            if (deathDirector != null)
             {
-                deathPlayer.PlaybackCompleted += OnDeathAnimationComplete;
-                isLoading = true;
-                StartCoroutine(WaitForDeathAnimationToLoad());
+                deathDirector.stopped += OnDirectorStopped;
+
+                // Play the death animation
+                deathDirector.time = 0;
+                deathDirector.Play();
             }
             else
             {
-                // No death player, activate everything immediately and just reload
-                ActivateGameObjects();
+                // No death player, just reload
                 StartCoroutine(ReloadLevelAfterDelay());
             }
         }
 
         private void OnDestroy()
         {
-            // Unsubscribe from callback
-            if (deathPlayer != null)
-            {
-                deathPlayer.PlaybackCompleted -= OnDeathAnimationComplete;
-            }
+            if (deathDirector != null)
+                deathDirector.stopped -= OnDirectorStopped;
 
-            // Unsubscribe from skip button
             if (skipButton != null)
-            {
                 skipButton.TapEndEvent.RemoveListener(SkipDeathAnimation);
-            }
         }
 
-        /// <summary>
-        /// Wait for death animation assets to finish loading
-        /// </summary>
-        private IEnumerator WaitForDeathAnimationToLoad()
+        private void OnDirectorStopped(PlayableDirector director)
         {
-            // Wait until animation is loaded
-            while (deathPlayer != null && !deathPlayer.IsLoaded)
-            {
-                yield return null; // Wait one frame
-            }
-
-            animationLoaded = true;
-            isLoading = false;
-
-            // Deactivate loading indicators
-            DeactivateGameObjects();
-
-            // Activate game objects now that loading is complete
-            ActivateGameObjects();
-
-            // Play the death animation automatically
-            if (deathPlayer != null)
-            {
-                deathPlayer.Play();
-            }
-            else
-            {
-                // No player, just reload
-                StartCoroutine(ReloadLevelAfterDelay());
-            }
+            OnDeathAnimationComplete();
         }
 
         /// <summary>
@@ -114,10 +69,12 @@ namespace SickOfIt.Core.Flow
         /// </summary>
         public void SkipDeathAnimation()
         {
-            if (deathPlayer != null)
+            if (deathDirector != null)
             {
                 Debug.Log("DeathManager: Death animation skipped by player");
-                deathPlayer.SkipToEnd();
+                deathDirector.time = deathDirector.duration;
+                deathDirector.Evaluate();
+                deathDirector.Stop();
             }
         }
 
@@ -181,38 +138,5 @@ namespace SickOfIt.Core.Flow
             }
         }
 
-        /// <summary>
-        /// Activate all game objects that were waiting for loading to complete
-        /// </summary>
-        private void ActivateGameObjects()
-        {
-            if (objectsToActivateAfterLoading != null)
-            {
-                foreach (var obj in objectsToActivateAfterLoading)
-                {
-                    if (obj != null)
-                    {
-                        obj.SetActive(true);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Deactivate loading indicators after loading is complete
-        /// </summary>
-        private void DeactivateGameObjects()
-        {
-            if (objectsToDeactivateAfterLoading != null)
-            {
-                foreach (var obj in objectsToDeactivateAfterLoading)
-                {
-                    if (obj != null)
-                    {
-                        obj.SetActive(false);
-                    }
-                }
-            }
-        }
     }
 }

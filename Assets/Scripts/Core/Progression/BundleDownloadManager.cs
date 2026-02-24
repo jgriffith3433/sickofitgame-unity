@@ -108,10 +108,6 @@ namespace SickOfIt.Core.Progression
                     if (!string.IsNullOrEmpty(chunk.addressableLabel) && seen.Add(chunk.addressableLabel))
                         allLabels.Add(chunk.addressableLabel);
                 }
-
-                // Also include audio if present
-                if (!string.IsNullOrEmpty(data.audioAddress) && seen.Add(data.audioAddress))
-                    allLabels.Add(data.audioAddress);
             }
 
             foreach (var label in additionalLabels)

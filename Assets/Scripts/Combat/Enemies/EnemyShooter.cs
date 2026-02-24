@@ -29,11 +29,13 @@ namespace SickOfIt.Combat.Enemies
 
         [Header("Attack")]
         [SerializeField] private float attackInterval = 2f;
+        [Tooltip("Delay before the first attack after the enemy spawns.")]
+        [SerializeField] private float initialAttackDelay = 5f;
 
         [Header("Animation")]
         [SerializeField] private Animator animator;
 
-        private float lastAttackTime = -Mathf.Infinity;
+        private float lastAttackTime;
 
         private static readonly int ParamIsAttacking = Animator.StringToHash("IsAttacking");
 
@@ -43,6 +45,9 @@ namespace SickOfIt.Combat.Enemies
 
             // Shooter enemies should not move
             rb.constraints = RigidbodyConstraints2D.FreezeAll;
+
+            // Apply initial attack delay so the first shot isn't immediate
+            lastAttackTime = Time.time - attackInterval + initialAttackDelay;
 
             // Load projectile prefab
             if (animator == null)

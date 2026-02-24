@@ -61,6 +61,7 @@ namespace SickOfIt.Core.Addressables
 
         private void Awake()
         {
+            Debug.Log($"[AddressablesOperationManager] Awake - Instance: {_instance}, This: {this}");
             if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);

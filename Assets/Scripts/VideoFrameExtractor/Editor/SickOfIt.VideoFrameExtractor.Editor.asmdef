@@ -4,7 +4,9 @@
   "references": [
     "SickOfIt.VideoFrameExtractor.Runtime",
     "Unity.Addressables",
-    "Unity.Addressables.Editor"
+    "Unity.Addressables.Editor",
+    "Unity.Timeline",
+    "Unity.Timeline.Editor"
   ],
   "includePlatforms": [
     "Editor"

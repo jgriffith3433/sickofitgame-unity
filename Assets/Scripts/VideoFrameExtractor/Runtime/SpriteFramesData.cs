@@ -13,16 +13,6 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         [Tooltip("Name of this video (e.g., 'Video3')")]
         public string videoName = "";
 
-        [Tooltip("Target playback FPS")]
-        public float playbackFPS = 30f;
-
-        [Tooltip("If true, video will loop")]
-        public bool loop = false;
-
-        [Header("Audio")]
-        [Tooltip("Addressables address for audio clip (optional)")]
-        public string audioAddress = "";
-
         [Header("Sprite Sheet Configuration")]
         [Tooltip("Original source frame width in pixels (e.g., 1280)")]
         public int sourceFrameWidth = 1280;
@@ -82,6 +72,11 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
             [Tooltip("Ending frame index (inclusive)")]
             public int endFrame = 0;
+
+#if UNITY_EDITOR
+            [Tooltip("Editor-only: direct texture references for Timeline preview (no Addressables needed)")]
+            public List<Texture2D> editorTextures = new List<Texture2D>();
+#endif
 
             [Tooltip("Read-only: Number of frames in this chunk")]
             public int frameCount => endFrame - startFrame + 1;
