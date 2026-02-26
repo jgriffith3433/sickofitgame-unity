@@ -1,3 +1,6 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
 # Unity 6 Project Git LFS Config
 # Covers models, textures, audio, video,
 # Unity binary assets, fonts, etc.

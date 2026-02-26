@@ -46,6 +46,14 @@ namespace SickOfIt.Tools.Editor
             window.RefreshVersionInfo();
         }
 
+        [MenuItem("Tools/Run Full Deploy")]
+        public static void RunFullDeployFromMenu()
+        {
+            var window = GetWindow<GameDeployWindow>("Game Deploy");
+            window.RefreshVersionInfo();
+            window.RunFullDeploy();
+        }
+
         private void OnEnable()
         {
             RefreshVersionInfo();
@@ -445,7 +453,7 @@ namespace SickOfIt.Tools.Editor
         // Full deploy pipeline
         // ─────────────────────────────────────────────
 
-        private void RunFullDeploy()
+        internal void RunFullDeploy()
         {
             isBusy = true;
             currentStep = 0;
