@@ -118,8 +118,11 @@ namespace SickOfIt.Core.Progression
                 videoWasSkipped = true;
                 SickOfIt.Core.AnalyticsManager.Instance.TrackVideoSkip(videoNumber);
 
-                videoDirector.time = videoDirector.duration;
-                videoDirector.Evaluate();
+                // Stop immediately without Evaluate(). Calling Evaluate() at
+                // duration causes ProcessFrame to fire for the last video frame,
+                // which triggers an async Addressable load for the final chunk.
+                // That load can't be cancelled and its textures decompress into
+                // WASM memory alongside the next scene's load, causing OOM on WebGL.
                 videoDirector.Stop();
             }
         }

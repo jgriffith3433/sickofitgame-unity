@@ -14,9 +14,8 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         public SpriteFramesData spriteFramesData;
 
         /// <summary>
-        /// If true, the animation loops within the clip duration.
-        /// When the clip is extended beyond one cycle on the timeline, it repeats.
+        /// How the clip behaves when playback reaches the end of its frames.
         /// </summary>
-        public bool loop;
+        public SpriteFrameEndBehaviour endBehaviour;
     }
 }

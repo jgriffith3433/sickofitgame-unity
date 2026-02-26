@@ -31,8 +31,10 @@ namespace SickOfIt.Core.Flow
 
         private void Start()
         {
-            // If this is the active scene (e.g., opened directly in editor), activate immediately
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene() == gameObject.scene)
+            // Auto-activate when this scene is loaded directly (e.g., pressing Play in the editor
+            // with this scene open).  When loaded via Addressables, the loader calls
+            // ActivateScene() explicitly after old-scene cleanup is finished.
+            if (!isActive && UnityEngine.SceneManagement.SceneManager.GetActiveScene() == gameObject.scene)
             {
                 ActivateScene();
             }

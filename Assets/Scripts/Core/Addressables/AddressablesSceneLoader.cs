@@ -145,6 +145,45 @@ namespace SickOfIt.Core.Addressables
                     shouldHideLoadingScreen = true;
                 }
 
+                // ---------------------------------------------------------------
+                // PRE-RELEASE: Free old scene's textures BEFORE loading the new
+                // scene.  On WebGL the new scene's bundle + old scene's textures
+                // can exceed the 2 GB WASM limit if both are in memory at the same
+                // time.  The loading screen is already visible, so the visual
+                // impact of releasing textures early is hidden.
+                // ---------------------------------------------------------------
+                bool hadPreviousScene = !string.IsNullOrEmpty(currentGameplayScene) && currentGameplayScene != sceneName;
+                if (hadPreviousScene)
+                {
+                    Scene previousScene = SceneManager.GetSceneByName(currentGameplayScene);
+                    if (previousScene.isLoaded)
+                    {
+                        // CRITICAL: Release all IFrameSequencePlayer resources BEFORE new scene load.
+                        // SpriteFramePlayer creates Sprite objects that reference Addressable Texture2Ds.
+                        // If we rely on OnDestroy() → Destroy(sprite), destruction is deferred to end of frame,
+                        // meaning sprites still hold texture references when Resources.UnloadUnusedAssets() runs.
+                        // ReleaseAllResources() uses DestroyImmediate to sever references immediately.
+                        ReleaseFrameSequencePlayerResources(previousScene);
+
+                        // Hide previous scene's content (behind loading screen anyway)
+                        DeactivateSceneContent(previousScene);
+                    }
+
+                    // Release tracked asset handles (audio clips, prefabs, etc.) for the outgoing scene.
+                    AddressablesOperationManager.Instance.ReleaseAllSceneAssetHandles(currentGameplayScene);
+                    AddressablesOperationManager.Instance.ReleaseAllSceneAssetHandles("");
+
+                    // Reclaim texture memory NOW, before the new scene's bundle is loaded.
+                    yield return Resources.UnloadUnusedAssets();
+                    System.GC.Collect();
+
+                    Debug.Log($"[AddressablesSceneLoader] Pre-released resources for '{currentGameplayScene}' before loading '{sceneName}'");
+                }
+
+                // ---------------------------------------------------------------
+                // LOAD: Load the new scene additively (old scene is still loaded
+                // but its heavy texture assets have been freed above).
+                // ---------------------------------------------------------------
                 bool loadCompleted = false;
                 bool loadSuccess = false;
                 float currentProgress = 0f;
@@ -176,7 +215,7 @@ namespace SickOfIt.Core.Addressables
 
                 loadedScenes.Add(sceneName);
 
-                // Get scene reference - don't activate content yet (free old scene memory first)
+                // Get scene reference and set it as active for lighting/physics
                 Scene scene = SceneManager.GetSceneByName(sceneName);
                 if (scene.isLoaded)
                 {
@@ -193,42 +232,23 @@ namespace SickOfIt.Core.Addressables
                     }
                 }
 
-                // Unload the previous scene and WAIT for completion before activating new content.
-                // This prevents old + new scene textures from coexisting in memory (critical for WebGL OOM).
-                if (!string.IsNullOrEmpty(currentGameplayScene) && currentGameplayScene != sceneName)
+                // ---------------------------------------------------------------
+                // UNLOAD: Now fully unload the previous scene (its resources were
+                // already released above, so this just removes the scene object).
+                // ---------------------------------------------------------------
+                if (hadPreviousScene)
                 {
-                    Scene previousScene = SceneManager.GetSceneByName(currentGameplayScene);
-                    if (previousScene.isLoaded)
-                    {
-                        // CRITICAL: Release all IFrameSequencePlayer resources BEFORE scene unload.
-                        // SpriteFramePlayer creates Sprite objects that reference Addressable Texture2Ds.
-                        // If we rely on OnDestroy() → Destroy(sprite), destruction is deferred to end of frame,
-                        // meaning sprites still hold texture references when Resources.UnloadUnusedAssets() runs.
-                        // ReleaseAllResources() uses DestroyImmediate to sever references immediately.
-                        ReleaseFrameSequencePlayerResources(previousScene);
-
-                        // Hide previous scene's content
-                        DeactivateSceneContent(previousScene);
-                    }
-
-                    // Release tracked asset handles (audio clips, prefabs, etc.) for the outgoing scene.
-                    // These are handles from LoadAsset/LoadLabel that the caller doesn't own.
-                    AddressablesOperationManager.Instance.ReleaseAllSceneAssetHandles(currentGameplayScene);
-                    // Also release any handles from before the first scene transition (e.g., MainMenu assets)
-                    AddressablesOperationManager.Instance.ReleaseAllSceneAssetHandles("");
-
-                    // Wait for unload to fully complete (was fire-and-forget, caused OOM)
+                    // Wait for unload to fully complete
                     yield return StartCoroutine(UnloadSceneAsync(currentGameplayScene));
 
-                    // Force cleanup of released assets to reclaim memory before loading new content.
-                    // Sprites are already DestroyImmediate'd, so textures are truly unreferenced now.
+                    // Final cleanup pass — catch anything the scene unload freed
                     yield return Resources.UnloadUnusedAssets();
                     System.GC.Collect();
 
                     Debug.Log($"[AddressablesSceneLoader] Previous scene fully unloaded and memory cleaned before activating '{sceneName}'");
                 }
 
-                // NOW activate new scene content (after old scene memory is freed).
+                // Activate new scene content (after old scene memory is freed).
                 // This triggers SpriteFramePlayer.Awake() which starts loading texture chunks.
                 if (scene.isLoaded)
                 {
@@ -238,7 +258,6 @@ namespace SickOfIt.Core.Addressables
                 // Update current scene (Video, Death, and Level scenes all become "current")
                 currentGameplayScene = sceneName;
 
-                AddressablesOperationManager.Instance.SetCurrentScene(sceneName);
                 AddressablesOperationManager.Instance.CompleteSceneTransition();
 
                 if (shouldHideLoadingScreen) HideLoadingScreen();

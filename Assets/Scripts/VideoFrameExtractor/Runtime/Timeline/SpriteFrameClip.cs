@@ -1,17 +1,19 @@
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.Serialization;
 using UnityEngine.Timeline;
 
 namespace SickOfIt.VideoFrameExtractor.Runtime
 {
     /// <summary>
     /// PlayableAsset for a sprite frame clip on the Timeline.
-    /// Each clip references a SpriteFramesData and has a loop option.
+    /// Each clip references a SpriteFramesData and a playback mode.
     /// 
     /// Duration is derived from the frame count ÷ 30 FPS as a default.
-    /// The user controls effective FPS by resizing the clip on the Timeline:
-    /// - Non-looping (SpeedMultiplier): stretching the clip slows playback, shrinking speeds it up.
-    /// - Looping: extending beyond one cycle repeats the animation.
+    /// The user controls playback behaviour via <see cref="SpriteFrameEndBehaviour"/>:
+    /// - Speed:  resizing the clip changes playback speed.
+    /// - Loop:   extending beyond one cycle repeats the animation.
+    /// - Hold:   plays once at native FPS, then freezes the last frame.
     /// </summary>
     [System.Serializable]
     public class SpriteFrameClip : PlayableAsset, ITimelineClipAsset
@@ -21,9 +23,9 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         [Tooltip("SpriteFramesData asset defining the frame chunks for this clip")]
         [SerializeField] private SpriteFramesData spriteFramesData;
 
-        [Tooltip("If true, the animation loops within the clip. " +
-                 "Extend the clip on the Timeline for multiple loops.")]
-        [SerializeField] private bool loop = false;
+        [Tooltip("How the clip behaves when it reaches the end of its frames.")]
+        [FormerlySerializedAs("loop")]
+        [SerializeField] private SpriteFrameEndBehaviour endBehaviour = SpriteFrameEndBehaviour.Speed;
 
         /// <summary>
         /// The sprite frames data for this clip.
@@ -35,12 +37,12 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         }
 
         /// <summary>
-        /// Whether this clip loops.
+        /// How the clip behaves when playback reaches the end of its frames.
         /// </summary>
-        public bool Loop
+        public SpriteFrameEndBehaviour EndBehaviour
         {
-            get => loop;
-            set => loop = value;
+            get => endBehaviour;
+            set => endBehaviour = value;
         }
 
         /// <summary>
@@ -57,21 +59,32 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         }
 
         /// <summary>
-        /// Clip capabilities:
-        /// - Looping clips: ClipCaps.Looping - extending the clip on the timeline loops the animation.
-        /// - Non-looping clips: ClipCaps.SpeedMultiplier - resizing changes playback speed.
-        /// - Both support blending and clip-in for smooth transitions.
+        /// Clip capabilities depend on the chosen <see cref="SpriteFrameEndBehaviour"/>:
+        /// - Speed:  SpeedMultiplier — resizing the clip changes playback speed.
+        /// - Loop:   Looping — extending the clip repeats the animation.
+        /// - Hold:   None — plays once at native FPS, then holds the last frame.
+        /// All modes support blending and clip-in for smooth transitions.
         /// </summary>
-        public ClipCaps clipCaps => loop
-            ? ClipCaps.Looping | ClipCaps.Blending | ClipCaps.ClipIn
-            : ClipCaps.SpeedMultiplier | ClipCaps.Blending | ClipCaps.ClipIn;
+        public ClipCaps clipCaps
+        {
+            get
+            {
+                const ClipCaps common = ClipCaps.Blending | ClipCaps.ClipIn;
+                return endBehaviour switch
+                {
+                    SpriteFrameEndBehaviour.Loop  => ClipCaps.Looping | common,
+                    SpriteFrameEndBehaviour.Hold  => common,
+                    _                             => ClipCaps.SpeedMultiplier | common,
+                };
+            }
+        }
 
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             var playable = ScriptPlayable<SpriteFrameBehaviour>.Create(graph);
             var behaviour = playable.GetBehaviour();
             behaviour.spriteFramesData = spriteFramesData;
-            behaviour.loop = loop;
+            behaviour.endBehaviour = endBehaviour;
 
             // Explicitly set the playable duration so GetDuration() returns a valid value
             playable.SetDuration(duration);

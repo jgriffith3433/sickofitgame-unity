@@ -47,6 +47,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
             // Sheet-based rendering
             public Sprite referenceSprite;    // ONE full-sheet sprite for mesh geometry
+            public int referenceSpriteChunkIdx = -1; // Which chunk provided the reference sprite texture
             public Vector2[] cellOffsets;     // Precomputed per cell (0..framesPerSheet-1)
             public bool cellOffsetsReady;     // True once offsets computed from actual texture
         }
@@ -63,6 +64,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         private bool _released;
         private SpriteFrameRenderer _boundRenderer;
         private int _lastChunkIdx = -1;
+        private int _displayedChunkIdx = -1; // Chunk currently being rendered — never evict
         private readonly List<int> _evictCandidates = new List<int>();
 
         #endregion
@@ -87,6 +89,17 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             _initialChunksToPreload = initialPreload;
             _chunksAheadToLoad = ahead;
             _maxChunksInMemory = maxInMemory;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // WebGL has very limited WASM memory (~200MB usable on mobile).
+            // WASM linear memory can only grow, never shrink, so the peak
+            // allocation during video playback permanently sets the heap floor.
+            // With DXT1 textures (~22MB/chunk), 2 chunks ≈ 44MB leaves
+            // enough headroom for scene transitions.
+            _maxChunksInMemory = Mathf.Min(_maxChunksInMemory, 2);
+            _chunksAheadToLoad = Mathf.Min(_chunksAheadToLoad, 1);
+            _initialChunksToPreload = Mathf.Min(_initialChunksToPreload, _maxChunksInMemory);
+#endif
         }
 
         // ----------------------------------------------------------------
@@ -132,7 +145,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                     clipDuration = totalFrames / DefaultFPS;
 
                 double progress = System.Math.Max(localTime / clipDuration, 0.0);
-                if (!behaviour.loop)
+                if (behaviour.endBehaviour != SpriteFrameEndBehaviour.Loop)
                     progress = System.Math.Min(progress, 1.0 - 1e-10);
 
                 int frameIndex = Mathf.Clamp((int)(progress * totalFrames), 0, totalFrames - 1);
@@ -179,9 +192,13 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                                     int cell = localIndex % state.data.framesPerSheet;
                                     var offset = state.cellOffsets[cell];
                                     renderer.SetFrameOnSheet(textures[texIdx], offset.x, offset.y);
+                                    _displayedChunkIdx = chunkIdx;
                                 }
                             }
                         }
+                        // else: chunk not loaded yet — keep showing last rendered
+                        // frame (don't clear the renderer). The sliding window
+                        // will load it shortly.
                     }
                 }
 
@@ -261,14 +278,22 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             state.loadingChunks.Add(chunkIndex);
             var chunk = state.data.chunks[chunkIndex];
 
+            // Use the out-handle overload so we can track (and cancel) the
+            // AsyncOperationHandle while the load is still in flight.
             AddressablesOperationManager.Instance.LoadLabelWithHandle<Texture2D>(
                 chunk.addressableLabel,
                 (handle, textures) =>
                 {
                     OnChunkTexturesLoaded(state, chunkIndex, chunk,
                         handle, textures, isInitialPreload);
-                }
+                },
+                out var immediateHandle
             );
+
+            // Store the handle NOW so ReleaseAllChunks() can release it even
+            // if the load hasn't completed yet. OnChunkTexturesLoaded will
+            // overwrite this with the same handle on success, which is fine.
+            state.chunkHandles[chunkIndex] = immediateHandle;
         }
 
         private void OnChunkTexturesLoaded(
@@ -280,6 +305,15 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         {
             // Guard against post-release callbacks
             if (_released)
+            {
+                if (handle.IsValid()) Addressables.Release(handle);
+                return;
+            }
+
+            // Guard against chunks that were evicted/cancelled while in flight.
+            // UnloadChunk removes the index from loadingChunks and releases the
+            // handle. If the callback still fires (race), discard the result.
+            if (!state.loadingChunks.Contains(chunkIndex))
             {
                 if (handle.IsValid()) Addressables.Release(handle);
                 return;
@@ -305,6 +339,32 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             state.loadedChunks.Add(chunkIndex);
             state.loadingChunks.Remove(chunkIndex);
 
+            // Evict if over budget — use window-based eviction centered on
+            // the latest known playback chunk.  This catches the edge case
+            // where the displayed chunk was temporarily protected and an
+            // extra chunk squeezed in.
+            if (_maxChunksInMemory > 0)
+            {
+                int center = _lastChunkIdx >= 0 ? _lastChunkIdx : chunkIndex;
+                int totalChunks = state.data.chunks.Count;
+                int effectiveAhead = _chunksAheadToLoad;
+                if (_maxChunksInMemory > 0)
+                    effectiveAhead = Mathf.Min(effectiveAhead, _maxChunksInMemory - 1);
+                int windowEnd = Mathf.Min(center + effectiveAhead, totalChunks - 1);
+
+                _evictCandidates.Clear();
+                foreach (int idx in state.loadedChunks) _evictCandidates.Add(idx);
+                foreach (int idx in state.loadingChunks) _evictCandidates.Add(idx);
+
+                for (int i = 0; i < _evictCandidates.Count; i++)
+                {
+                    int idx = _evictCandidates[i];
+                    if (idx >= center && idx <= windowEnd) continue;
+                    if (idx == _displayedChunkIdx && !state.loadedChunks.Contains(center)) continue;
+                    UnloadChunk(state, idx);
+                }
+            }
+
             // Create one full-sheet reference sprite and compute cell offsets (once per DataState)
             if (state.referenceSprite == null && sorted.Count > 0)
             {
@@ -314,6 +374,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                     new Rect(0, 0, firstTex.width, firstTex.height),
                     new Vector2(0.5f, 0.5f),
                     state.data.spritePixelsPerUnit);
+                state.referenceSpriteChunkIdx = chunkIndex;
             }
 
             // Compute cell offsets from actual texture dimensions (once)
@@ -384,34 +445,56 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         // Sliding Window
         // ----------------------------------------------------------------
 
+        /// <summary>
+        /// Manage the sliding window of loaded chunks around the current
+        /// playback position.  Uses a simple window-based approach:
+        ///
+        ///   wanted = [chunkIndex .. chunkIndex + effectiveAhead]
+        ///
+        /// Everything outside the window is evicted (loaded OR in-flight).
+        /// Everything inside the window is loaded if not already present.
+        /// No complex gating — the window size itself enforces the budget.
+        /// </summary>
         private void EnsureChunksAround(DataState state, int chunkIndex)
         {
             int totalChunks = state.data.chunks.Count;
 
-            for (int offset = 0; offset <= _chunksAheadToLoad; offset++)
+            // Window size = effectiveAhead + 1 ≤ _maxChunksInMemory.
+            // This guarantees the window never exceeds the memory budget.
+            int effectiveAhead = _chunksAheadToLoad;
+            if (_maxChunksInMemory > 0)
+                effectiveAhead = Mathf.Min(effectiveAhead, _maxChunksInMemory - 1);
+            int windowStart = chunkIndex;
+            int windowEnd = Mathf.Min(chunkIndex + effectiveAhead, totalChunks - 1);
+
+            // --- Evict everything outside the window (frees memory first) ---
+            // Protect _displayedChunkIdx ONLY if the current chunk isn't
+            // loaded yet — we need something valid to show this frame.
+            bool protectDisplayed = _displayedChunkIdx >= 0
+                && _displayedChunkIdx != chunkIndex
+                && !state.loadedChunks.Contains(chunkIndex);
+
+            _evictCandidates.Clear();
+            foreach (int idx in state.loadedChunks) _evictCandidates.Add(idx);
+            foreach (int idx in state.loadingChunks) _evictCandidates.Add(idx);
+
+            for (int i = 0; i < _evictCandidates.Count; i++)
             {
-                int target = chunkIndex + offset;
-                if (target < totalChunks &&
-                    !state.loadedChunks.Contains(target) &&
-                    !state.loadingChunks.Contains(target))
-                {
-                    LoadChunk(state, target);
-                }
+                int idx = _evictCandidates[i];
+                if (idx >= windowStart && idx <= windowEnd) continue; // in window — keep
+                if (protectDisplayed && idx == _displayedChunkIdx) continue;
+                UnloadChunk(state, idx);
             }
 
-            if (_maxChunksInMemory > 0 && state.loadedChunks.Count > _maxChunksInMemory)
-                EvictDistantChunks(state, chunkIndex);
-        }
-
-        private void EvictDistantChunks(DataState state, int currentChunk)
-        {
-            _evictCandidates.Clear();
-            _evictCandidates.AddRange(state.loadedChunks);
-            _evictCandidates.Sort((a, b) =>
-                Mathf.Abs(a - currentChunk).CompareTo(Mathf.Abs(b - currentChunk)));
-
-            for (int i = _maxChunksInMemory; i < _evictCandidates.Count; i++)
-                UnloadChunk(state, _evictCandidates[i]);
+            // --- Load anything in the window that isn't loaded or loading ---
+            for (int offset = 0; offset <= effectiveAhead; offset++)
+            {
+                int target = chunkIndex + offset;
+                if (target >= totalChunks) break;
+                if (state.loadedChunks.Contains(target)) continue;
+                if (state.loadingChunks.Contains(target)) continue;
+                LoadChunk(state, target);
+            }
         }
 
         private void UnloadChunk(DataState state, int chunkIndex)
@@ -420,11 +503,51 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
             if (state.chunkHandles.TryGetValue(chunkIndex, out var handle))
             {
+                // Releasing an in-flight handle cancels the download and causes
+                // the tracking coroutine's IsValid() check to fail, preventing
+                // the OnChunkTexturesLoaded callback from firing.
                 if (handle.IsValid()) Addressables.Release(handle);
                 state.chunkHandles.Remove(chunkIndex);
             }
 
             state.loadedChunks.Remove(chunkIndex);
+            state.loadingChunks.Remove(chunkIndex); // also cancel in-flight loads
+
+            if (state.referenceSpriteChunkIdx == chunkIndex)
+                RecreateReferenceSprite(state);
+        }
+
+        /// <summary>
+        /// Recreate the reference sprite from any currently loaded chunk.
+        /// Called when the chunk that originally provided the sprite's texture is evicted.
+        /// </summary>
+        private void RecreateReferenceSprite(DataState state)
+        {
+            if (state.referenceSprite != null)
+            {
+                Object.DestroyImmediate(state.referenceSprite);
+                state.referenceSprite = null;
+            }
+            state.referenceSpriteChunkIdx = -1;
+
+            // Find any loaded chunk to create a new reference sprite from
+            foreach (var kvp in state.chunkTextures)
+            {
+                if (kvp.Value != null && kvp.Value.Count > 0)
+                {
+                    var tex = kvp.Value[0];
+                    state.referenceSprite = Sprite.Create(
+                        tex,
+                        new Rect(0, 0, tex.width, tex.height),
+                        new Vector2(0.5f, 0.5f),
+                        state.data.spritePixelsPerUnit);
+                    state.referenceSpriteChunkIdx = kvp.Key;
+
+                    if (_boundRenderer != null)
+                        _boundRenderer.SetReferenceSprite(state.referenceSprite);
+                    break;
+                }
+            }
         }
 
         // ----------------------------------------------------------------

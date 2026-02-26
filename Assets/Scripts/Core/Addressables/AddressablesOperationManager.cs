@@ -88,6 +88,16 @@ namespace SickOfIt.Core.Addressables
             StartCoroutine(LoadLabelWithHandleAsync<T>(label, onComplete));
         }
 
+        /// <summary>
+        /// Same as LoadLabelWithHandle but also outputs the raw AsyncOperationHandle
+        /// immediately so the caller can release it to cancel an in-flight load.
+        /// </summary>
+        public void LoadLabelWithHandle<T>(string label, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete, out AsyncOperationHandle<IList<T>> immediateHandle) where T : UnityEngine.Object
+        {
+            immediateHandle = AddressablesAPI.LoadAssetsAsync<T>(label, null);
+            StartCoroutine(LoadLabelWithHandleTrackingAsync<T>(label, immediateHandle, onComplete));
+        }
+
         public void LoadAsset<T>(string address, System.Action<T> onComplete) where T : UnityEngine.Object
         {
             StartCoroutine(LoadAssetAsync<T>(address, onComplete));
@@ -389,10 +399,53 @@ namespace SickOfIt.Core.Addressables
 
             var loadHandle = AddressablesAPI.LoadAssetsAsync<T>(label, null);
 
+            yield return TrackLoadProgressAsync<T>(label, loadHandle);
+
+            bool success = loadHandle.IsValid() && loadHandle.Status == AsyncOperationStatus.Succeeded;
+            if (success) Log($"Loaded typed label '{label}<{typeof(T).Name}>' ({loadHandle.Result.Count} assets) - returning handle");
+            else if (loadHandle.IsValid()) Debug.LogError($"Failed to load typed label '{label}<{typeof(T).Name}>': {loadHandle.OperationException}");
+
+            inProgressTypedLabelLoads[key] = false;
+            activeOperations.Remove($"LoadTypedWithHandle: {label}<{typeof(T).Name}>");
+
+            // Return both handle and result
+            onComplete?.Invoke(loadHandle, success ? loadHandle.Result : null);
+        }
+
+        /// <summary>
+        /// Variant that tracks a pre-created handle (used by the out-handle overload).
+        /// </summary>
+        private IEnumerator LoadLabelWithHandleTrackingAsync<T>(string label, AsyncOperationHandle<IList<T>> loadHandle, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete) where T : UnityEngine.Object
+        {
+            string key = $"{label}+{typeof(T).Name}";
+
+            inProgressTypedLabelLoads[key] = true;
+            activeOperations.Add($"LoadTypedWithHandle: {label}<{typeof(T).Name}>");
+            Log($"Loading typed label '{label}' as <{typeof(T).Name}> (returning handle)...");
+
+            yield return TrackLoadProgressAsync<T>(label, loadHandle);
+
+            bool success = loadHandle.IsValid() && loadHandle.Status == AsyncOperationStatus.Succeeded;
+            if (success) Log($"Loaded typed label '{label}<{typeof(T).Name}>' ({loadHandle.Result.Count} assets) - returning handle");
+            else if (loadHandle.IsValid()) Debug.LogError($"Failed to load typed label '{label}<{typeof(T).Name}>': {loadHandle.OperationException}");
+
+            inProgressTypedLabelLoads[key] = false;
+            activeOperations.Remove($"LoadTypedWithHandle: {label}<{typeof(T).Name}>");
+
+            // Handle may have been released externally (caller cancelled) — guard
+            if (loadHandle.IsValid())
+                onComplete?.Invoke(loadHandle, success ? loadHandle.Result : null);
+        }
+
+        /// <summary>
+        /// Shared progress-tracking loop for label loads.
+        /// </summary>
+        private IEnumerator TrackLoadProgressAsync<T>(string label, AsyncOperationHandle<IList<T>> loadHandle) where T : UnityEngine.Object
+        {
             float elapsed = 0f;
             float lastProgress = 0f;
 
-            while (!loadHandle.IsDone)
+            while (loadHandle.IsValid() && !loadHandle.IsDone)
             {
                 if (loadHandle.PercentComplete > lastProgress + 0.1f)
                 {
@@ -409,16 +462,6 @@ namespace SickOfIt.Core.Addressables
 
                 yield return null;
             }
-
-            bool success = loadHandle.Status == AsyncOperationStatus.Succeeded;
-            if (success) Log($"Loaded typed label '{label}<{typeof(T).Name}>' ({loadHandle.Result.Count} assets) - returning handle");
-            else Debug.LogError($"Failed to load typed label '{label}<{typeof(T).Name}>': {loadHandle.OperationException}");
-
-            inProgressTypedLabelLoads[key] = false;
-            activeOperations.Remove($"LoadTypedWithHandle: {label}<{typeof(T).Name}>");
-
-            // Return both handle and result
-            onComplete?.Invoke(loadHandle, success ? loadHandle.Result : null);
         }
 
         private IEnumerator LoadAssetAsync<T>(string address, System.Action<T> onComplete) where T : UnityEngine.Object

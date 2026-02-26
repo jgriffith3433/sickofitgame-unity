@@ -15,12 +15,12 @@ namespace SickOfIt.VideoFrameExtractor.Editor
     public class SpriteFrameClipEditor : UnityEditor.Editor
     {
         private SerializedProperty spriteFramesDataProp;
-        private SerializedProperty loopProp;
+        private SerializedProperty endBehaviourProp;
 
         private void OnEnable()
         {
             spriteFramesDataProp = serializedObject.FindProperty("spriteFramesData");
-            loopProp = serializedObject.FindProperty("loop");
+            endBehaviourProp = serializedObject.FindProperty("endBehaviour");
         }
 
         public override void OnInspectorGUI()
@@ -28,7 +28,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
             serializedObject.Update();
 
             EditorGUILayout.PropertyField(spriteFramesDataProp, new GUIContent("Sprite Frames Data"));
-            EditorGUILayout.PropertyField(loopProp, new GUIContent("Loop"));
+            EditorGUILayout.PropertyField(endBehaviourProp, new GUIContent("Playback Mode"));
 
             var clip = target as SpriteFrameClip;
             if (clip != null && clip.SpriteFramesData != null)
@@ -58,21 +58,28 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                     }
                 }
 
-                if (clip.Loop)
+                switch (clip.EndBehaviour)
                 {
-                    EditorGUILayout.HelpBox(
-                        "Looping: Extend this clip on the Timeline to repeat the animation. " +
-                        "Each cycle plays all frames once.",
-                        MessageType.Info
-                    );
-                }
-                else
-                {
-                    EditorGUILayout.HelpBox(
-                        "Non-looping: Resize this clip on the Timeline to change playback speed. " +
-                        $"Default = 30 FPS ({defaultDuration:F2}s). Stretch = slower, shrink = faster.",
-                        MessageType.Info
-                    );
+                    case SpriteFrameEndBehaviour.Loop:
+                        EditorGUILayout.HelpBox(
+                            "Loop: Extend this clip on the Timeline to repeat the animation. " +
+                            "Each cycle plays all frames once at native FPS.",
+                            MessageType.Info);
+                        break;
+
+                    case SpriteFrameEndBehaviour.Hold:
+                        EditorGUILayout.HelpBox(
+                            "Hold: Plays the animation once at native FPS (30), then freezes " +
+                            "on the last frame. Extend the clip to hold the final pose longer.",
+                            MessageType.Info);
+                        break;
+
+                    default: // Speed
+                        EditorGUILayout.HelpBox(
+                            "Speed: Resize this clip on the Timeline to change playback speed. " +
+                            $"Default = 30 FPS ({defaultDuration:F2}s). Stretch = slower, shrink = faster.",
+                            MessageType.Info);
+                        break;
                 }
             }
             else
@@ -80,7 +87,12 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 EditorGUILayout.HelpBox("Assign a SpriteFramesData asset to configure this clip.", MessageType.Warning);
             }
 
-            serializedObject.ApplyModifiedProperties();
+            if (serializedObject.ApplyModifiedProperties())
+            {
+                // Changing the playback mode affects clipCaps; force the Timeline
+                // to re-evaluate so the clip immediately reflects the new mode.
+                TimelineEditor.Refresh(RefreshReason.ContentsModified);
+            }
         }
 
         /// <summary>
