@@ -563,6 +563,11 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             foreach (var kvp in _states)
             {
                 var state = kvp.Value;
+                int loaded = state.loadedChunks.Count;
+                int loading = state.loadingChunks.Count;
+                int handles = state.chunkHandles.Count;
+                Debug.Log($"[SpriteFrameMixer] ReleaseAllChunks '{state.data.name}': " +
+                    $"{loaded} loaded, {loading} loading, {handles} handles to release");
 
                 state.chunkTextures.Clear();
 

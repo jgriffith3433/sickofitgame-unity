@@ -165,6 +165,11 @@ namespace SickOfIt.Core.Addressables
                         // ReleaseAllResources() uses DestroyImmediate to sever references immediately.
                         ReleaseFrameSequencePlayerResources(previousScene);
 
+                        // Stop and destroy all PlayableDirector playable graphs so that
+                        // PlayableBehaviour native allocations (mixer state, etc.) are freed
+                        // before the new scene loads.
+                        DestroyPlayableDirectorGraphs(previousScene);
+
                         // Hide previous scene's content (behind loading screen anyway)
                         DeactivateSceneContent(previousScene);
                     }
@@ -173,7 +178,23 @@ namespace SickOfIt.Core.Addressables
                     AddressablesOperationManager.Instance.ReleaseAllSceneAssetHandles(currentGameplayScene);
                     AddressablesOperationManager.Instance.ReleaseAllSceneAssetHandles("");
 
-                    // Reclaim texture memory NOW, before the new scene's bundle is loaded.
+                    // Cancel in-flight label-load tracking coroutines on AddressablesOperationManager.
+                    // Their chunk handles were already released by ReleaseAllChunks, but the
+                    // coroutine state-machines still hold stale AsyncOperationHandle copies
+                    // that can prevent the GC from collecting the underlying operation objects.
+                    AddressablesOperationManager.Instance.CancelAllLabelLoads();
+
+                    // --- First cleanup pass ---
+                    yield return Resources.UnloadUnusedAssets();
+                    System.GC.Collect();
+
+                    // Yield a frame so the engine can process deferred native deallocations
+                    // (texture upload buffers, GL resource cleanup, bundle unload finalization).
+                    yield return null;
+
+                    // --- Second cleanup pass ---
+                    // Catches assets that only became unused after the first pass freed their
+                    // dependants (e.g., materials no longer referencing destroyed textures).
                     yield return Resources.UnloadUnusedAssets();
                     System.GC.Collect();
 
@@ -394,6 +415,33 @@ namespace SickOfIt.Core.Addressables
             if (released > 0)
             {
                 Debug.Log($"[AddressablesSceneLoader] Released resources for {released} IFrameSequencePlayer(s) in scene '{scene.name}'");
+            }
+        }
+
+        /// <summary>
+        /// Stop all PlayableDirectors in the scene and destroy their playable graphs.
+        /// This frees native mixer/playable allocations immediately rather than waiting
+        /// for scene unload, reducing peak WASM memory during the transition.
+        /// </summary>
+        private void DestroyPlayableDirectorGraphs(Scene scene)
+        {
+            int destroyed = 0;
+            foreach (GameObject rootObj in scene.GetRootGameObjects())
+            {
+                var directors = rootObj.GetComponentsInChildren<UnityEngine.Playables.PlayableDirector>(true);
+                foreach (var director in directors)
+                {
+                    if (director != null && director.playableGraph.IsValid())
+                    {
+                        director.Stop();
+                        director.playableGraph.Destroy();
+                        destroyed++;
+                    }
+                }
+            }
+            if (destroyed > 0)
+            {
+                Debug.Log($"[AddressablesSceneLoader] Destroyed {destroyed} PlayableDirector graph(s) in scene '{scene.name}'");
             }
         }
     }

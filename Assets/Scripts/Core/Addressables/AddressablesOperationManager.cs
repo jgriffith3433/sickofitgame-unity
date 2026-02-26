@@ -246,6 +246,31 @@ namespace SickOfIt.Core.Addressables
             Log($"[SCENE] Transition complete: {currentSceneName}");
         }
 
+        /// <summary>
+        /// Cancel all in-progress label/typed-label/asset load coroutines.
+        /// Called during scene transitions AFTER IFrameSequencePlayer resources
+        /// have been released, to stop lingering tracking coroutines that hold
+        /// stale AsyncOperationHandle copies in their state machines.
+        /// Scene load coroutines are NOT affected (they run on AddressablesSceneLoader).
+        /// </summary>
+        public void CancelAllLabelLoads()
+        {
+            // Stop ALL coroutines on this MonoBehaviour. This is safe because
+            // this is only called during the pre-release phase BEFORE the new
+            // scene load starts (scene load coroutines are on AddressablesSceneLoader).
+            StopAllCoroutines();
+
+            int cancelled = inProgressTypedLabelLoads.Count + inProgressLabelLoads.Count + inProgressAssetLoads.Count;
+            inProgressLabelLoads.Clear();
+            inProgressTypedLabelLoads.Clear();
+            inProgressAssetLoads.Clear();
+            pendingLabelLoadCallbacks.Clear();
+            activeOperations.Clear();
+
+            if (cancelled > 0)
+                Log($"[SCENE] Cancelled {cancelled} in-progress label load coroutine(s) for scene transition");
+        }
+
         #endregion
 
         #region Implementation
