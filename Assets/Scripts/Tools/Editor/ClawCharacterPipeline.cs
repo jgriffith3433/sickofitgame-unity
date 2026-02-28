@@ -262,7 +262,7 @@ namespace SickOfIt.Tools.Editor
         // =====================================================================
 
         /// <summary>
-        /// Create an enemy prefab with SpriteRenderer, Animator, and enemy script.
+        /// Create an enemy prefab with proper structure: Root(Enemy tag/layer) → Sprite + Shadow + HealthBarContainer
         /// </summary>
         /// <param name="enemyName">Name of the enemy</param>
         /// <param name="controllerPath">Path to the .controller asset</param>
@@ -283,11 +283,33 @@ namespace SickOfIt.Tools.Editor
                 AssetDatabase.Refresh();
             }
 
-            // Create root GameObject
-            var go = new GameObject(enemyName);
+            // Create root GameObject with proper tag and layer
+            var root = new GameObject(enemyName);
+            root.tag = "Enemy";
+            
+            // Set Enemy layer if it exists
+            int enemyLayer = LayerMask.NameToLayer("Enemy");
+            if (enemyLayer != -1)
+            {
+                root.layer = enemyLayer;
+            }
 
-            // Add SpriteRenderer
-            var sr = go.AddComponent<SpriteRenderer>();
+            // Add physics components to root
+            var rb = root.AddComponent<Rigidbody2D>();
+            rb.gravityScale = 0;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+            
+            var collider = root.AddComponent<BoxCollider2D>();
+            collider.size = new Vector2(3f, 3f); // Larger collider based on feedback
+
+            // Create Sprite child GameObject
+            var spriteChild = new GameObject("Sprite");
+            spriteChild.transform.SetParent(root.transform);
+            spriteChild.transform.localPosition = Vector3.zero;
+            
+            var sr = spriteChild.AddComponent<SpriteRenderer>();
+            sr.sortingLayerName = "Default";
+            sr.sortingOrder = 1;
 
             // Set initial sprite from idle sheet
             var sprites = AssetDatabase.LoadAllAssetsAtPath(idleSpriteSheetPath)
@@ -299,21 +321,39 @@ namespace SickOfIt.Tools.Editor
                 sr.sprite = sprites[0];
             }
 
-            // Add Animator
-            var animator = go.AddComponent<Animator>();
+            // Add Animator to sprite child
+            var animator = spriteChild.AddComponent<Animator>();
             var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controllerPath);
             if (controller != null)
             {
                 animator.runtimeAnimatorController = controller;
             }
-
-            // Add Collider2D
-            var collider = go.AddComponent<BoxCollider2D>();
-
-            // Add Rigidbody2D
-            var rb = go.AddComponent<Rigidbody2D>();
-            rb.gravityScale = 0;
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+            
+            // Create Shadow child
+            var shadowChild = new GameObject("Shadow");
+            shadowChild.transform.SetParent(root.transform);
+            shadowChild.transform.localPosition = new Vector3(0, -1.5f, 0);
+            shadowChild.transform.localScale = new Vector3(1.2f, 0.3f, 1f); // Oval shadow
+            
+            var shadowRenderer = shadowChild.AddComponent<SpriteRenderer>();
+            shadowRenderer.color = new Color(0, 0, 0, 0.3f); // Semi-transparent black
+            shadowRenderer.sortingOrder = -1;
+            if (sprites.Length > 0)
+            {
+                shadowRenderer.sprite = sprites[0]; // Use same sprite but darkened
+            }
+            
+            // Create HealthBarContainer child
+            var healthBarContainer = new GameObject("HealthBarContainer");
+            healthBarContainer.transform.SetParent(root.transform);
+            healthBarContainer.transform.localPosition = new Vector3(0, 2f, 0);
+            
+            // Add Canvas for health bar UI
+            var canvas = healthBarContainer.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.WorldSpace;
+            
+            var canvasScaler = healthBarContainer.AddComponent<UnityEngine.UI.CanvasScaler>();
+            canvasScaler.dynamicPixelsPerUnit = 100f;
 
             // Add enemy script by type name (avoids assembly reference to SickOfIt.Combat)
             string[] searchNamespaces = {
@@ -344,7 +384,21 @@ namespace SickOfIt.Tools.Editor
 
             if (enemyScriptType != null && typeof(MonoBehaviour).IsAssignableFrom(enemyScriptType))
             {
-                go.AddComponent(enemyScriptType);
+                var enemyScript = root.AddComponent(enemyScriptType);
+                
+                // Try to set PlayerLayer field if it exists
+                var playerLayerField = enemyScriptType.GetField("PlayerLayer", 
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                if (playerLayerField != null && playerLayerField.FieldType == typeof(LayerMask))
+                {
+                    int playerLayer = LayerMask.NameToLayer("Player");
+                    if (playerLayer != -1)
+                    {
+                        LayerMask playerLayerMask = 1 << playerLayer;
+                        playerLayerField.SetValue(enemyScript, playerLayerMask);
+                        Debug.Log($"[ClawPipeline] Set PlayerLayer field to layer {playerLayer}");
+                    }
+                }
             }
             else
             {
@@ -354,10 +408,11 @@ namespace SickOfIt.Tools.Editor
             // Save as prefab
             string prefabPath = $"{outputDir}/{enemyName}.prefab";
             prefabPath = AssetDatabase.GenerateUniqueAssetPath(prefabPath);
-            PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
-            Object.DestroyImmediate(go);
+            PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+            Object.DestroyImmediate(root);
 
-            Debug.Log($"[ClawPipeline] Created enemy prefab: {prefabPath} (type={enemyType})");
+            Debug.Log($"[ClawPipeline] Created improved enemy prefab: {prefabPath} (type={enemyType})");
+            Debug.Log($"[ClawPipeline] Structure: Root(Enemy tag/layer) → Sprite(SpriteRenderer+Animator) + Shadow + HealthBarContainer");
             return prefabPath;
         }
 

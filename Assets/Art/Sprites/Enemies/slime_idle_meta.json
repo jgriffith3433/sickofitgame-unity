@@ -1,0 +1,14 @@
+{
+  "name": "slime",
+  "animation": "idle",
+  "frameCount": 8,
+  "columns": 4,
+  "rows": 2,
+  "frameWidth": 400,
+  "frameHeight": 400,
+  "sheetWidth": 1600,
+  "sheetHeight": 800,
+  "spriteSheetFile": "slime_idle.png",
+  "fps": 12,
+  "loop": true
+}
