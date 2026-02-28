@@ -60,6 +60,10 @@ namespace SickOfIt.Core.Flow
 
         public void LoadLevel(int levelNumber)
         {
+            // Store level number for LevelRuntime to read on scene load
+            PlayerPrefs.SetInt("CurrentLevelNumber", levelNumber);
+            PlayerPrefs.Save();
+
             string sceneName = $"Level{levelNumber}";
 
             // Set current scene for memory management

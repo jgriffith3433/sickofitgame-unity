@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Combat.Enemies
 {
@@ -40,6 +41,13 @@ namespace SickOfIt.Combat.Enemies
 
         private bool isWalking = false;
         private float nextStateChangeTime;
+
+        public override void InitializeFromConfig(EnemyTemplate template, EnemySpawnConfig spawn)
+        {
+            base.InitializeFromConfig(template, spawn);
+            attackRange = template.attackRange;
+            attackDamage = template.contactDamage;
+        }
 
         protected override void Awake()
         {

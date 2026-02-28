@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using MobileControllerFramework;
 using SickOfIt.Core.Addressables;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Core.Input
 {
@@ -151,8 +152,32 @@ namespace SickOfIt.Core.Input
         
         #region Unity Lifecycle
         
+        /// <summary>
+        /// Apply stats from PlayerConfig. Called early in Awake.
+        /// Serialized fields act as defaults; config overrides them.
+        /// </summary>
+        private void ApplyPlayerConfig()
+        {
+            var gd = GameDefinition.Instance;
+            if (gd == null) return;
+
+            var cfg = gd.player;
+            moveSpeed = cfg.moveSpeed;
+            jumpForce = cfg.jumpForce;
+            gravityScale = cfg.gravityScale;
+            groundCheckDistance = cfg.groundCheckDistance;
+            groundCheckWidth = cfg.groundCheckWidth;
+            enableShooting = cfg.enableShooting;
+            fireRate = cfg.fireRate;
+            projectileSpeed = cfg.projectileSpeed;
+            projectileLifetime = cfg.projectileLifetime;
+            if (!string.IsNullOrEmpty(cfg.projectileAddress))
+                projectileAddress = cfg.projectileAddress;
+        }
+
         private void Awake()
         {
+            ApplyPlayerConfig();
             rb = GetComponent<Rigidbody2D>();
             col = GetComponent<Collider2D>();
             playerLayer = gameObject.layer;

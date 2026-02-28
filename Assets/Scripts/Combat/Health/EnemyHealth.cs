@@ -43,6 +43,15 @@ namespace SickOfIt.Combat.Health
         public bool IsAlive => currentHealth > 0;
         public bool IsInvincible => invincibilityTimer > 0;
 
+        /// <summary>
+        /// Set max health (and reset current health). Call before Awake or immediately after Instantiate.
+        /// </summary>
+        public void SetMaxHealth(int health)
+        {
+            maxHealth = health;
+            currentHealth = health;
+        }
+
         private void Awake()
         {
             currentHealth = maxHealth;

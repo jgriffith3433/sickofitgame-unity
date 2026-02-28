@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using SickOfIt.Combat.Damage;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Combat.Enemies
 {
@@ -75,6 +76,13 @@ namespace SickOfIt.Combat.Enemies
         private bool isLaserReady = false;
 
         // ── Unity lifecycle ───────────────────────────────────────────────────────
+
+        public override void InitializeFromConfig(EnemyTemplate template, EnemySpawnConfig spawn)
+        {
+            base.InitializeFromConfig(template, spawn);
+            standingAttackDamage = template.contactDamage;
+            standingAttackRange = template.attackRange;
+        }
 
         protected override void Awake()
         {

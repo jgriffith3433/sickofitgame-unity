@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.gamelovers.mcp-unity": "https://github.com/CoderGamester/mcp-unity.git",
+    "com.gamelovers.mcp-unity": "file:com.gamelovers.mcp-unity",
     "com.unity.2d.enhancers": "1.0.0",
     "com.unity.addressables": "2.8.1",
     "com.unity.ai.assistant": "1.6.0-pre.2",

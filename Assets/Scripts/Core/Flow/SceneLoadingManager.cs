@@ -67,18 +67,15 @@ namespace SickOfIt.Core.Flow
 
             if (isLoading)
             {
-                Debug.Log("[MOBILE DEBUG] SceneLoadingManager: Already loading, skipping UI activation");
                 return; // Already loading
             }
 
             isLoading = true;
-            Debug.Log("[MOBILE DEBUG] SceneLoadingManager: Showing loading UI");
             Debug.Log($"[SceneLoadingManager] Set isLoading = true");
 
             // Activate loading indicators
             if (objectsToActivateOnLoad != null)
             {
-                Debug.Log($"[MOBILE DEBUG] Activating {objectsToActivateOnLoad.Count} loading UI objects");
                 Debug.Log($"[SceneLoadingManager] objectsToActivateOnLoad count: {objectsToActivateOnLoad.Count}");
 
                 foreach (var obj in objectsToActivateOnLoad)
@@ -87,7 +84,6 @@ namespace SickOfIt.Core.Flow
                     {
                         Debug.Log($"[SceneLoadingManager] Activating object: {obj.name}, currently active: {obj.activeSelf}");
                         obj.SetActive(true);
-                        Debug.Log($"[MOBILE DEBUG] Activated: {obj.name}");
                         Debug.Log($"[SceneLoadingManager] Object {obj.name} now active: {obj.activeSelf}");
                     }
                     else
@@ -98,14 +94,12 @@ namespace SickOfIt.Core.Flow
             }
             else
             {
-                Debug.LogWarning("[MOBILE DEBUG] No loading objects to activate!");
                 Debug.LogWarning($"[SceneLoadingManager] objectsToActivateOnLoad is NULL!");
             }
 
             // Deactivate menu UI
             if (objectsToDeactivateOnLoad != null)
             {
-                Debug.Log($"[MOBILE DEBUG] Deactivating {objectsToDeactivateOnLoad.Count} menu UI objects");
                 Debug.Log($"[SceneLoadingManager] objectsToDeactivateOnLoad count: {objectsToDeactivateOnLoad.Count}");
 
                 foreach (var obj in objectsToDeactivateOnLoad)
@@ -147,10 +141,8 @@ namespace SickOfIt.Core.Flow
         /// </summary>
         public void LoadVideo(int videoNumber)
         {
-            Debug.Log($"[MOBILE DEBUG] SceneLoadingManager.LoadVideo({videoNumber}) called");
             Debug.Log($"[SceneLoadingManager] LoadVideo({videoNumber}) called");
             ShowLoadingUI();
-            Debug.Log($"[MOBILE DEBUG] Calling SceneTransitionManager.LoadVideo({videoNumber})");
             Debug.Log($"[SceneLoadingManager] Calling SceneTransitionManager.LoadVideo({videoNumber})");
             SceneTransitionManager.Instance.LoadVideo(videoNumber);
             Debug.Log($"[SceneLoadingManager] LoadVideo({videoNumber}) completed (scene load initiated)");

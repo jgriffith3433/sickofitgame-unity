@@ -1,6 +1,7 @@
 using UnityEngine;
 using SickOfIt.Combat.Health;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Combat.Enemies
 {
@@ -44,6 +45,33 @@ namespace SickOfIt.Combat.Enemies
         protected Rigidbody2D rb;
         protected EnemyHealth enemyHealth;
         protected AudioSource audioSource;
+
+        /// <summary>
+        /// Initialize this enemy from a template + spawn config.
+        /// Called by LevelRuntime after instantiation.
+        /// Override fields (> 0) replace template defaults.
+        /// </summary>
+        public virtual void InitializeFromConfig(EnemyTemplate template, EnemySpawnConfig spawn)
+        {
+            moveSpeed = spawn.speedOverride > 0 ? spawn.speedOverride : template.defaultMoveSpeed;
+            contactDamage = template.contactDamage;
+            detectionRange = spawn.detectionRangeOverride > 0 ? spawn.detectionRangeOverride : template.detectionRange;
+
+            // Audio
+            if (template.hurtSounds != null && template.hurtSounds.Length > 0)
+                hurtSounds = template.hurtSounds;
+            if (template.deathSounds != null && template.deathSounds.Length > 0)
+                deathSounds = template.deathSounds;
+            hurtSoundHealthThreshold = template.hurtSoundHealthThreshold;
+            pitchVariation = template.pitchVariation;
+
+            // Drops
+            if (template.pointsPickupPrefab != null)
+                pointsPickupPrefab = template.pointsPickupPrefab;
+            dropChance = template.dropChance;
+            dropPointsValue = template.dropPointsValue;
+            dropCount = template.dropCount;
+        }
 
         protected virtual void Awake()
         {

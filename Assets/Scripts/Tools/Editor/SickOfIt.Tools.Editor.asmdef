@@ -2,6 +2,7 @@
   "name": "SickOfIt.Tools.Editor",
   "rootNamespace": "SickOfIt.Tools.Editor",
   "references": [
+    "SickOfIt.Data",
     "Unity.Addressables",
     "Unity.Addressables.Editor"
   ],

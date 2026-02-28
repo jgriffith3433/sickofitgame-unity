@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using SickOfIt.Combat.Damage;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Combat.Enemies
 {
@@ -38,6 +39,21 @@ namespace SickOfIt.Combat.Enemies
         private float lastAttackTime;
 
         private static readonly int ParamIsAttacking = Animator.StringToHash("IsAttacking");
+
+        public override void InitializeFromConfig(EnemyTemplate template, EnemySpawnConfig spawn)
+        {
+            base.InitializeFromConfig(template, spawn);
+            projectileSpeed = template.projectileSpeed;
+            projectileAddress = template.projectileAddress;
+            attackInterval = spawn.fireRateOverride > 0 ? spawn.fireRateOverride : template.fireRate;
+
+            // Apply shoot direction
+            if (spawn.shootDirection != ShootDirection.AtPlayer)
+            {
+                shootInFixedDirection = true;
+                fixedShootDirection = spawn.shootDirection == ShootDirection.Left ? Vector2.left : Vector2.right;
+            }
+        }
 
         protected override void Awake()
         {

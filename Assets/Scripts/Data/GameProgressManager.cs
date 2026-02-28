@@ -7,8 +7,7 @@ namespace SickOfIt.Data
     /// </summary>
     public class GameProgressManager : MonoBehaviour
     {
-        [Header("Game Configuration")]
-        [SerializeField] private GameConfiguration gameConfiguration;
+        private GameDefinition gameDefinition;
         
         private static GameProgressManager _instance;
         public static GameProgressManager Instance
@@ -34,6 +33,7 @@ namespace SickOfIt.Data
             }
             _instance = this;
             DontDestroyOnLoad(gameObject);
+            gameDefinition = GameDefinition.Instance;
         }
 
         // Level Management
@@ -100,12 +100,16 @@ namespace SickOfIt.Data
 
         public int GetTotalLevels()
         {
-            if (gameConfiguration == null)
+            if (gameDefinition == null)
             {
-                Debug.LogError("[GameProgressManager] GameConfiguration is not assigned!");
-                return 1;
+                gameDefinition = GameDefinition.Instance;
+                if (gameDefinition == null)
+                {
+                    Debug.LogError("[GameProgressManager] GameDefinition not found in Resources!");
+                    return 1;
+                }
             }
-            return gameConfiguration.TotalLevels;
+            return gameDefinition.TotalLevels;
         }
 
         public bool HasBeatenGame()

@@ -13,8 +13,8 @@ namespace SickOfIt.Core.Progression
     /// </summary>
     public class LevelSelectionManager : MonoBehaviour
     {
-        [Header("Settings")]
-        [SerializeField] private GameConfiguration gameConfiguration;
+        // Game definition loaded from Resources
+        private GameDefinition gameDefinition;
 
         [Header("UI References")]
         [SerializeField] private Transform levelButtonContainer; // Parent object for level buttons
@@ -30,6 +30,7 @@ namespace SickOfIt.Core.Progression
 
         private void Start()
         {
+            gameDefinition = GameDefinition.Instance;
             GenerateLevelButtons();
             UpdateCumulativeHealthDisplay();
 
@@ -39,10 +40,10 @@ namespace SickOfIt.Core.Progression
 
         private void UpdateCumulativeHealthDisplay()
         {
-            if (cumulativeHealthText != null && gameConfiguration != null)
+            if (cumulativeHealthText != null && gameDefinition != null)
             {
                 int maxHealth = RogueliteManager.Instance.GetMaxHealth();
-                int cumulativeHealth = RogueliteManager.Instance.GetCumulativeHealth(gameConfiguration.TotalLevels);
+                int cumulativeHealth = RogueliteManager.Instance.GetCumulativeHealth(gameDefinition.TotalLevels);
                 cumulativeHealthText.text = $"Yooba's Health: {cumulativeHealth} / {maxHealth}";
             }
         }
@@ -55,9 +56,9 @@ namespace SickOfIt.Core.Progression
                 return;
             }
 
-            if (gameConfiguration == null)
+            if (gameDefinition == null)
             {
-                Debug.LogError("LevelSelectionManager: GameConfiguration is not assigned!");
+                Debug.LogError("LevelSelectionManager: GameDefinition not found in Resources!");
                 return;
             }
 
@@ -70,7 +71,7 @@ namespace SickOfIt.Core.Progression
             int highestReached = GameProgressManager.Instance.GetHighestLevelReached();
 
             // Create buttons for each level
-            for (int i = 1; i <= gameConfiguration.TotalLevels; i++)
+            for (int i = 1; i <= gameDefinition.TotalLevels; i++)
             {
                 int levelNumber = i; // Capture for lambda
 
