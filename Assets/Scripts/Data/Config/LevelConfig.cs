@@ -33,6 +33,16 @@ namespace SickOfIt.Data.Config
         public Vector2 levelBounds = new Vector2(10f, 6f);
         public List<PlatformConfig> platforms = new List<PlatformConfig>();
 
+        [Header("Barriers")]
+        [Tooltip("Generate invisible boundary colliders around the camera viewport")]
+        public bool generateBarriers = true;
+        [Tooltip("Thickness of each barrier collider (in world units)")]
+        public float barrierThickness = 1f;
+        [Tooltip("If true, also add a floor barrier at the bottom of the viewport")]
+        public bool barrierOnBottom = true;
+        [Tooltip("If true, also add a ceiling barrier at the top of the viewport")]
+        public bool barrierOnTop = true;
+
         [Header("Enemies")]
         public List<EnemySpawnConfig> enemies = new List<EnemySpawnConfig>();
 

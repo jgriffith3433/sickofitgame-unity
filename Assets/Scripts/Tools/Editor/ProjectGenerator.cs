@@ -41,7 +41,7 @@ namespace SickOfIt.Tools.Editor
             
             // Generate the 3 simple scenes
             GenerateVideoScene();
-            GenerateLevelScene();
+            GenerateLevelScene(gd);
             GenerateDeathScene();
             
             // Setup Addressables
@@ -113,6 +113,8 @@ namespace SickOfIt.Tools.Editor
             if (camera != null)
             {
                 camera.transform.position = new Vector3(0, 0, -10f);
+                camera.orthographic = true;
+                camera.orthographicSize = 2.8f;
                 camera.backgroundColor = Color.black;
                 camera.gameObject.name = "Main Camera";
             }
@@ -135,7 +137,7 @@ namespace SickOfIt.Tools.Editor
             Debug.Log("✅ Created: Video.unity");
         }
         
-        private static void GenerateLevelScene()
+        private static void GenerateLevelScene(GameDefinition gd)
         {
             Debug.Log("Generating Level.unity...");
             string scenePath = $"{SCENES_ROOT}/Level.unity";
@@ -148,6 +150,8 @@ namespace SickOfIt.Tools.Editor
             if (camera != null)
             {
                 camera.transform.position = new Vector3(0, 0, -10f);
+                camera.orthographic = true;
+                camera.orthographicSize = 2.8f;
                 camera.backgroundColor = new Color(0.1f, 0.1f, 0.2f);
                 camera.gameObject.name = "Main Camera";
             }
@@ -159,11 +163,18 @@ namespace SickOfIt.Tools.Editor
             var playerSpawn = new GameObject("PlayerSpawn");
             playerSpawn.transform.SetParent(spawnsRoot.transform);
             
-            // Create player character (LevelRuntime expects this)
-            var player = new GameObject("Player");
-            player.transform.position = Vector3.zero;
-            // Note: PlayerHealth component would be added by the game's player prefab system
-            // For now just create the GameObject so LevelRuntime doesn't crash
+            // Instantiate player Character prefab from GameDefinition config
+            if (gd.player?.playerPrefab != null)
+            {
+                var player = (GameObject)PrefabUtility.InstantiatePrefab(gd.player.playerPrefab);
+                player.name = "Character";
+                player.transform.position = Vector3.zero;
+                Debug.Log($"✅ Placed Character prefab in Level scene");
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ No playerPrefab in GameDefinition.player — Level scene has no player. Assign it in GameDefinition and regenerate.");
+            }
             
             // Create music audio source
             var musicGo = new GameObject("Music");
@@ -189,6 +200,8 @@ namespace SickOfIt.Tools.Editor
             if (camera != null)
             {
                 camera.transform.position = new Vector3(0, 0, -10f);
+                camera.orthographic = true;
+                camera.orthographicSize = 2.8f;
                 camera.backgroundColor = Color.black;
                 camera.gameObject.name = "Main Camera";
             }

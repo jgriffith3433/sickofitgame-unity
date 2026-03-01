@@ -67,7 +67,7 @@ namespace SickOfIt.Tools.Editor.Generation
             cameraGo.tag = "MainCamera";
             var cam = cameraGo.AddComponent<Camera>();
             cam.orthographic = true;
-            cam.orthographicSize = 5f;
+            cam.orthographicSize = 2.8f;
             cam.backgroundColor = Color.black;
             cameraGo.AddComponent<AudioListener>();
 

@@ -129,6 +129,7 @@ namespace SickOfIt.Core.Progression
             SetupRewind();
             SpawnEnemies();
             SpawnPlatforms();
+            SpawnBarriers();
 
             // Player init
             if (playerHealth != null)
@@ -160,6 +161,7 @@ namespace SickOfIt.Core.Progression
             // Spawn the Character prefab if no player exists in the scene
             if (playerHealth == null)
             {
+                Debug.Log("[LevelRuntime] No PlayerHealth found in scene, attempting to spawn Character prefab...");
                 var characterPrefab = gameDefinition?.player?.playerPrefab;
                 if (characterPrefab != null)
                 {
@@ -171,12 +173,16 @@ namespace SickOfIt.Core.Progression
                     var player = Instantiate(characterPrefab, spawnPos, Quaternion.identity);
                     player.name = "Character";
                     playerHealth = player.GetComponent<PlayerHealth>();
-                    Debug.Log($"[LevelRuntime] Spawned Character prefab at {spawnPos}");
+                    Debug.Log($"[LevelRuntime] Spawned Character prefab at {spawnPos} (has PlayerHealth: {playerHealth != null})");
                 }
                 else
                 {
-                    Debug.LogWarning("[LevelRuntime] No playerPrefab assigned in GameDefinition.player! Player will not spawn.");
+                    Debug.LogWarning($"[LevelRuntime] No playerPrefab assigned in GameDefinition.player! (gameDefinition null: {gameDefinition == null}, player null: {gameDefinition?.player == null})");
                 }
+            }
+            else
+            {
+                Debug.Log($"[LevelRuntime] Found existing PlayerHealth on '{playerHealth.gameObject.name}'");
             }
 
             // Find music source — prefer one tagged or named "Music", fallback to any AudioSource
@@ -358,6 +364,74 @@ namespace SickOfIt.Core.Progression
                 if (platLayer >= 0)
                     go.layer = platLayer;
             }
+        }
+
+        #endregion
+
+        #region Barrier Spawning
+
+        private void SpawnBarriers()
+        {
+            if (!config.generateBarriers) return;
+
+            var cam = Camera.main;
+            if (cam == null)
+            {
+                Debug.LogWarning("[LevelRuntime] No main camera found, cannot generate barriers");
+                return;
+            }
+
+            float halfHeight = cam.orthographicSize;
+            float halfWidth = halfHeight * cam.aspect;
+            float thickness = config.barrierThickness;
+
+            var barrierContainer = new GameObject("Barriers");
+            barrierContainer.transform.SetParent(transform);
+
+            int boundaryLayer = LayerMask.NameToLayer("Boundary");
+
+            // Left barrier
+            CreateBarrier(barrierContainer.transform, "Barrier_Left",
+                new Vector3(-halfWidth - thickness * 0.5f, 0f, 0f),
+                new Vector2(thickness, halfHeight * 2f + thickness * 2f),
+                boundaryLayer);
+
+            // Right barrier
+            CreateBarrier(barrierContainer.transform, "Barrier_Right",
+                new Vector3(halfWidth + thickness * 0.5f, 0f, 0f),
+                new Vector2(thickness, halfHeight * 2f + thickness * 2f),
+                boundaryLayer);
+
+            // Top barrier
+            if (config.barrierOnTop)
+            {
+                CreateBarrier(barrierContainer.transform, "Barrier_Top",
+                    new Vector3(0f, halfHeight + thickness * 0.5f, 0f),
+                    new Vector2(halfWidth * 2f + thickness * 2f, thickness),
+                    boundaryLayer);
+            }
+
+            // Bottom barrier
+            if (config.barrierOnBottom)
+            {
+                CreateBarrier(barrierContainer.transform, "Barrier_Bottom",
+                    new Vector3(0f, -halfHeight - thickness * 0.5f, 0f),
+                    new Vector2(halfWidth * 2f + thickness * 2f, thickness),
+                    boundaryLayer);
+            }
+
+            Debug.Log($"[LevelRuntime] Spawned barriers (viewport: {halfWidth * 2:F1}x{halfHeight * 2:F1})");
+        }
+
+        private static void CreateBarrier(Transform parent, string name, Vector3 position, Vector2 size, int layer)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent);
+            go.transform.position = position;
+            if (layer >= 0) go.layer = layer;
+
+            var col = go.AddComponent<BoxCollider2D>();
+            col.size = size;
         }
 
         #endregion
