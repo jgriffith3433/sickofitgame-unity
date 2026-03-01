@@ -37,7 +37,7 @@ namespace SickOfIt.Tools.Editor.Generation
             string sceneName = config.videoName;
             string scenePath = $"{VIDEOS_FOLDER}/{sceneName}.unity";
 
-            GameBuilder.EnsureFolder(VIDEOS_FOLDER);
+            ProjectGenerator.EnsureFolder(VIDEOS_FOLDER);
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 

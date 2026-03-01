@@ -404,6 +404,22 @@ namespace SickOfIt.Tools.Editor
             }
         }
 
+        /// <summary>
+        /// Ensures a folder exists in the Asset database. Used by scene generators.
+        /// </summary>
+        public static void EnsureFolder(string path)
+        {
+            if (AssetDatabase.IsValidFolder(path)) return;
+            
+            string parent = Path.GetDirectoryName(path)?.Replace('\\', '/');
+            string folderName = Path.GetFileName(path);
+            
+            if (!string.IsNullOrEmpty(parent) && !AssetDatabase.IsValidFolder(parent))
+                EnsureFolder(parent);
+            
+            AssetDatabase.CreateFolder(parent, folderName);
+        }
+        
         private static GameDefinition LoadGameDefinition()
         {
             string[] guids = AssetDatabase.FindAssets("t:GameDefinition");

@@ -39,7 +39,7 @@ namespace SickOfIt.Tools.Editor.Generation
             string sceneName = config.levelName;
             string scenePath = $"{LEVELS_FOLDER}/{sceneName}.unity";
 
-            GameBuilder.EnsureFolder(LEVELS_FOLDER);
+            ProjectGenerator.EnsureFolder(LEVELS_FOLDER);
 
             // Create or open scene
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);

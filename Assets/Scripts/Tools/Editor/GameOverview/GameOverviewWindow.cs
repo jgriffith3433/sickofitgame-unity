@@ -149,7 +149,7 @@ namespace SickOfIt.Tools.Editor.GameOverview
 
             if (GUILayout.Button("Build Scenes", EditorStyles.toolbarButton))
             {
-                Generation.GameBuilder.BuildAllScenes();
+                ProjectGenerator.GenerateProject();
             }
 
             if (GUILayout.Button("Select Asset", EditorStyles.toolbarButton))

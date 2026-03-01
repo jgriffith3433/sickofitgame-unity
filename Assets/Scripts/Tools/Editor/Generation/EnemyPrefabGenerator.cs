@@ -65,9 +65,9 @@ namespace SickOfIt.Tools.Editor.Generation
             Debug.Log($"[EnemyPrefabGen] Found {spriteList.Count} sprites in '{spriteSheetPath}'");
 
             // Ensure output folders
-            GameBuilder.EnsureFolder(ENEMIES_PREFAB_ROOT);
-            GameBuilder.EnsureFolder(ENEMIES_ANIM_ROOT);
-            GameBuilder.EnsureFolder($"{ENEMIES_ANIM_ROOT}/{enemyName}");
+            ProjectGenerator.EnsureFolder(ENEMIES_PREFAB_ROOT);
+            ProjectGenerator.EnsureFolder(ENEMIES_ANIM_ROOT);
+            ProjectGenerator.EnsureFolder($"{ENEMIES_ANIM_ROOT}/{enemyName}");
 
             // Create animation clip
             var clip = CreateIdleClip(enemyName, spriteList, fps);
@@ -100,7 +100,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (prefab == null) return (null, null);
 
             // Create EnemyTemplate SO
-            GameBuilder.EnsureFolder("Assets/Data/EnemyTemplates");
+            ProjectGenerator.EnsureFolder("Assets/Data/EnemyTemplates");
             string templatePath = $"Assets/Data/EnemyTemplates/{enemyName}Template.asset";
 
             var template = ScriptableObject.CreateInstance<EnemyTemplate>();

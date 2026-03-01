@@ -36,7 +36,7 @@ namespace SickOfIt.Tools.Editor.Generation
             string sceneName = config.deathName;
             string scenePath = $"{DEATHS_FOLDER}/{sceneName}.unity";
 
-            GameBuilder.EnsureFolder(DEATHS_FOLDER);
+            ProjectGenerator.EnsureFolder(DEATHS_FOLDER);
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
