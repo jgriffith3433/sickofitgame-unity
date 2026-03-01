@@ -1,9 +1,9 @@
 namespace SickOfIt.Core.Flow
 {
     /// <summary>
-    /// Interface for chunked sprite frame renderers driven by Unity Timeline.
+    /// Interface for chunked sprite frame renderers.
     /// Provides loading state, visibility control, and resource cleanup.
-    /// Playback is controlled by PlayableDirector on the same GameObject.
+    /// Implemented by SpriteFramePlayer (GameClock-driven).
     /// </summary>
     public interface IFrameSequencePlayer
     {

@@ -147,6 +147,11 @@ namespace SickOfIt.Tools.Editor.GameOverview
                 selectedTab = 6;
             }
 
+            if (GUILayout.Button("Build Scenes", EditorStyles.toolbarButton))
+            {
+                Generation.GameBuilder.BuildAllScenes();
+            }
+
             if (GUILayout.Button("Select Asset", EditorStyles.toolbarButton))
             {
                 Selection.activeObject = gameDefinition;
@@ -440,9 +445,154 @@ namespace SickOfIt.Tools.Editor.GameOverview
 
             EditorGUILayout.Space(10);
 
-            // Timeline
-            EditorGUILayout.LabelField("TIMELINE", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("timeline"), true);
+            // Experience Events
+            int eventCount = level.timeline?.events?.Count ?? 0;
+            EditorGUILayout.LabelField($"EXPERIENCE EVENTS ({eventCount})", EditorStyles.boldLabel);
+
+            if (level.timeline?.events != null)
+            {
+                var timelineProp = levelProp.FindPropertyRelative("timeline");
+                var eventsProp = timelineProp.FindPropertyRelative("events");
+
+                for (int e = 0; e < eventsProp.arraySize; e++)
+                {
+                    var evtProp = eventsProp.GetArrayElementAtIndex(e);
+                    var evt = level.timeline.events[e];
+
+                    EditorGUILayout.BeginVertical("box");
+                    EditorGUILayout.BeginHorizontal();
+
+                    string evtLabel = !string.IsNullOrEmpty(evt.label) ? evt.label : evt.type.ToString();
+                    EditorGUILayout.LabelField($"t={evt.time:F1}s [{evt.type}] {evtLabel}", EditorStyles.boldLabel, GUILayout.Width(300));
+
+                    if (e > 0 && GUILayout.Button("↑", GUILayout.Width(25)))
+                    {
+                        Undo.RecordObject(gameDefinition, "Move Event Up");
+                        (level.timeline.events[e], level.timeline.events[e - 1]) = (level.timeline.events[e - 1], level.timeline.events[e]);
+                        EditorUtility.SetDirty(gameDefinition);
+                    }
+                    if (e < eventsProp.arraySize - 1 && GUILayout.Button("↓", GUILayout.Width(25)))
+                    {
+                        Undo.RecordObject(gameDefinition, "Move Event Down");
+                        (level.timeline.events[e], level.timeline.events[e + 1]) = (level.timeline.events[e + 1], level.timeline.events[e]);
+                        EditorUtility.SetDirty(gameDefinition);
+                    }
+                    if (GUILayout.Button("×", GUILayout.Width(25)))
+                    {
+                        Undo.RecordObject(gameDefinition, "Remove Event");
+                        level.timeline.events.RemoveAt(e);
+                        EditorUtility.SetDirty(gameDefinition);
+                        break;
+                    }
+
+                    EditorGUILayout.EndHorizontal();
+
+                    EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("time"));
+                    EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("type"));
+                    EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("label"));
+
+                    // Show relevant fields based on event type
+                    switch (evt.type)
+                    {
+                        case GameEventType.PlaySFX:
+                        case GameEventType.PlayMusic:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("audioClip"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("volume"));
+                            if (evt.type == GameEventType.PlaySFX)
+                                EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("pitchVariation"));
+                            break;
+
+                        case GameEventType.CameraShake:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("shakeIntensity"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("duration"));
+                            break;
+
+                        case GameEventType.CameraZoom:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("zoomTarget"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("duration"));
+                            break;
+
+                        case GameEventType.CameraMove:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("cameraTargetPosition"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("duration"));
+                            break;
+
+                        case GameEventType.ScreenFlash:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("color"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("duration"));
+                            break;
+
+                        case GameEventType.SetAmbientColor:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("color"));
+                            break;
+
+                        case GameEventType.ActivateObject:
+                        case GameEventType.DeactivateObject:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("targetPath"));
+                            break;
+
+                        case GameEventType.SpawnPrefab:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("prefab"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("spawnPosition"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("duration"));
+                            break;
+
+                        case GameEventType.SpawnEnemyWave:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("enemyType"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("enemyCount"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("spawnPosition"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("enemyPositions"), true);
+                            break;
+
+                        case GameEventType.SlowMotion:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("timeScale"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("duration"));
+                            break;
+
+                        case GameEventType.SetMusicVolume:
+                        case GameEventType.StopMusic:
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("volume"));
+                            EditorGUILayout.PropertyField(evtProp.FindPropertyRelative("duration"));
+                            break;
+                    }
+
+                    EditorGUILayout.EndVertical();
+                    EditorGUILayout.Space(2);
+                }
+            }
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("+ Add Event", GUILayout.Height(25)))
+            {
+                Undo.RecordObject(gameDefinition, "Add Event");
+                if (level.timeline == null)
+                    level.timeline = new TimelineConfig();
+                level.timeline.events.Add(new GameEvent
+                {
+                    time = 0f,
+                    type = GameEventType.PlaySFX,
+                    volume = 1f
+                });
+                EditorUtility.SetDirty(gameDefinition);
+            }
+            if (eventCount > 0 && GUILayout.Button("Sort by Time", GUILayout.Width(100), GUILayout.Height(25)))
+            {
+                Undo.RecordObject(gameDefinition, "Sort Events");
+                level.timeline.events.Sort((a, b) => a.time.CompareTo(b.time));
+                EditorUtility.SetDirty(gameDefinition);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(10);
+
+            // Legacy Timeline (for existing assets)
+            var legacyTracks = level.timeline?.tracks;
+            if (legacyTracks != null && legacyTracks.Count > 0)
+            {
+                EditorGUILayout.LabelField("LEGACY TIMELINE TRACKS", EditorStyles.boldLabel);
+                var timelinePropLegacy = levelProp.FindPropertyRelative("timeline");
+                EditorGUILayout.PropertyField(timelinePropLegacy.FindPropertyRelative("tracks"), true);
+            }
         }
 
         // =========================================================================
@@ -469,6 +619,7 @@ namespace SickOfIt.Tools.Editor.GameOverview
                 EditorGUILayout.PropertyField(videoProp.FindPropertyRelative("audio"));
                 EditorGUILayout.PropertyField(videoProp.FindPropertyRelative("afterLevel"));
                 EditorGUILayout.PropertyField(videoProp.FindPropertyRelative("nextLevel"));
+                EditorGUILayout.PropertyField(videoProp.FindPropertyRelative("returnToMainMenu"));
 
                 if (GUILayout.Button("Remove", GUILayout.Width(80)))
                 {
@@ -510,6 +661,7 @@ namespace SickOfIt.Tools.Editor.GameOverview
                 EditorGUILayout.PropertyField(deathProp.FindPropertyRelative("displayName"));
                 EditorGUILayout.PropertyField(deathProp.FindPropertyRelative("spriteFramesData"));
                 EditorGUILayout.PropertyField(deathProp.FindPropertyRelative("audio"));
+                EditorGUILayout.PropertyField(deathProp.FindPropertyRelative("delayBeforeReload"));
 
                 if (GUILayout.Button("Remove", GUILayout.Width(80)))
                 {

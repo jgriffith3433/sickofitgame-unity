@@ -80,7 +80,7 @@ namespace SickOfIt.Core.Progression
 
             if (extraJumpDescriptionText != null)
             {
-                extraJumpDescriptionText.text = $"Air Jumps: {purchased} / {RogueliteManager.MAX_EXTRA_JUMPS}";
+                extraJumpDescriptionText.text = $"Air Jumps: {purchased} / {RogueliteManager.Instance.MaxExtraJumps}";
             }
 
             if (maxed)

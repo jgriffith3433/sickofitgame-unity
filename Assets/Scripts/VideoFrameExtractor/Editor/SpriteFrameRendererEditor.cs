@@ -59,13 +59,11 @@ namespace SickOfIt.VideoFrameExtractor.Editor
 
             GUILayout.Space(10);
             EditorGUILayout.HelpBox(
-                "TIMELINE-DRIVEN SPRITE FRAMES:\n\n" +
-                "1. Add a SpriteFrameTrack to your Timeline\n" +
-                "2. Bind this SpriteFrameRenderer as the track target\n" +
-                "3. Create clips referencing SpriteFramesData assets\n" +
-                "4. Configure chunk loading on the SpriteFrameTrack\n\n" +
-                "Everything is automatic - the track discovers data\n" +
-                "from clips and manages chunk loading itself.",
+                "SPRITE FRAME PLAYBACK:\n\n" +
+                "SpriteFrameRenderer is legacy. Use SpriteFramePlayer instead.\n" +
+                "SpriteFramePlayer is driven by GameClock and supports rewind.\n\n" +
+                "ExperienceRunner creates SpriteFramePlayers automatically\n" +
+                "from PlaySpriteSequence events in the timeline config.",
                 MessageType.Info);
 
             serializedObject.ApplyModifiedProperties();

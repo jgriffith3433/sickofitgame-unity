@@ -52,6 +52,14 @@ namespace SickOfIt.Combat.Health
             currentHealth = health;
         }
 
+        /// <summary>
+        /// Set current health directly (used by rewind system).
+        /// </summary>
+        public void SetHealth(int health)
+        {
+            currentHealth = Mathf.Clamp(health, 0, maxHealth);
+        }
+
         private void Awake()
         {
             currentHealth = maxHealth;

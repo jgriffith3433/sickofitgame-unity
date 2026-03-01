@@ -82,6 +82,10 @@ namespace SickOfIt.Combat.Enemies
             base.InitializeFromConfig(template, spawn);
             standingAttackDamage = template.contactDamage;
             standingAttackRange = template.attackRange;
+            laserProjectileAddress = template.laserProjectileAddress;
+            laserSpeed = template.laserSpeed;
+            crouchThreshold = template.crouchThreshold;
+            crouchingAttackRange = template.crouchingAttackRange;
         }
 
         protected override void Awake()

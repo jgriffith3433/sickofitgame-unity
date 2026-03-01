@@ -33,19 +33,50 @@ namespace SickOfIt.Data
         private const string KEY_MAX_HEALTH = "Rogue_MaxHealth"; // int: player's current max health
 
         /// <summary>
-        /// The starting max health for a brand new player.
+        /// Fallback starting max health (used if GameDefinition is unavailable).
+        /// Runtime values come from GameDefinition.player.
         /// </summary>
-        public const int BASE_MAX_HEALTH = 5;
+        public const int BASE_MAX_HEALTH_FALLBACK = 5;
 
         /// <summary>
-        /// Maximum number of extra jumps that can be purchased.
+        /// Fallback max extra jumps (used if GameDefinition is unavailable).
         /// </summary>
-        public const int MAX_EXTRA_JUMPS = 2;
+        public const int MAX_EXTRA_JUMPS_FALLBACK = 2;
 
         /// <summary>
-        /// Cost per extra jump upgrade (can be adjusted).
+        /// Fallback cost per extra jump (used if GameDefinition is unavailable).
         /// </summary>
-        public const int EXTRA_JUMP_COST = 100;
+        public const int EXTRA_JUMP_COST_FALLBACK = 100;
+
+        /// <summary>Read from GameDefinition.player at runtime.</summary>
+        public int BaseMaxHealth
+        {
+            get
+            {
+                var gd = GameDefinition.Instance;
+                return gd != null ? gd.player.baseMaxHealth : BASE_MAX_HEALTH_FALLBACK;
+            }
+        }
+
+        /// <summary>Read from GameDefinition.player at runtime.</summary>
+        public int MaxExtraJumps
+        {
+            get
+            {
+                var gd = GameDefinition.Instance;
+                return gd != null ? gd.player.maxExtraJumps : MAX_EXTRA_JUMPS_FALLBACK;
+            }
+        }
+
+        /// <summary>Read from GameDefinition.player at runtime.</summary>
+        public int ExtraJumpCost
+        {
+            get
+            {
+                var gd = GameDefinition.Instance;
+                return gd != null ? gd.player.extraJumpCost : EXTRA_JUMP_COST_FALLBACK;
+            }
+        }
 
         private void Awake()
         {
@@ -68,7 +99,7 @@ namespace SickOfIt.Data
         /// </summary>
         public int GetMaxHealth()
         {
-            return PlayerPrefs.GetInt(KEY_MAX_HEALTH, BASE_MAX_HEALTH);
+            return PlayerPrefs.GetInt(KEY_MAX_HEALTH, BaseMaxHealth);
         }
 
         /// <summary>
@@ -310,7 +341,7 @@ namespace SickOfIt.Data
         public bool PurchaseExtraJump()
         {
             int current = GetExtraJumpsPurchased();
-            if (current >= MAX_EXTRA_JUMPS)
+            if (current >= MaxExtraJumps)
             {
                 Debug.Log("[RogueliteManager] Already at max extra jumps!");
                 return false;
@@ -335,7 +366,7 @@ namespace SickOfIt.Data
         /// </summary>
         public int GetExtraJumpCost(int jumpNumber)
         {
-            return EXTRA_JUMP_COST * jumpNumber;
+            return ExtraJumpCost * jumpNumber;
         }
 
         /// <summary>
@@ -344,7 +375,7 @@ namespace SickOfIt.Data
         public bool CanAffordNextExtraJump()
         {
             int current = GetExtraJumpsPurchased();
-            if (current >= MAX_EXTRA_JUMPS)
+            if (current >= MaxExtraJumps)
                 return false;
 
             int cost = GetExtraJumpCost(current + 1);
@@ -356,7 +387,7 @@ namespace SickOfIt.Data
         /// </summary>
         public bool HasMaxExtraJumps()
         {
-            return GetExtraJumpsPurchased() >= MAX_EXTRA_JUMPS;
+            return GetExtraJumpsPurchased() >= MaxExtraJumps;
         }
 
         // =========================================================================

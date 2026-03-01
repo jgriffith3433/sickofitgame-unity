@@ -316,6 +316,275 @@ namespace SickOfIt.Tools.Editor.MCP
             Debug.Log($"[ClawTools] Added Level {newNum} '{newLevel.displayName}'. Total levels: {gd.TotalLevels}");
         }
 
+        // =====================================================================
+        // EXPERIENCE / TIMELINE TOOLS
+        // =====================================================================
+
+        [MenuItem("Tools/Claw/Get Level Events")]
+        public static void GetLevelEvents()
+        {
+            var gd = LoadGameDefinition();
+            if (gd == null) return;
+
+            for (int i = 0; i < gd.levels.Count; i++)
+            {
+                var level = gd.levels[i];
+                int eventCount = level.timeline?.events?.Count ?? 0;
+                if (eventCount == 0)
+                {
+                    Debug.Log($"[ClawTools] Level {i + 1}: No experience events");
+                    continue;
+                }
+
+                Debug.Log($"[ClawTools] Level {i + 1}: {eventCount} events:");
+                foreach (var evt in level.timeline.events)
+                {
+                    string detail = evt.type switch
+                    {
+                        GameEventType.PlaySFX => $"clip={evt.audioClip?.name ?? "null"}, vol={evt.volume}",
+                        GameEventType.PlayMusic => $"clip={evt.audioClip?.name ?? "null"}, vol={evt.volume}",
+                        GameEventType.CameraShake => $"intensity={evt.shakeIntensity}, dur={evt.duration}s",
+                        GameEventType.CameraZoom => $"zoom={evt.zoomTarget}, dur={evt.duration}s",
+                        GameEventType.SpawnEnemyWave => $"{evt.enemyCount}x {evt.enemyType} at ({evt.spawnPosition.x},{evt.spawnPosition.y})",
+                        GameEventType.ActivateObject => $"path={evt.targetPath}",
+                        GameEventType.DeactivateObject => $"path={evt.targetPath}",
+                        GameEventType.SlowMotion => $"scale={evt.timeScale}, dur={evt.duration}s",
+                        GameEventType.ScreenFlash => $"color={evt.color}, dur={evt.duration}s",
+                        _ => ""
+                    };
+                    Debug.Log($"  t={evt.time:F1}s [{evt.type}] {evt.label} {detail}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add a SFX event to a level's timeline.
+        /// Environment vars: LEVEL_NUMBER, EVENT_TIME, CLIP_NAME (AudioClip asset name), VOLUME (optional)
+        /// </summary>
+        [MenuItem("Tools/Claw/Add SFX Event To Level")]
+        public static void AddSFXEventToLevel()
+        {
+            var gd = LoadGameDefinition();
+            if (gd == null) return;
+
+            int levelNum = int.TryParse(System.Environment.GetEnvironmentVariable("LEVEL_NUMBER"), out var ln) ? ln : 1;
+            float time = float.TryParse(System.Environment.GetEnvironmentVariable("EVENT_TIME"), out var t) ? t : 0f;
+            string clipName = System.Environment.GetEnvironmentVariable("CLIP_NAME") ?? "";
+            float volume = float.TryParse(System.Environment.GetEnvironmentVariable("VOLUME"), out var v) ? v : 1f;
+            string label = System.Environment.GetEnvironmentVariable("EVENT_LABEL") ?? "";
+
+            var level = gd.GetLevel(levelNum);
+            if (level == null) return;
+
+            // Find audio clip by name
+            AudioClip clip = null;
+            if (!string.IsNullOrEmpty(clipName))
+            {
+                string[] guids = AssetDatabase.FindAssets($"t:AudioClip {clipName}");
+                if (guids.Length > 0)
+                    clip = AssetDatabase.LoadAssetAtPath<AudioClip>(AssetDatabase.GUIDToAssetPath(guids[0]));
+            }
+
+            if (level.timeline == null)
+                level.timeline = new TimelineConfig();
+
+            level.timeline.events.Add(new GameEvent
+            {
+                time = time,
+                type = GameEventType.PlaySFX,
+                audioClip = clip,
+                volume = volume,
+                label = label
+            });
+
+            SaveAndRefresh(gd);
+            Debug.Log($"[ClawTools] Added SFX '{clipName}' to Level {levelNum} at t={time}s (vol={volume})");
+        }
+
+        /// <summary>
+        /// Add a camera shake event.
+        /// Environment vars: LEVEL_NUMBER, EVENT_TIME, SHAKE_INTENSITY (default 0.3), SHAKE_DURATION (default 0.3)
+        /// </summary>
+        [MenuItem("Tools/Claw/Add Camera Shake To Level")]
+        public static void AddCameraShakeToLevel()
+        {
+            var gd = LoadGameDefinition();
+            if (gd == null) return;
+
+            int levelNum = int.TryParse(System.Environment.GetEnvironmentVariable("LEVEL_NUMBER"), out var ln) ? ln : 1;
+            float time = float.TryParse(System.Environment.GetEnvironmentVariable("EVENT_TIME"), out var t) ? t : 0f;
+            float intensity = float.TryParse(System.Environment.GetEnvironmentVariable("SHAKE_INTENSITY"), out var si) ? si : 0.3f;
+            float duration = float.TryParse(System.Environment.GetEnvironmentVariable("SHAKE_DURATION"), out var sd) ? sd : 0.3f;
+            string label = System.Environment.GetEnvironmentVariable("EVENT_LABEL") ?? "";
+
+            var level = gd.GetLevel(levelNum);
+            if (level == null) return;
+
+            if (level.timeline == null)
+                level.timeline = new TimelineConfig();
+
+            level.timeline.events.Add(new GameEvent
+            {
+                time = time,
+                type = GameEventType.CameraShake,
+                shakeIntensity = intensity,
+                duration = duration,
+                label = label
+            });
+
+            SaveAndRefresh(gd);
+            Debug.Log($"[ClawTools] Added CameraShake to Level {levelNum} at t={time}s (intensity={intensity}, dur={duration}s)");
+        }
+
+        /// <summary>
+        /// Add an enemy wave spawn event.
+        /// Environment vars: LEVEL_NUMBER, EVENT_TIME, ENEMY_TYPE, ENEMY_COUNT, SPAWN_X, SPAWN_Y
+        /// </summary>
+        [MenuItem("Tools/Claw/Add Enemy Wave Event To Level")]
+        public static void AddEnemyWaveEventToLevel()
+        {
+            var gd = LoadGameDefinition();
+            if (gd == null) return;
+
+            int levelNum = int.TryParse(System.Environment.GetEnvironmentVariable("LEVEL_NUMBER"), out var ln) ? ln : 1;
+            float time = float.TryParse(System.Environment.GetEnvironmentVariable("EVENT_TIME"), out var t) ? t : 0f;
+            string typeStr = System.Environment.GetEnvironmentVariable("ENEMY_TYPE") ?? "Chaser";
+            int count = int.TryParse(System.Environment.GetEnvironmentVariable("ENEMY_COUNT"), out var c) ? c : 1;
+            float x = float.TryParse(System.Environment.GetEnvironmentVariable("SPAWN_X"), out var sx) ? sx : 5f;
+            float y = float.TryParse(System.Environment.GetEnvironmentVariable("SPAWN_Y"), out var sy) ? sy : 0f;
+            string label = System.Environment.GetEnvironmentVariable("EVENT_LABEL") ?? "";
+
+            if (!System.Enum.TryParse<EnemyType>(typeStr, true, out var enemyType))
+            {
+                Debug.LogError($"[ClawTools] Invalid ENEMY_TYPE: {typeStr}");
+                return;
+            }
+
+            var level = gd.GetLevel(levelNum);
+            if (level == null) return;
+
+            if (level.timeline == null)
+                level.timeline = new TimelineConfig();
+
+            level.timeline.events.Add(new GameEvent
+            {
+                time = time,
+                type = GameEventType.SpawnEnemyWave,
+                enemyType = enemyType,
+                enemyCount = count,
+                spawnPosition = new Vector2(x, y),
+                label = label
+            });
+
+            SaveAndRefresh(gd);
+            Debug.Log($"[ClawTools] Added {count}x {enemyType} wave to Level {levelNum} at t={time}s ({x},{y})");
+        }
+
+        /// <summary>
+        /// Clear all experience events from a level.
+        /// Environment var: LEVEL_NUMBER
+        /// </summary>
+        [MenuItem("Tools/Claw/Clear Level Events")]
+        public static void ClearLevelEvents()
+        {
+            var gd = LoadGameDefinition();
+            if (gd == null) return;
+
+            int levelNum = int.TryParse(System.Environment.GetEnvironmentVariable("LEVEL_NUMBER"), out var ln) ? ln : 1;
+            var level = gd.GetLevel(levelNum);
+            if (level == null) return;
+
+            int count = level.timeline?.events?.Count ?? 0;
+            if (level.timeline != null)
+                level.timeline.events.Clear();
+
+            SaveAndRefresh(gd);
+            Debug.Log($"[ClawTools] Cleared {count} events from Level {levelNum}");
+        }
+
+        // =====================================================================
+        // BUILD TOOLS
+        // =====================================================================
+
+        [MenuItem("Tools/Claw/Build All Scenes")]
+        public static void BuildAllScenes()
+        {
+            Generation.GameBuilder.BuildAllScenes();
+        }
+
+        [MenuItem("Tools/Claw/Build Level Scenes")]
+        public static void BuildLevelScenes()
+        {
+            Generation.GameBuilder.BuildLevelScenesOnly();
+        }
+
+        [MenuItem("Tools/Claw/Build Video Scenes")]
+        public static void BuildVideoScenes()
+        {
+            Generation.GameBuilder.BuildVideoScenesOnly();
+        }
+
+        [MenuItem("Tools/Claw/Build Death Scenes")]
+        public static void BuildDeathScenes()
+        {
+            Generation.GameBuilder.BuildDeathScenesOnly();
+        }
+
+        // =====================================================================
+        // ENEMY PREFAB GENERATION
+        // =====================================================================
+
+        /// <summary>
+        /// Generate an enemy prefab from a sprite sheet.
+        /// Set environment variables before calling:
+        ///   ENEMY_NAME, ENEMY_TYPE (Chaser/Fighter/Sentinel/Shooter), SPRITE_SHEET_PATH
+        ///   Optional: ENEMY_HEALTH, ENEMY_SPEED, ENEMY_DAMAGE, ENEMY_FPS
+        /// </summary>
+        [MenuItem("Tools/Claw/Generate Enemy From Sprite Sheet")]
+        public static void GenerateEnemyFromSpriteSheet()
+        {
+            string name = System.Environment.GetEnvironmentVariable("ENEMY_NAME") ?? "NewEnemy";
+            string typeStr = System.Environment.GetEnvironmentVariable("ENEMY_TYPE") ?? "Chaser";
+            string sheetPath = System.Environment.GetEnvironmentVariable("SPRITE_SHEET_PATH") ?? "";
+            int health = int.TryParse(System.Environment.GetEnvironmentVariable("ENEMY_HEALTH"), out var h) ? h : 3;
+            float speed = float.TryParse(System.Environment.GetEnvironmentVariable("ENEMY_SPEED"), out var s) ? s : 2f;
+            int damage = int.TryParse(System.Environment.GetEnvironmentVariable("ENEMY_DAMAGE"), out var d) ? d : 1;
+            int fps = int.TryParse(System.Environment.GetEnvironmentVariable("ENEMY_FPS"), out var f) ? f : 8;
+
+            if (string.IsNullOrEmpty(sheetPath))
+            {
+                Debug.LogError("[ClawGameTools] SPRITE_SHEET_PATH not set!");
+                return;
+            }
+
+            if (!System.Enum.TryParse<EnemyType>(typeStr, true, out var enemyType))
+            {
+                Debug.LogError($"[ClawGameTools] Invalid ENEMY_TYPE: {typeStr}");
+                return;
+            }
+
+            var (prefab, template) = Generation.EnemyPrefabGenerator.GenerateWithTemplate(
+                name, enemyType, sheetPath, health, speed, damage, fps);
+
+            if (prefab != null && template != null)
+            {
+                // Auto-add to GameDefinition
+                string[] guids = UnityEditor.AssetDatabase.FindAssets("t:GameDefinition");
+                if (guids.Length > 0)
+                {
+                    var gd = UnityEditor.AssetDatabase.LoadAssetAtPath<GameDefinition>(
+                        UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]));
+                    if (gd != null)
+                    {
+                        gd.enemyTemplates.Add(template);
+                        UnityEditor.EditorUtility.SetDirty(gd);
+                        UnityEditor.AssetDatabase.SaveAssets();
+                        Debug.Log($"[ClawGameTools] ✅ Added {name} to GameDefinition.enemyTemplates");
+                    }
+                }
+            }
+        }
+
         [MenuItem("Tools/Claw/Remove Last Level")]
         public static void RemoveLastLevel()
         {

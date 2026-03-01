@@ -1,4 +1,5 @@
 using UnityEngine;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Combat.Enemies
 {
@@ -8,8 +9,14 @@ namespace SickOfIt.Combat.Enemies
     public class EnemyChaser : EnemyBase
     {
         [Header("Chaser Settings")]
-        [SerializeField] private float stopDistance = 0.5f; // How close before stopping
+        [SerializeField] private float stopDistance = 0.5f;
         [SerializeField] private bool faceMovementDirection = true;
+
+        public override void InitializeFromConfig(EnemyTemplate template, EnemySpawnConfig spawn)
+        {
+            base.InitializeFromConfig(template, spawn);
+            stopDistance = template.stopDistance;
+        }
 
         protected override void UpdateBehavior()
         {

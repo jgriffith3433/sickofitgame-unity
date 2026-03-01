@@ -47,6 +47,8 @@ namespace SickOfIt.Combat.Enemies
             base.InitializeFromConfig(template, spawn);
             attackRange = template.attackRange;
             attackDamage = template.contactDamage;
+            minStateChangeTime = template.minStateChangeTime;
+            maxStateChangeTime = template.maxStateChangeTime;
         }
 
         protected override void Awake()

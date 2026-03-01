@@ -19,6 +19,10 @@ namespace SickOfIt.Data.Config
         public ScriptableObject spriteFramesData;
         public AudioClip audio;
 
+        [Header("Flow")]
+        [Tooltip("Delay in seconds before reloading the level after death animation")]
+        public float delayBeforeReload = 1f;
+
         [Header("Timeline")]
         public TimelineConfig timeline;
     }

@@ -11,6 +11,10 @@ namespace SickOfIt.Data.Config
     [Serializable]
     public class PlayerConfig
     {
+        [Header("Prefab")]
+        [Tooltip("The player character prefab to spawn in levels")]
+        public GameObject playerPrefab;
+
         [Header("Movement")]
         public float moveSpeed = 2f;
         public float jumpForce = 15f;

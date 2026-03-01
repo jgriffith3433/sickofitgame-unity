@@ -37,6 +37,9 @@ namespace SickOfIt.Data.Config
         public int dropPointsValue = 1;
         public int dropCount = 1;
 
+        [Header("Chaser Settings")]
+        public float stopDistance = 0.5f;
+
         [Header("Shooter Settings")]
         public float fireRate = 1f;
         public float projectileSpeed = 5f;
@@ -45,5 +48,15 @@ namespace SickOfIt.Data.Config
         [Header("Fighter/Sentinel Settings")]
         public float attackRange = 2f;
         public float attackCooldown = 1f;
+
+        [Header("Fighter Behavior")]
+        public float minStateChangeTime = 5f;
+        public float maxStateChangeTime = 10f;
+
+        [Header("Sentinel Settings")]
+        public string laserProjectileAddress = "Projectile_Laser";
+        public float laserSpeed = 10f;
+        public float crouchThreshold = 5f;
+        public float crouchingAttackRange = 8f;
     }
 }

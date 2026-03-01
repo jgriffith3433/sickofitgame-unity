@@ -18,7 +18,7 @@ namespace SickOfIt.Combat.Health
         [SerializeField] private string deathSceneName = "Death1";
 
         [Header("Roguelite Settings")]
-        [Tooltip("The level number this player is in. Set by LevelManager.")]
+        [Tooltip("The level number this player is in. Set by LevelRuntime.")]
         [SerializeField] private int currentLevelNumber = 1;
 
         [Header("Invincibility")]
@@ -46,8 +46,17 @@ namespace SickOfIt.Combat.Health
         }
 
         /// <summary>
+        /// Set the death scene for this level. Called by LevelRuntime.
+        /// </summary>
+        public void SetDeathSceneName(string name)
+        {
+            if (!string.IsNullOrEmpty(name))
+                deathSceneName = name;
+        }
+
+        /// <summary>
         /// Set the level number and apply roguelite health values.
-        /// Called by LevelManager during level initialisation.
+        /// Called by LevelRuntime during level initialisation.
         /// </summary>
         public void InitializeForLevel(int levelNumber)
         {

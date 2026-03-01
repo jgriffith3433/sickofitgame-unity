@@ -41,6 +41,7 @@ namespace SickOfIt.Data.Config
 
         [Header("Shooter Overrides")]
         public float fireRateOverride;
+        public float initialAttackDelay = 5f;
         public ShootDirection shootDirection = ShootDirection.AtPlayer;
     }
 }

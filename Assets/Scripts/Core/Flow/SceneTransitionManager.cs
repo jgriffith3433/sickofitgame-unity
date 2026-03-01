@@ -64,7 +64,7 @@ namespace SickOfIt.Core.Flow
             PlayerPrefs.SetInt("CurrentLevelNumber", levelNumber);
             PlayerPrefs.Save();
 
-            string sceneName = $"Level{levelNumber}";
+            string sceneName = "Level";
 
             // Set current scene for memory management
             if (useAddressables)
@@ -102,7 +102,11 @@ namespace SickOfIt.Core.Flow
 
         public void LoadVideo(int videoNumber)
         {
-            string sceneName = $"Video{videoNumber}";
+            // Store video number for VideoRuntime to read on scene load
+            PlayerPrefs.SetInt("CurrentVideoNumber", videoNumber);
+            PlayerPrefs.Save();
+
+            string sceneName = "Video";
 
             // Set current scene for memory management
             if (useAddressables)
@@ -122,19 +126,25 @@ namespace SickOfIt.Core.Flow
 
         public void LoadDeathScene(string deathSceneName)
         {
+            // Store death config name for DeathRuntime to read
+            PlayerPrefs.SetString("CurrentDeathConfig", deathSceneName);
+            PlayerPrefs.Save();
+
+            string sceneName = "Death";
+            
             // Set current scene for memory management
             if (useAddressables)
             {
-                AddressablesOperationManager.Instance.SetCurrentScene(deathSceneName);
+                AddressablesOperationManager.Instance.SetCurrentScene(sceneName);
             }
 
             if (useAddressables)
             {
-                AddressablesSceneLoader.Instance.LoadScene(deathSceneName);
+                AddressablesSceneLoader.Instance.LoadScene(sceneName);
             }
             else
             {
-                SceneManager.LoadScene(deathSceneName);
+                SceneManager.LoadScene(sceneName);
             }
         }
 

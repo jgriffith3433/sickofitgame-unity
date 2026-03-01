@@ -3,8 +3,13 @@
   "rootNamespace": "SickOfIt.Tools.Editor",
   "references": [
     "SickOfIt.Data",
+    "SickOfIt.Core",
+    "SickOfIt.Core.Progression",
+    "SickOfIt.Combat",
+    "SickOfIt.VideoFrameExtractor.Runtime",
     "Unity.Addressables",
-    "Unity.Addressables.Editor"
+    "Unity.Addressables.Editor",
+    "Unity.ResourceManager"
   ],
   "includePlatforms": [
     "Editor"

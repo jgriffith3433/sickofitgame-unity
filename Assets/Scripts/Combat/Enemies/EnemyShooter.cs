@@ -46,6 +46,7 @@ namespace SickOfIt.Combat.Enemies
             projectileSpeed = template.projectileSpeed;
             projectileAddress = template.projectileAddress;
             attackInterval = spawn.fireRateOverride > 0 ? spawn.fireRateOverride : template.fireRate;
+            initialAttackDelay = spawn.initialAttackDelay;
 
             // Apply shoot direction
             if (spawn.shootDirection != ShootDirection.AtPlayer)

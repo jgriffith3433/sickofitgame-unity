@@ -25,6 +25,8 @@ namespace SickOfIt.Data.Config
         public int afterLevel;
         [Tooltip("Which level to load after video finishes")]
         public int nextLevel;
+        [Tooltip("If true, returns to main menu instead of loading next level")]
+        public bool returnToMainMenu;
 
         [Header("Timeline")]
         public TimelineConfig timeline;
