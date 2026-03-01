@@ -5,6 +5,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
+using SickOfIt.Core.Progression;
 
 namespace SickOfIt.Tools.Editor.Generation
 {
@@ -63,10 +64,11 @@ namespace SickOfIt.Tools.Editor.Generation
             playerSpawn.transform.position = new Vector3(-4f, 0f, 0f);
 
             // Try to instantiate player prefab
+            GameObject player = null;
             var playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PLAYER_PREFAB_PATH);
             if (playerPrefab != null)
             {
-                var player = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab, content.transform);
+                player = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab, content.transform);
                 player.name = "Character";
                 player.transform.position = new Vector3(-4f, 0f, 0f);
             }
@@ -116,14 +118,68 @@ namespace SickOfIt.Tools.Editor.Generation
             if (config.music != null)
                 audioSource.clip = config.music;
 
-            // Camera
-            var cameraGo = new GameObject("Main Camera");
-            cameraGo.transform.SetParent(sceneRoot.transform);
-            cameraGo.tag = "MainCamera";
-            var cam = cameraGo.AddComponent<Camera>();
-            cam.orthographic = true;
-            cam.orthographicSize = 2.8f;
-            cameraGo.AddComponent<AudioListener>();
+            // Camera from prefab
+            Camera sceneCamera = null;
+            if (gd.levelCameraPrefab != null)
+            {
+                var cameraGo = (GameObject)PrefabUtility.InstantiatePrefab(gd.levelCameraPrefab);
+                cameraGo.name = "Main Camera";
+                cameraGo.tag = "MainCamera";
+                cameraGo.transform.SetParent(sceneRoot.transform);
+                sceneCamera = cameraGo.GetComponent<Camera>();
+            }
+            else
+            {
+                var cameraGo = new GameObject("Main Camera");
+                cameraGo.transform.SetParent(sceneRoot.transform);
+                cameraGo.tag = "MainCamera";
+                var cam = cameraGo.AddComponent<Camera>();
+                cam.orthographic = true;
+                cam.orthographicSize = 2.8f;
+                cameraGo.AddComponent<AudioListener>();
+                sceneCamera = cam;
+            }
+
+            // Place full UI prefab (MobileController) from GameDefinition
+            GameObject mobileController = null;
+            if (gd.levelUIPrefab != null)
+            {
+                mobileController = (GameObject)PrefabUtility.InstantiatePrefab(gd.levelUIPrefab);
+                mobileController.name = "MobileController";
+                mobileController.transform.SetParent(content.transform);
+                WireCanvasCamera(mobileController, sceneCamera);
+                Debug.Log("[LevelGen] Placed level UI prefab");
+            }
+
+            // Add LevelRuntime directly to the scene and wire references
+            var levelRuntimeGo = new GameObject("LevelRuntime");
+            levelRuntimeGo.transform.SetParent(sceneRoot.transform);
+            var levelRuntime = levelRuntimeGo.AddComponent<LevelRuntime>();
+            var lrso = new SerializedObject(levelRuntime);
+            if (player != null) lrso.FindProperty("characterObject").objectReferenceValue = player;
+            lrso.FindProperty("playerSpawnPoint").objectReferenceValue = playerSpawn.transform;
+            lrso.FindProperty("musicSource").objectReferenceValue = audioSource;
+            if (mobileController != null) lrso.FindProperty("mobileControllerObject").objectReferenceValue = mobileController;
+            lrso.ApplyModifiedPropertiesWithoutUndo();
+
+            // Add StateRecorder + RewindController and wire their references
+            var stateRecorder = levelRuntimeGo.AddComponent<StateRecorder>();
+            var srso = new SerializedObject(stateRecorder);
+            if (player != null)
+            {
+                srso.FindProperty("playerTransform").objectReferenceValue = player.transform;
+                var rb = player.GetComponentInChildren<Rigidbody2D>();
+                if (rb != null) srso.FindProperty("playerRb").objectReferenceValue = rb;
+                var ph = player.GetComponentInChildren<SickOfIt.Combat.Health.PlayerHealth>();
+                if (ph != null) srso.FindProperty("playerHealth").objectReferenceValue = ph;
+            }
+            if (sceneCamera != null) srso.FindProperty("mainCamera").objectReferenceValue = sceneCamera;
+            srso.ApplyModifiedPropertiesWithoutUndo();
+
+            var rewindController = levelRuntimeGo.AddComponent<RewindController>();
+            var rcso = new SerializedObject(rewindController);
+            rcso.FindProperty("musicSource").objectReferenceValue = audioSource;
+            rcso.ApplyModifiedPropertiesWithoutUndo();
 
             // Set the contentRoots via SerializedObject
             var so = new SerializedObject(contentController);
@@ -139,6 +195,16 @@ namespace SickOfIt.Tools.Editor.Generation
                 $"(bounds: {config.levelBounds}, enemies: {config.EnemyCount})");
 
             return true;
+        }
+        
+        private static void WireCanvasCamera(GameObject uiRoot, Camera camera)
+        {
+            if (uiRoot == null || camera == null) return;
+            foreach (var canvas in uiRoot.GetComponentsInChildren<Canvas>(true))
+            {
+                if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
+                    canvas.worldCamera = camera;
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using MobileControllerFramework;
 using SickOfIt.Core.Addressables;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
@@ -56,13 +55,7 @@ namespace SickOfIt.Core.Input
         [Tooltip("Downward force applied when dropping through platforms (helps fall faster)")]
         [SerializeField] private float dropThroughForce = 5f;
         
-        [Header("Mobile Input")]
-        [Tooltip("Analog stick for movement. Add AnalogTapJump component for tap-to-jump.")]
-        [SerializeField] private Analog moveAnalog;
-        [Tooltip("Analog stick for aiming/firing. Movement beyond threshold automatically fires.")]
-        [SerializeField] private Analog fireAnalog;
-        [SerializeField] private Dpad dpad;
-        [SerializeField] private ArrowKeys arrowKeys;
+
         
         [Header("PC Input Actions")]
         [Tooltip("WASD/Arrow keys movement action")]
@@ -79,7 +72,9 @@ namespace SickOfIt.Core.Input
         [SerializeField] private Transform graphicsTransform;
         [SerializeField] private Animator animator;
         [SerializeField] private Camera mainCamera;
-        [SerializeField] private GameInputManager gameInputManager;
+        
+        // Auto-discovered at runtime from the UI prefab in the scene
+        private GameInputManager gameInputManager;
         
         [Header("Rotation Settings")]
         [Tooltip("Speed of rotation when moving (smooth rotation to show front/back/sides)")]
@@ -212,6 +207,37 @@ namespace SickOfIt.Core.Input
             PreloadProjectilePrefab();
         }
         
+        /// <summary>
+        /// Called by GameInputManager when it enables (e.g. new scene loaded).
+        /// Subscribes to its events so we receive mobile input.
+        /// </summary>
+        public void BindGameInputManager(GameInputManager gim)
+        {
+            // Unsub from any previous instance first
+            if (gameInputManager != null && gameInputManager != gim)
+            {
+                gameInputManager.OnJumpPressed -= OnJumpRequested;
+                gameInputManager.OnMoveAnalogReleased -= OnAnalogReleased;
+            }
+            
+            gameInputManager = gim;
+            gameInputManager.OnJumpPressed += OnJumpRequested;
+            gameInputManager.OnMoveAnalogReleased += OnAnalogReleased;
+        }
+        
+        /// <summary>
+        /// Called by GameInputManager when it disables / is destroyed.
+        /// Only unbinds if it's the same instance we're currently using.
+        /// </summary>
+        public void UnbindGameInputManager(GameInputManager gim)
+        {
+            if (gameInputManager != gim) return;
+            
+            gameInputManager.OnJumpPressed -= OnJumpRequested;
+            gameInputManager.OnMoveAnalogReleased -= OnAnalogReleased;
+            gameInputManager = null;
+        }
+        
         private void PreloadProjectilePrefab()
         {
             if (string.IsNullOrEmpty(projectileAddress))
@@ -252,17 +278,19 @@ namespace SickOfIt.Core.Input
                 fireAction.action.Enable();
             if (lookAction?.action != null)
                 lookAction.action.Enable();
-
-            if (gameInputManager != null)
-                gameInputManager.OnJumpPressed += OnJumpRequested;
-            
-            // Subscribe to analog stick release event for immediate platform re-enable
-            if (moveAnalog != null)
-            {
-                moveAnalog.StickExitEvent.AddListener(OnAnalogReleased);
-            }
         }
         
+        private void OnEnable()
+        {
+            // Re-enable input actions every time we come back on.
+            // InputActionReference shares the underlying action across instances,
+            // so another Character's OnDisable may have disabled them.
+            if (moveAction?.action != null) moveAction.action.Enable();
+            if (jumpAction?.action != null) jumpAction.action.Enable();
+            if (fireAction?.action != null) fireAction.action.Enable();
+            if (lookAction?.action != null) lookAction.action.Enable();
+        }
+
         private void Update()
         {
             ReadMoveInput();
@@ -290,21 +318,17 @@ namespace SickOfIt.Core.Input
         
         private void OnDisable()
         {
-            if (moveAction?.action != null)
-                moveAction.action.Disable();
-            if (jumpAction?.action != null)
-                jumpAction.action.Disable();
-            if (fireAction?.action != null)
-                fireAction.action.Disable();
-            if (lookAction?.action != null)
-                lookAction.action.Disable();
+            // NOTE: Do NOT call Disable() on InputActionReferences here.
+            // InputActionReference shares the same underlying InputAction across
+            // all prefab instances. With additive scene loading the MainMenu
+            // Character's OnDisable fires AFTER the Level Character's Start,
+            // which would disable the actions the Level Character just enabled.
 
             if (gameInputManager != null)
-                gameInputManager.OnJumpPressed -= OnJumpRequested;
-            
-            if (moveAnalog != null)
             {
-                moveAnalog.StickExitEvent.RemoveListener(OnAnalogReleased);
+                gameInputManager.OnJumpPressed -= OnJumpRequested;
+                gameInputManager.OnMoveAnalogReleased -= OnAnalogReleased;
+                gameInputManager = null;
             }
         }
         
@@ -351,21 +375,10 @@ namespace SickOfIt.Core.Input
             Vector2 keyboardInput = Vector2.zero;
             bool usingMobileInput = false;
             
-            if (moveAnalog != null && moveAnalog.gameObject.activeSelf)
+            // Poll mobile move input via GameInputManager (lives on UI prefab)
+            if (gameInputManager != null && gameInputManager.HasMoveAnalog)
             {
-                mobileInput = moveAnalog.GetStickPosition();
-                moveInput = mobileInput;
-                usingMobileInput = true;
-            }
-            else if (dpad != null && dpad.gameObject.activeSelf)
-            {
-                mobileInput = dpad.GetDpadDirection();
-                moveInput = mobileInput;
-                usingMobileInput = true;
-            }
-            else if (arrowKeys != null && arrowKeys.gameObject.activeSelf)
-            {
-                mobileInput = arrowKeys.GetDirection();
+                mobileInput = gameInputManager.GetMoveInput();
                 moveInput = mobileInput;
                 usingMobileInput = true;
             }
@@ -406,9 +419,10 @@ namespace SickOfIt.Core.Input
             fireDirection = Vector2.zero;
             isFiring = false;
             
-            if (fireAnalog != null && fireAnalog.gameObject.activeSelf)
+            // Poll mobile fire input via GameInputManager (lives on UI prefab)
+            if (gameInputManager != null && gameInputManager.HasFireAnalog)
             {
-                Vector2 analogInput = fireAnalog.GetStickPosition();
+                Vector2 analogInput = gameInputManager.GetFireInput();
                 if (analogInput.magnitude > InputDeadzone)
                 {
                     fireDirection = analogInput.normalized;

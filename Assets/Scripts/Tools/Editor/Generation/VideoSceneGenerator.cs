@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
+using SickOfIt.Core.Progression;
 
 namespace SickOfIt.Tools.Editor.Generation
 {
@@ -17,8 +18,9 @@ namespace SickOfIt.Tools.Editor.Generation
     ///       - Audio (AudioSource)
     ///       - UI/ (skip button)
     ///       - Camera
+    ///     - VideoRuntime
     /// 
-    /// VideoRuntime auto-bootstraps and drives playback from config.
+    /// VideoRuntime is placed directly in the scene and drives playback from config.
     /// </summary>
     public static class VideoSceneGenerator
     {
@@ -62,15 +64,49 @@ namespace SickOfIt.Tools.Editor.Generation
             if (config.audio != null)
                 audioSource.clip = config.audio;
 
-            // Camera
-            var cameraGo = new GameObject("Main Camera");
-            cameraGo.transform.SetParent(sceneRoot.transform);
-            cameraGo.tag = "MainCamera";
-            var cam = cameraGo.AddComponent<Camera>();
-            cam.orthographic = true;
-            cam.orthographicSize = 2.8f;
-            cam.backgroundColor = Color.black;
-            cameraGo.AddComponent<AudioListener>();
+            // Camera from prefab
+            Camera sceneCamera = null;
+            if (gd.videoCameraPrefab != null)
+            {
+                var cameraGo = (GameObject)PrefabUtility.InstantiatePrefab(gd.videoCameraPrefab);
+                cameraGo.name = "Main Camera";
+                cameraGo.tag = "MainCamera";
+                cameraGo.transform.SetParent(sceneRoot.transform);
+                sceneCamera = cameraGo.GetComponent<Camera>();
+            }
+            else
+            {
+                var cameraGo = new GameObject("Main Camera");
+                cameraGo.transform.SetParent(sceneRoot.transform);
+                cameraGo.tag = "MainCamera";
+                var cam = cameraGo.AddComponent<Camera>();
+                cam.orthographic = true;
+                cam.orthographicSize = 2.8f;
+                cam.backgroundColor = Color.black;
+                cameraGo.AddComponent<AudioListener>();
+                sceneCamera = cam;
+            }
+
+            // Place UI prefab (skip button) from GameDefinition
+            GameObject ui = null;
+            if (gd.videoUIPrefab != null)
+            {
+                ui = (GameObject)PrefabUtility.InstantiatePrefab(gd.videoUIPrefab);
+                ui.name = "UI";
+                ui.transform.SetParent(content.transform);
+                WireCanvasCamera(ui, sceneCamera);
+                Debug.Log("[VideoGen] Placed video UI prefab");
+            }
+
+            // Add VideoRuntime directly to the scene and wire references
+            var videoRuntimeGo = new GameObject("VideoRuntime");
+            videoRuntimeGo.transform.SetParent(sceneRoot.transform);
+            var videoRuntime = videoRuntimeGo.AddComponent<VideoRuntime>();
+            var vrso = new SerializedObject(videoRuntime);
+            vrso.FindProperty("videoPlayerObject").objectReferenceValue = videoPlayer;
+            vrso.FindProperty("audioObject").objectReferenceValue = audioGo;
+            if (ui != null) vrso.FindProperty("uiRoot").objectReferenceValue = ui;
+            vrso.ApplyModifiedPropertiesWithoutUndo();
 
             // Wire content roots
             var so = new SerializedObject(contentController);
@@ -83,6 +119,16 @@ namespace SickOfIt.Tools.Editor.Generation
 
             Debug.Log($"[VideoGen] Generated scene: {scenePath}");
             return true;
+        }
+        
+        private static void WireCanvasCamera(GameObject uiRoot, Camera camera)
+        {
+            if (uiRoot == null || camera == null) return;
+            foreach (var canvas in uiRoot.GetComponentsInChildren<Canvas>(true))
+            {
+                if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
+                    canvas.worldCamera = camera;
+            }
         }
     }
 }

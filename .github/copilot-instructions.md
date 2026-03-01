@@ -10,4 +10,4 @@ Start with ARCHITECTURE.md, then CURRENT-STATE.md, then TODO.md.
 4. **Scene names are exact** — bootstrap checks `scene.name == "Video"`, `== "Level"`, `== "Death"`
 5. **PlayerPrefs bridge** — SceneTransitionManager sets PlayerPrefs before loading a scene, Runtime reads them to know which config to use
 6. **Never create individual scenes** like Video1, Level2, etc. — everything is config-driven through the same 3 scenes
-7. **Never use PlayableDirectors or Timeline** — all playback is done by SpriteFramePlayer + GameClock
+7. **Never use GameObject.Find or FindObjectsOfType or FindGameObjectWithTag** — all references should be assigned via the inspector or auto-discovered through known scene objects

@@ -39,6 +39,7 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private AudioClip rewindStartSound;
         [SerializeField] private AudioClip rewindLoopSound;
         [SerializeField] private AudioClip rewindStopSound;
+        [SerializeField] private AudioSource musicSource;
 
         private AudioSource audioSource;
         private bool isRewinding;
@@ -57,20 +58,6 @@ namespace SickOfIt.Core.Progression
 
             if (rewindIndicator != null)
                 rewindIndicator.SetActive(false);
-
-            // Auto-discover rewind button if not assigned
-            if (rewindButton == null)
-            {
-                var buttons = Object.FindObjectsByType<MobileControllerFramework.Button>(FindObjectsSortMode.None);
-                foreach (var btn in buttons)
-                {
-                    if (btn.gameObject.name.ToLower().Contains("rewind"))
-                    {
-                        rewindButton = btn;
-                        break;
-                    }
-                }
-            }
 
             if (rewindButton != null)
             {
@@ -120,12 +107,8 @@ namespace SickOfIt.Core.Progression
             }
 
             // Mute game music during rewind
-            var musicSources = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
-            foreach (var src in musicSources)
-            {
-                if (src != audioSource && src.gameObject.name.Contains("Music"))
-                    src.Pause();
-            }
+            if (musicSource != null)
+                musicSource.Pause();
 
             Debug.Log("[Rewind] Started");
         }
@@ -150,12 +133,8 @@ namespace SickOfIt.Core.Progression
                 audioSource.PlayOneShot(rewindStopSound);
 
             // Resume game music
-            var musicSources = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
-            foreach (var src in musicSources)
-            {
-                if (src != audioSource && src.gameObject.name.Contains("Music"))
-                    src.UnPause();
-            }
+            if (musicSource != null)
+                musicSource.UnPause();
 
             Debug.Log($"[Rewind] Stopped at t={GameClock.Instance?.Time:F1}s");
         }

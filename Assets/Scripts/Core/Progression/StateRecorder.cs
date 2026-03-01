@@ -29,17 +29,17 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Maximum seconds of rewind history")]
         [SerializeField] private float maxHistorySeconds = 10f;
 
+        [Header("Scene References (wired by generator)")]
+        [SerializeField] private Transform playerTransform;
+        [SerializeField] private Rigidbody2D playerRb;
+        [SerializeField] private PlayerHealth playerHealth;
+        [SerializeField] private Camera mainCamera;
+
         // Ring buffer
         private StateSnapshot[] snapshots;
         private int writeIndex;
         private int snapshotCount;
         private float lastSnapshotTime;
-
-        // Tracked objects
-        private Transform playerTransform;
-        private Rigidbody2D playerRb;
-        private PlayerHealth playerHealth;
-        private Camera mainCamera;
 
         // Active during rewind
         private bool isRestoring;
@@ -53,16 +53,9 @@ namespace SickOfIt.Core.Progression
             for (int i = 0; i < capacity; i++)
                 snapshots[i] = new StateSnapshot();
 
-            // Find player
-            var playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-            {
-                playerTransform = playerObj.transform;
-                playerRb = playerObj.GetComponent<Rigidbody2D>();
-                playerHealth = playerObj.GetComponentInChildren<PlayerHealth>(true);
-            }
-
-            mainCamera = Camera.main;
+            // If player refs weren't wired by generator, try to resolve from characterObject
+            if (playerTransform == null && playerRb != null)
+                playerTransform = playerRb.transform;
 
             // Subscribe to GameClock
             if (GameClock.Instance != null)

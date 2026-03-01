@@ -12,36 +12,16 @@ namespace SickOfIt.Core.Progression
     /// Config-driven death scene runtime. Reads DeathConfig from GameDefinition
     /// and drives death animation via SpriteFramePlayer (no PlayableDirector).
     /// 
-    /// Auto-bootstraps on any scene starting with "Death".
+    /// Added directly to generated scenes by ProjectGenerator / DeathSceneGenerator.
     /// </summary>
     public class DeathRuntime : MonoBehaviour
     {
-        #region Static Bootstrap
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void RegisterSceneCallback()
-        {
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
-        }
-
-        private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
-        {
-            if (scene.name != "Death")
-                return;
-
-            if (Object.FindAnyObjectByType<DeathRuntime>() != null)
-                return;
-
-            var go = new GameObject("DeathRuntime");
-            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(go, scene);
-            go.AddComponent<DeathRuntime>();
-            Debug.Log($"[DeathRuntime] Auto-bootstrapped in scene '{scene.name}'");
-        }
-
-        #endregion
-
         [Header("Settings")]
         [SerializeField] private float delayBeforeReload = 1f;
+
+        [Header("Scene References (wired by generator)")]
+        [SerializeField] private GameObject deathAnimationObject;
+        [SerializeField] private GameObject uiRoot;
 
         private SpriteFramePlayer spritePlayer;
         private MobileControllerFramework.Button skipButton;
@@ -81,13 +61,17 @@ namespace SickOfIt.Core.Progression
 
         private void AutoDiscoverReferences()
         {
-            var buttons = Object.FindObjectsByType<MobileControllerFramework.Button>(FindObjectsSortMode.None);
-            foreach (var btn in buttons)
+            // Find skip button from serialized UI reference
+            if (uiRoot != null)
             {
-                if (btn.gameObject.name.ToLower().Contains("skip"))
+                var buttons = uiRoot.GetComponentsInChildren<MobileControllerFramework.Button>(true);
+                foreach (var btn in buttons)
                 {
-                    skipButton = btn;
-                    break;
+                    if (btn.gameObject.name.ToLower().Contains("skip"))
+                    {
+                        skipButton = btn;
+                        break;
+                    }
                 }
             }
         }
@@ -103,18 +87,18 @@ namespace SickOfIt.Core.Progression
                 var framesData = config.spriteFramesData as SpriteFramesData;
                 if (framesData != null)
                 {
-                    var deathObj = GameObject.Find("DeathAnimation");
-                    if (deathObj == null)
+                    // Use serialized reference or create fallback
+                    if (deathAnimationObject == null)
                     {
-                        deathObj = new GameObject("DeathAnimation");
-                        deathObj.transform.SetParent(transform);
-                        var sr = deathObj.AddComponent<SpriteRenderer>();
+                        deathAnimationObject = new GameObject("DeathAnimation");
+                        deathAnimationObject.transform.SetParent(transform);
+                        var sr = deathAnimationObject.AddComponent<SpriteRenderer>();
                         sr.sortingOrder = -10;
                     }
 
-                    spritePlayer = deathObj.GetComponent<SpriteFramePlayer>();
+                    spritePlayer = deathAnimationObject.GetComponent<SpriteFramePlayer>();
                     if (spritePlayer == null)
-                        spritePlayer = deathObj.AddComponent<SpriteFramePlayer>();
+                        spritePlayer = deathAnimationObject.AddComponent<SpriteFramePlayer>();
 
                     spritePlayer.Initialize(framesData);
                 }

@@ -11,37 +11,18 @@ namespace SickOfIt.Core.Progression
     /// Config-driven video/cutscene runtime. Reads VideoConfig from GameDefinition
     /// and drives playback via SpriteFramePlayer (no PlayableDirector).
     /// 
-    /// Auto-bootstraps on any scene starting with "Video" (except VideoSelection).
+    /// Added directly to generated scenes by ProjectGenerator / VideoSceneGenerator.
     /// ONE generic video scene handles all videos — the config defines everything.
     /// </summary>
     public class VideoRuntime : MonoBehaviour
     {
-        #region Static Bootstrap
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void RegisterSceneCallback()
-        {
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
-        }
-
-        private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
-        {
-            if (scene.name != "Video")
-                return;
-
-            if (Object.FindAnyObjectByType<VideoRuntime>() != null)
-                return;
-
-            var go = new GameObject("VideoRuntime");
-            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(go, scene);
-            go.AddComponent<VideoRuntime>();
-            Debug.Log($"[VideoRuntime] Auto-bootstrapped in scene '{scene.name}'");
-        }
-
-        #endregion
-
         [Header("Video Identity")]
         [SerializeField] private int videoNumber = 1;
+
+        [Header("Scene References (wired by generator)")]
+        [SerializeField] private GameObject videoPlayerObject;
+        [SerializeField] private GameObject audioObject;
+        [SerializeField] private GameObject uiRoot;
 
         private GameClock gameClock;
         private SpriteFramePlayer spritePlayer;
@@ -92,14 +73,17 @@ namespace SickOfIt.Core.Progression
 
         private void AutoDiscoverReferences()
         {
-            // Find skip button
-            var buttons = Object.FindObjectsByType<MobileControllerFramework.Button>(FindObjectsSortMode.None);
-            foreach (var btn in buttons)
+            // Find skip button from serialized UI reference
+            if (uiRoot != null)
             {
-                if (btn.gameObject.name.ToLower().Contains("skip"))
+                var buttons = uiRoot.GetComponentsInChildren<MobileControllerFramework.Button>(true);
+                foreach (var btn in buttons)
                 {
-                    skipButton = btn;
-                    break;
+                    if (btn.gameObject.name.ToLower().Contains("skip"))
+                    {
+                        skipButton = btn;
+                        break;
+                    }
                 }
             }
         }
@@ -114,21 +98,20 @@ namespace SickOfIt.Core.Progression
             if (framesData != null)
             {
                 Debug.Log($"[VideoRuntime] Found SpriteFramesData: {framesData.videoName}");
-                // Find or create a sprite renderer for video playback
-                var videoObj = GameObject.Find("VideoPlayer");
-                if (videoObj == null)
+                // Use serialized reference or create fallback
+                if (videoPlayerObject == null)
                 {
-                    videoObj = new GameObject("VideoPlayer");
-                    videoObj.transform.SetParent(transform);
-                    videoObj.transform.position = Vector3.zero; // Ensure it's at origin where camera can see it
-                    var sr = videoObj.AddComponent<SpriteRenderer>();
-                    sr.sortingOrder = 0; // Make sure it's visible (not behind other objects)
-                    sr.color = Color.white; // Ensure it's not transparent
+                    videoPlayerObject = new GameObject("VideoPlayer");
+                    videoPlayerObject.transform.SetParent(transform);
+                    videoPlayerObject.transform.position = Vector3.zero;
+                    var sr = videoPlayerObject.AddComponent<SpriteRenderer>();
+                    sr.sortingOrder = 0;
+                    sr.color = Color.white;
                 }
 
-                spritePlayer = videoObj.GetComponent<SpriteFramePlayer>();
+                spritePlayer = videoPlayerObject.GetComponent<SpriteFramePlayer>();
                 if (spritePlayer == null)
-                    spritePlayer = videoObj.AddComponent<SpriteFramePlayer>();
+                    spritePlayer = videoPlayerObject.AddComponent<SpriteFramePlayer>();
 
                 spritePlayer.Initialize(framesData, () =>
                 {
@@ -152,15 +135,14 @@ namespace SickOfIt.Core.Progression
             // Setup audio
             if (config.audio != null)
             {
-                var audioGo = GameObject.Find("Audio");
-                if (audioGo == null)
+                if (audioObject == null)
                 {
-                    audioGo = new GameObject("Audio");
-                    audioGo.transform.SetParent(transform);
+                    audioObject = new GameObject("Audio");
+                    audioObject.transform.SetParent(transform);
                 }
-                var audioSource = audioGo.GetComponent<AudioSource>();
+                var audioSource = audioObject.GetComponent<AudioSource>();
                 if (audioSource == null)
-                    audioSource = audioGo.AddComponent<AudioSource>();
+                    audioSource = audioObject.AddComponent<AudioSource>();
                 audioSource.clip = config.audio;
                 audioSource.Play();
             }

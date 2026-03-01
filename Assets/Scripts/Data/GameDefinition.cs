@@ -34,6 +34,22 @@ namespace SickOfIt.Data
         public int startingLevel = 1;
         public bool debugMode;
 
+        [Header("Scene UI Prefabs")]
+        [Tooltip("Full MobileController UI prefab for level scenes (movement, jump, shoot, etc.)")]
+        public GameObject levelUIPrefab;
+        [Tooltip("Minimal UI prefab for video scenes (skip button only)")]
+        public GameObject videoUIPrefab;
+        [Tooltip("Minimal UI prefab for death scenes (skip button only)")]
+        public GameObject deathUIPrefab;
+
+        [Header("Scene Camera Prefabs")]
+        [Tooltip("Camera prefab for level scenes")]
+        public GameObject levelCameraPrefab;
+        [Tooltip("Camera prefab for video scenes")]
+        public GameObject videoCameraPrefab;
+        [Tooltip("Camera prefab for death scenes")]
+        public GameObject deathCameraPrefab;
+
         // =========================================================================
         // ACCESSORS
         // =========================================================================

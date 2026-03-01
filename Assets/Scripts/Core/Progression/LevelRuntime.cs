@@ -1,4 +1,5 @@
 using SickOfIt.Core;
+using SickOfIt.Core.Input;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,40 +17,20 @@ namespace SickOfIt.Core.Progression
     /// 
     /// This is the ONLY script needed on a level scene. No LevelManager, no baked-in enemies.
     /// 
-    /// Auto-bootstraps via [RuntimeInitializeOnLoadMethod] — attaches itself to any level scene.
-    /// Can also be placed manually on a GameObject in the scene.
+    /// Added directly to generated scenes by ProjectGenerator / LevelSceneGenerator.
     /// </summary>
     public class LevelRuntime : MonoBehaviour
     {
-        #region Static Bootstrap
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void RegisterSceneCallback()
-        {
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
-        }
-
-        private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
-        {
-            if (scene.name != "Level")
-                return;
-
-            if (Object.FindAnyObjectByType<LevelRuntime>() != null)
-                return;
-
-            // Create a fresh runtime object — no dependency on LevelManager
-            var go = new GameObject("LevelRuntime");
-            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(go, scene);
-            go.AddComponent<LevelRuntime>();
-            Debug.Log($"[LevelRuntime] Auto-bootstrapped in scene '{scene.name}'");
-        }
-
-        #endregion
-
         #region Config
 
         [Header("Level Identity")]
         [SerializeField] private int levelNumber = 1;
+
+        [Header("Scene References (wired by generator)")]
+        [SerializeField] private GameObject characterObject;
+        [SerializeField] private Transform playerSpawnPoint;
+        [SerializeField] private AudioSource musicSource;
+        [SerializeField] private GameObject mobileControllerObject;
 
         // Runtime state
         private LevelConfig config;
@@ -58,9 +39,8 @@ namespace SickOfIt.Core.Progression
         private bool levelCompleted;
         private List<Coroutine> spawnCoroutines = new List<Coroutine>();
 
-        // Auto-discovered scene references
+        // Resolved scene references
         private PlayerHealth playerHealth;
-        private AudioSource musicSource;
         private Transform enemyContainer;
         private Transform platformContainer;
 
@@ -117,8 +97,8 @@ namespace SickOfIt.Core.Progression
                 }
             }
 
-            // Discover what exists in the scene
-            AutoDiscoverReferences();
+            // Resolve scene references (from serialized fields or fallback spawn)
+            ResolveReferences();
 
             // Build level content
             SetupContainers();
@@ -152,54 +132,53 @@ namespace SickOfIt.Core.Progression
 
         #endregion
 
-        #region Auto-Discovery
+        #region Scene References
 
-        private void AutoDiscoverReferences()
+        private void ResolveReferences()
         {
-            playerHealth = Object.FindAnyObjectByType<PlayerHealth>();
-
-            // Spawn the Character prefab if no player exists in the scene
-            if (playerHealth == null)
+            // Use serialized character reference, or spawn from prefab as fallback
+            if (characterObject != null)
             {
-                Debug.Log("[LevelRuntime] No PlayerHealth found in scene, attempting to spawn Character prefab...");
+                playerHealth = characterObject.GetComponentInChildren<PlayerHealth>();
+                Debug.Log($"[LevelRuntime] Using serialized Character ref (has PlayerHealth: {playerHealth != null})");
+            }
+            else
+            {
+                Debug.Log("[LevelRuntime] No characterObject assigned, spawning Character prefab...");
                 var characterPrefab = gameDefinition?.player?.playerPrefab;
                 if (characterPrefab != null)
                 {
-                    var spawnPos = Vector3.zero;
-                    var spawnPoint = GameObject.Find("PlayerSpawn");
-                    if (spawnPoint != null)
-                        spawnPos = spawnPoint.transform.position;
-
-                    var player = Instantiate(characterPrefab, spawnPos, Quaternion.identity);
-                    player.name = "Character";
-                    playerHealth = player.GetComponent<PlayerHealth>();
+                    var spawnPos = playerSpawnPoint != null ? playerSpawnPoint.position : Vector3.zero;
+                    characterObject = Instantiate(characterPrefab, spawnPos, Quaternion.identity);
+                    characterObject.name = "Character";
+                    playerHealth = characterObject.GetComponentInChildren<PlayerHealth>();
                     Debug.Log($"[LevelRuntime] Spawned Character prefab at {spawnPos} (has PlayerHealth: {playerHealth != null})");
                 }
                 else
                 {
-                    Debug.LogWarning($"[LevelRuntime] No playerPrefab assigned in GameDefinition.player! (gameDefinition null: {gameDefinition == null}, player null: {gameDefinition?.player == null})");
+                    Debug.LogWarning("[LevelRuntime] No characterObject assigned and no playerPrefab in GameDefinition!");
                 }
+            }
+
+            // Wire mobile controls from serialized references
+            TopDownController controller = null;
+            if (characterObject != null)
+                controller = characterObject.GetComponentInChildren<TopDownController>();
+
+            GameInputManager gim = null;
+            if (mobileControllerObject != null)
+                gim = mobileControllerObject.GetComponentInChildren<GameInputManager>();
+
+            if (gim != null && controller != null)
+            {
+                controller.BindGameInputManager(gim);
+                Debug.Log("[LevelRuntime] Wired GameInputManager → TopDownController");
             }
             else
             {
-                Debug.Log($"[LevelRuntime] Found existing PlayerHealth on '{playerHealth.gameObject.name}'");
+                if (gim == null) Debug.LogWarning("[LevelRuntime] No GameInputManager found — assign mobileControllerObject in generator.");
+                if (controller == null) Debug.LogWarning("[LevelRuntime] No TopDownController found — assign characterObject in generator.");
             }
-
-            // Find music source — prefer one tagged or named "Music", fallback to any AudioSource
-            var allAudio = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
-            foreach (var src in allAudio)
-            {
-                if (src.gameObject.name.Contains("Music"))
-                {
-                    musicSource = src;
-                    break;
-                }
-            }
-            if (musicSource == null && allAudio.Length > 0)
-                musicSource = allAudio[0];
-
-            // No more PlayableDirector discovery — all timeline events
-            // are handled by ExperienceRunner from config.
         }
 
         #endregion
@@ -213,8 +192,14 @@ namespace SickOfIt.Core.Progression
 
         private void SetupRewind()
         {
-            stateRecorder = gameObject.AddComponent<StateRecorder>();
-            rewindController = gameObject.AddComponent<RewindController>();
+            // Prefer components already on the GO (wired by generator), fallback to AddComponent
+            stateRecorder = GetComponent<StateRecorder>();
+            if (stateRecorder == null)
+                stateRecorder = gameObject.AddComponent<StateRecorder>();
+
+            rewindController = GetComponent<RewindController>();
+            if (rewindController == null)
+                rewindController = gameObject.AddComponent<RewindController>();
         }
 
         private void SetupContainers()
