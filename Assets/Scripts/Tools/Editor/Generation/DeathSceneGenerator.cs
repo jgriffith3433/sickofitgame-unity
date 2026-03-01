@@ -23,20 +23,18 @@ namespace SickOfIt.Tools.Editor.Generation
     /// </summary>
     public static class DeathSceneGenerator
     {
-        private const string DEATHS_FOLDER = "Assets/Scenes/Deaths";
+        private const string SCENES_ROOT = "Assets/Scenes";
 
-        public static bool GenerateDeathScene(DeathConfig config, GameDefinition gd)
+        public static bool GenerateDeathScene(GameDefinition gd)
         {
-            if (config == null)
+            if (gd == null)
             {
-                Debug.LogError("[DeathGen] Null DeathConfig!");
+                Debug.LogError("[DeathGen] Null GameDefinition!");
                 return false;
             }
 
-            string sceneName = config.deathName;
-            string scenePath = $"{DEATHS_FOLDER}/{sceneName}.unity";
-
-            ProjectGenerator.EnsureFolder(DEATHS_FOLDER);
+            Debug.Log("Generating Death.unity...");
+            string scenePath = $"{SCENES_ROOT}/Death.unity";
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -60,8 +58,6 @@ namespace SickOfIt.Tools.Editor.Generation
             audioGo.transform.SetParent(content.transform);
             var audioSource = audioGo.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
-            if (config.audio != null)
-                audioSource.clip = config.audio;
 
             // Camera from prefab
             Camera sceneCamera = null;

@@ -1,5 +1,4 @@
 using SickOfIt.Core;
-using SickOfIt.Core.Input;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,7 +29,6 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private GameObject characterObject;
         [SerializeField] private Transform playerSpawnPoint;
         [SerializeField] private AudioSource musicSource;
-        [SerializeField] private GameObject mobileControllerObject;
 
         // Runtime state
         private LevelConfig config;
@@ -160,25 +158,9 @@ namespace SickOfIt.Core.Progression
                 }
             }
 
-            // Wire mobile controls from serialized references
-            TopDownController controller = null;
-            if (characterObject != null)
-                controller = characterObject.GetComponentInChildren<TopDownController>();
-
-            GameInputManager gim = null;
-            if (mobileControllerObject != null)
-                gim = mobileControllerObject.GetComponentInChildren<GameInputManager>();
-
-            if (gim != null && controller != null)
-            {
-                controller.BindGameInputManager(gim);
-                Debug.Log("[LevelRuntime] Wired GameInputManager → TopDownController");
-            }
-            else
-            {
-                if (gim == null) Debug.LogWarning("[LevelRuntime] No GameInputManager found — assign mobileControllerObject in generator.");
-                if (controller == null) Debug.LogWarning("[LevelRuntime] No TopDownController found — assign characterObject in generator.");
-            }
+            // Resolve PlayerHealth from character
+            if (characterObject != null && playerHealth == null)
+                playerHealth = characterObject.GetComponentInChildren<PlayerHealth>();
         }
 
         #endregion

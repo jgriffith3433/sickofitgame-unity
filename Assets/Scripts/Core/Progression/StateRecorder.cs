@@ -1,32 +1,23 @@
 using SickOfIt.Core;
 using System.Collections.Generic;
 using UnityEngine;
+using SickOfIt.Combat.Damage;
 using SickOfIt.Combat.Enemies;
 using SickOfIt.Combat.Health;
 
 namespace SickOfIt.Core.Progression
 {
     /// <summary>
-    /// Records game state snapshots at regular intervals for rewind.
+    /// Records game state snapshots for rewind. Ring buffer, configurable duration.
     /// 
-    /// Tracked per snapshot:
-    ///   - Player position, velocity, health
-    ///   - All enemy positions, health, active state
-    ///   - Spawned/destroyed objects
-    ///   - Audio state (music position)
-    ///   - Camera position
-    /// 
-    /// Rewind = restore snapshots in reverse order.
-    /// Uses a ring buffer with configurable duration.
-    /// 
-    /// Attaches to GameClock — only records when time flows forward.
+    /// Tracks: player position/velocity/health, enemy positions/health/active state, camera.
+    /// Uses cached references — no GetComponent in hot paths.
+    /// Only records when GameClock flows forward.
     /// </summary>
     public class StateRecorder : MonoBehaviour
     {
         [Header("Settings")]
-        [Tooltip("Seconds between snapshots (lower = smoother rewind, more memory)")]
         [SerializeField] private float snapshotInterval = 0.1f;
-        [Tooltip("Maximum seconds of rewind history")]
         [SerializeField] private float maxHistorySeconds = 10f;
 
         [Header("Scene References (wired by generator)")]
@@ -40,11 +31,20 @@ namespace SickOfIt.Core.Progression
         private int writeIndex;
         private int snapshotCount;
         private float lastSnapshotTime;
-
-        // Active during rewind
         private bool isRestoring;
+        private bool subscribedToGameClock;
 
-        #region Initialization
+        // Enemy tracking — cached refs, no GetComponent during record/restore
+        private readonly List<TrackedEnemy> trackedEnemies = new List<TrackedEnemy>();
+
+        private struct TrackedEnemy
+        {
+            public int instanceId;
+            public EnemyBase enemy;
+            public EnemyHealth health;
+            public Rigidbody2D rb;
+            public RigidbodyType2D originalBodyType;
+        }
 
         private void Start()
         {
@@ -53,17 +53,19 @@ namespace SickOfIt.Core.Progression
             for (int i = 0; i < capacity; i++)
                 snapshots[i] = new StateSnapshot();
 
-            // If player refs weren't wired by generator, try to resolve from characterObject
             if (playerTransform == null && playerRb != null)
                 playerTransform = playerRb.transform;
 
-            // Subscribe to GameClock
-            if (GameClock.Instance != null)
-            {
-                GameClock.Instance.OnTimeChanged += OnClockTick;
-                GameClock.Instance.OnRewindStarted += OnRewindStarted;
-                GameClock.Instance.OnRewindStopped += OnRewindStopped;
-            }
+            TrySubscribeToGameClock();
+        }
+
+        private void TrySubscribeToGameClock()
+        {
+            if (subscribedToGameClock || GameClock.Instance == null) return;
+            GameClock.Instance.OnTimeChanged += OnClockTick;
+            GameClock.Instance.OnRewindStarted += OnRewindStarted;
+            GameClock.Instance.OnRewindStopped += OnRewindStopped;
+            subscribedToGameClock = true;
         }
 
         private void OnDestroy()
@@ -76,20 +78,44 @@ namespace SickOfIt.Core.Progression
             }
         }
 
-        #endregion
+        /// <summary>
+        /// Register an enemy with all refs cached upfront. Call when spawning.
+        /// </summary>
+        public void RegisterEnemy(EnemyBase enemy)
+        {
+            int id = enemy.gameObject.GetInstanceID();
+
+            // Check if already tracked
+            for (int i = 0; i < trackedEnemies.Count; i++)
+                if (trackedEnemies[i].instanceId == id) return;
+
+            trackedEnemies.Add(new TrackedEnemy
+            {
+                instanceId = id,
+                enemy = enemy,
+                health = enemy.GetComponent<EnemyHealth>(),   // Cached ONCE at registration
+                rb = enemy.GetComponent<Rigidbody2D>(),       // Cached ONCE at registration
+                originalBodyType = enemy.GetComponent<Rigidbody2D>()?.bodyType ?? RigidbodyType2D.Dynamic
+            });
+        }
 
         #region Recording
 
+        private void Update()
+        {
+            TrySubscribeToGameClock();
+
+            if (!isRestoring || GameClock.Instance == null) return;
+            RestoreToTime(GameClock.Instance.Time);
+        }
+
         private void OnClockTick(float time)
         {
-            if (isRestoring) return;
-            if (GameClock.Instance.IsRewinding) return;
+            if (isRestoring || GameClock.Instance.IsRewinding) return;
+            if (time - lastSnapshotTime < snapshotInterval) return;
 
-            if (time - lastSnapshotTime >= snapshotInterval)
-            {
-                RecordSnapshot(time);
-                lastSnapshotTime = time;
-            }
+            RecordSnapshot(time);
+            lastSnapshotTime = time;
         }
 
         private void RecordSnapshot(float time)
@@ -116,29 +142,23 @@ namespace SickOfIt.Core.Progression
                 snap.cameraSize = mainCamera.orthographic ? mainCamera.orthographicSize : 0f;
             }
 
-            // Enemies
+            // Enemies — all from cached list, no FindObjectsByType
             snap.enemyStates.Clear();
-            var enemies = Object.FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
-            foreach (var enemy in enemies)
+            for (int i = 0; i < trackedEnemies.Count; i++)
             {
-                var es = new EnemySnapshot
-                {
-                    instanceId = enemy.gameObject.GetInstanceID(),
-                    position = enemy.transform.position,
-                    isActive = enemy.gameObject.activeSelf,
-                };
+                var te = trackedEnemies[i];
+                if (te.enemy == null) continue;
 
-                var health = enemy.GetComponent<EnemyHealth>();
-                if (health != null)
+                snap.enemyStates.Add(new EnemySnapshot
                 {
-                    es.health = health.CurrentHealth;
-                    es.isAlive = health.IsAlive;
-                }
-
-                snap.enemyStates.Add(es);
+                    instanceId = te.instanceId,
+                    position = te.enemy.transform.position,
+                    isActive = te.enemy.gameObject.activeSelf,
+                    health = te.health != null ? te.health.CurrentHealth : 0,
+                    maxHealth = te.health != null ? te.health.MaxHealth : 0
+                });
             }
 
-            // Advance write pointer
             writeIndex = (writeIndex + 1) % snapshots.Length;
             if (snapshotCount < snapshots.Length)
                 snapshotCount++;
@@ -146,40 +166,48 @@ namespace SickOfIt.Core.Progression
 
         #endregion
 
-        #region Rewind Restore
+        #region Rewind
 
         private void OnRewindStarted()
         {
             isRestoring = true;
 
-            // Disable player physics during rewind
+            // Freeze player
             if (playerRb != null)
             {
                 playerRb.bodyType = RigidbodyType2D.Kinematic;
                 playerRb.linearVelocity = Vector2.zero;
             }
+
+            // Freeze all enemies
+            for (int i = 0; i < trackedEnemies.Count; i++)
+            {
+                var rb = trackedEnemies[i].rb;
+                if (rb != null) rb.bodyType = RigidbodyType2D.Kinematic;
+            }
+
+            DestroyProjectiles();
         }
 
         private void OnRewindStopped()
         {
             isRestoring = false;
 
-            // Re-enable player physics
+            // Restore player physics
             if (playerRb != null)
                 playerRb.bodyType = RigidbodyType2D.Dynamic;
+
+            // Restore enemy physics (only active ones)
+            for (int i = 0; i < trackedEnemies.Count; i++)
+            {
+                var te = trackedEnemies[i];
+                if (te.rb != null && te.enemy != null && te.enemy.gameObject.activeSelf)
+                    te.rb.bodyType = te.originalBodyType;
+            }
+
+            DestroyProjectiles();
         }
 
-        private void Update()
-        {
-            if (!isRestoring || GameClock.Instance == null) return;
-
-            float targetTime = GameClock.Instance.Time;
-            RestoreToTime(targetTime);
-        }
-
-        /// <summary>
-        /// Find the closest snapshot to the target time and restore it.
-        /// </summary>
         private void RestoreToTime(float targetTime)
         {
             if (snapshotCount == 0) return;
@@ -198,7 +226,6 @@ namespace SickOfIt.Core.Progression
                     closestDelta = delta;
                     closest = snap;
                 }
-                // Optimization: if we've passed the target going backwards, stop
                 if (snap.time < targetTime - snapshotInterval * 2)
                     break;
             }
@@ -208,6 +235,8 @@ namespace SickOfIt.Core.Progression
             // Restore player
             if (playerTransform != null)
                 playerTransform.position = closest.playerPosition;
+            if (playerHealth != null && closest.playerHealth > 0)
+                playerHealth.SetHealth(closest.playerHealth);
 
             // Restore camera
             if (mainCamera != null)
@@ -217,39 +246,43 @@ namespace SickOfIt.Core.Progression
                     mainCamera.orthographicSize = closest.cameraSize;
             }
 
-            // Restore enemies
-            var currentEnemies = Object.FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
-            foreach (var enemy in currentEnemies)
+            // Restore enemies — use cached tracked list, match by instanceId
+            for (int e = 0; e < closest.enemyStates.Count; e++)
             {
-                int id = enemy.gameObject.GetInstanceID();
-                EnemySnapshot found = null;
-                foreach (var es in closest.enemyStates)
+                var es = closest.enemyStates[e];
+                TrackedEnemy? matched = null;
+
+                for (int t = 0; t < trackedEnemies.Count; t++)
                 {
-                    if (es.instanceId == id)
+                    if (trackedEnemies[t].instanceId == es.instanceId)
                     {
-                        found = es;
+                        matched = trackedEnemies[t];
                         break;
                     }
                 }
 
-                if (found != null)
-                {
-                    enemy.transform.position = found.position;
-                    enemy.gameObject.SetActive(found.isActive);
+                if (matched == null || matched.Value.enemy == null) continue;
 
-                    var health = enemy.GetComponent<EnemyHealth>();
-                    if (health != null && found.health > 0)
-                        health.SetHealth(found.health);
+                var te = matched.Value;
+                var go = te.enemy.gameObject;
+
+                // Activate/deactivate
+                if (es.isActive && !go.activeSelf) go.SetActive(true);
+                else if (!es.isActive && go.activeSelf) go.SetActive(false);
+
+                if (es.isActive)
+                {
+                    te.enemy.transform.position = es.position;
+                    if (te.health != null && es.health > 0)
+                        te.health.SetHealth(es.health);
                 }
             }
 
-            // Trim snapshots ahead of current time (they're now "future")
             TrimSnapshotsAfter(targetTime);
         }
 
         private void TrimSnapshotsAfter(float time)
         {
-            // Remove snapshots recorded after the current rewind position
             while (snapshotCount > 0)
             {
                 int lastIdx = ((writeIndex - 1) % snapshots.Length + snapshots.Length) % snapshots.Length;
@@ -258,42 +291,44 @@ namespace SickOfIt.Core.Progression
                     writeIndex = lastIdx;
                     snapshotCount--;
                 }
-                else
-                {
-                    break;
-                }
+                else break;
+            }
+        }
+
+        private void DestroyProjectiles()
+        {
+            var damageDealers = Object.FindObjectsByType<DamageDealer>(FindObjectsSortMode.None);
+            foreach (var dd in damageDealers)
+            {
+                if (dd.GetComponent<EnemyBase>() != null) continue;
+                if (dd.GetComponent<PlayerHealth>() != null) continue;
+                Destroy(dd.gameObject);
             }
         }
 
         #endregion
 
-        #region Snapshot Data Structures
+        #region Data
 
         private class StateSnapshot
         {
             public float time;
-
-            // Player
             public Vector3 playerPosition;
             public Vector2 playerVelocity;
             public int playerHealth;
             public int playerMaxHealth;
-
-            // Camera
             public Vector3 cameraPosition;
             public float cameraSize;
-
-            // Enemies
-            public List<EnemySnapshot> enemyStates = new List<EnemySnapshot>();
+            public readonly List<EnemySnapshot> enemyStates = new List<EnemySnapshot>();
         }
 
-        private class EnemySnapshot
+        private struct EnemySnapshot
         {
             public int instanceId;
             public Vector3 position;
             public bool isActive;
             public int health;
-            public bool isAlive;
+            public int maxHealth;
         }
 
         #endregion

@@ -4,61 +4,31 @@ using UnityEngine;
 namespace SickOfIt.Core.Progression
 {
     /// <summary>
-    /// Rewind input handler and visual effects controller.
-    /// Uses MobileControllerFramework Button for input (same as all other game controls).
+    /// Rewind input handler. Hold the rewind button to rewind time.
     /// 
-    /// Hold the rewind button to rewind. Release to resume.
-    /// 
-    /// Visual effects during rewind:
-    ///   - VHS scanline overlay
-    ///   - Rewind icon indicator
-    /// 
+    /// The rewind button is wired at generation time directly from
+    /// the MobileController prefab — no runtime lookups needed.
     /// The actual state restore is handled by StateRecorder.
     /// The actual time manipulation is handled by GameClock.
     /// </summary>
     public class RewindController : MonoBehaviour
     {
-        [Header("Input")]
-        [Tooltip("MobileControllerFramework Button for rewind")]
-        [SerializeField] private MobileControllerFramework.Button rewindButton;
-
-        [Header("Rewind Settings")]
+        [Header("Settings")]
         [SerializeField] private float rewindSpeed = 3f;
         [Tooltip("Minimum time (seconds) that must have passed before rewind is available")]
         [SerializeField] private float minimumTimeBeforeRewind = 2f;
 
-        [Header("Visual Effects")]
-        [Tooltip("Overlay sprite for VHS scanline effect during rewind")]
-        [SerializeField] private GameObject rewindOverlay;
-        [Tooltip("Rewind icon/indicator UI")]
-        [SerializeField] private GameObject rewindIndicator;
-        [Tooltip("Color tint during rewind")]
-        [SerializeField] private Color rewindTint = new Color(0.8f, 0.9f, 1f, 0.3f);
-
         [Header("Audio")]
-        [SerializeField] private AudioClip rewindStartSound;
-        [SerializeField] private AudioClip rewindLoopSound;
-        [SerializeField] private AudioClip rewindStopSound;
         [SerializeField] private AudioSource musicSource;
 
-        private AudioSource audioSource;
+        [Header("Mobile Controls (wired by generator from MobileController prefab)")]
+        [Tooltip("Hold-to-rewind button.")]
+        [SerializeField] private MobileControllerFramework.Button rewindButton;
+
         private bool isRewinding;
-        private SpriteRenderer overlayRenderer;
 
-        private void Start()
+        private void OnEnable()
         {
-            audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-
-            if (rewindOverlay != null)
-            {
-                rewindOverlay.SetActive(false);
-                overlayRenderer = rewindOverlay.GetComponent<SpriteRenderer>();
-            }
-
-            if (rewindIndicator != null)
-                rewindIndicator.SetActive(false);
-
             if (rewindButton != null)
             {
                 rewindButton.TapStartEvent.AddListener(StartRewind);
@@ -66,19 +36,13 @@ namespace SickOfIt.Core.Progression
             }
         }
 
-        private void OnDestroy()
+        private void OnDisable()
         {
             if (rewindButton != null)
             {
                 rewindButton.TapStartEvent.RemoveListener(StartRewind);
                 rewindButton.TapEndEvent.RemoveListener(StopRewind);
             }
-        }
-
-        private void Update()
-        {
-            if (isRewinding)
-                UpdateRewindVisuals();
         }
 
         public void StartRewind()
@@ -89,22 +53,6 @@ namespace SickOfIt.Core.Progression
 
             isRewinding = true;
             GameClock.Instance.StartRewind(rewindSpeed);
-
-            // Visuals
-            if (rewindOverlay != null)
-                rewindOverlay.SetActive(true);
-            if (rewindIndicator != null)
-                rewindIndicator.SetActive(true);
-
-            // Audio
-            if (rewindStartSound != null)
-                audioSource.PlayOneShot(rewindStartSound);
-            if (rewindLoopSound != null)
-            {
-                audioSource.clip = rewindLoopSound;
-                audioSource.loop = true;
-                audioSource.Play();
-            }
 
             // Mute game music during rewind
             if (musicSource != null)
@@ -121,34 +69,11 @@ namespace SickOfIt.Core.Progression
             if (GameClock.Instance != null)
                 GameClock.Instance.StopRewind();
 
-            // Visuals
-            if (rewindOverlay != null)
-                rewindOverlay.SetActive(false);
-            if (rewindIndicator != null)
-                rewindIndicator.SetActive(false);
-
-            // Audio
-            audioSource.Stop();
-            if (rewindStopSound != null)
-                audioSource.PlayOneShot(rewindStopSound);
-
             // Resume game music
             if (musicSource != null)
                 musicSource.UnPause();
 
             Debug.Log($"[Rewind] Stopped at t={GameClock.Instance?.Time:F1}s");
-        }
-
-        private void UpdateRewindVisuals()
-        {
-            // Pulse the overlay opacity for VHS effect
-            if (overlayRenderer != null)
-            {
-                float alpha = 0.1f + Mathf.PingPong(Time.unscaledTime * 2f, 0.15f);
-                var c = rewindTint;
-                c.a = alpha;
-                overlayRenderer.color = c;
-            }
         }
     }
 }

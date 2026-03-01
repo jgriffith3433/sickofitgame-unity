@@ -24,20 +24,18 @@ namespace SickOfIt.Tools.Editor.Generation
     /// </summary>
     public static class VideoSceneGenerator
     {
-        private const string VIDEOS_FOLDER = "Assets/Scenes/Videos";
+        private const string SCENES_ROOT = "Assets/Scenes";
 
-        public static bool GenerateVideoScene(VideoConfig config, GameDefinition gd)
+        public static bool GenerateVideoScene(GameDefinition gd)
         {
-            if (config == null)
+            if (gd == null)
             {
-                Debug.LogError("[VideoGen] Null VideoConfig!");
+                Debug.LogError("[VideoGen] Null GameDefinition!");
                 return false;
             }
 
-            string sceneName = config.videoName;
-            string scenePath = $"{VIDEOS_FOLDER}/{sceneName}.unity";
-
-            ProjectGenerator.EnsureFolder(VIDEOS_FOLDER);
+            Debug.Log("Generating Video.unity...");
+            string scenePath = $"{SCENES_ROOT}/Video.unity";
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -61,8 +59,6 @@ namespace SickOfIt.Tools.Editor.Generation
             audioGo.transform.SetParent(content.transform);
             var audioSource = audioGo.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
-            if (config.audio != null)
-                audioSource.clip = config.audio;
 
             // Camera from prefab
             Camera sceneCamera = null;

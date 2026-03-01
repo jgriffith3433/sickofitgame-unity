@@ -10,6 +10,7 @@ using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 using SickOfIt.Core.Progression;
+using SickOfIt.Tools.Editor.Generation;
 
 namespace SickOfIt.Tools.Editor
 {
@@ -40,12 +41,27 @@ namespace SickOfIt.Tools.Editor
             // Clean up old scenes first
             CleanupOldScenes();
             
-            // Generate the 3 simple scenes
-            GenerateVideoScene(gd);
-            GenerateLevelScene(gd);
-            GenerateDeathScene(gd);
+            // Delegate to individual scene generators
+            // NOTE: Each NewScene(EmptyScene, Single) can unload the SO from native side,
+            // so we reload GameDefinition before each generator call.
+            try { VideoSceneGenerator.GenerateVideoScene(gd); }
+            catch (System.Exception e) { Debug.LogError($"VideoSceneGenerator failed: {e}"); }
+            
+            gd = LoadGameDefinition();
+            try { LevelSceneGenerator.GenerateLevelScene(gd); }
+            catch (System.Exception e) { Debug.LogError($"LevelSceneGenerator failed: {e}"); }
+            
+            gd = LoadGameDefinition();
+            try { DeathSceneGenerator.GenerateDeathScene(gd); }
+            catch (System.Exception e) { Debug.LogError($"DeathSceneGenerator failed: {e}"); }
+            
+            // Refresh AssetDatabase so newly-saved scenes have valid GUIDs
+            // before Addressables tries to register them
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
             
             // Setup Addressables
+            gd = LoadGameDefinition();
             SetupAddressables(gd);
             
             // Force refresh
@@ -57,6 +73,9 @@ namespace SickOfIt.Tools.Editor
             Debug.Log($"✅ Config from GameDefinition: {gd.levels.Count} levels, {gd.videos.Count} videos, {gd.deaths.Count} deaths");
             Debug.Log($"✅ Addressables configured");
             Debug.Log($"🎮 Game ready to play!");
+            
+            // Open MainMenu scene so it's ready to play
+            EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity");
         }
         
         private static void CleanupOldScenes()
@@ -101,188 +120,14 @@ namespace SickOfIt.Tools.Editor
             }
         }
         
-        private static void GenerateVideoScene(GameDefinition gd)
-        {
-            Debug.Log("Generating Video.unity...");
-            string scenePath = $"{SCENES_ROOT}/Video.unity";
-            
-            // Create new scene (empty — camera comes from prefab)
-            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            
-            // Camera from prefab
-            var sceneCamera = PlaceCamera(gd.videoCameraPrefab, "video");
-            
-            // Create VideoPlayer GameObject
-            var videoPlayer = new GameObject("VideoPlayer");
-            var spriteRenderer = videoPlayer.AddComponent<SpriteRenderer>();
-            spriteRenderer.sortingOrder = 0;
-            spriteRenderer.color = Color.white;
-            videoPlayer.transform.position = Vector3.zero;
-            
-            // Create Audio GameObject
-            var audioGo = new GameObject("Audio");
-            var audioSource = audioGo.AddComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-            audioSource.spatialBlend = 0f;
-            
-            // Place UI prefab (skip button)
-            GameObject ui = null;
-            if (gd.videoUIPrefab != null)
-            {
-                ui = (GameObject)PrefabUtility.InstantiatePrefab(gd.videoUIPrefab);
-                ui.name = "UI";
-                WireCanvasCamera(ui, sceneCamera);
-                Debug.Log("✅ Placed video UI prefab in Video scene");
-            }
-            else
-            {
-                Debug.LogWarning("⚠️ No videoUIPrefab in GameDefinition — Video scene has no skip button.");
-            }
-            
-            // Add VideoRuntime directly to the scene and wire references
-            var videoRuntimeGo = new GameObject("VideoRuntime");
-            var videoRuntime = videoRuntimeGo.AddComponent<VideoRuntime>();
-            var vso = new SerializedObject(videoRuntime);
-            vso.FindProperty("videoPlayerObject").objectReferenceValue = videoPlayer;
-            vso.FindProperty("audioObject").objectReferenceValue = audioGo;
-            if (ui != null) vso.FindProperty("uiRoot").objectReferenceValue = ui;
-            vso.ApplyModifiedPropertiesWithoutUndo();
-
-            // Save scene
-            EditorSceneManager.SaveScene(scene, scenePath);
-            Debug.Log("✅ Created: Video.unity");
-        }
+        // --- Commented out: now delegated to VideoSceneGenerator ---
+        // private static void GenerateVideoScene(GameDefinition gd) { ... }
         
-        private static void GenerateLevelScene(GameDefinition gd)
-        {
-            Debug.Log("Generating Level.unity...");
-            string scenePath = $"{SCENES_ROOT}/Level.unity";
-            
-            // Create new scene (empty — camera comes from prefab)
-            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            
-            // Camera from prefab
-            var sceneCamera = PlaceCamera(gd.levelCameraPrefab, "level");
-            
-            // Create basic level structure
-            var levelRoot = new GameObject("Level");
-            var spawnsRoot = new GameObject("Spawns");
-            spawnsRoot.transform.SetParent(levelRoot.transform);
-            var playerSpawn = new GameObject("PlayerSpawn");
-            playerSpawn.transform.SetParent(spawnsRoot.transform);
-            
-            // Instantiate player Character prefab from GameDefinition config
-            GameObject player = null;
-            if (gd.player?.playerPrefab != null)
-            {
-                player = (GameObject)PrefabUtility.InstantiatePrefab(gd.player.playerPrefab);
-                player.name = "Character";
-                player.transform.position = Vector3.zero;
-                Debug.Log($"✅ Placed Character prefab in Level scene");
-            }
-            else
-            {
-                Debug.LogWarning("⚠️ No playerPrefab in GameDefinition.player — Level scene has no player. Assign it in GameDefinition and regenerate.");
-            }
-            
-            // Place full UI prefab (MobileController)
-            GameObject mobileController = null;
-            if (gd.levelUIPrefab != null)
-            {
-                mobileController = (GameObject)PrefabUtility.InstantiatePrefab(gd.levelUIPrefab);
-                mobileController.name = "MobileController";
-                WireCanvasCamera(mobileController, sceneCamera);
-                Debug.Log("✅ Placed level UI prefab in Level scene");
-            }
-            else
-            {
-                Debug.LogWarning("⚠️ No levelUIPrefab in GameDefinition — Level scene has no mobile controls.");
-            }
-            
-            // Create music audio source
-            var musicGo = new GameObject("Music");
-            var audioSource = musicGo.AddComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-            audioSource.spatialBlend = 0f; // 2D audio
-            
-            // Add LevelRuntime directly to the scene and wire references
-            var levelRuntimeGo = new GameObject("LevelRuntime");
-            var levelRuntime = levelRuntimeGo.AddComponent<LevelRuntime>();
-            var lso = new SerializedObject(levelRuntime);
-            if (player != null) lso.FindProperty("characterObject").objectReferenceValue = player;
-            lso.FindProperty("playerSpawnPoint").objectReferenceValue = playerSpawn.transform;
-            lso.FindProperty("musicSource").objectReferenceValue = audioSource;
-            if (mobileController != null) lso.FindProperty("mobileControllerObject").objectReferenceValue = mobileController;
-            lso.ApplyModifiedPropertiesWithoutUndo();
-
-            // Add StateRecorder + RewindController and wire their references
-            var stateRecorder = levelRuntimeGo.AddComponent<StateRecorder>();
-            var srso = new SerializedObject(stateRecorder);
-            if (player != null)
-            {
-                srso.FindProperty("playerTransform").objectReferenceValue = player.transform;
-                var rb = player.GetComponentInChildren<Rigidbody2D>();
-                if (rb != null) srso.FindProperty("playerRb").objectReferenceValue = rb;
-                var ph = player.GetComponentInChildren<SickOfIt.Combat.Health.PlayerHealth>();
-                if (ph != null) srso.FindProperty("playerHealth").objectReferenceValue = ph;
-            }
-            if (sceneCamera != null) srso.FindProperty("mainCamera").objectReferenceValue = sceneCamera;
-            srso.ApplyModifiedPropertiesWithoutUndo();
-
-            var rewindController = levelRuntimeGo.AddComponent<RewindController>();
-            var rcso = new SerializedObject(rewindController);
-            rcso.FindProperty("musicSource").objectReferenceValue = audioSource;
-            rcso.ApplyModifiedPropertiesWithoutUndo();
-
-            // Save scene
-            EditorSceneManager.SaveScene(scene, scenePath);
-            Debug.Log("✅ Created: Level.unity");
-        }
+        // --- Commented out: now delegated to LevelSceneGenerator ---
+        // private static void GenerateLevelScene(GameDefinition gd) { ... }
         
-        private static void GenerateDeathScene(GameDefinition gd)
-        {
-            Debug.Log("Generating Death.unity...");
-            string scenePath = $"{SCENES_ROOT}/Death.unity";
-            
-            // Create new scene (empty — camera comes from prefab)
-            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            
-            // Camera from prefab
-            var sceneCamera = PlaceCamera(gd.deathCameraPrefab, "death");
-            
-            // Create death player
-            var deathPlayer = new GameObject("DeathPlayer");
-            var spriteRenderer = deathPlayer.AddComponent<SpriteRenderer>();
-            spriteRenderer.sortingOrder = 0;
-            spriteRenderer.color = Color.white;
-            deathPlayer.transform.position = Vector3.zero;
-            
-            // Place UI prefab (skip button)
-            GameObject deathUi = null;
-            if (gd.deathUIPrefab != null)
-            {
-                deathUi = (GameObject)PrefabUtility.InstantiatePrefab(gd.deathUIPrefab);
-                deathUi.name = "UI";
-                WireCanvasCamera(deathUi, sceneCamera);
-                Debug.Log("✅ Placed death UI prefab in Death scene");
-            }
-            else
-            {
-                Debug.LogWarning("⚠️ No deathUIPrefab in GameDefinition — Death scene has no skip button.");
-            }
-            
-            // Add DeathRuntime directly to the scene and wire references
-            var deathRuntimeGo = new GameObject("DeathRuntime");
-            var deathRuntime = deathRuntimeGo.AddComponent<DeathRuntime>();
-            var dso = new SerializedObject(deathRuntime);
-            dso.FindProperty("deathAnimationObject").objectReferenceValue = deathPlayer;
-            if (deathUi != null) dso.FindProperty("uiRoot").objectReferenceValue = deathUi;
-            dso.ApplyModifiedPropertiesWithoutUndo();
-
-            // Save scene
-            EditorSceneManager.SaveScene(scene, scenePath);
-            Debug.Log("✅ Created: Death.unity");
-        }
+        // --- Commented out: now delegated to DeathSceneGenerator ---
+        // private static void GenerateDeathScene(GameDefinition gd) { ... }
         
         private static void SetupAddressables(GameDefinition gd)
         {

@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using MobileControllerFramework;
 using SickOfIt.Core.Addressables;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
@@ -67,14 +69,19 @@ namespace SickOfIt.Core.Input
         [Tooltip("Gamepad right stick / mouse delta - bind to 'Character/Look' action")]
         [SerializeField] private InputActionReference lookAction;
         
+        [Header("Mobile Controls (wired by generator from MobileController prefab)")]
+        [Tooltip("Move analog stick (left stick on MobileController).")]
+        [SerializeField] private Analog moveAnalog;
+        [Tooltip("Fire/aim analog stick (right stick on MobileController).")]
+        [SerializeField] private Analog fireAnalog;
+        [Tooltip("GameInputManager for jump events (lives on MobileController).")]
+        [SerializeField] private GameInputManager gameInputManager;
+
         [Header("References")]
         [Tooltip("Child transform containing the graphics/visuals to rotate")]
         [SerializeField] private Transform graphicsTransform;
         [SerializeField] private Animator animator;
         [SerializeField] private Camera mainCamera;
-        
-        // Auto-discovered at runtime from the UI prefab in the scene
-        private GameInputManager gameInputManager;
         
         [Header("Rotation Settings")]
         [Tooltip("Speed of rotation when moving (smooth rotation to show front/back/sides)")]
@@ -182,11 +189,6 @@ namespace SickOfIt.Core.Input
                 rb.gravityScale = gravityScale;
             }
             
-            if (mainCamera == null)
-            {
-                mainCamera = Camera.main;
-            }
-            
             // Initialize rotation to face camera (front view)
             currentYRotation = 90f;
             targetYRotation = 90f;
@@ -205,37 +207,6 @@ namespace SickOfIt.Core.Input
             }
             
             PreloadProjectilePrefab();
-        }
-        
-        /// <summary>
-        /// Called by GameInputManager when it enables (e.g. new scene loaded).
-        /// Subscribes to its events so we receive mobile input.
-        /// </summary>
-        public void BindGameInputManager(GameInputManager gim)
-        {
-            // Unsub from any previous instance first
-            if (gameInputManager != null && gameInputManager != gim)
-            {
-                gameInputManager.OnJumpPressed -= OnJumpRequested;
-                gameInputManager.OnMoveAnalogReleased -= OnAnalogReleased;
-            }
-            
-            gameInputManager = gim;
-            gameInputManager.OnJumpPressed += OnJumpRequested;
-            gameInputManager.OnMoveAnalogReleased += OnAnalogReleased;
-        }
-        
-        /// <summary>
-        /// Called by GameInputManager when it disables / is destroyed.
-        /// Only unbinds if it's the same instance we're currently using.
-        /// </summary>
-        public void UnbindGameInputManager(GameInputManager gim)
-        {
-            if (gameInputManager != gim) return;
-            
-            gameInputManager.OnJumpPressed -= OnJumpRequested;
-            gameInputManager.OnMoveAnalogReleased -= OnAnalogReleased;
-            gameInputManager = null;
         }
         
         private void PreloadProjectilePrefab()
@@ -289,10 +260,24 @@ namespace SickOfIt.Core.Input
             if (jumpAction?.action != null) jumpAction.action.Enable();
             if (fireAction?.action != null) fireAction.action.Enable();
             if (lookAction?.action != null) lookAction.action.Enable();
+
+            // Subscribe to mobile control events
+            if (moveAnalog != null)
+                moveAnalog.StickExitEvent.AddListener(OnAnalogReleased);
+            if (gameInputManager != null)
+                gameInputManager.OnJumpPressed += OnJumpRequested;
         }
 
         private void Update()
         {
+            // Freeze all player input/logic during rewind — StateRecorder controls position
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return;
+
+            if (mainCamera == null)
+            {
+                mainCamera = Camera.main;
+            }
             ReadMoveInput();
             ReadJumpInput();
             ReadFireInput();
@@ -307,6 +292,10 @@ namespace SickOfIt.Core.Input
         
         private void FixedUpdate()
         {
+            // Don't apply movement during rewind
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return;
+
             HandleMovement();
         }
         
@@ -324,12 +313,11 @@ namespace SickOfIt.Core.Input
             // Character's OnDisable fires AFTER the Level Character's Start,
             // which would disable the actions the Level Character just enabled.
 
+            // Unsubscribe from mobile control events
+            if (moveAnalog != null)
+                moveAnalog.StickExitEvent.RemoveListener(OnAnalogReleased);
             if (gameInputManager != null)
-            {
                 gameInputManager.OnJumpPressed -= OnJumpRequested;
-                gameInputManager.OnMoveAnalogReleased -= OnAnalogReleased;
-                gameInputManager = null;
-            }
         }
         
         #endregion
@@ -375,10 +363,10 @@ namespace SickOfIt.Core.Input
             Vector2 keyboardInput = Vector2.zero;
             bool usingMobileInput = false;
             
-            // Poll mobile move input via GameInputManager (lives on UI prefab)
-            if (gameInputManager != null && gameInputManager.HasMoveAnalog)
+            // Poll mobile move input directly from analog stick
+            if (moveAnalog != null && moveAnalog.gameObject.activeSelf)
             {
-                mobileInput = gameInputManager.GetMoveInput();
+                mobileInput = moveAnalog.GetStickPosition();
                 moveInput = mobileInput;
                 usingMobileInput = true;
             }
@@ -419,10 +407,10 @@ namespace SickOfIt.Core.Input
             fireDirection = Vector2.zero;
             isFiring = false;
             
-            // Poll mobile fire input via GameInputManager (lives on UI prefab)
-            if (gameInputManager != null && gameInputManager.HasFireAnalog)
+            // Poll mobile fire input directly from analog stick
+            if (fireAnalog != null && fireAnalog.gameObject.activeSelf)
             {
-                Vector2 analogInput = gameInputManager.GetFireInput();
+                Vector2 analogInput = fireAnalog.GetStickPosition();
                 if (analogInput.magnitude > InputDeadzone)
                 {
                     fireDirection = analogInput.normalized;
@@ -443,7 +431,8 @@ namespace SickOfIt.Core.Input
                 }
             }
             
-            if (fireAction?.action != null && fireAction.action.IsPressed())
+            if (fireAction?.action != null && fireAction.action.IsPressed()
+                && (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject()))
             {
                 isFiring = true;
                 fireDirection = GetMouseDirectionFromPlayer();

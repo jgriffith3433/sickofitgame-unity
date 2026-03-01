@@ -25,21 +25,19 @@ namespace SickOfIt.Tools.Editor.Generation
     /// </summary>
     public static class LevelSceneGenerator
     {
-        private const string LEVELS_FOLDER = "Assets/Scenes/Levels";
+        private const string SCENES_ROOT = "Assets/Scenes";
         private const string PLAYER_PREFAB_PATH = "Assets/Prefabs/Character.prefab";
 
-        public static bool GenerateLevelScene(LevelConfig config, GameDefinition gd)
+        public static bool GenerateLevelScene(GameDefinition gd)
         {
-            if (config == null)
+            if (gd == null)
             {
-                Debug.LogError("[LevelGen] Null LevelConfig!");
+                Debug.LogError("[LevelGen] Null GameDefinition!");
                 return false;
             }
 
-            string sceneName = config.levelName;
-            string scenePath = $"{LEVELS_FOLDER}/{sceneName}.unity";
-
-            ProjectGenerator.EnsureFolder(LEVELS_FOLDER);
+            Debug.Log("Generating Level.unity...");
+            string scenePath = $"{SCENES_ROOT}/Level.unity";
 
             // Create or open scene
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -63,14 +61,28 @@ namespace SickOfIt.Tools.Editor.Generation
             playerSpawn.transform.SetParent(content.transform);
             playerSpawn.transform.position = new Vector3(-4f, 0f, 0f);
 
-            // Try to instantiate player prefab
+            // Instantiate player Character prefab from GameDefinition
             GameObject player = null;
-            var playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PLAYER_PREFAB_PATH);
-            if (playerPrefab != null)
+            if (gd.player?.playerPrefab != null)
             {
-                player = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab, content.transform);
+                player = (GameObject)PrefabUtility.InstantiatePrefab(gd.player.playerPrefab, content.transform);
                 player.name = "Character";
                 player.transform.position = new Vector3(-4f, 0f, 0f);
+            }
+            else
+            {
+                // Fallback: try hardcoded path
+                var playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PLAYER_PREFAB_PATH);
+                if (playerPrefab != null)
+                {
+                    player = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab, content.transform);
+                    player.name = "Character";
+                    player.transform.position = new Vector3(-4f, 0f, 0f);
+                }
+                else
+                {
+                    Debug.LogWarning("[LevelGen] No playerPrefab in GameDefinition and no prefab at " + PLAYER_PREFAB_PATH);
+                }
             }
 
             // Ground / boundaries
@@ -82,31 +94,31 @@ namespace SickOfIt.Tools.Editor.Generation
             ground.transform.SetParent(level.transform);
             ground.transform.position = new Vector3(0f, -3.5f, 0f);
             var groundCollider = ground.AddComponent<BoxCollider2D>();
-            groundCollider.size = new Vector2(config.levelBounds.x * 2, 1f);
+            groundCollider.size = new Vector2(14f, 1f);  // Default size; LevelRuntime spawns barriers from config
             int groundLayer = LayerMask.NameToLayer("Ground");
             if (groundLayer >= 0) ground.layer = groundLayer;
 
             // Left wall
             var leftWall = new GameObject("LeftWall");
             leftWall.transform.SetParent(level.transform);
-            leftWall.transform.position = new Vector3(-config.levelBounds.x, 0f, 0f);
+            leftWall.transform.position = new Vector3(-7f, 0f, 0f);
             var leftCollider = leftWall.AddComponent<BoxCollider2D>();
-            leftCollider.size = new Vector2(1f, config.levelBounds.y * 2);
+            leftCollider.size = new Vector2(1f, 8f);
 
             // Right wall
             var rightWall = new GameObject("RightWall");
             rightWall.transform.SetParent(level.transform);
-            rightWall.transform.position = new Vector3(config.levelBounds.x, 0f, 0f);
+            rightWall.transform.position = new Vector3(7f, 0f, 0f);
             var rightCollider = rightWall.AddComponent<BoxCollider2D>();
-            rightCollider.size = new Vector2(1f, config.levelBounds.y * 2);
+            rightCollider.size = new Vector2(1f, 8f);
 
             // Level completion trigger (right side)
             var winTrigger = new GameObject("WinTrigger");
             winTrigger.transform.SetParent(content.transform);
-            winTrigger.transform.position = new Vector3(config.levelBounds.x - 0.5f, 0f, 0f);
+            winTrigger.transform.position = new Vector3(6.5f, 0f, 0f);
             var winCollider = winTrigger.AddComponent<BoxCollider2D>();
             winCollider.isTrigger = true;
-            winCollider.size = new Vector2(1f, config.levelBounds.y * 2);
+            winCollider.size = new Vector2(1f, 8f);
             winTrigger.AddComponent<SickOfIt.Core.Progression.LevelWinTrigger>();
 
             // Music AudioSource
@@ -115,8 +127,6 @@ namespace SickOfIt.Tools.Editor.Generation
             var audioSource = musicGo.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
             audioSource.loop = true;
-            if (config.music != null)
-                audioSource.clip = config.music;
 
             // Camera from prefab
             Camera sceneCamera = null;
@@ -127,6 +137,9 @@ namespace SickOfIt.Tools.Editor.Generation
                 cameraGo.tag = "MainCamera";
                 cameraGo.transform.SetParent(sceneRoot.transform);
                 sceneCamera = cameraGo.GetComponent<Camera>();
+                // Override prefab's orthographic size for level gameplay
+                if (sceneCamera != null)
+                    sceneCamera.orthographicSize = 3.6f;
             }
             else
             {
@@ -135,7 +148,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 cameraGo.tag = "MainCamera";
                 var cam = cameraGo.AddComponent<Camera>();
                 cam.orthographic = true;
-                cam.orthographicSize = 2.8f;
+                cam.orthographicSize = 3.6f;
                 cameraGo.AddComponent<AudioListener>();
                 sceneCamera = cam;
             }
@@ -159,8 +172,57 @@ namespace SickOfIt.Tools.Editor.Generation
             if (player != null) lrso.FindProperty("characterObject").objectReferenceValue = player;
             lrso.FindProperty("playerSpawnPoint").objectReferenceValue = playerSpawn.transform;
             lrso.FindProperty("musicSource").objectReferenceValue = audioSource;
-            if (mobileController != null) lrso.FindProperty("mobileControllerObject").objectReferenceValue = mobileController;
             lrso.ApplyModifiedPropertiesWithoutUndo();
+
+            // ── Discover mobile controls from MobileController hierarchy ──
+            MobileControllerFramework.Analog moveAnalog = null;
+            MobileControllerFramework.Analog fireAnalog = null;
+            MobileControllerFramework.Button rewindBtn = null;
+            SickOfIt.Core.Input.GameInputManager gim = null;
+
+            if (mobileController != null)
+            {
+                // Analogs are named "(Prb)MoveAnalog" and "(Prb)FireAnalog" in the prefab
+                foreach (var analog in mobileController.GetComponentsInChildren<MobileControllerFramework.Analog>(true))
+                {
+                    if (analog.gameObject.name.Contains("Move"))
+                        moveAnalog = analog;
+                    else if (analog.gameObject.name.Contains("Fire"))
+                        fireAnalog = analog;
+                }
+
+                // Take the first enabled Button component as the rewind button
+                foreach (var btn in mobileController.GetComponentsInChildren<MobileControllerFramework.Button>(true))
+                {
+                    if (btn.enabled)
+                    {
+                        rewindBtn = btn;
+                        break;
+                    }
+                }
+
+                gim = mobileController.GetComponentInChildren<SickOfIt.Core.Input.GameInputManager>(true);
+            }
+
+            // Wire mobile controls + camera directly into TopDownController
+            if (player != null)
+            {
+                var tdc = player.GetComponentInChildren<SickOfIt.Core.Input.TopDownController>();
+                if (tdc != null)
+                {
+                    var tdcSo = new SerializedObject(tdc);
+                    if (sceneCamera != null)
+                        tdcSo.FindProperty("mainCamera").objectReferenceValue = sceneCamera;
+                    if (moveAnalog != null)
+                        tdcSo.FindProperty("moveAnalog").objectReferenceValue = moveAnalog;
+                    if (fireAnalog != null)
+                        tdcSo.FindProperty("fireAnalog").objectReferenceValue = fireAnalog;
+                    if (gim != null)
+                        tdcSo.FindProperty("gameInputManager").objectReferenceValue = gim;
+                    tdcSo.ApplyModifiedPropertiesWithoutUndo();
+                    Debug.Log("[LevelGen] Wired mobile controls → TopDownController");
+                }
+            }
 
             // Add StateRecorder + RewindController and wire their references
             var stateRecorder = levelRuntimeGo.AddComponent<StateRecorder>();
@@ -179,7 +241,10 @@ namespace SickOfIt.Tools.Editor.Generation
             var rewindController = levelRuntimeGo.AddComponent<RewindController>();
             var rcso = new SerializedObject(rewindController);
             rcso.FindProperty("musicSource").objectReferenceValue = audioSource;
+            if (rewindBtn != null)
+                rcso.FindProperty("rewindButton").objectReferenceValue = rewindBtn;
             rcso.ApplyModifiedPropertiesWithoutUndo();
+            Debug.Log($"[LevelGen] Wired RewindController (rewindButton: {rewindBtn != null})");
 
             // Set the contentRoots via SerializedObject
             var so = new SerializedObject(contentController);
@@ -191,8 +256,7 @@ namespace SickOfIt.Tools.Editor.Generation
             // Save scene
             EditorSceneManager.SaveScene(scene, scenePath);
 
-            Debug.Log($"[LevelGen] Generated scene: {scenePath} " +
-                $"(bounds: {config.levelBounds}, enemies: {config.EnemyCount})");
+            Debug.Log($"[LevelGen] Generated scene: {scenePath}");
 
             return true;
         }

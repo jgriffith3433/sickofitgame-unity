@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
 using SickOfIt.Core.Flow;
-using SickOfIt.Core.Input;
 using SickOfIt.Data;
 
 namespace SickOfIt.Combat.Health
@@ -31,6 +30,8 @@ namespace SickOfIt.Combat.Health
         public UnityEvent onDamaged;
         public UnityEvent onDeath;
 
+        // Cached ref — set once in Awake, no GetComponent in Die()
+        private SickOfIt.Core.Input.TopDownController controller;
         private int maxHealth;
         private int currentHealth;
 
@@ -38,6 +39,20 @@ namespace SickOfIt.Combat.Health
         public int MaxHealth => maxHealth;
         public bool IsAlive => currentHealth > 0;
         public bool IsInvincible => invincibilityTimer > 0;
+
+        /// <summary>
+        /// Set current health directly (used by rewind system).
+        /// </summary>
+        public void SetHealth(int health)
+        {
+            currentHealth = Mathf.Clamp(health, 0, maxHealth);
+            onHealthChanged?.Invoke(currentHealth);
+        }
+
+        private void Awake()
+        {
+            controller = GetComponentInParent<SickOfIt.Core.Input.TopDownController>();
+        }
 
         private void Update()
         {
@@ -90,9 +105,8 @@ namespace SickOfIt.Combat.Health
         {
             onDeath?.Invoke();
 
-            SickOfIt.Core.AnalyticsManager.Instance.TrackPlayerDeath("combat");
+            SickOfIt.Core.AnalyticsManager.Instance?.TrackPlayerDeath("combat");
 
-            var controller = GetComponentInParent<TopDownController>();
             if (controller != null)
                 controller.enabled = false;
 

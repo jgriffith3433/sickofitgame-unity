@@ -14,10 +14,6 @@ namespace SickOfIt.Combat.Health
         [SerializeField] private int maxHealth = 3;
         [SerializeField] private int currentHealth;
 
-        [Header("Death Settings")]
-        [SerializeField] private bool destroyOnDeath = true;
-        [SerializeField] private float deathDelay = 0f;
-
         [Header("Invincibility")]
         [SerializeField] private bool hasInvincibilityFrames = false;
         [SerializeField] private float invincibilityDuration = 0.5f;
@@ -91,15 +87,12 @@ namespace SickOfIt.Combat.Health
 
         private void Die()
         {
-            onDeath?.Invoke();
+            // Only fire death events during normal play (not during rewind restore)
+            if (SickOfIt.Core.GameClock.Instance == null || !SickOfIt.Core.GameClock.Instance.IsRewinding)
+                onDeath?.Invoke();
 
-            if (destroyOnDeath)
-            {
-                if (deathDelay > 0)
-                    Destroy(gameObject, deathDelay);
-                else
-                    Destroy(gameObject);
-            }
+            // Hide instead of destroy so rewind can bring enemies back
+            gameObject.SetActive(false);
         }
 
         #region Health Bar
