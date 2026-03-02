@@ -76,8 +76,8 @@ namespace SickOfIt.Tools.Editor.Generation
                 cameraGo.tag = "MainCamera";
                 var cam = cameraGo.AddComponent<Camera>();
                 cam.orthographic = true;
-                cam.orthographicSize = 2.8f;
-                cam.backgroundColor = Color.black;
+                cam.orthographicSize = gd.cinematicCameraOrthoSize;
+                cam.backgroundColor = gd.cinematicCameraBackground;
                 cameraGo.AddComponent<AudioListener>();
                 sceneCamera = cam;
             }
@@ -99,6 +99,7 @@ namespace SickOfIt.Tools.Editor.Generation
             var deathRuntime = deathRuntimeGo.AddComponent<DeathRuntime>();
             var drso = new SerializedObject(deathRuntime);
             drso.FindProperty("deathAnimationObject").objectReferenceValue = deathAnim;
+            drso.FindProperty("audioSource").objectReferenceValue = audioSource;
             if (ui != null) drso.FindProperty("uiRoot").objectReferenceValue = ui;
             drso.ApplyModifiedPropertiesWithoutUndo();
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using SickOfIt.Core;
 using SickOfIt.Data.Config;
 
 namespace SickOfIt.Combat.Enemies
@@ -49,6 +50,7 @@ namespace SickOfIt.Combat.Enemies
             attackDamage = template.contactDamage;
             minStateChangeTime = template.minStateChangeTime;
             maxStateChangeTime = template.maxStateChangeTime;
+            faceMovementDirection = template.faceMovementDirection;
         }
 
         protected override void Awake()
@@ -74,7 +76,8 @@ namespace SickOfIt.Combat.Enemies
             if (!isAttacking)
             {
                 // Randomly switch between idle and walk
-                if (Time.time >= nextStateChangeTime)
+                float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+                if (currentTime >= nextStateChangeTime)
                 {
                     isWalking = !isWalking;
                     SetRandomStateChangeTime();
@@ -99,7 +102,7 @@ namespace SickOfIt.Combat.Enemies
             Vector2 newPosition = Vector2.MoveTowards(
                 currentPos2D,
                 playerPos2D,
-                moveSpeed * Time.deltaTime
+                moveSpeed * (GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime)
             );
 
             rb.MovePosition(newPosition);
@@ -124,7 +127,8 @@ namespace SickOfIt.Combat.Enemies
 
         private void SetRandomStateChangeTime()
         {
-            nextStateChangeTime = Time.time + Random.Range(minStateChangeTime, maxStateChangeTime);
+            float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+            nextStateChangeTime = currentTime + Random.Range(minStateChangeTime, maxStateChangeTime);
         }
 
         protected override void OnDrawGizmosSelected()

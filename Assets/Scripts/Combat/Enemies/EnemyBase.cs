@@ -1,5 +1,6 @@
 using UnityEngine;
 using SickOfIt.Combat.Health;
+using SickOfIt.Core;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 
@@ -33,6 +34,8 @@ namespace SickOfIt.Combat.Enemies
         [SerializeField] private int dropPointsValue = 1;
         [SerializeField] private int dropCount = 1;
 
+        private ObjectPool pickupPool;
+
         [Header("Cached References")]
         [SerializeField] protected SpriteRenderer spriteRenderer;
         [SerializeField] protected Rigidbody2D rb;
@@ -58,8 +61,8 @@ namespace SickOfIt.Combat.Enemies
             hurtSoundHealthThreshold = template.hurtSoundHealthThreshold;
             pitchVariation = template.pitchVariation;
 
-            if (template.pointsPickupPrefab != null)
-                pointsPickupPrefab = template.pointsPickupPrefab;
+            // Pickup prefab comes from GameDefinition (generated), not from template
+            pointsPickupPrefab = GameDefinition.Instance.pickupPrefab;
             dropChance = template.dropChance;
             dropPointsValue = template.dropPointsValue;
             dropCount = template.dropCount;
@@ -73,6 +76,15 @@ namespace SickOfIt.Combat.Enemies
         {
             player = playerTransform;
             playerDamageable = damageable;
+        }
+
+        /// <summary>
+        /// Set the pickup pool. Called by LevelRuntime after spawning.
+        /// When set, SpawnPointDrops uses pool.Get() instead of Instantiate.
+        /// </summary>
+        public void SetPickupPool(ObjectPool pool)
+        {
+            pickupPool = pool;
         }
 
         protected virtual void Awake()
@@ -95,16 +107,8 @@ namespace SickOfIt.Combat.Enemies
 
         protected virtual void OnEnable()
         {
-            // Re-find player when reactivated (rewind may reactivate enemies)
-            if (player == null)
-            {
-                var playerObj = GameObject.FindGameObjectWithTag("Player");
-                if (playerObj != null)
-                {
-                    player = playerObj.transform;
-                    playerDamageable = playerObj.GetComponentInChildren<IDamageable>(true);
-                }
-            }
+            // Player ref is set via SetPlayer() by LevelRuntime.
+            // No runtime lookup needed.
         }
 
         protected virtual void OnDestroy()
@@ -161,13 +165,19 @@ namespace SickOfIt.Combat.Enemies
 
         private void SpawnPointDrops()
         {
-            if (pointsPickupPrefab == null || dropChance <= 0f) return;
+            if (dropChance <= 0f) return;
+            if (pickupPool == null && pointsPickupPrefab == null) return;
 
             for (int i = 0; i < dropCount; i++)
             {
                 if (Random.value > dropChance) continue;
 
-                var drop = Instantiate(pointsPickupPrefab, transform.position, Quaternion.identity);
+                GameObject drop;
+                if (pickupPool != null)
+                    drop = pickupPool.Get(transform.position, Quaternion.identity);
+                else
+                    drop = Instantiate(pointsPickupPrefab, transform.position, Quaternion.identity);
+
                 if (drop.TryGetComponent<PointsPickup>(out var pickup))
                 {
                     pickup.SetPointsValue(dropPointsValue);

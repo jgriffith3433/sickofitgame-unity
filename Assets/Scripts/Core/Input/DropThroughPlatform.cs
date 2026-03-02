@@ -4,39 +4,40 @@ namespace SickOfIt.Core.Input
 {
     /// <summary>
     /// Add this component to platforms that can be dropped through.
-    /// Automatically registers with the TopDownController on the player.
+    /// Registers with the PlayerController via serialised reference (wired by LevelSceneGenerator).
     /// </summary>
     public class DropThroughPlatform : MonoBehaviour
     {
-        private Collider2D platformCollider;
+        [SerializeField] private PlayerController playerController;
+
+        [SerializeField] private Collider2D platformCollider;
+
+        /// <summary>
+        /// Inject the player controller reference at runtime (called by LevelSceneGenerator).
+        /// </summary>
+        public void SetPlayerController(PlayerController controller)
+        {
+            playerController = controller;
+            if (playerController != null)
+                playerController.RegisterPlatform(this);
+        }
 
         private void Awake()
         {
-            platformCollider = GetComponent<Collider2D>();
+            if (platformCollider == null) platformCollider = GetComponent<Collider2D>();
         }
 
         private void Start()
         {
-            RegisterWithPlayer();
-        }
-
-        private void RegisterWithPlayer()
-        {
-            TopDownController controller = FindAnyObjectByType<TopDownController>(FindObjectsInactive.Include);
-            
-            if (controller != null)
-            {
-                controller.RegisterPlatform(this);
-            }
+            // If the reference was already wired (serialised or via SetPlayerController), register.
+            if (playerController != null)
+                playerController.RegisterPlatform(this);
         }
 
         private void OnDestroy()
         {
-            TopDownController controller = FindAnyObjectByType<TopDownController>(FindObjectsInactive.Include);
-            if (controller != null)
-            {
-                controller.UnregisterPlatform(this);
-            }
+            if (playerController != null)
+                playerController.UnregisterPlatform(this);
         }
 
         public void EnablePlatform()

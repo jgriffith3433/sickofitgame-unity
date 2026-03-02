@@ -43,6 +43,20 @@ namespace SickOfIt.Core
         public bool IsRewinding => isRewinding;
         public float Direction => isRewinding ? -1f : 1f;
 
+        /// <summary>
+        /// Frame delta scaled by GameClock's timeScale and direction.
+        /// Use this instead of Time.deltaTime for all gameplay code.
+        /// Returns 0 while paused or during rewind.
+        /// </summary>
+        public float DeltaTime
+        {
+            get
+            {
+                if (isPaused || isRewinding) return 0f;
+                return UnityEngine.Time.deltaTime * timeScale;
+            }
+        }
+
         private void Awake()
         {
             _instance = this;

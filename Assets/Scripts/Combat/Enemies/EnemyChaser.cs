@@ -1,4 +1,5 @@
 using UnityEngine;
+using SickOfIt.Core;
 using SickOfIt.Data.Config;
 
 namespace SickOfIt.Combat.Enemies
@@ -16,6 +17,7 @@ namespace SickOfIt.Combat.Enemies
         {
             base.InitializeFromConfig(template, spawn);
             stopDistance = template.stopDistance;
+            faceMovementDirection = template.faceMovementDirection;
         }
 
         protected override void UpdateBehavior()
@@ -35,7 +37,7 @@ namespace SickOfIt.Combat.Enemies
                 Vector2 newPosition = Vector2.MoveTowards(
                     currentPos2D,
                     playerPos2D,
-                    moveSpeed * Time.deltaTime
+                    moveSpeed * (GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime)
                 );
 
                 rb.MovePosition(newPosition);

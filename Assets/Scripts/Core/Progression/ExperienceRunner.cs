@@ -1,4 +1,5 @@
 using SickOfIt.Core;
+using SickOfIt.Core.Input;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,6 +55,15 @@ namespace SickOfIt.Core.Progression
         private LevelRuntime levelRuntime;
         private Dictionary<EnemyType, EnemyTemplate> templateCache;
 
+        // Injected references (set via SetPlayerRefs / SetMusicSource / SetPools)
+        private PlayerHealth cachedPlayerHealth;
+        private PlayerController cachedPlayerController;
+        private Transform cachedPlayerTransform;
+        private IDamageable cachedPlayerDamageable;
+        private ObjectPool cachedEnemyProjectilePool;
+        private ObjectPool cachedLaserPool;
+        private ObjectPool cachedPickupPool;
+
         // Active coroutines for cleanup
         private List<Coroutine> activeCoroutines = new List<Coroutine>();
 
@@ -64,6 +74,41 @@ namespace SickOfIt.Core.Progression
         #endregion
 
         #region Public API
+
+        /// <summary>
+        /// Inject player references so ExperienceRunner never needs FindAnyObjectByType.
+        /// Called by LevelRuntime after setting up the character.
+        /// </summary>
+        public void SetPlayerRefs(PlayerHealth health, PlayerController controller)
+        {
+            cachedPlayerHealth = health;
+            cachedPlayerController = controller;
+            if (controller != null)
+            {
+                cachedPlayerTransform = controller.transform;
+                cachedPlayerDamageable = health;
+            }
+        }
+
+        /// <summary>
+        /// Inject projectile pools so timeline-spawned enemies can shoot.
+        /// Called by LevelRuntime after setting up pools.
+        /// </summary>
+        public void SetPools(ObjectPool enemyProjectilePool, ObjectPool laserPool, ObjectPool pickupPool = null)
+        {
+            cachedEnemyProjectilePool = enemyProjectilePool;
+            cachedLaserPool = laserPool;
+            cachedPickupPool = pickupPool;
+        }
+
+        /// <summary>
+        /// Inject the music AudioSource so we don't scan the scene.
+        /// Called by LevelRuntime after setting up audio.
+        /// </summary>
+        public void SetMusicSource(AudioSource source)
+        {
+            musicSource = source;
+        }
 
         /// <summary>
         /// Initialize and start running the experience.
@@ -94,16 +139,6 @@ namespace SickOfIt.Core.Progression
             isPaused = false;
 
             Debug.Log($"[ExperienceRunner] Started: {sortedEvents.Count} events, duration={config.duration}s");
-        }
-
-        public void Pause()
-        {
-            isPaused = true;
-        }
-
-        public void Resume()
-        {
-            isPaused = false;
         }
 
         public void Stop()
@@ -145,17 +180,18 @@ namespace SickOfIt.Core.Progression
             }
 
             levelRuntime = GetComponent<LevelRuntime>();
-            if (levelRuntime == null)
-                levelRuntime = Object.FindAnyObjectByType<LevelRuntime>();
 
-            // Find or create music source
-            var allAudio = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
-            foreach (var src in allAudio)
+            // musicSource is injected via SetMusicSource().
+            // Fallback: search children only (no scene-wide scan).
+            if (musicSource == null)
             {
-                if (src.gameObject.name.Contains("Music"))
+                foreach (Transform child in transform)
                 {
-                    musicSource = src;
-                    break;
+                    if (child.name.Contains("Music"))
+                    {
+                        musicSource = child.GetComponent<AudioSource>();
+                        if (musicSource != null) break;
+                    }
                 }
             }
         }
@@ -211,7 +247,7 @@ namespace SickOfIt.Core.Progression
                     var evt = sortedEvents[nextEventIndex];
 
                     // During rewind, only fire "presentation" events (audio, visual).
-                    // Skip state-changing events (spawns, activations) — StateRecorder handles those.
+                    // Skip state-changing events (spawns, activations) — RewindTimeline handles those.
                     if (IsRewindSafeEvent(evt.type))
                         ProcessEvent(evt);
                 }
@@ -295,7 +331,7 @@ namespace SickOfIt.Core.Progression
         /// <summary>
         /// During rewind, only "presentation" events fire — things that produce audio/visual output
         /// but don't change game state. State changes (enemy spawns, object activation) are handled
-        /// by the StateRecorder restoring snapshots.
+        /// by RewindTimeline restoring snapshots.
         /// </summary>
         private static bool IsRewindSafeEvent(GameEventType type)
         {
@@ -383,7 +419,7 @@ namespace SickOfIt.Core.Progression
             float t = 0;
             while (t < duration)
             {
-                t += Time.deltaTime;
+                t += GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime;
                 musicSource.volume = Mathf.Lerp(startVol, 0f, t / duration);
                 yield return null;
             }
@@ -398,7 +434,7 @@ namespace SickOfIt.Core.Progression
             float t = 0;
             while (t < duration)
             {
-                t += Time.deltaTime;
+                t += GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime;
                 musicSource.volume = Mathf.Lerp(startVol, targetVol, t / duration);
                 yield return null;
             }
@@ -431,7 +467,7 @@ namespace SickOfIt.Core.Progression
                 float x = Random.Range(-1f, 1f) * intensity;
                 float y = Random.Range(-1f, 1f) * intensity;
                 shakeOffset = new Vector3(x, y, 0);
-                elapsed += Time.deltaTime;
+                elapsed += GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime;
                 yield return null;
             }
             shakeOffset = Vector3.zero;
@@ -456,7 +492,7 @@ namespace SickOfIt.Core.Progression
             float t = 0;
             while (t < duration)
             {
-                t += Time.deltaTime;
+                t += GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime;
                 mainCamera.orthographicSize = Mathf.Lerp(start, target, t / duration);
                 yield return null;
             }
@@ -483,7 +519,7 @@ namespace SickOfIt.Core.Progression
             float t = 0;
             while (t < duration)
             {
-                t += Time.deltaTime;
+                t += GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime;
                 cameraTransform.position = Vector3.Lerp(start, target, t / duration);
                 yield return null;
             }
@@ -530,7 +566,7 @@ namespace SickOfIt.Core.Progression
             Color endColor = new Color(color.r, color.g, color.b, 0);
             while (t < duration)
             {
-                t += Time.deltaTime;
+                t += GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime;
                 sr.color = Color.Lerp(startColor, endColor, t / duration);
                 yield return null;
             }
@@ -609,7 +645,21 @@ namespace SickOfIt.Core.Progression
                         activeAtStart = true
                     };
                     enemyBase.InitializeFromConfig(template, spawn);
+
+                    // Wire player refs so enemies can track and attack the player
+                    if (cachedPlayerTransform != null)
+                        enemyBase.SetPlayer(cachedPlayerTransform, cachedPlayerDamageable);
+
+                    // Wire projectile pools so shooters/sentinels can fire
+                    if (enemyBase is EnemyShooter shooter && cachedEnemyProjectilePool != null)
+                        shooter.SetProjectilePool(cachedEnemyProjectilePool);
+                    else if (enemyBase is EnemySentinel sentinel && cachedLaserPool != null)
+                        sentinel.SetLaserPool(cachedLaserPool);
                 }
+
+                // Wire pickup pool for point drops
+                if (enemyBase != null && cachedPickupPool != null)
+                    enemyBase.SetPickupPool(cachedPickupPool);
 
                 var health = enemy.GetComponent<EnemyHealth>();
                 if (health != null)
@@ -703,20 +753,17 @@ namespace SickOfIt.Core.Progression
 
         private void HandlePlayerInvincible(GameEvent evt)
         {
-            var playerHealth = Object.FindAnyObjectByType<PlayerHealth>();
-            if (playerHealth != null && evt.duration > 0)
+            if (cachedPlayerHealth != null && evt.duration > 0)
             {
-                // PlayerHealth uses invincibility frames — we can leverage that
-                // For now, just log it. A proper implementation would set a flag.
-                Debug.Log($"[Experience] Player invincible for {evt.duration}s (TODO: implement on PlayerHealth)");
+                cachedPlayerHealth.SetInvincibilityTimer(evt.duration);
+                Debug.Log($"[Experience] Player invincible for {evt.duration}s");
             }
         }
 
         private void HandlePlayerInput(GameEvent evt, bool enable)
         {
-            var controller = Object.FindAnyObjectByType<SickOfIt.Core.Input.TopDownController>();
-            if (controller != null)
-                controller.enabled = enable;
+            if (cachedPlayerController != null)
+                cachedPlayerController.enabled = enable;
         }
 
         #endregion

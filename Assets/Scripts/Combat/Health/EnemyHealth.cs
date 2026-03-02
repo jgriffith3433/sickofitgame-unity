@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using SickOfIt.Core;
 
 namespace SickOfIt.Combat.Health
 {
@@ -38,6 +39,7 @@ namespace SickOfIt.Combat.Health
         public int MaxHealth => maxHealth;
         public bool IsAlive => currentHealth > 0;
         public bool IsInvincible => invincibilityTimer > 0;
+        public float InvincibilityTimer => invincibilityTimer;
 
         /// <summary>
         /// Set max health (and reset current health). Call before Awake or immediately after Instantiate.
@@ -50,10 +52,21 @@ namespace SickOfIt.Combat.Health
 
         /// <summary>
         /// Set current health directly (used by rewind system).
+        /// Fires onHealthChanged so health bars update during rewind.
         /// </summary>
         public void SetHealth(int health)
         {
             currentHealth = Mathf.Clamp(health, 0, maxHealth);
+            onHealthChanged?.Invoke(currentHealth);
+            UpdateHealthBar();
+        }
+
+        /// <summary>
+        /// Set invincibility timer directly (used by rewind system to restore i-frame state).
+        /// </summary>
+        public void SetInvincibilityTimer(float time)
+        {
+            invincibilityTimer = Mathf.Max(0f, time);
         }
 
         private void Awake()
@@ -65,7 +78,7 @@ namespace SickOfIt.Combat.Health
         private void Update()
         {
             if (invincibilityTimer > 0)
-                invincibilityTimer -= Time.deltaTime;
+                invincibilityTimer -= (GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime);
         }
 
         public void TakeDamage(int damage)
@@ -134,12 +147,19 @@ namespace SickOfIt.Combat.Health
             UpdateHealthBar();
         }
 
+        // Shared white sprite — created once, reused by all EnemyHealth instances
+        private static Sprite s_whiteSprite;
+
         private static Sprite CreateWhiteSprite()
         {
+            if (s_whiteSprite != null)
+                return s_whiteSprite;
+
             var texture = new Texture2D(1, 1);
             texture.SetPixel(0, 0, Color.white);
             texture.Apply();
-            return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+            s_whiteSprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+            return s_whiteSprite;
         }
 
         private void UpdateHealthBar()

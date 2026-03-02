@@ -16,13 +16,13 @@ namespace SickOfIt.Core.Device
         [Tooltip("Show debug information")]
         public bool showDebug = false;
 
-        private RectTransform rectTransform;
+        [SerializeField] private RectTransform rectTransform;
         private Rect lastSafeArea;
         private Vector2Int lastScreenSize;
 
         private void Awake()
         {
-            rectTransform = GetComponent<RectTransform>();
+            if (rectTransform == null) rectTransform = GetComponent<RectTransform>();
             ApplySafeArea();
         }
 

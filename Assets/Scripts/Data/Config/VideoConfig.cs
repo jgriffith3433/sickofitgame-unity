@@ -14,6 +14,8 @@ namespace SickOfIt.Data.Config
         public string videoName;
         public int videoNumber;
         public string displayName;
+        [Tooltip("If true, this video is always unlocked regardless of progress")]
+        public bool alwaysUnlocked;
 
         [Header("Content")]
         [Tooltip("SpriteFramesData ScriptableObject for this video")]

@@ -6,6 +6,7 @@ namespace SickOfIt.Combat.Damage
     /// <summary>
     /// Deals damage on collision with objects that implement IDamageable
     /// (PlayerHealth, EnemyHealth). Use this on projectiles, enemies, etc.
+    /// Pool-aware: returns to ObjectPool on hit instead of Destroy.
     /// </summary>
     public class DamageDealer : MonoBehaviour
     {
@@ -15,10 +16,25 @@ namespace SickOfIt.Combat.Damage
 
         [Header("Target Filtering")]
         [Tooltip("What tags can this damage? Default for player projectiles: Enemy")]
-        [SerializeField] private string[] targetTags = { "Enemy" }; // What can this damage?
+        [SerializeField] private string[] targetTags = { "Enemy" };
         [SerializeField] private bool canDamageMultipleTargets = false;
 
         private bool hasDealtDamage = false;
+        private SickOfIt.Core.ObjectPool ownerPool;
+
+        /// <summary>
+        /// Set the pool this projectile belongs to. Called by ObjectPool or generator.
+        /// </summary>
+        public void SetOwnerPool(SickOfIt.Core.ObjectPool pool)
+        {
+            ownerPool = pool;
+        }
+
+        private void OnEnable()
+        {
+            // Reset damage state when re-used from pool
+            hasDealtDamage = false;
+        }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
@@ -49,7 +65,11 @@ namespace SickOfIt.Combat.Damage
 
                 if (destroyOnHit)
                 {
-                    Destroy(gameObject);
+                    // Return to pool if available, otherwise destroy
+                    if (ownerPool != null)
+                        ownerPool.Return(gameObject);
+                    else
+                        Destroy(gameObject);
                 }
             }
         }

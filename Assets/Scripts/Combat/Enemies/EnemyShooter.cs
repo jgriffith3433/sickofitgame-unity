@@ -1,8 +1,8 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using SickOfIt.Combat.Damage;
+using SickOfIt.Core;
+using SickOfIt.Core.Rewind;
 using SickOfIt.Data.Config;
 
 namespace SickOfIt.Combat.Enemies
@@ -13,7 +13,7 @@ namespace SickOfIt.Combat.Enemies
     public class EnemyShooter : EnemyBase
     {
         [Header("Shooter Settings")]
-        [SerializeField] private string projectileAddress = "Projectile_Enemy";
+        [SerializeField] private ObjectPool projectilePool;
         [SerializeField] private float projectileSpeed = 5f;
         [SerializeField] private Transform leftFirePoint;
         [SerializeField] private Transform rightFirePoint;
@@ -25,13 +25,14 @@ namespace SickOfIt.Combat.Enemies
         [Tooltip("The direction to shoot in when 'Shoot In Fixed Direction' is enabled. Does not need to be normalized.")]
         [SerializeField] private Vector2 fixedShootDirection = Vector2.right;
 
-        private GameObject cachedProjectilePrefab;
-        private bool isProjectileReady = false;
-
         [Header("Attack")]
         [SerializeField] private float attackInterval = 2f;
         [Tooltip("Delay before the first attack after the enemy spawns.")]
         [SerializeField] private float initialAttackDelay = 5f;
+        [Tooltip("How long fired projectiles live")]
+        [SerializeField] private float projectileLifetime = 5f;
+        [Tooltip("Damage dealt by fired projectiles")]
+        [SerializeField] private int projectileDamage = 1;
 
         [Header("Animation")]
         [SerializeField] private Animator animator;
@@ -44,9 +45,11 @@ namespace SickOfIt.Combat.Enemies
         {
             base.InitializeFromConfig(template, spawn);
             projectileSpeed = template.projectileSpeed;
-            projectileAddress = template.projectileAddress;
             attackInterval = spawn.fireRateOverride > 0 ? spawn.fireRateOverride : template.fireRate;
             initialAttackDelay = spawn.initialAttackDelay;
+            flipToFacePlayer = template.faceMovementDirection;
+            projectileLifetime = template.projectileLifetime;
+            projectileDamage = template.projectileDamage;
 
             // Apply shoot direction
             if (spawn.shootDirection != ShootDirection.AtPlayer)
@@ -56,6 +59,9 @@ namespace SickOfIt.Combat.Enemies
             }
         }
 
+        /// <summary>Set at runtime by LevelRuntime after spawning.</summary>
+        public void SetProjectilePool(ObjectPool pool) => projectilePool = pool;
+
         protected override void Awake()
         {
             base.Awake();
@@ -64,28 +70,12 @@ namespace SickOfIt.Combat.Enemies
             rb.constraints = RigidbodyConstraints2D.FreezeAll;
 
             // Apply initial attack delay so the first shot isn't immediate
-            lastAttackTime = Time.time - attackInterval + initialAttackDelay;
+            float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+            lastAttackTime = currentTime - attackInterval + initialAttackDelay;
 
             // Load projectile prefab
             if (animator == null)
                 animator = GetComponentInChildren<Animator>();
-            LoadProjectilePrefab();
-        }
-
-        private void LoadProjectilePrefab()
-        {
-            Addressables.LoadAssetAsync<GameObject>(projectileAddress).Completed += (AsyncOperationHandle<GameObject> handle) =>
-            {
-                if (handle.Status == AsyncOperationStatus.Succeeded)
-                {
-                    cachedProjectilePrefab = handle.Result;
-                    isProjectileReady = true;
-                }
-                else
-                {
-                    Debug.LogError($"Failed to load projectile: {projectileAddress}");
-                }
-            };
         }
 
         protected override void UpdateBehavior()
@@ -123,9 +113,10 @@ namespace SickOfIt.Combat.Enemies
             if (animator == null)
                 return;
 
-            if (Time.time >= lastAttackTime + attackInterval)
+            float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+            if (currentTime >= lastAttackTime + attackInterval)
             {
-                lastAttackTime = Time.time;
+                lastAttackTime = currentTime;
                 animator.SetBool(ParamIsAttacking, true);
                 StartCoroutine(ClearAttackBoolNextFrame());
             }
@@ -143,7 +134,7 @@ namespace SickOfIt.Combat.Enemies
             // Choose fire point based on facing direction
             Transform firePoint = spriteRenderer.flipX ? leftFirePoint : rightFirePoint;
             
-            if (cachedProjectilePrefab == null || firePoint == null)
+            if (projectilePool == null || firePoint == null)
                 return;
 
             // Calculate shoot direction
@@ -165,11 +156,11 @@ namespace SickOfIt.Combat.Enemies
                 direction = (playerPos2D - firePointPos2D).normalized;
             }
 
-            // Spawn projectile
-            GameObject projectile = Instantiate(cachedProjectilePrefab, firePoint.position, Quaternion.identity);
+            // Get projectile from pool
+            GameObject projectile = projectilePool.Get(firePoint.position, Quaternion.identity);
 
-            // Set projectile velocity
-            Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
+            // Set projectile velocity (cached — no per-fire GetComponent)
+            Rigidbody2D projectileRb = projectilePool.GetCachedRb(projectile);
             if (projectileRb != null)
             {
                 projectileRb.linearVelocity = direction * projectileSpeed;
@@ -180,10 +171,13 @@ namespace SickOfIt.Combat.Enemies
             if (damageDealer != null)
             {
                 damageDealer.SetTargetTags("Player");
+                damageDealer.SetDamage(projectileDamage);
             }
 
-            // Auto-destroy after a while
-            Destroy(projectile, 5f);
+            // ProjectileLifetime is already on the prefab, just set time (cached)
+            var lifetime = projectilePool.GetCachedLifetime(projectile);
+            if (lifetime != null)
+                lifetime.SetLifetime(projectileLifetime);
         }
 
         /// <summary>
@@ -192,7 +186,7 @@ namespace SickOfIt.Combat.Enemies
         /// <param name="spawnPoint">Optional spawn location. If null, uses the default firePoint.</param>
         public void FireProjectile()
         {
-            if (isProjectileReady)
+            if (projectilePool != null)
             {
                 Shoot();
             }

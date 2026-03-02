@@ -1,0 +1,770 @@
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using MobileControllerFramework;
+using SickOfIt.Core.Rewind;
+using SickOfIt.Data;
+
+namespace SickOfIt.Core.Input
+{
+    /// <summary>
+    /// 2D top-down player controller with mobile and PC input support.
+    /// Loads projectile prefab via Addressables for WebGL optimization.
+    /// Replaces TopDownController — same logic, GameClock-aware firing,
+    /// and ProjectileLifetime on spawned projectiles.
+    /// </summary>
+    [RequireComponent(typeof(CircleCollider2D))]
+    [RequireComponent(typeof(Rigidbody2D))]
+    public class PlayerController : MonoBehaviour
+    {
+        #region Serialized Fields
+        
+        [Header("Movement Settings")]
+        [SerializeField] private float moveSpeed = 2f;
+        
+        [Header("Jump Settings")]
+        [SerializeField] private float jumpForce = 15f;
+        [Tooltip("Base air jumps (before roguelite upgrades). Set to 0 for roguelite mode where jumps are purchased.")]
+        [SerializeField] private int maxAirJumps = 0;
+        [Tooltip("If true, maxAirJumps will be overridden by roguelite upgrade purchases.")]
+        [SerializeField] private bool useRogueliteJumps = true;
+        [Tooltip("How fast the character falls (higher = faster). Try 3-5 for faster falling.")]
+        [SerializeField] private float gravityScale = 1.8f;
+        [Tooltip("Distance below collider to check for ground")]
+        [SerializeField] private float groundCheckDistance = 0.2f;
+        [Tooltip("Width of ground check box (smaller than collider)")]
+        [SerializeField] private float groundCheckWidth = 0.1f;
+        [Tooltip("Layers that count as ground (exclude player layer!)")]
+        [SerializeField] private LayerMask groundLayer = ~0;
+        [Tooltip("Minimum upward velocity needed to trigger jump animation (prevents false triggers)")]
+        [SerializeField] private float jumpDetectVelocityThreshold = 0.3f;
+        
+        [Header("Projectile Settings")]
+        [Tooltip("Enable or disable shooting")]
+        [SerializeField] private bool enableShooting = true;
+        [Tooltip("Object pool for player projectiles (wired by generator).")]
+        [SerializeField] private ObjectPool projectilePool;
+        [Tooltip("Optional: Transform where projectiles spawn. If null, spawns at player position.")]
+        [SerializeField] private Transform projectileSpawnPoint;
+        [SerializeField] private float projectileSpeed = 10f;
+        [SerializeField] private float fireRate = 0.25f;
+        [SerializeField] private float projectileLifetime = 5f;
+        
+        [Header("Platform Interaction")]
+        [Tooltip("Layer to ignore collision with when moving down (e.g., 'Platform' layer)")]
+        [SerializeField] private LayerMask platformLayer;
+        [Tooltip("How far down the player must press to drop through platforms (-1 = full down)")]
+        [SerializeField] private float dropThroughThreshold = -0.5f;
+        [Tooltip("Downward force applied when dropping through platforms (helps fall faster)")]
+        [SerializeField] private float dropThroughForce = 5f;
+        
+        [Header("PC Input Actions")]
+        [Tooltip("WASD/Arrow keys movement action")]
+        [SerializeField] private InputActionReference moveAction;
+        [Tooltip("Space key - bind to 'Player/Jump' action")]
+        [SerializeField] private InputActionReference jumpAction;
+        [Tooltip("Left mouse button - bind to 'Player/Fire' action")]
+        [SerializeField] private InputActionReference fireAction;
+        [Tooltip("Gamepad right stick / mouse delta - bind to 'Character/Look' action")]
+        [SerializeField] private InputActionReference lookAction;
+        
+        [Header("Mobile Controls (wired by generator from MobileController prefab)")]
+        [Tooltip("Move analog stick (left stick on MobileController).")]
+        [SerializeField] private Analog moveAnalog;
+        [Tooltip("Fire/aim analog stick (right stick on MobileController).")]
+        [SerializeField] private Analog fireAnalog;
+        [Tooltip("GameInputManager for jump events (lives on MobileController).")]
+        [SerializeField] private GameInputManager gameInputManager;
+
+        [Header("References")]
+        [Tooltip("Child transform containing the graphics/visuals to rotate")]
+        [SerializeField] private Transform graphicsTransform;
+        [SerializeField] private Animator animator;
+        [SerializeField] private Camera mainCamera;
+        
+        [Header("Rotation Settings")]
+        [Tooltip("Speed of rotation when moving (smooth rotation to show front/back/sides)")]
+        [SerializeField] private float normalRotationSpeed = 900f;
+        [Tooltip("Speed of rotation when firing (fast snap to left/right)")]
+        [SerializeField] private float firingRotationSpeed = 1800f;
+        
+        [Header("Shadow Settings")]
+        [Tooltip("The shadow sprite transform that follows the character")]
+        [SerializeField] private Transform shadowSprite;
+        [Tooltip("Maximum height at which shadow is still visible (shadow scale = 0 at this height)")]
+        [SerializeField] private float shadowMaxHeight = 10f;
+        [Tooltip("Minimum scale of shadow when at max height (0 = invisible)")]
+        [SerializeField] private float shadowMinScale = 0.2f;
+        [Tooltip("How far down to raycast for ground detection")]
+        [SerializeField] private float shadowRaycastDistance = 20f;
+        
+        #endregion
+        
+        #region Animator Parameter Hashes
+        
+        private static readonly int OnGroundHash = Animator.StringToHash("OnGround");
+        private static readonly int VelocityXHash = Animator.StringToHash("Velocity_X");
+        private static readonly int VelocityZHash = Animator.StringToHash("Velocity_Z");
+        private static readonly int JumpHash = Animator.StringToHash("Jump");
+        private static readonly int FireHash = Animator.StringToHash("Fire");
+        
+        #endregion
+        
+        #region Private Fields
+        
+        [SerializeField] private Rigidbody2D rb;
+        [SerializeField] private Collider2D col;
+        
+        // Movement
+        private Vector2 moveInput;
+        private float currentYRotation;
+        private float targetYRotation;
+        
+        // Jump
+        private bool isGrounded;
+        private int airJumpsRemaining;
+        private bool jumpRequested;
+        
+        // Firing — uses GameClock time instead of Time.time
+        private Vector2 fireDirection;
+        private bool isFiring;
+        private float lastFireTime;
+        
+        // Platform collision
+        private int playerLayer;
+        private bool isIgnoringPlatformCollision = false;
+        private bool isDroppingThrough = false;
+        private System.Collections.Generic.List<DropThroughPlatform> registeredPlatforms = new System.Collections.Generic.List<DropThroughPlatform>();
+        
+        // Input tracking
+        private bool isUsingMobileInput = false;
+        [SerializeField] private float inputDeadzone = 0.1f;
+        [SerializeField] private float mobileDropThreshold = -0.4f;
+        
+        // Shadow
+        private Vector3 shadowInitialScale;
+        private Vector3 shadowInitialLocalPosition;
+        
+        #endregion
+        
+        #region Unity Lifecycle
+        
+        /// <summary>
+        /// Apply stats from PlayerConfig. Called early in Awake.
+        /// Serialized fields act as defaults; config overrides them.
+        /// </summary>
+        private void ApplyPlayerConfig()
+        {
+            var gd = GameDefinition.Instance;
+            if (gd == null) return;
+
+            var cfg = gd.player;
+            moveSpeed = cfg.moveSpeed;
+            jumpForce = cfg.jumpForce;
+            gravityScale = cfg.gravityScale;
+            groundCheckDistance = cfg.groundCheckDistance;
+            groundCheckWidth = cfg.groundCheckWidth;
+            enableShooting = cfg.enableShooting;
+            fireRate = cfg.fireRate;
+            projectileSpeed = cfg.projectileSpeed;
+            projectileLifetime = cfg.projectileLifetime;
+
+            // Rotation
+            normalRotationSpeed = cfg.normalRotationSpeed;
+            firingRotationSpeed = cfg.firingRotationSpeed;
+
+            // Drop-through
+            dropThroughForce = cfg.dropThroughForce;
+            dropThroughThreshold = cfg.dropThroughThreshold;
+
+            // Shadow
+            shadowMaxHeight = cfg.shadowMaxHeight;
+            shadowMinScale = cfg.shadowMinScale;
+            shadowRaycastDistance = cfg.shadowRaycastDistance;
+
+            // Input
+            jumpDetectVelocityThreshold = cfg.jumpDetectVelocityThreshold;
+        }
+
+        private void Awake()
+        {
+            ApplyPlayerConfig();
+            if (rb == null) rb = GetComponent<Rigidbody2D>();
+            if (col == null) col = GetComponent<Collider2D>();
+            playerLayer = gameObject.layer;
+            
+            if (rb != null)
+            {
+                rb.gravityScale = gravityScale;
+            }
+            
+            // Initialize rotation to face camera (front view)
+            currentYRotation = 90f;
+            targetYRotation = 90f;
+            
+            // Apply initial rotation to graphics transform
+            if (graphicsTransform != null)
+            {
+                graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+            }
+            
+            // Store initial shadow values
+            if (shadowSprite != null)
+            {
+                shadowInitialScale = shadowSprite.localScale;
+                shadowInitialLocalPosition = shadowSprite.localPosition;
+            }
+        }
+        
+        private void Start()
+        {
+            // Apply roguelite jump upgrades
+            if (useRogueliteJumps)
+            {
+                int purchasedJumps = RogueliteManager.Instance.GetExtraJumpsPurchased();
+                maxAirJumps = purchasedJumps;
+                Debug.Log($"[PlayerController] Roguelite jumps applied: {maxAirJumps} air jumps.");
+            }
+
+            if (moveAction?.action != null)
+                moveAction.action.Enable();
+            if (jumpAction?.action != null)
+                jumpAction.action.Enable();
+            if (fireAction?.action != null)
+                fireAction.action.Enable();
+            if (lookAction?.action != null)
+                lookAction.action.Enable();
+        }
+        
+        private void OnEnable()
+        {
+            // Re-enable input actions every time we come back on.
+            if (moveAction?.action != null) moveAction.action.Enable();
+            if (jumpAction?.action != null) jumpAction.action.Enable();
+            if (fireAction?.action != null) fireAction.action.Enable();
+            if (lookAction?.action != null) lookAction.action.Enable();
+
+            // Subscribe to mobile control events
+            if (moveAnalog != null)
+                moveAnalog.StickExitEvent.AddListener(OnAnalogReleased);
+            if (gameInputManager != null)
+                gameInputManager.OnJumpPressed += OnJumpRequested;
+        }
+
+        private void Update()
+        {
+            // Freeze all player input/logic during rewind — RewindTimeline controls position
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return;
+
+            if (mainCamera == null)
+            {
+                mainCamera = Camera.main;
+            }
+            ReadMoveInput();
+            ReadJumpInput();
+            ReadFireInput();
+            CheckGrounded();
+            HandlePlatformCollision();
+            HandleJump();
+            HandleFiring();
+            UpdateRotationTarget();
+            UpdateAnimator();
+            UpdateShadow();
+        }
+        
+        private void FixedUpdate()
+        {
+            // Don't apply movement during rewind
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return;
+
+            HandleMovement();
+        }
+        
+        private void LateUpdate()
+        {
+            // Apply rotation after Animator updates to prevent override
+            ApplyRotation();
+        }
+        
+        private void OnDisable()
+        {
+            // NOTE: Do NOT call Disable() on InputActionReferences here.
+            // InputActionReference shares the same underlying InputAction across
+            // all prefab instances.
+
+            // Unsubscribe from mobile control events
+            if (moveAnalog != null)
+                moveAnalog.StickExitEvent.RemoveListener(OnAnalogReleased);
+            if (gameInputManager != null)
+                gameInputManager.OnJumpPressed -= OnJumpRequested;
+        }
+        
+        #endregion
+        
+        #region Ground Check
+        
+        private void CheckGrounded()
+        {
+            Vector2 boxSize = new Vector2(groundCheckWidth, groundCheckDistance);
+            Vector2 boxCenter = (Vector2)transform.position + col.offset + Vector2.down * (col.bounds.extents.y + groundCheckDistance * 0.5f);
+            
+            bool wasGrounded = isGrounded;
+            
+            // If ignoring platform collision, exclude platform layer from ground check
+            LayerMask checkLayer = isIgnoringPlatformCollision ? (groundLayer & ~platformLayer) : groundLayer;
+            isGrounded = Physics2D.OverlapBox(boxCenter, boxSize, 0f, checkLayer);
+            
+            if (isGrounded && !wasGrounded)
+            {
+                airJumpsRemaining = maxAirJumps;
+            }
+        }
+        
+        private void OnDrawGizmosSelected()
+        {
+            if (col != null)
+            {
+                Gizmos.color = isGrounded ? Color.green : Color.red;
+                Vector2 boxSize = new Vector2(groundCheckWidth, groundCheckDistance);
+                Vector2 boxCenter = (Vector2)transform.position + col.offset + Vector2.down * (col.bounds.extents.y + groundCheckDistance * 0.5f);
+                Gizmos.DrawWireCube(boxCenter, boxSize);
+            }
+        }
+        
+        #endregion
+        
+        #region Input Reading
+        
+        private void ReadMoveInput()
+        {
+            moveInput = Vector2.zero;
+            Vector2 mobileInput = Vector2.zero;
+            Vector2 keyboardInput = Vector2.zero;
+            bool usingMobileInput = false;
+            
+            // Poll mobile move input directly from analog stick
+            if (moveAnalog != null && moveAnalog.gameObject.activeSelf)
+            {
+                mobileInput = moveAnalog.GetStickPosition();
+                moveInput = mobileInput;
+                usingMobileInput = true;
+            }
+            
+            // Always check keyboard/gamepad input and use it if mobile input is idle
+            if (moveAction?.action != null && moveAction.action.enabled)
+            {
+                keyboardInput = moveAction.action.ReadValue<Vector2>();
+                if (keyboardInput.magnitude > inputDeadzone && moveInput.magnitude < inputDeadzone)
+                {
+                    moveInput = keyboardInput;
+                    usingMobileInput = false;
+                }
+            }
+            
+            // Store whether we're using mobile input for platform threshold adjustment
+            isUsingMobileInput = usingMobileInput;
+        }
+        
+        private void ReadJumpInput()
+        {
+            if (jumpAction?.action != null && jumpAction.action.WasPressedThisFrame())
+            {
+                jumpRequested = true;
+            }
+        }
+        
+        /// <summary>
+        /// Called by GameInputManager when any input source requests a jump.
+        /// </summary>
+        private void OnJumpRequested()
+        {
+            jumpRequested = true;
+        }
+        
+        private void ReadFireInput()
+        {
+            fireDirection = Vector2.zero;
+            isFiring = false;
+            
+            // Poll mobile fire input directly from analog stick
+            if (fireAnalog != null && fireAnalog.gameObject.activeSelf)
+            {
+                Vector2 analogInput = fireAnalog.GetStickPosition();
+                if (analogInput.magnitude > inputDeadzone)
+                {
+                    fireDirection = analogInput.normalized;
+                    isFiring = true;
+                }
+            }
+            
+            // Check gamepad right stick (Look action) - only accept gamepad input, not mouse
+            if (lookAction?.action != null && !isFiring)
+            {
+                Vector2 lookInput = lookAction.action.ReadValue<Vector2>();
+                if (lookInput.magnitude > inputDeadzone && 
+                    lookAction.action.activeControl?.device is Gamepad)
+                {
+                    fireDirection = lookInput.normalized;
+                    isFiring = true;
+                }
+            }
+            
+            if (fireAction?.action != null && fireAction.action.IsPressed()
+                && (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject()))
+            {
+                isFiring = true;
+                fireDirection = GetMouseDirectionFromPlayer();
+            }
+        }
+        
+        private Vector2 GetMouseDirectionFromPlayer()
+        {
+            if (mainCamera == null || Mouse.current == null)
+                return Vector2.zero;
+            
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            Vector3 worldMousePos = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCamera.nearClipPlane));
+            Vector2 direction = ((Vector2)worldMousePos - (Vector2)transform.position).normalized;
+            
+            return direction;
+        }
+        
+        #endregion
+        
+        #region Platform Collision
+        
+        private void HandlePlatformCollision()
+        {
+            // Use more lenient threshold for mobile analog sticks
+            float threshold = isUsingMobileInput ? mobileDropThreshold : dropThroughThreshold;
+            bool pressingDown = moveInput.y < threshold;
+            
+            // Only change state when transitioning
+            if (pressingDown && !isDroppingThrough)
+            {
+                StartDroppingThrough();
+            }
+            else if (!pressingDown && isDroppingThrough)
+            {
+                StopDroppingThrough();
+            }
+        }
+        
+        private void StartDroppingThrough()
+        {
+            isDroppingThrough = true;
+            
+            // Disable all platform colliders
+            foreach (var platform in registeredPlatforms)
+            {
+                if (platform != null)
+                {
+                    platform.DisablePlatform();
+                }
+            }
+            
+            int platformLayerIndex = GetLayerIndexFromMask(platformLayer);
+            if (platformLayerIndex >= 0)
+            {
+                Physics2D.IgnoreLayerCollision(playerLayer, platformLayerIndex, true);
+                isIgnoringPlatformCollision = true;
+            }
+            
+            // Apply downward force to help player fall through faster (only if grounded)
+            if (isGrounded && rb != null && dropThroughForce > 0)
+            {
+                rb.AddForce(Vector2.down * dropThroughForce, ForceMode2D.Impulse);
+            }
+        }
+        
+        private void StopDroppingThrough()
+        {
+            isDroppingThrough = false;
+            
+            // Re-enable all platforms
+            foreach (var platform in registeredPlatforms)
+            {
+                if (platform != null)
+                {
+                    platform.EnablePlatform();
+                }
+            }
+            
+            int platformLayerIndex = GetLayerIndexFromMask(platformLayer);
+            if (platformLayerIndex >= 0)
+            {
+                Physics2D.IgnoreLayerCollision(playerLayer, platformLayerIndex, false);
+                isIgnoringPlatformCollision = false;
+            }
+        }
+        
+        private void OnAnalogReleased()
+        {
+            // When analog is released, immediately re-enable platforms
+            if (isDroppingThrough)
+            {
+                StopDroppingThrough();
+            }
+        }
+        
+        private int GetLayerIndexFromMask(LayerMask mask)
+        {
+            int layerNumber = 0;
+            int layer = mask.value;
+            
+            if (layer == 0)
+                return -1;
+            
+            while (layer > 1)
+            {
+                layer = layer >> 1;
+                layerNumber++;
+            }
+            
+            return layer == 1 ? layerNumber : -1;
+        }
+        
+        /// <summary>
+        /// Called by DropThroughPlatform components to register themselves
+        /// </summary>
+        public void RegisterPlatform(DropThroughPlatform platform)
+        {
+            if (!registeredPlatforms.Contains(platform))
+            {
+                registeredPlatforms.Add(platform);
+            }
+        }
+        
+        /// <summary>
+        /// Called by DropThroughPlatform components when destroyed
+        /// </summary>
+        public void UnregisterPlatform(DropThroughPlatform platform)
+        {
+            registeredPlatforms.Remove(platform);
+        }
+
+        /// <summary>Set at runtime by LevelRuntime after resolving references.</summary>
+        public void SetProjectilePool(ObjectPool pool) => projectilePool = pool;
+        
+        #endregion
+        
+        #region Movement & Jump
+        
+        private void HandleMovement()
+        {
+            if (rb == null) return;
+            
+            float horizontalInput = Mathf.Clamp(moveInput.x, -1f, 1f);
+            
+            Vector2 velocity = rb.linearVelocity;
+            velocity.x = horizontalInput * moveSpeed;
+            rb.linearVelocity = velocity;
+        }
+        
+        private void UpdateRotationTarget()
+        {
+            float rotationSpeed = normalRotationSpeed;
+            
+            // Priority 1: Firing direction (fast rotation to pure left/right)
+            if (isFiring && Mathf.Abs(fireDirection.x) > inputDeadzone)
+            {
+                rotationSpeed = firingRotationSpeed;
+                if (fireDirection.x > 0)
+                {
+                    targetYRotation = 0f;  // Right (side view)
+                }
+                else if (fireDirection.x < 0)
+                {
+                    targetYRotation = 180f; // Left (side view)
+                }
+            }
+            // Priority 2: Movement direction (4 cardinal directions only)
+            else if (moveInput.magnitude > inputDeadzone)
+            {
+                float absX = Mathf.Abs(moveInput.x);
+                float absY = Mathf.Abs(moveInput.y);
+                
+                if (absX >= absY)
+                {
+                    if (moveInput.x > 0)
+                    {
+                        targetYRotation = 0f;   // Right
+                    }
+                    else
+                    {
+                        targetYRotation = 180f; // Left
+                    }
+                }
+                else
+                {
+                    if (moveInput.y > 0)
+                    {
+                        targetYRotation = 270f; // Up/Back
+                    }
+                    else
+                    {
+                        targetYRotation = 90f;  // Down/Front
+                    }
+                }
+            }
+            
+            currentYRotation = Mathf.MoveTowardsAngle(currentYRotation, targetYRotation, 
+                rotationSpeed * (GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime));
+        }
+        
+        private void ApplyRotation()
+        {
+            if (graphicsTransform != null)
+            {
+                graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+            }
+            else
+            {
+                transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+            }
+        }
+        
+        private void HandleJump()
+        {
+            if (!jumpRequested) return;
+            jumpRequested = false;
+            
+            if (isGrounded)
+            {
+                Jump();
+                airJumpsRemaining = maxAirJumps;
+            }
+            else if (airJumpsRemaining > 0)
+            {
+                Jump();
+                airJumpsRemaining--;
+            }
+        }
+        
+        private void Jump()
+        {
+            if (rb == null) return;
+            
+            Vector2 velocity = rb.linearVelocity;
+            velocity.y = jumpForce;
+            rb.linearVelocity = velocity;
+            
+            if (animator != null)
+            {
+                animator.SetTrigger(JumpHash);
+            }
+        }
+        
+        #endregion
+        
+        #region Projectile Firing
+        
+        private void HandleFiring()
+        {
+            if (!enableShooting) return;
+            if (fireDirection.magnitude < inputDeadzone) return;
+            
+            // Use GameClock time for fire rate to survive rewind properly
+            float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+            if (currentTime - lastFireTime < fireRate) return;
+            if (projectilePool == null) return;
+            
+            FireProjectile(fireDirection);
+        }
+        
+        private void FireProjectile(Vector2 direction)
+        {
+            if (projectilePool == null)
+            {
+                Debug.LogWarning("PlayerController: projectilePool not assigned!");
+                return;
+            }
+            
+            // Use GameClock time for fire timing
+            lastFireTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+            
+            Vector3 spawnPosition = projectileSpawnPoint != null ? projectileSpawnPoint.position : transform.position;
+            
+            GameObject projectile = projectilePool.Get(spawnPosition, Quaternion.identity);
+            
+            Collider2D projectileCollider = projectile.GetComponent<Collider2D>();
+            if (projectileCollider != null)
+            {
+                Physics2D.IgnoreCollision(projectileCollider, col);
+            }
+            
+            Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
+            if (projectileRb != null)
+            {
+                projectileRb.linearVelocity = direction * projectileSpeed;
+            }
+            
+            if (animator != null)
+            {
+                animator.SetTrigger(FireHash);
+            }
+            
+            // ProjectileLifetime is already on the prefab, just set the time
+            var lifetime = projectile.GetComponent<ProjectileLifetime>();
+            if (lifetime != null)
+                lifetime.SetLifetime(projectileLifetime);
+        }
+        
+        #endregion
+        
+        #region Animation
+        
+        private void UpdateAnimator()
+        {
+            if (animator == null) return;
+            
+            animator.SetBool(OnGroundHash, isGrounded);
+            animator.SetFloat(VelocityXHash, Mathf.Abs(moveInput.x));
+            
+            if (rb != null)
+            {
+                float verticalVelocity = rb.linearVelocity.y;
+                animator.SetFloat(VelocityZHash, verticalVelocity);
+            }
+        }
+        
+        #endregion
+        
+        #region Shadow
+        
+        private void UpdateShadow()
+        {
+            if (shadowSprite == null) return;
+            
+            if (isGrounded)
+            {
+                shadowSprite.localPosition = shadowInitialLocalPosition;
+                shadowSprite.localScale = shadowInitialScale;
+                return;
+            }
+            
+            LayerMask checkLayer = isIgnoringPlatformCollision ? (groundLayer & ~platformLayer) : groundLayer;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, shadowRaycastDistance, checkLayer);
+            
+            if (hit.collider != null)
+            {
+                float distanceToGround = hit.distance;
+                
+                Vector3 shadowWorldPosition = new Vector3(transform.position.x, hit.point.y, transform.position.z);
+                shadowSprite.position = shadowWorldPosition;
+                
+                float heightRatio = Mathf.Clamp01(distanceToGround / shadowMaxHeight);
+                float scaleFactor = Mathf.Lerp(1f, shadowMinScale, heightRatio);
+                shadowSprite.localScale = shadowInitialScale * scaleFactor;
+            }
+            else
+            {
+                shadowSprite.localScale = shadowInitialScale * shadowMinScale;
+            }
+        }
+        
+        #endregion
+    }
+}

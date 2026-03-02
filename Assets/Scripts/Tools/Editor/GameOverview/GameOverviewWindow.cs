@@ -361,9 +361,6 @@ namespace SickOfIt.Tools.Editor.GameOverview
             EditorGUILayout.LabelField("FLOW", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("deathConfigName"));
             EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("duration"));
-            EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("hasTwoStageSequence"));
-            if (level.hasTwoStageSequence)
-                EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("firstSequenceDuration"));
             EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("nextVideoNumber"));
 
             EditorGUILayout.Space(10);

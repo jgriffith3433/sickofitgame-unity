@@ -8,7 +8,7 @@ namespace SickOfIt.Core.Progression
     /// 
     /// The rewind button is wired at generation time directly from
     /// the MobileController prefab — no runtime lookups needed.
-    /// The actual state restore is handled by StateRecorder.
+    /// The actual state restore is handled by RewindTimeline.
     /// The actual time manipulation is handled by GameClock.
     /// </summary>
     public class RewindController : MonoBehaviour

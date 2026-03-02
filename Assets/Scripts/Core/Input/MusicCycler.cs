@@ -36,7 +36,7 @@ namespace SickOfIt.Core.Input
         [SerializeField] private int currentSongIndex = 0;
         [SerializeField] private bool isLoaded = false;
         
-        private AudioSource audioSource;
+        [SerializeField] private AudioSource audioSource;
 
         /// <summary>
         /// Public property to check if music is loaded
@@ -45,12 +45,8 @@ namespace SickOfIt.Core.Input
 
         private void Awake()
         {
-            // Create an AudioSource component if we don't have one
-            audioSource = GetComponent<AudioSource>();
-            if (audioSource == null)
-            {
-                audioSource = gameObject.AddComponent<AudioSource>();
-            }
+            if (audioSource == null) audioSource = GetComponent<AudioSource>();
+            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
             
             audioSource.playOnAwake = false;
             audioSource.loop = loopSongs;

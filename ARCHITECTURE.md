@@ -2,28 +2,44 @@
 
 ## Core Philosophy
 
-**The game IS the config.** One ScriptableObject (`GameDefinition` at `Assets/Resources/GameDefinition.asset`) defines every level, video, death scene, enemy, and player setting. Unity scenes are OUTPUT generated from this config. You edit the definition, press one button (`SickOfIt → Generate Project`), the game regenerates.
+**The game IS the config.** One ScriptableObject (`GameDefinition` at `Assets/Resources/GameDefinition.asset`) defines every level, video, death scene, enemy, projectile, and player setting. Unity scenes AND prefabs are OUTPUT generated from this config. You edit the definition, press one button (`SickOfIt → Generate Project`), the entire game regenerates.
 
-## How Scene Generation Works
-
-The project uses **scene generators** that read from `GameDefinition` and produce fully-wired Unity scenes. The generators place Runtime components directly into the scenes with serialized references already connected — no auto-bootstrap magic, no runtime discovery hacks.
-
-### The Generation Pipeline
+## The Generation Pipeline
 
 ```
 GameDefinition.asset (THE source of truth)
        ↓
 ProjectGenerator.cs ("SickOfIt → Generate Project")
-       ↓ calls individual generators:
-       ├── VideoSceneGenerator  → Video.unity  (or per-video scenes)
-       ├── LevelSceneGenerator  → Level.unity  (or per-level scenes)
-       ├── DeathSceneGenerator  → Death.unity  (or per-death scenes)
-       └── AddressableGroupGenerator → Addressables config
+       │
+       ├── Phase 1: Cleanup
+       │   └── Delete all generated prefabs and scenes
+       │
+       ├── Phase 2: Prefab Generation (order matters)
+       │   ├── ProjectilePrefabGenerator → Projectile_Player, Projectile_Enemy, Projectile_Laser
+       │   ├── PlayerPrefabGenerator     → Character.prefab
+       │   └── EnemyPrefabGenerator      → Enemy_Chaser, Enemy_Fighter, Enemy_Sentinel, Enemy_Shooter
+       │
+       ├── Phase 3: Scene Generation
+       │   ├── VideoSceneGenerator       → Video.unity
+       │   ├── LevelSceneGenerator       → Level.unity
+       │   └── DeathSceneGenerator       → Death.unity
+       │
+       └── Phase 4: Addressables Setup
 ```
 
-### What Generators Produce
+## What Gets Generated
 
-Each generator creates a scene with:
+### Prefabs (Phase 2)
+| Generator | Output | Components Added |
+|-----------|--------|------------------|
+| ProjectilePrefabGenerator | `Projectile_*.prefab` | SpriteRenderer, Rigidbody2D, CircleCollider2D, DamageDealer |
+| PlayerPrefabGenerator | `Character.prefab` | PlayerController, PlayerHealth, Rigidbody2D, ColliderCircle2D, Graphics+Shadow children, Rewind components |
+| EnemyPrefabGenerator | `Enemy_*.prefab` | SpriteRenderer, Animator, Rigidbody2D, CircleCollider2D, EnemyHealth, EnemyBase subclass, Rewind components |
+
+All prefabs include **rewind components**: RewindableTransform, RewindableRigidbody2D, RewindableGameObject, RewindableHealth.
+
+### Scenes (Phase 3)
+Each scene has:
 1. **SceneRoot** — has `SceneContentController` for Addressable loading state
 2. **Content** — parent for all visible content
 3. **Camera** — from GameDefinition camera prefab, or fallback orthographic
@@ -31,12 +47,13 @@ Each generator creates a scene with:
 5. **UI** — from GameDefinition UI prefab (MobileController for levels, skip button for videos/deaths)
 
 ### Level Scene Specifics
-- **Character** — instantiated from `PlayerConfig.playerPrefab` (or `Assets/Prefabs/Character.prefab`)
+- **Character** — instantiated from generated `PlayerConfig.playerPrefab`
 - **Ground/Walls** — `BoxCollider2D` boundaries based on `LevelConfig.levelBounds`
-- **WinTrigger** — `LevelWinTrigger` at the right edge
+- **Win Zone** — Bounds check in LevelRuntime (winZoneCenter/winZoneHalfSize) — no separate script
 - **Music** — `AudioSource` with `LevelConfig.music`
-- **LevelRuntime** — wired to character, spawn point, music source, mobile controller
-- **StateRecorder + RewindController** — wired to player transform, rigidbody, health, camera
+- **Projectile Pools** — `ObjectPool` components: PlayerProjectilePool, EnemyProjectilePool, LaserPool
+- **LevelRuntime** — wired to character, spawn point, music source, pools, HealthUI, mobile controller
+- **RewindTimeline + RewindController** — component-based rewind system (see Rewind System section)
 
 ### Video Scene Specifics
 - **VideoPlayer** — `SpriteRenderer` (SpriteFramePlayer added at runtime)
@@ -80,7 +97,7 @@ LevelRuntime:
   5. Spawns platforms from config.platforms
   6. Spawns barriers from camera viewport
   7. Starts ExperienceRunner for timeline events
-  8. Sets up GameClock, StateRecorder, RewindController
+  8. Sets up GameClock, RewindTimeline, RewindController
     ↓
 Player dies → SceneTransitionManager.LoadDeathScene(config.deathConfigName)
     ↓
@@ -99,7 +116,7 @@ DeathRuntime:
 |----------|------|---------|
 | `SickOfIt.Data` | `Scripts/Data/` | GameDefinition, all config types, progression, roguelite |
 | `SickOfIt.Core` | `Scripts/Core/` | GameClock, AnalyticsManager, input, device detection |
-| `SickOfIt.Core.Progression` | `Scripts/Core/Progression/` | **VideoRuntime, LevelRuntime, DeathRuntime**, MainMenuManager, ExperienceRunner, StateRecorder, RewindController |
+| `SickOfIt.Core.Progression` | `Scripts/Core/Progression/` | **VideoRuntime, LevelRuntime, DeathRuntime**, MainMenuManager, ExperienceRunner, RewindController |
 | `SickOfIt.Core.Addressables` | `Scripts/Core/Addressables/` | AddressablesSceneLoader, AddressablesOperationManager |
 | `SickOfIt.Core.Flow` | `Scripts/Core/Flow/` | SceneTransitionManager, SceneContentController, SceneLoadingManager |
 | `SickOfIt.Combat` | `Scripts/Combat/` | EnemyBase subclasses, health systems, projectiles, pickups |
@@ -124,9 +141,11 @@ DeathRuntime:
 - **LevelRuntime** — Reads LevelConfig, spawns everything dynamically, manages completion/death flow
 - **DeathRuntime** — Reads DeathConfig, plays death animation, reloads level after delay
 - **GameClock** — Per-scene time that can go forward/backward. Singleton (`GameClock.Instance`)
-- **ExperienceRunner** — Fires timed events (spawn enemy, activate object, play sound, etc.) driven by GameClock
-- **StateRecorder** — Ring buffer of game state snapshots for rewind
-- **RewindController** — Triggers rewind on GameClock, restores StateRecorder snapshots
+- **ExperienceRunner** — Fires timed events (spawn enemy, activate object, play sound, etc.) driven by GameClock. Player/music refs injected by LevelRuntime.
+- **RewindTimeline** — Per-scene singleton. Registers all IRewindable components, 2-phase restore (GameObjects first), pool-based projectile cleanup
+- **RewindController** — Triggers rewind on GameClock; RewindTimeline restores component snapshots
+- **ObjectPool** — MonoBehaviour-based reusable object pool. Self-registers with RewindTimeline. ReturnAll() on rewind.
+- **PlayerController** — 2D player controller (renamed from TopDownController), GameClock-aware firing, uses ObjectPool for projectiles
 - **SpriteFramePlayer** — Loads sprite sheet chunks via Addressables, renders frames. Supports GameClock or Time.deltaTime
 
 ### Scene Loading
@@ -136,11 +155,11 @@ DeathRuntime:
 - **SceneContentController** — Shows/hides content root while Addressables load
 
 ### Combat (`SickOfIt.Combat`)
-- **EnemyBase** — Base class, `InitializeFromConfig(EnemyTemplate, EnemySpawnConfig)`
+- **EnemyBase** — Base class, `InitializeFromConfig(EnemyTemplate, EnemySpawnConfig)`, `SetPlayer(Transform, IDamageable)` for injected player ref
 - **EnemyChaser** — Follows player
 - **EnemyFighter** — Alternates between approach and attack states
-- **EnemySentinel** — Stationary, shoots at player
-- **EnemyShooter** — Shoots in configured direction (at player, left, right)
+- **EnemySentinel** — Stationary, crouches/shoots lasers from ObjectPool
+- **EnemyShooter** — Shoots projectiles from ObjectPool (configurable direction)
 - **PlayerHealth / EnemyHealth** — Health systems with damage, death, invulnerability frames
 - **AnimationEventRelay** — Forwards animation events (like FireProjectile) from child Animator to parent EnemyShooter
 
@@ -153,6 +172,72 @@ DeathRuntime:
 | RogueliteManager | DontDestroyOnLoad | `RogueliteManager.Instance` |
 | AnalyticsManager | DontDestroyOnLoad | `AnalyticsManager.Instance` |
 | GameClock | Per-scene | `GameClock.Instance` |
+| RewindTimeline | Per-scene | `RewindTimeline.Instance` |
+
+## Rewind System (Component-Based)
+
+The rewind system is fully decentralized. Each rewindable aspect of an object is a separate component that records its own snapshots into a circular buffer. `RewindTimeline` coordinates recording and restoring across all registered components.
+
+### Architecture
+
+```
+GameClock (time source)
+    ↓ events: OnTick, OnRewindStart, OnRewindStop
+RewindTimeline (coordinator)
+    ↓ calls RecordAll() / RestoreAll()
+    ↓ calls ReturnAllPools() on rewind start/stop
+IRewindable components (self-contained state capture)
+    ├── RewindableTransform   — position, rotation, scale
+    ├── RewindableRigidbody2D — velocity, body type
+    ├── RewindableGameObject  — activeSelf (change-driven)
+    ├── RewindableHealth      — HP + invincibility (event-driven)
+    └── RewindableAnimator    — state hash, params
+ObjectPool (projectile lifecycle)
+    ├── Get(pos, rot)   — activates pooled object
+    ├── Return(obj)     — deactivates, re-parents
+    └── ReturnAll()     — bulk return on rewind
+```
+
+### Key Design Decisions
+
+1. **Awake/OnDestroy registration** (not OnEnable/OnDisable) — dead enemies stay registered so RewindableGameObject can reactivate them
+2. **2-phase RestoreAll** — RewindableGameObject runs first (reactivates objects), then all other components restore their state
+3. **Pre-existence default** — if rewinding to a time before an object was first recorded, `ApplyPreExistenceDefault()` deactivates it
+4. **Change-driven recording** — RewindableGameObject and RewindableHealth only record when state actually changes (with safety-net ticks)
+5. **No scene-wide lookups** — all components self-register with `RewindTimeline.Instance`
+6. **Pool-based projectiles** — `ObjectPool` manages projectile lifecycle; `ReturnAll()` on rewind instead of Destroy
+
+### Adding Rewind to a New Object
+
+Place these components on the prefab:
+- `RewindableTransform` — always (position tracking)
+- `RewindableRigidbody2D` — if it has a Rigidbody2D
+- `RewindableGameObject` — if it can be deactivated/destroyed
+- `RewindableHealth` — if it has PlayerHealth or EnemyHealth
+- `RewindableAnimator` — if it has an Animator
+- `RewindableProjectile` + `ProjectileLifetime` — for short-lived projectiles (pool-aware)
+
+### Object Pool System
+
+`ObjectPool` is a MonoBehaviour-based generic pool. Created by LevelSceneGenerator, wired as serialized fields.
+
+```
+LevelSceneGenerator creates:
+    ├── PlayerProjectilePool  (Projectile_Player, size=10)
+    ├── EnemyProjectilePool   (Projectile_Enemy, size=20)
+    └── LaserPool             (Projectile_Laser, size=5)
+
+Wiring:
+    LevelRuntime holds pool refs → distributes to enemies at spawn time
+    PlayerController.SetProjectilePool() ← called by LevelRuntime
+    EnemyShooter.SetProjectilePool()   ← called by LevelRuntime.SpawnEnemy()
+    EnemySentinel.SetLaserPool()       ← called by LevelRuntime.SpawnEnemy()
+
+Rewind integration:
+    ObjectPool.Awake() → RewindTimeline.RegisterPool(this)
+    RewindTimeline.OnRewindStarted → ReturnAllPools() → each pool.ReturnAll()
+    ProjectileLifetime returns to pool instead of Destroy()
+```
 
 ## Addressables
 

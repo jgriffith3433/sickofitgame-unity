@@ -22,6 +22,7 @@ namespace SickOfIt.Core.Progression
         [Header("Scene References (wired by generator)")]
         [SerializeField] private GameObject deathAnimationObject;
         [SerializeField] private GameObject uiRoot;
+        [SerializeField] private AudioSource audioSource;
 
         private SpriteFramePlayer spritePlayer;
         private MobileControllerFramework.Button skipButton;
@@ -36,12 +37,6 @@ namespace SickOfIt.Core.Progression
                 deathName = PlayerPrefs.GetString("CurrentDeathConfig", deathName);
                 PlayerPrefs.DeleteKey("CurrentDeathConfig");
                 PlayerPrefs.Save();
-            }
-            else
-            {
-                var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-                if (sceneName.StartsWith("Death"))
-                    deathName = sceneName;
             }
 
             var gd = GameDefinition.Instance;
@@ -104,12 +99,15 @@ namespace SickOfIt.Core.Progression
                 }
             }
 
-            // Setup audio
+            // Setup audio using scene-generated AudioSource
             if (config?.audio != null)
             {
-                var audioGo = new GameObject("DeathAudio");
-                audioGo.transform.SetParent(transform);
-                var audioSource = audioGo.AddComponent<AudioSource>();
+                if (audioSource == null)
+                {
+                    var audioGo = new GameObject("DeathAudio");
+                    audioGo.transform.SetParent(transform);
+                    audioSource = audioGo.AddComponent<AudioSource>();
+                }
                 audioSource.clip = config.audio;
                 audioSource.Play();
             }
@@ -164,28 +162,9 @@ namespace SickOfIt.Core.Progression
 
         private void ReloadLevel()
         {
-            if (PlayerPrefs.HasKey("DeathSceneToReload"))
-            {
-                string sceneName = PlayerPrefs.GetString("DeathSceneToReload");
-                PlayerPrefs.DeleteKey("DeathSceneToReload");
-                PlayerPrefs.Save();
-
-                if (sceneName.StartsWith("Level"))
-                {
-                    string numberStr = sceneName.Replace("Level", "");
-                    if (int.TryParse(numberStr, out int levelNum))
-                    {
-                        SceneTransitionManager.Instance.LoadLevel(levelNum);
-                        return;
-                    }
-                }
-
-                SceneTransitionManager.Instance.LoadMainMenu();
-            }
-            else
-            {
-                SceneTransitionManager.Instance.LoadMainMenu();
-            }
+            // Read the level number directly — no scene name parsing needed
+            int levelNumber = PlayerPrefs.GetInt("CurrentLevelNumber", 1);
+            SceneTransitionManager.Instance.LoadLevel(levelNumber);
         }
     }
 }

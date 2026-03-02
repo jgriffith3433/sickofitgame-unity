@@ -30,7 +30,6 @@ namespace SickOfIt.Data.Config
         public float musicVolume = 1f;
 
         [Header("Layout")]
-        public Vector2 levelBounds = new Vector2(10f, 6f);
         public List<PlatformConfig> platforms = new List<PlatformConfig>();
 
         [Header("Barriers")]
@@ -46,15 +45,27 @@ namespace SickOfIt.Data.Config
         [Header("Enemies")]
         public List<EnemySpawnConfig> enemies = new List<EnemySpawnConfig>();
 
+        [Header("Player")]
+        [Tooltip("Where the player spawns in this level")]
+        public Vector2 playerSpawnPosition = new Vector2(-4f, 0f);
+
+        [Header("Win Zone")]
+        [Tooltip("Center of the win zone in world space")]
+        public Vector2 winZoneCenter = new Vector2(6.5f, 0f);
+        [Tooltip("Half-size of the win zone (box check)")]
+        public Vector2 winZoneHalfSize = new Vector2(0.5f, 4f);
+
         [Header("Flow")]
         public string deathConfigName = "Death1";
         public float duration = 60f;
-        public bool hasTwoStageSequence;
-        public float firstSequenceDuration;
 
         [Header("Completion")]
+        [Tooltip("Delay in seconds after level completion before transitioning")]
+        public float completionDelay = 2f;
         [Tooltip("Video number to play after completing this level (0 = go to level select)")]
         public int nextVideoNumber;
+        [Tooltip("If true, completing this level returns to main menu instead of continuing")]
+        public bool returnToMainMenuOnComplete;
 
         [Header("Timeline")]
         public TimelineConfig timeline = new TimelineConfig();

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using SickOfIt.Combat.Health;
+using SickOfIt.Core;
 
 namespace SickOfIt.Combat.Effects
 {
@@ -23,14 +24,14 @@ namespace SickOfIt.Combat.Effects
         [Tooltip("How strongly the flash color overrides the original (0 = none, 1 = full)")]
         [SerializeField] [Range(0f, 1f)] private float flashIntensity = 0.5f;
 
-        private EnemyHealth enemyHealth;
-        private PlayerHealth playerHealth;
+        [SerializeField] private EnemyHealth enemyHealth;
+        [SerializeField] private PlayerHealth playerHealth;
         private Coroutine activeGlitch;
 
         private void Awake()
         {
-            enemyHealth = GetComponent<EnemyHealth>();
-            playerHealth = GetComponent<PlayerHealth>();
+            if (enemyHealth == null) enemyHealth = GetComponent<EnemyHealth>();
+            if (playerHealth == null) playerHealth = GetComponent<PlayerHealth>();
         }
 
         private void OnEnable()
@@ -74,13 +75,27 @@ namespace SickOfIt.Combat.Effects
                     sr.color = Color.Lerp(Color.white, flashColor, flashIntensity);
                 }
 
-                yield return new WaitForSeconds(flashOnDuration);
+                // GameClock-aware wait for flash on duration
+                float timer = 0f;
+                while (timer < flashOnDuration)
+                {
+                    timer += GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime;
+                    yield return null;
+                }
 
                 // Flash off — restore to normal
                 RestoreAllRenderers();
 
                 if (i < flashCount - 1)
-                    yield return new WaitForSeconds(flashOffDuration);
+                {
+                    // GameClock-aware wait for flash off duration
+                    timer = 0f;
+                    while (timer < flashOffDuration)
+                    {
+                        timer += GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime;
+                        yield return null;
+                    }
+                }
             }
 
             // Final safety restore

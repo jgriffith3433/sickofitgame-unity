@@ -32,7 +32,7 @@ namespace SickOfIt.Core.Input
         [SerializeField] private bool debugMode = false;
 
         private readonly Dictionary<int, TouchData> activeTouches = new Dictionary<int, TouchData>();
-        private Canvas parentCanvas;
+        [SerializeField] private Canvas parentCanvas;
 
         private class TouchData
         {
@@ -43,7 +43,8 @@ namespace SickOfIt.Core.Input
 
         private void Awake()
         {
-            parentCanvas = GetComponentInParent<Canvas>();
+            if (parentCanvas == null)
+                parentCanvas = GetComponentInParent<Canvas>();
             if (parentCanvas == null)
                 parentCanvas = FindFirstObjectByType<Canvas>();
 

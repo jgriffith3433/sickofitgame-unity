@@ -14,15 +14,15 @@ namespace SickOfIt.Combat.Enemies
     /// </summary>
     public class AnimationEventRelay : MonoBehaviour
     {
-        private EnemyFighter _fighter;
-        private EnemySentinel _sentinel;
-        private EnemyShooter _shooter;
+        [SerializeField] private EnemyFighter _fighter;
+        [SerializeField] private EnemySentinel _sentinel;
+        [SerializeField] private EnemyShooter _shooter;
 
         private void Awake()
         {
-            _fighter = GetComponentInParent<EnemyFighter>();
-            _sentinel = GetComponentInParent<EnemySentinel>();
-            _shooter = GetComponentInParent<EnemyShooter>();
+            if (_fighter == null) _fighter = GetComponentInParent<EnemyFighter>();
+            if (_sentinel == null) _sentinel = GetComponentInParent<EnemySentinel>();
+            if (_shooter == null) _shooter = GetComponentInParent<EnemyShooter>();
         }
 
         // Fighter events

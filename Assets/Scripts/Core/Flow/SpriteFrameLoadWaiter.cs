@@ -38,18 +38,13 @@ namespace SickOfIt.Core.Flow
 
         private void Awake()
         {
-            // Auto-find SceneContentController if not assigned
+            // Auto-find SceneContentController if not assigned — only check own GameObject
             if (sceneContentController == null)
             {
                 sceneContentController = GetComponent<SceneContentController>();
                 if (sceneContentController == null)
                 {
-                    sceneContentController = FindObjectOfType<SceneContentController>();
-                }
-
-                if (sceneContentController == null)
-                {
-                    Debug.LogWarning("[SpriteFrameLoadWaiter] No SceneContentController found. Content won't be activated automatically.");
+                    Debug.LogWarning("[SpriteFrameLoadWaiter] No SceneContentController found. Wire via serialized field or place on same GameObject.");
                 }
             }
 

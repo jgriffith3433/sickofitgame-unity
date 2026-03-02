@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using SickOfIt.Core;
 using SickOfIt.Core.Flow;
 using SickOfIt.Data;
 
@@ -30,8 +31,7 @@ namespace SickOfIt.Combat.Health
         public UnityEvent onDamaged;
         public UnityEvent onDeath;
 
-        // Cached ref — set once in Awake, no GetComponent in Die()
-        private SickOfIt.Core.Input.TopDownController controller;
+        // Cached ref — set by generator or discovered in Awake
         private int maxHealth;
         private int currentHealth;
 
@@ -39,6 +39,7 @@ namespace SickOfIt.Combat.Health
         public int MaxHealth => maxHealth;
         public bool IsAlive => currentHealth > 0;
         public bool IsInvincible => invincibilityTimer > 0;
+        public float InvincibilityTimer => invincibilityTimer;
 
         /// <summary>
         /// Set current health directly (used by rewind system).
@@ -49,15 +50,26 @@ namespace SickOfIt.Combat.Health
             onHealthChanged?.Invoke(currentHealth);
         }
 
+        /// <summary>
+        /// Set invincibility timer directly (used by rewind system to restore i-frame state).
+        /// </summary>
+        public void SetInvincibilityTimer(float time)
+        {
+            invincibilityTimer = Mathf.Max(0f, time);
+        }
+
+        [SerializeField] private SickOfIt.Core.Input.PlayerController controller;
+
         private void Awake()
         {
-            controller = GetComponentInParent<SickOfIt.Core.Input.TopDownController>();
+            if (controller == null)
+                controller = GetComponentInParent<SickOfIt.Core.Input.PlayerController>();
         }
 
         private void Update()
         {
             if (invincibilityTimer > 0)
-                invincibilityTimer -= Time.deltaTime;
+                invincibilityTimer -= (GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime);
         }
 
         /// <summary>
@@ -115,9 +127,6 @@ namespace SickOfIt.Combat.Health
 
         private void PlayDeathScene()
         {
-            var currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            PlayerPrefs.SetString("DeathSceneToReload", currentScene.name);
-            PlayerPrefs.Save();
             SceneTransitionManager.Instance.LoadDeathScene(deathSceneName);
         }
     }

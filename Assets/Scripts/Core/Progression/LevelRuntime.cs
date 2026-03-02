@@ -1,4 +1,5 @@
 using SickOfIt.Core;
+using SickOfIt.Core.Rewind;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,6 +30,19 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private GameObject characterObject;
         [SerializeField] private Transform playerSpawnPoint;
         [SerializeField] private AudioSource musicSource;
+        [SerializeField] private HealthUI healthUI;
+
+        [Header("Win Zone (bounds check — no separate script needed)")]
+        [SerializeField] private Vector2 winZoneCenter = new Vector2(6.5f, 0f);
+        [SerializeField] private Vector2 winZoneHalfSize = new Vector2(0.5f, 4f);
+
+        [Header("Projectile Pools (wired by generator)")]
+        [SerializeField] private ObjectPool playerProjectilePool;
+        [SerializeField] private ObjectPool enemyProjectilePool;
+        [SerializeField] private ObjectPool laserPool;
+
+        [Header("Pickup Pool (wired by generator)")]
+        [SerializeField] private ObjectPool pickupPool;
 
         // Runtime state
         private LevelConfig config;
@@ -42,16 +56,6 @@ namespace SickOfIt.Core.Progression
         private Transform enemyContainer;
         private Transform platformContainer;
 
-        // Game systems
-        private GameClock gameClock;
-        private ExperienceRunner experienceRunner;
-        private StateRecorder stateRecorder;
-        private RewindController rewindController;
-
-        // Scene transition UI
-        private List<GameObject> objectsToActivateOnTransition = new List<GameObject>();
-        private List<GameObject> objectsToDeactivateOnTransition = new List<GameObject>();
-
         #endregion
 
         #region Public API
@@ -59,6 +63,12 @@ namespace SickOfIt.Core.Progression
         public int LevelNumber => levelNumber;
         public LevelConfig Config => config;
         public void SetLevelNumber(int number) => levelNumber = number;
+
+        // Game systems
+        private GameClock gameClock;
+        private ExperienceRunner experienceRunner;
+        private RewindTimeline rewindTimeline;
+        private RewindController rewindController;
 
         #endregion
 
@@ -84,6 +94,10 @@ namespace SickOfIt.Core.Progression
                 return;
             }
 
+            // Apply per-level win zone from config
+            winZoneCenter = config.winZoneCenter;
+            winZoneHalfSize = config.winZoneHalfSize;
+
             // Cache enemy templates
             templateCache = new Dictionary<EnemyType, EnemyTemplate>();
             if (gameDefinition.enemyTemplates != null)
@@ -102,7 +116,6 @@ namespace SickOfIt.Core.Progression
             SetupContainers();
             SetupGameClock();
             SetupAudio();
-            SetupTimelines();
             StartExperience();
             SetupRewind();
             SpawnEnemies();
@@ -126,6 +139,11 @@ namespace SickOfIt.Core.Progression
             {
                 if (co != null) StopCoroutine(co);
             }
+        }
+
+        private void Update()
+        {
+            CheckWinZone();
         }
 
         #endregion
@@ -161,6 +179,18 @@ namespace SickOfIt.Core.Progression
             // Resolve PlayerHealth from character
             if (characterObject != null && playerHealth == null)
                 playerHealth = characterObject.GetComponentInChildren<PlayerHealth>();
+
+            // Wire player projectile pool
+            if (characterObject != null && playerProjectilePool != null)
+            {
+                var pc = characterObject.GetComponentInChildren<SickOfIt.Core.Input.PlayerController>();
+                if (pc != null)
+                    pc.SetProjectilePool(playerProjectilePool);
+            }
+
+            // Wire HealthUI → PlayerHealth
+            if (healthUI != null && playerHealth != null)
+                healthUI.SetPlayerHealth(playerHealth);
         }
 
         #endregion
@@ -169,15 +199,18 @@ namespace SickOfIt.Core.Progression
 
         private void SetupGameClock()
         {
-            gameClock = gameObject.AddComponent<GameClock>();
+            // Prefer pre-attached component from generator, fallback to AddComponent
+            gameClock = GetComponent<GameClock>();
+            if (gameClock == null)
+                gameClock = gameObject.AddComponent<GameClock>();
         }
 
         private void SetupRewind()
         {
             // Prefer components already on the GO (wired by generator), fallback to AddComponent
-            stateRecorder = GetComponent<StateRecorder>();
-            if (stateRecorder == null)
-                stateRecorder = gameObject.AddComponent<StateRecorder>();
+            rewindTimeline = GetComponent<RewindTimeline>();
+            if (rewindTimeline == null)
+                rewindTimeline = gameObject.AddComponent<RewindTimeline>();
 
             rewindController = GetComponent<RewindController>();
             if (rewindController == null)
@@ -215,18 +248,24 @@ namespace SickOfIt.Core.Progression
             musicSource.Play();
         }
 
-        private void SetupTimelines()
-        {
-            // All timeline events are now handled by ExperienceRunner.
-            // Two-stage sequences are defined as experience events in config.
-        }
-
         private void StartExperience()
         {
             if (config.timeline == null || config.timeline.events == null || config.timeline.events.Count == 0)
                 return;
 
             experienceRunner = gameObject.AddComponent<ExperienceRunner>();
+
+            // Inject references so ExperienceRunner never uses Find*
+            var playerCtrl = characterObject != null
+                ? characterObject.GetComponentInChildren<SickOfIt.Core.Input.PlayerController>()
+                : null;
+            experienceRunner.SetPlayerRefs(playerHealth, playerCtrl);
+            if (musicSource != null)
+                experienceRunner.SetMusicSource(musicSource);
+
+            // Wire projectile pools so timeline-spawned enemies can shoot
+            experienceRunner.SetPools(enemyProjectilePool, laserPool, pickupPool);
+
             experienceRunner.Run(config.timeline, templateCache);
             Debug.Log($"[LevelRuntime] Experience started: {config.timeline.events.Count} events");
         }
@@ -282,6 +321,23 @@ namespace SickOfIt.Core.Progression
                 health.SetMaxHealth(hp);
             }
 
+            // Inject player reference so enemies never need FindGameObjectWithTag
+            if (enemyBase != null && characterObject != null)
+            {
+                var playerDamageable = characterObject.GetComponentInChildren<IDamageable>(true);
+                enemyBase.SetPlayer(characterObject.transform, playerDamageable);
+            }
+
+            // Wire projectile pools to shooting enemies
+            if (enemyBase is EnemyShooter shooter && enemyProjectilePool != null)
+                shooter.SetProjectilePool(enemyProjectilePool);
+            else if (enemyBase is EnemySentinel sentinel && laserPool != null)
+                sentinel.SetLaserPool(laserPool);
+
+            // Wire pickup pool for point drops
+            if (enemyBase != null && pickupPool != null)
+                enemyBase.SetPickupPool(pickupPool);
+
             if (!spawn.activeAtStart)
                 enemy.SetActive(false);
         }
@@ -302,17 +358,30 @@ namespace SickOfIt.Core.Progression
 
         private void SpawnPlatform(PlatformConfig platConfig)
         {
-            if (platConfig.prefab != null)
+            // Use the generated platform prefab from GameDefinition
+            var platformPrefab = GameDefinition.Instance.platformPrefab;
+            
+            if (platformPrefab != null)
             {
-                var plat = Instantiate(platConfig.prefab, new Vector3(platConfig.position.x, platConfig.position.y, 0f), Quaternion.identity, platformContainer);
+                var plat = Instantiate(platformPrefab, new Vector3(platConfig.position.x, platConfig.position.y, 0f), Quaternion.identity, platformContainer);
                 plat.name = $"Platform_{config.platforms.IndexOf(platConfig)}";
 
-                if (platConfig.scale != Vector2.zero)
-                    plat.transform.localScale = new Vector3(platConfig.scale.x, platConfig.scale.y, 1f);
+                float width = platConfig.scale.x > 0 ? platConfig.scale.x : platConfig.width;
+                float height = platConfig.scale.y > 0 ? platConfig.scale.y : 0.3f;
+                plat.transform.localScale = new Vector3(width, height, 1f);
+
+                // Wire DropThroughPlatform to PlayerController
+                var dropThrough = plat.GetComponent<SickOfIt.Core.Input.DropThroughPlatform>();
+                if (dropThrough != null)
+                {
+                    var playerController = characterObject?.GetComponent<SickOfIt.Core.Input.PlayerController>();
+                    if (playerController != null)
+                        dropThrough.SetPlayerController(playerController);
+                }
             }
             else
             {
-                // Create a basic platform from scratch
+                // Fallback: create a basic platform from scratch
                 var go = new GameObject($"Platform_{config.platforms.IndexOf(platConfig)}");
                 go.transform.SetParent(platformContainer);
                 go.transform.position = new Vector3(platConfig.position.x, platConfig.position.y, 0f);
@@ -326,7 +395,6 @@ namespace SickOfIt.Core.Progression
                 col.size = new Vector2(width, height);
                 go.transform.localScale = new Vector3(width, height, 1f);
 
-                // Set platform layer if it exists
                 int platLayer = LayerMask.NameToLayer("Platform");
                 if (platLayer >= 0)
                     go.layer = platLayer;
@@ -405,6 +473,18 @@ namespace SickOfIt.Core.Progression
 
         #region Level Completion
 
+        private void CheckWinZone()
+        {
+            if (levelCompleted || characterObject == null) return;
+
+            Vector2 playerPos = characterObject.transform.position;
+            if (Mathf.Abs(playerPos.x - winZoneCenter.x) <= winZoneHalfSize.x &&
+                Mathf.Abs(playerPos.y - winZoneCenter.y) <= winZoneHalfSize.y)
+            {
+                CompleteLevel();
+            }
+        }
+
         public void CompleteLevel()
         {
             if (levelCompleted) return;
@@ -412,32 +492,23 @@ namespace SickOfIt.Core.Progression
 
             GameProgressManager.Instance.SetLevelCompleted(levelNumber);
             AnalyticsManager.Instance?.TrackLevelComplete(levelNumber);
-            GameProgressManager.Instance.UnlockVideo(levelNumber + 1);
 
             if (playerHealth != null)
                 RogueliteManager.Instance.SaveLevelEndHealth(levelNumber, playerHealth.CurrentHealth, playerHealth.MaxHealth);
 
-            Invoke(nameof(ProceedToNextLevel), 2f);
-        }
-
-        public void CompleteLevelAndReturnToMainMenu()
-        {
-            if (levelCompleted) return;
-            levelCompleted = true;
-
-            GameProgressManager.Instance.SetLevelCompleted(levelNumber);
-            AnalyticsManager.Instance?.TrackLevelComplete(levelNumber);
-
-            if (playerHealth != null)
-                RogueliteManager.Instance.SaveLevelEndHealth(levelNumber, playerHealth.CurrentHealth, playerHealth.MaxHealth);
-
-            Invoke(nameof(ReturnToMainMenu), 2f);
+            if (config.returnToMainMenuOnComplete)
+            {
+                Invoke(nameof(ReturnToMainMenu), config.completionDelay);
+            }
+            else
+            {
+                GameProgressManager.Instance.UnlockVideo(levelNumber + 1);
+                Invoke(nameof(ProceedToNextLevel), config.completionDelay);
+            }
         }
 
         private void ProceedToNextLevel()
         {
-            ShowSceneTransitionUI();
-
             if (config.nextVideoNumber > 0)
             {
                 PlayerPrefs.SetInt("ReturnToLevel", levelNumber + 1);
@@ -457,10 +528,6 @@ namespace SickOfIt.Core.Progression
         public void RestartLevel()
         {
             var currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            PlayerPrefs.SetString("DeathSceneToReload", currentScene.name);
-            PlayerPrefs.Save();
-
-            ShowSceneTransitionUI();
 
             if (!string.IsNullOrEmpty(config.deathConfigName))
                 SceneTransitionManager.Instance.LoadDeathScene(config.deathConfigName);
@@ -470,38 +537,17 @@ namespace SickOfIt.Core.Progression
 
         public void ReturnToLevelSelect()
         {
-            ShowSceneTransitionUI();
             SceneTransitionManager.Instance.LoadLevelSelection();
         }
 
         public void ReturnToMainMenu()
         {
-            ShowSceneTransitionUI();
             SceneTransitionManager.Instance.LoadMainMenu();
-        }
-
-        public void ShowSceneTransitionUI()
-        {
-            SetGameObjectsActive(objectsToActivateOnTransition, true);
-            SetGameObjectsActive(objectsToDeactivateOnTransition, false);
         }
 
         #endregion
 
         // Two-stage sequences are now handled by ExperienceRunner events.
         // Use GameEventType.ActivateObject/DeactivateObject events in the timeline config.
-
-        #region Helpers
-
-        private static void SetGameObjectsActive(List<GameObject> objects, bool active)
-        {
-            if (objects == null) return;
-            foreach (var obj in objects)
-            {
-                if (obj != null) obj.SetActive(active);
-            }
-        }
-
-        #endregion
     }
 }

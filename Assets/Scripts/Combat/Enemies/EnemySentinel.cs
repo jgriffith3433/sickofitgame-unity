@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using SickOfIt.Combat.Damage;
+using SickOfIt.Core;
+using SickOfIt.Core.Rewind;
 using SickOfIt.Data.Config;
 
 namespace SickOfIt.Combat.Enemies
@@ -54,10 +54,14 @@ namespace SickOfIt.Combat.Enemies
         [SerializeField] private int standingAttackDamage = 2;
 
         [Header("Laser Projectile")]
-        [SerializeField] private string laserProjectileAddress = "Projectile_Laser";
+        [SerializeField] private ObjectPool laserPool;
         [SerializeField] private float laserSpeed = 10f;
         [SerializeField] private Transform leftProjectileSpawn;
         [SerializeField] private Transform rightProjectileSpawn;
+        [Tooltip("How long fired lasers live")]
+        [SerializeField] private float laserLifetime = 5f;
+        [Tooltip("Damage dealt by fired lasers")]
+        [SerializeField] private int laserDamage = 1;
 
         [Header("Animation")]
         [SerializeField] private Animator animator;
@@ -72,8 +76,6 @@ namespace SickOfIt.Combat.Enemies
 
         // ── Private state ─────────────────────────────────────────────────────────
 
-        private GameObject cachedLaserPrefab;
-        private bool isLaserReady = false;
 
         // ── Unity lifecycle ───────────────────────────────────────────────────────
 
@@ -82,11 +84,16 @@ namespace SickOfIt.Combat.Enemies
             base.InitializeFromConfig(template, spawn);
             standingAttackDamage = template.contactDamage;
             standingAttackRange = template.attackRange;
-            laserProjectileAddress = template.laserProjectileAddress;
             laserSpeed = template.laserSpeed;
             crouchThreshold = template.crouchThreshold;
             crouchingAttackRange = template.crouchingAttackRange;
+            facePlayer = template.faceMovementDirection;
+            laserLifetime = template.projectileLifetime;
+            laserDamage = template.projectileDamage;
         }
+
+        /// <summary>Set at runtime by LevelRuntime after spawning.</summary>
+        public void SetLaserPool(ObjectPool pool) => laserPool = pool;
 
         protected override void Awake()
         {
@@ -96,8 +103,6 @@ namespace SickOfIt.Combat.Enemies
 
             if (animator == null)
                 animator = GetComponentInChildren<Animator>();
-
-            LoadLaserPrefab();
         }
 
         // ── Core behavior ─────────────────────────────────────────────────────────
@@ -143,7 +148,7 @@ namespace SickOfIt.Combat.Enemies
 
         private void FireLaser()
         {
-            if (!isLaserReady || cachedLaserPrefab == null)
+            if (laserPool == null)
                 return;
 
             bool facingLeft = spriteRenderer != null && !spriteRenderer.flipX;
@@ -156,34 +161,24 @@ namespace SickOfIt.Combat.Enemies
             }
 
             Vector2 direction = facingLeft ? Vector2.left : Vector2.right;
-            GameObject laser = Instantiate(cachedLaserPrefab, spawnPoint.position, Quaternion.identity);
+            GameObject laser = laserPool.Get(spawnPoint.position, Quaternion.identity);
 
-            Rigidbody2D laserRb = laser.GetComponent<Rigidbody2D>();
+            // Use cached components — no per-fire GetComponent
+            Rigidbody2D laserRb = laserPool.GetCachedRb(laser);
             if (laserRb != null)
                 laserRb.linearVelocity = direction * laserSpeed;
 
             DamageDealer damageDealer = laser.GetComponent<DamageDealer>();
             if (damageDealer != null)
+            {
                 damageDealer.SetTargetTags("Player");
+                damageDealer.SetDamage(laserDamage);
+            }
 
-            Destroy(laser, 5f);
-        }
-
-        private void LoadLaserPrefab()
-        {
-            Addressables.LoadAssetAsync<GameObject>(laserProjectileAddress).Completed +=
-                (AsyncOperationHandle<GameObject> handle) =>
-                {
-                    if (handle.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        cachedLaserPrefab = handle.Result;
-                        isLaserReady = true;
-                    }
-                    else
-                    {
-                        Debug.LogError($"[EnemySentinel] Failed to load laser prefab: '{laserProjectileAddress}'");
-                    }
-                };
+            // ProjectileLifetime is already on the prefab, just set time (cached)
+            var lifetime = laserPool.GetCachedLifetime(laser);
+            if (lifetime != null)
+                lifetime.SetLifetime(laserLifetime);
         }
 
         // ── Gizmos ────────────────────────────────────────────────────────────────

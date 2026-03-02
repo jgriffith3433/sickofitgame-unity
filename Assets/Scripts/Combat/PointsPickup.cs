@@ -1,4 +1,5 @@
 using UnityEngine;
+using SickOfIt.Core;
 using SickOfIt.Data;
 
 namespace SickOfIt.Combat
@@ -6,6 +7,7 @@ namespace SickOfIt.Combat
     /// <summary>
     /// A collectable pickup that awards points when the player touches it.
     /// Spawned by enemies on death. Uses a trigger collider.
+    /// Supports pool-based lifecycle: SetPool() on creation, ReturnToPool() on collection/despawn.
     /// </summary>
     [RequireComponent(typeof(Collider2D))]
     public class PointsPickup : MonoBehaviour
@@ -36,6 +38,8 @@ namespace SickOfIt.Combat
         private bool settled;
         private float settledY;
         private float settledTime;
+        private float aliveTime;
+        private ObjectPool pool;
 
         /// <summary>
         /// Set the points value at runtime (used when spawning from enemy drops).
@@ -45,28 +49,63 @@ namespace SickOfIt.Combat
             pointsValue = value;
         }
 
+        /// <summary>
+        /// Set the pool this pickup belongs to (called once at pool warmup via ObjectPool parent).
+        /// When set, collection/despawn returns to pool instead of Destroy.
+        /// </summary>
+        public void SetPool(ObjectPool p)
+        {
+            pool = p;
+        }
+
+        [SerializeField] private Collider2D col;
+
         private void Start()
         {
+            ResetState();
+        }
+
+        private void OnEnable()
+        {
+            // Reset state for pool reuse
+            ResetState();
+        }
+
+        private void ResetState()
+        {
             // Make sure collider is a trigger
-            var col = GetComponent<Collider2D>();
+            if (col == null) col = GetComponent<Collider2D>();
             if (col != null)
                 col.isTrigger = true;
 
             // Apply initial pop velocity
             float randomX = Random.Range(-spreadRange, spreadRange);
             velocity = new Vector2(randomX, popForce);
-
-            if (lifetime > 0)
-                Destroy(gameObject, lifetime);
+            aliveTime = 0f;
+            settled = false;
         }
 
         private void Update()
         {
+            // Respect GameClock — freeze during pause/rewind
+            var clock = GameClock.Instance;
+            float dt = clock != null ? clock.DeltaTime : Time.deltaTime;
+            if (dt <= 0f) return;
+
+            aliveTime += dt;
+
+            // Self-destruct / return to pool after lifetime
+            if (lifetime > 0 && aliveTime >= lifetime)
+            {
+                ReturnOrDestroy();
+                return;
+            }
+
             if (!settled)
             {
                 // Apply gravity
-                velocity.y -= gravity * Time.deltaTime;
-                transform.position += (Vector3)velocity * Time.deltaTime;
+                velocity.y -= gravity * dt;
+                transform.position += (Vector3)velocity * dt;
 
                 // Settle when falling below spawn height
                 if (velocity.y < 0 && transform.position.y <= settledY)
@@ -75,13 +114,13 @@ namespace SickOfIt.Combat
                     Vector3 pos = transform.position;
                     pos.y = settledY;
                     transform.position = pos;
-                    settledTime = Time.time;
+                    settledTime = aliveTime;
                 }
             }
             else if (bobAmplitude > 0)
             {
-                // Gentle bobbing once settled
-                float elapsed = Time.time - settledTime;
+                // Gentle bobbing once settled (uses alive time for consistency)
+                float elapsed = aliveTime - settledTime;
                 Vector3 pos = transform.position;
                 pos.y = settledY + Mathf.Sin(elapsed * bobSpeed) * bobAmplitude;
                 transform.position = pos;
@@ -104,7 +143,18 @@ namespace SickOfIt.Combat
             // Award points
             RogueliteManager.Instance.AddPoints(pointsValue);
 
-            Destroy(gameObject);
+            ReturnOrDestroy();
+        }
+
+        /// <summary>
+        /// Return to pool if available, else Destroy.
+        /// </summary>
+        private void ReturnOrDestroy()
+        {
+            if (pool != null)
+                pool.Return(gameObject);
+            else
+                Destroy(gameObject);
         }
     }
 }

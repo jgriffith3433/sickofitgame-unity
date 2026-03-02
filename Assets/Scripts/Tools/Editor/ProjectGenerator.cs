@@ -17,14 +17,27 @@ namespace SickOfIt.Tools.Editor
     /// <summary>
     /// THE ONLY PROJECT BUILDER YOU NEED.
     /// 
-    /// Reads GameDefinition and generates 3 simple scenes:
-    /// - Video.unity (VideoRuntime reads config to know which video to play)
-    /// - Level.unity (LevelRuntime reads config to know which level to build)
-    /// - Death.unity (DeathRuntime reads config to know which death to show)
-    /// - Sets up Addressables  
-    /// - Everything is config-driven from GameDefinition
+    /// Reads GameDefinition and generates:
     /// 
-    /// ONE BUTTON. ONE SCRIPT. BOOM.
+    /// Phase 1 - Cleanup:
+    ///   - DeleteGeneratedPrefabs() - removes Character, Enemy_*, Projectile_*
+    ///   - CleanupOldScenes() - removes old generated scenes
+    /// 
+    /// Phase 2 - Prefabs (order matters):
+    ///   - ProjectilePrefabGenerator - Projectile_Player, Projectile_Enemy, Projectile_Laser
+    ///   - PickupPrefabGenerator - Diamond.prefab (point drop pickup)
+    ///   - PlatformPrefabGenerator - Platform.prefab (one-way platform)
+    ///   - PlayerPrefabGenerator - Character.prefab
+    ///   - EnemyPrefabGenerator - Enemy_Chaser, Enemy_Fighter, Enemy_Sentinel, Enemy_Shooter
+    /// 
+    /// Phase 3 - Scenes:
+    ///   - VideoSceneGenerator - Video.unity
+    ///   - LevelSceneGenerator - Level.unity
+    ///   - DeathSceneGenerator - Death.unity
+    /// 
+    /// Phase 4 - Addressables
+    /// 
+    /// ONE BUTTON. ONE SCRIPT. EVERYTHING GENERATED.
     /// </summary>
     public static class ProjectGenerator
     {
@@ -38,12 +51,51 @@ namespace SickOfIt.Tools.Editor
             var gd = LoadGameDefinition();
             if (gd == null) return;
             
-            // Clean up old scenes first
+            // ═══════════════════════════════════════════════════════════════
+            // PHASE 1: CLEANUP
+            // ═══════════════════════════════════════════════════════════════
+            Debug.Log("Phase 1: Cleanup...");
+            DeleteGeneratedPrefabs();
+            DeleteGeneratedAnimations();
             CleanupOldScenes();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
             
-            // Delegate to individual scene generators
-            // NOTE: Each NewScene(EmptyScene, Single) can unload the SO from native side,
-            // so we reload GameDefinition before each generator call.
+            // ═══════════════════════════════════════════════════════════════
+            // PHASE 2: GENERATE PREFABS
+            // Order: Projectiles → Player → Enemies (player needed for enemy targeting)
+            // ═══════════════════════════════════════════════════════════════
+            Debug.Log("Phase 2: Generating prefabs...");
+            gd = LoadGameDefinition();
+            
+            try { ProjectilePrefabGenerator.GenerateAll(gd); }
+            catch (System.Exception e) { Debug.LogError($"ProjectilePrefabGenerator failed: {e}"); }
+            
+            gd = LoadGameDefinition();
+            try { PickupPrefabGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"PickupPrefabGenerator failed: {e}"); }
+            
+            gd = LoadGameDefinition();
+            try { PlatformPrefabGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"PlatformPrefabGenerator failed: {e}"); }
+            
+            gd = LoadGameDefinition();
+            try { PlayerPrefabGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"PlayerPrefabGenerator failed: {e}"); }
+            
+            gd = LoadGameDefinition();
+            try { EnemyPrefabGenerator.GenerateAll(gd); }
+            catch (System.Exception e) { Debug.LogError($"EnemyPrefabGenerator failed: {e}"); }
+            
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            
+            // ═══════════════════════════════════════════════════════════════
+            // PHASE 3: GENERATE SCENES
+            // ═══════════════════════════════════════════════════════════════
+            Debug.Log("Phase 3: Generating scenes...");
+            gd = LoadGameDefinition();
+            
             try { VideoSceneGenerator.GenerateVideoScene(gd); }
             catch (System.Exception e) { Debug.LogError($"VideoSceneGenerator failed: {e}"); }
             
@@ -55,12 +107,13 @@ namespace SickOfIt.Tools.Editor
             try { DeathSceneGenerator.GenerateDeathScene(gd); }
             catch (System.Exception e) { Debug.LogError($"DeathSceneGenerator failed: {e}"); }
             
-            // Refresh AssetDatabase so newly-saved scenes have valid GUIDs
-            // before Addressables tries to register them
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             
-            // Setup Addressables
+            // ═══════════════════════════════════════════════════════════════
+            // PHASE 4: ADDRESSABLES
+            // ═══════════════════════════════════════════════════════════════
+            Debug.Log("Phase 4: Setting up Addressables...");
             gd = LoadGameDefinition();
             SetupAddressables(gd);
             
@@ -69,13 +122,45 @@ namespace SickOfIt.Tools.Editor
             AssetDatabase.Refresh();
             
             Debug.Log("=== PROJECT GENERATION COMPLETE ===");
-            Debug.Log($"✅ Generated: Video.unity, Level.unity, Death.unity");
-            Debug.Log($"✅ Config from GameDefinition: {gd.levels.Count} levels, {gd.videos.Count} videos, {gd.deaths.Count} deaths");
+            Debug.Log($"✅ Generated prefabs: Character, Platform, Diamond, {gd.enemyTemplates?.Count ?? 0} enemies, {gd.projectileConfigs?.Count ?? 0} projectiles");
+            Debug.Log($"✅ Generated scenes: Video.unity, Level.unity, Death.unity");
+            Debug.Log($"✅ Config: {gd.levels.Count} levels, {gd.videos.Count} videos, {gd.deaths.Count} deaths");
             Debug.Log($"✅ Addressables configured");
             Debug.Log($"🎮 Game ready to play!");
             
             // Open MainMenu scene so it's ready to play
             EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity");
+        }
+        
+        /// <summary>
+        /// Delete all generated prefabs (Character, Enemy_*, Projectile_*, Diamond, Platform).
+        /// </summary>
+        private static void DeleteGeneratedPrefabs()
+        {
+            Debug.Log("Deleting generated prefabs...");
+            
+            ProjectilePrefabGenerator.DeleteAll();
+            PickupPrefabGenerator.Delete();
+            PlatformPrefabGenerator.Delete();
+            PlayerPrefabGenerator.Delete();
+            EnemyPrefabGenerator.DeleteAll();
+        }
+
+        /// <summary>
+        /// Delete all generated animation assets (controllers, clips).
+        /// Wipes the entire Assets/Animations/ tree to prevent orphans.
+        /// Each generator recreates its subfolder during generation.
+        /// </summary>
+        private static void DeleteGeneratedAnimations()
+        {
+            Debug.Log("Deleting generated animations...");
+            
+            string animRoot = "Assets/Animations";
+            if (AssetDatabase.IsValidFolder(animRoot))
+            {
+                AssetDatabase.DeleteAsset(animRoot);
+                Debug.Log($"Deleted: {animRoot}");
+            }
         }
         
         private static void CleanupOldScenes()
@@ -204,49 +289,6 @@ namespace SickOfIt.Tools.Editor
             entry.SetAddress(address);
             Debug.Log($"Added to Addressables: {address} -> {scenePath}");
             return true;
-        }
-        
-        private static Camera PlaceCamera(GameObject cameraPrefab, string sceneType)
-        {
-            GameObject camGo;
-            if (cameraPrefab != null)
-            {
-                camGo = (GameObject)PrefabUtility.InstantiatePrefab(cameraPrefab);
-                camGo.name = "Main Camera";
-                camGo.tag = "MainCamera";
-                Debug.Log($"✅ Placed {sceneType} camera prefab");
-            }
-            else
-            {
-                // Fallback: create a default camera so the scene is still usable
-                camGo = new GameObject("Main Camera");
-                camGo.tag = "MainCamera";
-                var cam = camGo.AddComponent<Camera>();
-                cam.orthographic = true;
-                cam.orthographicSize = 2.8f;
-                cam.backgroundColor = Color.black;
-                cam.transform.position = new Vector3(0, 0, -10f);
-                camGo.AddComponent<AudioListener>();
-                Debug.LogWarning($"⚠️ No {sceneType}CameraPrefab in GameDefinition — using default camera.");
-            }
-            return camGo.GetComponent<Camera>();
-        }
-        
-        /// <summary>
-        /// Find every Canvas on the UI prefab instance and assign its worldCamera.
-        /// Handles Screen Space - Camera canvases.
-        /// </summary>
-        private static void WireCanvasCamera(GameObject uiRoot, Camera camera)
-        {
-            if (uiRoot == null || camera == null) return;
-            
-            foreach (var canvas in uiRoot.GetComponentsInChildren<Canvas>(true))
-            {
-                if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
-                {
-                    canvas.worldCamera = camera;
-                }
-            }
         }
 
         /// <summary>

@@ -29,10 +29,42 @@ namespace SickOfIt.Data
         [Header("Enemy Templates")]
         public List<EnemyTemplate> enemyTemplates = new List<EnemyTemplate>();
 
+        [Header("Projectile Configs")]
+        [Tooltip("Projectile definitions (Player, Enemy, Laser). Used by ProjectilePrefabGenerator.")]
+        public List<ProjectileConfig> projectileConfigs = new List<ProjectileConfig>();
+
+        [Header("Pickup Config")]
+        [Tooltip("Configuration for point drop pickups (Diamond)")]
+        public PickupConfig pickupConfig = new PickupConfig();
+
+        [Header("Platform Defaults")]
+        public float platformColliderHeight = 0.1f;
+
+        [Header("Camera Defaults")]
+        [Tooltip("Orthographic size for level camera")]
+        public float levelCameraOrthoSize = 3.6f;
+        [Tooltip("Orthographic size for video/death cameras")]
+        public float cinematicCameraOrthoSize = 2.8f;
+        public Color cinematicCameraBackground = Color.black;
+
+        [Header("Level Scene Layout")]
+        [Tooltip("Y position of the ground collider")]
+        public float groundY = -3.5f;
+        [Tooltip("Size of the ground collider")]
+        public Vector2 groundColliderSize = new Vector2(14f, 1f);
+        [Tooltip("X distance of boundary walls from center")]
+        public float wallX = 7f;
+        [Tooltip("Size of each boundary wall collider")]
+        public Vector2 wallColliderSize = new Vector2(1f, 8f);
+
         [Header("Global Settings")]
         public float defaultLevelDuration = 60f;
-        public int startingLevel = 1;
-        public bool debugMode;
+
+        [Header("Rewind Settings")]
+        [Tooltip("How often rewind state is recorded (seconds). Lower = more precise, more memory.")]
+        public float rewindRecordInterval = 0.05f;
+        [Tooltip("Maximum seconds of rewind history to keep.")]
+        public float rewindMaxHistorySeconds = 30f;
 
         [Header("Scene UI Prefabs")]
         [Tooltip("Full MobileController UI prefab for level scenes (movement, jump, shoot, etc.)")]
@@ -49,6 +81,12 @@ namespace SickOfIt.Data
         public GameObject videoCameraPrefab;
         [Tooltip("Camera prefab for death scenes")]
         public GameObject deathCameraPrefab;
+
+        [Header("Generated Prefab References (set by generators — DO NOT EDIT)")]
+        [Tooltip("Set by PickupPrefabGenerator")]
+        public GameObject pickupPrefab;
+        [Tooltip("Set by PlatformPrefabGenerator")]
+        public GameObject platformPrefab;
 
         // =========================================================================
         // ACCESSORS
@@ -203,6 +241,23 @@ namespace SickOfIt.Data
                 issues.Add("Player: Base max health is 0 or negative");
 
             return issues;
+        }
+
+        // =========================================================================
+        // ACCESSORS
+        // =========================================================================
+
+        /// <summary>
+        /// Find a projectile config by its ID string (e.g. "Player", "Enemy", "Laser").
+        /// </summary>
+        public ProjectileConfig GetProjectileConfig(string id)
+        {
+            for (int i = 0; i < projectileConfigs.Count; i++)
+            {
+                if (projectileConfigs[i].id == id)
+                    return projectileConfigs[i];
+            }
+            return null;
         }
 
         // =========================================================================

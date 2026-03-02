@@ -1,172 +1,178 @@
 #if UNITY_EDITOR
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.Animations;
+using SickOfIt.Combat.Effects;
 using SickOfIt.Combat.Enemies;
 using SickOfIt.Combat.Health;
+using SickOfIt.Core.Rewind;
+using SickOfIt.Data;
 using SickOfIt.Data.Config;
 
 namespace SickOfIt.Tools.Editor.Generation
 {
     /// <summary>
-    /// Generates a complete enemy prefab from a sprite sheet.
+    /// Generates enemy prefabs from EnemyTemplate configs.
     /// 
-    /// Given:
-    ///   - A sprite sheet texture (already sliced in Multiple mode)
-    ///   - An EnemyType (Chaser, Fighter, Sentinel, Shooter)
-    ///   - A name
+    /// Called by ProjectGenerator during the prefab generation phase.
+    /// Prefabs are generated to Assets/Prefabs/Combat/Enemy_{type}.prefab
     /// 
-    /// Produces:
-    ///   - An Animator Controller with Idle loop
-    ///   - An AnimationClip from the sprite sheet frames
-    ///   - A Prefab with SpriteRenderer, Animator, Collider, Rigidbody, EnemyHealth, EnemyBase subclass
-    ///   - (Optionally) an EnemyTemplate ScriptableObject
+    /// Created prefab has:
+    /// - SpriteRenderer, Animator
+    /// - Rigidbody2D, CircleCollider2D
+    /// - EnemyHealth (with healthBarContainer, healthBarColor, healthBarSize wired)
+    /// - EnemyBase subclass (EnemyChaser, EnemyFighter, etc.)
+    /// - LeftFirePoint/RightFirePoint children (Shooter/Sentinel only)
+    /// - AnimationEventRelay (Fighter/Sentinel/Shooter)
+    /// - GlitchEffect (wired to EnemyHealth)
+    /// - WorldSpace Canvas health bar (wired to EnemyHealth)
+    /// - Rewind components: RewindableTransform, RewindableRigidbody2D, RewindableGameObject, RewindableHealth, RewindableAnimator
     /// 
-    /// Usage via MCP:
-    ///   execute_menu_item menuPath="Tools/Claw/Generate Enemy Prefab"
-    /// Or call directly:
-    ///   EnemyPrefabGenerator.Generate("SlimeEnemy", EnemyType.Chaser, "Assets/Art/Enemies/slime_sheet.png")
+    /// All serialized fields are wired via SerializedObject.
     /// </summary>
     public static class EnemyPrefabGenerator
     {
-        private const string ENEMIES_ART_ROOT = "Assets/Art/Enemies";
-        private const string ENEMIES_PREFAB_ROOT = "Assets/Prefabs/Enemies";
+        private const string ENEMIES_PREFAB_ROOT = "Assets/Prefabs/Combat";
         private const string ENEMIES_ANIM_ROOT = "Assets/Animations/Enemies";
 
         /// <summary>
-        /// Generate a complete enemy prefab from a sprite sheet.
+        /// Delete all generated enemy prefabs.
         /// </summary>
-        /// <param name="enemyName">Name of the enemy (e.g., "SlimeEnemy")</param>
-        /// <param name="type">The EnemyType to use</param>
-        /// <param name="spriteSheetPath">Path to the sprite sheet texture (must be imported as Multiple sprite mode)</param>
-        /// <param name="fps">Animation playback speed</param>
-        /// <param name="pixelsPerUnit">Sprite pixels per unit</param>
-        /// <returns>The generated prefab, or null on failure</returns>
-        public static GameObject Generate(string enemyName, EnemyType type, string spriteSheetPath, int fps = 8, int pixelsPerUnit = 100)
+        public static void DeleteAll()
         {
-            // Validate sprite sheet
-            var sprites = AssetDatabase.LoadAllAssetsAtPath(spriteSheetPath);
-            var spriteList = new System.Collections.Generic.List<Sprite>();
-            foreach (var asset in sprites)
+            ProjectGenerator.EnsureFolder(ENEMIES_PREFAB_ROOT);
+
+            // Delete all Enemy_*.prefab files
+            var guids = AssetDatabase.FindAssets("Enemy_ t:Prefab", new[] { ENEMIES_PREFAB_ROOT });
+            foreach (var guid in guids)
             {
-                if (asset is Sprite sprite)
-                    spriteList.Add(sprite);
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                if (path.Contains("Enemy_"))
+                {
+                    AssetDatabase.DeleteAsset(path);
+                    Debug.Log($"[EnemyPrefabGen] Deleted: {path}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Generate all enemy prefabs from GameDefinition.enemyTemplates.
+        /// </summary>
+        public static void GenerateAll(GameDefinition gd)
+        {
+            if (gd == null || gd.enemyTemplates == null || gd.enemyTemplates.Count == 0)
+            {
+                Debug.LogWarning("[EnemyPrefabGen] No enemy templates in GameDefinition");
+                return;
             }
 
-            if (spriteList.Count == 0)
-            {
-                Debug.LogError($"[EnemyPrefabGen] No sprites found in '{spriteSheetPath}'. Is it set to Multiple sprite mode?");
-                return null;
-            }
-
-            // Sort sprites by name (frame_0, frame_1, etc.)
-            spriteList.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
-
-            Debug.Log($"[EnemyPrefabGen] Found {spriteList.Count} sprites in '{spriteSheetPath}'");
-
-            // Ensure output folders
             ProjectGenerator.EnsureFolder(ENEMIES_PREFAB_ROOT);
             ProjectGenerator.EnsureFolder(ENEMIES_ANIM_ROOT);
-            ProjectGenerator.EnsureFolder($"{ENEMIES_ANIM_ROOT}/{enemyName}");
 
-            // Create animation clip
-            var clip = CreateIdleClip(enemyName, spriteList, fps);
+            foreach (var template in gd.enemyTemplates)
+            {
+                if (template == null)
+                {
+                    Debug.LogWarning("[EnemyPrefabGen] Skipping null template");
+                    continue;
+                }
 
-            // Create animator controller
-            var controller = CreateAnimatorController(enemyName, clip);
-
-            // Create prefab
-            var prefab = CreatePrefab(enemyName, type, spriteList[0], controller);
+                GenerateFromTemplate(template);
+            }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log($"[EnemyPrefabGen] ✅ Generated enemy '{enemyName}': " +
-                $"Prefab={ENEMIES_PREFAB_ROOT}/{enemyName}.prefab, " +
-                $"Anim={spriteList.Count} frames @ {fps}fps");
+            Debug.Log($"[EnemyPrefabGen] Generated {gd.enemyTemplates.Count} enemy prefabs");
+        }
+
+        /// <summary>
+        /// Generate a single enemy prefab from an EnemyTemplate.
+        /// Updates the template's prefab reference.
+        /// </summary>
+        public static GameObject GenerateFromTemplate(EnemyTemplate template)
+        {
+            if (template == null)
+            {
+                Debug.LogError("[EnemyPrefabGen] Null template provided");
+                return null;
+            }
+
+            string enemyName = $"Enemy_{template.type}";
+            string animFolder = $"{ENEMIES_ANIM_ROOT}/{enemyName}";
+
+            // Clean old animation assets before regenerating
+            AnimationGenerator.DeleteFolder(animFolder);
+            ProjectGenerator.EnsureFolder(animFolder);
+
+            // ─── Auto-populate animation config if missing ─────────────
+            if (template.animationConfig == null || template.animationConfig.states.Count == 0)
+            {
+                template.animationConfig = AnimationConfigPopulator.CreateEnemyAnimConfig(template);
+                if (template.animationConfig != null)
+                {
+                    EditorUtility.SetDirty(template);
+                    Debug.Log($"[EnemyPrefabGen] Auto-populated animation config for {enemyName}");
+                }
+            }
+
+            // ─── Animation generation via AnimationGenerator ─────────────
+            RuntimeAnimatorController animController = null;
+
+            if (template.animationConfig != null && template.animationConfig.states.Count > 0)
+            {
+                // Full multi-state animation from config
+                var animResult = AnimationGenerator.Generate(
+                    template.animationConfig,
+                    enemyName,
+                    animFolder,
+                    template.spriteSheet,
+                    template.animationFps);
+
+                if (animResult != null)
+                    animController = animResult.controller;
+            }
+            else if (template.spriteSheet != null)
+            {
+                // Simple idle fallback
+                var animResult = AnimationGenerator.GenerateSimpleIdle(
+                    enemyName, animFolder, template.spriteSheet, template.animationFps);
+
+                if (animResult != null)
+                    animController = animResult.controller;
+            }
+
+            // Get default sprite (first sprite from the primary sprite sheet)
+            Sprite defaultSprite = null;
+            if (template.spriteSheet != null)
+            {
+                var sprites = AssetDatabase.LoadAllAssetsAtPath(
+                    AssetDatabase.GetAssetPath(template.spriteSheet));
+                foreach (var asset in sprites)
+                {
+                    if (asset is Sprite sprite)
+                    {
+                        defaultSprite = sprite;
+                        break;
+                    }
+                }
+            }
+
+            // Create prefab (pass template so all config values are used)
+            var prefab = CreatePrefab(enemyName, template, defaultSprite, animController);
+
+            // Update template's prefab reference
+            template.prefab = prefab;
+            EditorUtility.SetDirty(template);
 
             return prefab;
         }
 
-        /// <summary>
-        /// Generate a prefab AND create an EnemyTemplate ScriptableObject for it.
-        /// </summary>
-        public static (GameObject prefab, EnemyTemplate template) GenerateWithTemplate(
-            string enemyName, EnemyType type, string spriteSheetPath,
-            int defaultHealth = 3, float defaultMoveSpeed = 2f, int contactDamage = 1,
-            int fps = 8)
+        private static GameObject CreatePrefab(string enemyName, EnemyTemplate template, Sprite defaultSprite, RuntimeAnimatorController controller)
         {
-            var prefab = Generate(enemyName, type, spriteSheetPath, fps);
-            if (prefab == null) return (null, null);
+            var type = template.type;
 
-            // Create EnemyTemplate SO
-            ProjectGenerator.EnsureFolder("Assets/Data/EnemyTemplates");
-            string templatePath = $"Assets/Data/EnemyTemplates/{enemyName}Template.asset";
-
-            var template = ScriptableObject.CreateInstance<EnemyTemplate>();
-            template.type = type;
-            template.displayName = enemyName;
-            template.prefab = prefab;
-            template.defaultHealth = defaultHealth;
-            template.defaultMoveSpeed = defaultMoveSpeed;
-            template.contactDamage = contactDamage;
-
-            AssetDatabase.CreateAsset(template, templatePath);
-            AssetDatabase.SaveAssets();
-
-            Debug.Log($"[EnemyPrefabGen] ✅ Created EnemyTemplate: {templatePath}");
-            return (prefab, template);
-        }
-
-        private static AnimationClip CreateIdleClip(string enemyName, System.Collections.Generic.List<Sprite> sprites, int fps)
-        {
-            var clip = new AnimationClip();
-            clip.name = $"{enemyName}_Idle";
-            clip.frameRate = fps;
-
-            // Set loop
-            var settings = AnimationUtility.GetAnimationClipSettings(clip);
-            settings.loopTime = true;
-            AnimationUtility.SetAnimationClipSettings(clip, settings);
-
-            // Create keyframes for sprite swap
-            var keyframes = new ObjectReferenceKeyframe[sprites.Count];
-            float frameDuration = 1f / fps;
-
-            for (int i = 0; i < sprites.Count; i++)
-            {
-                keyframes[i] = new ObjectReferenceKeyframe
-                {
-                    time = i * frameDuration,
-                    value = sprites[i]
-                };
-            }
-
-            var binding = EditorCurveBinding.PPtrCurve("", typeof(SpriteRenderer), "m_Sprite");
-            AnimationUtility.SetObjectReferenceCurve(clip, binding, keyframes);
-
-            string clipPath = $"{ENEMIES_ANIM_ROOT}/{enemyName}/{enemyName}_Idle.anim";
-            AssetDatabase.CreateAsset(clip, clipPath);
-
-            return clip;
-        }
-
-        private static AnimatorController CreateAnimatorController(string enemyName, AnimationClip idleClip)
-        {
-            string controllerPath = $"{ENEMIES_ANIM_ROOT}/{enemyName}/{enemyName}.controller";
-            var controller = AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
-
-            // Add Idle state
-            var rootStateMachine = controller.layers[0].stateMachine;
-            var idleState = rootStateMachine.AddState("Idle");
-            idleState.motion = idleClip;
-            rootStateMachine.defaultState = idleState;
-
-            return controller;
-        }
-
-        private static GameObject CreatePrefab(string enemyName, EnemyType type, Sprite defaultSprite, AnimatorController controller)
-        {
             // Create root GameObject
             var go = new GameObject(enemyName);
 
@@ -175,44 +181,185 @@ namespace SickOfIt.Tools.Editor.Generation
             sr.sprite = defaultSprite;
 
             // Animator
-            var animator = go.AddComponent<Animator>();
-            animator.runtimeAnimatorController = controller;
+            Animator animator = null;
+            if (controller != null)
+            {
+                animator = go.AddComponent<Animator>();
+                animator.runtimeAnimatorController = controller;
+            }
 
-            // Physics
+            // Physics — read from template config
             var rb = go.AddComponent<Rigidbody2D>();
             rb.bodyType = RigidbodyType2D.Kinematic;
-            rb.gravityScale = 0;
+            rb.gravityScale = template.gravityScale;
+            rb.constraints = template.constraints;
 
             var collider = go.AddComponent<CircleCollider2D>();
-            collider.radius = 0.4f;
+            collider.radius = template.colliderRadius > 0 ? template.colliderRadius : 0.4f;
 
             // Audio
-            go.AddComponent<AudioSource>();
+            var audioSource = go.AddComponent<AudioSource>();
 
             // Health
-            go.AddComponent<EnemyHealth>();
+            var enemyHealth = go.AddComponent<EnemyHealth>();
+
+            // Wire EnemyHealth config from template
+            var ehSo = new SerializedObject(enemyHealth);
+            var invProp = ehSo.FindProperty("hasInvincibilityFrames");
+            if (invProp != null) invProp.boolValue = template.hasInvincibilityFrames;
+            var invTimerProp = ehSo.FindProperty("invincibilityDuration");
+            if (invTimerProp != null) invTimerProp.floatValue = template.invincibilityDuration;
+            ehSo.ApplyModifiedPropertiesWithoutUndo();
+
+            // ─── Fire points for Shooter/Sentinel ────────────────────────
+            Transform leftFirePoint = null;
+            Transform rightFirePoint = null;
+            if (type == EnemyType.Shooter || type == EnemyType.Sentinel)
+            {
+                var leftFP = new GameObject("LeftFirePoint");
+                leftFP.transform.SetParent(go.transform);
+                leftFP.transform.localPosition = new Vector3(
+                    -Mathf.Abs(template.firePointOffset.x),
+                    template.firePointOffset.y,
+                    0f);
+                leftFirePoint = leftFP.transform;
+
+                var rightFP = new GameObject("RightFirePoint");
+                rightFP.transform.SetParent(go.transform);
+                rightFP.transform.localPosition = new Vector3(
+                    Mathf.Abs(template.firePointOffset.x),
+                    template.firePointOffset.y,
+                    0f);
+                rightFirePoint = rightFP.transform;
+            }
 
             // Enemy behavior based on type
+            EnemyBase enemyBase = null;
             switch (type)
             {
                 case EnemyType.Chaser:
-                    go.AddComponent<EnemyChaser>();
+                    enemyBase = go.AddComponent<EnemyChaser>();
                     break;
                 case EnemyType.Fighter:
-                    go.AddComponent<EnemyFighter>();
+                    enemyBase = go.AddComponent<EnemyFighter>();
                     break;
                 case EnemyType.Sentinel:
-                    go.AddComponent<EnemySentinel>();
+                    enemyBase = go.AddComponent<EnemySentinel>();
                     break;
                 case EnemyType.Shooter:
-                    go.AddComponent<EnemyShooter>();
+                    enemyBase = go.AddComponent<EnemyShooter>();
                     break;
             }
 
-            // Create health bar child (optional, can be configured later)
+            // Wire all serialized fields on EnemyBase via SerializedObject
+            if (enemyBase != null)
+            {
+                var so = new SerializedObject(enemyBase);
+                so.FindProperty("spriteRenderer").objectReferenceValue = sr;
+                so.FindProperty("rb").objectReferenceValue = rb;
+                so.FindProperty("enemyHealth").objectReferenceValue = enemyHealth;
+                so.FindProperty("audioSource").objectReferenceValue = audioSource;
+
+                // Wire animator for types that have one
+                var animProp = so.FindProperty("animator");
+                if (animProp != null && animator != null)
+                    animProp.objectReferenceValue = animator;
+
+                // Wire fire points for Shooter
+                if (type == EnemyType.Shooter)
+                {
+                    var lfpProp = so.FindProperty("leftFirePoint");
+                    if (lfpProp != null) lfpProp.objectReferenceValue = leftFirePoint;
+                    var rfpProp = so.FindProperty("rightFirePoint");
+                    if (rfpProp != null) rfpProp.objectReferenceValue = rightFirePoint;
+                }
+
+                // Wire fire points for Sentinel
+                if (type == EnemyType.Sentinel)
+                {
+                    var lfpProp = so.FindProperty("leftProjectileSpawn");
+                    if (lfpProp != null) lfpProp.objectReferenceValue = leftFirePoint;
+                    var rfpProp = so.FindProperty("rightProjectileSpawn");
+                    if (rfpProp != null) rfpProp.objectReferenceValue = rightFirePoint;
+                }
+
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            // ─── Rewind components ────────────────────────────────────────
+            go.AddComponent<RewindableTransform>();
+            go.AddComponent<RewindableRigidbody2D>();
+            go.AddComponent<RewindableGameObject>();
+
+            var rewindableHealth = go.AddComponent<RewindableHealth>();
+            var rhSo = new SerializedObject(rewindableHealth);
+            rhSo.FindProperty("enemyHealth").objectReferenceValue = enemyHealth;
+            rhSo.ApplyModifiedPropertiesWithoutUndo();
+
+            // RewindableAnimator (if animator exists)
+            if (animator != null)
+            {
+                var rewindableAnimator = go.AddComponent<RewindableAnimator>();
+                var raSo = new SerializedObject(rewindableAnimator);
+                var animRefProp = raSo.FindProperty("animator");
+                if (animRefProp != null)
+                    animRefProp.objectReferenceValue = animator;
+                raSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            // ─── GlitchEffect ──────────────────────────────────────────
+            var glitchEffect = go.AddComponent<GlitchEffect>();
+            var geSo = new SerializedObject(glitchEffect);
+            geSo.FindProperty("enemyHealth").objectReferenceValue = enemyHealth;
+            geSo.ApplyModifiedPropertiesWithoutUndo();
+
+            // ─── AnimationEventRelay (for types that use animation-driven attacks) ──
+            if (type == EnemyType.Fighter || type == EnemyType.Sentinel || type == EnemyType.Shooter)
+            {
+                var relay = go.AddComponent<AnimationEventRelay>();
+                var relaySo = new SerializedObject(relay);
+                // Wire the appropriate enemy subclass
+                if (type == EnemyType.Fighter)
+                {
+                    var prop = relaySo.FindProperty("_fighter");
+                    if (prop != null) prop.objectReferenceValue = enemyBase as EnemyFighter;
+                }
+                else if (type == EnemyType.Sentinel)
+                {
+                    var prop = relaySo.FindProperty("_sentinel");
+                    if (prop != null) prop.objectReferenceValue = enemyBase as EnemySentinel;
+                }
+                else if (type == EnemyType.Shooter)
+                {
+                    var prop = relaySo.FindProperty("_shooter");
+                    if (prop != null) prop.objectReferenceValue = enemyBase as EnemyShooter;
+                }
+                relaySo.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            // ─── Health bar (WorldSpace Canvas + Images) ──────────────────
             var healthBarGo = new GameObject("HealthBar");
             healthBarGo.transform.SetParent(go.transform);
-            healthBarGo.transform.localPosition = new Vector3(0, 0.6f, 0);
+            healthBarGo.transform.localPosition = new Vector3(
+                template.healthBarOffset.x,
+                template.healthBarOffset.y,
+                0f);
+
+            // Add a WorldSpace Canvas so UI Images render in-world
+            var canvas = healthBarGo.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.WorldSpace;
+            canvas.sortingOrder = 10;
+
+            var canvasRect = healthBarGo.GetComponent<RectTransform>();
+            canvasRect.sizeDelta = template.healthBarSize;
+            canvasRect.localScale = new Vector3(0.01f, 0.01f, 1f); // world-space scaling
+
+            // Wire healthBarContainer on EnemyHealth
+            var ehSo2 = new SerializedObject(enemyHealth);
+            ehSo2.FindProperty("healthBarContainer").objectReferenceValue = healthBarGo.transform;
+            ehSo2.FindProperty("healthBarColor").colorValue = template.healthBarColor;
+            ehSo2.FindProperty("healthBarSize").vector2Value = template.healthBarSize;
+            ehSo2.ApplyModifiedPropertiesWithoutUndo();
 
             // Save as prefab
             string prefabPath = $"{ENEMIES_PREFAB_ROOT}/{enemyName}.prefab";
@@ -220,6 +367,8 @@ namespace SickOfIt.Tools.Editor.Generation
 
             // Clean up scene object
             Object.DestroyImmediate(go);
+
+            Debug.Log($"[EnemyPrefabGen] Created: {prefabPath}");
 
             return prefab;
         }

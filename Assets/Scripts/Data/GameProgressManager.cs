@@ -83,9 +83,15 @@ namespace SickOfIt.Data
 
         public bool IsVideoUnlocked(int videoNumber)
         {
-            // Video 1 (intro) is always unlocked
-            if (videoNumber == 1)
-                return true;
+            // Check config-driven alwaysUnlocked flag
+            if (gameDefinition == null)
+                gameDefinition = GameDefinition.Instance;
+            if (gameDefinition != null)
+            {
+                var vc = gameDefinition.GetVideo(videoNumber);
+                if (vc != null && vc.alwaysUnlocked)
+                    return true;
+            }
 
             return PlayerPrefs.GetInt($"Video_{videoNumber}_Unlocked", 0) == 1;
         }

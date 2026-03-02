@@ -3,6 +3,7 @@ using MobileControllerFramework;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.UI;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Core.Progression
 {
@@ -12,7 +13,8 @@ namespace SickOfIt.Core.Progression
     public class VideoSelectionManager : MonoBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private int totalVideos = 2; // Set this to your total number of videos (1 = intro, 2-X = level videos)
+        [Tooltip("Read from GameDefinition.TotalVideos at runtime")]
+        [SerializeField] private int totalVideos = 2;
 
         [Header("UI References")]
         [SerializeField] private Transform videoButtonContainer; // Parent object for video buttons
@@ -24,6 +26,10 @@ namespace SickOfIt.Core.Progression
 
         private void Start()
         {
+            // Read total videos from config instead of hardcoded serialized field
+            var gd = GameDefinition.Instance;
+            if (gd != null) totalVideos = gd.TotalVideos;
+
             GenerateVideoButtons();
 
             if (backButton != null)
@@ -55,7 +61,16 @@ namespace SickOfIt.Core.Progression
                 if (videoButton != null)
                 {
                     bool isUnlocked = GameProgressManager.Instance.IsVideoUnlocked(videoNumber);
-                    string videoName = videoNumber == 1 ? "Intro" : $"Episode {videoNumber}";
+
+                    // Read display name from VideoConfig if available
+                    string videoName = $"Episode {videoNumber}";
+                    var gd2 = GameDefinition.Instance;
+                    if (gd2 != null)
+                    {
+                        VideoConfig vc = gd2.GetVideo(videoNumber);
+                        if (vc != null && !string.IsNullOrEmpty(vc.displayName))
+                            videoName = vc.displayName;
+                    }
 
                     videoButton.Setup(videoNumber, videoName, isUnlocked, () => OnVideoClicked(videoNumber));
                 }
