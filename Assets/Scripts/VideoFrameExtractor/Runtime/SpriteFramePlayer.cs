@@ -159,7 +159,6 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 onReady?.Invoke();
             }
 
-            Debug.Log($"[SpriteFramePlayer] Initialized: {data.videoName}, {totalFrames} frames, {data.chunks.Count} chunks");
         }
 
         /// <summary>
@@ -455,7 +454,6 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 {
                     isReady = true;
                     onReady?.Invoke();
-                    Debug.Log($"[SpriteFramePlayer] Ready: {data.videoName}");
                 }
             }
         }
@@ -488,6 +486,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 int idx = evictCandidates[i];
                 if (idx >= windowBehind && idx <= windowEnd) continue;
                 if (protectDisplayed && idx == displayedChunkIdx) continue;
+                if (idx == referenceSpriteChunkIdx) continue; // Protect reference sprite chunk
                 UnloadChunk(idx);
             }
 
@@ -520,6 +519,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 int idx = evictCandidates[i];
                 if (idx >= center && idx <= windowEnd) continue;
                 if (idx == displayedChunkIdx && !loadedChunks.Contains(center)) continue;
+                if (idx == referenceSpriteChunkIdx) continue; // Protect reference sprite chunk from eviction to prevent flash
                 UnloadChunk(idx);
             }
         }
@@ -564,6 +564,9 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
                     if (spriteRenderer != null)
                         spriteRenderer.sprite = referenceSprite;
+
+                    // Invalidate cached texture so MPB gets refreshed on next RenderFrame
+                    currentTexture = null;
                     break;
                 }
             }

@@ -16,7 +16,7 @@ namespace SickOfIt.Data.Config
 
         [Header("Visuals")]
         public Sprite sprite;
-        public float spriteScale = 1f;
+        public float spriteScale = 0.25f;
         public int sortingOrder = 5;
 
         [Header("Physics")]
@@ -37,6 +37,12 @@ namespace SickOfIt.Data.Config
         [Header("Layer / Tag")]
         public string layerName = "Pickup";
         public string tag = "Pickup";
+
+        [Header("Audio - SFX")]
+        [Tooltip("Sound played when the pickup is collected")]
+        public AudioClip collectSound;
+        [Tooltip("Sound played when the pickup spawns/pops out")]
+        public AudioClip spawnSound;
 
         [Header("Animation (for generator)")]
         [Tooltip("Sprite sheet for pickup animation (e.g., diamond spin). If null, uses static sprite.")]

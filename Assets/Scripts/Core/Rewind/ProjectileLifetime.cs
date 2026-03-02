@@ -8,7 +8,7 @@ namespace SickOfIt.Core.Rewind
     /// 
     /// Pauses during rewind. Does not tick when GameClock is paused or rewinding.
     /// </summary>
-    public class ProjectileLifetime : MonoBehaviour
+    public class ProjectileLifetime : MonoBehaviour, IPoolReturnable
     {
         [SerializeField] private float lifetime = 5f;
 

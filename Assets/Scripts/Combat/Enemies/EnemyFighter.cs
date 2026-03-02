@@ -43,14 +43,14 @@ namespace SickOfIt.Combat.Enemies
         private bool isWalking = false;
         private float nextStateChangeTime;
 
-        public override void InitializeFromConfig(EnemyTemplate template, EnemySpawnConfig spawn)
+        public override void InitializeFromConfig(EnemyTypeConfig config, EnemySpawnConfig spawn)
         {
-            base.InitializeFromConfig(template, spawn);
-            attackRange = template.attackRange;
-            attackDamage = template.contactDamage;
-            minStateChangeTime = template.minStateChangeTime;
-            maxStateChangeTime = template.maxStateChangeTime;
-            faceMovementDirection = template.faceMovementDirection;
+            base.InitializeFromConfig(config, spawn);
+            attackRange = config.attackRange;
+            attackDamage = config.contactDamage;
+            minStateChangeTime = config.minStateChangeTime;
+            maxStateChangeTime = config.maxStateChangeTime;
+            faceMovementDirection = config.faceMovementDirection;
         }
 
         protected override void Awake()

@@ -300,6 +300,9 @@ namespace SickOfIt.Tools.Editor.Generation
             string entityName,
             string outputFolder)
         {
+            // Ensure valid fps (fallback to 12 if invalid)
+            if (fps <= 0) fps = 12;
+            
             var clip = new AnimationClip();
             clip.name = $"{entityName}_{stateConfig.stateName}";
             clip.frameRate = fps;

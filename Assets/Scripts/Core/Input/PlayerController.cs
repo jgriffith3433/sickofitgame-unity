@@ -83,6 +83,8 @@ namespace SickOfIt.Core.Input
         [SerializeField] private Camera mainCamera;
         
         [Header("Rotation Settings")]
+        [Tooltip("If true, use 2D sprite flip (localScale.x) instead of Y-axis rotation")]
+        [SerializeField] private bool use2DFlip = true;
         [Tooltip("Speed of rotation when moving (smooth rotation to show front/back/sides)")]
         [SerializeField] private float normalRotationSpeed = 900f;
         [Tooltip("Speed of rotation when firing (fast snap to left/right)")]
@@ -97,6 +99,15 @@ namespace SickOfIt.Core.Input
         [SerializeField] private float shadowMinScale = 0.2f;
         [Tooltip("How far down to raycast for ground detection")]
         [SerializeField] private float shadowRaycastDistance = 20f;
+
+        [Header("Audio")]
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioClip[] hurtSounds;
+        [SerializeField] private AudioClip[] deathSounds;
+        [SerializeField] private AudioClip jumpSound;
+        [SerializeField] private AudioClip fireSound;
+        [SerializeField] private AudioClip landSound;
+        [SerializeField] [Range(0f, 0.3f)] private float pitchVariation = 0.1f;
         
         #endregion
         
@@ -170,6 +181,7 @@ namespace SickOfIt.Core.Input
             projectileLifetime = cfg.projectileLifetime;
 
             // Rotation
+            use2DFlip = cfg.use2DFlip;
             normalRotationSpeed = cfg.normalRotationSpeed;
             firingRotationSpeed = cfg.firingRotationSpeed;
 
@@ -184,6 +196,14 @@ namespace SickOfIt.Core.Input
 
             // Input
             jumpDetectVelocityThreshold = cfg.jumpDetectVelocityThreshold;
+
+            // Audio SFX
+            if (cfg.hurtSounds != null && cfg.hurtSounds.Length > 0) hurtSounds = cfg.hurtSounds;
+            if (cfg.deathSounds != null && cfg.deathSounds.Length > 0) deathSounds = cfg.deathSounds;
+            if (cfg.jumpSound != null) jumpSound = cfg.jumpSound;
+            if (cfg.fireSound != null) fireSound = cfg.fireSound;
+            if (cfg.landSound != null) landSound = cfg.landSound;
+            pitchVariation = cfg.pitchVariation;
         }
 
         private void Awake()
@@ -198,14 +218,22 @@ namespace SickOfIt.Core.Input
                 rb.gravityScale = gravityScale;
             }
             
-            // Initialize rotation to face camera (front view)
-            currentYRotation = 90f;
-            targetYRotation = 90f;
-            
-            // Apply initial rotation to graphics transform
-            if (graphicsTransform != null)
+            // Initialize rotation based on mode
+            if (use2DFlip)
             {
-                graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+                // 2D mode: no Y rotation, start facing right (positive scale)
+                currentYRotation = 0f;
+                targetYRotation = 0f;
+            }
+            else
+            {
+                // 3D mode: Y rotation to face camera
+                currentYRotation = 90f;
+                targetYRotation = 90f;
+                if (graphicsTransform != null)
+                {
+                    graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+                }
             }
             
             // Store initial shadow values
@@ -284,6 +312,10 @@ namespace SickOfIt.Core.Input
         
         private void LateUpdate()
         {
+            // Don't apply rotation during rewind — RewindableTransform handles it
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return;
+
             // Apply rotation after Animator updates to prevent override
             ApplyRotation();
         }
@@ -319,6 +351,7 @@ namespace SickOfIt.Core.Input
             if (isGrounded && !wasGrounded)
             {
                 airJumpsRemaining = maxAirJumps;
+                PlaySFX(landSound);
             }
         }
         
@@ -616,13 +649,34 @@ namespace SickOfIt.Core.Input
         
         private void ApplyRotation()
         {
-            if (graphicsTransform != null)
+            if (use2DFlip)
             {
-                graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+                // 2D mode: flip sprite using localScale.x
+                if (graphicsTransform != null)
+                {
+                    Vector3 scale = graphicsTransform.localScale;
+                    if (isFiring && Mathf.Abs(fireDirection.x) > inputDeadzone)
+                    {
+                        scale.x = fireDirection.x > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+                    }
+                    else if (moveInput.magnitude > inputDeadzone && Mathf.Abs(moveInput.x) > inputDeadzone)
+                    {
+                        scale.x = moveInput.x > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+                    }
+                    graphicsTransform.localScale = scale;
+                }
             }
             else
             {
-                transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+                // 3D mode: Y-axis rotation
+                if (graphicsTransform != null)
+                {
+                    graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+                }
             }
         }
         
@@ -650,6 +704,8 @@ namespace SickOfIt.Core.Input
             Vector2 velocity = rb.linearVelocity;
             velocity.y = jumpForce;
             rb.linearVelocity = velocity;
+            
+            PlaySFX(jumpSound);
             
             if (animator != null)
             {
@@ -695,19 +751,24 @@ namespace SickOfIt.Core.Input
                 Physics2D.IgnoreCollision(projectileCollider, col);
             }
             
-            Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
+            // Use pool-cached Rigidbody2D when available (avoids GetComponent per shot)
+            Rigidbody2D projectileRb = projectilePool.GetCachedRb(projectile);
+            if (projectileRb == null) projectileRb = projectile.GetComponent<Rigidbody2D>();
             if (projectileRb != null)
             {
                 projectileRb.linearVelocity = direction * projectileSpeed;
             }
+            
+            PlaySFX(fireSound);
             
             if (animator != null)
             {
                 animator.SetTrigger(FireHash);
             }
             
-            // ProjectileLifetime is already on the prefab, just set the time
-            var lifetime = projectile.GetComponent<ProjectileLifetime>();
+            // Use pool-cached ProjectileLifetime when available
+            var lifetime = projectilePool.GetCachedLifetime(projectile);
+            if (lifetime == null) lifetime = projectile.GetComponent<ProjectileLifetime>();
             if (lifetime != null)
                 lifetime.SetLifetime(projectileLifetime);
         }
@@ -765,6 +826,40 @@ namespace SickOfIt.Core.Input
             }
         }
         
+        #endregion
+
+        #region Audio SFX
+
+        /// <summary>
+        /// Play a single sound effect via the player's AudioSource.
+        /// Applies random pitch variation for variety.
+        /// </summary>
+        private void PlaySFX(AudioClip clip)
+        {
+            if (clip == null || audioSource == null) return;
+            audioSource.pitch = 1f + Random.Range(-pitchVariation, pitchVariation);
+            audioSource.PlayOneShot(clip);
+        }
+
+        /// <summary>
+        /// Play a random sound from an array of clips.
+        /// </summary>
+        public void PlayRandomSFX(AudioClip[] clips)
+        {
+            if (clips == null || clips.Length == 0) return;
+            PlaySFX(clips[Random.Range(0, clips.Length)]);
+        }
+
+        /// <summary>
+        /// Called by PlayerHealth when the player is damaged. Plays a random hurt sound.
+        /// </summary>
+        public void PlayHurtSound() => PlayRandomSFX(hurtSounds);
+
+        /// <summary>
+        /// Called by PlayerHealth when the player dies. Plays a random death sound.
+        /// </summary>
+        public void PlayDeathSound() => PlayRandomSFX(deathSounds);
+
         #endregion
     }
 }

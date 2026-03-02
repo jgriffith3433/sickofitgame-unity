@@ -2,18 +2,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
-using UnityEditor.Animations;
 using SickOfIt.Combat.Effects;
 using SickOfIt.Combat.Enemies;
 using SickOfIt.Combat.Health;
-using SickOfIt.Core.Rewind;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 
 namespace SickOfIt.Tools.Editor.Generation
 {
     /// <summary>
-    /// Generates enemy prefabs from EnemyTemplate configs.
+    /// Generates enemy prefabs from EnemyTypeConfig configs.
     /// 
     /// Called by ProjectGenerator during the prefab generation phase.
     /// Prefabs are generated to Assets/Prefabs/Combat/Enemy_{type}.prefab
@@ -57,49 +55,49 @@ namespace SickOfIt.Tools.Editor.Generation
         }
 
         /// <summary>
-        /// Generate all enemy prefabs from GameDefinition.enemyTemplates.
+        /// Generate all enemy prefabs from GameDefinition.enemyTypes.
         /// </summary>
         public static void GenerateAll(GameDefinition gd)
         {
-            if (gd == null || gd.enemyTemplates == null || gd.enemyTemplates.Count == 0)
+            if (gd == null || gd.enemyTypes == null || gd.enemyTypes.Count == 0)
             {
-                Debug.LogWarning("[EnemyPrefabGen] No enemy templates in GameDefinition");
+                Debug.LogWarning("[EnemyPrefabGen] No enemy types in GameDefinition");
                 return;
             }
 
             ProjectGenerator.EnsureFolder(ENEMIES_PREFAB_ROOT);
             ProjectGenerator.EnsureFolder(ENEMIES_ANIM_ROOT);
 
-            foreach (var template in gd.enemyTemplates)
+            foreach (var config in gd.enemyTypes)
             {
-                if (template == null)
+                if (config == null)
                 {
-                    Debug.LogWarning("[EnemyPrefabGen] Skipping null template");
+                    Debug.LogWarning("[EnemyPrefabGen] Skipping null config");
                     continue;
                 }
 
-                GenerateFromTemplate(template);
+                GenerateFromConfig(config);
             }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log($"[EnemyPrefabGen] Generated {gd.enemyTemplates.Count} enemy prefabs");
+            Debug.Log($"[EnemyPrefabGen] Generated {gd.enemyTypes.Count} enemy prefabs");
         }
 
         /// <summary>
-        /// Generate a single enemy prefab from an EnemyTemplate.
-        /// Updates the template's prefab reference.
+        /// Generate a single enemy prefab from an EnemyTypeConfig.
+        /// Updates the config's prefab reference.
         /// </summary>
-        public static GameObject GenerateFromTemplate(EnemyTemplate template)
+        public static GameObject GenerateFromConfig(EnemyTypeConfig config)
         {
-            if (template == null)
+            if (config == null)
             {
-                Debug.LogError("[EnemyPrefabGen] Null template provided");
+                Debug.LogError("[EnemyPrefabGen] Null config provided");
                 return null;
             }
 
-            string enemyName = $"Enemy_{template.type}";
+            string enemyName = $"Enemy_{config.type}";
             string animFolder = $"{ENEMIES_ANIM_ROOT}/{enemyName}";
 
             // Clean old animation assets before regenerating
@@ -107,12 +105,12 @@ namespace SickOfIt.Tools.Editor.Generation
             ProjectGenerator.EnsureFolder(animFolder);
 
             // ─── Auto-populate animation config if missing ─────────────
-            if (template.animationConfig == null || template.animationConfig.states.Count == 0)
+            if (config.animationConfig == null || config.animationConfig.states.Count == 0)
             {
-                template.animationConfig = AnimationConfigPopulator.CreateEnemyAnimConfig(template);
-                if (template.animationConfig != null)
+                config.animationConfig = AnimationConfigPopulator.CreateEnemyAnimConfig(config);
+                if (config.animationConfig != null)
                 {
-                    EditorUtility.SetDirty(template);
+                    EditorUtility.SetDirty(GameDefinition.Instance);
                     Debug.Log($"[EnemyPrefabGen] Auto-populated animation config for {enemyName}");
                 }
             }
@@ -120,65 +118,58 @@ namespace SickOfIt.Tools.Editor.Generation
             // ─── Animation generation via AnimationGenerator ─────────────
             RuntimeAnimatorController animController = null;
 
-            if (template.animationConfig != null && template.animationConfig.states.Count > 0)
+            if (config.animationConfig != null && config.animationConfig.states.Count > 0)
             {
                 // Full multi-state animation from config
                 var animResult = AnimationGenerator.Generate(
-                    template.animationConfig,
+                    config.animationConfig,
                     enemyName,
                     animFolder,
-                    template.spriteSheet,
-                    template.animationFps);
+                    config.spriteSheet,
+                    config.animationFps);
 
                 if (animResult != null)
                     animController = animResult.controller;
             }
-            else if (template.spriteSheet != null)
+            else if (config.spriteSheet != null)
             {
                 // Simple idle fallback
                 var animResult = AnimationGenerator.GenerateSimpleIdle(
-                    enemyName, animFolder, template.spriteSheet, template.animationFps);
+                    enemyName, animFolder, config.spriteSheet, config.animationFps);
 
                 if (animResult != null)
                     animController = animResult.controller;
             }
 
             // Get default sprite (first sprite from the primary sprite sheet)
-            Sprite defaultSprite = null;
-            if (template.spriteSheet != null)
-            {
-                var sprites = AssetDatabase.LoadAllAssetsAtPath(
-                    AssetDatabase.GetAssetPath(template.spriteSheet));
-                foreach (var asset in sprites)
-                {
-                    if (asset is Sprite sprite)
-                    {
-                        defaultSprite = sprite;
-                        break;
-                    }
-                }
-            }
+            Sprite defaultSprite = GeneratorHelper.GetFirstSprite(config.spriteSheet);
 
-            // Create prefab (pass template so all config values are used)
-            var prefab = CreatePrefab(enemyName, template, defaultSprite, animController);
+            // Create prefab (pass config so all values are used)
+            var prefab = CreatePrefab(enemyName, config, defaultSprite, animController);
 
-            // Update template's prefab reference
-            template.prefab = prefab;
-            EditorUtility.SetDirty(template);
+            // Update config's prefab reference
+            config.prefab = prefab;
+            EditorUtility.SetDirty(GameDefinition.Instance);
 
             return prefab;
         }
 
-        private static GameObject CreatePrefab(string enemyName, EnemyTemplate template, Sprite defaultSprite, RuntimeAnimatorController controller)
+        private static GameObject CreatePrefab(string enemyName, EnemyTypeConfig config, Sprite defaultSprite, RuntimeAnimatorController controller)
         {
-            var type = template.type;
+            var type = config.type;
 
             // Create root GameObject
             var go = new GameObject(enemyName);
+            go.tag = "Enemy";
+            go.layer = LayerMask.NameToLayer("Enemy");
 
             // SpriteRenderer
             var sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = defaultSprite;
+            
+            // Apply sprite scale (default to 0.33 if not set to compensate for large sprites)
+            float spriteScale = config.spriteScale > 0 ? config.spriteScale : 0.15f;
+            go.transform.localScale = Vector3.one * spriteScale;
 
             // Animator
             Animator animator = null;
@@ -188,14 +179,14 @@ namespace SickOfIt.Tools.Editor.Generation
                 animator.runtimeAnimatorController = controller;
             }
 
-            // Physics — read from template config
+            // Physics — read from config
             var rb = go.AddComponent<Rigidbody2D>();
             rb.bodyType = RigidbodyType2D.Kinematic;
-            rb.gravityScale = template.gravityScale;
-            rb.constraints = template.constraints;
+            rb.gravityScale = config.gravityScale;
+            rb.constraints = config.constraints;
 
             var collider = go.AddComponent<CircleCollider2D>();
-            collider.radius = template.colliderRadius > 0 ? template.colliderRadius : 0.4f;
+            collider.radius = config.colliderRadius > 0 ? config.colliderRadius : 0.4f;
 
             // Audio
             var audioSource = go.AddComponent<AudioSource>();
@@ -203,12 +194,12 @@ namespace SickOfIt.Tools.Editor.Generation
             // Health
             var enemyHealth = go.AddComponent<EnemyHealth>();
 
-            // Wire EnemyHealth config from template
+            // Wire EnemyHealth config
             var ehSo = new SerializedObject(enemyHealth);
             var invProp = ehSo.FindProperty("hasInvincibilityFrames");
-            if (invProp != null) invProp.boolValue = template.hasInvincibilityFrames;
+            if (invProp != null) invProp.boolValue = config.hasInvincibilityFrames;
             var invTimerProp = ehSo.FindProperty("invincibilityDuration");
-            if (invTimerProp != null) invTimerProp.floatValue = template.invincibilityDuration;
+            if (invTimerProp != null) invTimerProp.floatValue = config.invincibilityDuration;
             ehSo.ApplyModifiedPropertiesWithoutUndo();
 
             // ─── Fire points for Shooter/Sentinel ────────────────────────
@@ -219,16 +210,16 @@ namespace SickOfIt.Tools.Editor.Generation
                 var leftFP = new GameObject("LeftFirePoint");
                 leftFP.transform.SetParent(go.transform);
                 leftFP.transform.localPosition = new Vector3(
-                    -Mathf.Abs(template.firePointOffset.x),
-                    template.firePointOffset.y,
+                    -Mathf.Abs(config.firePointOffset.x),
+                    config.firePointOffset.y,
                     0f);
                 leftFirePoint = leftFP.transform;
 
                 var rightFP = new GameObject("RightFirePoint");
                 rightFP.transform.SetParent(go.transform);
                 rightFP.transform.localPosition = new Vector3(
-                    Mathf.Abs(template.firePointOffset.x),
-                    template.firePointOffset.y,
+                    Mathf.Abs(config.firePointOffset.x),
+                    config.firePointOffset.y,
                     0f);
                 rightFirePoint = rightFP.transform;
             }
@@ -287,25 +278,7 @@ namespace SickOfIt.Tools.Editor.Generation
             }
 
             // ─── Rewind components ────────────────────────────────────────
-            go.AddComponent<RewindableTransform>();
-            go.AddComponent<RewindableRigidbody2D>();
-            go.AddComponent<RewindableGameObject>();
-
-            var rewindableHealth = go.AddComponent<RewindableHealth>();
-            var rhSo = new SerializedObject(rewindableHealth);
-            rhSo.FindProperty("enemyHealth").objectReferenceValue = enemyHealth;
-            rhSo.ApplyModifiedPropertiesWithoutUndo();
-
-            // RewindableAnimator (if animator exists)
-            if (animator != null)
-            {
-                var rewindableAnimator = go.AddComponent<RewindableAnimator>();
-                var raSo = new SerializedObject(rewindableAnimator);
-                var animRefProp = raSo.FindProperty("animator");
-                if (animRefProp != null)
-                    animRefProp.objectReferenceValue = animator;
-                raSo.ApplyModifiedPropertiesWithoutUndo();
-            }
+            GeneratorHelper.AddRewindComponents(go, rb: rb, animator: animator, enemyHealth: enemyHealth);
 
             // ─── GlitchEffect ──────────────────────────────────────────
             var glitchEffect = go.AddComponent<GlitchEffect>();
@@ -341,8 +314,8 @@ namespace SickOfIt.Tools.Editor.Generation
             var healthBarGo = new GameObject("HealthBar");
             healthBarGo.transform.SetParent(go.transform);
             healthBarGo.transform.localPosition = new Vector3(
-                template.healthBarOffset.x,
-                template.healthBarOffset.y,
+                config.healthBarOffset.x,
+                config.healthBarOffset.y,
                 0f);
 
             // Add a WorldSpace Canvas so UI Images render in-world
@@ -351,22 +324,19 @@ namespace SickOfIt.Tools.Editor.Generation
             canvas.sortingOrder = 10;
 
             var canvasRect = healthBarGo.GetComponent<RectTransform>();
-            canvasRect.sizeDelta = template.healthBarSize;
+            canvasRect.sizeDelta = config.healthBarSize;
             canvasRect.localScale = new Vector3(0.01f, 0.01f, 1f); // world-space scaling
 
             // Wire healthBarContainer on EnemyHealth
             var ehSo2 = new SerializedObject(enemyHealth);
             ehSo2.FindProperty("healthBarContainer").objectReferenceValue = healthBarGo.transform;
-            ehSo2.FindProperty("healthBarColor").colorValue = template.healthBarColor;
-            ehSo2.FindProperty("healthBarSize").vector2Value = template.healthBarSize;
+            ehSo2.FindProperty("healthBarColor").colorValue = config.healthBarColor;
+            ehSo2.FindProperty("healthBarSize").vector2Value = config.healthBarSize;
             ehSo2.ApplyModifiedPropertiesWithoutUndo();
 
             // Save as prefab
             string prefabPath = $"{ENEMIES_PREFAB_ROOT}/{enemyName}.prefab";
-            var prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
-
-            // Clean up scene object
-            Object.DestroyImmediate(go);
+            var prefab = GeneratorHelper.SavePrefab(go, prefabPath);
 
             Debug.Log($"[EnemyPrefabGen] Created: {prefabPath}");
 

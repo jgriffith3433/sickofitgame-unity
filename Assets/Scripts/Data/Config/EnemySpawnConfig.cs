@@ -20,7 +20,7 @@ namespace SickOfIt.Data.Config
 
     /// <summary>
     /// Defines one enemy spawn in a level.
-    /// Type maps to an EnemyTemplate which holds the prefab and default stats.
+    /// Type maps to an EnemyTypeConfig which holds the prefab and default stats.
     /// Override fields (when > 0) replace the template defaults.
     /// </summary>
     [Serializable]

@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEditor;
 using SickOfIt.Combat;
-using SickOfIt.Core.Rewind;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 
@@ -79,6 +78,10 @@ namespace SickOfIt.Tools.Editor.Generation
 
             // ─── PointsPickup component ───────────────────────────────────
             var pickup = go.AddComponent<PointsPickup>();
+
+            // ─── AudioSource for SFX ──────────────────────────────────────
+            var audioSource = GeneratorHelper.AddAudioSource(go);
+
             var so = new SerializedObject(pickup);
             so.FindProperty("pointsValue").intValue = 1; // Default; overridden at runtime by SetPointsValue()
             so.FindProperty("lifetime").floatValue = config.lifetime;
@@ -88,40 +91,22 @@ namespace SickOfIt.Tools.Editor.Generation
             so.FindProperty("bobAmplitude").floatValue = config.bobAmplitude;
             so.FindProperty("bobSpeed").floatValue = config.bobSpeed;
             so.FindProperty("col").objectReferenceValue = collider;
+            so.FindProperty("audioSource").objectReferenceValue = audioSource;
+            if (config.collectSound != null)
+                so.FindProperty("collectSound").objectReferenceValue = config.collectSound;
+            if (config.spawnSound != null)
+                so.FindProperty("spawnSound").objectReferenceValue = config.spawnSound;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             // ─── Layer / Tag ──────────────────────────────────────────────
-            if (!string.IsNullOrEmpty(config.layerName))
-            {
-                int layer = LayerMask.NameToLayer(config.layerName);
-                if (layer >= 0) go.layer = layer;
-            }
-            if (!string.IsNullOrEmpty(config.tag) && config.tag != "Untagged")
-            {
-                try { go.tag = config.tag; }
-                catch { /* Tag doesn't exist */ }
-            }
+            GeneratorHelper.SetLayer(go, config.layerName);
+            GeneratorHelper.SetTag(go, config.tag);
 
             // ─── Animation (from config) ──────────────────────────────
-            RuntimeAnimatorController animController = null;
             string animFolder = "Assets/Animations/Pickups";
-            AnimationGenerator.DeleteFolder(animFolder);
-
-            if (config.animationConfig != null && config.animationConfig.states.Count > 0)
-            {
-                var animResult = AnimationGenerator.Generate(
-                    config.animationConfig, PREFAB_NAME, animFolder,
-                    config.spriteSheet, config.animationFps);
-                if (animResult != null)
-                    animController = animResult.controller;
-            }
-            else if (config.spriteSheet != null)
-            {
-                var animResult = AnimationGenerator.GenerateSimpleIdle(
-                    PREFAB_NAME, animFolder, config.spriteSheet, config.animationFps);
-                if (animResult != null)
-                    animController = animResult.controller;
-            }
+            var animController = GeneratorHelper.GenerateAnimation(
+                config.animationConfig, PREFAB_NAME, animFolder,
+                config.spriteSheet, config.animationFps);
 
             if (animController != null)
             {
@@ -130,12 +115,10 @@ namespace SickOfIt.Tools.Editor.Generation
             }
 
             // ─── Rewind components ────────────────────────────────────────
-            go.AddComponent<RewindableTransform>();
-            go.AddComponent<RewindableGameObject>();
+            GeneratorHelper.AddRewindComponents(go);
 
             // ─── Save as prefab ───────────────────────────────────────────
-            var prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
-            Object.DestroyImmediate(go);
+            var prefab = GeneratorHelper.SavePrefab(go, prefabPath);
 
             // Update GameDefinition with generated prefab
             gd.pickupPrefab = prefab;

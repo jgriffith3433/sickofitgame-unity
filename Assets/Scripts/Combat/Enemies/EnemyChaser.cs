@@ -13,11 +13,11 @@ namespace SickOfIt.Combat.Enemies
         [SerializeField] private float stopDistance = 0.5f;
         [SerializeField] private bool faceMovementDirection = true;
 
-        public override void InitializeFromConfig(EnemyTemplate template, EnemySpawnConfig spawn)
+        public override void InitializeFromConfig(EnemyTypeConfig config, EnemySpawnConfig spawn)
         {
-            base.InitializeFromConfig(template, spawn);
-            stopDistance = template.stopDistance;
-            faceMovementDirection = template.faceMovementDirection;
+            base.InitializeFromConfig(config, spawn);
+            stopDistance = config.stopDistance;
+            faceMovementDirection = config.faceMovementDirection;
         }
 
         protected override void UpdateBehavior()

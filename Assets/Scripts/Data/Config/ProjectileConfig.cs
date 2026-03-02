@@ -20,7 +20,7 @@ namespace SickOfIt.Data.Config
         [Tooltip("Sprite to use for the projectile")]
         public Sprite sprite;
         [Tooltip("Scale multiplier for the sprite")]
-        public float scale = 1f;
+        public float scale = 0.15f;
         [Tooltip("Color tint for the sprite")]
         public Color color = Color.white;
         [Tooltip("Sorting layer name")]
@@ -53,6 +53,14 @@ namespace SickOfIt.Data.Config
         [Header("Pool")]
         [Tooltip("Number of instances to pre-warm in the object pool")]
         public int poolSize = 10;
+
+        [Header("Audio - SFX")]
+        [Tooltip("Sound played when this projectile is fired")]
+        public AudioClip fireSound;
+        [Tooltip("Sound played when this projectile hits a target")]
+        public AudioClip hitSound;
+        [Tooltip("Sound played when this projectile expires/returns to pool")]
+        public AudioClip expireSound;
 
         [Header("Animation (for generator)")]
         [Tooltip("Sprite sheet for projectile animation (e.g., fireball spin). If null, uses static sprite.")]

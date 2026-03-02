@@ -109,6 +109,10 @@ namespace SickOfIt.Combat.Health
             if (hasInvincibilityFrames)
                 invincibilityTimer = invincibilityDuration;
 
+            // Play SFX via PlayerController
+            if (controller != null)
+                controller.PlayHurtSound();
+
             if (currentHealth <= 0)
                 Die();
         }
@@ -117,10 +121,14 @@ namespace SickOfIt.Combat.Health
         {
             onDeath?.Invoke();
 
-            SickOfIt.Core.AnalyticsManager.Instance?.TrackPlayerDeath("combat");
-
+            // Play death SFX via PlayerController
             if (controller != null)
+            {
+                controller.PlayDeathSound();
                 controller.enabled = false;
+            }
+
+            SickOfIt.Core.AnalyticsManager.Instance?.TrackPlayerDeath("combat");
 
             PlayDeathScene();
         }

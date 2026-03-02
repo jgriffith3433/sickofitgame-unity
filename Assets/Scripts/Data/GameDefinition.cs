@@ -26,8 +26,8 @@ namespace SickOfIt.Data
         [Header("Deaths")]
         public List<DeathConfig> deaths = new List<DeathConfig>();
 
-        [Header("Enemy Templates")]
-        public List<EnemyTemplate> enemyTemplates = new List<EnemyTemplate>();
+        [Header("Enemy Types")]
+        public List<EnemyTypeConfig> enemyTypes = new List<EnemyTypeConfig>();
 
         [Header("Projectile Configs")]
         [Tooltip("Projectile definitions (Player, Enemy, Laser). Used by ProjectilePrefabGenerator.")]
@@ -81,6 +81,16 @@ namespace SickOfIt.Data
         public GameObject videoCameraPrefab;
         [Tooltip("Camera prefab for death scenes")]
         public GameObject deathCameraPrefab;
+
+        [Header("UI Scene Configs")]
+        [Tooltip("Configuration for MainMenu scene generation")]
+        public MainMenuConfig mainMenuConfig = new MainMenuConfig();
+        [Tooltip("Configuration for LevelSelection scene generation")]
+        public SelectionSceneConfig levelSelectionConfig = new SelectionSceneConfig();
+        [Tooltip("Configuration for VideoSelection scene generation")]
+        public SelectionSceneConfig videoSelectionConfig = new SelectionSceneConfig();
+        [Tooltip("Configuration for UpgradeShop scene generation")]
+        public UpgradeShopConfig upgradeShopConfig = new UpgradeShopConfig();
 
         [Header("Generated Prefab References (set by generators — DO NOT EDIT)")]
         [Tooltip("Set by PickupPrefabGenerator")]
@@ -137,16 +147,16 @@ namespace SickOfIt.Data
         }
 
         /// <summary>
-        /// Get an enemy template by type.
+        /// Get an enemy type config by type enum.
         /// </summary>
-        public EnemyTemplate GetEnemyTemplate(EnemyType type)
+        public EnemyTypeConfig GetEnemyType(EnemyType type)
         {
-            for (int i = 0; i < enemyTemplates.Count; i++)
+            for (int i = 0; i < enemyTypes.Count; i++)
             {
-                if (enemyTemplates[i] != null && enemyTemplates[i].type == type)
-                    return enemyTemplates[i];
+                if (enemyTypes[i] != null && enemyTypes[i].type == type)
+                    return enemyTypes[i];
             }
-            Debug.LogError($"[GameDefinition] Enemy template for type '{type}' not found");
+            Debug.LogError($"[GameDefinition] Enemy type config for '{type}' not found");
             return null;
         }
 
@@ -185,8 +195,8 @@ namespace SickOfIt.Data
                 if (string.IsNullOrEmpty(level.levelName))
                     issues.Add($"{prefix}: Missing level name");
 
-                if (level.backgrounds.Count == 0)
-                    issues.Add($"{prefix}: No backgrounds assigned");
+                if (level.backgrounds.Count == 0 && level.backgroundLayers.Count == 0)
+                    issues.Add($"{prefix}: No backgrounds assigned (use backgrounds or backgroundLayers)");
 
                 if (level.music == null)
                     issues.Add($"{prefix}: No music assigned");
@@ -197,12 +207,12 @@ namespace SickOfIt.Data
                 if (level.duration <= 0)
                     issues.Add($"{prefix}: Duration is 0 or negative");
 
-                // Validate enemy types have templates
+                // Validate enemy types have configs
                 for (int j = 0; j < level.enemies.Count; j++)
                 {
                     var enemy = level.enemies[j];
-                    if (GetEnemyTemplate(enemy.type) == null)
-                        issues.Add($"{prefix}: Enemy #{j + 1} uses type '{enemy.type}' but no template exists");
+                    if (GetEnemyType(enemy.type) == null)
+                        issues.Add($"{prefix}: Enemy #{j + 1} uses type '{enemy.type}' but no config exists");
                 }
 
                 // Validate death config exists
@@ -224,16 +234,16 @@ namespace SickOfIt.Data
                     issues.Add($"Death #{i + 1}: Missing death name");
             }
 
-            // Validate enemy templates
-            for (int i = 0; i < enemyTemplates.Count; i++)
+            // Validate enemy type configs
+            for (int i = 0; i < enemyTypes.Count; i++)
             {
-                if (enemyTemplates[i] == null)
+                if (enemyTypes[i] == null)
                 {
-                    issues.Add($"Enemy template #{i + 1}: NULL reference");
+                    issues.Add($"Enemy type #{i + 1}: NULL reference");
                     continue;
                 }
-                if (enemyTemplates[i].prefab == null)
-                    issues.Add($"Enemy template '{enemyTemplates[i].displayName}': No prefab assigned");
+                if (enemyTypes[i].prefab == null)
+                    issues.Add($"Enemy type '{enemyTypes[i].displayName}': No prefab assigned");
             }
 
             // Player validation

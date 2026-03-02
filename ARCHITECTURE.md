@@ -49,7 +49,7 @@ Each scene has:
 ### Level Scene Specifics
 - **Character** — instantiated from generated `PlayerConfig.playerPrefab`
 - **Ground/Walls** — `BoxCollider2D` boundaries based on `LevelConfig.levelBounds`
-- **Win Zone** — Bounds check in LevelRuntime (winZoneCenter/winZoneHalfSize) — no separate script
+- **Win Condition** — All enemies spawned and killed (tracked by LevelRuntime counters)
 - **Music** — `AudioSource` with `LevelConfig.music`
 - **Projectile Pools** — `ObjectPool` components: PlayerProjectilePool, EnemyProjectilePool, LaserPool
 - **LevelRuntime** — wired to character, spawn point, music source, pools, HealthUI, mobile controller
@@ -93,7 +93,7 @@ LevelRuntime:
   1. Reads PlayerPrefs["CurrentLevelNumber"]
   2. Reads GameDefinition.GetLevel(N) → LevelConfig
   3. Uses serialized refs (character, music, etc.)
-  4. Spawns enemies from config.enemies + enemyTemplates
+  4. Spawns enemies from config.enemies + EnemyTypeConfigs
   5. Spawns platforms from config.platforms
   6. Spawns barriers from camera viewport
   7. Starts ExperienceRunner for timeline events
@@ -130,7 +130,7 @@ DeathRuntime:
 - **LevelConfig** — Level name, enemies, platforms, barriers, music, duration, death config name, timeline events
 - **VideoConfig** — Video name/number, spriteFramesData, audio, afterLevel, nextLevel, returnToMainMenu
 - **DeathConfig** — Death name, spriteFramesData, audio, delayBeforeReload
-- **EnemyTemplate** — SO per enemy type (Chaser/Fighter/Sentinel/Shooter). Prefab, default stats, sounds, drops
+- **EnemyTypeConfig** — SO per enemy type (Chaser/Fighter/Sentinel/Shooter). Prefab, default stats, sounds, drops
 - **EnemySpawnConfig** — Per-spawn: type, position, spawnTime, stat overrides
 - **PlayerConfig** — Player prefab, movement params, combat params, roguelite settings, upgrades
 - **PlatformConfig** — Type, prefab, position, scale, width
@@ -155,7 +155,7 @@ DeathRuntime:
 - **SceneContentController** — Shows/hides content root while Addressables load
 
 ### Combat (`SickOfIt.Combat`)
-- **EnemyBase** — Base class, `InitializeFromConfig(EnemyTemplate, EnemySpawnConfig)`, `SetPlayer(Transform, IDamageable)` for injected player ref
+- **EnemyBase** — Base class, `InitializeFromConfig(EnemyTypeConfig, EnemySpawnConfig)`, `SetPlayer(Transform, IDamageable)` for injected player ref
 - **EnemyChaser** — Follows player
 - **EnemyFighter** — Alternates between approach and attack states
 - **EnemySentinel** — Stationary, crouches/shoots lasers from ObjectPool
@@ -282,7 +282,7 @@ SpriteFramePlayer loads them via `Addressables.LoadAssetsAsync<Texture2D>(label)
 | Projectile_Laser | `Prefabs/Combat/Projectile_Laser.prefab` | Sentinel laser |
 
 ## Enemy Templates (ScriptableObjects)
-Located at `Assets/Resources/EnemyTemplates/`:
+Located at `Assets/Resources/EnemyTypeConfigs/`:
 - `Chaser.asset` — follows player, melee
 - `Fighter.asset` — alternates approach/attack states
 - `Sentinel.asset` — stationary, ranged (laser)

@@ -27,11 +27,21 @@ namespace SickOfIt.Combat.Effects
         [SerializeField] private EnemyHealth enemyHealth;
         [SerializeField] private PlayerHealth playerHealth;
         private Coroutine activeGlitch;
+        private SpriteRenderer[] cachedRenderers;
 
         private void Awake()
         {
             if (enemyHealth == null) enemyHealth = GetComponent<EnemyHealth>();
             if (playerHealth == null) playerHealth = GetComponent<PlayerHealth>();
+            CacheRenderers();
+        }
+
+        /// <summary>
+        /// Rebuild the cached renderer array. Call if children change at runtime.
+        /// </summary>
+        public void CacheRenderers()
+        {
+            cachedRenderers = GetComponentsInChildren<SpriteRenderer>(true);
         }
 
         private void OnEnable()
@@ -65,11 +75,13 @@ namespace SickOfIt.Combat.Effects
 
         private IEnumerator GlitchCoroutine()
         {
+            if (cachedRenderers == null || cachedRenderers.Length == 0)
+                CacheRenderers();
+
             for (int i = 0; i < flashCount; i++)
             {
-                // Flash on — tint all active renderers toward the flash color
-                SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(false);
-                foreach (SpriteRenderer sr in renderers)
+                // Flash on — tint all cached renderers toward the flash color
+                foreach (SpriteRenderer sr in cachedRenderers)
                 {
                     if (sr == null) continue;
                     sr.color = Color.Lerp(Color.white, flashColor, flashIntensity);
@@ -110,8 +122,8 @@ namespace SickOfIt.Combat.Effects
         /// </summary>
         private void RestoreAllRenderers()
         {
-            SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(false);
-            foreach (SpriteRenderer sr in renderers)
+            if (cachedRenderers == null) return;
+            foreach (SpriteRenderer sr in cachedRenderers)
             {
                 if (sr == null) continue;
                 sr.color = Color.white;

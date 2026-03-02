@@ -141,31 +141,22 @@ namespace SickOfIt.Tools.Editor.Generation
                 // Create a simple circle sprite as fallback
                 sr.sprite = CreateFallbackSprite();
             }
-            sr.color = config.color;
-            sr.sortingLayerName = config.sortingLayer;
-            sr.sortingOrder = config.sortingOrder;
-            go.transform.localScale = Vector3.one * config.scale;
+            
+            // Default color to white if not set (alpha 0 means invisible)
+            Color renderColor = config.color.a > 0 ? config.color : Color.white;
+            sr.color = renderColor;
+            sr.sortingLayerName = string.IsNullOrEmpty(config.sortingLayer) ? "Default" : config.sortingLayer;
+            sr.sortingOrder = config.sortingOrder > 0 ? config.sortingOrder : 10;
+            
+            // Default scale to 0.333 if 0 or less (compensate for large sprites)
+            float scale = config.scale > 0 ? config.scale : 0.15f;
+            go.transform.localScale = Vector3.one * scale;
 
             // ─── Animation (from config) ──────────────────────────────
             string animFolder = $"Assets/Animations/Projectiles/{prefabName}";
-            AnimationGenerator.DeleteFolder(animFolder);
-
-            RuntimeAnimatorController animCtrl = null;
-            if (config.animationConfig != null && config.animationConfig.states.Count > 0)
-            {
-                var animResult = AnimationGenerator.Generate(
-                    config.animationConfig, prefabName, animFolder,
-                    config.spriteSheet, config.animationFps);
-                if (animResult != null)
-                    animCtrl = animResult.controller;
-            }
-            else if (config.spriteSheet != null)
-            {
-                var animResult = AnimationGenerator.GenerateSimpleIdle(
-                    prefabName, animFolder, config.spriteSheet, config.animationFps);
-                if (animResult != null)
-                    animCtrl = animResult.controller;
-            }
+            var animCtrl = GeneratorHelper.GenerateAnimation(
+                config.animationConfig, prefabName, animFolder,
+                config.spriteSheet, config.animationFps);
 
             if (animCtrl != null)
             {
@@ -180,8 +171,8 @@ namespace SickOfIt.Tools.Editor.Generation
 
             // CircleCollider2D
             var collider = go.AddComponent<CircleCollider2D>();
-            collider.radius = config.colliderRadius;
-            collider.isTrigger = config.isTrigger;
+            collider.radius = config.colliderRadius > 0 ? config.colliderRadius : 0.1f;
+            collider.isTrigger = true; // Always trigger for projectiles
 
             // ProjectileLifetime (pre-attached so ObjectPool doesn't need AddComponent)
             var projectileLifetime = go.AddComponent<SickOfIt.Core.Rewind.ProjectileLifetime>();
@@ -219,26 +210,22 @@ namespace SickOfIt.Tools.Editor.Generation
             }
             ddSo.ApplyModifiedPropertiesWithoutUndo();
 
-            // Set layer
-            if (!string.IsNullOrEmpty(config.layerName))
+            // Wire SFX from config
+            if (config.hitSound != null)
             {
-                int layer = LayerMask.NameToLayer(config.layerName);
-                if (layer >= 0)
-                    go.layer = layer;
+                var ddSo2 = new SerializedObject(damageDealer);
+                ddSo2.FindProperty("hitSound").objectReferenceValue = config.hitSound;
+                ddSo2.ApplyModifiedPropertiesWithoutUndo();
             }
+
+            // Set layer
+            GeneratorHelper.SetLayer(go, config.layerName);
 
             // Set tag
-            if (!string.IsNullOrEmpty(config.tag) && config.tag != "Untagged")
-            {
-                try { go.tag = config.tag; }
-                catch { /* Tag doesn't exist */ }
-            }
+            GeneratorHelper.SetTag(go, config.tag);
 
             // Save as prefab
-            var prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
-
-            // Clean up scene object
-            Object.DestroyImmediate(go);
+            var prefab = GeneratorHelper.SavePrefab(go, prefabPath);
 
             Debug.Log($"[ProjectilePrefabGen] Created: {prefabPath}");
 

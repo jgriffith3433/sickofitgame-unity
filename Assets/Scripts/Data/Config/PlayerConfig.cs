@@ -21,6 +21,8 @@ namespace SickOfIt.Data.Config
         public Texture2D spriteSheet;
         [Tooltip("Animation frames per second")]
         public int animationFps = 12;
+        [Tooltip("Scale multiplier for player sprite (default 1)")]
+        public float spriteScale = 0.15f;
 
         [Header("Animation Config (for generator)")]
         [Tooltip("Full animation setup: states, transitions, parameters, events. If set, the generator builds a multi-state animator. If null, falls back to a single idle clip from spriteSheet.")]
@@ -53,6 +55,8 @@ namespace SickOfIt.Data.Config
         public float dropThroughThreshold = -0.5f;
 
         [Header("Movement - Rotation")]
+        [Tooltip("If true, use 2D sprite flip (localScale.x) instead of Y-axis rotation")]
+        public bool use2DFlip = true;
         public float normalRotationSpeed = 900f;
         public float firingRotationSpeed = 1800f;
 
@@ -78,6 +82,21 @@ namespace SickOfIt.Data.Config
         [Tooltip("Downward velocity threshold for falling detection")]
         public float jumpDetectVelocityThreshold = 0.3f;
 
+        [Header("Audio - SFX")]
+        [Tooltip("Sound played when the player takes damage")]
+        public AudioClip[] hurtSounds;
+        [Tooltip("Sound played when the player dies")]
+        public AudioClip[] deathSounds;
+        [Tooltip("Sound played when the player jumps")]
+        public AudioClip jumpSound;
+        [Tooltip("Sound played when the player fires a projectile")]
+        public AudioClip fireSound;
+        [Tooltip("Sound played when the player lands on ground")]
+        public AudioClip landSound;
+        [Range(0f, 0.3f)]
+        [Tooltip("Random pitch variation for SFX")]
+        public float pitchVariation = 0.1f;
+
         [Header("Rewind")]
         public float rewindSpeed = 3f;
         public float minimumTimeBeforeRewind = 2f;
@@ -97,10 +116,10 @@ namespace SickOfIt.Data.Config
     [Serializable]
     public class UpgradeDefinition
     {
-        public string upgradeId;
-        public string displayName;
+        public string id;
+        public string title;
         public string description;
-        public int cost;
-        public int maxPurchases = 1;
+        public int[] costsPerLevel;
+        public int maxLevel;
     }
 }

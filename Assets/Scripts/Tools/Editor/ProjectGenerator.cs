@@ -34,6 +34,10 @@ namespace SickOfIt.Tools.Editor
     ///   - VideoSceneGenerator - Video.unity
     ///   - LevelSceneGenerator - Level.unity
     ///   - DeathSceneGenerator - Death.unity
+    ///   - MainMenuSceneGenerator - MainMenu.unity
+    ///   - LevelSelectionSceneGenerator - LevelSelection.unity
+    ///   - VideoSelectionSceneGenerator - VideoSelection.unity
+    ///   - UpgradeShopSceneGenerator - UpgradeShop.unity
     /// 
     /// Phase 4 - Addressables
     /// 
@@ -107,6 +111,23 @@ namespace SickOfIt.Tools.Editor
             try { DeathSceneGenerator.GenerateDeathScene(gd); }
             catch (System.Exception e) { Debug.LogError($"DeathSceneGenerator failed: {e}"); }
             
+            // UI Scenes
+            gd = LoadGameDefinition();
+            try { MainMenuSceneGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"MainMenuSceneGenerator failed: {e}"); }
+            
+            gd = LoadGameDefinition();
+            try { LevelSelectionSceneGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"LevelSelectionSceneGenerator failed: {e}"); }
+            
+            gd = LoadGameDefinition();
+            try { VideoSelectionSceneGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"VideoSelectionSceneGenerator failed: {e}"); }
+            
+            gd = LoadGameDefinition();
+            try { UpgradeShopSceneGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"UpgradeShopSceneGenerator failed: {e}"); }
+            
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             
@@ -122,8 +143,8 @@ namespace SickOfIt.Tools.Editor
             AssetDatabase.Refresh();
             
             Debug.Log("=== PROJECT GENERATION COMPLETE ===");
-            Debug.Log($"✅ Generated prefabs: Character, Platform, Diamond, {gd.enemyTemplates?.Count ?? 0} enemies, {gd.projectileConfigs?.Count ?? 0} projectiles");
-            Debug.Log($"✅ Generated scenes: Video.unity, Level.unity, Death.unity");
+            Debug.Log($"✅ Generated prefabs: Character, Platform, Diamond, {gd.enemyTypes?.Count ?? 0} enemies, {gd.projectileConfigs?.Count ?? 0} projectiles");
+            Debug.Log($"✅ Generated scenes: Video, Level, Death, MainMenu, LevelSelection, VideoSelection, UpgradeShop");
             Debug.Log($"✅ Config: {gd.levels.Count} levels, {gd.videos.Count} videos, {gd.deaths.Count} deaths");
             Debug.Log($"✅ Addressables configured");
             Debug.Log($"🎮 Game ready to play!");

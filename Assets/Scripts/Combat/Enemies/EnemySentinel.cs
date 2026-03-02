@@ -79,17 +79,17 @@ namespace SickOfIt.Combat.Enemies
 
         // ── Unity lifecycle ───────────────────────────────────────────────────────
 
-        public override void InitializeFromConfig(EnemyTemplate template, EnemySpawnConfig spawn)
+        public override void InitializeFromConfig(EnemyTypeConfig config, EnemySpawnConfig spawn)
         {
-            base.InitializeFromConfig(template, spawn);
-            standingAttackDamage = template.contactDamage;
-            standingAttackRange = template.attackRange;
-            laserSpeed = template.laserSpeed;
-            crouchThreshold = template.crouchThreshold;
-            crouchingAttackRange = template.crouchingAttackRange;
-            facePlayer = template.faceMovementDirection;
-            laserLifetime = template.projectileLifetime;
-            laserDamage = template.projectileDamage;
+            base.InitializeFromConfig(config, spawn);
+            standingAttackDamage = config.contactDamage;
+            standingAttackRange = config.attackRange;
+            laserSpeed = config.laserSpeed;
+            crouchThreshold = config.crouchThreshold;
+            crouchingAttackRange = config.crouchingAttackRange;
+            facePlayer = config.faceMovementDirection;
+            laserLifetime = config.projectileLifetime;
+            laserDamage = config.projectileDamage;
         }
 
         /// <summary>Set at runtime by LevelRuntime after spawning.</summary>

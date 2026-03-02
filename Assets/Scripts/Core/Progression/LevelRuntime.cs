@@ -8,6 +8,7 @@ using SickOfIt.Combat.Health;
 using SickOfIt.Core.Flow;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
+using SickOfIt.VideoFrameExtractor.Runtime;
 
 namespace SickOfIt.Core.Progression
 {
@@ -29,12 +30,9 @@ namespace SickOfIt.Core.Progression
         [Header("Scene References (wired by generator)")]
         [SerializeField] private GameObject characterObject;
         [SerializeField] private Transform playerSpawnPoint;
+        [SerializeField] private Transform backgroundsContainer;
         [SerializeField] private AudioSource musicSource;
         [SerializeField] private HealthUI healthUI;
-
-        [Header("Win Zone (bounds check — no separate script needed)")]
-        [SerializeField] private Vector2 winZoneCenter = new Vector2(6.5f, 0f);
-        [SerializeField] private Vector2 winZoneHalfSize = new Vector2(0.5f, 4f);
 
         [Header("Projectile Pools (wired by generator)")]
         [SerializeField] private ObjectPool playerProjectilePool;
@@ -47,9 +45,12 @@ namespace SickOfIt.Core.Progression
         // Runtime state
         private LevelConfig config;
         private GameDefinition gameDefinition;
-        private Dictionary<EnemyType, EnemyTemplate> templateCache;
+        private Dictionary<EnemyType, EnemyTypeConfig> templateCache;
         private bool levelCompleted;
         private List<Coroutine> spawnCoroutines = new List<Coroutine>();
+        private int totalEnemiesToSpawn;
+        private int enemiesSpawned;
+        private int enemiesKilled;
 
         // Resolved scene references
         private PlayerHealth playerHealth;
@@ -94,18 +95,20 @@ namespace SickOfIt.Core.Progression
                 return;
             }
 
-            // Apply per-level win zone from config
-            winZoneCenter = config.winZoneCenter;
-            winZoneHalfSize = config.winZoneHalfSize;
+            // Apply per-level config
+            // Count total enemies for win condition
+            totalEnemiesToSpawn = config.enemies != null ? config.enemies.Count : 0;
+            enemiesSpawned = 0;
+            enemiesKilled = 0;
 
-            // Cache enemy templates
-            templateCache = new Dictionary<EnemyType, EnemyTemplate>();
-            if (gameDefinition.enemyTemplates != null)
+            // Cache enemy types
+            templateCache = new Dictionary<EnemyType, EnemyTypeConfig>();
+            if (gameDefinition.enemyTypes != null)
             {
-                foreach (var template in gameDefinition.enemyTemplates)
+                foreach (var enemyConfig in gameDefinition.enemyTypes)
                 {
-                    if (template != null && !templateCache.ContainsKey(template.type))
-                        templateCache[template.type] = template;
+                    if (enemyConfig != null && !templateCache.ContainsKey(enemyConfig.type))
+                        templateCache[enemyConfig.type] = enemyConfig;
                 }
             }
 
@@ -116,6 +119,7 @@ namespace SickOfIt.Core.Progression
             SetupContainers();
             SetupGameClock();
             SetupAudio();
+            SetupBackgrounds();
             StartExperience();
             SetupRewind();
             SpawnEnemies();
@@ -143,7 +147,7 @@ namespace SickOfIt.Core.Progression
 
         private void Update()
         {
-            CheckWinZone();
+            // Win condition checked via OnEnemyDied callback
         }
 
         #endregion
@@ -248,6 +252,86 @@ namespace SickOfIt.Core.Progression
             musicSource.Play();
         }
 
+        private void SetupBackgrounds()
+        {
+            if (config.backgroundLayers == null || config.backgroundLayers.Count == 0)
+                return;
+
+            // Create container if generator didn't wire one
+            Transform container = backgroundsContainer;
+            if (container == null)
+            {
+                var go = new GameObject("Backgrounds");
+                go.transform.SetParent(transform);
+                container = go.transform;
+            }
+
+            var cam = Camera.main;
+
+            for (int i = 0; i < config.backgroundLayers.Count; i++)
+            {
+                var layer = config.backgroundLayers[i];
+                if (!layer.HasContent) continue;
+
+                var layerGo = new GameObject(string.IsNullOrEmpty(layer.name) ? $"BG_{i}" : layer.name);
+                layerGo.transform.SetParent(container);
+
+                var sr = layerGo.AddComponent<SpriteRenderer>();
+                sr.sortingOrder = layer.sortingOrder;
+
+                // Position offset (centered on camera if available)
+                Vector3 basePos = cam != null
+                    ? new Vector3(cam.transform.position.x, cam.transform.position.y, 0f)
+                    : Vector3.zero;
+                layerGo.transform.position = basePos + new Vector3(layer.offset.x, layer.offset.y, 0f);
+
+                if (layer.IsAnimated)
+                {
+                    // Animated background using SpriteFramePlayer
+                    var framesData = layer.spriteFramesData as SpriteFramesData;
+                    if (framesData != null)
+                    {
+                        // Scale to fill camera view
+                        if (cam != null && cam.orthographic)
+                        {
+                            float camHeight = cam.orthographicSize * 2f;
+                            float spriteHeight = framesData.frameHeight / framesData.spritePixelsPerUnit;
+                            float scale = camHeight / spriteHeight;
+                            layerGo.transform.localScale = new Vector3(
+                                scale * layer.scale.x, scale * layer.scale.y, 1f);
+                        }
+
+                        var player = layerGo.AddComponent<SpriteFramePlayer>();
+                        player.Initialize(framesData);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[LevelRuntime] Background layer '{layer.name}' spriteFramesData is not a SpriteFramesData");
+                    }
+                }
+                else if (layer.staticSprite != null)
+                {
+                    // Static sprite background
+                    sr.sprite = layer.staticSprite;
+                    layerGo.transform.localScale = new Vector3(layer.scale.x, layer.scale.y, 1f);
+                }
+                else if (layer.solidColor.a > 0)
+                {
+                    // Solid color — create a 1x1 white texture, scale to fill viewport
+                    sr.color = layer.solidColor;
+                    if (cam != null && cam.orthographic)
+                    {
+                        float camHeight = cam.orthographicSize * 2f;
+                        float camWidth = camHeight * cam.aspect;
+                        layerGo.transform.localScale = new Vector3(
+                            camWidth * layer.scale.x, camHeight * layer.scale.y, 1f);
+                    }
+                }
+            }
+
+            Debug.Log($"[LevelRuntime] Setup {config.backgroundLayers.Count} background layers");
+        }
+
         private void StartExperience()
         {
             if (config.timeline == null || config.timeline.events == null || config.timeline.events.Count == 0)
@@ -282,12 +366,12 @@ namespace SickOfIt.Core.Progression
             {
                 if (!templateCache.TryGetValue(spawn.type, out var template))
                 {
-                    Debug.LogWarning($"[LevelRuntime] No EnemyTemplate for {spawn.type}");
+                    Debug.LogWarning($"[LevelRuntime] No EnemyTypeConfig for {spawn.type}");
                     continue;
                 }
                 if (template.prefab == null)
                 {
-                    Debug.LogWarning($"[LevelRuntime] EnemyTemplate '{template.displayName}' has no prefab!");
+                    Debug.LogWarning($"[LevelRuntime] EnemyTypeConfig '{template.displayName}' has no prefab!");
                     continue;
                 }
 
@@ -298,14 +382,14 @@ namespace SickOfIt.Core.Progression
             }
         }
 
-        private IEnumerator DelayedSpawn(EnemyTemplate template, EnemySpawnConfig spawn)
+        private IEnumerator DelayedSpawn(EnemyTypeConfig template, EnemySpawnConfig spawn)
         {
             if (spawn.spawnTime > 0f)
                 yield return new WaitForSeconds(spawn.spawnTime);
             SpawnEnemy(template, spawn);
         }
 
-        private void SpawnEnemy(EnemyTemplate template, EnemySpawnConfig spawn)
+        private void SpawnEnemy(EnemyTypeConfig template, EnemySpawnConfig spawn)
         {
             var enemy = Instantiate(template.prefab, new Vector3(spawn.position.x, spawn.position.y, 0f), Quaternion.identity, enemyContainer);
             enemy.name = $"{template.displayName}_{config.enemies.IndexOf(spawn)}";
@@ -314,12 +398,16 @@ namespace SickOfIt.Core.Progression
             if (enemyBase != null)
                 enemyBase.InitializeFromConfig(template, spawn);
 
+            // Subscribe to death event for win condition tracking
             var health = enemy.GetComponent<EnemyHealth>();
             if (health != null)
             {
                 int hp = spawn.healthOverride > 0 ? spawn.healthOverride : template.defaultHealth;
                 health.SetMaxHealth(hp);
+                health.onDeath.AddListener(OnEnemyDied);
             }
+
+            enemiesSpawned++;
 
             // Inject player reference so enemies never need FindGameObjectWithTag
             if (enemyBase != null && characterObject != null)
@@ -473,13 +561,12 @@ namespace SickOfIt.Core.Progression
 
         #region Level Completion
 
-        private void CheckWinZone()
+        private void OnEnemyDied()
         {
-            if (levelCompleted || characterObject == null) return;
+            enemiesKilled++;
+            Debug.Log($"[LevelRuntime] Enemy killed ({enemiesKilled}/{totalEnemiesToSpawn})");
 
-            Vector2 playerPos = characterObject.transform.position;
-            if (Mathf.Abs(playerPos.x - winZoneCenter.x) <= winZoneHalfSize.x &&
-                Mathf.Abs(playerPos.y - winZoneCenter.y) <= winZoneHalfSize.y)
+            if (enemiesKilled >= totalEnemiesToSpawn && enemiesSpawned >= totalEnemiesToSpawn)
             {
                 CompleteLevel();
             }

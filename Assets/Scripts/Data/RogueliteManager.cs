@@ -10,10 +10,14 @@ namespace SickOfIt.Data
     public class RogueliteManager : MonoBehaviour
     {
         private static RogueliteManager _instance;
+        private static bool _applicationIsQuitting;
+
         public static RogueliteManager Instance
         {
             get
             {
+                if (_applicationIsQuitting)
+                    return null;
                 if (_instance == null)
                 {
                     GameObject go = new GameObject("RogueliteManager");
@@ -86,7 +90,13 @@ namespace SickOfIt.Data
                 return;
             }
             _instance = this;
+            _applicationIsQuitting = false;
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void OnApplicationQuit()
+        {
+            _applicationIsQuitting = true;
         }
 
         // =========================================================================

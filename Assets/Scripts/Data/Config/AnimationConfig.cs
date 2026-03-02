@@ -8,7 +8,7 @@ namespace SickOfIt.Data.Config
     /// Describes a complete animator setup: parameters, states, transitions, and events.
     /// Used by AnimationGenerator to produce .controller + .anim assets.
     /// 
-    /// Attach to EnemyTemplate or PlayerConfig via animationConfig field.
+    /// Attach to EnemyTypeConfig or PlayerConfig via animationConfig field.
     /// The generator reads this to build everything from sprite sheets.
     /// </summary>
     [Serializable]

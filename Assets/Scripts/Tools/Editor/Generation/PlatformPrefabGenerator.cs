@@ -78,14 +78,9 @@ namespace SickOfIt.Tools.Editor.Generation
             collider.usedByEffector = true;
 
             // Set platform layer
-            int platLayer = LayerMask.NameToLayer("Platform");
-            if (platLayer >= 0)
-                go.layer = platLayer;
-            else
-            {
-                int groundLayer = LayerMask.NameToLayer("Ground");
-                if (groundLayer >= 0) go.layer = groundLayer;
-            }
+            GeneratorHelper.SetLayer(go, "Platform");
+            if (go.layer == 0) // Fallback if Platform layer doesn't exist
+                GeneratorHelper.SetLayer(go, "Ground");
 
             // ─── DropThroughPlatform script ───────────────────────────────
             var dropThrough = go.AddComponent<DropThroughPlatform>();
@@ -94,8 +89,7 @@ namespace SickOfIt.Tools.Editor.Generation
             dtSo.ApplyModifiedPropertiesWithoutUndo();
 
             // ─── Save as prefab ───────────────────────────────────────────
-            var prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
-            Object.DestroyImmediate(go);
+            var prefab = GeneratorHelper.SavePrefab(go, prefabPath);
 
             // Update GameDefinition with generated prefab
             gd.platformPrefab = prefab;

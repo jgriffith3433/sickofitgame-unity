@@ -18,8 +18,12 @@ namespace SickOfIt.Data.Config
         public int levelNumber;
 
         [Header("Visuals")]
-        [Tooltip("Background layers — SpriteFramesData ScriptableObjects (rendered in order, first = back)")]
+        [Tooltip("Background layers — SpriteFramesData ScriptableObjects (rendered in order, first = back). Legacy field; prefer backgroundLayers.")]
         public List<ScriptableObject> backgrounds = new List<ScriptableObject>();
+
+        [Tooltip("Strongly-typed background layers with parallax, position, and static sprite support. If populated, takes priority over 'backgrounds' list.")]
+        public List<BackgroundLayerConfig> backgroundLayers = new List<BackgroundLayerConfig>();
+
         public Color ambientColor = Color.white;
 
         [Header("Audio")]
@@ -28,6 +32,14 @@ namespace SickOfIt.Data.Config
         public float musicStartTime;
         [Range(0f, 1f)]
         public float musicVolume = 1f;
+
+        [Header("Audio - Ambient SFX")]
+        [Tooltip("Ambient/environmental sounds that loop during the level")]
+        public AudioClip ambientSound;
+        [Range(0f, 1f)]
+        public float ambientVolume = 0.5f;
+        [Tooltip("Sound played when the level is completed")]
+        public AudioClip levelCompleteSound;
 
         [Header("Layout")]
         public List<PlatformConfig> platforms = new List<PlatformConfig>();
@@ -48,12 +60,6 @@ namespace SickOfIt.Data.Config
         [Header("Player")]
         [Tooltip("Where the player spawns in this level")]
         public Vector2 playerSpawnPosition = new Vector2(-4f, 0f);
-
-        [Header("Win Zone")]
-        [Tooltip("Center of the win zone in world space")]
-        public Vector2 winZoneCenter = new Vector2(6.5f, 0f);
-        [Tooltip("Half-size of the win zone (box check)")]
-        public Vector2 winZoneHalfSize = new Vector2(0.5f, 4f);
 
         [Header("Flow")]
         public string deathConfigName = "Death1";

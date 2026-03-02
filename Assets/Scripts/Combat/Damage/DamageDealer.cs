@@ -7,8 +7,9 @@ namespace SickOfIt.Combat.Damage
     /// Deals damage on collision with objects that implement IDamageable
     /// (PlayerHealth, EnemyHealth). Use this on projectiles, enemies, etc.
     /// Pool-aware: returns to ObjectPool on hit instead of Destroy.
+    /// Implements IPoolReturnable so ObjectPool can wire the pool reference directly.
     /// </summary>
-    public class DamageDealer : MonoBehaviour
+    public class DamageDealer : MonoBehaviour, SickOfIt.Core.IPoolReturnable
     {
         [Header("Damage Settings")]
         [SerializeField] private int damageAmount = 1;
@@ -18,6 +19,9 @@ namespace SickOfIt.Combat.Damage
         [Tooltip("What tags can this damage? Default for player projectiles: Enemy")]
         [SerializeField] private string[] targetTags = { "Enemy" };
         [SerializeField] private bool canDamageMultipleTargets = false;
+
+        [Header("Audio")]
+        [SerializeField] private AudioClip hitSound;
 
         private bool hasDealtDamage = false;
         private SickOfIt.Core.ObjectPool ownerPool;
@@ -62,6 +66,10 @@ namespace SickOfIt.Combat.Damage
             {
                 damageable.TakeDamage(damageAmount);
                 hasDealtDamage = true;
+
+                // Play hit SFX at impact point (PlayClipAtPoint so it persists after pool return)
+                if (hitSound != null)
+                    AudioSource.PlayClipAtPoint(hitSound, transform.position);
 
                 if (destroyOnHit)
                 {

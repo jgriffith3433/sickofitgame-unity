@@ -1,16 +1,20 @@
+using System;
 using UnityEngine;
 
 namespace SickOfIt.Data.Config
 {
     /// <summary>
-    /// ScriptableObject defining an enemy type.
+    /// Serializable config defining an enemy type.
+    /// Embedded directly in GameDefinition.enemyTypes[].
     /// One per enemy archetype (Chaser, Fighter, Sentinel, Shooter).
     /// EnemySpawnConfig references these by EnemyType enum.
     /// EnemyBase reads stats from this at spawn time.
     /// EnemyPrefabGenerator uses this to create enemy prefabs.
+    /// 
+    /// Field defaults serve as SEED DATA for new enemy types.
     /// </summary>
-    [CreateAssetMenu(menuName = "Sick Of It/Enemy Template")]
-    public class EnemyTemplate : ScriptableObject
+    [Serializable]
+    public class EnemyTypeConfig
     {
         [Header("Identity")]
         public EnemyType type;
@@ -23,6 +27,8 @@ namespace SickOfIt.Data.Config
         public Texture2D spriteSheet;
         [Tooltip("Animation frames per second")]
         public int animationFps = 8;
+        [Tooltip("Scale multiplier for enemy sprite (default 1)")]
+        public float spriteScale = 0.15f;
 
         [Header("Animation Config (for generator)")]
         [Tooltip("Full animation setup: states, transitions, parameters, events. If set, the generator builds a multi-state animator. If null, falls back to a single idle clip from spriteSheet.")]
@@ -71,7 +77,7 @@ namespace SickOfIt.Data.Config
         public Color healthBarColor = Color.red;
 
         [Header("Chaser Settings")]
-        public float stopDistance = 0.5f;
+        public float stopDistance = 1.5f;
 
         [Header("Shooter Settings")]
         public float fireRate = 1f;

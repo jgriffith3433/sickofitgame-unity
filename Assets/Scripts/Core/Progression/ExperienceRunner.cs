@@ -53,7 +53,7 @@ namespace SickOfIt.Core.Progression
 
         // Enemy spawning (delegate to LevelRuntime if available)
         private LevelRuntime levelRuntime;
-        private Dictionary<EnemyType, EnemyTemplate> templateCache;
+        private Dictionary<EnemyType, EnemyTypeConfig> templateCache;
 
         // Injected references (set via SetPlayerRefs / SetMusicSource / SetPools)
         private PlayerHealth cachedPlayerHealth;
@@ -113,7 +113,7 @@ namespace SickOfIt.Core.Progression
         /// <summary>
         /// Initialize and start running the experience.
         /// </summary>
-        public void Run(TimelineConfig timelineConfig, Dictionary<EnemyType, EnemyTemplate> templates = null)
+        public void Run(TimelineConfig timelineConfig, Dictionary<EnemyType, EnemyTypeConfig> templates = null)
         {
             config = timelineConfig;
             templateCache = templates;
@@ -553,11 +553,14 @@ namespace SickOfIt.Core.Progression
             sr.color = color;
             sr.sortingOrder = 999;
 
-            // Create a 1x1 white sprite and scale it to fill screen
-            var tex = new Texture2D(1, 1);
-            tex.SetPixel(0, 0, Color.white);
-            tex.Apply();
-            sr.sprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1);
+            // Reuse a cached 1x1 white texture (avoids Texture2D leak per flash)
+            if (_cachedFlashTexture == null)
+            {
+                _cachedFlashTexture = new Texture2D(1, 1);
+                _cachedFlashTexture.SetPixel(0, 0, Color.white);
+                _cachedFlashTexture.Apply();
+            }
+            sr.sprite = Sprite.Create(_cachedFlashTexture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1);
             go.transform.localScale = new Vector3(100, 100, 1);
 
             // Fade out
@@ -573,6 +576,8 @@ namespace SickOfIt.Core.Progression
 
             Destroy(go);
         }
+
+        private static Texture2D _cachedFlashTexture;
 
         private void HandleSetAmbientColor(GameEvent evt)
         {

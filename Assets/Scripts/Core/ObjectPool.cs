@@ -95,9 +95,11 @@ namespace SickOfIt.Core
                 cachedLifetime[obj] = lifetime;
             }
 
-            // Wire DamageDealer so hit-projectiles return to pool instead of Destroy
-            // Use SendMessage to avoid cross-assembly dependency (DamageDealer is in SickOfIt.Combat)
-            obj.SendMessage("SetOwnerPool", this, SendMessageOptions.DontRequireReceiver);
+            // Wire all IPoolReturnable components so they know which pool to return to
+            foreach (var returnable in obj.GetComponents<IPoolReturnable>())
+            {
+                returnable.SetOwnerPool(this);
+            }
 
             return obj;
         }

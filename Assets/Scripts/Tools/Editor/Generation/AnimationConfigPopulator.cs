@@ -19,25 +19,25 @@ namespace SickOfIt.Tools.Editor.Generation
     public static class AnimationConfigPopulator
     {
         /// <summary>
-        /// Create the correct AnimationConfig for an enemy template based on its type.
+        /// Create the correct AnimationConfig for an enemy config based on its type.
         /// Returns null if the type is unknown.
         /// </summary>
-        public static AnimationConfig CreateEnemyAnimConfig(EnemyTemplate template)
+        public static AnimationConfig CreateEnemyAnimConfig(EnemyTypeConfig config)
         {
-            if (template == null) return null;
+            if (config == null) return null;
 
-            switch (template.type)
+            switch (config.type)
             {
                 case EnemyType.Chaser:
-                    return CreateChaserConfig(template);
+                    return CreateChaserConfig(config);
                 case EnemyType.Fighter:
-                    return CreateFighterConfig(template);
+                    return CreateFighterConfig(config);
                 case EnemyType.Shooter:
-                    return CreateShooterConfig(template);
+                    return CreateShooterConfig(config);
                 case EnemyType.Sentinel:
-                    return CreateSentinelConfig(template);
+                    return CreateSentinelConfig(config);
                 default:
-                    Debug.LogWarning($"[AnimConfigPopulator] Unknown enemy type: {template.type}");
+                    Debug.LogWarning($"[AnimConfigPopulator] Unknown enemy type: {config.type}");
                     return null;
             }
         }
@@ -54,7 +54,7 @@ namespace SickOfIt.Tools.Editor.Generation
         /// <summary>
         /// Chaser: Simple looping idle animation. No parameters, no events.
         /// </summary>
-        private static AnimationConfig CreateChaserConfig(EnemyTemplate template)
+        private static AnimationConfig CreateChaserConfig(EnemyTypeConfig config)
         {
             return new AnimationConfig
             {
@@ -65,7 +65,7 @@ namespace SickOfIt.Tools.Editor.Generation
                     new AnimationStateConfig
                     {
                         stateName = "Idle",
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = true
                     }
                 },
@@ -78,7 +78,7 @@ namespace SickOfIt.Tools.Editor.Generation
         /// Parameters: IsWalking (bool), IsAttacking (bool)
         /// Event: OnAttackFrame on the Attack clip
         /// </summary>
-        private static AnimationConfig CreateFighterConfig(EnemyTemplate template)
+        private static AnimationConfig CreateFighterConfig(EnemyTypeConfig config)
         {
             return new AnimationConfig
             {
@@ -94,21 +94,21 @@ namespace SickOfIt.Tools.Editor.Generation
                     {
                         stateName = "Idle",
                         spriteSheet = FindSpriteSheet("FighterIdle"),
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = true
                     },
                     new AnimationStateConfig
                     {
                         stateName = "Walk",
                         spriteSheet = FindSpriteSheet("FighterWalk"),
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = true
                     },
                     new AnimationStateConfig
                     {
                         stateName = "Attack",
                         spriteSheet = FindSpriteSheet("FighterAttack"),
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = false,
                         events = new List<AnimationEventConfig>
                         {
@@ -169,7 +169,7 @@ namespace SickOfIt.Tools.Editor.Generation
         /// Parameters: IsAttacking (bool)
         /// Event: FireProjectile on the Attack clip
         /// </summary>
-        private static AnimationConfig CreateShooterConfig(EnemyTemplate template)
+        private static AnimationConfig CreateShooterConfig(EnemyTypeConfig config)
         {
             return new AnimationConfig
             {
@@ -183,13 +183,13 @@ namespace SickOfIt.Tools.Editor.Generation
                     new AnimationStateConfig
                     {
                         stateName = "Idle",
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = true
                     },
                     new AnimationStateConfig
                     {
                         stateName = "Attack",
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = false,
                         events = new List<AnimationEventConfig>
                         {
@@ -230,7 +230,7 @@ namespace SickOfIt.Tools.Editor.Generation
         /// Parameters: IsCrouching (bool), IsAttacking (bool)
         /// Events: OnStandingAttackFrame, OnCrouchAttackFrame
         /// </summary>
-        private static AnimationConfig CreateSentinelConfig(EnemyTemplate template)
+        private static AnimationConfig CreateSentinelConfig(EnemyTypeConfig config)
         {
             return new AnimationConfig
             {
@@ -246,14 +246,14 @@ namespace SickOfIt.Tools.Editor.Generation
                     {
                         stateName = "StandingIdle",
                         spriteSheet = FindSpriteSheet("Level3Enemy_StandingIdle"),
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = true
                     },
                     new AnimationStateConfig
                     {
                         stateName = "StandingAttack",
                         spriteSheet = FindSpriteSheet("Level3Enemy_StandingAttack"),
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = false,
                         events = new List<AnimationEventConfig>
                         {
@@ -268,21 +268,21 @@ namespace SickOfIt.Tools.Editor.Generation
                     {
                         stateName = "StandingToCrouch",
                         spriteSheet = FindSpriteSheet("Level3Enemy_StandingToCrouch"),
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = false
                     },
                     new AnimationStateConfig
                     {
                         stateName = "CrouchingIdle",
                         spriteSheet = FindSpriteSheet("Level3Enemy_CrouchingIdle"),
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = true
                     },
                     new AnimationStateConfig
                     {
                         stateName = "CrouchingAttack",
                         spriteSheet = FindSpriteSheet("Level3Enemy_CrouchingAttack"),
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = false,
                         events = new List<AnimationEventConfig>
                         {
@@ -297,7 +297,7 @@ namespace SickOfIt.Tools.Editor.Generation
                     {
                         stateName = "CrouchToStanding",
                         spriteSheet = FindSpriteSheet("Level3Enemy_CrouchToStanding"),
-                        fps = template.animationFps,
+                        fps = config.animationFps,
                         loop = false
                     }
                 },

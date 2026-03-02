@@ -88,14 +88,13 @@ namespace SickOfIt.Tools.Editor.Generation
             var level = new GameObject("Level");
             level.transform.SetParent(content.transform);
 
-            // Ground collider — position & size from config
+            // Ground collider — position & size from config (uses Platform layer)
             var ground = new GameObject("Ground");
             ground.transform.SetParent(level.transform);
             ground.transform.position = new Vector3(0f, gd.groundY, 0f);
             var groundCollider = ground.AddComponent<BoxCollider2D>();
             groundCollider.size = gd.groundColliderSize;
-            int groundLayer = LayerMask.NameToLayer("Ground");
-            if (groundLayer >= 0) ground.layer = groundLayer;
+            GeneratorHelper.SetLayer(ground, "Platform");
 
             // Left wall
             var leftWall = new GameObject("LeftWall");
@@ -119,6 +118,12 @@ namespace SickOfIt.Tools.Editor.Generation
             var audioSource = musicGo.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
             audioSource.loop = true;
+
+            // Rewindable audio — restores music playback position after rewind
+            var rewindableAudio = musicGo.AddComponent<SickOfIt.Core.RewindableAudioSource>();
+            var raSo = new SerializedObject(rewindableAudio);
+            raSo.FindProperty("audioSource").objectReferenceValue = audioSource;
+            raSo.ApplyModifiedPropertiesWithoutUndo();
 
             // Camera from prefab
             Camera sceneCamera = null;
@@ -162,19 +167,8 @@ namespace SickOfIt.Tools.Editor.Generation
             var lrso = new SerializedObject(levelRuntime);
             if (player != null) lrso.FindProperty("characterObject").objectReferenceValue = player;
             lrso.FindProperty("playerSpawnPoint").objectReferenceValue = playerSpawn.transform;
+            lrso.FindProperty("backgroundsContainer").objectReferenceValue = backgrounds.transform;
             lrso.FindProperty("musicSource").objectReferenceValue = audioSource;
-
-            // Win zone bounds — LevelRuntime reads per-level config at runtime,
-            // but we set defaults from the first level for the generated scene
-            var defaultWinCenter = new Vector2(6.5f, 0f);
-            var defaultWinHalfSize = new Vector2(0.5f, 4f);
-            if (gd.levels.Count > 0)
-            {
-                defaultWinCenter = gd.levels[0].winZoneCenter;
-                defaultWinHalfSize = gd.levels[0].winZoneHalfSize;
-            }
-            lrso.FindProperty("winZoneCenter").vector2Value = defaultWinCenter;
-            lrso.FindProperty("winZoneHalfSize").vector2Value = defaultWinHalfSize;
 
             // ── Create projectile pools (sizes from config) ──
             var poolContainer = new GameObject("Pools");
@@ -263,6 +257,9 @@ namespace SickOfIt.Tools.Editor.Generation
 
             // Add RewindTimeline + RewindController and wire their references
             var rewindTimeline = levelRuntimeGo.AddComponent<SickOfIt.Core.Rewind.RewindTimeline>();
+
+            // RewindableScore — tracks player points so diamonds revert on rewind
+            levelRuntimeGo.AddComponent<SickOfIt.Core.RewindableScore>();
 
             // Wire RewindTimeline config values from GameDefinition
             var rtSo = new SerializedObject(rewindTimeline);

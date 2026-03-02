@@ -1,11 +1,10 @@
 #if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.Animations;
+using UnityEngine.InputSystem;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 using SickOfIt.Core.Input;
-using SickOfIt.Core.Rewind;
 using SickOfIt.Combat.Effects;
 using SickOfIt.Combat.Health;
 
@@ -74,7 +73,7 @@ namespace SickOfIt.Tools.Editor.Generation
             // ─── Create root GameObject ───────────────────────────────────
             var root = new GameObject(PREFAB_NAME);
             root.tag = "Player";
-
+            root.layer = LayerMask.NameToLayer("Player");
             // ─── Physics ──────────────────────────────────────────────────
             var rb = root.AddComponent<Rigidbody2D>();
             rb.bodyType = RigidbodyType2D.Dynamic;
@@ -89,22 +88,14 @@ namespace SickOfIt.Tools.Editor.Generation
             var graphics = new GameObject("Graphics");
             graphics.transform.SetParent(root.transform);
             graphics.transform.localPosition = Vector3.zero;
+            
+            // Apply sprite scale (default to 0.33 if not set to compensate for large sprites)
+            float spriteScale = config.spriteScale > 0 ? config.spriteScale : 0.15f;
+            graphics.transform.localScale = Vector3.one * spriteScale;
 
             var sr = graphics.AddComponent<SpriteRenderer>();
             // Auto-detect default sprite from sprite sheet
-            if (config.spriteSheet != null)
-            {
-                var sprites = AssetDatabase.LoadAllAssetsAtPath(
-                    AssetDatabase.GetAssetPath(config.spriteSheet));
-                foreach (var asset in sprites)
-                {
-                    if (asset is Sprite sprite)
-                    {
-                        sr.sprite = sprite;
-                        break;
-                    }
-                }
-            }
+            sr.sprite = GeneratorHelper.GetFirstSprite(config.spriteSheet);
             sr.sortingLayerName = "Default";
             sr.sortingOrder = 5;
 
@@ -193,6 +184,9 @@ namespace SickOfIt.Tools.Editor.Generation
             // ─── PlayerHealth ─────────────────────────────────────────────
             var playerHealth = root.AddComponent<PlayerHealth>();
 
+            // ─── AudioSource for SFX ──────────────────────────────────────
+            var audioSource = GeneratorHelper.AddAudioSource(root);
+
             // ─── PlayerController ─────────────────────────────────────────
             var playerController = root.AddComponent<PlayerController>();
 
@@ -213,6 +207,7 @@ namespace SickOfIt.Tools.Editor.Generation
             pcSo.FindProperty("groundCheckWidth").floatValue = config.groundCheckWidth;
             
             // Rotation settings from config
+            pcSo.FindProperty("use2DFlip").boolValue = config.use2DFlip;
             pcSo.FindProperty("normalRotationSpeed").floatValue = config.normalRotationSpeed;
             pcSo.FindProperty("firingRotationSpeed").floatValue = config.firingRotationSpeed;
 
@@ -238,6 +233,39 @@ namespace SickOfIt.Tools.Editor.Generation
             pcSo.FindProperty("fireRate").floatValue = config.fireRate;
             pcSo.FindProperty("projectileSpeed").floatValue = config.projectileSpeed;
             pcSo.FindProperty("projectileLifetime").floatValue = config.projectileLifetime;
+
+            // Audio
+            pcSo.FindProperty("audioSource").objectReferenceValue = audioSource;
+            pcSo.FindProperty("pitchVariation").floatValue = config.pitchVariation;
+            WireSFXArray(pcSo, "hurtSounds", config.hurtSounds);
+            WireSFXArray(pcSo, "deathSounds", config.deathSounds);
+            if (config.jumpSound != null)
+                pcSo.FindProperty("jumpSound").objectReferenceValue = config.jumpSound;
+            if (config.fireSound != null)
+                pcSo.FindProperty("fireSound").objectReferenceValue = config.fireSound;
+            if (config.landSound != null)
+                pcSo.FindProperty("landSound").objectReferenceValue = config.landSound;
+
+            // ─── Create ProjectileSpawnPoint child ────────────────────────
+            var spawnPoint = new GameObject("ProjectileSpawnPoint");
+            spawnPoint.transform.SetParent(root.transform);
+            spawnPoint.transform.localPosition = new Vector3(0.5f, 0f, 0f);
+            pcSo.FindProperty("projectileSpawnPoint").objectReferenceValue = spawnPoint.transform;
+
+            // ─── Set LayerMasks ───────────────────────────────────────────
+            // Ground uses Platform layer, boundaries use Boundary layer
+            pcSo.FindProperty("groundLayer").intValue = LayerMask.GetMask("Platform", "Boundary");
+            pcSo.FindProperty("platformLayer").intValue = LayerMask.GetMask("Platform");
+
+            // ─── Wire InputActionReferences ───────────────────────────────
+            var inputAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>("Assets/InputSystem_Actions.inputactions");
+            if (inputAsset != null)
+            {
+                WireInputAction(pcSo, "moveAction", inputAsset, "Character", "Move");
+                WireInputAction(pcSo, "jumpAction", inputAsset, "Character", "Jump");
+                WireInputAction(pcSo, "fireAction", inputAsset, "Character", "Attack");
+                WireInputAction(pcSo, "lookAction", inputAsset, "Character", "Look");
+            }
             
             pcSo.ApplyModifiedPropertiesWithoutUndo();
 
@@ -255,31 +283,13 @@ namespace SickOfIt.Tools.Editor.Generation
             geSo.ApplyModifiedPropertiesWithoutUndo();
 
             // ─── Rewind components ────────────────────────────────────────
-            root.AddComponent<RewindableTransform>();
-            root.AddComponent<RewindableRigidbody2D>();
-            root.AddComponent<RewindableGameObject>();
-            
-            var rewindableHealth = root.AddComponent<RewindableHealth>();
-            var rhSo = new SerializedObject(rewindableHealth);
-            rhSo.FindProperty("playerHealth").objectReferenceValue = playerHealth;
-            rhSo.ApplyModifiedPropertiesWithoutUndo();
+            GeneratorHelper.AddRewindComponents(root, rb: rb, animator: animator, playerHealth: playerHealth);
 
-            // RewindableAnimator (if animator exists on Graphics child)
-            if (animator != null)
-            {
-                var rewindableAnimator = root.AddComponent<RewindableAnimator>();
-                var raSo = new SerializedObject(rewindableAnimator);
-                var animRefProp = raSo.FindProperty("animator");
-                if (animRefProp != null)
-                    animRefProp.objectReferenceValue = animator;
-                raSo.ApplyModifiedPropertiesWithoutUndo();
-            }
+            // Graphics child also needs RewindableTransform for sprite flip/rotation during rewind
+            graphics.AddComponent<SickOfIt.Core.Rewind.RewindableTransform>();
 
             // ─── Save as prefab ───────────────────────────────────────────
-            var prefab = PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
-
-            // Clean up scene object
-            Object.DestroyImmediate(root);
+            var prefab = GeneratorHelper.SavePrefab(root, prefabPath);
 
             // Update GameDefinition with generated prefab
             gd.player.playerPrefab = prefab;
@@ -288,6 +298,52 @@ namespace SickOfIt.Tools.Editor.Generation
             Debug.Log($"[PlayerPrefabGen] Created: {prefabPath}");
 
             return prefab;
+        }
+
+        /// <summary>
+        /// Wire an AudioClip array into a SerializedProperty.
+        /// </summary>
+        private static void WireSFXArray(SerializedObject so, string propertyName, AudioClip[] clips)
+        {
+            if (clips == null || clips.Length == 0) return;
+            var prop = so.FindProperty(propertyName);
+            if (prop == null) return;
+            prop.arraySize = clips.Length;
+            for (int i = 0; i < clips.Length; i++)
+            {
+                if (clips[i] != null)
+                    prop.GetArrayElementAtIndex(i).objectReferenceValue = clips[i];
+            }
+        }
+
+        /// <summary>
+        /// Wires an InputActionReference to a SerializedProperty.
+        /// </summary>
+        private static void WireInputAction(SerializedObject so, string propertyName, InputActionAsset asset, string mapName, string actionName)
+        {
+            var prop = so.FindProperty(propertyName);
+            if (prop == null) return;
+
+            var map = asset.FindActionMap(mapName);
+            if (map == null) return;
+
+            var action = map.FindAction(actionName);
+            if (action == null) return;
+
+            // Create or find InputActionReference asset
+            var refPath = $"Assets/InputSystem_Actions.inputactions";
+            var refs = AssetDatabase.LoadAllAssetsAtPath(refPath);
+            foreach (var r in refs)
+            {
+                if (r is InputActionReference iar && iar.action?.id == action.id)
+                {
+                    prop.objectReferenceValue = iar;
+                    return;
+                }
+            }
+            // If no reference found, create one inline (won't persist but works at runtime)
+            var newRef = InputActionReference.Create(action);
+            prop.objectReferenceValue = newRef;
         }
     }
 }

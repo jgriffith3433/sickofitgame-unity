@@ -41,15 +41,15 @@ namespace SickOfIt.Combat.Enemies
 
         private static readonly int ParamIsAttacking = Animator.StringToHash("IsAttacking");
 
-        public override void InitializeFromConfig(EnemyTemplate template, EnemySpawnConfig spawn)
+        public override void InitializeFromConfig(EnemyTypeConfig config, EnemySpawnConfig spawn)
         {
-            base.InitializeFromConfig(template, spawn);
-            projectileSpeed = template.projectileSpeed;
-            attackInterval = spawn.fireRateOverride > 0 ? spawn.fireRateOverride : template.fireRate;
+            base.InitializeFromConfig(config, spawn);
+            projectileSpeed = config.projectileSpeed;
+            attackInterval = spawn.fireRateOverride > 0 ? spawn.fireRateOverride : config.fireRate;
             initialAttackDelay = spawn.initialAttackDelay;
-            flipToFacePlayer = template.faceMovementDirection;
-            projectileLifetime = template.projectileLifetime;
-            projectileDamage = template.projectileDamage;
+            flipToFacePlayer = config.faceMovementDirection;
+            projectileLifetime = config.projectileLifetime;
+            projectileDamage = config.projectileDamage;
 
             // Apply shoot direction
             if (spawn.shootDirection != ShootDirection.AtPlayer)

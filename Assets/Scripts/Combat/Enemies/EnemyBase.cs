@@ -46,26 +46,26 @@ namespace SickOfIt.Combat.Enemies
         protected IDamageable playerDamageable;
 
         /// <summary>
-        /// Initialize from template + spawn config. Called by LevelRuntime after instantiation.
+        /// Initialize from config + spawn config. Called by LevelRuntime after instantiation.
         /// </summary>
-        public virtual void InitializeFromConfig(EnemyTemplate template, EnemySpawnConfig spawn)
+        public virtual void InitializeFromConfig(EnemyTypeConfig config, EnemySpawnConfig spawn)
         {
-            moveSpeed = spawn.speedOverride > 0 ? spawn.speedOverride : template.defaultMoveSpeed;
-            contactDamage = template.contactDamage;
-            detectionRange = spawn.detectionRangeOverride > 0 ? spawn.detectionRangeOverride : template.detectionRange;
+            moveSpeed = spawn.speedOverride > 0 ? spawn.speedOverride : config.defaultMoveSpeed;
+            contactDamage = config.contactDamage;
+            detectionRange = spawn.detectionRangeOverride > 0 ? spawn.detectionRangeOverride : config.detectionRange;
 
-            if (template.hurtSounds != null && template.hurtSounds.Length > 0)
-                hurtSounds = template.hurtSounds;
-            if (template.deathSounds != null && template.deathSounds.Length > 0)
-                deathSounds = template.deathSounds;
-            hurtSoundHealthThreshold = template.hurtSoundHealthThreshold;
-            pitchVariation = template.pitchVariation;
+            if (config.hurtSounds != null && config.hurtSounds.Length > 0)
+                hurtSounds = config.hurtSounds;
+            if (config.deathSounds != null && config.deathSounds.Length > 0)
+                deathSounds = config.deathSounds;
+            hurtSoundHealthThreshold = config.hurtSoundHealthThreshold;
+            pitchVariation = config.pitchVariation;
 
-            // Pickup prefab comes from GameDefinition (generated), not from template
+            // Pickup prefab comes from GameDefinition (generated), not from config
             pointsPickupPrefab = GameDefinition.Instance.pickupPrefab;
-            dropChance = template.dropChance;
-            dropPointsValue = template.dropPointsValue;
-            dropCount = template.dropCount;
+            dropChance = config.dropChance;
+            dropPointsValue = config.dropPointsValue;
+            dropCount = config.dropCount;
         }
 
         /// <summary>

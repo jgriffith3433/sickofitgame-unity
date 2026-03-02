@@ -132,7 +132,7 @@ namespace SickOfIt.Tools.Editor.GameOverview
             GUILayout.FlexibleSpace();
 
             EditorGUILayout.LabelField(
-                $"{gameDefinition.TotalLevels} Levels | {gameDefinition.TotalVideos} Videos | {gameDefinition.TotalDeaths} Deaths | {gameDefinition.enemyTemplates.Count} Enemy Types",
+                $"{gameDefinition.TotalLevels} Levels | {gameDefinition.TotalVideos} Videos | {gameDefinition.TotalDeaths} Deaths | {gameDefinition.enemyTypes.Count} Enemy Types",
                 EditorStyles.miniLabel);
 
             GUILayout.FlexibleSpace();
@@ -222,9 +222,9 @@ namespace SickOfIt.Tools.Editor.GameOverview
 
             EditorGUILayout.BeginVertical(GUILayout.Width(200));
             EditorGUILayout.LabelField("ENEMY TYPES", EditorStyles.boldLabel);
-            for (int i = 0; i < gameDefinition.enemyTemplates.Count; i++)
+            for (int i = 0; i < gameDefinition.enemyTypes.Count; i++)
             {
-                var template = gameDefinition.enemyTemplates[i];
+                var template = gameDefinition.enemyTypes[i];
                 if (template != null)
                     EditorGUILayout.LabelField($"  {template.displayName} ({template.type})");
             }
@@ -687,72 +687,65 @@ namespace SickOfIt.Tools.Editor.GameOverview
         {
             EditorGUILayout.LabelField("Enemy Templates", EditorStyles.boldLabel);
             EditorGUILayout.HelpBox(
-                "Each template defines an enemy type. Levels reference these by type.\n" +
-                "Change a template's stats and ALL levels using that type are affected.",
+                "Each enemy type config defines an enemy type. Levels reference these by type.\n" +
+                "Change a config's stats and ALL levels using that type are affected.",
                 MessageType.Info);
             EditorGUILayout.Space(5);
 
-            var templatesProp = serializedGameDef.FindProperty("enemyTemplates");
-            for (int i = 0; i < gameDefinition.enemyTemplates.Count; i++)
+            var enemyTypesProp = serializedGameDef.FindProperty("enemyTypes");
+            for (int i = 0; i < gameDefinition.enemyTypes.Count; i++)
             {
-                var template = gameDefinition.enemyTemplates[i];
-                if (template == null) continue;
+                var config = gameDefinition.enemyTypes[i];
+                if (config == null) continue;
 
                 EditorGUILayout.BeginVertical("box");
-                EditorGUILayout.LabelField($"{template.displayName} ({template.type})", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField($"{config.displayName} ({config.type})", EditorStyles.boldLabel);
 
                 EditorGUI.BeginChangeCheck();
-                var templateObj = new SerializedObject(template);
-                templateObj.Update();
+                var configProp = enemyTypesProp.GetArrayElementAtIndex(i);
 
-                EditorGUILayout.PropertyField(templateObj.FindProperty("displayName"));
-                EditorGUILayout.PropertyField(templateObj.FindProperty("type"));
-                EditorGUILayout.PropertyField(templateObj.FindProperty("prefab"));
-                EditorGUILayout.PropertyField(templateObj.FindProperty("defaultHealth"));
-                EditorGUILayout.PropertyField(templateObj.FindProperty("defaultMoveSpeed"));
-                EditorGUILayout.PropertyField(templateObj.FindProperty("contactDamage"));
-                EditorGUILayout.PropertyField(templateObj.FindProperty("detectionRange"));
-                EditorGUILayout.PropertyField(templateObj.FindProperty("dropChance"));
-                EditorGUILayout.PropertyField(templateObj.FindProperty("dropPointsValue"));
+                EditorGUILayout.PropertyField(configProp.FindPropertyRelative("displayName"));
+                EditorGUILayout.PropertyField(configProp.FindPropertyRelative("type"));
+                EditorGUILayout.PropertyField(configProp.FindPropertyRelative("prefab"));
+                EditorGUILayout.PropertyField(configProp.FindPropertyRelative("defaultHealth"));
+                EditorGUILayout.PropertyField(configProp.FindPropertyRelative("defaultMoveSpeed"));
+                EditorGUILayout.PropertyField(configProp.FindPropertyRelative("contactDamage"));
+                EditorGUILayout.PropertyField(configProp.FindPropertyRelative("detectionRange"));
+                EditorGUILayout.PropertyField(configProp.FindPropertyRelative("dropChance"));
+                EditorGUILayout.PropertyField(configProp.FindPropertyRelative("dropPointsValue"));
 
-                if (template.type == EnemyType.Shooter)
+                if (config.type == EnemyType.Shooter)
                 {
-                    EditorGUILayout.PropertyField(templateObj.FindProperty("fireRate"));
-                    EditorGUILayout.PropertyField(templateObj.FindProperty("projectileSpeed"));
+                    EditorGUILayout.PropertyField(configProp.FindPropertyRelative("fireRate"));
+                    EditorGUILayout.PropertyField(configProp.FindPropertyRelative("projectileSpeed"));
                 }
-                if (template.type == EnemyType.Fighter || template.type == EnemyType.Sentinel)
+                if (config.type == EnemyType.Fighter || config.type == EnemyType.Sentinel)
                 {
-                    EditorGUILayout.PropertyField(templateObj.FindProperty("attackRange"));
-                    EditorGUILayout.PropertyField(templateObj.FindProperty("attackCooldown"));
+                    EditorGUILayout.PropertyField(configProp.FindPropertyRelative("attackRange"));
+                    EditorGUILayout.PropertyField(configProp.FindPropertyRelative("attackCooldown"));
                 }
 
-                templateObj.ApplyModifiedProperties();
+                if (EditorGUI.EndChangeCheck())
+                {
+                    serializedGameDef.ApplyModifiedProperties();
+                }
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.Space(5);
             }
 
             EditorGUILayout.Space(10);
-            EditorGUILayout.LabelField("Add Enemy Template", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Add Enemy Type", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Create New Enemy Template", GUILayout.Height(30)))
+            if (GUILayout.Button("Create New Enemy Type", GUILayout.Height(30)))
             {
-                var template = CreateInstance<EnemyTemplate>();
-                template.displayName = "New Enemy";
-                template.type = EnemyType.Chaser;
-
-                string path = EditorUtility.SaveFilePanelInProject(
-                    "Save Enemy Template", "NewEnemy", "asset",
-                    "Save the enemy template", "Assets/Resources");
-
-                if (!string.IsNullOrEmpty(path))
+                Undo.RecordObject(gameDefinition, "Add Enemy Type");
+                var newConfig = new EnemyTypeConfig
                 {
-                    AssetDatabase.CreateAsset(template, path);
-                    AssetDatabase.SaveAssets();
-
-                    Undo.RecordObject(gameDefinition, "Add Enemy Template");
-                    gameDefinition.enemyTemplates.Add(template);
-                    EditorUtility.SetDirty(gameDefinition);
-                }
+                    displayName = "New Enemy",
+                    type = EnemyType.Chaser
+                };
+                gameDefinition.enemyTypes.Add(newConfig);
+                EditorUtility.SetDirty(gameDefinition);
             }
             EditorGUILayout.EndHorizontal();
         }

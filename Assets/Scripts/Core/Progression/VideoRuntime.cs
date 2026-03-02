@@ -33,12 +33,9 @@ namespace SickOfIt.Core.Progression
 
         private void Start()
         {
-            Debug.Log($"[VideoRuntime] Starting in scene '{UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}'");
-            
             if (PlayerPrefs.HasKey("CurrentVideoNumber"))
             {
                 videoNumber = PlayerPrefs.GetInt("CurrentVideoNumber", videoNumber);
-                Debug.Log($"[VideoRuntime] Found CurrentVideoNumber: {videoNumber}");
             }
             else
             {
@@ -51,7 +48,6 @@ namespace SickOfIt.Core.Progression
                 Debug.LogError("[VideoRuntime] GameDefinition not found!");
                 return;
             }
-            Debug.Log($"[VideoRuntime] Found GameDefinition with {gd.TotalVideos} videos");
 
             config = gd.GetVideo(videoNumber);
             if (config == null)
@@ -59,7 +55,6 @@ namespace SickOfIt.Core.Progression
                 Debug.LogError($"[VideoRuntime] No VideoConfig for video {videoNumber}!");
                 return;
             }
-            Debug.Log($"[VideoRuntime] Found VideoConfig: '{config.displayName}'");
 
             // Setup GameClock for this video
             gameClock = gameObject.AddComponent<GameClock>();
@@ -67,8 +62,6 @@ namespace SickOfIt.Core.Progression
             AutoDiscoverReferences();
             SetupPlayback();
             StartExperience();
-
-            Debug.Log($"[VideoRuntime] Video {videoNumber} '{config.displayName}' loaded");
         }
 
         private void AutoDiscoverReferences()
@@ -97,7 +90,6 @@ namespace SickOfIt.Core.Progression
             var framesData = config.spriteFramesData as SpriteFramesData;
             if (framesData != null)
             {
-                Debug.Log($"[VideoRuntime] Found SpriteFramesData: {framesData.videoName}");
                 // Use serialized reference or create fallback
                 if (videoPlayerObject == null)
                 {
@@ -115,13 +107,8 @@ namespace SickOfIt.Core.Progression
 
                 spritePlayer.Initialize(framesData, () =>
                 {
-                    Debug.Log($"[VideoRuntime] Sprite frames ready, starting playback");
-                    Debug.Log($"[VideoRuntime] SpriteFramePlayer - IsReady: {spritePlayer.IsReady}, TotalFrames: {spritePlayer.TotalFrames}");
                     AnalyticsManager.Instance?.TrackVideoStart(videoNumber);
-                    
-                    // Force the sprite player to play
                     spritePlayer.Play();
-                    Debug.Log("[VideoRuntime] Forced SpriteFramePlayer.Play()");
                 });
             }
             else
@@ -161,22 +148,9 @@ namespace SickOfIt.Core.Progression
         {
             if (videoCompleted) return;
 
-            // Debug sprite player status
-            if (spritePlayer != null)
+            if (spritePlayer != null && spritePlayer.IsReady && spritePlayer.Progress >= 0.99f)
             {
-                if (!spritePlayer.IsReady)
-                {
-                    Debug.Log($"[VideoRuntime] SpritePlayer not ready yet...");
-                }
-                else if (spritePlayer.Progress >= 0.99f)
-                {
-                    Debug.Log($"[VideoRuntime] Video playback complete!");
-                    OnVideoComplete();
-                }
-                else if (Time.frameCount % 60 == 0) // Log every 60 frames
-                {
-                    Debug.Log($"[VideoRuntime] Playing... Progress: {spritePlayer.Progress:P1}, Frame: {spritePlayer.CurrentFrame}/{spritePlayer.TotalFrames}, IsPlaying: {spritePlayer.IsPlaying}");
-                }
+                OnVideoComplete();
             }
         }
 

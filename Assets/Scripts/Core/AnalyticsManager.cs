@@ -5,16 +5,19 @@ namespace SickOfIt.Core
 {
     /// <summary>
     /// Manages analytics event tracking for the game using Umami Analytics.
-    /// Uses JavaScript interop for WebGL builds to communicate with the website's analytics wrapper.
+    /// Uses two generic JavaScript interop functions — scales to any number of levels/videos.
+    /// Event names match the existing website functions (e.g. "trackLevel1Start") for backward compat.
     /// </summary>
     public class AnalyticsManager : MonoBehaviour
     {
         private static AnalyticsManager _instance;
+        private static bool _applicationIsQuitting;
 
         public static AnalyticsManager Instance
         {
             get
             {
+                if (_applicationIsQuitting) return null;
                 if (_instance == null)
                 {
                     GameObject go = new GameObject("AnalyticsManager");
@@ -36,335 +39,86 @@ namespace SickOfIt.Core
             DontDestroyOnLoad(gameObject);
         }
 
+        private void OnApplicationQuit()
+        {
+            _applicationIsQuitting = true;
+        }
+
         // ============================================================
-        // JavaScript Interop for WebGL Builds
+        // JavaScript Interop — two generic functions handle everything
         // ============================================================
-        // These functions call the JavaScript wrapper on the website
-        // The [DllImport("__Internal")] tells Unity to look for these functions in the browser
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
-        private static extern void trackGameStart();
+        private static extern void trackEvent(string eventName);
 
         [DllImport("__Internal")]
-        private static extern void trackLevel1Start();
-
-        [DllImport("__Internal")]
-        private static extern void trackLevel2Start();
-
-        [DllImport("__Internal")]
-        private static extern void trackLevel3Start();
-
-        [DllImport("__Internal")]
-        private static extern void trackLevel4Start();
-
-        [DllImport("__Internal")]
-        private static extern void trackLevel1Complete();
-
-        [DllImport("__Internal")]
-        private static extern void trackLevel2Complete();
-
-        [DllImport("__Internal")]
-        private static extern void trackLevel3Complete();
-
-        [DllImport("__Internal")]
-        private static extern void trackLevel4Complete();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo1Start();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo2Start();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo3Start();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo4Start();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo1Complete();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo2Complete();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo3Complete();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo4Complete();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo1Skip();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo2Skip();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo3Skip();
-
-        [DllImport("__Internal")]
-        private static extern void trackVideo4Skip();
-
-        [DllImport("__Internal")]
-        private static extern void trackPlayerDeath(string cause);
-
-        [DllImport("__Internal")]
-        private static extern void trackGameOver();
+        private static extern void trackEventWithData(string eventName, string data);
 #endif
 
         // ============================================================
-        // Public API - Call these methods from anywhere in the game
+        // Internal helper — fires a named event via JS interop
         // ============================================================
 
-        /// <summary>
-        /// Track when the game starts (player begins playing for the first time in a session)
-        /// </summary>
-        public void TrackGameStart()
+        private void Track(string eventName)
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
             try
             {
-                trackGameStart();
-                Debug.Log("[Analytics] Tracked: game_start");
+                trackEvent(eventName);
+                Debug.Log($"[Analytics] Tracked: {eventName}");
             }
             catch (System.Exception e)
             {
-                Debug.LogWarning($"[Analytics] Failed to track game_start: {e.Message}");
+                Debug.LogWarning($"[Analytics] Failed to track {eventName}: {e.Message}");
             }
 #else
-            Debug.Log("[Analytics] (Simulated) Tracked: game_start");
+            Debug.Log($"[Analytics] (Simulated) Tracked: {eventName}");
 #endif
         }
 
-        /// <summary>
-        /// Track when a level starts (player enters the level and gains control)
-        /// </summary>
-        /// <param name="levelNumber">The level number that is starting (1-4)</param>
-        public void TrackLevelStart(int levelNumber)
+        private void Track(string eventName, string data)
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
             try
             {
-                switch (levelNumber)
-                {
-                    case 1:
-                        trackLevel1Start();
-                        break;
-                    case 2:
-                        trackLevel2Start();
-                        break;
-                    case 3:
-                        trackLevel3Start();
-                        break;
-                    case 4:
-                        trackLevel4Start();
-                        break;
-                    default:
-                        Debug.LogWarning($"[Analytics] Level {levelNumber} start tracking not implemented");
-                        return;
-                }
-                Debug.Log($"[Analytics] Tracked: level{levelNumber}_start");
+                trackEventWithData(eventName, data);
+                Debug.Log($"[Analytics] Tracked: {eventName} ({data})");
             }
             catch (System.Exception e)
             {
-                Debug.LogWarning($"[Analytics] Failed to track level{levelNumber}_start: {e.Message}");
+                Debug.LogWarning($"[Analytics] Failed to track {eventName}: {e.Message}");
             }
 #else
-            Debug.Log($"[Analytics] (Simulated) Tracked: level{levelNumber}_start");
+            Debug.Log($"[Analytics] (Simulated) Tracked: {eventName} ({data})");
 #endif
         }
 
-        /// <summary>
-        /// Track when a level is completed
-        /// </summary>
-        /// <param name="levelNumber">The level number that was completed (1-4)</param>
-        public void TrackLevelComplete(int levelNumber)
-        {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            try
-            {
-                switch (levelNumber)
-                {
-                    case 1:
-                        trackLevel1Complete();
-                        break;
-                    case 2:
-                        trackLevel2Complete();
-                        break;
-                    case 3:
-                        trackLevel3Complete();
-                        break;
-                    case 4:
-                        trackLevel4Complete();
-                        break;
-                    default:
-                        Debug.LogWarning($"[Analytics] Level {levelNumber} tracking not implemented");
-                        return;
-                }
-                Debug.Log($"[Analytics] Tracked: level{levelNumber}_complete");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning($"[Analytics] Failed to track level{levelNumber}_complete: {e.Message}");
-            }
-#else
-            Debug.Log($"[Analytics] (Simulated) Tracked: level{levelNumber}_complete");
-#endif
-        }
+        // ============================================================
+        // Public API — same signatures, now scales to any N
+        // ============================================================
 
-        /// <summary>
-        /// Track when a video starts playing
-        /// </summary>
-        /// <param name="videoNumber">The video number that is starting (1-4)</param>
-        public void TrackVideoStart(int videoNumber)
-        {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            try
-            {
-                switch (videoNumber)
-                {
-                    case 1:
-                        trackVideo1Start();
-                        break;
-                    case 2:
-                        trackVideo2Start();
-                        break;
-                    case 3:
-                        trackVideo3Start();
-                        break;
-                    case 4:
-                        trackVideo4Start();
-                        break;
-                    default:
-                        Debug.LogWarning($"[Analytics] Video {videoNumber} start tracking not implemented");
-                        return;
-                }
-                Debug.Log($"[Analytics] Tracked: video{videoNumber}_start");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning($"[Analytics] Failed to track video{videoNumber}_start: {e.Message}");
-            }
-#else
-            Debug.Log($"[Analytics] (Simulated) Tracked: video{videoNumber}_start");
-#endif
-        }
+        /// <summary>Track when the game starts.</summary>
+        public void TrackGameStart() => Track("trackGameStart");
 
-        /// <summary>
-        /// Track when a video completes (plays to the end)
-        /// </summary>
-        /// <param name="videoNumber">The video number that was completed (1-4)</param>
-        public void TrackVideoComplete(int videoNumber)
-        {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            try
-            {
-                switch (videoNumber)
-                {
-                    case 1:
-                        trackVideo1Complete();
-                        break;
-                    case 2:
-                        trackVideo2Complete();
-                        break;
-                    case 3:
-                        trackVideo3Complete();
-                        break;
-                    case 4:
-                        trackVideo4Complete();
-                        break;
-                    default:
-                        Debug.LogWarning($"[Analytics] Video {videoNumber} complete tracking not implemented");
-                        return;
-                }
-                Debug.Log($"[Analytics] Tracked: video{videoNumber}_complete");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning($"[Analytics] Failed to track video{videoNumber}_complete: {e.Message}");
-            }
-#else
-            Debug.Log($"[Analytics] (Simulated) Tracked: video{videoNumber}_complete");
-#endif
-        }
+        /// <summary>Track when a level starts. Works for any level number.</summary>
+        public void TrackLevelStart(int levelNumber) => Track($"trackLevel{levelNumber}Start");
 
-        /// <summary>
-        /// Track when a video is skipped by the player
-        /// </summary>
-        /// <param name="videoNumber">The video number that was skipped (1-4)</param>
-        public void TrackVideoSkip(int videoNumber)
-        {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            try
-            {
-                switch (videoNumber)
-                {
-                    case 1:
-                        trackVideo1Skip();
-                        break;
-                    case 2:
-                        trackVideo2Skip();
-                        break;
-                    case 3:
-                        trackVideo3Skip();
-                        break;
-                    case 4:
-                        trackVideo4Skip();
-                        break;
-                    default:
-                        Debug.LogWarning($"[Analytics] Video {videoNumber} skip tracking not implemented");
-                        return;
-                }
-                Debug.Log($"[Analytics] Tracked: video{videoNumber}_skip");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning($"[Analytics] Failed to track video{videoNumber}_skip: {e.Message}");
-            }
-#else
-            Debug.Log($"[Analytics] (Simulated) Tracked: video{videoNumber}_skip");
-#endif
-        }
+        /// <summary>Track when a level is completed. Works for any level number.</summary>
+        public void TrackLevelComplete(int levelNumber) => Track($"trackLevel{levelNumber}Complete");
 
-        /// <summary>
-        /// Track when the player dies
-        /// </summary>
-        /// <param name="cause">The cause of death (e.g., "enemy", "fall", "projectile")</param>
-        public void TrackPlayerDeath(string cause = "unknown")
-        {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            try
-            {
-                trackPlayerDeath(cause);
-                Debug.Log($"[Analytics] Tracked: player_death (cause: {cause})");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning($"[Analytics] Failed to track player_death: {e.Message}");
-            }
-#else
-            Debug.Log($"[Analytics] (Simulated) Tracked: player_death (cause: {cause})");
-#endif
-        }
+        /// <summary>Track when a video starts playing. Works for any video number.</summary>
+        public void TrackVideoStart(int videoNumber) => Track($"trackVideo{videoNumber}Start");
 
-        /// <summary>
-        /// Track when the game is over (all levels completed or player quits)
-        /// </summary>
-        public void TrackGameOver()
-        {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            try
-            {
-                trackGameOver();
-                Debug.Log("[Analytics] Tracked: game_over");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning($"[Analytics] Failed to track game_over: {e.Message}");
-            }
-#else
-            Debug.Log("[Analytics] (Simulated) Tracked: game_over");
-#endif
-        }
+        /// <summary>Track when a video completes. Works for any video number.</summary>
+        public void TrackVideoComplete(int videoNumber) => Track($"trackVideo{videoNumber}Complete");
+
+        /// <summary>Track when a video is skipped. Works for any video number.</summary>
+        public void TrackVideoSkip(int videoNumber) => Track($"trackVideo{videoNumber}Skip");
+
+        /// <summary>Track when the player dies with a cause string.</summary>
+        public void TrackPlayerDeath(string cause = "unknown") => Track("trackPlayerDeath", cause);
+
+        /// <summary>Track when the game is over.</summary>
+        public void TrackGameOver() => Track("trackGameOver");
     }
 }

@@ -8,9 +8,10 @@ namespace SickOfIt.Combat
     /// A collectable pickup that awards points when the player touches it.
     /// Spawned by enemies on death. Uses a trigger collider.
     /// Supports pool-based lifecycle: SetPool() on creation, ReturnToPool() on collection/despawn.
+    /// Implements IPoolReturnable so ObjectPool can wire the pool reference directly.
     /// </summary>
     [RequireComponent(typeof(Collider2D))]
-    public class PointsPickup : MonoBehaviour
+    public class PointsPickup : MonoBehaviour, SickOfIt.Core.IPoolReturnable
     {
         [Header("Pickup Settings")]
         [Tooltip("Points awarded when collected")]
@@ -28,6 +29,11 @@ namespace SickOfIt.Combat
 
         [Tooltip("Horizontal spread range when spawned")]
         [SerializeField] private float spreadRange = 0.5f;
+
+        [Header("Audio")]
+        [SerializeField] private AudioClip collectSound;
+        [SerializeField] private AudioClip spawnSound;
+        [SerializeField] private AudioSource audioSource;
 
         [Header("Visual")]
         [Tooltip("Optional: Bobbing amplitude once settled")]
@@ -58,6 +64,14 @@ namespace SickOfIt.Combat
             pool = p;
         }
 
+        /// <summary>
+        /// IPoolReturnable implementation — ObjectPool calls this on creation.
+        /// </summary>
+        public void SetOwnerPool(ObjectPool p)
+        {
+            pool = p;
+        }
+
         [SerializeField] private Collider2D col;
 
         private void Start()
@@ -83,6 +97,10 @@ namespace SickOfIt.Combat
             velocity = new Vector2(randomX, popForce);
             aliveTime = 0f;
             settled = false;
+
+            // Play spawn SFX
+            if (spawnSound != null && audioSource != null)
+                audioSource.PlayOneShot(spawnSound);
         }
 
         private void Update()
@@ -142,6 +160,10 @@ namespace SickOfIt.Combat
 
             // Award points
             RogueliteManager.Instance.AddPoints(pointsValue);
+
+            // Play collect SFX (PlayOneShot so it finishes even after return to pool)
+            if (collectSound != null && audioSource != null)
+                AudioSource.PlayClipAtPoint(collectSound, transform.position);
 
             ReturnOrDestroy();
         }

@@ -10,10 +10,14 @@ namespace SickOfIt.Data
         private GameDefinition gameDefinition;
         
         private static GameProgressManager _instance;
+        private static bool _applicationIsQuitting;
+
         public static GameProgressManager Instance
         {
             get
             {
+                if (_applicationIsQuitting)
+                    return null;
                 if (_instance == null)
                 {
                     GameObject go = new GameObject("GameProgressManager");
@@ -32,8 +36,14 @@ namespace SickOfIt.Data
                 return;
             }
             _instance = this;
+            _applicationIsQuitting = false;
             DontDestroyOnLoad(gameObject);
             gameDefinition = GameDefinition.Instance;
+        }
+
+        private void OnApplicationQuit()
+        {
+            _applicationIsQuitting = true;
         }
 
         // Level Management
