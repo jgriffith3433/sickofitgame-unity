@@ -94,7 +94,18 @@ namespace SickOfIt.Core.Addressables
         /// </summary>
         public void LoadLabelWithHandle<T>(string label, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete, out AsyncOperationHandle<IList<T>> immediateHandle) where T : UnityEngine.Object
         {
-            immediateHandle = AddressablesAPI.LoadAssetsAsync<T>(label, null);
+            try
+            {
+                immediateHandle = AddressablesAPI.LoadAssetsAsync<T>(label, null);
+            }
+            catch (InvalidKeyException)
+            {
+                Log($"No addressable locations for '{label}'. Skipping <{typeof(T).Name}> load.");
+                immediateHandle = default;
+                onComplete?.Invoke(default, null);
+                return;
+            }
+
             StartCoroutine(LoadLabelWithHandleTrackingAsync<T>(label, immediateHandle, onComplete));
         }
 
@@ -452,6 +463,8 @@ namespace SickOfIt.Core.Addressables
 
             bool success = loadHandle.IsValid() && loadHandle.Status == AsyncOperationStatus.Succeeded;
             if (success) Log($"Loaded typed label '{label}<{typeof(T).Name}>' ({loadHandle.Result.Count} assets) - returning handle");
+            else if (loadHandle.IsValid() && loadHandle.OperationException is InvalidKeyException)
+                Log($"No addressable locations for '{label}'. Nothing loaded.");
             else if (loadHandle.IsValid()) Debug.LogError($"Failed to load typed label '{label}<{typeof(T).Name}>': {loadHandle.OperationException}");
 
             inProgressTypedLabelLoads[key] = false;

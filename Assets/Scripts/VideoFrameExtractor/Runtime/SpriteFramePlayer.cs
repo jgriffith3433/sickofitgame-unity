@@ -148,6 +148,16 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             initialChunksToPreload = Mathf.Min(initialChunksToPreload, maxChunksInMemory);
 #endif
 
+            // A label with no packed sheets throws InvalidKeyException if we ask Addressables for it.
+            if (!data.HasBuiltFrames)
+            {
+                Debug.LogWarning($"[SpriteFramePlayer] '{data.videoName}' has no built sprite sheets. Skipping load.");
+                initialized = true;
+                isReady = true;
+                onReady?.Invoke();
+                return;
+            }
+
             // Start preloading
             int totalChunks = data.chunks.Count;
             targetPreload = Mathf.Min(initialChunksToPreload, totalChunks);

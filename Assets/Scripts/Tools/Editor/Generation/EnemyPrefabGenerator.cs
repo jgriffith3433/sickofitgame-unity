@@ -337,6 +337,9 @@ namespace SickOfIt.Tools.Editor.Generation
             // Save as prefab
             string prefabPath = $"{ENEMIES_PREFAB_ROOT}/{enemyName}.prefab";
             var prefab = GeneratorHelper.SavePrefab(go, prefabPath);
+            config.prefab = prefab;
+            if (GameDefinition.Instance != null)
+                EditorUtility.SetDirty(GameDefinition.Instance);
 
             Debug.Log($"[EnemyPrefabGen] Created: {prefabPath}");
 

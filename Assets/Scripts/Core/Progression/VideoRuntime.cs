@@ -142,7 +142,13 @@ namespace SickOfIt.Core.Progression
 
             // Setup SpriteFramePlayer if we have sprite frames data
             var framesData = config.spriteFramesData as SpriteFramesData;
-            if (framesData != null)
+            if (framesData != null && !framesData.HasBuiltFrames)
+            {
+                Debug.LogWarning($"[VideoRuntime] Video {videoNumber} has no built sprite sheets. Returning to the main menu.");
+                SceneTransitionManager.Instance.LoadMainMenu();
+                return;
+            }
+            else if (framesData != null)
             {
                 // Use serialized reference or create fallback
                 if (videoPlayerObject == null)

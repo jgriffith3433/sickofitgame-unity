@@ -59,6 +59,8 @@ namespace SickOfIt.Tools.Editor.Generation
             audioGo.transform.SetParent(content.transform);
             var audioSource = audioGo.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f;
+            audioSource.dopplerLevel = 0f;
 
             // Camera from prefab
             Camera sceneCamera = null;
@@ -82,6 +84,8 @@ namespace SickOfIt.Tools.Editor.Generation
                 cameraGo.AddComponent<AudioListener>();
                 sceneCamera = cam;
             }
+
+            EnsureEventSystem();
 
             // Place UI prefab (skip button) from GameDefinition
             GameObject ui = null;
@@ -117,6 +121,13 @@ namespace SickOfIt.Tools.Editor.Generation
             return true;
         }
         
+        private static void EnsureEventSystem()
+        {
+            var eventSystem = new GameObject("EventSystem");
+            eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            eventSystem.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+        }
+
         private static void WireCanvasCamera(GameObject uiRoot, Camera camera)
         {
             if (uiRoot == null || camera == null) return;

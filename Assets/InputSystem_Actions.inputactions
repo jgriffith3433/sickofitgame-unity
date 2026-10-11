@@ -579,6 +579,17 @@
                 },
                 {
                     "name": "",
+                    "id": "b8c9d0e1-f2a3-4b4c-8d5e-889900112233",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "d7e8f9a1-b2c3-4d4e-5f6a-777879808182",
                     "path": "<Gamepad>/buttonWest",
                     "interactions": "",

@@ -715,6 +715,15 @@ namespace SickOfIt.Core.Progression
         {
             if (config.nextVideoNumber > 0)
             {
+                var nextVideo = gameDefinition != null ? gameDefinition.GetVideo(config.nextVideoNumber) : null;
+                var frames = nextVideo != null ? nextVideo.spriteFramesData as SpriteFramesData : null;
+                if (frames != null && !frames.HasBuiltFrames)
+                {
+                    Debug.LogWarning($"[LevelRuntime] Video {config.nextVideoNumber} is not built yet. Returning to the main menu.");
+                    SceneTransitionManager.Instance.LoadMainMenu();
+                    return;
+                }
+
                 PlayerPrefs.SetInt("ReturnToLevel", levelNumber + 1);
                 PlayerPrefs.Save();
                 SceneTransitionManager.Instance.LoadVideo(config.nextVideoNumber);

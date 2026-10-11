@@ -39,12 +39,9 @@ namespace SickOfIt.Tools.Editor.Generation
         /// </summary>
         public static void Delete()
         {
-            string prefabPath = $"{OUTPUT_PATH}/{PREFAB_NAME}.prefab";
-            if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) != null)
-            {
-                AssetDatabase.DeleteAsset(prefabPath);
-                Debug.Log($"[PlayerPrefabGen] Deleted: {prefabPath}");
-            }
+            // Character.prefab is instanced by the hand-authored MainMenu scene.
+            // Deleting it assigns a new GUID and new component ids, which breaks that instance.
+            // Generate() overwrites the existing prefab in place instead.
         }
 
         /// <summary>
@@ -69,6 +66,11 @@ namespace SickOfIt.Tools.Editor.Generation
             ProjectGenerator.EnsureFolder(ANIM_PATH);
 
             string prefabPath = $"{OUTPUT_PATH}/{PREFAB_NAME}.prefab";
+            var animController = BuildPlayerAnimator(config, gd);
+            var shadowAnimCtrl = BuildShadowAnimator(config);
+
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) != null)
+                return UpdateExistingPrefab(gd, config, prefabPath, animController, shadowAnimCtrl);
 
             // ─── Create root GameObject ───────────────────────────────────
             var root = new GameObject(PREFAB_NAME);
@@ -99,48 +101,7 @@ namespace SickOfIt.Tools.Editor.Generation
             sr.sortingLayerName = "Default";
             sr.sortingOrder = 5;
 
-            // ─── Auto-populate animation config if missing ────────────────
-            if (config.animationConfig == null || config.animationConfig.states.Count == 0)
-            {
-                config.animationConfig = AnimationConfigPopulator.CreatePlayerAnimConfig(config);
-                if (config.animationConfig != null)
-                {
-                    EditorUtility.SetDirty(gd);
-                    Debug.Log("[PlayerPrefabGen] Auto-populated player animation config");
-                }
-            }
-
-            // ─── Animation generation via AnimationGenerator ──────────────
             Animator animator = null;
-            RuntimeAnimatorController animController = null;
-
-            // Clean old animation assets
-            AnimationGenerator.DeleteFolder(ANIM_PATH);
-            ProjectGenerator.EnsureFolder(ANIM_PATH);
-
-            if (config.animationConfig != null && config.animationConfig.states.Count > 0)
-            {
-                // Full multi-state animation from config
-                var animResult = AnimationGenerator.Generate(
-                    config.animationConfig,
-                    "Player",
-                    ANIM_PATH,
-                    config.spriteSheet,
-                    config.animationFps);
-
-                if (animResult != null)
-                    animController = animResult.controller;
-            }
-            else if (config.spriteSheet != null)
-            {
-                // Simple idle fallback
-                var animResult = AnimationGenerator.GenerateSimpleIdle(
-                    "Player", ANIM_PATH, config.spriteSheet, config.animationFps);
-
-                if (animResult != null)
-                    animController = animResult.controller;
-            }
-
             if (animController != null)
             {
                 animator = graphics.AddComponent<Animator>();
@@ -161,23 +122,9 @@ namespace SickOfIt.Tools.Editor.Generation
             shadowSr.sortingOrder = 0;
             shadowSr.color = config.shadowColor;
 
-            // Shadow animator (generated from sprite sheet if available)
-            Animator shadowAnimator = null;
-            RuntimeAnimatorController shadowAnimCtrl = null;
-
-            if (config.shadowSpriteSheet != null)
-            {
-                string shadowAnimFolder = "Assets/Animations/Shadow";
-                AnimationGenerator.DeleteFolder(shadowAnimFolder);
-                var shadowAnimResult = AnimationGenerator.GenerateSimpleIdle(
-                    "Shadow", shadowAnimFolder, config.shadowSpriteSheet, config.shadowAnimationFps);
-                if (shadowAnimResult != null)
-                    shadowAnimCtrl = shadowAnimResult.controller;
-            }
-
             if (shadowAnimCtrl != null)
             {
-                shadowAnimator = shadow.AddComponent<Animator>();
+                var shadowAnimator = shadow.AddComponent<Animator>();
                 shadowAnimator.runtimeAnimatorController = shadowAnimCtrl;
             }
 
@@ -298,6 +245,191 @@ namespace SickOfIt.Tools.Editor.Generation
             Debug.Log($"[PlayerPrefabGen] Created: {prefabPath}");
 
             return prefab;
+        }
+
+        private static RuntimeAnimatorController BuildPlayerAnimator(PlayerConfig config, GameDefinition gd)
+        {
+            if (config.animationConfig == null || config.animationConfig.states.Count == 0)
+            {
+                config.animationConfig = AnimationConfigPopulator.CreatePlayerAnimConfig(config);
+                if (config.animationConfig != null)
+                {
+                    EditorUtility.SetDirty(gd);
+                    Debug.Log("[PlayerPrefabGen] Auto-populated player animation config");
+                }
+            }
+
+            AnimationGenerator.DeleteFolder(ANIM_PATH);
+            ProjectGenerator.EnsureFolder(ANIM_PATH);
+
+            if (config.animationConfig != null && config.animationConfig.states.Count > 0)
+            {
+                var animResult = AnimationGenerator.Generate(
+                    config.animationConfig,
+                    "Player",
+                    ANIM_PATH,
+                    config.spriteSheet,
+                    config.animationFps);
+                return animResult != null ? animResult.controller : null;
+            }
+
+            if (config.spriteSheet != null)
+            {
+                var animResult = AnimationGenerator.GenerateSimpleIdle(
+                    "Player", ANIM_PATH, config.spriteSheet, config.animationFps);
+                return animResult != null ? animResult.controller : null;
+            }
+
+            return null;
+        }
+
+        private static RuntimeAnimatorController BuildShadowAnimator(PlayerConfig config)
+        {
+            if (config.shadowSpriteSheet == null)
+                return null;
+
+            string shadowAnimFolder = "Assets/Animations/Shadow";
+            AnimationGenerator.DeleteFolder(shadowAnimFolder);
+            var shadowAnimResult = AnimationGenerator.GenerateSimpleIdle(
+                "Shadow", shadowAnimFolder, config.shadowSpriteSheet, config.shadowAnimationFps);
+            return shadowAnimResult != null ? shadowAnimResult.controller : null;
+        }
+
+        /// <summary>
+        /// Refresh config-driven fields on the existing Character prefab without
+        /// replacing it. MainMenu keeps a valid prefab instance.
+        /// </summary>
+        private static GameObject UpdateExistingPrefab(
+            GameDefinition gd,
+            PlayerConfig config,
+            string prefabPath,
+            RuntimeAnimatorController animController,
+            RuntimeAnimatorController shadowAnimCtrl)
+        {
+            var root = PrefabUtility.LoadPrefabContents(prefabPath);
+            var playerController = root.GetComponent<PlayerController>();
+            var rb = root.GetComponent<Rigidbody2D>();
+            var collider = root.GetComponent<CircleCollider2D>();
+            var graphics = root.transform.Find("Graphics");
+            var shadow = root.transform.Find("Shadow");
+
+            if (playerController == null || rb == null || collider == null || graphics == null)
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+                Debug.LogWarning("[PlayerPrefabGen] Existing Character prefab is missing components. Rebuilding it.");
+                AssetDatabase.DeleteAsset(prefabPath);
+                return Generate(gd);
+            }
+
+            rb.gravityScale = config.gravityScale;
+            collider.radius = config.colliderRadius > 0 ? config.colliderRadius : 0.3f;
+
+            float spriteScale = config.spriteScale > 0 ? config.spriteScale : 0.15f;
+            graphics.localScale = Vector3.one * spriteScale;
+
+            var animator = graphics.GetComponent<Animator>();
+            if (animController != null)
+            {
+                if (animator == null)
+                    animator = graphics.gameObject.AddComponent<Animator>();
+                animator.runtimeAnimatorController = animController;
+            }
+
+            if (shadow != null)
+            {
+                shadow.localPosition = config.shadowOffset;
+                var shadowAnimator = shadow.GetComponent<Animator>();
+                if (shadowAnimCtrl != null)
+                {
+                    if (shadowAnimator == null)
+                        shadowAnimator = shadow.gameObject.AddComponent<Animator>();
+                    shadowAnimator.runtimeAnimatorController = shadowAnimCtrl;
+                }
+            }
+
+            var audioSource = root.GetComponent<AudioSource>();
+            var spawnPoint = root.transform.Find("ProjectileSpawnPoint");
+
+            var pcSo = new SerializedObject(playerController);
+            pcSo.FindProperty("rb").objectReferenceValue = rb;
+            pcSo.FindProperty("col").objectReferenceValue = collider;
+            pcSo.FindProperty("graphicsTransform").objectReferenceValue = graphics;
+            if (animator != null)
+                pcSo.FindProperty("animator").objectReferenceValue = animator;
+            if (shadow != null)
+                pcSo.FindProperty("shadowSprite").objectReferenceValue = shadow;
+            ApplyControllerConfig(pcSo, config, audioSource, spawnPoint);
+            pcSo.ApplyModifiedPropertiesWithoutUndo();
+
+            var playerHealth = root.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                var phSo = new SerializedObject(playerHealth);
+                phSo.FindProperty("controller").objectReferenceValue = playerController;
+                phSo.FindProperty("hasInvincibilityFrames").boolValue = config.hasInvincibilityFrames;
+                phSo.FindProperty("invincibilityDuration").floatValue = config.invincibilityDuration;
+                phSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            var prefab = PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+            PrefabUtility.UnloadPrefabContents(root);
+
+            gd.player.playerPrefab = prefab;
+            EditorUtility.SetDirty(gd);
+            Debug.Log($"[PlayerPrefabGen] Updated existing prefab: {prefabPath}");
+            return prefab;
+        }
+
+        private static void ApplyControllerConfig(SerializedObject pcSo, PlayerConfig config, AudioSource audioSource, Transform spawnPoint)
+        {
+            pcSo.FindProperty("moveSpeed").floatValue = config.moveSpeed;
+            pcSo.FindProperty("jumpForce").floatValue = config.jumpForce;
+            pcSo.FindProperty("gravityScale").floatValue = config.gravityScale;
+            pcSo.FindProperty("groundCheckDistance").floatValue = config.groundCheckDistance;
+            pcSo.FindProperty("groundCheckWidth").floatValue = config.groundCheckWidth;
+            pcSo.FindProperty("use2DFlip").boolValue = config.use2DFlip;
+            pcSo.FindProperty("normalRotationSpeed").floatValue = config.normalRotationSpeed;
+            pcSo.FindProperty("firingRotationSpeed").floatValue = config.firingRotationSpeed;
+            pcSo.FindProperty("dropThroughForce").floatValue = config.dropThroughForce;
+            pcSo.FindProperty("dropThroughThreshold").floatValue = config.dropThroughThreshold;
+            pcSo.FindProperty("shadowMaxHeight").floatValue = config.shadowMaxHeight;
+            pcSo.FindProperty("shadowMinScale").floatValue = config.shadowMinScale;
+            pcSo.FindProperty("shadowRaycastDistance").floatValue = config.shadowRaycastDistance;
+            pcSo.FindProperty("jumpDetectVelocityThreshold").floatValue = config.jumpDetectVelocityThreshold;
+            pcSo.FindProperty("inputDeadzone").floatValue = config.inputDeadzone;
+            pcSo.FindProperty("mobileDropThreshold").floatValue = config.mobileDropThreshold;
+            pcSo.FindProperty("maxAirJumps").intValue = config.maxExtraJumps;
+            pcSo.FindProperty("enableShooting").boolValue = config.enableShooting;
+            pcSo.FindProperty("fireRate").floatValue = config.fireRate;
+            pcSo.FindProperty("projectileSpeed").floatValue = config.projectileSpeed;
+            pcSo.FindProperty("projectileLifetime").floatValue = config.projectileLifetime;
+            pcSo.FindProperty("pitchVariation").floatValue = config.pitchVariation;
+
+            if (audioSource != null)
+                pcSo.FindProperty("audioSource").objectReferenceValue = audioSource;
+            if (spawnPoint != null)
+                pcSo.FindProperty("projectileSpawnPoint").objectReferenceValue = spawnPoint;
+
+            WireSFXArray(pcSo, "hurtSounds", config.hurtSounds);
+            WireSFXArray(pcSo, "deathSounds", config.deathSounds);
+            if (config.jumpSound != null)
+                pcSo.FindProperty("jumpSound").objectReferenceValue = config.jumpSound;
+            if (config.fireSound != null)
+                pcSo.FindProperty("fireSound").objectReferenceValue = config.fireSound;
+            if (config.landSound != null)
+                pcSo.FindProperty("landSound").objectReferenceValue = config.landSound;
+
+            pcSo.FindProperty("groundLayer").intValue = LayerMask.GetMask("Platform", "Boundary");
+            pcSo.FindProperty("platformLayer").intValue = LayerMask.GetMask("Platform");
+
+            var inputAsset = AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/InputSystem_Actions.inputactions");
+            if (inputAsset != null)
+            {
+                WireInputAction(pcSo, "moveAction", inputAsset, "Character", "Move");
+                WireInputAction(pcSo, "jumpAction", inputAsset, "Character", "Jump");
+                WireInputAction(pcSo, "fireAction", inputAsset, "Character", "Fire");
+                WireInputAction(pcSo, "lookAction", inputAsset, "Character", "Look");
+            }
         }
 
         /// <summary>

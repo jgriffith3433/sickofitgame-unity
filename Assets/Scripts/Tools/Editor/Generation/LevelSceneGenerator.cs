@@ -118,6 +118,8 @@ namespace SickOfIt.Tools.Editor.Generation
             var audioSource = musicGo.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
             audioSource.loop = true;
+            audioSource.spatialBlend = 0f;
+            audioSource.dopplerLevel = 0f;
 
             // Rewindable audio — restores music playback position after rewind
             var rewindableAudio = musicGo.AddComponent<SickOfIt.Core.RewindableAudioSource>();
@@ -208,10 +210,9 @@ namespace SickOfIt.Tools.Editor.Generation
                         fireAnalog = analog;
                 }
 
-                // Take the first enabled Button component as the rewind button
                 foreach (var btn in mobileController.GetComponentsInChildren<MobileControllerFramework.Button>(true))
                 {
-                    if (btn.enabled)
+                    if (btn.gameObject.name.ToLowerInvariant().Contains("rewind"))
                     {
                         rewindBtn = btn;
                         break;

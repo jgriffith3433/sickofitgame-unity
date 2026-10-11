@@ -119,6 +119,12 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         }
 
         /// <summary>
+        /// True when sprite sheets have actually been packed for this sequence.
+        /// A chunk label with zero sheets (Video4) has nothing to load.
+        /// </summary>
+        public bool HasBuiltFrames => totalSpriteSheets > 0 && chunks != null && chunks.Count > 0;
+
+        /// <summary>
         /// Set total frame count (called by editor when packing sprite sheets)
         /// </summary>
         public void SetTotalFrameCount(int count)
