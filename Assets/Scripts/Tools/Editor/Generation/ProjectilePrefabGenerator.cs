@@ -107,7 +107,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 sprite = null,  // Will use fallback
                 scale = 1f,
                 color = color,
-                colliderRadius = 0.1f,
+                colliderRadius = 1f,
                 isTrigger = true,
                 damage = damage,
                 speed = speed,
@@ -171,7 +171,7 @@ namespace SickOfIt.Tools.Editor.Generation
 
             // CircleCollider2D
             var collider = go.AddComponent<CircleCollider2D>();
-            collider.radius = config.colliderRadius > 0 ? config.colliderRadius : 0.1f;
+            collider.radius = config.colliderRadius > 0 ? config.colliderRadius : 1f;
             collider.isTrigger = true; // Always trigger for projectiles
 
             // ProjectileLifetime (pre-attached so ObjectPool doesn't need AddComponent)

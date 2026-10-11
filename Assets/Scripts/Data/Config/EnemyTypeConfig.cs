@@ -56,7 +56,7 @@ namespace SickOfIt.Data.Config
 
         [Header("Physics (for generator)")]
         [Tooltip("Collider radius for the generated prefab")]
-        public float colliderRadius = 0.4f;
+        public float colliderRadius = 1f;
         [Tooltip("Rigidbody gravity scale (0 for floating enemies)")]
         public float gravityScale = 0f;
         [Tooltip("Rigidbody constraints")]

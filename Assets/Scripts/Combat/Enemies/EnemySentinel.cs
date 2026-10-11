@@ -160,7 +160,19 @@ namespace SickOfIt.Combat.Enemies
                 return;
             }
 
-            Vector2 direction = facingLeft ? Vector2.left : Vector2.right;
+            Vector2 direction;
+            if (player == null)
+            {
+                direction = facingLeft ? Vector2.left : Vector2.right;
+            }
+            else
+            {
+                direction = PlayerAimPoint() - (Vector2)spawnPoint.position;
+                if (direction.sqrMagnitude < 0.0001f)
+                    direction = facingLeft ? Vector2.left : Vector2.right;
+                else
+                    direction.Normalize();
+            }
             GameObject laser = laserPool.Get(spawnPoint.position, Quaternion.identity);
 
             // Use cached components — no per-fire GetComponent

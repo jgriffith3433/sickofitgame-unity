@@ -186,7 +186,7 @@ namespace SickOfIt.Tools.Editor.Generation
             rb.constraints = config.constraints;
 
             var collider = go.AddComponent<CircleCollider2D>();
-            collider.radius = config.colliderRadius > 0 ? config.colliderRadius : 0.4f;
+            collider.radius = config.colliderRadius > 0 ? config.colliderRadius : 1f;
 
             // Audio
             var audioSource = go.AddComponent<AudioSource>();

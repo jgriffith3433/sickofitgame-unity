@@ -80,31 +80,17 @@ namespace SickOfIt.Combat.Enemies
 
         protected override void UpdateBehavior()
         {
-            if (shootInFixedDirection)
+            if (player == null)
             {
-                if (flipToFacePlayer)
-                {
-                    // Flip sprite to match the fixed shoot direction
+                if (shootInFixedDirection && flipToFacePlayer && spriteRenderer != null)
                     spriteRenderer.flipX = fixedShootDirection.x < 0f;
-                }
-                // Even when shooting in a fixed direction, attacker should periodically enter Attack state
                 TryTriggerAttack();
                 return;
             }
 
-            if (player == null)
-                return;
+            if (flipToFacePlayer && spriteRenderer != null)
+                spriteRenderer.flipX = player.position.x < transform.position.x;
 
-            if (flipToFacePlayer)
-            {
-                // Flip sprite to face player
-                if (player.position.x < transform.position.x)
-                    spriteRenderer.flipX = true;
-                else
-                    spriteRenderer.flipX = false;
-            }
-
-            // If player is present, periodically trigger attack animation
             TryTriggerAttack();
         }
 
@@ -137,27 +123,20 @@ namespace SickOfIt.Combat.Enemies
             if (projectilePool == null || firePoint == null)
                 return;
 
-            // Calculate shoot direction
-            Vector2 direction;
-            if (shootInFixedDirection)
+            // Leave from the body, not the cell pivot. The pivot sits under the drawn character.
+            Vector2 origin = firePoint.position;
+            if (spriteRenderer != null)
             {
-                direction = fixedShootDirection.normalized;
-                if (direction == Vector2.zero)
-                    direction = Vector2.right;
+                Bounds body = spriteRenderer.bounds;
+                origin.y = body.center.y + body.extents.y * 0.25f;
             }
-            else
-            {
-                if (player == null)
-                    return;
 
-                // Calculate direction to player (ignoring Z for 2D)
-                Vector2 playerPos2D = new Vector2(player.position.x, player.position.y);
-                Vector2 firePointPos2D = new Vector2(firePoint.position.x, firePoint.position.y);
-                direction = (playerPos2D - firePointPos2D).normalized;
-            }
+            Vector2 direction = ShotDirection(origin);
+            if (direction.sqrMagnitude < 0.0001f)
+                return;
 
             // Get projectile from pool
-            GameObject projectile = projectilePool.Get(firePoint.position, Quaternion.identity);
+            GameObject projectile = projectilePool.Get(origin, Quaternion.identity);
 
             // Set projectile velocity (cached — no per-fire GetComponent)
             Rigidbody2D projectileRb = projectilePool.GetCachedRb(projectile);
@@ -180,10 +159,24 @@ namespace SickOfIt.Combat.Enemies
                 lifetime.SetLifetime(projectileLifetime);
         }
 
+        private Vector2 ShotDirection(Vector2 origin)
+        {
+            if (player != null)
+            {
+                Vector2 toPlayer = PlayerAimPoint() - origin;
+                if (toPlayer.sqrMagnitude > 0.0001f)
+                    return toPlayer.normalized;
+            }
+
+            if (shootInFixedDirection && fixedShootDirection.sqrMagnitude > 0.0001f)
+                return fixedShootDirection.normalized;
+
+            return Vector2.right;
+        }
+
         /// <summary>
         /// Public method to be called by animation events (via AnimationEventRelayShooter)
         /// </summary>
-        /// <param name="spawnPoint">Optional spawn location. If null, uses the default firePoint.</param>
         public void FireProjectile()
         {
             if (projectilePool != null)

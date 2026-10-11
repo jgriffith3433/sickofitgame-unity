@@ -30,7 +30,7 @@ namespace SickOfIt.Data.Config
 
         [Header("Physics")]
         [Tooltip("Collider radius")]
-        public float colliderRadius = 0.1f;
+        public float colliderRadius = 1f;
         [Tooltip("Is the collider a trigger?")]
         public bool isTrigger = true;
 

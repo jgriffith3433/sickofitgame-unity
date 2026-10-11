@@ -726,8 +726,12 @@ namespace SickOfIt.Core.Input
             if (!enableShooting) return;
             if (fireDirection.magnitude < inputDeadzone) return;
             
-            // Use GameClock time for fire rate to survive rewind properly
+            // Use GameClock time for fire rate to survive rewind properly.
+            // Rewinding to the start leaves lastFireTime ahead of the clock, which
+            // would block firing until time catches up to the pre-rewind shot.
             float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+            if (currentTime < lastFireTime)
+                lastFireTime = currentTime - fireRate;
             if (currentTime - lastFireTime < fireRate) return;
             if (projectilePool == null) return;
             

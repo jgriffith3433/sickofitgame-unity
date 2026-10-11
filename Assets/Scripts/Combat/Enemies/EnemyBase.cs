@@ -133,6 +133,39 @@ namespace SickOfIt.Combat.Enemies
                 UpdateBehavior();
         }
 
+        /// <summary>
+        /// Where shots should go. The character sprite is centered in its cell,
+        /// and the drawn body sits above that pivot, so aiming at transform.position
+        /// sends projectiles under the player.
+        /// </summary>
+        protected Vector2 PlayerAimPoint()
+        {
+            if (player == null)
+                return Vector2.zero;
+
+            SpriteRenderer body = null;
+            var renderers = player.GetComponentsInChildren<SpriteRenderer>();
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (renderers[i].gameObject.name == "Shadow")
+                    continue;
+                body = renderers[i];
+                break;
+            }
+
+            if (body != null)
+            {
+                Bounds b = body.bounds;
+                return new Vector2(b.center.x, b.center.y + b.extents.y * 0.35f);
+            }
+
+            var col = player.GetComponent<Collider2D>();
+            if (col != null)
+                return (Vector2)col.bounds.center + Vector2.up * (col.bounds.extents.y * 0.35f);
+
+            return player.position;
+        }
+
         protected abstract void UpdateBehavior();
 
         protected virtual void OnCollisionEnter2D(Collision2D collision)

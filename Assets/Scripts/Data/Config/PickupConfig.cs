@@ -16,7 +16,7 @@ namespace SickOfIt.Data.Config
 
         [Header("Visuals")]
         public Sprite sprite;
-        public float spriteScale = 0.25f;
+        public float spriteScale = 0.125f;
         public int sortingOrder = 5;
 
         [Header("Physics")]
@@ -25,7 +25,7 @@ namespace SickOfIt.Data.Config
         public float gravity = 5f;
         public float spreadRange = 0.5f;
         [Tooltip("Time in seconds before the pickup is returned to pool")]
-        public float lifetime = 1f;
+        public float lifetime = 10f;
 
         [Header("Bob Animation")]
         public float bobAmplitude = 0.1f;

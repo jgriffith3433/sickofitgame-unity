@@ -42,7 +42,7 @@ namespace SickOfIt.Data
 
         [Header("Camera Defaults")]
         [Tooltip("Orthographic size for level camera")]
-        public float levelCameraOrthoSize = 3.6f;
+        public float levelCameraOrthoSize = 2.8f;
         [Tooltip("Orthographic size for video/death cameras")]
         public float cinematicCameraOrthoSize = 2.8f;
         public Color cinematicCameraBackground = Color.black;
