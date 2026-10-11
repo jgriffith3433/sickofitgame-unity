@@ -23,7 +23,7 @@ namespace SickOfIt.Core.Input
         [SerializeField] private float moveSpeed = 2f;
         
         [Header("Jump Settings")]
-        [SerializeField] private float jumpForce = 15f;
+        [SerializeField] private float jumpForce = 9f;
         [Tooltip("Base air jumps (before roguelite upgrades). Set to 0 for roguelite mode where jumps are purchased.")]
         [SerializeField] private int maxAirJumps = 0;
         [Tooltip("If true, maxAirJumps will be overridden by roguelite upgrade purchases.")]
@@ -444,8 +444,12 @@ namespace SickOfIt.Core.Input
                 }
             }
             
-            if (fireAction?.action != null && fireAction.action.IsPressed()
-                && (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject()))
+            // Attack is bound to F. Left click is the expected fire button, so poll it
+            // directly as well as the action (the prefab still references Attack).
+            bool pointerOverUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+            bool actionFire = fireAction?.action != null && fireAction.action.IsPressed();
+            bool mouseFire = Mouse.current != null && Mouse.current.leftButton.isPressed;
+            if ((actionFire || mouseFire) && !pointerOverUi)
             {
                 isFiring = true;
                 fireDirection = GetMouseDirectionFromPlayer();

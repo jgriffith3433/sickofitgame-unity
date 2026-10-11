@@ -42,6 +42,10 @@ namespace SickOfIt.Core.Progression
         [Header("Pickup Pool (wired by generator)")]
         [SerializeField] private ObjectPool pickupPool;
 
+        [Header("Win Zone")]
+        [SerializeField] private Vector2 winZoneCenter = new Vector2(6.5f, 0f);
+        [SerializeField] private Vector2 winZoneHalfSize = new Vector2(0.5f, 4f);
+
         // Runtime state
         private LevelConfig config;
         private GameDefinition gameDefinition;
@@ -96,7 +100,10 @@ namespace SickOfIt.Core.Progression
             }
 
             // Apply per-level config
-            // Count total enemies for win condition
+            winZoneCenter = config.winZoneCenter;
+            winZoneHalfSize = config.winZoneHalfSize;
+
+            // Count total enemies for the kill-all win condition
             totalEnemiesToSpawn = config.enemies != null ? config.enemies.Count : 0;
             enemiesSpawned = 0;
             enemiesKilled = 0;
@@ -147,7 +154,7 @@ namespace SickOfIt.Core.Progression
 
         private void Update()
         {
-            // Win condition checked via OnEnemyDied callback
+            CheckWinZone();
         }
 
         #endregion
@@ -245,16 +252,81 @@ namespace SickOfIt.Core.Progression
                 musicSource = audioGo.AddComponent<AudioSource>();
             }
 
+            // SceneContentController hides Content in Awake and shows it later.
+            // Play() on a source whose parent is inactive is ignored, so wait.
+            musicSource.playOnAwake = false;
+            musicSource.spatialBlend = 0f;
+            musicSource.dopplerLevel = 0f;
             musicSource.clip = config.music;
             musicSource.volume = config.musicVolume;
-            musicSource.time = config.musicStartTime;
             musicSource.loop = true;
+            StartCoroutine(PlayMusicWhenAudible());
+        }
+
+        private IEnumerator PlayMusicWhenAudible()
+        {
+            var clip = musicSource != null ? musicSource.clip : null;
+            if (clip != null && clip.loadState != AudioDataLoadState.Loaded)
+                clip.LoadAudioData();
+
+            float waited = 0f;
+            while (musicSource != null && !musicSource.gameObject.activeInHierarchy && waited < 10f)
+            {
+                waited += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (musicSource == null || !musicSource.gameObject.activeInHierarchy)
+            {
+                Debug.LogWarning("[LevelRuntime] Music source never became active, so playback was skipped.");
+                yield break;
+            }
+
+            EnsureAudioListener();
+            musicSource.enabled = true;
+
+            float loadWait = 0f;
+            while (clip != null && clip.loadState == AudioDataLoadState.Loading && loadWait < 5f)
+            {
+                loadWait += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
             musicSource.Play();
+            if (config.musicStartTime > 0f && musicSource.isPlaying)
+                musicSource.time = config.musicStartTime;
+
+            Debug.Log($"[LevelRuntime] Music '{(clip != null ? clip.name : "none")}' playing={musicSource.isPlaying}");
+        }
+
+        private static void EnsureAudioListener()
+        {
+            var listeners = Object.FindObjectsByType<AudioListener>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            for (int i = 0; i < listeners.Length; i++)
+            {
+                if (listeners[i] != null && listeners[i].enabled && listeners[i].gameObject.activeInHierarchy)
+                    return;
+            }
+
+            var cam = Camera.main;
+            if (cam != null)
+            {
+                var listener = cam.GetComponent<AudioListener>();
+                if (listener == null)
+                    cam.gameObject.AddComponent<AudioListener>();
+                else
+                    listener.enabled = true;
+                return;
+            }
+
+            var go = new GameObject("AudioListener");
+            go.AddComponent<AudioListener>();
         }
 
         private void SetupBackgrounds()
         {
-            if (config.backgroundLayers == null || config.backgroundLayers.Count == 0)
+            var layers = ResolveBackgroundLayers();
+            if (layers.Count == 0)
                 return;
 
             // Create container if generator didn't wire one
@@ -268,9 +340,9 @@ namespace SickOfIt.Core.Progression
 
             var cam = Camera.main;
 
-            for (int i = 0; i < config.backgroundLayers.Count; i++)
+            for (int i = 0; i < layers.Count; i++)
             {
-                var layer = config.backgroundLayers[i];
+                var layer = layers[i];
                 if (!layer.HasContent) continue;
 
                 var layerGo = new GameObject(string.IsNullOrEmpty(layer.name) ? $"BG_{i}" : layer.name);
@@ -302,7 +374,9 @@ namespace SickOfIt.Core.Progression
                         }
 
                         var player = layerGo.AddComponent<SpriteFramePlayer>();
-                        player.Initialize(framesData);
+                        player.UseGameClock(true);
+                        player.Initialize(framesData, () => player.Play());
+                        player.SetLoop(true);
                     }
                     else
                     {
@@ -329,7 +403,38 @@ namespace SickOfIt.Core.Progression
                 }
             }
 
-            Debug.Log($"[LevelRuntime] Setup {config.backgroundLayers.Count} background layers");
+            Debug.Log($"[LevelRuntime] Setup {layers.Count} background layers");
+        }
+
+        /// <summary>
+        /// backgroundLayers is the newer list. Existing levels still store their
+        /// videos on the legacy backgrounds list, which was being ignored.
+        /// </summary>
+        private List<BackgroundLayerConfig> ResolveBackgroundLayers()
+        {
+            if (config.backgroundLayers != null && config.backgroundLayers.Count > 0)
+                return config.backgroundLayers;
+
+            var layers = new List<BackgroundLayerConfig>();
+            if (config.backgrounds == null)
+                return layers;
+
+            for (int i = 0; i < config.backgrounds.Count; i++)
+            {
+                var frames = config.backgrounds[i] as SpriteFramesData;
+                if (frames == null)
+                    continue;
+
+                layers.Add(new BackgroundLayerConfig
+                {
+                    name = string.IsNullOrEmpty(frames.videoName) ? $"BG_{i}" : frames.videoName,
+                    spriteFramesData = frames,
+                    sortingOrder = -100 + i,
+                    scale = Vector2.one
+                });
+            }
+
+            return layers;
         }
 
         private void StartExperience()
@@ -560,6 +665,18 @@ namespace SickOfIt.Core.Progression
         #endregion
 
         #region Level Completion
+
+        private void CheckWinZone()
+        {
+            if (levelCompleted || characterObject == null) return;
+
+            Vector2 playerPos = characterObject.transform.position;
+            if (Mathf.Abs(playerPos.x - winZoneCenter.x) <= winZoneHalfSize.x &&
+                Mathf.Abs(playerPos.y - winZoneCenter.y) <= winZoneHalfSize.y)
+            {
+                CompleteLevel();
+            }
+        }
 
         private void OnEnemyDied()
         {

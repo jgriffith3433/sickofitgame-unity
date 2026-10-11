@@ -32,7 +32,7 @@ namespace SickOfIt.Data.Config
 
         [Header("Movement")]
         public float moveSpeed = 2f;
-        public float jumpForce = 15f;
+        public float jumpForce = 9f;
         public float gravityScale = 1.8f;
         public float groundCheckDistance = 0.2f;
         public float groundCheckWidth = 0.1f;

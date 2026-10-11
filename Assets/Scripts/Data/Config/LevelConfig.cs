@@ -61,6 +61,12 @@ namespace SickOfIt.Data.Config
         [Tooltip("Where the player spawns in this level")]
         public Vector2 playerSpawnPosition = new Vector2(-4f, 0f);
 
+        [Header("Win Zone")]
+        [Tooltip("Center of the win zone in world space")]
+        public Vector2 winZoneCenter = new Vector2(6.5f, 0f);
+        [Tooltip("Half-size of the win zone (box check)")]
+        public Vector2 winZoneHalfSize = new Vector2(0.5f, 4f);
+
         [Header("Flow")]
         public string deathConfigName = "Death1";
         public float duration = 60f;

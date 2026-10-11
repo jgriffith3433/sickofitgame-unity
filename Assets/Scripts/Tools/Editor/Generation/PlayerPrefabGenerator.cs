@@ -263,7 +263,7 @@ namespace SickOfIt.Tools.Editor.Generation
             {
                 WireInputAction(pcSo, "moveAction", inputAsset, "Character", "Move");
                 WireInputAction(pcSo, "jumpAction", inputAsset, "Character", "Jump");
-                WireInputAction(pcSo, "fireAction", inputAsset, "Character", "Attack");
+                WireInputAction(pcSo, "fireAction", inputAsset, "Character", "Fire");
                 WireInputAction(pcSo, "lookAction", inputAsset, "Character", "Look");
             }
             

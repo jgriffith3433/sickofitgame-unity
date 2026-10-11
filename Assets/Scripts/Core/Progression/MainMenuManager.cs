@@ -6,6 +6,7 @@ using TMPro;
 using MobileControllerFramework;
 using SickOfIt.Core.Flow;
 using SickOfIt.Data;
+using SickOfIt.VideoFrameExtractor.Runtime;
 
 namespace SickOfIt.Core.Progression
 {
@@ -50,12 +51,21 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Delay before executing scene load after transition starts")]
         [SerializeField] private float transitionDelay = 1f;
 
+        [Header("Explode Transition")]
+        [Tooltip("House-explosion video. Played to the end before the next scene loads.")]
+        [SerializeField] private GameObject explodeRoot;
+        [SerializeField] private SpriteFramesData explodeFrames;
+        [SerializeField] private AudioClip explodeAudio;
+
         private bool isTransitioning = false;
 
         private void Start()
         {
             SickOfIt.Core.AnalyticsManager.Instance.TrackGameStart();
             GameProgressManager.Instance.InitializeNewPlayer();
+
+            if (explodeRoot != null)
+                explodeRoot.SetActive(false);
 
             SetupButtons();
             UpdateContinueButton();
@@ -144,42 +154,93 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>
-        /// Play transition (hide idle objects, show transition objects, wait) then execute action.
+        /// Play the house explosion through to the end, then execute the scene load.
         /// </summary>
         private IEnumerator TransitionThenExecute(Action onComplete)
         {
-            // Hide idle objects
             if (idleObjects != null)
             {
                 foreach (var obj in idleObjects)
                     if (obj != null) obj.SetActive(false);
             }
 
-            // Show transition objects
             if (transitionObjects != null)
             {
                 foreach (var obj in transitionObjects)
                     if (obj != null) obj.SetActive(true);
             }
 
-            // Start delayed hide
-            StartCoroutine(DelayedHideObjects(hideDelay));
+            if (objectsToHideOnStart != null)
+            {
+                foreach (var obj in objectsToHideOnStart)
+                    if (obj != null) obj.SetActive(false);
+            }
 
-            // Wait for transition
-            if (transitionDelay > 0)
+            if (explodeRoot != null)
+                explodeRoot.SetActive(true);
+
+            SpriteFramePlayer player = null;
+            if (explodeRoot != null && explodeFrames != null)
+            {
+                player = explodeRoot.GetComponent<SpriteFramePlayer>();
+                if (player == null)
+                    player = explodeRoot.AddComponent<SpriteFramePlayer>();
+
+                var renderer = explodeRoot.GetComponent<SpriteRenderer>();
+                if (renderer != null)
+                    renderer.sortingOrder = 50;
+
+                player.UseGameClock(false);
+                player.Initialize(explodeFrames, () => player.Play());
+                player.SetLoop(false);
+            }
+
+            var source = explodeRoot != null ? explodeRoot.GetComponent<AudioSource>() : null;
+            if (source != null && explodeAudio != null)
+            {
+                source.playOnAwake = false;
+                source.spatialBlend = 0f;
+                source.dopplerLevel = 0f;
+                source.loop = false;
+                source.clip = explodeAudio;
+                source.volume = 1f;
+                if (explodeAudio.loadState != AudioDataLoadState.Loaded)
+                    explodeAudio.LoadAudioData();
+                source.Play();
+            }
+
+            if (player != null)
+                yield return PlayExplodeUntilDone(player);
+            else if (transitionDelay > 0)
                 yield return new WaitForSeconds(transitionDelay);
 
             onComplete?.Invoke();
         }
 
-        private IEnumerator DelayedHideObjects(float delay)
+        private IEnumerator PlayExplodeUntilDone(SpriteFramePlayer player)
         {
-            yield return new WaitForSeconds(delay);
-
-            if (objectsToHideOnStart != null)
+            float waited = 0f;
+            while (player != null && !player.IsReady && waited < 8f)
             {
-                foreach (var obj in objectsToHideOnStart)
-                    if (obj != null) obj.SetActive(false);
+                waited += Time.deltaTime;
+                yield return null;
+            }
+
+            float duration = player != null ? player.Duration : 0f;
+            if (explodeAudio != null)
+                duration = Mathf.Max(duration, explodeAudio.length);
+            if (duration <= 0f)
+                duration = 4f;
+
+            float played = 0f;
+            while (played < duration + 0.15f)
+            {
+                played += Time.deltaTime;
+                bool framesDone = player != null && player.IsReady && player.TotalFrames > 0 && player.Progress >= 0.99f;
+                bool audioDone = explodeAudio == null || played >= explodeAudio.length - 0.05f;
+                if (framesDone && audioDone)
+                    break;
+                yield return null;
             }
         }
 

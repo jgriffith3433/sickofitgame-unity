@@ -633,10 +633,29 @@ namespace SickOfIt.Core.Addressables
 
         private IEnumerator GetDownloadSizeAsync(string label, System.Action<long> onComplete)
         {
+            // Labels listed on SpriteFramesData but missing from a built group (Video4_Part1
+            // is an empty group) throw InvalidKeyException inside GetDownloadSizeAsync.
+            var locations = AddressablesAPI.LoadResourceLocationsAsync(label);
+            yield return locations;
+            bool hasLocations = locations.Status == AsyncOperationStatus.Succeeded
+                && locations.Result != null
+                && locations.Result.Count > 0;
+            if (locations.IsValid())
+                AddressablesAPI.Release(locations);
+
+            if (!hasLocations)
+            {
+                Log($"No addressable locations for '{label}'. Treating download size as 0.");
+                onComplete?.Invoke(0);
+                yield break;
+            }
+
             var handle = AddressablesAPI.GetDownloadSizeAsync(label);
             yield return handle;
-            onComplete?.Invoke(handle.Result);
-            AddressablesAPI.Release(handle);
+            long size = handle.Status == AsyncOperationStatus.Succeeded ? handle.Result : 0;
+            if (handle.IsValid())
+                AddressablesAPI.Release(handle);
+            onComplete?.Invoke(size);
         }
 
         /// <summary>
@@ -651,11 +670,28 @@ namespace SickOfIt.Core.Addressables
 
         private IEnumerator DownloadDependenciesAsync(string label, System.Action<bool> onComplete, System.Action<float> onProgress)
         {
-            // First check if we even need to download
+            // First check if we even need to download. Missing labels have no locations.
+            var locations = AddressablesAPI.LoadResourceLocationsAsync(label);
+            yield return locations;
+            bool hasLocations = locations.Status == AsyncOperationStatus.Succeeded
+                && locations.Result != null
+                && locations.Result.Count > 0;
+            if (locations.IsValid())
+                AddressablesAPI.Release(locations);
+
+            if (!hasLocations)
+            {
+                Log($"[Download] '{label}' has no addressable locations");
+                onProgress?.Invoke(1f);
+                onComplete?.Invoke(true);
+                yield break;
+            }
+
             var sizeHandle = AddressablesAPI.GetDownloadSizeAsync(label);
             yield return sizeHandle;
-            long downloadSize = sizeHandle.Result;
-            AddressablesAPI.Release(sizeHandle);
+            long downloadSize = sizeHandle.Status == AsyncOperationStatus.Succeeded ? sizeHandle.Result : 0;
+            if (sizeHandle.IsValid())
+                AddressablesAPI.Release(sizeHandle);
 
             if (downloadSize == 0)
             {

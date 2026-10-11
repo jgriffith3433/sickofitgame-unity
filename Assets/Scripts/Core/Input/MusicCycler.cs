@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using SickOfIt.Core.Addressables;
+using AddressablesAPI = UnityEngine.AddressableAssets.Addressables;
 
 namespace SickOfIt.Core.Input
 {
@@ -102,6 +104,27 @@ namespace SickOfIt.Core.Input
                 return;
             }
             
+            var locationHandle = AddressablesAPI.LoadResourceLocationsAsync(musicLabel, typeof(AudioClip));
+            locationHandle.Completed += handle =>
+            {
+                bool hasLocations = handle.Status == AsyncOperationStatus.Succeeded
+                    && handle.Result != null
+                    && handle.Result.Count > 0;
+                if (handle.IsValid())
+                    AddressablesAPI.Release(handle);
+
+                if (!hasLocations)
+                {
+                    Debug.LogWarning($"MusicCycler: No addressable AudioClips labeled '{musicLabel}'. Level music plays from the level config.");
+                    return;
+                }
+
+                LoadLabeledClips();
+            };
+        }
+
+        private void LoadLabeledClips()
+        {
             AddressablesAssetLoader.Instance.LoadAssetsByLabel<AudioClip>(musicLabel, (clips) =>
             {
                 if (clips != null && clips.Count > 0)

@@ -1,5 +1,9 @@
 using SickOfIt.Core;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using SickOfIt.Core.Flow;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
@@ -59,6 +63,8 @@ namespace SickOfIt.Core.Progression
             // Setup GameClock for this video
             gameClock = gameObject.AddComponent<GameClock>();
 
+            EnsurePlaybackCamera();
+            EnsureEventSystem();
             AutoDiscoverReferences();
             SetupPlayback();
             StartExperience();
@@ -66,19 +72,67 @@ namespace SickOfIt.Core.Progression
 
         private void AutoDiscoverReferences()
         {
-            // Find skip button from serialized UI reference
-            if (uiRoot != null)
+            // The shared mobile UI has no object named "skip". The circular control
+            // is (Prb)ButtonRewind, so use that when a skip button is absent.
+            if (uiRoot == null) return;
+
+            var buttons = uiRoot.GetComponentsInChildren<MobileControllerFramework.Button>(true);
+            MobileControllerFramework.Button rewindFallback = null;
+            foreach (var btn in buttons)
             {
-                var buttons = uiRoot.GetComponentsInChildren<MobileControllerFramework.Button>(true);
-                foreach (var btn in buttons)
+                string name = btn.gameObject.name.ToLowerInvariant();
+                if (name.Contains("skip"))
                 {
-                    if (btn.gameObject.name.ToLower().Contains("skip"))
-                    {
-                        skipButton = btn;
-                        break;
-                    }
+                    skipButton = btn;
+                    break;
                 }
+                if (rewindFallback == null && name.Contains("rewind"))
+                    rewindFallback = btn;
             }
+
+            if (skipButton == null)
+                skipButton = rewindFallback;
+        }
+
+        /// <summary>
+        /// Video.unity has no camera. The mobile canvas is Screen Space - Camera
+        /// with no world camera, so pointer clicks never reach the skip button,
+        /// and there is no AudioListener once the menu scene unloads.
+        /// </summary>
+        private void EnsurePlaybackCamera()
+        {
+            var cam = Camera.main;
+            if (cam == null)
+            {
+                var go = new GameObject("VideoCamera");
+                go.tag = "MainCamera";
+                cam = go.AddComponent<Camera>();
+                cam.orthographic = true;
+                cam.orthographicSize = 5f;
+                cam.clearFlags = CameraClearFlags.SolidColor;
+                cam.backgroundColor = Color.black;
+                go.transform.position = new Vector3(0f, 0f, -10f);
+            }
+
+            if (cam.GetComponent<AudioListener>() == null)
+                cam.gameObject.AddComponent<AudioListener>();
+
+            var canvases = Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < canvases.Length; i++)
+            {
+                if (canvases[i].renderMode == RenderMode.ScreenSpaceCamera && canvases[i].worldCamera == null)
+                    canvases[i].worldCamera = cam;
+            }
+        }
+
+        private static void EnsureEventSystem()
+        {
+            if (Object.FindFirstObjectByType<EventSystem>() != null)
+                return;
+
+            var go = new GameObject("EventSystem");
+            go.AddComponent<EventSystem>();
+            go.AddComponent<InputSystemUIInputModule>();
         }
 
         private void SetupPlayback()
@@ -130,9 +184,35 @@ namespace SickOfIt.Core.Progression
                 var audioSource = audioObject.GetComponent<AudioSource>();
                 if (audioSource == null)
                     audioSource = audioObject.AddComponent<AudioSource>();
+                audioSource.playOnAwake = false;
+                audioSource.spatialBlend = 0f;
+                audioSource.dopplerLevel = 0f;
+                audioSource.loop = false;
                 audioSource.clip = config.audio;
-                audioSource.Play();
+                audioSource.volume = 1f;
+                StartCoroutine(PlayClipWhenAudible(audioSource));
             }
+        }
+
+        private static IEnumerator PlayClipWhenAudible(AudioSource source)
+        {
+            var clip = source != null ? source.clip : null;
+            if (clip != null && clip.loadState != AudioDataLoadState.Loaded)
+                clip.LoadAudioData();
+
+            float waited = 0f;
+            while (source != null && !source.gameObject.activeInHierarchy && waited < 10f)
+            {
+                waited += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (source == null || !source.gameObject.activeInHierarchy)
+                yield break;
+
+            source.enabled = true;
+            source.Play();
+            Debug.Log($"[VideoRuntime] Audio '{(clip != null ? clip.name : "none")}' playing={source.isPlaying}");
         }
 
         private void StartExperience()
@@ -147,6 +227,12 @@ namespace SickOfIt.Core.Progression
         private void Update()
         {
             if (videoCompleted) return;
+
+            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+            {
+                SkipVideo();
+                return;
+            }
 
             if (spritePlayer != null && spritePlayer.IsReady && spritePlayer.Progress >= 0.99f)
             {

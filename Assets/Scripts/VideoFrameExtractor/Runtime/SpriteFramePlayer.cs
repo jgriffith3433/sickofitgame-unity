@@ -130,6 +130,10 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             mpb = new MaterialPropertyBlock();
             baseLocalPosition = transform.localPosition;
 
+            if (data.playbackFPS > 0f)
+                fps = data.playbackFPS;
+            loop = data.loop;
+
             totalFrames = data.GetStoredTotalFrames();
             if (totalFrames <= 0)
                 totalFrames = data.GetTotalFrames();
@@ -180,6 +184,8 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         }
 
         public void Play() => isPlaying = true;
+        public void SetLoop(bool shouldLoop) => loop = shouldLoop;
+        public void UseGameClock(bool enabled) => useGameClock = enabled;
         public void Pause() => isPlaying = false;
         public void Stop() { isPlaying = false; localTime = 0; }
 

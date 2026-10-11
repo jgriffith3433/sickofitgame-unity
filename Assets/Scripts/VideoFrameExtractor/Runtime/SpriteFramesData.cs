@@ -13,6 +13,15 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         [Tooltip("Name of this video (e.g., 'Video3')")]
         public string videoName = "";
 
+        [Tooltip("Frames per second. Assets authored before this field default to 30.")]
+        public float playbackFPS = 30f;
+
+        [Tooltip("Loop the sequence when it reaches the last frame.")]
+        public bool loop = false;
+
+        [Tooltip("Addressables label for the companion audio clip, if any.")]
+        public string audioAddress = "";
+
         [Header("Sprite Sheet Configuration")]
         [Tooltip("Original source frame width in pixels (e.g., 1280)")]
         public int sourceFrameWidth = 1280;
