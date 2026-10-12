@@ -4,6 +4,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
+using SickOfIt.Tools.Editor.Generation;
 
 namespace SickOfIt.Tools.Editor.GameOverview
 {
@@ -686,7 +687,9 @@ namespace SickOfIt.Tools.Editor.GameOverview
             EditorGUILayout.LabelField("Enemy Templates", EditorStyles.boldLabel);
             EditorGUILayout.HelpBox(
                 "Each enemy type config defines an enemy type. Levels reference these by type.\n" +
-                "Change a config's stats and ALL levels using that type are affected.",
+                "Change a config's stats and ALL levels using that type are affected.\n\n" +
+                "Regenerate Sprites reads " + CharacterSpriteBaker.EnemySourceRoot + "\\{Type}\\{State}\\Output\\{State}.mp4 " +
+                "for that type's animation states.",
                 MessageType.Info);
             EditorGUILayout.Space(5);
 
@@ -698,6 +701,11 @@ namespace SickOfIt.Tools.Editor.GameOverview
 
                 EditorGUILayout.BeginVertical("box");
                 EditorGUILayout.LabelField($"{config.displayName} ({config.type})", EditorStyles.boldLabel);
+                if (GUILayout.Button("Regenerate Sprites From MP4s"))
+                {
+                    serializedGameDef.ApplyModifiedProperties();
+                    CharacterSpriteRegenWindow.OpenEnemies();
+                }
 
                 EditorGUI.BeginChangeCheck();
                 var configProp = enemyTypesProp.GetArrayElementAtIndex(i);
@@ -755,6 +763,15 @@ namespace SickOfIt.Tools.Editor.GameOverview
         private void DrawPlayerTab()
         {
             EditorGUILayout.LabelField("Player Configuration", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Regenerate reads " + CharacterSpriteBaker.PlayerSourceRoot + "\\{Idle,Walk,Jump,Fall,Fire}\\Output\\{State}.mp4, " +
+                "packs one sliced sheet per state, and rebuilds the Character prefab.",
+                MessageType.Info);
+            if (GUILayout.Button("Regenerate Player Sprites From MP4s", GUILayout.Height(30)))
+            {
+                serializedGameDef.ApplyModifiedProperties();
+                CharacterSpriteRegenWindow.OpenPlayer();
+            }
             EditorGUILayout.Space(5);
 
             var playerProp = serializedGameDef.FindProperty("player");

@@ -145,8 +145,11 @@ namespace SickOfIt.Tools.Editor.Generation
             // Default color to white if not set (alpha 0 means invisible)
             Color renderColor = config.color.a > 0 ? config.color : Color.white;
             sr.color = renderColor;
-            sr.sortingLayerName = string.IsNullOrEmpty(config.sortingLayer) ? "Default" : config.sortingLayer;
-            sr.sortingOrder = config.sortingOrder > 0 ? config.sortingOrder : 10;
+            string sortingLayer = string.IsNullOrEmpty(config.sortingLayer)
+                ? SpriteLayer.Player.ToString()
+                : config.sortingLayer;
+            sr.sortingLayerName = sortingLayer;
+            sr.sortingOrder = config.sortingOrder > 0 ? config.sortingOrder : SpriteLayers.Projectile;
             
             // Default scale to 0.333 if 0 or less (compensate for large sprites)
             float scale = config.scale > 0 ? config.scale : 0.15f;

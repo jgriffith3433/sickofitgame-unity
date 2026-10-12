@@ -7,6 +7,7 @@
     "SickOfIt.Core.Progression",
     "SickOfIt.Combat",
     "SickOfIt.VideoFrameExtractor.Runtime",
+    "SickOfIt.VideoFrameExtractor.Editor",
     "nappin.MobileControllerFramework",
     "Unity.Addressables",
     "Unity.Addressables.Editor",

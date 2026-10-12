@@ -132,11 +132,20 @@ namespace SickOfIt.Core.Progression
             SetupReferences();
             SetupSFXPool();
 
-            // Start processing
+            // Start processing. Callers hold playback until videos and audio
+            // are ready, so time-zero events do not fire during that pause.
             nextEventIndex = 0;
             elapsedTime = 0f;
             isRunning = true;
-            isPaused = false;
+            isPaused = true;
+        }
+
+        /// <summary>
+        /// Keep timeline events from firing until scene playback is released.
+        /// </summary>
+        public void SetPlaybackHeld(bool held)
+        {
+            isPaused = held;
         }
 
         public void Stop()
@@ -536,17 +545,17 @@ namespace SickOfIt.Core.Progression
             // Create a full-screen flash using a temporary SpriteRenderer
             var go = new GameObject("ScreenFlash");
             go.transform.SetParent(transform);
+
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.color = color;
+            SpriteLayers.Apply(sr, SpriteLayer.Foreground2, SpriteLayers.Overlay);
             if (mainCamera != null)
             {
                 go.transform.position = new Vector3(
                     mainCamera.transform.position.x,
                     mainCamera.transform.position.y,
-                    mainCamera.transform.position.z + 1);
+                    SpriteLayers.Depth(SpriteLayer.Foreground2));
             }
-
-            var sr = go.AddComponent<SpriteRenderer>();
-            sr.color = color;
-            sr.sortingOrder = 999;
 
             // Reuse a cached 1x1 white texture (avoids Texture2D leak per flash)
             if (_cachedFlashTexture == null)
@@ -707,7 +716,7 @@ namespace SickOfIt.Core.Progression
                 targetGo.transform.SetParent(transform);
 
                 var sr = targetGo.AddComponent<SpriteRenderer>();
-                sr.sortingOrder = -10; // Behind gameplay
+                SpriteLayers.Apply(sr, SpriteLayer.Background2);
 
                 // Scale to fill camera view
                 if (mainCamera != null && mainCamera.orthographic)
@@ -719,9 +728,10 @@ namespace SickOfIt.Core.Progression
                     targetGo.transform.localScale = new Vector3(scale, scale, 1f);
                 }
 
+                float depth = SpriteLayers.Depth(SpriteLayer.Background2);
                 targetGo.transform.position = mainCamera != null
-                    ? new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y, 0)
-                    : Vector3.zero;
+                    ? new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y, depth)
+                    : new Vector3(0f, 0f, depth);
             }
 
             var player = targetGo.GetComponent<SpriteFramePlayer>();

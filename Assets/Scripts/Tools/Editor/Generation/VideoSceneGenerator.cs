@@ -51,7 +51,7 @@ namespace SickOfIt.Tools.Editor.Generation
             var videoPlayer = new GameObject("VideoPlayer");
             videoPlayer.transform.SetParent(content.transform);
             var sr = videoPlayer.AddComponent<SpriteRenderer>();
-            sr.sortingOrder = -10;
+            SpriteLayers.Apply(sr, SpriteLayer.Background1);
             // SpriteFramePlayer will be added at runtime by VideoRuntime
 
             // Audio

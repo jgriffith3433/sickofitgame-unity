@@ -92,14 +92,12 @@ namespace SickOfIt.Tools.Editor.Generation
             graphics.transform.localPosition = Vector3.zero;
             
             // Apply sprite scale (default to 0.33 if not set to compensate for large sprites)
-            float spriteScale = config.spriteScale > 0 ? config.spriteScale : 0.15f;
-            graphics.transform.localScale = Vector3.one * spriteScale;
+            float spriteScale = config.spriteScale > 0 ? config.spriteScale : 0.25f;
+            graphics.transform.localScale = new Vector3(-spriteScale, spriteScale, spriteScale);
 
             var sr = graphics.AddComponent<SpriteRenderer>();
-            // Auto-detect default sprite from sprite sheet
-            sr.sprite = GeneratorHelper.GetFirstSprite(config.spriteSheet);
-            sr.sortingLayerName = "Default";
-            sr.sortingOrder = 5;
+            sr.sprite = DefaultSprite(config);
+            SpriteLayers.Apply(sr, SpriteLayer.Player, SpriteLayers.Character);
 
             Animator animator = null;
             if (animController != null)
@@ -118,8 +116,7 @@ namespace SickOfIt.Tools.Editor.Generation
             {
                 shadowSr.sprite = config.shadowSprite;
             }
-            shadowSr.sortingLayerName = "Default";
-            shadowSr.sortingOrder = 0;
+            SpriteLayers.Apply(shadowSr, SpriteLayer.Player, SpriteLayers.Shadow);
             shadowSr.color = config.shadowColor;
 
             if (shadowAnimCtrl != null)
@@ -247,6 +244,27 @@ namespace SickOfIt.Tools.Editor.Generation
             return prefab;
         }
 
+        /// <summary>
+        /// Sprite shown before the Animator plays. Uses the first frame of Idle.
+        /// </summary>
+        static Sprite DefaultSprite(PlayerConfig config)
+        {
+            Texture2D sheet = config.spriteSheet;
+            if (config.animationConfig != null && config.animationConfig.states != null)
+            {
+                foreach (var state in config.animationConfig.states)
+                {
+                    if (state != null && state.stateName == "Idle" && state.spriteSheet != null)
+                    {
+                        sheet = state.spriteSheet;
+                        break;
+                    }
+                }
+            }
+
+            return GeneratorHelper.GetFirstSprite(sheet);
+        }
+
         private static RuntimeAnimatorController BuildPlayerAnimator(PlayerConfig config, GameDefinition gd)
         {
             if (config.animationConfig == null || config.animationConfig.states.Count == 0)
@@ -324,8 +342,15 @@ namespace SickOfIt.Tools.Editor.Generation
             rb.gravityScale = config.gravityScale;
             collider.radius = config.colliderRadius > 0 ? config.colliderRadius : 0.3f;
 
-            float spriteScale = config.spriteScale > 0 ? config.spriteScale : 0.15f;
-            graphics.localScale = Vector3.one * spriteScale;
+            float spriteScale = config.spriteScale > 0 ? config.spriteScale : 0.25f;
+            graphics.localScale = new Vector3(-spriteScale, spriteScale, spriteScale);
+
+            var spriteRenderer = graphics.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sprite = DefaultSprite(config);
+                SpriteLayers.Apply(spriteRenderer, SpriteLayer.Player, SpriteLayers.Character);
+            }
 
             var animator = graphics.GetComponent<Animator>();
             if (animController != null)
@@ -338,6 +363,9 @@ namespace SickOfIt.Tools.Editor.Generation
             if (shadow != null)
             {
                 shadow.localPosition = config.shadowOffset;
+                var shadowRenderer = shadow.GetComponent<SpriteRenderer>();
+                if (shadowRenderer != null)
+                    SpriteLayers.Apply(shadowRenderer, SpriteLayer.Player, SpriteLayers.Shadow);
                 var shadowAnimator = shadow.GetComponent<Animator>();
                 if (shadowAnimCtrl != null)
                 {
@@ -373,6 +401,7 @@ namespace SickOfIt.Tools.Editor.Generation
 
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
             PrefabUtility.UnloadPrefabContents(root);
+            GeneratorHelper.RevertAnimatorControllerOverrides(prefab);
 
             gd.player.playerPrefab = prefab;
             EditorUtility.SetDirty(gd);

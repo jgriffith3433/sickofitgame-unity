@@ -17,7 +17,8 @@ namespace SickOfIt.Data.Config
         [Header("Visuals")]
         public Sprite sprite;
         public float spriteScale = 0.125f;
-        public int sortingOrder = 5;
+        [Tooltip("Order inside the Player layer. Characters are 2, so the default sits just in front of them.")]
+        public int sortingOrder = 3;
 
         [Header("Physics")]
         public float colliderRadius = 0.15f;

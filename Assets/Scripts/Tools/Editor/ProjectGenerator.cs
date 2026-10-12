@@ -53,6 +53,8 @@ namespace SickOfIt.Tools.Editor
             
             var gd = LoadGameDefinition();
             if (gd == null) return;
+
+            SortingLayerSetup.Ensure();
             
             // ═══════════════════════════════════════════════════════════════
             // PHASE 1: CLEANUP
@@ -160,14 +162,9 @@ namespace SickOfIt.Tools.Editor
         /// </summary>
         private static void DeleteGeneratedAnimations()
         {
-            ////Debug.Log("Deleting generated animations...");
-            
             string animRoot = "Assets/Animations";
             if (AssetDatabase.IsValidFolder(animRoot))
-            {
                 AssetDatabase.DeleteAsset(animRoot);
-                ////Debug.Log($"Deleted: {animRoot}");
-            }
         }
         
         private static void CleanupOldScenes()

@@ -358,37 +358,31 @@ namespace SickOfIt.VideoFrameExtractor.Editor
 
             try
             {
-                //UnityEngine.Debug.Log($"FFmpeg command: {ffmpegPath} {arguments}");
-                //UnityEngine.Debug.Log($"Video path: {absoluteVideoPath}");
-                //UnityEngine.Debug.Log($"Output path: {absoluteOutputPath}");
-
-                Process process = Process.Start(startInfo);
-                process.WaitForExit();
-
-                int exitCode = process.ExitCode;
-                string output = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
-
-                //UnityEngine.Debug.Log($"FFmpeg exit code: {exitCode}");
-                if (!string.IsNullOrEmpty(output))
-                    //UnityEngine.Debug.Log($"FFmpeg output: {output}");
-                if (!string.IsNullOrEmpty(error))
-                    //UnityEngine.Debug.Log($"FFmpeg stderr: {error}");
-
-                if (exitCode == 0)
+                using (Process process = new Process())
                 {
-                    string[] jpgFiles = Directory.GetFiles(absoluteOutputPath, "frame_*.jpg");
-                    //UnityEngine.Debug.Log($"Found {jpgFiles.Length} frames in {absoluteOutputPath}");
+                    process.StartInfo = startInfo;
+                    process.Start();
 
-                    // Set import settings for all extracted frames
-                    SetFrameImportSettings(outputPath, jpgFiles.Length);
+                    // Drain both pipes on thread-pool threads while ffmpeg runs.
+                    // Reading them after WaitForExit deadlocks once stderr fills the buffer.
+                    var stdoutTask = System.Threading.Tasks.Task.Run(() => process.StandardOutput.ReadToEnd());
+                    var stderrTask = System.Threading.Tasks.Task.Run(() => process.StandardError.ReadToEnd());
+                    process.WaitForExit();
+                    string output = stdoutTask.Result;
+                    string error = stderrTask.Result;
+                    int exitCode = process.ExitCode;
 
-                    onComplete?.Invoke(true, $"Successfully extracted {jpgFiles.Length} frames!");
-                }
-                else
-                {
-                    UnityEngine.Debug.LogError($"FFmpeg extraction failed with exit code {exitCode}");
-                    onComplete?.Invoke(false, $"FFmpeg extraction failed. Check console for details.");
+                    if (exitCode == 0)
+                    {
+                        string[] jpgFiles = Directory.GetFiles(absoluteOutputPath, "frame_*.jpg");
+                        SetFrameImportSettings(outputPath, jpgFiles.Length);
+                        onComplete?.Invoke(true, $"Successfully extracted {jpgFiles.Length} frames!");
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.LogError($"FFmpeg extraction failed with exit code {exitCode}\n{error}\n{output}");
+                        onComplete?.Invoke(false, "FFmpeg extraction failed. Check the Console for details.");
+                    }
                 }
             }
             catch (System.Exception e)
@@ -401,6 +395,11 @@ namespace SickOfIt.VideoFrameExtractor.Editor
         {
             try
             {
+                string normalizedOutput = outputPath.Replace('\\', '/');
+                string normalizedData = Application.dataPath.Replace('\\', '/');
+                if (!normalizedOutput.StartsWith(normalizedData))
+                    return;
+
                 // Convert absolute path to Unity asset path
                 string unityPath;
                 if (outputPath.StartsWith(Application.dataPath))

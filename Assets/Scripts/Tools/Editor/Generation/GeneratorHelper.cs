@@ -27,12 +27,14 @@ namespace SickOfIt.Tools.Editor.Generation
         {
             if (spriteSheet == null) return null;
             var assets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(spriteSheet));
+            Sprite first = null;
             foreach (var asset in assets)
             {
-                if (asset is Sprite sprite)
-                    return sprite;
+                if (asset is Sprite sprite &&
+                    (first == null || string.Compare(sprite.name, first.name, System.StringComparison.Ordinal) < 0))
+                    first = sprite;
             }
-            return null;
+            return first;
         }
 
         /// <summary>
@@ -269,7 +271,34 @@ namespace SickOfIt.Tools.Editor.Generation
         {
             var prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
             Object.DestroyImmediate(go);
+            RevertAnimatorControllerOverrides(prefab);
             return prefab;
+        }
+
+        /// <summary>
+        /// Deleting a controller while a scene is open makes Unity store a missing
+        /// Controller override on that instance. The regenerated prefab is the
+        /// source of truth, so drop the override and let the instance follow it.
+        /// </summary>
+        public static void RevertAnimatorControllerOverrides(GameObject prefabAsset)
+        {
+            if (prefabAsset == null)
+                return;
+
+            string prefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+            var animators = Object.FindObjectsByType<Animator>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var animator in animators)
+            {
+                if (!PrefabUtility.IsPartOfPrefabInstance(animator))
+                    continue;
+                if (PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(animator.gameObject) != prefabPath)
+                    continue;
+
+                var serializedAnimator = new SerializedObject(animator);
+                var controller = serializedAnimator.FindProperty("m_Controller");
+                if (controller != null && controller.prefabOverride)
+                    PrefabUtility.RevertPropertyOverride(controller, InteractionMode.AutomatedAction);
+            }
         }
 
         /// <summary>

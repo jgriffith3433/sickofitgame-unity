@@ -21,8 +21,8 @@ namespace SickOfIt.Data.Config
         public Texture2D spriteSheet;
         [Tooltip("Animation frames per second")]
         public int animationFps = 12;
-        [Tooltip("Scale multiplier for player sprite (default 1)")]
-        public float spriteScale = 0.15f;
+        [Tooltip("Scale multiplier for the Graphics child")]
+        public float spriteScale = 0.25f;
 
         [Header("Animation Config (for generator)")]
         [Tooltip("Full animation setup: states, transitions, parameters, events. If set, the generator builds a multi-state animator. If null, falls back to a single idle clip from spriteSheet.")]

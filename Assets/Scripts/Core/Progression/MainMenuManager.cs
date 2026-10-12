@@ -193,7 +193,7 @@ namespace SickOfIt.Core.Progression
 
                 var renderer = explodeRoot.GetComponent<SpriteRenderer>();
                 if (renderer != null)
-                    renderer.sortingOrder = 50;
+                    SpriteLayers.Apply(renderer, SpriteLayer.Foreground2);
 
                 player.UseGameClock(false);
                 player.Initialize(explodeFrames, () => player.Play());

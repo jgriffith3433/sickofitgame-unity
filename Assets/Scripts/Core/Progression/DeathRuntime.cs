@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using System.Collections;
+using System.Collections.Generic;
 using SickOfIt.Core.Flow;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
@@ -28,7 +29,9 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private AudioSource audioSource;
 
         private GameClock gameClock;
+        private ExperienceRunner experienceRunner;
         private SpriteFramePlayer spritePlayer;
+        private readonly List<SpriteFramePlayer> playbackPlayers = new List<SpriteFramePlayer>();
         private MobileControllerFramework.Button skipButton;
         private MobileControllerFramework.Button rewindButton;
         private bool rewindAlsoSkips;
@@ -63,6 +66,7 @@ namespace SickOfIt.Core.Progression
             AutoDiscoverReferences();
             SetupPlayback();
             StartExperience();
+            StartCoroutine(PlaybackStartGate.Hold(gameClock, playbackPlayers, audioSource, BeginDeathPlayback));
         }
 
         private void AutoDiscoverReferences()
@@ -148,12 +152,13 @@ namespace SickOfIt.Core.Progression
                         deathAnimationObject = new GameObject("DeathAnimation");
                         deathAnimationObject.transform.SetParent(transform);
                         var sr = deathAnimationObject.AddComponent<SpriteRenderer>();
-                        sr.sortingOrder = -10;
+                        SpriteLayers.Apply(sr, SpriteLayer.Background1);
                     }
 
                     spritePlayer = deathAnimationObject.GetComponent<SpriteFramePlayer>();
                     if (spritePlayer == null)
                         spritePlayer = deathAnimationObject.AddComponent<SpriteFramePlayer>();
+                    playbackPlayers.Add(spritePlayer);
 
                     spritePlayer.Initialize(framesData, () =>
                     {
@@ -181,31 +186,24 @@ namespace SickOfIt.Core.Progression
                 audioSource.volume = 1f;
                 if (audioSource.GetComponent<RewindableAudioSource>() == null)
                     audioSource.gameObject.AddComponent<RewindableAudioSource>();
-                StartCoroutine(PlayClipWhenAudible(audioSource));
             }
         }
 
-        private static IEnumerator PlayClipWhenAudible(AudioSource source)
+        private void BeginDeathPlayback()
         {
-            var clip = source != null ? source.clip : null;
-            if (clip != null && clip.loadState != AudioDataLoadState.Loaded)
-                clip.LoadAudioData();
+            if (experienceRunner != null)
+                experienceRunner.SetPlaybackHeld(false);
 
-            float waited = 0f;
-            while (source != null && !source.gameObject.activeInHierarchy && waited < 10f)
-            {
-                waited += Time.unscaledDeltaTime;
-                yield return null;
-            }
-
-            if (source == null || !source.gameObject.activeInHierarchy)
+            if (audioSource == null || audioSource.clip == null)
+                return;
+            if (!audioSource.gameObject.activeInHierarchy)
             {
                 Debug.LogWarning("[DeathRuntime] Audio source never became active.");
-                yield break;
+                return;
             }
 
-            source.enabled = true;
-            source.Play();
+            audioSource.enabled = true;
+            audioSource.Play();
         }
 
         private void StartExperience()
@@ -213,8 +211,8 @@ namespace SickOfIt.Core.Progression
             if (config == null || config.timeline == null || config.timeline.events == null || config.timeline.events.Count == 0)
                 return;
 
-            var runner = gameObject.AddComponent<ExperienceRunner>();
-            runner.Run(config.timeline);
+            experienceRunner = gameObject.AddComponent<ExperienceRunner>();
+            experienceRunner.Run(config.timeline);
         }
 
         private void OnRewindButtonDown()

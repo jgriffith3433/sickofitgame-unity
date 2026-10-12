@@ -107,7 +107,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 var houseGO = new GameObject("House");
                 var sr = houseGO.AddComponent<SpriteRenderer>();
                 sr.sprite = config.idleHouseSprite;
-                sr.sortingOrder = -1;
+                SpriteLayers.Apply(sr, SpriteLayer.Foreground1);
                 idleObjects.Add(houseGO);
             }
 
@@ -117,7 +117,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 var explodeGO = new GameObject("Explosion");
                 var sr = explodeGO.AddComponent<SpriteRenderer>();
                 sr.sprite = config.explosionSprite;
-                sr.sortingOrder = 10;
+                SpriteLayers.Apply(sr, SpriteLayer.Foreground2);
                 explodeGO.SetActive(false);
                 transitionObjects.Add(explodeGO);
             }

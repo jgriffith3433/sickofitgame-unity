@@ -23,10 +23,10 @@ namespace SickOfIt.Data.Config
         public float scale = 0.15f;
         [Tooltip("Color tint for the sprite")]
         public Color color = Color.white;
-        [Tooltip("Sorting layer name")]
-        public string sortingLayer = "Default";
-        [Tooltip("Sorting order within layer")]
-        public int sortingOrder = 10;
+        [Tooltip("SpriteLayer name. Empty uses Player.")]
+        public string sortingLayer = "Player";
+        [Tooltip("Order inside that layer. 0 uses the projectile order on the Player layer.")]
+        public int sortingOrder;
 
         [Header("Physics")]
         [Tooltip("Collider radius")]

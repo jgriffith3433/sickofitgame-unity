@@ -1,5 +1,6 @@
 using SickOfIt.Core;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -29,7 +30,11 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private GameObject uiRoot;
 
         private GameClock gameClock;
+        private ExperienceRunner experienceRunner;
         private SpriteFramePlayer spritePlayer;
+        private readonly List<SpriteFramePlayer> playbackPlayers = new List<SpriteFramePlayer>();
+        private AudioSource playbackAudio;
+        private bool leavingScene;
         private MobileControllerFramework.Button skipButton;
         private MobileControllerFramework.Button rewindButton;
         private bool rewindAlsoSkips;
@@ -71,6 +76,8 @@ namespace SickOfIt.Core.Progression
             AutoDiscoverReferences();
             SetupPlayback();
             StartExperience();
+            if (!leavingScene)
+                StartCoroutine(PlaybackStartGate.Hold(gameClock, playbackPlayers, playbackAudio, BeginVideoPlayback));
         }
 
         private void AutoDiscoverReferences()
@@ -155,6 +162,7 @@ namespace SickOfIt.Core.Progression
             if (framesData != null && !framesData.HasBuiltFrames)
             {
                 Debug.LogWarning($"[VideoRuntime] Video {videoNumber} has no built sprite sheets. Returning to the main menu.");
+                leavingScene = true;
                 SceneTransitionManager.Instance.LoadMainMenu();
                 return;
             }
@@ -165,15 +173,16 @@ namespace SickOfIt.Core.Progression
                 {
                     videoPlayerObject = new GameObject("VideoPlayer");
                     videoPlayerObject.transform.SetParent(transform);
-                    videoPlayerObject.transform.position = Vector3.zero;
                     var sr = videoPlayerObject.AddComponent<SpriteRenderer>();
-                    sr.sortingOrder = 0;
+                    SpriteLayers.Apply(sr, SpriteLayer.Background1);
+                    videoPlayerObject.transform.position = new Vector3(0f, 0f, SpriteLayers.Depth(SpriteLayer.Background1));
                     sr.color = Color.white;
                 }
 
                 spritePlayer = videoPlayerObject.GetComponent<SpriteFramePlayer>();
                 if (spritePlayer == null)
                     spritePlayer = videoPlayerObject.AddComponent<SpriteFramePlayer>();
+                playbackPlayers.Add(spritePlayer);
 
                 spritePlayer.Initialize(framesData, () =>
                 {
@@ -210,29 +219,22 @@ namespace SickOfIt.Core.Progression
                 audioSource.volume = 1f;
                 if (audioSource.GetComponent<RewindableAudioSource>() == null)
                     audioSource.gameObject.AddComponent<RewindableAudioSource>();
-                StartCoroutine(PlayClipWhenAudible(audioSource));
+                playbackAudio = audioSource;
             }
         }
 
-        private static IEnumerator PlayClipWhenAudible(AudioSource source)
+        private void BeginVideoPlayback()
         {
-            var clip = source != null ? source.clip : null;
-            if (clip != null && clip.loadState != AudioDataLoadState.Loaded)
-                clip.LoadAudioData();
+            if (experienceRunner != null)
+                experienceRunner.SetPlaybackHeld(false);
 
-            float waited = 0f;
-            while (source != null && !source.gameObject.activeInHierarchy && waited < 10f)
-            {
-                waited += Time.unscaledDeltaTime;
-                yield return null;
-            }
+            if (playbackAudio == null || playbackAudio.clip == null)
+                return;
+            if (!playbackAudio.gameObject.activeInHierarchy)
+                return;
 
-            if (source == null || !source.gameObject.activeInHierarchy)
-                yield break;
-
-            source.enabled = true;
-            source.Play();
-            ////Debug.Log($"[VideoRuntime] Audio '{(clip != null ? clip.name : "none")}' playing={source.isPlaying}");
+            playbackAudio.enabled = true;
+            playbackAudio.Play();
         }
 
         private void StartExperience()
@@ -240,8 +242,8 @@ namespace SickOfIt.Core.Progression
             if (config.timeline == null || config.timeline.events == null || config.timeline.events.Count == 0)
                 return;
 
-            var runner = gameObject.AddComponent<ExperienceRunner>();
-            runner.Run(config.timeline);
+            experienceRunner = gameObject.AddComponent<ExperienceRunner>();
+            experienceRunner.Run(config.timeline);
         }
 
         private bool rewindButtonHeld;

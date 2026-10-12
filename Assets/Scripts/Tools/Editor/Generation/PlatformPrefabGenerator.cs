@@ -63,8 +63,7 @@ namespace SickOfIt.Tools.Editor.Generation
             // ─── SpriteRenderer ───────────────────────────────────────────
             var sr = go.AddComponent<SpriteRenderer>();
             sr.color = new Color(0.4f, 0.4f, 0.4f);
-            sr.sortingLayerName = "Default";
-            sr.sortingOrder = 1;
+            SpriteLayers.Apply(sr, SpriteLayer.Player, SpriteLayers.Platform);
 
             // ─── PlatformEffector2D (one-way) ─────────────────────────────
             var effector = go.AddComponent<PlatformEffector2D>();

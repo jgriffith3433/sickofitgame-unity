@@ -166,6 +166,7 @@ namespace SickOfIt.Tools.Editor.Generation
             // SpriteRenderer
             var sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = defaultSprite;
+            SpriteLayers.Apply(sr, SpriteLayer.Player, SpriteLayers.Character);
             
             // Apply sprite scale (default to 0.33 if not set to compensate for large sprites)
             float spriteScale = config.spriteScale > 0 ? config.spriteScale : 0.15f;
@@ -321,7 +322,8 @@ namespace SickOfIt.Tools.Editor.Generation
             // Add a WorldSpace Canvas so UI Images render in-world
             var canvas = healthBarGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
-            canvas.sortingOrder = 10;
+            canvas.sortingLayerName = SpriteLayer.Player.ToString();
+            canvas.sortingOrder = SpriteLayers.HealthBar;
 
             var canvasRect = healthBarGo.GetComponent<RectTransform>();
             canvasRect.sizeDelta = config.healthBarSize;

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using SickOfIt.Data;
 
 namespace SickOfIt.Data.Config
 {
@@ -12,7 +13,7 @@ namespace SickOfIt.Data.Config
     /// 2. A static Sprite (simple image)
     /// 3. A solid Color (flat fill)
     /// 
-    /// Layers are rendered back-to-front (index 0 = furthest back).
+    /// Each layer picks a SpriteLayer band. Order inside that band is sortingOrder.
     /// </summary>
     [Serializable]
     public class BackgroundLayerConfig
@@ -34,8 +35,10 @@ namespace SickOfIt.Data.Config
         public Vector2 offset = Vector2.zero;
         [Tooltip("Scale multiplier")]
         public Vector2 scale = Vector2.one;
-        [Tooltip("Sorting order (higher = closer to camera)")]
-        public int sortingOrder = -100;
+        [Tooltip("Draw band. Background1 is furthest back. Foreground bands cover the player.")]
+        public SpriteLayer layer = SpriteLayer.Background1;
+        [Tooltip("Order inside the chosen band. Higher draws in front of other sprites on that same band.")]
+        public int sortingOrder;
 
         [Header("Parallax")]
         [Tooltip("Parallax multiplier (0 = static background, 1 = moves with camera)")]

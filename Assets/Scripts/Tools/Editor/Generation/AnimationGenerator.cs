@@ -85,7 +85,6 @@ namespace SickOfIt.Tools.Editor.Generation
             // ─── Step 2: Create animator controller ──────────────────────
             string controllerPath = $"{outputFolder}/{entityName}.controller";
 
-            // Delete existing controller to avoid stale states
             if (AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath) != null)
                 AssetDatabase.DeleteAsset(controllerPath);
 
@@ -231,7 +230,6 @@ namespace SickOfIt.Tools.Editor.Generation
 
             result.clips["Idle"] = clip;
 
-            // Create controller
             string controllerPath = $"{outputFolder}/{entityName}.controller";
             if (AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath) != null)
                 AssetDatabase.DeleteAsset(controllerPath);
@@ -256,10 +254,7 @@ namespace SickOfIt.Tools.Editor.Generation
         public static void DeleteFolder(string folderPath)
         {
             if (AssetDatabase.IsValidFolder(folderPath))
-            {
                 AssetDatabase.DeleteAsset(folderPath);
-                ////Debug.Log($"[AnimationGenerator] Deleted folder: {folderPath}");
-            }
         }
 
         #region Internal

@@ -50,7 +50,7 @@ namespace SickOfIt.Tools.Editor.Generation
             var deathAnim = new GameObject("DeathAnimation");
             deathAnim.transform.SetParent(content.transform);
             var sr = deathAnim.AddComponent<SpriteRenderer>();
-            sr.sortingOrder = -10;
+            SpriteLayers.Apply(sr, SpriteLayer.Background1);
             // SpriteFramePlayer will be added at runtime by DeathRuntime
 
             // Audio

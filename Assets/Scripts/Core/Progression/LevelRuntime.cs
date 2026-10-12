@@ -72,6 +72,7 @@ namespace SickOfIt.Core.Progression
         // Game systems
         private GameClock gameClock;
         private ExperienceRunner experienceRunner;
+        private readonly List<SpriteFramePlayer> backgroundPlayers = new List<SpriteFramePlayer>();
         private RewindTimeline rewindTimeline;
         private RewindController rewindController;
 
@@ -140,6 +141,7 @@ namespace SickOfIt.Core.Progression
                 playerHealth.InitializeForLevel(levelNumber);
             }
             AnalyticsManager.Instance?.TrackLevelStart(levelNumber);
+            StartCoroutine(PlaybackStartGate.Hold(gameClock, backgroundPlayers, musicSource, StartLevelMusic));
 
             //Debug.Log($"[LevelRuntime] Level {levelNumber} '{config.displayName}' — {config.EnemyCount} enemies, {config.platforms?.Count ?? 0} platforms, {config.duration}s");
         }
@@ -262,43 +264,28 @@ namespace SickOfIt.Core.Progression
             musicSource.loop = true;
             if (musicSource.GetComponent<RewindableAudioSource>() == null)
                 musicSource.gameObject.AddComponent<RewindableAudioSource>();
-            StartCoroutine(PlayMusicWhenAudible());
+            if (musicSource.clip != null && musicSource.clip.loadState == AudioDataLoadState.Unloaded)
+                musicSource.clip.LoadAudioData();
         }
 
-        private IEnumerator PlayMusicWhenAudible()
+        private void StartLevelMusic()
         {
-            var clip = musicSource != null ? musicSource.clip : null;
-            if (clip != null && clip.loadState != AudioDataLoadState.Loaded)
-                clip.LoadAudioData();
+            if (experienceRunner != null)
+                experienceRunner.SetPlaybackHeld(false);
 
-            float waited = 0f;
-            while (musicSource != null && !musicSource.gameObject.activeInHierarchy && waited < 10f)
-            {
-                waited += Time.unscaledDeltaTime;
-                yield return null;
-            }
-
-            if (musicSource == null || !musicSource.gameObject.activeInHierarchy)
+            if (musicSource == null || musicSource.clip == null)
+                return;
+            if (!musicSource.gameObject.activeInHierarchy)
             {
                 Debug.LogWarning("[LevelRuntime] Music source never became active, so playback was skipped.");
-                yield break;
+                return;
             }
 
             EnsureAudioListener();
             musicSource.enabled = true;
-
-            float loadWait = 0f;
-            while (clip != null && clip.loadState == AudioDataLoadState.Loading && loadWait < 5f)
-            {
-                loadWait += Time.unscaledDeltaTime;
-                yield return null;
-            }
-
             musicSource.Play();
-            if (config.musicStartTime > 0f && musicSource.isPlaying)
+            if (config != null && config.musicStartTime > 0f && musicSource.isPlaying)
                 musicSource.time = config.musicStartTime;
-
-            //Debug.Log($"[LevelRuntime] Music '{(clip != null ? clip.name : "none")}' playing={musicSource.isPlaying}");
         }
 
         private static void EnsureAudioListener()
@@ -351,13 +338,14 @@ namespace SickOfIt.Core.Progression
                 layerGo.transform.SetParent(container);
 
                 var sr = layerGo.AddComponent<SpriteRenderer>();
-                sr.sortingOrder = layer.sortingOrder;
+                SpriteLayers.Apply(sr, layer.layer, layer.sortingOrder);
 
                 // Position offset (centered on camera if available)
                 Vector3 basePos = cam != null
                     ? new Vector3(cam.transform.position.x, cam.transform.position.y, 0f)
                     : Vector3.zero;
-                layerGo.transform.position = basePos + new Vector3(layer.offset.x, layer.offset.y, 0f);
+                layerGo.transform.position = basePos + new Vector3(
+                    layer.offset.x, layer.offset.y, SpriteLayers.Depth(layer.layer));
 
                 if (layer.IsAnimated)
                 {
@@ -376,6 +364,7 @@ namespace SickOfIt.Core.Progression
                         }
 
                         var player = layerGo.AddComponent<SpriteFramePlayer>();
+                        backgroundPlayers.Add(player);
                         player.Initialize(framesData, () =>
                         {
                             player.UseGameClock(true);
@@ -436,7 +425,8 @@ namespace SickOfIt.Core.Progression
                 {
                     name = string.IsNullOrEmpty(frames.videoName) ? $"BG_{i}" : frames.videoName,
                     spriteFramesData = frames,
-                    sortingOrder = -100 + i,
+                    layer = i == 0 ? SpriteLayer.Background1 : SpriteLayer.Background2,
+                    sortingOrder = i == 0 ? 0 : i - 1,
                     scale = Vector2.one
                 });
             }

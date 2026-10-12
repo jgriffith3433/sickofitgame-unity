@@ -68,7 +68,7 @@ namespace SickOfIt.Tools.Editor.Generation
             var sr = go.AddComponent<SpriteRenderer>();
             if (config.sprite != null)
                 sr.sprite = config.sprite;
-            sr.sortingOrder = config.sortingOrder;
+            SpriteLayers.Apply(sr, SpriteLayer.Player, config.sortingOrder);
             go.transform.localScale = Vector3.one * config.spriteScale;
 
             // ─── CircleCollider2D (trigger) ───────────────────────────────

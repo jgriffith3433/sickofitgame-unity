@@ -221,9 +221,15 @@ namespace SickOfIt.Core.Input
             // Initialize rotation based on mode
             if (use2DFlip)
             {
-                // 2D mode: no Y rotation, start facing right (positive scale)
+                // Negative X faces right. The source art faces the other way.
                 currentYRotation = 0f;
                 targetYRotation = 0f;
+                if (graphicsTransform != null)
+                {
+                    Vector3 scale = graphicsTransform.localScale;
+                    scale.x = -Mathf.Abs(scale.x);
+                    graphicsTransform.localScale = scale;
+                }
             }
             else
             {
@@ -660,11 +666,11 @@ namespace SickOfIt.Core.Input
                     Vector3 scale = graphicsTransform.localScale;
                     if (isFiring && Mathf.Abs(fireDirection.x) > inputDeadzone)
                     {
-                        scale.x = fireDirection.x > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+                        scale.x = fireDirection.x > 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
                     }
                     else if (moveInput.magnitude > inputDeadzone && Mathf.Abs(moveInput.x) > inputDeadzone)
                     {
-                        scale.x = moveInput.x > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+                        scale.x = moveInput.x > 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
                     }
                     graphicsTransform.localScale = scale;
                 }
