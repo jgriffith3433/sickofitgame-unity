@@ -1,5 +1,7 @@
 #if UNITY_EDITOR
+using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.Animations;
 using SickOfIt.Core.Rewind;
@@ -305,6 +307,173 @@ namespace SickOfIt.Tools.Editor.Generation
             poolSo.ApplyModifiedPropertiesWithoutUndo();
 
             return go;
+        }
+
+        // ─── Transport buttons ───────────────────────────────────────
+
+        const string RewindIconPath = "Assets/Images/UI/IconRewind.png";
+        const string SkipIconPath = "Assets/Images/UI/IconSkip.png";
+
+        /// <summary>
+        /// Gives the rewind control a rewind mark (two triangles pointing left).
+        /// Video and death scenes also get a skip control (triangle and bar) beside it.
+        /// </summary>
+        public static void StyleTransportControls(GameObject uiRoot, bool includeSkip)
+        {
+            if (uiRoot == null) return;
+
+            // Build both icons before touching a scene. The video scene is generated
+            // first, and assigning a sprite before its import finishes leaves the old arrow.
+            GetTransportIcon(rewindIcon: true);
+            if (includeSkip)
+                GetTransportIcon(rewindIcon: false);
+
+            var rewind = FindNamedButton(uiRoot, "rewind");
+            if (rewind == null) return;
+
+            ApplyTransportIcon(rewind.gameObject, rewindIcon: true);
+
+            if (!includeSkip) return;
+
+            var skip = FindNamedButton(uiRoot, "skip");
+            if (skip == null)
+            {
+                var skipGo = Object.Instantiate(rewind.gameObject, rewind.transform.parent);
+                skipGo.name = "(Prb)ButtonSkip";
+                foreach (var behaviour in skipGo.GetComponents<MonoBehaviour>())
+                {
+                    if (behaviour != null && behaviour.GetType().Name == "MusicCycler")
+                        Object.DestroyImmediate(behaviour);
+                }
+
+                var source = rewind.GetComponent<RectTransform>();
+                var rect = skipGo.GetComponent<RectTransform>();
+                float gap = Mathf.Max(source.sizeDelta.x, 80f) + 16f;
+                rect.anchoredPosition = source.anchoredPosition + new Vector2(gap, 0f);
+                skip = skipGo.GetComponent<MobileControllerFramework.Button>();
+            }
+
+            if (skip != null)
+                ApplyTransportIcon(skip.gameObject, rewindIcon: false);
+        }
+
+        static MobileControllerFramework.Button FindNamedButton(GameObject uiRoot, string namePart)
+        {
+            foreach (var button in uiRoot.GetComponentsInChildren<MobileControllerFramework.Button>(true))
+            {
+                if (button.gameObject.name.ToLowerInvariant().Contains(namePart))
+                    return button;
+            }
+            return null;
+        }
+
+        static void ApplyTransportIcon(GameObject button, bool rewindIcon)
+        {
+            var sprite = GetTransportIcon(rewindIcon);
+            if (sprite == null) return;
+
+            foreach (var image in button.GetComponentsInChildren<Image>(true))
+            {
+                if (image.gameObject.name != "_iconImg") continue;
+                image.sprite = sprite;
+                image.color = Color.white;
+                image.preserveAspect = true;
+                image.enabled = true;
+                EditorUtility.SetDirty(image);
+                if (PrefabUtility.IsPartOfPrefabInstance(image))
+                    PrefabUtility.RecordPrefabInstancePropertyModifications(image);
+            }
+        }
+
+        static Sprite GetTransportIcon(bool rewindIcon)
+        {
+            string path = rewindIcon ? RewindIconPath : SkipIconPath;
+            var existing = LoadSprite(path);
+            if (existing != null) return existing;
+
+            const int size = 128;
+            const int samples = 4;
+            var pixels = new Color32[size * size];
+            int sampleCount = samples * samples;
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    int hit = 0;
+                    for (int sy = 0; sy < samples; sy++)
+                    {
+                        for (int sx = 0; sx < samples; sx++)
+                        {
+                            float px = x + (sx + 0.5f) / samples;
+                            float py = y + (sy + 0.5f) / samples;
+                            if (rewindIcon ? InsideRewind(px, py) : InsideSkip(px, py))
+                                hit++;
+                        }
+                    }
+                    byte alpha = (byte)(hit * 255 / sampleCount);
+                    pixels[y * size + x] = new Color32(255, 255, 255, alpha);
+                }
+            }
+
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            byte[] png = texture.EncodeToPNG();
+            Object.DestroyImmediate(texture);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            File.WriteAllBytes(path, png);
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
+
+            var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.alphaIsTransparency = true;
+            importer.mipmapEnabled = false;
+            importer.filterMode = FilterMode.Bilinear;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.SaveAndReimport();
+
+            var sprite = LoadSprite(path);
+            if (sprite == null)
+                Debug.LogWarning($"[GeneratorHelper] Transport icon did not import: {path}");
+            return sprite;
+        }
+
+        static Sprite LoadSprite(string path)
+        {
+            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (sprite != null) return sprite;
+
+            foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(path))
+            {
+                if (asset is Sprite found)
+                    return found;
+            }
+            return null;
+        }
+
+        static bool InsideRewind(float x, float y)
+        {
+            return PointInTriangle(x, y, 16f, 64f, 54f, 26f, 54f, 102f)
+                || PointInTriangle(x, y, 62f, 64f, 108f, 26f, 108f, 102f);
+        }
+
+        static bool InsideSkip(float x, float y)
+        {
+            bool triangle = PointInTriangle(x, y, 78f, 64f, 20f, 26f, 20f, 102f);
+            bool bar = x >= 96f && x <= 112f && y >= 26f && y <= 102f;
+            return triangle || bar;
+        }
+
+        static bool PointInTriangle(float x, float y, float ax, float ay, float bx, float by, float cx, float cy)
+        {
+            float d1 = (x - bx) * (ay - by) - (ax - bx) * (y - by);
+            float d2 = (x - cx) * (by - cy) - (bx - cx) * (y - cy);
+            float d3 = (x - ax) * (cy - ay) - (cx - ax) * (y - ay);
+            bool hasNeg = d1 < 0f || d2 < 0f || d3 < 0f;
+            bool hasPos = d1 > 0f || d2 > 0f || d3 > 0f;
+            return !(hasNeg && hasPos);
         }
     }
 }

@@ -30,6 +30,8 @@ namespace SickOfIt.Core.Progression
         private GameClock gameClock;
         private SpriteFramePlayer spritePlayer;
         private MobileControllerFramework.Button skipButton;
+        private MobileControllerFramework.Button rewindButton;
+        private bool rewindAlsoSkips;
         private bool rewindButtonHeld;
         private float rewindPressedAt;
         private DeathConfig config;
@@ -65,25 +67,21 @@ namespace SickOfIt.Core.Progression
 
         private void AutoDiscoverReferences()
         {
-            // Same mobile UI as the video scene: no object is named "skip".
             if (uiRoot == null) return;
 
             var buttons = uiRoot.GetComponentsInChildren<MobileControllerFramework.Button>(true);
-            MobileControllerFramework.Button rewindFallback = null;
             foreach (var btn in buttons)
             {
                 string name = btn.gameObject.name.ToLowerInvariant();
-                if (name.Contains("skip"))
-                {
+                if (skipButton == null && name.Contains("skip"))
                     skipButton = btn;
-                    break;
-                }
-                if (rewindFallback == null && name.Contains("rewind"))
-                    rewindFallback = btn;
+                else if (rewindButton == null && name.Contains("rewind"))
+                    rewindButton = btn;
             }
 
-            if (skipButton == null)
-                skipButton = rewindFallback;
+            rewindAlsoSkips = skipButton == null;
+            if (rewindAlsoSkips)
+                skipButton = rewindButton;
         }
 
         private void EnsurePlaybackCamera()
@@ -124,11 +122,19 @@ namespace SickOfIt.Core.Progression
 
         private void SetupPlayback()
         {
-            if (skipButton != null)
+            if (rewindButton != null && !rewindAlsoSkips)
+            {
+                rewindButton.TapStartEvent.AddListener(OnRewindButtonDown);
+                rewindButton.TapEndEvent.AddListener(OnRewindButtonUp);
+            }
+            else if (skipButton != null)
             {
                 skipButton.TapStartEvent.AddListener(OnRewindButtonDown);
                 skipButton.TapEndEvent.AddListener(OnRewindButtonUp);
             }
+
+            if (skipButton != null && !rewindAlsoSkips)
+                skipButton.TapEndEvent.AddListener(OnSkipButton);
 
             // Setup SpriteFramePlayer if we have sprite frames data
             if (config?.spriteFramesData != null)
@@ -223,8 +229,15 @@ namespace SickOfIt.Core.Progression
             bool wasRewinding = gameClock != null && gameClock.IsRewinding;
             if (wasRewinding)
                 gameClock.StopRewind();
-            else
+            else if (rewindAlsoSkips)
                 SkipDeathAnimation();
+        }
+
+        private void OnSkipButton()
+        {
+            if (gameClock != null && gameClock.IsRewinding)
+                gameClock.StopRewind();
+            SkipDeathAnimation();
         }
 
         private void Update()
@@ -252,11 +265,19 @@ namespace SickOfIt.Core.Progression
 
         private void OnDestroy()
         {
-            if (skipButton != null)
+            if (rewindButton != null && !rewindAlsoSkips)
+            {
+                rewindButton.TapStartEvent.RemoveListener(OnRewindButtonDown);
+                rewindButton.TapEndEvent.RemoveListener(OnRewindButtonUp);
+            }
+            else if (skipButton != null)
             {
                 skipButton.TapStartEvent.RemoveListener(OnRewindButtonDown);
                 skipButton.TapEndEvent.RemoveListener(OnRewindButtonUp);
             }
+
+            if (skipButton != null && !rewindAlsoSkips)
+                skipButton.TapEndEvent.RemoveListener(OnSkipButton);
         }
 
         public void SkipDeathAnimation()

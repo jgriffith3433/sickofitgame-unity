@@ -94,7 +94,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 ui.name = "UI";
                 ui.transform.SetParent(content.transform);
                 WireCanvasCamera(ui, sceneCamera);
-                ////Debug.Log("[VideoGen] Placed video UI prefab");
+                GeneratorHelper.StyleTransportControls(ui, includeSkip: true);
             }
 
             // Add VideoRuntime directly to the scene and wire references

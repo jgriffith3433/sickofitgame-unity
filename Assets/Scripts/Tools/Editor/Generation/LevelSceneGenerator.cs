@@ -157,7 +157,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 mobileController.name = "MobileController";
                 mobileController.transform.SetParent(content.transform);
                 WireCanvasCamera(mobileController, sceneCamera);
-                ////Debug.Log("[LevelGen] Placed level UI prefab");
+                GeneratorHelper.StyleTransportControls(mobileController, includeSkip: false);
             }
 
             // Add LevelRuntime directly to the scene and wire references

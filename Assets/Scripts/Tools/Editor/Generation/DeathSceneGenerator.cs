@@ -93,7 +93,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 ui.name = "UI";
                 ui.transform.SetParent(content.transform);
                 WireCanvasCamera(ui, sceneCamera);
-                ////Debug.Log("[DeathGen] Placed death UI prefab");
+                GeneratorHelper.StyleTransportControls(ui, includeSkip: true);
             }
 
             // Add DeathRuntime directly to the scene and wire references
