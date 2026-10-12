@@ -28,9 +28,6 @@ namespace SickOfIt.Core.Input
         [Tooltip("Automatically detect and exclude TouchRegionAnalog components.")]
         [SerializeField] private bool autoExcludeTouchRegions = false;
 
-        [Header("Debug")]
-        [SerializeField] private bool debugMode = false;
-
         private readonly Dictionary<int, TouchData> activeTouches = new Dictionary<int, TouchData>();
         [SerializeField] private Canvas parentCanvas;
 
@@ -56,8 +53,6 @@ namespace SickOfIt.Core.Input
                     if (rect != null && !excludedRegions.Contains(rect))
                     {
                         excludedRegions.Add(rect);
-                        if (debugMode)
-                            Debug.Log($"[GlobalTapJump] Auto-excluded region: {region.gameObject.name}");
                     }
                 }
             }
@@ -99,8 +94,6 @@ namespace SickOfIt.Core.Input
                     if (isTap && !data.isInExcludedRegion)
                     {
                         gameInputManager.RequestJump();
-                        if (debugMode)
-                            Debug.Log("[GlobalTapJump] Jump triggered!");
                     }
 
                     activeTouches.Remove(pointerId);

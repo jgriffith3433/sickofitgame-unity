@@ -119,7 +119,6 @@ namespace SickOfIt.Data
         {
             PlayerPrefs.SetInt(KEY_MAX_HEALTH, Mathf.Max(1, maxHealth));
             PlayerPrefs.Save();
-            Debug.Log($"[RogueliteManager] Max health set to {maxHealth}");
         }
 
         /// <summary>
@@ -160,7 +159,7 @@ namespace SickOfIt.Data
             }
 
             PlayerPrefs.Save();
-            Debug.Log($"[RogueliteManager] Level {levelNumber} end health saved: {clampedEndHealth}/{maxHealth}");
+            ////Debug.Log($"[RogueliteManager] Level {levelNumber} end health saved: {clampedEndHealth}/{maxHealth}");
         }
 
         /// <summary>
@@ -180,7 +179,7 @@ namespace SickOfIt.Data
                 int newHealth = Mathf.Min(storedHealth + delta, maxHealth);
                 PlayerPrefs.SetInt(string.Format(KEY_LEVEL_END_HEALTH, level), newHealth);
                 PlayerPrefs.SetInt(string.Format(KEY_LEVEL_MAX_HEALTH, level), maxHealth);
-                Debug.Log($"[RogueliteManager] Cascaded +{delta} to level {level}: {storedHealth} → {newHealth}/{maxHealth}");
+                ////Debug.Log($"[RogueliteManager] Cascaded +{delta} to level {level}: {storedHealth} → {newHealth}/{maxHealth}");
             }
         }
 
@@ -353,20 +352,20 @@ namespace SickOfIt.Data
             int current = GetExtraJumpsPurchased();
             if (current >= MaxExtraJumps)
             {
-                Debug.Log("[RogueliteManager] Already at max extra jumps!");
+                ////Debug.Log("[RogueliteManager] Already at max extra jumps!");
                 return false;
             }
 
             int cost = GetExtraJumpCost(current + 1);
             if (!SpendPoints(cost))
             {
-                Debug.Log($"[RogueliteManager] Not enough points for extra jump! Need {cost}, have {GetPoints()}");
+                ////Debug.Log($"[RogueliteManager] Not enough points for extra jump! Need {cost}, have {GetPoints()}");
                 return false;
             }
 
             PlayerPrefs.SetInt(KEY_EXTRA_JUMPS_PURCHASED, current + 1);
             PlayerPrefs.Save();
-            Debug.Log($"[RogueliteManager] Purchased extra jump #{current + 1}! Air jumps now: {current + 1}");
+            ////Debug.Log($"[RogueliteManager] Purchased extra jump #{current + 1}! Air jumps now: {current + 1}");
             return true;
         }
 
@@ -453,7 +452,7 @@ namespace SickOfIt.Data
             PlayerPrefs.DeleteKey("GameInitialized");
 
             PlayerPrefs.Save();
-            Debug.Log("[RogueliteManager] All game and roguelite data reset.");
+            ////Debug.Log("[RogueliteManager] All game and roguelite data reset.");
         }
     }
 }

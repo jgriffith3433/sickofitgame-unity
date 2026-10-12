@@ -38,7 +38,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) != null)
             {
                 AssetDatabase.DeleteAsset(prefabPath);
-                Debug.Log($"[PlatformPrefabGen] Deleted: {prefabPath}");
+                ////Debug.Log($"[PlatformPrefabGen] Deleted: {prefabPath}");
             }
         }
 
@@ -95,7 +95,7 @@ namespace SickOfIt.Tools.Editor.Generation
             gd.platformPrefab = prefab;
             EditorUtility.SetDirty(gd);
 
-            Debug.Log($"[PlatformPrefabGen] Created: {prefabPath}");
+            ////Debug.Log($"[PlatformPrefabGen] Created: {prefabPath}");
             return prefab;
         }
     }

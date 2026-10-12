@@ -50,7 +50,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 return false;
             }
 
-            Debug.Log("Generating Level.unity...");
+            ////Debug.Log("Generating Level.unity...");
             string scenePath = $"{SCENES_ROOT}/Level.unity";
 
             // Create or open scene
@@ -136,20 +136,18 @@ namespace SickOfIt.Tools.Editor.Generation
                 cameraGo.tag = "MainCamera";
                 cameraGo.transform.SetParent(sceneRoot.transform);
                 sceneCamera = cameraGo.GetComponent<Camera>();
-                if (sceneCamera != null)
-                    sceneCamera.orthographicSize = gd.levelCameraOrthoSize;
             }
             else
             {
                 var cameraGo = new GameObject("Main Camera");
                 cameraGo.transform.SetParent(sceneRoot.transform);
                 cameraGo.tag = "MainCamera";
-                var cam = cameraGo.AddComponent<Camera>();
-                cam.orthographic = true;
-                cam.orthographicSize = gd.levelCameraOrthoSize;
+                cameraGo.AddComponent<Camera>();
                 cameraGo.AddComponent<AudioListener>();
-                sceneCamera = cam;
+                sceneCamera = cameraGo.GetComponent<Camera>();
             }
+
+            GeneratorHelper.ConfigureSceneCamera(sceneCamera, gd.levelCameraOrthoSize);
 
             // Place full UI prefab (MobileController) from GameDefinition
             GameObject mobileController = null;
@@ -159,7 +157,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 mobileController.name = "MobileController";
                 mobileController.transform.SetParent(content.transform);
                 WireCanvasCamera(mobileController, sceneCamera);
-                Debug.Log("[LevelGen] Placed level UI prefab");
+                ////Debug.Log("[LevelGen] Placed level UI prefab");
             }
 
             // Add LevelRuntime directly to the scene and wire references
@@ -249,7 +247,7 @@ namespace SickOfIt.Tools.Editor.Generation
                     if (gim != null)
                         pcSo.FindProperty("gameInputManager").objectReferenceValue = gim;
                     pcSo.ApplyModifiedPropertiesWithoutUndo();
-                    Debug.Log("[LevelGen] Wired mobile controls → PlayerController");
+                    ////Debug.Log("[LevelGen] Wired mobile controls → PlayerController");
                 }
             }
 
@@ -276,7 +274,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (rewindBtn != null)
                 rcso.FindProperty("rewindButton").objectReferenceValue = rewindBtn;
             rcso.ApplyModifiedPropertiesWithoutUndo();
-            Debug.Log($"[LevelGen] Wired RewindController (rewindButton: {rewindBtn != null})");
+            ////Debug.Log($"[LevelGen] Wired RewindController (rewindButton: {rewindBtn != null})");
 
             // ── Create pickup pool ──
             string pickupPrefabPath = "Assets/Prefabs/Combat/Diamond.prefab";
@@ -299,7 +297,7 @@ namespace SickOfIt.Tools.Editor.Generation
             // Save scene
             EditorSceneManager.SaveScene(scene, scenePath);
 
-            Debug.Log($"[LevelGen] Generated scene: {scenePath}");
+            ////Debug.Log($"[LevelGen] Generated scene: {scenePath}");
 
             return true;
         }
@@ -336,7 +334,7 @@ namespace SickOfIt.Tools.Editor.Generation
             poolSo.FindProperty("initialSize").intValue = initialSize;
             poolSo.ApplyModifiedPropertiesWithoutUndo();
 
-            Debug.Log($"[LevelGen] Created pool '{poolName}' ({prefabPath}, size={initialSize})");
+            ////Debug.Log($"[LevelGen] Created pool '{poolName}' ({prefabPath}, size={initialSize})");
             return go;
         }
     }

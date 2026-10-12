@@ -35,7 +35,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) != null)
             {
                 AssetDatabase.DeleteAsset(prefabPath);
-                Debug.Log($"[PickupPrefabGen] Deleted: {prefabPath}");
+                ////Debug.Log($"[PickupPrefabGen] Deleted: {prefabPath}");
             }
         }
 
@@ -124,7 +124,7 @@ namespace SickOfIt.Tools.Editor.Generation
             gd.pickupPrefab = prefab;
             EditorUtility.SetDirty(gd);
 
-            Debug.Log($"[PickupPrefabGen] Created: {prefabPath}");
+            ////Debug.Log($"[PickupPrefabGen] Created: {prefabPath}");
             return prefab;
         }
     }

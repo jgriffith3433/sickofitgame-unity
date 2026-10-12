@@ -140,9 +140,7 @@ namespace SickOfIt.Tools.Editor.GameOverview
             if (GUILayout.Button("Validate", EditorStyles.toolbarButton))
             {
                 validationIssues = gameDefinition.Validate();
-                if (validationIssues.Count == 0)
-                    Debug.Log("[GameOverview] ✅ Validation passed — no issues found");
-                else
+                if (validationIssues.Count != 0)
                     Debug.LogWarning($"[GameOverview] ⚠️ {validationIssues.Count} issue(s) found");
                 selectedTab = 6;
             }

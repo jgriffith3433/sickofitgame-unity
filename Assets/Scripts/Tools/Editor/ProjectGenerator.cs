@@ -49,7 +49,7 @@ namespace SickOfIt.Tools.Editor
         [MenuItem("SickOfIt/Generate Project")]
         public static void GenerateProject()
         {
-            Debug.Log("=== GENERATING PROJECT FROM CONFIG ===");
+            ////Debug.Log("=== GENERATING PROJECT FROM CONFIG ===");
             
             var gd = LoadGameDefinition();
             if (gd == null) return;
@@ -57,7 +57,7 @@ namespace SickOfIt.Tools.Editor
             // ═══════════════════════════════════════════════════════════════
             // PHASE 1: CLEANUP
             // ═══════════════════════════════════════════════════════════════
-            Debug.Log("Phase 1: Cleanup...");
+            ////Debug.Log("Phase 1: Cleanup...");
             DeleteGeneratedPrefabs();
             DeleteGeneratedAnimations();
             CleanupOldScenes();
@@ -68,7 +68,7 @@ namespace SickOfIt.Tools.Editor
             // PHASE 2: GENERATE PREFABS
             // Order: Projectiles → Player → Enemies (player needed for enemy targeting)
             // ═══════════════════════════════════════════════════════════════
-            Debug.Log("Phase 2: Generating prefabs...");
+            ////Debug.Log("Phase 2: Generating prefabs...");
             gd = LoadGameDefinition();
             
             try { ProjectilePrefabGenerator.GenerateAll(gd); }
@@ -96,7 +96,7 @@ namespace SickOfIt.Tools.Editor
             // ═══════════════════════════════════════════════════════════════
             // PHASE 3: GENERATE SCENES
             // ═══════════════════════════════════════════════════════════════
-            Debug.Log("Phase 3: Generating scenes...");
+            ////Debug.Log("Phase 3: Generating scenes...");
             gd = LoadGameDefinition();
             
             try { VideoSceneGenerator.GenerateVideoScene(gd); }
@@ -120,7 +120,7 @@ namespace SickOfIt.Tools.Editor
             // ═══════════════════════════════════════════════════════════════
             // PHASE 4: ADDRESSABLES
             // ═══════════════════════════════════════════════════════════════
-            Debug.Log("Phase 4: Setting up Addressables...");
+            ////Debug.Log("Phase 4: Setting up Addressables...");
             gd = LoadGameDefinition();
             SetupAddressables(gd);
             
@@ -128,12 +128,12 @@ namespace SickOfIt.Tools.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             
-            Debug.Log("=== PROJECT GENERATION COMPLETE ===");
-            Debug.Log($"✅ Generated prefabs: Character, Platform, Diamond, {gd.enemyTypes?.Count ?? 0} enemies, {gd.projectileConfigs?.Count ?? 0} projectiles");
-            Debug.Log($"✅ Generated scenes: Video, Level, Death (menu scenes left as authored)");
-            Debug.Log($"✅ Config: {gd.levels.Count} levels, {gd.videos.Count} videos, {gd.deaths.Count} deaths");
-            Debug.Log($"✅ Addressables configured");
-            Debug.Log($"🎮 Game ready to play!");
+            ////Debug.Log("=== PROJECT GENERATION COMPLETE ===");
+            ////Debug.Log($"✅ Generated prefabs: Character, Platform, Diamond, {gd.enemyTypes?.Count ?? 0} enemies, {gd.projectileConfigs?.Count ?? 0} projectiles");
+            ////Debug.Log($"✅ Generated scenes: Video, Level, Death (menu scenes left as authored)");
+            ////Debug.Log($"✅ Config: {gd.levels.Count} levels, {gd.videos.Count} videos, {gd.deaths.Count} deaths");
+            ////Debug.Log($"✅ Addressables configured");
+            ////Debug.Log($"🎮 Game ready to play!");
             
             // Open MainMenu scene so it's ready to play
             EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity");
@@ -144,7 +144,7 @@ namespace SickOfIt.Tools.Editor
         /// </summary>
         private static void DeleteGeneratedPrefabs()
         {
-            Debug.Log("Deleting generated prefabs...");
+            ////Debug.Log("Deleting generated prefabs...");
             
             ProjectilePrefabGenerator.DeleteAll();
             PickupPrefabGenerator.Delete();
@@ -160,19 +160,19 @@ namespace SickOfIt.Tools.Editor
         /// </summary>
         private static void DeleteGeneratedAnimations()
         {
-            Debug.Log("Deleting generated animations...");
+            ////Debug.Log("Deleting generated animations...");
             
             string animRoot = "Assets/Animations";
             if (AssetDatabase.IsValidFolder(animRoot))
             {
                 AssetDatabase.DeleteAsset(animRoot);
-                Debug.Log($"Deleted: {animRoot}");
+                ////Debug.Log($"Deleted: {animRoot}");
             }
         }
         
         private static void CleanupOldScenes()
         {
-            Debug.Log("Cleaning up old scenes...");
+            ////Debug.Log("Cleaning up old scenes...");
             
             // Delete old scene folders and individual scenes
             string[] foldersToDelete = {
@@ -188,7 +188,7 @@ namespace SickOfIt.Tools.Editor
                 if (Directory.Exists(folder))
                 {
                     AssetDatabase.DeleteAsset(folder);
-                    Debug.Log($"Deleted folder: {folder}");
+                    ////Debug.Log($"Deleted folder: {folder}");
                 }
             }
             
@@ -207,7 +207,7 @@ namespace SickOfIt.Tools.Editor
                         continue;
                         
                     AssetDatabase.DeleteAsset(path);
-                    Debug.Log($"Deleted old scene: {sceneName}");
+                    ////Debug.Log($"Deleted old scene: {sceneName}");
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace SickOfIt.Tools.Editor
         
         private static void SetupAddressables(GameDefinition gd)
         {
-            Debug.Log("Setting up Addressables...");
+            ////Debug.Log("Setting up Addressables...");
             
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings == null)
@@ -252,7 +252,7 @@ namespace SickOfIt.Tools.Editor
             if (entriesAdded > 0)
             {
                 EditorUtility.SetDirty(settings);
-                Debug.Log($"✅ Added {entriesAdded} scenes to Addressables");
+                ////Debug.Log($"✅ Added {entriesAdded} scenes to Addressables");
             }
         }
         
@@ -263,7 +263,7 @@ namespace SickOfIt.Tools.Editor
             {
                 group = settings.CreateGroup(groupName, false, false, true, null,
                     typeof(BundledAssetGroupSchema), typeof(ContentUpdateGroupSchema));
-                Debug.Log($"Created Addressables group: {groupName}");
+                ////Debug.Log($"Created Addressables group: {groupName}");
             }
             return group;
         }
@@ -294,7 +294,7 @@ namespace SickOfIt.Tools.Editor
             // Add new entry
             entry = settings.CreateOrMoveEntry(guid, group);
             entry.SetAddress(address);
-            Debug.Log($"Added to Addressables: {address} -> {scenePath}");
+            ////Debug.Log($"Added to Addressables: {address} -> {scenePath}");
             return true;
         }
 
@@ -324,7 +324,7 @@ namespace SickOfIt.Tools.Editor
             }
             
             var gd = AssetDatabase.LoadAssetAtPath<GameDefinition>(AssetDatabase.GUIDToAssetPath(guids[0]));
-            Debug.Log($"Found GameDefinition: {gd.levels.Count} levels, {gd.videos.Count} videos, {gd.deaths.Count} deaths");
+            ////Debug.Log($"Found GameDefinition: {gd.levels.Count} levels, {gd.videos.Count} videos, {gd.deaths.Count} deaths");
             return gd;
         }
     }

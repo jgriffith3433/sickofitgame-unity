@@ -254,9 +254,20 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 isPlaying = true;
         }
 
+        private bool wasRewinding;
+
         private void Update()
         {
             if (!initialized || !isReady) return;
+
+            bool rewinding = useGameClock && GameClock.Instance != null && GameClock.Instance.IsRewinding;
+            if (rewinding && !wasRewinding && data != null)
+            {
+                int chunk = data.GetChunkIndexForFrame(currentFrameIndex);
+                if (chunk >= 0)
+                    EnsureChunksAround(chunk);
+            }
+            wasRewinding = rewinding;
 
             if (useGameClock && GameClock.Instance != null)
             {
@@ -472,21 +483,48 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                     onReady?.Invoke();
                 }
             }
+
+            // The playhead may already be sitting on this chunk (rewind stepped backward).
+            if (cellOffsetsReady && totalFrames > 0)
+                UpdateFrame();
         }
 
         // =====================================================================
         // SLIDING WINDOW — identical to SpriteFrameMixerBehaviour
         // =====================================================================
 
+        /// <summary>
+        /// Chunks to keep resident. Forward play keeps the upcoming chunk.
+        /// Rewind keeps the chunks behind the playhead, which is the only way
+        /// the picture can step backward.
+        /// </summary>
+        private void GetRetentionWindow(int center, int totalChunks, out int windowStart, out int windowEnd)
+        {
+            bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
+            int budget = Mathf.Max(1, maxChunksInMemory);
+            int behind = rewinding ? budget - 1 : (budget > 2 ? 1 : 0);
+            int ahead = rewinding ? 0 : Mathf.Min(chunksAheadToLoad, Mathf.Max(0, budget - 1));
+
+            while (behind + ahead + 1 > budget)
+            {
+                if (!rewinding && ahead > 0)
+                    ahead--;
+                else if (behind > 0)
+                    behind--;
+                else if (ahead > 0)
+                    ahead--;
+                else
+                    break;
+            }
+
+            windowStart = Mathf.Max(0, center - behind);
+            windowEnd = Mathf.Min(totalChunks - 1, center + ahead);
+        }
+
         private void EnsureChunksAround(int chunkIndex)
         {
             int totalChunks = data.chunks.Count;
-            int effectiveAhead = Mathf.Min(chunksAheadToLoad, maxChunksInMemory - 1);
-            int windowStart = chunkIndex;
-            int windowEnd = Mathf.Min(chunkIndex + effectiveAhead, totalChunks - 1);
-
-            // Also load chunks BEHIND current for rewind support
-            int windowBehind = Mathf.Max(chunkIndex - 1, 0);
+            GetRetentionWindow(chunkIndex, totalChunks, out int windowStart, out int windowEnd);
 
             // Evict outside window
             bool protectDisplayed = displayedChunkIdx >= 0
@@ -500,14 +538,14 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             for (int i = 0; i < evictCandidates.Count; i++)
             {
                 int idx = evictCandidates[i];
-                if (idx >= windowBehind && idx <= windowEnd) continue;
+                if (idx >= windowStart && idx <= windowEnd) continue;
                 if (protectDisplayed && idx == displayedChunkIdx) continue;
                 if (idx == referenceSpriteChunkIdx) continue; // Protect reference sprite chunk
                 UnloadChunk(idx);
             }
 
             // Load window
-            for (int target = windowBehind; target <= windowEnd; target++)
+            for (int target = windowStart; target <= windowEnd; target++)
             {
                 if (target < 0 || target >= totalChunks) continue;
                 if (loadedChunks.Contains(target)) continue;
@@ -522,9 +560,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             if (!isReady) return; // Don't evict during initial preload
 
             int center = lastChunkIdx >= 0 ? lastChunkIdx : justLoaded;
-            int totalChunks = data.chunks.Count;
-            int effectiveAhead = Mathf.Min(chunksAheadToLoad, maxChunksInMemory - 1);
-            int windowEnd = Mathf.Min(center + effectiveAhead, totalChunks - 1);
+            GetRetentionWindow(center, data.chunks.Count, out int windowStart, out int windowEnd);
 
             evictCandidates.Clear();
             foreach (int idx in loadedChunks) evictCandidates.Add(idx);
@@ -533,7 +569,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             for (int i = 0; i < evictCandidates.Count; i++)
             {
                 int idx = evictCandidates[i];
-                if (idx >= center && idx <= windowEnd) continue;
+                if (idx >= windowStart && idx <= windowEnd) continue;
                 if (idx == displayedChunkIdx && !loadedChunks.Contains(center)) continue;
                 if (idx == referenceSpriteChunkIdx) continue; // Protect reference sprite chunk from eviction to prevent flash
                 UnloadChunk(idx);

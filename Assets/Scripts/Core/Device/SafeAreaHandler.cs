@@ -13,9 +13,6 @@ namespace SickOfIt.Core.Device
         [Tooltip("Apply safe area adjustments")]
         public bool applySafeArea = true;
 
-        [Tooltip("Show debug information")]
-        public bool showDebug = false;
-
         [SerializeField] private RectTransform rectTransform;
         private Rect lastSafeArea;
         private Vector2Int lastScreenSize;
@@ -63,12 +60,6 @@ namespace SickOfIt.Core.Device
             // Apply to RectTransform
             rectTransform.anchorMin = anchorMin;
             rectTransform.anchorMax = anchorMax;
-
-            if (showDebug)
-            {
-                Debug.Log($"SafeArea Applied: Screen={Screen.width}x{Screen.height}, " +
-                          $"SafeArea=({safeArea.x}, {safeArea.y}, {safeArea.width}, {safeArea.height})");
-            }
         }
 
         private void OnValidate()

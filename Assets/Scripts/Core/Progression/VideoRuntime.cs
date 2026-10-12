@@ -60,8 +60,9 @@ namespace SickOfIt.Core.Progression
                 return;
             }
 
-            // Setup GameClock for this video
+            // Setup GameClock for this video. RewindTimeline applies the audio scrub.
             gameClock = gameObject.AddComponent<GameClock>();
+            gameObject.AddComponent<SickOfIt.Core.Rewind.RewindTimeline>();
 
             EnsurePlaybackCamera();
             EnsureEventSystem();
@@ -138,7 +139,10 @@ namespace SickOfIt.Core.Progression
         private void SetupPlayback()
         {
             if (skipButton != null)
-                skipButton.TapEndEvent.AddListener(SkipVideo);
+            {
+                skipButton.TapStartEvent.AddListener(OnRewindButtonDown);
+                skipButton.TapEndEvent.AddListener(OnRewindButtonUp);
+            }
 
             // Setup SpriteFramePlayer if we have sprite frames data
             var framesData = config.spriteFramesData as SpriteFramesData;
@@ -168,8 +172,10 @@ namespace SickOfIt.Core.Progression
                 spritePlayer.Initialize(framesData, () =>
                 {
                     AnalyticsManager.Instance?.TrackVideoStart(videoNumber);
+                    spritePlayer.UseGameClock(true);
                     spritePlayer.Play();
                 });
+                spritePlayer.UseGameClock(true);
             }
             else
             {
@@ -196,6 +202,8 @@ namespace SickOfIt.Core.Progression
                 audioSource.loop = false;
                 audioSource.clip = config.audio;
                 audioSource.volume = 1f;
+                if (audioSource.GetComponent<RewindableAudioSource>() == null)
+                    audioSource.gameObject.AddComponent<RewindableAudioSource>();
                 StartCoroutine(PlayClipWhenAudible(audioSource));
             }
         }
@@ -218,7 +226,7 @@ namespace SickOfIt.Core.Progression
 
             source.enabled = true;
             source.Play();
-            Debug.Log($"[VideoRuntime] Audio '{(clip != null ? clip.name : "none")}' playing={source.isPlaying}");
+            ////Debug.Log($"[VideoRuntime] Audio '{(clip != null ? clip.name : "none")}' playing={source.isPlaying}");
         }
 
         private void StartExperience()
@@ -230,15 +238,40 @@ namespace SickOfIt.Core.Progression
             runner.Run(config.timeline);
         }
 
+        private bool rewindButtonHeld;
+        private float rewindPressedAt;
+
+        private void OnRewindButtonDown()
+        {
+            rewindButtonHeld = true;
+            rewindPressedAt = Time.unscaledTime;
+        }
+
+        private void OnRewindButtonUp()
+        {
+            rewindButtonHeld = false;
+            bool wasRewinding = gameClock != null && gameClock.IsRewinding;
+            if (wasRewinding)
+                gameClock.StopRewind();
+            else
+                SkipVideo();
+        }
+
         private void Update()
         {
             if (videoCompleted) return;
+
+            if (rewindButtonHeld && gameClock != null && !gameClock.IsRewinding &&
+                Time.unscaledTime - rewindPressedAt >= 0.22f && gameClock.Time > 0.05f)
+                gameClock.StartRewind(3f);
 
             if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
             {
                 SkipVideo();
                 return;
             }
+
+            if (gameClock != null && gameClock.IsRewinding) return;
 
             if (spritePlayer != null && spritePlayer.IsReady && spritePlayer.Progress >= 0.99f)
             {
@@ -249,7 +282,10 @@ namespace SickOfIt.Core.Progression
         private void OnDestroy()
         {
             if (skipButton != null)
-                skipButton.TapEndEvent.RemoveListener(SkipVideo);
+            {
+                skipButton.TapStartEvent.RemoveListener(OnRewindButtonDown);
+                skipButton.TapEndEvent.RemoveListener(OnRewindButtonUp);
+            }
         }
 
         public void SkipVideo()

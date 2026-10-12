@@ -194,7 +194,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 {
                     AssetDatabase.Refresh();
                     EditorUtility.DisplayDialog("Success", message, "OK");
-                    UnityEngine.Debug.Log($"Frames extracted to: {outputFolderPath}");
+                    //UnityEngine.Debug.Log($"Frames extracted to: {outputFolderPath}");
                 }
                 else
                 {
@@ -220,7 +220,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
             if (File.Exists(hardcodedPath))
             {
                 ffmpegPath = hardcodedPath;
-                UnityEngine.Debug.Log($"Found FFmpeg at hardcoded path: {ffmpegPath}");
+                //UnityEngine.Debug.Log($"Found FFmpeg at hardcoded path: {ffmpegPath}");
                 return true;
             }
 
@@ -248,7 +248,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                         if (lines.Length > 0)
                         {
                             ffmpegPath = lines[0].Trim();
-                            UnityEngine.Debug.Log($"Found FFmpeg at: {ffmpegPath}");
+                            //UnityEngine.Debug.Log($"Found FFmpeg at: {ffmpegPath}");
                             return true;
                         }
                     }
@@ -273,7 +273,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 if (File.Exists(path))
                 {
                     ffmpegPath = path;
-                    UnityEngine.Debug.Log($"Found FFmpeg at: {ffmpegPath}");
+                    //UnityEngine.Debug.Log($"Found FFmpeg at: {ffmpegPath}");
                     return true;
                 }
             }
@@ -297,7 +297,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                         if (File.Exists(exePath))
                         {
                             ffmpegPath = exePath;
-                            UnityEngine.Debug.Log($"Found FFmpeg at: {ffmpegPath}");
+                            //UnityEngine.Debug.Log($"Found FFmpeg at: {ffmpegPath}");
                             return true;
                         }
                     }
@@ -358,9 +358,9 @@ namespace SickOfIt.VideoFrameExtractor.Editor
 
             try
             {
-                UnityEngine.Debug.Log($"FFmpeg command: {ffmpegPath} {arguments}");
-                UnityEngine.Debug.Log($"Video path: {absoluteVideoPath}");
-                UnityEngine.Debug.Log($"Output path: {absoluteOutputPath}");
+                //UnityEngine.Debug.Log($"FFmpeg command: {ffmpegPath} {arguments}");
+                //UnityEngine.Debug.Log($"Video path: {absoluteVideoPath}");
+                //UnityEngine.Debug.Log($"Output path: {absoluteOutputPath}");
 
                 Process process = Process.Start(startInfo);
                 process.WaitForExit();
@@ -369,16 +369,16 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 string output = process.StandardOutput.ReadToEnd();
                 string error = process.StandardError.ReadToEnd();
 
-                UnityEngine.Debug.Log($"FFmpeg exit code: {exitCode}");
+                //UnityEngine.Debug.Log($"FFmpeg exit code: {exitCode}");
                 if (!string.IsNullOrEmpty(output))
-                    UnityEngine.Debug.Log($"FFmpeg output: {output}");
+                    //UnityEngine.Debug.Log($"FFmpeg output: {output}");
                 if (!string.IsNullOrEmpty(error))
-                    UnityEngine.Debug.Log($"FFmpeg stderr: {error}");
+                    //UnityEngine.Debug.Log($"FFmpeg stderr: {error}");
 
                 if (exitCode == 0)
                 {
                     string[] jpgFiles = Directory.GetFiles(absoluteOutputPath, "frame_*.jpg");
-                    UnityEngine.Debug.Log($"Found {jpgFiles.Length} frames in {absoluteOutputPath}");
+                    //UnityEngine.Debug.Log($"Found {jpgFiles.Length} frames in {absoluteOutputPath}");
 
                     // Set import settings for all extracted frames
                     SetFrameImportSettings(outputPath, jpgFiles.Length);
@@ -415,7 +415,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 // Ensure path uses forward slashes
                 unityPath = unityPath.Replace("\\", "/");
 
-                UnityEngine.Debug.Log($"Setting import settings for frames in: {unityPath}");
+                //UnityEngine.Debug.Log($"Setting import settings for frames in: {unityPath}");
 
                 // Find all frame files and set import settings
                 string[] guids = AssetDatabase.FindAssets("frame_* t:Texture2D", new[] { unityPath });
@@ -433,7 +433,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                     }
                 }
 
-                UnityEngine.Debug.Log($"Import settings updated for {guids.Length} frames");
+                //UnityEngine.Debug.Log($"Import settings updated for {guids.Length} frames");
             }
             catch (System.Exception e)
             {

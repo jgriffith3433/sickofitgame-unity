@@ -42,6 +42,10 @@ namespace SickOfIt.Combat.Damage
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            // Scrubbing a shot backward through a body must not hit it again.
+            if (SickOfIt.Core.GameClock.Instance != null && SickOfIt.Core.GameClock.Instance.IsRewinding)
+                return;
+
             // Skip if already dealt damage and can't damage multiple
             if (hasDealtDamage && !canDamageMultipleTargets)
                 return;

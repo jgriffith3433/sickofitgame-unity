@@ -49,7 +49,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 if (path.Contains("Enemy_"))
                 {
                     AssetDatabase.DeleteAsset(path);
-                    Debug.Log($"[EnemyPrefabGen] Deleted: {path}");
+                    ////Debug.Log($"[EnemyPrefabGen] Deleted: {path}");
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace SickOfIt.Tools.Editor.Generation
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log($"[EnemyPrefabGen] Generated {gd.enemyTypes.Count} enemy prefabs");
+            ////Debug.Log($"[EnemyPrefabGen] Generated {gd.enemyTypes.Count} enemy prefabs");
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 if (config.animationConfig != null)
                 {
                     EditorUtility.SetDirty(GameDefinition.Instance);
-                    Debug.Log($"[EnemyPrefabGen] Auto-populated animation config for {enemyName}");
+                    ////Debug.Log($"[EnemyPrefabGen] Auto-populated animation config for {enemyName}");
                 }
             }
 
@@ -341,7 +341,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (GameDefinition.Instance != null)
                 EditorUtility.SetDirty(GameDefinition.Instance);
 
-            Debug.Log($"[EnemyPrefabGen] Created: {prefabPath}");
+            ////Debug.Log($"[EnemyPrefabGen] Created: {prefabPath}");
 
             return prefab;
         }

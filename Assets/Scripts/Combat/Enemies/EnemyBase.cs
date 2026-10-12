@@ -171,6 +171,7 @@ namespace SickOfIt.Combat.Enemies
         protected virtual void OnCollisionEnter2D(Collision2D collision)
         {
             if (!collision.gameObject.CompareTag("Player")) return;
+            if (enemyHealth != null && !enemyHealth.IsAlive) return;
 
             // Use cached ref first, fall back only if null
             var target = playerDamageable;

@@ -33,8 +33,7 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Maximum concurrent download size checks to avoid overwhelming the server")]
         [SerializeField] private int maxConcurrentChecks = 3;
 
-        [Header("Debug")]
-        [SerializeField] private bool showDebugLogs = true;
+        private bool showDebugLogs = false;
 
         // Singleton
         private static BundleDownloadManager _instance;
@@ -340,18 +339,12 @@ namespace SickOfIt.Core.Progression
 
             // Build and log all labels for verification
             BuildLabelList();
-            Debug.Log($"[BundleDownloadManager] Found {spriteFramesDataAssets.Count} SpriteFramesData assets → {allLabels.Count} labels total");
-            for (int i = 0; i < allLabels.Count; i++)
-                Debug.Log($"  [{i + 1}] {allLabels[i]}");
         }
 
         [ContextMenu("List All Labels (Dry Run)")]
         private void ListAllLabels()
         {
             BuildLabelList();
-            Debug.Log($"[BundleDownloadManager] === {allLabels.Count} labels would be checked ===");
-            for (int i = 0; i < allLabels.Count; i++)
-                Debug.Log($"  [{i + 1}] {allLabels[i]}");
         }
 
         [ContextMenu("Force Re-check Cache")]

@@ -51,7 +51,7 @@ namespace SickOfIt.Core.Progression
         private GameDefinition gameDefinition;
         private Dictionary<EnemyType, EnemyTypeConfig> templateCache;
         private bool levelCompleted;
-        private List<Coroutine> spawnCoroutines = new List<Coroutine>();
+        private bool[] enemyHasSpawned;
         private int totalEnemiesToSpawn;
         private int enemiesSpawned;
         private int enemiesKilled;
@@ -141,20 +141,20 @@ namespace SickOfIt.Core.Progression
             }
             AnalyticsManager.Instance?.TrackLevelStart(levelNumber);
 
-            Debug.Log($"[LevelRuntime] Level {levelNumber} '{config.displayName}' — {config.EnemyCount} enemies, {config.platforms?.Count ?? 0} platforms, {config.duration}s");
-        }
-
-        private void OnDestroy()
-        {
-            foreach (var co in spawnCoroutines)
-            {
-                if (co != null) StopCoroutine(co);
-            }
+            //Debug.Log($"[LevelRuntime] Level {levelNumber} '{config.displayName}' — {config.EnemyCount} enemies, {config.platforms?.Count ?? 0} platforms, {config.duration}s");
         }
 
         private void Update()
         {
+            TrySpawnDueEnemies();
             CheckWinZone();
+
+            // A kill rewound back to dead is counted during the scrub, and the
+            // clear itself waits until time is running forward again.
+            if (!levelCompleted &&
+                (GameClock.Instance == null || !GameClock.Instance.IsRewinding) &&
+                KillsSatisfied())
+                CompleteLevel();
         }
 
         #endregion
@@ -167,11 +167,11 @@ namespace SickOfIt.Core.Progression
             if (characterObject != null)
             {
                 playerHealth = characterObject.GetComponentInChildren<PlayerHealth>();
-                Debug.Log($"[LevelRuntime] Using serialized Character ref (has PlayerHealth: {playerHealth != null})");
+                //Debug.Log($"[LevelRuntime] Using serialized Character ref (has PlayerHealth: {playerHealth != null})");
             }
             else
             {
-                Debug.Log("[LevelRuntime] No characterObject assigned, spawning Character prefab...");
+                //Debug.Log("[LevelRuntime] No characterObject assigned, spawning Character prefab...");
                 var characterPrefab = gameDefinition?.player?.playerPrefab;
                 if (characterPrefab != null)
                 {
@@ -179,7 +179,7 @@ namespace SickOfIt.Core.Progression
                     characterObject = Instantiate(characterPrefab, spawnPos, Quaternion.identity);
                     characterObject.name = "Character";
                     playerHealth = characterObject.GetComponentInChildren<PlayerHealth>();
-                    Debug.Log($"[LevelRuntime] Spawned Character prefab at {spawnPos} (has PlayerHealth: {playerHealth != null})");
+                    //Debug.Log($"[LevelRuntime] Spawned Character prefab at {spawnPos} (has PlayerHealth: {playerHealth != null})");
                 }
                 else
                 {
@@ -260,6 +260,8 @@ namespace SickOfIt.Core.Progression
             musicSource.clip = config.music;
             musicSource.volume = config.musicVolume;
             musicSource.loop = true;
+            if (musicSource.GetComponent<RewindableAudioSource>() == null)
+                musicSource.gameObject.AddComponent<RewindableAudioSource>();
             StartCoroutine(PlayMusicWhenAudible());
         }
 
@@ -296,7 +298,7 @@ namespace SickOfIt.Core.Progression
             if (config.musicStartTime > 0f && musicSource.isPlaying)
                 musicSource.time = config.musicStartTime;
 
-            Debug.Log($"[LevelRuntime] Music '{(clip != null ? clip.name : "none")}' playing={musicSource.isPlaying}");
+            //Debug.Log($"[LevelRuntime] Music '{(clip != null ? clip.name : "none")}' playing={musicSource.isPlaying}");
         }
 
         private static void EnsureAudioListener()
@@ -374,8 +376,13 @@ namespace SickOfIt.Core.Progression
                         }
 
                         var player = layerGo.AddComponent<SpriteFramePlayer>();
+                        player.Initialize(framesData, () =>
+                        {
+                            player.UseGameClock(true);
+                            player.SetLoop(true);
+                            player.Play();
+                        });
                         player.UseGameClock(true);
-                        player.Initialize(framesData, () => player.Play());
                         player.SetLoop(true);
                     }
                     else
@@ -403,7 +410,7 @@ namespace SickOfIt.Core.Progression
                 }
             }
 
-            Debug.Log($"[LevelRuntime] Setup {layers.Count} background layers");
+            //Debug.Log($"[LevelRuntime] Setup {layers.Count} background layers");
         }
 
         /// <summary>
@@ -456,7 +463,7 @@ namespace SickOfIt.Core.Progression
             experienceRunner.SetPools(enemyProjectilePool, laserPool, pickupPool);
 
             experienceRunner.Run(config.timeline, templateCache);
-            Debug.Log($"[LevelRuntime] Experience started: {config.timeline.events.Count} events");
+            //Debug.Log($"[LevelRuntime] Experience started: {config.timeline.events.Count} events");
         }
 
         #endregion
@@ -466,32 +473,45 @@ namespace SickOfIt.Core.Progression
         private void SpawnEnemies()
         {
             if (config.enemies == null) return;
+            enemyHasSpawned = new bool[config.enemies.Count];
+            TrySpawnDueEnemies();
+        }
 
-            foreach (var spawn in config.enemies)
+        /// <summary>
+        /// Spawn from the game clock, not a real-time delay. Rewinding before a
+        /// spawn and playing forward crosses spawnTime again and creates the enemy
+        /// if it does not already exist. Already-spawned enemies are shown again
+        /// by RewindableGameObject.
+        /// </summary>
+        private void TrySpawnDueEnemies()
+        {
+            if (config?.enemies == null || enemyHasSpawned == null) return;
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding) return;
+
+            float time = GameClock.Instance != null ? GameClock.Instance.Time : 0f;
+
+            for (int i = 0; i < config.enemies.Count; i++)
             {
+                if (enemyHasSpawned[i]) continue;
+
+                var spawn = config.enemies[i];
+                if (time + 0.0001f < spawn.spawnTime) continue;
                 if (!templateCache.TryGetValue(spawn.type, out var template))
                 {
                     Debug.LogWarning($"[LevelRuntime] No EnemyTypeConfig for {spawn.type}");
+                    enemyHasSpawned[i] = true;
                     continue;
                 }
                 if (template.prefab == null)
                 {
                     Debug.LogWarning($"[LevelRuntime] EnemyTypeConfig '{template.displayName}' has no prefab!");
+                    enemyHasSpawned[i] = true;
                     continue;
                 }
 
-                if (spawn.activeAtStart && spawn.spawnTime <= 0f)
-                    SpawnEnemy(template, spawn);
-                else
-                    spawnCoroutines.Add(StartCoroutine(DelayedSpawn(template, spawn)));
+                enemyHasSpawned[i] = true;
+                SpawnEnemy(template, spawn);
             }
-        }
-
-        private IEnumerator DelayedSpawn(EnemyTypeConfig template, EnemySpawnConfig spawn)
-        {
-            if (spawn.spawnTime > 0f)
-                yield return new WaitForSeconds(spawn.spawnTime);
-            SpawnEnemy(template, spawn);
         }
 
         private void SpawnEnemy(EnemyTypeConfig template, EnemySpawnConfig spawn)
@@ -509,7 +529,8 @@ namespace SickOfIt.Core.Progression
             {
                 int hp = spawn.healthOverride > 0 ? spawn.healthOverride : template.defaultHealth;
                 health.SetMaxHealth(hp);
-                health.onDeath.AddListener(OnEnemyDied);
+                health.onDefeated.AddListener(OnEnemyDied);
+                health.onRevived.AddListener(OnEnemyRevived);
             }
 
             enemiesSpawned++;
@@ -648,7 +669,7 @@ namespace SickOfIt.Core.Progression
                     boundaryLayer);
             }
 
-            Debug.Log($"[LevelRuntime] Spawned barriers (viewport: {halfWidth * 2:F1}x{halfHeight * 2:F1})");
+            //Debug.Log($"[LevelRuntime] Spawned barriers (viewport: {halfWidth * 2:F1}x{halfHeight * 2:F1})");
         }
 
         private static void CreateBarrier(Transform parent, string name, Vector3 position, Vector2 size, int layer)
@@ -668,31 +689,82 @@ namespace SickOfIt.Core.Progression
 
         private void CheckWinZone()
         {
-            if (levelCompleted || characterObject == null) return;
+            if (characterObject == null) return;
 
-            Vector2 playerPos = characterObject.transform.position;
-            if (Mathf.Abs(playerPos.x - winZoneCenter.x) <= winZoneHalfSize.x &&
-                Mathf.Abs(playerPos.y - winZoneCenter.y) <= winZoneHalfSize.y)
+            bool inside = IsPlayerInWinZone();
+            if (levelCompleted)
             {
-                CompleteLevel();
+                if (completionCommitted) return;
+                if (!inside && !KillsSatisfied())
+                    CancelCompletion();
+                return;
             }
+
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding) return;
+            if (inside)
+                CompleteLevel();
+        }
+
+        private bool IsPlayerInWinZone()
+        {
+            Vector2 playerPos = characterObject.transform.position;
+            return Mathf.Abs(playerPos.x - winZoneCenter.x) <= winZoneHalfSize.x &&
+                   Mathf.Abs(playerPos.y - winZoneCenter.y) <= winZoneHalfSize.y;
+        }
+
+        private bool KillsSatisfied()
+        {
+            return totalEnemiesToSpawn > 0 &&
+                   enemiesKilled >= totalEnemiesToSpawn &&
+                   enemiesSpawned >= totalEnemiesToSpawn;
         }
 
         private void OnEnemyDied()
         {
             enemiesKilled++;
-            Debug.Log($"[LevelRuntime] Enemy killed ({enemiesKilled}/{totalEnemiesToSpawn})");
+            //Debug.Log($"[LevelRuntime] Enemy killed ({enemiesKilled}/{totalEnemiesToSpawn})");
 
-            if (enemiesKilled >= totalEnemiesToSpawn && enemiesSpawned >= totalEnemiesToSpawn)
-            {
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding) return;
+            if (KillsSatisfied())
                 CompleteLevel();
-            }
         }
+
+        private void OnEnemyRevived()
+        {
+            enemiesKilled = Mathf.Max(0, enemiesKilled - 1);
+            if (!levelCompleted || completionCommitted) return;
+            if (KillsSatisfied()) return;
+            if (characterObject != null && IsPlayerInWinZone()) return;
+            CancelCompletion();
+        }
+
+        private bool completionCommitted;
 
         public void CompleteLevel()
         {
             if (levelCompleted) return;
             levelCompleted = true;
+
+            // Progress is written when the level actually changes. Rewind during
+            // the delay can still undo the clear.
+            if (config.returnToMainMenuOnComplete)
+                Invoke(nameof(FinishAndReturnToMainMenu), config.completionDelay);
+            else
+                Invoke(nameof(ProceedToNextLevel), config.completionDelay);
+        }
+
+        private void CancelCompletion()
+        {
+            if (completionCommitted) return;
+            levelCompleted = false;
+            CancelInvoke(nameof(ProceedToNextLevel));
+            CancelInvoke(nameof(FinishAndReturnToMainMenu));
+        }
+
+        private void CommitCompletion()
+        {
+            if (completionCommitted) return;
+            completionCommitted = true;
 
             GameProgressManager.Instance.SetLevelCompleted(levelNumber);
             AnalyticsManager.Instance?.TrackLevelComplete(levelNumber);
@@ -700,19 +772,20 @@ namespace SickOfIt.Core.Progression
             if (playerHealth != null)
                 RogueliteManager.Instance.SaveLevelEndHealth(levelNumber, playerHealth.CurrentHealth, playerHealth.MaxHealth);
 
-            if (config.returnToMainMenuOnComplete)
-            {
-                Invoke(nameof(ReturnToMainMenu), config.completionDelay);
-            }
-            else
-            {
+            if (config != null && !config.returnToMainMenuOnComplete)
                 GameProgressManager.Instance.UnlockVideo(levelNumber + 1);
-                Invoke(nameof(ProceedToNextLevel), config.completionDelay);
-            }
+        }
+
+        private void FinishAndReturnToMainMenu()
+        {
+            CommitCompletion();
+            SceneTransitionManager.Instance.LoadMainMenu();
         }
 
         private void ProceedToNextLevel()
         {
+            CommitCompletion();
+
             if (config.nextVideoNumber > 0)
             {
                 var nextVideo = gameDefinition != null ? gameDefinition.GetVideo(config.nextVideoNumber) : null;

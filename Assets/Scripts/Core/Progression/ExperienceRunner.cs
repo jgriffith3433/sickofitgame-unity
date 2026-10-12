@@ -120,7 +120,7 @@ namespace SickOfIt.Core.Progression
 
             if (config == null || config.events == null || config.events.Count == 0)
             {
-                Debug.Log("[ExperienceRunner] No events to process");
+                ////Debug.Log("[ExperienceRunner] No events to process");
                 return;
             }
 
@@ -137,8 +137,6 @@ namespace SickOfIt.Core.Progression
             elapsedTime = 0f;
             isRunning = true;
             isPaused = false;
-
-            Debug.Log($"[ExperienceRunner] Started: {sortedEvents.Count} events, duration={config.duration}s");
         }
 
         public void Stop()
@@ -263,7 +261,7 @@ namespace SickOfIt.Core.Progression
             if (config.duration > 0 && elapsedTime >= config.duration && nextEventIndex >= sortedEvents.Count)
             {
                 isRunning = false;
-                Debug.Log("[ExperienceRunner] Complete");
+                ////Debug.Log("[ExperienceRunner] Complete");
             }
         }
 
@@ -319,9 +317,6 @@ namespace SickOfIt.Core.Progression
                     Debug.LogWarning($"[ExperienceRunner] Unhandled event type: {evt.type} at t={evt.time}s");
                     break;
             }
-
-            if (!string.IsNullOrEmpty(evt.label))
-                Debug.Log($"[Experience] t={evt.time:F1}s: {evt.label}");
         }
 
         #endregion
@@ -671,7 +666,7 @@ namespace SickOfIt.Core.Progression
                     health.SetMaxHealth(template.defaultHealth);
             }
 
-            Debug.Log($"[Experience] Spawned {evt.enemyCount}x {evt.enemyType} at t={evt.time:F1}s");
+            ////Debug.Log($"[Experience] Spawned {evt.enemyCount}x {evt.enemyType} at t={evt.time:F1}s");
         }
 
         private void HandleActivateEnemy(GameEvent evt)
@@ -682,9 +677,6 @@ namespace SickOfIt.Core.Progression
             if (go != null)
             {
                 go.SetActive(true);
-                var enemyBase = go.GetComponent<EnemyBase>();
-                if (enemyBase != null)
-                    Debug.Log($"[Experience] Activated enemy: {evt.targetPath}");
             }
         }
 
@@ -737,6 +729,8 @@ namespace SickOfIt.Core.Progression
                 player = targetGo.AddComponent<SpriteFramePlayer>();
 
             player.Initialize(framesData);
+            player.UseGameClock(GameClock.Instance != null);
+            player.Play();
         }
 
         #endregion
@@ -761,7 +755,7 @@ namespace SickOfIt.Core.Progression
             if (cachedPlayerHealth != null && evt.duration > 0)
             {
                 cachedPlayerHealth.SetInvincibilityTimer(evt.duration);
-                Debug.Log($"[Experience] Player invincible for {evt.duration}s");
+                ////Debug.Log($"[Experience] Player invincible for {evt.duration}s");
             }
         }
 

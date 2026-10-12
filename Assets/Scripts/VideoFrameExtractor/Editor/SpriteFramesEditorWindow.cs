@@ -215,7 +215,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                     }
                     spriteFramesData.CalculateOptimalGrid();
                     EditorUtility.SetDirty(spriteFramesData);
-                    Debug.Log($"Detected source frame size: {spriteFramesData.sourceFrameWidth}x{spriteFramesData.sourceFrameHeight}");
+                    ////Debug.Log($"Detected source frame size: {spriteFramesData.sourceFrameWidth}x{spriteFramesData.sourceFrameHeight}");
                     return;
                 }
             }
@@ -370,14 +370,14 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 EditorUtility.SetDirty(spriteFramesData);
                 AssetDatabase.SaveAssets();
                 
-                Debug.Log($"[SpriteFramesEditor] Set total frames to {textures.Count} (from {textures.Count} input textures)");
+                ////Debug.Log($"[SpriteFramesEditor] Set total frames to {textures.Count} (from {textures.Count} input textures)");
             }
             finally
             {
                 EditorUtility.ClearProgressBar();
             }
 
-            Debug.Log($"Packed {textures.Count} frames into {totalSheets} sprite sheets ({sheetWidth}x{sheetHeight}) at {outputFolder}");
+            ////Debug.Log($"Packed {textures.Count} frames into {totalSheets} sprite sheets ({sheetWidth}x{sheetHeight}) at {outputFolder}");
             EditorUtility.DisplayDialog(
                 "Success",
                 $"Packed {textures.Count} frames into {totalSheets} sprite sheets!\n\n" +
@@ -521,7 +521,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
             EditorUtility.SetDirty(spriteFramesData);
             AssetDatabase.SaveAssets();
 
-            Debug.Log($"Created {chunkCount} chunks for {totalFrames} frames ({sheetTextures.Count} sprite sheets, {sheetsPerChunk} sheets/chunk)");
+            ////Debug.Log($"Created {chunkCount} chunks for {totalFrames} frames ({sheetTextures.Count} sprite sheets, {sheetsPerChunk} sheets/chunk)");
         }
 
         // =====================================================================
@@ -558,7 +558,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
                 spriteFramesData.SetTotalFrameCount(newTotal);
                 EditorUtility.SetDirty(spriteFramesData);
                 AssetDatabase.SaveAssets();
-                Debug.Log($"[SpriteFramesEditor] Manually set total frames to {newTotal}");
+                ////Debug.Log($"[SpriteFramesEditor] Manually set total frames to {newTotal}");
             }
             EditorGUILayout.LabelField($"(Calculated from chunks: {spriteFramesData.GetTotalFrames()})", EditorStyles.miniLabel);
             EditorGUILayout.EndHorizontal();
@@ -611,7 +611,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
             EditorUtility.SetDirty(spriteFramesData);
             AssetDatabase.SaveAssets();
 
-            Debug.Log($"[SpriteFramesEditor] Filled editorTextures on {spriteFramesData.chunks.Count} chunks ({totalFilled} textures total) from Addressable labels.");
+            ////Debug.Log($"[SpriteFramesEditor] Filled editorTextures on {spriteFramesData.chunks.Count} chunks ({totalFilled} textures total) from Addressable labels.");
         }
 
         // =====================================================================
@@ -712,7 +712,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
             AssetDatabase.SaveAssets();
             EditorUtility.SetDirty(settings);
 
-            Debug.Log($"Applied addressable labels to {processedCount} sprite sheets across {spriteFramesData.chunks.Count} chunks");
+            ////Debug.Log($"Applied addressable labels to {processedCount} sprite sheets across {spriteFramesData.chunks.Count} chunks");
             EditorUtility.DisplayDialog("Success", $"Applied labels to {processedCount} sprite sheets!", "OK");
         }
 
@@ -876,7 +876,7 @@ namespace SickOfIt.VideoFrameExtractor.Editor
 
             AssetDatabase.SaveAssets();
 
-            Debug.Log($"First frame extracted to {firstFramePath}, applied to {spriteFrameRenderer.name}, and scaled to match source aspect ratio.");
+            ////Debug.Log($"First frame extracted to {firstFramePath}, applied to {spriteFrameRenderer.name}, and scaled to match source aspect ratio.");
             EditorUtility.DisplayDialog("Success",
                 $"First frame saved to: {firstFramePath}\n\n" +
                 $"SpriteRenderer sprite set on: {spriteFrameRenderer.name}\n" +

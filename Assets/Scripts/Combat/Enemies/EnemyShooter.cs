@@ -145,6 +145,8 @@ namespace SickOfIt.Combat.Enemies
                 projectileRb.linearVelocity = direction * projectileSpeed;
             }
 
+            projectilePool.CaptureLaunchState(projectile);
+
             // Make sure it can damage player
             DamageDealer damageDealer = projectile.GetComponent<DamageDealer>();
             if (damageDealer != null)

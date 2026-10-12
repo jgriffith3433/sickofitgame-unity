@@ -146,8 +146,7 @@ namespace SickOfIt.Core.Addressables
         {
             AddressablesOperationManager.Instance.LoadAsset<T>(address, (asset) =>
             {
-                if (asset != null) Debug.Log($"Preloaded asset: {address}");
-                else Debug.LogError($"Failed to preload asset: {address}");
+                if (asset == null) Debug.LogError($"Failed to preload asset: {address}");
             });
         }
 
@@ -155,8 +154,7 @@ namespace SickOfIt.Core.Addressables
         {
             AddressablesOperationManager.Instance.LoadLabel(label, (success) =>
             {
-                if (success) Debug.Log($"Preloaded label: {label}");
-                else Debug.LogError($"Failed to preload label: {label}");
+                if (!success) Debug.LogError($"Failed to preload label: {label}");
             });
         }
 

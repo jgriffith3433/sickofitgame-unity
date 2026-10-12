@@ -40,11 +40,11 @@ namespace SickOfIt.Combat
         [SerializeField] private float bobAmplitude = 0.1f;
         [SerializeField] private float bobSpeed = 3f;
 
-        private Vector2 velocity;
-        private bool settled;
         private float settledY;
-        private float settledTime;
-        private float aliveTime;
+        private float bornAt;
+        private Vector3 origin;
+        private float driftX;
+        private bool motionReady;
         private ObjectPool pool;
 
         /// <summary>
@@ -74,14 +74,12 @@ namespace SickOfIt.Combat
 
         [SerializeField] private Collider2D col;
 
-        private void Start()
-        {
-            ResetState();
-        }
-
         private void OnEnable()
         {
-            // Reset state for pool reuse
+            // Rewind turns the diamond back on. Keep the original toss.
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return;
+
             ResetState();
         }
 
@@ -92,11 +90,11 @@ namespace SickOfIt.Combat
             if (col != null)
                 col.isTrigger = true;
 
-            // Apply initial pop velocity
-            float randomX = Random.Range(-spreadRange, spreadRange);
-            velocity = new Vector2(randomX, popForce);
-            aliveTime = 0f;
-            settled = false;
+            origin = transform.position;
+            settledY = origin.y;
+            driftX = Random.Range(-spreadRange, spreadRange);
+            bornAt = GameClock.Instance != null ? GameClock.Instance.Time : 0f;
+            motionReady = true;
 
             // Play spawn SFX
             if (spawnSound != null && audioSource != null)
@@ -109,40 +107,35 @@ namespace SickOfIt.Combat
             var clock = GameClock.Instance;
             float dt = clock != null ? clock.DeltaTime : Time.deltaTime;
             if (dt <= 0f) return;
+            if (!motionReady)
+                ResetState();
 
-            aliveTime += dt;
+            float age = clock != null ? clock.Time - bornAt : 0f;
 
             // Self-destruct / return to pool after lifetime
-            if (lifetime > 0 && aliveTime >= lifetime)
+            if (lifetime > 0 && age >= lifetime)
             {
                 ReturnOrDestroy();
                 return;
             }
 
-            if (!settled)
-            {
-                // Apply gravity
-                velocity.y -= gravity * dt;
-                transform.position += (Vector3)velocity * dt;
+            // Position is a function of age, so rewind lands on the same toss.
+            float g = Mathf.Max(0.01f, gravity);
+            float settleAge = 2f * popForce / g;
+            float xOffset = driftX * Mathf.Min(age, settleAge);
+            float yOffset;
 
-                // Settle when falling below spawn height
-                if (velocity.y < 0 && transform.position.y <= settledY)
-                {
-                    settled = true;
-                    Vector3 pos = transform.position;
-                    pos.y = settledY;
-                    transform.position = pos;
-                    settledTime = aliveTime;
-                }
-            }
-            else if (bobAmplitude > 0)
+            if (age >= settleAge)
             {
-                // Gentle bobbing once settled (uses alive time for consistency)
-                float elapsed = aliveTime - settledTime;
-                Vector3 pos = transform.position;
-                pos.y = settledY + Mathf.Sin(elapsed * bobSpeed) * bobAmplitude;
-                transform.position = pos;
+                float bob = bobAmplitude > 0f ? Mathf.Sin((age - settleAge) * bobSpeed) * bobAmplitude : 0f;
+                yOffset = (settledY - origin.y) + bob;
             }
+            else
+            {
+                yOffset = popForce * age - 0.5f * g * age * age;
+            }
+
+            transform.position = origin + new Vector3(xOffset, yOffset, 0f);
         }
 
         /// <summary>
@@ -155,6 +148,9 @@ namespace SickOfIt.Combat
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return;
+
             if (!other.CompareTag("Player"))
                 return;
 

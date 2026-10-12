@@ -4,16 +4,15 @@ using SickOfIt.Core.Rewind;
 namespace SickOfIt.Core
 {
     /// <summary>
-    /// Records and restores AudioSource playback position during rewind.
-    /// When rewinding, the music scrubs backward to the correct timestamp.
-    /// 
-    /// Attach to the same GameObject as the level music AudioSource.
-    /// RewindController already pauses music during rewind — this component
-    /// ensures the playback position is correct when rewind stops.
+    /// Plays an AudioSource backward while the game clock rewinds, then
+    /// leaves it at the matching timestamp when time runs forward again.
     /// </summary>
     public class RewindableAudioSource : BaseRewindable<RewindableAudioSource.AudioSnapshot>
     {
         [SerializeField] private AudioSource audioSource;
+
+        private float savedPitch = 1f;
+        private float nextScrubTime;
 
         public struct AudioSnapshot
         {
@@ -42,15 +41,58 @@ namespace SickOfIt.Core
 
         protected override void ApplySnapshot(AudioSnapshot snapshot)
         {
-            if (audioSource == null) return;
-            // Don't play during rewind — just track the position.
-            // RewindController handles muting. We restore position on stop.
+            if (audioSource == null || audioSource.clip == null) return;
+            if (GameClock.Instance == null || !GameClock.Instance.IsRewinding) return;
+            if (!snapshot.isPlaying) return;
+
+            if (!audioSource.isPlaying)
+                audioSource.Play();
+
+            float length = audioSource.clip.length;
+            if (length <= 0.05f) return;
+
+            float target = Mathf.Clamp(snapshot.playbackTime, 0f, length - 0.01f);
+            bool canReverse = audioSource.clip.loadType == AudioClipLoadType.DecompressOnLoad;
+            float speed = Mathf.Max(0.01f, Mathf.Abs(GameClock.Instance.TimeScale));
+
+            if (canReverse)
+            {
+                // Decompressed clips can actually play backward.
+                audioSource.pitch = -speed;
+                float drift = Mathf.Abs(audioSource.time - target);
+                if (audioSource.loop)
+                    drift = Mathf.Min(drift, length - drift);
+                if (drift > 0.15f)
+                    audioSource.time = target;
+                return;
+            }
+
+            // Compressed clips ignore a negative pitch, so step the playhead
+            // backward and let each step be heard.
+            audioSource.pitch = savedPitch > 0.01f ? savedPitch : 1f;
+            if (Time.unscaledTime < nextScrubTime) return;
+            nextScrubTime = Time.unscaledTime + 0.05f;
+            audioSource.time = target;
         }
 
         protected override float GetSnapshotTime(AudioSnapshot snapshot) => snapshot.time;
 
+        public override void OnRewindStart()
+        {
+            base.OnRewindStart();
+            if (audioSource == null) return;
+
+            savedPitch = audioSource.pitch > 0.01f ? audioSource.pitch : 1f;
+            nextScrubTime = 0f;
+            if (!audioSource.isPlaying && audioSource.clip != null)
+                audioSource.Play();
+        }
+
         public override void OnRewindStop()
         {
+            if (audioSource != null)
+                audioSource.pitch = savedPitch > 0.01f ? savedPitch : 1f;
+
             base.OnRewindStop();
 
             // Restore audio playback position to where it was at the current GameClock time

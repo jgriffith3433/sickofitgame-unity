@@ -130,11 +130,11 @@ namespace SickOfIt.Core.Progression
             bool success = RogueliteManager.Instance.PurchaseExtraJump();
             if (success)
             {
-                Debug.Log("[UpgradeShop] Extra jump purchased!");
+                ////Debug.Log("[UpgradeShop] Extra jump purchased!");
             }
             else
             {
-                Debug.Log("[UpgradeShop] Could not purchase extra jump.");
+                ////Debug.Log("[UpgradeShop] Could not purchase extra jump.");
             }
 
             RefreshUI();
@@ -148,7 +148,7 @@ namespace SickOfIt.Core.Progression
         private void OnAddPointsDebugClicked()
         {
             RogueliteManager.Instance.AddPoints(debugPointsAmount);
-            Debug.Log($"[UpgradeShop] Debug: Added {debugPointsAmount} points.");
+            ////Debug.Log($"[UpgradeShop] Debug: Added {debugPointsAmount} points.");
             RefreshUI();
         }
     }

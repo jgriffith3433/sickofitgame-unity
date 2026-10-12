@@ -57,13 +57,20 @@ namespace SickOfIt.Combat.Health
                 enemyHealth.onHealthChanged.RemoveListener(OnHealthChanged);
         }
 
+        public override void OnRewindStop()
+        {
+            base.OnRewindStop();
+            lastRecordTime = GameClock.Instance != null ? GameClock.Instance.Time : 0f;
+            lastRecordTime -= SafetyTickInterval;
+        }
+
         private void OnHealthChanged(int newHealth)
         {
             // Force a recording on health change
             if (GameClock.Instance != null && !GameClock.Instance.IsRewinding)
             {
                 float time = GameClock.Instance.Time;
-                history.Add(CaptureSnapshot(time));
+                Remember(CaptureSnapshot(time));
                 lastRecordedHealth = newHealth;
                 lastRecordTime = time;
             }
@@ -80,7 +87,7 @@ namespace SickOfIt.Combat.Health
 
             if (changed || safetyTick)
             {
-                history.Add(CaptureSnapshot(time));
+                Remember(CaptureSnapshot(time));
                 lastRecordedHealth = currentHP;
                 lastRecordTime = time;
             }

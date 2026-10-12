@@ -34,8 +34,6 @@ namespace SickOfIt.Core.Input
         [Range(0f, 1f)]
         [SerializeField] private float screenSplitRatio = 0.5f;
 
-        [Header("Debug")]
-        [SerializeField] private bool debugMode = false;
 
         private Camera mainCamera;
         private readonly Dictionary<int, TrackedTouch> letterboxTouches = new Dictionary<int, TrackedTouch>();
@@ -131,9 +129,6 @@ namespace SickOfIt.Core.Input
             var eventData = CreatePointerEventData(fingerId, clampedPos);
             target.OnPointerDown(eventData);
 
-            if (debugMode)
-                Debug.Log($"[LetterboxInput] Touch {fingerId} began in letterbox at {screenPos}, " +
-                          $"forwarded to {target.name} at viewport edge {clampedPos}");
         }
 
         private void HandleTouchMoved(int fingerId, Vector2 screenPos)
@@ -156,9 +151,6 @@ namespace SickOfIt.Core.Input
             var eventData = CreatePointerEventData(fingerId, adjustedPos);
             tracked.region.OnPointerUp(eventData);
             letterboxTouches.Remove(fingerId);
-
-            if (debugMode)
-                Debug.Log($"[LetterboxInput] Touch {fingerId} ended, released from {tracked.region.name}");
         }
 
         /// <summary>

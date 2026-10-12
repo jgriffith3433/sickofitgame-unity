@@ -19,7 +19,7 @@ namespace SickOfIt.Tools.Editor.Generation
     /// - CircleCollider2D (trigger)
     /// - DamageDealer
     /// 
-    /// Includes ProjectileLifetime so ObjectPool doesn't need to AddComponent at runtime.
+    /// Includes ProjectileLifetime and rewind components so shots scrub instead of vanishing.
     /// </summary>
     public static class ProjectilePrefabGenerator
     {
@@ -40,7 +40,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 if (path.Contains("Projectile_"))
                 {
                     AssetDatabase.DeleteAsset(path);
-                    Debug.Log($"[ProjectilePrefabGen] Deleted: {path}");
+                    ////Debug.Log($"[ProjectilePrefabGen] Deleted: {path}");
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace SickOfIt.Tools.Editor.Generation
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log($"[ProjectilePrefabGen] Generated {gd.projectileConfigs.Count} projectile prefabs");
+            ////Debug.Log($"[ProjectilePrefabGen] Generated {gd.projectileConfigs.Count} projectile prefabs");
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace SickOfIt.Tools.Editor.Generation
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("[ProjectilePrefabGen] Generated default projectile prefabs");
+            ////Debug.Log("[ProjectilePrefabGen] Generated default projectile prefabs");
         }
 
         private static void GenerateDefault(string id, Color color, int damage, float speed, float lifetime)
@@ -158,9 +158,10 @@ namespace SickOfIt.Tools.Editor.Generation
                 config.animationConfig, prefabName, animFolder,
                 config.spriteSheet, config.animationFps);
 
+            Animator animator = null;
             if (animCtrl != null)
             {
-                var animator = go.AddComponent<Animator>();
+                animator = go.AddComponent<Animator>();
                 animator.runtimeAnimatorController = animCtrl;
             }
 
@@ -218,6 +219,9 @@ namespace SickOfIt.Tools.Editor.Generation
                 ddSo2.ApplyModifiedPropertiesWithoutUndo();
             }
 
+            // Shots scrub with rewind instead of vanishing when time runs backward.
+            GeneratorHelper.AddRewindComponents(go, rb, animator);
+
             // Set layer
             GeneratorHelper.SetLayer(go, config.layerName);
 
@@ -227,7 +231,7 @@ namespace SickOfIt.Tools.Editor.Generation
             // Save as prefab
             var prefab = GeneratorHelper.SavePrefab(go, prefabPath);
 
-            Debug.Log($"[ProjectilePrefabGen] Created: {prefabPath}");
+            ////Debug.Log($"[ProjectilePrefabGen] Created: {prefabPath}");
 
             return prefab;
         }

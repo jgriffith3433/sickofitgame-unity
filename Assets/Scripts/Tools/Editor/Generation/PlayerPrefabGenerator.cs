@@ -242,7 +242,7 @@ namespace SickOfIt.Tools.Editor.Generation
             gd.player.playerPrefab = prefab;
             EditorUtility.SetDirty(gd);
 
-            Debug.Log($"[PlayerPrefabGen] Created: {prefabPath}");
+            ////Debug.Log($"[PlayerPrefabGen] Created: {prefabPath}");
 
             return prefab;
         }
@@ -255,7 +255,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 if (config.animationConfig != null)
                 {
                     EditorUtility.SetDirty(gd);
-                    Debug.Log("[PlayerPrefabGen] Auto-populated player animation config");
+                    ////Debug.Log("[PlayerPrefabGen] Auto-populated player animation config");
                 }
             }
 
@@ -376,7 +376,7 @@ namespace SickOfIt.Tools.Editor.Generation
 
             gd.player.playerPrefab = prefab;
             EditorUtility.SetDirty(gd);
-            Debug.Log($"[PlayerPrefabGen] Updated existing prefab: {prefabPath}");
+            ////Debug.Log($"[PlayerPrefabGen] Updated existing prefab: {prefabPath}");
             return prefab;
         }
 

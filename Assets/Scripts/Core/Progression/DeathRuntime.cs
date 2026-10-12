@@ -27,8 +27,11 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private GameObject uiRoot;
         [SerializeField] private AudioSource audioSource;
 
+        private GameClock gameClock;
         private SpriteFramePlayer spritePlayer;
         private MobileControllerFramework.Button skipButton;
+        private bool rewindButtonHeld;
+        private float rewindPressedAt;
         private DeathConfig config;
         private bool deathCompleted;
 
@@ -50,13 +53,14 @@ namespace SickOfIt.Core.Progression
                     delayBeforeReload = config.delayBeforeReload > 0 ? config.delayBeforeReload : delayBeforeReload;
             }
 
+            gameClock = gameObject.AddComponent<GameClock>();
+            gameObject.AddComponent<SickOfIt.Core.Rewind.RewindTimeline>();
+
             EnsurePlaybackCamera();
             EnsureEventSystem();
             AutoDiscoverReferences();
             SetupPlayback();
             StartExperience();
-
-            Debug.Log($"[DeathRuntime] Death '{deathName}' loaded");
         }
 
         private void AutoDiscoverReferences()
@@ -121,7 +125,10 @@ namespace SickOfIt.Core.Progression
         private void SetupPlayback()
         {
             if (skipButton != null)
-                skipButton.TapEndEvent.AddListener(SkipDeathAnimation);
+            {
+                skipButton.TapStartEvent.AddListener(OnRewindButtonDown);
+                skipButton.TapEndEvent.AddListener(OnRewindButtonUp);
+            }
 
             // Setup SpriteFramePlayer if we have sprite frames data
             if (config?.spriteFramesData != null)
@@ -142,7 +149,12 @@ namespace SickOfIt.Core.Progression
                     if (spritePlayer == null)
                         spritePlayer = deathAnimationObject.AddComponent<SpriteFramePlayer>();
 
-                    spritePlayer.Initialize(framesData, () => spritePlayer.Play());
+                    spritePlayer.Initialize(framesData, () =>
+                    {
+                        spritePlayer.UseGameClock(true);
+                        spritePlayer.Play();
+                    });
+                    spritePlayer.UseGameClock(true);
                 }
             }
 
@@ -161,6 +173,8 @@ namespace SickOfIt.Core.Progression
                 audioSource.loop = false;
                 audioSource.clip = config.audio;
                 audioSource.volume = 1f;
+                if (audioSource.GetComponent<RewindableAudioSource>() == null)
+                    audioSource.gameObject.AddComponent<RewindableAudioSource>();
                 StartCoroutine(PlayClipWhenAudible(audioSource));
             }
         }
@@ -186,7 +200,6 @@ namespace SickOfIt.Core.Progression
 
             source.enabled = true;
             source.Play();
-            Debug.Log($"[DeathRuntime] Audio '{(clip != null ? clip.name : "none")}' playing={source.isPlaying}");
         }
 
         private void StartExperience()
@@ -198,15 +211,37 @@ namespace SickOfIt.Core.Progression
             runner.Run(config.timeline);
         }
 
+        private void OnRewindButtonDown()
+        {
+            rewindButtonHeld = true;
+            rewindPressedAt = Time.unscaledTime;
+        }
+
+        private void OnRewindButtonUp()
+        {
+            rewindButtonHeld = false;
+            bool wasRewinding = gameClock != null && gameClock.IsRewinding;
+            if (wasRewinding)
+                gameClock.StopRewind();
+            else
+                SkipDeathAnimation();
+        }
+
         private void Update()
         {
             if (deathCompleted) return;
+
+            if (rewindButtonHeld && gameClock != null && !gameClock.IsRewinding &&
+                Time.unscaledTime - rewindPressedAt >= 0.22f && gameClock.Time > 0.05f)
+                gameClock.StartRewind(3f);
 
             if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
             {
                 SkipDeathAnimation();
                 return;
             }
+
+            if (gameClock != null && gameClock.IsRewinding) return;
 
             // Check if sprite playback is done
             if (spritePlayer != null && spritePlayer.IsReady && spritePlayer.Progress >= 0.99f)
@@ -218,7 +253,10 @@ namespace SickOfIt.Core.Progression
         private void OnDestroy()
         {
             if (skipButton != null)
-                skipButton.TapEndEvent.RemoveListener(SkipDeathAnimation);
+            {
+                skipButton.TapStartEvent.RemoveListener(OnRewindButtonDown);
+                skipButton.TapEndEvent.RemoveListener(OnRewindButtonUp);
+            }
         }
 
         public void SkipDeathAnimation()

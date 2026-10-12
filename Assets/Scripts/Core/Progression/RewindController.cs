@@ -47,33 +47,24 @@ namespace SickOfIt.Core.Progression
 
         public void StartRewind()
         {
-            if (isRewinding) return;
             if (GameClock.Instance == null) return;
+            // The clock can stop itself at time zero. Trust that, not a stale local flag.
+            if (GameClock.Instance.IsRewinding) return;
             if (GameClock.Instance.Time < minimumTimeBeforeRewind) return;
 
             isRewinding = true;
             GameClock.Instance.StartRewind(rewindSpeed);
 
-            // Mute game music during rewind
-            if (musicSource != null)
-                musicSource.Pause();
-
-            Debug.Log("[Rewind] Started");
+            // The song has to stay running so RewindableAudioSource can play it backward.
+            if (musicSource != null && musicSource.GetComponent<RewindableAudioSource>() == null)
+                musicSource.gameObject.AddComponent<RewindableAudioSource>();
         }
 
         public void StopRewind()
         {
-            if (!isRewinding) return;
-
             isRewinding = false;
-            if (GameClock.Instance != null)
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
                 GameClock.Instance.StopRewind();
-
-            // Resume game music
-            if (musicSource != null)
-                musicSource.UnPause();
-
-            Debug.Log($"[Rewind] Stopped at t={GameClock.Instance?.Time:F1}s");
         }
     }
 }

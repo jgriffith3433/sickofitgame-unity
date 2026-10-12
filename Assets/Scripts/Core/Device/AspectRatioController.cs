@@ -31,6 +31,7 @@ namespace SickOfIt.Core.Device
         }
 
         private Camera cam;
+        private Camera clearCamera;
         private float lastScreenWidth;
         private float lastScreenHeight;
 
@@ -44,7 +45,32 @@ namespace SickOfIt.Core.Device
                 return;
             }
 
+            // Camera.rect only clears its own rectangle. The skip/rewind UI sits in
+            // the rest of the screen, so that area has to be wiped every frame too.
+            EnsureClearCamera();
             UpdateCameraRect();
+        }
+
+        private void EnsureClearCamera()
+        {
+            var existing = transform.Find("BackgroundClear");
+            if (existing != null)
+                clearCamera = existing.GetComponent<Camera>();
+
+            if (clearCamera == null)
+            {
+                var go = new GameObject("BackgroundClear");
+                go.transform.SetParent(transform, false);
+                clearCamera = go.AddComponent<Camera>();
+            }
+
+            clearCamera.orthographic = true;
+            clearCamera.cullingMask = 0;
+            clearCamera.clearFlags = CameraClearFlags.SolidColor;
+            clearCamera.rect = new Rect(0f, 0f, 1f, 1f);
+            clearCamera.allowHDR = cam.allowHDR;
+            clearCamera.allowMSAA = cam.allowMSAA;
+            clearCamera.depth = cam.depth - 1f;
         }
 
         private void Update()
@@ -76,8 +102,16 @@ namespace SickOfIt.Core.Device
                 FitOutsideScreen(targetAspect, screenAspect);
             }
 
-            // Set background color for letterbox bars
+            // Wipe the game view every frame. The full-screen camera behind it
+            // wipes the bars the viewport no longer covers.
+            cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = letterboxColor;
+            if (clearCamera != null)
+            {
+                clearCamera.backgroundColor = letterboxColor;
+                clearCamera.depth = cam.depth - 1f;
+                clearCamera.enabled = cam.rect.width < 0.999f || cam.rect.height < 0.999f;
+            }
         }
 
         private void FitInsideScreen(float targetAspect, float screenAspect)

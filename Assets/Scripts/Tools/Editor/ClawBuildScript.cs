@@ -45,30 +45,30 @@ namespace SickOfIt.Tools.Editor
                 if (buildVersionOverride != null)
                     newVersion = int.Parse(buildVersionOverride);
 
-                Debug.Log($"[ClawBuild] Starting full deploy: v{currentVersion} → v{newVersion}");
+                ////Debug.Log($"[ClawBuild] Starting full deploy: v{currentVersion} → v{newVersion}");
 
                 // Step 1: Delete ServerData
                 if (Directory.Exists(serverDataWebGL))
                 {
                     Directory.Delete(serverDataWebGL, true);
-                    Debug.Log("[ClawBuild] Deleted ServerData/WebGL");
+                    ////Debug.Log("[ClawBuild] Deleted ServerData/WebGL");
                 }
 
                 // Step 2: Build Addressables
-                Debug.Log("[ClawBuild] Building Addressables...");
+                ////Debug.Log("[ClawBuild] Building Addressables...");
                 AddressableAssetSettings.CleanPlayerContent(
                     AddressableAssetSettingsDefaultObject.Settings.ActivePlayerDataBuilder);
                 AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult addrResult);
                 if (!string.IsNullOrEmpty(addrResult.Error))
                     throw new Exception("Addressables build failed: " + addrResult.Error);
-                Debug.Log($"[ClawBuild] Addressables built in {addrResult.Duration}s");
+                ////Debug.Log($"[ClawBuild] Addressables built in {addrResult.Duration}s");
 
                 // Step 3: Create version folder from template
                 string newVersionFolder = Path.Combine(gameFolder, $"v{newVersion}");
                 if (Directory.Exists(newVersionFolder))
                     Directory.Delete(newVersionFolder, true);
                 CopyDirectory(templateFolder, newVersionFolder);
-                Debug.Log($"[ClawBuild] Created {newVersionFolder}");
+                ////Debug.Log($"[ClawBuild] Created {newVersionFolder}");
 
                 // Step 4: Delete old version folder
                 if (currentVersion >= 0)
@@ -77,7 +77,7 @@ namespace SickOfIt.Tools.Editor
                     if (Directory.Exists(oldFolder))
                     {
                         Directory.Delete(oldFolder, true);
-                        Debug.Log($"[ClawBuild] Deleted v{currentVersion}");
+                        ////Debug.Log($"[ClawBuild] Deleted v{currentVersion}");
                     }
                 }
 
@@ -85,7 +85,7 @@ namespace SickOfIt.Tools.Editor
                 string destWebGL = Path.Combine(newVersionFolder, "ServerData", "WebGL");
                 Directory.CreateDirectory(Path.GetDirectoryName(destWebGL));
                 CopyDirectory(serverDataWebGL, destWebGL);
-                Debug.Log("[ClawBuild] Copied addressables");
+                ////Debug.Log("[ClawBuild] Copied addressables");
 
                 // Step 6: Build WebGL
                 string buildPath = Path.Combine(newVersionFolder, "SickOfIt");
@@ -97,7 +97,7 @@ namespace SickOfIt.Tools.Editor
                     ReplaceVersionInWebsite(websitePath, $"v{currentVersion}", $"v{newVersion}");
                 }
 
-                Debug.Log($"[ClawBuild] Full deploy complete! Version: v{newVersion}");
+                ////Debug.Log($"[ClawBuild] Full deploy complete! Version: v{newVersion}");
             }
             catch (Exception ex)
             {
@@ -121,7 +121,7 @@ namespace SickOfIt.Tools.Editor
 
                 string buildPath = Path.Combine(gameFolder, $"v{version}", "SickOfIt");
                 BuildWebGLTo(buildPath);
-                Debug.Log($"[ClawBuild] WebGL build complete: {buildPath}");
+                ////Debug.Log($"[ClawBuild] WebGL build complete: {buildPath}");
             }
             catch (Exception ex)
             {
@@ -148,7 +148,7 @@ namespace SickOfIt.Tools.Editor
                 if (!string.IsNullOrEmpty(result.Error))
                     throw new Exception("Addressables build failed: " + result.Error);
 
-                Debug.Log($"[ClawBuild] Addressables built in {result.Duration}s");
+                ////Debug.Log($"[ClawBuild] Addressables built in {result.Duration}s");
             }
             catch (Exception ex)
             {
@@ -171,7 +171,7 @@ namespace SickOfIt.Tools.Editor
             if (scenes.Length == 0)
                 throw new Exception("No scenes enabled in Build Settings.");
 
-            Debug.Log($"[ClawBuild] Building {scenes.Length} scene(s) to {buildPath}...");
+            ////Debug.Log($"[ClawBuild] Building {scenes.Length} scene(s) to {buildPath}...");
 
             if (Directory.Exists(buildPath))
                 Directory.Delete(buildPath, true);
@@ -188,9 +188,6 @@ namespace SickOfIt.Tools.Editor
             var report = BuildPipeline.BuildPlayer(options);
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
                 throw new Exception($"WebGL build failed: {report.summary.result}");
-
-            Debug.Log($"[ClawBuild] Build succeeded. Size: {report.summary.totalSize / (1024 * 1024)}MB, " +
-                      $"Duration: {report.summary.totalTime.TotalSeconds:F1}s");
         }
 
         private static int DetectVersion(string gameFolder)
@@ -214,7 +211,7 @@ namespace SickOfIt.Tools.Editor
 
         private static void ReplaceVersionInWebsite(string websitePath, string oldVer, string newVer)
         {
-            Debug.Log($"[ClawBuild] Replacing '{oldVer}' → '{newVer}' in website...");
+            ////Debug.Log($"[ClawBuild] Replacing '{oldVer}' → '{newVer}' in website...");
 
             string[] extensions = { ".html", ".htm", ".js", ".css", ".json", ".yml", ".yaml",
                                     ".bat", ".sh", ".md", ".txt", ".conf", ".cfg", ".env",
@@ -239,7 +236,7 @@ namespace SickOfIt.Tools.Editor
                     fileCount++;
                 }
             }
-            Debug.Log($"[ClawBuild] Replaced in {fileCount} file(s)");
+            ////Debug.Log($"[ClawBuild] Replaced in {fileCount} file(s)");
         }
 
         private static void CopyDirectory(string source, string dest)

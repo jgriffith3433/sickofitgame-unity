@@ -65,14 +65,12 @@ namespace SickOfIt.Core
             try
             {
                 trackEvent(eventName);
-                Debug.Log($"[Analytics] Tracked: {eventName}");
             }
             catch (System.Exception e)
             {
                 Debug.LogWarning($"[Analytics] Failed to track {eventName}: {e.Message}");
             }
 #else
-            Debug.Log($"[Analytics] (Simulated) Tracked: {eventName}");
 #endif
         }
 
@@ -82,14 +80,12 @@ namespace SickOfIt.Core
             try
             {
                 trackEventWithData(eventName, data);
-                Debug.Log($"[Analytics] Tracked: {eventName} ({data})");
             }
             catch (System.Exception e)
             {
                 Debug.LogWarning($"[Analytics] Failed to track {eventName}: {e.Message}");
             }
 #else
-            Debug.Log($"[Analytics] (Simulated) Tracked: {eventName} ({data})");
 #endif
         }
 

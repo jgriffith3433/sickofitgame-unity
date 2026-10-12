@@ -94,7 +94,6 @@ namespace SickOfIt.Combat.Health
                 0, maxHealth);
             invincibilityTimer = 0f;
             onHealthChanged?.Invoke(currentHealth);
-            Debug.Log($"[PlayerHealth] Level {currentLevelNumber}: Max={maxHealth}, Starting={currentHealth}");
         }
 
         public void TakeDamage(int damage)
@@ -117,8 +116,14 @@ namespace SickOfIt.Combat.Health
                 Die();
         }
 
+        private bool deathPending;
+
         private void Die()
         {
+            if (deathPending)
+                return;
+
+            deathPending = true;
             onDeath?.Invoke();
 
             // Play death SFX via PlayerController
@@ -128,9 +133,48 @@ namespace SickOfIt.Combat.Health
                 controller.enabled = false;
             }
 
-            SickOfIt.Core.AnalyticsManager.Instance?.TrackPlayerDeath("combat");
+            StartCoroutine(WaitThenLoadDeath());
+        }
 
+        private System.Collections.IEnumerator WaitThenLoadDeath()
+        {
+            // Leave a beat so rewind can restore health and cancel the death.
+            // The timer holds while time is running backward.
+            const float delay = 0.6f;
+            float elapsed = 0f;
+            while (elapsed < delay)
+            {
+                if (currentHealth > 0)
+                {
+                    CancelDeath();
+                    yield break;
+                }
+
+                if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (currentHealth > 0)
+            {
+                CancelDeath();
+                yield break;
+            }
+
+            SickOfIt.Core.AnalyticsManager.Instance?.TrackPlayerDeath("combat");
             PlayDeathScene();
+        }
+
+        private void CancelDeath()
+        {
+            deathPending = false;
+            if (controller != null)
+                controller.enabled = true;
         }
 
         private void PlayDeathScene()

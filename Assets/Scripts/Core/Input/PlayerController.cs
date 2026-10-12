@@ -251,7 +251,6 @@ namespace SickOfIt.Core.Input
             {
                 int purchasedJumps = RogueliteManager.Instance.GetExtraJumpsPurchased();
                 maxAirJumps = purchasedJumps;
-                Debug.Log($"[PlayerController] Roguelite jumps applied: {maxAirJumps} air jumps.");
             }
 
             if (moveAction?.action != null)
@@ -766,6 +765,8 @@ namespace SickOfIt.Core.Input
             {
                 projectileRb.linearVelocity = direction * projectileSpeed;
             }
+
+            projectilePool.CaptureLaunchState(projectile);
             
             PlaySFX(fireSound);
             

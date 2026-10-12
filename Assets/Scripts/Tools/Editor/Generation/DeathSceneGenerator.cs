@@ -33,7 +33,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 return false;
             }
 
-            Debug.Log("Generating Death.unity...");
+            ////Debug.Log("Generating Death.unity...");
             string scenePath = $"{SCENES_ROOT}/Death.unity";
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -76,13 +76,12 @@ namespace SickOfIt.Tools.Editor.Generation
                 var cameraGo = new GameObject("Main Camera");
                 cameraGo.transform.SetParent(sceneRoot.transform);
                 cameraGo.tag = "MainCamera";
-                var cam = cameraGo.AddComponent<Camera>();
-                cam.orthographic = true;
-                cam.orthographicSize = gd.cinematicCameraOrthoSize;
-                cam.backgroundColor = gd.cinematicCameraBackground;
+                cameraGo.AddComponent<Camera>();
                 cameraGo.AddComponent<AudioListener>();
-                sceneCamera = cam;
+                sceneCamera = cameraGo.GetComponent<Camera>();
             }
+
+            GeneratorHelper.ConfigureSceneCamera(sceneCamera, gd.cinematicCameraOrthoSize, gd.cinematicCameraBackground);
 
             EnsureEventSystem();
 
@@ -94,7 +93,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 ui.name = "UI";
                 ui.transform.SetParent(content.transform);
                 WireCanvasCamera(ui, sceneCamera);
-                Debug.Log("[DeathGen] Placed death UI prefab");
+                ////Debug.Log("[DeathGen] Placed death UI prefab");
             }
 
             // Add DeathRuntime directly to the scene and wire references
@@ -116,7 +115,7 @@ namespace SickOfIt.Tools.Editor.Generation
 
             EditorSceneManager.SaveScene(scene, scenePath);
 
-            Debug.Log($"[DeathGen] Generated scene: {scenePath}");
+            ////Debug.Log($"[DeathGen] Generated scene: {scenePath}");
             return true;
         }
         

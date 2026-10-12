@@ -195,7 +195,7 @@ namespace SickOfIt.Tools.Editor.Generation
             EditorUtility.SetDirty(controller);
             AssetDatabase.SaveAssets();
 
-            Debug.Log($"[AnimationGenerator] Generated controller for {entityName}: {result.clips.Count} clips, {config.parameters?.Count ?? 0} params, {config.transitions?.Count ?? 0} transitions");
+            ////Debug.Log($"[AnimationGenerator] Generated controller for {entityName}: {result.clips.Count} clips, {config.parameters?.Count ?? 0} params, {config.transitions?.Count ?? 0} transitions");
 
             return result;
         }
@@ -258,7 +258,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (AssetDatabase.IsValidFolder(folderPath))
             {
                 AssetDatabase.DeleteAsset(folderPath);
-                Debug.Log($"[AnimationGenerator] Deleted folder: {folderPath}");
+                ////Debug.Log($"[AnimationGenerator] Deleted folder: {folderPath}");
             }
         }
 

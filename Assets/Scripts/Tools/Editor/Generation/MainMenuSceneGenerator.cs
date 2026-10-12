@@ -179,7 +179,7 @@ namespace SickOfIt.Tools.Editor.Generation
             // ─── Save scene ───────────────────────────────────────────────
             UISceneGeneratorBase.SaveScene(OUTPUT_PATH);
 
-            Debug.Log($"[MainMenuSceneGen] Created: {OUTPUT_PATH}");
+            ////Debug.Log($"[MainMenuSceneGen] Created: {OUTPUT_PATH}");
         }
     }
 }

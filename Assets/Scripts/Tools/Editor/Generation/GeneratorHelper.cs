@@ -120,6 +120,38 @@ namespace SickOfIt.Tools.Editor.Generation
             }
         }
 
+        /// <summary>
+        /// Orthographic camera that clears the color buffer every frame.
+        /// Without this, the previous frame stays on screen and UI smears.
+        /// </summary>
+        public static void ConfigureSceneCamera(Camera cam, float orthoSize)
+        {
+            ConfigureSceneCamera(cam, orthoSize, setBackground: false, background: default);
+        }
+
+        public static void ConfigureSceneCamera(Camera cam, float orthoSize, Color background)
+        {
+            ConfigureSceneCamera(cam, orthoSize, setBackground: true, background: background);
+        }
+
+        private static void ConfigureSceneCamera(Camera cam, float orthoSize, bool setBackground, Color background)
+        {
+            if (cam == null) return;
+
+            cam.orthographic = true;
+            if (orthoSize > 0f)
+                cam.orthographicSize = orthoSize;
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            if (setBackground)
+                cam.backgroundColor = background;
+
+            var aspect = cam.GetComponent<SickOfIt.Core.Device.AspectRatioController>();
+            if (aspect == null)
+                aspect = cam.gameObject.AddComponent<SickOfIt.Core.Device.AspectRatioController>();
+            if (setBackground)
+                aspect.letterboxColor = background;
+        }
+
         // ─── Layer/Tag Helpers ───────────────────────────────────────
 
         /// <summary>

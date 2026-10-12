@@ -66,7 +66,7 @@ namespace SickOfIt.Tools.Editor.Generation
             // ─── Save scene ───────────────────────────────────────────────
             UISceneGeneratorBase.SaveScene(OUTPUT_PATH);
 
-            Debug.Log($"[VideoSelectionSceneGen] Created: {OUTPUT_PATH}");
+            ////Debug.Log($"[VideoSelectionSceneGen] Created: {OUTPUT_PATH}");
         }
     }
 }

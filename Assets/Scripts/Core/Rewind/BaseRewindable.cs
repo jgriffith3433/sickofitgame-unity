@@ -18,7 +18,25 @@ namespace SickOfIt.Core.Rewind
 
         protected CircularBuffer<TSnapshot> history;
 
+        // First moment this object existed. Survives a rewind that trims every snapshot.
+        private bool hasBirth;
+        private TSnapshot birthSnapshot;
+        private bool birthPresented;
+
+        protected bool HasBirth => hasBirth;
+        protected float BornAt { get; private set; }
+        protected TSnapshot BirthSnapshot => birthSnapshot;
+
+        public bool HasRecordedBirth => hasBirth;
+        public float BirthTime => BornAt;
+
         public virtual bool IsGameObjectRewindable => false;
+
+        /// <summary>
+        /// When true, forward playback turns the object back on once time reaches its birth.
+        /// Pooled shots and pickups set this false so a discarded future does not replay.
+        /// </summary>
+        public virtual bool ReplaysBirth => true;
 
         protected virtual void Awake()
         {
@@ -38,14 +56,61 @@ namespace SickOfIt.Core.Rewind
             // Retry registration if RewindTimeline wasn't ready during Awake
             if (RewindTimeline.Instance != null)
                 RewindTimeline.Instance.Register(this);
+
+            // Capture birth immediately. Waiting for the next record tick makes
+            // "before the first snapshot" look like the object never existed.
+            if (!gameObject.activeInHierarchy) return;
+            if (GameClock.Instance == null || GameClock.Instance.IsRewinding) return;
+            RecordState(GameClock.Instance.Time);
         }
 
         // ─── IRewindable ──────────────────────────────────────────────
 
         public virtual void RecordState(float time)
         {
-            var snapshot = CaptureSnapshot(time);
+            Remember(CaptureSnapshot(time));
+        }
+
+        /// <summary>
+        /// Store a snapshot. The first one is the object's birth and is kept even
+        /// when a rewind trims every later sample.
+        /// </summary>
+        protected void Remember(TSnapshot snapshot)
+        {
+            float time = GetSnapshotTime(snapshot);
+            if (hasBirth && time < BornAt - 0.0001f)
+                return;
+
+            if (!hasBirth)
+            {
+                hasBirth = true;
+                BornAt = time;
+                birthSnapshot = snapshot;
+            }
+
             history.Add(snapshot);
+        }
+
+        public virtual void CatchUp(float time)
+        {
+            if (!hasBirth)
+                return;
+
+            if (time < BornAt)
+            {
+                birthPresented = false;
+                return;
+            }
+
+            if (birthPresented)
+                return;
+
+            birthPresented = true;
+
+            // History was trimmed away because we branched before this object existed.
+            // Put it back in the birth state, then let recording take over.
+            if (history.Count == 0)
+                ApplySnapshot(birthSnapshot);
         }
 
         public void RestoreState(float time)
@@ -77,7 +142,27 @@ namespace SickOfIt.Core.Rewind
             }
         }
 
-        public virtual void OnRewindStart() { }
+        public void BeginNewLife()
+        {
+            hasBirth = false;
+            birthPresented = false;
+            history?.Clear();
+            OnLifeReset();
+        }
+
+        public void CaptureBirth()
+        {
+            if (!isActiveAndEnabled) return;
+            if (GameClock.Instance == null || GameClock.Instance.IsRewinding) return;
+            RecordState(GameClock.Instance.Time);
+        }
+
+        protected virtual void OnLifeReset() { }
+
+        public virtual void OnRewindStart()
+        {
+            birthPresented = false;
+        }
         public virtual void OnRewindStop()
         {
             // Trim future entries: find the entry at current GameClock time and discard later ones

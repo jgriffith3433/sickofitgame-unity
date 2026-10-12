@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.gamelovers.mcp-unity": "file:com.gamelovers.mcp-unity",
+    "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main",
     "com.unity.2d.enhancers": "1.0.0",
     "com.unity.addressables": "2.8.1",
     "com.unity.ai.assistant": "1.6.0-pre.2",

@@ -7,7 +7,7 @@ namespace SickOfIt.Core.Rewind
     /// Per-scene rewind coordinator. Replaces StateRecorder.
     /// 
     /// Rewindable components register/unregister themselves via BaseRewindable.Awake/OnDestroy.
-    /// Object pools register themselves so all active projectiles are returned on rewind.
+    /// Object pools register themselves so shots from a discarded future can be reclaimed.
     /// 
     /// Subscribes to GameClock events to drive recording and restoring.
     /// </summary>
@@ -20,6 +20,8 @@ namespace SickOfIt.Core.Rewind
         [Header("Settings")]
         [SerializeField] private float recordInterval = 0.05f;
         [SerializeField] private float maxHistorySeconds = 30f;
+
+        public float MaxHistorySeconds => maxHistorySeconds;
 
         private readonly List<IRewindable> rewindables = new List<IRewindable>();
         private readonly List<ObjectPool> trackedPools = new List<ObjectPool>();
@@ -100,6 +102,9 @@ namespace SickOfIt.Core.Rewind
             }
             else
             {
+                // Objects rewound to before they existed come back when time reaches their birth.
+                CatchUpAll(time);
+
                 if (time - lastRecordTime >= recordInterval)
                 {
                     RecordAll(time);
@@ -112,8 +117,6 @@ namespace SickOfIt.Core.Rewind
         {
             for (int i = 0; i < rewindables.Count; i++)
                 rewindables[i].OnRewindStart();
-
-            ReturnAllPools();
         }
 
         private void OnRewindStopped()
@@ -121,7 +124,19 @@ namespace SickOfIt.Core.Rewind
             for (int i = 0; i < rewindables.Count; i++)
                 rewindables[i].OnRewindStop();
 
-            ReturnAllPools();
+            float time = GameClock.Instance != null ? GameClock.Instance.Time : 0f;
+
+            // lastRecordTime is still up in the discarded future. Until the clock
+            // caught back up to it, nothing new was saved, so the next rewind
+            // had no history for the time you just replayed.
+            RecordAll(time);
+            lastRecordTime = time;
+
+            for (int i = 0; i < trackedPools.Count; i++)
+            {
+                if (trackedPools[i] != null)
+                    trackedPools[i].ReclaimDiscarded(time);
+            }
         }
 
         // ─── Record / Restore ─────────────────────────────────────────
@@ -138,6 +153,21 @@ namespace SickOfIt.Core.Rewind
                     continue;
 
                 r.RecordState(time);
+            }
+        }
+
+        private void CatchUpAll(float time)
+        {
+            for (int i = 0; i < rewindables.Count; i++)
+            {
+                if (rewindables[i].IsGameObjectRewindable)
+                    rewindables[i].CatchUp(time);
+            }
+
+            for (int i = 0; i < rewindables.Count; i++)
+            {
+                if (!rewindables[i].IsGameObjectRewindable)
+                    rewindables[i].CatchUp(time);
             }
         }
 
@@ -158,15 +188,5 @@ namespace SickOfIt.Core.Rewind
             }
         }
 
-        // ─── Pool management ──────────────────────────────────────────
-
-        private void ReturnAllPools()
-        {
-            for (int i = 0; i < trackedPools.Count; i++)
-            {
-                if (trackedPools[i] != null)
-                    trackedPools[i].ReturnAll();
-            }
-        }
     }
 }

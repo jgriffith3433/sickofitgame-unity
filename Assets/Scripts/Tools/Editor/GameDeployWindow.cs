@@ -21,7 +21,7 @@ namespace SickOfIt.Tools.Editor
     {
         // Paths
         private const string UnityProjectPath = @"C:\Projects\sickofitgame-unity";
-        private const string WebsiteProjectPath = @"C:\Projects\sickofitgame-website";
+        private const string WebsiteProjectPath = @"C:\Projects\sickofitgamewebsite";
         private const string ServerDataWebGL = UnityProjectPath + @"\ServerData\WebGL";
         private const string GameFolder = WebsiteProjectPath + @"\Game";
         private const string TemplateFolder = GameFolder + @"\v0000000";
@@ -567,7 +567,7 @@ namespace SickOfIt.Tools.Editor
         private void Log(string message)
         {
             statusLog += message + "\n";
-            Debug.Log("[GameDeploy] " + message);
+            ////Debug.Log("[GameDeploy] " + message);
             Repaint();
         }
 

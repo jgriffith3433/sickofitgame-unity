@@ -180,6 +180,8 @@ namespace SickOfIt.Combat.Enemies
             if (laserRb != null)
                 laserRb.linearVelocity = direction * laserSpeed;
 
+            laserPool.CaptureLaunchState(laser);
+
             DamageDealer damageDealer = laser.GetComponent<DamageDealer>();
             if (damageDealer != null)
             {

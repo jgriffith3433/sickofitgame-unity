@@ -77,7 +77,6 @@ namespace SickOfIt.Core.Addressables
                 if (AddressablesOperationManager.Instance.IsSceneLoadedThroughAddressables(sceneName))
                 {
                     AddressablesOperationManager.Instance.ReleaseSceneHandle(sceneName);
-                    Debug.Log($"[AddressablesSceneLoader] Released orphaned handle for force-unloaded scene '{sceneName}'");
                 }
             }
 
@@ -197,8 +196,6 @@ namespace SickOfIt.Core.Addressables
                     // dependants (e.g., materials no longer referencing destroyed textures).
                     yield return Resources.UnloadUnusedAssets();
                     System.GC.Collect();
-
-                    Debug.Log($"[AddressablesSceneLoader] Pre-released resources for '{currentGameplayScene}' before loading '{sceneName}'");
                 }
 
                 // ---------------------------------------------------------------
@@ -265,8 +262,6 @@ namespace SickOfIt.Core.Addressables
                     // Final cleanup pass — catch anything the scene unload freed
                     yield return Resources.UnloadUnusedAssets();
                     System.GC.Collect();
-
-                    Debug.Log($"[AddressablesSceneLoader] Previous scene fully unloaded and memory cleaned before activating '{sceneName}'");
                 }
 
                 // Activate new scene content (after old scene memory is freed).
@@ -412,10 +407,6 @@ namespace SickOfIt.Core.Addressables
                     }
                 }
             }
-            if (released > 0)
-            {
-                Debug.Log($"[AddressablesSceneLoader] Released resources for {released} IFrameSequencePlayer(s) in scene '{scene.name}'");
-            }
         }
 
         /// <summary>
@@ -438,10 +429,6 @@ namespace SickOfIt.Core.Addressables
                         destroyed++;
                     }
                 }
-            }
-            if (destroyed > 0)
-            {
-                Debug.Log($"[AddressablesSceneLoader] Destroyed {destroyed} PlayableDirector graph(s) in scene '{scene.name}'");
             }
         }
     }

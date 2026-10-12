@@ -41,14 +41,20 @@ namespace SickOfIt.Core.Rewind
 
         protected override void ApplySnapshot(RBSnapshot snapshot)
         {
-            // During rewind, position is handled by RewindableTransform.
-            // Velocity is informational — we restore it on rewind stop.
+            // During rewind, position is handled by RewindableTransform and velocity stays zero.
+            // Forward catch-up (respawn after rewinding past birth) applies the birth velocity.
+            if (rb == null) return;
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding) return;
+
+            rb.linearVelocity = snapshot.velocity;
+            rb.angularVelocity = snapshot.angularVelocity;
         }
 
         protected override float GetSnapshotTime(RBSnapshot snapshot) => snapshot.time;
 
         public override void OnRewindStart()
         {
+            base.OnRewindStart();
             if (rb == null) return;
             savedBodyType = rb.bodyType;
             rb.bodyType = RigidbodyType2D.Kinematic;

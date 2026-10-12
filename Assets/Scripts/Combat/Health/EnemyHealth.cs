@@ -24,6 +24,8 @@ namespace SickOfIt.Combat.Health
         public UnityEvent<int> onHealthChanged;
         public UnityEvent onDamaged;
         public UnityEvent onDeath;
+        public UnityEvent onDefeated;
+        public UnityEvent onRevived;
 
         [Header("Health Bar (Optional)")]
         [Tooltip("Drag in a UI transform to auto-generate a health bar")]
@@ -56,7 +58,12 @@ namespace SickOfIt.Combat.Health
         /// </summary>
         public void SetHealth(int health)
         {
+            int previous = currentHealth;
             currentHealth = Mathf.Clamp(health, 0, maxHealth);
+            if (previous <= 0 && currentHealth > 0)
+                onRevived?.Invoke();
+            else if (previous > 0 && currentHealth <= 0)
+                onDefeated?.Invoke();
             onHealthChanged?.Invoke(currentHealth);
             UpdateHealthBar();
         }
@@ -100,9 +107,14 @@ namespace SickOfIt.Combat.Health
 
         private void Die()
         {
-            // Only fire death events during normal play (not during rewind restore)
+            // Presentation (sound, drops) and the kill count stay separate.
+            // Rewind restores health through SetHealth, which updates the count
+            // without dropping another diamond.
             if (SickOfIt.Core.GameClock.Instance == null || !SickOfIt.Core.GameClock.Instance.IsRewinding)
+            {
+                onDefeated?.Invoke();
                 onDeath?.Invoke();
+            }
 
             // Hide instead of destroy so rewind can bring enemies back
             gameObject.SetActive(false);
