@@ -351,6 +351,8 @@ namespace SickOfIt.Tools.Editor
                 throw new Exception($"WebGL build failed: {report.summary.result}");
             }
 
+            ClawBuildScript.RaiseUnityCacheLimit(buildPath);
+
             Log($"  WebGL build succeeded! Size: {report.summary.totalSize / (1024 * 1024)}MB, " +
                 $"Duration: {report.summary.totalTime.TotalSeconds:F1}s");
         }

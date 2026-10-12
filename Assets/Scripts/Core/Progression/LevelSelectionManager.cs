@@ -102,6 +102,9 @@ namespace SickOfIt.Core.Progression
                 PlayerPrefs.SetInt("ReturnToLevel", 1);
                 PlayerPrefs.Save();
 
+                if (BundleDownloadManager.Instance != null)
+                    BundleDownloadManager.Instance.StartDownloadForLevel(1);
+
                 if (sceneLoadingManager != null)
                     sceneLoadingManager.LoadVideo(1);
                 else
@@ -109,6 +112,9 @@ namespace SickOfIt.Core.Progression
             }
             else
             {
+                if (BundleDownloadManager.Instance != null)
+                    BundleDownloadManager.Instance.StartDownloadForLevel(levelNumber);
+
                 if (sceneLoadingManager != null)
                     sceneLoadingManager.LoadLevel(levelNumber);
                 else

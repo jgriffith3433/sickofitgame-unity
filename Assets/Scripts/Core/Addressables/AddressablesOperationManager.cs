@@ -4,6 +4,11 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_WEBGL && !UNITY_EDITOR
+using UnityEngine.ResourceManagement.ResourceLocations;
+using System.Runtime.InteropServices;
+using AOT;
+#endif
 using AddressablesAPI = UnityEngine.AddressableAssets.Addressables;
 
 namespace SickOfIt.Core.Addressables
@@ -662,6 +667,17 @@ namespace SickOfIt.Core.Addressables
                 yield break;
             }
 
+            // GetDownloadSizeAsync uses Caching.IsVersionCached, which does not exist on
+            // WebGL, so it reports the full bundle size even when UnityCache already has it.
+            bool cachedInBrowser = false;
+            yield return WebGlBundlesAreCached(label, hit => cachedInBrowser = hit);
+            if (cachedInBrowser)
+            {
+                Log($"'{label}' is in the browser cache. Download size 0.");
+                onComplete?.Invoke(0);
+                yield break;
+            }
+
             var handle = AddressablesAPI.GetDownloadSizeAsync(label);
             yield return handle;
             long size = handle.Status == AsyncOperationStatus.Succeeded ? handle.Result : 0;
@@ -694,6 +710,16 @@ namespace SickOfIt.Core.Addressables
             if (!hasLocations)
             {
                 Log($"[Download] '{label}' has no addressable locations");
+                onProgress?.Invoke(1f);
+                onComplete?.Invoke(true);
+                yield break;
+            }
+
+            bool cachedInBrowser = false;
+            yield return WebGlBundlesAreCached(label, hit => cachedInBrowser = hit);
+            if (cachedInBrowser)
+            {
+                Log($"[Download] '{label}' already in the browser cache");
                 onProgress?.Invoke(1f);
                 onComplete?.Invoke(true);
                 yield break;
@@ -734,6 +760,100 @@ namespace SickOfIt.Core.Addressables
             activeOperations.Remove($"Download: {label}");
             onProgress?.Invoke(1f);
             onComplete?.Invoke(success);
+        }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        private delegate void BundleCacheCallback(int requestId, int isCached);
+
+        private static int nextCacheRequestId = 1;
+        private static readonly Dictionary<int, System.Action<bool>> pendingCacheChecks =
+            new Dictionary<int, System.Action<bool>>();
+
+        [DllImport("__Internal")]
+        private static extern void WebGL_IsBundleCached(int requestId, string url, BundleCacheCallback callback);
+
+        [MonoPInvokeCallback(typeof(BundleCacheCallback))]
+        private static void OnBundleCacheResult(int requestId, int isCached)
+        {
+            if (!pendingCacheChecks.TryGetValue(requestId, out var handler))
+                return;
+            pendingCacheChecks.Remove(requestId);
+            handler(isCached != 0);
+        }
+
+        private static void RequestBundleCacheCheck(string url, System.Action<bool> onComplete)
+        {
+            int requestId = nextCacheRequestId++;
+            pendingCacheChecks[requestId] = onComplete;
+            WebGL_IsBundleCached(requestId, url, OnBundleCacheResult);
+        }
+#endif
+
+        /// <summary>
+        /// True when every bundle for the label is already in Unity's browser cache.
+        /// Outside WebGL this is always false; Caching.IsVersionCached handles that case.
+        /// </summary>
+        private IEnumerator WebGlBundlesAreCached(string label, System.Action<bool> onComplete)
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            var locations = AddressablesAPI.LoadResourceLocationsAsync(label);
+            yield return locations;
+
+            var urls = new List<string>();
+            if (locations.Status == AsyncOperationStatus.Succeeded && locations.Result != null)
+            {
+                var seen = new HashSet<string>();
+                var pending = new Stack<IResourceLocation>();
+                for (int i = 0; i < locations.Result.Count; i++)
+                    pending.Push(locations.Result[i]);
+
+                while (pending.Count > 0)
+                {
+                    var loc = pending.Pop();
+                    if (loc == null || string.IsNullOrEmpty(loc.InternalId) || !seen.Add(loc.InternalId))
+                        continue;
+
+                    string id = AddressablesAPI.ResourceManager.TransformInternalId(loc);
+                    if (!string.IsNullOrEmpty(id) && id.Contains(".bundle"))
+                        urls.Add(id);
+
+                    if (loc.HasDependencies && loc.Dependencies != null)
+                    {
+                        for (int i = 0; i < loc.Dependencies.Count; i++)
+                            pending.Push(loc.Dependencies[i]);
+                    }
+                }
+            }
+
+            if (locations.IsValid())
+                AddressablesAPI.Release(locations);
+
+            if (urls.Count == 0)
+            {
+                onComplete?.Invoke(false);
+                yield break;
+            }
+
+            int[] progress = new int[2];
+            progress[0] = urls.Count;
+            for (int i = 0; i < urls.Count; i++)
+            {
+                RequestBundleCacheCheck(urls[i], hit =>
+                {
+                    if (hit)
+                        progress[1]++;
+                    progress[0]--;
+                });
+            }
+
+            while (progress[0] > 0)
+                yield return null;
+
+            onComplete?.Invoke(progress[1] == urls.Count);
+#else
+            onComplete?.Invoke(false);
+            yield break;
+#endif
         }
 
         private void Log(string message)

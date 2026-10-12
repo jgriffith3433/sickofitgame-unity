@@ -4,6 +4,8 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections;
 using System.Collections.Generic;
 using SickOfIt.Core.Addressables;
+using SickOfIt.Data;
+using SickOfIt.Data.Config;
 using SickOfIt.VideoFrameExtractor.Runtime;
 using UnityEngine.Events;
 using AddressablesAPI = UnityEngine.AddressableAssets.Addressables;
@@ -30,6 +32,9 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Start downloading automatically on Awake")]
         [SerializeField] private bool autoStartOnAwake = true;
 
+        [Tooltip("Download the main menu plus the level the player is on, instead of every bundle.")]
+        [SerializeField] private bool downloadForCurrentLevel = true;
+
         [Tooltip("Maximum concurrent download size checks to avoid overwhelming the server")]
         [SerializeField] private int maxConcurrentChecks = 3;
 
@@ -38,6 +43,9 @@ namespace SickOfIt.Core.Progression
         // Singleton
         private static BundleDownloadManager _instance;
         public static BundleDownloadManager Instance => _instance;
+
+        private Coroutine downloadRoutine;
+        private int activeLevel = -1;
 
         // State
         private List<string> allLabels = new List<string>();
@@ -66,7 +74,7 @@ namespace SickOfIt.Core.Progression
         /// <summary>Formatted string for remaining download size, or empty if not applicable.</summary>
         public string SizeText { get; private set; } = "";
 
-        /// <summary>Total bytes that need downloading (may include cached content due to WebGL revalidation).</summary>
+        /// <summary>Total bytes that need downloading.</summary>
         public long TotalDownloadBytes => totalDownloadBytes;
 
         /// <summary>Bytes completed so far.</summary>
@@ -84,23 +92,76 @@ namespace SickOfIt.Core.Progression
             _instance = this;
             DontDestroyOnLoad(gameObject);
 
-            BuildLabelList();
-
+            int level = downloadForCurrentLevel ? CurrentLevelNumber() : 0;
             if (autoStartOnAwake)
-                StartCoroutine(CheckAndDownload());
+                BeginDownload(level);
+            else
+            {
+                activeLevel = level;
+                BuildLabelList(level);
+            }
         }
 
         /// <summary>
-        /// Collect all unique labels from the SpriteFramesData chunks and additional labels.
+        /// Download the main menu bundles plus everything the given level needs
+        /// (its intro video, backgrounds, death scene, and the video after it).
+        /// Passing 0 downloads the full list.
         /// </summary>
-        private void BuildLabelList()
+        public void StartDownloadForLevel(int levelNumber)
+        {
+            if (!downloadForCurrentLevel)
+                levelNumber = 0;
+
+            if (levelNumber == activeLevel && (isDownloading || IsFullyCached))
+                return;
+
+            BeginDownload(levelNumber);
+        }
+
+        private void BeginDownload(int levelNumber)
+        {
+            if (downloadRoutine != null)
+                StopCoroutine(downloadRoutine);
+
+            activeLevel = levelNumber;
+            IsFullyCached = false;
+            isDownloading = false;
+            BuildLabelList(levelNumber);
+            downloadRoutine = StartCoroutine(CheckAndDownload());
+        }
+
+        private static int CurrentLevelNumber()
+        {
+            if (GameProgressManager.Instance == null)
+                return 1;
+            return GameProgressManager.Instance.GetCurrentLevel();
+        }
+
+        /// <summary>
+        /// Collect chunk labels for the main menu and, when a level is given, that level only.
+        /// </summary>
+        private void BuildLabelList(int levelNumber)
         {
             allLabels.Clear();
             var seen = new HashSet<string>();
+            HashSet<SpriteFramesData> needed = null;
+            HashSet<string> neededNames = null;
+            if (downloadForCurrentLevel && levelNumber > 0)
+            {
+                needed = FramesForLevel(levelNumber);
+                neededNames = new HashSet<string>();
+                foreach (var frames in needed)
+                {
+                    if (frames != null)
+                        neededNames.Add(frames.name);
+                }
+            }
 
             foreach (var data in spriteFramesDataAssets)
             {
                 if (data == null) continue;
+                if (needed != null && !needed.Contains(data) && !neededNames.Contains(data.name) && !IsMainMenuFrames(data))
+                    continue;
 
                 foreach (var chunk in data.chunks)
                 {
@@ -116,7 +177,106 @@ namespace SickOfIt.Core.Progression
             }
 
             totalLabels = allLabels.Count;
-            Log($"Built label list: {totalLabels} labels to check");
+            Log($"Built label list: {totalLabels} labels for level {levelNumber}");
+        }
+
+        private static bool IsMainMenuFrames(SpriteFramesData data)
+        {
+            return data.name.StartsWith("MainMenu");
+        }
+
+        /// <summary>
+        /// Frame assets the player needs while on this level: the video that leads
+        /// into it, the level itself, its death scene, and the video that follows it.
+        /// </summary>
+        private static HashSet<SpriteFramesData> FramesForLevel(int levelNumber)
+        {
+            var set = new HashSet<SpriteFramesData>();
+            GameDefinition def = GameDefinition.Instance;
+            if (def == null || levelNumber < 1 || levelNumber > def.TotalLevels)
+                return set;
+
+            LevelConfig level = def.GetLevel(levelNumber);
+            if (level == null)
+                return set;
+
+            if (level.backgrounds != null)
+            {
+                for (int i = 0; i < level.backgrounds.Count; i++)
+                    AddFrames(set, level.backgrounds[i]);
+            }
+
+            if (level.backgroundLayers != null)
+            {
+                for (int i = 0; i < level.backgroundLayers.Count; i++)
+                {
+                    if (level.backgroundLayers[i] != null)
+                        AddFrames(set, level.backgroundLayers[i].spriteFramesData);
+                }
+            }
+
+            AddTimeline(set, level.timeline);
+
+            if (!string.IsNullOrEmpty(level.deathConfigName))
+            {
+                DeathConfig death = def.GetDeath(level.deathConfigName);
+                if (death != null)
+                {
+                    AddFrames(set, death.spriteFramesData);
+                    AddTimeline(set, death.timeline);
+                }
+            }
+
+            for (int i = 0; i < def.TotalVideos; i++)
+            {
+                VideoConfig video = def.GetVideo(i + 1);
+                if (video == null)
+                    continue;
+                bool leadsIntoLevel = video.nextLevel == levelNumber;
+                bool followsLevel = video.afterLevel == levelNumber || video.videoNumber == level.nextVideoNumber;
+                if (!leadsIntoLevel && !followsLevel)
+                    continue;
+                AddFrames(set, video.spriteFramesData);
+                AddTimeline(set, video.timeline);
+            }
+
+            return set;
+        }
+
+        private static void AddFrames(HashSet<SpriteFramesData> set, ScriptableObject source)
+        {
+            if (source is SpriteFramesData frames)
+                set.Add(frames);
+        }
+
+        private static void AddTimeline(HashSet<SpriteFramesData> set, TimelineConfig timeline)
+        {
+            if (timeline == null)
+                return;
+
+            if (timeline.events != null)
+            {
+                for (int i = 0; i < timeline.events.Count; i++)
+                {
+                    if (timeline.events[i] != null)
+                        AddFrames(set, timeline.events[i].spriteFramesData);
+                }
+            }
+
+            if (timeline.tracks == null)
+                return;
+
+            for (int i = 0; i < timeline.tracks.Count; i++)
+            {
+                TimelineTrackConfig track = timeline.tracks[i];
+                if (track == null || track.clips == null)
+                    continue;
+                for (int c = 0; c < track.clips.Count; c++)
+                {
+                    if (track.clips[c] != null)
+                        AddFrames(set, track.clips[c].spriteFramesData);
+                }
+            }
         }
 
         /// <summary>
@@ -125,7 +285,7 @@ namespace SickOfIt.Core.Progression
         public void StartDownload()
         {
             if (!isDownloading)
-                StartCoroutine(CheckAndDownload());
+                BeginDownload(downloadForCurrentLevel ? CurrentLevelNumber() : 0);
         }
 
         /// <summary>
@@ -338,13 +498,13 @@ namespace SickOfIt.Core.Progression
             UnityEditor.EditorUtility.SetDirty(this);
 
             // Build and log all labels for verification
-            BuildLabelList();
+            BuildLabelList(0);
         }
 
         [ContextMenu("List All Labels (Dry Run)")]
         private void ListAllLabels()
         {
-            BuildLabelList();
+            BuildLabelList(0);
         }
 
         [ContextMenu("Force Re-check Cache")]

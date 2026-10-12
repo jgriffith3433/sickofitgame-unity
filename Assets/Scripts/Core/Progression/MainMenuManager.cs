@@ -144,6 +144,11 @@ namespace SickOfIt.Core.Progression
             PlayerPrefs.SetInt("ReturnToLevel", 1);
             PlayerPrefs.Save();
 
+            if (bundleDownloadManager != null)
+                bundleDownloadManager.StartDownloadForLevel(1);
+            else if (BundleDownloadManager.Instance != null)
+                BundleDownloadManager.Instance.StartDownloadForLevel(1);
+
             StartCoroutine(TransitionThenExecute(() =>
             {
                 if (sceneLoadingManager != null)

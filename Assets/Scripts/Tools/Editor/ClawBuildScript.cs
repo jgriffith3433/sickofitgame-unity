@@ -188,6 +188,30 @@ namespace SickOfIt.Tools.Editor
             var report = BuildPipeline.BuildPlayer(options);
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
                 throw new Exception($"WebGL build failed: {report.summary.result}");
+
+            RaiseUnityCacheLimit(buildPath);
+        }
+
+        /// <summary>
+        /// Unity's WebGL loader caps its browser cache at 1 GiB and evicts older
+        /// bundles on every startup. This build is larger than that, so raise the
+        /// cap in the generated loader. There is no player setting for it.
+        /// </summary>
+        public static void RaiseUnityCacheLimit(string buildPath)
+        {
+            const string oldLimit = "MaximumCacheSize=1073741824";
+            const string newLimit = "MaximumCacheSize=4294967296";
+            string loaderDir = Path.Combine(buildPath, "Build");
+            if (!Directory.Exists(loaderDir))
+                return;
+
+            foreach (string file in Directory.GetFiles(loaderDir, "*.loader.js"))
+            {
+                string content = File.ReadAllText(file);
+                if (!content.Contains(oldLimit))
+                    continue;
+                File.WriteAllText(file, content.Replace(oldLimit, newLimit));
+            }
         }
 
         private static int DetectVersion(string gameFolder)
