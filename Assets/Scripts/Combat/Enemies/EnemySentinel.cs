@@ -99,8 +99,6 @@ namespace SickOfIt.Combat.Enemies
         {
             base.Awake();
 
-            rb.constraints = RigidbodyConstraints2D.FreezeAll;
-
             if (animator == null)
                 animator = GetComponentInChildren<Animator>();
         }

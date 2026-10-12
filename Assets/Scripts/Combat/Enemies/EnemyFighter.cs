@@ -28,6 +28,7 @@ namespace SickOfIt.Combat.Enemies
         [SerializeField] private int attackDamage = 2;
         [SerializeField] private float minStateChangeTime = 5f;
         [SerializeField] private float maxStateChangeTime = 10f;
+        [SerializeField] private float attackCooldown;
         [SerializeField] private bool faceMovementDirection = true;
 
         [Header("Animation")]
@@ -42,6 +43,8 @@ namespace SickOfIt.Combat.Enemies
 
         private bool isWalking = false;
         private float nextStateChangeTime;
+        private float attackReadyTime;
+        private float attackUntil;
 
         public override void InitializeFromConfig(EnemyTypeConfig config, EnemySpawnConfig spawn)
         {
@@ -50,6 +53,7 @@ namespace SickOfIt.Combat.Enemies
             attackDamage = config.contactDamage;
             minStateChangeTime = config.minStateChangeTime;
             maxStateChangeTime = config.maxStateChangeTime;
+            attackCooldown = config.attackCooldown;
             faceMovementDirection = config.faceMovementDirection;
         }
 
@@ -71,7 +75,22 @@ namespace SickOfIt.Combat.Enemies
                 return;
 
             float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-            bool isAttacking = distanceToPlayer <= attackRange;
+            bool inRange = distanceToPlayer <= attackRange;
+            float now = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+            bool isAttacking;
+            if (attackCooldown <= 0f)
+            {
+                isAttacking = inRange;
+            }
+            else
+            {
+                if (inRange && now >= attackReadyTime)
+                {
+                    attackUntil = now + Mathf.Min(0.35f, attackCooldown);
+                    attackReadyTime = now + attackCooldown;
+                }
+                isAttacking = now < attackUntil;
+            }
 
             if (!isAttacking)
             {

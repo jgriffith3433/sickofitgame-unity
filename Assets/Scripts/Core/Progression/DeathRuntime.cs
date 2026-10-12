@@ -97,9 +97,9 @@ namespace SickOfIt.Core.Progression
                 go.tag = "MainCamera";
                 cam = go.AddComponent<Camera>();
                 cam.orthographic = true;
-                cam.orthographicSize = 5f;
+                cam.orthographicSize = CinematicOrthoSize();
                 cam.clearFlags = CameraClearFlags.SolidColor;
-                cam.backgroundColor = Color.black;
+                cam.backgroundColor = CinematicBackground();
                 go.transform.position = new Vector3(0f, 0f, -10f);
             }
 
@@ -243,8 +243,8 @@ namespace SickOfIt.Core.Progression
             if (deathCompleted) return;
 
             if (rewindButtonHeld && gameClock != null && !gameClock.IsRewinding &&
-                Time.unscaledTime - rewindPressedAt >= 0.22f && gameClock.Time > 0.05f)
-                gameClock.StartRewind(3f);
+                Time.unscaledTime - rewindPressedAt >= RewindHoldSeconds() && gameClock.Time > 0.05f)
+                gameClock.StartRewind(RewindSpeed());
 
             if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
             {
@@ -304,6 +304,30 @@ namespace SickOfIt.Core.Progression
             // Read the level number directly — no scene name parsing needed
             int levelNumber = PlayerPrefs.GetInt("CurrentLevelNumber", 1);
             SceneTransitionManager.Instance.LoadLevel(levelNumber);
+        }
+
+        static float CinematicOrthoSize()
+        {
+            var gd = GameDefinition.Instance;
+            return gd != null && gd.cinematicCameraOrthoSize > 0f ? gd.cinematicCameraOrthoSize : 5f;
+        }
+
+        static Color CinematicBackground()
+        {
+            var gd = GameDefinition.Instance;
+            return gd != null ? gd.cinematicCameraBackground : Color.black;
+        }
+
+        static float RewindHoldSeconds()
+        {
+            var player = GameDefinition.Instance != null ? GameDefinition.Instance.player : null;
+            return player != null ? player.rewindHoldSeconds : 0.22f;
+        }
+
+        static float RewindSpeed()
+        {
+            var player = GameDefinition.Instance != null ? GameDefinition.Instance.player : null;
+            return player != null && player.rewindSpeed > 0f ? player.rewindSpeed : 3f;
         }
     }
 }

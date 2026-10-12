@@ -100,6 +100,18 @@ namespace SickOfIt.Data.Config
         [Header("Rewind")]
         public float rewindSpeed = 3f;
         public float minimumTimeBeforeRewind = 2f;
+        [Tooltip("How long the rewind button must be held before video and death scenes rewind.")]
+        public float rewindHoldSeconds = 0.22f;
+        [Tooltip("Seconds after a lethal hit during which a rewind can cancel the death scene.")]
+        public float deathRewindGrace = 0.6f;
+
+        [Header("Hurt Flash")]
+        public Color hurtFlashColor = new Color(1f, 0.2f, 0.2f, 1f);
+        public int hurtFlashCount = 2;
+        public float hurtFlashOnDuration = 0.08f;
+        public float hurtFlashOffDuration = 0.06f;
+        [Range(0f, 1f)]
+        public float hurtFlashIntensity = 0.5f;
 
         [Header("Roguelite")]
         public int baseMaxHealth = 5;

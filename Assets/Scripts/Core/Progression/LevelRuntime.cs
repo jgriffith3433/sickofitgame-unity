@@ -128,6 +128,7 @@ namespace SickOfIt.Core.Progression
             SetupGameClock();
             SetupAudio();
             SetupBackgrounds();
+            SpawnPlacedSprites();
             StartExperience();
             SetupRewind();
             SpawnEnemies();
@@ -240,6 +241,13 @@ namespace SickOfIt.Core.Progression
             var platformGo = new GameObject("Platforms");
             platformGo.transform.SetParent(transform);
             platformContainer = platformGo.transform;
+        }
+
+        private void SpawnPlacedSprites()
+        {
+            var props = new GameObject("Props");
+            props.transform.SetParent(transform);
+            PlacedSpriteBuilder.SpawnAll(props.transform, config.placedSprites);
         }
 
         private void SetupAudio()
@@ -573,6 +581,9 @@ namespace SickOfIt.Core.Progression
                 float width = platConfig.scale.x > 0 ? platConfig.scale.x : platConfig.width;
                 float height = platConfig.scale.y > 0 ? platConfig.scale.y : 0.3f;
                 plat.transform.localScale = new Vector3(width, height, 1f);
+                var platRenderer = plat.GetComponent<SpriteRenderer>();
+                if (platRenderer != null)
+                    platRenderer.color = PlatformColor();
 
                 // Wire DropThroughPlatform to PlayerController
                 var dropThrough = plat.GetComponent<SickOfIt.Core.Input.DropThroughPlatform>();
@@ -591,7 +602,8 @@ namespace SickOfIt.Core.Progression
                 go.transform.position = new Vector3(platConfig.position.x, platConfig.position.y, 0f);
 
                 var sr = go.AddComponent<SpriteRenderer>();
-                sr.color = new Color(0.4f, 0.4f, 0.4f);
+                sr.color = PlatformColor();
+                SpriteLayers.Apply(sr, SpriteLayer.Player, SpriteLayers.Platform);
 
                 var col = go.AddComponent<BoxCollider2D>();
                 float width = platConfig.scale.x > 0 ? platConfig.scale.x : platConfig.width;
@@ -608,6 +620,12 @@ namespace SickOfIt.Core.Progression
         #endregion
 
         #region Barrier Spawning
+
+        private static Color PlatformColor()
+        {
+            var presentation = GameDefinition.Instance != null ? GameDefinition.Instance.presentation : null;
+            return presentation != null ? presentation.platformColor : new Color(0.4f, 0.4f, 0.4f, 1f);
+        }
 
         private void SpawnBarriers()
         {

@@ -66,9 +66,6 @@ namespace SickOfIt.Combat.Enemies
         {
             base.Awake();
 
-            // Shooter enemies should not move
-            rb.constraints = RigidbodyConstraints2D.FreezeAll;
-
             // Apply initial attack delay so the first shot isn't immediate
             float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
             lastAttackTime = currentTime - attackInterval + initialAttackDelay;

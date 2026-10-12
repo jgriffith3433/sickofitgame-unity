@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Data
 {
@@ -67,6 +69,10 @@ namespace SickOfIt.Data
         {
             get
             {
+                var upgrade = ExtraJumpUpgrade();
+                if (upgrade != null && upgrade.maxLevel > 0)
+                    return upgrade.maxLevel;
+
                 var gd = GameDefinition.Instance;
                 return gd != null ? gd.player.maxExtraJumps : MAX_EXTRA_JUMPS_FALLBACK;
             }
@@ -375,7 +381,41 @@ namespace SickOfIt.Data
         /// </summary>
         public int GetExtraJumpCost(int jumpNumber)
         {
+            var upgrade = ExtraJumpUpgrade();
+            if (upgrade != null && upgrade.costsPerLevel != null && upgrade.costsPerLevel.Length > 0)
+            {
+                int index = Mathf.Clamp(jumpNumber - 1, 0, upgrade.costsPerLevel.Length - 1);
+                return upgrade.costsPerLevel[index];
+            }
+
             return ExtraJumpCost * jumpNumber;
+        }
+
+        static UpgradeDefinition ExtraJumpUpgrade()
+        {
+            var gd = GameDefinition.Instance;
+            if (gd == null)
+                return null;
+
+            var fromPlayer = FindUpgrade(gd.player != null ? gd.player.availableUpgrades : null, "extraJump");
+            if (fromPlayer != null)
+                return fromPlayer;
+
+            return FindUpgrade(gd.upgradeShopConfig != null ? gd.upgradeShopConfig.upgrades : null, "extraJump");
+        }
+
+        static UpgradeDefinition FindUpgrade(IList<UpgradeDefinition> list, string id)
+        {
+            if (list == null)
+                return null;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i] != null && list[i].id == id)
+                    return list[i];
+            }
+
+            return null;
         }
 
         /// <summary>

@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using SickOfIt.Combat.Health;
 using SickOfIt.Core;
+using SickOfIt.Data;
 
 namespace SickOfIt.Combat.Effects
 {
@@ -33,12 +34,27 @@ namespace SickOfIt.Combat.Effects
         {
             if (enemyHealth == null) enemyHealth = GetComponent<EnemyHealth>();
             if (playerHealth == null) playerHealth = GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+                ApplyPlayerFlash();
             CacheRenderers();
         }
 
         /// <summary>
         /// Rebuild the cached renderer array. Call if children change at runtime.
         /// </summary>
+        void ApplyPlayerFlash()
+        {
+            var player = GameDefinition.Instance != null ? GameDefinition.Instance.player : null;
+            if (player == null)
+                return;
+
+            flashColor = player.hurtFlashColor;
+            flashCount = player.hurtFlashCount;
+            flashOnDuration = player.hurtFlashOnDuration;
+            flashOffDuration = player.hurtFlashOffDuration;
+            flashIntensity = player.hurtFlashIntensity;
+        }
+
         public void CacheRenderers()
         {
             cachedRenderers = GetComponentsInChildren<SpriteRenderer>(true);

@@ -327,12 +327,14 @@ namespace SickOfIt.Tools.Editor.Generation
 
             var canvasRect = healthBarGo.GetComponent<RectTransform>();
             canvasRect.sizeDelta = config.healthBarSize;
-            canvasRect.localScale = new Vector3(0.01f, 0.01f, 1f); // world-space scaling
+            float barScale = config.healthBarWorldScale > 0f ? config.healthBarWorldScale : 0.01f;
+            canvasRect.localScale = new Vector3(barScale, barScale, 1f);
 
             // Wire healthBarContainer on EnemyHealth
             var ehSo2 = new SerializedObject(enemyHealth);
             ehSo2.FindProperty("healthBarContainer").objectReferenceValue = healthBarGo.transform;
             ehSo2.FindProperty("healthBarColor").colorValue = config.healthBarColor;
+            ehSo2.FindProperty("healthBarTrackColor").colorValue = config.healthBarTrackColor;
             ehSo2.FindProperty("healthBarSize").vector2Value = config.healthBarSize;
             ehSo2.ApplyModifiedPropertiesWithoutUndo();
 

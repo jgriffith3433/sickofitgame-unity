@@ -29,6 +29,31 @@ namespace SickOfIt.Tools.Editor.Generation
 
         const int MaxSheetSize = 4096;
         const float SpritePixelsPerUnit = 100f;
+        const int DefaultClearCutoff = 28;
+
+        static int activeMaxSheet = MaxSheetSize;
+        static float activePixelsPerUnit = SpritePixelsPerUnit;
+        static int activeClearCutoff = DefaultClearCutoff;
+
+        static void UseArt(GameDefinition gd)
+        {
+            var art = gd != null && gd.characterArt != null ? gd.characterArt : null;
+            activeMaxSheet = art != null && art.maxSheetSize > 0 ? art.maxSheetSize : MaxSheetSize;
+            activePixelsPerUnit = art != null && art.pixelsPerUnit > 0f ? art.pixelsPerUnit : SpritePixelsPerUnit;
+            activeClearCutoff = art != null ? art.clearCutoff : DefaultClearCutoff;
+        }
+
+        public static string PlayerRoot(GameDefinition gd)
+        {
+            var art = gd != null ? gd.characterArt : null;
+            return art != null && !string.IsNullOrEmpty(art.playerSourceRoot) ? art.playerSourceRoot : PlayerSourceRoot;
+        }
+
+        public static string EnemyRoot(GameDefinition gd)
+        {
+            var art = gd != null ? gd.characterArt : null;
+            return art != null && !string.IsNullOrEmpty(art.enemySourceRoot) ? art.enemySourceRoot : EnemySourceRoot;
+        }
         const string PlayerSheetFolder = "Assets/Art/Sprites/Player";
 
         class BakedClip
@@ -70,6 +95,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (!EnsureFfmpeg())
                 return;
 
+            UseArt(gd);
             EnsurePlayerAnimConfig(gd);
             var states = gd.player.animationConfig.states;
             int fallbackFps = gd.player.animationFps > 0 ? gd.player.animationFps : 12;
@@ -77,7 +103,7 @@ namespace SickOfIt.Tools.Editor.Generation
             try
             {
                 var baked = BakeStates(
-                    PlayerSourceRoot,
+                    PlayerRoot(gd),
                     states,
                     PlayerSheetFolder,
                     fallbackFps,
@@ -209,7 +235,8 @@ namespace SickOfIt.Tools.Editor.Generation
             if (config.animationConfig == null || config.animationConfig.states == null || config.animationConfig.states.Count == 0)
                 return $"{config.type}: no animation states.";
 
-            string sourceRoot = Path.Combine(EnemySourceRoot, config.type.ToString());
+            UseArt(gd);
+            string sourceRoot = Path.Combine(EnemyRoot(gd), config.type.ToString());
             string outputFolder = $"Assets/Art/Sprites/Enemies/{config.type}";
             int fallbackFps = config.animationFps > 0 ? config.animationFps : 12;
             var states = config.animationConfig.states;
@@ -422,9 +449,9 @@ namespace SickOfIt.Tools.Editor.Generation
             int srcH = probe.height;
             UnityEngine.Object.DestroyImmediate(probe);
 
-            if (!TryFitGrid(framePaths.Length, srcW, srcH, MaxSheetSize, out int cols, out int rows, out int cellW, out int cellH))
+            if (!TryFitGrid(framePaths.Length, srcW, srcH, activeMaxSheet, out int cols, out int rows, out int cellW, out int cellH))
             {
-                error = $"Could not fit {framePaths.Length} frames of {srcW}x{srcH} into a {MaxSheetSize} sheet. Lower the animation FPS.";
+                error = $"Could not fit {framePaths.Length} frames of {srcW}x{srcH} into a {activeMaxSheet} sheet. Lower the animation FPS.";
                 return null;
             }
 
@@ -495,7 +522,7 @@ namespace SickOfIt.Tools.Editor.Generation
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.Compressed;
             importer.maxTextureSize = maxSize;
-            importer.spritePixelsPerUnit = SpritePixelsPerUnit;
+            importer.spritePixelsPerUnit = activePixelsPerUnit;
             importer.isReadable = false;
 
             var settings = new TextureImporterSettings();
@@ -504,7 +531,7 @@ namespace SickOfIt.Tools.Editor.Generation
             settings.spriteMeshType = SpriteMeshType.FullRect;
             settings.spriteAlignment = (int)SpriteAlignment.Center;
             settings.spritePivot = new Vector2(0.5f, 0.5f);
-            settings.spritePixelsPerUnit = SpritePixelsPerUnit;
+            settings.spritePixelsPerUnit = activePixelsPerUnit;
             settings.alphaIsTransparency = true;
             settings.mipmapEnabled = false;
             settings.readable = false;
@@ -610,7 +637,7 @@ namespace SickOfIt.Tools.Editor.Generation
         /// </summary>
         static void RemoveBlackBackground(Texture2D texture)
         {
-            const byte ClearCutoff = 28;
+            byte ClearCutoff = (byte)Mathf.Clamp(activeClearCutoff, 0, 255);
 
             int w = texture.width;
             int h = texture.height;
@@ -851,7 +878,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 gd.player.animationConfig = AnimationConfigPopulator.CreatePlayerAnimConfig(gd.player);
 
             EditorGUILayout.LabelField("Player", EditorStyles.boldLabel);
-            EditorGUILayout.LabelField(CharacterSpriteBaker.PlayerSourceRoot, EditorStyles.miniLabel);
+            EditorGUILayout.LabelField(CharacterSpriteBaker.PlayerRoot(gd), EditorStyles.miniLabel);
             EditorGUILayout.Space(6);
             DrawStateButtons(gd.player.animationConfig.states, stateName =>
             {
@@ -867,7 +894,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 return;
             }
 
-            EditorGUILayout.LabelField(CharacterSpriteBaker.EnemySourceRoot + "\\{Type}\\{State}\\Output", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField(CharacterSpriteBaker.EnemyRoot(gd) + "\\{Type}\\{State}\\Output", EditorStyles.miniLabel);
             EditorGUILayout.Space(6);
 
             foreach (var config in gd.enemyTypes)

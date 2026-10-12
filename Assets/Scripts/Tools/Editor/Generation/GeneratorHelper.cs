@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -276,29 +277,123 @@ namespace SickOfIt.Tools.Editor.Generation
         }
 
         /// <summary>
-        /// Deleting a controller while a scene is open makes Unity store a missing
-        /// Controller override on that instance. The regenerated prefab is the
-        /// source of truth, so drop the override and let the instance follow it.
+        /// Deleting a controller while a scene is open leaves the live Animator
+        /// pointing at nothing, even after the prefab is rewritten. Copy the
+        /// controller back from the prefab asset and drop a null override.
         /// </summary>
         public static void RevertAnimatorControllerOverrides(GameObject prefabAsset)
         {
-            if (prefabAsset == null)
-                return;
+            string prefabPath = prefabAsset != null ? AssetDatabase.GetAssetPath(prefabAsset) : null;
+            RepairMissingAnimatorControllers(prefabPath);
+        }
 
-            string prefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+        public static void RepairMissingAnimatorControllers()
+        {
+            RepairMissingAnimatorControllers(null);
+        }
+
+        static void RepairMissingAnimatorControllers(string onlyPrefabPath)
+        {
+            var broken = new List<Animator>();
             var animators = Object.FindObjectsByType<Animator>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var animator in animators)
             {
+                if (animator == null || animator.runtimeAnimatorController != null)
+                    continue;
                 if (!PrefabUtility.IsPartOfPrefabInstance(animator))
                     continue;
-                if (PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(animator.gameObject) != prefabPath)
+                if (!string.IsNullOrEmpty(onlyPrefabPath) &&
+                    PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(animator.gameObject) != onlyPrefabPath)
+                    continue;
+                broken.Add(animator);
+            }
+
+            foreach (var animator in broken)
+            {
+                if (animator == null)
                     continue;
 
+                var controller = ControllerFromPrefabAsset(animator);
+                if (controller == null)
+                    continue;
+
+                ClearNullControllerOverride(animator);
+                if (animator.runtimeAnimatorController != null)
+                    continue;
+
+                animator.runtimeAnimatorController = controller;
                 var serializedAnimator = new SerializedObject(animator);
-                var controller = serializedAnimator.FindProperty("m_Controller");
-                if (controller != null && controller.prefabOverride)
-                    PrefabUtility.RevertPropertyOverride(controller, InteractionMode.AutomatedAction);
+                var property = serializedAnimator.FindProperty("m_Controller");
+                if (property != null && property.prefabOverride)
+                    PrefabUtility.RevertPropertyOverride(property, InteractionMode.AutomatedAction);
+
+                if (animator.runtimeAnimatorController == null)
+                    animator.runtimeAnimatorController = controller;
             }
+        }
+
+        static RuntimeAnimatorController ControllerFromPrefabAsset(Animator instance)
+        {
+            var source = PrefabUtility.GetCorrespondingObjectFromSource(instance);
+            if (source != null && source.runtimeAnimatorController != null)
+                return source.runtimeAnimatorController;
+
+            string prefabPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(instance.gameObject);
+            if (string.IsNullOrEmpty(prefabPath))
+                return null;
+
+            AssetDatabase.ImportAsset(prefabPath, ImportAssetOptions.ForceUpdate);
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab == null)
+                return null;
+
+            var instanceRoot = PrefabUtility.GetNearestPrefabInstanceRoot(instance.gameObject);
+            string relative = RelativePath(instanceRoot.transform, instance.transform);
+            var match = string.IsNullOrEmpty(relative) ? prefab.transform : prefab.transform.Find(relative);
+            var prefabAnimator = match != null ? match.GetComponent<Animator>() : null;
+            return prefabAnimator != null ? prefabAnimator.runtimeAnimatorController : null;
+        }
+
+        static void ClearNullControllerOverride(Animator animator)
+        {
+            var root = PrefabUtility.GetNearestPrefabInstanceRoot(animator.gameObject);
+            if (root == null)
+                return;
+
+            var mods = PrefabUtility.GetPropertyModifications(root);
+            if (mods == null || mods.Length == 0)
+                return;
+
+            var kept = new List<PropertyModification>(mods.Length);
+            bool removed = false;
+            foreach (var mod in mods)
+            {
+                if (mod.propertyPath == "m_Controller" && mod.objectReference == null)
+                {
+                    removed = true;
+                    continue;
+                }
+                kept.Add(mod);
+            }
+
+            if (removed)
+                PrefabUtility.SetPropertyModifications(root, kept.ToArray());
+        }
+
+        static string RelativePath(Transform root, Transform child)
+        {
+            if (child == root)
+                return string.Empty;
+
+            var names = new Stack<string>();
+            var current = child;
+            while (current != null && current != root)
+            {
+                names.Push(current.name);
+                current = current.parent;
+            }
+
+            return string.Join("/", names);
         }
 
         /// <summary>
@@ -503,6 +598,20 @@ namespace SickOfIt.Tools.Editor.Generation
             bool hasNeg = d1 < 0f || d2 < 0f || d3 < 0f;
             bool hasPos = d1 > 0f || d2 > 0f || d3 > 0f;
             return !(hasNeg && hasPos);
+        }
+    }
+
+    /// <summary>
+    /// The open Character instance keeps a blank controller after Generate Project
+    /// deletes the animator asset. Repair it on the next script reload.
+    /// </summary>
+    [InitializeOnLoad]
+    static class AnimatorControllerRepair
+    {
+        static AnimatorControllerRepair()
+        {
+            EditorApplication.delayCall += () =>
+                EditorApplication.delayCall += GeneratorHelper.RepairMissingAnimatorControllers;
         }
     }
 }

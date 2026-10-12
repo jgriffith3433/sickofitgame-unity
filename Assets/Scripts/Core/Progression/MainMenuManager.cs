@@ -67,10 +67,37 @@ namespace SickOfIt.Core.Progression
             if (explodeRoot != null)
                 explodeRoot.SetActive(false);
 
+            ApplyMenuConfig();
             SetupButtons();
             UpdateContinueButton();
             UpdateRogueliteUI();
             SetupBundleDownloadManager();
+        }
+
+        private void ApplyMenuConfig()
+        {
+            var menu = GameDefinition.Instance != null ? GameDefinition.Instance.mainMenuConfig : null;
+            if (menu == null)
+                return;
+
+            hideDelay = menu.hideDelay;
+            transitionDelay = menu.transitionDelay;
+            PlacedSpriteBuilder.Bind(menu.placedSprites);
+
+            if (!menu.placeCharacter)
+                return;
+
+            var transforms = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                if (transforms[i] == null || transforms[i].name != "Character")
+                    continue;
+                var position = transforms[i].localPosition;
+                position.x = menu.characterPosition.x;
+                position.y = menu.characterPosition.y;
+                transforms[i].localPosition = position;
+                break;
+            }
         }
 
         private void SetupButtons()

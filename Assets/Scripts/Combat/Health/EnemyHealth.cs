@@ -31,6 +31,7 @@ namespace SickOfIt.Combat.Health
         [Tooltip("Drag in a UI transform to auto-generate a health bar")]
         [SerializeField] private Transform healthBarContainer;
         [SerializeField] private Color healthBarColor = Color.red;
+        [SerializeField] private Color healthBarTrackColor = new Color(0.2f, 0.2f, 0.2f, 0.8f);
         [SerializeField] private Vector2 healthBarSize = new Vector2(35f, 3f);
         [SerializeField] private bool hideWhenFull = false;
 
@@ -38,6 +39,32 @@ namespace SickOfIt.Combat.Health
         private Image healthBarFillImage;
 
         public int CurrentHealth => currentHealth;
+
+        /// <summary>
+        /// Applies the enemy config after the bar has been built in Awake.
+        /// </summary>
+        public void ApplyPresentation(Color fill, Vector2 size, Color track, float worldScale)
+        {
+            healthBarColor = fill;
+            healthBarSize = size;
+            healthBarTrackColor = track;
+
+            if (healthBarBackground != null)
+            {
+                var trackImage = healthBarBackground.GetComponent<Image>();
+                if (trackImage != null)
+                    trackImage.color = track;
+                var rect = healthBarBackground.GetComponent<RectTransform>();
+                if (rect != null)
+                    rect.sizeDelta = size;
+            }
+
+            if (healthBarFillImage != null)
+                healthBarFillImage.color = fill;
+
+            if (healthBarContainer != null && worldScale > 0f)
+                healthBarContainer.localScale = new Vector3(worldScale, worldScale, 1f);
+        }
         public int MaxHealth => maxHealth;
         public bool IsAlive => currentHealth > 0;
         public bool IsInvincible => invincibilityTimer > 0;
@@ -131,7 +158,7 @@ namespace SickOfIt.Combat.Health
             healthBarBackground.transform.SetParent(healthBarContainer, false);
 
             var bgImage = healthBarBackground.AddComponent<Image>();
-            bgImage.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+            bgImage.color = healthBarTrackColor;
             bgImage.sprite = CreateWhiteSprite();
 
             var bgRect = healthBarBackground.GetComponent<RectTransform>();

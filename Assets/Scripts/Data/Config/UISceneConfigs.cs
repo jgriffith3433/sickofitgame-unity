@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SickOfIt.Data.Config
@@ -62,6 +63,12 @@ namespace SickOfIt.Data.Config
         public Sprite explosionSprite;
         public float hideDelay = 1.5f;
         public float transitionDelay = 1f;
+
+        [Header("Scene Layout")]
+        [Tooltip("Sprites already in the menu, or new ones to spawn. Matched by name.")]
+        public List<PlacedSpriteConfig> placedSprites = new List<PlacedSpriteConfig>();
+        public bool placeCharacter = true;
+        public Vector2 characterPosition = new Vector2(-4.21f, -3.14f);
     }
 
     /// <summary>
@@ -97,6 +104,7 @@ namespace SickOfIt.Data.Config
         public UISceneConfig baseConfig = new UISceneConfig();
         
         [Header("Upgrades")]
+        [Tooltip("Used only when PlayerConfig.availableUpgrades is empty. The player list is the catalog.")]
         public UpgradeDefinition[] upgrades = new UpgradeDefinition[]
         {
             new UpgradeDefinition

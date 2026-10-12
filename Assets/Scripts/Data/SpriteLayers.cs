@@ -1,4 +1,5 @@
 using UnityEngine;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Data
 {
@@ -24,18 +25,21 @@ namespace SickOfIt.Data
     /// </summary>
     public static class SpriteLayers
     {
-        /// <summary>Distance between neighboring bands. Player sits at 0.</summary>
-        public const float Spacing = 2f;
+        static PresentationConfig Presentation =>
+            GameDefinition.Instance != null ? GameDefinition.Instance.presentation : null;
 
-        public const int Platform = 0;
-        public const int Shadow = 1;
-        public const int Character = 2;
-        public const int Pickup = 3;
-        public const int Projectile = 4;
-        public const int HealthBar = 10;
+        /// <summary>Distance between neighboring bands. Player sits at 0.</summary>
+        public static float Spacing => Presentation != null ? Presentation.layerSpacing : 2f;
+
+        public static int Platform => Presentation != null ? Presentation.platformOrder : 0;
+        public static int Shadow => Presentation != null ? Presentation.shadowOrder : 1;
+        public static int Character => Presentation != null ? Presentation.characterOrder : 2;
+        public static int Pickup => Presentation != null ? Presentation.pickupOrder : 3;
+        public static int Projectile => Presentation != null ? Presentation.projectileOrder : 4;
+        public static int HealthBar => Presentation != null ? Presentation.healthBarOrder : 10;
 
         /// <summary>Full-screen effects on Foreground2, in front of other foreground art.</summary>
-        public const int Overlay = 1000;
+        public static int Overlay => Presentation != null ? Presentation.overlayOrder : 1000;
 
         /// <summary>
         /// World/local Z for a band. Positive is farther from the camera (camera sits at z = -10).

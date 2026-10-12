@@ -75,6 +75,9 @@ namespace SickOfIt.Data.Config
         public Vector2 healthBarOffset = new Vector2(0f, 0.6f);
         public Vector2 healthBarSize = new Vector2(35f, 3f);
         public Color healthBarColor = Color.red;
+        public Color healthBarTrackColor = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+        [Tooltip("World scale of the health-bar canvas.")]
+        public float healthBarWorldScale = 0.01f;
 
         [Header("Chaser Settings")]
         public float stopDistance = 1.5f;

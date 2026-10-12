@@ -66,6 +66,23 @@ namespace SickOfIt.Combat.Enemies
             dropChance = config.dropChance;
             dropPointsValue = config.dropPointsValue;
             dropCount = config.dropCount;
+
+            if (rb == null)
+                rb = GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.gravityScale = config.gravityScale;
+                rb.constraints = config.constraints;
+            }
+
+            if (enemyHealth != null)
+            {
+                enemyHealth.ApplyPresentation(
+                    config.healthBarColor,
+                    config.healthBarSize,
+                    config.healthBarTrackColor,
+                    config.healthBarWorldScale);
+            }
         }
 
         /// <summary>
@@ -94,9 +111,6 @@ namespace SickOfIt.Combat.Enemies
             if (rb == null) rb = GetComponent<Rigidbody2D>();
             if (enemyHealth == null) enemyHealth = GetComponent<EnemyHealth>();
             if (audioSource == null) audioSource = GetComponent<AudioSource>();
-
-            rb.gravityScale = 0;
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
             if (enemyHealth != null)
             {

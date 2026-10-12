@@ -140,7 +140,10 @@ namespace SickOfIt.Combat.Health
         {
             // Leave a beat so rewind can restore health and cancel the death.
             // The timer holds while time is running backward.
-            const float delay = 0.6f;
+            float delay = 0.6f;
+            var definition = GameDefinition.Instance;
+            if (definition != null && definition.player != null)
+                delay = definition.player.deathRewindGrace;
             float elapsed = 0f;
             while (elapsed < delay)
             {

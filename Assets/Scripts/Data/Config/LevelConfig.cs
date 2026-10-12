@@ -44,6 +44,9 @@ namespace SickOfIt.Data.Config
         [Header("Layout")]
         public List<PlatformConfig> platforms = new List<PlatformConfig>();
 
+        [Tooltip("Props in the level: houses, trees, doors. Pick a sorting layer and they stack with the player.")]
+        public List<PlacedSpriteConfig> placedSprites = new List<PlacedSpriteConfig>();
+
         [Header("Barriers")]
         [Tooltip("Generate invisible boundary colliders around the camera viewport")]
         public bool generateBarriers = true;

@@ -40,6 +40,14 @@ namespace SickOfIt.Data
         [Header("Platform Defaults")]
         public float platformColliderHeight = 0.1f;
 
+        [Header("Presentation")]
+        [Tooltip("Sorting-band spacing, draw order inside the Player band, and the platform color.")]
+        public PresentationConfig presentation = new PresentationConfig();
+
+        [Header("Character Art")]
+        [Tooltip("mp4 folders and sprite-sheet packing used by Regenerate Player/Enemy Sprites.")]
+        public CharacterArtConfig characterArt = new CharacterArtConfig();
+
         [Header("Camera Defaults")]
         [Tooltip("Orthographic size for level camera")]
         public float levelCameraOrthoSize = 2.8f;

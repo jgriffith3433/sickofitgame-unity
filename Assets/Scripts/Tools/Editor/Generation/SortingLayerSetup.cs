@@ -46,13 +46,13 @@ namespace SickOfIt.Tools.Editor.Generation
             }
 
             var knownIds = new Dictionary<string, int>();
-            var extras = new List<(string name, int id, int locked)>();
+            var extras = new List<(string name, int id, bool locked)>();
             for (int i = 0; i < sortingLayers.arraySize; i++)
             {
                 var element = sortingLayers.GetArrayElementAtIndex(i);
                 string name = element.FindPropertyRelative("name").stringValue;
                 int id = element.FindPropertyRelative("uniqueID").intValue;
-                int locked = element.FindPropertyRelative("locked").intValue;
+                bool locked = ReadLocked(element);
                 if (name == "Default")
                     continue;
 
@@ -71,11 +71,11 @@ namespace SickOfIt.Tools.Editor.Generation
             }
 
             sortingLayers.arraySize = 1 + Layers.Length + extras.Count;
-            Write(sortingLayers, 0, "Default", 0, 0);
+            Write(sortingLayers, 0, "Default", 0, false);
             for (int i = 0; i < Layers.Length; i++)
             {
                 int id = knownIds.TryGetValue(Layers[i].name, out int found) ? found : Layers[i].id;
-                Write(sortingLayers, i + 1, Layers[i].name, id, 0);
+                Write(sortingLayers, i + 1, Layers[i].name, id, false);
             }
 
             for (int i = 0; i < extras.Count; i++)
@@ -84,12 +84,30 @@ namespace SickOfIt.Tools.Editor.Generation
             tagManager.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void Write(SerializedProperty array, int index, string name, int id, int locked)
+        private static bool ReadLocked(SerializedProperty element)
+        {
+            var locked = element.FindPropertyRelative("locked");
+            if (locked == null)
+                return false;
+            if (locked.propertyType == SerializedPropertyType.Boolean)
+                return locked.boolValue;
+            if (locked.propertyType == SerializedPropertyType.Integer)
+                return locked.intValue != 0;
+            return false;
+        }
+
+        private static void Write(SerializedProperty array, int index, string name, int id, bool locked)
         {
             var element = array.GetArrayElementAtIndex(index);
             element.FindPropertyRelative("name").stringValue = name;
             element.FindPropertyRelative("uniqueID").intValue = id;
-            element.FindPropertyRelative("locked").intValue = locked;
+            var lockedProp = element.FindPropertyRelative("locked");
+            if (lockedProp == null)
+                return;
+            if (lockedProp.propertyType == SerializedPropertyType.Boolean)
+                lockedProp.boolValue = locked;
+            else if (lockedProp.propertyType == SerializedPropertyType.Integer)
+                lockedProp.intValue = locked ? 1 : 0;
         }
     }
 }

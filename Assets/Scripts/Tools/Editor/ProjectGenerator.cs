@@ -137,8 +137,12 @@ namespace SickOfIt.Tools.Editor
             ////Debug.Log($"✅ Addressables configured");
             ////Debug.Log($"🎮 Game ready to play!");
             
-            // Open MainMenu scene so it's ready to play
+            // Open MainMenu scene so it's ready to play.
+            // Wiping Assets/Animations while this scene is open leaves the
+            // Character instance's Animator controller blank. Put it back
+            // from the prefab after the scene is loaded.
             EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity");
+            GeneratorHelper.RepairMissingAnimatorControllers();
         }
         
         /// <summary>
