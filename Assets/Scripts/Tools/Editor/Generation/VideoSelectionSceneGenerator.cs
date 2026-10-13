@@ -1,13 +1,10 @@
 #if UNITY_EDITOR
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using TMPro;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 using SickOfIt.Core.Progression;
-using SickOfIt.Core.Flow;
 
 namespace SickOfIt.Tools.Editor.Generation
 {
@@ -16,57 +13,49 @@ namespace SickOfIt.Tools.Editor.Generation
     /// </summary>
     public static class VideoSelectionSceneGenerator
     {
-        private const string OUTPUT_PATH = "Assets/Scenes/VideoSelection.unity";
-        private const string VIDEO_BUTTON_PREFAB_PATH = "Assets/Prefabs/UI/ButtonVideo.prefab";
+        const string OutputPath = "Assets/Scenes/VideoSelection.unity";
+        const string VideoButtonPath = "Assets/Prefabs/(Prb)ButtonVideo.prefab";
 
         public static void Generate(GameDefinition gd)
         {
             if (gd == null)
             {
-                Debug.LogError("[VideoSelectionSceneGen] GameDefinition is null!");
+                Debug.LogError("[VideoSelectionSceneGen] GameDefinition is null.");
                 return;
             }
 
-            var config = gd.videoSelectionConfig;
+            var config = gd.videoSelectionConfig ?? new SelectionSceneConfig();
+            var shell = MenuShell.Build(
+                gd,
+                config.baseConfig,
+                "VideoSelectPanel",
+                string.IsNullOrEmpty(config.title) ? "Select Video" : config.title,
+                "VideoButtonContainer",
+                config.buttonSpacing,
+                config.buttonSize);
+            if (shell == null)
+                return;
 
-            // Create base scene infrastructure
-            UISceneGeneratorBase.CreateBaseScene(OUTPUT_PATH, config.baseConfig, out var canvasGO, out var safeArea);
+            var backPrefab = config.backButtonPrefab != null
+                ? config.backButtonPrefab
+                : gd.mainMenuConfig != null ? gd.mainMenuConfig.buttonPrefab : null;
+            var back = MenuShell.AddOvalButton(shell.SafeArea, backPrefab, "(Prb)ButtonBack", "Back", config.buttonSize);
+            MenuShell.PlaceCornerButton(back, Vector2.zero, Vector2.zero, new Vector2(60f, 50f));
 
-            // ─── Scene Loading Manager ────────────────────────────────────
-            var sceneLoadingGO = new GameObject("Scene Loading Manager");
-            var sceneLoadingManager = sceneLoadingGO.AddComponent<SceneLoadingManager>();
+            var videoButton = config.itemButtonPrefab != null
+                ? config.itemButtonPrefab
+                : AssetDatabase.LoadAssetAtPath<GameObject>(VideoButtonPath);
 
-            // ─── Video Selection Manager ──────────────────────────────────
-            var managerGO = new GameObject("Video Selection Manager");
-            var videoSelectionManager = managerGO.AddComponent<VideoSelectionManager>();
+            var manager = new GameObject("Video Selection Manager").AddComponent<VideoSelectionManager>();
+            var so = new SerializedObject(manager);
+            so.FindProperty("videoButtonContainer").objectReferenceValue = shell.Container;
+            so.FindProperty("videoButtonPrefab").objectReferenceValue = videoButton;
+            if (back != null)
+                so.FindProperty("backButton").objectReferenceValue = back.GetComponent<MobileControllerFramework.Button>();
+            so.FindProperty("sceneLoadingManager").objectReferenceValue = shell.Loading;
+            so.ApplyModifiedPropertiesWithoutUndo();
 
-            // ─── Create button container ──────────────────────────────────
-            var buttonContainer = UISceneGeneratorBase.CreateButtonContainer(safeArea, "VideoButtonContainer", config.buttonSpacing);
-
-            // ─── Create back button ───────────────────────────────────────
-            var backButton = UISceneGeneratorBase.CreateSimpleButton(safeArea, "BackButton", "Back", new Vector2(150, 60));
-            var backRect = backButton.GetComponent<RectTransform>();
-            backRect.anchorMin = new Vector2(0, 1);
-            backRect.anchorMax = new Vector2(0, 1);
-            backRect.anchoredPosition = new Vector2(100, -50);
-
-            // ─── Load or create video button prefab ───────────────────────
-            var videoButtonPrefab = config.itemButtonPrefab;
-            if (videoButtonPrefab == null)
-                videoButtonPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(VIDEO_BUTTON_PREFAB_PATH);
-
-            // ─── Wire VideoSelectionManager ───────────────────────────────
-            var vsmSo = new SerializedObject(videoSelectionManager);
-            vsmSo.FindProperty("videoButtonContainer").objectReferenceValue = buttonContainer;
-            vsmSo.FindProperty("videoButtonPrefab").objectReferenceValue = videoButtonPrefab;
-            vsmSo.FindProperty("backButton").objectReferenceValue = backButton.GetComponent<MobileControllerFramework.Button>();
-            vsmSo.FindProperty("sceneLoadingManager").objectReferenceValue = sceneLoadingManager;
-            vsmSo.ApplyModifiedPropertiesWithoutUndo();
-
-            // ─── Save scene ───────────────────────────────────────────────
-            UISceneGeneratorBase.SaveScene(OUTPUT_PATH);
-
-            ////Debug.Log($"[VideoSelectionSceneGen] Created: {OUTPUT_PATH}");
+            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), OutputPath);
         }
     }
 }

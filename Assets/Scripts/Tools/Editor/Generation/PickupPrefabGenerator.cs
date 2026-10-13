@@ -111,7 +111,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (animController != null)
             {
                 var animator = go.AddComponent<Animator>();
-                animator.runtimeAnimatorController = animController;
+                GeneratorHelper.AssignAnimatorController(animator, animController);
             }
 
             // ─── Rewind components ────────────────────────────────────────

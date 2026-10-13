@@ -34,11 +34,12 @@ namespace SickOfIt.Tools.Editor
     ///   - VideoSceneGenerator - Video.unity
     ///   - LevelSceneGenerator - Level.unity
     ///   - DeathSceneGenerator - Death.unity
-    ///
-    /// MainMenu, LevelSelection, VideoSelection, and UpgradeShop stay hand-authored.
-    /// Their generators rebuild a button list and drop the house, download UI, and layout.
+    ///   - LevelSelectionSceneGenerator - LevelSelection.unity
+    ///   - VideoSelectionSceneGenerator - VideoSelection.unity
+    ///   - UpgradeShopSceneGenerator - UpgradeShop.unity
+    ///   - MainMenuSceneGenerator - MainMenu.unity
     /// 
-    /// Phase 4 - Addressables
+    /// Phase 4 - Addressables (Video, Level, Death) and the built-in scene list
     /// 
     /// ONE BUTTON. ONE SCRIPT. EVERYTHING GENERATED.
     /// </summary>
@@ -46,7 +47,6 @@ namespace SickOfIt.Tools.Editor
     {
         private const string SCENES_ROOT = "Assets/Scenes";
         
-        [MenuItem("SickOfIt/Generate Project")]
         public static void GenerateProject()
         {
             ////Debug.Log("=== GENERATING PROJECT FROM CONFIG ===");
@@ -112,9 +112,23 @@ namespace SickOfIt.Tools.Editor
             try { DeathSceneGenerator.GenerateDeathScene(gd); }
             catch (System.Exception e) { Debug.LogError($"DeathSceneGenerator failed: {e}"); }
 
-            // Menu scenes are hand-authored (house transition, bundle download, shop layout).
-            // MainMenuSceneGenerator and the other UI generators replace those scenes with a
-            // button list, so Generate Project leaves them alone.
+            gd = LoadGameDefinition();
+            try { LevelSelectionSceneGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"LevelSelectionSceneGenerator failed: {e}"); }
+
+            gd = LoadGameDefinition();
+            try { VideoSelectionSceneGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"VideoSelectionSceneGenerator failed: {e}"); }
+
+            gd = LoadGameDefinition();
+            try { UpgradeShopSceneGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"UpgradeShopSceneGenerator failed: {e}"); }
+
+            gd = LoadGameDefinition();
+            try { MainMenuSceneGenerator.Generate(gd); }
+            catch (System.Exception e) { Debug.LogError($"MainMenuSceneGenerator failed: {e}"); }
+
+            EnsureBuiltInScenes();
             
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -132,17 +146,12 @@ namespace SickOfIt.Tools.Editor
             
             ////Debug.Log("=== PROJECT GENERATION COMPLETE ===");
             ////Debug.Log($"✅ Generated prefabs: Character, Platform, Diamond, {gd.enemyTypes?.Count ?? 0} enemies, {gd.projectileConfigs?.Count ?? 0} projectiles");
-            ////Debug.Log($"✅ Generated scenes: Video, Level, Death (menu scenes left as authored)");
+            ////Debug.Log($"✅ Generated scenes: Video, Level, Death, MainMenu");
             ////Debug.Log($"✅ Config: {gd.levels.Count} levels, {gd.videos.Count} videos, {gd.deaths.Count} deaths");
             ////Debug.Log($"✅ Addressables configured");
             ////Debug.Log($"🎮 Game ready to play!");
             
-            // Open MainMenu scene so it's ready to play.
-            // Wiping Assets/Animations while this scene is open leaves the
-            // Character instance's Animator controller blank. Put it back
-            // from the prefab after the scene is loaded.
             EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity");
-            GeneratorHelper.RepairMissingAnimatorControllers();
         }
         
         /// <summary>
@@ -160,15 +169,23 @@ namespace SickOfIt.Tools.Editor
         }
 
         /// <summary>
-        /// Delete all generated animation assets (controllers, clips).
-        /// Wipes the entire Assets/Animations/ tree to prevent orphans.
-        /// Each generator recreates its subfolder during generation.
+        /// Deletes generated clips so they can be rebuilt from config.
+        /// Controller assets stay. Their guids are what prefab Animators reference,
+        /// and deleting the file is what makes that field go missing.
         /// </summary>
         private static void DeleteGeneratedAnimations()
         {
             string animRoot = "Assets/Animations";
-            if (AssetDatabase.IsValidFolder(animRoot))
-                AssetDatabase.DeleteAsset(animRoot);
+            if (!AssetDatabase.IsValidFolder(animRoot))
+                return;
+
+            var clips = AssetDatabase.FindAssets("t:AnimationClip", new[] { animRoot });
+            foreach (var guid in clips)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (path.EndsWith(".anim"))
+                    AssetDatabase.DeleteAsset(path);
+            }
         }
         
         private static void CleanupOldScenes()
@@ -222,6 +239,36 @@ namespace SickOfIt.Tools.Editor
         // --- Commented out: now delegated to DeathSceneGenerator ---
         // private static void GenerateDeathScene(GameDefinition gd) { ... }
         
+        /// <summary>
+        /// Main menu, level select, video select, and the shop load through the build.
+        /// Video, Level, and Death stay addressable.
+        /// </summary>
+        private static void EnsureBuiltInScenes()
+        {
+            string[] required =
+            {
+                $"{SCENES_ROOT}/MainMenu.unity",
+                $"{SCENES_ROOT}/LevelSelection.unity",
+                $"{SCENES_ROOT}/VideoSelection.unity",
+                $"{SCENES_ROOT}/UpgradeShop.unity"
+            };
+
+            var scenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+            foreach (string path in required)
+            {
+                if (!File.Exists(path))
+                    continue;
+
+                int index = scenes.FindIndex(scene => scene.path == path);
+                if (index < 0)
+                    scenes.Add(new EditorBuildSettingsScene(path, true));
+                else if (!scenes[index].enabled)
+                    scenes[index] = new EditorBuildSettingsScene(path, true);
+            }
+
+            EditorBuildSettings.scenes = scenes.ToArray();
+        }
+
         private static void SetupAddressables(GameDefinition gd)
         {
             ////Debug.Log("Setting up Addressables...");

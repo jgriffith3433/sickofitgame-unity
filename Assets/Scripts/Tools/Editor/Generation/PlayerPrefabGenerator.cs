@@ -103,7 +103,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (animController != null)
             {
                 animator = graphics.AddComponent<Animator>();
-                animator.runtimeAnimatorController = animController;
+                GeneratorHelper.AssignAnimatorController(animator, animController);
             }
 
             // ─── Shadow child ─────────────────────────────────────────────
@@ -122,7 +122,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (shadowAnimCtrl != null)
             {
                 var shadowAnimator = shadow.AddComponent<Animator>();
-                shadowAnimator.runtimeAnimatorController = shadowAnimCtrl;
+                GeneratorHelper.AssignAnimatorController(shadowAnimator, shadowAnimCtrl);
             }
 
             // ─── PlayerHealth ─────────────────────────────────────────────
@@ -357,7 +357,7 @@ namespace SickOfIt.Tools.Editor.Generation
             {
                 if (animator == null)
                     animator = graphics.gameObject.AddComponent<Animator>();
-                animator.runtimeAnimatorController = animController;
+                GeneratorHelper.AssignAnimatorController(animator, animController);
             }
 
             if (shadow != null)
@@ -371,7 +371,7 @@ namespace SickOfIt.Tools.Editor.Generation
                 {
                     if (shadowAnimator == null)
                         shadowAnimator = shadow.gameObject.AddComponent<Animator>();
-                    shadowAnimator.runtimeAnimatorController = shadowAnimCtrl;
+                    GeneratorHelper.AssignAnimatorController(shadowAnimator, shadowAnimCtrl);
                 }
             }
 
@@ -399,9 +399,11 @@ namespace SickOfIt.Tools.Editor.Generation
                 phSo.ApplyModifiedPropertiesWithoutUndo();
             }
 
-            var prefab = PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+            PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
             PrefabUtility.UnloadPrefabContents(root);
-            GeneratorHelper.RevertAnimatorControllerOverrides(prefab);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.ImportAsset(prefabPath, ImportAssetOptions.ForceUpdate);
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
             gd.player.playerPrefab = prefab;
             EditorUtility.SetDirty(gd);

@@ -48,6 +48,10 @@ namespace SickOfIt.Data
         [Tooltip("mp4 folders and sprite-sheet packing used by Regenerate Player/Enemy Sprites.")]
         public CharacterArtConfig characterArt = new CharacterArtConfig();
 
+        [Header("Source Media")]
+        [Tooltip("Authoring folders for videos, object clips, and still images. Generate Project lists what is missing.")]
+        public SourceMediaConfig sourceMedia = new SourceMediaConfig();
+
         [Header("Camera Defaults")]
         [Tooltip("Orthographic size for level camera")]
         public float levelCameraOrthoSize = 2.8f;

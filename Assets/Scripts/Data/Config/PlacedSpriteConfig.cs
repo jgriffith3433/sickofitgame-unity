@@ -28,6 +28,12 @@ namespace SickOfIt.Data.Config
         public Vector2 scale = Vector2.one;
         public bool flipX;
 
+        [Tooltip("Play the frame sequence from GameClock. Menu art leaves this off and uses real time.")]
+        public bool useGameClock = true;
+
+        [Tooltip("Turn off for a transition that should stay hidden until something plays it.")]
+        public bool startActive = true;
+
         [Tooltip("Levels always spawn these. The menu spawns one only when no object with this name is already in the scene.")]
         public bool spawnIfMissing = true;
     }

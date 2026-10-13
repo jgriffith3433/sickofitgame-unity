@@ -68,15 +68,11 @@ namespace SickOfIt.Core.Progression
             if (frames != null)
             {
                 var player = go.AddComponent<SpriteFramePlayer>();
-                player.Initialize(frames, () =>
-                {
-                    player.UseGameClock(true);
-                    player.SetLoop(true);
-                    player.Play();
-                });
-                player.UseGameClock(true);
-                player.SetLoop(true);
+                player.Bind(frames, cfg.useGameClock);
             }
+
+            if (!cfg.startActive)
+                go.SetActive(false);
 
             return go;
         }

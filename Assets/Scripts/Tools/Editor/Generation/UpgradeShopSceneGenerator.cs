@@ -1,141 +1,120 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using TMPro;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 using SickOfIt.Core.Progression;
-using SickOfIt.Core.Flow;
 
 namespace SickOfIt.Tools.Editor.Generation
 {
     /// <summary>
     /// Generates UpgradeShop.unity from UpgradeShopConfig.
+    /// The player upgrade list is the catalog. The shop config list is the fallback.
     /// </summary>
     public static class UpgradeShopSceneGenerator
     {
-        private const string OUTPUT_PATH = "Assets/Scenes/UpgradeShop.unity";
+        const string OutputPath = "Assets/Scenes/UpgradeShop.unity";
 
         public static void Generate(GameDefinition gd)
         {
             if (gd == null)
             {
-                Debug.LogError("[UpgradeShopSceneGen] GameDefinition is null!");
+                Debug.LogError("[UpgradeShopSceneGen] GameDefinition is null.");
                 return;
             }
 
-            var config = gd.upgradeShopConfig;
+            var config = gd.upgradeShopConfig ?? new UpgradeShopConfig();
+            var shell = MenuShell.Build(
+                gd,
+                config.baseConfig,
+                "UpgradeShopPanel",
+                string.IsNullOrEmpty(config.title) ? "Upgrade Shop" : config.title,
+                "ShopContainer",
+                config.buttonSpacing,
+                config.buttonSize);
+            if (shell == null)
+                return;
 
-            // Create base scene infrastructure
-            UISceneGeneratorBase.CreateBaseScene(OUTPUT_PATH, config.baseConfig, out var canvasGO, out var safeArea);
+            var buttonPrefab = config.buyButtonPrefab != null
+                ? config.buyButtonPrefab
+                : config.backButtonPrefab != null
+                    ? config.backButtonPrefab
+                    : gd.mainMenuConfig != null ? gd.mainMenuConfig.buttonPrefab : null;
 
-            // ─── Upgrade Shop Manager ─────────────────────────────────────
-            var managerGO = new GameObject("Upgrade Shop Manager");
-            var upgradeShopManager = managerGO.AddComponent<UpgradeShopManager>();
+            TextMeshProUGUI extraJumpTitle = null;
+            TextMeshProUGUI extraJumpDescription = null;
+            TextMeshProUGUI extraJumpCost = null;
+            TextMeshProUGUI extraJumpStatus = null;
+            GameObject buyExtraJump = null;
 
-            // ─── Points text ──────────────────────────────────────────────
-            var pointsText = UISceneGeneratorBase.CreateText(
-                safeArea, "PointsText", "Points: 0",
-                new Vector2(0, 400), new Vector2(300, 50),
-                TextAlignmentOptions.Center, 36f);
-
-            // ─── Cumulative health text ───────────────────────────────────
-            var cumulativeHealthText = UISceneGeneratorBase.CreateText(
-                safeArea, "CumulativeHealthText", "♥: 0",
-                new Vector2(-800, 450), new Vector2(200, 50),
-                TextAlignmentOptions.Left, 32f);
-
-            // ─── Shop container ───────────────────────────────────────────
-            var shopContainer = UISceneGeneratorBase.CreateButtonContainer(safeArea, "ShopContainer", 20f);
-
-            // ─── Create upgrade UI for each upgrade definition ────────────
-            TextMeshProUGUI extraJumpTitleText = null;
-            TextMeshProUGUI extraJumpDescriptionText = null;
-            TextMeshProUGUI extraJumpStatusText = null;
-            GameObject buyExtraJumpButton = null;
-
-            foreach (var upgrade in config.upgrades)
+            foreach (var upgrade in Catalog(gd, config))
             {
-                // Title
-                var titleText = UISceneGeneratorBase.CreateText(
-                    shopContainer, $"{upgrade.id}TitleText", upgrade.title,
-                    Vector2.zero, new Vector2(300, 40),
-                    TextAlignmentOptions.Center, 28f);
+                if (upgrade == null)
+                    continue;
 
-                // Description
-                var descText = UISceneGeneratorBase.CreateText(
-                    shopContainer, $"{upgrade.id}DescriptionText", upgrade.description,
-                    Vector2.zero, new Vector2(300, 30),
-                    TextAlignmentOptions.Center, 18f);
+                var title = MenuShell.CreateText(shell.Container, upgrade.id + "TitleText", upgrade.title, 32f);
+                var description = MenuShell.CreateText(shell.Container, upgrade.id + "DescriptionText", upgrade.description, 24f);
+                int cost = upgrade.costsPerLevel != null && upgrade.costsPerLevel.Length > 0 ? upgrade.costsPerLevel[0] : 0;
+                var costText = MenuShell.CreateText(shell.Container, upgrade.id + "CostText", "Cost: " + cost, 24f);
+                var status = MenuShell.CreateText(shell.Container, upgrade.id + "StatusText", "Level: 0 / " + upgrade.maxLevel, 24f);
+                var buy = MenuShell.AddOvalButton(shell.Container, buttonPrefab, "Buy" + upgrade.id + "Button", "Buy " + upgrade.title, config.buttonSize);
 
-                // Status
-                var statusText = UISceneGeneratorBase.CreateText(
-                    shopContainer, $"{upgrade.id}StatusText", "Level: 0 / " + upgrade.maxLevel,
-                    Vector2.zero, new Vector2(300, 30),
-                    TextAlignmentOptions.Center, 18f);
-
-                // Buy button
-                var buyButton = UISceneGeneratorBase.CreateSimpleButton(
-                    shopContainer, $"Buy{upgrade.id}Button", $"Buy ({upgrade.costsPerLevel[0]} pts)",
-                    new Vector2(200, 50));
-
-                // Track references for ExtraJump (the default upgrade)
                 if (upgrade.id == "extraJump")
                 {
-                    extraJumpTitleText = titleText;
-                    extraJumpDescriptionText = descText;
-                    extraJumpStatusText = statusText;
-                    buyExtraJumpButton = buyButton;
+                    extraJumpTitle = title;
+                    extraJumpDescription = description;
+                    extraJumpCost = costText;
+                    extraJumpStatus = status;
+                    buyExtraJump = buy;
                 }
             }
 
-            // ─── Create back button ───────────────────────────────────────
-            var backButton = UISceneGeneratorBase.CreateSimpleButton(safeArea, "BackButton", "Back", new Vector2(150, 60));
-            var backRect = backButton.GetComponent<RectTransform>();
-            backRect.anchorMin = new Vector2(0, 1);
-            backRect.anchorMax = new Vector2(0, 1);
-            backRect.anchoredPosition = new Vector2(100, -50);
+            var back = MenuShell.AddOvalButton(shell.SafeArea, config.backButtonPrefab != null ? config.backButtonPrefab : buttonPrefab, "(Prb)ButtonBack", "Back", config.buttonSize);
+            MenuShell.PlaceCornerButton(back, Vector2.zero, Vector2.zero, new Vector2(60f, 50f));
 
-            // ─── Debug add points button (conditional) ────────────────────
-            GameObject addPointsDebugButton = null;
+            GameObject debug = null;
             if (config.showDebugAddPoints)
             {
-                addPointsDebugButton = UISceneGeneratorBase.CreateSimpleButton(safeArea, "AddPointsDebugButton", "+500 Points", new Vector2(150, 40));
-                var debugRect = addPointsDebugButton.GetComponent<RectTransform>();
-                debugRect.anchorMin = new Vector2(1, 1);
-                debugRect.anchorMax = new Vector2(1, 1);
-                debugRect.anchoredPosition = new Vector2(-100, -50);
+                debug = MenuShell.AddOvalButton(shell.SafeArea, buttonPrefab, "AddPointsDebugButton", "+" + config.debugPointsAmount + " Points", config.buttonSize);
+                MenuShell.PlaceCornerButton(debug, Vector2.one, Vector2.one, new Vector2(-40f, -40f));
             }
 
-            // ─── Wire UpgradeShopManager ──────────────────────────────────
-            var usmSo = new SerializedObject(upgradeShopManager);
-            usmSo.FindProperty("pointsText").objectReferenceValue = pointsText;
-            usmSo.FindProperty("cumulativeHealthText").objectReferenceValue = cumulativeHealthText;
-            usmSo.FindProperty("backButton").objectReferenceValue = backButton.GetComponent<MobileControllerFramework.Button>();
-
-            if (extraJumpTitleText != null)
-                usmSo.FindProperty("extraJumpTitleText").objectReferenceValue = extraJumpTitleText;
-            if (extraJumpDescriptionText != null)
-                usmSo.FindProperty("extraJumpDescriptionText").objectReferenceValue = extraJumpDescriptionText;
-            if (extraJumpStatusText != null)
-                usmSo.FindProperty("extraJumpStatusText").objectReferenceValue = extraJumpStatusText;
-            if (buyExtraJumpButton != null)
-                usmSo.FindProperty("buyExtraJumpButton").objectReferenceValue = buyExtraJumpButton.GetComponent<MobileControllerFramework.Button>();
-
-            if (addPointsDebugButton != null)
+            var manager = new GameObject("Upgrade Shop Manager").AddComponent<UpgradeShopManager>();
+            var so = new SerializedObject(manager);
+            if (shell.Points != null)
+                so.FindProperty("pointsText").objectReferenceValue = shell.Points;
+            if (extraJumpTitle != null)
+                so.FindProperty("extraJumpTitleText").objectReferenceValue = extraJumpTitle;
+            if (extraJumpDescription != null)
+                so.FindProperty("extraJumpDescriptionText").objectReferenceValue = extraJumpDescription;
+            if (extraJumpCost != null)
+                so.FindProperty("extraJumpCostText").objectReferenceValue = extraJumpCost;
+            if (extraJumpStatus != null)
+                so.FindProperty("extraJumpStatusText").objectReferenceValue = extraJumpStatus;
+            if (buyExtraJump != null)
+                so.FindProperty("buyExtraJumpButton").objectReferenceValue = buyExtraJump.GetComponent<MobileControllerFramework.Button>();
+            if (shell.Health != null)
+                so.FindProperty("cumulativeHealthText").objectReferenceValue = shell.Health;
+            if (back != null)
+                so.FindProperty("backButton").objectReferenceValue = back.GetComponent<MobileControllerFramework.Button>();
+            if (debug != null)
             {
-                usmSo.FindProperty("addPointsDebugButton").objectReferenceValue = addPointsDebugButton.GetComponent<MobileControllerFramework.Button>();
-                usmSo.FindProperty("debugPointsAmount").intValue = config.debugPointsAmount;
+                so.FindProperty("addPointsDebugButton").objectReferenceValue = debug.GetComponent<MobileControllerFramework.Button>();
+                so.FindProperty("debugPointsAmount").intValue = config.debugPointsAmount;
             }
+            so.ApplyModifiedPropertiesWithoutUndo();
 
-            usmSo.ApplyModifiedPropertiesWithoutUndo();
+            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), OutputPath);
+        }
 
-            // ─── Save scene ───────────────────────────────────────────────
-            UISceneGeneratorBase.SaveScene(OUTPUT_PATH);
-
-            ////Debug.Log($"[UpgradeShopSceneGen] Created: {OUTPUT_PATH}");
+        static IList<UpgradeDefinition> Catalog(GameDefinition gd, UpgradeShopConfig config)
+        {
+            if (gd.player != null && gd.player.availableUpgrades != null && gd.player.availableUpgrades.Count > 0)
+                return gd.player.availableUpgrades;
+            return config.upgrades;
         }
     }
 }

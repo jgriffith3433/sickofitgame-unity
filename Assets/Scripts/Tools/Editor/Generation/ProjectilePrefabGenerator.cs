@@ -165,7 +165,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (animCtrl != null)
             {
                 animator = go.AddComponent<Animator>();
-                animator.runtimeAnimatorController = animCtrl;
+                GeneratorHelper.AssignAnimatorController(animator, animCtrl);
             }
 
             // Rigidbody2D

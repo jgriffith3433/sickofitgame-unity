@@ -177,7 +177,7 @@ namespace SickOfIt.Tools.Editor.Generation
             if (controller != null)
             {
                 animator = go.AddComponent<Animator>();
-                animator.runtimeAnimatorController = controller;
+                GeneratorHelper.AssignAnimatorController(animator, controller);
             }
 
             // Physics — read from config

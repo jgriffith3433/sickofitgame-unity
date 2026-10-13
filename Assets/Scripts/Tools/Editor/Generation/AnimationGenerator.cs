@@ -82,13 +82,10 @@ namespace SickOfIt.Tools.Editor.Generation
                 return null;
             }
 
-            // ─── Step 2: Create animator controller ──────────────────────
+            // Keep the controller asset. Deleting it drops the guid every
+            // prefab Animator points at, and Unity leaves those references missing.
             string controllerPath = $"{outputFolder}/{entityName}.controller";
-
-            if (AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath) != null)
-                AssetDatabase.DeleteAsset(controllerPath);
-
-            var controller = AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
+            var controller = LoadOrCreateController(controllerPath);
             result.controller = controller;
 
             // ─── Step 3: Add parameters ──────────────────────────────────
@@ -231,10 +228,7 @@ namespace SickOfIt.Tools.Editor.Generation
             result.clips["Idle"] = clip;
 
             string controllerPath = $"{outputFolder}/{entityName}.controller";
-            if (AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath) != null)
-                AssetDatabase.DeleteAsset(controllerPath);
-
-            var controller = AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
+            var controller = LoadOrCreateController(controllerPath);
             var rootSM = controller.layers[0].stateMachine;
             var idleState = rootSM.AddState("Idle");
             idleState.motion = clip;
@@ -246,6 +240,40 @@ namespace SickOfIt.Tools.Editor.Generation
             AssetDatabase.SaveAssets();
 
             return result;
+        }
+
+        /// <summary>
+        /// Opens the controller at this path, or creates one.
+        /// An existing controller is emptied and reused so its guid stays put.
+        /// </summary>
+        public static AnimatorController LoadOrCreateController(string controllerPath)
+        {
+            var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath);
+            if (controller == null)
+                return AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
+
+            ClearController(controller);
+            return controller;
+        }
+
+        static void ClearController(AnimatorController controller)
+        {
+            var parameters = controller.parameters;
+            for (int i = parameters.Length - 1; i >= 0; i--)
+                controller.RemoveParameter(i);
+
+            var machine = controller.layers[0].stateMachine;
+            var anyState = machine.anyStateTransitions;
+            for (int i = anyState.Length - 1; i >= 0; i--)
+                machine.RemoveAnyStateTransition(anyState[i]);
+
+            var states = machine.states;
+            for (int i = states.Length - 1; i >= 0; i--)
+                machine.RemoveState(states[i].state);
+
+            var machines = machine.stateMachines;
+            for (int i = machines.Length - 1; i >= 0; i--)
+                machine.RemoveStateMachine(machines[i].stateMachine);
         }
 
         /// <summary>

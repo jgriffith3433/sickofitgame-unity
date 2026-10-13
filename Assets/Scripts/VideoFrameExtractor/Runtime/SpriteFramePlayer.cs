@@ -111,6 +111,17 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         public float Duration => totalFrames > 0 ? totalFrames / fps : 0f;
 
         /// <summary>
+        /// Store the sequence on the component. Play mode Start loads it.
+        /// Scene generators use this so the reference is saved with the scene.
+        /// </summary>
+        public void Bind(SpriteFramesData spriteData, bool clock)
+        {
+            data = spriteData;
+            useGameClock = clock;
+            autoPlay = true;
+        }
+
+        /// <summary>
         /// Initialize with a SpriteFramesData asset. Starts preloading chunks.
         /// </summary>
         public void Initialize(SpriteFramesData spriteData, System.Action onReadyCallback = null)

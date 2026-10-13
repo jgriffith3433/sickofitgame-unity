@@ -24,6 +24,12 @@ namespace SickOfIt.Data.Config
         public bool useDirectionalLight = true;
         public Color lightColor = Color.white;
         public float lightIntensity = 1f;
+
+        [Header("World")]
+        [Tooltip("Backdrop sprite placed under the camera. Used by the selection and shop scenes.")]
+        public Sprite groundSprite;
+        public Vector2 groundPosition = new Vector2(1.03f, 0f);
+        public Vector3 cameraPosition = new Vector3(0f, -0.23f, -10f);
     }
 
     /// <summary>
@@ -61,14 +67,36 @@ namespace SickOfIt.Data.Config
         [Header("Transition Visuals")]
         public Sprite idleHouseSprite;
         public Sprite explosionSprite;
+        public AudioClip explodeAudio;
         public float hideDelay = 1.5f;
         public float transitionDelay = 1f;
 
         [Header("Scene Layout")]
-        [Tooltip("Sprites already in the menu, or new ones to spawn. Matched by name.")]
+        [Tooltip("Background, house, explosion, and any other menu art.")]
         public List<PlacedSpriteConfig> placedSprites = new List<PlacedSpriteConfig>();
         public bool placeCharacter = true;
         public Vector2 characterPosition = new Vector2(-4.21f, -3.14f);
+        public bool characterCanShoot;
+
+        [Tooltip("Placed sprite the hut colliders are parented under.")]
+        public string houseSpriteName = "MainMenu_LeftPartOfHouse";
+        public Vector3 houseBodyPosition = new Vector3(0.73f, 0.27f, 2f);
+        public Vector3 houseBodyScale = new Vector3(0.25f, 0.25f, 0.25f);
+        public List<MenuBoxConfig> houseColliders = new List<MenuBoxConfig>();
+        public List<MenuBoxConfig> screenBounds = new List<MenuBoxConfig>();
+    }
+
+    /// <summary>
+    /// A box collider placed by the main menu generator.
+    /// </summary>
+    [Serializable]
+    public class MenuBoxConfig
+    {
+        public string name = "Box";
+        public Vector2 position;
+        public float rotation;
+        public Vector2 size = Vector2.one;
+        public Vector2 offset;
     }
 
     /// <summary>
@@ -79,10 +107,13 @@ namespace SickOfIt.Data.Config
     {
         [Header("Base Settings")]
         public UISceneConfig baseConfig = new UISceneConfig();
+
+        [Header("Title")]
+        public string title = "Select";
         
         [Header("Button Container")]
         public float buttonSpacing = 20f;
-        public Vector2 buttonSize = new Vector2(300, 100);
+        public Vector2 buttonSize = new Vector2(420, 130);
         
         [Header("Button Prefabs")]
         [Tooltip("Button prefab for selection items (LevelButton/VideoButton)")]
@@ -102,6 +133,11 @@ namespace SickOfIt.Data.Config
     {
         [Header("Base Settings")]
         public UISceneConfig baseConfig = new UISceneConfig();
+
+        [Header("Title")]
+        public string title = "Upgrade Shop";
+        public float buttonSpacing = 20f;
+        public Vector2 buttonSize = new Vector2(420, 130);
         
         [Header("Upgrades")]
         [Tooltip("Used only when PlayerConfig.availableUpgrades is empty. The player list is the catalog.")]
