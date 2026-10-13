@@ -104,6 +104,8 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         public void ReleaseAllResources() => Release();
 
         public bool IsReady => isReady;
+        /// <summary>True once a frame has been written onto the renderer. A cut waits for this so the clear color never shows through.</summary>
+        public bool HasDrawnFrame => spriteRenderer != null && spriteRenderer.sprite != null;
         public bool IsPlaying => isPlaying;
         public int CurrentFrame => currentFrameIndex;
         public int TotalFrames => totalFrames;
@@ -206,6 +208,35 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
         public void Play() => isPlaying = true;
         public void SetLoop(bool shouldLoop) => loop = shouldLoop;
+
+        /// <summary>
+        /// Clock time at which this clip's frame 0 plays. Local time is the clock minus this.
+        /// </summary>
+        public void SetClockOrigin(float clockOrigin) => startTime = clockOrigin;
+
+        /// <summary>
+        /// Load the clip without following the clock. A sequenced background stays parked
+        /// until its window opens, then LevelRuntime turns the clock on.
+        /// </summary>
+        public void PrepareForSequence(SpriteFramesData frames, float clockOrigin, bool shouldLoop)
+        {
+            autoPlay = false;
+            startTime = clockOrigin;
+            useGameClock = false;
+            Initialize(frames);
+            SetLoop(shouldLoop);
+            Pause();
+            SetSpriteRendererEnabled(false);
+        }
+
+        public void DriveFromClock(bool drive)
+        {
+            useGameClock = drive;
+            if (drive)
+                Play();
+            else
+                Pause();
+        }
         public void UseGameClock(bool enabled) => useGameClock = enabled;
         public void Pause() => isPlaying = false;
         public void Stop() { isPlaying = false; localTime = 0; }

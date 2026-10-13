@@ -73,6 +73,7 @@ namespace SickOfIt.Core.Progression
         private GameClock gameClock;
         private ExperienceRunner experienceRunner;
         private readonly List<SpriteFramePlayer> backgroundPlayers = new List<SpriteFramePlayer>();
+        private readonly List<SequencedBackground> backgroundSequence = new List<SequencedBackground>();
         private RewindTimeline rewindTimeline;
         private RewindController rewindController;
 
@@ -149,6 +150,7 @@ namespace SickOfIt.Core.Progression
 
         private void Update()
         {
+            UpdateBackgroundSequence();
             TrySpawnDueEnemies();
             CheckWinZone();
 
@@ -372,15 +374,37 @@ namespace SickOfIt.Core.Progression
                         }
 
                         var player = layerGo.AddComponent<SpriteFramePlayer>();
-                        backgroundPlayers.Add(player);
-                        player.Initialize(framesData, () =>
+                        if (layer.IsSequenced)
                         {
+                            var segment = new SequencedBackground
+                            {
+                                player = player,
+                                frames = framesData,
+                                start = layer.sequenceStart,
+                                end = SequenceEnd(layer, layers, i),
+                                loop = layer.sequenceLoop
+                            };
+                            backgroundSequence.Add(segment);
+                            // The clip that is on screen at time zero has to be ready
+                            // before the clock and the music start together.
+                            if (segment.Contains(0f))
+                            {
+                                BeginSegment(segment);
+                                backgroundPlayers.Add(player);
+                            }
+                        }
+                        else
+                        {
+                            backgroundPlayers.Add(player);
+                            player.Initialize(framesData, () =>
+                            {
+                                player.UseGameClock(true);
+                                player.SetLoop(true);
+                                player.Play();
+                            });
                             player.UseGameClock(true);
                             player.SetLoop(true);
-                            player.Play();
-                        });
-                        player.UseGameClock(true);
-                        player.SetLoop(true);
+                        }
                     }
                     else
                     {
@@ -408,6 +432,118 @@ namespace SickOfIt.Core.Progression
             }
 
             //Debug.Log($"[LevelRuntime] Setup {layers.Count} background layers");
+        }
+
+        /// <summary>
+        /// A sequenced layer runs until its duration ends, or until the next sequenced layer starts.
+        /// </summary>
+        private static float SequenceEnd(BackgroundLayerConfig layer, List<BackgroundLayerConfig> layers, int index)
+        {
+            if (layer.sequenceDuration > 0f)
+                return layer.sequenceStart + layer.sequenceDuration;
+
+            for (int i = index + 1; i < layers.Count; i++)
+            {
+                if (layers[i] != null && layers[i].IsSequenced)
+                    return layers[i].sequenceStart;
+            }
+
+            return float.PositiveInfinity;
+        }
+
+        private static void BeginSegment(SequencedBackground segment)
+        {
+            if (segment.started)
+                return;
+            segment.started = true;
+            segment.player.PrepareForSequence(segment.frames, segment.start, segment.loop);
+        }
+
+        private int visibleBackground = -1;
+
+        /// <summary>
+        /// Show whichever segment contains the clock, and park the others.
+        /// The clip on screen stays up until the next one has actually drawn a
+        /// frame, so the camera color never flashes through the cut.
+        /// Rewind crosses back the same way: the clip you return to was preloaded.
+        /// </summary>
+        private void UpdateBackgroundSequence()
+        {
+            if (backgroundSequence.Count == 0)
+                return;
+
+            float time = GameClock.Instance != null ? GameClock.Instance.Time : 0f;
+            int wanted = -1;
+            for (int i = 0; i < backgroundSequence.Count; i++)
+            {
+                if (backgroundSequence[i].Contains(time))
+                    wanted = i;
+            }
+
+            if (wanted >= 0)
+            {
+                // The player's initial-chunk preload is what makes the cut instant.
+                // Start it while the current clip is still covering the screen.
+                if (wanted + 1 < backgroundSequence.Count)
+                    BeginSegment(backgroundSequence[wanted + 1]);
+                if (wanted - 1 >= 0)
+                    BeginSegment(backgroundSequence[wanted - 1]);
+            }
+
+            if (wanted >= 0 && backgroundSequence[wanted].started)
+                PoseSegment(backgroundSequence[wanted], time);
+
+            // Warm the frame the cut will land on, while that clip is still hidden.
+            if (wanted >= 0 && wanted + 1 < backgroundSequence.Count && backgroundSequence[wanted + 1].started)
+                PoseSegment(backgroundSequence[wanted + 1], backgroundSequence[wanted + 1].start);
+            if (wanted > 0 && backgroundSequence[wanted - 1].started)
+                PoseSegment(backgroundSequence[wanted - 1], Mathf.Min(time, backgroundSequence[wanted - 1].end - 0.0001f));
+
+            bool incomingReady = wanted >= 0 && CanShow(backgroundSequence[wanted]);
+            int show = incomingReady ? wanted : visibleBackground;
+
+            for (int i = 0; i < backgroundSequence.Count; i++)
+            {
+                var segment = backgroundSequence[i];
+                if (segment.player == null || !segment.started)
+                    continue;
+
+                bool on = i == show;
+                segment.player.SetSpriteRendererEnabled(on);
+                if (!on)
+                    segment.player.DriveFromClock(false);
+            }
+
+            if (incomingReady)
+                visibleBackground = wanted;
+        }
+
+        private static void PoseSegment(SequencedBackground segment, float time)
+        {
+            segment.player.SetClockOrigin(segment.start);
+            segment.player.SetLoop(segment.loop);
+            segment.player.SetTime(time);
+            // The first frame index is already 0, so SetTime will not draw it until the
+            // playhead moves. Push that preloaded frame onto the renderer while hidden.
+            if (!segment.player.HasDrawnFrame)
+                segment.player.SetFrame(segment.player.CurrentFrame);
+        }
+
+        private static bool CanShow(SequencedBackground segment)
+        {
+            return segment.started && segment.player != null && segment.player.IsReady && segment.player.HasDrawnFrame;
+        }
+
+        private sealed class SequencedBackground
+        {
+            public SpriteFramePlayer player;
+            public SpriteFramesData frames;
+            public float start;
+            public float end;
+            public bool loop;
+            public bool started;
+
+            public bool Contains(float time) => time >= start && time < end;
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,8 +16,11 @@ namespace SickOfIt.Core.Progression
     /// <summary>
     /// Pre-downloads Addressable bundles to browser cache without loading assets into memory.
     /// Place on the Main Menu to show download progress and cache game assets in the background.
-    /// Uses Addressables.GetDownloadSizeAsync to detect what's already cached and
-    /// Addressables.DownloadDependenciesAsync to cache the rest.
+    ///
+    /// Pipeline: labels are resolved to their unique physical bundles in one catalog pass,
+    /// every bundle's cache state is checked at once, and the uncached bundles are then
+    /// downloaded several at a time (bounded by count and by total bytes in flight).
+    /// Android and iOS use a higher count and byte budget than WebGL.
     /// </summary>
     public class BundleDownloadManager : MonoBehaviour
     {
@@ -35,8 +39,20 @@ namespace SickOfIt.Core.Progression
         [Tooltip("Download the main menu plus the level the player is on, instead of every bundle.")]
         [SerializeField] private bool downloadForCurrentLevel = true;
 
-        [Tooltip("Maximum concurrent download size checks to avoid overwhelming the server")]
-        [SerializeField] private int maxConcurrentChecks = 3;
+        [Tooltip("How many bundles download at the same time on WebGL and desktop. Browsers allow about " +
+                 "6 connections per host. Bundles are deduplicated first, so two in-flight downloads never share one.")]
+        [SerializeField] private int maxConcurrentDownloads = 6;
+
+        [Tooltip("Cap on the combined size (MB) of bundles in flight at once. Bounds peak WebGL heap " +
+                 "usage during pre-caching. A single bundle larger than this still downloads alone. 0 = no cap.")]
+        [SerializeField] private int maxInFlightMegabytes = 256;
+
+        [Tooltip("Concurrent downloads on Android and iOS. Native players are not limited to a browser's " +
+                 "6 connections per host, and these downloads only fill the cache — they are not decompressed into memory.")]
+        [SerializeField] private int mobileMaxConcurrentDownloads = 8;
+
+        [Tooltip("Combined size (MB) of bundles in flight on Android and iOS. 0 = no cap.")]
+        [SerializeField] private int mobileMaxInFlightMegabytes = 512;
 
         private bool showDebugLogs = false;
 
@@ -51,10 +67,19 @@ namespace SickOfIt.Core.Progression
         private List<string> allLabels = new List<string>();
         private bool isDownloading = false;
         private int totalLabels = 0;
-        private int completedLabels = 0;
+        private int totalBundles = 0;
+        private int completedBundles = 0;
         private long totalDownloadBytes = 0;
         private long completedDownloadBytes = 0;
         private string currentLabel = "";
+
+        private struct ActiveDownload
+        {
+            public RemoteBundle Bundle;
+            public AsyncOperationHandle Handle;
+        }
+
+        private readonly List<ActiveDownload> activeDownloads = new List<ActiveDownload>();
 
         /// <summary>Event fired when all downloads complete (success or failure).</summary>
         public UnityEvent OnDownloadComplete = new UnityEvent();
@@ -122,6 +147,7 @@ namespace SickOfIt.Core.Progression
         {
             if (downloadRoutine != null)
                 StopCoroutine(downloadRoutine);
+            CancelActiveDownloads();
 
             activeLevel = levelNumber;
             IsFullyCached = false;
@@ -163,10 +189,15 @@ namespace SickOfIt.Core.Progression
                 if (needed != null && !needed.Contains(data) && !neededNames.Contains(data.name) && !IsMainMenuFrames(data))
                     continue;
 
+                int chunkLimit = ChunkLimit(data, levelNumber);
+                int added = 0;
                 foreach (var chunk in data.chunks)
                 {
+                    if (chunkLimit >= 0 && added >= chunkLimit)
+                        break;
                     if (!string.IsNullOrEmpty(chunk.addressableLabel) && seen.Add(chunk.addressableLabel))
                         allLabels.Add(chunk.addressableLabel);
+                    added++;
                 }
             }
 
@@ -178,6 +209,59 @@ namespace SickOfIt.Core.Progression
 
             totalLabels = allLabels.Count;
             Log($"Built label list: {totalLabels} labels for level {levelNumber}");
+        }
+
+        /// <summary>
+        /// How many leading chunks of this clip the level actually plays.
+        /// A one-shot sequence shorter than the packed clip does not need the rest.
+        /// A loop, or a layer that plays the whole level, needs every chunk.
+        /// Returns -1 when there is no limit.
+        /// </summary>
+        private int ChunkLimit(SpriteFramesData data, int levelNumber)
+        {
+            if (!downloadForCurrentLevel || levelNumber <= 0 || data == null)
+                return -1;
+
+            GameDefinition def = GameDefinition.Instance;
+            LevelConfig level = def != null ? def.GetLevel(levelNumber) : null;
+            if (level == null || level.backgroundLayers == null)
+                return -1;
+
+            bool referenced = false;
+            int lastFrame = -1;
+            for (int i = 0; i < level.backgroundLayers.Count; i++)
+            {
+                BackgroundLayerConfig layer = level.backgroundLayers[i];
+                if (layer == null || layer.spriteFramesData == null)
+                    continue;
+                bool same = layer.spriteFramesData == data || layer.spriteFramesData.name == data.name;
+                if (!same)
+                    continue;
+
+                referenced = true;
+                if (!layer.IsSequenced || layer.sequenceLoop || layer.sequenceDuration <= 0f)
+                    return -1;
+
+                float fps = data.playbackFPS > 0f ? data.playbackFPS : 30f;
+                int frame = Mathf.CeilToInt(layer.sequenceDuration * fps) - 1;
+                if (frame > lastFrame)
+                    lastFrame = frame;
+            }
+
+            if (!referenced || lastFrame < 0 || data.chunks == null)
+                return -1;
+
+            int needed = 0;
+            for (int i = 0; i < data.chunks.Count; i++)
+            {
+                needed++;
+                if (data.chunks[i].endFrame >= lastFrame)
+                    break;
+            }
+
+            // SpriteFramePlayer preloads the first three chunks before it reports ready.
+            int preload = Mathf.Min(3, data.chunks.Count);
+            return Mathf.Max(needed, preload);
         }
 
         private static bool IsMainMenuFrames(SpriteFramesData data)
@@ -289,12 +373,18 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>
-        /// Check which bundles need downloading, then download them sequentially.
-        /// Sequential downloading prevents memory spikes from multiple concurrent decompression operations.
+        /// Resolve labels to unique bundles, find the ones not yet cached, and download them
+        /// in parallel.
+        ///
+        /// Working at the bundle level (instead of the label level) is what makes parallelism
+        /// safe: labels that share a physical bundle collapse to one entry, so Unity is never
+        /// asked to fetch/decompress the same bundle twice at once. Peak memory is bounded by
+        /// the platform's concurrency and in-flight byte budget.
         /// </summary>
         private IEnumerator CheckAndDownload()
         {
-            completedLabels = 0;
+            completedBundles = 0;
+            totalBundles = 0;
             completedDownloadBytes = 0;
             totalDownloadBytes = 0;
             Progress = 0f;
@@ -302,136 +392,206 @@ namespace SickOfIt.Core.Progression
             currentLabel = "Verifying cache...";
             UpdateStatus();
 
-            // Phase 1: Check download sizes in batches to avoid overwhelming the server
-            // Batch checking is much faster than sequential while respecting server limits
-            Log($"Phase 1: Verifying cached content (max {maxConcurrentChecks} concurrent checks)...");
-            var labelsToDownload = new List<string>();
-            var labelSizes = new Dictionary<string, long>();
-            var sizeResults = new Dictionary<string, long>();
-            int checksCompleted = 0;
-            int checksStarted = 0;
-            int activeChecks = 0;
+            var ops = AddressablesOperationManager.Instance;
 
-            // Process labels in batches
-            while (checksCompleted < allLabels.Count)
+            // Phase 1: one catalog pass resolves every label to its unique bundles.
+            Log($"Phase 1: Resolving {allLabels.Count} labels to bundles...");
+            List<RemoteBundle> bundles = null;
+            yield return ops.ResolveBundles(allLabels, result => bundles = result);
+            bundles ??= new List<RemoteBundle>();
+
+            // Phase 2: ask the cache about every bundle at once.
+            Log($"Phase 2: Checking cache for {bundles.Count} bundles...");
+            HashSet<string> cachedUrls = null;
+            yield return ops.CheckBundlesCached(bundles, result => cachedUrls = result);
+            cachedUrls ??= new HashSet<string>();
+
+            var pending = new List<RemoteBundle>(bundles.Count);
+            for (int i = 0; i < bundles.Count; i++)
             {
-                // Launch new checks up to the concurrent limit
-                while (activeChecks < maxConcurrentChecks && checksStarted < allLabels.Count)
-                {
-                    int index = checksStarted;
-                    string capturedLabel = allLabels[index];
-                    checksStarted++;
-                    activeChecks++;
-
-                    AddressablesOperationManager.Instance.GetLabelDownloadSize(capturedLabel, downloadSize =>
-                    {
-                        sizeResults[capturedLabel] = downloadSize;
-                        checksCompleted++;
-                        activeChecks--;
-                    });
-                }
-
-                // Update progress
-                float checkProgress = checksCompleted / (float)allLabels.Count;
-                Progress = checkProgress * 0.1f; // Reserve 10% for checking phase
-                currentLabel = $"Verifying cache ({checksCompleted}/{allLabels.Count})...";
-                UpdateStatus();
-                
-                yield return null;
+                var bundle = bundles[i];
+                if (cachedUrls.Contains(bundle.Url))
+                    continue;
+                pending.Add(bundle);
+                totalDownloadBytes += bundle.Size;
+                Log($"  '{bundle.BundleName}': {FormatBytes(bundle.Size)} needs download ({bundle.Labels.Count} label(s))");
             }
+            totalBundles = pending.Count;
 
-            // Process results
-            foreach (var kvp in sizeResults)
-            {
-                if (kvp.Value > 0)
-                {
-                    labelsToDownload.Add(kvp.Key);
-                    labelSizes[kvp.Key] = kvp.Value;
-                    totalDownloadBytes += kvp.Value;
-                    Log($"  '{kvp.Key}': {FormatBytes(kvp.Value)} needs download");
-                }
-            }
+            // Addressables serialises every web request through one queue, and initialization
+            // resets it to the project setting (3). Raise it after that init — ResolveBundles
+            // has already waited for it — or the parallel downloads get throttled back down.
+            // Leave it raised afterwards so scene and chunk loads keep the wider pipe.
+            int concurrency = EffectiveConcurrency;
+            WebRequestQueue.SetMaxConcurrentRequests(concurrency);
 
-            // Check if everything is already cached
-            if (labelsToDownload.Count == 0)
+            if (pending.Count == 0)
             {
                 Log("All bundles already cached!");
-                IsFullyCached = true;
-                Progress = 1f;
-                isDownloading = false;
-
-                UpdateStatus();
-                OnDownloadComplete?.Invoke();
+                FinishDownload(failed: 0);
                 yield break;
             }
 
-            Log($"Phase 2: Preparing {labelsToDownload.Count} bundles ({FormatBytes(totalDownloadBytes)} total)");
+            // Largest first + first-fit below keeps the pipe full: big bundles start early,
+            // small ones fill whatever budget is left alongside them.
+            pending.Sort((a, b) => b.Size.CompareTo(a.Size));
+
+            long budget = EffectiveBudgetBytes;
+            long inFlightBytes = 0;
+            int failed = 0;
+
+            Log($"Phase 3: Downloading {pending.Count} bundles ({FormatBytes(totalDownloadBytes)}) " +
+                $"with up to {concurrency} in flight, {FormatBytes(budget == long.MaxValue ? 0 : budget)} budget");
             IsFullyCached = false;
             UpdateStatus();
 
-            // Phase 2: Download each bundle sequentially.
-            // MUST be sequential on WebGL - concurrent downloads of bundles that share the same
-            // underlying asset bundle (e.g., 14 Level3 labels all map to one 106 MB bundle) cause
-            // Unity to decompress the same bundle multiple times simultaneously, causing OOM.
-            // Sequential also means after the first label downloads the shared bundle, subsequent
-            // labels in the same group see download size = 0 and skip instantly.
-            foreach (var label in labelsToDownload)
+            while (pending.Count > 0 || activeDownloads.Count > 0)
             {
-                currentLabel = label;
-                long labelSize = labelSizes[label];
-                bool downloadComplete = false;
-                bool downloadSuccess = false;
-
-                AddressablesOperationManager.Instance.DownloadDependencies(
-                    label,
-                    success =>
+                // Launch: scan the pending list for anything that fits in the remaining budget.
+                for (int i = 0; i < pending.Count && activeDownloads.Count < concurrency;)
+                {
+                    var bundle = pending[i];
+                    bool fits = activeDownloads.Count == 0 || inFlightBytes + bundle.Size <= budget;
+                    if (!fits)
                     {
-                        downloadSuccess = success;
-                        downloadComplete = true;
-                    },
-                    progress =>
-                    {
-                        // Calculate overall progress: completed bytes + current label partial progress
-                        long currentLabelProgress = (long)(progress * labelSize);
-                        float overall = (completedDownloadBytes + currentLabelProgress) / (float)totalDownloadBytes;
-                        Progress = Mathf.Clamp01(overall);
-                        UpdateStatus();
+                        i++;
+                        continue;
                     }
-                );
 
-                yield return new WaitUntil(() => downloadComplete);
-
-                if (downloadSuccess)
-                {
-                    completedLabels++;
-                    completedDownloadBytes += labelSize;
-                    Progress = completedDownloadBytes / (float)totalDownloadBytes;
-                    Log($"  Prepared '{label}' ({completedLabels}/{labelsToDownload.Count})");
+                    pending.RemoveAt(i);
+                    var handle = ops.DownloadBundle(bundle);
+                    activeDownloads.Add(new ActiveDownload { Bundle = bundle, Handle = handle });
+                    inFlightBytes += bundle.Size;
                 }
+
+                // Poll: harvest finished downloads, sum partial progress of the rest.
+                long partialBytes = 0;
+                for (int i = activeDownloads.Count - 1; i >= 0; i--)
+                {
+                    var active = activeDownloads[i];
+                    var handle = active.Handle;
+
+                    if (!handle.IsValid())
+                    {
+                        activeDownloads.RemoveAt(i);
+                        inFlightBytes -= active.Bundle.Size;
+                        failed++;
+                        Debug.LogError($"[BundleDownloadManager] Download handle for '{active.Bundle.BundleName}' became invalid.");
+                        continue;
+                    }
+
+                    if (handle.IsDone)
+                    {
+                        bool success = handle.Status == AsyncOperationStatus.Succeeded;
+                        if (!success)
+                            Debug.LogError($"[BundleDownloadManager] Failed to download '{active.Bundle.BundleName}': {handle.OperationException}. Continuing with remaining bundles.");
+
+                        AddressablesAPI.Release(handle);
+                        activeDownloads.RemoveAt(i);
+                        inFlightBytes -= active.Bundle.Size;
+
+                        if (success)
+                        {
+                            completedBundles++;
+                            completedDownloadBytes += active.Bundle.Size;
+                            Log($"  Prepared '{active.Bundle.BundleName}' ({completedBundles}/{totalBundles})");
+                        }
+                        else
+                        {
+                            failed++;
+                        }
+                        continue;
+                    }
+
+                    partialBytes += DownloadedBytes(active);
+                }
+
+                if (totalDownloadBytes > 0)
+                    Progress = Mathf.Clamp01((completedDownloadBytes + partialBytes) / (float)totalDownloadBytes);
                 else
-                {
-                    Debug.LogError($"[BundleDownloadManager] Failed to download '{label}'. Continuing with remaining bundles.");
-                }
+                    Progress = totalBundles > 0 ? (completedBundles + failed) / (float)totalBundles : 1f;
 
+                currentLabel = DescribeActiveDownloads();
                 UpdateStatus();
+                yield return null;
             }
 
-            // Done
-            IsFullyCached = completedLabels == labelsToDownload.Count;
+            FinishDownload(failed);
+        }
+
+        /// <summary>
+        /// Android and iOS use their own knobs. A phone has no browser connection cap, and a
+        /// download-only request writes the bundle straight to the Unity cache instead of
+        /// decompressing it, so more of them can be in flight than on WebGL.
+        /// </summary>
+        private bool IsMobilePlayer =>
+            Application.platform == RuntimePlatform.Android ||
+            Application.platform == RuntimePlatform.IPhonePlayer;
+
+        private int EffectiveConcurrency =>
+            Mathf.Max(1, IsMobilePlayer ? mobileMaxConcurrentDownloads : maxConcurrentDownloads);
+
+        private long EffectiveBudgetBytes
+        {
+            get
+            {
+                int megabytes = IsMobilePlayer ? mobileMaxInFlightMegabytes : maxInFlightMegabytes;
+                return megabytes > 0 ? megabytes * 1024L * 1024L : long.MaxValue;
+            }
+        }
+
+        private void FinishDownload(int failed)
+        {
+            IsFullyCached = failed == 0;
             Progress = 1f;
             isDownloading = false;
+            currentLabel = "";
 
             if (IsFullyCached)
-            {
-                Log($"All downloads complete! ({FormatBytes(totalDownloadBytes)} total)");
-            }
+                Log($"All downloads complete! ({FormatBytes(totalDownloadBytes)} total, {completedBundles} bundle(s))");
             else
-            {
-                Log($"Downloads finished with errors. {completedLabels}/{labelsToDownload.Count} succeeded.");
-            }
+                Log($"Downloads finished with errors. {completedBundles}/{totalBundles} succeeded.");
 
             UpdateStatus();
             OnDownloadComplete?.Invoke();
+        }
+
+        /// <summary>Bytes received so far for an in-flight bundle, clamped to its catalog size.</summary>
+        private static long DownloadedBytes(ActiveDownload active)
+        {
+            var status = active.Handle.GetDownloadStatus();
+            long bytes = status.TotalBytes > 0
+                ? status.DownloadedBytes
+                : (long)(active.Handle.PercentComplete * active.Bundle.Size);
+            return active.Bundle.Size > 0 ? System.Math.Min(bytes, active.Bundle.Size) : 0;
+        }
+
+        private string DescribeActiveDownloads()
+        {
+            if (activeDownloads.Count == 0)
+                return "";
+
+            var first = activeDownloads[0].Bundle;
+            string name = first.Labels.Count > 0 ? first.Labels[0] : first.BundleName;
+            return activeDownloads.Count > 1 ? $"{name} (+{activeDownloads.Count - 1} more)" : name;
+        }
+
+        /// <summary>Release every in-flight download handle (aborts the web requests).</summary>
+        private void CancelActiveDownloads()
+        {
+            for (int i = 0; i < activeDownloads.Count; i++)
+            {
+                var handle = activeDownloads[i].Handle;
+                if (handle.IsValid())
+                    AddressablesAPI.Release(handle);
+            }
+            activeDownloads.Clear();
+        }
+
+        private void OnDestroy()
+        {
+            if (_instance == this)
+                CancelActiveDownloads();
         }
 
         /// <summary>

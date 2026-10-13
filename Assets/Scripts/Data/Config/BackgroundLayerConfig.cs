@@ -46,6 +46,17 @@ namespace SickOfIt.Data.Config
         [Tooltip("If true, tile this layer horizontally for infinite scroll")]
         public bool tileHorizontally = false;
 
+        [Header("Sequence")]
+        [Tooltip("When this layer appears, in seconds on the game clock (the same clock as the music). Negative means it plays from the start, stacked with the other layers.")]
+        public float sequenceStart = -1f;
+        [Tooltip("How long this layer stays up. The clip loops or holds inside that window. 0 means until the next sequenced layer, or for the rest of the level if it is the last one.")]
+        public float sequenceDuration;
+        [Tooltip("Repeat the clip until the window ends. Off plays it once and holds the last frame.")]
+        public bool sequenceLoop = true;
+
+        /// <summary>True when this layer is a timed segment instead of a layer that plays for the whole level.</summary>
+        public bool IsSequenced => sequenceStart >= 0f;
+
         /// <summary>
         /// Returns true if this layer has any renderable content.
         /// </summary>

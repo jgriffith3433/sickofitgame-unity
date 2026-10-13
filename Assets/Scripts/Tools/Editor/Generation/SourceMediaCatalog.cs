@@ -19,6 +19,12 @@ namespace SickOfIt.Tools.Editor.Generation
         public string Label;
         public string Path;
         public bool Exists;
+
+        /// <summary>True when this clip already has packed, chunked sprite sheets.</summary>
+        public bool SheetsBuilt;
+
+        /// <summary>Status line for video, death, and background clips. Empty for other rows.</summary>
+        public string SheetDetail;
     }
 
     public static class SourceMediaCatalog

@@ -438,6 +438,13 @@ namespace SickOfIt.Tools.Editor.Generation
                 frames.GetArrayElementAtIndex(index).objectReferenceValue = data;
             }
             downloadSo.FindProperty("autoStartOnAwake").boolValue = true;
+            downloadSo.FindProperty("downloadForCurrentLevel").boolValue = true;
+            // WebGL/desktop stay inside a browser's ~6 connections and a small heap budget.
+            // Phones get a wider pipe; download-only caching does not decompress the bundles.
+            downloadSo.FindProperty("maxConcurrentDownloads").intValue = 6;
+            downloadSo.FindProperty("maxInFlightMegabytes").intValue = 256;
+            downloadSo.FindProperty("mobileMaxConcurrentDownloads").intValue = 8;
+            downloadSo.FindProperty("mobileMaxInFlightMegabytes").intValue = 512;
             downloadSo.ApplyModifiedPropertiesWithoutUndo();
         }
 

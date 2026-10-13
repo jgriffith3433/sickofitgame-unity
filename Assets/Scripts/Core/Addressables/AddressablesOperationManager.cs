@@ -2,10 +2,10 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.ResourceManagement.ResourceLocations;
 using System.Collections;
 using System.Collections.Generic;
 #if UNITY_WEBGL && !UNITY_EDITOR
-using UnityEngine.ResourceManagement.ResourceLocations;
 using System.Runtime.InteropServices;
 using AOT;
 #endif
@@ -13,6 +13,26 @@ using AddressablesAPI = UnityEngine.AddressableAssets.Addressables;
 
 namespace SickOfIt.Core.Addressables
 {
+    /// <summary>
+    /// One remote asset bundle that one or more Addressable labels resolve to.
+    /// Produced by <see cref="AddressablesOperationManager.ResolveBundles"/>; bundles are
+    /// deduplicated by URL so each physical bundle appears exactly once no matter how
+    /// many labels reference it.
+    /// </summary>
+    public sealed class RemoteBundle
+    {
+        /// <summary>Fully transformed download URL. Unique key for the bundle.</summary>
+        public string Url;
+        /// <summary>Bundle file name from the catalog (falls back to the location's primary key).</summary>
+        public string BundleName;
+        /// <summary>Compressed size in bytes as recorded in the catalog. 0 if unknown.</summary>
+        public long Size;
+        /// <summary>Catalog location; pass to DownloadDependenciesAsync to fetch just this bundle.</summary>
+        public IResourceLocation Location;
+        /// <summary>Every label that resolved to this bundle.</summary>
+        public readonly List<string> Labels = new List<string>();
+    }
+
     /// <summary>
     /// Coordinates Addressables operations to prevent duplicate concurrent loads.
     /// Unity's Addressables system handles caching - we only provide deduplication.
@@ -761,6 +781,171 @@ namespace SickOfIt.Core.Addressables
             onProgress?.Invoke(1f);
             onComplete?.Invoke(success);
         }
+
+        #region Bundle-level pre-caching
+
+        /// <summary>
+        /// Resolve a set of labels to the unique asset bundles behind them, in a single
+        /// catalog pass. Every label lookup is issued at once and the results are merged
+        /// by bundle URL, so a bundle shared by many labels is returned exactly once.
+        ///
+        /// Returned as an IEnumerator (rather than started here) so the caller can drive it
+        /// on its own MonoBehaviour and survive <see cref="CancelAllLabelLoads"/>.
+        /// </summary>
+        public IEnumerator ResolveBundles(IList<string> labels, System.Action<List<RemoteBundle>> onComplete)
+        {
+            var handles = new List<KeyValuePair<string, AsyncOperationHandle<IList<IResourceLocation>>>>(labels.Count);
+
+            // Fire every lookup at once. These are catalog queries, not downloads.
+            for (int i = 0; i < labels.Count; i++)
+            {
+                string label = labels[i];
+                if (string.IsNullOrEmpty(label)) continue;
+                try
+                {
+                    var handle = AddressablesAPI.LoadResourceLocationsAsync(label);
+                    handles.Add(new KeyValuePair<string, AsyncOperationHandle<IList<IResourceLocation>>>(label, handle));
+                }
+                catch (System.Exception e)
+                {
+                    Log($"[Bundles] Could not resolve '{label}': {e.Message}");
+                }
+            }
+
+            // Wait for all of them (waiting in order is fine - they're all already running).
+            for (int i = 0; i < handles.Count; i++)
+            {
+                var handle = handles[i].Value;
+                while (handle.IsValid() && !handle.IsDone)
+                    yield return null;
+            }
+
+            var byUrl = new Dictionary<string, RemoteBundle>();
+            var ordered = new List<RemoteBundle>();
+            var pending = new Stack<IResourceLocation>();
+            var seen = new HashSet<string>();
+
+            for (int i = 0; i < handles.Count; i++)
+            {
+                string label = handles[i].Key;
+                var handle = handles[i].Value;
+
+                if (handle.IsValid() && handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
+                {
+                    seen.Clear();
+                    for (int l = 0; l < handle.Result.Count; l++)
+                        pending.Push(handle.Result[l]);
+
+                    // Walk each location and its dependency tree, collecting bundle locations.
+                    while (pending.Count > 0)
+                    {
+                        var loc = pending.Pop();
+                        if (loc == null || string.IsNullOrEmpty(loc.InternalId) || !seen.Add(loc.InternalId))
+                            continue;
+
+                        if (loc.ResourceType == typeof(IAssetBundleResource))
+                            RegisterBundle(loc, label, byUrl, ordered);
+
+                        if (loc.HasDependencies && loc.Dependencies != null)
+                        {
+                            for (int d = 0; d < loc.Dependencies.Count; d++)
+                                pending.Push(loc.Dependencies[d]);
+                        }
+                    }
+                }
+                else
+                {
+                    Log($"[Bundles] No addressable locations for '{label}'");
+                }
+
+                if (handle.IsValid())
+                    AddressablesAPI.Release(handle);
+            }
+
+            Log($"[Bundles] {labels.Count} label(s) -> {ordered.Count} unique bundle(s)");
+            onComplete?.Invoke(ordered);
+        }
+
+        private void RegisterBundle(IResourceLocation loc, string label, Dictionary<string, RemoteBundle> byUrl, List<RemoteBundle> ordered)
+        {
+            string url = AddressablesAPI.ResourceManager.TransformInternalId(loc);
+            if (string.IsNullOrEmpty(url)) url = loc.InternalId;
+
+            if (!byUrl.TryGetValue(url, out var bundle))
+            {
+                var options = loc.Data as AssetBundleRequestOptions;
+                bundle = new RemoteBundle
+                {
+                    Url = url,
+                    Location = loc,
+                    BundleName = !string.IsNullOrEmpty(options?.BundleName) ? options.BundleName : loc.PrimaryKey,
+                    Size = options != null ? options.BundleSize : 0,
+                };
+                byUrl[url] = bundle;
+                ordered.Add(bundle);
+            }
+
+            if (!bundle.Labels.Contains(label))
+                bundle.Labels.Add(label);
+        }
+
+        /// <summary>
+        /// Determine which of the given bundles are already cached locally. All checks are
+        /// issued concurrently. On WebGL this asks the browser's UnityCache directly (the
+        /// only source of truth there); elsewhere it uses the catalog's size computation,
+        /// which returns 0 for local bundles and for bundles already in Unity's cache.
+        /// </summary>
+        public IEnumerator CheckBundlesCached(IList<RemoteBundle> bundles, System.Action<HashSet<string>> onCachedUrls)
+        {
+            var cached = new HashSet<string>();
+#if UNITY_WEBGL && !UNITY_EDITOR
+            int pending = bundles.Count;
+            for (int i = 0; i < bundles.Count; i++)
+            {
+                var bundle = bundles[i];
+                RequestBundleCacheCheck(bundle.Url, hit =>
+                {
+                    if (hit) cached.Add(bundle.Url);
+                    pending--;
+                });
+            }
+
+            while (pending > 0)
+                yield return null;
+#else
+            for (int i = 0; i < bundles.Count; i++)
+            {
+                var bundle = bundles[i];
+                var sizeData = bundle.Location?.Data as ILocationSizeData;
+                long remaining = sizeData != null
+                    ? sizeData.ComputeSize(bundle.Location, AddressablesAPI.ResourceManager)
+                    : 0;
+                if (remaining == 0)
+                    cached.Add(bundle.Url);
+            }
+#endif
+            onCachedUrls?.Invoke(cached);
+            yield break;
+        }
+
+        /// <summary>
+        /// Start downloading a single bundle into the local cache without loading it into
+        /// memory. The caller owns the returned handle and must release it when done; poll
+        /// <c>handle.GetDownloadStatus()</c> for byte-level progress.
+        /// </summary>
+        public AsyncOperationHandle DownloadBundle(RemoteBundle bundle)
+        {
+            string opName = $"Download: {bundle.BundleName}";
+            activeOperations.Add(opName);
+            Log($"[Download] {bundle.BundleName} ({bundle.Size / 1024f / 1024f:F2} MB)...");
+
+            var handle = AddressablesAPI.DownloadDependenciesAsync(
+                new List<IResourceLocation>(1) { bundle.Location }, false);
+            handle.Completed += _ => activeOperations.Remove(opName);
+            return handle;
+        }
+
+        #endregion
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         private delegate void BundleCacheCallback(int requestId, int isCached);

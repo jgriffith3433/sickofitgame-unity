@@ -344,6 +344,7 @@ namespace SickOfIt.Tools.Editor.GameOverview
             // Visuals
             EditorGUILayout.LabelField("VISUALS", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("backgrounds"), true);
+            EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("backgroundLayers"), true);
             EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("ambientColor"));
 
             EditorGUILayout.Space(10);

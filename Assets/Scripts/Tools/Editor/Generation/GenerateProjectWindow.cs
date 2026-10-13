@@ -7,18 +7,19 @@ using SickOfIt.Data;
 namespace SickOfIt.Tools.Editor.Generation
 {
     /// <summary>
-    /// Generate Project, plus the authoring clips that are not on disk yet.
+    /// Generate Project, plus per-clip sprite sheets for videos, deaths, and backgrounds.
     /// </summary>
     public class GenerateProjectWindow : EditorWindow
     {
         Vector2 scroll;
         List<SourceMediaEntry> entries = new List<SourceMediaEntry>();
+        bool busy;
 
         [MenuItem("SickOfIt/Generate Project")]
         public static void Open()
         {
             var window = GetWindow<GenerateProjectWindow>("Generate Project");
-            window.minSize = new Vector2(560, 420);
+            window.minSize = new Vector2(640, 420);
             window.Refresh();
             window.Show();
         }
@@ -30,14 +31,20 @@ namespace SickOfIt.Tools.Editor.Generation
 
         void Refresh()
         {
-            entries = SourceMediaCatalog.Collect(LoadGameDefinition());
+            var gd = LoadGameDefinition();
+            entries = SourceMediaCatalog.Collect(gd);
+            for (int i = 0; i < entries.Count; i++)
+                VideoSpriteSheetBaker.Annotate(gd, entries[i]);
         }
 
         void OnGUI()
         {
             var gd = LoadGameDefinition();
             EditorGUILayout.LabelField("Generate Project", EditorStyles.boldLabel);
-            EditorGUILayout.LabelField("Builds the Unity project from GameDefinition. Source clips stay outside the project.", EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "Builds the Unity project from GameDefinition. Source clips stay outside the project. " +
+                "Build Sheets packs one video, death, or background mp4 into addressable sprite sheets.",
+                EditorStyles.wordWrappedMiniLabel);
 
             EditorGUILayout.Space(6);
             using (new EditorGUILayout.HorizontalScope())
@@ -88,10 +95,52 @@ namespace SickOfIt.Tools.Editor.Generation
                 style.normal.textColor = entry.Exists
                     ? new Color(0.35f, 0.7f, 0.35f)
                     : new Color(0.85f, 0.3f, 0.25f);
-                EditorGUILayout.LabelField((entry.Exists ? "Present  " : "Missing  ") + entry.Label, style);
+
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField((entry.Exists ? "Present  " : "Missing  ") + entry.Label, style);
+                    if (VideoSpriteSheetBaker.IsSequence(entry.Group))
+                    {
+                        GUI.enabled = entry.Exists && !busy;
+                        string caption = entry.SheetsBuilt ? "Regenerate" : "Build Sheets";
+                        if (GUILayout.Button(caption, GUILayout.Width(110)))
+                            QueueSheetBuild(entry);
+                        GUI.enabled = true;
+                    }
+                }
+
                 EditorGUILayout.LabelField(entry.Path, EditorStyles.miniLabel);
+                if (!string.IsNullOrEmpty(entry.SheetDetail))
+                    EditorGUILayout.LabelField(entry.SheetDetail, EditorStyles.miniLabel);
             }
             EditorGUILayout.EndScrollView();
+        }
+
+        void QueueSheetBuild(SourceMediaEntry entry)
+        {
+            if (busy || entry == null)
+                return;
+
+            busy = true;
+            string clipId = entry.Label;
+            string mp4Path = entry.Path;
+            EditorApplication.delayCall += () =>
+            {
+                try
+                {
+                    if (this == null)
+                        return;
+                    VideoSpriteSheetBaker.Regenerate(LoadGameDefinition(), clipId, mp4Path);
+                    if (this == null)
+                        return;
+                    Refresh();
+                    Repaint();
+                }
+                finally
+                {
+                    busy = false;
+                }
+            };
         }
 
         static GameDefinition LoadGameDefinition()
