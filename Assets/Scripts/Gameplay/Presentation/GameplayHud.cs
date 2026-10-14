@@ -69,6 +69,7 @@ namespace SickOfIt.Gameplay
             menu.GetComponent<Canvas>().sortingOrder = 50;
             menu.transform.SetParent(world.transform, false);
             menu.SafeAdoptScene(world.gameObject.scene);
+            HideLegacyRewindButton(world.gameObject.scene);
 
             var hud = menu.gameObject.AddComponent<GameplayHud>();
             hud.world = world;
@@ -86,6 +87,7 @@ namespace SickOfIt.Gameplay
 
             BuildHealth();
             BuildDiamonds();
+            BuildRewind();
 
             objective = menu.AddText(menu.Root, "Objective", "", theme.caption, new Vector2(0f, 1f), new Vector2(436f, -150f),
                 new Vector2(800f, 44f), out _, 0f, null, theme.entrance);
@@ -159,6 +161,144 @@ namespace SickOfIt.Gameplay
 
             // The motion driver owns the slot's position, so hits shake the panel inside it.
             menu.AddMotion(healthRoot.gameObject, null, theme.entrance, 0f);
+        }
+
+        // ─── Rewind: a labeled hold button (top-right), a rewinding overlay, and a hint on the first hit ───
+
+        MenuButton rewindButton;
+        RectTransform rewindRoot;
+        TextMeshProUGUI rewindKey;
+        Image rewindTint;
+        TextMeshProUGUI rewindingText;
+        TextMeshProUGUI rewindHint;
+        MenuMotionDriver rewindHintMotion;
+        float hintShownAt = -99f;
+        bool hintShown;
+        int lastHealth = -1;
+
+        static string RewindKeyText => Application.isMobilePlatform ? "Hold: rewind" : "Hold R: rewind";
+
+        void BuildRewind()
+        {
+            // Overlay while rewinding: a teal vignette wash and a big pulsing "<<".
+            rewindTint = MenuGraphics.NewImage(transform, "RewindTint", Color.clear);
+            rewindTint.sprite = MenuGraphics.Vignette();
+            rewindTint.transform.SetSiblingIndex(1);
+            rewindingText = menu.AddText(menu.Root, "Rewinding", "\u25C4\u25C4  Rewinding", theme.title, new Vector2(0.5f, 0.8f),
+                Vector2.zero, new Vector2(1200f, 130f), out _, Mathf.Min(theme.title.fontSize, 84f), menu.TitleFont, null,
+                new MenuMotion { type = MenuMotionType.Pulse, amount = 0.05f, speed = 2.5f });
+            rewindingText.enableVertexGradient = false;
+            rewindingText.color = style.rewind;
+            rewindingText.transform.parent.gameObject.SetActive(false);
+
+            var ink = theme.title.outlineColor;
+            var buttonStyle = new MenuButtonStyle
+            {
+                size = new Vector2(124f, 124f),
+                surface = new MenuSurfaceStyle
+                {
+                    shape = MenuShape.Circle,
+                    fill = style.rewind,
+                    borderColor = ink,
+                    borderWidth = 7f,
+                    shadowColor = ink,
+                    shadowOffset = new Vector2(0f, -8f),
+                    padding = new Vector2(8f, 8f),
+                },
+                label = new MenuTextStyle
+                {
+                    fontSize = 46f,
+                    color = new Color(1f, 0.96f, 0.84f, 1f),
+                    outlineColor = ink,
+                    outlineWidth = 0.25f,
+                    bold = true,
+                },
+                hoverFill = theme.accent,
+                pressedFill = Color.Lerp(style.rewind, Color.black, 0.3f),
+                disabledFill = new Color(0.35f, 0.32f, 0.36f, 0.9f),
+                hoverScale = 1.1f,
+                pressScale = 0.9f,
+                hoverRotation = 8f,
+            };
+            rewindButton = menu.AddButtonAt(new Vector2(1f, 1f), new Vector2(-112f, -190f), "\u25C4\u25C4", buttonStyle, null);
+            rewindButton.Pressed += SickOfIt.Core.Rewind.RewindInput.Begin;
+            rewindButton.Released += SickOfIt.Core.Rewind.RewindInput.End;
+            // Keep it out of keyboard/gamepad navigation, so arrow keys never select it mid-fight.
+            rewindButton.navigation = new Navigation { mode = Navigation.Mode.None };
+            rewindRoot = (RectTransform)rewindButton.transform.parent;
+
+            var keySlot = MenuGraphics.NewRect("Key", rewindRoot);
+            keySlot.anchorMin = keySlot.anchorMax = new Vector2(0.5f, 0f);
+            keySlot.pivot = new Vector2(0.5f, 1f);
+            keySlot.sizeDelta = new Vector2(240f, 40f);
+            keySlot.anchoredPosition = new Vector2(0f, -10f);
+            rewindKey = MenuGraphics.Text(keySlot, "Text", RewindKeyText, theme.caption, menu.Font, 22f);
+
+            // Taught once per level: the first time you get hurt with juice to spend.
+            string hint = Application.isMobilePlatform ? "Ouch! Hold \u25C4\u25C4 to undo that." : "Ouch! Hold R to undo that.";
+            rewindHint = menu.AddText(menu.Root, "RewindHint", hint, theme.subtitle, new Vector2(1f, 1f), new Vector2(-520f, -300f),
+                new Vector2(760f, 70f), out rewindHintMotion, 34f, null, theme.entrance,
+                new MenuMotion { type = MenuMotionType.Bob, amount = 5f, speed = 1.5f }, -3f);
+            rewindHint.enableVertexGradient = false;
+            rewindHint.color = style.rewind;
+            rewindHint.transform.parent.gameObject.SetActive(false);
+        }
+
+        void UpdateRewind()
+        {
+            if (rewindButton == null)
+                return;
+            var clock = SickOfIt.Core.GameClock.Instance;
+            var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
+            bool rewinding = clock != null && clock.IsRewinding;
+            bool canRewind = SickOfIt.Core.Rewind.RewindInput.Available;
+            bool hasJuice = budget == null || budget.CanRewind;
+
+            if (rewindRoot.gameObject.activeSelf != canRewind)
+                rewindRoot.gameObject.SetActive(canRewind);
+            if (!rewinding)
+                rewindButton.interactable = hasJuice;
+            MenuGraphics.SetText(rewindKey, hasJuice ? RewindKeyText : "Out of juice");
+            rewindKey.enableVertexGradient = false;
+            rewindKey.color = hasJuice ? new Color(1f, 0.96f, 0.84f, 1f) : style.rewindEmpty;
+
+            float wash = rewinding ? 0.55f + 0.1f * Mathf.Sin(Time.unscaledTime * 10f) : 0f;
+            var tint = style.rewind;
+            rewindTint.color = new Color(tint.r, tint.g, tint.b, Mathf.MoveTowards(rewindTint.color.a, wash, Time.unscaledDeltaTime * 4f));
+            var rewindingSlot = rewindingText.transform.parent.gameObject;
+            if (rewindingSlot.activeSelf != rewinding)
+                rewindingSlot.SetActive(rewinding);
+
+            // First hit with juice to spend: show the hint for a few seconds, gone once they rewind.
+            var player = world != null ? world.Player : null;
+            int health = player != null ? player.Health : -1;
+            var hintSlot = rewindHint.transform.parent.gameObject;
+            if (!hintShown && lastHealth >= 0 && health >= 0 && health < lastHealth && canRewind && hasJuice && !rewinding)
+            {
+                hintShown = true;
+                hintShownAt = Time.unscaledTime;
+                hintSlot.SetActive(true);
+                rewindHintMotion.Restart();
+            }
+            lastHealth = health;
+            if (hintSlot.activeSelf && (rewinding || Time.unscaledTime - hintShownAt > 4.5f))
+                hintSlot.SetActive(false);
+        }
+
+        /// <summary>The mobile UI prefab's own small rewind button sat top-left, under the health bar; the HUD has its own.</summary>
+        static void HideLegacyRewindButton(UnityEngine.SceneManagement.Scene scene)
+        {
+            if (!scene.IsValid())
+                return;
+            foreach (var root in scene.GetRootGameObjects())
+            {
+                foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                {
+                    if (t.name.IndexOf("ButtonRewind", System.StringComparison.OrdinalIgnoreCase) >= 0
+                        && t.GetComponentInParent<MenuCanvas>(true) == null)
+                        t.gameObject.SetActive(false);
+                }
+            }
         }
 
         void BuildDiamonds()
@@ -322,6 +462,7 @@ namespace SickOfIt.Gameplay
             flash.color = c;
             UpdateHealthAndDiamonds();
             UpdateProgressBar();
+            UpdateRewind();
             UpdatePickerKeys();
         }
 

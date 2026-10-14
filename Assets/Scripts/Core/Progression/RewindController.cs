@@ -29,6 +29,7 @@ namespace SickOfIt.Core.Progression
 
         private void OnEnable()
         {
+            SickOfIt.Core.Rewind.RewindInput.Register(StartRewind, StopRewind);
             if (rewindButton != null)
             {
                 rewindButton.TapStartEvent.AddListener(StartRewind);
@@ -38,6 +39,7 @@ namespace SickOfIt.Core.Progression
 
         private void OnDisable()
         {
+            SickOfIt.Core.Rewind.RewindInput.Unregister(StartRewind);
             if (rewindButton != null)
             {
                 rewindButton.TapStartEvent.RemoveListener(StartRewind);
@@ -66,15 +68,27 @@ namespace SickOfIt.Core.Progression
 
         private void Update()
         {
-            // Desktop: hold R to rewind (the on-screen button does the same on mobile).
+            // Hold R to rewind (the HUD's rewind button does the same with mouse or touch). Holding counts, not just
+            // the press, so R held before rewind is allowed (first seconds, empty juice) starts it as soon as it is.
             var keyboard = UnityEngine.InputSystem.Keyboard.current;
             if (keyboard == null)
                 return;
-            if (keyboard.rKey.wasPressedThisFrame)
+            // One rewind per hold: if it stops by itself (out of juice, back at the start), wait for a new press.
+            bool held = keyboard.rKey.isPressed;
+            if (held && !heldLastFrame)
+                rewoundThisHold = false;
+            if (held && !rewoundThisHold && GameClock.Instance != null && !GameClock.Instance.IsRewinding)
+            {
                 StartRewind();
-            else if (keyboard.rKey.wasReleasedThisFrame)
+                rewoundThisHold = GameClock.Instance.IsRewinding;
+            }
+            if (!held && heldLastFrame)
                 StopRewind();
+            heldLastFrame = held;
         }
+
+        private bool heldLastFrame;
+        private bool rewoundThisHold;
 
         public void StopRewind()
         {

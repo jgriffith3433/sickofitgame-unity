@@ -14,6 +14,11 @@ namespace SickOfIt.Core.UI.Menus
     public sealed class MenuButton : Selectable, IPointerClickHandler, ISubmitHandler
     {
         public event Action Clicked;
+        /// <summary>Pointer/touch went down on it (for hold-to-use buttons like rewind).</summary>
+        public event Action Pressed;
+        /// <summary>The press ended (released anywhere, or the button got disabled mid-press).</summary>
+        public event Action Released;
+        bool held;
 
         /// <summary>Where custom content (card text, pictures) goes, inside the padding.</summary>
         public RectTransform Content { get; private set; }
@@ -171,6 +176,35 @@ namespace SickOfIt.Core.UI.Menus
         }
 
         public void OnSubmit(BaseEventData eventData) => Press();
+
+        public override void OnPointerDown(PointerEventData eventData)
+        {
+            base.OnPointerDown(eventData);
+            if (eventData.button != PointerEventData.InputButton.Left || !IsInteractable())
+                return;
+            held = true;
+            Pressed?.Invoke();
+        }
+
+        public override void OnPointerUp(PointerEventData eventData)
+        {
+            base.OnPointerUp(eventData);
+            EndHold();
+        }
+
+        protected override void OnDisable()
+        {
+            EndHold();
+            base.OnDisable();
+        }
+
+        void EndHold()
+        {
+            if (!held)
+                return;
+            held = false;
+            Released?.Invoke();
+        }
 
         public override void OnPointerExit(PointerEventData eventData)
         {
