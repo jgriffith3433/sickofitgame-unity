@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 3,
+  "moveSpeed": 0.0,
+  "activationRange": 6.0,
+  "tags": ["sentinel"],
+  "body": {
+    "shape": "Circle",
+    "radius": 1.0,
+    "solid": true,
+    "gravity": 0.0
+  },
+  "visual": {
+    "scale": 0.15,
+    "facesLeft": true,
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsCrouching",
+          "type": "Bool",
+          "defaultValue": 0.0
+        },
+        {
+          "name": "IsAttacking",
+          "type": "Bool",
+          "defaultValue": 0.0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "StandingIdle",
+          "spriteSheet": "Images/Level3Enemy_StandingIdle.png",
+          "fps": 8,
+          "loop": true
+        },
+        {
+          "stateName": "StandingAttack",
+          "spriteSheet": "Images/Level3Enemy_StandingAttack.png",
+          "fps": 8,
+          "loop": false,
+          "events": [
+            {
+              "frame": 2,
+              "functionName": "OnStandingAttackFrame"
+            }
+          ]
+        },
+        {
+          "stateName": "StandingToCrouch",
+          "spriteSheet": "Images/Level3Enemy_StandingToCrouch.png",
+          "fps": 8,
+          "loop": false
+        },
+        {
+          "stateName": "CrouchingIdle",
+          "spriteSheet": "Images/Level3Enemy_CrouchingIdle.png",
+          "fps": 8,
+          "loop": true
+        },
+        {
+          "stateName": "CrouchingAttack",
+          "spriteSheet": "Images/Level3Enemy_CrouchingAttack.png",
+          "fps": 8,
+          "loop": false,
+          "events": [
+            {
+              "frame": 2,
+              "functionName": "OnCrouchAttackFrame"
+            }
+          ]
+        },
+        {
+          "stateName": "CrouchToStanding",
+          "spriteSheet": "Images/Level3Enemy_CrouchToStanding.png",
+          "fps": 8,
+          "loop": false
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "StandingIdle",
+          "toState": "StandingToCrouch",
+          "hasExitTime": false,
+          "exitTime": 1.0,
+          "conditions": [
+            {
+              "parameterName": "IsCrouching",
+              "mode": "If",
+              "threshold": 0.0
+            }
+          ]
+        },
+        {
+          "fromState": "StandingToCrouch",
+          "toState": "CrouchingIdle",
+          "hasExitTime": true,
+          "exitTime": 1.0,
+          "conditions": []
+        },
+        {
+          "fromState": "CrouchingIdle",
+          "toState": "CrouchToStanding",
+          "hasExitTime": false,
+          "exitTime": 1.0,
+          "conditions": [
+            {
+              "parameterName": "IsCrouching",
+              "mode": "IfNot",
+              "threshold": 0.0
+            }
+          ]
+        },
+        {
+          "fromState": "CrouchToStanding",
+          "toState": "StandingIdle",
+          "hasExitTime": true,
+          "exitTime": 1.0,
+          "conditions": []
+        },
+        {
+          "fromState": "StandingIdle",
+          "toState": "StandingAttack",
+          "hasExitTime": false,
+          "exitTime": 1.0,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0.0
+            },
+            {
+              "parameterName": "IsCrouching",
+              "mode": "IfNot",
+              "threshold": 0.0
+            }
+          ]
+        },
+        {
+          "fromState": "StandingAttack",
+          "toState": "StandingIdle",
+          "hasExitTime": true,
+          "exitTime": 0.9,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "IfNot",
+              "threshold": 0.0
+            }
+          ]
+        },
+        {
+          "fromState": "CrouchingIdle",
+          "toState": "CrouchingAttack",
+          "hasExitTime": false,
+          "exitTime": 1.0,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0.0
+            },
+            {
+              "parameterName": "IsCrouching",
+              "mode": "If",
+              "threshold": 0.0
+            }
+          ]
+        },
+        {
+          "fromState": "CrouchingAttack",
+          "toState": "CrouchingIdle",
+          "hasExitTime": true,
+          "exitTime": 0.9,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "IfNot",
+              "threshold": 0.0
+            }
+          ]
+        }
+      ],
+      "defaultStateName": "StandingIdle"
+    }
+  },
+  "healthBar": {
+    "show": true
+  },
+  "sounds": {
+    "hurt": [],
+    "death": [],
+    "hurtThreshold": 1.0,
+    "pitchVariation": 0.1
+  },
+  "loot": {
+    "chance": 0.4,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "animParam",
+      "param": "IsCrouching",
+      "when": {
+        "type": "distanceToPlayer",
+        "above": 5.0
+      }
+    },
+    {
+      "type": "animParam",
+      "param": "IsAttacking",
+      "when": {
+        "type": "anyOf",
+        "triggers": [
+          {
+            "type": "distanceToPlayer",
+            "below": 3.0
+          },
+          {
+            "type": "distanceToPlayer",
+            "above": 8.0
+          }
+        ]
+      }
+    },
+    {
+      "type": "melee",
+      "autoAttack": false,
+      "hitEvent": "OnStandingAttackFrame",
+      "range": 3.0,
+      "damage": 1
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileLaser",
+      "speed": 10.0,
+      "aim": "Player",
+      "muzzle": [0.045, 0.0],
+      "interval": 0.0,
+      "fireOnEvent": "OnCrouchAttackFrame",
+      "damage": 1
+    }
+  ]
+}

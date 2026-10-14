@@ -1,7 +1,9 @@
 {
   "name": "SickOfIt.Data",
   "rootNamespace": "SickOfIt.Data",
-  "references": [],
+  "references": [
+    "SickOfIt.Json"
+  ],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

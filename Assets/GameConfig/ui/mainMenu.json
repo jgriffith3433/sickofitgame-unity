@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 1,
+  "baseConfig": {
+    "cameraOrthoSize": 3.6,
+    "cameraBackgroundColor": "#000000",
+    "referenceResolution": [1920.0, 1080.0],
+    "backgroundSprite": null,
+    "useDirectionalLight": true,
+    "lightColor": [0.97735846, 0.96032965, 0.8021715, 1.0],
+    "lightIntensity": 1.0,
+    "groundSprite": null,
+    "groundPosition": [1.03, 0.0],
+    "cameraPosition": [0.0, -0.23, -10.0]
+  },
+  "showContinueButton": true,
+  "showNewGameButton": true,
+  "showLevelSelectButton": true,
+  "showVideosButton": true,
+  "showUpgradeShopButton": true,
+  "showQuitButton": true,
+  "showCumulativeHealth": true,
+  "showPointsDisplay": true,
+  "layout": {
+    "backdrop": {
+      "image": null,
+      "imageTint": "#FFFFFF",
+      "tint": "#00000000",
+      "pattern": "None",
+      "patternColor": [1.0, 1.0, 1.0, 0.06],
+      "patternScale": 90.0,
+      "patternScroll": [30.0, -15.0],
+      "vignette": "#1E122059"
+    },
+    "title": {
+      "show": true,
+      "text": "Sick Of It",
+      "anchor": [0.71, 0.86],
+      "offset": [0.0, 0.0],
+      "rotation": -4.0,
+      "fontSize": 0.0,
+      "motion": {
+        "type": "Wobble",
+        "amount": 1.5,
+        "speed": 0.35,
+        "phase": 0.0
+      }
+    },
+    "subtitle": {
+      "show": true,
+      "text": "a game about having had enough",
+      "anchor": [0.71, 0.745],
+      "offset": [0.0, 0.0],
+      "rotation": -2.0,
+      "fontSize": 0.0,
+      "motion": {
+        "type": "Bob",
+        "amount": 4.0,
+        "speed": 0.5,
+        "phase": 0.0
+      }
+    },
+    "list": {
+      "anchor": [0.71, 0.335],
+      "offset": [0.0, 0.0],
+      "size": [720.0, 720.0],
+      "direction": "Vertical",
+      "columns": 0,
+      "spacing": [0.0, 12.0],
+      "itemSize": [0.0, 0.0]
+    },
+    "backAnchor": [0.0, 0.0],
+    "backOffset": [150.0, 90.0],
+    "backText": "Back",
+    "statsAnchor": [0.0, 1.0],
+    "statsOffset": [40.0, -40.0],
+    "decorations": [
+      {
+        "text": "Now with\nrewind!",
+        "style": "caption",
+        "fontSize": 30.0,
+        "textColor": "#1E1220",
+        "shape": "Burst",
+        "sprite": null,
+        "fill": "#FFC93C",
+        "borderColor": "#1E1220",
+        "borderWidth": 6.0,
+        "size": [0.0, 0.0],
+        "anchor": [0.92, 0.58],
+        "offset": [0.0, 0.0],
+        "rotation": 14.0,
+        "motion": {
+          "type": "Pulse",
+          "amount": 0.06,
+          "speed": 1.2,
+          "phase": 0.0
+        }
+      }
+    ]
+  },
+  "labels": {
+    "continueGame": "Continue (Lvl {0})",
+    "newGame": "New Game",
+    "levelSelect": "Pick a Level",
+    "videos": "Rewatch Stuff",
+    "shop": "Spend Diamonds",
+    "quit": "Rage Quit"
+  },
+  "showBundleDownloadUI": true,
+  "idleHouseSprite": null,
+  "explosionSprite": null,
+  "explodeAudio": "Videos/MainMenu_Explode_Audio.mp3",
+  "hideDelay": 1.5,
+  "transitionDelay": 1.0,
+  "placedSprites": [
+    {
+      "name": "MainMenu_Background1",
+      "sprite": null,
+      "spriteFramesData": "Videos/MainMenu_Background1.asset",
+      "layer": "Background1",
+      "sortingOrder": 0,
+      "position": [0.0, 0.0],
+      "scale": [1.25, 1.263127],
+      "flipX": false,
+      "useGameClock": false,
+      "startActive": true,
+      "spawnIfMissing": true
+    },
+    {
+      "name": "MainMenu_LeftPartOfHouse",
+      "sprite": "Images/MainMenu_LeftPartOfHouse.png",
+      "spriteFramesData": null,
+      "layer": "Foreground1",
+      "sortingOrder": 0,
+      "position": [-5.5, -2.63],
+      "scale": [1.0, 1.0],
+      "flipX": false,
+      "useGameClock": false,
+      "startActive": true,
+      "spawnIfMissing": true
+    },
+    {
+      "name": "MainMenu_Explode",
+      "sprite": null,
+      "spriteFramesData": "Videos/MainMenu_Explode.asset",
+      "layer": "Foreground2",
+      "sortingOrder": 0,
+      "position": [0.0, 0.0],
+      "scale": [1.25, 1.2631272],
+      "flipX": false,
+      "useGameClock": false,
+      "startActive": false,
+      "spawnIfMissing": true
+    }
+  ],
+  "placeCharacter": true,
+  "characterPosition": [-4.21, -3.14],
+  "characterCanShoot": false,
+  "houseSpriteName": "MainMenu_LeftPartOfHouse",
+  "houseBodyPosition": [0.73, 0.27, 2.0],
+  "houseBodyScale": [0.25, 0.25, 0.25],
+  "houseColliders": [
+    {
+      "name": "LeftHouse",
+      "position": [-3.64, 2.43],
+      "rotation": -39.72,
+      "size": [0.56, 5.9],
+      "offset": [-1.012191, -0.0004106164]
+    },
+    {
+      "name": "TopHouse",
+      "position": [-0.16, 5.99],
+      "rotation": 0.0,
+      "size": [5.91, 0.53],
+      "offset": [-0.003780365, -0.5050192]
+    },
+    {
+      "name": "TopDoor",
+      "position": [-0.09343338, 1.2399244],
+      "rotation": 1.524,
+      "size": [11.49, 0.53],
+      "offset": [-0.003780365, -0.5050192]
+    },
+    {
+      "name": "LeftDoor",
+      "position": [-5.33, -1.24],
+      "rotation": 0.0,
+      "size": [0.56, 4.93],
+      "offset": [1.0083077, 0.0005990267]
+    },
+    {
+      "name": "RightHouse",
+      "position": [3.3, 2.59],
+      "rotation": 41.35,
+      "size": [0.56, 6.4],
+      "offset": [1.0083077, 0.0005990267]
+    }
+  ],
+  "screenBounds": [
+    {
+      "name": "Left",
+      "position": [-5.34, 0.0],
+      "rotation": 0.0,
+      "size": [0.062060356, 7.17],
+      "offset": [-1.012191, -0.0004106164]
+    },
+    {
+      "name": "Right",
+      "position": [5.367, 0.0],
+      "rotation": 0.0,
+      "size": [0.059904575, 7.17],
+      "offset": [1.0083077, 0.0005990267]
+    },
+    {
+      "name": "Top",
+      "position": [0.0, 3.01],
+      "rotation": 0.0,
+      "size": [13.0, 0.06486583],
+      "offset": [-0.0024804473, 0.5295787]
+    },
+    {
+      "name": "Bottom",
+      "position": [0.0, -2.698],
+      "rotation": 0.0,
+      "size": [13.0, 0.09203145],
+      "offset": [-0.003780365, -0.5050192]
+    }
+  ]
+}

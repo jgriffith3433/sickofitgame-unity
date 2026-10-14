@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 2,
+  "moveSpeed": 0.0,
+  "activationRange": 15.0,
+  "tags": ["shooter"],
+  "body": {
+    "shape": "Circle",
+    "radius": 1.0,
+    "solid": true,
+    "gravity": 0.0
+  },
+  "visual": {
+    "scale": 0.3,
+    "facesLeft": false,
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsAttacking",
+          "type": "Bool",
+          "defaultValue": 0.0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Images/Demon2.png",
+          "fps": 8,
+          "loop": true
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Images/Demon2.png",
+          "fps": 8,
+          "loop": false,
+          "events": [
+            {
+              "frame": 1,
+              "functionName": "FireProjectile"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1.0,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0.0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 0.9,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "IfNot",
+              "threshold": 0.0
+            }
+          ]
+        }
+      ],
+      "defaultStateName": "Idle"
+    }
+  },
+  "healthBar": {
+    "show": true
+  },
+  "sounds": {
+    "hurt": [],
+    "death": [],
+    "hurtThreshold": 1.0,
+    "pitchVariation": 0.1
+  },
+  "loot": {
+    "chance": 0.3,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "speed": 5.0,
+      "aim": "Player",
+      "muzzle": [0.09, 0.09375],
+      "interval": 1.5,
+      "initialDelay": 4.5,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile",
+      "damage": 1
+    }
+  ]
+}

@@ -77,6 +77,8 @@ namespace SickOfIt.Data
         public float rewindRecordInterval = 0.05f;
         [Tooltip("Maximum seconds of rewind history to keep.")]
         public float rewindMaxHistorySeconds = 30f;
+        [Tooltip("How much rewinding the player gets per level, and how it refills.")]
+        public RewindBudgetConfig rewindBudget = new RewindBudgetConfig();
 
         [Header("Scene UI Prefabs")]
         [Tooltip("Full MobileController UI prefab for level scenes (movement, jump, shoot, etc.)")]
@@ -103,6 +105,17 @@ namespace SickOfIt.Data
         public SelectionSceneConfig videoSelectionConfig = new SelectionSceneConfig();
         [Tooltip("Configuration for UpgradeShop scene generation")]
         public UpgradeShopConfig upgradeShopConfig = new UpgradeShopConfig();
+        [Tooltip("Shared look of all menus (ui/theme.json)")]
+        public MenuTheme menuTheme = new MenuTheme();
+
+        [Header("Gameplay Content")]
+        [Tooltip("Entities, sequences, and status effects, parsed at runtime. Authored in Assets/GameConfig/content/.")]
+        public List<ContentFile> content = new List<ContentFile>();
+        [Tooltip("Optional URL of a content bundle that replaces the content and level scripts above at startup, so they can change without a rebuild.")]
+        public string remoteContentUrl = "";
+
+        [Tooltip("Assets used by gameplay content, by id. Built by the config importer — DO NOT EDIT.")]
+        public List<AssetRegistryEntry> assetRegistry = new List<AssetRegistryEntry>();
 
         [Header("Generated Prefab References (set by generators — DO NOT EDIT)")]
         [Tooltip("Set by PickupPrefabGenerator")]

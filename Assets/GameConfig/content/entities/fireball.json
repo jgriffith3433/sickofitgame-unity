@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 0,
+  "body": {
+    "radius": 0.6,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.12,
+    "sortingOrder": 4,
+    "hurtFlash": false,
+    "animator": {
+      "states": [
+        {
+          "stateName": "Burn",
+          "spriteSheet": "Images/Fireball.png",
+          "fps": 12,
+          "loop": true
+        }
+      ],
+      "defaultStateName": "Burn"
+    }
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "dieOnSolid": true,
+      "effect": "burning"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 5
+    }
+  ]
+}

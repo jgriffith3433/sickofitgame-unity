@@ -42,6 +42,10 @@ namespace SickOfIt.Data.Config
         public float fireRate = 0.25f;
         public float projectileSpeed = 10f;
         public float projectileLifetime = 5f;
+        [Tooltip("Rotate each shot to face where it flies.")]
+        public bool projectileFaceAim = false;
+        [Tooltip("Direction (degrees, 0 = right, 90 = up) the projectile art travels in when unrotated.")]
+        public float projectileSpriteAngle = 0f;
 
         [Header("Physics")]
         public float colliderRadius = 0.3f;

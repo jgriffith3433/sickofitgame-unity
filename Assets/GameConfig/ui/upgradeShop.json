@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "baseConfig": {
+    "cameraOrthoSize": 1.2,
+    "cameraBackgroundColor": [0.1137255, 0.17254902, 0.25490198, 1.0],
+    "referenceResolution": [1920.0, 1080.0],
+    "backgroundSprite": null,
+    "useDirectionalLight": true,
+    "lightColor": [0.97735846, 0.96032965, 0.8021715, 1.0],
+    "lightIntensity": 1.0,
+    "groundSprite": null,
+    "groundPosition": [1.03, 0.0],
+    "cameraPosition": [0.0, -0.23, -10.0]
+  },
+  "upgrades": [
+    {
+      "id": "extraJump",
+      "title": "Extra Jump",
+      "description": "Allows an additional jump in the air",
+      "costsPerLevel": [100, 200, 400, 800],
+      "maxLevel": 4
+    }
+  ],
+  "showDebugAddPoints": true,
+  "debugPointsAmount": 500,
+  "layout": {
+    "backdrop": {
+      "image": "Videos/MainMenu_Background1_FirstFrame.png",
+      "imageTint": "#FFFFFF",
+      "tint": "#2B1A08CC",
+      "pattern": "Checker",
+      "patternColor": "#FFC93C0A",
+      "patternScale": 140.0,
+      "patternScroll": [25.0, 25.0],
+      "vignette": "#000000A6"
+    },
+    "title": {
+      "show": true,
+      "text": "Shop",
+      "anchor": [0.5, 0.885],
+      "offset": [0.0, 0.0],
+      "rotation": -3.0,
+      "fontSize": 140.0,
+      "motion": {
+        "type": "Wobble",
+        "amount": 1.5,
+        "speed": 0.35,
+        "phase": 0.0
+      }
+    },
+    "subtitle": {
+      "show": true,
+      "text": "Diamonds in. Power out. No refunds.",
+      "anchor": [0.5, 0.77],
+      "offset": [0.0, 0.0],
+      "rotation": 0.0,
+      "fontSize": 38.0,
+      "motion": {
+        "type": "None",
+        "amount": 8.0,
+        "speed": 1.0,
+        "phase": 0.0
+      }
+    },
+    "list": {
+      "anchor": [0.5, 0.42],
+      "offset": [0.0, 0.0],
+      "size": [1600.0, 560.0],
+      "direction": "Grid",
+      "columns": 0,
+      "spacing": [32.0, 32.0],
+      "itemSize": [440.0, 400.0]
+    },
+    "backAnchor": [0.0, 0.0],
+    "backOffset": [170.0, 80.0],
+    "backText": "Back",
+    "statsAnchor": [1.0, 1.0],
+    "statsOffset": [-40.0, -40.0],
+    "decorations": [
+      {
+        "text": "No\nrefunds!",
+        "style": "caption",
+        "fontSize": 28.0,
+        "textColor": "#1E1220",
+        "shape": "Burst",
+        "sprite": null,
+        "fill": "#FF5B3A",
+        "borderColor": "#1E1220",
+        "borderWidth": 6.0,
+        "size": [0.0, 0.0],
+        "anchor": [0.84, 0.84],
+        "offset": [0.0, 0.0],
+        "rotation": 10.0,
+        "motion": {
+          "type": "Pulse",
+          "amount": 0.06,
+          "speed": 1.1,
+          "phase": 0.0
+        }
+      },
+      {
+        "text": "♦ = diamonds. Shoot things, collect them.",
+        "style": "caption",
+        "fontSize": 24.0,
+        "textColor": "#FFF4D6B3",
+        "shape": "None",
+        "sprite": null,
+        "fill": "#FFCC33",
+        "borderColor": "#00000000",
+        "borderWidth": 0.0,
+        "size": [0.0, 0.0],
+        "anchor": [0.5, 0.11],
+        "offset": [0.0, 0.0],
+        "rotation": 0.0,
+        "motion": {
+          "type": "None",
+          "amount": 8.0,
+          "speed": 1.0,
+          "phase": 0.0
+        }
+      }
+    ]
+  },
+  "buyFormat": "Buy ♦ {0}",
+  "maxedText": "Maxed out",
+  "comingSoonText": "Coming soon"
+}

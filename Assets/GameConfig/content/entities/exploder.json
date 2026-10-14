@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "extends": "chaser",
+  "health": 2,
+  "moveSpeed": 2.6,
+  "tags": ["exploder"],
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.2
+    }
+  ],
+  "visual": {
+    "color": "#FF9966"
+  },
+  "abilities": [
+    {
+      "type": "chase",
+      "stopDistance": 0.3
+    },
+    {
+      "type": "explodeNear",
+      "triggerRadius": 0.9,
+      "fuse": 0.5,
+      "blastRadius": 1.0,
+      "damage": 1
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "sludge",
+      "anchor": "Self"
+    }
+  ]
+}

@@ -4,6 +4,8 @@
 
 **The game IS the config.** One ScriptableObject (`GameDefinition` at `Assets/Resources/GameDefinition.asset`) defines every level, video, death scene, enemy, projectile, and player setting. Unity scenes AND prefabs are OUTPUT generated from this config. You edit the definition, press one button (`SickOfIt → Generate Project`), the entire game regenerates.
 
+**The definition is authored as JSON** in `Assets/GameConfig/` and compiled into `GameDefinition.asset` automatically (see CLAUDE.md "The game is defined in JSON").
+
 ## The Generation Pipeline
 
 ```
@@ -122,6 +124,38 @@ DeathRuntime:
 | `SickOfIt.Combat` | `Scripts/Combat/` | EnemyBase subclasses, health systems, projectiles, pickups |
 | `SickOfIt.Tools.Editor` | `Scripts/Tools/Editor/` | ProjectGenerator, scene generators, build scripts, MCP tools |
 | `SickOfIt.VideoFrameExtractor.Runtime` | `Scripts/VideoFrameExtractor/Runtime/` | SpriteFramePlayer, SpriteFramesData |
+| `SickOfIt.Json` | `Scripts/Json/` | Unity-compatible JSON serializer (strict reading, `"type"` polymorphism, raw JSON fields) |
+| `SickOfIt.Gameplay` | `Scripts/Gameplay/` | Data-driven gameplay: content model, entities, level director, HUD, telemetry, playtest bot |
+
+## Gameplay Layer (data-driven)
+
+Levels with a `script` (levels/{name}.json) and everything in `Assets/GameConfig/content/` run on this layer;
+levels without a script still use LevelRuntime's enemy list and the `Combat/Enemies` classes.
+Authoring guide: CLAUDE.md, Docs/GameplayCookbook.md, Docs/GameplayReference.md (generated).
+
+```
+LevelRuntime ──creates──▶ GameplayWorld (per level, FixedUpdate)
+                            ├── LevelDirector  phases · rules (trigger → actions) · sequences · hazards · objective
+                            ├── Entity × N     pooled; abilities + optional state machine + EntityAnimation
+                            ├── Entity(player) wraps PlayerController/PlayerHealth for statuses, modifiers, targeting
+                            ├── GameplayHud    banner/subtitle/objective/boss bar/flash
+                            ├── WorldEffects   camera (static/follow/scroll) · shake · slow motion · audio
+                            └── GameplayTelemetry → Logs/Playtest/*.jsonl + *.summary.json
+GameContent (parsed JSON, from GameDefinition.content + level scripts, or a remote bundle)
+```
+
+- **Content model** (`Gameplay/Content/`): `EntityDef`, `Ability`, `Trigger`, `GameAction`, `Pattern`, `LevelScript`,
+  `SequenceDef`, `StatusEffectDef`. Polymorphic classes are picked by `"type"` (`[JsonType]`). Abilities and triggers are
+  cloned per use; their private fields are runtime state.
+- **Determinism and rewind**: the world ticks the director, then entities in spawn order. Every decision draws from a
+  seeded `DeterministicRandom` (per entity, derived from the level seed and spawn serial). Entity, director, world, HUD,
+  and camera state are snapshotted by `SimHistory` (an `IRewindable`); positions by the existing Rewindable* components.
+  Entities spawned after a rewind's branch point are reclaimed by their `ObjectPool` and re-simulated, so the replayed
+  future matches. Physics itself isn't bit-exact across a replay; decisions are.
+- **Assets at runtime**: content refers to assets by path; the importer records them in `GameDefinition.assetRegistry`,
+  which `RegistryAssetResolver` reads. `link.xml` keeps the reflection-created types from being stripped in WebGL builds.
+- **Validation**: `GameConfigImporter` parses content and scripts with line numbers, `ContentValidator` checks references
+  ([EntityRef], [PhaseRef], ...), and errors block import, Generate, Play, and builds.
 
 ## Key Classes
 

@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "baseConfig": {
+    "cameraOrthoSize": 1.2,
+    "cameraBackgroundColor": [0.1137255, 0.17254902, 0.25490198, 1.0],
+    "referenceResolution": [1920.0, 1080.0],
+    "backgroundSprite": null,
+    "useDirectionalLight": true,
+    "lightColor": [0.97735846, 0.96032965, 0.8021715, 1.0],
+    "lightIntensity": 1.0,
+    "groundSprite": null,
+    "groundPosition": [1.03, 0.0],
+    "cameraPosition": [0.0, -0.23, -10.0]
+  },
+  "showCumulativeHealth": false,
+  "layout": {
+    "backdrop": {
+      "image": "Videos/MainMenu_Background1_FirstFrame.png",
+      "imageTint": "#FFFFFF",
+      "tint": "#0B2430C7",
+      "pattern": "Dots",
+      "patternColor": "#FFFFFF0D",
+      "patternScale": 70.0,
+      "patternScroll": [0.0, -20.0],
+      "vignette": "#000000A6"
+    },
+    "title": {
+      "show": true,
+      "text": "Reruns",
+      "anchor": [0.5, 0.885],
+      "offset": [0.0, 0.0],
+      "rotation": 2.0,
+      "fontSize": 130.0,
+      "motion": {
+        "type": "Wobble",
+        "amount": 1.0,
+        "speed": 0.3,
+        "phase": 0.0
+      }
+    },
+    "subtitle": {
+      "show": true,
+      "text": "Relive the drama. Skip nothing.",
+      "anchor": [0.5, 0.775],
+      "offset": [0.0, 0.0],
+      "rotation": 0.0,
+      "fontSize": 38.0,
+      "motion": {
+        "type": "None",
+        "amount": 8.0,
+        "speed": 1.0,
+        "phase": 0.0
+      }
+    },
+    "list": {
+      "anchor": [0.5, 0.43],
+      "offset": [0.0, 0.0],
+      "size": [1800.0, 600.0],
+      "direction": "Grid",
+      "columns": 0,
+      "spacing": [24.0, 24.0],
+      "itemSize": [360.0, 380.0]
+    },
+    "backAnchor": [0.0, 0.0],
+    "backOffset": [170.0, 80.0],
+    "backText": "Back",
+    "statsAnchor": [1.0, 1.0],
+    "statsOffset": [-40.0, -40.0],
+    "decorations": [
+      {
+        "text": "No\nspoilers",
+        "style": "caption",
+        "fontSize": 28.0,
+        "textColor": "#1E1220",
+        "shape": "Burst",
+        "sprite": null,
+        "fill": "#2EC4B6",
+        "borderColor": "#1E1220",
+        "borderWidth": 6.0,
+        "size": [0.0, 0.0],
+        "anchor": [0.88, 0.86],
+        "offset": [0.0, 0.0],
+        "rotation": 12.0,
+        "motion": {
+          "type": "Pulse",
+          "amount": 0.06,
+          "speed": 1.1,
+          "phase": 0.0
+        }
+      }
+    ]
+  },
+  "captionFormat": "Episode {0}",
+  "playText": "Watch",
+  "lockedText": "Not yet",
+  "clearedText": "Watched"
+}

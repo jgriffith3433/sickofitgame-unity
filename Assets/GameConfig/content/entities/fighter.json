@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 4,
+  "moveSpeed": 1.5,
+  "activationRange": 8.0,
+  "tags": ["fighter"],
+  "body": {
+    "shape": "Circle",
+    "radius": 1.0,
+    "solid": true,
+    "gravity": 0.0
+  },
+  "visual": {
+    "scale": 0.15,
+    "facesLeft": false,
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsWalking",
+          "type": "Bool",
+          "defaultValue": 0.0
+        },
+        {
+          "name": "IsAttacking",
+          "type": "Bool",
+          "defaultValue": 0.0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Images/FighterIdle.png",
+          "fps": 8,
+          "loop": true
+        },
+        {
+          "stateName": "Walk",
+          "spriteSheet": "Images/FighterWalk.png",
+          "fps": 8,
+          "loop": true
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Images/FighterAttack.png",
+          "fps": 8,
+          "loop": false,
+          "events": [
+            {
+              "frame": 2,
+              "functionName": "OnAttackFrame"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Walk",
+          "hasExitTime": false,
+          "exitTime": 1.0,
+          "conditions": [
+            {
+              "parameterName": "IsWalking",
+              "mode": "If",
+              "threshold": 0.0
+            }
+          ]
+        },
+        {
+          "fromState": "Walk",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1.0,
+          "conditions": [
+            {
+              "parameterName": "IsWalking",
+              "mode": "IfNot",
+              "threshold": 0.0
+            }
+          ]
+        },
+        {
+          "fromState": "Any",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1.0,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0.0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 0.9,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "IfNot",
+              "threshold": 0.0
+            }
+          ]
+        }
+      ],
+      "defaultStateName": "Idle"
+    }
+  },
+  "healthBar": {
+    "show": true
+  },
+  "sounds": {
+    "hurt": [],
+    "death": [],
+    "hurtThreshold": 1.0,
+    "pitchVariation": 0.1
+  },
+  "loot": {
+    "chance": 0.5,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "melee",
+      "range": 2.0,
+      "damage": 1,
+      "cooldown": 1.5,
+      "window": 0.35,
+      "hitEvent": "OnAttackFrame",
+      "animBool": "IsAttacking"
+    }
+  ],
+  "states": [
+    {
+      "name": "walk",
+      "abilities": [
+        {
+          "type": "chase",
+          "stopDistance": 0.0,
+          "face": true,
+          "animBool": "IsWalking"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "idle",
+          "when": {
+            "type": "randomAfter",
+            "min": 5.0,
+            "max": 10.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "idle",
+      "onEnter": [
+        {
+          "type": "setAnimParam",
+          "target": {
+            "self": true
+          },
+          "param": "IsWalking",
+          "value": 0.0
+        }
+      ],
+      "transitions": [
+        {
+          "to": "walk",
+          "when": {
+            "type": "randomAfter",
+            "min": 5.0,
+            "max": 10.0
+          }
+        }
+      ]
+    }
+  ],
+  "initialStates": ["walk", "idle"]
+}

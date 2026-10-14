@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "body": {
+    "kind": "Dynamic",
+    "radius": 0.5,
+    "solid": false,
+    "gravity": 1.6
+  },
+  "visual": {
+    "sprite": "Art/Sprites/Enemies/slime_idle.png#slime_idle_0",
+    "scale": 0.045,
+    "color": "#9CFF7AE6",
+    "sortingOrder": 7,
+    "hurtFlash": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "spin",
+      "degreesPerSecond": 540
+    },
+    {
+      "type": "lifetime",
+      "seconds": 0.65
+    }
+  ]
+}

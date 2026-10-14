@@ -481,6 +481,7 @@ namespace SickOfIt.Data
             // Clear upgrades and max health (points are preserved across new games)
             PlayerPrefs.DeleteKey(KEY_EXTRA_JUMPS_PURCHASED);
             PlayerPrefs.DeleteKey(KEY_MAX_HEALTH);
+            UpgradeProgress.Reset();
 
             // Clear game progress data (level completions, video unlocks, highest level)
             for (int i = 1; i <= totalLevels; i++)

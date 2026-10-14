@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Diamond",
+  "sprite": "Images/Diamond.png#Diamond_0",
+  "spriteScale": 0.125,
+  "sortingOrder": 3,
+  "colliderRadius": 0.15,
+  "popForce": 3.0,
+  "gravity": 5.0,
+  "spreadRange": 0.5,
+  "lifetime": 10.0,
+  "bobAmplitude": 0.1,
+  "bobSpeed": 3.0,
+  "poolSize": 20,
+  "layerName": "Pickup",
+  "tag": "Pickup",
+  "collectSound": null,
+  "spawnSound": null,
+  "spriteSheet": "Images/Diamond.png",
+  "animationFps": 12,
+  "animationConfig": {
+    "parameters": [],
+    "states": [],
+    "transitions": [],
+    "defaultStateName": "Idle"
+  }
+}

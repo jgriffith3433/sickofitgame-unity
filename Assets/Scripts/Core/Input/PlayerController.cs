@@ -49,6 +49,8 @@ namespace SickOfIt.Core.Input
         [SerializeField] private float projectileSpeed = 10f;
         [SerializeField] private float fireRate = 0.25f;
         [SerializeField] private float projectileLifetime = 5f;
+        [SerializeField] private bool projectileFaceAim;
+        [SerializeField] private float projectileSpriteAngle;
         
         [Header("Platform Interaction")]
         [Tooltip("Layer to ignore collision with when moving down (e.g., 'Platform' layer)")]
@@ -118,6 +120,11 @@ namespace SickOfIt.Core.Input
         private static readonly int VelocityZHash = Animator.StringToHash("Velocity_Z");
         private static readonly int JumpHash = Animator.StringToHash("Jump");
         private static readonly int FireHash = Animator.StringToHash("Fire");
+        private static readonly int FiringHash = Animator.StringToHash("Firing");
+        private static readonly int FireStateHash = Animator.StringToHash("Fire");
+        // Which optional fire parameters the generated controller has (null until the animator is inspected).
+        private bool? animatorHasFiring;
+        private bool animatorHasFireTrigger;
         
         #endregion
         
@@ -139,8 +146,35 @@ namespace SickOfIt.Core.Input
         // Firing — uses GameClock time instead of Time.time
         private Vector2 fireDirection;
         private bool isFiring;
+        // World point under the mouse while firing with it; shots aim from the muzzle at this point.
+        private Vector2? mouseAimPoint;
         private float lastFireTime;
-        
+
+        // Gameplay hooks — set by status effects, level scripts, and the playtest bot
+        /// <summary>Multiplies horizontal speed (slows, haste). 0 = can't move.</summary>
+        public float MoveSpeedMultiplier { get; set; } = 1f;
+        /// <summary>When true the player ignores all input (cutscenes, stuns).</summary>
+        public bool InputLocked { get; set; }
+        /// <summary>When set, input comes from here instead of the devices (the playtest bot).</summary>
+        public IPlayerInputSource InputOverride { get; set; }
+        /// <summary>Shots per second multiplier (2 = twice as fast). Set by upgrades.</summary>
+        public float FireRateMultiplier { get; set; } = 1f;
+        /// <summary>Multiplies the damage of each shot. Set by upgrades.</summary>
+        public float DamageMultiplier { get; set; } = 1f;
+        /// <summary>Extra shots per volley, fanned out around the aim. Set by upgrades.</summary>
+        public int ExtraShots { get; set; }
+        /// <summary>Degrees between the shots of a volley.</summary>
+        public float ShotSpreadDegrees { get; set; } = 10f;
+
+        private readonly System.Collections.Generic.Dictionary<GameObject, IProjectileDamage> shotDamage =
+            new System.Collections.Generic.Dictionary<GameObject, IProjectileDamage>();
+
+        public void SetGravityMultiplier(float multiplier)
+        {
+            if (rb != null)
+                rb.gravityScale = gravityScale * multiplier;
+        }
+
         // Platform collision
         private int playerLayer;
         private bool isIgnoringPlatformCollision = false;
@@ -179,6 +213,8 @@ namespace SickOfIt.Core.Input
             fireRate = cfg.fireRate;
             projectileSpeed = cfg.projectileSpeed;
             projectileLifetime = cfg.projectileLifetime;
+            projectileFaceAim = cfg.projectileFaceAim;
+            projectileSpriteAngle = cfg.projectileSpriteAngle;
 
             // Rotation
             use2DFlip = cfg.use2DFlip;
@@ -297,6 +333,7 @@ namespace SickOfIt.Core.Input
             ReadMoveInput();
             ReadJumpInput();
             ReadFireInput();
+            ApplyInputOverrides();
             CheckGrounded();
             HandlePlatformCollision();
             HandleJump();
@@ -413,6 +450,24 @@ namespace SickOfIt.Core.Input
             }
         }
         
+        private void ApplyInputOverrides()
+        {
+            if (InputOverride != null)
+            {
+                moveInput = InputOverride.Move;
+                jumpRequested = InputOverride.ConsumeJump();
+                fireDirection = InputOverride.FireDirection;
+                isFiring = fireDirection.sqrMagnitude > inputDeadzone * inputDeadzone;
+            }
+            if (InputLocked)
+            {
+                moveInput = Vector2.zero;
+                jumpRequested = false;
+                fireDirection = Vector2.zero;
+                isFiring = false;
+            }
+        }
+
         /// <summary>
         /// Called by GameInputManager when any input source requests a jump.
         /// </summary>
@@ -425,6 +480,7 @@ namespace SickOfIt.Core.Input
         {
             fireDirection = Vector2.zero;
             isFiring = false;
+            mouseAimPoint = null;
             
             // Poll mobile fire input directly from analog stick
             if (fireAnalog != null && fireAnalog.gameObject.activeSelf)
@@ -458,6 +514,7 @@ namespace SickOfIt.Core.Input
             {
                 isFiring = true;
                 fireDirection = GetMouseDirectionFromPlayer();
+                mouseAimPoint = GetMouseWorldPoint();
             }
         }
         
@@ -466,11 +523,25 @@ namespace SickOfIt.Core.Input
             if (mainCamera == null || Mouse.current == null)
                 return Vector2.zero;
             
+            return (GetMouseWorldPoint() - (Vector2)transform.position).normalized;
+        }
+
+        private Vector2 GetMouseWorldPoint()
+        {
             Vector2 mousePos = Mouse.current.position.ReadValue();
-            Vector3 worldMousePos = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCamera.nearClipPlane));
-            Vector2 direction = ((Vector2)worldMousePos - (Vector2)transform.position).normalized;
-            
-            return direction;
+            // Project onto the player's plane so a perspective camera aims correctly too.
+            float depth = Mathf.Abs(transform.position.z - mainCamera.transform.position.z);
+            return mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, depth));
+        }
+
+        /// <summary>Where shots leave the gun: the spawn point, mirrored to the side being aimed at.</summary>
+        private Vector2 GetMuzzlePosition(Vector2 direction)
+        {
+            if (projectileSpawnPoint == null)
+                return transform.position;
+            Vector3 local = transform.InverseTransformPoint(projectileSpawnPoint.position);
+            local.x = Mathf.Abs(local.x) * (direction.x < 0f ? -1f : 1f);
+            return transform.TransformPoint(local);
         }
         
         #endregion
@@ -601,7 +672,7 @@ namespace SickOfIt.Core.Input
             float horizontalInput = Mathf.Clamp(moveInput.x, -1f, 1f);
             
             Vector2 velocity = rb.linearVelocity;
-            velocity.x = horizontalInput * moveSpeed;
+            velocity.x = horizontalInput * moveSpeed * MoveSpeedMultiplier;
             rb.linearVelocity = velocity;
         }
         
@@ -735,14 +806,15 @@ namespace SickOfIt.Core.Input
             // Rewinding to the start leaves lastFireTime ahead of the clock, which
             // would block firing until time catches up to the pre-rewind shot.
             float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+            float interval = fireRate / Mathf.Max(0.1f, FireRateMultiplier);
             if (currentTime < lastFireTime)
-                lastFireTime = currentTime - fireRate;
-            if (currentTime - lastFireTime < fireRate) return;
+                lastFireTime = currentTime - interval;
+            if (currentTime - lastFireTime < interval) return;
             if (projectilePool == null) return;
-            
+
             FireProjectile(fireDirection);
         }
-        
+
         private void FireProjectile(Vector2 direction)
         {
             if (projectilePool == null)
@@ -750,13 +822,36 @@ namespace SickOfIt.Core.Input
                 Debug.LogWarning("PlayerController: projectilePool not assigned!");
                 return;
             }
-            
+
             // Use GameClock time for fire timing
             lastFireTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
-            
-            Vector3 spawnPosition = projectileSpawnPoint != null ? projectileSpawnPoint.position : transform.position;
-            
-            GameObject projectile = projectilePool.Get(spawnPosition, Quaternion.identity);
+
+            // Aim from the muzzle so the shot passes through the cursor, not parallel to it.
+            Vector2 muzzle = GetMuzzlePosition(direction);
+            if (mouseAimPoint.HasValue && (mouseAimPoint.Value - (Vector2)transform.position).sqrMagnitude > 0.25f)
+            {
+                Vector2 toCursor = mouseAimPoint.Value - muzzle;
+                if (toCursor.sqrMagnitude > 0.0001f && Vector2.Dot(toCursor, direction) > 0f)
+                    direction = toCursor.normalized;
+            }
+
+            // Extra shots fan out evenly around the aim.
+            int shots = 1 + Mathf.Max(0, ExtraShots);
+            for (int i = 0; i < shots; i++)
+            {
+                float angle = (i - (shots - 1) * 0.5f) * ShotSpreadDegrees;
+                SpawnShot(muzzle, Quaternion.Euler(0f, 0f, angle) * direction, i == 0);
+            }
+        }
+
+        private void SpawnShot(Vector2 muzzle, Vector2 direction, bool firstOfVolley)
+        {
+            Vector3 spawnPosition = new Vector3(muzzle.x, muzzle.y, transform.position.z);
+            Quaternion rotation = projectileFaceAim
+                ? Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - projectileSpriteAngle)
+                : Quaternion.identity;
+
+            GameObject projectile = projectilePool.Get(spawnPosition, rotation);
             
             Collider2D projectileCollider = projectile.GetComponent<Collider2D>();
             if (projectileCollider != null)
@@ -773,30 +868,65 @@ namespace SickOfIt.Core.Input
             }
 
             projectilePool.CaptureLaunchState(projectile);
-            
-            PlaySFX(fireSound);
-            
-            if (animator != null)
+
+            if (!shotDamage.TryGetValue(projectile, out var damage))
             {
-                animator.SetTrigger(FireHash);
+                damage = projectile.GetComponent<IProjectileDamage>();
+                shotDamage[projectile] = damage;
             }
-            
+            damage?.SetDamageMultiplier(DamageMultiplier);
+
             // Use pool-cached ProjectileLifetime when available
             var lifetime = projectilePool.GetCachedLifetime(projectile);
             if (lifetime == null) lifetime = projectile.GetComponent<ProjectileLifetime>();
             if (lifetime != null)
                 lifetime.SetLifetime(projectileLifetime);
+
+            if (!firstOfVolley)
+                return;
+
+            PlaySFX(fireSound);
+
+            // Restart the fire clip on every shot so the muzzle flash lines up with the projectile.
+            if (animator != null && animator.HasState(0, FireStateHash))
+                animator.Play(FireStateHash, 0, 0f);
+            else if (animator != null && AnimatorHasFireTrigger())
+                animator.SetTrigger(FireHash);
         }
         
         #endregion
         
         #region Animation
         
+        private bool AnimatorHasFiring()
+        {
+            if (!animatorHasFiring.HasValue && animator != null && animator.runtimeAnimatorController != null)
+            {
+                animatorHasFiring = false;
+                foreach (var parameter in animator.parameters)
+                {
+                    if (parameter.nameHash == FiringHash && parameter.type == AnimatorControllerParameterType.Bool)
+                        animatorHasFiring = true;
+                    if (parameter.nameHash == FireHash && parameter.type == AnimatorControllerParameterType.Trigger)
+                        animatorHasFireTrigger = true;
+                }
+            }
+            return animatorHasFiring == true;
+        }
+
+        private bool AnimatorHasFireTrigger()
+        {
+            AnimatorHasFiring();
+            return animatorHasFireTrigger;
+        }
+
         private void UpdateAnimator()
         {
             if (animator == null) return;
             
             animator.SetBool(OnGroundHash, isGrounded);
+            if (AnimatorHasFiring())
+                animator.SetBool(FiringHash, isFiring && enableShooting);
             animator.SetFloat(VelocityXHash, Mathf.Abs(moveInput.x));
             
             if (rb != null)

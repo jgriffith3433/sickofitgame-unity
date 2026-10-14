@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "title": "Snooze Button",
+  "description": "Five more minutes. Well, two more seconds. Hold 2s more rewind.",
+  "maxLevel": 3,
+  "rewindSecondsPerLevel": 2,
+  "color": "#40E0D0"
+}

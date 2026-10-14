@@ -1,0 +1,239 @@
+# Gameplay Cookbook
+
+Worked recipes for common requests. Every field is listed in [GameplayReference.md](GameplayReference.md) (generated from the code).
+All of these are plain JSON in `Assets/GameConfig/`: no C#, no Generate Project. Save the file, focus Unity (or run the
+`Validate` command), and read `Logs/GameConfig.log`.
+
+Working example: **Level 5, "Fire Rain"** (`levels/Level5.json`) uses most of the recipes below; its entities are in
+`content/entities/` (`fireball`, `exploder`, `sludge`, `magmaKing`), its sequences in `content/sequences/`.
+
+---
+
+## Make a new level
+
+1. Copy an existing `levels/LevelN.json` to `levels/Level6.json`. Change `levelName`, `displayName`, `levelNumber`,
+   `music`, `backgrounds`, `deathConfigName`.
+2. Add `"Level6"` to the end of the `"levels"` list in `game.json` (the position is the level number).
+3. Write its `"script"` (below). Set `"enemies": []` — a script replaces the enemies list.
+4. Nothing to generate: the level select screen builds its buttons from the levels list at runtime. A new level unlocks after the one before it is completed.
+
+```json
+"script": {
+  "objective": { "complete": { "type": "allDead", "target": { "tag": "wave" } }, "text": "Clear the arena" },
+  "phases": [
+    { "name": "main", "rules": [
+      { "when": { "type": "atTime", "seconds": 1 },
+        "do": [ { "type": "spawn", "entity": "chaser", "at": [4, -2], "tags": ["wave"] } ] }
+    ] }
+  ]
+}
+```
+
+## Rain fire from the sky
+
+A hazard fires projectile entities from the level itself and stops when its phase ends.
+
+```json
+{ "type": "startHazard", "id": "rain", "projectile": "fireball",
+  "pattern": { "type": "rain", "count": 1 }, "speed": 3, "interval": 1.2, "rampPerSecond": 0.03 }
+```
+
+`rampPerSecond` makes it intensify. Use `stopHazard` to end it early, `"persist": true` to keep it past its phase.
+
+## Enemies in waves that get tougher
+
+An `every` rule repeats; `multiplyPerRepeat` scales each wave (wave 3 gets `multiply + 2 × multiplyPerRepeat`).
+
+```json
+{ "name": "waves", "when": { "type": "every", "seconds": 9, "startAfter": 3, "maxTimes": 4 },
+  "do": [ { "type": "spawnWave", "entity": "chaser", "count": 3, "interval": 0.6, "anchor": "Camera",
+            "points": [[-5.5, -2], [5.5, -2], [5.5, 1]], "tags": ["wave"],
+            "modifiers": [ { "stat": "MaxHealth", "multiply": 1, "multiplyPerRepeat": 0.25 } ] } ] }
+```
+
+For stats that should also change while enemies are alive (speed, damage), use a `modifier` action; add
+`"includeFuture": true` to cover enemies spawned later.
+
+## Only one kind of enemy in a level
+
+Spawn only that entity in the level's script. To change every enemy already in a level, replace the `"entity"`
+values in its spawn actions.
+
+## An enemy variant ("a faster chaser")
+
+`extends` copies another entity; objects merge, lists replace.
+
+```json
+{ "schemaVersion": 1, "extends": "chaser", "moveSpeed": 3.5, "health": 1, "visual": { "color": "#88CCFF" } }
+```
+
+## Chasers that explode near the player and leave sludge that hurts over time
+
+`content/entities/exploder.json`:
+
+```json
+{ "schemaVersion": 1, "extends": "chaser", "moveSpeed": 2.6,
+  "abilities": [
+    { "type": "chase", "stopDistance": 0.3 },
+    { "type": "explodeNear", "triggerRadius": 0.9, "fuse": 0.5, "blastRadius": 1.0, "damage": 1 } ],
+  "onDeath": [ { "type": "spawn", "entity": "sludge", "anchor": "Self" } ] }
+```
+
+`content/entities/sludge.json` — `aura` damage ignores the player's hit invincibility, so it keeps hurting:
+
+```json
+{ "schemaVersion": 1, "team": "Enemy", "health": 0, "body": { "radius": 0.5, "solid": false },
+  "visual": { "placeholderColor": "#5A8F2ACC", "placeholderLabel": false }, "healthBar": { "show": false },
+  "abilities": [ { "type": "aura", "radius": 0.35, "damagePerTick": 1, "interval": 0.75 },
+                 { "type": "lifetime", "seconds": 6 } ] }
+```
+
+To change the existing `chaser` itself instead of making a new type, edit `content/entities/chaser.json` the same way.
+
+**Kamikaze on touch instead** (the stock `chaser`): `{ "type": "contactDamage", "damage": 1, "dieOnHit": true }` hits once and
+dies, running `onDeath`. The chaser's `onDeath` spawns `slimeSplat` plus a few `slimeGlob`s with different `velocity`s
+(Dynamic bodies with gravity) for a cosmetic green burst; spawn `sludge` there too if the puddle should hurt.
+
+## A boss fight
+
+A boss is an entity with a state machine; health thresholds switch its attacks. See `content/entities/magmaKing.json`:
+
+```json
+"states": [
+  { "name": "fanning",
+    "abilities": [ { "type": "shoot", "projectile": "fireball", "pattern": { "type": "spread", "count": 3, "angle": 30 },
+                     "speed": 4, "interval": 2 } ],
+    "transitions": [ { "to": "enraged", "when": { "type": "healthBelow", "fraction": 0.5 } } ] },
+  { "name": "enraged",
+    "onEnter": [ { "type": "runSequence", "sequence": "bossEnrage" } ],
+    "abilities": [ { "type": "shoot", "projectile": "fireball", "pattern": { "type": "radial", "count": 10, "rotationPerVolley": 12 },
+                     "speed": 3.5, "interval": 1.6 },
+                   { "type": "spawner", "entity": "exploder", "interval": 6, "maxAlive": 2 } ] }
+]
+```
+
+In the level: a `boss` phase whose `onEnter` runs an intro sequence (lock input, text, camera shake, then spawn the
+boss with `"id": "boss"` and show a `bossBar`), and `"objective": { "complete": { "type": "allDead", "target": { "id": "boss" } } }`.
+
+## A cutscene moment / unique scripted beat
+
+Put steps in a sequence (inline `steps` or a file in `content/sequences/`); `wait` pauses between steps.
+
+```json
+{ "type": "runSequence", "steps": [
+  { "type": "lockInput", "seconds": 3 },
+  { "type": "slowMotion", "scale": 0.3, "duration": 1.5 },
+  { "type": "showText", "text": "Something is coming...", "duration": 2 },
+  { "type": "wait", "seconds": 2 },
+  { "type": "playMusic", "clip": "Videos/Level3_Background1_Audio.mp3" } ] }
+```
+
+## Branching: secret exits, alternate paths
+
+```json
+{ "when": { "type": "playerInZone", "center": [-6.5, 2], "size": [1, 1] }, "do": [ { "type": "goToLevel", "level": 4 } ] }
+{ "when": { "type": "counter", "name": "kills", "atLeast": 30 }, "do": [ { "type": "playVideo", "video": 3 } ] }
+{ "type": "if", "condition": { "type": "healthBelow", "target": { "player": true }, "fraction": 0.3 },
+  "then": [ { "type": "heal", "target": { "player": true }, "amount": 2 } ] }
+```
+
+Counters: `kills`, `kills:{entityId}`, `spawned`, `spawned:{entityId}`, `playerHits`, plus any you set with
+`setCounter` / `addCounter`. Signals: `emit` one, react with a `signal` trigger.
+
+## The arcade loop: rewind juice, orbs, upgrades
+
+**Rewind is limited.** `game.json` → `"rewindBudget"`: `startSeconds` of juice per level, `maxSeconds` held, `costPerSecond`
+spent per second rewound. The bottom progress bar shows the level played so far (length = script `"length"`, ticks from
+`"markers"`) and the juice as a teal tail behind the playhead: exactly how far back you can go.
+
+**Orbs refill it.** Enemies drop pickups through `"drops"`; `content/entities/rewindOrb.json` is a `collect` pickup that runs
+`addRewind`. A pickup pays once, even if a rewind replays it.
+
+```json
+"drops": [{ "entity": "rewindOrb", "chance": 0.25 }]
+```
+
+**Upgrades make the player stronger** (sawtooth difficulty: each level ramps up, then you get stronger, then the next
+starts a bit easier). They live in `content/upgrades/{id}.json` (`modifiersPerLevel` with `AttackSpeed`, `Damage`,
+`MoveSpeed`; `extraShotsPerLevel`; `rewindSecondsPerLevel`; `maxHealthPerLevel`), are saved, and reset on New Game.
+Offer them at the end of a level, before completing it, so dying and retrying can't farm them:
+
+```json
+{ "when": { "type": "allDead", "target": { "tag": "wave" } },
+  "do": [{ "type": "runSequence", "steps": [
+    { "type": "showText", "text": "MONDAY: DEFEATED", "duration": 2 },
+    { "type": "wait", "seconds": 1.5 },
+    { "type": "offerUpgrades", "title": "You earned a treat" },
+    { "type": "setCounter", "name": "cleared", "value": 1 } ] }] }
+```
+
+with `"objective": { "complete": { "type": "counter", "name": "cleared", "atLeast": 1 } }`.
+
+**Tone:** frantic arcade bullet-dodging (slow, readable bullet patterns in numbers: `spread`, `radial`, `sweep`, bursts),
+comedic text beats (`showText` banners and subtitles, boss intros, upgrade descriptions).
+
+## Status effects (poison, slow, stun, shield)
+
+`content/effects/{id}.json`; apply with `applyStatus`, or from `contactDamage` / `projectile` / `aura` via `"effect"`.
+
+```json
+{ "schemaVersion": 1, "duration": 2, "modifiers": [ { "stat": "MoveSpeed", "multiply": 0.4 } ], "tint": "#66AAFF88" }
+```
+
+## A different kind of level space
+
+`"world"` in the script: `"camera": "Follow"` with `boundsCenter`/`boundsSize` for a wider arena, `"Scroll"` with
+`scrollSpeed` for an auto-scroller, and `"playerGravity": 0.5` for floaty jumps.
+
+## Art
+
+Entities without art draw as colored placeholders with their id, so gameplay can come first. To add art, give the entity
+a `visual.animator` with states pointing at sprite sheets (`"spriteSheet": "Images/Thing.png"`), the same shape as the
+generator's AnimationConfig. Animation events (`"events": [{ "frame": 2, "functionName": "fire" }]`) drive
+`shoot.fireOnEvent` and `melee.hitEvent`.
+
+To play only part of a long sheet, give the state `"firstFrame"` and `"frameCount"` (applied after `spriteNameFilter`);
+this works for entities and for the player's `animationConfig` in player.json (the player's needs **Generate Project**).
+
+## Menus (main menu, level select, videos, shop)
+
+Menus are built at runtime by `MenuCanvas` (`Assets/Scripts/Core/UI/Menus/`), so restyling them is JSON-only and
+needs no Generate Project. Two layers:
+
+- **`ui/theme.json`: the look.** Fonts (`font`, `titleFont`: a .ttf/.otf path), text styles (`title`, `subtitle`, `heading`,
+  `body`, `caption`, `chipText`: size, color or `gradientTop`/`gradientBottom`, `outlineColor`/`outlineWidth`, `shadowColor`,
+  `uppercase`, `characterSpacing`, `italic`), button styles (`button`, `backButton`, `smallButton`, `card`: `size`, a
+  `surface` with `shape` Rounded/Pill/Rectangle/Circle/Burst/Sprite, `fill`, `borderColor`/`borderWidth`, `shadowColor`/
+  `shadowOffset`; hover/press colors, `hoverScale`, `hoverRotation`, resting `tilt` + `alternateTilt`, `idle` motion),
+  `chip` (the health/diamond pills), `accent`/`positive`/`muted` colors, `entrance` and `titleEntrance`
+  (Pop/Fade/Slide*/Drop with `stagger` so lists cascade in), `hoverSound`/`clickSound`, and the `healthFormat`/`pointsFormat` strings.
+- **Each screen's `layout`: what goes where.** `backdrop` (`image` cropped to fill, `tint`, a drifting `pattern`
+  Stripes/Dots/Checker, `vignette`), `title`/`subtitle` (`text`, `anchor`, `rotation`, `motion`), `list` (`anchor`, `size`,
+  `direction` Vertical/Horizontal/Grid, `columns` 0 = as many as fit, `itemSize`; overflow scrolls), `backAnchor`/
+  `backOffset`/`backText`, `statsAnchor`/`statsOffset`, and `decorations`: free stickers with `text`, a `shape` (Burst = comic
+  starburst), `fill`, `anchor`, `rotation` and a `motion` (Bob/Pulse/Wobble/Sway/Spin/Jitter).
+
+The in-level HUD uses the same theme: banners use `title`, subtitles `subtitle`, the upgrade picker uses `card`, and the
+theme's `hud` block sets the player health bar (top-left; one segment per hit point up to `maxSegments`, a flash and
+drain on hits, throbbing at `lowHealthFraction`), the boss bar, the progress/rewind bar colors and the dark edge on
+enemy health bars (enemies show a bar only once hurt; `healthBar.aboveBody` places it over the body). Pop text in the
+world and the generated loading screen pick up the theme font and ink outline too.
+
+Anchors are fractions of the screen (`[0,0]` bottom-left, `[1,1]` top-right); offsets and sizes are pixels in the
+1920x1080 reference space, which scales to fit any screen (and stays inside phone safe areas). Button labels:
+`mainMenu.json` `labels`; card texts: `captionFormat`/`playText`/`lockedText`/`clearedText` (selection screens) and
+`buyFormat`/`maxedText`/`comingSoonText` (shop). Level and video cards show the level's/video's `thumbnail` sprite.
+
+```json
+"decorations": [ { "text": "Now with
+rewind!", "shape": "Burst", "fill": "#FFC93C", "textColor": "#1E1220",
+                   "borderColor": "#1E1220", "borderWidth": 6, "anchor": [0.92, 0.58], "rotation": 14,
+                   "motion": { "type": "Pulse", "amount": 0.06, "speed": 1.2 } } ]
+```
+
+## Checking it plays
+
+- `Logs/GameConfig.log` after every edit (errors have file, line, field, and suggestions).
+- Bot playtest of every level: `-runTests -testPlatform PlayMode -testCategory Playtest` (see CLAUDE.md), then read
+  `Logs/Playtest/report.md` and the per-level `*.summary.json` (kills, damage taken by source, outcome).
+- Rewind is automatic for everything here: content can't break it.

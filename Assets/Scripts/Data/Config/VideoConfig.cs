@@ -14,6 +14,8 @@ namespace SickOfIt.Data.Config
         public string videoName;
         public int videoNumber;
         public string displayName;
+        [Tooltip("Picture on the video select card.")]
+        public Sprite thumbnail;
         [Tooltip("If true, this video is always unlocked regardless of progress")]
         public bool alwaysUnlocked;
 

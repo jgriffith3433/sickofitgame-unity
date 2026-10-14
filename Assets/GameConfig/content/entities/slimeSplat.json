@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "visual": {
+    "sprite": "Art/Sprites/Enemies/slime_idle.png#slime_idle_7",
+    "scale": 0.11,
+    "color": "#7BD65A99",
+    "sortingOrder": 0,
+    "hurtFlash": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 0.35
+    }
+  ]
+}

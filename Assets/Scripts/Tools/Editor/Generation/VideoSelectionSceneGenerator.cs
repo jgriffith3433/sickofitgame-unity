@@ -9,12 +9,12 @@ using SickOfIt.Core.Progression;
 namespace SickOfIt.Tools.Editor.Generation
 {
     /// <summary>
-    /// Generates VideoSelection.unity from SelectionSceneConfig.
+    /// Generates VideoSelection.unity. The video cards are built at runtime by VideoSelectionManager from
+    /// videoSelectionConfig.layout and ui/theme.json.
     /// </summary>
     public static class VideoSelectionSceneGenerator
     {
         const string OutputPath = "Assets/Scenes/VideoSelection.unity";
-        const string VideoButtonPath = "Assets/Prefabs/(Prb)ButtonVideo.prefab";
 
         public static void Generate(GameDefinition gd)
         {
@@ -25,33 +25,12 @@ namespace SickOfIt.Tools.Editor.Generation
             }
 
             var config = gd.videoSelectionConfig ?? new SelectionSceneConfig();
-            var shell = MenuShell.Build(
-                gd,
-                config.baseConfig,
-                "VideoSelectPanel",
-                string.IsNullOrEmpty(config.title) ? "Select Video" : config.title,
-                "VideoButtonContainer",
-                config.buttonSpacing,
-                config.buttonSize);
+            var shell = MenuShell.Build(gd, config.baseConfig);
             if (shell == null)
                 return;
 
-            var backPrefab = config.backButtonPrefab != null
-                ? config.backButtonPrefab
-                : gd.mainMenuConfig != null ? gd.mainMenuConfig.buttonPrefab : null;
-            var back = MenuShell.AddOvalButton(shell.SafeArea, backPrefab, "(Prb)ButtonBack", "Back", config.buttonSize);
-            MenuShell.PlaceCornerButton(back, Vector2.zero, Vector2.zero, new Vector2(60f, 50f));
-
-            var videoButton = config.itemButtonPrefab != null
-                ? config.itemButtonPrefab
-                : AssetDatabase.LoadAssetAtPath<GameObject>(VideoButtonPath);
-
             var manager = new GameObject("Video Selection Manager").AddComponent<VideoSelectionManager>();
             var so = new SerializedObject(manager);
-            so.FindProperty("videoButtonContainer").objectReferenceValue = shell.Container;
-            so.FindProperty("videoButtonPrefab").objectReferenceValue = videoButton;
-            if (back != null)
-                so.FindProperty("backButton").objectReferenceValue = back.GetComponent<MobileControllerFramework.Button>();
             so.FindProperty("sceneLoadingManager").objectReferenceValue = shell.Loading;
             so.ApplyModifiedPropertiesWithoutUndo();
 

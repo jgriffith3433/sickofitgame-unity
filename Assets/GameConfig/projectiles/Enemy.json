@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "Enemy",
+  "displayName": "",
+  "sprite": null,
+  "scale": 0.15,
+  "color": "#00000000",
+  "sortingLayer": "",
+  "sortingOrder": 0,
+  "colliderRadius": 1.0,
+  "isTrigger": false,
+  "damage": 1,
+  "speed": 8.0,
+  "lifetime": 2.0,
+  "layerName": "",
+  "tag": "",
+  "poolSize": 20,
+  "fireSound": null,
+  "hitSound": null,
+  "expireSound": null,
+  "spriteSheet": "Images/Fireball.png",
+  "animationFps": 0,
+  "animationConfig": {
+    "parameters": [],
+    "states": [],
+    "transitions": [],
+    "defaultStateName": ""
+  }
+}

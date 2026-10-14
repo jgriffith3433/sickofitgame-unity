@@ -1,99 +1,85 @@
 using UnityEngine;
-using TMPro;
-using MobileControllerFramework;
 using SickOfIt.Core.Flow;
-using SickOfIt.Core.UI;
+using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Core.Progression
 {
     /// <summary>
-    /// Manages the Level Selection scene. Dynamically creates or updates level buttons.
-    /// Displays per-level health info and cumulative health for the roguelite system.
+    /// Manages the Level Selection scene: a card per level (thumbnail, name, locked/cleared state and the health
+    /// Yooba finished it with), built at runtime from levelSelectionConfig.layout and ui/theme.json.
     /// </summary>
     public class LevelSelectionManager : MonoBehaviour
     {
-        // Game definition loaded from Resources
-        private GameDefinition gameDefinition;
-
-        [Header("UI References")]
-        [SerializeField] private Transform levelButtonContainer; // Parent object for level buttons
-        [SerializeField] private GameObject levelButtonPrefab; // Prefab for level buttons
-        [SerializeField] private MobileControllerFramework.Button backButton;
-
-        [Header("Roguelite UI")]
-        [Tooltip("Displays cumulative health on the level selection screen.")]
-        [SerializeField] private TextMeshProUGUI cumulativeHealthText;
-
         [Header("Scene Loading")]
         [SerializeField] private SceneLoadingManager sceneLoadingManager;
 
+        private MenuCanvas menu;
+        private bool leaving;
+
         private void Start()
         {
-            gameDefinition = GameDefinition.Instance;
-            GenerateLevelButtons();
-            UpdateCumulativeHealthDisplay();
-
-            if (backButton != null)
-                backButton.TapEndEvent.AddListener(OnBackClicked);
-        }
-
-        private void UpdateCumulativeHealthDisplay()
-        {
-            if (cumulativeHealthText != null && gameDefinition != null)
-            {
-                int maxHealth = RogueliteManager.Instance.GetMaxHealth();
-                int cumulativeHealth = RogueliteManager.Instance.GetCumulativeHealth(gameDefinition.TotalLevels);
-                cumulativeHealthText.text = $"Yooba's Health: {cumulativeHealth} / {maxHealth}";
-            }
-        }
-
-        private void GenerateLevelButtons()
-        {
-            if (levelButtonContainer == null || levelButtonPrefab == null)
-            {
-                Debug.LogError("LevelSelectionManager: Missing references! Please assign levelButtonContainer and levelButtonPrefab in the inspector.");
-                return;
-            }
-
-            if (gameDefinition == null)
+            var gd = GameDefinition.Instance;
+            if (gd == null)
             {
                 Debug.LogError("LevelSelectionManager: GameDefinition not found in Resources!");
                 return;
             }
 
-            // Clear existing buttons
-            foreach (Transform child in levelButtonContainer)
-            {
-                Destroy(child.gameObject);
-            }
+            var config = gd.levelSelectionConfig ?? new SelectionSceneConfig();
+            menu = MenuCanvas.Create("LevelSelectUI", gd.menuTheme, config.layout);
+            var list = menu.AddList(config.layout.list, menu.Theme.card.size);
 
             int highestReached = GameProgressManager.Instance.GetHighestLevelReached();
-
-            // Create buttons for each level
-            for (int i = 1; i <= gameDefinition.TotalLevels; i++)
+            for (int i = 1; i <= gd.TotalLevels; i++)
             {
-                int levelNumber = i; // Capture for lambda
+                int levelNumber = i;
+                var level = gd.GetLevel(levelNumber);
+                bool completed = GameProgressManager.Instance.IsLevelCompleted(levelNumber);
+                bool unlocked = levelNumber <= highestReached;
+                int endHealth = RogueliteManager.Instance.GetLevelEndHealth(levelNumber);
+                int maxHealth = RogueliteManager.Instance.GetLevelMaxHealth(levelNumber);
 
-                GameObject buttonObj = Instantiate(levelButtonPrefab, levelButtonContainer);
-                LevelButton levelButton = buttonObj.GetComponent<LevelButton>();
-
-                if (levelButton != null)
+                var data = new MenuCardData
                 {
-                    bool isCompleted = GameProgressManager.Instance.IsLevelCompleted(levelNumber);
-                    bool isUnlocked = levelNumber <= highestReached;
-
-                    // Get roguelite health data for this level
-                    int endHealth = RogueliteManager.Instance.GetLevelEndHealth(levelNumber);
-                    int maxHealth = RogueliteManager.Instance.GetLevelMaxHealth(levelNumber);
-
-                    levelButton.Setup(levelNumber, isCompleted, isUnlocked, () => OnLevelClicked(levelNumber), endHealth, maxHealth);
-                }
+                    Picture = level != null ? level.thumbnail : null,
+                    PictureArea = true,
+                    Badge = levelNumber.ToString(),
+                    Caption = string.Format(config.captionFormat, levelNumber),
+                    Title = level != null && !string.IsNullOrEmpty(level.displayName) ? level.displayName : $"Level {levelNumber}",
+                    Status = completed
+                        ? config.clearedText + (endHealth >= 0 ? "  " + Hearts(endHealth, maxHealth) : "")
+                        : config.playText,
+                    StatusColor = completed ? menu.Theme.positive : menu.Theme.accent,
+                    LockedStamp = unlocked ? null : config.lockedText,
+                };
+                MenuCard.Add(menu, list, data, () => OnLevelClicked(levelNumber));
             }
+
+            if (config.showCumulativeHealth)
+            {
+                int maxHealth = RogueliteManager.Instance.GetMaxHealth();
+                int health = RogueliteManager.Instance.GetCumulativeHealth(gd.TotalLevels);
+                menu.AddChip(string.Format(menu.Theme.healthFormat, health, maxHealth));
+            }
+            menu.AddBackButton(OnBackClicked);
+        }
+
+        /// <summary>Health as hearts, lost ones faded (falls back to "♥ 3/5" for big totals).</summary>
+        public static string Hearts(int health, int max)
+        {
+            if (max <= 0 || max > 8)
+                return $"♥ {health}/{max}";
+            health = Mathf.Clamp(health, 0, max);
+            return new string('♥', health) + "<alpha=#40>" + new string('♥', max - health) + "<alpha=#FF>";
         }
 
         private void OnLevelClicked(int levelNumber)
         {
+            if (leaving) return;
+            leaving = true;
+
             // For Level 1, check if it's the first time visiting
             if (levelNumber == 1 && !HasVisitedLevel(1))
             {
@@ -135,6 +121,9 @@ namespace SickOfIt.Core.Progression
 
         private void OnBackClicked()
         {
+            if (leaving) return;
+            leaving = true;
+            SceneLoadingManager.ShowLoadingUI();
             SceneTransitionManager.Instance.LoadMainMenu();
         }
     }

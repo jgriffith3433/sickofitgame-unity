@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "steps": [
+    {
+      "type": "cameraShake",
+      "intensity": 0.25,
+      "duration": 0.6
+    },
+    {
+      "type": "flash",
+      "color": "#FF4400AA",
+      "duration": 0.4
+    },
+    {
+      "type": "showText",
+      "text": "The Magma King has entered his villain era.",
+      "style": "Subtitle",
+      "duration": 2.5,
+      "color": "#FFAA66"
+    },
+    {
+      "type": "modifier",
+      "target": {
+        "tag": "boss"
+      },
+      "modifiers": [
+        {
+          "stat": "MoveSpeed",
+          "multiply": 1.6
+        }
+      ]
+    }
+  ]
+}

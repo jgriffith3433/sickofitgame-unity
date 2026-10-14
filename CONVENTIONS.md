@@ -51,7 +51,7 @@ private void Update()
 
 ## Rewind System Rules
 - **Never Destroy enemies** — use `gameObject.SetActive(false)` so rewind can bring them back
-- **Register enemies** with `StateRecorder.RegisterEnemy()` at spawn time
+- **Rewindable state lives in components** (`RewindableTransform`, `RewindableHealth`, ...) that self-register with `RewindTimeline.Instance` in `Awake`; see ARCHITECTURE.md "Rewind System"
 - **Freeze during rewind**: check `GameClock.Instance?.IsRewinding` and return early from AI/input
 - **`onDeath` events**: guard with IsRewinding check — don't spawn drops during rewind restore
 

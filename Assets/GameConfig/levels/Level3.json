@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level3",
+  "displayName": "Spin Cycle",
+  "levelNumber": 3,
+  "thumbnail": "Videos/Level3_Background1_FirstFrame.png",
+  "backgrounds": ["Videos/Level3_Background1.asset", "Videos/Level3_Background2.asset"],
+  "backgroundLayers": [],
+  "ambientColor": "#FFFFFF",
+  "music": "Videos/Level3_Background1_Audio.mp3",
+  "musicStartTime": 0.0,
+  "musicVolume": 1.0,
+  "ambientSound": null,
+  "ambientVolume": 0.5,
+  "levelCompleteSound": null,
+  "platforms": [],
+  "placedSprites": [],
+  "generateBarriers": true,
+  "barrierThickness": 1.0,
+  "barrierOnBottom": true,
+  "barrierOnTop": true,
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "winZoneCenter": [6.5, 0.0],
+  "winZoneHalfSize": [0.5, 4.0],
+  "deathConfigName": "Death3",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 4,
+  "returnToMainMenuOnComplete": false,
+  "timeline": {
+    "duration": 60.0,
+    "events": [],
+    "tracks": []
+  },
+  "script": {
+    "length": 95,
+    "markers": [
+      {
+        "seconds": 40,
+        "label": "FIRE RAIN"
+      },
+      {
+        "seconds": 70,
+        "label": "FINAL WAVE"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      }
+    },
+    "phases": [
+      {
+        "name": "spin",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "LEVEL 3: SPIN CYCLE",
+            "duration": 2.5,
+            "color": "#FFD27A"
+          },
+          {
+            "type": "showText",
+            "text": "Warning: contents may spin.",
+            "style": "Subtitle",
+            "duration": 3.0
+          },
+          {
+            "type": "spawn",
+            "entity": "spinner",
+            "anchor": "Camera",
+            "at": [3.8, -2.0],
+            "tags": ["wave"]
+          }
+        ],
+        "rules": [
+          {
+            "name": "drones",
+            "when": {
+              "type": "every",
+              "seconds": 8.0,
+              "startAfter": 6.0,
+              "maxTimes": 3
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "drone",
+                "anchor": "Camera",
+                "at": [5.2, 2.0],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "name": "swarmers",
+            "when": {
+              "type": "every",
+              "seconds": 4.5,
+              "startAfter": 3.0,
+              "maxTimes": 7
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "swarmer",
+                "count": 3,
+                "interval": 0.3,
+                "anchor": "Camera",
+                "points": [
+                  [-5.2, -2.0],
+                  [5.2, -2.0],
+                  [5.2, 1.0]
+                ],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "name": "second spinner",
+            "when": {
+              "type": "after",
+              "seconds": 18.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "spinner",
+                "anchor": "Camera",
+                "at": [-3.8, -2.0],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 40.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "rain"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "rain",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "Is it raining fire? It's raining fire.",
+            "style": "Subtitle",
+            "duration": 3.0,
+            "color": "#FF9966"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 2.6,
+            "interval": 1.6,
+            "initialDelay": 1.0,
+            "rampPerSecond": 0.015
+          }
+        ],
+        "rules": [
+          {
+            "name": "chasers",
+            "when": {
+              "type": "every",
+              "seconds": 6.0,
+              "startAfter": 2.0,
+              "maxTimes": 4
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "chaser",
+                "count": 2,
+                "interval": 0.5,
+                "anchor": "Camera",
+                "points": [
+                  [5.2, -2.0],
+                  [-5.2, -2.0]
+                ],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "name": "drone",
+            "when": {
+              "type": "after",
+              "seconds": 12.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "drone",
+                "anchor": "Camera",
+                "at": [-5.2, 2.0],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 30.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "final"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "final",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "FINAL WAVE",
+            "duration": 2.0,
+            "color": "#FF7A5C"
+          },
+          {
+            "type": "showText",
+            "text": "The big one brought snacks. And violence.",
+            "style": "Subtitle",
+            "duration": 2.5
+          },
+          {
+            "type": "startHazard",
+            "id": "lightRain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 2.4,
+            "interval": 2.4
+          },
+          {
+            "type": "spawn",
+            "entity": "brute",
+            "anchor": "Camera",
+            "at": [4.8, -2.0],
+            "tags": ["wave"]
+          },
+          {
+            "type": "spawnWave",
+            "entity": "spinner",
+            "count": 2,
+            "interval": 1.5,
+            "anchor": "Camera",
+            "points": [
+              [-3.8, -2.0],
+              [2.0, 1.5]
+            ],
+            "tags": ["wave"]
+          },
+          {
+            "type": "spawnWave",
+            "entity": "drone",
+            "count": 2,
+            "interval": 3.0,
+            "anchor": "Camera",
+            "points": [
+              [5.2, 2.0],
+              [-5.2, 2.0]
+            ],
+            "tags": ["wave"]
+          }
+        ],
+        "rules": [
+          {
+            "name": "clear",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "wave"
+              }
+            },
+            "do": [
+              {
+                "type": "stopHazard",
+                "id": "lightRain"
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "showText",
+                    "text": "LAUNDRY: DONE",
+                    "duration": 2.0,
+                    "color": "#7CFF8A"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "One sock is still missing. Forever.",
+                    "style": "Subtitle",
+                    "duration": 2.0
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a fresh upgrade"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

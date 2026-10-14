@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "type": "Sentinel",
+  "displayName": "Sentinel",
+  "prefab": "Prefabs/Combat/Enemy_Sentinel.prefab",
+  "spriteSheet": "Images/Level3Enemy_StandingIdle.png",
+  "animationFps": 8,
+  "spriteScale": 0.15,
+  "animationConfig": {
+    "parameters": [
+      {
+        "name": "IsCrouching",
+        "type": "Bool",
+        "defaultValue": 0.0
+      },
+      {
+        "name": "IsAttacking",
+        "type": "Bool",
+        "defaultValue": 0.0
+      }
+    ],
+    "states": [
+      {
+        "stateName": "StandingIdle",
+        "spriteSheet": "Images/Level3Enemy_StandingIdle.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 8,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "StandingAttack",
+        "spriteSheet": "Images/Level3Enemy_StandingAttack.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 8,
+        "loop": false,
+        "events": [
+          {
+            "frame": 2,
+            "functionName": "OnStandingAttackFrame",
+            "stringParameter": "",
+            "intParameter": 0,
+            "floatParameter": 0.0
+          }
+        ],
+        "speed": 1.0
+      },
+      {
+        "stateName": "StandingToCrouch",
+        "spriteSheet": "Images/Level3Enemy_StandingToCrouch.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 8,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "CrouchingIdle",
+        "spriteSheet": "Images/Level3Enemy_CrouchingIdle.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 8,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "CrouchingAttack",
+        "spriteSheet": "Images/Level3Enemy_CrouchingAttack.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 8,
+        "loop": false,
+        "events": [
+          {
+            "frame": 2,
+            "functionName": "OnCrouchAttackFrame",
+            "stringParameter": "",
+            "intParameter": 0,
+            "floatParameter": 0.0
+          }
+        ],
+        "speed": 1.0
+      },
+      {
+        "stateName": "CrouchToStanding",
+        "spriteSheet": "Images/Level3Enemy_CrouchToStanding.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 8,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      }
+    ],
+    "transitions": [
+      {
+        "fromState": "StandingIdle",
+        "toState": "StandingToCrouch",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "IsCrouching",
+            "mode": "If",
+            "threshold": 0.0
+          }
+        ]
+      },
+      {
+        "fromState": "StandingToCrouch",
+        "toState": "CrouchingIdle",
+        "hasExitTime": true,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": []
+      },
+      {
+        "fromState": "CrouchingIdle",
+        "toState": "CrouchToStanding",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "IsCrouching",
+            "mode": "IfNot",
+            "threshold": 0.0
+          }
+        ]
+      },
+      {
+        "fromState": "CrouchToStanding",
+        "toState": "StandingIdle",
+        "hasExitTime": true,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": []
+      },
+      {
+        "fromState": "StandingIdle",
+        "toState": "StandingAttack",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "IsAttacking",
+            "mode": "If",
+            "threshold": 0.0
+          },
+          {
+            "parameterName": "IsCrouching",
+            "mode": "IfNot",
+            "threshold": 0.0
+          }
+        ]
+      },
+      {
+        "fromState": "StandingAttack",
+        "toState": "StandingIdle",
+        "hasExitTime": true,
+        "exitTime": 0.9,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "IsAttacking",
+            "mode": "IfNot",
+            "threshold": 0.0
+          }
+        ]
+      },
+      {
+        "fromState": "CrouchingIdle",
+        "toState": "CrouchingAttack",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "IsAttacking",
+            "mode": "If",
+            "threshold": 0.0
+          },
+          {
+            "parameterName": "IsCrouching",
+            "mode": "If",
+            "threshold": 0.0
+          }
+        ]
+      },
+      {
+        "fromState": "CrouchingAttack",
+        "toState": "CrouchingIdle",
+        "hasExitTime": true,
+        "exitTime": 0.9,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "IsAttacking",
+            "mode": "IfNot",
+            "threshold": 0.0
+          }
+        ]
+      }
+    ],
+    "defaultStateName": "StandingIdle"
+  },
+  "defaultHealth": 3,
+  "defaultMoveSpeed": 0.0,
+  "contactDamage": 1,
+  "detectionRange": 6.0,
+  "hurtSounds": [],
+  "deathSounds": [],
+  "hurtSoundHealthThreshold": 1.0,
+  "pitchVariation": 0.1,
+  "dropChance": 0.4,
+  "dropPointsValue": 1,
+  "dropCount": 1,
+  "colliderRadius": 1.0,
+  "gravityScale": 0.0,
+  "constraints": "FreezeAll",
+  "hasInvincibilityFrames": false,
+  "invincibilityDuration": 0.5,
+  "faceMovementDirection": true,
+  "healthBarOffset": [0.0, 0.6],
+  "healthBarSize": [35.0, 3.0],
+  "healthBarColor": "#FF0000",
+  "healthBarTrackColor": "#333333CC",
+  "healthBarWorldScale": 0.01,
+  "stopDistance": 0.5,
+  "fireRate": 0.0,
+  "projectileSpeed": 0.0,
+  "projectileLifetime": 5.0,
+  "projectileDamage": 1,
+  "firePointOffset": [0.3, 0.0],
+  "attackRange": 3.0,
+  "attackCooldown": 2.0,
+  "minStateChangeTime": 5.0,
+  "maxStateChangeTime": 10.0,
+  "laserSpeed": 10.0,
+  "crouchThreshold": 5.0,
+  "crouchingAttackRange": 8.0
+}

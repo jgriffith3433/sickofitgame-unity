@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "videoName": "Video4",
+  "videoNumber": 4,
+  "displayName": "After Level 3",
+  "thumbnail": null,
+  "alwaysUnlocked": false,
+  "spriteFramesData": "Videos/Video4.asset",
+  "audio": null,
+  "afterLevel": 3,
+  "nextLevel": 4,
+  "returnToMainMenu": false,
+  "timeline": {
+    "duration": 60.0,
+    "events": [],
+    "tracks": []
+  }
+}

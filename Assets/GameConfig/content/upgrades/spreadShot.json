@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "title": "Buy One Get One",
+  "description": "Every shot comes with a free extra shot. Terms and conditions do not apply.",
+  "maxLevel": 3,
+  "extraShotsPerLevel": 1,
+  "color": "#FF7AC8"
+}

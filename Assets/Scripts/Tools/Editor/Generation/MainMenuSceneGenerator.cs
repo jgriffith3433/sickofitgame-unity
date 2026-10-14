@@ -22,7 +22,6 @@ namespace SickOfIt.Tools.Editor.Generation
     public static class MainMenuSceneGenerator
     {
         const string OutputPath = "Assets/Scenes/MainMenu.unity";
-        const string DefaultButtonPath = "Assets/nappin/MobileControllerFramework/Prefabs/Button/(Prb)ButtonOval.prefab";
         const string PreloadingIndicatorPath = "Assets/Prefabs/PreloadingIndicator.prefab";
         const string ButtonFontGuid = "8f586378b4e144a9851e7b34d9b748ee";
 
@@ -61,11 +60,11 @@ namespace SickOfIt.Tools.Editor.Generation
             PlaceScreenBounds(content.transform, config);
 
             var mobile = PlaceMobileController(gd, content.transform, sceneCamera);
-            var buttons = PlaceButtons(config, mobile);
+            PlacePreloadingIndicator(mobile);
             PlaceDownloadUi(config, mobile);
 
-            PlaceManagers(buttons, out var sceneLoading, out var downloadManager);
-            WireMenu(mobile, config, buttons, downloadManager, sceneLoading, character);
+            PlaceManagers(out var sceneLoading, out var downloadManager);
+            WireMenu(mobile, config, downloadManager, sceneLoading, character);
 
             var waiter = menu.AddComponent<SpriteFrameLoadWaiter>();
             var waiterSo = new SerializedObject(waiter);
@@ -233,102 +232,25 @@ namespace SickOfIt.Tools.Editor.Generation
             return mobile;
         }
 
-        static List<GameObject> PlaceButtons(MainMenuConfig config, GameObject mobile)
+        /// <summary>The menu's buttons are built at runtime (MainMenuManager + MenuCanvas); only the preload spinner is placed here.</summary>
+        static void PlacePreloadingIndicator(GameObject mobile)
         {
-            var created = new List<GameObject>();
             if (mobile == null)
-                return created;
-
+                return;
             var safe = FindNamed(mobile.transform, "SafeAreaPanel");
             if (safe == null)
                 safe = mobile.transform;
-
-            var menuButtons = new GameObject("MenuButtons", typeof(RectTransform));
-            menuButtons.transform.SetParent(safe, false);
-            var rect = menuButtons.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.5f, 0.5f);
-            rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition = Vector2.zero;
-            rect.sizeDelta = new Vector2(config.buttonSize.x, 900f);
-
-            var layout = menuButtons.AddComponent<VerticalLayoutGroup>();
-            layout.spacing = config.buttonSpacing;
-            layout.childAlignment = TextAnchor.UpperCenter;
-            layout.childControlWidth = false;
-            layout.childControlHeight = false;
-            layout.childForceExpandWidth = false;
-            layout.childForceExpandHeight = false;
-
-            var buttonPrefab = config.buttonPrefab != null
-                ? config.buttonPrefab
-                : AssetDatabase.LoadAssetAtPath<GameObject>(DefaultButtonPath);
-
-            AddButton(created, buttonPrefab, menuButtons.transform, config, config.showContinueButton, "(Prb)ButtonContinue", "Continue");
-            AddButton(created, buttonPrefab, menuButtons.transform, config, config.showNewGameButton, "(Prb)ButtonNewGame", "New Game");
-            AddButton(created, buttonPrefab, menuButtons.transform, config, config.showLevelSelectButton, "(Prb)ButtonLevelSelect", "Level Select");
-            AddButton(created, buttonPrefab, menuButtons.transform, config, config.showVideosButton, "(Prb)ButtonVideos", "Videos");
-            AddButton(created, buttonPrefab, menuButtons.transform, config, config.showUpgradeShopButton, "(Prb)ButtonShop", "Shop");
-            AddButton(created, buttonPrefab, menuButtons.transform, config, config.showQuitButton, "(Prb)ButtonQuit", "Quit");
-
             var indicator = AssetDatabase.LoadAssetAtPath<GameObject>(PreloadingIndicatorPath);
-            if (indicator != null)
-                PrefabUtility.InstantiatePrefab(indicator, menuButtons.transform);
-
-            return created;
-        }
-
-        static void AddButton(List<GameObject> created, GameObject prefab, Transform parent, MainMenuConfig config, bool show, string objectName, string label)
-        {
-            if (!show || prefab == null)
+            if (indicator == null)
                 return;
-
-            var button = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-            button.name = objectName;
-            var rect = button.GetComponent<RectTransform>();
+            var placed = (GameObject)PrefabUtility.InstantiatePrefab(indicator, safe);
+            var rect = placed.GetComponent<RectTransform>();
             if (rect != null)
             {
-                rect.anchorMin = new Vector2(0.5f, 0.5f);
-                rect.anchorMax = new Vector2(0.5f, 0.5f);
-                rect.sizeDelta = config.buttonSize;
+                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0f);
+                rect.pivot = new Vector2(0.5f, 0f);
+                rect.anchoredPosition = new Vector2(0f, 40f);
             }
-
-            foreach (var child in button.GetComponentsInChildren<RectTransform>(true))
-            {
-                if (child == rect)
-                    continue;
-                if (child.gameObject.name == "_iconImg")
-                {
-                    child.gameObject.SetActive(false);
-                    continue;
-                }
-                if (child.gameObject.name == "_backgroundImg" || child.gameObject.name == "Content_Target")
-                    child.sizeDelta = config.buttonSize;
-            }
-
-            var labelParent = button.transform.Find("Content_Target");
-            if (labelParent == null)
-                labelParent = button.transform;
-
-            var textGo = new GameObject("Text");
-            textGo.transform.SetParent(labelParent, false);
-            var textRect = textGo.AddComponent<RectTransform>();
-            textRect.anchorMin = Vector2.zero;
-            textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = Vector2.zero;
-            textRect.offsetMax = Vector2.zero;
-
-            var tmp = textGo.AddComponent<TextMeshProUGUI>();
-            tmp.text = label;
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.fontSize = 36f;
-            tmp.color = Color.white;
-            tmp.raycastTarget = false;
-            var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetDatabase.GUIDToAssetPath(ButtonFontGuid));
-            if (font != null)
-                tmp.font = font;
-
-            created.Add(button);
         }
 
         static BundleDownloadUI PlaceDownloadUi(MainMenuConfig config, GameObject mobile)
@@ -343,10 +265,11 @@ namespace SickOfIt.Tools.Editor.Generation
             var root = new GameObject("Bundle Download Panel", typeof(RectTransform));
             root.transform.SetParent(safe, false);
             var rect = root.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = new Vector2(0f, 1f);
+            // Bottom-center, above the preload spinner; the top corners hold the menu's stat chips.
+            rect.anchorMin = new Vector2(0.5f, 0f);
+            rect.anchorMax = new Vector2(0.5f, 0f);
             rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition = new Vector2(200f, -100f);
+            rect.anchoredPosition = new Vector2(0f, 190f);
             rect.sizeDelta = new Vector2(500f, 100f);
             root.AddComponent<CanvasGroup>();
 
@@ -401,7 +324,7 @@ namespace SickOfIt.Tools.Editor.Generation
             return tmp;
         }
 
-        static void PlaceManagers(List<GameObject> buttons, out SceneLoadingManager loading, out BundleDownloadManager download)
+        static void PlaceManagers(out SceneLoadingManager loading, out BundleDownloadManager download)
         {
             var managers = new GameObject("Game Managers");
             managers.AddComponent<GameProgressManager>();
@@ -410,17 +333,9 @@ namespace SickOfIt.Tools.Editor.Generation
             new GameObject("Roguelite Manager").AddComponent<RogueliteManager>();
             new GameObject("Addressables Operation Manager").AddComponent<AddressablesOperationManager>();
 
+            // The runtime menu registers itself to be hidden on load (SceneLoadingManager.HideOnLoad).
             var loadingGo = new GameObject("Scene Loading Manager");
             loading = loadingGo.AddComponent<SceneLoadingManager>();
-            var loadingSo = new SerializedObject(loading);
-            var hide = loadingSo.FindProperty("objectsToDeactivateOnLoad");
-            hide.ClearArray();
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                hide.InsertArrayElementAtIndex(i);
-                hide.GetArrayElementAtIndex(i).objectReferenceValue = buttons[i];
-            }
-            loadingSo.ApplyModifiedPropertiesWithoutUndo();
 
             var downloadGo = new GameObject("Bundle Download Manager");
             download = downloadGo.AddComponent<BundleDownloadManager>();
@@ -448,41 +363,13 @@ namespace SickOfIt.Tools.Editor.Generation
             downloadSo.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        static void WireMenu(GameObject mobile, MainMenuConfig config, List<GameObject> buttons, BundleDownloadManager downloadManager, SceneLoadingManager loading, GameObject character)
+        static void WireMenu(GameObject mobile, MainMenuConfig config, BundleDownloadManager downloadManager, SceneLoadingManager loading, GameObject character)
         {
             if (mobile == null)
                 return;
 
             var menu = mobile.AddComponent<MainMenuManager>();
             var so = new SerializedObject(menu);
-
-            AssignButton(so, "continueButton", buttons, "(Prb)ButtonContinue");
-            AssignButton(so, "newGameButton", buttons, "(Prb)ButtonNewGame");
-            AssignButton(so, "levelSelectButton", buttons, "(Prb)ButtonLevelSelect");
-            AssignButton(so, "videosButton", buttons, "(Prb)ButtonVideos");
-            AssignButton(so, "upgradeShopButton", buttons, "(Prb)ButtonShop");
-            AssignButton(so, "quitButton", buttons, "(Prb)ButtonQuit");
-
-            var continueButton = FindButton(buttons, "(Prb)ButtonContinue");
-            if (continueButton != null)
-            {
-                var label = continueButton.GetComponentInChildren<TextMeshProUGUI>(true);
-                so.FindProperty("continueButtonText").objectReferenceValue = label;
-            }
-
-            TextMeshProUGUI health = null;
-            TextMeshProUGUI points = null;
-            foreach (var tmp in mobile.GetComponentsInChildren<TextMeshProUGUI>(true))
-            {
-                if (tmp.gameObject.name == "CumulativeHealth")
-                    health = tmp;
-                else if (tmp.gameObject.name == "Points")
-                    points = tmp;
-            }
-            if (health != null)
-                so.FindProperty("cumulativeHealthText").objectReferenceValue = health;
-            if (points != null)
-                so.FindProperty("pointsText").objectReferenceValue = points;
 
             so.FindProperty("sceneLoadingManager").objectReferenceValue = loading;
             so.FindProperty("bundleDownloadManager").objectReferenceValue = downloadManager;
@@ -540,24 +427,6 @@ namespace SickOfIt.Tools.Editor.Generation
             if (input != null)
                 pcSo.FindProperty("gameInputManager").objectReferenceValue = input;
             pcSo.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        static void AssignButton(SerializedObject so, string property, List<GameObject> buttons, string objectName)
-        {
-            var button = FindButton(buttons, objectName);
-            if (button == null)
-                return;
-            so.FindProperty(property).objectReferenceValue = button.GetComponent<MobileControllerFramework.Button>();
-        }
-
-        static GameObject FindButton(List<GameObject> buttons, string objectName)
-        {
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                if (buttons[i] != null && buttons[i].name == objectName)
-                    return buttons[i];
-            }
-            return null;
         }
 
         static GameObject FindInLoadedScene(string objectName)

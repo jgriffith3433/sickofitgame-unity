@@ -9,7 +9,7 @@ namespace SickOfIt.Combat.Damage
     /// Pool-aware: returns to ObjectPool on hit instead of Destroy.
     /// Implements IPoolReturnable so ObjectPool can wire the pool reference directly.
     /// </summary>
-    public class DamageDealer : MonoBehaviour, SickOfIt.Core.IPoolReturnable
+    public class DamageDealer : MonoBehaviour, SickOfIt.Core.IPoolReturnable, SickOfIt.Core.IProjectileDamage
     {
         [Header("Damage Settings")]
         [SerializeField] private int damageAmount = 1;
@@ -25,6 +25,15 @@ namespace SickOfIt.Combat.Damage
 
         private bool hasDealtDamage = false;
         private SickOfIt.Core.ObjectPool ownerPool;
+        private int baseDamage = -1;
+
+        /// <summary>Scales damage from the prefab's value (player upgrades).</summary>
+        public void SetDamageMultiplier(float multiplier)
+        {
+            if (baseDamage < 0)
+                baseDamage = damageAmount;
+            damageAmount = Mathf.Max(1, Mathf.RoundToInt(baseDamage * multiplier));
+        }
 
         /// <summary>
         /// Set the pool this projectile belongs to. Called by ObjectPool or generator.

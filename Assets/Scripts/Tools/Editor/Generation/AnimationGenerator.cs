@@ -65,6 +65,8 @@ namespace SickOfIt.Tools.Editor.Generation
                 int fps = stateConfig.fps > 0 ? stateConfig.fps : fallbackFps;
 
                 var sprites = LoadSprites(spriteSheet, stateConfig.spriteNameFilter);
+                if (sprites != null)
+                    sprites = stateConfig.SelectFrames(sprites);
                 if (sprites == null || sprites.Count == 0)
                 {
                     Debug.LogWarning($"[AnimationGenerator] No sprites for state '{stateConfig.stateName}' of {entityName}");

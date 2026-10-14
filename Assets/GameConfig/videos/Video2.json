@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "videoName": "Video2",
+  "videoNumber": 2,
+  "displayName": "After Level 1",
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "alwaysUnlocked": false,
+  "spriteFramesData": "Videos/Video2.asset",
+  "audio": "Videos/Video2_Audio.mp3",
+  "afterLevel": 1,
+  "nextLevel": 2,
+  "returnToMainMenu": false,
+  "timeline": {
+    "duration": 60.0,
+    "events": [],
+    "tracks": []
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "extends": "shooter",
+  "health": 4,
+  "tags": ["sprayer"],
+  "visual": {
+    "color": "#D69CFF"
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.3
+    }
+  ],
+  "abilities": [
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "pattern": {
+        "type": "sweep",
+        "fromAngle": -55,
+        "toAngle": 55,
+        "steps": 9
+      },
+      "speed": 2.8,
+      "aim": "Player",
+      "interval": 0.28,
+      "initialDelay": 1.5
+    }
+  ]
+}

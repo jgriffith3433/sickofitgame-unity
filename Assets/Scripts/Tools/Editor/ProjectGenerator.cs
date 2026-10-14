@@ -50,7 +50,16 @@ namespace SickOfIt.Tools.Editor
         public static void GenerateProject()
         {
             ////Debug.Log("=== GENERATING PROJECT FROM CONFIG ===");
-            
+
+            // Assets/GameConfig is the source of truth: pull in any JSON edits before reading GameDefinition.
+            if (!GameConfig.GameConfigSync.ImportIfChanged("Generate Project"))
+            {
+                Debug.LogError($"Generate Project stopped: the game config has errors. See {GameConfig.GameConfigReport.LogPath}.");
+                if (!Application.isBatchMode)
+                    EditorUtility.DisplayDialog("Generate Project", $"The game config has errors, so nothing was generated.\n\nSee {GameConfig.GameConfigReport.LogPath}.", "OK");
+                return;
+            }
+
             var gd = LoadGameDefinition();
             if (gd == null) return;
 

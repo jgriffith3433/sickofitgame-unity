@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "extends": "sentinel",
+  "health": 5,
+  "activationRange": 0,
+  "tags": ["spinner"],
+  "visual": {
+    "color": "#7FD8FF"
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.35
+    }
+  ],
+  "abilities": [
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileLaser",
+      "pattern": {
+        "type": "radial",
+        "count": 8,
+        "rotationPerVolley": 14
+      },
+      "speed": 2.4,
+      "aim": "Right",
+      "interval": 1.1,
+      "initialDelay": 1.0
+    }
+  ]
+}

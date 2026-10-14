@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "levels": ["Level1", "Level2", "Level3", "Level4", "Level5"],
+  "videos": ["Video1", "Video2", "Video3", "Video4"],
+  "deaths": ["Death1", "Death2", "Death3"],
+  "enemyTypes": ["Chaser", "Fighter", "Sentinel", "Shooter"],
+  "projectileConfigs": ["Player", "Enemy", "Laser"],
+  "platformColliderHeight": 0.1,
+  "presentation": {
+    "layerSpacing": 2.0,
+    "platformOrder": 0,
+    "shadowOrder": 1,
+    "characterOrder": 2,
+    "pickupOrder": 3,
+    "projectileOrder": 4,
+    "healthBarOrder": 10,
+    "overlayOrder": 1000,
+    "platformColor": "#666666"
+  },
+  "characterArt": {
+    "playerSourceRoot": "C:\\Projects\\SickOfItGamePlayer",
+    "enemySourceRoot": "C:\\Projects\\SickOfItGameEnemies",
+    "maxSheetSize": 4096,
+    "pixelsPerUnit": 100.0,
+    "clearCutoff": 28
+  },
+  "sourceMedia": {
+    "videoRoot": "C:\\Projects\\SickOfItGameVideos",
+    "objectRoot": "C:\\Projects\\SickOfItGameObjects",
+    "imageRoot": "C:\\Projects\\SickOfItGameImages"
+  },
+  "levelCameraOrthoSize": 2.8,
+  "cinematicCameraOrthoSize": 2.8,
+  "cinematicCameraBackground": "#000000",
+  "groundY": -3.0,
+  "groundColliderSize": [14.0, 1.0],
+  "wallX": 7.0,
+  "wallColliderSize": [1.0, 8.0],
+  "defaultLevelDuration": 60.0,
+  "rewindRecordInterval": 0.05,
+  "rewindMaxHistorySeconds": 30.0,
+  "rewindBudget": {
+    "enabled": true,
+    "startSeconds": 3.0,
+    "maxSeconds": 5.0,
+    "costPerSecond": 1.0
+  },
+  "levelUIPrefab": "Prefabs/MobileController.prefab",
+  "videoUIPrefab": "Prefabs/MobileController.prefab",
+  "deathUIPrefab": "Prefabs/MobileController.prefab",
+  "levelCameraPrefab": "Prefabs/Camera.prefab",
+  "videoCameraPrefab": "Prefabs/Camera.prefab",
+  "deathCameraPrefab": "Prefabs/Camera.prefab",
+  "remoteContentUrl": "",
+  "pickupPrefab": "Prefabs/Diamond.prefab",
+  "platformPrefab": "Prefabs/Platform.prefab"
+}

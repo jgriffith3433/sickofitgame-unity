@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "deathName": "Death1",
+  "displayName": "Death 1",
+  "spriteFramesData": "Videos/Death1.asset",
+  "audio": "Videos/Death1_Audio.mp3",
+  "delayBeforeReload": 1.0,
+  "timeline": {
+    "duration": 60.0,
+    "events": [],
+    "tracks": []
+  }
+}

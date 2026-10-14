@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "steps": [
+    {
+      "type": "lockInput",
+      "seconds": 2.5
+    },
+    {
+      "type": "playerInvincible",
+      "seconds": 3.5
+    },
+    {
+      "type": "cameraShake",
+      "intensity": 0.3,
+      "duration": 1.0
+    },
+    {
+      "type": "showText",
+      "text": "MAGMA KING",
+      "duration": 2.0,
+      "color": "#FF6633"
+    },
+    {
+      "type": "showText",
+      "text": "He's hot, he's angry, and he skipped lunch.",
+      "style": "Subtitle",
+      "duration": 2.5
+    },
+    {
+      "type": "wait",
+      "seconds": 1.2
+    },
+    {
+      "type": "spawn",
+      "entity": "magmaKing",
+      "id": "boss",
+      "anchor": "Camera",
+      "at": [4, 1]
+    },
+    {
+      "type": "bossBar",
+      "target": {
+        "id": "boss"
+      },
+      "label": "Magma King (furious)"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "extends": "shooter",
+  "health": 2,
+  "moveSpeed": 2.5,
+  "tags": ["drone"],
+  "visual": {
+    "scale": 0.22,
+    "color": "#9FFFE0"
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.25
+    }
+  ],
+  "abilities": [
+    {
+      "type": "hover",
+      "offset": [2.5, 1.8],
+      "speed": 2.5,
+      "bobHeight": 0.2
+    },
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "speed": 3.6,
+      "aim": "Player",
+      "interval": 2.2,
+      "initialDelay": 1.5,
+      "burst": 3,
+      "burstInterval": 0.15
+    }
+  ]
+}

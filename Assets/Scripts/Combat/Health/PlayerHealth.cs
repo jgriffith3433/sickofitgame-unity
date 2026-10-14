@@ -53,6 +53,14 @@ namespace SickOfIt.Combat.Health
         /// <summary>
         /// Set invincibility timer directly (used by rewind system to restore i-frame state).
         /// </summary>
+        /// <summary>Raises (or lowers) maximum health mid-level, healing by <paramref name="heal"/>.</summary>
+        public void SetMaxHealth(int max, int heal)
+        {
+            maxHealth = Mathf.Max(1, max);
+            currentHealth = Mathf.Clamp(currentHealth + heal, 0, maxHealth);
+            onHealthChanged?.Invoke(currentHealth);
+        }
+
         public void SetInvincibilityTimer(float time)
         {
             invincibilityTimer = Mathf.Max(0f, time);
@@ -88,6 +96,9 @@ namespace SickOfIt.Combat.Health
         public void InitializeForLevel(int levelNumber)
         {
             currentLevelNumber = levelNumber;
+            var definition = GameDefinition.Instance;
+            if (definition != null && definition.player != null)
+                invincibilityDuration = definition.player.invincibilityDuration;
             maxHealth = RogueliteManager.Instance.GetMaxHealth();
             currentHealth = Mathf.Clamp(
                 RogueliteManager.Instance.GetStartingHealthForLevel(currentLevelNumber),
@@ -98,8 +109,28 @@ namespace SickOfIt.Combat.Health
 
         public void TakeDamage(int damage)
         {
-            if (!IsAlive || IsInvincible)
+            TakeDamage(damage, false);
+        }
+
+        /// <summary>
+        /// Damage that can skip the post-hit invincibility window, for damage over time (sludge, poison).
+        /// It still doesn't start a new invincibility window, so regular hits aren't blocked by ticks.
+        /// </summary>
+        public void TakeDamage(int damage, bool ignoreInvincibility)
+        {
+            if (!IsAlive || (IsInvincible && !ignoreInvincibility))
                 return;
+            if (ignoreInvincibility)
+            {
+                currentHealth = Mathf.Max(0, currentHealth - damage);
+                onDamaged?.Invoke();
+                onHealthChanged?.Invoke(currentHealth);
+                if (controller != null)
+                    controller.PlayHurtSound();
+                if (currentHealth <= 0)
+                    Die();
+                return;
+            }
 
             currentHealth = Mathf.Max(0, currentHealth - damage);
             onDamaged?.Invoke();

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "Laser",
+  "displayName": "",
+  "sprite": null,
+  "scale": 0.15,
+  "color": "#00000000",
+  "sortingLayer": "",
+  "sortingOrder": 0,
+  "colliderRadius": 1.0,
+  "isTrigger": false,
+  "damage": 1,
+  "speed": 12.0,
+  "lifetime": 1.5,
+  "layerName": "",
+  "tag": "",
+  "poolSize": 10,
+  "fireSound": null,
+  "hitSound": null,
+  "expireSound": null,
+  "spriteSheet": "Images/Fireball.png",
+  "animationFps": 0,
+  "animationConfig": {
+    "parameters": [],
+    "states": [],
+    "transitions": [],
+    "defaultStateName": ""
+  }
+}

@@ -40,6 +40,13 @@ namespace SickOfIt.Core.Flow
                 _currentInstance.ActivateLoadingUI();
         }
 
+        /// <summary>Hides 'target' when loading starts, like objectsToDeactivateOnLoad (for UI built at runtime).</summary>
+        public static void HideOnLoad(GameObject target)
+        {
+            if (_currentInstance != null && target != null && !_currentInstance.objectsToDeactivateOnLoad.Contains(target))
+                _currentInstance.objectsToDeactivateOnLoad.Add(target);
+        }
+
         private void ActivateLoadingUI()
         {
             if (isLoading) return;

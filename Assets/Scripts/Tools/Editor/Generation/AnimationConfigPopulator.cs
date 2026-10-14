@@ -389,7 +389,7 @@ namespace SickOfIt.Tools.Editor.Generation
                     new AnimatorParameterConfig { name = "Velocity_X", type = AnimatorParameterType.Float },
                     new AnimatorParameterConfig { name = "Velocity_Z", type = AnimatorParameterType.Float },
                     new AnimatorParameterConfig { name = "Jump", type = AnimatorParameterType.Trigger },
-                    new AnimatorParameterConfig { name = "Fire", type = AnimatorParameterType.Trigger }
+                    new AnimatorParameterConfig { name = "Firing", type = AnimatorParameterType.Bool }
                 },
                 states = new List<AnimationStateConfig>
                 {
@@ -421,7 +421,7 @@ namespace SickOfIt.Tools.Editor.Generation
                     {
                         stateName = "Fire",
                         fps = config.animationFps,
-                        loop = false
+                        loop = true
                     }
                 },
                 transitions = new List<AnimationTransitionConfig>
@@ -472,20 +472,15 @@ namespace SickOfIt.Tools.Editor.Generation
                             new TransitionConditionConfig { parameterName = "OnGround", mode = ConditionMode.If }
                         }
                     },
-                    // Any → Fire on trigger
-                    new AnimationTransitionConfig
-                    {
-                        fromState = "Any", toState = "Fire",
-                        conditions = new List<TransitionConditionConfig>
-                        {
-                            new TransitionConditionConfig { parameterName = "Fire", mode = ConditionMode.If }
-                        }
-                    },
-                    // Fire → Idle after clip plays
+                    // PlayerController enters Fire on every shot (restarting it so the flash lines up);
+                    // Fire loops until the fire button is released.
                     new AnimationTransitionConfig
                     {
                         fromState = "Fire", toState = "Idle",
-                        hasExitTime = true, exitTime = 1f
+                        conditions = new List<TransitionConditionConfig>
+                        {
+                            new TransitionConditionConfig { parameterName = "Firing", mode = ConditionMode.IfNot }
+                        }
                     }
                 }
             };

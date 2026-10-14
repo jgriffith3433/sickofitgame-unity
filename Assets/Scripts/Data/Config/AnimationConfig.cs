@@ -70,6 +70,10 @@ namespace SickOfIt.Data.Config
         public Texture2D spriteSheet;
         [Tooltip("If the sheet has multiple rows, which sprites to use (by name prefix). Leave empty to use all.")]
         public string spriteNameFilter;
+        [Tooltip("Skip this many frames (after the name filter), e.g. to play only part of a long sheet.")]
+        public int firstFrame = 0;
+        [Tooltip("How many frames to play from firstFrame. 0 = through the last frame.")]
+        public int frameCount = 0;
 
         [Header("Playback")]
         public int fps = 12;
@@ -82,6 +86,20 @@ namespace SickOfIt.Data.Config
         [Header("Speed")]
         [Tooltip("Playback speed multiplier for this state")]
         public float speed = 1f;
+
+        /// <summary>The part of a sheet's frames (already name-filtered and in order) this state plays.</summary>
+        public List<T> SelectFrames<T>(IReadOnlyList<T> frames) => SelectFrames(frames, firstFrame, frameCount);
+
+        /// <summary>frames[firstFrame ..] limited to frameCount (0 = through the end), clamped to what exists.</summary>
+        public static List<T> SelectFrames<T>(IReadOnlyList<T> frames, int firstFrame, int frameCount)
+        {
+            int start = Mathf.Clamp(firstFrame, 0, frames.Count);
+            int count = frameCount > 0 ? Mathf.Min(frameCount, frames.Count - start) : frames.Count - start;
+            var selected = new List<T>(count);
+            for (int i = 0; i < count; i++)
+                selected.Add(frames[start + i]);
+            return selected;
+        }
     }
 
     /// <summary>

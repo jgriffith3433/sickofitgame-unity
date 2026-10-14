@@ -2,37 +2,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
-using MobileControllerFramework;
 using SickOfIt.Core.Flow;
+using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 using SickOfIt.VideoFrameExtractor.Runtime;
 
 namespace SickOfIt.Core.Progression
 {
     /// <summary>
-    /// Manages the Main Menu scene.
+    /// Manages the Main Menu scene. The title, buttons, stickers and stats are built at runtime from
+    /// mainMenuConfig.layout/labels and ui/theme.json (see <see cref="MenuCanvas"/>).
     /// No PlayableDirectors — transitions use simple coroutine-based fades.
     /// </summary>
     public class MainMenuManager : MonoBehaviour
     {
-        [Header("UI References")]
-        [SerializeField] private MobileControllerFramework.Button continueButton;
-        [SerializeField] private MobileControllerFramework.Button newGameButton;
-        [SerializeField] private MobileControllerFramework.Button levelSelectButton;
-        [SerializeField] private MobileControllerFramework.Button videosButton;
-        [SerializeField] private MobileControllerFramework.Button quitButton;
-        [SerializeField] private MobileControllerFramework.Button upgradeShopButton;
-
-        [Header("Optional UI Elements")]
-        [SerializeField] private TextMeshProUGUI continueButtonText;
-
-        [Header("Roguelite UI")]
-        [Tooltip("Displays Yooba's cumulative health on the main menu.")]
-        [SerializeField] private TextMeshProUGUI cumulativeHealthText;
-        [Tooltip("Displays the player's current points.")]
-        [SerializeField] private TextMeshProUGUI pointsText;
-
         [Header("Scene Loading")]
         [SerializeField] private SceneLoadingManager sceneLoadingManager;
 
@@ -58,6 +42,7 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private AudioClip explodeAudio;
 
         private bool isTransitioning = false;
+        private MenuCanvas menu;
 
         private void Start()
         {
@@ -68,23 +53,21 @@ namespace SickOfIt.Core.Progression
                 explodeRoot.SetActive(false);
 
             ApplyMenuConfig();
-            SetupButtons();
-            UpdateContinueButton();
-            UpdateRogueliteUI();
+            BuildMenu();
             SetupBundleDownloadManager();
         }
 
         private void ApplyMenuConfig()
         {
-            var menu = GameDefinition.Instance != null ? GameDefinition.Instance.mainMenuConfig : null;
-            if (menu == null)
+            var config = GameDefinition.Instance != null ? GameDefinition.Instance.mainMenuConfig : null;
+            if (config == null)
                 return;
 
-            hideDelay = menu.hideDelay;
-            transitionDelay = menu.transitionDelay;
-            PlacedSpriteBuilder.Bind(menu.placedSprites);
+            hideDelay = config.hideDelay;
+            transitionDelay = config.transitionDelay;
+            PlacedSpriteBuilder.Bind(config.placedSprites);
 
-            if (!menu.placeCharacter)
+            if (!config.placeCharacter)
                 return;
 
             var transforms = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
@@ -93,57 +76,50 @@ namespace SickOfIt.Core.Progression
                 if (transforms[i] == null || transforms[i].name != "Character")
                     continue;
                 var position = transforms[i].localPosition;
-                position.x = menu.characterPosition.x;
-                position.y = menu.characterPosition.y;
+                position.x = config.characterPosition.x;
+                position.y = config.characterPosition.y;
                 transforms[i].localPosition = position;
                 break;
             }
         }
 
-        private void SetupButtons()
+        private void BuildMenu()
         {
-            if (continueButton != null)
-                continueButton.TapEndEvent.AddListener(OnContinueClicked);
-            if (newGameButton != null)
-                newGameButton.TapEndEvent.AddListener(OnNewGameClicked);
-            if (levelSelectButton != null)
-                levelSelectButton.TapEndEvent.AddListener(OnLevelSelectClicked);
-            if (videosButton != null)
-                videosButton.TapEndEvent.AddListener(OnVideosClicked);
-            if (quitButton != null)
-                quitButton.TapEndEvent.AddListener(OnQuitClicked);
-            if (upgradeShopButton != null)
-                upgradeShopButton.TapEndEvent.AddListener(OnUpgradeShopClicked);
-        }
-
-        private void UpdateContinueButton()
-        {
-            if (continueButton == null) return;
+            var gd = GameDefinition.Instance;
+            var config = gd != null ? gd.mainMenuConfig : new MainMenuConfig();
+            var labels = config.labels ?? new MainMenuLabels();
+            menu = MenuCanvas.Create("MainMenuUI", gd != null ? gd.menuTheme : null, config.layout);
+            var list = menu.AddList(config.layout.list, menu.Theme.button.size);
 
             int currentLevel = GameProgressManager.Instance.GetCurrentLevel();
             int totalLevels = GameProgressManager.Instance.GetTotalLevels();
+            if (config.showContinueButton && currentLevel <= totalLevels)
+                Add(list, string.Format(labels.continueGame, currentLevel), OnContinueClicked);
+            if (config.showNewGameButton)
+                Add(list, labels.newGame, OnNewGameClicked);
+            if (config.showLevelSelectButton)
+                Add(list, labels.levelSelect, OnLevelSelectClicked);
+            if (config.showVideosButton)
+                Add(list, labels.videos, OnVideosClicked);
+            if (config.showUpgradeShopButton)
+                Add(list, labels.shop, OnUpgradeShopClicked);
+            // Quitting does nothing in a browser tab.
+            if (config.showQuitButton && Application.platform != RuntimePlatform.WebGLPlayer)
+                Add(list, labels.quit, OnQuitClicked);
 
-            if (currentLevel > totalLevels)
+            if (config.showCumulativeHealth)
             {
-                continueButton.gameObject.SetActive(false);
-                return;
+                int maxHealth = RogueliteManager.Instance.GetMaxHealth();
+                int health = RogueliteManager.Instance.GetCumulativeHealth(totalLevels);
+                menu.AddChip(string.Format(menu.Theme.healthFormat, health, maxHealth));
             }
-
-            continueButton.gameObject.SetActive(true);
-            if (continueButtonText != null)
-                continueButtonText.text = $"Continue (Level {currentLevel})";
+            if (config.showPointsDisplay)
+                menu.AddChip(string.Format(menu.Theme.pointsFormat, RogueliteManager.Instance.GetPoints()));
         }
 
-        private void UpdateRogueliteUI()
+        private void Add(RectTransform list, string text, Action onClick)
         {
-            int totalLevels = GameProgressManager.Instance.GetTotalLevels();
-            int maxHealth = RogueliteManager.Instance.GetMaxHealth();
-            int cumulativeHealth = RogueliteManager.Instance.GetCumulativeHealth(totalLevels);
-
-            if (cumulativeHealthText != null)
-                cumulativeHealthText.text = $"Yooba's Health: {cumulativeHealth} / {maxHealth}";
-            if (pointsText != null)
-                pointsText.text = $"Diamonds: {RogueliteManager.Instance.GetPoints()}";
+            menu.AddButton(list, text, menu.Theme.button, onClick);
         }
 
         private void OnContinueClicked()
@@ -207,6 +183,9 @@ namespace SickOfIt.Core.Progression
                 foreach (var obj in objectsToHideOnStart)
                     if (obj != null) obj.SetActive(false);
             }
+
+            if (menu != null)
+                menu.PlayExit(0.35f);
 
             if (explodeRoot != null)
                 explodeRoot.SetActive(true);
@@ -322,22 +301,14 @@ namespace SickOfIt.Core.Progression
 
         private void DisableAllButtons()
         {
-            if (continueButton != null) continueButton.Disable();
-            if (newGameButton != null) newGameButton.Disable();
-            if (levelSelectButton != null) levelSelectButton.Disable();
-            if (videosButton != null) videosButton.Disable();
-            if (quitButton != null) quitButton.Disable();
-            if (upgradeShopButton != null) upgradeShopButton.Disable();
+            if (menu != null)
+                menu.SetInteractable(false);
         }
 
         private void EnableAllButtons()
         {
-            if (continueButton != null && continueButton.gameObject.activeSelf) continueButton.Enable();
-            if (newGameButton != null) newGameButton.Enable();
-            if (levelSelectButton != null) levelSelectButton.Enable();
-            if (videosButton != null) videosButton.Enable();
-            if (quitButton != null) quitButton.Enable();
-            if (upgradeShopButton != null) upgradeShopButton.Enable();
+            if (menu != null && !isTransitioning)
+                menu.SetInteractable(true);
         }
     }
 }

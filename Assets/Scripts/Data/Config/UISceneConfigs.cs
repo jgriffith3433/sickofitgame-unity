@@ -41,10 +41,6 @@ namespace SickOfIt.Data.Config
         [Header("Base Settings")]
         public UISceneConfig baseConfig = new UISceneConfig();
         
-        [Header("Button Prefabs")]
-        [Tooltip("Base button prefab template (MobileControllerFramework.Button)")]
-        public GameObject buttonPrefab;
-        
         [Header("Button Visibility")]
         public bool showContinueButton = true;
         public bool showNewGameButton = true;
@@ -53,13 +49,14 @@ namespace SickOfIt.Data.Config
         public bool showUpgradeShopButton = true;
         public bool showQuitButton = true;
         
-        [Header("Button Layout")]
-        public float buttonSpacing = 50f;
-        public Vector2 buttonSize = new Vector2(300, 80);
-        
         [Header("Roguelite UI")]
         public bool showCumulativeHealth = true;
         public bool showPointsDisplay = true;
+
+        [Header("Look")]
+        [Tooltip("Title, buttons, stickers and backdrop, built at runtime (style comes from ui/theme.json).")]
+        public MenuLayoutConfig layout = new MenuLayoutConfig();
+        public MainMenuLabels labels = new MainMenuLabels();
         
         [Header("Bundle Download UI")]
         public bool showBundleDownloadUI = true;
@@ -108,21 +105,17 @@ namespace SickOfIt.Data.Config
         [Header("Base Settings")]
         public UISceneConfig baseConfig = new UISceneConfig();
 
-        [Header("Title")]
-        public string title = "Select";
-        
-        [Header("Button Container")]
-        public float buttonSpacing = 20f;
-        public Vector2 buttonSize = new Vector2(420, 130);
-        
-        [Header("Button Prefabs")]
-        [Tooltip("Button prefab for selection items (LevelButton/VideoButton)")]
-        public GameObject itemButtonPrefab;
-        [Tooltip("Back button prefab")]
-        public GameObject backButtonPrefab;
-        
         [Header("Roguelite UI")]
         public bool showCumulativeHealth = true;
+
+        [Header("Look")]
+        [Tooltip("Title, item grid, stickers and backdrop, built at runtime (style comes from ui/theme.json).")]
+        public MenuLayoutConfig layout = new MenuLayoutConfig();
+        [Tooltip("Small text above each item's name. {0} = its number.")]
+        public string captionFormat = "{0}";
+        public string playText = "PLAY";
+        public string lockedText = "LOCKED";
+        public string clearedText = "CLEARED";
     }
 
     /// <summary>
@@ -134,11 +127,6 @@ namespace SickOfIt.Data.Config
         [Header("Base Settings")]
         public UISceneConfig baseConfig = new UISceneConfig();
 
-        [Header("Title")]
-        public string title = "Upgrade Shop";
-        public float buttonSpacing = 20f;
-        public Vector2 buttonSize = new Vector2(420, 130);
-        
         [Header("Upgrades")]
         [Tooltip("Used only when PlayerConfig.availableUpgrades is empty. The player list is the catalog.")]
         public UpgradeDefinition[] upgrades = new UpgradeDefinition[]
@@ -153,12 +141,16 @@ namespace SickOfIt.Data.Config
             }
         };
         
-        [Header("Button Prefabs")]
-        public GameObject backButtonPrefab;
-        public GameObject buyButtonPrefab;
-        
         [Header("Debug")]
         public bool showDebugAddPoints = true;
         public int debugPointsAmount = 500;
+
+        [Header("Look")]
+        [Tooltip("Title, upgrade cards, stickers and backdrop, built at runtime (style comes from ui/theme.json).")]
+        public MenuLayoutConfig layout = new MenuLayoutConfig();
+        [Tooltip("{0} = cost.")]
+        public string buyFormat = "BUY ♦ {0}";
+        public string maxedText = "MAXED OUT";
+        public string comingSoonText = "COMING SOON";
     }
 }

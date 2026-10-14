@@ -9,6 +9,8 @@ using SickOfIt.Core.Flow;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 using SickOfIt.VideoFrameExtractor.Runtime;
+using SickOfIt.Gameplay;
+using SickOfIt.Gameplay.Content;
 
 namespace SickOfIt.Core.Progression
 {
@@ -20,7 +22,7 @@ namespace SickOfIt.Core.Progression
     /// 
     /// Added directly to generated scenes by ProjectGenerator / LevelSceneGenerator.
     /// </summary>
-    public class LevelRuntime : MonoBehaviour
+    public class LevelRuntime : MonoBehaviour, ILevelHost
     {
         #region Config
 
@@ -58,6 +60,12 @@ namespace SickOfIt.Core.Progression
 
         // Resolved scene references
         private PlayerHealth playerHealth;
+        private LevelScript script;
+        private GameplayWorld gameplayWorld;
+
+        /// <summary>The level's gameplay script, or null for a level that uses the enemies list.</summary>
+        public LevelScript Script => script;
+        public GameplayWorld World => gameplayWorld;
         private Transform enemyContainer;
         private Transform platformContainer;
 
@@ -132,25 +140,78 @@ namespace SickOfIt.Core.Progression
             SpawnPlacedSprites();
             StartExperience();
             SetupRewind();
-            SpawnEnemies();
+
+            // A level with a gameplay script hands spawning and winning to the script.
+            var content = GameContent.Current;
+            content.LevelScripts.TryGetValue(config.levelName, out script);
+            if (script == null)
+                SpawnEnemies();
             SpawnPlatforms();
-            SpawnBarriers();
+            if (script == null || script.world.camera == CameraMode.Static)
+                SpawnBarriers();
 
             // Player init
             if (playerHealth != null)
             {
                 playerHealth.SetDeathSceneName(config.deathConfigName);
                 playerHealth.InitializeForLevel(levelNumber);
+                playerHealth.onDeath.AddListener(OnPlayerDied);
             }
+
+            gameplayWorld = GameplayWorld.Create(new WorldSetup
+            {
+                Content = content,
+                Script = script,
+                LevelNumber = levelNumber,
+                LevelName = config.levelName,
+                Player = characterObject,
+                Camera = Camera.main,
+                Music = musicSource,
+                PickupPool = pickupPool,
+                Host = this,
+                BackgroundRoot = backgroundsContainer,
+                Scene = gameObject.scene,
+                LevelDuration = config.duration,
+                RewindBudget = gameDefinition.rewindBudget,
+            });
+
             AnalyticsManager.Instance?.TrackLevelStart(levelNumber);
             StartCoroutine(PlaybackStartGate.Hold(gameClock, backgroundPlayers, musicSource, StartLevelMusic));
 
             //Debug.Log($"[LevelRuntime] Level {levelNumber} '{config.displayName}' — {config.EnemyCount} enemies, {config.platforms?.Count ?? 0} platforms, {config.duration}s");
         }
 
+        private void OnEnable()
+        {
+            GameContent.Changed += OnContentChanged;
+        }
+
+        private void OnDisable()
+        {
+            GameContent.Changed -= OnContentChanged;
+        }
+
+        /// <summary>The config was reimported while playing (editor): restart the level with the new content.</summary>
+        private void OnContentChanged()
+        {
+            if (!Application.isEditor || levelCompleted || SceneTransitionManager.Instance == null)
+                return;
+            Debug.Log("[LevelRuntime] Game config changed — restarting the level with the new content.");
+            gameplayWorld?.Telemetry?.Finish("reloaded");
+            SceneTransitionManager.Instance.LoadLevel(levelNumber);
+        }
+
+        private void OnPlayerDied()
+        {
+            gameplayWorld?.Telemetry?.Finish("died");
+        }
+
         private void Update()
         {
             UpdateBackgroundSequence();
+            if (script != null)
+                return;
+
             TrySpawnDueEnemies();
             CheckWinZone();
 
@@ -160,6 +221,38 @@ namespace SickOfIt.Core.Progression
                 (GameClock.Instance == null || !GameClock.Instance.IsRewinding) &&
                 KillsSatisfied())
                 CompleteLevel();
+        }
+
+        // ─── ILevelHost (the gameplay script's way out of the level) ──────────
+
+        void ILevelHost.CompleteLevel() => CompleteLevel();
+        void ILevelHost.CancelCompletion() => CancelCompletion();
+
+        void ILevelHost.FailLevel()
+        {
+            gameplayWorld?.Telemetry?.Finish("failed");
+            if (!string.IsNullOrEmpty(config.deathConfigName))
+                SceneTransitionManager.Instance.LoadDeathScene(config.deathConfigName);
+            else
+                SceneTransitionManager.Instance.LoadLevel(levelNumber);
+        }
+
+        void ILevelHost.GoToLevel(int number)
+        {
+            gameplayWorld?.Telemetry?.Finish("left for level " + number);
+            SceneTransitionManager.Instance.LoadLevel(number);
+        }
+
+        void ILevelHost.PlayVideo(int number)
+        {
+            gameplayWorld?.Telemetry?.Finish("left for video " + number);
+            SceneTransitionManager.Instance.LoadVideo(number);
+        }
+
+        void ILevelHost.ReturnToMenu()
+        {
+            gameplayWorld?.Telemetry?.Finish("returned to menu");
+            SceneTransitionManager.Instance.LoadMainMenu();
         }
 
         #endregion
@@ -282,6 +375,8 @@ namespace SickOfIt.Core.Progression
         {
             if (experienceRunner != null)
                 experienceRunner.SetPlaybackHeld(false);
+            if (gameplayWorld != null)
+                gameplayWorld.Begin();
 
             if (musicSource == null || musicSource.clip == null)
                 return;
@@ -909,6 +1004,7 @@ namespace SickOfIt.Core.Progression
         {
             if (completionCommitted) return;
             completionCommitted = true;
+            gameplayWorld?.Telemetry?.Finish("completed");
 
             GameProgressManager.Instance.SetLevelCompleted(levelNumber);
             AnalyticsManager.Instance?.TrackLevelComplete(levelNumber);

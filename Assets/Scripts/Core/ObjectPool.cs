@@ -36,6 +36,8 @@ namespace SickOfIt.Core
         private readonly Dictionary<GameObject, Rewind.RewindableGameObject> cachedPresence = new Dictionary<GameObject, Rewind.RewindableGameObject>();
         private readonly Dictionary<GameObject, float> heldSince = new Dictionary<GameObject, float>();
 
+        private bool warnWhenGrowing = true;
+
         public int ActiveCount => active.Count;
         public int AvailableCount => available.Count;
 
@@ -109,6 +111,18 @@ namespace SickOfIt.Core
         {
             if (Rewind.RewindTimeline.Instance != null)
                 Rewind.RewindTimeline.Instance.UnregisterPool(this);
+        }
+
+        /// <summary>
+        /// Sets the template for a pool created at runtime (AddComponent leaves the prefab empty)
+        /// and pre-instantiates <paramref name="size"/> copies.
+        /// </summary>
+        public void Configure(GameObject template, int size, bool warnWhenGrowing = true)
+        {
+            prefab = template;
+            this.warnWhenGrowing = warnWhenGrowing;
+            initialSize = size;
+            Prewarm(Mathf.Max(0, size - available.Count - active.Count - cooling.Count));
         }
 
         /// <summary>
@@ -189,7 +203,8 @@ namespace SickOfIt.Core
             else
             {
                 // Pool exhausted — grow by one. Cooling instances are still rewindable.
-                Debug.LogWarning($"[ObjectPool] '{gameObject.name}' exhausted, growing. Consider increasing initialSize.");
+                if (warnWhenGrowing)
+                    Debug.LogWarning($"[ObjectPool] '{gameObject.name}' exhausted, growing. Consider increasing initialSize.");
                 obj = CreateInstance();
             }
 

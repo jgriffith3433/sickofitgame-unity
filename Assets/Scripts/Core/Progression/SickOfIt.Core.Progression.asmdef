@@ -5,6 +5,7 @@
     "SickOfIt.Data",
     "SickOfIt.Core",
     "SickOfIt.Combat",
+    "SickOfIt.Gameplay",
     "SickOfIt.VideoFrameExtractor.Runtime",
     "nappin.MobileControllerFramework",
     "Unity.TextMeshPro",

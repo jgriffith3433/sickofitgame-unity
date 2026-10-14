@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "playerPrefab": "Prefabs/Character.prefab",
+  "spriteSheet": "Art/Sprites/Player/Idle.png",
+  "animationFps": 12,
+  "spriteScale": 0.25,
+  "animationConfig": {
+    "parameters": [
+      {
+        "name": "OnGround",
+        "type": "Bool",
+        "defaultValue": 1.0
+      },
+      {
+        "name": "Velocity_X",
+        "type": "Float",
+        "defaultValue": 0.0
+      },
+      {
+        "name": "Velocity_Z",
+        "type": "Float",
+        "defaultValue": 0.0
+      },
+      {
+        "name": "Jump",
+        "type": "Trigger",
+        "defaultValue": 0.0
+      },
+      {
+        "name": "Firing",
+        "type": "Bool",
+        "defaultValue": 0.0
+      }
+    ],
+    "states": [
+      {
+        "stateName": "Idle",
+        "spriteSheet": "Art/Sprites/Player/Idle.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Walk",
+        "spriteSheet": "Art/Sprites/Player/Walk.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Jump",
+        "spriteSheet": "Art/Sprites/Player/Jump.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Fall",
+        "spriteSheet": "Art/Sprites/Player/Fall.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Fire",
+        "spriteSheet": "Art/Sprites/Player/Fire.png",
+        "spriteNameFilter": "",
+        "firstFrame": 12,
+        "frameCount": 18,
+        "fps": 60,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      }
+    ],
+    "transitions": [
+      {
+        "fromState": "Idle",
+        "toState": "Walk",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "Velocity_X",
+            "mode": "Greater",
+            "threshold": 0.1
+          },
+          {
+            "parameterName": "OnGround",
+            "mode": "If",
+            "threshold": 0.0
+          }
+        ]
+      },
+      {
+        "fromState": "Walk",
+        "toState": "Idle",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "Velocity_X",
+            "mode": "Less",
+            "threshold": 0.1
+          }
+        ]
+      },
+      {
+        "fromState": "Any",
+        "toState": "Jump",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "Jump",
+            "mode": "If",
+            "threshold": 0.0
+          }
+        ]
+      },
+      {
+        "fromState": "Jump",
+        "toState": "Fall",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "Velocity_Z",
+            "mode": "Less",
+            "threshold": -0.1
+          }
+        ]
+      },
+      {
+        "fromState": "Fall",
+        "toState": "Idle",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "OnGround",
+            "mode": "If",
+            "threshold": 0.0
+          }
+        ]
+      },
+      {
+        "fromState": "Fire",
+        "toState": "Idle",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "Firing",
+            "mode": "IfNot",
+            "threshold": 0.0
+          }
+        ]
+      }
+    ],
+    "defaultStateName": "Idle"
+  },
+  "shadowSprite": null,
+  "moveSpeed": 2.0,
+  "jumpForce": 9.0,
+  "gravityScale": 1.8,
+  "groundCheckDistance": 0.2,
+  "groundCheckWidth": 0.1,
+  "enableShooting": true,
+  "fireRate": 0.3,
+  "projectileSpeed": 10.0,
+  "projectileLifetime": 5.0,
+  "projectileFaceAim": true,
+  "projectileSpriteAngle": 225.0,
+  "colliderRadius": 0.3,
+  "hasInvincibilityFrames": true,
+  "invincibilityDuration": 1.0,
+  "dropThroughForce": 5.0,
+  "dropThroughThreshold": -0.5,
+  "use2DFlip": true,
+  "normalRotationSpeed": 900.0,
+  "firingRotationSpeed": 1800.0,
+  "shadowOffset": [0.0, -0.4, 0.0],
+  "shadowColor": [0.0, 0.0, 0.0, 0.5],
+  "shadowSpriteSheet": null,
+  "shadowAnimationFps": 12,
+  "shadowMaxHeight": 10.0,
+  "shadowMinScale": 0.2,
+  "shadowRaycastDistance": 20.0,
+  "inputDeadzone": 0.1,
+  "mobileDropThreshold": -0.4,
+  "jumpDetectVelocityThreshold": 0.3,
+  "hurtSounds": [],
+  "deathSounds": [],
+  "jumpSound": null,
+  "fireSound": null,
+  "landSound": null,
+  "pitchVariation": 0.1,
+  "rewindSpeed": 3.0,
+  "minimumTimeBeforeRewind": 2.0,
+  "rewindHoldSeconds": 0.22,
+  "deathRewindGrace": 0.6,
+  "hurtFlashColor": "#FF3333",
+  "hurtFlashCount": 2,
+  "hurtFlashOnDuration": 0.08,
+  "hurtFlashOffDuration": 0.06,
+  "hurtFlashIntensity": 0.5,
+  "baseMaxHealth": 5,
+  "maxExtraJumps": 2,
+  "extraJumpCost": 100,
+  "availableUpgrades": [
+    {
+      "id": "extraJump",
+      "title": "Extra Jump",
+      "description": "Jump. Then, against all physics, jump again.",
+      "costsPerLevel": [100, 200],
+      "maxLevel": 2
+    }
+  ]
+}

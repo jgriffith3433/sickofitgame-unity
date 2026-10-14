@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 2,
+  "moveSpeed": 2.0,
+  "activationRange": 10.0,
+  "tags": ["chaser"],
+  "body": {
+    "shape": "Circle",
+    "radius": 2.0,
+    "solid": true,
+    "gravity": 0.0
+  },
+  "visual": {
+    "scale": 0.15,
+    "facesLeft": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Sprites/Enemies/slime_idle.png",
+          "fps": 8,
+          "loop": true
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
+  },
+  "healthBar": {
+    "show": true
+  },
+  "sounds": {
+    "hurt": [],
+    "death": [],
+    "hurtThreshold": 1.0,
+    "pitchVariation": 0.1
+  },
+  "loot": {
+    "chance": 0.35,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1,
+      "dieOnHit": true
+    },
+    {
+      "type": "chase",
+      "stopDistance": 0.0,
+      "face": true
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "slimeSplat",
+      "anchor": "Self",
+      "facePlayer": false
+    },
+    {
+      "type": "spawn",
+      "entity": "slimeGlob",
+      "anchor": "Self",
+      "velocity": [-3.2, 3.5],
+      "facePlayer": false
+    },
+    {
+      "type": "spawn",
+      "entity": "slimeGlob",
+      "anchor": "Self",
+      "velocity": [-1.4, 5.2],
+      "facePlayer": false
+    },
+    {
+      "type": "spawn",
+      "entity": "slimeGlob",
+      "anchor": "Self",
+      "velocity": [0.3, 6.0],
+      "facePlayer": false
+    },
+    {
+      "type": "spawn",
+      "entity": "slimeGlob",
+      "anchor": "Self",
+      "velocity": [1.6, 4.8],
+      "facePlayer": false
+    },
+    {
+      "type": "spawn",
+      "entity": "slimeGlob",
+      "anchor": "Self",
+      "velocity": [3.4, 3.2],
+      "facePlayer": false
+    }
+  ]
+}

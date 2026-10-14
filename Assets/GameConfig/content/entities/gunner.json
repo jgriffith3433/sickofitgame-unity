@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "extends": "shooter",
+  "health": 3,
+  "tags": ["gunner"],
+  "visual": {
+    "color": "#FFD27A"
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.25
+    }
+  ],
+  "abilities": [
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "pattern": {
+        "type": "spread",
+        "count": 3,
+        "angle": 40
+      },
+      "speed": 3.0,
+      "aim": "Player",
+      "interval": 1.8,
+      "initialDelay": 1.2,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
+    }
+  ]
+}

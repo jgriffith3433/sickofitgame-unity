@@ -1,0 +1,363 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level4",
+  "displayName": "Everything, Everywhere",
+  "levelNumber": 4,
+  "thumbnail": null,
+  "backgrounds": ["Videos/Level4_Background1.asset"],
+  "backgroundLayers": [],
+  "ambientColor": "#FFFFFF",
+  "music": "Videos/Level1_Background1_Audio.mp3",
+  "musicStartTime": 0.0,
+  "musicVolume": 1.0,
+  "ambientSound": null,
+  "ambientVolume": 0.5,
+  "levelCompleteSound": null,
+  "platforms": [],
+  "placedSprites": [],
+  "generateBarriers": true,
+  "barrierThickness": 1.0,
+  "barrierOnBottom": true,
+  "barrierOnTop": true,
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "winZoneCenter": [6.5, 0.0],
+  "winZoneHalfSize": [0.5, 4.0],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "returnToMainMenuOnComplete": false,
+  "timeline": {
+    "duration": 60.0,
+    "events": [],
+    "tracks": []
+  },
+  "script": {
+    "length": 105,
+    "markers": [
+      {
+        "seconds": 35,
+        "label": "REPLY-ALL"
+      },
+      {
+        "seconds": 75,
+        "label": "FINAL WAVE"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      }
+    },
+    "phases": [
+      {
+        "name": "inbox",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "LEVEL 4: EVERYTHING, EVERYWHERE",
+            "duration": 2.5,
+            "color": "#FFD27A"
+          },
+          {
+            "type": "showText",
+            "text": "Your inbox, but it shoots back.",
+            "style": "Subtitle",
+            "duration": 3.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "sprayer",
+            "when": {
+              "type": "after",
+              "seconds": 3.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "sprayer",
+                "anchor": "Camera",
+                "at": [4.4, -1.8],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "name": "mixed",
+            "when": {
+              "type": "every",
+              "seconds": 6.0,
+              "startAfter": 6.0,
+              "maxTimes": 5
+            },
+            "do": [
+              {
+                "type": "random",
+                "choices": [
+                  {
+                    "weight": 2,
+                    "do": [
+                      {
+                        "type": "spawnWave",
+                        "entity": "swarmer",
+                        "count": 4,
+                        "interval": 0.25,
+                        "anchor": "Camera",
+                        "points": [
+                          [5.2, -2.0],
+                          [5.2, 0.5],
+                          [-5.2, -2.0],
+                          [-5.2, 0.5]
+                        ],
+                        "tags": ["wave"]
+                      }
+                    ]
+                  },
+                  {
+                    "weight": 1,
+                    "do": [
+                      {
+                        "type": "spawn",
+                        "entity": "exploder",
+                        "anchor": "Camera",
+                        "at": [-5.2, -2.0],
+                        "count": 2,
+                        "spacing": [-0.8, 0],
+                        "tags": ["wave"]
+                      }
+                    ]
+                  },
+                  {
+                    "weight": 1,
+                    "do": [
+                      {
+                        "type": "spawn",
+                        "entity": "drone",
+                        "anchor": "Camera",
+                        "at": [5.2, 2.0],
+                        "tags": ["wave"]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 35.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "replyAll"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "replyAll",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "Reply-all detected.",
+            "style": "Subtitle",
+            "duration": 2.5,
+            "color": "#FF9966"
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.2,
+            "duration": 0.5
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 2.8,
+            "interval": 1.3,
+            "rampPerSecond": 0.02
+          },
+          {
+            "type": "spawn",
+            "entity": "brute",
+            "anchor": "Camera",
+            "at": [5.0, -2.0],
+            "tags": ["wave"]
+          }
+        ],
+        "rules": [
+          {
+            "name": "gunners",
+            "when": {
+              "type": "every",
+              "seconds": 8.0,
+              "startAfter": 3.0,
+              "maxTimes": 4
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "gunner",
+                "count": 2,
+                "interval": 0.6,
+                "anchor": "Camera",
+                "points": [
+                  [-4.6, -2.0],
+                  [4.6, 1.2]
+                ],
+                "tags": ["wave"],
+                "modifiers": [
+                  {
+                    "stat": "MaxHealth",
+                    "multiply": 1.0,
+                    "multiplyPerRepeat": 0.2
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "spinner",
+            "when": {
+              "type": "after",
+              "seconds": 15.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "spinner",
+                "anchor": "Camera",
+                "at": [0.0, 1.6],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 40.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "final"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "final",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "FINAL WAVE",
+            "duration": 2.0,
+            "color": "#FF7A5C"
+          },
+          {
+            "type": "showText",
+            "text": "Unsubscribe from all of this.",
+            "style": "Subtitle",
+            "duration": 2.5
+          },
+          {
+            "type": "spawnWave",
+            "entity": "sprayer",
+            "count": 2,
+            "interval": 2.0,
+            "anchor": "Camera",
+            "points": [
+              [4.4, -1.8],
+              [-4.4, -1.8]
+            ],
+            "tags": ["wave"]
+          },
+          {
+            "type": "spawnWave",
+            "entity": "brute",
+            "count": 2,
+            "interval": 4.0,
+            "anchor": "Camera",
+            "points": [
+              [5.0, -2.0],
+              [-5.0, -2.0]
+            ],
+            "tags": ["wave"]
+          },
+          {
+            "type": "spawnWave",
+            "entity": "drone",
+            "count": 3,
+            "interval": 2.5,
+            "anchor": "Camera",
+            "points": [
+              [5.2, 2.0],
+              [-5.2, 2.0],
+              [0.0, 2.4]
+            ],
+            "tags": ["wave"]
+          }
+        ],
+        "rules": [
+          {
+            "name": "clear",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "wave"
+              }
+            },
+            "do": [
+              {
+                "type": "stopHazard",
+                "id": "rain"
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "showText",
+                    "text": "INBOX ZERO",
+                    "duration": 2.0,
+                    "color": "#7CFF8A"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "It will last about four seconds.",
+                    "style": "Subtitle",
+                    "duration": 2.0
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Self-care: pick one"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

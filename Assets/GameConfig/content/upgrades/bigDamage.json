@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "title": "Strongly Worded Bullets",
+  "description": "Each shot carries a passive-aggressive note. Deals 50% more damage.",
+  "maxLevel": 2,
+  "modifiersPerLevel": [
+    {
+      "stat": "Damage",
+      "multiply": 1.5
+    }
+  ],
+  "color": "#FF5C5C"
+}

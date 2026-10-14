@@ -16,6 +16,8 @@ namespace SickOfIt.Data.Config
         public string levelName;
         public string displayName;
         public int levelNumber;
+        [Tooltip("Picture on the level select card.")]
+        public Sprite thumbnail;
 
         [Header("Visuals")]
         [Tooltip("Background layers — SpriteFramesData ScriptableObjects (rendered in order, first = back). Legacy field; prefer backgroundLayers.")]
@@ -84,6 +86,14 @@ namespace SickOfIt.Data.Config
 
         [Header("Timeline")]
         public TimelineConfig timeline = new TimelineConfig();
+
+        [Header("Gameplay Script")]
+        [SickOfIt.Json.RawJson]
+        [Tooltip("Phases, rules, spawns, and the objective (see Docs/GameplayReference.md). Parsed at runtime. " +
+                 "When set, it replaces the 'enemies' list and the built-in win rules; the timeline still runs.")]
+        public string script;
+
+        public bool HasScript => !string.IsNullOrEmpty(script);
 
         // --- Convenience ---
 

@@ -51,6 +51,10 @@ namespace SickOfIt.Core.Progression
             // The clock can stop itself at time zero. Trust that, not a stale local flag.
             if (GameClock.Instance.IsRewinding) return;
             if (GameClock.Instance.Time < minimumTimeBeforeRewind) return;
+            if (GameClock.Instance.IsPaused) return;
+            // Out of rewind juice: nothing happens until a pickup refills it.
+            var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
+            if (budget != null && !budget.CanRewind) return;
 
             isRewinding = true;
             GameClock.Instance.StartRewind(rewindSpeed);
@@ -58,6 +62,18 @@ namespace SickOfIt.Core.Progression
             // The song has to stay running so RewindableAudioSource can play it backward.
             if (musicSource != null && musicSource.GetComponent<RewindableAudioSource>() == null)
                 musicSource.gameObject.AddComponent<RewindableAudioSource>();
+        }
+
+        private void Update()
+        {
+            // Desktop: hold R to rewind (the on-screen button does the same on mobile).
+            var keyboard = UnityEngine.InputSystem.Keyboard.current;
+            if (keyboard == null)
+                return;
+            if (keyboard.rKey.wasPressedThisFrame)
+                StartRewind();
+            else if (keyboard.rKey.wasReleasedThisFrame)
+                StopRewind();
         }
 
         public void StopRewind()

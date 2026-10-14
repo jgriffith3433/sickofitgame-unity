@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "extends": "chaser",
+  "health": 1,
+  "moveSpeed": 3.2,
+  "tags": ["swarmer"],
+  "visual": {
+    "scale": 0.1,
+    "color": "#B8FF8A"
+  },
+  "loot": {
+    "chance": 0.15
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.1
+    }
+  ],
+  "abilities": [
+    {
+      "type": "chase",
+      "stopDistance": 0.2
+    },
+    {
+      "type": "contactDamage",
+      "damage": 1,
+      "dieOnHit": true
+    }
+  ]
+}

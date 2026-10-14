@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level5",
+  "displayName": "Fire Rain",
+  "levelNumber": 5,
+  "thumbnail": "Videos/Level3_Background2_FirstFrame.png",
+  "backgrounds": ["Videos/Level3_Background1.asset", "Videos/Level3_Background2.asset"],
+  "backgroundLayers": [],
+  "ambientColor": "#FFFFFF",
+  "music": "Videos/Level3_Background1_Audio.mp3",
+  "musicStartTime": 0.0,
+  "musicVolume": 1.0,
+  "ambientSound": null,
+  "ambientVolume": 0.5,
+  "levelCompleteSound": null,
+  "platforms": [],
+  "placedSprites": [],
+  "generateBarriers": true,
+  "barrierThickness": 1.0,
+  "barrierOnBottom": true,
+  "barrierOnTop": true,
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "winZoneCenter": [6.5, 0.0],
+  "winZoneHalfSize": [0.5, 4.0],
+  "deathConfigName": "Death2",
+  "duration": 150.0,
+  "completionDelay": 3.0,
+  "nextVideoNumber": 0,
+  "returnToMainMenuOnComplete": false,
+  "timeline": {
+    "duration": 0.0,
+    "events": [],
+    "tracks": []
+  },
+  "script": {
+    "length": 110,
+    "markers": [
+      {
+        "seconds": 45,
+        "label": "BOSS"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Survive the fire rain"
+    },
+    "phases": [
+      {
+        "name": "fireRain",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "LEVEL 5: FIRE RAIN",
+            "duration": 2.5,
+            "color": "#FF8844"
+          },
+          {
+            "type": "showText",
+            "text": "Forecast: 100% chance of fire. Bring an umbrella. A metal one.",
+            "style": "Subtitle",
+            "duration": 3.5
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 2.8,
+            "interval": 1.2,
+            "initialDelay": 2.0,
+            "rampPerSecond": 0.03
+          }
+        ],
+        "rules": [
+          {
+            "name": "swarmer waves",
+            "when": {
+              "type": "every",
+              "seconds": 7.0,
+              "startAfter": 3.0,
+              "maxTimes": 5
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "swarmer",
+                "count": 4,
+                "interval": 0.3,
+                "anchor": "Camera",
+                "points": [
+                  [-5.2, -2.0],
+                  [5.2, -2.0],
+                  [5.2, 1.0],
+                  [-5.2, 1.0]
+                ],
+                "tags": ["wave"],
+                "modifiers": [
+                  {
+                    "stat": "MaxHealth",
+                    "multiply": 1.0,
+                    "multiplyPerRepeat": 0.25
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "exploders",
+            "when": {
+              "type": "every",
+              "seconds": 10.0,
+              "startAfter": 8.0,
+              "maxTimes": 3
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "exploder",
+                "anchor": "Camera",
+                "at": [5.2, -2.0],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "name": "gunners",
+            "when": {
+              "type": "after",
+              "seconds": 20.0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "gunner",
+                "count": 2,
+                "interval": 1.0,
+                "anchor": "Camera",
+                "points": [
+                  [4.6, -2.0],
+                  [-4.6, 1.2]
+                ],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "name": "boss arrives",
+            "when": {
+              "type": "after",
+              "seconds": 45.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "boss"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "boss",
+        "onEnter": [
+          {
+            "type": "objectiveText",
+            "text": "Defeat the Magma King"
+          },
+          {
+            "type": "runSequence",
+            "sequence": "bossIntro"
+          }
+        ],
+        "rules": [
+          {
+            "name": "rain returns",
+            "when": {
+              "type": "healthBelow",
+              "target": {
+                "id": "boss"
+              },
+              "fraction": 0.5
+            },
+            "do": [
+              {
+                "type": "startHazard",
+                "id": "rain2",
+                "projectile": "fireball",
+                "pattern": {
+                  "type": "rain",
+                  "count": 2
+                },
+                "speed": 3.0,
+                "interval": 1.5
+              }
+            ]
+          },
+          {
+            "name": "victory",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "id": "boss"
+              }
+            },
+            "do": [
+              {
+                "type": "stopHazard",
+                "id": "rain2"
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "slowMotion",
+                    "scale": 0.3,
+                    "duration": 1.2
+                  },
+                  {
+                    "type": "showText",
+                    "text": "THE MAGMA KING HAS LEFT THE CHAT",
+                    "duration": 3.0,
+                    "color": "#7CFF8A"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "He will be back. He always comes back. Like Mondays.",
+                    "style": "Subtitle",
+                    "duration": 3.0
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 2.5
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

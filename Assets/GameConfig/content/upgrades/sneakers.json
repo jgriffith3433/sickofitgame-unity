@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "title": "Comfortable Shoes",
+  "description": "Finally, shoes that aren't from 2009. Move 15% faster.",
+  "maxLevel": 3,
+  "modifiersPerLevel": [
+    {
+      "stat": "MoveSpeed",
+      "multiply": 1.15
+    }
+  ],
+  "color": "#7CFF8A"
+}

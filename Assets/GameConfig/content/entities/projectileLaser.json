@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 0,
+  "body": {
+    "shape": "Circle",
+    "radius": 1.0,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.15,
+    "layer": "Player",
+    "sortingOrder": 4,
+    "hurtFlash": false,
+    "animator": {
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Images/Fireball.png",
+          "fps": 12,
+          "loop": true
+        }
+      ],
+      "defaultStateName": "Idle"
+    }
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "hitSound": null
+    },
+    {
+      "type": "lifetime",
+      "seconds": 1.5
+    }
+  ]
+}

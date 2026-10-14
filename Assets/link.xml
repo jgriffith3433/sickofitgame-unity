@@ -1,0 +1,10 @@
+<!--
+  Gameplay content (entities, abilities, triggers, actions, patterns, level scripts) is created by reflection
+  when JSON is parsed at runtime. Keep these assemblies whole so WebGL/IL2CPP code stripping can't remove
+  constructors or fields that are only reached that way.
+-->
+<linker>
+  <assembly fullname="SickOfIt.Json" preserve="all" />
+  <assembly fullname="SickOfIt.Data" preserve="all" />
+  <assembly fullname="SickOfIt.Gameplay" preserve="all" />
+</linker>

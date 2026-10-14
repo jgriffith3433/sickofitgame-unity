@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "type": "Shooter",
+  "displayName": "Shooter",
+  "prefab": "Prefabs/Combat/Enemy_Shooter.prefab",
+  "spriteSheet": "Images/Demon2.png",
+  "animationFps": 8,
+  "spriteScale": 0.15,
+  "animationConfig": {
+    "parameters": [
+      {
+        "name": "IsAttacking",
+        "type": "Bool",
+        "defaultValue": 0.0
+      }
+    ],
+    "states": [
+      {
+        "stateName": "Idle",
+        "spriteSheet": null,
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 8,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Attack",
+        "spriteSheet": null,
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 8,
+        "loop": false,
+        "events": [
+          {
+            "frame": 1,
+            "functionName": "FireProjectile",
+            "stringParameter": "",
+            "intParameter": 0,
+            "floatParameter": 0.0
+          }
+        ],
+        "speed": 1.0
+      }
+    ],
+    "transitions": [
+      {
+        "fromState": "Idle",
+        "toState": "Attack",
+        "hasExitTime": false,
+        "exitTime": 1.0,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "IsAttacking",
+            "mode": "If",
+            "threshold": 0.0
+          }
+        ]
+      },
+      {
+        "fromState": "Attack",
+        "toState": "Idle",
+        "hasExitTime": true,
+        "exitTime": 0.9,
+        "transitionDuration": 0.0,
+        "conditions": [
+          {
+            "parameterName": "IsAttacking",
+            "mode": "IfNot",
+            "threshold": 0.0
+          }
+        ]
+      }
+    ],
+    "defaultStateName": "Idle"
+  },
+  "defaultHealth": 2,
+  "defaultMoveSpeed": 0.0,
+  "contactDamage": 1,
+  "detectionRange": 15.0,
+  "hurtSounds": [],
+  "deathSounds": [],
+  "hurtSoundHealthThreshold": 1.0,
+  "pitchVariation": 0.1,
+  "dropChance": 0.3,
+  "dropPointsValue": 1,
+  "dropCount": 1,
+  "colliderRadius": 1.0,
+  "gravityScale": 0.0,
+  "constraints": "FreezeAll",
+  "hasInvincibilityFrames": false,
+  "invincibilityDuration": 0.5,
+  "faceMovementDirection": true,
+  "healthBarOffset": [0.0, 0.6],
+  "healthBarSize": [35.0, 3.0],
+  "healthBarColor": "#FF0000",
+  "healthBarTrackColor": "#333333CC",
+  "healthBarWorldScale": 0.01,
+  "stopDistance": 0.5,
+  "fireRate": 1.5,
+  "projectileSpeed": 5.0,
+  "projectileLifetime": 5.0,
+  "projectileDamage": 1,
+  "firePointOffset": [0.3, 0.0],
+  "attackRange": 0.0,
+  "attackCooldown": 0.0,
+  "minStateChangeTime": 5.0,
+  "maxStateChangeTime": 10.0,
+  "laserSpeed": 10.0,
+  "crouchThreshold": 5.0,
+  "crouchingAttackRange": 8.0
+}

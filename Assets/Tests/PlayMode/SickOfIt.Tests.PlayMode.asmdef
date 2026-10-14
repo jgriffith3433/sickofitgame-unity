@@ -1,0 +1,27 @@
+{
+  "name": "SickOfIt.Tests.PlayMode",
+  "rootNamespace": "SickOfIt.Tests.PlayMode",
+  "references": [
+    "SickOfIt.Json",
+    "SickOfIt.Data",
+    "SickOfIt.Core",
+    "SickOfIt.Combat",
+    "SickOfIt.Gameplay",
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll",
+    "Newtonsoft.Json.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

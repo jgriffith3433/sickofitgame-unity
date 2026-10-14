@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 0,
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#5A8F2ACC",
+    "placeholderSize": 0.9,
+    "placeholderLabel": false,
+    "sortingOrder": 0,
+    "hurtFlash": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "aura",
+      "radius": 0.3,
+      "damagePerTick": 1,
+      "interval": 1.25
+    },
+    {
+      "type": "lifetime",
+      "seconds": 4
+    }
+  ]
+}

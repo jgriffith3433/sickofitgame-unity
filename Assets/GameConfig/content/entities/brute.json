@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "extends": "fighter",
+  "health": 9,
+  "moveSpeed": 1.2,
+  "tags": ["brute"],
+  "visual": {
+    "scale": 0.2,
+    "color": "#FF8A8A"
+  },
+  "loot": {
+    "chance": 1,
+    "count": 2
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.6
+    }
+  ]
+}
