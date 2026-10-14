@@ -205,6 +205,10 @@
             "color": "#FF7A5C"
           },
           {
+            "type": "playSound",
+            "sound": "vo_final_wave"
+          },
+          {
             "type": "showText",
             "text": "Duck. Literally, if possible.",
             "style": "Subtitle",

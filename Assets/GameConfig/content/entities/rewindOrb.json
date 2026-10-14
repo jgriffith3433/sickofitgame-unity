@@ -27,7 +27,8 @@
           "type": "addRewind",
           "seconds": 1.5
         }
-      ]
+      ],
+      "soundId": "pickup_rewind"
     },
     {
       "type": "lifetime",

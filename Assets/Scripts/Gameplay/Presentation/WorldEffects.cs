@@ -146,6 +146,8 @@ namespace SickOfIt.Gameplay
 
         public void Shake(float intensity, float duration)
         {
+            if (!SickOfIt.Data.GameSettings.ScreenShake)
+                return;
             shakeIntensity = intensity;
             shakeEndsAt = Time.unscaledTime + duration;
             movesCamera = true;
@@ -232,7 +234,7 @@ namespace SickOfIt.Gameplay
             if (music == null || clip == null)
                 return;
             music.clip = clip;
-            music.volume = volume;
+            SickOfIt.Core.Audio.MusicVolume.Set(music, volume);
             music.loop = true;
             music.Play();
         }
@@ -240,7 +242,7 @@ namespace SickOfIt.Gameplay
         public void MusicVolume(float volume)
         {
             if (music != null)
-                music.volume = volume;
+                SickOfIt.Core.Audio.MusicVolume.Set(music, volume);
         }
 
         // ─── Rewind ───────────────────────────────────────────────────

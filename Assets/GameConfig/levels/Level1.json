@@ -305,6 +305,10 @@
             "color": "#FF7A5C"
           },
           {
+            "type": "playSound",
+            "sound": "vo_final_wave"
+          },
+          {
             "type": "showText",
             "text": "This is the last one. Probably.",
             "style": "Subtitle",

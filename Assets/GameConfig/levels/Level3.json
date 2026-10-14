@@ -237,6 +237,10 @@
             "color": "#FF7A5C"
           },
           {
+            "type": "playSound",
+            "sound": "vo_final_wave"
+          },
+          {
             "type": "showText",
             "text": "The big one brought snacks. And violence.",
             "style": "Subtitle",

@@ -393,7 +393,8 @@ namespace SickOfIt.Core.Input
             if (isGrounded && !wasGrounded)
             {
                 airJumpsRemaining = maxAirJumps;
-                PlaySFX(landSound);
+                if (Cue(landSound, SickOfIt.Core.Audio.Sfx.Events.playerLand))
+                    SickOfIt.Core.Fx.Fx.Dust(Feet, 1f);
             }
         }
         
@@ -785,7 +786,8 @@ namespace SickOfIt.Core.Input
             velocity.y = jumpForce;
             rb.linearVelocity = velocity;
             
-            PlaySFX(jumpSound);
+            if (Cue(jumpSound, SickOfIt.Core.Audio.Sfx.Events.playerJump))
+                SickOfIt.Core.Fx.Fx.Dust(Feet, 0.6f);
             
             if (animator != null)
             {
@@ -885,7 +887,11 @@ namespace SickOfIt.Core.Input
             if (!firstOfVolley)
                 return;
 
-            PlaySFX(fireSound);
+            if (Cue(fireSound, SickOfIt.Core.Audio.Sfx.Events.playerShoot))
+            {
+                SickOfIt.Core.Fx.Fx.Flash(muzzle, new Color(1f, 0.85f, 0.45f, 0.9f), 0.5f, 0.08f);
+                SickOfIt.Core.Fx.Fx.Spark(muzzle, new Color(1f, 0.95f, 0.6f, 1f), 0.42f);
+            }
 
             // Restart the fire clip on every shot so the muzzle flash lines up with the projectile.
             if (animator != null && animator.HasState(0, FireStateHash))
@@ -996,14 +1002,43 @@ namespace SickOfIt.Core.Input
         }
 
         /// <summary>
-        /// Called by PlayerHealth when the player is damaged. Plays a random hurt sound.
+        /// Called by PlayerHealth when the player is damaged: the player's own hurt clips, else audio.json's playerHurt.
         /// </summary>
-        public void PlayHurtSound() => PlayRandomSFX(hurtSounds);
+        public void PlayHurtSound()
+        {
+            if (hurtSounds != null && hurtSounds.Length > 0)
+                PlayRandomSFX(hurtSounds);
+            else
+                SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.playerHurt);
+        }
 
         /// <summary>
-        /// Called by PlayerHealth when the player dies. Plays a random death sound.
+        /// Called by PlayerHealth when the player dies: the player's own death clips, else audio.json's playerDie.
         /// </summary>
-        public void PlayDeathSound() => PlayRandomSFX(deathSounds);
+        public void PlayDeathSound()
+        {
+            if (deathSounds != null && deathSounds.Length > 0)
+                PlayRandomSFX(deathSounds);
+            else
+                SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.playerDie);
+        }
+
+        /// <summary>
+        /// Plays the player's own clip if one is set, else the audio.json sound. Returns false while time runs
+        /// backward (a rewind replays landings and jumps; they shouldn't make noise or dust).
+        /// </summary>
+        private bool Cue(AudioClip clip, string soundId)
+        {
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return false;
+            if (clip != null)
+                PlaySFX(clip);
+            else
+                SickOfIt.Core.Audio.Sfx.Play(soundId);
+            return true;
+        }
+
+        private Vector2 Feet => col != null ? new Vector2(transform.position.x, col.bounds.min.y) : (Vector2)transform.position;
 
         #endregion
     }

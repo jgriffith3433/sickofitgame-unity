@@ -17,6 +17,7 @@
   "showLevelSelectButton": true,
   "showVideosButton": true,
   "showUpgradeShopButton": true,
+  "showSettingsButton": true,
   "showQuitButton": true,
   "showCumulativeHealth": true,
   "showPointsDisplay": true,
@@ -62,10 +63,10 @@
     "list": {
       "anchor": [0.71, 0.335],
       "offset": [0.0, 0.0],
-      "size": [720.0, 720.0],
+      "size": [720.0, 730.0],
       "direction": "Vertical",
       "columns": 0,
-      "spacing": [0.0, 12.0],
+      "spacing": [0.0, 10.0],
       "itemSize": [0.0, 0.0]
     },
     "backAnchor": [0.0, 0.0],
@@ -103,6 +104,7 @@
     "levelSelect": "Pick a Level",
     "videos": "Rewatch Stuff",
     "shop": "Spend Diamonds",
+    "settings": "Settings",
     "quit": "Rage Quit"
   },
   "showBundleDownloadUI": true,

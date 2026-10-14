@@ -89,6 +89,9 @@ namespace SickOfIt.Gameplay.Content
     /// <summary>The string names an entity in content/entities.</summary>
     [AttributeUsage(AttributeTargets.Field)] public sealed class EntityRefAttribute : Attribute { }
 
+    /// <summary>The string names a sound in audio.json.</summary>
+    [AttributeUsage(AttributeTargets.Field)] public sealed class SoundRefAttribute : Attribute { }
+
     /// <summary>The string names a sequence in content/sequences.</summary>
     [AttributeUsage(AttributeTargets.Field)] public sealed class SequenceRefAttribute : Attribute { }
 

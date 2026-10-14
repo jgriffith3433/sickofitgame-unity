@@ -18,6 +18,7 @@ Assets/GameConfig/
   game.json                 globals (camera, ground, rewind, UI/camera prefabs, ...) and the ordered
                             lists of item files: "levels": ["Level1", "Level2"] -> levels/Level1.json, ...
   player.json, pickup.json  one file per large section
+  audio.json                every sound effect and voice line (ElevenLabs prompts) + which plays for each game event
   ui/*.json                 menus: theme.json (the look of every menu) + mainMenu, levelSelection,
                             videoSelection, upgradeShop (each has a "layout": backdrop, title, list, stickers)
   levels/ videos/ deaths/   one file per item (a level's gameplay is its "script" field)
@@ -86,7 +87,9 @@ and a suggested fix ("Did you mean ...?"). Read it after every change.
 ```
 
 Methods: `Validate` (check only), `Import` (JSON -> GameDefinition), `Export` (GameDefinition -> JSON),
-`VerifyRoundTrip`, `GenerateReference`, `BuildContentBundle`, `ConvertLegacy`. Batch mode fails with "another Unity
+`VerifyRoundTrip`, `GenerateReference`, `BuildContentBundle`, `ConvertLegacy`. Sounds:
+`-executeMethod SickOfIt.Tools.Editor.Audio.SoundGeneratorWindow.GenerateSounds` makes every missing/outdated sound in
+audio.json with ElevenLabs (needs `ELEVENLABS_API_KEY`; never put the key in the repo). Batch mode fails with "another Unity
 instance is running" while the editor is open.
 
 - **Tests:** `-runTests -testPlatform EditMode` and `-runTests -testPlatform PlayMode` (add `-testResults <file>`).

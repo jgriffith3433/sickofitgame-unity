@@ -6,7 +6,8 @@
   "tags": ["swarmer"],
   "visual": {
     "scale": 0.1,
-    "color": "#B8FF8A"
+    "color": "#B8FF8A",
+    "fxColor": "#B8FF8A"
   },
   "loot": {
     "chance": 0.15

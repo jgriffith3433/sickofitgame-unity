@@ -363,7 +363,7 @@ namespace SickOfIt.Core.Progression
             musicSource.spatialBlend = 0f;
             musicSource.dopplerLevel = 0f;
             musicSource.clip = config.music;
-            musicSource.volume = config.musicVolume;
+            SickOfIt.Core.Audio.MusicVolume.Set(musicSource, config.musicVolume);
             musicSource.loop = true;
             if (musicSource.GetComponent<RewindableAudioSource>() == null)
                 musicSource.gameObject.AddComponent<RewindableAudioSource>();
@@ -986,16 +986,38 @@ namespace SickOfIt.Core.Progression
 
             // Progress is written when the level actually changes. Rewind during
             // the delay can still undo the clear.
-            if (config.returnToMainMenuOnComplete)
-                Invoke(nameof(FinishAndReturnToMainMenu), config.completionDelay);
+            Invoke(nameof(ShowResultsThenLeave), config.completionDelay);
+        }
+
+        /// <summary>The results screen (when the level has a HUD), then on to the next level or the menu.</summary>
+        private void ShowResultsThenLeave()
+        {
+            void Leave()
+            {
+                if (config.returnToMainMenuOnComplete)
+                    FinishAndReturnToMainMenu();
+                else
+                    ProceedToNextLevel();
+            }
+
+            var hud = gameplayWorld != null ? gameplayWorld.Hud : null;
+            if (hud != null)
+            {
+                // Once the results are up the clear is final.
+                CommitCompletion();
+                hud.ShowResults(Leave);
+            }
             else
-                Invoke(nameof(ProceedToNextLevel), config.completionDelay);
+            {
+                Leave();
+            }
         }
 
         private void CancelCompletion()
         {
             if (completionCommitted) return;
             levelCompleted = false;
+            CancelInvoke(nameof(ShowResultsThenLeave));
             CancelInvoke(nameof(ProceedToNextLevel));
             CancelInvoke(nameof(FinishAndReturnToMainMenu));
         }

@@ -222,6 +222,7 @@
   "minimumTimeBeforeRewind": 2.0,
   "rewindHoldSeconds": 0.22,
   "deathRewindGrace": 0.6,
+  "deathRewindWindow": 2.5,
   "hurtFlashColor": "#FF3333",
   "hurtFlashCount": 2,
   "hurtFlashOnDuration": 0.08,

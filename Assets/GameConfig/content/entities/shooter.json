@@ -71,7 +71,8 @@
         }
       ],
       "defaultStateName": "Idle"
-    }
+    },
+    "fxColor": "#FF5B3A"
   },
   "healthBar": {
     "show": true

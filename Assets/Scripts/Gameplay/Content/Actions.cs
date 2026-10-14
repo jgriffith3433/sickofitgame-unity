@@ -403,11 +403,20 @@ namespace SickOfIt.Gameplay.Content
     }
 
     [Serializable, JsonType("playSound")]
+    [Doc("Plays a sound: an audio.json sound id (announcer lines, stings) or a clip.")]
     public sealed class PlaySoundAction : GameAction
     {
+        [SoundRef, Doc("audio.json sound id (e.g. an announcer line). Used when 'clip' isn't set.")] public string sound = "";
         public AudioClip clip;
         public float volume = 1f;
-        public override void Run(ActionContext context) => context.World.Effects.PlaySound(clip, volume);
+
+        public override void Run(ActionContext context)
+        {
+            if (clip != null)
+                context.World.Effects.PlaySound(clip, volume);
+            else
+                SickOfIt.Core.Audio.Sfx.Play(sound, volume);
+        }
     }
 
     [Serializable, JsonType("playMusic")]

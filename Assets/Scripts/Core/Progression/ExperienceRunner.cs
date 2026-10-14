@@ -458,6 +458,8 @@ namespace SickOfIt.Core.Progression
 
         private void HandleCameraShake(GameEvent evt)
         {
+            if (!SickOfIt.Data.GameSettings.ScreenShake)
+                return;
             if (shakeCoroutine != null)
                 StopCoroutine(shakeCoroutine);
             shakeCoroutine = StartCoroutine(ShakeCamera(evt.shakeIntensity, evt.duration > 0 ? evt.duration : 0.3f));

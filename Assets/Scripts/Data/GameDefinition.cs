@@ -107,6 +107,8 @@ namespace SickOfIt.Data
         public UpgradeShopConfig upgradeShopConfig = new UpgradeShopConfig();
         [Tooltip("Shared look of all menus (ui/theme.json)")]
         public MenuTheme menuTheme = new MenuTheme();
+        [Tooltip("Sounds (generated with ElevenLabs) and which plays for each game event (audio.json)")]
+        public AudioConfig audio = new AudioConfig();
 
         [Header("Gameplay Content")]
         [Tooltip("Entities, sequences, and status effects, parsed at runtime. Authored in Assets/GameConfig/content/.")]

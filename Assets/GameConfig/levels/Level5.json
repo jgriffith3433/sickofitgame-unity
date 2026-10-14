@@ -170,6 +170,10 @@
         "name": "boss",
         "onEnter": [
           {
+            "type": "playSound",
+            "sound": "vo_boss"
+          },
+          {
             "type": "objectiveText",
             "text": "Defeat the Magma King"
           },

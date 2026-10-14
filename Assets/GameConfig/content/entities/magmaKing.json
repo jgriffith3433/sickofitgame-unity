@@ -10,7 +10,8 @@
   },
   "visual": {
     "scale": 0.6,
-    "color": "#FF7755"
+    "color": "#FF7755",
+    "fxColor": "#FF7A3D"
   },
   "healthBar": {
     "show": false

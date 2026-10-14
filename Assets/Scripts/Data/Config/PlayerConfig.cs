@@ -108,6 +108,8 @@ namespace SickOfIt.Data.Config
         public float rewindHoldSeconds = 0.22f;
         [Tooltip("Seconds after a lethal hit during which a rewind can cancel the death scene.")]
         public float deathRewindGrace = 0.6f;
+        [Tooltip("With rewind juice left, how long a death waits (\"Hold R to undo it!\") before the death scene.")]
+        public float deathRewindWindow = 2.5f;
 
         [Header("Hurt Flash")]
         public Color hurtFlashColor = new Color(1f, 0.2f, 0.2f, 1f);

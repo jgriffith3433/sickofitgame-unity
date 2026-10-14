@@ -117,7 +117,38 @@ namespace SickOfIt.Tools.Editor.GameConfig
 
             var content = GameContent.Build(contentSources, scripts, recorder, new EditorSpriteSheets());
             issues.AddRange(content.Issues);
-            ContentValidator.Validate(content, issues);
+            ContentValidator.Validate(content, issues, definition.audio.sounds.Where(s => s != null).Select(s => s.id).ToList());
+            ValidateAudio(definition.audio, issues);
+        }
+
+        /// <summary>audio.json: unique ids, and every game event naming a sound that exists.</summary>
+        static void ValidateAudio(SickOfIt.Data.Config.AudioConfig audio, JsonIssueList issues)
+        {
+            const string file = "audio.json";
+            var ids = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < audio.sounds.Count; i++)
+            {
+                var sound = audio.sounds[i];
+                if (sound == null)
+                    continue;
+                if (string.IsNullOrEmpty(sound.id))
+                    issues.Error(file, $"sounds[{i}].id", "Every sound needs an id.");
+                else if (!ids.Add(sound.id))
+                    issues.Error(file, $"sounds[{i}].id", $"Sound \"{sound.id}\" is defined twice.");
+                if (sound.clip == null && string.IsNullOrEmpty(sound.prompt))
+                    issues.Warning(file, $"sounds[{i}]", $"Sound \"{sound.id}\" has neither a clip nor a prompt to generate one from.");
+                if (sound.kind == SickOfIt.Data.Config.SoundKind.Effect && sound.durationSeconds != 0f
+                    && (sound.durationSeconds < 0.5f || sound.durationSeconds > 30f))
+                    issues.Error(file, $"sounds[{i}].durationSeconds", "ElevenLabs makes effects 0.5-30 seconds long (0 = let it decide).");
+                if (sound.kind == SickOfIt.Data.Config.SoundKind.Voice && string.IsNullOrEmpty(sound.voiceId) && string.IsNullOrEmpty(audio.defaultVoiceId))
+                    issues.Warning(file, $"sounds[{i}].voiceId", $"Voice line \"{sound.id}\" has no voice: set its voiceId or audio.json's defaultVoiceId.");
+            }
+            foreach (var field in typeof(SickOfIt.Data.Config.SoundEvents).GetFields())
+            {
+                var id = field.GetValue(audio.events) as string;
+                if (!string.IsNullOrEmpty(id) && !ids.Contains(id))
+                    issues.Warning(file, "events." + field.Name, $"No sound \"{id}\" in sounds, so this event is silent.{UnityJsonSerializer.SuggestName(id, ids)}");
+            }
         }
 
         static void LoadCollection(IConfigFiles files, JObject root, GameConfigLayout.Collection collection, GameDefinition definition,

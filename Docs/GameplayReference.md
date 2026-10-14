@@ -78,6 +78,8 @@ How it looks. Without art it is drawn as a colored placeholder with its id, so g
 | `layer` | [SpriteLayer](#spritelayer) | `"Player"` | Draw order band. |
 | `sortingOrder` | integer | `-1` | Draw order within the band (-1 = the standard character order). |
 | `hurtFlash` | true/false | `true` | Flash white when hurt. |
+| `fxColor` | color | `"#00000000"` | Color of the bits that fly off when it's hit or dies. Transparent = cream. |
+| `deathPop` | true/false | `true` | Pop into bits when it dies (enemies with health). |
 
 ### AnimatorDef
 
@@ -163,6 +165,8 @@ Floating health bar.
 | `hurt` | list of asset (AudioClip) | `[]` |  |
 | `death` | list of asset (AudioClip) | `[]` |  |
 | `hurtThreshold` | number | `1.0` | Hurt sounds only play at or below this fraction of health. |
+| `hurtSound` | string | `""` | audio.json sound for hits, used when 'hurt' has no clips. Empty = the game's enemyHurt sound (enemies only). |
+| `deathSound` | string | `""` | audio.json sound for deaths, used when 'death' has no clips. Empty = the game's enemyDie sound (enemies only). |
 | `pitchVariation` | number | `0.1` |  |
 | `volume` | number | `1.0` |  |
 
@@ -263,6 +267,7 @@ Makes it a pickup: drifts to the player when close, and when touched runs its ac
 | `bobHeight` | number | `0.06` | Bob up and down while waiting. |
 | `do` | list of [Action](#actions) | `[]` |  |
 | `sound` | asset (AudioClip) | — |  |
+| `soundId` | string | `""` | audio.json sound to play when collected (used when 'sound' isn't set). |
 
 ### contactDamage
 
@@ -818,10 +823,11 @@ Switches the level music.
 
 ### playSound
 
-Something that happens: spawn, change phase, show text, apply a status...
+Plays a sound: an audio.json sound id (announcer lines, stings) or a clip.
 
 | Field | Type | Default | Notes |
 |---|---|---|---|
+| `sound` | string | `""` | audio.json sound id (e.g. an announcer line). Used when 'clip' isn't set. |
 | `clip` | asset (AudioClip) | — |  |
 | `volume` | number | `1.0` |  |
 

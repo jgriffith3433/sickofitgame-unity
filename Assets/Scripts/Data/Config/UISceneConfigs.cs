@@ -47,6 +47,7 @@ namespace SickOfIt.Data.Config
         public bool showLevelSelectButton = true;
         public bool showVideosButton = true;
         public bool showUpgradeShopButton = true;
+        public bool showSettingsButton = true;
         public bool showQuitButton = true;
         
         [Header("Roguelite UI")]

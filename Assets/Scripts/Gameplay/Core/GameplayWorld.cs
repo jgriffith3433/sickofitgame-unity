@@ -45,6 +45,8 @@ namespace SickOfIt.Gameplay
         public Entity Player { get; private set; }
         public GameplayHud Hud { get; private set; }
         public WorldEffects Effects { get; private set; }
+        /// <summary>The level runner (restart, leave the level); null in tests.</summary>
+        public ILevelHost Host { get; private set; }
         public GameplayTelemetry Telemetry { get; private set; }
         public UpgradeSystem Upgrades { get; private set; }
         /// <summary>Expected level length in seconds, for the progress bar.</summary>
@@ -134,6 +136,7 @@ namespace SickOfIt.Gameplay
             if (playerController != null && setup.Script != null && !Mathf.Approximately(setup.Script.world.playerGravity, 1f))
                 playerController.SetGravityMultiplier(setup.Script.world.playerGravity);
 
+            Host = setup.Host;
             Director = new LevelDirector(this, setup.Script ?? new LevelScript(), setup.Host);
 
             LevelLength = setup.Script != null && setup.Script.length > 0f ? setup.Script.length : Mathf.Max(1f, setup.LevelDuration);
@@ -171,6 +174,8 @@ namespace SickOfIt.Gameplay
                     playerBody = r;
             }
             PlayerRenderers = list.ToArray();
+            if (health != null && !root.TryGetComponent<PlayerBlink>(out _))
+                root.AddComponent<PlayerBlink>().Init(health, PlayerRenderers);
             if (health != null)
                 health.onDamaged.AddListener(OnPlayerDamaged);
         }

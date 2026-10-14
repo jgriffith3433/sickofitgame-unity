@@ -51,6 +51,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
             new SplitFile("videoSelectionConfig", "ui/videoSelection.json"),
             new SplitFile("upgradeShopConfig", "ui/upgradeShop.json"),
             new SplitFile("menuTheme", "ui/theme.json"),
+            new SplitFile("audio", "audio.json"),
         };
 
         public static readonly Collection[] Collections =

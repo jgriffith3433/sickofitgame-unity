@@ -375,9 +375,9 @@ namespace SickOfIt.Core.UI.Menus
         }
 
         /// <summary>Adds a free-standing button at an anchor (like the back button).</summary>
-        public MenuButton AddButtonAt(Vector2 anchor, Vector2 offset, string text, MenuButtonStyle style, Action onClick)
+        public MenuButton AddButtonAt(Vector2 anchor, Vector2 offset, string text, MenuButtonStyle style, Action onClick, Transform parent = null)
         {
-            var slot = MenuGraphics.NewRect("Button", Root);
+            var slot = MenuGraphics.NewRect("Button", parent != null ? parent : Root);
             MenuGraphics.Place(slot, anchor, offset, style.size);
             return Finish(MenuButton.Create(slot, style, text, Font, Theme.entrance, NextDelay(Theme.entrance), buttons.Count, Sounds), onClick);
         }

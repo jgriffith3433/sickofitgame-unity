@@ -11,7 +11,8 @@
     }
   ],
   "visual": {
-    "color": "#FF9966"
+    "color": "#FF9966",
+    "fxColor": "#FF9966"
   },
   "abilities": [
     {

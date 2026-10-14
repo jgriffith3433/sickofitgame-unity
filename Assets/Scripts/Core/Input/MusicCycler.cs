@@ -52,7 +52,7 @@ namespace SickOfIt.Core.Input
             
             audioSource.playOnAwake = false;
             audioSource.loop = loopSongs;
-            audioSource.volume = volume;
+            SickOfIt.Core.Audio.MusicVolume.Set(audioSource, volume);
             
             // Preload music for instant playback
             if (preloadOnAwake && !string.IsNullOrEmpty(musicLabel))
@@ -270,9 +270,7 @@ namespace SickOfIt.Core.Input
         {
             volume = Mathf.Clamp01(newVolume);
             if (audioSource != null)
-            {
-                audioSource.volume = volume;
-            }
+                SickOfIt.Core.Audio.MusicVolume.Set(audioSource, volume);
         }
 
         /// <summary>

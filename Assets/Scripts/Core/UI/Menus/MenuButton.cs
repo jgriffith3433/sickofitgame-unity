@@ -30,9 +30,7 @@ namespace SickOfIt.Core.UI.Menus
         Color normalFill, hoverFill, pressedFill;
         Color labelColor;
         bool labelGradient;
-        AudioSource audioSource;
-        AudioClip hoverSound, clickSound;
-        float volume;
+        MenuSounds sounds;
 
         float scale = 1f, rotation, targetScale = 1f, targetRotation;
         Color currentFill, targetFill;
@@ -87,10 +85,7 @@ namespace SickOfIt.Core.UI.Menus
             float tilt = style.alternateTilt && index % 2 == 1 ? -style.tilt : style.tilt;
             Motion.BaseRotation = tilt;
 
-            audioSource = sounds?.Source;
-            hoverSound = sounds?.Hover;
-            clickSound = sounds?.Click;
-            volume = sounds?.Volume ?? 1f;
+            this.sounds = sounds;
             DoStateTransition(currentSelectionState, true);
         }
 
@@ -105,8 +100,8 @@ namespace SickOfIt.Core.UI.Menus
             {
                 case SelectionState.Highlighted:
                 case SelectionState.Selected:
-                    if (state == SelectionState.Highlighted && targetScale <= 1f && hoverSound != null && audioSource != null)
-                        audioSource.PlayOneShot(hoverSound, volume * 0.6f);
+                    if (state == SelectionState.Highlighted && targetScale <= 1f)
+                        sounds?.PlayHover();
                     targetScale = style.hoverScale;
                     targetRotation = style.hoverRotation;
                     targetFill = hoverFill;
@@ -219,19 +214,31 @@ namespace SickOfIt.Core.UI.Menus
         {
             if (!IsActive() || !IsInteractable())
                 return;
-            if (clickSound != null && audioSource != null)
-                audioSource.PlayOneShot(clickSound, volume);
+            sounds?.PlayClick();
             scale = style.pressScale;
             Clicked?.Invoke();
         }
     }
 
-    /// <summary>Where menu buttons play their hover/click sounds.</summary>
+    /// <summary>
+    /// Menu button sounds: the theme's own clips if it sets them, otherwise audio.json's uiHover/uiClick sounds.
+    /// </summary>
     public sealed class MenuSounds
     {
         public AudioSource Source;
         public AudioClip Hover;
         public AudioClip Click;
         public float Volume = 1f;
+
+        public void PlayHover() => Play(Hover, Volume * 0.6f, SickOfIt.Core.Audio.Sfx.Events.uiHover);
+        public void PlayClick() => Play(Click, Volume, SickOfIt.Core.Audio.Sfx.Events.uiClick);
+
+        void Play(AudioClip clip, float volume, string fallback)
+        {
+            if (clip != null && Source != null)
+                Source.PlayOneShot(clip, volume * SickOfIt.Data.GameSettings.SfxVolume);
+            else
+                SickOfIt.Core.Audio.Sfx.Play(fallback);
+        }
     }
 }

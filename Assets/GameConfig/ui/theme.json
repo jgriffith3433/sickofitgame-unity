@@ -84,7 +84,7 @@
     "align": "Center"
   },
   "button": {
-    "size": [520.0, 96.0],
+    "size": [520.0, 84.0],
     "surface": {
       "shape": "Rounded",
       "sprite": null,
@@ -97,7 +97,7 @@
       "padding": [28.0, 10.0]
     },
     "label": {
-      "fontSize": 44.0,
+      "fontSize": 40.0,
       "color": "#FFF4D6",
       "gradientTop": "#00000000",
       "gradientBottom": "#00000000",
@@ -332,6 +332,69 @@
     "marker": "#FFC93C",
     "worldBarOutline": "#1E1220"
   },
+  "texts": {
+    "pauseTitle": "Paused",
+    "pauseSubtitle": "Take a breath. The enemies will wait. Probably.",
+    "resume": "Resume",
+    "restart": "Restart Level",
+    "settings": "Settings",
+    "quitToMenu": "Quit to Menu",
+    "settingsTitle": "Settings",
+    "masterVolume": "Volume",
+    "musicVolume": "Music",
+    "effectsVolume": "Effects",
+    "voiceVolume": "Voices",
+    "screenShake": "Screen Shake",
+    "hints": "Hints",
+    "on": "On",
+    "off": "Off",
+    "done": "Done",
+    "resultsTitle": "Level Clear!",
+    "resultsTime": "Time",
+    "resultsKills": "Kills",
+    "resultsHits": "Hits Taken",
+    "resultsRewinds": "Rewinds",
+    "resultsDiamonds": "Diamonds",
+    "continueText": "Continue",
+    "deathTitle": "You Died",
+    "deathRewind": "Hold R to undo it!",
+    "deathRewindTouch": "Hold ◄◄ to undo it!",
+    "deathNoJuice": "No rewind juice left...",
+    "rewindHint": "Ouch! Hold R to undo that.",
+    "rewindHintTouch": "Ouch! Hold ◄◄ to undo that."
+  },
+  "grades": [
+    {
+      "grade": "S",
+      "minScore": 95,
+      "quip": "Flawless. Suspicious, even.",
+      "color": "#FFD940"
+    },
+    {
+      "grade": "A",
+      "minScore": 80,
+      "quip": "Tuesday energy.",
+      "color": "#80FF73"
+    },
+    {
+      "grade": "B",
+      "minScore": 60,
+      "quip": "Acceptable. Barely.",
+      "color": "#4DD9FF"
+    },
+    {
+      "grade": "C",
+      "minScore": 40,
+      "quip": "Monday energy.",
+      "color": "#FF994D"
+    },
+    {
+      "grade": "D",
+      "minScore": 0,
+      "quip": "You survived. Technically.",
+      "color": "#FF594D"
+    }
+  ],
   "healthFormat": "♥ {0}/{1}",
   "pointsFormat": "♦ {0}"
 }

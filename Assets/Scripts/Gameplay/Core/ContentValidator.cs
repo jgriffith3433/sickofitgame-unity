@@ -13,8 +13,10 @@ namespace SickOfIt.Gameplay
     /// </summary>
     public static class ContentValidator
     {
-        public static void Validate(GameContent content, JsonIssueList issues)
+        /// <summary>Checks content. 'soundIds' (audio.json's sounds) enables checking sound references; null skips it.</summary>
+        public static void Validate(GameContent content, JsonIssueList issues, ICollection<string> soundIds = null)
         {
+            ValidSoundIds = soundIds;
             foreach (var pair in content.Entities.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateEntity(content, pair.Value, issues);
             foreach (var pair in content.Sequences.OrderBy(p => p.Key, StringComparer.Ordinal))
@@ -26,6 +28,8 @@ namespace SickOfIt.Gameplay
             foreach (var pair in content.LevelScripts.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateScript(content, pair.Value, issues);
         }
+
+        [ThreadStatic] static ICollection<string> ValidSoundIds;
 
         static void ValidateEntity(GameContent content, EntityDef entity, JsonIssueList issues)
         {
@@ -98,6 +102,7 @@ namespace SickOfIt.Gameplay
                 (typeof(SequenceRefAttribute), content.Sequences.Keys, "sequence \"{0}\" in content/sequences"),
                 (typeof(EffectRefAttribute), content.Effects.Keys, "status effect \"{0}\" in content/effects"),
                 (typeof(UpgradeRefAttribute), content.Upgrades.Keys, "upgrade \"{0}\" in content/upgrades"),
+                (typeof(SoundRefAttribute), ValidSoundIds, "sound \"{0}\" in audio.json"),
                 (typeof(PhaseRefAttribute), phases, "phase \"{0}\" in this script"),
                 (typeof(EntityStateRefAttribute), entity?.states.Select(s => s.name).ToList(), "state \"{0}\" in this entity"),
                 (typeof(AnimStateRefAttribute), entity != null && !entity.visual.animator.IsEmpty

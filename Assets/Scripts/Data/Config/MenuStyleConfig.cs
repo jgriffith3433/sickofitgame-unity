@@ -118,6 +118,9 @@ namespace SickOfIt.Data.Config
         [Tooltip("How quickly it reacts to hover/press (higher = snappier).")]
         public float responsiveness = 18f;
         public MenuMotion idle = new MenuMotion();
+
+        /// <summary>A copy to tweak (size, colors) without changing the theme. Nested styles are shared.</summary>
+        public MenuButtonStyle Clone() => (MenuButtonStyle)MemberwiseClone();
     }
 
     [Serializable]
@@ -235,6 +238,56 @@ namespace SickOfIt.Data.Config
         public Color worldBarOutline = new Color(0.12f, 0.07f, 0.13f, 1f);
     }
 
+    /// <summary>A results-screen grade: the best one whose minScore the run reaches.</summary>
+    [Serializable]
+    public class MenuGrade
+    {
+        public string grade = "C";
+        [Tooltip("Score out of 100 needed (100 minus points lost to hits and rewinds).")]
+        public int minScore;
+        public string quip = "";
+        public Color color = Color.white;
+    }
+
+    /// <summary>Words on the in-level screens (pause, settings, results, death).</summary>
+    [Serializable]
+    public class MenuTexts
+    {
+        public string pauseTitle = "Paused";
+        public string pauseSubtitle = "Take a breath. The enemies will wait. Probably.";
+        public string resume = "Resume";
+        public string restart = "Restart Level";
+        public string settings = "Settings";
+        public string quitToMenu = "Quit to Menu";
+
+        public string settingsTitle = "Settings";
+        public string masterVolume = "Volume";
+        public string musicVolume = "Music";
+        public string effectsVolume = "Effects";
+        public string voiceVolume = "Voices";
+        public string screenShake = "Screen Shake";
+        public string hints = "Hints";
+        public string on = "On";
+        public string off = "Off";
+        public string done = "Done";
+
+        public string resultsTitle = "Level Clear!";
+        public string resultsTime = "Time";
+        public string resultsKills = "Kills";
+        public string resultsHits = "Hits Taken";
+        public string resultsRewinds = "Rewinds";
+        public string resultsDiamonds = "Diamonds";
+        public string continueText = "Continue";
+
+        public string deathTitle = "You Died";
+        public string deathRewind = "Hold R to undo it!";
+        public string deathRewindTouch = "Hold ◄◄ to undo it!";
+        public string deathNoJuice = "No rewind juice left...";
+
+        public string rewindHint = "Ouch! Hold R to undo that.";
+        public string rewindHintTouch = "Ouch! Hold ◄◄ to undo that.";
+    }
+
     /// <summary>The shared look of every menu: fonts, text styles, buttons, cards, motion.</summary>
     [Serializable]
     public class MenuTheme
@@ -274,6 +327,9 @@ namespace SickOfIt.Data.Config
         [Range(0f, 1f)] public float soundVolume = 0.6f;
 
         public MenuHudStyle hud = new MenuHudStyle();
+        public MenuTexts texts = new MenuTexts();
+        [Tooltip("Results-screen grades, any order.")]
+        public List<MenuGrade> grades = new List<MenuGrade>();
 
         [Tooltip("{0} = health, {1} = max health.")]
         public string healthFormat = "♥ {0}/{1}";
@@ -290,6 +346,7 @@ namespace SickOfIt.Data.Config
         public string levelSelect = "Level Select";
         public string videos = "Videos";
         public string shop = "Shop";
+        public string settings = "Settings";
         public string quit = "Quit";
     }
 }

@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using SickOfIt.Core;
+using SickOfIt.Core.Audio;
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
@@ -15,7 +17,7 @@ namespace SickOfIt.Gameplay
     /// rewind bar, the upgrade picker and a full-screen flash. What the script shows (texts, boss bar) is part of
     /// the saved simulation state, so it rewinds too; the animations are cosmetic.
     /// </summary>
-    public sealed class GameplayHud : MonoBehaviour
+    public sealed partial class GameplayHud : MonoBehaviour
     {
         MenuCanvas menu;
         MenuTheme theme;
@@ -100,6 +102,7 @@ namespace SickOfIt.Gameplay
                 new Vector2(1600f, 90f), out subtitleMotion, 0f, null, theme.entrance);
 
             BuildBossBar();
+            BuildScreens();
         }
 
         // ─── Player health (top-left) and diamonds (top-right) ────────
@@ -173,6 +176,7 @@ namespace SickOfIt.Gameplay
         TextMeshProUGUI rewindHint;
         MenuMotionDriver rewindHintMotion;
         float hintShownAt = -99f;
+        bool wasRewinding;
         bool hintShown;
         int lastHealth = -1;
 
@@ -220,7 +224,7 @@ namespace SickOfIt.Gameplay
                 pressScale = 0.9f,
                 hoverRotation = 8f,
             };
-            rewindButton = menu.AddButtonAt(new Vector2(1f, 1f), new Vector2(-112f, -190f), "\u25C4\u25C4", buttonStyle, null);
+            rewindButton = menu.AddButtonAt(new Vector2(1f, 1f), new Vector2(-112f, -214f), "\u25C4\u25C4", buttonStyle, null);
             rewindButton.Pressed += SickOfIt.Core.Rewind.RewindInput.Begin;
             rewindButton.Released += SickOfIt.Core.Rewind.RewindInput.End;
             // Keep it out of keyboard/gamepad navigation, so arrow keys never select it mid-fight.
@@ -235,7 +239,7 @@ namespace SickOfIt.Gameplay
             rewindKey = MenuGraphics.Text(keySlot, "Text", RewindKeyText, theme.caption, menu.Font, 22f);
 
             // Taught once per level: the first time you get hurt with juice to spend.
-            string hint = Application.isMobilePlatform ? "Ouch! Hold \u25C4\u25C4 to undo that." : "Ouch! Hold R to undo that.";
+            string hint = Application.isMobilePlatform ? Texts.rewindHintTouch : Texts.rewindHint;
             rewindHint = menu.AddText(menu.Root, "RewindHint", hint, theme.subtitle, new Vector2(1f, 1f), new Vector2(-520f, -300f),
                 new Vector2(760f, 70f), out rewindHintMotion, 34f, null, theme.entrance,
                 new MenuMotion { type = MenuMotionType.Bob, amount = 5f, speed = 1.5f }, -3f);
@@ -262,6 +266,14 @@ namespace SickOfIt.Gameplay
             rewindKey.enableVertexGradient = false;
             rewindKey.color = hasJuice ? new Color(1f, 0.96f, 0.84f, 1f) : style.rewindEmpty;
 
+            if (rewinding != wasRewinding)
+            {
+                Sfx.Play(rewinding ? Sfx.Events.rewindStart : Sfx.Events.rewindStop);
+                if (!rewinding && !hasJuice)
+                    Sfx.Play(Sfx.Events.rewindEmpty);
+                wasRewinding = rewinding;
+            }
+
             float wash = rewinding ? 0.55f + 0.1f * Mathf.Sin(Time.unscaledTime * 10f) : 0f;
             var tint = style.rewind;
             rewindTint.color = new Color(tint.r, tint.g, tint.b, Mathf.MoveTowards(rewindTint.color.a, wash, Time.unscaledDeltaTime * 4f));
@@ -273,7 +285,7 @@ namespace SickOfIt.Gameplay
             var player = world != null ? world.Player : null;
             int health = player != null ? player.Health : -1;
             var hintSlot = rewindHint.transform.parent.gameObject;
-            if (!hintShown && lastHealth >= 0 && health >= 0 && health < lastHealth && canRewind && hasJuice && !rewinding)
+            if (!hintShown && GameSettings.Hints && lastHealth >= 0 && health >= 0 && health < lastHealth && canRewind && hasJuice && !rewinding)
             {
                 hintShown = true;
                 hintShownAt = Time.unscaledTime;
@@ -305,7 +317,7 @@ namespace SickOfIt.Gameplay
         {
             diamondsRoot = MenuGraphics.NewRect("Diamonds", menu.Root);
             diamondsRoot.anchorMin = diamondsRoot.anchorMax = diamondsRoot.pivot = new Vector2(1f, 1f);
-            diamondsRoot.anchoredPosition = new Vector2(-36f, -48f);
+            diamondsRoot.anchoredPosition = new Vector2(-140f, -48f); // right of it: the pause button
             var row = diamondsRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
             var padding = theme.chip.padding;
             row.padding = new RectOffset((int)padding.x, (int)padding.x, (int)padding.y, (int)padding.y);
@@ -354,8 +366,11 @@ namespace SickOfIt.Gameplay
                 int points = roguelite.GetPoints();
                 if (points != shownPoints)
                 {
-                    if (shownPoints >= 0)
+                    if (shownPoints >= 0 && points > shownPoints)
+                    {
                         diamondsPopAt = Time.unscaledTime;
+                        Sfx.Play(Sfx.Events.pickupDiamond);
+                    }
                     shownPoints = points;
                     MenuGraphics.SetText(diamonds, string.Format(theme.pointsFormat, points));
                 }
@@ -463,6 +478,7 @@ namespace SickOfIt.Gameplay
             UpdateHealthAndDiamonds();
             UpdateProgressBar();
             UpdateRewind();
+            UpdateScreens();
             UpdatePickerKeys();
         }
 
@@ -596,6 +612,7 @@ namespace SickOfIt.Gameplay
                 return;
             onPick = picked;
             pickerCount = options.Count;
+            Sfx.Play(Sfx.Events.upgradeOffer);
             timeScaleBeforePicker = Time.timeScale;
             Time.timeScale = 0f;
 
@@ -649,6 +666,7 @@ namespace SickOfIt.Gameplay
                 return;
             Destroy(pickerRoot);
             pickerRoot = null;
+            Sfx.Play(Sfx.Events.upgradePick);
             Time.timeScale = timeScaleBeforePicker <= 0f ? 1f : timeScaleBeforePicker;
             var callback = onPick;
             onPick = null;
@@ -670,8 +688,11 @@ namespace SickOfIt.Gameplay
 
         void OnDestroy()
         {
-            if (PickerOpen)
-                Time.timeScale = timeScaleBeforePicker <= 0f ? 1f : timeScaleBeforePicker;
+            // Never leave the game frozen behind us (picker, pause or results open when the level unloads).
+            if (PickerOpen || Paused || resultsRoot != null)
+                Time.timeScale = 1f;
+            if (Paused || resultsRoot != null)
+                GameClock.Instance?.Resume();
         }
 
         void Refresh(float now)
@@ -688,7 +709,10 @@ namespace SickOfIt.Gameplay
                 var top = Color.Lerp(bannerColor, Color.white, 0.45f);
                 banner.colorGradient = new VertexGradient(top, top, bannerColor, bannerColor);
                 if (bannerNow.Length > 0)
+                {
                     bannerMotion.Restart();
+                    Sfx.Play(Sfx.Events.bannerShow);
+                }
             }
             string subtitleNow = now < subtitleUntil ? subtitleText : "";
             if (subtitleNow != shownSubtitle)
@@ -716,6 +740,8 @@ namespace SickOfIt.Gameplay
                 if (boss == null && bossTarget.player)
                     boss = world.Player;
             }
+            if (boss != null && !bossRoot.gameObject.activeSelf)
+                Sfx.Play(Sfx.Events.bossAppear);
             bossRoot.gameObject.SetActive(boss != null);
             if (boss != null)
             {

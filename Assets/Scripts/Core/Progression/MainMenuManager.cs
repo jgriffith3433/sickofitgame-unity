@@ -103,6 +103,8 @@ namespace SickOfIt.Core.Progression
                 Add(list, labels.videos, OnVideosClicked);
             if (config.showUpgradeShopButton)
                 Add(list, labels.shop, OnUpgradeShopClicked);
+            if (config.showSettingsButton)
+                Add(list, labels.settings, () => SettingsPanel.Show(menu, null));
             // Quitting does nothing in a browser tab.
             if (config.showQuitButton && Application.platform != RuntimePlatform.WebGLPlayer)
                 Add(list, labels.quit, OnQuitClicked);

@@ -686,6 +686,9 @@ namespace SickOfIt.Gameplay.Content
                     target.ApplyStatus(effect, Owner);
             });
             Owner.World.Effects.Shake(0.15f, 0.2f);
+            SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.explosion);
+            SickOfIt.Core.Fx.Fx.Flash(Owner.Position, new Color(1f, 0.8f, 0.4f, 0.9f), blastRadius * 2.2f, 0.18f);
+            SickOfIt.Core.Fx.Fx.Burst(Owner.Position, new Color(1f, 0.55f, 0.2f, 1f), 16, 6f, 0.18f, 0.5f);
             Owner.Die(DeathCause.Self);
         }
 

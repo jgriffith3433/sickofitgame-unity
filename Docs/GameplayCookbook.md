@@ -231,6 +231,35 @@ rewind!", "shape": "Burst", "fill": "#FFC93C", "textColor": "#1E1220",
                    "motion": { "type": "Pulse", "amount": 0.06, "speed": 1.2 } } ]
 ```
 
+## Sound effects and voice lines (ElevenLabs)
+
+Every sound lives in `audio.json` as a prompt; the files are generated, never hand-placed:
+
+```json
+{ "id": "player_shoot", "kind": "Effect", "prompt": "Punchy retro arcade blaster shot, short fiery whoosh and pop",
+  "durationSeconds": 0.5, "promptInfluence": 0.5, "volume": 0.55, "pitchVariation": 0.08, "maxVoices": 4, "cooldown": 0.05 },
+{ "id": "vo_final_wave", "kind": "Voice", "prompt": "Final wave! Probably." }
+```
+
+- **Make them:** SickOfIt > Audio > Sound Generator (paste the API key once; it stays on that computer), or the
+  `GenerateSounds` batch command. It fills in `clip` and `generatedFrom`; editing a prompt (or duration, influence, loop,
+  voice) marks the sound "Outdated" so it gets remade. Files go to `outputFolder` (Assets/Audio/Generated).
+- **Effects** use ElevenLabs text-to-sound-effects: describe the sound, 0.5-30 s (`durationSeconds` 0 = let it decide),
+  `promptInfluence` 0-1 (higher = more literal), `loop` for seamless loops. **Voices** use text-to-speech: `prompt` is
+  the line, `voiceId` (or `defaultVoiceId`) the ElevenLabs voice.
+- **When they play:** `events` maps game moments to sound ids (playerShoot, enemyDie, rewindStart, levelClear, uiClick,
+  ...; empty = silent). Per enemy: `sounds.hurtSound` / `sounds.deathSound`; pickups: `collect.soundId`; scripts:
+  `{ "type": "playSound", "sound": "vo_final_wave" }`. Ids are validated on import.
+- Players control Volume / Music / Effects / Voices, screen shake and hints in Settings (main menu and pause menu).
+
+## Game feel
+
+Built in, no config needed: enemies pop into bits on death (`visual.fxColor` sets the color, `visual.deathPop` turns it
+off), sparks on hits, muzzle flash and dust on jump/land, a red flash + shake + hit-stop when the player is hurt, the
+player blinks while invincible. Screens: pause (Esc/P/Start), settings, the end-of-level results with a grade
+(`ui/theme.json` `grades`: S..D thresholds and quips; score = 100 - 12 per hit - 4 per rewind), and the "undo your death"
+countdown (`player.json` `deathRewindWindow`). Every on-screen word is in `ui/theme.json` `texts`.
+
 ## Checking it plays
 
 - `Logs/GameConfig.log` after every edit (errors have file, line, field, and suggestions).

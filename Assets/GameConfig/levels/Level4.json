@@ -267,6 +267,10 @@
             "color": "#FF7A5C"
           },
           {
+            "type": "playSound",
+            "sound": "vo_final_wave"
+          },
+          {
             "type": "showText",
             "text": "Unsubscribe from all of this.",
             "style": "Subtitle",

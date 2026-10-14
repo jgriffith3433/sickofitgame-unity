@@ -99,6 +99,8 @@ namespace SickOfIt.Gameplay.Content
 
         public int SortingOrder => sortingOrder >= 0 ? sortingOrder : SpriteLayers.Character;
         [Doc("Flash white when hurt.")] public bool hurtFlash = true;
+        [Doc("Color of the bits that fly off when it's hit or dies. Transparent = cream.")] public Color fxColor = Color.clear;
+        [Doc("Pop into bits when it dies (enemies with health).")] public bool deathPop = true;
     }
 
     [Serializable]
@@ -204,6 +206,10 @@ namespace SickOfIt.Gameplay.Content
         public List<AudioClip> hurt = new List<AudioClip>();
         public List<AudioClip> death = new List<AudioClip>();
         [Doc("Hurt sounds only play at or below this fraction of health.")] public float hurtThreshold = 1f;
+        [Doc("audio.json sound for hits, used when 'hurt' has no clips. Empty = the game's enemyHurt sound (enemies only).")]
+        [SoundRef] public string hurtSound = "";
+        [Doc("audio.json sound for deaths, used when 'death' has no clips. Empty = the game's enemyDie sound (enemies only).")]
+        [SoundRef] public string deathSound = "";
         public float pitchVariation = 0.1f;
         public float volume = 1f;
     }

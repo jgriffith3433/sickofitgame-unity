@@ -636,7 +636,14 @@ namespace SickOfIt.Gameplay
             if (Def.visual.hurtFlash)
                 FlashFor(0.1f, Color.white);
             if (maxHealth > 0 && (float)health / maxHealth <= Def.sounds.hurtThreshold)
-                PlayRandom(Def.sounds.hurt);
+            {
+                if (Def.sounds.hurt.Count > 0)
+                    PlayRandom(Def.sounds.hurt);
+                else if (health > 0)
+                    SickOfIt.Core.Audio.Sfx.Play(SoundOr(Def.sounds.hurtSound, SickOfIt.Core.Audio.Sfx.Events.enemyHurt));
+            }
+            if (health > 0 && Team == Team.Enemy)
+                SickOfIt.Core.Fx.Fx.Spark(Position, FxColor, Mathf.Clamp(radius * 1.6f, 0.2f, 0.8f));
             World.NotifyDamaged(this, final, source, damageLabel);
             dirty = true;
 
@@ -690,6 +697,18 @@ namespace SickOfIt.Gameplay
                     var clip = Def.sounds.death[random.Range(0, Def.sounds.death.Count)];
                     if (clip != null)
                         AudioSource.PlayClipAtPoint(clip, at, Def.sounds.volume);
+                }
+                else if (maxHealth > 0)
+                {
+                    SickOfIt.Core.Audio.Sfx.Play(SoundOr(Def.sounds.deathSound, SickOfIt.Core.Audio.Sfx.Events.enemyDie));
+                }
+                // Enemies pop into bits; things without health (shots, puddles) just vanish.
+                if (maxHealth > 0 && Def.visual.deathPop)
+                {
+                    float size = Mathf.Clamp(radius * 3f, 0.5f, 2.5f);
+                    SickOfIt.Core.Fx.Fx.Flash(at, Color.white, size, 0.14f);
+                    SickOfIt.Core.Fx.Fx.Burst(at, FxColor, Mathf.Clamp(Mathf.RoundToInt(6 + radius * 10f), 6, 18), 3f + radius * 4f,
+                        Mathf.Clamp(radius * 0.45f, 0.07f, 0.3f));
                 }
             }
             if (cause == DeathCause.Damage)
@@ -989,6 +1008,16 @@ namespace SickOfIt.Gameplay
             Sprite.color = color;
             if (healthBar != null)
                 healthBar.Show(maxHealth > 0 ? (float)health / maxHealth : 0f, transform.lossyScale.x);
+        }
+
+        Color FxColor => Def.visual.fxColor.a > 0f ? Def.visual.fxColor : new Color(1f, 0.95f, 0.82f, 1f);
+
+        /// <summary>The entity's own sound id; for enemies with none, the game-wide fallback.</summary>
+        string SoundOr(string own, string enemyDefault)
+        {
+            if (!string.IsNullOrEmpty(own))
+                return own;
+            return Team == Team.Enemy ? enemyDefault : null;
         }
 
         void PlayRandom(List<AudioClip> clips)

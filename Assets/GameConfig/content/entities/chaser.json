@@ -26,7 +26,8 @@
       ],
       "transitions": [],
       "defaultStateName": "Idle"
-    }
+    },
+    "fxColor": "#7CFF6B"
   },
   "healthBar": {
     "show": true

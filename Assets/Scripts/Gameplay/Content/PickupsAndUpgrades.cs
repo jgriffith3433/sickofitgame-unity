@@ -16,6 +16,7 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Bob up and down while waiting.")] public float bobHeight = 0.06f;
         public List<GameAction> @do = new List<GameAction>();
         public AudioClip sound;
+        [SoundRef, Doc("audio.json sound to play when collected (used when 'sound' isn't set).")] public string soundId = "";
 
         public override void Tick(float now, float dt)
         {
@@ -51,6 +52,9 @@ namespace SickOfIt.Gameplay.Content
                 Owner.RunActions(@do, 0);
                 if (sound != null)
                     AudioSource.PlayClipAtPoint(sound, Owner.Position);
+                else
+                    SickOfIt.Core.Audio.Sfx.Play(soundId);
+                SickOfIt.Core.Fx.Fx.Flash(Owner.Position, new Color(1f, 1f, 1f, 0.8f), 0.7f, 0.15f);
                 Owner.World.Telemetry.Record("pickup", Owner.DefId, Owner.Serial);
             }
             Owner.Die(DeathCause.Despawn);

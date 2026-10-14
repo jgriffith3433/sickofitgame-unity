@@ -149,6 +149,11 @@ namespace SickOfIt.Combat.Health
 
         private bool deathPending;
 
+        /// <summary>Seconds left to undo a death with a rewind before the death scene; -1 when not dying.</summary>
+        public float DeathTimeLeft { get; private set; } = -1f;
+        /// <summary>The death window's full length (for drawing a countdown).</summary>
+        public float DeathWindow { get; private set; }
+
         private void Die()
         {
             if (deathPending)
@@ -171,13 +176,21 @@ namespace SickOfIt.Combat.Health
         {
             // Leave a beat so rewind can restore health and cancel the death.
             // The timer holds while time is running backward.
+            // With rewind juice left the window is longer, and the HUD offers "Hold R to undo it!".
             float delay = 0.6f;
             var definition = GameDefinition.Instance;
             if (definition != null && definition.player != null)
+            {
                 delay = definition.player.deathRewindGrace;
+                var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
+                if (budget == null || budget.CanRewind)
+                    delay = Mathf.Max(delay, definition.player.deathRewindWindow);
+            }
+            DeathWindow = delay;
             float elapsed = 0f;
             while (elapsed < delay)
             {
+                DeathTimeLeft = delay - elapsed;
                 if (currentHealth > 0)
                 {
                     CancelDeath();
@@ -190,9 +203,15 @@ namespace SickOfIt.Combat.Health
                     continue;
                 }
 
+                // Out of juice mid-window (or never had any): no point waiting the long window out.
+                var juice = SickOfIt.Core.Rewind.RewindBudget.Instance;
+                if (juice != null && !juice.CanRewind && elapsed >= (definition != null ? definition.player.deathRewindGrace : 0.6f))
+                    break;
+
                 elapsed += Time.unscaledDeltaTime;
                 yield return null;
             }
+            DeathTimeLeft = 0f;
 
             if (currentHealth > 0)
             {
@@ -207,6 +226,7 @@ namespace SickOfIt.Combat.Health
         private void CancelDeath()
         {
             deathPending = false;
+            DeathTimeLeft = -1f;
             if (controller != null)
                 controller.enabled = true;
         }
