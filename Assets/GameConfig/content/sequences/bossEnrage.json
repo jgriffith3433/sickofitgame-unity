@@ -16,7 +16,8 @@
       "text": "The Magma King has entered his villain era.",
       "style": "Subtitle",
       "duration": 2.5,
-      "color": "#FFAA66"
+      "color": "#FFAA66",
+      "sound": "vo_boss_enrage"
     },
     {
       "type": "modifier",

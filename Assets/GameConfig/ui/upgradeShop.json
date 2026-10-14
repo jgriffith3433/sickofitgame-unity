@@ -15,10 +15,12 @@
   "upgrades": [
     {
       "id": "extraJump",
-      "title": "Extra Jump",
-      "description": "Allows an additional jump in the air",
-      "costsPerLevel": [100, 200, 400, 800],
-      "maxLevel": 4
+      "title": "Double Jump",
+      "description": "Jump. Then, against all physics, jump again.",
+      "costsPerLevel": [15, 35],
+      "maxLevel": 2,
+      "effect": "ExtraJump",
+      "amountPerLevel": 1.0
     }
   ],
   "showDebugAddPoints": true,
@@ -50,7 +52,7 @@
     },
     "subtitle": {
       "show": true,
-      "text": "Diamonds in. Power out. No refunds.",
+      "text": "Spend diamonds on upgrades that stick. Until New Game.",
       "anchor": [0.5, 0.77],
       "offset": [0.0, 0.0],
       "rotation": 0.0,
@@ -63,13 +65,13 @@
       }
     },
     "list": {
-      "anchor": [0.5, 0.42],
+      "anchor": [0.5, 0.43],
       "offset": [0.0, 0.0],
-      "size": [1600.0, 560.0],
+      "size": [1700.0, 680.0],
       "direction": "Grid",
       "columns": 0,
-      "spacing": [32.0, 32.0],
-      "itemSize": [440.0, 400.0]
+      "spacing": [28.0, 28.0],
+      "itemSize": [360.0, 290.0]
     },
     "backAnchor": [0.0, 0.0],
     "backOffset": [170.0, 80.0],

@@ -37,6 +37,7 @@ namespace SickOfIt.Data
         private const string KEY_UPGRADE_PURCHASED = "Rogue_Upgrade_{0}_Purchased"; // int 0/1
         private const string KEY_EXTRA_JUMPS_PURCHASED = "Rogue_ExtraJumps_Purchased"; // int: count of extra jumps bought
         private const string KEY_MAX_HEALTH = "Rogue_MaxHealth"; // int: player's current max health
+        private const string KEY_SHOP_LEVEL = "Rogue_Shop_{0}"; // int: levels bought of a shop upgrade
 
         /// <summary>
         /// Fallback starting max health (used if GameDefinition is unavailable).
@@ -61,30 +62,6 @@ namespace SickOfIt.Data
             {
                 var gd = GameDefinition.Instance;
                 return gd != null ? gd.player.baseMaxHealth : BASE_MAX_HEALTH_FALLBACK;
-            }
-        }
-
-        /// <summary>Read from GameDefinition.player at runtime.</summary>
-        public int MaxExtraJumps
-        {
-            get
-            {
-                var upgrade = ExtraJumpUpgrade();
-                if (upgrade != null && upgrade.maxLevel > 0)
-                    return upgrade.maxLevel;
-
-                var gd = GameDefinition.Instance;
-                return gd != null ? gd.player.maxExtraJumps : MAX_EXTRA_JUMPS_FALLBACK;
-            }
-        }
-
-        /// <summary>Read from GameDefinition.player at runtime.</summary>
-        public int ExtraJumpCost
-        {
-            get
-            {
-                var gd = GameDefinition.Instance;
-                return gd != null ? gd.player.extraJumpCost : EXTRA_JUMP_COST_FALLBACK;
             }
         }
 
@@ -337,107 +314,90 @@ namespace SickOfIt.Data
         }
 
         // =========================================================================
-        // UPGRADES - EXTRA JUMPS
+        // SHOP UPGRADES (bought with diamonds, kept until New Game)
         // =========================================================================
 
         /// <summary>
-        /// Get the number of extra jumps the player has purchased (0 to MAX_EXTRA_JUMPS).
-        /// This is the number of air jumps available. Player always has ground jump.
-        /// A fresh player has 0 extra jumps (ground jump only, no air jumps).
+        /// What the shop sells: player.availableUpgrades, or upgradeShopConfig.upgrades when that's empty.
         /// </summary>
-        public int GetExtraJumpsPurchased()
+        public static IList<UpgradeDefinition> ShopCatalog
         {
-            return PlayerPrefs.GetInt(KEY_EXTRA_JUMPS_PURCHASED, 0);
+            get
+            {
+                var gd = GameDefinition.Instance;
+                if (gd == null)
+                    return new UpgradeDefinition[0];
+                if (gd.player != null && gd.player.availableUpgrades != null && gd.player.availableUpgrades.Count > 0)
+                    return gd.player.availableUpgrades;
+                return gd.upgradeShopConfig != null && gd.upgradeShopConfig.upgrades != null
+                    ? (IList<UpgradeDefinition>)gd.upgradeShopConfig.upgrades
+                    : new UpgradeDefinition[0];
+            }
+        }
+
+        static string LevelKey(string id) => id == "extraJump" ? KEY_EXTRA_JUMPS_PURCHASED : string.Format(KEY_SHOP_LEVEL, id);
+
+        /// <summary>How many levels of a shop upgrade the player owns.</summary>
+        public int GetUpgradeLevel(string id) => string.IsNullOrEmpty(id) ? 0 : PlayerPrefs.GetInt(LevelKey(id), 0);
+
+        /// <summary>Price of the next level, or -1 when maxed.</summary>
+        public int GetNextCost(UpgradeDefinition upgrade)
+        {
+            int level = GetUpgradeLevel(upgrade.id);
+            if (level >= upgrade.maxLevel)
+                return -1;
+            if (upgrade.costsPerLevel == null || upgrade.costsPerLevel.Length == 0)
+                return 0;
+            return upgrade.costsPerLevel[Mathf.Clamp(level, 0, upgrade.costsPerLevel.Length - 1)];
+        }
+
+        public bool CanAfford(UpgradeDefinition upgrade)
+        {
+            int cost = GetNextCost(upgrade);
+            return cost >= 0 && GetPoints() >= cost;
         }
 
         /// <summary>
-        /// Try to purchase one extra jump. Returns true if successful.
+        /// Buys the next level: spends the diamonds, saves the level, and applies what persists outside levels
+        /// (max health, which also tops up the health carried between levels). Returns false if maxed or too poor.
         /// </summary>
-        public bool PurchaseExtraJump()
+        public bool TryPurchase(UpgradeDefinition upgrade)
         {
-            int current = GetExtraJumpsPurchased();
-            if (current >= MaxExtraJumps)
-            {
-                ////Debug.Log("[RogueliteManager] Already at max extra jumps!");
+            int cost = GetNextCost(upgrade);
+            if (cost < 0 || !SpendPoints(cost))
                 return false;
-            }
-
-            int cost = GetExtraJumpCost(current + 1);
-            if (!SpendPoints(cost))
+            PlayerPrefs.SetInt(LevelKey(upgrade.id), GetUpgradeLevel(upgrade.id) + 1);
+            if (upgrade.Effect == ShopEffect.MaxHealth)
             {
-                ////Debug.Log($"[RogueliteManager] Not enough points for extra jump! Need {cost}, have {GetPoints()}");
-                return false;
+                int amount = Mathf.Max(1, Mathf.RoundToInt(upgrade.amountPerLevel));
+                int max = IncreaseMaxHealth(amount);
+                int totalLevels = GameDefinition.Instance != null ? GameDefinition.Instance.TotalLevels : 0;
+                for (int i = 1; i <= totalLevels; i++)
+                {
+                    if (!HasLevelHealthData(i))
+                        continue;
+                    string key = string.Format(KEY_LEVEL_END_HEALTH, i);
+                    PlayerPrefs.SetInt(key, Mathf.Min(max, PlayerPrefs.GetInt(key) + amount));
+                }
             }
-
-            PlayerPrefs.SetInt(KEY_EXTRA_JUMPS_PURCHASED, current + 1);
             PlayerPrefs.Save();
-            ////Debug.Log($"[RogueliteManager] Purchased extra jump #{current + 1}! Air jumps now: {current + 1}");
             return true;
         }
 
-        /// <summary>
-        /// Get the cost of the Nth extra jump (1-indexed).
-        /// Jump 1 costs EXTRA_JUMP_COST, Jump 2 costs EXTRA_JUMP_COST * 2.
-        /// </summary>
-        public int GetExtraJumpCost(int jumpNumber)
+        /// <summary>The summed effect of every owned shop upgrade of one kind (e.g. extra jumps, +% fire rate).</summary>
+        public float GetShopTotal(ShopEffect effect)
         {
-            var upgrade = ExtraJumpUpgrade();
-            if (upgrade != null && upgrade.costsPerLevel != null && upgrade.costsPerLevel.Length > 0)
+            float total = 0f;
+            foreach (var upgrade in ShopCatalog)
             {
-                int index = Mathf.Clamp(jumpNumber - 1, 0, upgrade.costsPerLevel.Length - 1);
-                return upgrade.costsPerLevel[index];
+                if (upgrade != null && upgrade.Effect == effect)
+                    total += GetUpgradeLevel(upgrade.id) * upgrade.amountPerLevel;
             }
-
-            return ExtraJumpCost * jumpNumber;
+            return total;
         }
 
-        static UpgradeDefinition ExtraJumpUpgrade()
-        {
-            var gd = GameDefinition.Instance;
-            if (gd == null)
-                return null;
-
-            var fromPlayer = FindUpgrade(gd.player != null ? gd.player.availableUpgrades : null, "extraJump");
-            if (fromPlayer != null)
-                return fromPlayer;
-
-            return FindUpgrade(gd.upgradeShopConfig != null ? gd.upgradeShopConfig.upgrades : null, "extraJump");
-        }
-
-        static UpgradeDefinition FindUpgrade(IList<UpgradeDefinition> list, string id)
-        {
-            if (list == null)
-                return null;
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i] != null && list[i].id == id)
-                    return list[i];
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Returns true if the player can afford the next extra jump.
-        /// </summary>
-        public bool CanAffordNextExtraJump()
-        {
-            int current = GetExtraJumpsPurchased();
-            if (current >= MaxExtraJumps)
-                return false;
-
-            int cost = GetExtraJumpCost(current + 1);
-            return GetPoints() >= cost;
-        }
-
-        /// <summary>
-        /// Returns true if the player has purchased all available extra jumps.
-        /// </summary>
-        public bool HasMaxExtraJumps()
-        {
-            return GetExtraJumpsPurchased() >= MaxExtraJumps;
-        }
+        /// <summary>Air jumps bought in the shop. The player always has the ground jump.</summary>
+        public int GetExtraJumpsPurchased() => Mathf.RoundToInt(GetShopTotal(ShopEffect.ExtraJump));
 
         // =========================================================================
         // GENERIC UPGRADE TRACKING
@@ -480,6 +440,11 @@ namespace SickOfIt.Data
 
             // Clear upgrades and max health (points are preserved across new games)
             PlayerPrefs.DeleteKey(KEY_EXTRA_JUMPS_PURCHASED);
+            foreach (var upgrade in ShopCatalog)
+            {
+                if (upgrade != null && !string.IsNullOrEmpty(upgrade.id))
+                    PlayerPrefs.DeleteKey(LevelKey(upgrade.id));
+            }
             PlayerPrefs.DeleteKey(KEY_MAX_HEALTH);
             UpgradeProgress.Reset();
 

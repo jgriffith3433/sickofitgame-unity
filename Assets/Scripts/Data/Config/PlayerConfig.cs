@@ -137,7 +137,28 @@ namespace SickOfIt.Data.Config
         public string id;
         public string title;
         public string description;
+        [Tooltip("Diamonds for each level, in order (the last price repeats).")]
         public int[] costsPerLevel;
         public int maxLevel;
+        [Tooltip("What each level does.")]
+        public ShopEffect effect = ShopEffect.None;
+        [Tooltip("How much each level adds: health points, air jumps, seconds of rewind, magnet range, or a fraction (0.1 = +10%) for speed, fire rate and damage.")]
+        public float amountPerLevel = 1f;
+
+        /// <summary>The effect, treating the original "extraJump" entry (written before effects existed) as ExtraJump.</summary>
+        public ShopEffect Effect => effect == ShopEffect.None && id == "extraJump" ? ShopEffect.ExtraJump : effect;
+    }
+
+    /// <summary>What a shop upgrade does per level.</summary>
+    public enum ShopEffect
+    {
+        None,
+        [Tooltip("+amount max health (kept between levels).")] MaxHealth,
+        [Tooltip("+amount air jumps.")] ExtraJump,
+        [Tooltip("+amount x100% move speed.")] MoveSpeed,
+        [Tooltip("+amount x100% fire rate.")] FireRate,
+        [Tooltip("+amount x100% damage.")] Damage,
+        [Tooltip("+amount seconds of rewind juice (max and starting).")] RewindJuice,
+        [Tooltip("+amount world units of pickup magnet range.")] Magnet,
     }
 }

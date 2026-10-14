@@ -887,11 +887,9 @@ namespace SickOfIt.Core.Input
             if (!firstOfVolley)
                 return;
 
+            // Firing happens constantly, so its feedback stays quiet: a faint, small flash and a soft sound.
             if (Cue(fireSound, SickOfIt.Core.Audio.Sfx.Events.playerShoot))
-            {
-                SickOfIt.Core.Fx.Fx.Flash(muzzle, new Color(1f, 0.85f, 0.45f, 0.9f), 0.5f, 0.08f);
-                SickOfIt.Core.Fx.Fx.Spark(muzzle, new Color(1f, 0.95f, 0.6f, 1f), 0.42f);
-            }
+                SickOfIt.Core.Fx.Fx.Flash(muzzle, new Color(1f, 0.85f, 0.45f, 0.35f), 0.26f, 0.06f);
 
             // Restart the fire clip on every shot so the muzzle flash lines up with the projectile.
             if (animator != null && animator.HasState(0, FireStateHash))

@@ -33,7 +33,7 @@ namespace SickOfIt.Tools.Editor.Audio
                 return sound.clip != null ? Status.Ready : Status.NoPrompt;
             if (sound.clip == null)
                 return Status.Missing;
-            return sound.generatedFrom == sound.GenerationKey(audio.defaultVoiceId) ? Status.Ready : Status.Outdated;
+            return sound.generatedFrom == sound.GenerationKey(audio) ? Status.Ready : Status.Outdated;
         }
 
         /// <summary>The sounds that need making (missing or outdated), or all of 'ids' when given.</summary>
@@ -75,7 +75,7 @@ namespace SickOfIt.Tools.Editor.Audio
                     File.WriteAllBytes(assetPath, bytes);
                     AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
                     ConfigureImport(assetPath, sound);
-                    WriteBack(sound.id, assetPath.Substring("Assets/".Length), sound.GenerationKey(audio.defaultVoiceId));
+                    WriteBack(sound.id, assetPath.Substring("Assets/".Length), sound.GenerationKey(audio));
                     result.Made++;
                 }
                 catch (OperationCanceledException)
@@ -96,14 +96,139 @@ namespace SickOfIt.Tools.Editor.Audio
             return result;
         }
 
+        // ─── Takes: several variations of one sound to choose from ──────────
+
+        static string Folder(AudioConfig audio) => "Assets/" + (string.IsNullOrEmpty(audio.outputFolder) ? "Audio/Generated" : audio.outputFolder.Trim('/'));
+        static string TakesFolder(AudioConfig audio) => Folder(audio) + "/Takes";
+        static string Extension(AudioConfig audio) => audio.outputFormat.StartsWith("mp3", StringComparison.Ordinal) ? ".mp3"
+            : audio.outputFormat.StartsWith("wav", StringComparison.Ordinal) ? ".wav" : ".ogg";
+
+        /// <summary>Existing takes of a sound (asset paths), oldest first.</summary>
+        public static List<string> TakesOf(AudioConfig audio, string id)
+        {
+            string folder = TakesFolder(audio);
+            if (!Directory.Exists(folder))
+                return new List<string>();
+            string prefix = SafeName(id) + "_take";
+            return Directory.GetFiles(folder)
+                .Select(p => p.Replace(Path.DirectorySeparatorChar, '/'))
+                .Where(p => Path.GetFileName(p).StartsWith(prefix, StringComparison.Ordinal) && !p.EndsWith(".meta", StringComparison.Ordinal))
+                .OrderBy(p => File.GetCreationTimeUtc(p))
+                .ToList();
+        }
+
+        /// <summary>
+        /// Makes 'count' variations of one sound into the Takes folder without touching the sound's clip; pick one
+        /// with <see cref="UseTake"/>. ElevenLabs gives a different result each call, like the Playground's variations.
+        /// </summary>
+        public static async Task<List<string>> MakeTakesAsync(AudioConfig audio, SoundDef sound, int count, Action<int, int, string> progress,
+            CancellationToken cancel)
+        {
+            var made = new List<string>();
+            string folder = TakesFolder(audio);
+            Directory.CreateDirectory(folder);
+            int first = TakesOf(audio, sound.id).Count + 1;
+            for (int i = 0; i < count && !cancel.IsCancellationRequested; i++)
+            {
+                progress?.Invoke(i, count, sound.id);
+                byte[] bytes = await Request(audio, sound, cancel);
+                string path = $"{folder}/{SafeName(sound.id)}_take{first + i}{Extension(audio)}";
+                File.WriteAllBytes(path, bytes);
+                AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+                ConfigureImport(path, sound);
+                made.Add(path);
+            }
+            progress?.Invoke(count, count, null);
+            return made;
+        }
+
+        /// <summary>Makes a take the sound's clip (copied over its main file) and records the prompt it came from.</summary>
+        public static void UseTake(AudioConfig audio, SoundDef sound, string takePath)
+        {
+            string target = $"{Folder(audio)}/{SafeName(sound.id)}{Path.GetExtension(takePath)}";
+            Directory.CreateDirectory(Folder(audio));
+            File.Copy(takePath, target, true);
+            AssetDatabase.ImportAsset(target, ImportAssetOptions.ForceUpdate);
+            ConfigureImport(target, sound);
+            WriteBack(sound.id, target.Substring("Assets/".Length), sound.GenerationKey(audio));
+            GameConfigSync.ImportNow("sound generator: picked a take");
+        }
+
+        // ─── Voice design: candidate voices for a VoiceDef, then save the one you like ───────────
+
+        static string DesignsFolder(AudioConfig audio) => Folder(audio) + "/VoiceDesigns";
+        static string DesignsIndex(AudioConfig audio, string voiceName) => $"{DesignsFolder(audio)}/{SafeName(voiceName)}_designs.json";
+
+        /// <summary>Candidate voices made so far for a voice (preview file, ElevenLabs' id to save it), oldest first.</summary>
+        public static List<(string path, string generatedVoiceId)> DesignsOf(AudioConfig audio, string voiceName)
+        {
+            var result = new List<(string, string)>();
+            string index = DesignsIndex(audio, voiceName);
+            if (!File.Exists(index))
+                return result;
+            foreach (var pair in JObject.Parse(File.ReadAllText(index)).Properties())
+            {
+                if (File.Exists(pair.Name))
+                    result.Add((pair.Name, (string)pair.Value));
+            }
+            return result;
+        }
+
+        /// <summary>Asks ElevenLabs Voice Design for candidates (usually 3) and saves their previews to audition.</summary>
+        public static async Task<int> DesignVoiceAsync(AudioConfig audio, VoiceDef voice, CancellationToken cancel)
+        {
+            if (string.IsNullOrWhiteSpace(voice.description))
+                throw new InvalidOperationException($"voice \"{voice.name}\" has no description to design from");
+            var previews = await ElevenLabsClient.DesignVoiceAsync(voice.description, voice.sampleText, cancel);
+            string folder = DesignsFolder(audio);
+            Directory.CreateDirectory(folder);
+            string indexPath = DesignsIndex(audio, voice.name);
+            var index = File.Exists(indexPath) ? JObject.Parse(File.ReadAllText(indexPath)) : new JObject();
+            int next = index.Count + 1;
+            foreach (var preview in previews)
+            {
+                string path = $"{folder}/{SafeName(voice.name)}_design{next++}.mp3";
+                File.WriteAllBytes(path, preview.Audio);
+                AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+                index[path] = preview.GeneratedVoiceId;
+            }
+            File.WriteAllText(indexPath, index.ToString());
+            return previews.Length;
+        }
+
+        /// <summary>
+        /// Saves a candidate as a voice in the ElevenLabs account and makes it this voice's voiceId in audio.json.
+        /// Every line spoken in this voice then shows as outdated, ready to remake.
+        /// </summary>
+        public static async Task UseDesignAsync(AudioConfig audio, VoiceDef voice, string generatedVoiceId, CancellationToken cancel)
+        {
+            string voiceId = await ElevenLabsClient.SaveDesignedVoiceAsync($"Sick Of It - {voice.name}", voice.description, generatedVoiceId, cancel);
+            if (string.IsNullOrEmpty(voiceId))
+                throw new InvalidOperationException("ElevenLabs didn't return a voice id");
+            EditAudioJson(root =>
+            {
+                if (!(root["voices"] is JArray voices))
+                    return;
+                foreach (var token in voices)
+                {
+                    if (token is JObject entry && (string)entry["name"] == voice.name)
+                        entry["voiceId"] = voiceId;
+                }
+            });
+            GameConfigSync.ImportNow("sound generator: picked a voice");
+        }
+
         static Task<byte[]> Request(AudioConfig audio, SoundDef sound, CancellationToken cancel)
         {
             if (sound.kind == SoundKind.Voice)
             {
-                string voice = string.IsNullOrEmpty(sound.voiceId) ? audio.defaultVoiceId : sound.voiceId;
-                if (string.IsNullOrEmpty(voice))
-                    throw new InvalidOperationException("no voice: set its voiceId or audio.json's defaultVoiceId");
-                return ElevenLabsClient.SpeechAsync(voice, sound.prompt, audio.voiceModel, audio.outputFormat, cancel);
+                var speaker = audio.ResolveVoice(sound);
+                if (string.IsNullOrEmpty(speaker.voiceId))
+                    throw new InvalidOperationException(string.IsNullOrEmpty(sound.voice)
+                        ? "no voice: set its voice (e.g. \"player\") or audio.json's defaultVoiceId"
+                        : $"voice \"{sound.voice}\" has no voiceId yet: design it in the Voices section first");
+                return ElevenLabsClient.SpeechAsync(speaker.voiceId, sound.prompt, speaker.model, speaker.stability, speaker.speed,
+                    audio.outputFormat, cancel);
             }
             return ElevenLabsClient.SoundEffectAsync(sound.prompt, sound.durationSeconds, sound.promptInfluence, sound.loop, audio.outputFormat, cancel);
         }
@@ -128,9 +253,10 @@ namespace SickOfIt.Tools.Editor.Audio
         /// <summary>Sets "clip" and "generatedFrom" on the sound in audio.json, keeping the rest of the file as it is.</summary>
         static void WriteBack(string id, string clipId, string key)
         {
-            var root = JObject.Parse(File.ReadAllText(AudioFile));
-            if (root["sounds"] is JArray sounds)
+            EditAudioJson(root =>
             {
+                if (!(root["sounds"] is JArray sounds))
+                    return;
                 foreach (var token in sounds)
                 {
                     if (token is JObject sound && (string)sound["id"] == id)
@@ -139,7 +265,13 @@ namespace SickOfIt.Tools.Editor.Audio
                         sound["generatedFrom"] = key;
                     }
                 }
-            }
+            });
+        }
+
+        static void EditAudioJson(Action<JObject> edit)
+        {
+            var root = JObject.Parse(File.ReadAllText(AudioFile));
+            edit(root);
             File.WriteAllText(AudioFile, JsonText.Format(root));
         }
 

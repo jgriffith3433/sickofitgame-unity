@@ -18,13 +18,15 @@
       "type": "showText",
       "text": "MAGMA KING",
       "duration": 2.0,
-      "color": "#FF6633"
+      "color": "#FF6633",
+      "sound": "vo_boss_title"
     },
     {
       "type": "showText",
       "text": "He's hot, he's angry, and he skipped lunch.",
       "style": "Subtitle",
-      "duration": 2.5
+      "duration": 2.5,
+      "sound": "vo_boss_intro"
     },
     {
       "type": "wait",

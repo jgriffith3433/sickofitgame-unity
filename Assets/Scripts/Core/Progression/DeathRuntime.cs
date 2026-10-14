@@ -67,7 +67,42 @@ namespace SickOfIt.Core.Progression
             SetupPlayback();
             StartExperience();
             StartCoroutine(PlaybackStartGate.Hold(gameClock, playbackPlayers, audioSource, BeginDeathPlayback));
+            BuildRageQuitButton();
         }
+
+        /// <summary>Main menu flag: the next main menu offers "Rage Quit Again".</summary>
+        public const string RageQuitKey = "RageQuitFromDeath";
+
+        /// <summary>A corner button (out of the way of the death animation) that leaves for the main menu.</summary>
+        private void BuildRageQuitButton()
+        {
+            var gd = GameDefinition.Instance;
+            var theme = gd != null ? gd.menuTheme : new SickOfIt.Data.Config.MenuTheme();
+            var layout = new SickOfIt.Data.Config.MenuLayoutConfig();
+            layout.title.show = false;
+            layout.subtitle.show = false;
+            var menu = SickOfIt.Core.UI.Menus.MenuCanvas.Create("DeathUI", theme, layout, gameObject);
+            var style = menu.Theme.button.Clone();
+            style.size = new Vector2(340f, 92f);
+            string label = menu.Theme.texts != null ? menu.Theme.texts.rageQuit : "Rage Quit";
+            menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f, 96f), label, style, OnRageQuit);
+        }
+
+        private void OnRageQuit()
+        {
+            if (rageQuitting)
+                return;
+            rageQuitting = true;
+            deathCompleted = true; // no reload into the level afterwards
+            StopAllCoroutines();
+            if (gameClock != null && gameClock.IsRewinding)
+                gameClock.StopRewind();
+            PlayerPrefs.SetInt(RageQuitKey, 1);
+            PlayerPrefs.Save();
+            SceneTransitionManager.Instance.LoadMainMenu();
+        }
+
+        private bool rageQuitting;
 
         private void AutoDiscoverReferences()
         {
@@ -114,15 +149,7 @@ namespace SickOfIt.Core.Progression
             }
         }
 
-        private static void EnsureEventSystem()
-        {
-            if (Object.FindFirstObjectByType<EventSystem>() != null)
-                return;
-
-            var go = new GameObject("EventSystem");
-            go.AddComponent<EventSystem>();
-            go.AddComponent<InputSystemUIInputModule>();
-        }
+        private static void EnsureEventSystem() => SickOfIt.Core.UI.EventSystemGuard.Ensure();
 
         private void SetupPlayback()
         {

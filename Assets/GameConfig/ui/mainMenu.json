@@ -105,7 +105,9 @@
     "videos": "Rewatch Stuff",
     "shop": "Spend Diamonds",
     "settings": "Settings",
-    "quit": "Rage Quit"
+    "quit": "Rage Quit",
+    "rageQuitAgain": "Rage Quit Again",
+    "browserQuitHint": "Browsers won't let us close the tab. Do it yourself. We'll wait."
   },
   "showBundleDownloadUI": true,
   "idleHouseSprite": null,

@@ -59,17 +59,73 @@ namespace SickOfIt.Tools.Editor.Audio
             return PostAsync($"/v1/sound-generation?output_format={Uri.EscapeDataString(outputFormat)}", body, cancel);
         }
 
-        public static Task<byte[]> SpeechAsync(string voiceId, string text, string modelId, string outputFormat, CancellationToken cancel)
+        public static Task<byte[]> SpeechAsync(string voiceId, string text, string modelId, float stability, float speed,
+            string outputFormat, CancellationToken cancel)
         {
             var body = new JObject
             {
                 ["text"] = text,
                 ["model_id"] = string.IsNullOrEmpty(modelId) ? "eleven_multilingual_v2" : modelId,
+                ["voice_settings"] = new JObject
+                {
+                    ["stability"] = Math.Round(Math.Max(0f, Math.Min(1f, stability)), 2),
+                    ["speed"] = Math.Round(Math.Max(0.7f, Math.Min(1.2f, speed)), 2),
+                },
             };
             return PostAsync($"/v1/text-to-speech/{Uri.EscapeDataString(voiceId)}?output_format={Uri.EscapeDataString(outputFormat)}", body, cancel);
         }
 
-        static async Task<byte[]> PostAsync(string path, JObject body, CancellationToken cancel)
+        /// <summary>A candidate voice from Voice Design: its preview audio and the id to save it with.</summary>
+        public sealed class VoicePreview
+        {
+            public string GeneratedVoiceId;
+            public byte[] Audio;
+        }
+
+        /// <summary>
+        /// Voice Design (POST /v1/text-to-voice/design): a few candidate voices for a description. 'sampleText' is what
+        /// they say (100-1000 characters; empty = ElevenLabs writes it). Nothing is saved until <see cref="SaveDesignedVoiceAsync"/>.
+        /// </summary>
+        public static async Task<VoicePreview[]> DesignVoiceAsync(string description, string sampleText, CancellationToken cancel)
+        {
+            var body = new JObject
+            {
+                ["voice_description"] = description,
+                ["model_id"] = "eleven_ttv_v3",
+            };
+            bool hasText = !string.IsNullOrWhiteSpace(sampleText) && sampleText.Trim().Length >= 100;
+            if (hasText)
+                body["text"] = sampleText.Trim().Length > 1000 ? sampleText.Trim().Substring(0, 1000) : sampleText.Trim();
+            else
+                body["auto_generate_text"] = true;
+            var json = JObject.Parse(Encoding.UTF8.GetString(await PostAsync("/v1/text-to-voice/design?output_format=mp3_44100_128", body, cancel, "application/json")));
+            var previews = json["previews"] as JArray ?? new JArray();
+            var result = new VoicePreview[previews.Count];
+            for (int i = 0; i < previews.Count; i++)
+            {
+                result[i] = new VoicePreview
+                {
+                    GeneratedVoiceId = (string)previews[i]["generated_voice_id"],
+                    Audio = Convert.FromBase64String((string)previews[i]["audio_base_64"] ?? ""),
+                };
+            }
+            return result;
+        }
+
+        /// <summary>Saves a designed voice to the ElevenLabs account (POST /v1/text-to-voice) and returns its voice id.</summary>
+        public static async Task<string> SaveDesignedVoiceAsync(string name, string description, string generatedVoiceId, CancellationToken cancel)
+        {
+            var body = new JObject
+            {
+                ["voice_name"] = name,
+                ["voice_description"] = description,
+                ["generated_voice_id"] = generatedVoiceId,
+            };
+            var json = JObject.Parse(Encoding.UTF8.GetString(await PostAsync("/v1/text-to-voice", body, cancel, "application/json")));
+            return (string)json["voice_id"];
+        }
+
+        static async Task<byte[]> PostAsync(string path, JObject body, CancellationToken cancel, string accept = "audio/mpeg")
         {
             string key = ApiKey;
             if (string.IsNullOrEmpty(key))
@@ -82,7 +138,7 @@ namespace SickOfIt.Tools.Editor.Audio
                 using (var request = new HttpRequestMessage(HttpMethod.Post, BaseUrl + path))
                 {
                     request.Headers.Add("xi-api-key", key);
-                    request.Headers.Accept.ParseAdd("audio/mpeg");
+                    request.Headers.Accept.ParseAdd(accept);
                     request.Content = new StringContent(json, Encoding.UTF8, "application/json");
                     HttpResponseMessage response;
                     try
@@ -102,7 +158,8 @@ namespace SickOfIt.Tools.Editor.Audio
                             return await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 
                         int status = (int)response.StatusCode;
-                        bool retry = status == 429 || status >= 500;
+                        // 409: ElevenLabs is still making this preview; worth another try.
+                        bool retry = status == 429 || status == 409 || status >= 500;
                         if (retry && attempt < MaxAttempts)
                         {
                             await Task.Delay(Backoff(attempt), cancel).ConfigureAwait(false);

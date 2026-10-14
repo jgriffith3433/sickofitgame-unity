@@ -5,6 +5,7 @@ using SickOfIt.Combat.Health;
 using SickOfIt.Core.Input;
 using SickOfIt.Core.Rewind;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 using SickOfIt.Gameplay.Content;
 
 namespace SickOfIt.Gameplay
@@ -29,6 +30,32 @@ namespace SickOfIt.Gameplay
         }
 
         /// <summary>Applies every owned upgrade level. Called once when the level starts.</summary>
+        /// <summary>
+        /// Applies the diamond-shop upgrades for this level: speed, fire rate and damage as permanent player
+        /// modifiers, extra rewind juice, and pickup magnet range. (Max health and air jumps are read by the player
+        /// directly from RogueliteManager.) Constant for the whole level, so rewinds and replays agree.
+        /// </summary>
+        public void ApplyShop()
+        {
+            var roguelite = RogueliteManager.Instance;
+            if (roguelite == null)
+                return;
+            var player = world.Player;
+            void Boost(Stat stat, ShopEffect effect)
+            {
+                float total = roguelite.GetShopTotal(effect);
+                if (player != null && total > 0f)
+                    player.AddModifier(stat, 1f + total, 0f, float.PositiveInfinity);
+            }
+            Boost(Stat.MoveSpeed, ShopEffect.MoveSpeed);
+            Boost(Stat.AttackSpeed, ShopEffect.FireRate);
+            Boost(Stat.Damage, ShopEffect.Damage);
+            float juice = roguelite.GetShopTotal(ShopEffect.RewindJuice);
+            if (juice > 0f)
+                RewindBudget.Instance?.RaiseMax(juice, fill: true);
+            world.PickupMagnetBonus = roguelite.GetShopTotal(ShopEffect.Magnet);
+        }
+
         public void ApplyOwned()
         {
             foreach (var pair in UpgradeProgress.Owned().OrderBy(p => p.Key, System.StringComparer.Ordinal))

@@ -742,13 +742,26 @@ namespace SickOfIt.Gameplay
         void DropLoot(Vector2 at)
         {
             var loot = Def.loot;
-            if (loot.chance <= 0f || World.PickupPool == null)
+            if (loot.chance <= 0f)
+                return;
+            string pickup = string.IsNullOrEmpty(loot.entity) ? "diamond" : loot.entity;
+            bool asEntity = World.Content.Entities.ContainsKey(pickup);
+            if (!asEntity && World.PickupPool == null)
                 return;
             for (int i = 0; i < loot.count; i++)
             {
                 if (random.Value() > loot.chance)
                     continue;
-                World.DropPoints(at, loot.value);
+                if (!asEntity)
+                {
+                    World.DropPoints(at, loot.value);
+                    continue;
+                }
+                for (int d = 0; d < Mathf.Max(1, loot.value); d++)
+                {
+                    var offset = new Vector2(random.Range(-0.3f, 0.3f), random.Range(0f, 0.25f));
+                    World.Spawn(pickup, at + offset, new SpawnOptions { FacePlayer = false });
+                }
             }
         }
 

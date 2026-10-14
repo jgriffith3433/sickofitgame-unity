@@ -57,13 +57,15 @@
             "type": "showText",
             "text": "LEVEL 5: FIRE RAIN",
             "duration": 2.5,
-            "color": "#FF8844"
+            "color": "#FF8844",
+            "sound": "vo_l5_title"
           },
           {
             "type": "showText",
             "text": "Forecast: 100% chance of fire. Bring an umbrella. A metal one.",
             "style": "Subtitle",
-            "duration": 3.5
+            "duration": 3.5,
+            "sound": "vo_l5_intro"
           },
           {
             "type": "startHazard",
@@ -170,10 +172,6 @@
         "name": "boss",
         "onEnter": [
           {
-            "type": "playSound",
-            "sound": "vo_boss"
-          },
-          {
             "type": "objectiveText",
             "text": "Defeat the Magma King"
           },
@@ -231,13 +229,15 @@
                     "type": "showText",
                     "text": "THE MAGMA KING HAS LEFT THE CHAT",
                     "duration": 3.0,
-                    "color": "#7CFF8A"
+                    "color": "#7CFF8A",
+                    "sound": "vo_l5_clear"
                   },
                   {
                     "type": "showText",
                     "text": "He will be back. He always comes back. Like Mondays.",
                     "style": "Subtitle",
-                    "duration": 3.0
+                    "duration": 3.0,
+                    "sound": "vo_l5_outro"
                   },
                   {
                     "type": "wait",

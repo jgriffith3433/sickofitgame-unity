@@ -131,15 +131,7 @@ namespace SickOfIt.Core.Progression
             }
         }
 
-        private static void EnsureEventSystem()
-        {
-            if (Object.FindFirstObjectByType<EventSystem>() != null)
-                return;
-
-            var go = new GameObject("EventSystem");
-            go.AddComponent<EventSystem>();
-            go.AddComponent<InputSystemUIInputModule>();
-        }
+        private static void EnsureEventSystem() => SickOfIt.Core.UI.EventSystemGuard.Ensure();
 
         private void SetupPlayback()
         {

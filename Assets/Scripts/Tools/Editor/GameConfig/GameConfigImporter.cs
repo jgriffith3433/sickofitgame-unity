@@ -139,9 +139,28 @@ namespace SickOfIt.Tools.Editor.GameConfig
                     issues.Warning(file, $"sounds[{i}]", $"Sound \"{sound.id}\" has neither a clip nor a prompt to generate one from.");
                 if (sound.kind == SickOfIt.Data.Config.SoundKind.Effect && sound.durationSeconds != 0f
                     && (sound.durationSeconds < 0.5f || sound.durationSeconds > 30f))
-                    issues.Error(file, $"sounds[{i}].durationSeconds", "ElevenLabs makes effects 0.5-30 seconds long (0 = let it decide).");
-                if (sound.kind == SickOfIt.Data.Config.SoundKind.Voice && string.IsNullOrEmpty(sound.voiceId) && string.IsNullOrEmpty(audio.defaultVoiceId))
-                    issues.Warning(file, $"sounds[{i}].voiceId", $"Voice line \"{sound.id}\" has no voice: set its voiceId or audio.json's defaultVoiceId.");
+                    issues.Error(file, $"sounds[{i}].durationSeconds", "The ElevenLabs API accepts 0.5-30 seconds (0 = let it decide); for shorter sounds, use 0.5 and ask for a very short sound in the prompt.");
+                if (sound.kind == SickOfIt.Data.Config.SoundKind.Voice)
+                {
+                    var names = audio.voices.Where(v => v != null).Select(v => v.name).ToList();
+                    if (!string.IsNullOrEmpty(sound.voice) && audio.FindVoice(sound.voice) == null)
+                        issues.Error(file, $"sounds[{i}].voice", $"No voice \"{sound.voice}\" in voices.{UnityJsonSerializer.SuggestName(sound.voice, names)}");
+                    else if (string.IsNullOrEmpty(sound.voice) && string.IsNullOrEmpty(sound.voiceId) && string.IsNullOrEmpty(audio.defaultVoiceId))
+                        issues.Warning(file, $"sounds[{i}].voice", $"Voice line \"{sound.id}\" has no voice: set its voice (e.g. \"player\").");
+                }
+            }
+            var voiceNames = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < audio.voices.Count; i++)
+            {
+                var voice = audio.voices[i];
+                if (voice == null)
+                    continue;
+                if (string.IsNullOrEmpty(voice.name) || !voiceNames.Add(voice.name))
+                    issues.Error(file, $"voices[{i}].name", "Every voice needs a unique name.");
+                if (string.IsNullOrEmpty(voice.voiceId))
+                    issues.Warning(file, $"voices[{i}].voiceId", $"Voice \"{voice.name}\" has no voiceId yet, so its lines can't be made. Design it in SickOfIt > Audio > Sound Generator (Voices), or paste a voice id from your ElevenLabs library.");
+                if (voice.model == "eleven_v3" && !(Mathf.Approximately(voice.stability, 0f) || Mathf.Approximately(voice.stability, 0.5f) || Mathf.Approximately(voice.stability, 1f)))
+                    issues.Error(file, $"voices[{i}].stability", "eleven_v3 takes stability 0 (creative), 0.5 (natural) or 1 (robust).");
             }
             foreach (var field in typeof(SickOfIt.Data.Config.SoundEvents).GetFields())
             {

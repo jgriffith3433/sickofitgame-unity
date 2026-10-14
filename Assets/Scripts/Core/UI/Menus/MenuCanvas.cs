@@ -33,13 +33,19 @@ namespace SickOfIt.Core.UI.Menus
         RectTransform stats;
         int entranceIndex;
 
-        public static MenuCanvas Create(string name, MenuTheme theme, MenuLayoutConfig layout)
+        /// <param name="owner">
+        /// The object the menu belongs to. The canvas is put in its scene: scenes load additively, so the active scene
+        /// at Start can be the one about to unload (which would take the menu with it).
+        /// </param>
+        public static MenuCanvas Create(string name, MenuTheme theme, MenuLayoutConfig layout, GameObject owner)
         {
             theme = theme ?? new MenuTheme();
             layout = layout ?? new MenuLayoutConfig();
             EnsureEventSystem();
 
             var go = new GameObject(name, typeof(RectTransform));
+            if (owner != null && owner.scene.IsValid() && go.scene != owner.scene)
+                UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(go, owner.scene);
             var canvas = go.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 20;
@@ -487,14 +493,7 @@ namespace SickOfIt.Core.UI.Menus
             }
         }
 
-        static void EnsureEventSystem()
-        {
-            if (EventSystem.current != null || FindAnyObjectByType<EventSystem>() != null)
-                return;
-            var go = new GameObject("EventSystem");
-            go.AddComponent<EventSystem>();
-            go.AddComponent<InputSystemUIInputModule>();
-        }
+        static void EnsureEventSystem() => EventSystemGuard.Ensure();
     }
 
     /// <summary>Remembers a list's item size for buttons added to it.</summary>

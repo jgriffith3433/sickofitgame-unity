@@ -28,7 +28,7 @@ namespace SickOfIt.Core.Progression
             }
 
             var config = gd.levelSelectionConfig ?? new SelectionSceneConfig();
-            menu = MenuCanvas.Create("LevelSelectUI", gd.menuTheme, config.layout);
+            menu = MenuCanvas.Create("LevelSelectUI", gd.menuTheme, config.layout, gameObject);
             var list = menu.AddList(config.layout.list, menu.Theme.card.size);
 
             int highestReached = GameProgressManager.Instance.GetHighestLevelReached();

@@ -60,13 +60,15 @@
             "type": "showText",
             "text": "LEVEL 4: EVERYTHING, EVERYWHERE",
             "duration": 2.5,
-            "color": "#FFD27A"
+            "color": "#FFD27A",
+            "sound": "vo_l4_title"
           },
           {
             "type": "showText",
             "text": "Your inbox, but it shoots back.",
             "style": "Subtitle",
-            "duration": 3.0
+            "duration": 3.0,
+            "sound": "vo_l4_intro"
           }
         ],
         "rules": [
@@ -169,7 +171,8 @@
             "text": "Reply-all detected.",
             "style": "Subtitle",
             "duration": 2.5,
-            "color": "#FF9966"
+            "color": "#FF9966",
+            "sound": "vo_l4_replyall"
           },
           {
             "type": "cameraShake",
@@ -264,17 +267,15 @@
             "type": "showText",
             "text": "FINAL WAVE",
             "duration": 2.0,
-            "color": "#FF7A5C"
-          },
-          {
-            "type": "playSound",
+            "color": "#FF7A5C",
             "sound": "vo_final_wave"
           },
           {
             "type": "showText",
             "text": "Unsubscribe from all of this.",
             "style": "Subtitle",
-            "duration": 2.5
+            "duration": 2.5,
+            "sound": "vo_l4_last"
           },
           {
             "type": "spawnWave",
@@ -335,13 +336,15 @@
                     "type": "showText",
                     "text": "INBOX ZERO",
                     "duration": 2.0,
-                    "color": "#7CFF8A"
+                    "color": "#7CFF8A",
+                    "sound": "vo_l4_clear"
                   },
                   {
                     "type": "showText",
                     "text": "It will last about four seconds.",
                     "style": "Subtitle",
-                    "duration": 2.0
+                    "duration": 2.0,
+                    "sound": "vo_l4_outro"
                   },
                   {
                     "type": "wait",

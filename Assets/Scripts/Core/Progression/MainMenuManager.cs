@@ -88,7 +88,7 @@ namespace SickOfIt.Core.Progression
             var gd = GameDefinition.Instance;
             var config = gd != null ? gd.mainMenuConfig : new MainMenuConfig();
             var labels = config.labels ?? new MainMenuLabels();
-            menu = MenuCanvas.Create("MainMenuUI", gd != null ? gd.menuTheme : null, config.layout);
+            menu = MenuCanvas.Create("MainMenuUI", gd != null ? gd.menuTheme : null, config.layout, gameObject);
             var list = menu.AddList(config.layout.list, menu.Theme.button.size);
 
             int currentLevel = GameProgressManager.Instance.GetCurrentLevel();
@@ -105,9 +105,16 @@ namespace SickOfIt.Core.Progression
                 Add(list, labels.shop, OnUpgradeShopClicked);
             if (config.showSettingsButton)
                 Add(list, labels.settings, () => SettingsPanel.Show(menu, null));
-            // Quitting does nothing in a browser tab.
-            if (config.showQuitButton && Application.platform != RuntimePlatform.WebGLPlayer)
-                Add(list, labels.quit, OnQuitClicked);
+            // Right after a rage quit from a death, the quit button dares you to do it again (even in a browser,
+            // where it can only ask you to close the tab). Otherwise quitting is hidden in browsers.
+            bool rageQuitAgain = PlayerPrefs.GetInt(DeathRuntime.RageQuitKey, 0) == 1;
+            if (rageQuitAgain)
+            {
+                PlayerPrefs.DeleteKey(DeathRuntime.RageQuitKey);
+                PlayerPrefs.Save();
+            }
+            if (config.showQuitButton && (rageQuitAgain || Application.platform != RuntimePlatform.WebGLPlayer))
+                Add(list, rageQuitAgain ? labels.rageQuitAgain : labels.quit, OnQuitClicked);
 
             if (config.showCumulativeHealth)
             {
@@ -276,7 +283,17 @@ namespace SickOfIt.Core.Progression
         private void OnQuitClicked()
         {
             SceneTransitionManager.Instance.QuitGame();
+            if (Application.platform == RuntimePlatform.WebGLPlayer && menu != null && !quitHintShown)
+            {
+                // Browsers usually refuse to let a page close its own tab.
+                quitHintShown = true;
+                var labels = GameDefinition.Instance != null ? GameDefinition.Instance.mainMenuConfig.labels : new MainMenuLabels();
+                menu.AddText(menu.Root, "QuitHint", labels.browserQuitHint, menu.Theme.subtitle, new Vector2(0.5f, 0.08f), Vector2.zero,
+                    new Vector2(1500f, 70f), out _, 34f, null, menu.Theme.entrance);
+            }
         }
+
+        private bool quitHintShown;
 
         private void OnUpgradeShopClicked()
         {

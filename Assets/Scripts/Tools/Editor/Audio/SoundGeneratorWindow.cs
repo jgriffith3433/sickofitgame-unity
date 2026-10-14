@@ -75,6 +75,8 @@ namespace SickOfIt.Tools.Editor.Audio
             if (audio == null)
                 return;
 
+            DrawVoices();
+
             var pending = SoundGenerator.Pending(audio);
             EditorGUILayout.Space();
             using (new EditorGUILayout.HorizontalScope())
@@ -120,7 +122,35 @@ namespace SickOfIt.Tools.Editor.Audio
                     GUI.enabled = running == null && !string.IsNullOrEmpty(sound.prompt);
                     if (GUILayout.Button(sound.clip != null ? "Redo" : "Make", GUILayout.Width(50)))
                         Run(new List<SoundDef> { sound });
+                    if (GUILayout.Button(new GUIContent("3 takes", "Make 3 variations to choose from (uses 3x the credits)."), GUILayout.Width(62)))
+                        RunTakes(sound, 3);
                     GUI.enabled = true;
+                }
+
+                var takes = SoundGenerator.TakesOf(audio, sound.id);
+                if (takes.Count > 0)
+                {
+                    using (new EditorGUILayout.HorizontalScope())
+                    {
+                        GUILayout.Space(80);
+                        GUILayout.Label("Takes:", GUILayout.Width(44));
+                        for (int t = 0; t < takes.Count; t++)
+                        {
+                            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(takes[t]);
+                            if (GUILayout.Button($"▶ {t + 1}", GUILayout.Width(44)) && clip != null)
+                                Preview(clip);
+                            GUI.enabled = running == null;
+                            if (GUILayout.Button("Use", GUILayout.Width(40)))
+                            {
+                                SoundGenerator.UseTake(audio, sound, takes[t]);
+                                lastResult = $"{sound.id}: using take {t + 1}.";
+                                Reload();
+                                GUIUtility.ExitGUI();
+                            }
+                            GUI.enabled = true;
+                            GUILayout.Space(6);
+                        }
+                    }
                 }
             }
             EditorGUILayout.EndScrollView();
@@ -149,6 +179,142 @@ namespace SickOfIt.Tools.Editor.Audio
             catch (Exception e)
             {
                 lastResult = "Generation failed: " + e.Message;
+                Debug.LogException(e);
+            }
+            finally
+            {
+                running.Dispose();
+                running = null;
+                Reload();
+            }
+        }
+
+        bool showVoices = true;
+
+        void DrawVoices()
+        {
+            EditorGUILayout.Space();
+            showVoices = EditorGUILayout.Foldout(showVoices, $"Voices ({audio.voices.Count})", true, EditorStyles.foldoutHeader);
+            if (!showVoices)
+                return;
+            foreach (var voice in audio.voices)
+            {
+                if (voice == null)
+                    continue;
+                using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+                {
+                    using (new EditorGUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label(voice.name, EditorStyles.boldLabel, GUILayout.Width(110));
+                        var old = GUI.color;
+                        GUI.color = string.IsNullOrEmpty(voice.voiceId) ? new Color(1f, 0.75f, 0.3f) : new Color(0.5f, 0.9f, 0.5f);
+                        GUILayout.Label(string.IsNullOrEmpty(voice.voiceId) ? "not designed yet" : "voice " + voice.voiceId, GUILayout.Width(220));
+                        GUI.color = old;
+                        GUILayout.FlexibleSpace();
+                        GUI.enabled = running == null && !string.IsNullOrWhiteSpace(voice.description);
+                        if (GUILayout.Button(new GUIContent("Design 3 candidates", "ElevenLabs Voice Design makes candidate voices from the description to audition."), GUILayout.Width(150)))
+                            RunDesign(voice);
+                        GUI.enabled = true;
+                    }
+                    GUILayout.Label(voice.description, EditorStyles.wordWrappedMiniLabel);
+
+                    var designs = SoundGenerator.DesignsOf(audio, voice.name);
+                    if (designs.Count == 0)
+                        continue;
+                    using (new EditorGUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Candidates:", GUILayout.Width(72));
+                        for (int d = 0; d < designs.Count; d++)
+                        {
+                            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(designs[d].path);
+                            if (GUILayout.Button($"▶ {d + 1}", GUILayout.Width(44)) && clip != null)
+                                Preview(clip);
+                            GUI.enabled = running == null;
+                            if (GUILayout.Button(new GUIContent("Use", "Save this voice to your ElevenLabs account and speak this voice's lines with it."), GUILayout.Width(40)))
+                                RunUseDesign(voice, designs[d].generatedVoiceId, d + 1);
+                            GUI.enabled = true;
+                            GUILayout.Space(6);
+                        }
+                    }
+                }
+            }
+        }
+
+        async void RunDesign(VoiceDef voice)
+        {
+            running = new CancellationTokenSource();
+            lastResult = null;
+            progress = 0.3f;
+            progressText = $"Designing {voice.name}...";
+            try
+            {
+                SaveTypedKey();
+                int count = await SoundGenerator.DesignVoiceAsync(audio, voice, running.Token);
+                lastResult = $"Made {count} candidate voice(s) for {voice.name}. Play them and press Use on the one that fits.";
+            }
+            catch (Exception e)
+            {
+                lastResult = "Voice design failed: " + e.Message;
+                Debug.LogException(e);
+            }
+            finally
+            {
+                running.Dispose();
+                running = null;
+                Reload();
+            }
+        }
+
+        async void RunUseDesign(VoiceDef voice, string generatedVoiceId, int number)
+        {
+            running = new CancellationTokenSource();
+            lastResult = null;
+            progress = 0.5f;
+            progressText = $"Saving candidate {number} as {voice.name}...";
+            try
+            {
+                SaveTypedKey();
+                await SoundGenerator.UseDesignAsync(audio, voice, generatedVoiceId, running.Token);
+                lastResult = $"{voice.name} now uses candidate {number}. Its lines show as outdated: Generate to record them.";
+            }
+            catch (Exception e)
+            {
+                lastResult = "Saving the voice failed: " + e.Message + " (design previews expire after a while; design again if needed)";
+                Debug.LogException(e);
+            }
+            finally
+            {
+                running.Dispose();
+                running = null;
+                Reload();
+            }
+        }
+
+        void SaveTypedKey()
+        {
+            if (!ElevenLabsClient.KeyFromEnvironment && keyInput != ElevenLabsClient.ApiKey && !string.IsNullOrEmpty(keyInput))
+                ElevenLabsClient.SaveKey(keyInput);
+        }
+
+        async void RunTakes(SoundDef sound, int count)
+        {
+            if (!ElevenLabsClient.KeyFromEnvironment && keyInput != ElevenLabsClient.ApiKey && !string.IsNullOrEmpty(keyInput))
+                ElevenLabsClient.SaveKey(keyInput);
+            running = new CancellationTokenSource();
+            lastResult = null;
+            try
+            {
+                var made = await SoundGenerator.MakeTakesAsync(audio, sound, count, (done, total, id) =>
+                {
+                    progress = total > 0 ? (float)done / total : 1f;
+                    progressText = id != null ? $"Take {done + 1}/{total} of {id}..." : "Done";
+                    Repaint();
+                }, running.Token);
+                lastResult = $"Made {made.Count} take(s) of {sound.id}. Play them below and press Use on the best one.";
+            }
+            catch (Exception e)
+            {
+                lastResult = "Takes failed: " + e.Message;
                 Debug.LogException(e);
             }
             finally

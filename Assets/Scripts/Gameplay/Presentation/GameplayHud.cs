@@ -67,7 +67,7 @@ namespace SickOfIt.Gameplay
             var layout = new MenuLayoutConfig();
             layout.title.show = false;
             layout.subtitle.show = false;
-            var menu = MenuCanvas.Create("GameplayHud", theme, layout);
+            var menu = MenuCanvas.Create("GameplayHud", theme, layout, world.gameObject);
             menu.GetComponent<Canvas>().sortingOrder = 50;
             menu.transform.SetParent(world.transform, false);
             menu.SafeAdoptScene(world.gameObject.scene);

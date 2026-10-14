@@ -45,6 +45,9 @@ namespace SickOfIt.Gameplay
         public Entity Player { get; private set; }
         public GameplayHud Hud { get; private set; }
         public WorldEffects Effects { get; private set; }
+        /// <summary>Extra pickup magnet range from shop upgrades (world units), set once at level start.</summary>
+        public float PickupMagnetBonus { get; set; }
+
         /// <summary>The level runner (restart, leave the level); null in tests.</summary>
         public ILevelHost Host { get; private set; }
         public GameplayTelemetry Telemetry { get; private set; }
@@ -147,6 +150,7 @@ namespace SickOfIt.Gameplay
             }
             Upgrades = new UpgradeSystem(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             Upgrades.ApplyOwned();
+            Upgrades.ApplyShop();
             Hud.BuildProgressBar();
 
             history = gameObject.AddComponent<SimHistory>();

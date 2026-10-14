@@ -4,7 +4,7 @@
 
 **The game IS the config.** One ScriptableObject (`GameDefinition` at `Assets/Resources/GameDefinition.asset`) defines every level, video, death scene, enemy, projectile, and player setting. Unity scenes AND prefabs are OUTPUT generated from this config. You edit the definition, press one button (`SickOfIt → Generate Project`), the entire game regenerates.
 
-**The definition is authored as JSON** in `Assets/GameConfig/` and compiled into `GameDefinition.asset` automatically (see CLAUDE.md "The game is defined in JSON").
+**The definition is authored as JSON** in `Assets/GameConfig/` and compiled into `GameDefinition.asset` automatically (see AGENTS.md "The game is defined in JSON").
 
 ## The Generation Pipeline
 
@@ -117,12 +117,12 @@ DeathRuntime:
 | Assembly | Path | Purpose |
 |----------|------|---------|
 | `SickOfIt.Data` | `Scripts/Data/` | GameDefinition, all config types, progression, roguelite |
-| `SickOfIt.Core` | `Scripts/Core/` | GameClock, AnalyticsManager, input, device detection |
-| `SickOfIt.Core.Progression` | `Scripts/Core/Progression/` | **VideoRuntime, LevelRuntime, DeathRuntime**, MainMenuManager, ExperienceRunner, RewindController |
+| `SickOfIt.Core` | `Scripts/Core/` | GameClock, AnalyticsManager, input, device detection; runtime UI kit (`UI/Menus`: MenuCanvas, MenuButton, MenuCard, MenuBar, SettingsPanel), sound (`Audio`: Sfx, MusicVolume), cosmetic effects (`Fx`) |
+| `SickOfIt.Core.Progression` | `Scripts/Core/Progression/` | **VideoRuntime, LevelRuntime, DeathRuntime**, MainMenuManager, LevelSelection/VideoSelection/UpgradeShop managers (build their menus from config), ExperienceRunner, RewindController |
 | `SickOfIt.Core.Addressables` | `Scripts/Core/Addressables/` | AddressablesSceneLoader, AddressablesOperationManager |
 | `SickOfIt.Core.Flow` | `Scripts/Core/Flow/` | SceneTransitionManager, SceneContentController, SceneLoadingManager |
 | `SickOfIt.Combat` | `Scripts/Combat/` | EnemyBase subclasses, health systems, projectiles, pickups |
-| `SickOfIt.Tools.Editor` | `Scripts/Tools/Editor/` | ProjectGenerator, scene generators, build scripts, MCP tools |
+| `SickOfIt.Tools.Editor` | `Scripts/Tools/Editor/` | ProjectGenerator, scene generators, build scripts, MCP tools, GameConfig import/export, ElevenLabs Sound Generator (`Audio/`) |
 | `SickOfIt.VideoFrameExtractor.Runtime` | `Scripts/VideoFrameExtractor/Runtime/` | SpriteFramePlayer, SpriteFramesData |
 | `SickOfIt.Json` | `Scripts/Json/` | Unity-compatible JSON serializer (strict reading, `"type"` polymorphism, raw JSON fields) |
 | `SickOfIt.Gameplay` | `Scripts/Gameplay/` | Data-driven gameplay: content model, entities, level director, HUD, telemetry, playtest bot |
@@ -131,14 +131,15 @@ DeathRuntime:
 
 Levels with a `script` (levels/{name}.json) and everything in `Assets/GameConfig/content/` run on this layer;
 levels without a script still use LevelRuntime's enemy list and the `Combat/Enemies` classes.
-Authoring guide: CLAUDE.md, Docs/GameplayCookbook.md, Docs/GameplayReference.md (generated).
+Authoring guide: AGENTS.md, Docs/GameplayCookbook.md, Docs/GameplayReference.md (generated).
 
 ```
 LevelRuntime ──creates──▶ GameplayWorld (per level, FixedUpdate)
                             ├── LevelDirector  phases · rules (trigger → actions) · sequences · hazards · objective
                             ├── Entity × N     pooled; abilities + optional state machine + EntityAnimation
                             ├── Entity(player) wraps PlayerController/PlayerHealth for statuses, modifiers, targeting
-                            ├── GameplayHud    banner/subtitle/objective/boss bar/flash
+                            ├── GameplayHud    MenuCanvas-based: health, diamonds, rewind button, banner/subtitle, boss
+                            │                  bar, progress/rewind bar, upgrade picker, pause, results, death overlay
                             ├── WorldEffects   camera (static/follow/scroll) · shake · slow motion · audio
                             └── GameplayTelemetry → Logs/Playtest/*.jsonl + *.summary.json
 GameContent (parsed JSON, from GameDefinition.content + level scripts, or a remote bundle)
@@ -156,6 +157,23 @@ GameContent (parsed JSON, from GameDefinition.content + level scripts, or a remo
   which `RegistryAssetResolver` reads. `link.xml` keeps the reflection-created types from being stripped in WebGL builds.
 - **Validation**: `GameConfigImporter` parses content and scripts with line numbers, `ContentValidator` checks references
   ([EntityRef], [PhaseRef], ...), and errors block import, Generate, Play, and builds.
+
+## Presentation: menus, HUD, sound, effects
+
+Everything the player sees and hears outside the simulation is built at runtime from config, so it changes without
+Generate Project:
+
+- **UI kit** (`Core/UI/Menus`): `MenuCanvas` builds a scaled (1920x1080 reference, `Expand`), safe-area-aware overlay
+  from a `MenuTheme` (ui/theme.json) and a `MenuLayoutConfig` (each screen's `layout`): backdrop, title, lists/grids
+  with scrolling, stickers, chips, back button, keyboard/gamepad navigation. `MenuButton` is a Selectable with
+  spring hover/press; `MenuGraphics` draws rounded/pill/burst shapes procedurally; `MenuMotionDriver` handles entrances
+  and idle motion on unscaled time. Scene generators only make the shell (camera, mobile controls, loading screen).
+- **Sound** (`Core/Audio`): `Sfx.Play(id)` plays audio.json sounds (pooled, per-sound volume/pitch/cooldown/voice
+  limits; voice lines queue so they never overlap). `MusicVolume` applies the Music setting. `GameSettings` (Data)
+  holds the player's volumes and toggles. The editor's `Tools/Editor/Audio` generates clips with ElevenLabs
+  (`ElevenLabsClient`: sound effects, text-to-speech, voice design) and writes them back into audio.json.
+- **Effects** (`Core/Fx`): pooled sprite flashes, bursts, sparks and dust; cosmetic, on game time.
+- **Rule**: presentation reads simulation state but never writes it, so rewinds and replays stay deterministic.
 
 ## Key Classes
 

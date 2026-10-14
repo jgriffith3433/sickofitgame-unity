@@ -1,3 +1,6 @@
+> **Historical (March 2026).** This describes the project before the JSON config, data-driven gameplay, runtime
+> menus/HUD and ElevenLabs audio. For how things work now, read [AGENTS.md](AGENTS.md) and [ARCHITECTURE.md](ARCHITECTURE.md).
+
 # REFACTOR-PLAN-6: Full Config-Driven Generation
 
 ## Status: ✅ COMPLETE

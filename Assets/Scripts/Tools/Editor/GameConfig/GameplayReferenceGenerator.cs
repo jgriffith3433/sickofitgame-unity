@@ -51,7 +51,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
 
             sb.AppendLine("# Gameplay Reference");
             sb.AppendLine();
-            sb.AppendLine("> Generated from the code by `GameplayReferenceGenerator` — don't edit by hand. See CLAUDE.md for the workflow and Docs/GameplayCookbook.md for worked examples.");
+            sb.AppendLine("> Generated from the code by `GameplayReferenceGenerator` — don't edit by hand. See AGENTS.md for the workflow and Docs/GameplayCookbook.md for worked examples.");
             sb.AppendLine();
             sb.AppendLine("Gameplay is data. **Entities** (enemies, bosses, projectiles, hazards) live in `Assets/GameConfig/content/entities/{id}.json`, " +
                           "reusable **sequences** in `content/sequences/{id}.json`, **status effects** in `content/effects/{id}.json`, and each level's " +

@@ -30,7 +30,7 @@ namespace SickOfIt.Gameplay.Content
                 Collect();
                 return;
             }
-            if (magnetRadius > 0f && distance <= magnetRadius)
+            if (magnetRadius > 0f && distance <= magnetRadius + Owner.World.PickupMagnetBonus)
                 Owner.Move(to / distance * magnetSpeed);
             else if (bobHeight > 0f)
                 Owner.Move(Vector2.up * Mathf.Cos((now - Owner.SpawnTime) * 4f) * bobHeight * 4f);
@@ -59,6 +59,15 @@ namespace SickOfIt.Gameplay.Content
             }
             Owner.Die(DeathCause.Despawn);
         }
+    }
+
+    [Serializable, JsonType("addDiamonds")]
+    [Doc("Gives the player diamonds (the shop currency). Use it in a pickup's collect actions, which pay out once even if rewound.")]
+    public sealed class AddDiamondsAction : GameAction
+    {
+        public int amount = 1;
+
+        public override void Run(ActionContext context) => SickOfIt.Data.RogueliteManager.Instance?.AddPoints(amount);
     }
 
     [Serializable, JsonType("addRewind")]

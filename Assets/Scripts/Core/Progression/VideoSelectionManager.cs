@@ -22,7 +22,7 @@ namespace SickOfIt.Core.Progression
         {
             var gd = GameDefinition.Instance;
             var config = gd != null ? gd.videoSelectionConfig : new SelectionSceneConfig();
-            menu = MenuCanvas.Create("VideoSelectUI", gd != null ? gd.menuTheme : null, config.layout);
+            menu = MenuCanvas.Create("VideoSelectUI", gd != null ? gd.menuTheme : null, config.layout, gameObject);
             var list = menu.AddList(config.layout.list, menu.Theme.card.size);
 
             int totalVideos = gd != null ? gd.TotalVideos : 0;

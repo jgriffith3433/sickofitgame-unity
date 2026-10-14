@@ -233,11 +233,67 @@
   "extraJumpCost": 100,
   "availableUpgrades": [
     {
+      "id": "moreHealth",
+      "title": "More health, duh",
+      "description": "+1 max health. Getting hit is a lifestyle.",
+      "costsPerLevel": [10, 20, 35, 55, 80],
+      "maxLevel": 5,
+      "effect": "MaxHealth",
+      "amountPerLevel": 1.0
+    },
+    {
       "id": "extraJump",
-      "title": "Extra Jump",
+      "title": "Double Jump",
       "description": "Jump. Then, against all physics, jump again.",
-      "costsPerLevel": [100, 200],
-      "maxLevel": 2
+      "costsPerLevel": [15, 35],
+      "maxLevel": 2,
+      "effect": "ExtraJump",
+      "amountPerLevel": 1.0
+    },
+    {
+      "id": "comfySneakers",
+      "title": "Running Late Shoes",
+      "description": "Run away from your problems 8% faster.",
+      "costsPerLevel": [12, 25, 40],
+      "maxLevel": 3,
+      "effect": "MoveSpeed",
+      "amountPerLevel": 0.08
+    },
+    {
+      "id": "triggerFinger",
+      "title": "Trigger Finger",
+      "description": "Shoot 10% faster. Ask questions never.",
+      "costsPerLevel": [15, 30, 50],
+      "maxLevel": 3,
+      "effect": "FireRate",
+      "amountPerLevel": 0.1
+    },
+    {
+      "id": "spicyFireballs",
+      "title": "Spicier Fireballs",
+      "description": "Same fireball. 15% more attitude.",
+      "costsPerLevel": [20, 40, 70],
+      "maxLevel": 3,
+      "effect": "Damage",
+      "amountPerLevel": 0.15
+    },
+    {
+      "id": "juiceBox",
+      "title": "Bigger Juice Box",
+      "description": "+1 second of rewind. More time for regret.",
+      "costsPerLevel": [12, 25, 40],
+      "maxLevel": 3,
+      "effect": "RewindJuice",
+      "amountPerLevel": 1.0
+    },
+    {
+      "id": "diamondMagnet",
+      "title": "Diamond Magnet",
+      "description": "Diamonds come to you from farther away. As they should.",
+      "costsPerLevel": [8, 18],
+      "maxLevel": 2,
+      "effect": "Magnet",
+      "amountPerLevel": 1.2
     }
   ]
 }

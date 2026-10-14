@@ -25,13 +25,15 @@ namespace SickOfIt.Data.Config
         public SoundKind kind = SoundKind.Effect;
         [Tooltip("Effect: what it sounds like. Voice: the words to say.")]
         public string prompt = "";
-        [Tooltip("Effect length in seconds (0.5-30). 0 = let ElevenLabs decide.")]
+        [Tooltip("Effect length in seconds (0.5-30; the API rejects less). 0 = let ElevenLabs decide.")]
         public float durationSeconds;
         [Tooltip("Effect: 0-1, how literally to follow the prompt (ElevenLabs default 0.3).")]
         public float promptInfluence = 0.3f;
         [Tooltip("Effect: make it loop seamlessly.")]
         public bool loop;
-        [Tooltip("Voice: ElevenLabs voice id. Empty = audio.json's defaultVoiceId.")]
+        [Tooltip("Voice: which of audio.json's voices speaks it (\"player\", \"announcer\").")]
+        public string voice = "";
+        [Tooltip("Voice: a raw ElevenLabs voice id instead of a named voice. Empty = the named voice, else defaultVoiceId.")]
         public string voiceId = "";
 
         [Tooltip("The audio file. Filled in by the generator.")]
@@ -48,13 +50,37 @@ namespace SickOfIt.Data.Config
         public float cooldown = 0.04f;
 
         /// <summary>Everything that changes what ElevenLabs would make; compared with generatedFrom.</summary>
-        public string GenerationKey(string defaultVoiceId)
+        public string GenerationKey(AudioConfig audio)
         {
             var c = CultureInfo.InvariantCulture;
-            return kind == SoundKind.Voice
-                ? $"voice|{(string.IsNullOrEmpty(voiceId) ? defaultVoiceId : voiceId)}|{prompt}"
-                : $"effect|{durationSeconds.ToString("0.##", c)}|{promptInfluence.ToString("0.##", c)}|{loop}|{prompt}";
+            if (kind != SoundKind.Voice)
+                return $"effect|{durationSeconds.ToString("0.##", c)}|{promptInfluence.ToString("0.##", c)}|{loop}|{prompt}";
+            var speaker = audio.ResolveVoice(this);
+            return $"voice|{speaker.voiceId}|{speaker.model}|{speaker.stability.ToString("0.##", c)}|{speaker.speed.ToString("0.##", c)}|{prompt}";
         }
+    }
+
+    /// <summary>
+    /// A named voice (the player, the announcer). Describe it and use the Sound Generator's "Design" to have
+    /// ElevenLabs create candidates; picking one saves it to your ElevenLabs account and fills in voiceId. Or paste
+    /// the id of any voice from your ElevenLabs library.
+    /// </summary>
+    [Serializable]
+    public class VoiceDef
+    {
+        public string name = "";
+        [Tooltip("What the voice sounds like (age, tone, accent, attitude, recording quality), for ElevenLabs Voice Design.")]
+        public string description = "";
+        [Tooltip("What the design previews say (100-1000 characters). Empty = ElevenLabs writes something.")]
+        public string sampleText = "";
+        [Tooltip("ElevenLabs voice id. Filled in when you pick a design.")]
+        public string voiceId = "";
+        [Tooltip("Speech model. eleven_v3 understands delivery tags in the line: [sighs], [sarcastic], [shouting], [whispers]...")]
+        public string model = "eleven_v3";
+        [Tooltip("eleven_v3 takes 0 (creative, most expressive), 0.5 (natural) or 1 (robust, steady).")]
+        public float stability = 0.5f;
+        [Tooltip("Speaking speed, 0.7-1.2.")]
+        public float speed = 1f;
     }
 
     /// <summary>Which sound plays for each game event (sound ids from audio.json; empty = silent).</summary>
@@ -95,14 +121,44 @@ namespace SickOfIt.Data.Config
     {
         [Tooltip("Where generated files go, under Assets/.")]
         public string outputFolder = "Audio/Generated";
-        [Tooltip("ElevenLabs voice for Voice sounds that don't name one.")]
+        [Tooltip("ElevenLabs voice for Voice sounds that name neither a voice nor a voiceId.")]
         public string defaultVoiceId = "";
+        [Tooltip("The game's voices: who says the lines.")]
+        public List<VoiceDef> voices = new List<VoiceDef>();
         [Tooltip("ElevenLabs text-to-speech model.")]
         public string voiceModel = "eleven_multilingual_v2";
         [Tooltip("ElevenLabs output format (mp3_44100_128 works on every plan).")]
         public string outputFormat = "mp3_44100_128";
         public SoundEvents events = new SoundEvents();
         public List<SoundDef> sounds = new List<SoundDef>();
+
+        public VoiceDef FindVoice(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return null;
+            foreach (var v in voices)
+            {
+                if (v != null && v.name == name)
+                    return v;
+            }
+            return null;
+        }
+
+        /// <summary>The voice id and speech settings a Voice sound is made with.</summary>
+        public VoiceDef ResolveVoice(SoundDef sound)
+        {
+            var named = FindVoice(sound.voice);
+            if (named != null && string.IsNullOrEmpty(sound.voiceId))
+                return named;
+            return new VoiceDef
+            {
+                name = sound.voice,
+                voiceId = !string.IsNullOrEmpty(sound.voiceId) ? sound.voiceId : named != null ? named.voiceId : defaultVoiceId,
+                model = named != null ? named.model : voiceModel,
+                stability = named != null ? named.stability : 0.5f,
+                speed = named != null ? named.speed : 1f,
+            };
+        }
 
         public SoundDef Find(string id)
         {

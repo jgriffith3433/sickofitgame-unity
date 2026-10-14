@@ -220,7 +220,9 @@ namespace SickOfIt.Gameplay.Content
     {
         [Doc("Chance for each drop, 0-1.")] public float chance;
         public int count = 1;
-        [Doc("Points per pickup.")] public int value = 1;
+        [Doc("Diamonds per successful drop (each is its own pickup).")] public int value = 1;
+        [EntityRef, Doc("The pickup entity dropped. Empty = the \"diamond\" entity (or the old generated diamond prefab if there's no such entity).")]
+        public string entity = "";
     }
 
     [Serializable]

@@ -172,6 +172,18 @@ with `"objective": { "complete": { "type": "counter", "name": "cleared", "atLeas
 **Tone:** frantic arcade bullet-dodging (slow, readable bullet patterns in numbers: `spread`, `radial`, `sweep`, bursts),
 comedic text beats (`showText` banners and subtitles, boss intros, upgrade descriptions).
 
+## Diamonds and the shop
+
+- **Drops:** an enemy's `loot` rolls `count` times at `chance` when it's killed (not when it bursts on its own) and
+  drops `value` pickups of `loot.entity` (empty = `diamond`, content/entities/diamond.json: bobs, magnets toward the
+  player, lasts 10 s, pays +1 diamond once even across rewinds). Diamonds are kept across New Game.
+- **Shop upgrades** (permanent until New Game) are `player.json` `availableUpgrades`:
+  `{ "id": "moreHealth", "title": "More health, duh", "description": "...", "costsPerLevel": [10, 20, 35],
+  "maxLevel": 3, "effect": "MaxHealth", "amountPerLevel": 1 }`. Effects: MaxHealth (+HP, also tops up carried health),
+  ExtraJump (+air jumps), MoveSpeed / FireRate / Damage (+fraction, 0.1 = +10%), RewindJuice (+seconds), Magnet (+pickup
+  range). No code needed for a new one; the shop lays out a card per entry.
+- Between-level picks (content/upgrades) are separate: bigger, run-long boosts offered at the end of each level.
+
 ## Status effects (poison, slow, stun, shield)
 
 `content/effects/{id}.json`; apply with `applyStatus`, or from `contactDamage` / `projectile` / `aura` via `"effect"`.
@@ -244,9 +256,26 @@ Every sound lives in `audio.json` as a prompt; the files are generated, never ha
 - **Make them:** SickOfIt > Audio > Sound Generator (paste the API key once; it stays on that computer), or the
   `GenerateSounds` batch command. It fills in `clip` and `generatedFrom`; editing a prompt (or duration, influence, loop,
   voice) marks the sound "Outdated" so it gets remade. Files go to `outputFolder` (Assets/Audio/Generated).
-- **Effects** use ElevenLabs text-to-sound-effects: describe the sound, 0.5-30 s (`durationSeconds` 0 = let it decide),
+- **Effects** use ElevenLabs text-to-sound-effects: describe the sound, 0.5-30 s (the API rejects shorter) (`durationSeconds` 0 = let it decide),
   `promptInfluence` 0-1 (higher = more literal), `loop` for seamless loops. **Voices** use text-to-speech: `prompt` is
   the line, `voiceId` (or `defaultVoiceId`) the ElevenLabs voice.
+- **Writing prompts that sound good** (from ElevenLabs' guidance): describe one physical sound plainly: source,
+  material, action ("Gooey slime blob bursting: a juicy squelchy pop with a small wet splatter"). Add audio terms:
+  *one-shot*, *impact*, *whoosh*, *close-up*, *dry*, *no reverb*. Say *no music* / *no melody* and avoid instrument
+  words (trombone, brass, horn, fanfare) unless you want instruments. For two-part sounds, list them in order ("a bonk,
+  then a body flopping onto the ground"). For very short sounds (UI ticks, clicks) use the API minimum of 0.5 s and say "very short" in the prompt, and use `promptInfluence` 0.6-0.7 for
+  literal results.
+- **Auditioning:** "3 takes" in the Sound Generator makes three variations into `Takes/`; play them and press
+  **Use** on the best (each take costs a generation).
+- **Voices and spoken lines:** `voices` in audio.json defines who speaks: `player` (the hero's dry, sick-of-it inner
+  voice, used for subtitles) and `announcer` (the arcade announcer, used for banners). Each has a `description`; in the
+  Sound Generator press **Design 3 candidates**, play them, and **Use** the right one (it's saved to your ElevenLabs
+  account and its id goes into `voiceId`). Or paste any voice id from your ElevenLabs library. Lines use `eleven_v3`, so
+  a line's `prompt` can carry delivery tags: `"[sighs] They brought friends. [deadpan] Rude."` (also [sarcastic],
+  [annoyed], [shouting], [excited], [whispers], [laughs], [pause]). To voice on-screen text, give the `showText` action a
+  `sound`: `{ "type": "showText", "text": "They brought friends. Rude.", "style": "Subtitle", "sound": "vo_l1_friends" }`
+  and add that sound (`"kind": "Voice", "voice": "player"`). Lines play one at a time; a line that would start more
+  than 2.5 s late is skipped.
 - **When they play:** `events` maps game moments to sound ids (playerShoot, enemyDie, rewindStart, levelClear, uiClick,
   ...; empty = silent). Per enemy: `sounds.hurtSound` / `sounds.deathSound`; pickups: `collect.soundId`; scripts:
   `{ "type": "playSound", "sound": "vo_final_wave" }`. Ids are validated on import.
@@ -263,6 +292,6 @@ countdown (`player.json` `deathRewindWindow`). Every on-screen word is in `ui/th
 ## Checking it plays
 
 - `Logs/GameConfig.log` after every edit (errors have file, line, field, and suggestions).
-- Bot playtest of every level: `-runTests -testPlatform PlayMode -testCategory Playtest` (see CLAUDE.md), then read
+- Bot playtest of every level: `-runTests -testPlatform PlayMode -testCategory Playtest` (see AGENTS.md), then read
   `Logs/Playtest/report.md` and the per-level `*.summary.json` (kills, damage taken by source, outcome).
 - Rewind is automatic for everything here: content can't break it.

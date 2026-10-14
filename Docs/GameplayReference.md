@@ -1,6 +1,6 @@
 # Gameplay Reference
 
-> Generated from the code by `GameplayReferenceGenerator` — don't edit by hand. See CLAUDE.md for the workflow and Docs/GameplayCookbook.md for worked examples.
+> Generated from the code by `GameplayReferenceGenerator` — don't edit by hand. See AGENTS.md for the workflow and Docs/GameplayCookbook.md for worked examples.
 
 Gameplay is data. **Entities** (enemies, bosses, projectiles, hazards) live in `Assets/GameConfig/content/entities/{id}.json`, reusable **sequences** in `content/sequences/{id}.json`, **status effects** in `content/effects/{id}.json`, and each level's **script** in the `"script"` field of `levels/{name}.json`. Every content file starts with `"schemaVersion": 1`; the id is the file name. Polymorphic things (abilities, triggers, actions, patterns) are objects with a `"type"`.
 
@@ -43,7 +43,7 @@ Anything that exists in a level: an enemy, a boss, a projectile, a hazard. File:
 | `onSpawn` | list of [Action](#actions) | `[]` | Actions run when it spawns (self = this entity). |
 | `onDeath` | list of [Action](#actions) | `[]` | Actions run when it dies from damage (self = this entity, still at its death position). |
 | `drops` | list of [DropDef](#dropdef) | `[]` | Entities dropped when it is killed (rewind orbs, power-ups), each rolled separately. |
-| `loot` | [LootDef](#lootdef) | `{"chance":0.0,"count":1,"value":1}` | Points dropped on death. |
+| `loot` | [LootDef](#lootdef) | (object) | Points dropped on death. |
 
 ### BodyDef
 
@@ -178,7 +178,8 @@ Point pickups dropped on death.
 |---|---|---|---|
 | `chance` | number | `0.0` | Chance for each drop, 0-1. |
 | `count` | integer | `1` |  |
-| `value` | integer | `1` | Points per pickup. |
+| `value` | integer | `1` | Diamonds per successful drop (each is its own pickup). |
+| `entity` | string | `""` | The pickup entity dropped. Empty = the "diamond" entity (or the old generated diamond prefab if there's no such entity). (entity id) |
 
 ### StateDef
 
@@ -599,7 +600,7 @@ Another rule, sequence, or entity emitted this signal (action 'emit').
 
 Something that happens: spawn, change phase, show text, apply a status...
 
-[`addCounter`](#addcounter) · [`addRewind`](#addrewind) · [`applyStatus`](#applystatus) · [`bossBar`](#bossbar) · [`cameraShake`](#camerashake) · [`completeLevel`](#completelevel) · [`damage`](#damage) · [`despawn`](#despawn) · [`emit`](#emit) · [`failLevel`](#faillevel) · [`flash`](#flash) · [`goToLevel`](#gotolevel) · [`goToPhase`](#gotophase) · [`grantUpgrade`](#grantupgrade) · [`heal`](#heal) · [`hideBossBar`](#hidebossbar) · [`hideText`](#hidetext) · [`if`](#if) · [`kill`](#kill) · [`lockInput`](#lockinput) · [`modifier`](#modifier) · [`musicVolume`](#musicvolume) · [`objectiveText`](#objectivetext) · [`offerUpgrades`](#offerupgrades) · [`playAnimation`](#playanimation) · [`playMusic`](#playmusic) · [`playSound`](#playsound) · [`playVideo`](#playvideo) · [`playerInvincible`](#playerinvincible) · [`popText`](#poptext) · [`random`](#random) · [`removeStatus`](#removestatus) · [`returnToMenu`](#returntomenu) · [`runSequence`](#runsequence) · [`setAnimParam`](#setanimparam) · [`setCounter`](#setcounter) · [`setState`](#setstate) · [`showText`](#showtext) · [`slowMotion`](#slowmotion) · [`spawn`](#spawn) · [`spawnWave`](#spawnwave) · [`startHazard`](#starthazard) · [`stopHazard`](#stophazard) · [`unlockInput`](#unlockinput) · [`wait`](#wait)
+[`addCounter`](#addcounter) · [`addDiamonds`](#adddiamonds) · [`addRewind`](#addrewind) · [`applyStatus`](#applystatus) · [`bossBar`](#bossbar) · [`cameraShake`](#camerashake) · [`completeLevel`](#completelevel) · [`damage`](#damage) · [`despawn`](#despawn) · [`emit`](#emit) · [`failLevel`](#faillevel) · [`flash`](#flash) · [`goToLevel`](#gotolevel) · [`goToPhase`](#gotophase) · [`grantUpgrade`](#grantupgrade) · [`heal`](#heal) · [`hideBossBar`](#hidebossbar) · [`hideText`](#hidetext) · [`if`](#if) · [`kill`](#kill) · [`lockInput`](#lockinput) · [`modifier`](#modifier) · [`musicVolume`](#musicvolume) · [`objectiveText`](#objectivetext) · [`offerUpgrades`](#offerupgrades) · [`playAnimation`](#playanimation) · [`playMusic`](#playmusic) · [`playSound`](#playsound) · [`playVideo`](#playvideo) · [`playerInvincible`](#playerinvincible) · [`popText`](#poptext) · [`random`](#random) · [`removeStatus`](#removestatus) · [`returnToMenu`](#returntomenu) · [`runSequence`](#runsequence) · [`setAnimParam`](#setanimparam) · [`setCounter`](#setcounter) · [`setState`](#setstate) · [`showText`](#showtext) · [`slowMotion`](#slowmotion) · [`spawn`](#spawn) · [`spawnWave`](#spawnwave) · [`startHazard`](#starthazard) · [`stopHazard`](#stophazard) · [`unlockInput`](#unlockinput) · [`wait`](#wait)
 
 ### addCounter
 
@@ -609,6 +610,14 @@ Adds to a named counter (negative to subtract).
 |---|---|---|---|
 | `name` | string | `""` | **Required.** |
 | `amount` | number | `1.0` |  |
+
+### addDiamonds
+
+Gives the player diamonds (the shop currency). Use it in a pickup's collect actions, which pay out once even if rewound.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `amount` | integer | `1` |  |
 
 ### addRewind
 
@@ -930,6 +939,7 @@ Shows text on screen.
 | `duration` | number | `2.0` | Seconds (0 = until replaced or hideText). |
 | `style` | [TextStyle](#textstyle) | `"Banner"` |  |
 | `color` | color | `"#FFFFFF"` |  |
+| `sound` | string | `""` | audio.json sound spoken (or played) with it, e.g. the player's voice line for this subtitle. |
 
 ### slowMotion
 

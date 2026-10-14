@@ -18,6 +18,15 @@ namespace SickOfIt.Combat.Health
         [Tooltip("Format string for points display. {0} is replaced with the point count.")]
         [SerializeField] private string displayFormat = "Diamonds: {0}";
 
+        [Tooltip("Show this legacy readout. Off by default: the HUD and menus show diamonds as a styled chip.")]
+        [SerializeField] private bool showLegacyReadout;
+
+        private void Awake()
+        {
+            if (!showLegacyReadout)
+                gameObject.SetActive(false);
+        }
+
         private void Start()
         {
             if (pointsText == null)

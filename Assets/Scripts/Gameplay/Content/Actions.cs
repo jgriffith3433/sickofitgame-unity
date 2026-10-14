@@ -337,7 +337,15 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Seconds (0 = until replaced or hideText).")] public float duration = 2f;
         public TextStyle style = TextStyle.Banner;
         public Color color = Color.white;
-        public override void Run(ActionContext context) => context.World.Hud.ShowText(text, style, color, duration > 0f ? context.Now + duration : float.PositiveInfinity);
+        [SoundRef, Doc("audio.json sound spoken (or played) with it, e.g. the player's voice line for this subtitle.")] public string sound = "";
+
+        public override void Run(ActionContext context)
+        {
+            // A spoken line keeps its text up at least as long as it takes to say it.
+            float shown = duration > 0f ? Mathf.Max(duration, SickOfIt.Core.Audio.Sfx.LengthOf(sound) + 0.4f) : 0f;
+            context.World.Hud.ShowText(text, style, color, shown > 0f ? context.Now + shown : float.PositiveInfinity);
+            SickOfIt.Core.Audio.Sfx.Play(sound);
+        }
     }
 
     public enum TextStyle

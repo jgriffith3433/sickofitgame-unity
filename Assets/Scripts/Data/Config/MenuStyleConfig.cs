@@ -283,6 +283,8 @@ namespace SickOfIt.Data.Config
         public string deathRewind = "Hold R to undo it!";
         public string deathRewindTouch = "Hold ◄◄ to undo it!";
         public string deathNoJuice = "No rewind juice left...";
+        [Tooltip("Button on the death scene that goes to the main menu.")]
+        public string rageQuit = "Rage Quit";
 
         public string rewindHint = "Ouch! Hold R to undo that.";
         public string rewindHintTouch = "Ouch! Hold ◄◄ to undo that.";
@@ -348,5 +350,9 @@ namespace SickOfIt.Data.Config
         public string shop = "Shop";
         public string settings = "Settings";
         public string quit = "Quit";
+        [Tooltip("The quit button right after rage-quitting from a death.")]
+        public string rageQuitAgain = "Rage Quit Again";
+        [Tooltip("Shown when quitting can't close a browser tab.")]
+        public string browserQuitHint = "Browsers won't let us close the tab. Do it yourself. We'll wait.";
     }
 }
