@@ -82,10 +82,10 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         private MaterialPropertyBlock mpb;
         private Vector3 baseLocalPosition;
         private Texture2D currentTexture;
-        private Sprite referenceSprite;
+        // One sprite per sheet cell, cut from a loaded sheet. Every sheet has the same layout, so the property
+        // block swaps the texture underneath while the cell sprite keeps the frame's rectangle.
+        private Sprite[] cellSprites;
         private int referenceSpriteChunkIdx = -1;
-        private Vector2[] cellOffsets;
-        private bool cellOffsetsReady;
 
         // Ready tracking
         private int targetPreload;
@@ -150,9 +150,6 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             totalFrames = data.GetStoredTotalFrames();
             if (totalFrames <= 0)
                 totalFrames = data.GetTotalFrames();
-
-            // Allocate cell offsets array
-            cellOffsets = new Vector2[data.framesPerSheet];
 
             // Apply WebGL memory constraints
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -250,12 +247,8 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             released = true;
 
             chunkTextures.Clear();
-
-            if (referenceSprite != null)
-            {
-                DestroyImmediate(referenceSprite);
-                referenceSprite = null;
-            }
+            DestroyCellSprites();
+            currentTexture = null;
 
             foreach (var kvp in chunkHandles)
             {
@@ -377,9 +370,6 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             // Render from loaded chunk
             if (!chunkTextures.ContainsKey(chunkIdx)) return;
 
-            if (referenceSprite != null && spriteRenderer.sprite != referenceSprite)
-                spriteRenderer.sprite = referenceSprite;
-
             var chunk = data.chunks[chunkIdx];
             int localIndex = frameIndex - chunk.startFrame;
             if (localIndex < 0 || localIndex >= chunk.frameCount) return;
@@ -389,7 +379,10 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             if (texIdx >= textures.Count) return;
 
             int cell = localIndex % data.framesPerSheet;
-            if (!cellOffsetsReady || cell >= cellOffsets.Length) return;
+            if (cellSprites == null || cell >= cellSprites.Length) return;
+
+            if (spriteRenderer.sprite != cellSprites[cell])
+                spriteRenderer.sprite = cellSprites[cell];
 
             var tex = textures[texIdx];
             if (currentTexture != tex)
@@ -398,13 +391,6 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
                 mpb.SetTexture(MainTexID, tex);
                 spriteRenderer.SetPropertyBlock(mpb);
             }
-
-            var offset = cellOffsets[cell];
-            var s = transform.localScale;
-            transform.localPosition = new Vector3(
-                baseLocalPosition.x + offset.x * s.x,
-                baseLocalPosition.y + offset.y * s.y,
-                baseLocalPosition.z);
 
             displayedChunkIdx = chunkIdx;
         }
@@ -473,38 +459,11 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             // Evict if over budget
             EvictIfNeeded(chunkIndex);
 
-            // Create reference sprite (once)
-            if (referenceSprite == null && sorted.Count > 0)
+            // Cut the cell sprites (once)
+            if (cellSprites == null && sorted.Count > 0)
             {
-                var firstTex = sorted[0];
-                referenceSprite = Sprite.Create(
-                    firstTex,
-                    new Rect(0, 0, firstTex.width, firstTex.height),
-                    new Vector2(0.5f, 0.5f),
-                    data.spritePixelsPerUnit);
+                CreateCellSprites(sorted[0]);
                 referenceSpriteChunkIdx = chunkIndex;
-            }
-
-            // Compute cell offsets (once)
-            if (!cellOffsetsReady && sorted.Count > 0)
-            {
-                var tex = sorted[0];
-                float ppu = data.spritePixelsPerUnit;
-                float pivotPxX = tex.width * 0.5f;
-                float pivotPxY = tex.height * 0.5f;
-
-                for (int c = 0; c < data.framesPerSheet; c++)
-                {
-                    int col = c % data.sheetColumns;
-                    int row = c / data.sheetColumns;
-                    float cellCenterPxX = col * data.frameWidth + data.frameWidth * 0.5f;
-                    float cellCenterPxY = tex.height - (row * data.frameHeight + data.frameHeight * 0.5f);
-
-                    cellOffsets[c] = new Vector2(
-                        -(cellCenterPxX - pivotPxX) / ppu,
-                        -(cellCenterPxY - pivotPxY) / ppu);
-                }
-                cellOffsetsReady = true;
             }
 
             // Check if initial preload complete
@@ -527,7 +486,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             }
 
             // The playhead may already be sitting on this chunk (rewind stepped backward).
-            if (cellOffsetsReady && totalFrames > 0)
+            if (cellSprites != null && totalFrames > 0)
                 UpdateFrame();
         }
 
@@ -637,33 +596,59 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
         private void RecreateReferenceSprite()
         {
-            if (referenceSprite != null)
-            {
-                DestroyImmediate(referenceSprite);
-                referenceSprite = null;
-            }
+            DestroyCellSprites();
             referenceSpriteChunkIdx = -1;
 
             foreach (var kvp in chunkTextures)
             {
                 if (kvp.Value != null && kvp.Value.Count > 0)
                 {
-                    var tex = kvp.Value[0];
-                    referenceSprite = Sprite.Create(
-                        tex,
-                        new Rect(0, 0, tex.width, tex.height),
-                        new Vector2(0.5f, 0.5f),
-                        data.spritePixelsPerUnit);
+                    CreateCellSprites(kvp.Value[0]);
                     referenceSpriteChunkIdx = kvp.Key;
-
-                    if (spriteRenderer != null)
-                        spriteRenderer.sprite = referenceSprite;
 
                     // Invalidate cached texture so MPB gets refreshed on next RenderFrame
                     currentTexture = null;
                     break;
                 }
             }
+        }
+
+        /// <summary>
+        /// One sprite per cell, rows counted from the top of the sheet, each drawn
+        /// <see cref="SpriteFramesData.FrameWorldWidth"/> wide whatever resolution it was baked at.
+        /// </summary>
+        private void CreateCellSprites(Texture2D sheet)
+        {
+            DestroyCellSprites();
+            int cells = Mathf.Max(1, data.framesPerSheet);
+            int columns = Mathf.Max(1, data.sheetColumns);
+            float ppu = data.FramePixelsPerUnit;
+            cellSprites = new Sprite[cells];
+            for (int c = 0; c < cells; c++)
+            {
+                int col = c % columns;
+                int row = c / columns;
+                var rect = new Rect(
+                    col * data.frameWidth,
+                    sheet.height - (row + 1) * data.frameHeight,
+                    data.frameWidth,
+                    data.frameHeight);
+                cellSprites[c] = Sprite.Create(sheet, rect, new Vector2(0.5f, 0.5f), ppu, 0, SpriteMeshType.FullRect);
+            }
+        }
+
+        private void DestroyCellSprites()
+        {
+            if (cellSprites == null)
+                return;
+            if (spriteRenderer != null)
+                spriteRenderer.sprite = null;
+            for (int i = 0; i < cellSprites.Length; i++)
+            {
+                if (cellSprites[i] != null)
+                    DestroyImmediate(cellSprites[i]);
+            }
+            cellSprites = null;
         }
     }
 }

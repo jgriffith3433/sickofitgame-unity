@@ -19,6 +19,9 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         [Tooltip("Loop the sequence when it reaches the last frame.")]
         public bool loop = false;
 
+        [Tooltip("Regenerate All Sheets leaves this clip alone: its frames are hand-timed rather than the source mp4 at playbackFPS.")]
+        public bool skipBulkRegenerate = false;
+
         [Tooltip("Addressables label for the companion audio clip, if any.")]
         public string audioAddress = "";
 
@@ -55,6 +58,13 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
         [Tooltip("Pixels per unit for created sprites")]
         public float spritePixelsPerUnit = 100f;
+
+        /// <summary>World width of every frame, whatever resolution it was baked at: a 1024 px cell at 100 px/unit,
+        /// which is what menu, video and death layouts were tuned for.</summary>
+        public const float FrameWorldWidth = 10.24f;
+
+        /// <summary>Pixels per unit that draw one frame <see cref="FrameWorldWidth"/> wide.</summary>
+        public float FramePixelsPerUnit => frameWidth > 0 ? frameWidth / FrameWorldWidth : spritePixelsPerUnit;
 
         [Header("Chunk Configuration")]
         [Tooltip("List of frame chunks - each chunk has its own addressables label")]
@@ -150,7 +160,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
         /// <summary>
         /// Calculate optimal grid layout that preserves aspect ratio and maximizes frames per sheet
-        /// while keeping cell size at least half the source resolution for quality.
+        /// with cells at least a quarter of the sheet wide (512 px on a 2048 sheet).
         /// </summary>
         public void CalculateOptimalGrid()
         {
@@ -160,9 +170,11 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             float aspect = (float)sourceFrameWidth / sourceFrameHeight;
             int bestCols = 1, bestRows = 1, bestCellW = 0, bestCellH = 0, bestCount = 0;
 
-            // Minimum cell size = 75% of the source resolution to preserve quality
-            int minCellW = Mathf.Max(maxSheetSize / 8, sourceFrameWidth * 3 / 4);
-            int minCellH = Mathf.Max(maxSheetSize / 8, sourceFrameHeight * 3 / 4);
+            // Download size and WebGL memory matter more than sharpness: every source, 720p or 1080p, gets cells a
+            // quarter of the sheet wide (16:9 packs 28 frames per 2048 sheet). Frames sized from the source resolution
+            // put one 1080p frame on each sheet, ~28x the memory, and WebGL ran out of heap.
+            int minCellW = Mathf.Min(sourceFrameWidth, maxSheetSize / 4);
+            int minCellH = Mathf.Min(sourceFrameHeight, (int)(minCellW / aspect) & ~3);
 
             // Try reasonable column counts (1-8) to find the layout that maximizes frames per sheet
             for (int cols = 1; cols <= 8; cols++)

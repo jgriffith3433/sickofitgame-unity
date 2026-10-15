@@ -227,20 +227,9 @@ namespace SickOfIt.Tools.Editor
 
         private void Step_BuildAddressables()
         {
-            Log("Step 2: Building Addressables...");
-
-            AddressableAssetSettings.CleanPlayerContent(
-                AddressableAssetSettingsDefaultObject.Settings.ActivePlayerDataBuilder);
-
-            AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
-
-            if (!string.IsNullOrEmpty(result.Error))
-            {
-                Log("  ERROR: Addressables build failed: " + result.Error);
-                throw new Exception("Addressables build failed: " + result.Error);
-            }
-
-            Log("  Addressables build succeeded. Duration: " + result.Duration + "s");
+            Log("Step 2: Building Addressables (DXT for desktop, ASTC for phones)...");
+            AddressablesTextureVariants.Build(Log);
+            Log("  Addressables build succeeded.");
         }
 
         private void Step_CreateVersionFolder()
@@ -290,24 +279,8 @@ namespace SickOfIt.Tools.Editor
 
         private void Step_CopyAddressables()
         {
-            string destWebGL = Path.Combine(GameFolder, $"v{newVersion}", "ServerData", "WebGL");
-
             Log($"Step 5: Copying addressables to v{newVersion}...");
-
-            if (!Directory.Exists(ServerDataWebGL))
-            {
-                Log("  ERROR: Addressables output not found: " + ServerDataWebGL);
-                throw new Exception("Addressables output not found. Did you build addressables first?");
-            }
-
-            // Ensure destination parent exists
-            Directory.CreateDirectory(Path.GetDirectoryName(destWebGL));
-
-            if (Directory.Exists(destWebGL))
-                Directory.Delete(destWebGL, true);
-
-            CopyDirectoryRecursive(ServerDataWebGL, destWebGL);
-            Log($"  Copied to: {destWebGL}");
+            AddressablesTextureVariants.CopyToServerData(Path.Combine(GameFolder, $"v{newVersion}", "ServerData"), Log);
         }
 
         private void Step_BuildWebGL()

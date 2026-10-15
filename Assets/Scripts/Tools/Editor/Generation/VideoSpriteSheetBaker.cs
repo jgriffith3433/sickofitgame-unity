@@ -62,34 +62,65 @@ namespace SickOfIt.Tools.Editor.Generation
                 entry.SheetDetail = "No sprite sheets yet.";
         }
 
-        public static void Regenerate(GameDefinition gd, string clipId, string mp4Path)
+        /// <summary>
+        /// Rebuilds the sheets of every video, death, and background whose source mp4 exists, without dialogs.
+        /// Returns the number of clips that failed.
+        /// </summary>
+        public static int RegenerateAll(GameDefinition gd)
+        {
+            int built = 0, failed = 0;
+            foreach (var entry in SourceMediaCatalog.Collect(gd))
+            {
+                if (!IsSequence(entry.Group))
+                    continue;
+                if (!entry.Exists)
+                {
+                    Debug.LogWarning("[VideoSpriteSheetBaker] Skipped " + entry.Label + ": no source at " + entry.Path);
+                    continue;
+                }
+
+                var existing = FindData(gd, entry.Label, out _);
+                if (existing != null && existing.skipBulkRegenerate)
+                {
+                    Debug.Log("[VideoSpriteSheetBaker] Skipped " + entry.Label + ": skipBulkRegenerate is set.");
+                    continue;
+                }
+
+                if (Regenerate(gd, entry.Label, entry.Path, interactive: false))
+                    built++;
+                else
+                    failed++;
+            }
+
+            Debug.Log("[VideoSpriteSheetBaker] Rebuilt " + built + " clips, " + failed + " failed.");
+            return failed;
+        }
+
+        public static bool Regenerate(GameDefinition gd, string clipId, string mp4Path, bool interactive = true)
         {
             if (gd == null)
             {
-                EditorUtility.DisplayDialog("Sprite Sheets", "No GameDefinition found.", "OK");
-                return;
+                Report(interactive, clipId, "No GameDefinition found.", true);
+                return false;
             }
 
             if (string.IsNullOrEmpty(clipId) || string.IsNullOrEmpty(mp4Path) || !File.Exists(mp4Path))
             {
-                EditorUtility.DisplayDialog("Sprite Sheets", "The source mp4 is missing.\n\n" + mp4Path, "OK");
-                return;
+                Report(interactive, clipId, "The source mp4 is missing.\n\n" + mp4Path, true);
+                return false;
             }
 
             if (!FFmpegHelper.IsFFmpegAvailable())
             {
-                EditorUtility.DisplayDialog(
-                    "FFmpeg Not Found",
-                    "FFmpeg was not found.\n\nInstall it with:\nwinget install ffmpeg\n\nThen restart Unity.",
-                    "OK");
-                return;
+                Report(interactive, clipId, "FFmpeg was not found.\n\nInstall it with:\nwinget install ffmpeg\n\nThen restart Unity.", true);
+                return false;
             }
 
             var data = FindData(gd, clipId, out Slot slot);
             bool replacing = data != null && data.HasBuiltFrames;
             string verb = replacing ? "Replace the sprite sheets for " : "Build sprite sheets for ";
-            if (!EditorUtility.DisplayDialog("Sprite Sheets", verb + clipId + "?\n\n" + mp4Path, replacing ? "Replace" : "Build", "Cancel"))
-                return;
+            if (interactive && !EditorUtility.DisplayDialog("Sprite Sheets", verb + clipId + "?\n\n" + mp4Path, replacing ? "Replace" : "Build", "Cancel"))
+                return false;
 
             string tempDir = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Temp", "VideoFrames", clipId));
             bool created = false;
@@ -102,22 +133,22 @@ namespace SickOfIt.Tools.Editor.Generation
                 float fps = data != null && data.playbackFPS > 0f ? data.playbackFPS : 30f;
                 if (!Extract(mp4Path, fps, tempDir, out string extractError))
                 {
-                    EditorUtility.DisplayDialog("Sprite Sheets", extractError, "OK");
-                    return;
+                    Report(interactive, clipId, extractError, true);
+                    return false;
                 }
 
                 var frames = Directory.GetFiles(tempDir, "frame_*.jpg");
                 Array.Sort(frames, StringComparer.Ordinal);
                 if (frames.Length == 0)
                 {
-                    EditorUtility.DisplayDialog("Sprite Sheets", "ffmpeg wrote no frames.", "OK");
-                    return;
+                    Report(interactive, clipId, "ffmpeg wrote no frames.", true);
+                    return false;
                 }
 
                 if (!TryReadSize(frames[0], out int srcW, out int srcH))
                 {
-                    EditorUtility.DisplayDialog("Sprite Sheets", "Could not read the first frame.", "OK");
-                    return;
+                    Report(interactive, clipId, "Could not read the first frame.", true);
+                    return false;
                 }
 
                 if (data == null)
@@ -145,8 +176,8 @@ namespace SickOfIt.Tools.Editor.Generation
 
                 if (data.framesPerSheet <= 0 || data.frameWidth <= 0 || data.frameHeight <= 0)
                 {
-                    EditorUtility.DisplayDialog("Sprite Sheets", "Could not fit frames into a sprite sheet.", "OK");
-                    return;
+                    Report(interactive, clipId, "Could not fit frames into a sprite sheet.", true);
+                    return false;
                 }
 
                 int framesPerChunk = FramesPerChunk(data);
@@ -156,8 +187,8 @@ namespace SickOfIt.Tools.Editor.Generation
 
                 if (!PackSheets(frames, data, folder, prefix, out string packError))
                 {
-                    EditorUtility.DisplayDialog("Sprite Sheets", packError ?? "Cancelled.", "OK");
-                    return;
+                    Report(interactive, clipId, packError ?? "Cancelled.", true);
+                    return false;
                 }
 
                 int sheetCount = Mathf.CeilToInt((float)frames.Length / data.framesPerSheet);
@@ -167,8 +198,8 @@ namespace SickOfIt.Tools.Editor.Generation
                 var textures = LoadSheets(folder, prefix, sheetCount, out string loadError);
                 if (textures == null)
                 {
-                    EditorUtility.DisplayDialog("Sprite Sheets", loadError, "OK");
-                    return;
+                    Report(interactive, clipId, loadError, true);
+                    return false;
                 }
 
                 Undo.RecordObject(data, "Build " + clipId + " sprite sheets");
@@ -189,13 +220,13 @@ namespace SickOfIt.Tools.Editor.Generation
                     data.sheetTextureWidth + "x" + data.sheetTextureHeight + ").\n" +
                     data.chunks.Count + " chunks in " + groupName + ".\n" +
                     folder + "\nExtracted at " + fps.ToString("0.##") + " fps." + addressNote;
-                Debug.Log("[VideoSpriteSheetBaker] " + clipId + "\n" + summary);
-                EditorUtility.DisplayDialog("Sprite Sheets", summary, "OK");
+                Report(interactive, clipId, summary, false);
             }
             catch (Exception e)
             {
                 Debug.LogException(e);
-                EditorUtility.DisplayDialog("Sprite Sheets", e.Message, "OK");
+                if (interactive)
+                    EditorUtility.DisplayDialog("Sprite Sheets", e.Message, "OK");
             }
             finally
             {
@@ -220,6 +251,18 @@ namespace SickOfIt.Tools.Editor.Generation
                     catch (Exception e) { Debug.LogWarning("[VideoSpriteSheetBaker] Could not delete " + tempDir + ": " + e.Message); }
                 }
             }
+
+            return committed;
+        }
+
+        static void Report(bool interactive, string clipId, string message, bool error)
+        {
+            if (error)
+                Debug.LogError("[VideoSpriteSheetBaker] " + clipId + ": " + message);
+            else
+                Debug.Log("[VideoSpriteSheetBaker] " + clipId + "\n" + message);
+            if (interactive)
+                EditorUtility.DisplayDialog("Sprite Sheets", message, "OK");
         }
 
         static bool Extract(string mp4Path, float fps, string tempDir, out string error)
@@ -383,9 +426,10 @@ namespace SickOfIt.Tools.Editor.Generation
                         importer.isReadable ||
                         importer.mipmapEnabled ||
                         importer.maxTextureSize != maxSize ||
-                        importer.textureCompression != TextureImporterCompression.Compressed ||
+                        importer.textureCompression != TextureImporterCompression.CompressedLQ ||
                         importer.npotScale != TextureImporterNPOTScale.None ||
-                        importer.filterMode != FilterMode.Bilinear;
+                        importer.filterMode != FilterMode.Bilinear ||
+                        importer.alphaSource != TextureImporterAlphaSource.None;
                     if (!dirty)
                         continue;
 
@@ -393,9 +437,13 @@ namespace SickOfIt.Tools.Editor.Generation
                     importer.isReadable = false;
                     importer.mipmapEnabled = false;
                     importer.maxTextureSize = maxSize;
-                    importer.textureCompression = TextureImporterCompression.Compressed;
+                    // Low quality: DXT1 on desktop either way, ASTC 8x8 (2 bpp, 1 MB per 2048 sheet) instead of 6x6 in
+                    // the phone build (AddressablesTextureVariants).
+                    importer.textureCompression = TextureImporterCompression.CompressedLQ;
                     importer.npotScale = TextureImporterNPOTScale.None;
                     importer.filterMode = FilterMode.Bilinear;
+                    // Frames come from jpgs, so the sheets are opaque: no alpha halves their memory (DXT1, not DXT5).
+                    importer.alphaSource = TextureImporterAlphaSource.None;
                     importer.SaveAndReimport();
                 }
             }
@@ -802,7 +850,17 @@ namespace SickOfIt.Tools.Editor.Generation
 
         static bool GridMatches(SpriteFramesData data, int srcW, int srcH)
         {
-            return data.sourceFrameWidth == srcW &&
+            // A grid baked with fewer frames per sheet than the current layout rule allows is re-laid out.
+            var optimal = ScriptableObject.CreateInstance<SpriteFramesData>();
+            optimal.sourceFrameWidth = srcW;
+            optimal.sourceFrameHeight = srcH;
+            optimal.maxSheetSize = data.maxSheetSize > 0 ? data.maxSheetSize : 2048;
+            optimal.CalculateOptimalGrid();
+            int optimalPerSheet = optimal.framesPerSheet;
+            UnityEngine.Object.DestroyImmediate(optimal);
+
+            return data.framesPerSheet >= optimalPerSheet &&
+                   data.sourceFrameWidth == srcW &&
                    data.sourceFrameHeight == srcH &&
                    data.framesPerSheet > 0 &&
                    data.sheetColumns > 0 &&

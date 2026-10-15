@@ -462,7 +462,7 @@ namespace SickOfIt.Core.Progression
                         if (cam != null && cam.orthographic)
                         {
                             float camHeight = cam.orthographicSize * 2f;
-                            float spriteHeight = framesData.frameHeight / framesData.spritePixelsPerUnit;
+                            float spriteHeight = framesData.frameHeight / framesData.FramePixelsPerUnit;
                             float scale = camHeight / spriteHeight;
                             layerGo.transform.localScale = new Vector3(
                                 scale * layer.scale.x, scale * layer.scale.y, 1f);

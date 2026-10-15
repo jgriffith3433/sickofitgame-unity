@@ -58,6 +58,10 @@ namespace SickOfIt.Tools.Editor.Generation
                     SourceMediaCatalog.CreateFolders(entries);
                     Refresh();
                 }
+                GUI.enabled = !busy;
+                if (GUILayout.Button("Regenerate All Sheets", GUILayout.Height(28), GUILayout.Width(160)))
+                    QueueSheetBuildAll();
+                GUI.enabled = true;
             }
 
             if (gd == null)
@@ -141,6 +145,51 @@ namespace SickOfIt.Tools.Editor.Generation
                     busy = false;
                 }
             };
+        }
+
+        void QueueSheetBuildAll()
+        {
+            if (busy)
+                return;
+            if (!EditorUtility.DisplayDialog("Sprite Sheets",
+                    "Rebuild the sprite sheets of every video, death, and background? This takes a while.", "Rebuild All", "Cancel"))
+                return;
+
+            busy = true;
+            EditorApplication.delayCall += () =>
+            {
+                try
+                {
+                    int failed = VideoSpriteSheetBaker.RegenerateAll(LoadGameDefinition());
+                    EditorUtility.DisplayDialog("Sprite Sheets",
+                        failed == 0 ? "Every clip was rebuilt." : failed + " clip(s) failed. See the console.", "OK");
+                    if (this == null)
+                        return;
+                    Refresh();
+                    Repaint();
+                }
+                finally
+                {
+                    busy = false;
+                }
+            };
+        }
+
+        /// <summary>Batch mode: -executeMethod SickOfIt.Tools.Editor.Generation.GenerateProjectWindow.RegenerateAllSheets</summary>
+        public static void RegenerateAllSheets()
+        {
+            int failed = 1;
+            try
+            {
+                failed = VideoSpriteSheetBaker.RegenerateAll(LoadGameDefinition());
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogException(e);
+            }
+
+            if (Application.isBatchMode)
+                EditorApplication.Exit(failed == 0 ? 0 : 1);
         }
 
         static GameDefinition LoadGameDefinition()

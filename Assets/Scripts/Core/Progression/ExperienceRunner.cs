@@ -725,7 +725,7 @@ namespace SickOfIt.Core.Progression
                 {
                     float camHeight = mainCamera.orthographicSize * 2f;
                     float camWidth = camHeight * mainCamera.aspect;
-                    float spriteHeight = framesData.frameHeight / framesData.spritePixelsPerUnit;
+                    float spriteHeight = framesData.frameHeight / framesData.FramePixelsPerUnit;
                     float scale = camHeight / spriteHeight;
                     targetGo.transform.localScale = new Vector3(scale, scale, 1f);
                 }

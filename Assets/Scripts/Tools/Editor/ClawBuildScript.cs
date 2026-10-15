@@ -37,8 +37,6 @@ namespace SickOfIt.Tools.Editor
                 string websitePath = GetEnv("WEBSITE_PATH", DefaultWebsitePath);
                 string gameFolder = Path.Combine(websitePath, "Game");
                 string templateFolder = Path.Combine(gameFolder, "v0000000");
-                string serverDataWebGL = Path.Combine(DefaultUnityPath, "ServerData", "WebGL");
-
                 int currentVersion = DetectVersion(gameFolder);
                 int newVersion = currentVersion + 1;
                 string buildVersionOverride = GetEnv("BUILD_VERSION", null);
@@ -47,21 +45,8 @@ namespace SickOfIt.Tools.Editor
 
                 ////Debug.Log($"[ClawBuild] Starting full deploy: v{currentVersion} → v{newVersion}");
 
-                // Step 1: Delete ServerData
-                if (Directory.Exists(serverDataWebGL))
-                {
-                    Directory.Delete(serverDataWebGL, true);
-                    ////Debug.Log("[ClawBuild] Deleted ServerData/WebGL");
-                }
-
-                // Step 2: Build Addressables
-                ////Debug.Log("[ClawBuild] Building Addressables...");
-                AddressableAssetSettings.CleanPlayerContent(
-                    AddressableAssetSettingsDefaultObject.Settings.ActivePlayerDataBuilder);
-                AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult addrResult);
-                if (!string.IsNullOrEmpty(addrResult.Error))
-                    throw new Exception("Addressables build failed: " + addrResult.Error);
-                ////Debug.Log($"[ClawBuild] Addressables built in {addrResult.Duration}s");
+                // Steps 1-2: Build Addressables, once per texture format (ServerData/WebGL and WebGL_ASTC)
+                AddressablesTextureVariants.Build(message => Debug.Log("[ClawBuild] " + message));
 
                 // Step 3: Create version folder from template
                 string newVersionFolder = Path.Combine(gameFolder, $"v{newVersion}");
@@ -82,9 +67,8 @@ namespace SickOfIt.Tools.Editor
                 }
 
                 // Step 5: Copy addressables to new version
-                string destWebGL = Path.Combine(newVersionFolder, "ServerData", "WebGL");
-                Directory.CreateDirectory(Path.GetDirectoryName(destWebGL));
-                CopyDirectory(serverDataWebGL, destWebGL);
+                AddressablesTextureVariants.CopyToServerData(Path.Combine(newVersionFolder, "ServerData"),
+                    message => Debug.Log("[ClawBuild] " + message));
                 ////Debug.Log("[ClawBuild] Copied addressables");
 
                 // Step 6: Build WebGL
@@ -131,24 +115,13 @@ namespace SickOfIt.Tools.Editor
         }
 
         /// <summary>
-        /// Build addressables only.
+        /// Build addressables only (DXT and ASTC variants).
         /// </summary>
         public static void BuildAddressables()
         {
             try
             {
-                string serverDataWebGL = Path.Combine(DefaultUnityPath, "ServerData", "WebGL");
-                if (Directory.Exists(serverDataWebGL))
-                    Directory.Delete(serverDataWebGL, true);
-
-                AddressableAssetSettings.CleanPlayerContent(
-                    AddressableAssetSettingsDefaultObject.Settings.ActivePlayerDataBuilder);
-                AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
-
-                if (!string.IsNullOrEmpty(result.Error))
-                    throw new Exception("Addressables build failed: " + result.Error);
-
-                ////Debug.Log($"[ClawBuild] Addressables built in {result.Duration}s");
+                AddressablesTextureVariants.Build(message => Debug.Log("[ClawBuild] " + message));
             }
             catch (Exception ex)
             {
