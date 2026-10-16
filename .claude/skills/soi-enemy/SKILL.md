@@ -24,7 +24,12 @@ Read `Docs/Story.md` ("Structure", "The Circles", "Rules for enemies", "Roster")
 Start from the closest existing entity with `extends` (`shooter`, `chaser`, `fighter`, `imp`…) and change only what
 differs: `health`, `moveSpeed`, abilities (`chase`, `shoot`, `melee`…), `loot` (diamonds only if it carries them; loop
 shards from the damned), `tags`, and a design note with its reason. Every field is in `Docs/GameplayReference.md`;
-recipes in `Docs/GameplayCookbook.md` ("An enemy variant", "A boss fight"). Leave `visual.animator` to the art pipeline;
+recipes in `Docs/GameplayCookbook.md` ("An enemy variant", "A boss fight").
+**The body must fit the figure** (`body.radius` about half the art's `height`): `extends` copies the parent's body, and
+`shooter` is a solid circle with no gravity made for flyers. A ground enemy with a big solid body is a wall across a
+travel stage: its chase shoves the hero off the back of the camera, the camera never advances and the floor counter
+freezes (Brimstone Demon, first try). Ground walkers: a small radius, usually `solid: false` (contact damage still
+hurts), spawned with their feet on `track.groundY`. Projectile hitboxes match what's drawn. Leave `visual.animator` to the art pipeline;
 a placeholder `visual.color` is fine until then.
 
 ## 2. Art: spec, then the pipeline (GPU: ask first)
