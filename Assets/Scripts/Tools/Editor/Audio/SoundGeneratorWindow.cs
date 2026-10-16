@@ -11,14 +11,12 @@ namespace SickOfIt.Tools.Editor.Audio
 {
     /// <summary>
     /// SickOfIt > Audio > Sound Generator: lists audio.json's sounds with their state, makes missing or outdated
-    /// ones with ElevenLabs, regenerates a single sound, and previews clips. The API key is kept on this machine
-    /// (EditorPrefs), or taken from the ELEVENLABS_API_KEY environment variable.
+    /// ones through Hawkes Gen (the shared generative-AI service, which holds the ElevenLabs key), regenerates a single
+    /// sound, and previews clips.
     /// </summary>
     public sealed class SoundGeneratorWindow : EditorWindow
     {
         Vector2 scroll;
-        string keyInput = "";
-        bool showKey;
         CancellationTokenSource running;
         string progressText;
         float progress;
@@ -26,12 +24,11 @@ namespace SickOfIt.Tools.Editor.Audio
         AudioConfig audio;
         string loadError;
 
-        [MenuItem("SickOfIt/Audio/Sound Generator (ElevenLabs)", priority = 200)]
+        [MenuItem("SickOfIt/Audio/Sound Generator (Hawkes Gen)", priority = 200)]
         static void Open() => GetWindow<SoundGeneratorWindow>("Sound Generator").Show();
 
         void OnEnable()
         {
-            keyInput = ElevenLabsClient.KeyFromEnvironment ? "" : ElevenLabsClient.ApiKey;
             Reload();
         }
 
@@ -47,25 +44,8 @@ namespace SickOfIt.Tools.Editor.Audio
 
         void OnGUI()
         {
-            EditorGUILayout.LabelField("ElevenLabs", EditorStyles.boldLabel);
-            if (ElevenLabsClient.KeyFromEnvironment)
-            {
-                EditorGUILayout.HelpBox("Using the API key from the ELEVENLABS_API_KEY environment variable.", MessageType.Info);
-            }
-            else
-            {
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    keyInput = showKey ? EditorGUILayout.TextField("API key", keyInput) : EditorGUILayout.PasswordField("API key", keyInput);
-                    showKey = GUILayout.Toggle(showKey, "Show", "Button", GUILayout.Width(50));
-                    if (GUILayout.Button("Save", GUILayout.Width(60)))
-                    {
-                        ElevenLabsClient.SaveKey(keyInput);
-                        ShowNotification(new GUIContent("Key saved on this computer"));
-                    }
-                }
-                EditorGUILayout.HelpBox("The key is stored on this computer only (EditorPrefs), never in the project.", MessageType.None);
-            }
+            EditorGUILayout.HelpBox($"Sounds and voices are made by Hawkes Gen at {HawkesGen.HawkesGenClient.Url} (ElevenLabs; it holds the key). " +
+                "Start it with C:\\Projects\\hawkesgen\\auto-start.bat. Every take is kept in its library.", MessageType.None);
 
             if (!string.IsNullOrEmpty(loadError))
             {
@@ -84,7 +64,7 @@ namespace SickOfIt.Tools.Editor.Audio
                 EditorGUILayout.LabelField($"{audio.sounds.Count} sounds, {pending.Count} to make", EditorStyles.boldLabel);
                 GUI.enabled = running == null && pending.Count > 0;
                 if (GUILayout.Button($"Generate {pending.Count} missing / outdated", GUILayout.Width(240)))
-                    Run(pending);
+                    Run(pending, true);
                 GUI.enabled = running == null;
                 if (GUILayout.Button("Edit audio.json", GUILayout.Width(110)))
                     AssetDatabase.OpenAsset(AssetDatabase.LoadAssetAtPath<TextAsset>(SoundGenerator.AudioFile));
@@ -120,8 +100,9 @@ namespace SickOfIt.Tools.Editor.Audio
                     if (GUILayout.Button("▶", GUILayout.Width(28)))
                         Preview(sound.clip);
                     GUI.enabled = running == null && !string.IsNullOrEmpty(sound.prompt);
+                    // Make reuses Hawkes Gen's file for these exact settings if it has one; Redo always makes a new one.
                     if (GUILayout.Button(sound.clip != null ? "Redo" : "Make", GUILayout.Width(50)))
-                        Run(new List<SoundDef> { sound });
+                        Run(new List<SoundDef> { sound }, sound.clip == null);
                     if (GUILayout.Button(new GUIContent("3 takes", "Make 3 variations to choose from (uses 3x the credits)."), GUILayout.Width(62)))
                         RunTakes(sound, 3);
                     GUI.enabled = true;
@@ -156,10 +137,8 @@ namespace SickOfIt.Tools.Editor.Audio
             EditorGUILayout.EndScrollView();
         }
 
-        async void Run(List<SoundDef> sounds)
+        async void Run(List<SoundDef> sounds, bool reuse)
         {
-            if (!ElevenLabsClient.KeyFromEnvironment && keyInput != ElevenLabsClient.ApiKey && !string.IsNullOrEmpty(keyInput))
-                ElevenLabsClient.SaveKey(keyInput);
             running = new CancellationTokenSource();
             lastResult = null;
             try
@@ -169,7 +148,7 @@ namespace SickOfIt.Tools.Editor.Audio
                     progress = total > 0 ? (float)done / total : 1f;
                     progressText = id != null ? $"Making {id} ({done + 1}/{total})..." : "Done";
                     Repaint();
-                }, running.Token);
+                }, running.Token, reuse);
                 lastResult = $"Made {result.Made} sound(s)." + (result.Failures.Count > 0
                     ? $" {result.Failures.Count} failed:\n" + string.Join("\n", result.Failures.Take(8))
                     : "");
@@ -212,7 +191,7 @@ namespace SickOfIt.Tools.Editor.Audio
                         GUI.color = old;
                         GUILayout.FlexibleSpace();
                         GUI.enabled = running == null && !string.IsNullOrWhiteSpace(voice.description);
-                        if (GUILayout.Button(new GUIContent("Design 3 candidates", "ElevenLabs Voice Design makes candidate voices from the description to audition."), GUILayout.Width(150)))
+                        if (GUILayout.Button(new GUIContent("Design 3 candidates", "Hawkes Gen (ElevenLabs Voice Design) makes candidate voices from the description to audition."), GUILayout.Width(150)))
                             RunDesign(voice);
                         GUI.enabled = true;
                     }
@@ -248,7 +227,6 @@ namespace SickOfIt.Tools.Editor.Audio
             progressText = $"Designing {voice.name}...";
             try
             {
-                SaveTypedKey();
                 int count = await SoundGenerator.DesignVoiceAsync(audio, voice, running.Token);
                 lastResult = $"Made {count} candidate voice(s) for {voice.name}. Play them and press Use on the one that fits.";
             }
@@ -273,7 +251,6 @@ namespace SickOfIt.Tools.Editor.Audio
             progressText = $"Saving candidate {number} as {voice.name}...";
             try
             {
-                SaveTypedKey();
                 await SoundGenerator.UseDesignAsync(audio, voice, generatedVoiceId, running.Token);
                 lastResult = $"{voice.name} now uses candidate {number}. Its lines show as outdated: Generate to record them.";
             }
@@ -290,16 +267,8 @@ namespace SickOfIt.Tools.Editor.Audio
             }
         }
 
-        void SaveTypedKey()
-        {
-            if (!ElevenLabsClient.KeyFromEnvironment && keyInput != ElevenLabsClient.ApiKey && !string.IsNullOrEmpty(keyInput))
-                ElevenLabsClient.SaveKey(keyInput);
-        }
-
         async void RunTakes(SoundDef sound, int count)
         {
-            if (!ElevenLabsClient.KeyFromEnvironment && keyInput != ElevenLabsClient.ApiKey && !string.IsNullOrEmpty(keyInput))
-                ElevenLabsClient.SaveKey(keyInput);
             running = new CancellationTokenSource();
             lastResult = null;
             try
@@ -338,7 +307,7 @@ namespace SickOfIt.Tools.Editor.Audio
 
         /// <summary>
         /// Batch mode: makes every missing or outdated sound, then quits (exit 0 = all made, 1 = some failed or
-        /// config errors, 2 = crash). Needs ELEVENLABS_API_KEY (or a key saved on this machine).
+        /// config errors, 2 = crash). Needs Hawkes Gen running (C:\Projects\hawkesgen\auto-start.bat).
         /// </summary>
         public static async void GenerateSounds()
         {
@@ -353,7 +322,11 @@ namespace SickOfIt.Tools.Editor.Audio
                 }
                 else
                 {
-                    var pending = SoundGenerator.Pending(audio);
+                    // -sounds a,b: just those (even if up to date); otherwise everything missing or outdated.
+                    var args = Environment.GetCommandLineArgs();
+                    int at = Array.IndexOf(args, "-sounds");
+                    var ids = at >= 0 && at + 1 < args.Length ? args[at + 1].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries) : null;
+                    var pending = SoundGenerator.Pending(audio, ids);
                     Debug.Log($"[Sound Generator] {pending.Count} sound(s) to make.");
                     var result = await SoundGenerator.GenerateAsync(audio, pending,
                         (done, total, id) => { if (id != null) Debug.Log($"[Sound Generator] {done + 1}/{total} {id}"); },

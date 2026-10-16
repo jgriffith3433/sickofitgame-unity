@@ -284,6 +284,18 @@ namespace SickOfIt.Gameplay
             renderer.sprite = clip.Frames[frame];
         }
 
+        /// <summary>A state's frames and frame rate, for playing it outside the animator (the death effect plays "Die").</summary>
+        public bool TryGetClip(string state, out Sprite[] frames, out float fps)
+        {
+            frames = null;
+            fps = 0f;
+            if (!clipIndex.TryGetValue(state, out int i) || clips[i].Frames.Length == 0)
+                return false;
+            frames = clips[i].Frames;
+            fps = clips[i].Fps;
+            return true;
+        }
+
         /// <summary>The first frame of the default clip, for the template's initial look.</summary>
         public Sprite FirstSprite => clips.Length > 0 && clips[defaultClip].Frames.Length > 0 ? clips[defaultClip].Frames[0] : null;
 

@@ -7,16 +7,20 @@ using System.Text;
 using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using SickOfIt.Combat.Health;
 using SickOfIt.Data;
 using SickOfIt.Gameplay;
+using SickOfIt.Playtest;
+using Hawkes.Playtest;
 
 namespace SickOfIt.Tests.PlayMode
 {
     /// <summary>
-    /// Plays every level in the real Level scene with the playtest bot and writes what happened to
+    /// Plays every level in the real Level scene with the playtest bot (the Hawkes playtest's "level-N" scenario,
+    /// shared with WebGL builds; see SickOfIt.Playtest) and writes what happened to
     /// Logs/Playtest/report.md (plus a summary and event log per level). Excluded from normal runs:
     ///   Unity.exe -batchmode -projectPath . -runTests -testPlatform PlayMode -testCategory Playtest -testResults Logs/Playtest/results.xml
     /// A test fails only if the level throws errors or never starts; whether the bot wins is reported, not asserted.
@@ -73,6 +77,45 @@ namespace SickOfIt.Tests.PlayMode
             PlayerPrefs.Save();
         }
 
+        /// <summary>
+        /// Leave nothing of the level behind: its scene (clock, rewind timeline) would keep ticking into whichever
+        /// test fixture runs next.
+        /// </summary>
+        // Batch mode never focuses the Game view, and by default the editor drops keyboard and mouse input that
+        // isn't aimed at it, so the bot's virtual keyboard would go unheard. Let all input through while testing.
+        InputSettings.EditorInputBehaviorInPlayMode savedEditorInput;
+        InputSettings.BackgroundBehavior savedBackground;
+
+        [SetUp]
+        public void LetInputThrough()
+        {
+            savedEditorInput = InputSystem.settings.editorInputBehaviorInPlayMode;
+            savedBackground = InputSystem.settings.backgroundBehavior;
+            InputSystem.settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+        }
+
+        [TearDown]
+        public void RestoreInput()
+        {
+            InputSystem.settings.editorInputBehaviorInPlayMode = savedEditorInput;
+            InputSystem.settings.backgroundBehavior = savedBackground;
+        }
+
+        [UnityTearDown]
+        public IEnumerator LeaveLevel()
+        {
+            Time.timeScale = 1f;
+            var empty = SceneManager.CreateScene("AfterPlaytest" + Time.frameCount);
+            SceneManager.SetActiveScene(empty);
+            for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (scene != empty && scene.isLoaded)
+                    yield return SceneManager.UnloadSceneAsync(scene);
+            }
+        }
+
         void OnLog(string message, string stack, LogType type)
         {
             if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
@@ -96,47 +139,54 @@ namespace SickOfIt.Tests.PlayMode
                 var config = GameDefinition.Instance.GetLevel(levelNumber);
                 GameplayTelemetry.WriteFiles = true;
                 GameplayTelemetry.Folder = "Logs/Playtest";
-                PlayerPrefs.SetInt("CurrentLevelNumber", levelNumber);
 
-                yield return EditorSceneManager.LoadSceneAsyncInPlayMode("Assets/Scenes/Level.unity", new LoadSceneParameters(LoadSceneMode.Single));
-
-                float started = Time.realtimeSinceStartup;
-                while ((GameplayWorld.Instance == null || SickOfIt.Core.GameClock.Instance == null || SickOfIt.Core.GameClock.Instance.Time <= 0f)
-                       && Time.realtimeSinceStartup - started < 40f)
-                    yield return null;
-                var world = GameplayWorld.Instance;
-                Assert.That(world, Is.Not.Null, $"Level {levelNumber} never started its gameplay world. Errors:\n{string.Join("\n", errors)}");
-
-                PlaytestBot.Attach(world, (uint)(1000 + levelNumber));
-                Time.timeScale = SpeedUp;
-
-                var health = world.Player != null ? world.Player.GetComponentInChildren<PlayerHealth>() : null;
-                float limit = Mathf.Max(30f, config.duration) + 10f;
-                string outcome = "timeout";
-                while (Time.realtimeSinceStartup - started < limit / SpeedUp + 60f)
+                // The same scenario the WebGL build runs for the Hawkes playtest ("level-N"), with the editor's
+                // scene loader as its setup shortcut. The bot plays through virtual input devices.
+                SickOfItPlaytest.Register();
+                SickOfItPlaytest.LoadLevel = n =>
                 {
-                    if (world == null) { outcome = "scene changed"; break; }
-                    if (world.Director.Completed) { outcome = "completed"; break; }
-                    if (health != null && !health.IsAlive) { outcome = "died"; break; }
-                    if (SickOfIt.Core.GameClock.Instance != null && SickOfIt.Core.GameClock.Instance.Time > limit) break;
-                    yield return null;
+                    PlayerPrefs.SetInt("CurrentLevelNumber", n);
+                    return EditorSceneManager.LoadSceneAsyncInPlayMode("Assets/Scenes/Level.unity", new LoadSceneParameters(LoadSceneMode.Single));
+                };
+                GameplayTelemetry.Summary s = null;
+                void Keep(GameplayTelemetry log, GameplayTelemetry.Summary summary) => s = s ?? summary;
+                GameplayTelemetry.Finished += Keep;
+                PlaytestRun run;
+                try
+                {
+                    run = HawkesPlaytest.StartScenario("level-" + levelNumber, new PlaytestOptions { seed = 1, speed = SpeedUp });
+                    while (!run.Done)
+                        yield return null;
                 }
+                finally
+                {
+                    GameplayTelemetry.Finished -= Keep;
+                }
+                File.WriteAllText($"Logs/Playtest/level-{levelNumber}.report.json", HawkesPlaytest.ReportJson(run));
 
-                Time.timeScale = 1f;
-                world?.Telemetry.Finish(outcome);
-                var s = GameplayTelemetry.LastSummary;
+                Assert.That(s, Is.Not.Null, $"Level {levelNumber} never started its gameplay world ({run.Outcome}). Errors:\n{string.Join("\n", errors)}");
+                string outcome = SickOfItPlaytest.LastLevelOutcome ?? run.Outcome.ToString().ToLowerInvariant();
+                var world = GameplayWorld.Instance;
                 string upgrades = string.Join(" ", UpgradeProgress.Owned().Select(p => $"{p.Key}:{p.Value}"));
                 Rows.Add($"| {levelNumber} | {config.levelName} | {outcome} | {s?.duration:0.0} / {world?.LevelLength:0} | {s?.kills}/{s?.spawned} | " +
-                         $"{s?.playerHealthEnd}/{s?.playerMaxHealth} | {Damage(s)} | {s?.lastPhase} | {upgrades} | {errors.Count} |");
+                         $"{s?.playerHealthEnd}/{s?.playerMaxHealth} | {Damage(s)} | {s?.lastPhase} | {Floor(s)} | {upgrades} | {errors.Count} |");
                 WriteReport();
                 Assert.That(errors, Is.Empty, $"Level {levelNumber} logged errors:\n{string.Join("\n", errors.Take(20))}");
             }
             finally
             {
                 Application.logMessageReceived -= OnLog;
+                HawkesPlaytest.Stop();
                 Time.timeScale = 1f;
                 LogAssert.ignoreFailingMessages = false;
             }
+        }
+
+        static string Floor(GameplayTelemetry.Summary s)
+        {
+            if (s == null || (s.floorEnd == 0 && s.distance <= 0f))
+                return "-";
+            return s.floorEnd > 0 ? $"{s.floorEnd} ({s.distance:0} u)" : $"{s.distance:0} u";
         }
 
         static string Damage(GameplayTelemetry.Summary s)
@@ -153,8 +203,8 @@ namespace SickOfIt.Tests.PlayMode
             sb.AppendLine();
             sb.AppendLine($"Bot playtests at {SpeedUp}x speed. Per-level event logs and summaries are next to this file.");
             sb.AppendLine();
-            sb.AppendLine("| # | Level | Outcome | Time / length (s) | Kills/Spawned | Player HP | Damage taken by source | Last phase | Upgrades after | Errors |");
-            sb.AppendLine("|---|---|---|---|---|---|---|---|---|---|");
+            sb.AppendLine("| # | Level | Outcome | Time / length (s) | Kills/Spawned | Player HP | Damage taken by source | Last phase | Floor reached | Upgrades after | Errors |");
+            sb.AppendLine("|---|---|---|---|---|---|---|---|---|---|---|");
             foreach (var row in Rows)
                 sb.AppendLine(row);
             Directory.CreateDirectory(Path.GetDirectoryName(ReportPath));

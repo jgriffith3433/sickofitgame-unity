@@ -132,6 +132,10 @@ namespace SickOfIt.Core.Progression
             // Resolve scene references (from serialized fields or fallback spawn)
             ResolveReferences();
 
+            // A level with a gameplay script hands spawning and winning to the script.
+            var content = GameContent.Current;
+            content.LevelScripts.TryGetValue(config.levelName, out script);
+
             // Build level content
             SetupContainers();
             SetupGameClock();
@@ -141,14 +145,13 @@ namespace SickOfIt.Core.Progression
             StartExperience();
             SetupRewind();
 
-            // A level with a gameplay script hands spawning and winning to the script.
-            var content = GameContent.Current;
-            content.LevelScripts.TryGetValue(config.levelName, out script);
             if (script == null)
                 SpawnEnemies();
             SpawnPlatforms();
             if (script == null || script.world.camera == CameraMode.Static)
                 SpawnBarriers();
+            if (script != null && script.world.camera == CameraMode.Travel)
+                DisableSceneGround();
 
             // Player init
             if (playerHealth != null)
@@ -477,7 +480,10 @@ namespace SickOfIt.Core.Progression
                                 frames = framesData,
                                 start = layer.sequenceStart,
                                 end = SequenceEnd(layer, layers, i),
-                                loop = layer.sequenceLoop
+                                loop = layer.sequenceLoop,
+                                key = layer.sequenceBy,
+                                clipStart = layer.clipStart,
+                                clipLength = layer.clipLength
                             };
                             backgroundSequence.Add(segment);
                             // The clip that is on screen at time zero has to be ready
@@ -491,6 +497,7 @@ namespace SickOfIt.Core.Progression
                         else
                         {
                             backgroundPlayers.Add(player);
+                            player.SetWindow(layer.clipStart, layer.clipLength);
                             player.Initialize(framesData, () =>
                             {
                                 player.UseGameClock(true);
@@ -539,7 +546,7 @@ namespace SickOfIt.Core.Progression
 
             for (int i = index + 1; i < layers.Count; i++)
             {
-                if (layers[i] != null && layers[i].IsSequenced)
+                if (layers[i] != null && layers[i].IsSequenced && layers[i].sequenceBy == layer.sequenceBy)
                     return layers[i].sequenceStart;
             }
 
@@ -551,7 +558,8 @@ namespace SickOfIt.Core.Progression
             if (segment.started)
                 return;
             segment.started = true;
-            segment.player.PrepareForSequence(segment.frames, segment.start, segment.loop);
+            segment.player.SetWindow(segment.clipStart, segment.clipLength);
+            segment.player.PrepareForSequence(segment.frames, segment.ClockOrigin, segment.loop);
         }
 
         private int visibleBackground = -1;
@@ -571,7 +579,7 @@ namespace SickOfIt.Core.Progression
             int wanted = -1;
             for (int i = 0; i < backgroundSequence.Count; i++)
             {
-                if (backgroundSequence[i].Contains(time))
+                if (backgroundSequence[i].Contains(SequenceValue(backgroundSequence[i].key, time)))
                     wanted = i;
             }
 
@@ -590,9 +598,15 @@ namespace SickOfIt.Core.Progression
 
             // Warm the frame the cut will land on, while that clip is still hidden.
             if (wanted >= 0 && wanted + 1 < backgroundSequence.Count && backgroundSequence[wanted + 1].started)
-                PoseSegment(backgroundSequence[wanted + 1], backgroundSequence[wanted + 1].start);
+            {
+                var next = backgroundSequence[wanted + 1];
+                PoseSegment(next, next.key == BackgroundSequenceKey.Time ? next.start : time);
+            }
             if (wanted > 0 && backgroundSequence[wanted - 1].started)
-                PoseSegment(backgroundSequence[wanted - 1], Mathf.Min(time, backgroundSequence[wanted - 1].end - 0.0001f));
+            {
+                var previous = backgroundSequence[wanted - 1];
+                PoseSegment(previous, previous.key == BackgroundSequenceKey.Time ? Mathf.Min(time, previous.end - 0.0001f) : time);
+            }
 
             bool incomingReady = wanted >= 0 && CanShow(backgroundSequence[wanted]);
             int show = incomingReady ? wanted : visibleBackground;
@@ -613,9 +627,26 @@ namespace SickOfIt.Core.Progression
                 visibleBackground = wanted;
         }
 
+        /// <summary>
+        /// Where the stage is on a sequenced layer's scale: clock seconds, distance travelled, or floors climbed.
+        /// </summary>
+        private float SequenceValue(BackgroundSequenceKey key, float time)
+        {
+            var stage = gameplayWorld != null ? gameplayWorld.Stage : null;
+            switch (key)
+            {
+                case BackgroundSequenceKey.Distance:
+                    return stage != null ? stage.Distance : 0f;
+                case BackgroundSequenceKey.Floors:
+                    return stage != null && stage.HasFloors ? stage.Floors.start - stage.Floor : 0f;
+                default:
+                    return time;
+            }
+        }
+
         private static void PoseSegment(SequencedBackground segment, float time)
         {
-            segment.player.SetClockOrigin(segment.start);
+            segment.player.SetClockOrigin(segment.ClockOrigin);
             segment.player.SetLoop(segment.loop);
             segment.player.SetTime(time);
             // The first frame index is already 0, so SetTime will not draw it until the
@@ -637,8 +668,14 @@ namespace SickOfIt.Core.Progression
             public float end;
             public bool loop;
             public bool started;
+            public BackgroundSequenceKey key;
+            public float clipStart;
+            public float clipLength;
 
-            public bool Contains(float time) => time >= start && time < end;
+            /// <summary>A time-keyed clip starts with its window; one keyed by distance or floors just runs on the clock.</summary>
+            public float ClockOrigin => key == BackgroundSequenceKey.Time ? start : 0f;
+
+            public bool Contains(float value) => value >= start && value < end;
         }
 
         /// <summary>
@@ -651,6 +688,11 @@ namespace SickOfIt.Core.Progression
                 return config.backgroundLayers;
 
             var layers = new List<BackgroundLayerConfig>();
+            // A stage in a Circle of Hell without a backdrop of its own uses the circle's.
+            if ((config.backgrounds == null || config.backgrounds.Count == 0) && script != null
+                && !string.IsNullOrEmpty(script.floors.circle)
+                && GameContent.Current.Circles.TryGetValue(script.floors.circle, out var circle))
+                return circle.backgroundLayers;
             if (config.backgrounds == null)
                 return layers;
 
@@ -909,6 +951,22 @@ namespace SickOfIt.Core.Progression
             }
 
             //Debug.Log($"[LevelRuntime] Spawned barriers (viewport: {halfWidth * 2:F1}x{halfHeight * 2:F1})");
+        }
+
+        /// <summary>
+        /// A Travel stage brings its own ground (StageTrack) and moving edges; the scene's fixed ground slab and
+        /// side walls would stop the player after one screen.
+        /// </summary>
+        private void DisableSceneGround()
+        {
+            foreach (var root in gameObject.scene.GetRootGameObjects())
+            {
+                foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                {
+                    if (t.parent != null && t.parent.name == "Level" && (t.name == "Ground" || t.name == "LeftWall" || t.name == "RightWall"))
+                        t.gameObject.SetActive(false);
+                }
+            }
         }
 
         private static void CreateBarrier(Transform parent, string name, Vector3 position, Vector2 size, int layer)

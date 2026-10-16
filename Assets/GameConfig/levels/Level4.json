@@ -38,7 +38,7 @@
     "markers": [
       {
         "seconds": 35,
-        "label": "REPLY-ALL"
+        "label": "EVERYONE"
       },
       {
         "seconds": 75,
@@ -54,7 +54,7 @@
     },
     "phases": [
       {
-        "name": "inbox",
+        "name": "onslaught",
         "onEnter": [
           {
             "type": "showText",
@@ -65,7 +65,7 @@
           },
           {
             "type": "showText",
-            "text": "Your inbox, but it shoots back.",
+            "text": "Everything down here wants me dead. Fair.",
             "style": "Subtitle",
             "duration": 3.0,
             "sound": "vo_l4_intro"
@@ -157,22 +157,22 @@
             "do": [
               {
                 "type": "goToPhase",
-                "phase": "replyAll"
+                "phase": "everyone"
               }
             ]
           }
         ]
       },
       {
-        "name": "replyAll",
+        "name": "everyone",
         "onEnter": [
           {
             "type": "showText",
-            "text": "Reply-all detected.",
+            "text": "And now they're all here.",
             "style": "Subtitle",
             "duration": 2.5,
             "color": "#FF9966",
-            "sound": "vo_l4_replyall"
+            "sound": "vo_l4_everyone"
           },
           {
             "type": "cameraShake",
@@ -272,7 +272,7 @@
           },
           {
             "type": "showText",
-            "text": "Unsubscribe from all of this.",
+            "text": "I'd like to leave now.",
             "style": "Subtitle",
             "duration": 2.5,
             "sound": "vo_l4_last"
@@ -334,7 +334,7 @@
                 "steps": [
                   {
                     "type": "showText",
-                    "text": "INBOX ZERO",
+                    "text": "EVERYTHING: HANDLED",
                     "duration": 2.0,
                     "color": "#7CFF8A",
                     "sound": "vo_l4_clear"
@@ -352,7 +352,7 @@
                   },
                   {
                     "type": "offerUpgrades",
-                    "title": "Self-care: pick one"
+                    "title": "Pick a grudge"
                   },
                   {
                     "type": "setCounter",

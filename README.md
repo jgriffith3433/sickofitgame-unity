@@ -36,18 +36,18 @@ Guides:
 - **[Docs/GameplayReference.md](Docs/GameplayReference.md)**: every content field (generated).
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** and **[CONVENTIONS.md](CONVENTIONS.md)**: code structure and C# style.
 
-## Sound and voices (ElevenLabs)
+## Sound and voices (Hawkes Gen / ElevenLabs)
 
 Every sound in `audio.json` is a text prompt; the audio files are generated with
-[ElevenLabs](https://elevenlabs.io):
+[ElevenLabs](https://elevenlabs.io) through Hawkes Gen (`C:\Projects\hawkesgen`, which holds the key):
 
-1. Open **SickOfIt > Audio > Sound Generator (ElevenLabs)**.
-2. Paste your ElevenLabs API key and press **Save**. It's stored on your computer only (or set the
-   `ELEVENLABS_API_KEY` environment variable). Never commit it.
+1. Start Hawkes Gen (`C:\Projects\hawkesgen\auto-start.bat`).
+2. Open **SickOfIt > Audio > Sound Generator (Hawkes Gen)**.
 3. **Voices**: design the `player` and `announcer` voices from their descriptions ("Design 3 candidates", play, Use).
 4. **Generate** makes every sound that's missing or whose prompt changed. **3 takes** makes variations to pick from.
 
-Generation uses ElevenLabs credits. Generated files live in `Assets/Audio/Generated/`.
+Generation uses ElevenLabs credits (Hawkes Gen's dashboard shows the usage). Generated files live in
+`Assets/Audio/Generated/`, and every take is also kept in Hawkes Gen's library.
 
 ## Testing
 

@@ -15,6 +15,7 @@ namespace SickOfIt.Gameplay.Content
     {
         [Doc("Random seed (0 = derived from the level number). Same seed, same level, same choices.")] public int seed;
         public WorldDef world = new WorldDef();
+        public FloorsDef floors = new FloorsDef();
         public ObjectiveDef objective = new ObjectiveDef();
         [Doc("Expected length in seconds, for the progress bar (0 = the level's duration).")] public float length;
         [Doc("Labeled ticks on the progress bar, e.g. where the boss arrives.")] public List<ProgressMarkerDef> markers = new List<ProgressMarkerDef>();
@@ -65,6 +66,8 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Fixed on the level's starting view (the classic arena).")] Static,
         [Doc("Follows the player inside 'bounds'.")] Follow,
         [Doc("Moves at 'scrollSpeed'; the player is kept on screen.")] Scroll,
+        [Doc("Travels through the stage in 'travelDirection': follows the player forward, never back. The ground runs along with it, " +
+             "platforms and props stream in ahead and are removed behind. The counter \"distance\" is how far it has gone.")] Travel,
     }
 
     [Serializable]
@@ -77,6 +80,11 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Scroll: camera velocity in world units per second.")] public Vector2 scrollSpeed = new Vector2(1f, 0f);
         [Doc("Follow: how quickly the camera catches up (higher = snappier).")] public float followSharpness = 5f;
         [Doc("Multiplies the player's gravity (0.5 = floaty).")] public float playerGravity = 1f;
+        [Doc("Travel: which way the stage goes.")] public TravelDirection travelDirection = TravelDirection.Right;
+        [Doc("Travel: how far ahead of the player the camera looks (world units).")] public float travelLead = 1.5f;
+        [Doc("Travel: the camera also moves forward on its own at least this fast (0 = only as the player goes).")] public float travelSpeed;
+        [Doc("Travel: the camera stops after this distance (0 = no end).")] public float travelLength;
+        [Doc("Travel: the camera waits while enemies of a generated push are alive, so the player fights instead of running past.")] public bool holdForPushes = true;
     }
 
     /// <summary>content/sequences/{id}.json</summary>

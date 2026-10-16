@@ -43,6 +43,18 @@ namespace SickOfIt.Core.Fx
                 runner.Spawn(at, Vector2.zero, color, size, size * 0.2f, 0.1f, 0f, MenuShape.Burst, Random.Range(0f, 360f));
         }
 
+        /// <summary>
+        /// Plays sprite frames once where something was and then removes them (an enemy's "Die" clip after it is
+        /// gone from the simulation). The last frame fades out over fadeTime.
+        /// </summary>
+        public static void Flipbook(Sprite[] frames, float fps, Vector3 position, Vector3 scale, bool flipX, Color tint, SpriteLayer layer,
+            int sortingOrder, float fadeTime = 0.25f)
+        {
+            var runner = FxRunner.Get();
+            if (runner != null && frames != null && frames.Length > 0)
+                runner.PlayFlipbook(frames, fps, position, scale, flipX, tint, layer, sortingOrder, fadeTime);
+        }
+
         /// <summary>A puff of dust at the feet (jump, land).</summary>
         public static void Dust(Vector2 feet, float strength = 1f)
         {
@@ -77,7 +89,16 @@ namespace SickOfIt.Core.Fx
             public bool Active;
         }
 
+        sealed class Book
+        {
+            public SpriteRenderer Renderer;
+            public Sprite[] Frames;
+            public float Fps, Age, Fade;
+            public Color Tint;
+        }
+
         readonly Bit[] bits = new Bit[Capacity];
+        readonly System.Collections.Generic.List<Book> books = new System.Collections.Generic.List<Book>();
         int next;
 
         public static FxRunner Get()
@@ -117,9 +138,59 @@ namespace SickOfIt.Core.Fx
             Apply(ref bit);
         }
 
+        public void PlayFlipbook(Sprite[] frames, float fps, Vector3 position, Vector3 scale, bool flipX, Color tint, SpriteLayer layer, int sortingOrder,
+            float fade)
+        {
+            Book book = null;
+            foreach (var b in books)
+            {
+                if (!b.Renderer.gameObject.activeSelf)
+                {
+                    book = b;
+                    break;
+                }
+            }
+            if (book == null)
+            {
+                var go = new GameObject("Flipbook");
+                go.transform.SetParent(transform, false);
+                book = new Book { Renderer = go.AddComponent<SpriteRenderer>() };
+                books.Add(book);
+            }
+            SpriteLayers.Apply(book.Renderer, layer, sortingOrder);
+            book.Frames = frames;
+            book.Fps = Mathf.Max(0.01f, fps);
+            book.Age = 0f;
+            book.Fade = Mathf.Max(0f, fade);
+            book.Tint = tint;
+            book.Renderer.flipX = flipX;
+            book.Renderer.sprite = frames[0];
+            book.Renderer.color = tint;
+            book.Renderer.transform.position = position;
+            book.Renderer.transform.localScale = scale;
+            book.Renderer.gameObject.SetActive(true);
+        }
+
         void Update()
         {
             float dt = Time.deltaTime;
+            foreach (var book in books)
+            {
+                if (!book.Renderer.gameObject.activeSelf)
+                    continue;
+                book.Age += dt;
+                float length = book.Frames.Length / book.Fps;
+                if (book.Age >= length + book.Fade)
+                {
+                    book.Renderer.gameObject.SetActive(false);
+                    continue;
+                }
+                book.Renderer.sprite = book.Frames[Mathf.Min(book.Frames.Length - 1, Mathf.FloorToInt(book.Age * book.Fps))];
+                var c = book.Tint;
+                if (book.Age > length)
+                    c.a *= 1f - (book.Age - length) / Mathf.Max(0.001f, book.Fade);
+                book.Renderer.color = c;
+            }
             for (int i = 0; i < bits.Length; i++)
             {
                 ref var bit = ref bits[i];

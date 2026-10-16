@@ -60,6 +60,11 @@ namespace SickOfIt.Gameplay
         public Rigidbody2D Body { get; private set; }
         public SpriteRenderer Sprite { get; private set; }
         public EntityAnimation Animation { get; private set; }
+
+        /// <summary>Animator names the engine drives itself: a trigger pulsed on every hit that doesn't kill, and the
+        /// state played as the death effect.</summary>
+        public const string HurtParameter = "Hurt", DieState = "Die";
+
         SimHistory history;
         AudioSource audioSource;
         ObjectPool pool;
@@ -644,6 +649,9 @@ namespace SickOfIt.Gameplay
             }
             if (health > 0 && Team == Team.Enemy)
                 SickOfIt.Core.Fx.Fx.Spark(Position, FxColor, Mathf.Clamp(radius * 1.6f, 0.2f, 0.8f));
+            // Art made by the pipeline (Docs/ArtPipeline.md) has a "Hurt" trigger; no-op for animators without one.
+            if (health > 0)
+                Animation?.Pulse(HurtParameter);
             World.NotifyDamaged(this, final, source, damageLabel);
             dirty = true;
 
@@ -702,8 +710,16 @@ namespace SickOfIt.Gameplay
                 {
                     SickOfIt.Core.Audio.Sfx.Play(SoundOr(Def.sounds.deathSound, SickOfIt.Core.Audio.Sfx.Events.enemyDie));
                 }
-                // Enemies pop into bits; things without health (shots, puddles) just vanish.
-                if (maxHealth > 0 && Def.visual.deathPop)
+                // An animator with a "Die" state plays it where the entity was (presentation only: the entity is
+                // already gone from the simulation). Otherwise enemies pop into bits; things without health just vanish.
+                if (Animation != null && Animation.TryGetClip(DieState, out var dieFrames, out float dieFps))
+                {
+                    SickOfIt.Core.Fx.Fx.Flipbook(dieFrames, dieFps, transform.position, transform.lossyScale, Sprite != null && Sprite.flipX,
+                        Sprite != null ? Sprite.color : Color.white, Def.visual.layer, Def.visual.SortingOrder);
+                    if (maxHealth > 0 && Def.visual.deathPop)
+                        SickOfIt.Core.Fx.Fx.Burst(at, FxColor, 6, 2f + radius * 2f, Mathf.Clamp(radius * 0.3f, 0.05f, 0.2f));
+                }
+                else if (maxHealth > 0 && Def.visual.deathPop)
                 {
                     float size = Mathf.Clamp(radius * 3f, 0.5f, 2.5f);
                     SickOfIt.Core.Fx.Fx.Flash(at, Color.white, size, 0.14f);

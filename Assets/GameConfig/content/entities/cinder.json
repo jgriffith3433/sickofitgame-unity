@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "extends": "chaser",
+  "health": 1,
+  "moveSpeed": 1.4,
+  "tags": ["cinder"],
+  "body": {
+    "radius": 2.5
+  },
+  "visual": {
+    "scale": 0.12,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Burn",
+          "spriteSheet": "Images/Fireball.png",
+          "fps": 12,
+          "loop": true
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Burn"
+    },
+    "fxColor": "#FF8A3D"
+  },
+  "loot": {
+    "chance": 0.15,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1,
+      "dieOnHit": true
+    },
+    {
+      "type": "chase",
+      "stopDistance": 0.0,
+      "face": true
+    }
+  ],
+  "onDeath": []
+}

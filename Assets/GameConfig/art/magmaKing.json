@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "magmaKing",
+  "name": "The Magma King",
+  "description": "the Warden of the Ember Wastes: a hulking demon king made of cooling black slag and cracked obsidian with molten orange lava glowing through the cracks, a jagged crown of volcanic rock fused to his head, a heavy cloak of dripping lava, burning eyes, slouched and bored like he has ruled this place forever",
+  "height": 1.8,
+  "poses": {
+    "stand": "hovering a little above the ground on a cushion of heat haze and embers, arms folded",
+    "dead": "cracking apart and collapsing into a heap of cooling slag and smoke"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers in place, breathing slowly, lava pulsing through his cracks, cloak dripping",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "glides forward to the right on the heat haze, cloak trailing, staying in the same spot in the frame",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "to": "stand",
+      "action": "draws his arms back and flings them forward, hurling a spray of molten fireballs to the right, then folds his arms again",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck and reels back, lava spurting from a crack in his chest, then straightens up again",
+      "seconds": 1
+    },
+    "die": {
+      "from": "stand",
+      "to": "dead",
+      "action": "roars, cracks split across his body, and he collapses into a smoking heap of slag",
+      "seconds": 2
+    }
+  }
+}

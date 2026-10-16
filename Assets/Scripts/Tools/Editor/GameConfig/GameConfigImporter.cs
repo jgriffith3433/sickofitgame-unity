@@ -68,6 +68,10 @@ namespace SickOfIt.Tools.Editor.GameConfig
                 // Scripted levels don't use the enemies list.
                 if (problem.Contains("No enemies") && definition.levels.Exists(l => l.HasScript && problem.Contains($"({l.levelName})")))
                     continue;
+                // A stage in a Circle of Hell (script floors.circle) takes its backdrop from the circle.
+                if (problem.Contains("No backgrounds") && definition.levels.Exists(l => l.HasScript && problem.Contains($"({l.levelName})")
+                        && System.Text.RegularExpressions.Regex.IsMatch(l.script, "\"circle\"\\s*:\\s*\"[^\"]+\"")))
+                    continue;
                 issues.Warning("", "", problem);
             }
 
@@ -238,7 +242,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
             var known = new HashSet<string>(GameConfigLayout.Files.Select(f => f.File)) { GameConfigLayout.RootFile };
             foreach (string file in files.ListAll())
             {
-                if (known.Contains(file) || listed.Contains(file) || GameConfigLayout.IsContentFile(file))
+                if (known.Contains(file) || listed.Contains(file) || GameConfigLayout.IsContentFile(file) || GameConfigLayout.IsArtSpec(file))
                     continue;
 
                 var collection = GameConfigLayout.Collections.FirstOrDefault(c => file.StartsWith(c.Folder + "/", StringComparison.Ordinal)

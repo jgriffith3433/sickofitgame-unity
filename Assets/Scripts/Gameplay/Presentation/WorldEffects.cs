@@ -6,7 +6,7 @@ using SickOfIt.Gameplay.Content;
 namespace SickOfIt.Gameplay
 {
     /// <summary>
-    /// The camera (static, follow, or scroll, with shake), screen effects, and level audio for a scripted level.
+    /// The camera (static, follow, scroll, or travel, with shake), screen effects, and level audio for a scripted level.
     /// The camera's position is simulation state (saved for rewind); shake, flash, and slow motion are
     /// presentation and run on real time.
     /// </summary>
@@ -18,8 +18,12 @@ namespace SickOfIt.Gameplay
         Transform cameraTransform;
         float cameraZ;
 
+        Vector2 travelOrigin;
+        StageTrack track;
+
         // ─── Saved state ──────────────────────────────────────────────
         Vector2 cameraBase;
+        bool travelLocked;
 
         float shakeIntensity;
         float shakeEndsAt;
@@ -28,6 +32,19 @@ namespace SickOfIt.Gameplay
 
         public Vector2 CameraBase => cameraBase;
         public CameraMode Mode => worldDef != null ? worldDef.camera : CameraMode.Static;
+        public StageTrack Track => track;
+
+        Vector2 TravelAxis => worldDef.travelDirection == TravelDirection.Up ? Vector2.up : Vector2.right;
+
+        /// <summary>Travel stages: how far the camera has gone from where it started.</summary>
+        public float TravelDistance => Mode == CameraMode.Travel ? Mathf.Max(0f, Vector2.Dot(cameraBase - travelOrigin, TravelAxis)) : 0f;
+
+        /// <summary>Travel stages: the camera doesn't move forward (lockTravel / unlockTravel).</summary>
+        public bool TravelLocked
+        {
+            get => travelLocked;
+            set => travelLocked = value;
+        }
 
         public void Init(GameplayWorld owner, AudioSource musicSource, WorldDef def, Transform backgroundRoot)
         {
@@ -40,6 +57,7 @@ namespace SickOfIt.Gameplay
                 cameraBase = cameraTransform.position;
                 cameraZ = cameraTransform.position.z;
             }
+            travelOrigin = cameraBase;
 
             if (Mode != CameraMode.Static && cameraTransform != null)
             {
@@ -50,6 +68,15 @@ namespace SickOfIt.Gameplay
             }
         }
 
+        /// <summary>Travel stages: builds the streamed ground, platforms and scenery from the stage's circle.</summary>
+        public void BuildTrack(LevelScript script, CircleDef circle)
+        {
+            if (Mode != CameraMode.Travel || cameraTransform == null)
+                return;
+            track = StageTrack.Create(world, script, circle, travelOrigin);
+            track.Refresh(cameraBase);
+        }
+
         void BuildMovingBarriers()
         {
             if (world.Camera == null || !world.Camera.orthographic)
@@ -57,7 +84,16 @@ namespace SickOfIt.Gameplay
             float h = world.Camera.orthographicSize;
             float w = h * world.Camera.aspect;
             int layer = LayerMask.NameToLayer("Boundary");
-            if (Mode == CameraMode.Scroll)
+            if (Mode == CameraMode.Travel)
+            {
+                // Edges ride with the camera: no going back, no running ahead of it. A climb also gets a floor that
+                // rises with the camera, so falling off the bottom of the screen just lands you on its edge.
+                Barrier(cameraTransform, "TravelEdge_Left", new Vector2(-w - 0.5f, 0f), new Vector2(1f, h * 4f), layer);
+                Barrier(cameraTransform, "TravelEdge_Right", new Vector2(w + 0.5f, 0f), new Vector2(1f, h * 4f), layer);
+                if (worldDef.travelDirection == TravelDirection.Up)
+                    Barrier(cameraTransform, "TravelEdge_Bottom", new Vector2(0f, -h - 0.5f), new Vector2(w * 4f, 1f), layer);
+            }
+            else if (Mode == CameraMode.Scroll)
             {
                 // Edges travel with the camera, so the player can't fall behind or run ahead of the screen.
                 Barrier(cameraTransform, "ScrollEdge_Left", new Vector2(-w - 0.5f, 0f), new Vector2(1f, h * 4f), layer);
@@ -94,6 +130,13 @@ namespace SickOfIt.Gameplay
                 return;
 
             Vector2 next = cameraBase;
+            if (Mode == CameraMode.Travel)
+            {
+                cameraBase = TravelStep(dt);
+                movesCamera = true;
+                track?.Refresh(cameraBase);
+                return;
+            }
             if (Mode == CameraMode.Scroll)
             {
                 next += worldDef.scrollSpeed * dt;
@@ -105,6 +148,27 @@ namespace SickOfIt.Gameplay
             }
             cameraBase = ClampToBounds(next);
             movesCamera = true;
+        }
+
+        /// <summary>Forward only: follow the player (with a lead), at least at travelSpeed, unless held.</summary>
+        Vector2 TravelStep(float dt)
+        {
+            Vector2 axis = TravelAxis;
+            float current = Vector2.Dot(cameraBase - travelOrigin, axis);
+            float target = current;
+            if (world.Player != null)
+            {
+                float wanted = Vector2.Dot(world.Player.Position - travelOrigin, axis) + worldDef.travelLead;
+                float t = 1f - Mathf.Exp(-Mathf.Max(0.1f, worldDef.followSharpness) * dt);
+                target = Mathf.Max(current, Mathf.Lerp(current, wanted, t));
+            }
+            target = Mathf.Max(target, current + Mathf.Max(0f, worldDef.travelSpeed) * dt);
+            bool held = travelLocked || (worldDef.holdForPushes && world.Director != null && world.Director.GeneratorHoldsCamera);
+            if (held)
+                target = current;
+            if (worldDef.travelLength > 0f)
+                target = Mathf.Min(target, Mathf.Max(current, worldDef.travelLength));
+            return travelOrigin + axis * target;
         }
 
         Vector2 ClampToBounds(Vector2 center)
@@ -251,13 +315,16 @@ namespace SickOfIt.Gameplay
         {
             w.Float(cameraBase.x);
             w.Float(cameraBase.y);
+            w.Bool(travelLocked);
         }
 
         public void LoadState(StateReader r)
         {
             cameraBase = new Vector2(r.Float(), r.Float());
+            travelLocked = r.Bool();
             if (Mode != CameraMode.Static && cameraTransform != null)
                 cameraTransform.position = new Vector3(cameraBase.x, cameraBase.y, cameraZ);
+            track?.Refresh(cameraBase);
         }
     }
 }

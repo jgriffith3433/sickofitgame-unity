@@ -1,0 +1,24 @@
+{
+  "name": "SickOfIt.Playtest",
+  "rootNamespace": "SickOfIt.Playtest",
+  "references": [
+    "SickOfIt.Json",
+    "SickOfIt.Data",
+    "SickOfIt.Core",
+    "SickOfIt.Core.Progression",
+    "SickOfIt.Combat",
+    "SickOfIt.Gameplay",
+    "Unity.TextMeshPro",
+    "Unity.InputSystem",
+    "HawkesPlaytest.Runtime"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

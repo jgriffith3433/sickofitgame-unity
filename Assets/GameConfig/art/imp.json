@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "entity": "imp",
+  "name": "Imp",
+  "description": "a small wiry hell imp, one of the Overlord's raiders: crimson leathery skin, short curled horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, a little sack of stolen glittering diamonds slung over its shoulder, a glowing orange ember cupped in one clawed hand",
+  "height": 0.75,
+  "poses": {
+    "stand": "hovering in mid-air on spread bat wings, legs dangling, the ember held up in one hand",
+    "dead": "dropping out of the air, crumbling into a cloud of grey ash and dying embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers in place, flapping its bat wings steadily, tail swishing, tossing the ember from hand to hand",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "winds its arm back and hurls the glowing ember forward to the right, then hovers again",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a yelp, wings crumpling, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "stand",
+      "to": "dead",
+      "action": "is hit, stiffens, and crumbles into grey ash and fading embers that fall away",
+      "seconds": 1.5
+    }
+  }
+}

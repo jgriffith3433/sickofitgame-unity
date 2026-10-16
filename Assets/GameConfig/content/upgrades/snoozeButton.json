@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "title": "Snooze Button",
-  "description": "Five more minutes. Well, two more seconds. Hold 2s more rewind.",
+  "title": "Déjà Vu",
+  "description": "You've been here before. Hold 2s more rewind.",
   "maxLevel": 3,
   "rewindSecondsPerLevel": 2,
   "color": "#40E0D0"

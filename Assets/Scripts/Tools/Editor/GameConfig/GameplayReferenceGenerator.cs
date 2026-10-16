@@ -54,7 +54,8 @@ namespace SickOfIt.Tools.Editor.GameConfig
             sb.AppendLine("> Generated from the code by `GameplayReferenceGenerator` — don't edit by hand. See AGENTS.md for the workflow and Docs/GameplayCookbook.md for worked examples.");
             sb.AppendLine();
             sb.AppendLine("Gameplay is data. **Entities** (enemies, bosses, projectiles, hazards) live in `Assets/GameConfig/content/entities/{id}.json`, " +
-                          "reusable **sequences** in `content/sequences/{id}.json`, **status effects** in `content/effects/{id}.json`, and each level's " +
+                          "reusable **sequences** in `content/sequences/{id}.json`, **status effects** in `content/effects/{id}.json`, the **Circles of Hell** " +
+                          "(biome, enemy table, hazards, difficulty) in `content/circles/{id}.json`, and each level's " +
                           "**script** in the `\"script\"` field of `levels/{name}.json`. Every content file starts with `\"schemaVersion\": 1`; " +
                           "the id is the file name. Polymorphic things (abilities, triggers, actions, patterns) are objects with a `\"type\"`.");
             sb.AppendLine();
@@ -62,7 +63,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
             sb.AppendLine();
 
             sb.AppendLine("## Contents");
-            foreach (var title in new[] { "Entity", "Abilities", "Triggers", "Actions", "Patterns", "Level script", "Sequence", "Status effect", "Shared types", "Enums" })
+            foreach (var title in new[] { "Entity", "Abilities", "Triggers", "Actions", "Patterns", "Level script", "Circle", "Sequence", "Status effect", "Shared types", "Enums" })
                 sb.AppendLine($"- [{title}](#{Anchor(title)})");
             sb.AppendLine();
 
@@ -80,7 +81,14 @@ namespace SickOfIt.Tools.Editor.GameConfig
 
             sb.AppendLine("## Level script");
             sb.AppendLine();
-            foreach (var t in new[] { typeof(LevelScript), typeof(PhaseDef), typeof(RuleDef), typeof(ObjectiveDef), typeof(WorldDef), typeof(CounterDef) })
+            foreach (var t in new[] { typeof(LevelScript), typeof(PhaseDef), typeof(RuleDef), typeof(ObjectiveDef), typeof(WorldDef), typeof(FloorsDef),
+                         typeof(CounterDef), typeof(ProgressMarkerDef) })
+                Class(sb, t, enums, helpers, 3);
+
+            sb.AppendLine("## Circle");
+            sb.AppendLine();
+            foreach (var t in new[] { typeof(CircleDef), typeof(TrackDef), typeof(PropDef), typeof(CircleEnemyDef), typeof(CircleHazardDef),
+                         typeof(DifficultyDef), typeof(MilestoneDef), typeof(SickOfIt.Data.Config.BackgroundLayerConfig) })
                 Class(sb, t, enums, helpers, 3);
 
             sb.AppendLine("## Sequence");
@@ -180,6 +188,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
                 if (field.IsDefined(typeof(SequenceRefAttribute), false)) notes += " (sequence id)";
                 if (field.IsDefined(typeof(EffectRefAttribute), false)) notes += " (status effect id)";
                 if (field.IsDefined(typeof(PhaseRefAttribute), false)) notes += " (phase name)";
+                if (field.IsDefined(typeof(CircleRefAttribute), false)) notes += " (circle id)";
                 sb.AppendLine($"| `{field.Name}` | {TypeName(field.FieldType, enums, helpers)} | {Default(field, instance)} | {Escape(notes.Trim())} |");
             }
             sb.AppendLine();

@@ -7,6 +7,9 @@
     "SickOfIt.Core",
     "SickOfIt.Combat",
     "SickOfIt.Gameplay",
+    "SickOfIt.Playtest",
+    "HawkesPlaytest.Runtime",
+    "Unity.InputSystem",
     "UnityEngine.TestRunner",
     "UnityEditor.TestRunner"
   ],

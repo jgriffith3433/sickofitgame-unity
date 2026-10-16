@@ -122,7 +122,7 @@ DeathRuntime:
 | `SickOfIt.Core.Addressables` | `Scripts/Core/Addressables/` | AddressablesSceneLoader, AddressablesOperationManager |
 | `SickOfIt.Core.Flow` | `Scripts/Core/Flow/` | SceneTransitionManager, SceneContentController, SceneLoadingManager |
 | `SickOfIt.Combat` | `Scripts/Combat/` | EnemyBase subclasses, health systems, projectiles, pickups |
-| `SickOfIt.Tools.Editor` | `Scripts/Tools/Editor/` | ProjectGenerator, scene generators, build scripts, MCP tools, GameConfig import/export, ElevenLabs Sound Generator (`Audio/`) |
+| `SickOfIt.Tools.Editor` | `Scripts/Tools/Editor/` | ProjectGenerator, scene generators, build scripts, MCP tools, GameConfig import/export, Sound Generator via Hawkes Gen (`Audio/`) |
 | `SickOfIt.VideoFrameExtractor.Runtime` | `Scripts/VideoFrameExtractor/Runtime/` | SpriteFramePlayer, SpriteFramesData |
 | `SickOfIt.Json` | `Scripts/Json/` | Unity-compatible JSON serializer (strict reading, `"type"` polymorphism, raw JSON fields) |
 | `SickOfIt.Gameplay` | `Scripts/Gameplay/` | Data-driven gameplay: content model, entities, level director, HUD, telemetry, playtest bot |
@@ -170,8 +170,8 @@ Generate Project:
   and idle motion on unscaled time. Scene generators only make the shell (camera, mobile controls, loading screen).
 - **Sound** (`Core/Audio`): `Sfx.Play(id)` plays audio.json sounds (pooled, per-sound volume/pitch/cooldown/voice
   limits; voice lines queue so they never overlap). `MusicVolume` applies the Music setting. `GameSettings` (Data)
-  holds the player's volumes and toggles. The editor's `Tools/Editor/Audio` generates clips with ElevenLabs
-  (`ElevenLabsClient`: sound effects, text-to-speech, voice design) and writes them back into audio.json.
+  holds the player's volumes and toggles. The editor's `Tools/Editor/Audio` generates clips through Hawkes Gen
+  (`HawkesGenAudio`: its ElevenLabs tools for sound effects, text-to-speech and voice design) and writes them back into audio.json.
 - **Effects** (`Core/Fx`): pooled sprite flashes, bursts, sparks and dust; cosmetic, on game time.
 - **Rule**: presentation reads simulation state but never writes it, so rewinds and replays stay deterministic.
 
@@ -198,7 +198,7 @@ Generate Project:
 - **RewindController** — Triggers rewind on GameClock; RewindTimeline restores component snapshots
 - **ObjectPool** — MonoBehaviour-based reusable object pool. Self-registers with RewindTimeline. ReturnAll() on rewind.
 - **PlayerController** — 2D player controller (renamed from TopDownController), GameClock-aware firing, uses ObjectPool for projectiles
-- **SpriteFramePlayer** — Loads sprite sheet chunks via Addressables, renders frames. Supports GameClock or Time.deltaTime
+- **SpriteFramePlayer** — Loads sprite sheet chunks via Addressables, renders frames. Supports GameClock or Time.deltaTime. Baking, memory budget and callers: [Docs/VideoPlayback.md](Docs/VideoPlayback.md)
 
 ### Scene Loading
 - **SceneTransitionManager** — DontDestroyOnLoad singleton. Sets PlayerPrefs, loads scenes via Addressables or SceneManager

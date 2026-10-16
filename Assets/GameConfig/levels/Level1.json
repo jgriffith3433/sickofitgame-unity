@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "levelName": "Level1",
-  "displayName": "Rise and Whine",
+  "displayName": "The Meadow",
   "levelNumber": 1,
   "thumbnail": "Videos/Level1_Background1_FirstFrame.png",
   "backgrounds": [],
@@ -95,11 +95,15 @@
     "tracks": []
   },
   "script": {
-    "length": 75,
+    "length": 62,
     "markers": [
       {
-        "seconds": 55,
-        "label": "FINAL WAVE"
+        "seconds": 26,
+        "label": "LASER"
+      },
+      {
+        "seconds": 40,
+        "label": "AFTERMATH"
       }
     ],
     "objective": {
@@ -107,241 +111,276 @@
         "type": "counter",
         "name": "cleared",
         "atLeast": 1
-      }
+      },
+      "text": "Defend the meadow"
     },
     "phases": [
       {
-        "name": "warmup",
+        "name": "niceDay",
         "onEnter": [
           {
             "type": "showText",
-            "text": "LEVEL 1: RISE AND WHINE",
+            "text": "PROLOGUE: THE MEADOW",
             "duration": 2.5,
-            "color": "#FFD27A",
-            "sound": "vo_l1_title"
+            "sound": "vo_meadow_title",
+            "color": "#FFD27A"
           },
           {
             "type": "showText",
-            "text": "Objective: survive Monday.",
-            "style": "Subtitle",
+            "text": "Nice day. Nothing could possibly go wrong.",
             "duration": 3.0,
-            "sound": "vo_l1_intro"
+            "sound": "vo_meadow_intro",
+            "style": "Subtitle"
           }
         ],
         "rules": [
           {
-            "name": "a lone swarmer",
-            "when": {
-              "type": "every",
-              "seconds": 4.5,
-              "startAfter": 3.5,
-              "maxTimes": 3
-            },
-            "do": [
-              {
-                "type": "spawn",
-                "entity": "swarmer",
-                "anchor": "Camera",
-                "at": [5.2, -2.0],
-                "tags": ["wave"]
-              }
-            ]
-          },
-          {
-            "name": "swarmer pairs",
-            "when": {
-              "type": "every",
-              "seconds": 4.5,
-              "startAfter": 17.0,
-              "maxTimes": 3
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "swarmer",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "points": [
-                  [5.2, -2.0],
-                  [5.2, 0.5]
-                ],
-                "tags": ["wave"]
-              }
-            ]
-          },
-          {
-            "name": "chasers",
-            "when": {
-              "type": "every",
-              "seconds": 9.0,
-              "startAfter": 12.0,
-              "maxTimes": 2
-            },
-            "do": [
-              {
-                "type": "spawn",
-                "entity": "chaser",
-                "anchor": "Camera",
-                "at": [5.2, -1.5],
-                "tags": ["wave"]
-              }
-            ]
-          },
-          {
             "when": {
               "type": "after",
-              "seconds": 30.0
+              "seconds": 6.0
             },
             "do": [
               {
                 "type": "goToPhase",
-                "phase": "worse"
+                "phase": "imps"
               }
             ]
           }
         ]
       },
       {
-        "name": "worse",
+        "name": "imps",
         "onEnter": [
           {
             "type": "showText",
-            "text": "They brought friends. Rude.",
-            "style": "Subtitle",
-            "duration": 2.5,
-            "sound": "vo_l1_friends"
+            "text": "That's not a cloud. Those are not birds.",
+            "duration": 3.0,
+            "sound": "vo_meadow_imps",
+            "style": "Subtitle"
           }
         ],
         "rules": [
           {
-            "name": "swarmers both sides",
             "when": {
-              "type": "every",
-              "seconds": 4.0,
-              "startAfter": 1.0,
-              "maxTimes": 6
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "swarmer",
-                "count": 2,
-                "interval": 0.5,
-                "anchor": "Camera",
-                "points": [
-                  [5.2, -2.0],
-                  [-5.2, -2.0]
-                ],
-                "tags": ["wave"],
-                "modifiers": [
-                  {
-                    "stat": "MoveSpeed",
-                    "multiply": 1.0,
-                    "multiplyPerRepeat": 0.04
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "name": "chasers",
-            "when": {
-              "type": "every",
-              "seconds": 8.0,
-              "startAfter": 5.0,
-              "maxTimes": 2
+              "type": "after",
+              "seconds": 1.5
             },
             "do": [
               {
                 "type": "spawn",
-                "entity": "chaser",
+                "entity": "imp",
                 "anchor": "Camera",
-                "at": [-5.2, -1.0],
+                "at": [4.4, -2.0],
                 "tags": ["wave"]
               }
-            ]
-          },
-          {
-            "name": "first gunner",
-            "when": {
-              "type": "after",
-              "seconds": 12.0
-            },
-            "do": [
-              {
-                "type": "spawn",
-                "entity": "gunner",
-                "anchor": "Camera",
-                "at": [4.6, -2.0],
-                "tags": ["wave"],
-                "modifiers": [
-                  {
-                    "stat": "AttackSpeed",
-                    "multiply": 0.7
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "when": {
-              "type": "after",
-              "seconds": 25.0
-            },
-            "do": [
-              {
-                "type": "goToPhase",
-                "phase": "final"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "final",
-        "onEnter": [
-          {
-            "type": "showText",
-            "text": "FINAL WAVE",
-            "duration": 2.0,
-            "color": "#FF7A5C",
-            "sound": "vo_final_wave"
-          },
-          {
-            "type": "showText",
-            "text": "This is the last one. Probably.",
-            "style": "Subtitle",
-            "duration": 2.5,
-            "sound": "vo_l1_last"
-          },
-          {
-            "type": "spawnWave",
-            "entity": "chaser",
-            "count": 3,
-            "interval": 0.9,
-            "anchor": "Camera",
-            "points": [
-              [5.2, -2.0],
-              [-5.2, -2.0],
-              [5.2, 1.0]
             ],
-            "tags": ["wave"]
+            "name": "first imp, alone"
           },
           {
-            "type": "spawn",
-            "entity": "gunner",
-            "anchor": "Camera",
-            "at": [4.6, -2.0],
-            "tags": ["wave"],
-            "modifiers": [
+            "when": {
+              "type": "after",
+              "seconds": 8.0
+            },
+            "do": [
               {
-                "stat": "AttackSpeed",
-                "multiply": 0.7
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [-4.4, -2.0],
+                "tags": ["wave"]
+              }
+            ],
+            "name": "second imp, other side"
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 14.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [4.2, -2.0],
+                "tags": ["wave"]
+              },
+              {
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [-4.2, 0.6],
+                "tags": ["wave"]
+              }
+            ],
+            "name": "two imps"
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 20.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "laser"
               }
             ]
           }
+        ]
+      },
+      {
+        "name": "laser",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "Oh, he's lasering the village. Cool. Cool cool cool.",
+            "duration": 3.5,
+            "sound": "vo_meadow_laser",
+            "style": "Subtitle"
+          },
+          {
+            "type": "startHazard",
+            "id": "burningDebris",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 2.0,
+            "interval": 2.2,
+            "initialDelay": 2.5,
+            "rampPerSecond": 0.01
+          }
         ],
+        "rules": [
+          {
+            "when": {
+              "type": "after",
+              "seconds": 4.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "cinder",
+                "anchor": "Camera",
+                "at": [4.6, 0.5],
+                "tags": ["wave"]
+              }
+            ],
+            "name": "first cinder"
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 9.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "cinder",
+                "anchor": "Camera",
+                "at": [-4.6, 0.8],
+                "tags": ["wave"]
+              },
+              {
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [4.4, -2.0],
+                "tags": ["wave"]
+              }
+            ],
+            "name": "cinder and imp"
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 14.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "aftermath"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "aftermath",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "He's leaving. Through a hole in the sky. With our diamonds.",
+            "duration": 3.5,
+            "sound": "vo_meadow_leaving",
+            "style": "Subtitle"
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "after",
+              "seconds": 3.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [4.4, -2.0],
+                "tags": ["wave"]
+              },
+              {
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [-4.4, -2.0],
+                "tags": ["wave"]
+              }
+            ],
+            "name": "last imps"
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 6.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "cinder",
+                "anchor": "Camera",
+                "at": [4.6, 1.0],
+                "tags": ["wave"]
+              },
+              {
+                "type": "spawn",
+                "entity": "cinder",
+                "anchor": "Camera",
+                "at": [-4.6, 1.0],
+                "tags": ["wave"]
+              }
+            ],
+            "name": "last cinders"
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 6.5
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "lastStand"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "lastStand",
         "rules": [
           {
             "name": "clear",
@@ -351,23 +390,24 @@
                 "tag": "wave"
               }
             },
+            "maxTimes": 1,
             "do": [
               {
                 "type": "runSequence",
                 "steps": [
                   {
                     "type": "showText",
-                    "text": "MONDAY: DEFEATED",
+                    "text": "THE MEADOW: TOAST",
                     "duration": 2.0,
-                    "color": "#7CFF8A",
-                    "sound": "vo_l1_clear"
+                    "sound": "vo_meadow_clear",
+                    "color": "#FF9A5C"
                   },
                   {
                     "type": "showText",
-                    "text": "Tuesday is worse.",
-                    "style": "Subtitle",
-                    "duration": 2.0,
-                    "sound": "vo_l1_outro"
+                    "text": "Fine. I'll go get them.",
+                    "duration": 2.5,
+                    "sound": "vo_meadow_outro",
+                    "style": "Subtitle"
                   },
                   {
                     "type": "wait",
@@ -375,7 +415,7 @@
                   },
                   {
                     "type": "offerUpgrades",
-                    "title": "You earned a treat"
+                    "title": "Pick a grudge"
                   },
                   {
                     "type": "setCounter",

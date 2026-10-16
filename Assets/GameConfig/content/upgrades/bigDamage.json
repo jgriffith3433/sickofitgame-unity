@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "title": "Strongly Worded Bullets",
-  "description": "Each shot carries a passive-aggressive note. Deals 50% more damage.",
+  "title": "Spite Rounds",
+  "description": "Every shot carries a grudge. Deals 50% more damage.",
   "maxLevel": 2,
   "modifiersPerLevel": [
     {

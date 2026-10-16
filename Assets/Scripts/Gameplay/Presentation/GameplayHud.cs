@@ -491,8 +491,69 @@ namespace SickOfIt.Gameplay
         RectTransform playhead;
         TextMeshProUGUI rewindLabel;
 
+        // ─── Floor readout (top-center): FLOOR 973 ───
+
+        RectTransform floorRoot;
+        TextMeshProUGUI floorText;
+        int shownFloor = -1;
+        float floorPopAt = -99f;
+
+        void BuildFloor()
+        {
+            if (world.Stage == null || !world.Stage.HasFloors)
+                return;
+            floorRoot = MenuGraphics.NewRect("Floor", menu.Root);
+            floorRoot.anchorMin = floorRoot.anchorMax = floorRoot.pivot = new Vector2(0.5f, 1f);
+            floorRoot.anchoredPosition = new Vector2(0f, -40f);
+            var row = floorRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
+            var padding = theme.chip.padding;
+            row.padding = new RectOffset((int)padding.x + 12, (int)padding.x + 12, (int)padding.y, (int)padding.y);
+            row.childControlWidth = row.childControlHeight = true;
+            row.childForceExpandWidth = row.childForceExpandHeight = false;
+            var fitter = floorRoot.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            MenuGraphics.Surface(floorRoot, theme.chip);
+            floorText = MenuGraphics.Text(floorRoot, "Value", "", theme.chipText, menu.TitleFont, 0f, autoSize: false);
+            floorText.textWrappingMode = TextWrappingModes.NoWrap;
+            floorText.enableVertexGradient = false;
+            floorText.color = theme.accent;
+            menu.AddMotion(floorRoot.gameObject, null, theme.entrance, 0f);
+            // The boss bar normally sits top-center too; move it under the readout.
+            if (bossRoot != null)
+                bossRoot.anchoredPosition = new Vector2(bossRoot.anchoredPosition.x, -184f);
+        }
+
+        void UpdateFloor()
+        {
+            if (floorText == null)
+                return;
+            int floor = world.Stage.Floor;
+            if (floor != shownFloor)
+            {
+                if (shownFloor >= 0)
+                    floorPopAt = Time.unscaledTime;
+                shownFloor = floor;
+                MenuGraphics.SetText(floorText, string.Format(Texts.floorFormat ?? "FLOOR {0}", floor));
+            }
+            // A little punch when a floor ticks over (cosmetic, real time).
+            float t = Time.unscaledTime - floorPopAt;
+            float scale = t < 0.35f ? 1f + 0.22f * Mathf.Sin(t / 0.35f * Mathf.PI) : 1f;
+            floorText.rectTransform.localScale = new Vector3(scale, scale, 1f);
+        }
+
+        /// <summary>Where the progress bar's playhead is: floors climbed on a floor stage, otherwise level time.</summary>
+        float ProgressOf(float seconds, int floor)
+        {
+            var stage = world.Stage;
+            if (stage != null && stage.FloorProgress >= 0f && floor > 0)
+                return Mathf.Clamp01((float)(stage.Floors.start - floor) / (stage.Floors.start - stage.Floors.end));
+            return Mathf.Clamp01(seconds / Mathf.Max(1f, world.LevelLength));
+        }
+
         public void BuildProgressBar()
         {
+            BuildFloor();
+
             progressRoot = MenuGraphics.NewRect("ProgressBar", menu.Root);
             MenuGraphics.Place(progressRoot, new Vector2(0.5f, 0f), new Vector2(0f, 42f), new Vector2(1500f, 30f));
             MenuGraphics.Surface(progressRoot, new MenuSurfaceStyle
@@ -513,7 +574,7 @@ namespace SickOfIt.Gameplay
 
             foreach (var marker in world.Director.Script.markers)
             {
-                float x = Mathf.Clamp01(marker.seconds / world.LevelLength);
+                float x = ProgressOf(marker.seconds, marker.floor);
                 var tick = MenuGraphics.NewRect("Marker", inner);
                 tick.anchorMin = tick.anchorMax = new Vector2(x, 0.5f);
                 tick.sizeDelta = new Vector2(34f, 34f);
@@ -571,8 +632,10 @@ namespace SickOfIt.Gameplay
         {
             if (progressRoot == null || world == null)
                 return;
+            UpdateFloor();
             float length = Mathf.Max(1f, world.LevelLength);
-            float progress = Mathf.Clamp01(world.Now / length);
+            float floorProgress = world.Stage != null ? world.Stage.FloorProgress : -1f;
+            float progress = floorProgress >= 0f ? floorProgress : Mathf.Clamp01(world.Now / length);
             if (world.Director != null && !world.Director.Completed)
                 progress = Mathf.Min(progress, 0.995f);
             playedFill.anchorMax = new Vector2(progress, 1f);
@@ -587,7 +650,10 @@ namespace SickOfIt.Gameplay
                 MenuGraphics.SetText(rewindLabel, "");
                 return;
             }
-            float tail = Mathf.Min(progress, budget.Juice / length);
+            // The tail is how far back the juice reaches. On a floor stage, time becomes distance at the average pace so far.
+            float tail = floorProgress >= 0f
+                ? progress * Mathf.Clamp01(budget.Juice / Mathf.Max(1f, world.Now))
+                : Mathf.Min(progress, budget.Juice / length);
             rewindTail.anchorMin = new Vector2(progress - tail, 0f);
             rewindTail.anchorMax = new Vector2(progress, 1f);
             rewindTail.gameObject.SetActive(tail > 0.005f);

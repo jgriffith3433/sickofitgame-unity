@@ -1,64 +1,103 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using SickOfIt.Core;
-using SickOfIt.Core.Input;
 
 namespace SickOfIt.Gameplay
 {
     /// <summary>
     /// A simple automatic player for playtests: shoots the nearest enemy, keeps a comfortable distance from
-    /// threats, and jumps over incoming shots. It drives PlayerController through its input override, so
-    /// it plays the real game. Its choices come from a seeded random stream, so runs are repeatable.
+    /// threats, jumps over incoming shots, rewinds when hit and takes the first upgrade offered. It plays through
+    /// the real input path, pressing keys and sticks on <see cref="PlaytestInput"/>'s virtual devices, so it hits
+    /// what a player would. Its choices come from a seeded random stream, so runs are repeatable.
+    /// Used by the Hawkes playtest scenarios (SickOfIt.Playtest) in builds and by the PlayMode playtests.
     /// </summary>
-    public sealed class PlaytestBot : MonoBehaviour, IPlayerInputSource
+    public sealed class PlaytestBot : MonoBehaviour
     {
         public float preferredDistanceMin = 2.5f;
         public float preferredDistanceMax = 5f;
         public float dodgeRadius = 1.6f;
 
         GameplayWorld world;
-        PlayerController controller;
+        PlaytestInput input;
+        bool ownsInput;
         DeterministicRandom random;
-        bool jumpPending;
         float nextJumpCheck;
         float strafeUntil;
         float strafeDirection = 1f;
+        int releaseJumpFrame = -1;
+        int releasePickFrame = -1;
 
         public Vector2 Move { get; private set; }
         public Vector2 FireDirection { get; private set; }
+        /// <summary>Rewinds the bot started (each one a hold of R).</summary>
+        public int RewindsStarted { get; private set; }
 
-        public bool ConsumeJump()
+        /// <summary>Starts playing the level. Uses the given input devices, or makes its own (removed with the bot).</summary>
+        public static PlaytestBot Attach(GameplayWorld world, uint seed = 12345, PlaytestInput input = null)
         {
-            bool j = jumpPending;
-            jumpPending = false;
-            return j;
-        }
-
-        public static PlaytestBot Attach(GameplayWorld world, uint seed = 12345)
-        {
-            var controller = world.Player != null ? world.Player.GetComponent<PlayerController>() : null;
-            if (controller == null)
+            if (world == null || world.Player == null)
                 return null;
             var bot = world.gameObject.AddComponent<PlaytestBot>();
             bot.world = world;
-            bot.controller = controller;
+            bot.ownsInput = input == null;
+            bot.input = input ?? PlaytestInput.Create();
             bot.random = new DeterministicRandom(seed);
-            controller.InputOverride = bot;
             return bot;
         }
 
         void OnDestroy()
         {
-            if (controller != null && ReferenceEquals(controller.InputOverride, this))
-                controller.InputOverride = null;
+            if (input == null)
+                return;
+            if (ownsInput)
+                input.Dispose();
+            else
+                input.ReleaseAll();
+        }
+
+        void Press(Key key, ref int releaseFrame)
+        {
+            input.SetKey(key, true);
+            releaseFrame = Time.frameCount + 2;
+        }
+
+        void ReleaseTaps()
+        {
+            if (releaseJumpFrame >= 0 && Time.frameCount >= releaseJumpFrame)
+            {
+                input.SetKey(Key.Space, false);
+                releaseJumpFrame = -1;
+            }
+            if (releasePickFrame >= 0 && Time.frameCount >= releasePickFrame)
+            {
+                input.SetKey(Key.Digit1, false);
+                releasePickFrame = -1;
+            }
+        }
+
+        void Idle()
+        {
+            Move = Vector2.zero;
+            FireDirection = Vector2.zero;
+            input.SetMoveX(0f);
+            input.SetAim(Vector2.zero);
         }
 
         void Update()
         {
-            if (world == null || world.Player == null)
+            if (world == null || world.Player == null || input == null || !input.Alive)
                 return;
-            if (world.Hud.PickerOpen)
+            ReleaseTaps();
+            if (world.Hud != null && world.Hud.PickerOpen)
             {
-                world.Hud.Choose(0);
+                Idle();
+                if (releasePickFrame < 0 && !input.IsHeld(Key.Digit1))
+                    Press(Key.Digit1, ref releasePickFrame);
+                return;
+            }
+            if (world.Hud != null && (world.Hud.Paused || world.Hud.ResultsOpen))
+            {
+                Idle();
                 return;
             }
             var clock = GameClock.Instance;
@@ -100,6 +139,11 @@ namespace SickOfIt.Gameplay
                 else if (targetDistance > preferredDistanceMax)
                     moveX = Mathf.Sign(dx);
             }
+            // A travel stage only ends by going somewhere: with nothing to shoot, keep walking.
+            bool travelling = world.Effects.Mode == SickOfIt.Gameplay.Content.CameraMode.Travel
+                && world.Effects.Track != null && world.Director.Script.world.travelDirection == SickOfIt.Gameplay.Content.TravelDirection.Right;
+            if (travelling && target == null)
+                moveX = 1f;
             if (now < strafeUntil)
                 moveX = strafeDirection;
             else if (random.Value() < 0.004f)
@@ -136,36 +180,61 @@ namespace SickOfIt.Gameplay
             if (me.x < view.xMin + 0.8f) moveX = 1f;
             if (me.x > view.xMax - 0.8f) moveX = -1f;
             Move = new Vector2(moveX, 0f);
+            input.SetMoveX(moveX);
+            input.SetAim(FireDirection);
 
             if (now >= nextJumpCheck)
             {
                 nextJumpCheck = now + 0.2f;
-                if (jumpToDodge || (threat != null && threatDistance < dodgeRadius * 0.5f) || random.Value() < 0.04f)
-                    jumpPending = true;
+                if ((jumpToDodge || (threat != null && threatDistance < dodgeRadius * 0.5f) || random.Value() < 0.04f)
+                    && releaseJumpFrame < 0 && !input.IsHeld(Key.Space))
+                    Press(Key.Space, ref releaseJumpFrame);
             }
         }
 
-        // ─── Rewind like a player would: when hit, go back a second if there's juice ───
+        // ─── Rewind like a player would: when hit, hold R for about a second if there's juice ───
 
         public bool useRewind = true;
         int lastHealth = -1;
         float rewindTarget = -1f;
+        float holdStartedAt = -1f;
+
+        /// <summary>Holds R to rewind about 'seconds' of game time (if the game allows it now). Returns true if it pressed.</summary>
+        public bool RewindNow(float seconds = 1.2f)
+        {
+            var clock = GameClock.Instance;
+            if (clock == null || clock.IsRewinding || input == null || input.IsHeld(Key.R))
+                return false;
+            var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
+            if (budget != null && !budget.CanRewind)
+                return false;
+            rewindTarget = clock.Time - seconds;
+            holdStartedAt = Time.unscaledTime;
+            input.SetKey(Key.R, true);
+            RewindsStarted++;
+            lastHealth = -1;
+            return true;
+        }
 
         void HandleRewind(float now)
         {
             var clock = GameClock.Instance;
             if (clock == null)
                 return;
-            if (clock.IsRewinding)
+            if (input.IsHeld(Key.R))
             {
-                if (rewindTarget >= 0f && now <= rewindTarget)
+                // Let go once far enough back, or if the game didn't start a rewind (too early, no juice).
+                bool reached = clock.IsRewinding && now <= rewindTarget;
+                bool refused = !clock.IsRewinding && Time.unscaledTime - holdStartedAt > 0.4f;
+                if (reached || refused || Time.unscaledTime - holdStartedAt > 5f)
                 {
-                    clock.StopRewind();
+                    input.SetKey(Key.R, false);
                     rewindTarget = -1f;
                 }
                 return;
             }
-            rewindTarget = -1f;
+            if (clock.IsRewinding)
+                return;
 
             int health = world.Player.Health;
             bool hit = lastHealth >= 0 && health < lastHealth;
@@ -175,9 +244,7 @@ namespace SickOfIt.Gameplay
             var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
             if (budget == null || budget.Juice < 1.2f)
                 return;
-            rewindTarget = now - 1.2f;
-            clock.StartRewind(3f);
-            lastHealth = -1;
+            RewindNow(1.2f);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 > Generated from the code by `GameplayReferenceGenerator` — don't edit by hand. See AGENTS.md for the workflow and Docs/GameplayCookbook.md for worked examples.
 
-Gameplay is data. **Entities** (enemies, bosses, projectiles, hazards) live in `Assets/GameConfig/content/entities/{id}.json`, reusable **sequences** in `content/sequences/{id}.json`, **status effects** in `content/effects/{id}.json`, and each level's **script** in the `"script"` field of `levels/{name}.json`. Every content file starts with `"schemaVersion": 1`; the id is the file name. Polymorphic things (abilities, triggers, actions, patterns) are objects with a `"type"`.
+Gameplay is data. **Entities** (enemies, bosses, projectiles, hazards) live in `Assets/GameConfig/content/entities/{id}.json`, reusable **sequences** in `content/sequences/{id}.json`, **status effects** in `content/effects/{id}.json`, the **Circles of Hell** (biome, enemy table, hazards, difficulty) in `content/circles/{id}.json`, and each level's **script** in the `"script"` field of `levels/{name}.json`. Every content file starts with `"schemaVersion": 1`; the id is the file name. Polymorphic things (abilities, triggers, actions, patterns) are objects with a `"type"`.
 
 Missing fields use the defaults below; unknown fields are errors. Assets are paths under `Assets/` (e.g. `"Images/Fireball.png"`).
 
@@ -13,6 +13,7 @@ Missing fields use the defaults below; unknown fields are errors. Assets are pat
 - [Actions](#actions)
 - [Patterns](#patterns)
 - [Level script](#level-script)
+- [Circle](#circle)
 - [Sequence](#sequence)
 - [Status effect](#status-effect)
 - [Shared types](#shared-types)
@@ -454,7 +455,7 @@ Picks random points within 'radius' of where it spawned and walks to them, pausi
 
 When something happens. In a rule it fires the actions once each time it becomes true; in a state transition it switches state.
 
-[`after`](#after) · [`allDead`](#alldead) · [`allOf`](#allof) · [`always`](#always) · [`animationDone`](#animationdone) · [`anyOf`](#anyof) · [`atTime`](#attime) · [`chance`](#chance) · [`counter`](#counter) · [`distanceToPlayer`](#distancetoplayer) · [`every`](#every) · [`healthBelow`](#healthbelow) · [`not`](#not) · [`phaseStarted`](#phasestarted) · [`playerInZone`](#playerinzone) · [`randomAfter`](#randomafter) · [`signal`](#signal)
+[`after`](#after) · [`allDead`](#alldead) · [`allOf`](#allof) · [`always`](#always) · [`animationDone`](#animationdone) · [`anyOf`](#anyof) · [`atTime`](#attime) · [`chance`](#chance) · [`counter`](#counter) · [`distanceReached`](#distancereached) · [`distanceToPlayer`](#distancetoplayer) · [`every`](#every) · [`floorReached`](#floorreached) · [`healthBelow`](#healthbelow) · [`not`](#not) · [`phaseStarted`](#phasestarted) · [`playerInZone`](#playerinzone) · [`randomAfter`](#randomafter) · [`signal`](#signal)
 
 ### after
 
@@ -519,13 +520,21 @@ Checked every 'every' seconds; true with this probability (0-1) each check. Dete
 
 ### counter
 
-A counter is at least 'atLeast' (and below 'below', if set). Built-in counters: kills, kills:{entityId}, spawned, spawned:{entityId}, playerHits.
+A counter is at least 'atLeast' (and below 'below', if set). Built-in counters: kills, kills:{entityId}, spawned, spawned:{entityId}, playerHits, floor (the floor counter), distance (travel stages).
 
 | Field | Type | Default | Notes |
 |---|---|---|---|
 | `name` | string | `""` | **Required.** |
 | `atLeast` | number | `1.0` |  |
 | `below` | number | `0.0` | Optional upper bound (exclusive). 0 = none. |
+
+### distanceReached
+
+Travel stages: the camera has travelled at least 'units' world units from the start (the counter "distance").
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `units` | number | `10.0` |  |
 
 ### distanceToPlayer
 
@@ -545,6 +554,14 @@ Repeatedly: first after 'startAfter' seconds, then every 'seconds'. 'maxTimes' 0
 | `seconds` | number | `1.0` |  |
 | `startAfter` | number | `0.0` |  |
 | `maxTimes` | integer | `0` |  |
+
+### floorReached
+
+The floor counter is at 'floor' or higher up (a lower number). Use it for milestones and to end a generated stretch.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `floor` | integer | `1` |  |
 
 ### healthBelow
 
@@ -600,7 +617,7 @@ Another rule, sequence, or entity emitted this signal (action 'emit').
 
 Something that happens: spawn, change phase, show text, apply a status...
 
-[`addCounter`](#addcounter) · [`addDiamonds`](#adddiamonds) · [`addRewind`](#addrewind) · [`applyStatus`](#applystatus) · [`bossBar`](#bossbar) · [`cameraShake`](#camerashake) · [`completeLevel`](#completelevel) · [`damage`](#damage) · [`despawn`](#despawn) · [`emit`](#emit) · [`failLevel`](#faillevel) · [`flash`](#flash) · [`goToLevel`](#gotolevel) · [`goToPhase`](#gotophase) · [`grantUpgrade`](#grantupgrade) · [`heal`](#heal) · [`hideBossBar`](#hidebossbar) · [`hideText`](#hidetext) · [`if`](#if) · [`kill`](#kill) · [`lockInput`](#lockinput) · [`modifier`](#modifier) · [`musicVolume`](#musicvolume) · [`objectiveText`](#objectivetext) · [`offerUpgrades`](#offerupgrades) · [`playAnimation`](#playanimation) · [`playMusic`](#playmusic) · [`playSound`](#playsound) · [`playVideo`](#playvideo) · [`playerInvincible`](#playerinvincible) · [`popText`](#poptext) · [`random`](#random) · [`removeStatus`](#removestatus) · [`returnToMenu`](#returntomenu) · [`runSequence`](#runsequence) · [`setAnimParam`](#setanimparam) · [`setCounter`](#setcounter) · [`setState`](#setstate) · [`showText`](#showtext) · [`slowMotion`](#slowmotion) · [`spawn`](#spawn) · [`spawnWave`](#spawnwave) · [`startHazard`](#starthazard) · [`stopHazard`](#stophazard) · [`unlockInput`](#unlockinput) · [`wait`](#wait)
+[`addCounter`](#addcounter) · [`addDiamonds`](#adddiamonds) · [`addRewind`](#addrewind) · [`applyStatus`](#applystatus) · [`bossBar`](#bossbar) · [`cameraShake`](#camerashake) · [`climbFloors`](#climbfloors) · [`completeLevel`](#completelevel) · [`damage`](#damage) · [`despawn`](#despawn) · [`emit`](#emit) · [`failLevel`](#faillevel) · [`flash`](#flash) · [`generateFloors`](#generatefloors) · [`goToLevel`](#gotolevel) · [`goToPhase`](#gotophase) · [`grantUpgrade`](#grantupgrade) · [`heal`](#heal) · [`hideBossBar`](#hidebossbar) · [`hideText`](#hidetext) · [`if`](#if) · [`kill`](#kill) · [`lockInput`](#lockinput) · [`lockTravel`](#locktravel) · [`modifier`](#modifier) · [`musicVolume`](#musicvolume) · [`objectiveText`](#objectivetext) · [`offerUpgrades`](#offerupgrades) · [`playAnimation`](#playanimation) · [`playMusic`](#playmusic) · [`playSound`](#playsound) · [`playVideo`](#playvideo) · [`playerInvincible`](#playerinvincible) · [`popText`](#poptext) · [`random`](#random) · [`removeStatus`](#removestatus) · [`returnToMenu`](#returntomenu) · [`runSequence`](#runsequence) · [`setAnimParam`](#setanimparam) · [`setCounter`](#setcounter) · [`setFloor`](#setfloor) · [`setState`](#setstate) · [`showText`](#showtext) · [`slowMotion`](#slowmotion) · [`spawn`](#spawn) · [`spawnWave`](#spawnwave) · [`startHazard`](#starthazard) · [`stopGenerator`](#stopgenerator) · [`stopHazard`](#stophazard) · [`unlockInput`](#unlockinput) · [`unlockTravel`](#unlocktravel) · [`wait`](#wait)
 
 ### addCounter
 
@@ -655,6 +672,14 @@ Something that happens: spawn, change phase, show text, apply a status...
 | `intensity` | number | `0.2` |  |
 | `duration` | number | `0.3` |  |
 
+### climbFloors
+
+The hero goes up this many floors (the counter goes down; negative goes back down).
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `count` | integer | `1` |  |
+
 ### completeLevel
 
 Completes the level now (the level's completionDelay and next video still apply).
@@ -701,6 +726,20 @@ Flashes the screen a color.
 |---|---|---|---|
 | `color` | color | `"#FFFFFF"` |  |
 | `duration` | number | `0.2` |  |
+
+### generateFloors
+
+Fills the stage with floors built from a Circle (content/circles): pushes of enemies from its table and telegraphed hazards, with breathers between them, harder the higher the floor. Runs until the floor counter reaches 'untilFloor', its phase ends, or stopGenerator; hand-written story beats go in the phases around it. Seeded: same seed, same floors, so rewinds and playtests repeat. Generated enemies get the tags in 'tags'.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `circle` | string | `""` | Circle to build from (empty = the script's floors.circle). (circle id) |
+| `untilFloor` | integer | `0` | Stop starting pushes once the floor counter reaches this floor (0 = run until the phase ends). |
+| `firstBreather` | number | `2.0` | Quiet seconds before the first push. |
+| `tags` | list of string | `["generated"]` | Tags for every generated enemy (target them with allDead etc.). |
+| `seed` | integer | `0` | Added to the level seed, so two generated stretches in one stage differ. |
+| `persist` | true/false | `false` | Keep running after the phase that started it ends. |
+| `doneSignal` | string | `"floorsDone"` | Signal emitted when it stops at untilFloor and its last push is over. |
 
 ### goToLevel
 
@@ -774,6 +813,12 @@ Stops the player from moving and shooting for 'seconds' (0 = until unlockInput).
 | Field | Type | Default | Notes |
 |---|---|---|---|
 | `seconds` | number | `0.0` |  |
+
+### lockTravel
+
+Travel stages: the camera stops moving forward (an arena moment, a boss, a cutscene) until unlockTravel.
+
+No fields.
 
 ### modifier
 
@@ -920,6 +965,14 @@ Sets a named counter.
 | `name` | string | `""` | **Required.** |
 | `value` | number | `0.0` |  |
 
+### setFloor
+
+Sets the floor counter (the HUD's FLOOR readout), e.g. after a shortcut or a cutscene that skips floors.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `floor` | integer | `1000` |  |
+
 ### setState
 
 Moves entities to a state of their state machine.
@@ -1007,6 +1060,12 @@ Starts firing projectile entities from the level itself (fire rain, turrets, swe
 | `damage` | integer | `0` | Damage per shot; 0 = the projectile's own. |
 | `rampPerSecond` | number | `0.0` | Volleys per second added each second it runs (it intensifies). Negative slows it down. |
 
+### stopGenerator
+
+Stops the floor generator (enemies already spawned stay).
+
+No fields.
+
 ### stopHazard
 
 Stops a hazard started with startHazard.
@@ -1018,6 +1077,12 @@ Stops a hazard started with startHazard.
 ### unlockInput
 
 Something that happens: spawn, change phase, show text, apply a status...
+
+No fields.
+
+### unlockTravel
+
+Travel stages: the camera moves forward again after lockTravel.
 
 No fields.
 
@@ -1109,6 +1174,7 @@ A level's gameplay, written as the "script" object in levels/{name}.json. Rules 
 |---|---|---|---|
 | `seed` | integer | `0` | Random seed (0 = derived from the level number). Same seed, same level, same choices. |
 | `world` | [WorldDef](#worlddef) | (object) |  |
+| `floors` | [FloorsDef](#floorsdef) | (object) |  |
 | `objective` | [ObjectiveDef](#objectivedef) | `{"complete":null,"fail":null,"text":""}` |  |
 | `length` | number | `0.0` | Expected length in seconds, for the progress bar (0 = the level's duration). |
 | `markers` | list of [ProgressMarkerDef](#progressmarkerdef) | `[]` | Labeled ticks on the progress bar, e.g. where the boss arrives. |
@@ -1160,6 +1226,23 @@ The space the level happens in.
 | `scrollSpeed` | [x, y] | `[1.0,0.0]` | Scroll: camera velocity in world units per second. |
 | `followSharpness` | number | `5.0` | Follow: how quickly the camera catches up (higher = snappier). |
 | `playerGravity` | number | `1.0` | Multiplies the player's gravity (0.5 = floaty). |
+| `travelDirection` | [TravelDirection](#traveldirection) | `"Right"` | Travel: which way the stage goes. |
+| `travelLead` | number | `1.5` | Travel: how far ahead of the player the camera looks (world units). |
+| `travelSpeed` | number | `0.0` | Travel: the camera also moves forward on its own at least this fast (0 = only as the player goes). |
+| `travelLength` | number | `0.0` | Travel: the camera stops after this distance (0 = no end). |
+| `holdForPushes` | true/false | `true` | Travel: the camera waits while enemies of a generated push are alive, so the player fights instead of running past. |
+
+### FloorsDef
+
+The floor counter: which floors of Hell a stage covers. Floors count down as the hero climbs (1000 is the bottom, 1 the top). The counter is the script counter "floor"; the HUD shows it (ui/theme.json texts.floorFormat) and the progress bar measures floors.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `start` | integer | `0` | Floor the stage starts on, e.g. 1000. 0 = no floor counter. |
+| `end` | integer | `0` | Floor the stage ends on, e.g. 976 (the progress bar runs from start to here). 0 = no end. |
+| `unitsPerFloor` | number | `0.0` | Travel stages: world units travelled per floor. The counter goes up a floor each time the camera covers this distance, and a floor sign stands where it happens. 0 = only actions (setFloor, climbFloors) change the floor. |
+| `circle` | string | `""` | The Circle of Hell (content/circles) the stage is in: track, props, backdrop, generated floors and milestone lines. (circle id) |
+| `signs` | true/false | `true` | Paint floor numbers into the world as signs on travel stages. |
 
 ### CounterDef
 
@@ -1167,6 +1250,146 @@ The space the level happens in.
 |---|---|---|---|
 | `name` | string | `""` | **Required.** |
 | `value` | number | `0.0` |  |
+
+### ProgressMarkerDef
+
+A labeled tick on the level progress bar.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `seconds` | number | `0.0` |  |
+| `floor` | integer | `0` | On a stage with floors.end set the bar measures floors: put the tick at this floor instead of at 'seconds' (0 = use seconds). |
+| `label` | string | `""` |  |
+
+## Circle
+
+### CircleDef
+
+A Circle of Hell: a run of floors with one biome, one family of enemies and one Warden (see Docs/Story.md). Travel stages in the circle take their ground, platforms, passing props, backdrop and generated floors (generateFloors) from it. File: content/circles/{id}.json.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `displayName` | string | `""` | Name shown to the player, e.g. "The Ember Wastes". |
+| `firstFloor` | integer | `1000` | Bottom floor of the circle (where the climb through it starts), e.g. 1000. |
+| `lastFloor` | integer | `901` | Top floor (the Warden's), e.g. 901. Difficulty goes from 'easiest' at firstFloor to 'hardest' here. |
+| `backgroundLayers` | list of [BackgroundLayerConfig](#backgroundlayerconfig) | `[]` | Backdrop for stages in this circle whose level file has no backgroundLayers (same fields as a level's backgroundLayers). |
+| `track` | [TrackDef](#trackdef) | (object) |  |
+| `props` | list of [PropDef](#propdef) | `[]` | Scenery that passes by on travel stages: spires, rocks, chains. Drawn only; never collides. |
+| `enemies` | list of [CircleEnemyDef](#circleenemydef) | `[]` | Who the generator sends, picked by weight. Use fromFloor to introduce a new enemy partway up (one new enemy at a time). |
+| `hazards` | list of [CircleHazardDef](#circlehazarddef) | `[]` | Hazards the generator can use instead of an enemy push. Each is telegraphed first. |
+| `easiest` | [DifficultyDef](#difficultydef) | (object) | Generator settings at the circle's first (bottom) floor. |
+| `hardest` | [DifficultyDef](#difficultydef) | (object) | Generator settings at its last (top) floor; floors in between are interpolated. |
+| `milestones` | list of [MilestoneDef](#milestonedef) | `[]` | Lines that play when the floor counter reaches a floor in this circle (any stage), e.g. 999: "Only nine hundred ninety-nine to go." |
+
+### TrackDef
+
+The ground and platforms of a travel stage. The ground runs the whole way; platforms are streamed in ahead and removed behind, laid out from the level seed (same seed, same platforms).
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `groundY` | number | `-2.5` | Height of the top of the ground (world units). |
+| `groundColor` | color | `[0.12,0.06,0.05,1.0]` |  |
+| `groundEdgeColor` | color | `[1.0,0.45,0.15,1.0]` | Thin strip along the top of the ground (alpha 0 = none). |
+| `segmentLength` | number | `6.0` | Length of one streamed segment along the travel direction. Up: the height between ledges. |
+| `platformChance` | number | `0.5` | Chance (0-1) that a segment has a platform. |
+| `platformHeight` | [x, y] | `[1.1,1.8]` | Platform height above the ground: [min, max]. |
+| `platformWidth` | [x, y] | `[1.4,2.6]` | Platform width: [min, max]. |
+| `platformColor` | color | `"#00000000"` | Platform tint (alpha 0 = the game's platform color). |
+| `clearStart` | number | `8.0` | Distance from the start kept flat, so the opening has room to move. |
+
+### PropDef
+
+A kind of scenery repeated along a travel stage. 'parallax' sets its depth: 0 moves with the ground, 0.8 is far away and drifts by slowly, negative is close to the camera and rushes past in front.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `name` | string | `""` | For reports. |
+| `sprite` | asset (Sprite) | — | Art (optional). Without it the prop is drawn as 'shape' in 'color'. |
+| `shape` | [PropShape](#propshape) | `"Spire"` |  |
+| `color` | color | `[0.08,0.04,0.05,1.0]` |  |
+| `size` | [x, y] | `[1.0,2.5]` | Width and height in world units. |
+| `sizeVariation` | number | `0.3` | Random size variation as a fraction (0.3 = 70% to 130%). |
+| `across` | number | `-2.5` | Where its base sits across the travel direction: the world y for Right travel, the x offset from the camera for Up travel. |
+| `parallax` | number | `0.5` | Depth: 0 = with the ground, 1 = stuck to the sky, negative = in front of the player. |
+| `spacing` | number | `4.0` | Average distance between two of them. |
+| `chance` | number | `0.8` | Chance (0-1) each slot gets one. |
+| `layer` | [SpriteLayer](#spritelayer) | `"Background2"` | Draw band: Background2 behind the player, Foreground1 in front. |
+| `sortingOrder` | integer | `0` |  |
+
+### CircleEnemyDef
+
+An enemy the floor generator can send.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `entity` | string | `""` | **Required.**  (entity id) |
+| `weight` | number | `1.0` | How often it is picked relative to the others. |
+| `fromFloor` | integer | `0` | It only appears once the floor counter is at or above this floor (counting down: 990 means from floor 990 up). 0 = from the start. |
+| `areaCenter` | [x, y] | `[3.6,-1.2]` | Spawn area center, measured from the camera (x is ahead of it on Right travel). |
+| `areaSize` | [x, y] | `[1.2,2.0]` | Spawn area size; each spawn picks a point inside it. |
+
+### CircleHazardDef
+
+A hazard the floor generator can run instead of an enemy push: a warning (the telegraph), then its actions.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `name` | string | `""` | For reports. |
+| `weight` | number | `1.0` |  |
+| `fromFloor` | integer | `0` | Only at or above this floor (counting down). 0 = from the start. |
+| `warning` | string | `""` | Warning text shown when it starts (subtitle). |
+| `warningSound` | string | `""` | Sound played with the warning. |
+| `telegraph` | number | `1.2` | Seconds between the warning and the actions (at least 1, so it is fair). |
+| `actions` | list of [Action](#actions) | `[]` | What happens, usually a startHazard with a duration. |
+| `duration` | number | `6.0` | Seconds the push lasts before the next breather. |
+
+### DifficultyDef
+
+How hard the generated floors are. A circle sets one for its bottom floor and one for its top floor.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `maxAlive` | integer | `2` | Most generated enemies alive at once. |
+| `pushSize` | integer | `2` | Enemies in one push. |
+| `spawnInterval` | number | `1.2` | Seconds between spawns inside a push. |
+| `breather` | number | `4.0` | Quiet seconds between pushes. |
+| `hazardChance` | number | `0.2` | Chance (0-1) a push is a hazard instead of enemies. |
+| `healthMultiplier` | number | `1.0` | Multiplies generated enemies' health. |
+| `pushTimeout` | number | `25.0` | A push ends after this many seconds even if enemies are left (they keep fighting). |
+
+### MilestoneDef
+
+A line for reaching a floor.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `floor` | integer | `0` |  |
+| `text` | string | `""` | **Required.** |
+| `sound` | string | `""` | Voice line or sting played with it. |
+| `style` | [TextStyle](#textstyle) | `"Banner"` |  |
+| `color` | color | `[1.0,0.82,0.48,1.0]` |  |
+| `duration` | number | `2.5` | Seconds on screen. |
+
+### BackgroundLayerConfig
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `name` | string | `"Background"` | Name for this layer (for debugging/editing) |
+| `spriteFramesData` | asset (ScriptableObject) | — | Animated sprite frame sequence (for video-style or scrolling backgrounds) |
+| `staticSprite` | asset (Sprite) | — | Static sprite (for simple image backgrounds) |
+| `solidColor` | color | `"#00000000"` | Solid color fill (used when no sprite or frames assigned) |
+| `offset` | [x, y] | `[0.0,0.0]` | Position offset from camera center |
+| `scale` | [x, y] | `[1.0,1.0]` | Scale multiplier |
+| `layer` | [SpriteLayer](#spritelayer) | `"Background1"` | Draw band. Background1 is furthest back. Foreground bands cover the player. |
+| `sortingOrder` | integer | `0` | Order inside the chosen band. Higher draws in front of other sprites on that same band. |
+| `parallaxFactor` | number | `0.0` | Parallax multiplier (0 = static background, 1 = moves with camera) |
+| `tileHorizontally` | true/false | `false` | If true, tile this layer horizontally for infinite scroll |
+| `sequenceStart` | number | `-1.0` | When this layer appears, in seconds on the game clock (the same clock as the music). Negative means it plays from the start, stacked with the other layers. |
+| `sequenceDuration` | number | `0.0` | How long this layer stays up. The clip loops or holds inside that window. 0 means until the next sequenced layer, or for the rest of the level if it is the last one. |
+| `sequenceLoop` | true/false | `true` | Repeat the clip until the window ends. Off plays it once and holds the last frame. |
+| `sequenceBy` | [BackgroundSequenceKey](#backgroundsequencekey) | `"Time"` | What sequenceStart and sequenceDuration measure: Time (seconds), Distance (world units travelled on a Travel stage) or Floors (floors climbed since the stage's first floor). The clip itself still plays on the game clock. |
+| `clipStart` | number | `0.0` | Play only part of the clip: start here (seconds into the clip). Lets one long video supply a backdrop, e.g. just its lava-river shot. |
+| `clipLength` | number | `0.0` | Length of that part in seconds (0 = the whole clip). It loops inside this window when the layer loops. |
 
 ## Sequence
 
@@ -1279,6 +1502,12 @@ Animator parameter type.
 - `Friendly`
 - `All`
 
+### BackgroundSequenceKey
+
+- `Time`
+- `Distance`
+- `Floors`
+
 ### BodyKind
 
 How the body moves and collides.
@@ -1293,6 +1522,16 @@ How the camera behaves.
 - `Static` — Fixed on the level's starting view (the classic arena).
 - `Follow` — Follows the player inside 'bounds'.
 - `Scroll` — Moves at 'scrollSpeed'; the player is kept on screen.
+- `Travel` — Travels through the stage in 'travelDirection': follows the player forward, never back. The ground runs along with it, platforms and props stream in ahead and are removed behind. The counter "distance" is how far it has gone.
+
+### PropShape
+
+A built-in silhouette for props without a sprite.
+
+- `Spire` — A tall pointed rock.
+- `Rock` — A low lumpy boulder.
+- `Block` — A plain rectangle.
+- `Glow` — A flat glowing patch on the ground (lava cracks, puddles).
 
 ### ShapeKind
 
@@ -1341,4 +1580,11 @@ Which side something is on. Entities hurt entities of other teams; Neutral hurts
 
 - `Banner` — Big, centered.
 - `Subtitle` — Smaller, lower on screen.
+
+### TravelDirection
+
+Which way a travel stage goes.
+
+- `Right` — Walk to the right.
+- `Up` — Climb upward on ledges.
 

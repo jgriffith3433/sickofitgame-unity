@@ -9,6 +9,11 @@ the menu", "add a voice line", "add a shop upgrade"): read [Docs/GameplayCookboo
 recipes and [Docs/GameplayReference.md](Docs/GameplayReference.md) (generated) for every content field. Most requests
 are JSON-only edits; no C#, no Generate Project.
 
+**Story first.** [Docs/Story.md](Docs/Story.md) is the game's design: the 1,000-floor climb, the cast, which enemies
+live on which floors and why, how rewind/upgrades/diamonds fit the story, and the pacing rules for levels. Every new
+level, enemy, upgrade or voice line must fit it; if it doesn't yet, update the story first. No slime enemies (slimes
+are villagers).
+
 ## The game is defined in JSON
 
 `Assets/GameConfig/` is the **source of truth** for the whole game. It is compiled into
@@ -20,7 +25,7 @@ Assets/GameConfig/
   game.json                 globals (camera, ground, rewind, UI/camera prefabs, ...) and the ordered
                             lists of item files: "levels": ["Level1", "Level2"] -> levels/Level1.json, ...
   player.json, pickup.json  one file per large section
-  audio.json                every sound effect and voice line (ElevenLabs prompts) + which plays for each game event
+  audio.json                every sound effect and voice line (prompts for Hawkes Gen's ElevenLabs tools) + which plays for each game event
   ui/*.json                 menus: theme.json (the look of every menu) + mainMenu, levelSelection,
                             videoSelection, upgradeShop (each has a "layout": backdrop, title, list, stickers)
   levels/ videos/ deaths/   one file per item (a level's gameplay is its "script" field)
@@ -29,6 +34,8 @@ Assets/GameConfig/
   content/sequences/        reusable action lists (boss intros, cutscene beats)
   content/effects/          status effects (burning, slow, stun, shield)
   content/upgrades/         player upgrades offered between levels (saved; reset on New Game)
+  content/circles/          Circles of Hell: backdrop, track, props, enemy table, hazards, difficulty, milestones
+                            (travel stages and the floor generator use them; see the cookbook)
 ```
 
 - **Order matters.** `GetLevel(n)` and `GetVideo(n)` use the position in game.json's list, not `levelNumber`.
@@ -72,11 +79,12 @@ Assets/GameConfig/
   progress/rewind bar, upgrade picker). The look is `ui/theme.json` (styles, `hud` colors, every on-screen word in
   `texts`, results `grades`); placement is each screen's `layout`. Generators only build the scene shell; restyling
   never needs Generate Project. Don't add prefab buttons to scenes.
-- **Sound is `audio.json`**: every effect and voice line is an ElevenLabs prompt plus a `clip` filled in by the
-  generator (SickOfIt > Audio > Sound Generator, or the `GenerateSounds` batch command). `events` maps game moments to
+- **Sound is `audio.json`**: every effect and voice line is a prompt plus a `clip` filled in by the generator
+  (SickOfIt > Audio > Sound Generator, or the `GenerateSounds` batch command), which makes them through Hawkes Gen's
+  `audio.sfx` / `audio.voice` (ElevenLabs). `events` maps game moments to
   sound ids. `voices` defines who speaks (`player` for subtitles, `announcer` for banners); lines use `eleven_v3` with
   delivery tags like `[sighs]`. A `showText` voices its line through `"sound"`. Prompting rules are in the cookbook;
-  the API rejects effects under 0.5 s. Never commit or log the API key (it lives in EditorPrefs or `ELEVENLABS_API_KEY`).
+  the API rejects effects under 0.5 s. This project holds no ElevenLabs key: Hawkes Gen does.
 - **Diamonds** drop from enemy `loot` as the `diamond` entity and are spent in the shop. **Shop upgrades** are
   `player.json` `availableUpgrades` with an `effect` (MaxHealth, ExtraJump, MoveSpeed, FireRate, Damage, RewindJuice,
   Magnet); `RogueliteManager` stores levels, `UpgradeSystem.ApplyShop` applies them each level. Between-level picks are
@@ -86,6 +94,12 @@ Assets/GameConfig/
   (`player.deathRewindWindow`), Rage Quit on the death scene. All presentation; none of it touches the simulation.
   Rewind is **hold R** (`RewindController`) or the HUD's ◄◄ button (`RewindInput`). The input asset also binds R to an
   unused "DashRight" action; don't give R another job.
+- **Enemy art** comes from the art pipeline: a spec in `Assets/GameConfig/art/<id>.json` (description, poses, clips)
+  and `node Tools/Art/art.mjs <id> --start`, which generates poses and clips on the ComfyUI GPU server, packs sheets
+  into `Assets/Art/Enemies/` and writes the entity's `visual.animator`. Read [Docs/ArtPipeline.md](Docs/ArtPipeline.md).
+- **Videos, deaths and level/menu backgrounds** are baked sprite-sheet sequences played by `SpriteFramePlayer`, not
+  Unity video. `playbackFPS` is both bake and playback rate (change it, then re-bake); sizes are fixed per frame,
+  so never fix a video's size with the camera. Read [Docs/VideoPlayback.md](Docs/VideoPlayback.md) before touching them.
 - **Presentation code must stay out of the simulation**: sounds, effects and UI may read sim state but never change it,
   and use `UnityEngine.Random`/unscaled time only for cosmetics.
 - When the editor is open, Unity compiles on focus; check the console and `Logs/GameConfig.log`. Some Unity quirks bit
@@ -121,8 +135,9 @@ and a suggested fix ("Did you mean ...?"). Read it after every change.
 Methods: `Validate` (check only), `Import` (JSON -> GameDefinition), `Export` (GameDefinition -> JSON),
 `VerifyRoundTrip`, `GenerateReference`, `BuildContentBundle`, `ConvertLegacy`. Sounds:
 `-executeMethod SickOfIt.Tools.Editor.Audio.SoundGeneratorWindow.GenerateSounds` makes every missing/outdated sound in
-audio.json with ElevenLabs (needs `ELEVENLABS_API_KEY`; never put the key in the repo). Batch mode fails with "another Unity
-instance is running" while the editor is open.
+audio.json through Hawkes Gen (start it first: `C:\Projects\hawkesgen\auto-start.bat`); add `-sounds id1,id2` to make
+just those (even if up to date). A sound whose exact settings Hawkes Gen already made is downloaded from its library
+instead of generated again. Batch mode fails with "another Unity instance is running" while the editor is open.
 
 - **Tests:** `-runTests -testPlatform EditMode` and `-runTests -testPlatform PlayMode` (add `-testResults <file>`).
 - **Playtest every level with a bot** (real Level scene, ~1 min per level; omit `-nographics`):
@@ -131,6 +146,40 @@ instance is running" while the editor is open.
   Every real play in the editor also writes a log there.
 - **Compile check without Unity:** `dotnet build` an SDK-style csproj that reuses the HintPaths from the
   Unity-generated `*.csproj` files (they reference the editor's DLLs and `Library/ScriptAssemblies`).
+
+## Playtests (Hawkes playtest contract v1)
+
+Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest runner as `window.hawkesPlaytest`
+(spec: `C:\Projects\hawkesstudio\docs\playtest.md`; package `com.hawkes.playtest` in `Packages/manifest.json`).
+`Assets/Scripts/Playtest/SickOfItPlaytest.cs` registers the scenarios at startup; nothing runs until one starts.
+
+- **Scenarios:** `smoke` (main menu, New Game, skip the video, level 1 for ~30 s with one rewind and a P pause/resume,
+  quit to menu), `level-<n>` per level in game.json (loads the level directly, a setup shortcut), `full` (New Game, then
+  every level in order through the real flow: results → Continue → video skipped with Escape; up to 3 tries per level;
+  ~10 min), `menus` (level select, videos, shop, settings open and close).
+- **Start one:** in a browser `?playtest=smoke` (plus `&seed=`, `&speed=`), or `hawkesPlaytest.start("level-2")`; in the
+  editor or a test, `HawkesPlaytest.StartScenario("level-2")`. Note: `smoke` and `full` press New Game, which resets
+  the save in that browser.
+- **The bot plays through real input.** `PlaytestBot` (Gameplay/Presentation) decides; `PlaytestInput` adds a virtual
+  keyboard, gamepad and mouse to the Input System: A/D move, Space jump, gamepad right stick aims and fires, hold R
+  rewinds, P pauses, 1 picks an upgrade, Escape skips videos, and menu buttons are clicked with the mouse. Never give
+  it a shortcut that edits sim state. If a new control is added, bind it in the input asset and have the bot press it.
+- **Report:** metrics (kills, `damageTaken.<source>`, deaths, rewinds, `botRewinds`, diamonds, `level<n>.seconds`,
+  floor, fps); events (phases, level-start/level-end, death, rewind, pause, clicks); problems (placeholder art,
+  missing sounds from `[Sfx]` warnings, softlocks when the game clock stalls 15 s, GameConfig issues in the loaded
+  content, level-script errors, any logged error or exception).
+- **PlayMode playtests** (`-testCategory Playtest`, above) run the same `level-<n>` scenario with the editor's scene
+  loader (`SickOfItPlaytest.LoadLevel`) and also write `Logs/Playtest/level-<n>.report.json` (what the runner would get).
+  The editor drops keyboard/mouse input when the Game view isn't focused (always, in batch mode), so the test sets
+  `InputSystem.settings.editorInputBehaviorInPlayMode = AllDeviceInputAlwaysGoesToGameView` while it runs; starting a
+  scenario by hand in the editor, keep the Game view focused.
+- WebGL builds come from the build server; keep everything in `Assets/Scripts/Playtest/` runtime-only (no `UnityEditor`).
+
+**Deploy in batch mode** (the build server): `-batchmode -projectPath C:/Projects/sickofitgame-unity -executeMethod
+SickOfIt.Tools.Editor.GameDeployWindow.FullDeployBatch` runs Tools > Run Full Deploy without a window (Addressables, new
+`sickofitgamewebsite/Game/v<n>`, WebGL build, version replaced in the site, old version removed; no dev server), logs
+each step as `[GameDeploy]`, and exits 0/1. `BUILD_VERSION=<n>` forces the version number. Committing and pushing the
+site is still a separate, asked-for step.
 
 ## How the sync works
 
@@ -156,3 +205,19 @@ polymorphic content types. A field type the encoder doesn't support fails loudly
 - After C# changes to generators, regenerate (`SickOfIt > Generate Project`) and check the console.
 - Keep everything rewind-compatible (see "How gameplay runs").
 - Don't touch `Library/`, `Temp/`, `obj/`. Keep `.meta` files with their assets.
+
+## Generative AI: Hawkes Gen
+
+Images, textures, video, 3D, music, voice, sound and Claude all go through **Hawkes Gen**
+(`C:\Projects\hawkesgen`, dashboard http://127.0.0.1:8790; start it with `hawkesgen\auto-start.bat`). It holds
+the API and AWS keys and runs the shared GPU fleet. This project never holds those keys.
+
+- **Agents:** the `hawkesgen` MCP server is in this folder's `.mcp.json`. Use `hawkesgen_presets` (project
+  `sickofit`) for the art direction, then `hawkesgen_run`.
+- **Command line:** `C:\Projects\hawkesgen\hawkesgen.cmd run - --project sickofit --preset <name> --param prompt="..." --out <folder>`
+- **Art direction:** `hawkesgen/presets/sickofit.json` (style line and named presets). Edit it there.
+- **Unity:** Window > Hawkes Gen (package `com.hawkes.gen` in `Packages/manifest.json`) runs any tool or preset and imports the results into `Assets/HawkesGen/`.
+- Enemy art: `Tools/Art/art.mjs` calls Hawkes Gen (Docs/ArtPipeline.md). Sounds in `audio.json`: the Sound Generator
+  (`Assets/Scripts/Tools/Editor/Audio/`, `HawkesGenAudio.cs`) uses `audio.sfx`, `audio.voice`, `audio.voice-design` and
+  `audio.voice-save` through `com.hawkes.gen`, and `recipes/check` to reuse files it already made.
+- GPU tools cost money while a server runs. Ask J before starting servers or running big batches.

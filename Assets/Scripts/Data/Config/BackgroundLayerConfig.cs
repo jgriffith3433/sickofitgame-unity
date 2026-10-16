@@ -15,6 +15,17 @@ namespace SickOfIt.Data.Config
     /// 
     /// Each layer picks a SpriteLayer band. Order inside that band is sortingOrder.
     /// </summary>
+    /// <summary>What a sequenced background layer's start and duration are measured in.</summary>
+    public enum BackgroundSequenceKey
+    {
+        /// <summary>Seconds on the game clock.</summary>
+        Time,
+        /// <summary>World units travelled on a Travel stage.</summary>
+        Distance,
+        /// <summary>Floors climbed since the stage's first floor.</summary>
+        Floors,
+    }
+
     [Serializable]
     public class BackgroundLayerConfig
     {
@@ -53,6 +64,14 @@ namespace SickOfIt.Data.Config
         public float sequenceDuration;
         [Tooltip("Repeat the clip until the window ends. Off plays it once and holds the last frame.")]
         public bool sequenceLoop = true;
+        [Tooltip("What sequenceStart and sequenceDuration measure: Time (seconds), Distance (world units travelled on a Travel stage) or Floors (floors climbed since the stage's first floor). The clip itself still plays on the game clock.")]
+        public BackgroundSequenceKey sequenceBy = BackgroundSequenceKey.Time;
+
+        [Header("Clip window")]
+        [Tooltip("Play only part of the clip: start here (seconds into the clip). Lets one long video supply a backdrop, e.g. just its lava-river shot.")]
+        public float clipStart;
+        [Tooltip("Length of that part in seconds (0 = the whole clip). It loops inside this window when the layer loops.")]
+        public float clipLength;
 
         /// <summary>True when this layer is a timed segment instead of a layer that plays for the whole level.</summary>
         public bool IsSequenced => sequenceStart >= 0f;

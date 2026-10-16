@@ -78,6 +78,10 @@ namespace SickOfIt.Tools.Editor.GameConfig
 
         public static bool IsContentFile(string relativePath) => relativePath.StartsWith(ContentFolder + "/", StringComparison.Ordinal);
 
+        /// <summary>Art specs (art/&lt;id&gt;.json) are read by Tools/Art/art.mjs, not imported (Docs/ArtPipeline.md).</summary>
+        public const string ArtFolder = "art";
+        public static bool IsArtSpec(string relativePath) => relativePath.StartsWith(ArtFolder + "/", StringComparison.Ordinal);
+
         /// <summary>Fields of GameDefinition stored outside the root object's own values.</summary>
         public static HashSet<string> SplitFieldNames()
         {

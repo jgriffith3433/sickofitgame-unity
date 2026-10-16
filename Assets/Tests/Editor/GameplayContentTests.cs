@@ -168,6 +168,53 @@ namespace SickOfIt.Tests.Editor
         }
 
         [Test]
+        public void CirclesLoadAndTheirReferencesAreChecked()
+        {
+            const string script = @"{
+                'floors': { 'start': 1000, 'end': 990, 'unitsPerFloor': 2, 'circle': 'wastes' },
+                'world': { 'camera': 'Travel' },
+                'phases': [ { 'name': 'a', 'onEnter': [ { 'type': 'generateFloors', 'circle': 'wastse', 'untilFloor': 995 } ] } ]
+            }";
+            var c = Build(new Dictionary<string, string>
+            {
+                ["entities/imp.json"] = "{ }",
+                ["circles/wastes.json"] = "{ 'firstFloor': 1000, 'lastFloor': 901, 'enemies': [ { 'entity': 'ipm' } ], " +
+                                          "'hazards': [ { 'telegraph': 0.5, 'actions': [] } ], 'milestones': [ { 'floor': 800, 'text': 'x' } ] }",
+            }, script);
+            Assert.That(c.Circles.ContainsKey("wastes"), Is.True);
+            string all = Errors(c);
+            Assert.That(all, Does.Contain("No entity \"ipm\"").And.Contain("Did you mean \"imp\""));
+            Assert.That(all, Does.Contain("No circle \"wastse\"").And.Contain("Did you mean \"wastes\""));
+            Assert.That(all, Does.Contain("at least 1 second"));
+            Assert.That(all, Does.Contain("outside this circle"));
+        }
+
+        [Test]
+        public void FloorsMustCountDown()
+        {
+            var c = Build(new Dictionary<string, string> { ["circles/up.json"] = "{ 'firstFloor': 901, 'lastFloor': 1000 }" },
+                "{ 'floors': { 'start': 976, 'end': 1000 }, 'phases': [ { 'name': 'a' } ] }");
+            string all = Errors(c);
+            Assert.That(all, Does.Contain("firstFloor (the bottom) must be the larger number"));
+            Assert.That(all, Does.Contain("end must be a lower floor than start"));
+        }
+
+        [Test]
+        public void DifficultyIsInterpolatedAcrossTheCircle()
+        {
+            var circle = new CircleDef
+            {
+                firstFloor = 1000, lastFloor = 900,
+                easiest = new DifficultyDef { maxAlive = 2, breather = 4f },
+                hardest = new DifficultyDef { maxAlive = 4, breather = 2f },
+            };
+            Assert.That(circle.DifficultyAt(1000).maxAlive, Is.EqualTo(2));
+            Assert.That(circle.DifficultyAt(950).maxAlive, Is.EqualTo(3));
+            Assert.That(circle.DifficultyAt(950).breather, Is.EqualTo(3f).Within(0.001f));
+            Assert.That(circle.DifficultyAt(800).maxAlive, Is.EqualTo(4), "clamped past the top");
+        }
+
+        [Test]
         public void ExtendsLoopIsAnError()
         {
             var c = Build(new Dictionary<string, string>

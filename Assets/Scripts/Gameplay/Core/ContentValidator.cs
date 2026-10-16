@@ -25,8 +25,31 @@ namespace SickOfIt.Gameplay
                 ValidateObject(content, pair.Value, content.SourceOf(pair.Value), "", null, null, issues, inSequence: false);
             foreach (var pair in content.Upgrades.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateObject(content, pair.Value, content.SourceOf(pair.Value), "", null, null, issues, inSequence: false);
+            foreach (var pair in content.Circles.OrderBy(p => p.Key, StringComparer.Ordinal))
+                ValidateCircle(content, pair.Value, issues);
             foreach (var pair in content.LevelScripts.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateScript(content, pair.Value, issues);
+        }
+
+        static void ValidateCircle(GameContent content, CircleDef circle, JsonIssueList issues)
+        {
+            string file = content.SourceOf(circle);
+            ValidateObject(content, circle, file, "", null, null, issues, inSequence: false);
+            if (circle.firstFloor < circle.lastFloor)
+                issues.Error(file, "lastFloor", "Floors count down as the hero climbs: firstFloor (the bottom) must be the larger number.");
+            for (int i = 0; i < circle.hazards.Count; i++)
+            {
+                if (circle.hazards[i].telegraph < 1f)
+                    issues.Warning(file, $"hazards[{i}].telegraph", "Telegraph hazards at least 1 second ahead (Story.md pacing rules); it is raised to 1.");
+            }
+            for (int i = 0; i < circle.milestones.Count; i++)
+            {
+                int f = circle.milestones[i].floor;
+                if (f > circle.firstFloor || f < circle.lastFloor)
+                    issues.Warning(file, $"milestones[{i}].floor", $"Floor {f} is outside this circle ({circle.firstFloor}-{circle.lastFloor}), so it never plays here.");
+            }
+            if (circle.track.segmentLength < 1f)
+                issues.Error(file, "track.segmentLength", "Segments must be at least 1 unit long.");
         }
 
         [ThreadStatic] static ICollection<string> ValidSoundIds;
@@ -87,6 +110,12 @@ namespace SickOfIt.Gameplay
             ValidateObject(content, script, file, "script", null, phases, issues, inSequence: false);
             if (script.phases.Count == 0 && script.rules.Count == 0)
                 issues.Warning(file, "script", "The script has no phases and no rules, so nothing happens.");
+            if (script.floors.unitsPerFloor > 0f && script.floors.start <= 0)
+                issues.Warning(file, "script.floors.unitsPerFloor", "unitsPerFloor does nothing without floors.start.");
+            if (script.floors.end > script.floors.start && script.floors.start > 0)
+                issues.Error(file, "script.floors.end", "Floors count down as the hero climbs: end must be a lower floor than start.");
+            if (script.world.camera == CameraMode.Travel && string.IsNullOrEmpty(script.floors.circle))
+                issues.Warning(file, "script.floors.circle", "A Travel stage without a circle uses plain default ground and no props.");
             if (script.objective.complete == null)
                 issues.Warning(file, "script.objective.complete", "No win condition: the level only ends through a completeLevel action or the player dying.");
         }
@@ -102,6 +131,7 @@ namespace SickOfIt.Gameplay
                 (typeof(SequenceRefAttribute), content.Sequences.Keys, "sequence \"{0}\" in content/sequences"),
                 (typeof(EffectRefAttribute), content.Effects.Keys, "status effect \"{0}\" in content/effects"),
                 (typeof(UpgradeRefAttribute), content.Upgrades.Keys, "upgrade \"{0}\" in content/upgrades"),
+                (typeof(CircleRefAttribute), content.Circles.Keys, "circle \"{0}\" in content/circles"),
                 (typeof(SoundRefAttribute), ValidSoundIds, "sound \"{0}\" in audio.json"),
                 (typeof(PhaseRefAttribute), phases, "phase \"{0}\" in this script"),
                 (typeof(EntityStateRefAttribute), entity?.states.Select(s => s.name).ToList(), "state \"{0}\" in this entity"),

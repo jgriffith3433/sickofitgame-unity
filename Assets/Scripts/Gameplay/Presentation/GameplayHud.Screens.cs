@@ -147,6 +147,8 @@ namespace SickOfIt.Gameplay
         // ─── Results ──────────────────────────────────────────────────
 
         GameObject resultsRoot;
+        /// <summary>The end-of-level results screen is up (waiting for Continue).</summary>
+        public bool ResultsOpen => resultsRoot != null;
         int pointsAtStart = -1;
 
         static readonly MenuGrade[] DefaultGrades =

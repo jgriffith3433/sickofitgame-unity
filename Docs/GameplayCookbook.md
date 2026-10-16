@@ -11,9 +11,16 @@ Working example: **Level 5, "Fire Rain"** (`levels/Level5.json`) uses most of th
 
 ## Make a new level
 
-1. Copy an existing `levels/LevelN.json` to `levels/Level6.json`. Change `levelName`, `displayName`, `levelNumber`,
+First find the level's place in [Story.md](Story.md): which Circle and floors it covers, which enemies live there,
+and its story beat. Follow the pacing rules there (quiet first 5 seconds, new enemies alone, breathers between
+pushes). `levels/Level1.json` (The Meadow) is the reference: phases timed to the backdrop footage, one new enemy
+at a time, a voiced line per beat, and a final phase that only checks for the clear after the last spawn. A stage
+inside Hell (a stretch of floors) is a travel stage: see "A stage that climbs through Hell's floors" below, with
+`levels/Level6.json` (The Landing) as the reference.
+
+1. Copy an existing `levels/LevelN.json` to `levels/Level7.json`. Change `levelName`, `displayName`, `levelNumber`,
    `music`, `backgrounds`, `deathConfigName`.
-2. Add `"Level6"` to the end of the `"levels"` list in `game.json` (the position is the level number).
+2. Add `"Level7"` to the end of the `"levels"` list in `game.json` (the position is the level number).
 3. Write its `"script"` (below). Set `"enemies": []` — a script replaces the enemies list.
 4. Nothing to generate: the level select screen builds its buttons from the levels list at runtime. A new level unlocks after the one before it is completed.
 
@@ -23,7 +30,7 @@ Working example: **Level 5, "Fire Rain"** (`levels/Level5.json`) uses most of th
   "phases": [
     { "name": "main", "rules": [
       { "when": { "type": "atTime", "seconds": 1 },
-        "do": [ { "type": "spawn", "entity": "chaser", "at": [4, -2], "tags": ["wave"] } ] }
+        "do": [ { "type": "spawn", "entity": "imp", "at": [4, -2], "tags": ["wave"] } ] }
     ] }
   ]
 }
@@ -195,11 +202,63 @@ comedic text beats (`showText` banners and subtitles, boss intros, upgrade descr
 ## A different kind of level space
 
 `"world"` in the script: `"camera": "Follow"` with `boundsCenter`/`boundsSize` for a wider arena, `"Scroll"` with
-`scrollSpeed` for an auto-scroller, and `"playerGravity": 0.5` for floaty jumps.
+`scrollSpeed` for an auto-scroller, `"Travel"` for a stage that goes somewhere (next recipe), and `"playerGravity": 0.5`
+for floaty jumps.
+
+## A stage that climbs through Hell's floors ("make Floors 975-951")
+
+Story stages are **travel stages**: the camera follows the player forward (never back), the ground runs along with
+it, platforms and scenery stream in ahead, and the **floor counter** ticks down as they go (HUD `FLOOR 973`, floor
+signs in the world). Between hand-written story beats the **floor generator** fills the floors from the stage's
+**Circle** (`content/circles/{id}.json`). Working example: `levels/Level6.json` ("Floors 1000-976: The Landing") in
+`content/circles/emberWastes.json` (Circle X).
+
+1. **The circle** (one per Circle of Hell, shared by its stages; skip if it exists). Its `firstFloor`/`lastFloor`,
+   `backgroundLayers` (the backdrop for its stages), `track` (ground/platform colors, `segmentLength`,
+   `platformChance`, `clearStart`), `props` (scenery: `shape` Spire/Rock/Block/Glow or a `sprite`, `parallax` 0 = with
+   the ground, 0.8 = far away, negative = in front), `enemies` (weighted; `fromFloor` introduces one partway up),
+   `hazards` (a `warning` + `telegraph` ≥ 1 s, then `actions`), `easiest`/`hardest` difficulty (`maxAlive`,
+   `pushSize`, `breather`, `hazardChance`, `healthMultiplier`; floors in between are interpolated) and `milestones`
+   (a line when the counter reaches a floor, e.g. 999).
+2. **The stage**: a level whose script has `floors` and a Travel `world`:
+
+```json
+"floors": { "start": 975, "end": 951, "unitsPerFloor": 3, "circle": "emberWastes" },
+"world": { "camera": "Travel", "travelDirection": "Right", "travelLead": 1.5, "travelLength": 74 },
+"markers": [ { "floor": 960, "label": "AMBUSH" } ]
+```
+
+   `travelLength` ≈ (start − end) × unitsPerFloor + 2 so the camera stops at the top. Leave `backgroundLayers` empty to
+   use the circle's. The progress bar measures floors; `markers` take a `floor`.
+3. **Phases alternate beats and generated stretches** (follow the pacing rules in Story.md):
+
+```json
+{ "name": "climb", "onEnter": [ { "type": "generateFloors", "untilFloor": 960, "firstBreather": 3 } ],
+  "rules": [ { "when": { "type": "signal", "name": "floorsDone" }, "maxTimes": 1,
+               "do": [ { "type": "goToPhase", "phase": "ambush" } ] } ] },
+{ "name": "ambush", "onEnter": [ { "type": "lockTravel" }, { "type": "spawn", "entity": "imp", "anchor": "Camera", "at": [3.6, -1.4], "tags": ["beat"] } ],
+  "rules": [ { "when": { "type": "allDead", "target": { "tag": "beat" } }, "maxTimes": 1,
+               "do": [ { "type": "unlockTravel" }, { "type": "goToPhase", "phase": "climb2" } ] } ] }
+```
+
+   The generator stops at `untilFloor`, waits for its last push, then emits `floorsDone`. While one of its pushes is
+   alive the camera holds (`world.holdForPushes`), so the player fights instead of running past. Give a second
+   stretch `"seed": 1` so it differs. End the stage with `{ "type": "floorReached", "floor": 951 }`.
+4. Floors outside travel: `setFloor`, `climbFloors` (a shortcut, an elevator); triggers `floorReached`,
+   `distanceReached`; counters `floor` and `distance`.
+
+**Backdrops that change as you go**: a background layer's `sequenceBy` is `Time` (seconds), `Distance` (units
+travelled) or `Floors` (floors climbed in this stage), so `"sequenceBy": "Floors", "sequenceStart": 3` swaps the
+backdrop after three floors. `clipStart`/`clipLength` play just part of a long video (Circle X uses Video2's
+lava-river shot, `clipStart` 17.6, `clipLength` 5).
+
+Same seed, same floors: platforms, props and pushes come from the level seed, so rewinds and bot playtests repeat.
 
 ## Art
 
-Entities without art draw as colored placeholders with their id, so gameplay can come first. To add art, give the entity
+Entities without art draw as colored placeholders with their id, so gameplay can come first. **To make art for an
+enemy, use the art pipeline** ([ArtPipeline.md](ArtPipeline.md)): one spec in `art/<id>.json` and
+`node Tools/Art/art.mjs <id> --start` writes everything below for you. By hand, give the entity
 a `visual.animator` with states pointing at sprite sheets (`"spriteSheet": "Images/Thing.png"`), the same shape as the
 generator's AnimationConfig. Animation events (`"events": [{ "frame": 2, "functionName": "fire" }]`) drive
 `shoot.fireOnEvent` and `melee.hitEvent`.
@@ -243,7 +302,7 @@ rewind!", "shape": "Burst", "fill": "#FFC93C", "textColor": "#1E1220",
                    "motion": { "type": "Pulse", "amount": 0.06, "speed": 1.2 } } ]
 ```
 
-## Sound effects and voice lines (ElevenLabs)
+## Sound effects and voice lines (ElevenLabs, through Hawkes Gen)
 
 Every sound lives in `audio.json` as a prompt; the files are generated, never hand-placed:
 
@@ -253,8 +312,8 @@ Every sound lives in `audio.json` as a prompt; the files are generated, never ha
 { "id": "vo_final_wave", "kind": "Voice", "prompt": "Final wave! Probably." }
 ```
 
-- **Make them:** SickOfIt > Audio > Sound Generator (paste the API key once; it stays on that computer), or the
-  `GenerateSounds` batch command. It fills in `clip` and `generatedFrom`; editing a prompt (or duration, influence, loop,
+- **Make them:** SickOfIt > Audio > Sound Generator (Hawkes Gen must be running: `C:\Projects\hawkesgen\auto-start.bat`;
+  it holds the ElevenLabs key), or the `GenerateSounds` batch command. It fills in `clip` and `generatedFrom`; editing a prompt (or duration, influence, loop,
   voice) marks the sound "Outdated" so it gets remade. Files go to `outputFolder` (Assets/Audio/Generated).
 - **Effects** use ElevenLabs text-to-sound-effects: describe the sound, 0.5-30 s (the API rejects shorter) (`durationSeconds` 0 = let it decide),
   `promptInfluence` 0-1 (higher = more literal), `loop` for seamless loops. **Voices** use text-to-speech: `prompt` is

@@ -140,7 +140,7 @@
         "onEnter": [
           {
             "type": "showText",
-            "text": "Exploding coworkers incoming.",
+            "text": "Oh good. They explode.",
             "style": "Subtitle",
             "duration": 2.5,
             "color": "#FF9966",
@@ -262,14 +262,14 @@
                 "steps": [
                   {
                     "type": "showText",
-                    "text": "MEETING ADJOURNED",
+                    "text": "CROSSFIRE: SURVIVED",
                     "duration": 2.0,
                     "color": "#7CFF8A",
                     "sound": "vo_l2_clear"
                   },
                   {
                     "type": "showText",
-                    "text": "This could have been an email.",
+                    "text": "That was a lot of shooting for one road.",
                     "style": "Subtitle",
                     "duration": 2.0,
                     "sound": "vo_l2_outro"
@@ -280,7 +280,7 @@
                   },
                   {
                     "type": "offerUpgrades",
-                    "title": "Performance review: pick a bonus"
+                    "title": "Pick a grudge"
                   },
                   {
                     "type": "setCounter",

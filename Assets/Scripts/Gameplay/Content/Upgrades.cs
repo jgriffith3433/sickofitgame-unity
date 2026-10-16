@@ -40,6 +40,7 @@ namespace SickOfIt.Gameplay.Content
     public class ProgressMarkerDef
     {
         public float seconds;
+        [Doc("On a stage with floors.end set the bar measures floors: put the tick at this floor instead of at 'seconds' (0 = use seconds).")] public int floor;
         public string label = "";
     }
 }

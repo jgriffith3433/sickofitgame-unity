@@ -45,6 +45,8 @@ namespace SickOfIt.Gameplay
         public Entity Player { get; private set; }
         public GameplayHud Hud { get; private set; }
         public WorldEffects Effects { get; private set; }
+        /// <summary>The floor counter, distance travelled and milestones.</summary>
+        public StageProgress Stage { get; private set; }
         /// <summary>Extra pickup magnet range from shop upgrades (world units), set once at level start.</summary>
         public float PickupMagnetBonus { get; set; }
 
@@ -141,6 +143,9 @@ namespace SickOfIt.Gameplay
 
             Host = setup.Host;
             Director = new LevelDirector(this, setup.Script ?? new LevelScript(), setup.Host);
+            Stage = new StageProgress(this, setup.Script);
+            if (setup.Script != null)
+                Effects.BuildTrack(setup.Script, Stage.Circle);
 
             LevelLength = setup.Script != null && setup.Script.length > 0f ? setup.Script.length : Mathf.Max(1f, setup.LevelDuration);
             if (setup.RewindBudget != null && setup.RewindBudget.enabled)
@@ -199,6 +204,7 @@ namespace SickOfIt.Gameplay
                 return;
             started = true;
             Telemetry.Record("levelStart", LevelName, LevelNumber);
+            Stage.Start();
             Director.Start(Now);
             history.RecordNow();
         }
@@ -234,6 +240,7 @@ namespace SickOfIt.Gameplay
                 Player.Tick(now, dt);
 
             Effects.Tick(now, dt);
+            Stage.Tick(now);
             Hud.Tick(now);
             history.RecordNow();
         }
@@ -585,6 +592,7 @@ namespace SickOfIt.Gameplay
             Director.SaveState(w);
             Hud.SaveState(w);
             Effects.SaveState(w);
+            Stage.SaveState(w);
         }
 
         public void LoadState(StateReader r)
@@ -602,6 +610,7 @@ namespace SickOfIt.Gameplay
             Director.LoadState(r);
             Hud.LoadState(r);
             Effects.LoadState(r);
+            Stage.LoadState(r);
         }
     }
 }

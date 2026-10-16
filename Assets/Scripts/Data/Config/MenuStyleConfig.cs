@@ -288,6 +288,9 @@ namespace SickOfIt.Data.Config
 
         public string rewindHint = "Ouch! Hold R to undo that.";
         public string rewindHintTouch = "Ouch! Hold ◄◄ to undo that.";
+
+        [Tooltip("The HUD's floor readout on stages with a floor counter; {0} is the floor number.")]
+        public string floorFormat = "FLOOR {0}";
     }
 
     /// <summary>The shared look of every menu: fonts, text styles, buttons, cards, motion.</summary>

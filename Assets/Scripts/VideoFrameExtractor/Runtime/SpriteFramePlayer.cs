@@ -16,8 +16,8 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
     ///   - Chunked Addressable loading with sliding window
     ///   - WebGL memory budget (max 2 chunks on WebGL)
     ///   - Sheet-based zero-allocation rendering via MaterialPropertyBlock
-    ///   - Reference sprite for mesh geometry
-    ///   - Cell offset precomputation
+    ///   - One sprite per sheet cell, so only the current frame is drawn
+    /// See Docs/VideoPlayback.md.
     /// 
     /// But instead of Timeline driving time, GameClock does.
     /// This means:
@@ -89,6 +89,9 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
         // Ready tracking
         private int targetPreload;
+        private int firstPreloadChunk;
+        private float windowStart;
+        private float windowLength;
         private System.Action onReady;
 
         // =====================================================================
@@ -170,9 +173,11 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
             // Start preloading
             int totalChunks = data.chunks.Count;
-            targetPreload = Mathf.Min(initialChunksToPreload, totalChunks);
+            // A windowed clip preloads from the window's first chunk, not the clip's.
+            firstPreloadChunk = windowLength > 0f ? Mathf.Max(0, data.GetChunkIndexForFrame(Mathf.Clamp(Mathf.FloorToInt(windowStart * fps), 0, totalFrames - 1))) : 0;
+            targetPreload = Mathf.Min(initialChunksToPreload, totalChunks - firstPreloadChunk);
 
-            for (int i = 0; i < targetPreload; i++)
+            for (int i = firstPreloadChunk; i < firstPreloadChunk + targetPreload; i++)
                 LoadChunk(i, isInitial: true);
 
             initialized = true;
@@ -210,6 +215,17 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         /// Clock time at which this clip's frame 0 plays. Local time is the clock minus this.
         /// </summary>
         public void SetClockOrigin(float clockOrigin) => startTime = clockOrigin;
+
+        /// <summary>
+        /// Play only part of the clip: from <paramref name="start"/> seconds, for <paramref name="length"/> seconds
+        /// (looping inside it when the player loops). Length 0 plays the whole clip. Call before Initialize so the
+        /// preload starts at the window.
+        /// </summary>
+        public void SetWindow(float start, float length)
+        {
+            windowStart = Mathf.Max(0f, start);
+            windowLength = Mathf.Max(0f, length);
+        }
 
         /// <summary>
         /// Load the clip without following the clock. A sequenced background stays parked
@@ -333,7 +349,13 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             // Handle time → frame mapping
             float effectiveTime = localTime;
 
-            if (loop && duration > 0)
+            if (windowLength > 0f && windowStart < duration)
+            {
+                float length = Mathf.Min(windowLength, duration - windowStart);
+                float inside = loop ? Mathf.Repeat(localTime, length) : Mathf.Clamp(localTime, 0f, Mathf.Max(0f, length - 1f / fps));
+                effectiveTime = windowStart + inside;
+            }
+            else if (loop && duration > 0)
             {
                 effectiveTime = effectiveTime % duration;
                 if (effectiveTime < 0) effectiveTime += duration;
@@ -470,7 +492,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             if (isInitial && !isReady)
             {
                 bool allLoaded = true;
-                for (int i = 0; i < targetPreload; i++)
+                for (int i = firstPreloadChunk; i < firstPreloadChunk + targetPreload; i++)
                 {
                     if (!loadedChunks.Contains(i))
                     {

@@ -15,7 +15,8 @@
     "Unity.Addressables.Editor",
     "Unity.ResourceManager",
     "Unity.TextMeshPro",
-    "Unity.InputSystem"
+    "Unity.InputSystem",
+    "HawkesGen.Editor"
   ],
   "includePlatforms": [
     "Editor"

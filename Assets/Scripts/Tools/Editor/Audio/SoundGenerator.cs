@@ -16,9 +16,10 @@ using SickOfIt.Tools.Editor.GameConfig;
 namespace SickOfIt.Tools.Editor.Audio
 {
     /// <summary>
-    /// Makes the sounds in audio.json with ElevenLabs. For each sound that has a prompt but no clip, or whose
-    /// prompt/settings changed since its clip was made, it asks ElevenLabs, saves the audio under audio.json's
-    /// outputFolder, sets the import settings, and writes "clip" and "generatedFrom" back into audio.json.
+    /// Makes the sounds in audio.json through Hawkes Gen (its ElevenLabs tools, see <see cref="HawkesGenAudio"/>). For
+    /// each sound that has a prompt but no clip, or whose prompt/settings changed since its clip was made, it asks
+    /// Hawkes Gen, saves the audio under audio.json's outputFolder, sets the import settings, and writes "clip" and
+    /// "generatedFrom" back into audio.json.
     /// Used by the Sound Generator window and the GenerateSounds batch command.
     /// </summary>
     public static class SoundGenerator
@@ -50,11 +51,12 @@ namespace SickOfIt.Tools.Editor.Audio
         }
 
         /// <summary>
-        /// Makes 'sounds' one after another (ElevenLabs limits concurrent requests on most plans), saving each as
-        /// soon as it arrives so a failure or cancel keeps what's done. Must be awaited on the main thread.
+        /// Makes 'sounds' one after another through Hawkes Gen, saving each as soon as it arrives so a failure or
+        /// cancel keeps what's done. With 'reuse', a sound whose exact settings Hawkes Gen already made (its library's
+        /// recipes/check) is downloaded instead of paying for it again. Must be awaited on the main thread.
         /// </summary>
         public static async Task<Result> GenerateAsync(AudioConfig audio, IList<SoundDef> sounds, Action<int, int, string> progress,
-            CancellationToken cancel)
+            CancellationToken cancel, bool reuse = true)
         {
             var result = new Result();
             string folder = "Assets/" + (string.IsNullOrEmpty(audio.outputFolder) ? "Audio/Generated" : audio.outputFolder.Trim('/'));
@@ -68,11 +70,17 @@ namespace SickOfIt.Tools.Editor.Audio
                 progress?.Invoke(i, sounds.Count, sound.id);
                 try
                 {
-                    byte[] bytes = await Request(audio, sound, cancel);
-                    string extension = audio.outputFormat.StartsWith("mp3", StringComparison.Ordinal) ? ".mp3"
-                        : audio.outputFormat.StartsWith("wav", StringComparison.Ordinal) ? ".wav" : ".ogg";
-                    string assetPath = $"{folder}/{SafeName(sound.id)}{extension}";
-                    File.WriteAllBytes(assetPath, bytes);
+                    var (tool, parameters) = Request(audio, sound, 1);
+                    string asset = reuse ? await HawkesGenAudio.FindExistingAsync(tool, parameters) : null;
+                    if (asset == null)
+                    {
+                        var job = await HawkesGenAudio.RunAsync(tool, parameters, cancel, Labels(sound));
+                        if (job.Outputs.Count == 0)
+                            throw new InvalidOperationException($"Hawkes Gen job {job.Id} made no file");
+                        asset = job.Outputs[0].Asset;
+                    }
+                    string assetPath = $"{folder}/{SafeName(sound.id)}{Extension(audio)}";
+                    await HawkesGenAudio.DownloadAsync(asset, assetPath);
                     AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
                     ConfigureImport(assetPath, sound);
                     WriteBack(sound.id, assetPath.Substring("Assets/".Length), sound.GenerationKey(audio));
@@ -85,8 +93,8 @@ namespace SickOfIt.Tools.Editor.Audio
                 catch (Exception e)
                 {
                     result.Failures.Add($"{sound.id}: {e.Message}");
-                    // A bad key or no credits will fail every request the same way; stop instead of repeating it.
-                    if (e is ElevenLabsException el && (el.Status == 401 || el.Status == 402 || el.Status == 0))
+                    // No service, a bad key or no credits will fail every request the same way; stop instead of repeating it.
+                    if (e is HawkesGenAudioException hg && hg.Fatal)
                         break;
                 }
             }
@@ -119,7 +127,7 @@ namespace SickOfIt.Tools.Editor.Audio
 
         /// <summary>
         /// Makes 'count' variations of one sound into the Takes folder without touching the sound's clip; pick one
-        /// with <see cref="UseTake"/>. ElevenLabs gives a different result each call, like the Playground's variations.
+        /// with <see cref="UseTake"/>. One Hawkes Gen job makes all of them; ElevenLabs gives a different result each time.
         /// </summary>
         public static async Task<List<string>> MakeTakesAsync(AudioConfig audio, SoundDef sound, int count, Action<int, int, string> progress,
             CancellationToken cancel)
@@ -128,12 +136,14 @@ namespace SickOfIt.Tools.Editor.Audio
             string folder = TakesFolder(audio);
             Directory.CreateDirectory(folder);
             int first = TakesOf(audio, sound.id).Count + 1;
-            for (int i = 0; i < count && !cancel.IsCancellationRequested; i++)
+            progress?.Invoke(0, count, sound.id);
+            var (tool, parameters) = Request(audio, sound, count);
+            var job = await HawkesGenAudio.RunAsync(tool, parameters, cancel, Labels(sound));
+            for (int i = 0; i < job.Outputs.Count; i++)
             {
-                progress?.Invoke(i, count, sound.id);
-                byte[] bytes = await Request(audio, sound, cancel);
+                progress?.Invoke(i, job.Outputs.Count, sound.id);
                 string path = $"{folder}/{SafeName(sound.id)}_take{first + i}{Extension(audio)}";
-                File.WriteAllBytes(path, bytes);
+                await HawkesGenAudio.DownloadAsync(job.Outputs[i].Asset, path);
                 AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
                 ConfigureImport(path, sound);
                 made.Add(path);
@@ -174,12 +184,12 @@ namespace SickOfIt.Tools.Editor.Audio
             return result;
         }
 
-        /// <summary>Asks ElevenLabs Voice Design for candidates (usually 3) and saves their previews to audition.</summary>
+        /// <summary>Asks Hawkes Gen's Voice Design (ElevenLabs) for candidates (usually 3) and saves their previews to audition.</summary>
         public static async Task<int> DesignVoiceAsync(AudioConfig audio, VoiceDef voice, CancellationToken cancel)
         {
             if (string.IsNullOrWhiteSpace(voice.description))
                 throw new InvalidOperationException($"voice \"{voice.name}\" has no description to design from");
-            var previews = await ElevenLabsClient.DesignVoiceAsync(voice.description, voice.sampleText, cancel);
+            var previews = await HawkesGenAudio.DesignVoiceAsync(voice.description, voice.sampleText, cancel);
             string folder = DesignsFolder(audio);
             Directory.CreateDirectory(folder);
             string indexPath = DesignsIndex(audio, voice.name);
@@ -188,12 +198,13 @@ namespace SickOfIt.Tools.Editor.Audio
             foreach (var preview in previews)
             {
                 string path = $"{folder}/{SafeName(voice.name)}_design{next++}.mp3";
-                File.WriteAllBytes(path, preview.Audio);
+                await HawkesGenAudio.DownloadAsync(preview.Asset, path);
                 AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
                 index[path] = preview.GeneratedVoiceId;
+                // Written after each preview, so a failed download keeps the ones before it.
+                File.WriteAllText(indexPath, index.ToString());
             }
-            File.WriteAllText(indexPath, index.ToString());
-            return previews.Length;
+            return previews.Count;
         }
 
         /// <summary>
@@ -202,7 +213,7 @@ namespace SickOfIt.Tools.Editor.Audio
         /// </summary>
         public static async Task UseDesignAsync(AudioConfig audio, VoiceDef voice, string generatedVoiceId, CancellationToken cancel)
         {
-            string voiceId = await ElevenLabsClient.SaveDesignedVoiceAsync($"Sick Of It - {voice.name}", voice.description, generatedVoiceId, cancel);
+            string voiceId = await HawkesGenAudio.SaveDesignedVoiceAsync($"Sick Of It - {voice.name}", voice.description, generatedVoiceId, cancel);
             if (string.IsNullOrEmpty(voiceId))
                 throw new InvalidOperationException("ElevenLabs didn't return a voice id");
             EditAudioJson(root =>
@@ -218,7 +229,8 @@ namespace SickOfIt.Tools.Editor.Audio
             GameConfigSync.ImportNow("sound generator: picked a voice");
         }
 
-        static Task<byte[]> Request(AudioConfig audio, SoundDef sound, CancellationToken cancel)
+        /// <summary>The Hawkes Gen tool and params that make this sound ('count' takes).</summary>
+        static (string tool, Dictionary<string, object> parameters) Request(AudioConfig audio, SoundDef sound, int count)
         {
             if (sound.kind == SoundKind.Voice)
             {
@@ -227,11 +239,14 @@ namespace SickOfIt.Tools.Editor.Audio
                     throw new InvalidOperationException(string.IsNullOrEmpty(sound.voice)
                         ? "no voice: set its voice (e.g. \"player\") or audio.json's defaultVoiceId"
                         : $"voice \"{sound.voice}\" has no voiceId yet: design it in the Voices section first");
-                return ElevenLabsClient.SpeechAsync(speaker.voiceId, sound.prompt, speaker.model, speaker.stability, speaker.speed,
-                    audio.outputFormat, cancel);
+                return HawkesGenAudio.Speech(speaker.voiceId, sound.prompt, speaker.model, speaker.stability, speaker.speed,
+                    audio.outputFormat, count);
             }
-            return ElevenLabsClient.SoundEffectAsync(sound.prompt, sound.durationSeconds, sound.promptInfluence, sound.loop, audio.outputFormat, cancel);
+            return HawkesGenAudio.Effect(sound.prompt, sound.durationSeconds, sound.promptInfluence, sound.loop, audio.outputFormat, count);
         }
+
+        /// <summary>Labels on the Hawkes Gen job, so the library can be searched by sound.</summary>
+        static Dictionary<string, object> Labels(SoundDef sound) => new Dictionary<string, object> { ["sound"] = sound.id, ["kind"] = sound.kind.ToString() };
 
         /// <summary>Short effects decompress on load (no hitch on first play); longer voice lines stay compressed.</summary>
         static void ConfigureImport(string assetPath, SoundDef sound)

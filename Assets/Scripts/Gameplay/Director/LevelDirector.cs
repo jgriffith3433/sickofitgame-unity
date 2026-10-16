@@ -22,7 +22,7 @@ namespace SickOfIt.Gameplay
     /// and the objective. Its state is saved with the world's for rewind; anything it starts refers back to
     /// the action that started it by index, so a snapshot holds only numbers and strings.
     /// </summary>
-    public sealed class LevelDirector : IRandomSource
+    public sealed partial class LevelDirector : IRandomSource
     {
         sealed class RuleRuntime
         {
@@ -140,6 +140,8 @@ namespace SickOfIt.Gameplay
                 ContentWalker.CollectActions(content.Sequences[id], found);
             foreach (var id in SortedKeys(content.Entities))
                 ContentWalker.CollectActions(content.Entities[id], found);
+            foreach (var id in SortedKeys(content.Circles))
+                ContentWalker.CollectActions(content.Circles[id], found);
             foreach (var a in found)
             {
                 if (!actionIndex.ContainsKey(a))
@@ -225,6 +227,7 @@ namespace SickOfIt.Gameplay
                 FireHazards(now);
                 AdvanceWaves(now);
                 ExpireSpawnModifiers(now);
+                TickGenerator(now);
             }
             finally
             {
@@ -313,6 +316,7 @@ namespace SickOfIt.Gameplay
                 hazards.RemoveAll(h => h.Scope == oldScope);
                 waves.RemoveAll(w => w.Scope == oldScope);
                 spawnModifiers.RemoveAll(m => m.Scope == oldScope);
+                StopGeneratorInScope(oldScope);
                 world.RunActions(phases[phase].Def.onExit, Context(now, null, 0, null));
             }
 
@@ -572,6 +576,7 @@ namespace SickOfIt.Gameplay
             {
                 w.Int(m.Action); w.Int(m.Repeat); w.Float(m.Until); w.String(m.Scope);
             }
+            SaveGenerator(w);
         }
 
         static void SaveRules(StateWriter w, RuleRuntime[] rules)
@@ -616,6 +621,7 @@ namespace SickOfIt.Gameplay
             n = r.Int();
             for (int i = 0; i < n; i++)
                 spawnModifiers.Add(new SpawnModifierRun { Action = r.Int(), Repeat = r.Int(), Until = r.Float(), Scope = r.String() });
+            LoadGenerator(r);
             pendingPhase = -1;
 
             if (wasCompleted && !completed)

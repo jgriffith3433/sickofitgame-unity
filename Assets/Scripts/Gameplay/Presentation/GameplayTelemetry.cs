@@ -31,6 +31,12 @@ namespace SickOfIt.Gameplay
         public static string Folder = "Logs/Playtest";
         /// <summary>The most recent finished summary (the playtest runner reads it).</summary>
         public static Summary LastSummary { get; private set; }
+        /// <summary>Every event as it is recorded (the Hawkes playtest listens to report phases, deaths and errors).</summary>
+        public static event Action<GameplayTelemetry, Event> Recorded;
+        /// <summary>A level's log ended (any outcome), with its summary.</summary>
+        public static event Action<GameplayTelemetry, Summary> Finished;
+
+        public GameplayWorld World => world;
 
         readonly GameplayWorld world;
         readonly List<Event> events = new List<Event>();
@@ -70,7 +76,13 @@ namespace SickOfIt.Gameplay
         {
             if (finished)
                 return;
-            events.Add(new Event { Time = world.Now, Kind = kind, Subject = subject ?? "", Value = value, Detail = detail ?? "" });
+            var e = new Event { Time = world.Now, Kind = kind, Subject = subject ?? "", Value = value, Detail = detail ?? "" };
+            events.Add(e);
+            if (Recorded != null)
+            {
+                try { Recorded(this, e); }
+                catch (Exception ex) { Debug.LogException(ex); }
+            }
         }
 
         [Serializable]
@@ -89,6 +101,9 @@ namespace SickOfIt.Gameplay
             public float rewoundSeconds;
             public int errors;
             public string lastPhase;
+            /// <summary>Floor counter at the end (0 = the stage has no floors) and distance travelled (travel stages).</summary>
+            public int floorEnd;
+            public float distance;
             public Dictionary<string, int> killsByEntity = new Dictionary<string, int>();
             public Dictionary<string, int> damageTakenBySource = new Dictionary<string, int>();
             public List<string> phases = new List<string>();
@@ -110,6 +125,8 @@ namespace SickOfIt.Gameplay
                 rewinds = rewinds,
                 rewoundSeconds = rewoundSeconds,
                 lastPhase = world.Director != null ? world.Director.PhaseName : "",
+                floorEnd = world.Stage != null ? world.Stage.Floor : 0,
+                distance = world.Stage != null ? world.Stage.Distance : 0f,
             };
             foreach (var e in events)
             {
@@ -136,6 +153,8 @@ namespace SickOfIt.Gameplay
             Record("end", outcome, 0);
             finished = true;
             LastSummary = Summarize(outcome);
+            try { Finished?.Invoke(this, LastSummary); }
+            catch (Exception e) { Debug.LogException(e); }
             if (!WriteFiles)
                 return;
 

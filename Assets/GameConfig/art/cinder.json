@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "entity": "cinder",
+  "name": "Cinder",
+  "description": "a living spark from a burning village: a small teardrop-shaped flame with a hot white-yellow core and orange-red edges, two bright black beady eyes and a mischievous grin, a thin trail of smoke and sparks behind it",
+  "height": 0.35,
+  "poses": {
+    "stand": "floating in the air, its flame tip flickering upward",
+    "popped": "bursting apart into a scatter of tiny sparks and a puff of smoke"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "floats in place, its flame flickering and wobbling, blinking its eyes",
+      "seconds": 1.5
+    },
+    "move": {
+      "from": "stand",
+      "action": "leans forward and drifts toward the right, its flame streaming backward, staying in the same spot in the frame",
+      "seconds": 1.5
+    },
+    "die": {
+      "from": "stand",
+      "to": "popped",
+      "action": "puffs up and pops into a burst of sparks and smoke",
+      "seconds": 1
+    }
+  }
+}

@@ -33,6 +33,8 @@ namespace SickOfIt.Tools.Editor
         private Vector2 scrollPos;
         private string statusLog = "";
         private bool isBusy;
+        // Batch mode (FullDeployBatch): no window; every log line goes to the Unity log.
+        private bool batch;
 
         // Step tracking
         private int currentStep;
@@ -44,6 +46,35 @@ namespace SickOfIt.Tools.Editor
             var window = GetWindow<GameDeployWindow>("Game Deploy");
             window.minSize = new Vector2(500, 600);
             window.RefreshVersionInfo();
+        }
+
+        /// <summary>
+        /// Run Full Deploy without a window, for the build server:
+        /// Unity.exe -batchmode -projectPath C:/Projects/sickofitgame-unity -executeMethod SickOfIt.Tools.Editor.GameDeployWindow.FullDeployBatch
+        /// Same steps (Addressables, a new Game/v&lt;n&gt;, the loader and page update, removing the old version) except
+        /// starting the local dev server. BUILD_VERSION (environment) picks the version number instead of latest + 1.
+        /// Exits 0 on success, 1 on failure.
+        /// </summary>
+        public static void FullDeployBatch()
+        {
+            var deploy = CreateInstance<GameDeployWindow>();
+            deploy.batch = true;
+            int code = 1;
+            try
+            {
+                deploy.RefreshVersionInfo();
+                deploy.RunPipeline(startDevServer: false);
+                code = 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GameDeploy] Deploy failed: {ex}");
+            }
+            finally
+            {
+                DestroyImmediate(deploy);
+            }
+            EditorApplication.Exit(code);
         }
 
         [MenuItem("Tools/Run Full Deploy")]
@@ -203,7 +234,17 @@ namespace SickOfIt.Tools.Editor
                 newVersion = maxVersion + 1;
             }
 
-            Repaint();
+            string overrideVersion = batch ? Environment.GetEnvironmentVariable("BUILD_VERSION") : null;
+            if (!string.IsNullOrEmpty(overrideVersion))
+            {
+                if (!int.TryParse(overrideVersion.TrimStart('v', 'V'), out int forced) || forced < 1)
+                    throw new Exception("BUILD_VERSION must be a positive number, got: " + overrideVersion);
+                newVersion = forced;
+                Log($"BUILD_VERSION={forced}: building v{forced} (latest existing: v{detectedVersion}).");
+            }
+
+            if (!batch)
+                Repaint();
         }
 
         // ─────────────────────────────────────────────
@@ -257,7 +298,7 @@ namespace SickOfIt.Tools.Editor
 
         private void Step_DeleteOldVersionFolder()
         {
-            if (detectedVersion < 0)
+            if (detectedVersion < 0 || detectedVersion == newVersion)
             {
                 Log("Step 4: No old version to delete. Skipping.");
                 return;
@@ -332,7 +373,7 @@ namespace SickOfIt.Tools.Editor
 
         private void Step_FindReplaceVersion()
         {
-            if (detectedVersion < 0)
+            if (detectedVersion < 0 || detectedVersion == newVersion)
             {
                 Log("Step 7: No old version to replace. Skipping.");
                 return;
@@ -433,7 +474,24 @@ namespace SickOfIt.Tools.Editor
             isBusy = true;
             currentStep = 0;
             statusLog = "";
+            try
+            {
+                RunPipeline(startDevServer: true);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GameDeploy] Deploy failed: {ex}");
+            }
+            finally
+            {
+                isBusy = false;
+                Repaint();
+            }
+        }
 
+        /// <summary>Every deploy step in order; logs and rethrows the first failure.</summary>
+        private void RunPipeline(bool startDevServer)
+        {
             Log("═══════════════════════════════════════");
             Log("  FULL DEPLOY STARTED");
             Log($"  {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
@@ -463,7 +521,8 @@ namespace SickOfIt.Tools.Editor
                 Step_FindReplaceVersion();
                 Log("");
 
-                Step_RunDevServer();
+                if (startDevServer)
+                    Step_RunDevServer();
 
                 Log("");
                 Log("═══════════════════════════════════════");
@@ -478,12 +537,7 @@ namespace SickOfIt.Tools.Editor
                 Log("  DEPLOY FAILED");
                 Log($"  Error: {ex.Message}");
                 Log("═══════════════════════════════════════");
-                Debug.LogError($"[GameDeploy] Deploy failed: {ex}");
-            }
-            finally
-            {
-                isBusy = false;
-                Repaint();
+                throw;
             }
         }
 
@@ -542,7 +596,11 @@ namespace SickOfIt.Tools.Editor
         private void Log(string message)
         {
             statusLog += message + "\n";
-            ////Debug.Log("[GameDeploy] " + message);
+            if (batch)
+            {
+                Debug.Log("[GameDeploy] " + message);
+                return;
+            }
             Repaint();
         }
 

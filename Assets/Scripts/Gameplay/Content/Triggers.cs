@@ -144,7 +144,7 @@ namespace SickOfIt.Gameplay.Content
     }
 
     [Serializable, JsonType("counter")]
-    [Doc("A counter is at least 'atLeast' (and below 'below', if set). Built-in counters: kills, kills:{entityId}, spawned, spawned:{entityId}, playerHits.")]
+    [Doc("A counter is at least 'atLeast' (and below 'below', if set). Built-in counters: kills, kills:{entityId}, spawned, spawned:{entityId}, playerHits, floor (the floor counter), distance (travel stages).")]
     public sealed class CounterTrigger : Trigger
     {
         [Required] public string name = "";

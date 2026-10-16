@@ -1,0 +1,129 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+
+namespace SickOfIt.Gameplay
+{
+    /// <summary>
+    /// Virtual input devices for the playtest bot: a keyboard, a gamepad and a mouse added to the Input System,
+    /// so the game reads the bot exactly like a player (move A/D, jump Space, hold R to rewind, P to pause,
+    /// 1-4 to pick an upgrade, Escape to skip; aim with the gamepad's right stick; click menu buttons with the
+    /// mouse). Nothing exists until <see cref="Create"/>; <see cref="Dispose"/> removes the devices.
+    /// </summary>
+    public sealed class PlaytestInput
+    {
+        public static PlaytestInput Current { get; private set; }
+
+        Keyboard keyboard;
+        Gamepad gamepad;
+        Mouse mouse;
+        readonly HashSet<Key> held = new HashSet<Key>();
+        Vector2 leftStick;
+        Vector2 rightStick;
+        Vector2 mousePosition;
+        bool mouseDown;
+
+        public static PlaytestInput Create()
+        {
+            Current?.Dispose();
+            var input = new PlaytestInput
+            {
+                keyboard = InputSystem.AddDevice<Keyboard>("HawkesPlaytestKeyboard"),
+                gamepad = InputSystem.AddDevice<Gamepad>("HawkesPlaytestGamepad"),
+                mouse = InputSystem.AddDevice<Mouse>("HawkesPlaytestMouse"),
+            };
+            Current = input;
+            return input;
+        }
+
+        public bool Alive => keyboard != null && keyboard.added;
+
+        public bool IsHeld(Key key) => held.Contains(key);
+
+        public void SetKey(Key key, bool down)
+        {
+            if (!Alive || (down ? !held.Add(key) : !held.Remove(key)))
+                return;
+            var state = new KeyboardState();
+            foreach (var k in held)
+                state.Set(k, true);
+            InputSystem.QueueStateEvent(keyboard, state);
+            keyboard.MakeCurrent();
+        }
+
+        /// <summary>Horizontal movement (-1..1) on A/D.</summary>
+        public void SetMoveX(float x)
+        {
+            SetKey(Key.A, x < -0.5f);
+            SetKey(Key.D, x > 0.5f);
+        }
+
+        /// <summary>Aims (and fires) with the gamepad's right stick; zero stops firing.</summary>
+        public void SetAim(Vector2 direction)
+        {
+            direction = direction.sqrMagnitude > 1f ? direction.normalized : direction;
+            if (!Alive || direction == rightStick)
+                return;
+            rightStick = direction;
+            SendGamepad();
+        }
+
+        void SendGamepad()
+        {
+            InputSystem.QueueStateEvent(gamepad, new GamepadState { leftStick = leftStick, rightStick = rightStick });
+            gamepad.MakeCurrent();
+        }
+
+        public void MoveMouse(Vector2 screenPosition)
+        {
+            if (!Alive)
+                return;
+            mousePosition = screenPosition;
+            SendMouse();
+        }
+
+        public void SetMouseButton(bool down)
+        {
+            if (!Alive || mouseDown == down)
+                return;
+            mouseDown = down;
+            SendMouse();
+        }
+
+        void SendMouse()
+        {
+            var state = new MouseState { position = mousePosition };
+            if (mouseDown)
+                state = state.WithButton(MouseButton.Left);
+            InputSystem.QueueStateEvent(mouse, state);
+            mouse.MakeCurrent();
+        }
+
+        /// <summary>Lets go of everything.</summary>
+        public void ReleaseAll()
+        {
+            if (!Alive)
+                return;
+            held.Clear();
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            leftStick = rightStick = Vector2.zero;
+            SendGamepad();
+            mouseDown = false;
+            SendMouse();
+        }
+
+        public void Dispose()
+        {
+            if (keyboard != null && keyboard.added) InputSystem.RemoveDevice(keyboard);
+            if (gamepad != null && gamepad.added) InputSystem.RemoveDevice(gamepad);
+            if (mouse != null && mouse.added) InputSystem.RemoveDevice(mouse);
+            keyboard = null;
+            gamepad = null;
+            mouse = null;
+            held.Clear();
+            if (Current == this)
+                Current = null;
+        }
+    }
+}
