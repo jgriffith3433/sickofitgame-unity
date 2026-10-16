@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "extends": "fireball",
   "body": {
-    "radius": 0.9,
+    "radius": 0.2,
     "solid": false
   },
   "visual": {

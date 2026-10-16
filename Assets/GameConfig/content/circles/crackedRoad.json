@@ -84,7 +84,7 @@
       "entity": "brimstoneDemon",
       "weight": 1.0,
       "fromFloor": 0,
-      "areaCenter": [3.8, -1.95],
+      "areaCenter": [3.8, -2.05],
       "areaSize": [1.2, 0.1]
     }
   ],
