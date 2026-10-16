@@ -124,8 +124,45 @@ function loadSpec(id) {
 }
 
 function workRoot() {
+  // SOI_ART_WORK overrides; a Windows path in game.json means nothing elsewhere (the cloud server), so there the work
+  // folder sits beside the repo.
+  if (process.env.SOI_ART_WORK) return process.env.SOI_ART_WORK;
   const game = readJson(path.join(REPO, 'Assets', 'GameConfig', 'game.json'), {});
-  return path.join(game.characterArt?.enemySourceRoot || 'C:\\Projects\\SickOfItGameEnemies', 'Generated');
+  const root = game.characterArt?.enemySourceRoot || 'C:\\Projects\\SickOfItGameEnemies';
+  if (process.platform !== 'win32' && /^[A-Za-z]:\\/.test(root)) return path.join(REPO, '..', 'SickOfItGameEnemies', 'Generated');
+  return path.join(root, 'Generated');
+}
+
+/**
+ * Before anything is paid for: the Python that keys and cuts out (Dose Of Destruction's .venv, DOD_ROOT) must import,
+ * and a reference image must be a real file (not a Git LFS pointer). Fails with what's missing.
+ */
+async function preflight(spec) {
+  const probe = [
+    'import json, sys, os',
+    'missing = []',
+    "for m in ('PIL', 'numpy', 'rembg'):",
+    '    try: __import__(m)',
+    '    except Exception as e: missing.append(f"{m} ({e.__class__.__name__})")',
+    "sys.path[:0] = [os.environ['DOD_ROOT'], os.path.join(os.environ['DOD_ROOT'], 'tools')]",
+    "for m in ('_build_anims', 'cutout'):",
+    '    try: __import__(m)',
+    '    except Exception as e: missing.append(f"DoD {m} ({e.__class__.__name__}: {e})")',
+    'print(json.dumps(missing))',
+  ].join('\n');
+  let missing;
+  try {
+    missing = JSON.parse((await run(PYTHON, ['-c', probe], { quiet: true })).trim().split(/\r?\n/).pop());
+  } catch (e) {
+    missing = [`python (${PYTHON}): ${e.message.split('\n')[0]}`];
+  }
+  if (missing.length) {
+    throw new Error(`The art pipeline's Python isn't ready, so nothing was sent to the GPU: ${missing.join('; ')}. It uses Dose Of Destruction's .venv (DOD_ROOT=${DOD}, now ${PYTHON}). Run it where that exists (J's PC), or set DOD_ROOT.`);
+  }
+  const ref = spec.reference ? resolveAsset(spec.reference) : null;
+  if (ref && fs.existsSync(ref) && fs.statSync(ref).size < 1024 && fs.readFileSync(ref, 'utf8').startsWith('version https://git-lfs')) {
+    throw new Error(`reference ${spec.reference} is a Git LFS pointer, not the image: run git lfs pull (git lfs pull --include "${path.relative(REPO, ref).replace(/\\/g, '/')}")`);
+  }
 }
 
 function paths(spec) {
@@ -557,6 +594,7 @@ function parseArgs(argv) {
 async function make(id, opts) {
   const spec = loadSpec(id);
   const P = paths(spec);
+  await preflight(spec);
   fs.mkdirSync(P.work, { recursive: true });
   log(`${spec.name} (${spec.entity}) -> work folder ${P.work}`);
 

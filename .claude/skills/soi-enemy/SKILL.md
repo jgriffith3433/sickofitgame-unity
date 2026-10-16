@@ -45,8 +45,10 @@ node Tools/Art/art.mjs <id> --no-unity   # where Unity can't run (the server age
 ```
 
 - It goes through Hawkes Gen; each take has a job key, so a re-run after a failure pays for nothing twice.
-- Keying uses Dose Of Destruction's Python (`DOD_ROOT`, its `.venv` with rembg). If it isn't there, say so in your
-  summary rather than working around it.
+- Keying uses Dose Of Destruction's Python (`DOD_ROOT`, its `.venv` with rembg). `art.mjs` checks it before sending
+  anything (and that a `reference` isn't a Git LFS pointer: `git lfs pull --include <file>`); if it isn't there (the
+  cloud server today), stop with the spec and entity done and say the art runs on J's PC:
+  `node Tools/Art/art.mjs <id> --start`. The work folder is `SOI_ART_WORK`, else game.json's, else beside the repo.
 - **Check `preview.png` yourself** (Read it): the same creature in every row, the pivot cross in the same spot, nothing
   cut off, no green fringe, the gold box on the attack's hit frame. Fix framing with the spec's per-clip fields
   (`size`, `start`, `end`, `flip`, `tolerance`) before regenerating anything.
