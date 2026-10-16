@@ -221,3 +221,11 @@ the API and AWS keys and runs the shared GPU fleet. This project never holds tho
   (`Assets/Scripts/Tools/Editor/Audio/`, `HawkesGenAudio.cs`) uses `audio.sfx`, `audio.voice`, `audio.voice-design` and
   `audio.voice-save` through `com.hawkes.gen`, and `recipes/check` to reuse files it already made.
 - GPU tools cost money while a server runs. Ask J before starting servers or running big batches.
+
+## Making content (agents)
+
+Enemies, stages and lines are made end to end by agents with the skills in `.claude/skills/` (Claude Code loads them
+by themselves): `soi-enemy` (story → entity → art spec → `Tools/Art/art.mjs` → a level that introduces it → validate →
+bot playtest), `soi-level` (a stretch of floors in a Circle, travel script, beats, lines), `soi-voice-music`. Story.md
+comes first, GPU work is priced (`hawkesgen_estimate`) and needs J's OK, and the content playtest is the level's
+`level-<n>` scenario (`.hawkes/scenario.txt`).
