@@ -84,7 +84,7 @@
     {
       "type": "chase",
       "speed": 0.7,
-      "stopDistance": 1.6,
+      "stopDistance": 2.8,
       "horizontalOnly": true,
       "face": true
     },
@@ -97,7 +97,7 @@
       "muzzle": [0.22, 0.12],
       "interval": 2.6,
       "initialDelay": 2.0,
-      "range": 3.0,
+      "range": 3.6,
       "animTrigger": "IsAttacking",
       "fireOnEvent": "FireProjectile",
       "damage": 1

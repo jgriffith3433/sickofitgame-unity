@@ -30,6 +30,7 @@
       "camera": "Travel",
       "travelDirection": "Right",
       "travelLead": 1.5,
+      "travelSpeed": 0.5,
       "travelLength": 74.0,
       "followSharpness": 4.0,
       "holdForPushes": true
