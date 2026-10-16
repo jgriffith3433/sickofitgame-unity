@@ -6,7 +6,7 @@
     {
       "name": "player",
       "description": "A tired, grumpy hero in their thirties who is completely sick of everything. Low, slightly raspy voice with dry, deadpan delivery; sarcastic and unimpressed, muttering one-liners under their breath like a stand-up comedian. Natural, close-mic studio recording, American accent.",
-      "sampleText": "Oh, great. More of them. You know what, I had plans today. Big plans. Lying on the couch, ignoring my emails, eating cereal for dinner. And instead I'm out here. Shooting slime. Fantastic.",
+      "sampleText": "Oh, great. More of them. You know what, I had plans today. Big plans. Lying on the couch, ignoring the whole world, eating cereal for dinner. And instead I'm out here. Shooting slime. Fantastic.",
       "voiceId": "DzkD7I4tf5i3KSaB4cz5",
       "model": "eleven_v3",
       "stability": 0.5,
@@ -15,7 +15,7 @@
     {
       "name": "announcer",
       "description": "Over-the-top retro arcade game announcer: booming, energetic and larger than life, slightly cheesy, big punchy emphasis on every word, like a 1990s arcade cabinet. Clean, loud studio recording, American accent.",
-      "sampleText": "Welcome, challenger! Get ready for the most intense, the most ridiculous, the most Monday-flavored battle of your entire life! Level one, begin! Final wave! Oh yeah, now we're talking!",
+      "sampleText": "Welcome, challenger! Get ready for the most intense, the most ridiculous, the most infernal battle of your entire life! Level one, begin! Final wave! Oh yeah, now we're talking!",
       "voiceId": "1xynpTfy7I462pPrU2kL",
       "model": "eleven_v3",
       "stability": 0.5,

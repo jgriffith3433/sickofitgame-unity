@@ -41,8 +41,55 @@ namespace SickOfIt.Core.Progression
                 return;
             }
 
-            // Initialize UI to current state immediately
+            DockToCorner();
             UpdateUI();
+        }
+
+        /// <summary>
+        /// Keeps the download status out of the menu: a small strip in the bottom-left corner with a short label
+        /// (no asset names or MB counts), clear of the buttons.
+        /// </summary>
+        private void DockToCorner()
+        {
+            if (downloadUIRoot != null && downloadUIRoot.transform is RectTransform rect)
+            {
+                rect.anchorMin = rect.anchorMax = Vector2.zero;
+                rect.pivot = Vector2.zero;
+                rect.anchoredPosition = new Vector2(24f, 24f);
+                rect.sizeDelta = new Vector2(260f, 44f);
+            }
+
+            if (statusText != null)
+            {
+                var r = statusText.rectTransform;
+                r.anchorMin = r.anchorMax = new Vector2(0f, 1f);
+                r.pivot = new Vector2(0f, 1f);
+                r.anchoredPosition = Vector2.zero;
+                r.sizeDelta = new Vector2(260f, 24f);
+                statusText.alignment = TextAlignmentOptions.TopLeft;
+                statusText.fontSize = 16f;
+                statusText.textWrappingMode = TextWrappingModes.NoWrap;
+                statusText.overflowMode = TextOverflowModes.Ellipsis;
+            }
+
+            if (sizeText != null)
+                sizeText.gameObject.SetActive(false);
+
+            if (progressBarFill != null)
+            {
+                var r = progressBarFill.rectTransform;
+                r.anchorMin = r.anchorMax = new Vector2(0f, 1f);
+                r.pivot = new Vector2(0f, 1f);
+                r.anchoredPosition = new Vector2(0f, -28f);
+                r.sizeDelta = new Vector2(200f, 8f);
+            }
+        }
+
+        private static string CleanStatus(BundleDownloadManager m)
+        {
+            if (m.IsFullyCached && !m.IsDownloading)
+                return "";
+            return $"Loading {Mathf.RoundToInt(m.Progress * 100f)}%";
         }
 
         private void Update()
@@ -61,11 +108,7 @@ namespace SickOfIt.Core.Progression
 
             // Status text
             if (statusText != null)
-                statusText.text = manager.StatusText;
-
-            // Size text
-            if (sizeText != null)
-                sizeText.text = manager.SizeText;
+                statusText.text = CleanStatus(manager);
 
             // Show/hide root
             if (downloadUIRoot != null)

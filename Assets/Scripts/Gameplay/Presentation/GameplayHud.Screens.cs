@@ -92,10 +92,15 @@ namespace SickOfIt.Gameplay
             }
             else
             {
+                // Hide at once: Destroy waits for the end of the frame, and the title must never outlive the resume.
+                pauseRoot.SetActive(false);
                 Destroy(pauseRoot);
                 pauseRoot = null;
                 if (settingsRoot != null)
+                {
+                    settingsRoot.SetActive(false);
                     Destroy(settingsRoot);
+                }
                 settingsRoot = null;
                 menu.Back = null;
                 Time.timeScale = timeScaleBeforePause <= 0f ? 1f : timeScaleBeforePause;
@@ -156,7 +161,7 @@ namespace SickOfIt.Gameplay
             new MenuGrade { grade = "S", minScore = 95, quip = "Flawless. Suspicious, even.", color = new Color(1f, 0.85f, 0.25f) },
             new MenuGrade { grade = "A", minScore = 80, quip = "Tuesday energy.", color = new Color(0.5f, 1f, 0.45f) },
             new MenuGrade { grade = "B", minScore = 60, quip = "Acceptable. Barely.", color = new Color(0.3f, 0.85f, 1f) },
-            new MenuGrade { grade = "C", minScore = 40, quip = "Monday energy.", color = new Color(1f, 0.6f, 0.3f) },
+            new MenuGrade { grade = "C", minScore = 40, quip = "Barely a dent in Hell.", color = new Color(1f, 0.6f, 0.3f) },
             new MenuGrade { grade = "D", minScore = 0, quip = "You survived. Technically.", color = new Color(1f, 0.35f, 0.3f) },
         };
 
