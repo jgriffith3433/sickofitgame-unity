@@ -708,7 +708,18 @@ namespace SickOfIt.Playtest
                 for (int attempt = 0; attempt < 2 && !Run.Done; attempt++)
                 {
                     MenuButton button = null;
-                    yield return Run.Until(() => (button = FindButton(text)) != null && button.IsInteractable(), timeout, $"the \"{text}\" button");
+                    if (attempt == 0)
+                        yield return Run.Until(() => (button = FindButton(text)) != null && button.IsInteractable(), timeout, $"the \"{text}\" button");
+                    else
+                    {
+                        // The first click may still be working (New Game plays the house explosion before the video
+                        // loads, and the menu animates out): if the button is gone, wait for the effect, don't fail.
+                        float gone = Time.realtimeSinceStartup + 2f;
+                        while (!Run.Done && Time.realtimeSinceStartup < gone && !((button = FindButton(text)) != null && button.IsInteractable()))
+                            yield return null;
+                        if (button == null || !button.IsInteractable())
+                            break;
+                    }
                     if (Run.Done)
                         yield break;
                     yield return WaitReal(0.4f); // entrance animation
