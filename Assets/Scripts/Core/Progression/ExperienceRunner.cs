@@ -110,6 +110,12 @@ namespace SickOfIt.Core.Progression
             musicSource = source;
         }
 
+        /// <summary>The level's own camera (Camera.main can still be the previous scene's while this one loads).</summary>
+        public void SetCamera(Camera camera)
+        {
+            mainCamera = camera;
+        }
+
         /// <summary>
         /// Initialize and start running the experience.
         /// </summary>
@@ -178,7 +184,8 @@ namespace SickOfIt.Core.Progression
 
         private void SetupReferences()
         {
-            mainCamera = Camera.main;
+            if (mainCamera == null)
+                mainCamera = Camera.main;
             if (mainCamera != null)
             {
                 cameraTransform = mainCamera.transform;

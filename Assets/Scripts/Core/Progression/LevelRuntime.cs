@@ -62,6 +62,7 @@ namespace SickOfIt.Core.Progression
         private PlayerHealth playerHealth;
         private LevelScript script;
         private GameplayWorld gameplayWorld;
+        private Camera sceneCamera;
 
         /// <summary>The level's gameplay script, or null for a level that uses the enemies list.</summary>
         public LevelScript Script => script;
@@ -168,7 +169,7 @@ namespace SickOfIt.Core.Progression
                 LevelNumber = levelNumber,
                 LevelName = config.levelName,
                 Player = characterObject,
-                Camera = Camera.main,
+                Camera = SceneCamera(),
                 Music = musicSource,
                 PickupPool = pickupPool,
                 Host = this,
@@ -261,6 +262,31 @@ namespace SickOfIt.Core.Progression
         #endregion
 
         #region Scene References
+
+        /// <summary>
+        /// This level's own camera. Not Camera.main: in builds the level scene loads additively while the previous
+        /// scene (with its own MainCamera) is still loaded, and that one is destroyed right after. A travel stage that
+        /// grabbed it never moved its camera, and lost its backdrop and edges with it.
+        /// </summary>
+        private Camera SceneCamera()
+        {
+            if (sceneCamera != null)
+                return sceneCamera;
+            Camera any = null;
+            foreach (var root in gameObject.scene.GetRootGameObjects())
+            {
+                foreach (var cam in root.GetComponentsInChildren<Camera>(true))
+                {
+                    if (cam.CompareTag("MainCamera"))
+                        return sceneCamera = cam;
+                    if (any == null)
+                        any = cam;
+                }
+            }
+            var main = Camera.main;
+            sceneCamera = main != null && main.gameObject.scene == gameObject.scene ? main : any != null ? any : main;
+            return sceneCamera;
+        }
 
         private void ResolveReferences()
         {
@@ -396,7 +422,7 @@ namespace SickOfIt.Core.Progression
                 musicSource.time = config.musicStartTime;
         }
 
-        private static void EnsureAudioListener()
+        private void EnsureAudioListener()
         {
             var listeners = Object.FindObjectsByType<AudioListener>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             for (int i = 0; i < listeners.Length; i++)
@@ -405,7 +431,7 @@ namespace SickOfIt.Core.Progression
                     return;
             }
 
-            var cam = Camera.main;
+            var cam = SceneCamera();
             if (cam != null)
             {
                 var listener = cam.GetComponent<AudioListener>();
@@ -435,7 +461,7 @@ namespace SickOfIt.Core.Progression
                 container = go.transform;
             }
 
-            var cam = Camera.main;
+            var cam = SceneCamera();
 
             for (int i = 0; i < layers.Count; i++)
             {
@@ -727,6 +753,7 @@ namespace SickOfIt.Core.Progression
                 ? characterObject.GetComponentInChildren<SickOfIt.Core.Input.PlayerController>()
                 : null;
             experienceRunner.SetPlayerRefs(playerHealth, playerCtrl);
+            experienceRunner.SetCamera(SceneCamera());
             if (musicSource != null)
                 experienceRunner.SetMusicSource(musicSource);
 
@@ -904,7 +931,7 @@ namespace SickOfIt.Core.Progression
         {
             if (!config.generateBarriers) return;
 
-            var cam = Camera.main;
+            var cam = SceneCamera();
             if (cam == null)
             {
                 Debug.LogWarning("[LevelRuntime] No main camera found, cannot generate barriers");

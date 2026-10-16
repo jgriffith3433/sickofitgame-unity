@@ -143,11 +143,7 @@ namespace SickOfIt.Tests.PlayMode
                 // The same scenario the WebGL build runs for the Hawkes playtest ("level-N"), with the editor's
                 // scene loader as its setup shortcut. The bot plays through virtual input devices.
                 SickOfItPlaytest.Register();
-                SickOfItPlaytest.LoadLevel = n =>
-                {
-                    PlayerPrefs.SetInt("CurrentLevelNumber", n);
-                    return EditorSceneManager.LoadSceneAsyncInPlayMode("Assets/Scenes/Level.unity", new LoadSceneParameters(LoadSceneMode.Single));
-                };
+                SickOfItPlaytest.LoadLevel = LoadLevelLikeTheBuild;
                 GameplayTelemetry.Summary s = null;
                 void Keep(GameplayTelemetry log, GameplayTelemetry.Summary summary) => s = s ?? summary;
                 GameplayTelemetry.Finished += Keep;
@@ -180,6 +176,49 @@ namespace SickOfIt.Tests.PlayMode
                 Time.timeScale = 1f;
                 LogAssert.ignoreFailingMessages = false;
             }
+        }
+
+        /// <summary>
+        /// Opens a level the way the build's loader (AddressablesSceneLoader) does: additively, while the previous
+        /// scene and its own MainCamera are still loaded; that scene is unloaded and the level's content shown once
+        /// the load is done. A single-scene load hid code that grabbed the outgoing scene's camera.
+        /// </summary>
+        static AsyncOperation LoadLevelLikeTheBuild(int n)
+        {
+            PlayerPrefs.SetInt("CurrentLevelNumber", n);
+            var previous = SceneManager.CreateScene("PreviousScene" + Time.frameCount);
+            var camera = new GameObject("PreviousCamera") { tag = "MainCamera" };
+            camera.AddComponent<Camera>().orthographic = true;
+            SceneManager.MoveGameObjectToScene(camera, previous);
+            SceneManager.SetActiveScene(previous);
+            for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (scene != previous && scene.isLoaded)
+                    SceneManager.UnloadSceneAsync(scene);
+            }
+
+            const string levelPath = "Assets/Scenes/Level.unity";
+            var load = EditorSceneManager.LoadSceneAsyncInPlayMode(levelPath, new LoadSceneParameters(LoadSceneMode.Additive));
+            load.completed += _ =>
+            {
+                var level = SceneManager.GetSceneByPath(levelPath);
+                if (level.IsValid() && level.isLoaded)
+                {
+                    SceneManager.SetActiveScene(level);
+                    foreach (var root in level.GetRootGameObjects())
+                    {
+                        var content = root.GetComponentInChildren<SickOfIt.Core.Flow.SceneContentController>(true);
+                        if (content != null)
+                        {
+                            content.ActivateScene();
+                            break;
+                        }
+                    }
+                }
+                SceneManager.UnloadSceneAsync(previous);
+            };
+            return load;
         }
 
         static string Floor(GameplayTelemetry.Summary s)
