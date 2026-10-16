@@ -41,6 +41,10 @@ namespace SickOfIt.Core.Progression
         private VideoConfig config;
         private bool videoWasSkipped;
         private bool videoCompleted;
+        private bool playbackBegun;
+        private float lastClockTime = -1f;
+        private float stalledSeconds;
+        private const float StallSecondsBeforeAdvance = 6f;
 
         private void Start()
         {
@@ -217,6 +221,7 @@ namespace SickOfIt.Core.Progression
 
         private void BeginVideoPlayback()
         {
+            playbackBegun = true;
             if (experienceRunner != null)
                 experienceRunner.SetPlaybackHeld(false);
 
@@ -280,9 +285,30 @@ namespace SickOfIt.Core.Progression
 
             if (gameClock != null && gameClock.IsRewinding) return;
 
-            if (spritePlayer != null && spritePlayer.IsReady && spritePlayer.Progress >= 0.99f)
+            // Progress is frame/total and never reaches 1, so also test the last frame and the clock itself.
+            if (spritePlayer != null && spritePlayer.IsReady &&
+                (spritePlayer.Progress >= 0.99f || spritePlayer.CurrentFrame >= spritePlayer.TotalFrames - 1 ||
+                 (gameClock != null && spritePlayer.Duration > 0f && gameClock.Time >= spritePlayer.Duration)))
             {
                 OnVideoComplete();
+                return;
+            }
+
+            // Watchdog: if the clock stops advancing once playback began (stalled load), move on
+            // instead of leaving a black screen.
+            if (playbackBegun && gameClock != null)
+            {
+                if (Mathf.Approximately(gameClock.Time, lastClockTime))
+                    stalledSeconds += Time.unscaledDeltaTime;
+                else
+                    stalledSeconds = 0f;
+                lastClockTime = gameClock.Time;
+
+                if (stalledSeconds >= StallSecondsBeforeAdvance)
+                {
+                    Debug.LogWarning($"[VideoRuntime] Video {videoNumber} stalled at {gameClock.Time:F1}s; continuing.");
+                    OnVideoComplete();
+                }
             }
         }
 
