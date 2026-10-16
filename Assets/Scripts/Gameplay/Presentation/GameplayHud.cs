@@ -95,9 +95,11 @@ namespace SickOfIt.Gameplay
                 new Vector2(800f, 44f), out _, 0f, null, theme.entrance);
             objective.alignment = TextAlignmentOptions.MidlineLeft;
 
-            banner = menu.AddText(menu.Root, "Banner", "", theme.title, new Vector2(0.5f, 0.66f), Vector2.zero,
-                new Vector2(1700f, 190f), out bannerMotion, Mathf.Min(theme.title.fontSize, 120f), menu.TitleFont, theme.titleEntrance,
-                new MenuMotion { type = MenuMotionType.Wobble, amount = 1.2f, speed = 0.4f }, -2f);
+            banner = menu.AddText(menu.Root, "Banner", "", theme.title, new Vector2(0.5f, 0.52f), Vector2.zero,
+                new Vector2(1100f, 150f), out bannerMotion, Mathf.Min(theme.title.fontSize, 96f), menu.TitleFont, theme.titleEntrance,
+                new MenuMotion { type = MenuMotionType.Wobble, amount = 0.6f, speed = 0.4f }, -1f);
+            // Stay in the middle band, clear of the HUD row (objective, diamonds, pause, rewind) and the Overlord.
+            banner.fontSizeMin = 36f;
             subtitle = menu.AddText(menu.Root, "Subtitle", "", theme.subtitle, new Vector2(0.5f, 0.2f), Vector2.zero,
                 new Vector2(1600f, 90f), out subtitleMotion, 0f, null, theme.entrance);
 
