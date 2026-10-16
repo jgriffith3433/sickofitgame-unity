@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "entity": "brimstoneDemon",
+  "name": "Brimstone Demon",
+  "reference": "Images/Demon1.png",
+  "description": "a hunched brimstone demon of the Cracked Road, born out of a crack in the black rock: heavy body of cracked black basalt with molten orange light glowing through every seam, thick stony shoulders, short curved horns of charred stone, small burning ember eyes, a wide jaw with a furnace glow inside, long arms ending in blunt rock claws, flakes of rock and sulfur-yellow dust falling off it",
+  "height": 1.1,
+  "poses": {
+    "stand": "standing hunched on both feet, claws hanging low, the glow in its jaw smouldering",
+    "breath": "leaning forward with its jaw wide open, a short cone of orange fire roaring out of its mouth to the right",
+    "dead": "collapsed on the ground, split into cooling pieces of black rock with the glow gone out of the seams"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes heavily in place, shoulders rising and falling, the glowing seams pulsing brighter and dimmer",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "to": "breath",
+      "action": "rears back, then lunges its head forward and breathes a short burst of fire to the right",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, a chip of rock flies off its shoulder, it staggers back and recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "stand",
+      "to": "dead",
+      "action": "cracks apart along its glowing seams and crumbles into dark rock as the light goes out",
+      "seconds": 1.5
+    }
+  }
+}

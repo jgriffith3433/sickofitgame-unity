@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "extends": "shooter",
+  "health": 4,
+  "moveSpeed": 0.7,
+  "tags": ["brimstoneDemon"],
+  "body": {
+    "radius": 1.5
+  },
+  "visual": {
+    "fxColor": "#FF6A1F",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsAttacking",
+          "type": "Bool",
+          "defaultValue": 0.0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Images/Demon1.png",
+          "fps": 8,
+          "loop": true
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Images/Demon1.png",
+          "fps": 8,
+          "loop": false,
+          "events": [
+            {
+              "frame": 1,
+              "functionName": "FireProjectile"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1.0,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0.0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 0.9,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "IfNot",
+              "threshold": 0.0
+            }
+          ]
+        }
+      ],
+      "defaultStateName": "Idle"
+    }
+  },
+  "loot": {
+    "chance": 0.35,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "chase",
+      "speed": 0.7,
+      "stopDistance": 1.6,
+      "horizontalOnly": true,
+      "face": true
+    },
+    {
+      "type": "shoot",
+      "projectile": "brimstoneBreath",
+      "pattern": { "type": "spread", "count": 3, "angle": 24 },
+      "speed": 4.0,
+      "aim": "Player",
+      "muzzle": [0.22, 0.12],
+      "interval": 2.6,
+      "initialDelay": 2.0,
+      "range": 3.0,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile",
+      "damage": 1
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "displayName": "The Cracked Road",
+  "firstFloor": 900,
+  "lastFloor": 801,
+  "backgroundLayers": [
+    {
+      "name": "Road_Path",
+      "spriteFramesData": "Videos/Level2_Background1.asset",
+      "layer": "Background1",
+      "sequenceBy": "Floors",
+      "sequenceStart": 0,
+      "sequenceDuration": 0,
+      "sequenceLoop": true
+    }
+  ],
+  "track": {
+    "groundY": -2.5,
+    "groundColor": "#0B0A0D",
+    "groundEdgeColor": "#FF8A2A",
+    "segmentLength": 6.0,
+    "platformChance": 0.4,
+    "platformHeight": [1.1, 1.7],
+    "platformWidth": [1.4, 2.4],
+    "platformColor": "#1C1A20",
+    "clearStart": 8.0
+  },
+  "props": [
+    {
+      "name": "black spires",
+      "shape": "Spire",
+      "color": "#0A080CD9",
+      "size": [1.0, 3.8],
+      "sizeVariation": 0.35,
+      "across": -2.5,
+      "parallax": 0.75,
+      "spacing": 2.6,
+      "chance": 0.8,
+      "layer": "Background2",
+      "sortingOrder": 0
+    },
+    {
+      "name": "spire seams",
+      "shape": "Glow",
+      "color": "#FF7A1A80",
+      "size": [0.18, 2.2],
+      "sizeVariation": 0.4,
+      "across": -2.5,
+      "parallax": 0.75,
+      "spacing": 3.4,
+      "chance": 0.5,
+      "layer": "Background2",
+      "sortingOrder": 1
+    },
+    {
+      "name": "road cracks",
+      "shape": "Glow",
+      "color": "#FF6A1AB3",
+      "size": [2.2, 0.25],
+      "sizeVariation": 0.4,
+      "across": -2.78,
+      "parallax": 0.0,
+      "spacing": 2.6,
+      "chance": 0.7,
+      "layer": "Player",
+      "sortingOrder": -18
+    },
+    {
+      "name": "foreground shards",
+      "shape": "Spire",
+      "color": "#030204",
+      "size": [0.5, 1.4],
+      "sizeVariation": 0.3,
+      "across": -3.0,
+      "parallax": -0.4,
+      "spacing": 8.0,
+      "chance": 0.5,
+      "layer": "Foreground1",
+      "sortingOrder": 0
+    }
+  ],
+  "enemies": [
+    {
+      "entity": "brimstoneDemon",
+      "weight": 1.0,
+      "fromFloor": 0,
+      "areaCenter": [3.8, -1.95],
+      "areaSize": [1.2, 0.1]
+    }
+  ],
+  "hazards": [
+    {
+      "name": "spire shards",
+      "weight": 1.0,
+      "fromFloor": 890,
+      "warning": "The spires are shedding.",
+      "warningSound": "vo_road_shards",
+      "telegraph": 1.5,
+      "actions": [
+        {
+          "type": "startHazard",
+          "id": "spireShards",
+          "projectile": "fireball",
+          "pattern": { "type": "rain", "count": 1 },
+          "speed": 2.2,
+          "interval": 1.4,
+          "duration": 6.0
+        }
+      ],
+      "duration": 7.0
+    }
+  ],
+  "easiest": {
+    "maxAlive": 2,
+    "pushSize": 2,
+    "spawnInterval": 1.6,
+    "breather": 4.5,
+    "hazardChance": 0.25,
+    "healthMultiplier": 1.0,
+    "pushTimeout": 22.0
+  },
+  "hardest": {
+    "maxAlive": 3,
+    "pushSize": 5,
+    "spawnInterval": 1.0,
+    "breather": 3.0,
+    "hazardChance": 0.35,
+    "healthMultiplier": 1.5,
+    "pushTimeout": 25.0
+  },
+  "milestones": [
+    {
+      "floor": 850,
+      "text": "FLOOR 850: HALFWAY UP THE ROAD",
+      "sound": "vo_floor_850",
+      "style": "Banner",
+      "color": "#FFB46A",
+      "duration": 2.5
+    }
+  ]
+}

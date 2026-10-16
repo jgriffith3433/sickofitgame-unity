@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "extends": "fireball",
+  "body": {
+    "radius": 0.9,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.1
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "dieOnSolid": true,
+      "effect": "burning"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 0.55
+    }
+  ]
+}
