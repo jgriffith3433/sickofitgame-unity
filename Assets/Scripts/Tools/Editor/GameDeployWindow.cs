@@ -280,10 +280,12 @@ namespace SickOfIt.Tools.Editor
 
             Log($"Step 3: Creating v{newVersion} from template...");
 
+            // The template is an empty folder, and git can't store empty folders: a fresh clone of the website (the
+            // build server's copy) doesn't have it. Create it rather than fail.
             if (!Directory.Exists(TemplateFolder))
             {
-                Log("  ERROR: Template folder not found: " + TemplateFolder);
-                throw new Exception("Template folder not found: " + TemplateFolder);
+                Log("  Template folder not found (a fresh checkout): creating an empty " + TemplateFolder);
+                Directory.CreateDirectory(TemplateFolder);
             }
 
             if (Directory.Exists(newVersionFolder))
