@@ -48,6 +48,7 @@ namespace MobileControllerFramework
             }
             
             analogRect = analogController.GetComponent<RectTransform>();
+            analogController.followFinger = true;
             parentCanvas = analogController.GetComponentInParent<Canvas>();
             
             // Setup canvas group for fading
