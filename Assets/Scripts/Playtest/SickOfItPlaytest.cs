@@ -813,15 +813,29 @@ namespace SickOfIt.Playtest
                 yield return Run.Until(() => (button = FindButtonInRow(row, text)) != null, 10f, $"the \"{text}\" button for {row}");
                 if (Run.Done)
                     yield break;
-                input.MoveMouse(ScreenPoint(button));
-                yield return null;
-                yield return null;
-                input.SetMouseButton(true);
-                yield return null;
-                yield return null;
-                input.SetMouseButton(false);
-                Run.Event("click", $"{row}: {text}");
-                yield return Run.Until(effect, 5f, $"clicking {row} \"{text}\" to change the setting");
+                // The panel springs in when it opens, so a button's place moves for a moment: let it settle, then
+                // aim at the button where it is now, and click again if the first click found it moving.
+                for (int attempt = 0; attempt < 3; attempt++)
+                {
+                    yield return WaitReal(0.6f);
+                    if (Run.Done)
+                        yield break;
+                    button = FindButtonInRow(row, text) ?? button;
+                    input.MoveMouse(ScreenPoint(button));
+                    yield return null;
+                    yield return null;
+                    input.SetMouseButton(true);
+                    yield return null;
+                    yield return null;
+                    input.SetMouseButton(false);
+                    Run.Event("click", $"{row}: {text}");
+                    float end = Time.realtimeSinceStartup + 1.5f;
+                    while (Time.realtimeSinceStartup < end && !Safe(effect))
+                        yield return null;
+                    if (Safe(effect))
+                        yield break;
+                }
+                yield return Run.Until(effect, 3f, $"clicking {row} \"{text}\" to change the setting");
             }
 
             static MenuButton FindButtonInRow(string row, string text)
