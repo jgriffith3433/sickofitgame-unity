@@ -194,6 +194,7 @@
   "projectileLifetime": 5.0,
   "projectileFaceAim": true,
   "projectileSpriteAngle": 225.0,
+  "projectileSpawnOffset": [0.4, 0.22],
   "colliderRadius": 0.3,
   "hasInvincibilityFrames": true,
   "invincibilityDuration": 1.0,

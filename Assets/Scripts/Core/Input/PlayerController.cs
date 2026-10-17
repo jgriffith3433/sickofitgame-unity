@@ -215,6 +215,8 @@ namespace SickOfIt.Core.Input
             projectileLifetime = cfg.projectileLifetime;
             projectileFaceAim = cfg.projectileFaceAim;
             projectileSpriteAngle = cfg.projectileSpriteAngle;
+            if (projectileSpawnPoint != null)
+                projectileSpawnPoint.localPosition = new Vector3(cfg.projectileSpawnOffset.x, cfg.projectileSpawnOffset.y, projectileSpawnPoint.localPosition.z);
 
             // Rotation
             use2DFlip = cfg.use2DFlip;
