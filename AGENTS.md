@@ -157,7 +157,9 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
 - **Scenarios:** `smoke` (main menu, New Game, skip the video, level 1 for ~30 s with one rewind and a P pause/resume,
   quit to menu), `level-<n>` per level in game.json (loads the level directly, a setup shortcut), `full` (New Game, then
   every level in order through the real flow: results → Continue → video skipped with Escape; up to 3 tries per level;
-  ~10 min), `menus` (level select, videos, shop, settings open and close).
+  ~10 min), `menus` (level select, videos, shop, settings open and close), `site` (the website around the game: each page opened
+  over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
+  page has neither; `Plugins/WebGL/HawkesSite.jslib`).
 - **Start one:** in a browser `?playtest=smoke` (plus `&seed=`, `&speed=`), or `hawkesPlaytest.start("level-2")`; in the
   editor or a test, `HawkesPlaytest.StartScenario("level-2")`. Note: `smoke` and `full` press New Game, which resets
   the save in that browser.
@@ -182,6 +184,11 @@ to `Game/v<n>/` and puts its `<script>` first in the website's `Game/index.html`
 `window.AudioContext`/`Audio` before Unity's loader runs (Unity's `WEBAudio.audioContext` is private to the
 framework). Every playtest scenario presses it first (`hawkesSound.tap()` through `Plugins/WebGL/HawkesSound.jslib`);
 a scripted press can't unlock real audio, so a playtest's "audio" state stays "suspended" unless the runner clicked.
+
+**The "Powered by HAWKES GEN" mark** on every website page except the game (and the Hawkes Biomedical link on the
+landing page) is written by the deploy too (step 7c, `GameDeployWindow.InstallCredit`), into a fresh copy of the
+website's main, between `<!-- Hawkes credit: ... -->` comments. Change its words or look there, not in the website: an
+edit in the website is replaced on the next deploy. New site pages get it automatically.
 
 **Deploy in batch mode** (the build server): `-batchmode -projectPath C:/Projects/sickofitgame-unity -executeMethod
 SickOfIt.Tools.Editor.GameDeployWindow.FullDeployBatch` runs Tools > Run Full Deploy without a window (Addressables, new

@@ -27,7 +27,9 @@ namespace SickOfIt.Playtest
     ///
     /// Scenarios: smoke (menu, New Game, level 1 for ~30 s, rewind, pause), level-N (starts level N directly,
     /// a setup shortcut), full (New Game and every level in order through the real flow, ~10 min), menus (level
-    /// select, videos, shop and settings open and close; settings turns Sound off and on and steps Music).
+    /// select, videos, shop and settings open and close; settings turns Sound off and on and steps Music), site (the
+    /// website pages around the game show "Powered by HAWKES GEN", the landing page links Hawkes Biomedical, and the
+    /// game page itself has neither).
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
     /// </summary>
     public static class SickOfItPlaytest
@@ -79,6 +81,7 @@ namespace SickOfIt.Playtest
             }
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close", 70, "menus"));
+            list.Add(new PlaytestScenario("site", "The game's main menu (no credit on the game page), then the landing page, blog and sub pages each opened over it: Powered by HAWKES GEN on every one, Hawkes Biomedical on the landing page", 60, "menus"));
             return list.ToArray();
         }
 
@@ -125,6 +128,8 @@ namespace SickOfIt.Playtest
                 yield return session.Full();
             else if (id == "menus")
                 yield return session.Menus();
+            else if (id == "site")
+                yield return session.Site();
             else if (id.StartsWith("level-", StringComparison.Ordinal) && int.TryParse(id.Substring(6), out int n))
                 yield return session.LevelScenario(n);
             else
@@ -194,6 +199,7 @@ namespace SickOfIt.Playtest
                 if (fps != null)
                     Object.Destroy(fps.gameObject);
                 Time.timeScale = 1f;
+                SitePages.Close();
             }
 
             // ─── What the game can see ───────────────────────────────────
@@ -551,6 +557,82 @@ namespace SickOfIt.Playtest
                 }
                 Run.Progress(1f);
                 End(PlaytestOutcome.Done);
+            }
+
+            /// <summary>
+            /// The website around the game: the game page has no credit (the game screen is unchanged), then each
+            /// site page opens in a frame over the game, scrolled to its "Powered by HAWKES GEN" mark (ringed for the
+            /// recording), and the landing page's Hawkes Biomedical link is checked too. The pages are opened by
+            /// address, the way a visitor follows the site's links; outside a WebGL build there is no site to check.
+            /// </summary>
+            public IEnumerator Site()
+            {
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                if (!SitePages.Available)
+                {
+                    Run.Event("site", "no website here (editor or a test): nothing to check");
+                    Run.Progress(1f);
+                    End(PlaytestOutcome.Done);
+                    yield break;
+                }
+
+                int gameCredits = SitePages.GamePageCredits();
+                Run.Event("game-page", gameCredits == 0 ? "the game page has no credit mark (unchanged)" : $"the game page has {gameCredits} credit element(s)");
+                if (gameCredits > 0)
+                    Run.Problem(PlaytestSeverity.Bug, $"the game page itself shows the Hawkes credit ({gameCredits} element(s)); it belongs on the site pages only");
+                yield return WaitReal(1.5f);
+
+                int passed = 0;
+                for (int i = 0; i < SitePages.Pages.Length && !Run.Done; i++)
+                {
+                    var (path, name, landing) = SitePages.Pages[i];
+                    Run.Scene("Site: " + name);
+                    SitePages.Open(path);
+                    string json = "";
+                    yield return Run.Until(() => (json = SitePages.Result()).Length > 0, 25f, $"the {name} page to load");
+                    if (Run.Done) break;
+                    var check = JsonUtility.FromJson<SitePages.Check>(json);
+                    bool ok = true;
+                    if (!string.IsNullOrEmpty(check.error))
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"site page {name} (/{path}): {check.error}");
+                        ok = false;
+                    }
+                    else
+                    {
+                        ok &= Expect(name, path, "Powered by HAWKES GEN", "https://hawkesgen.com", check.gen, "powered by hawkes gen");
+                        if (landing)
+                            ok &= Expect(name, path, "Hawkes Biomedical", "https://hawkesbiomedical.com", check.parent, "hawkes biomedical");
+                    }
+                    if (ok)
+                        passed++;
+                    Run.Progress((i + 1f) / (SitePages.Pages.Length + 1));
+                    yield return WaitReal(2.5f); // on screen for the recording
+                }
+                SitePages.Close();
+                if (Run.Done) yield break;
+                Run.Metric("sitePagesChecked", SitePages.Pages.Length);
+                Run.Metric("sitePagesWithCredit", passed);
+                Run.Scene("Main Menu");
+                Run.Event("site-done", $"{passed}/{SitePages.Pages.Length} site pages show the credit; back to the game");
+                yield return WaitReal(1.5f);
+                Run.Progress(1f);
+                End(PlaytestOutcome.Done);
+            }
+
+            bool Expect(string page, string path, string what, string url, SitePages.Link link, string text)
+            {
+                if (link == null || string.IsNullOrEmpty(link.href))
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"site page {page} (/{path}) has no \"{what}\" link to {url}");
+                    return false;
+                }
+                bool good = link.visible && (link.text ?? "").ToLowerInvariant().Contains(text);
+                Run.Event("site-link", $"{page}: \"{link.text}\" -> {link.href}{(link.visible ? "" : " (not visible)")}");
+                if (!good)
+                    Run.Problem(PlaytestSeverity.Bug, $"site page {page} (/{path}): the {url} link reads \"{link.text}\"{(link.visible ? "" : " and isn't visible")}");
+                return good;
             }
 
             /// <summary>
@@ -924,6 +1006,71 @@ namespace SickOfIt.Playtest
 #else
             public static bool Tap() => false;
             public static string State() => null;
+#endif
+        }
+
+        /// <summary>
+        /// The website pages around the game (Plugins/WebGL/HawkesSite.jslib), opened in a frame over the game page.
+        /// The credit on them is installed by the deploy (GameDeployWindow step 7c).
+        /// </summary>
+        static class SitePages
+        {
+            /// <summary>Paths from the site root, a name for the timeline, and whether it's the landing page.</summary>
+            public static readonly (string path, string name, bool landing)[] Pages =
+            {
+                ("", "Landing", true),
+                ("blog/index.html", "Blog", false),
+                ("blog/lore.html", "Lore", false),
+                ("blog/lore/characters/overlord.html", "Lore: The Overlord", false),
+                ("blog/posts/diamonds.html", "Blog post: Diamonds", false),
+                ("blog/posts/resend-saved-my-sanity.html", "Blog post without a footer", false),
+                ("offline.html", "Offline", false),
+            };
+
+            [Serializable]
+            public class Link
+            {
+                public string href;
+                public string text;
+                public bool visible;
+            }
+
+            [Serializable]
+            public class Check
+            {
+                public string path;
+                public string url;
+                public int status;
+                public string error;
+                public string title;
+                public Link gen;
+                public Link parent;
+            }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            [DllImport("__Internal")]
+            static extern void HawkesSiteOpen(string path);
+
+            [DllImport("__Internal")]
+            static extern string HawkesSiteResult();
+
+            [DllImport("__Internal")]
+            static extern void HawkesSiteClose();
+
+            [DllImport("__Internal")]
+            static extern int HawkesSiteGamePageCredits();
+
+            public static bool Available => true;
+            public static void Open(string path) => HawkesSiteOpen(path);
+            public static string Result() => HawkesSiteResult() ?? "";
+            public static void Close() => HawkesSiteClose();
+            public static int GamePageCredits() => HawkesSiteGamePageCredits();
+#else
+            public static bool Available => false;
+            public static void Open(string path) { }
+            public static string Result() => "";
+            public static void Close() { }
+            public static int GamePageCredits() => 0;
 #endif
         }
 

@@ -155,6 +155,9 @@ namespace SickOfIt.Tools.Editor
                 if (GUILayout.Button("7b. Install the Tap-to-Play Sound Prompt"))
                     RunStep(() => Step_InstallSoundPrompt());
 
+                if (GUILayout.Button("7c. Install the Powered by HAWKES GEN Mark on the Site"))
+                    RunStep(() => Step_InstallCredit());
+
                 if (GUILayout.Button("8. Run Dev Server & Open Browser"))
                     RunStep(() => Step_RunDevServer());
             }
@@ -180,6 +183,7 @@ namespace SickOfIt.Tools.Editor
                         $"6. Build WebGL to v{newVersion}\\SickOfIt\n" +
                         $"7. Replace v{detectedVersion} → v{newVersion} in website\n" +
                         $"7b. Install the tap-to-play sound prompt in Game\\index.html\n" +
+                        $"7c. Put Powered by HAWKES GEN on every site page (not the game)\n" +
                         $"8. Run auto-start.bat & open browser\n\n" +
                         $"Continue?", "Deploy", "Cancel"))
                     {
@@ -502,6 +506,141 @@ namespace SickOfIt.Tools.Editor
             return without.Substring(0, at) + insert + without.Substring(at);
         }
 
+        // ─────────────────────────────────────────────
+        // Hawkes credit (Powered by HAWKES GEN, and the parent company on the landing page)
+        // ─────────────────────────────────────────────
+
+        private const string HawkesGenUrl = "https://hawkesgen.com";
+        private const string ParentUrl = "https://hawkesbiomedical.com";
+
+        /// <summary>
+        /// Puts the small "Powered by HAWKES GEN" mark (linking to hawkesgen.com) on every page of the website except
+        /// the game (Game/), and on the landing page also the parent company link (hawkesbiomedical.com). It sits in
+        /// the page's footer when it has one, else at the bottom of the page (pinned on the one-screen landing and
+        /// offline pages). The mark is generated here, so a build of this repo always ships it; the website only
+        /// holds the copy. Re-running replaces it.
+        /// </summary>
+        private void Step_InstallCredit()
+        {
+            Log("Step 7c: Installing the Powered by HAWKES GEN mark on the website's pages...");
+            int changed = 0, already = 0;
+            foreach (string file in Directory.GetFiles(WebsiteProjectPath, "*.html", SearchOption.AllDirectories))
+            {
+                string rel = file.Substring(WebsiteProjectPath.Length).TrimStart('\\', '/').Replace('\\', '/');
+                if (!IsSitePage(rel))
+                    continue;
+                string html = File.ReadAllText(file);
+                string updated = InstallCredit(html, CreditPlacementFor(rel));
+                if (updated == null)
+                {
+                    Log("  WARNING: no </body> in " + rel + ", skipped");
+                    continue;
+                }
+                if (updated == html)
+                {
+                    already++;
+                    continue;
+                }
+                File.WriteAllText(file, updated);
+                changed++;
+                Log("  " + rel);
+            }
+            Log($"  Done. {changed} page(s) updated, {already} already had it.");
+        }
+
+        /// <summary>Every website page but the game itself (Game/, its version folders) and repo plumbing.</summary>
+        public static bool IsSitePage(string relativePath)
+        {
+            string rel = relativePath.Replace('\\', '/');
+            if (rel.StartsWith("Game/", StringComparison.OrdinalIgnoreCase))
+                return false;
+            if (rel.StartsWith(".git/") || rel.Contains("node_modules/"))
+                return false;
+            return rel.EndsWith(".html", StringComparison.OrdinalIgnoreCase) || rel.EndsWith(".htm", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public enum CreditPlacement
+        {
+            /// <summary>Inside the page's last &lt;footer&gt; (the blog's pages).</summary>
+            Footer,
+            /// <summary>A footer bar of its own at the end of the page.</summary>
+            Bar,
+            /// <summary>Pinned to the bottom of the screen (one-screen pages: the landing page, offline).</summary>
+            Pinned,
+            /// <summary>Pinned, with the parent company link too (the landing page).</summary>
+            Landing,
+        }
+
+        public static CreditPlacement CreditPlacementFor(string relativePath)
+        {
+            string rel = relativePath.Replace('\\', '/');
+            if (rel == "index.html")
+                return CreditPlacement.Landing;
+            if (rel == "offline.html")
+                return CreditPlacement.Pinned;
+            return CreditPlacement.Footer; // InstallCredit falls back to Bar without a <footer>
+        }
+
+        private const string CreditStart = "<!-- Hawkes credit: installed by the deploy from sickofitgame-unity (GameDeployWindow); edit it there -->";
+        private const string CreditEnd = "<!-- /Hawkes credit -->";
+
+        /// <summary>
+        /// The page with exactly one Hawkes credit block (an existing one is replaced), or null without a &lt;/body&gt;.
+        /// </summary>
+        public static string InstallCredit(string html, CreditPlacement placement)
+        {
+            string newline = html.Contains("\r\n") ? "\r\n" : "\n";
+            string without = Regex.Replace(html, @"[ \t]*<!-- Hawkes credit:.*?<!-- /Hawkes credit -->[ \t]*\r?\n?", "", RegexOptions.Singleline);
+
+            int footer = without.LastIndexOf("</footer>", StringComparison.OrdinalIgnoreCase);
+            if (placement == CreditPlacement.Footer && footer < 0)
+                placement = CreditPlacement.Bar;
+            int at = placement == CreditPlacement.Footer ? footer : without.LastIndexOf("</body>", StringComparison.OrdinalIgnoreCase);
+            if (at < 0)
+                return null;
+
+            // On its own lines just before the closing tag, indented one step inside it.
+            int lineStart = at > 0 ? without.LastIndexOf('\n', at - 1) + 1 : 0;
+            string indent = without.Substring(lineStart, at - lineStart);
+            string block = string.Join(newline, CreditLines(placement, (indent.Trim().Length > 0 ? "" : indent) + "  ")) + newline;
+            if (indent.Trim().Length > 0)
+                return without.Substring(0, at) + newline + block + without.Substring(at);
+            return without.Substring(0, lineStart) + block + without.Substring(lineStart);
+        }
+
+        private static string[] CreditLines(CreditPlacement placement, string pad)
+        {
+            string gen = $"<a href=\"{HawkesGenUrl}\" target=\"_blank\" rel=\"noopener\" data-hawkes-credit=\"gen\">Powered by <strong>HAWKES GEN</strong></a>";
+            string parent = $"<a href=\"{ParentUrl}\" target=\"_blank\" rel=\"noopener\" data-hawkes-credit=\"parent\">A <strong>HAWKES BIOMEDICAL</strong> game</a>";
+            const string style =
+                "<style>" +
+                ".hawkes-credit{margin:.5rem 0 0;font:12px/1.5 Arial,sans-serif;letter-spacing:.03em;text-align:center;color:rgba(255,255,255,.45)}" +
+                ".hawkes-credit a{display:inline-block;white-space:nowrap;color:rgba(255,255,255,.6);text-decoration:none;transition:color .2s,text-shadow .2s}" +
+                ".hawkes-credit a:hover,.hawkes-credit a:focus{color:#fff;text-shadow:0 0 12px rgba(74,144,226,.8)}" +
+                ".hawkes-credit strong{font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.85)}" +
+                ".hawkes-credit-sep{margin:0 .6em}" +
+                ".hawkes-credit-bar{margin:0;padding:1.5rem 1rem;background:#000;border-top:1px solid rgba(13,110,253,.25)}" +
+                ".hawkes-credit-pinned{position:fixed;left:0;right:0;bottom:0;margin:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:2100}" +
+                "@media (max-width:480px){.hawkes-credit-sep{display:none}.hawkes-credit-pinned a{display:block;margin-top:2px}}" +
+                "</style>";
+            switch (placement)
+            {
+                case CreditPlacement.Landing:
+                    return new[]
+                    {
+                        pad + CreditStart, pad + style,
+                        pad + $"<div class=\"hawkes-credit hawkes-credit-pinned\">{parent}<span class=\"hawkes-credit-sep\">&middot;</span>{gen}</div>",
+                        pad + CreditEnd,
+                    };
+                case CreditPlacement.Pinned:
+                    return new[] { pad + CreditStart, pad + style, pad + $"<div class=\"hawkes-credit hawkes-credit-pinned\">{gen}</div>", pad + CreditEnd };
+                case CreditPlacement.Bar:
+                    return new[] { pad + CreditStart, pad + style, pad + $"<footer class=\"hawkes-credit hawkes-credit-bar\">{gen}</footer>", pad + CreditEnd };
+                default:
+                    return new[] { pad + CreditStart, pad + style, pad + $"<p class=\"hawkes-credit\">{gen}</p>", pad + CreditEnd };
+            }
+        }
+
         private void Step_RunDevServer()
         {
             Log("Step 8: Running auto-start.bat and opening browser...");
@@ -594,6 +733,9 @@ namespace SickOfIt.Tools.Editor
                 Log("");
 
                 Step_InstallSoundPrompt();
+                Log("");
+
+                Step_InstallCredit();
                 Log("");
 
                 if (startDevServer)
