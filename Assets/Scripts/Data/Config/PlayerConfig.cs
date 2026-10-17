@@ -46,6 +46,8 @@ namespace SickOfIt.Data.Config
         public bool projectileFaceAim = false;
         [Tooltip("Direction (degrees, 0 = right, 90 = up) the projectile art travels in when unrotated.")]
         public float projectileSpriteAngle = 0f;
+        [Tooltip("Where shots leave the weapon, relative to the player's center in world units (facing right); x is mirrored when aiming left.")]
+        public Vector2 projectileSpawnOffset = new Vector2(0.5f, 0f);
 
         [Header("Physics")]
         public float colliderRadius = 0.3f;

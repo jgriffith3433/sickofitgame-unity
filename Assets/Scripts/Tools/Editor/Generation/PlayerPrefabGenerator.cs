@@ -193,7 +193,7 @@ namespace SickOfIt.Tools.Editor.Generation
             // ─── Create ProjectileSpawnPoint child ────────────────────────
             var spawnPoint = new GameObject("ProjectileSpawnPoint");
             spawnPoint.transform.SetParent(root.transform);
-            spawnPoint.transform.localPosition = new Vector3(0.5f, 0f, 0f);
+            spawnPoint.transform.localPosition = new Vector3(config.projectileSpawnOffset.x, config.projectileSpawnOffset.y, 0f);
             pcSo.FindProperty("projectileSpawnPoint").objectReferenceValue = spawnPoint.transform;
 
             // ─── Set LayerMasks ───────────────────────────────────────────
@@ -377,6 +377,8 @@ namespace SickOfIt.Tools.Editor.Generation
 
             var audioSource = root.GetComponent<AudioSource>();
             var spawnPoint = root.transform.Find("ProjectileSpawnPoint");
+            if (spawnPoint != null)
+                spawnPoint.localPosition = new Vector3(config.projectileSpawnOffset.x, config.projectileSpawnOffset.y, 0f);
 
             var pcSo = new SerializedObject(playerController);
             pcSo.FindProperty("rb").objectReferenceValue = rb;
