@@ -152,6 +152,9 @@ namespace SickOfIt.Tools.Editor
                 if (GUILayout.Button("7. Find & Replace Version in Website"))
                     RunStep(() => Step_FindReplaceVersion());
 
+                if (GUILayout.Button("7b. Install the Tap-to-Play Sound Prompt"))
+                    RunStep(() => Step_InstallSoundPrompt());
+
                 if (GUILayout.Button("8. Run Dev Server & Open Browser"))
                     RunStep(() => Step_RunDevServer());
             }
@@ -176,6 +179,7 @@ namespace SickOfIt.Tools.Editor
                         $"5. Copy addressables to v{newVersion}\n" +
                         $"6. Build WebGL to v{newVersion}\\SickOfIt\n" +
                         $"7. Replace v{detectedVersion} → v{newVersion} in website\n" +
+                        $"7b. Install the tap-to-play sound prompt in Game\\index.html\n" +
                         $"8. Run auto-start.bat & open browser\n\n" +
                         $"Continue?", "Deploy", "Cancel"))
                     {
@@ -432,6 +436,72 @@ namespace SickOfIt.Tools.Editor
             Log($"  Done. {replaceCount} replacement(s) across {fileCount} file(s).");
         }
 
+        /// <summary>
+        /// The Hawkes standard sound prompt (shared memory m_d00535b22659): copies Tools/Web/hawkes-sound.js from this
+        /// project to Game/v&lt;n&gt;/ and makes sure Game/index.html loads it first in its &lt;head&gt; (before Unity's
+        /// loader, which it has to wrap). The script lives here so a build of this repo always ships it; the website
+        /// only holds the copy.
+        /// </summary>
+        private void Step_InstallSoundPrompt()
+        {
+            string page = Path.Combine(GameFolder, "index.html");
+            if (!File.Exists(page))
+                throw new Exception("Game page not found: " + page);
+            string html = File.ReadAllText(page);
+
+            // The build just made v<newVersion>; run on its own (the button), the page's current version.
+            int version = newVersion;
+            if (!Directory.Exists(Path.Combine(GameFolder, $"v{version}")))
+            {
+                var current = Regex.Match(html, @"gameVersion\s*=\s*""v(\d+)""");
+                version = current.Success ? int.Parse(current.Groups[1].Value) : -1;
+            }
+            Log($"Step 7b: Installing the tap-to-play sound prompt (v{version})...");
+            if (version < 0 || !Directory.Exists(Path.Combine(GameFolder, $"v{version}")))
+                throw new Exception($"No Game/v{version} folder to install the sound prompt into.");
+
+            string source = Path.Combine(Path.GetDirectoryName(Application.dataPath) ?? "", "Tools", "Web", SoundPromptFile);
+            if (!File.Exists(source))
+                throw new Exception("Sound prompt script not found: " + source);
+            string target = Path.Combine(GameFolder, $"v{version}", SoundPromptFile);
+            File.Copy(source, target, true);
+            Log($"  Copied {SoundPromptFile} to v{version}");
+
+            string updated = InstallSoundPromptTag(html, version);
+            if (updated == null)
+                throw new Exception("Game/index.html has no <head> to put the sound prompt in.");
+            if (updated != html)
+            {
+                File.WriteAllText(page, updated);
+                Log("  Game/index.html now loads v" + version + "/" + SoundPromptFile);
+            }
+            else
+            {
+                Log("  Game/index.html already loads it.");
+            }
+        }
+
+        private const string SoundPromptFile = "hawkes-sound.js";
+
+        /// <summary>
+        /// The page with exactly one &lt;script src="v&lt;n&gt;/hawkes-sound.js"&gt; as the first thing in &lt;head&gt;
+        /// (an existing tag is moved and repointed), or null without a &lt;head&gt;.
+        /// </summary>
+        internal static string InstallSoundPromptTag(string html, int version)
+        {
+            string newline = html.Contains("\r\n") ? "\r\n" : "\n";
+            string tag = $"<script src=\"v{version}/{SoundPromptFile}\"></script>";
+            string comment = "<!-- Hawkes sound prompt: installed by the deploy from sickofitgame-unity Tools/Web; must load before Unity's loader -->";
+            string without = Regex.Replace(html, @"[ \t]*<script[^>]*hawkes-sound\.js[^>]*>\s*</script>[ \t]*\r?\n?", "");
+            without = Regex.Replace(without, @"[ \t]*<!-- Hawkes sound prompt:[^>]*-->[ \t]*\r?\n?", "");
+            var head = Regex.Match(without, @"<head[^>]*>", RegexOptions.IgnoreCase);
+            if (!head.Success)
+                return null;
+            int at = head.Index + head.Length;
+            string insert = newline + "    " + comment + newline + "    " + tag;
+            return without.Substring(0, at) + insert + without.Substring(at);
+        }
+
         private void Step_RunDevServer()
         {
             Log("Step 8: Running auto-start.bat and opening browser...");
@@ -521,6 +591,9 @@ namespace SickOfIt.Tools.Editor
                 Log("");
 
                 Step_FindReplaceVersion();
+                Log("");
+
+                Step_InstallSoundPrompt();
                 Log("");
 
                 if (startDevServer)

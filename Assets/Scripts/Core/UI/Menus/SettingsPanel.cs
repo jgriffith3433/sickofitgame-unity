@@ -9,8 +9,8 @@ using SickOfIt.Data.Config;
 namespace SickOfIt.Core.UI.Menus
 {
     /// <summary>
-    /// The settings overlay (volumes, screen shake, hints), shared by the main menu and the pause menu.
-    /// Changes save immediately (<see cref="GameSettings"/>). Escape or Done closes it.
+    /// The settings overlay (sound on/off, volumes, screen shake, hints), shared by the main menu and the pause menu.
+    /// Changes save and apply immediately (<see cref="GameSettings"/>). Escape or Done closes it.
     /// </summary>
     public static class SettingsPanel
     {
@@ -26,7 +26,7 @@ namespace SickOfIt.Core.UI.Menus
             var inner = overlay.Inner;
 
             var panel = MenuGraphics.NewRect("Panel", inner);
-            MenuGraphics.Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(980f, 800f));
+            MenuGraphics.Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(980f, 880f));
             MenuGraphics.Surface(panel, theme.card.surface);
             menu.AddMotion(panel.gameObject, null, theme.entrance, 1.5f);
 
@@ -39,7 +39,7 @@ namespace SickOfIt.Core.UI.Menus
             rows.offsetMin = new Vector2(60f, 150f);
             rows.offsetMax = new Vector2(-60f, -160f);
             var layout = rows.gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.spacing = 14f;
+            layout.spacing = 10f;
             layout.childAlignment = TextAnchor.UpperCenter;
             layout.childControlWidth = layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
@@ -51,6 +51,7 @@ namespace SickOfIt.Core.UI.Menus
             var toggle = theme.smallButton.Clone();
             toggle.size = new Vector2(220f, 70f);
 
+            ToggleRow(menu, rows, texts.sound, texts, toggle, () => GameSettings.SoundOn, v => GameSettings.SoundOn = v);
             VolumeRow(menu, rows, texts.masterVolume, step, () => GameSettings.MasterVolume, v => GameSettings.MasterVolume = v);
             VolumeRow(menu, rows, texts.musicVolume, step, () => GameSettings.MusicVolume, v => GameSettings.MusicVolume = v);
             VolumeRow(menu, rows, texts.effectsVolume, step, () => GameSettings.SfxVolume, v => { GameSettings.SfxVolume = v; Sfx.Play(Sfx.Events.uiClick); });
@@ -95,7 +96,7 @@ namespace SickOfIt.Core.UI.Menus
         {
             var row = MenuGraphics.NewRect(label, rows);
             var element = row.gameObject.AddComponent<LayoutElement>();
-            element.preferredHeight = element.minHeight = 78f;
+            element.preferredHeight = element.minHeight = 72f;
             var line = row.gameObject.AddComponent<HorizontalLayoutGroup>();
             line.spacing = 18f;
             line.childAlignment = TextAnchor.MiddleLeft;
