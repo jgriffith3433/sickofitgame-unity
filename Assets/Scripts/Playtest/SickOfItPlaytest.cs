@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Hawkes.Playtest;
 using UnityEngine;
@@ -26,7 +27,8 @@ namespace SickOfIt.Playtest
     ///
     /// Scenarios: smoke (menu, New Game, level 1 for ~30 s, rewind, pause), level-N (starts level N directly,
     /// a setup shortcut), full (New Game and every level in order through the real flow, ~10 min), menus (level
-    /// select, videos, shop and settings open and close).
+    /// select, videos, shop and settings open and close; settings turns Sound off and on and steps Music).
+    /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
     /// </summary>
     public static class SickOfItPlaytest
     {
@@ -76,7 +78,7 @@ namespace SickOfIt.Playtest
                 list.Add(new PlaytestScenario("level-" + n, $"Level {n} ({name}), started directly (setup shortcut)", seconds, "full", "level"));
             }
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
-            list.Add(new PlaytestScenario("menus", "Level select, videos, shop and settings each open and close", 60, "menus"));
+            list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close", 70, "menus"));
             return list.ToArray();
         }
 
@@ -110,6 +112,7 @@ namespace SickOfIt.Playtest
         {
             StopActive();
             var session = active = new Session(run, options);
+            yield return session.TapSoundPrompt();
             run.Note("waiting for the game to load");
             yield return run.Until(IsReady, 90f, "the game to load");
             if (run.Done)
@@ -368,6 +371,15 @@ namespace SickOfIt.Playtest
                     yield break;
                 }
                 Run.Event("pause", "P");
+                string done = GameDefinition.Instance.menuTheme.texts.done;
+                yield return ClickUntil(GameDefinition.Instance.menuTheme.texts.settings, () => FindButton(done) != null, 10f);
+                if (Run.Done) yield break;
+                Run.Event("menu-open", "Settings (from pause)");
+                yield return WaitReal(1f);
+                yield return ClickUntil(done, () => FindButton(done) == null, 10f);
+                if (Run.Done) yield break;
+                Run.Event("menu-close", "Settings (from pause)");
+                yield return WaitReal(0.5f);
                 yield return Tap(Key.P);
                 yield return WaitReal(0.5f);
                 if (hud != null && hud.Paused)
@@ -527,14 +539,111 @@ namespace SickOfIt.Playtest
                     string done = definition.menuTheme.texts.done;
                     yield return ClickUntil(labels.settings, () => FindButton(done) != null, 15f);
                     if (Run.Done) yield break;
+                    Run.Scene("Settings");
                     Run.Event("menu-open", "Settings");
-                    yield return WaitReal(1.5f);
+                    yield return WaitReal(1f);
+                    yield return SoundSettings();
+                    if (Run.Done) yield break;
                     yield return ClickUntil(done, () => FindButton(done) == null, 15f);
                     if (Run.Done) yield break;
+                    Run.Scene("Main Menu");
                     Run.Event("menu-close", "Settings");
                 }
                 Run.Progress(1f);
                 End(PlaytestOutcome.Done);
+            }
+
+            /// <summary>
+            /// Presses the page's "Tap to play" prompt, so the run isn't recorded behind it, and logs what the
+            /// page says about audio. The page can only be pressed from script: a browser unlocks audio for a
+            /// real tap only, so "audio" stays "suspended" unless the runner clicked the page itself.
+            /// </summary>
+            public IEnumerator TapSoundPrompt()
+            {
+                string before = PageSound.State();
+                if (before == null)
+                {
+                    Run.Event("tap-prompt", "no page prompt here (editor or a page without hawkes-sound.js)");
+                    yield break;
+                }
+                if (before.Length == 0)
+                {
+                    Run.Problem(PlaytestSeverity.Bug, "the game page has no tap-to-play sound prompt (hawkes-sound.js not loaded)");
+                    yield break;
+                }
+                bool tapped = PageSound.Tap();
+                yield return WaitReal(0.5f);
+                string after = PageSound.State();
+                Run.Event("tap-prompt", (tapped ? "pressed the prompt: " : "the prompt was already gone: ") + after);
+                Run.Metric("soundPrompt", tapped ? 1f : 0f);
+                if (after != null && after.Contains("\"prompt\":\"shown\""))
+                    Run.Problem(PlaytestSeverity.Bug, "the tap-to-play prompt stayed up after it was pressed: " + after);
+            }
+
+            /// <summary>In the open settings: Sound off and on again, Music one step down and up, checking each applies.</summary>
+            IEnumerator SoundSettings()
+            {
+                var texts = GameDefinition.Instance.menuTheme.texts;
+                bool wasOn = GameSettings.SoundOn;
+                float music = GameSettings.MusicVolume;
+
+                yield return ClickIn(texts.sound, wasOn ? texts.on : texts.off, () => GameSettings.SoundOn != wasOn);
+                if (Run.Done) yield break;
+                bool muted = !GameSettings.SoundOn && AudioListener.volume == 0f;
+                Run.Event("settings", $"Sound {(GameSettings.SoundOn ? "on" : "off")}, listener volume {AudioListener.volume:0.##}, {GameSettings.SoundKey} = {GameSettings.SoundJson}");
+                if (wasOn && !muted)
+                    Run.Problem(PlaytestSeverity.Bug, $"Sound Off didn't mute the game (listener volume {AudioListener.volume:0.##})");
+                yield return WaitReal(0.5f);
+                yield return ClickIn(texts.sound, GameSettings.SoundOn ? texts.on : texts.off, () => GameSettings.SoundOn == wasOn);
+                if (Run.Done) yield break;
+                Run.Event("settings", $"Sound {(GameSettings.SoundOn ? "on" : "off")}, listener volume {AudioListener.volume:0.##}");
+
+                string step = music > 0.05f ? "-" : "+";
+                yield return ClickIn(texts.musicVolume, step, () => !Mathf.Approximately(GameSettings.MusicVolume, music));
+                if (Run.Done) yield break;
+                Run.Event("settings", $"Music {music:0.#} -> {GameSettings.MusicVolume:0.#}, {GameSettings.SoundKey} = {GameSettings.SoundJson}");
+                float stepped = GameSettings.MusicVolume;
+                yield return WaitReal(0.5f);
+                yield return ClickIn(texts.musicVolume, step == "-" ? "+" : "-", () => !Mathf.Approximately(GameSettings.MusicVolume, stepped));
+                if (Run.Done) yield break;
+                Run.Event("settings", $"Music back to {GameSettings.MusicVolume:0.#}");
+                Run.Metric("soundSettings", 1f);
+            }
+
+            /// <summary>Clicks the button labeled 'text' in the settings row 'row' until 'effect' is true.</summary>
+            IEnumerator ClickIn(string row, string text, Func<bool> effect)
+            {
+                MenuButton button = null;
+                yield return Run.Until(() => (button = FindButtonInRow(row, text)) != null, 10f, $"the \"{text}\" button for {row}");
+                if (Run.Done)
+                    yield break;
+                input.MoveMouse(ScreenPoint(button));
+                yield return null;
+                yield return null;
+                input.SetMouseButton(true);
+                yield return null;
+                yield return null;
+                input.SetMouseButton(false);
+                Run.Event("click", $"{row}: {text}");
+                yield return Run.Until(effect, 5f, $"clicking {row} \"{text}\" to change the setting");
+            }
+
+            static MenuButton FindButtonInRow(string row, string text)
+            {
+                foreach (var button in Object.FindObjectsByType<MenuButton>(FindObjectsSortMode.None))
+                {
+                    if (button == null || !button.isActiveAndEnabled || button.Label == null)
+                        continue;
+                    // A settings row is named after its label; its buttons sit a level or two below it.
+                    var parent = button.transform.parent;
+                    for (int up = 0; up < 3 && parent != null && parent.name != row; up++)
+                        parent = parent.parent;
+                    if (parent == null || parent.name != row)
+                        continue;
+                    if (string.Equals(Tags.Replace(button.Label.text ?? "", "").Trim(), text.Trim(), StringComparison.OrdinalIgnoreCase))
+                        return button;
+                }
+                return null;
             }
 
             // ─── Playing a level ─────────────────────────────────────────
@@ -795,6 +904,27 @@ namespace SickOfIt.Playtest
                 var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
                 return scene.IsValid() ? scene.name : "?";
             }
+        }
+
+        /// <summary>
+        /// The game page's tap-to-play sound prompt (Tools/Web/hawkes-sound.js, through Plugins/WebGL/HawkesSound.jslib).
+        /// State() is the page's JSON, "" on a page without the prompt, null outside a WebGL build.
+        /// </summary>
+        static class PageSound
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            [DllImport("__Internal")]
+            static extern int HawkesSoundTap();
+
+            [DllImport("__Internal")]
+            static extern string HawkesSoundState();
+
+            public static bool Tap() => HawkesSoundTap() != 0;
+            public static string State() => HawkesSoundState() ?? "";
+#else
+            public static bool Tap() => false;
+            public static string State() => null;
+#endif
         }
 
         /// <summary>Frames per second, sampled every second in real time.</summary>

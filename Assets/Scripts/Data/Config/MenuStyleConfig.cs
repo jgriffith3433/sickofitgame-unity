@@ -261,6 +261,7 @@ namespace SickOfIt.Data.Config
         public string quitToMenu = "Quit to Menu";
 
         public string settingsTitle = "Settings";
+        public string sound = "Sound";
         public string masterVolume = "Volume";
         public string musicVolume = "Music";
         public string effectsVolume = "Effects";

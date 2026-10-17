@@ -90,7 +90,8 @@ Assets/GameConfig/
   Magnet); `RogueliteManager` stores levels, `UpgradeSystem.ApplyShop` applies them each level. Between-level picks are
   `content/upgrades`.
 - **Feel**: hit pops/sparks/dust (`Core/Fx`), red flash + shake + hit-stop on damage, player blink during invincibility,
-  pause (Esc/P/Start), settings (volumes, shake, hints in `GameSettings`), "undo your death" countdown
+  pause (Esc/P/Start), settings (Sound on/off, volumes, shake, hints in `GameSettings`; Sound/Music/Effects are the
+  Hawkes standard `hawkes.sound` JSON `{ on, music, sfx }` in PlayerPrefs), "undo your death" countdown
   (`player.deathRewindWindow`), Rage Quit on the death scene. All presentation; none of it touches the simulation.
   Rewind is **hold R** (`RewindController`) or the HUD's ◄◄ button (`RewindInput`). The input asset also binds R to an
   unused "DashRight" action; don't give R another job.
@@ -174,6 +175,13 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   `InputSystem.settings.editorInputBehaviorInPlayMode = AllDeviceInputAlwaysGoesToGameView` while it runs; starting a
   scenario by hand in the editor, keep the Game view focused.
 - WebGL builds come from the build server; keep everything in `Assets/Scripts/Playtest/` runtime-only (no `UnityEditor`).
+
+**The "Tap to play" sound prompt** (the Hawkes standard: every game page asks for one tap, which unlocks audio on
+iOS/Android/desktop) is `Tools/Web/hawkes-sound.js`. Edit it here, not in the website: the deploy (step 7b) copies it
+to `Game/v<n>/` and puts its `<script>` first in the website's `Game/index.html` `<head>`, because it must wrap
+`window.AudioContext`/`Audio` before Unity's loader runs (Unity's `WEBAudio.audioContext` is private to the
+framework). Every playtest scenario presses it first (`hawkesSound.tap()` through `Plugins/WebGL/HawkesSound.jslib`);
+a scripted press can't unlock real audio, so a playtest's "audio" state stays "suspended" unless the runner clicked.
 
 **Deploy in batch mode** (the build server): `-batchmode -projectPath C:/Projects/sickofitgame-unity -executeMethod
 SickOfIt.Tools.Editor.GameDeployWindow.FullDeployBatch` runs Tools > Run Full Deploy without a window (Addressables, new
