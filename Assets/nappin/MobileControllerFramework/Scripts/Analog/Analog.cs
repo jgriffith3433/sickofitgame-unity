@@ -44,6 +44,9 @@ namespace MobileControllerFramework
         [Tooltip("Snap stick to origin on release.")]
         public bool snapStickOnRelease = false;
 
+        [Tooltip("When the finger moves past the stick's edge, the stick drifts after it instead of staying where the touch began (floating stick).")]
+        public bool followFinger = false;
+
         [Header("References")]
         [Tooltip("RectTransform of the stick.")]
         public RectTransform StickTarget;
@@ -141,6 +144,8 @@ namespace MobileControllerFramework
             if (!isDragging) return;
 
             Vector2 pointerPosition = eventData.position;
+            if (followFinger)
+                DragBaseTowards(pointerPosition);
             Vector2 direction = (pointerPosition - pointerStartPosition).normalized;
             float distance = Mathf.Clamp(Vector2.Distance(pointerPosition, pointerStartPosition), 0f, analogRadius);
             Vector2 newPosition = originalStickPosition + direction * distance;
@@ -152,6 +157,26 @@ namespace MobileControllerFramework
             StickDragEvent.Invoke();
         }
 
+
+        // Slides the stick's centre after a finger that is past the radius, so the finger ends up on the edge.
+        private void DragBaseTowards(Vector2 pointerPosition)
+        {
+            Vector2 offset = pointerPosition - pointerStartPosition;
+            float distance = offset.magnitude;
+            if (distance <= analogRadius || distance <= 0f) return;
+
+            Vector2 shift = offset / distance * (distance - analogRadius);
+            pointerStartPosition += shift;
+            transform.position += (Vector3)shift;
+
+            // A knob that isn't under this object has to move by hand and keep its resting spot in step.
+            if (!StickTarget.IsChildOf(transform))
+            {
+                Vector2 before = StickTarget.anchoredPosition;
+                StickTarget.position += (Vector3)shift;
+                originalStickPosition += StickTarget.anchoredPosition - before;
+            }
+        }
 
         public void OnPointerUp(PointerEventData eventData)
         {
