@@ -192,6 +192,9 @@ framework). Never make an AudioContext for Unity or hand it one that is already 
 as running when its own context *changes* to "running" (`onstatechange` in `_JS_Sound_Init`), so every sound would
 stay queued and the game would be silent. Track the context Unity makes and resume it. Every playtest scenario presses it first (`hawkesSound.tap()` through `Plugins/WebGL/HawkesSound.jslib`);
 a scripted press can't unlock real audio, so a playtest's "audio" state stays "suspended" unless the runner clicked.
+Because it runs first, it also stops the website's "reload on `controllerchange`" the first time the site's service
+worker claims a page that had none: on a first visit that claim can come a minute in and reloaded the player out of the
+level (and killed the playtest run). Updates on an already-controlled page still reload.
 
 **The "Powered by HAWKES GEN" mark** on every website page except the game (and the Hawkes Biomedical link on the
 landing page) is written by the deploy too (step 7c, `GameDeployWindow.InstallCredit`), into a fresh copy of the
