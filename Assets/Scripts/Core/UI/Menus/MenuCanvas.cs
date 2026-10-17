@@ -518,8 +518,13 @@ namespace SickOfIt.Core.UI.Menus
             if (Screen.width <= 0 || Screen.height <= 0)
                 return;
             var rect = (RectTransform)transform;
-            rect.anchorMin = new Vector2(safe.xMin / Screen.width, safe.yMin / Screen.height);
-            rect.anchorMax = new Vector2(safe.xMax / Screen.width, safe.yMax / Screen.height);
+            // Extra margins keep the HUD, timeline and corner buttons (Rage Quit) clear of the home bar at the bottom and,
+            // on the web, of the beta/build badge the page draws over the top-left corner. Fractions, so any screen fits.
+            bool portrait = Screen.height > Screen.width;
+            float bottom = 0.03f;
+            float top = Application.platform == RuntimePlatform.WebGLPlayer ? (portrait ? 0.065f : 0.1f) : 0f;
+            rect.anchorMin = new Vector2(safe.xMin / Screen.width, Mathf.Min(safe.yMin / Screen.height + bottom, 0.5f));
+            rect.anchorMax = new Vector2(safe.xMax / Screen.width, Mathf.Max(safe.yMax / Screen.height - top, 0.5f));
             rect.offsetMin = rect.offsetMax = Vector2.zero;
         }
     }
