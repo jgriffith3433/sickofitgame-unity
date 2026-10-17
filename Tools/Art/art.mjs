@@ -11,6 +11,10 @@
 //   node Tools/Art/art.mjs --list              every spec and its state
 //   flags: --no-unity (don't run the Unity batch import), --takes N, --seed N
 //
+// Picks can also be made in Hawkes Gen's library (Studio's Library tab, Window > Hawkes Gen > Library): each run first
+// writes those into the work folder and ends by bringing new takes into the library (hawkes.library.json; SOI_LIBRARY=off
+// skips it).
+//
 // Steps, each skipped when its output exists and its recipe still matches the spec:
 //   stand   Qwen-Image-Edit 2511: the description (or a reference image) -> standing side view, facing right
 //   poses   Qwen-Image-Edit 2511: the standing view -> every other pose the clips start or end on
@@ -30,6 +34,7 @@ import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { HawkesGen } from './hawkesgen.mjs';
+import { loadMapping, importFolders, exportFolders, slugOf } from './hawkesgen-folders.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DOD = process.env.DOD_ROOT || 'C:\\Projects\\doseofdestructionwebsite';
@@ -591,12 +596,45 @@ function parseArgs(argv) {
   return o;
 }
 
+/**
+ * The work folders and Hawkes Gen's library (hawkesgen/docs/library.md), both ways, as hawkes.library.json maps them:
+ * "export" writes the picks made in the library (Studio's Library tab, the Unity window) into the work folder before a
+ * run, "import" brings the takes this run made into the library so they can be reviewed and picked there. A Gen that
+ * isn't answering doesn't stop the art: the step is skipped with a note.
+ */
+async function librarySync(direction, spec) {
+  const file = path.join(REPO, 'hawkes.library.json');
+  if (!fs.existsSync(file) || process.env.SOI_LIBRARY === 'off') return;
+  try {
+    const m = { ...loadMapping(file), root: workRoot() };
+    const g = new HawkesGen({ project: PROJECT });
+    const r = direction === 'export' ? await exportFolders(g, m, { only: spec.id }) : await importFolders(g, m, { only: spec.id });
+    if (direction === 'import') {
+      // What the library's own "Make takes" uses (the enemy kind in hawkesgen/presets/sickofit.json): the look, and
+      // each pose's and clip's action, with a clip's from and to poses.
+      const slots = {};
+      for (const [pose, action] of Object.entries(spec.poses)) slots[`pose/${slugOf(pose)}`] = { brief: action };
+      for (const [name, c] of Object.entries(spec.clips)) {
+        if (c.video) continue;
+        const from = slugOf(c.from ?? 'stand');
+        slots[`clip/${slugOf(name)}`] = { brief: c.action, from, to: slugOf(c.to ?? c.from ?? 'stand') };
+      }
+      await g.updateEntity(`${PROJECT}/${slugOf(spec.id)}`, { name: spec.name, data: { look: spec.description, slots } }).catch(() => {});
+    }
+    const changed = r.filter((x) => !['same', 'differs'].includes(x.action));
+    if (changed.length) log(`library: ${direction === 'export' ? 'picks written into the work folder' : 'takes brought into the library'}: ${changed.length}`);
+  } catch (e) {
+    log(`library ${direction} skipped: ${String(e.message).split(/\r?\n/)[0]}`);
+  }
+}
+
 async function make(id, opts) {
   const spec = loadSpec(id);
   const P = paths(spec);
   await preflight(spec);
   fs.mkdirSync(P.work, { recursive: true });
   log(`${spec.name} (${spec.entity}) -> work folder ${P.work}`);
+  await librarySync('export', spec);
 
   for (const p of opts.pick) {
     const [what, seed] = p.split('=');
@@ -635,6 +673,7 @@ async function make(id, opts) {
     await frameAll(spec, P);
   }
 
+  await librarySync('import', spec);
   const { built, visualScale } = await build(spec, P);
   const notes = apply(spec, built, visualScale);
   if (!opts.noUnity) await unityImport();

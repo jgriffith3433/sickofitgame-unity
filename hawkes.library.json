@@ -1,0 +1,11 @@
+{
+  "_about": "How Sick Of It's enemy art work folders (SickOfItGameEnemies/Generated/<id>/, Tools/Art/art.mjs) map to the Hawkes Gen library (hawkesgen/docs/library.md): each folder is an enemy entity, poses and clips are slots, _takes are takes. art.mjs syncs both ways on every run; node C:/Projects/hawkesgen/bin/hawkesgen-folders.mjs status|import|export hawkes.library.json [--only imp].",
+  "project": "sickofit",
+  "kind": "enemy",
+  "root": "../SickOfItGameEnemies/Generated",
+  "skip": ["_*"],
+  "slots": [
+    { "slot": "pose/{name}", "current": "poses/{name}.png", "takes": "poses/_takes/{name}-*.png", "recipe": "{file}.json" },
+    { "slot": "clip/{name}", "current": "clips/{name}.mp4", "takes": "clips/_takes/{name}-*.mp4", "recipe": "{file}.json" }
+  ]
+}
