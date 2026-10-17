@@ -611,7 +611,7 @@ namespace SickOfIt.Tools.Editor
         private static string[] CreditLines(CreditPlacement placement, string pad)
         {
             string gen = $"<a href=\"{HawkesGenUrl}\" target=\"_blank\" rel=\"noopener\" data-hawkes-credit=\"gen\">Powered by <strong>HAWKES GEN</strong></a>";
-            string parent = $"<a href=\"{ParentUrl}\" target=\"_blank\" rel=\"noopener\" data-hawkes-credit=\"parent\">A <strong>HAWKES BIOMEDICAL</strong> game</a>";
+            string parent = $"<a href=\"{ParentUrl}\" target=\"_blank\" rel=\"noopener\" data-hawkes-credit=\"parent\">A <strong>HAWKES BIOMEDICAL</strong> company</a>";
             const string style =
                 "<style>" +
                 ".hawkes-credit{margin:.5rem 0 0;font:12px/1.5 Arial,sans-serif;letter-spacing:.03em;text-align:center;color:rgba(255,255,255,.45)}" +
