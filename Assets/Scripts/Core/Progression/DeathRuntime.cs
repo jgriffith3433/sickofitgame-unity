@@ -121,6 +121,7 @@ namespace SickOfIt.Core.Progression
             rewindAlsoSkips = skipButton == null;
             if (rewindAlsoSkips)
                 skipButton = rewindButton;
+            TransportButtonLayout.Apply(gameObject, rewindButton, skipButton);
         }
 
         private void EnsurePlaybackCamera()
