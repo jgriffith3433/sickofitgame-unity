@@ -48,6 +48,13 @@
         "amount": 1.5,
         "speed": 0.35,
         "phase": 0.0
+      },
+      "portrait": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.9],
+        "offset": [0.0, 0.0],
+        "size": [0.0, 0.0]
       }
     },
     "subtitle": {
@@ -62,6 +69,13 @@
         "amount": 8.0,
         "speed": 1.0,
         "phase": 0.0
+      },
+      "portrait": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.835],
+        "offset": [0.0, 0.0],
+        "size": [0.0, 0.0]
       }
     },
     "list": {
@@ -71,7 +85,17 @@
       "direction": "Grid",
       "columns": 0,
       "spacing": [28.0, 28.0],
-      "itemSize": [360.0, 290.0]
+      "itemSize": [360.0, 290.0],
+      "portrait": {
+        "use": true,
+        "anchor": [0.5, 0.49],
+        "offset": [0.0, 0.0],
+        "size": [1032.0, 1250.0],
+        "direction": "Grid",
+        "columns": 2,
+        "spacing": [24.0, 24.0],
+        "itemSize": [460.0, 330.0]
+      }
     },
     "backAnchor": [0.0, 0.0],
     "backOffset": [170.0, 80.0],
@@ -98,6 +122,13 @@
           "amount": 0.06,
           "speed": 1.1,
           "phase": 0.0
+        },
+        "portrait": {
+          "use": false,
+          "hide": true,
+          "anchor": [0.5, 0.5],
+          "offset": [0.0, 0.0],
+          "size": [0.0, 0.0]
         }
       },
       {
@@ -119,9 +150,30 @@
           "amount": 8.0,
           "speed": 1.0,
           "phase": 0.0
+        },
+        "portrait": {
+          "use": true,
+          "hide": false,
+          "anchor": [0.5, 0.13],
+          "offset": [0.0, 0.0],
+          "size": [0.0, 0.0]
         }
       }
-    ]
+    ],
+    "portraitBack": {
+      "use": true,
+      "hide": false,
+      "anchor": [0.0, 0.0],
+      "offset": [170.0, 90.0],
+      "size": [0.0, 0.0]
+    },
+    "portraitStats": {
+      "use": true,
+      "hide": false,
+      "anchor": [1.0, 1.0],
+      "offset": [-24.0, -24.0],
+      "size": [0.0, 0.0]
+    }
   },
   "buyFormat": "Buy ♦ {0}",
   "maxedText": "Maxed out",

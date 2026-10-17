@@ -4,13 +4,16 @@ namespace SickOfIt.Core.Progression
 {
     /// <summary>
     /// Puts the video/death rewind and skip buttons at the bottom centre, inside the safe area. The beta and build
-    /// badge the site draws over the page's top-left corner (and the notch) used to cover them. Presentation only.
+    /// badge the site draws over the page's top-left corner (and the notch) used to cover them. On a touch layout
+    /// (a phone held upright) they are at least the theme's touch size (ui/theme.json responsive.minTouchSize).
+    /// Presentation only.
     /// </summary>
     public sealed class TransportButtonLayout : MonoBehaviour
     {
         MobileControllerFramework.Button rewind;
         MobileControllerFramework.Button skip;
         Vector2Int screen;
+        Vector2 rewindSize, skipSize;
 
         public static void Apply(GameObject host, MobileControllerFramework.Button rewind, MobileControllerFramework.Button skip)
         {
@@ -18,6 +21,9 @@ namespace SickOfIt.Core.Progression
             var layout = host.AddComponent<TransportButtonLayout>();
             layout.rewind = rewind;
             layout.skip = skip == rewind ? null : skip;
+            layout.rewindSize = ((RectTransform)rewind.transform).rect.size;
+            if (layout.skip != null)
+                layout.skipSize = ((RectTransform)layout.skip.transform).rect.size;
         }
 
         void LateUpdate()
@@ -31,6 +37,16 @@ namespace SickOfIt.Core.Progression
             var parent = rewindRect.parent as RectTransform;
             if (parent == null) return;
 
+            var gd = SickOfIt.Data.GameDefinition.Instance;
+            var style = gd != null && gd.menuTheme != null ? gd.menuTheme.responsive : null;
+            var canvas = rewindRect.GetComponentInParent<Canvas>();
+            float pixelsPerUnit = canvas != null && canvas.rootCanvas.scaleFactor > 0f ? canvas.rootCanvas.scaleFactor : 1f;
+            float touch = SickOfIt.Core.UI.Menus.MenuScreen.TouchLayout(style)
+                ? SickOfIt.Core.UI.Menus.MenuScreen.MinTouchPixels(style) / pixelsPerUnit : 0f;
+            Size(rewindRect, rewindSize, touch);
+            if (skipRect != null)
+                Size(skipRect, skipSize, touch);
+
             // Lift the row clear of the bottom edge by the safe-area inset plus a margin (more in portrait).
             float inset = Screen.safeArea.yMin / screen.y;
             float lift = screen.y > screen.x ? 0.09f : 0.06f;
@@ -40,6 +56,15 @@ namespace SickOfIt.Core.Progression
             Place(rewindRect, 0.5f, y, skipRect != null ? -gap : 0f);
             if (skipRect != null)
                 Place(skipRect, 0.5f, y, gap);
+        }
+
+        static void Size(RectTransform rect, Vector2 size, float touch)
+        {
+            if (size.x <= 0f || size.y <= 0f)
+                return;
+            float grow = Mathf.Max(1f, touch / Mathf.Min(size.x, size.y)); // keep the button's shape
+            rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x * grow);
+            rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y * grow);
         }
 
         static void Place(RectTransform rect, float x, float y, float offsetX)

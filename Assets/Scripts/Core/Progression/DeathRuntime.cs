@@ -85,7 +85,9 @@ namespace SickOfIt.Core.Progression
             var style = menu.Theme.button.Clone();
             style.size = new Vector2(340f, 92f);
             string label = menu.Theme.texts != null ? menu.Theme.texts.rageQuit : "Rage Quit";
-            menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f, 96f), label, style, OnRageQuit);
+            // Bottom-right in landscape; top centre on a phone held upright, clear of the rewind/skip row.
+            var portrait = menu.Responsive.screens != null ? menu.Responsive.screens.rageQuit : null;
+            menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f, 96f), label, style, OnRageQuit, null, portrait);
         }
 
         private void OnRageQuit()

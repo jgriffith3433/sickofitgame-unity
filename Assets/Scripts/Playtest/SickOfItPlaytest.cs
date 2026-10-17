@@ -29,7 +29,8 @@ namespace SickOfIt.Playtest
     /// a setup shortcut), full (New Game and every level in order through the real flow, ~10 min), menus (level
     /// select, videos, shop and settings open and close; settings turns Sound off and on and steps Music), site (the
     /// website pages around the game show "Powered by HAWKES GEN", the landing page links Hawkes Biomedical, and the
-    /// game page itself has neither).
+    /// game page itself has neither), layout (every screen's buttons on screen, apart and thumb-sized: main menu,
+    /// level select, settings, the level HUD, pause and its settings, the death scene; meant for device "phone").
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
     /// </summary>
     public static class SickOfItPlaytest
@@ -81,6 +82,9 @@ namespace SickOfIt.Playtest
             }
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close", 70, "menus"));
+            list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu, level select, settings, " +
+                "level 1's HUD, the pause menu and its settings, and the death scene (loaded directly, a setup shortcut), no button overlaps another " +
+                "or a HUD panel, none leaves the screen, and every button is thumb-sized", 120, "menus"));
             list.Add(new PlaytestScenario("site", "The game's main menu (no credit on the game page), then the landing page, blog and sub pages each opened over it: Powered by HAWKES GEN on every one, Hawkes Biomedical on the landing page", 60, "menus"));
             return list.ToArray();
         }
@@ -130,6 +134,8 @@ namespace SickOfIt.Playtest
                 yield return session.Menus();
             else if (id == "site")
                 yield return session.Site();
+            else if (id == "layout")
+                yield return session.Layout();
             else if (id.StartsWith("level-", StringComparison.Ordinal) && int.TryParse(id.Substring(6), out int n))
                 yield return session.LevelScenario(n);
             else
@@ -557,6 +563,114 @@ namespace SickOfIt.Playtest
                 }
                 Run.Progress(1f);
                 End(PlaytestOutcome.Done);
+            }
+
+            /// <summary>
+            /// The responsive layout on every main screen: each one is opened the way a player opens it (clicks and
+            /// taps on the real buttons), then <see cref="MenuLayoutAudit"/> checks what is on screen. A level and the
+            /// death scene are loaded directly (setup shortcuts). Each overlap, off-screen or too-small button is a bug.
+            /// </summary>
+            public IEnumerator Layout()
+            {
+                var definition = GameDefinition.Instance;
+                var main = definition.mainMenuConfig;
+                var labels = main.labels;
+                var texts = definition.menuTheme.texts;
+                string done = texts.done;
+                Run.Metric("screenWidth", Screen.width);
+                Run.Metric("screenHeight", Screen.height);
+                Run.Event("layout-screen", $"{Screen.width}x{Screen.height} {(MenuScreen.Portrait ? "portrait" : "landscape")}, safe area {Screen.safeArea}, " +
+                                           $"touch size {MenuScreen.MinTouchPixels(definition.menuTheme.responsive):0} px" +
+                                           (MenuScreen.Portrait ? "" : " (landscape: run it with device \"phone\" for the portrait layout)"));
+                const int steps = 7;
+                int step = 0;
+
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                yield return Audit("Main Menu", ++step, steps);
+
+                if (main.showLevelSelectButton)
+                {
+                    yield return ClickUntil(labels.levelSelect, () => Object.FindAnyObjectByType<LevelSelectionManager>() != null, 20f);
+                    if (Run.Done) yield break;
+                    yield return Audit("Level Select", ++step, steps);
+                    yield return ClickUntil(definition.levelSelectionConfig.layout.backText,
+                        () => Object.FindAnyObjectByType<MainMenuManager>() != null && Object.FindAnyObjectByType<LevelSelectionManager>() == null, 20f);
+                    if (Run.Done) yield break;
+                    yield return WaitReal(1f);
+                }
+                if (main.showSettingsButton)
+                {
+                    yield return ClickUntil(labels.settings, () => FindButton(done) != null, 15f);
+                    if (Run.Done) yield break;
+                    yield return Audit("Settings", ++step, steps);
+                    yield return ClickUntil(done, () => FindButton(done) == null, 15f);
+                    if (Run.Done) yield break;
+                }
+
+                Run.Event("shortcut", "load level 1 directly");
+                var load = LoadLevel(1);
+                if (load != null)
+                    yield return load;
+                yield return Run.Until(() => LevelRunning(1), 45f, "level 1 to start");
+                if (Run.Done) yield break;
+                yield return Audit("Level 1 HUD", ++step, steps, 2.5f);
+
+                // Pause with the HUD's own button (the one a thumb presses), then its settings.
+                yield return ClickUntil("II", () => GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.Paused, 10f);
+                if (Run.Done) yield break;
+                yield return Audit("Pause", ++step, steps);
+                yield return ClickUntil(texts.settings, () => FindButton(done) != null, 10f);
+                if (Run.Done) yield break;
+                yield return Audit("Pause Settings", ++step, steps);
+                yield return ClickUntil(done, () => FindButton(done) == null, 10f);
+                if (Run.Done) yield break;
+                yield return ClickUntil(texts.resume, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.Paused, 10f);
+                if (Run.Done) yield break;
+
+                string death = definition.deaths.Count > 0 && !string.IsNullOrEmpty(definition.deaths[0].deathName) ? definition.deaths[0].deathName : "Death1";
+                Run.Event("shortcut", $"load the death scene ({death}) directly");
+                GameplayWorld.Instance?.Telemetry?.Finish("playtest left");
+                Time.timeScale = 1f;
+                SceneTransitionManager.Instance.LoadDeathScene(death);
+                yield return Run.Until(() => Object.FindAnyObjectByType<DeathRuntime>() != null && FindButton(texts.rageQuit) != null, 45f, "the death scene");
+                if (Run.Done) yield break;
+                yield return Audit("Death", ++step, steps, 1.5f);
+                yield return ClickUntil(texts.rageQuit, () => Object.FindAnyObjectByType<MainMenuManager>() != null, 30f);
+                if (Run.Done) yield break;
+                Run.Scene("Main Menu");
+
+                Run.Metric("layoutProblems", layoutProblems);
+                Run.Progress(1f);
+                End(PlaytestOutcome.Done);
+            }
+
+            int layoutProblems;
+
+            /// <summary>Lets the screen settle (entrances), then checks its layout and reports each problem once per screen.</summary>
+            IEnumerator Audit(string screen, int step, int steps, float settle = 1.5f)
+            {
+                Run.Scene(screen);
+                yield return WaitReal(settle);
+                // Park the virtual mouse in a corner so no hovered button is mid-spring.
+                input.MoveMouse(new Vector2(1f, 1f));
+                yield return WaitReal(0.4f);
+                if (Run.Done)
+                    yield break;
+                var result = MenuLayoutAudit.Check(GameDefinition.Instance.menuTheme.responsive);
+                int buttons = 0;
+                foreach (var box in result.Boxes)
+                    if (box.Kind == MenuElementKind.Button)
+                        buttons++;
+                foreach (var problem in result.Problems)
+                    Run.Problem(PlaytestSeverity.Bug, $"layout ({screen}, {Screen.width}x{Screen.height}): {problem}");
+                foreach (var warning in result.Warnings)
+                    Run.Problem(PlaytestSeverity.Polish, $"layout ({screen}, {Screen.width}x{Screen.height}): {warning}");
+                layoutProblems += result.Problems.Count;
+                Run.Metric("layout." + screen.Replace(" ", "") + ".problems", result.Problems.Count);
+                Run.Event("layout", $"{screen}: {buttons} buttons and {result.Boxes.Count - buttons} panels/texts checked, " +
+                                    (result.Problems.Count == 0 ? "no overlaps, all on screen and thumb-sized" : $"{result.Problems.Count} problem(s)"));
+                Run.Progress((float)step / (steps + 1));
             }
 
             /// <summary>

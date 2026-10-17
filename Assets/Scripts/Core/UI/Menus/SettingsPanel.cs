@@ -29,6 +29,9 @@ namespace SickOfIt.Core.UI.Menus
             MenuGraphics.Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(980f, 880f));
             MenuGraphics.Surface(panel, theme.card.surface);
             menu.AddMotion(panel.gameObject, null, theme.entrance, 1.5f);
+            // Portrait: a taller panel, so the rows can grow to the touch size without squeezing.
+            MenuResponsive.Track(panel, MenuPlacement.At(0.5f, 0.5f, 0f, -10f, 980f, 880f), menu.Responsive.screens?.settingsPanel,
+                MenuElementKind.Container, menu.Responsive);
 
             menu.AddText(panel, "Title", texts.settingsTitle, theme.title, new Vector2(0.5f, 1f), new Vector2(0f, -78f),
                 new Vector2(900f, 130f), out _, Mathf.Min(theme.title.fontSize, 96f), menu.TitleFont, null, null, -2f);
@@ -97,6 +100,8 @@ namespace SickOfIt.Core.UI.Menus
             var row = MenuGraphics.NewRect(label, rows);
             var element = row.gameObject.AddComponent<LayoutElement>();
             element.preferredHeight = element.minHeight = 72f;
+            // As tall as its buttons on a touch layout (they grow to the touch size).
+            MenuResponsive.TrackInGroup(row, element, new Vector2(0f, 72f), MenuElementKind.Container, menu.Responsive, touch: true);
             var line = row.gameObject.AddComponent<HorizontalLayoutGroup>();
             line.spacing = 18f;
             line.childAlignment = TextAnchor.MiddleLeft;
@@ -151,6 +156,7 @@ namespace SickOfIt.Core.UI.Menus
         {
             var image = MenuGraphics.NewImage(menu.transform, name, new Color(0.07f, 0.04f, 0.09f, dim));
             image.raycastTarget = true; // blocks clicks to whatever is underneath
+            image.gameObject.AddComponent<MenuLayer>();
             var inner = MenuGraphics.NewRect("SafeArea", image.transform);
             MenuGraphics.Fill(inner);
             inner.gameObject.AddComponent<MenuSafeArea>();

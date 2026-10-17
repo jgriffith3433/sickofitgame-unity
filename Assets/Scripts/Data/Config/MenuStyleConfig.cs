@@ -141,6 +141,64 @@ namespace SickOfIt.Data.Config
         public Color vignette = Color.clear;
     }
 
+    /// <summary>
+    /// Where an element goes on one screen shape. Portrait placements are in the portrait layout space
+    /// (theme.json responsive.portraitReferenceResolution, 1080 wide). Whatever the placement, an element is kept
+    /// inside the safe area and shrunk to fit it, so nothing leaves the screen.
+    /// </summary>
+    [Serializable]
+    public class MenuPlacement
+    {
+        [Tooltip("Use this placement. Off = fall back (in portrait: the landscape placement, kept on screen).")]
+        public bool use;
+        [Tooltip("Leave the element out on this screen shape (decorations, stickers).")]
+        public bool hide;
+        public Vector2 anchor = new Vector2(0.5f, 0.5f);
+        public Vector2 offset;
+        [Tooltip("Size in pixels. Zero = the element's own size.")]
+        public Vector2 size;
+
+        public static MenuPlacement At(float anchorX, float anchorY, float offsetX, float offsetY, float width = 0f, float height = 0f) =>
+            new MenuPlacement
+            {
+                use = true,
+                anchor = new Vector2(anchorX, anchorY),
+                offset = new Vector2(offsetX, offsetY),
+                size = new Vector2(width, height),
+            };
+    }
+
+    /// <summary>A list's portrait version: where it goes, and how it stacks or wraps on a tall screen.</summary>
+    [Serializable]
+    public class MenuPortraitList
+    {
+        [Tooltip("Use this in portrait. Off = the landscape list, kept on screen.")]
+        public bool use;
+        public Vector2 anchor = new Vector2(0.5f, 0.45f);
+        public Vector2 offset;
+        [Tooltip("Area in pixels. Zero = the landscape size (shrunk to fit).")]
+        public Vector2 size;
+        public MenuListDirection direction = MenuListDirection.Vertical;
+        [Tooltip("Grid only: columns. 0 = as many as fit.")]
+        public int columns;
+        public Vector2 spacing = new Vector2(28f, 22f);
+        [Tooltip("Item size in pixels. Zero = the landscape item size.")]
+        public Vector2 itemSize;
+
+        public static MenuPortraitList At(float anchorX, float anchorY, float width, float height, MenuListDirection direction,
+            float itemWidth, float itemHeight, float spacing, int columns = 0) =>
+            new MenuPortraitList
+            {
+                use = true,
+                anchor = new Vector2(anchorX, anchorY),
+                size = new Vector2(width, height),
+                direction = direction,
+                itemSize = new Vector2(itemWidth, itemHeight),
+                spacing = new Vector2(spacing, spacing),
+                columns = columns,
+            };
+    }
+
     [Serializable]
     public class MenuLabel
     {
@@ -152,6 +210,8 @@ namespace SickOfIt.Data.Config
         [Tooltip("0 = the theme style's size.")]
         public float fontSize;
         public MenuMotion motion = new MenuMotion();
+        [Tooltip("Where it goes on a portrait screen (size is ignored: the text sets it).")]
+        public MenuPlacement portrait = new MenuPlacement();
     }
 
     [Serializable]
@@ -167,6 +227,8 @@ namespace SickOfIt.Data.Config
         public Vector2 spacing = new Vector2(28f, 22f);
         [Tooltip("Item size in pixels. Zero = the button style's size.")]
         public Vector2 itemSize;
+        [Tooltip("The list on a portrait screen: stack or wrap instead of shrinking.")]
+        public MenuPortraitList portrait = new MenuPortraitList();
     }
 
     [Serializable]
@@ -190,6 +252,8 @@ namespace SickOfIt.Data.Config
         public Vector2 offset;
         public float rotation;
         public MenuMotion motion = new MenuMotion();
+        [Tooltip("Where it goes on a portrait screen ('hide' leaves it out there).")]
+        public MenuPlacement portrait = new MenuPlacement();
     }
 
     [Serializable]
@@ -207,6 +271,124 @@ namespace SickOfIt.Data.Config
         public Vector2 statsAnchor = new Vector2(1f, 1f);
         public Vector2 statsOffset = new Vector2(-40f, -40f);
         public List<MenuDecoration> decorations = new List<MenuDecoration>();
+        [Tooltip("Back button on a portrait screen (size is the button's).")]
+        public MenuPlacement portraitBack = new MenuPlacement();
+        [Tooltip("Health/diamond chips on a portrait screen.")]
+        public MenuPlacement portraitStats = new MenuPlacement();
+    }
+
+    /// <summary>Where each HUD element goes on one screen shape (see <see cref="MenuPlacement"/>).</summary>
+    [Serializable]
+    public class MenuHudLayout
+    {
+        [Tooltip("Player health; size x = the bar's width. Landscape: off = hud.healthAnchor/healthOffset/healthWidth.")]
+        public MenuPlacement health = new MenuPlacement();
+        [Tooltip("Diamond counter (its corner sits on the anchor).")]
+        public MenuPlacement diamonds = new MenuPlacement();
+        [Tooltip("Pause button.")]
+        public MenuPlacement pause = new MenuPlacement();
+        [Tooltip("Hold-to-rewind button.")]
+        public MenuPlacement rewind = new MenuPlacement();
+        [Tooltip("FLOOR readout on floor stages (its top edge sits on the anchor).")]
+        public MenuPlacement floor = new MenuPlacement();
+        public MenuPlacement bossBar = new MenuPlacement();
+        [Tooltip("Boss bar on stages that also show the floor readout.")]
+        public MenuPlacement bossBarWithFloor = new MenuPlacement();
+        public MenuPlacement objective = new MenuPlacement();
+        public MenuPlacement banner = new MenuPlacement();
+        public MenuPlacement subtitle = new MenuPlacement();
+        [Tooltip("The big '<< Rewinding' while rewinding.")]
+        public MenuPlacement rewinding = new MenuPlacement();
+        [Tooltip("'Ouch! Hold R to undo that.'")]
+        public MenuPlacement rewindHint = new MenuPlacement();
+        [Tooltip("Level progress / rewind juice bar.")]
+        public MenuPlacement progressBar = new MenuPlacement();
+
+        /// <summary>The desktop/landscape HUD, as it always looked (1920x1080 space).</summary>
+        public static MenuHudLayout Landscape() => new MenuHudLayout
+        {
+            diamonds = MenuPlacement.At(1f, 1f, -140f, -48f),
+            pause = MenuPlacement.At(1f, 1f, -80f, -78f, 88f, 88f),
+            rewind = MenuPlacement.At(1f, 1f, -112f, -214f, 124f, 124f),
+            floor = MenuPlacement.At(0.5f, 1f, 0f, -40f),
+            bossBar = MenuPlacement.At(0.5f, 1f, 0f, -112f, 780f, 54f),
+            bossBarWithFloor = MenuPlacement.At(0.5f, 1f, 0f, -184f, 780f, 54f),
+            objective = MenuPlacement.At(0f, 1f, 436f, -150f, 800f, 44f),
+            banner = MenuPlacement.At(0.5f, 0.52f, 0f, 0f, 1100f, 150f),
+            subtitle = MenuPlacement.At(0.5f, 0.2f, 0f, 0f, 1600f, 90f),
+            rewinding = MenuPlacement.At(0.5f, 0.8f, 0f, 0f, 1200f, 130f),
+            rewindHint = MenuPlacement.At(1f, 1f, -520f, -300f, 760f, 70f),
+            progressBar = MenuPlacement.At(0.5f, 0f, 0f, 42f, 1500f, 30f),
+        };
+
+        /// <summary>
+        /// A phone held upright (1080 wide): the game is a 16:9 band in the middle, so the readouts stack in the
+        /// space above it and the thumb controls (rewind, the progress bar) sit in the space below it.
+        /// </summary>
+        public static MenuHudLayout Portrait() => new MenuHudLayout
+        {
+            health = MenuPlacement.At(0f, 1f, 24f, -24f, 330f),
+            diamonds = MenuPlacement.At(1f, 1f, -176f, -40f),
+            pause = MenuPlacement.At(1f, 1f, -90f, -86f, 124f, 124f),
+            rewind = MenuPlacement.At(1f, 0f, -130f, 160f, 180f, 180f),
+            floor = MenuPlacement.At(0.5f, 1f, 0f, -176f),
+            bossBar = MenuPlacement.At(0.5f, 1f, 0f, -430f, 960f, 54f),
+            bossBarWithFloor = MenuPlacement.At(0.5f, 1f, 0f, -430f, 960f, 54f),
+            objective = MenuPlacement.At(0.5f, 1f, 0f, -300f, 1000f, 48f),
+            banner = MenuPlacement.At(0.5f, 0.52f, 0f, 0f, 1000f, 150f),
+            subtitle = MenuPlacement.At(0.5f, 0.3f, 0f, 0f, 1000f, 150f),
+            rewinding = MenuPlacement.At(0.5f, 1f, 0f, -620f, 1000f, 130f),
+            rewindHint = MenuPlacement.At(0.5f, 1f, 0f, -530f, 1000f, 70f),
+            progressBar = MenuPlacement.At(0.5f, 0f, 0f, 320f, 1000f, 30f),
+        };
+    }
+
+    /// <summary>Portrait versions of the in-level screens (pause, settings, results, upgrade picker, death scene).</summary>
+    [Serializable]
+    public class MenuPortraitScreens
+    {
+        [Tooltip("Pause menu buttons.")]
+        public MenuPortraitList pauseList = MenuPortraitList.At(0.5f, 0.38f, 900f, 720f, MenuListDirection.Vertical, 760f, 0f, 18f);
+        [Tooltip("The settings panel.")]
+        public MenuPlacement settingsPanel = MenuPlacement.At(0.5f, 0.5f, 0f, 0f, 1032f, 1500f);
+        [Tooltip("Upgrade cards between levels: they wrap into a grid.")]
+        public MenuPortraitList upgradePicker = MenuPortraitList.At(0.5f, 0.45f, 1032f, 1240f, MenuListDirection.Grid, 440f, 480f, 28f, 2);
+        [Tooltip("Results: the stat rows (label at anchor x 'labelX', value at 'valueX', from 'statsTop' down by 'statsStep').")]
+        public float resultsLabelX = 0.3f;
+        public float resultsValueX = 0.74f;
+        public float resultsStatsTop = 0.72f;
+        public float resultsStatsStep = 0.055f;
+        public MenuPlacement resultsGrade = MenuPlacement.At(0.5f, 0.37f, 0f, 0f, 330f, 330f);
+        public MenuPlacement resultsQuip = MenuPlacement.At(0.5f, 0.22f, 0f, 0f, 1000f, 80f);
+        public MenuPlacement resultsContinue = MenuPlacement.At(0.5f, 0.09f, 0f, 0f, 520f, 124f);
+        [Tooltip("The death scene's Rage Quit (top center, clear of the rewind/skip row at the bottom).")]
+        public MenuPlacement rageQuit = MenuPlacement.At(0.5f, 1f, 0f, -90f, 400f, 124f);
+    }
+
+    /// <summary>
+    /// How every menu and the HUD adapt to the screen: one layout system. Layouts are written in a fixed space
+    /// sized on the screen's short side (1920x1080 landscape, 1080x1920 portrait), so a button is the same
+    /// physical size on any phone; everything stays inside the device safe area; on a portrait screen elements
+    /// take their portrait placement and lists stack or wrap; and buttons there are never smaller than a thumb.
+    /// </summary>
+    [Serializable]
+    public class MenuResponsiveStyle
+    {
+        [Tooltip("Layout space on a portrait screen; its width is the short side, like 1080 in 1920x1080.")]
+        public Vector2 portraitReferenceResolution = new Vector2(1080f, 1920f);
+        [Tooltip("Smallest button in layout pixels on the short side's scale: 124 of 1080 is about 44 pt on a 390 pt wide phone.")]
+        public float minTouchSize = 124f;
+        [Tooltip("Also grow buttons to minTouchSize in landscape (off keeps the landscape look).")]
+        public bool touchSizeInLandscape;
+        [Tooltip("Gap kept between elements and the safe area's edge in portrait, in pixels.")]
+        public float portraitMargin = 24f;
+        [Tooltip("Extra room above the home bar, as a fraction of the screen height.")]
+        public float bottomMargin = 0.03f;
+        [Tooltip("On the web: room for the page's beta/build badge at the top, as a fraction of the screen height.")]
+        public float webTopMargin = 0.1f;
+        public float webTopMarginPortrait = 0.065f;
+        [Tooltip("Pause, settings, results, upgrade picker and death scene in portrait.")]
+        public MenuPortraitScreens screens = new MenuPortraitScreens();
     }
 
     /// <summary>In-level HUD: player health, diamonds, boss bar, level progress / rewind bar, enemy health bars.</summary>
@@ -236,6 +418,11 @@ namespace SickOfIt.Data.Config
         public Color marker = new Color(1f, 0.79f, 0.24f, 1f);
         [Tooltip("Dark edge around enemy health bars in the world.")]
         public Color worldBarOutline = new Color(0.12f, 0.07f, 0.13f, 1f);
+
+        [Tooltip("Where the HUD elements go on a landscape screen (desktop, a phone on its side).")]
+        public MenuHudLayout landscape = MenuHudLayout.Landscape();
+        [Tooltip("Where they go on a phone held upright.")]
+        public MenuHudLayout portrait = MenuHudLayout.Portrait();
     }
 
     /// <summary>A results-screen grade: the best one whose minScore the run reaches.</summary>
@@ -304,6 +491,8 @@ namespace SickOfIt.Data.Config
         public Font titleFont;
         [Tooltip("Size of the layout space in pixels; the menu scales to fit the screen.")]
         public Vector2 referenceResolution = new Vector2(1920f, 1080f);
+        [Tooltip("Portrait layout space, touch sizes, safe-area margins and the in-level screens' portrait layouts.")]
+        public MenuResponsiveStyle responsive = new MenuResponsiveStyle();
 
         public MenuTextStyle title = new MenuTextStyle { fontSize = 150f, outlineWidth = 0.25f };
         public MenuTextStyle subtitle = new MenuTextStyle { fontSize = 44f };

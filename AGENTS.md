@@ -77,7 +77,11 @@ Assets/GameConfig/
 - **Menus and HUD are built at runtime** by `MenuCanvas` (`Assets/Scripts/Core/UI/Menus/`): main menu, level/video
   select, shop, pause, settings, results, death overlay and the in-level HUD (health, diamonds, rewind button, boss bar,
   progress/rewind bar, upgrade picker). The look is `ui/theme.json` (styles, `hud` colors, every on-screen word in
-  `texts`, results `grades`); placement is each screen's `layout`. Generators only build the scene shell; restyling
+  `texts`, results `grades`); placement is each screen's `layout`. One responsive system places all of it
+  (`MenuResponsive`/`MenuListLayout`, numbers in theme.json `responsive` and `hud.landscape`/`hud.portrait`): scaled on
+  the short side, kept in the safe area, portrait placements that stack or wrap, thumb-sized buttons in portrait
+  (cookbook: "Phones, portrait and touch"). Place new UI through `MenuCanvas.Add*` or `MenuResponsive.Track`, never at
+  raw pixel positions, or the `layout` playtest flags it. Generators only build the scene shell; restyling
   never needs Generate Project. Don't add prefab buttons to scenes.
 - **Sound is `audio.json`**: every effect and voice line is a prompt plus a `clip` filled in by the generator
   (SickOfIt > Audio > Sound Generator, or the `GenerateSounds` batch command), which makes them through Hawkes Gen's
@@ -157,7 +161,9 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
 - **Scenarios:** `smoke` (main menu, New Game, skip the video, level 1 for ~30 s with one rewind and a P pause/resume,
   quit to menu), `level-<n>` per level in game.json (loads the level directly, a setup shortcut), `full` (New Game, then
   every level in order through the real flow: results → Continue → video skipped with Escape; up to 3 tries per level;
-  ~10 min), `menus` (level select, videos, shop, settings open and close), `site` (the website around the game: each page opened
+  ~10 min), `menus` (level select, videos, shop, settings open and close), `layout` (main menu, level select, settings,
+  level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or
+  is under the touch size; meant for device "phone", 390x844), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
   page has neither; `Plugins/WebGL/HawkesSite.jslib`).
 - **Start one:** in a browser `?playtest=smoke` (plus `&seed=`, `&speed=`), or `hawkesPlaytest.start("level-2")`; in the
