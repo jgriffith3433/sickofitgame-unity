@@ -21,6 +21,7 @@ namespace SickOfIt.Gameplay
     public sealed partial class GameplayHud
     {
         MenuTexts Texts => theme.texts ?? (theme.texts = new MenuTexts());
+        MenuPortraitScreens Screens => menu.Responsive.screens ?? (menu.Responsive.screens = new MenuPortraitScreens());
 
         // ─── Pause ────────────────────────────────────────────────────
 
@@ -33,8 +34,9 @@ namespace SickOfIt.Gameplay
 
         void BuildPauseButton()
         {
+            var place = Landscape.pause;
             var style = theme.backButton.Clone();
-            style.size = new Vector2(88f, 88f);
+            style.size = place.size;
             style.surface = new MenuSurfaceStyle
             {
                 shape = MenuShape.Circle,
@@ -47,7 +49,8 @@ namespace SickOfIt.Gameplay
             };
             style.tilt = 0f;
             style.hoverRotation = 0f;
-            pauseButton = menu.AddButtonAt(new Vector2(1f, 1f), new Vector2(-80f, -78f), "II", style, () => SetPaused(true));
+            pauseButton = menu.AddButtonAt(place.anchor, place.offset, "II", style, () => SetPaused(true));
+            Lay(pauseButton.transform.parent, l => l.pause, MenuElementKind.Button);
             pauseButton.navigation = new Navigation { mode = Navigation.Mode.None };
         }
 
@@ -127,6 +130,7 @@ namespace SickOfIt.Gameplay
                 size = new Vector2(700f, 520f),
                 direction = MenuListDirection.Vertical,
                 spacing = new Vector2(0f, 14f),
+                portrait = Screens.pauseList,
             }, theme.button.size, overlay.Inner);
             menu.AddButton(list, Texts.resume, theme.button, () => SetPaused(false));
             if (world.Host != null)
@@ -203,14 +207,21 @@ namespace SickOfIt.Gameplay
                 (Texts.resultsRewinds, summary.rewinds.ToString()),
                 (Texts.resultsDiamonds, "♦ " + diamondsGained),
             };
+            // Landscape: the stats on the left, the grade beside them. Portrait: stats on top, grade under them.
+            var screens = Screens;
             for (int i = 0; i < stats.Count; i++)
             {
                 float y = 0.66f - i * 0.085f;
+                float tallY = screens.resultsStatsTop - i * screens.resultsStatsStep;
                 var label = menu.AddText(inner, "Stat", stats[i].label, theme.heading, new Vector2(0.36f, y), Vector2.zero,
                     new Vector2(520f, 70f), out _, 44f, null, theme.entrance);
                 label.alignment = TextAlignmentOptions.MidlineLeft;
+                MenuResponsive.Track((RectTransform)label.transform.parent, MenuPlacement.At(0.36f, y, 0f, 0f, 520f, 70f),
+                    MenuPlacement.At(screens.resultsLabelX, tallY, 0f, 0f, 520f, 70f), MenuElementKind.Text, menu.Responsive);
                 var value = menu.AddText(inner, "Value", stats[i].value, theme.heading, new Vector2(0.52f, y), Vector2.zero,
                     new Vector2(300f, 70f), out _, 48f, null, theme.entrance);
+                MenuResponsive.Track((RectTransform)value.transform.parent, MenuPlacement.At(0.52f, y, 0f, 0f, 300f, 70f),
+                    MenuPlacement.At(screens.resultsValueX, tallY, 0f, 0f, 300f, 70f), MenuElementKind.Text, menu.Responsive);
                 value.alignment = TextAlignmentOptions.MidlineRight;
                 value.enableVertexGradient = false;
                 value.color = theme.accent;
@@ -233,10 +244,13 @@ namespace SickOfIt.Gameplay
             letter.color = new Color(1f, 0.97f, 0.88f, 1f);
             var stampMotion = menu.AddMotion(stamp.gameObject, new MenuMotion { type = MenuMotionType.Pulse, amount = 0.03f, speed = 1f },
                 new MenuEntrance { type = MenuEntranceType.Pop, duration = 0.45f, delay = 0f }, 12f);
+            MenuResponsive.Track(stamp, MenuPlacement.At(0.72f, 0.5f, 0f, 0f, 330f, 330f), screens.resultsGrade, MenuElementKind.Panel, menu.Responsive);
             stampMotion.EntranceDelay = 0.9f;
             gradeSoundAt = Time.unscaledTime + 0.95f;
-            menu.AddText(inner, "Quip", grade.quip, theme.subtitle, new Vector2(0.72f, 0.27f), Vector2.zero, new Vector2(620f, 80f),
+            var quip = menu.AddText(inner, "Quip", grade.quip, theme.subtitle, new Vector2(0.72f, 0.27f), Vector2.zero, new Vector2(620f, 80f),
                 out var quipMotion, 36f, null, theme.entrance, null, 4f);
+            MenuResponsive.Track((RectTransform)quip.transform.parent, MenuPlacement.At(0.72f, 0.27f, 0f, 0f, 620f, 80f), screens.resultsQuip,
+                MenuElementKind.Text, menu.Responsive);
             quipMotion.EntranceDelay = 1.2f;
 
             var go = theme.button.Clone();
@@ -248,7 +262,7 @@ namespace SickOfIt.Gameplay
                 Time.timeScale = 1f;
                 GameClock.Instance?.Resume();
                 onContinue?.Invoke();
-            }, inner);
+            }, inner, screens.resultsContinue);
         }
 
         float gradeSoundAt = -1f;

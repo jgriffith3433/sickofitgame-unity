@@ -103,8 +103,10 @@ namespace SickOfIt.Core.Input
 
         private void HandleTouchBegan(int fingerId, Vector2 screenPos)
         {
-            // Only handle touches that start in the letterbox area
+            // Only handle touches that start in the letterbox area, and not on a HUD button there (on a phone held
+            // upright the rewind and pause buttons live in the bars).
             if (!IsInLetterboxArea(screenPos)) return;
+            if (SickOfIt.Core.UI.Menus.MenuHit.OnButton(screenPos)) return;
 
             // Determine which analog to control based on horizontal screen position
             bool isLeftSide = screenPos.x < Screen.width * screenSplitRatio;

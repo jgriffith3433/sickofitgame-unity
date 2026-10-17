@@ -3,6 +3,76 @@
   "font": null,
   "titleFont": null,
   "referenceResolution": [1920.0, 1080.0],
+  "responsive": {
+    "portraitReferenceResolution": [1080.0, 1920.0],
+    "minTouchSize": 124.0,
+    "touchSizeInLandscape": false,
+    "portraitMargin": 24.0,
+    "bottomMargin": 0.03,
+    "webTopMargin": 0.1,
+    "webTopMarginPortrait": 0.065,
+    "screens": {
+      "pauseList": {
+        "use": true,
+        "anchor": [0.5, 0.38],
+        "offset": [0.0, 0.0],
+        "size": [900.0, 720.0],
+        "direction": "Vertical",
+        "columns": 0,
+        "spacing": [18.0, 18.0],
+        "itemSize": [760.0, 0.0]
+      },
+      "settingsPanel": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.5],
+        "offset": [0.0, 0.0],
+        "size": [1032.0, 1500.0]
+      },
+      "upgradePicker": {
+        "use": true,
+        "anchor": [0.5, 0.45],
+        "offset": [0.0, 0.0],
+        "size": [1032.0, 1240.0],
+        "direction": "Grid",
+        "columns": 2,
+        "spacing": [28.0, 28.0],
+        "itemSize": [440.0, 480.0]
+      },
+      "resultsLabelX": 0.3,
+      "resultsValueX": 0.74,
+      "resultsStatsTop": 0.72,
+      "resultsStatsStep": 0.055,
+      "resultsGrade": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.37],
+        "offset": [0.0, 0.0],
+        "size": [330.0, 330.0]
+      },
+      "resultsQuip": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.22],
+        "offset": [0.0, 0.0],
+        "size": [1000.0, 80.0]
+      },
+      "resultsContinue": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.09],
+        "offset": [0.0, 0.0],
+        "size": [520.0, 124.0]
+      },
+      "rageQuit": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 1.0],
+        "offset": [0.0, -90.0],
+        "size": [400.0, 124.0]
+      }
+    }
+  },
   "title": {
     "fontSize": 170.0,
     "color": "#FFE66D",
@@ -330,7 +400,193 @@
     "rewind": "#2EC4B6",
     "rewindEmpty": "#FF5B3A",
     "marker": "#FFC93C",
-    "worldBarOutline": "#1E1220"
+    "worldBarOutline": "#1E1220",
+    "landscape": {
+      "health": {
+        "use": false,
+        "hide": false,
+        "anchor": [0.0, 1.0],
+        "offset": [36.0, -30.0],
+        "size": [440.0, 0.0]
+      },
+      "diamonds": {
+        "use": true,
+        "hide": false,
+        "anchor": [1.0, 1.0],
+        "offset": [-140.0, -48.0],
+        "size": [0.0, 0.0]
+      },
+      "pause": {
+        "use": true,
+        "hide": false,
+        "anchor": [1.0, 1.0],
+        "offset": [-80.0, -78.0],
+        "size": [88.0, 88.0]
+      },
+      "rewind": {
+        "use": true,
+        "hide": false,
+        "anchor": [1.0, 1.0],
+        "offset": [-112.0, -214.0],
+        "size": [124.0, 124.0]
+      },
+      "floor": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 1.0],
+        "offset": [0.0, -40.0],
+        "size": [0.0, 0.0]
+      },
+      "bossBar": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 1.0],
+        "offset": [0.0, -112.0],
+        "size": [780.0, 54.0]
+      },
+      "bossBarWithFloor": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 1.0],
+        "offset": [0.0, -184.0],
+        "size": [780.0, 54.0]
+      },
+      "objective": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.0, 1.0],
+        "offset": [436.0, -150.0],
+        "size": [800.0, 44.0]
+      },
+      "banner": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.52],
+        "offset": [0.0, 0.0],
+        "size": [1100.0, 150.0]
+      },
+      "subtitle": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.2],
+        "offset": [0.0, 0.0],
+        "size": [1600.0, 90.0]
+      },
+      "rewinding": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.8],
+        "offset": [0.0, 0.0],
+        "size": [1200.0, 130.0]
+      },
+      "rewindHint": {
+        "use": true,
+        "hide": false,
+        "anchor": [1.0, 1.0],
+        "offset": [-520.0, -300.0],
+        "size": [760.0, 70.0]
+      },
+      "progressBar": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.0],
+        "offset": [0.0, 42.0],
+        "size": [1500.0, 30.0]
+      }
+    },
+    "portrait": {
+      "health": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.0, 1.0],
+        "offset": [24.0, -24.0],
+        "size": [330.0, 0.0]
+      },
+      "diamonds": {
+        "use": true,
+        "hide": false,
+        "anchor": [1.0, 1.0],
+        "offset": [-176.0, -40.0],
+        "size": [0.0, 0.0]
+      },
+      "pause": {
+        "use": true,
+        "hide": false,
+        "anchor": [1.0, 1.0],
+        "offset": [-90.0, -86.0],
+        "size": [124.0, 124.0]
+      },
+      "rewind": {
+        "use": true,
+        "hide": false,
+        "anchor": [1.0, 0.0],
+        "offset": [-130.0, 160.0],
+        "size": [180.0, 180.0]
+      },
+      "floor": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 1.0],
+        "offset": [0.0, -176.0],
+        "size": [0.0, 0.0]
+      },
+      "bossBar": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 1.0],
+        "offset": [0.0, -430.0],
+        "size": [960.0, 54.0]
+      },
+      "bossBarWithFloor": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 1.0],
+        "offset": [0.0, -430.0],
+        "size": [960.0, 54.0]
+      },
+      "objective": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 1.0],
+        "offset": [0.0, -300.0],
+        "size": [1000.0, 48.0]
+      },
+      "banner": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.52],
+        "offset": [0.0, 0.0],
+        "size": [1000.0, 150.0]
+      },
+      "subtitle": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.3],
+        "offset": [0.0, 0.0],
+        "size": [1000.0, 150.0]
+      },
+      "rewinding": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 1.0],
+        "offset": [0.0, -620.0],
+        "size": [1000.0, 130.0]
+      },
+      "rewindHint": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 1.0],
+        "offset": [0.0, -530.0],
+        "size": [1000.0, 70.0]
+      },
+      "progressBar": {
+        "use": true,
+        "hide": false,
+        "anchor": [0.5, 0.0],
+        "offset": [0.0, 320.0],
+        "size": [1000.0, 30.0]
+      }
+    }
   },
   "texts": {
     "pauseTitle": "Paused",

@@ -25,6 +25,18 @@ namespace SickOfIt.Core.UI.Menus
         float exitDuration;
         float seed;
 
+        /// <summary>Where the element rests (its layout position); <see cref="MenuResponsive"/> moves it when the screen turns.</summary>
+        public Vector2 RestPosition
+        {
+            get => restPosition;
+            set
+            {
+                restPosition = value;
+                restSet = true;
+            }
+        }
+        bool restSet;
+
         public bool EntranceDone => Entrance == null || Entrance.type == MenuEntranceType.None
             || (startedAt >= 0f && Time.unscaledTime - startedAt >= EntranceDelay + Entrance.duration);
 
@@ -34,7 +46,8 @@ namespace SickOfIt.Core.UI.Menus
             // Not '??': Unity's missing-component placeholder isn't C# null, so '??' would never add it.
             if (!TryGetComponent(out group))
                 group = gameObject.AddComponent<CanvasGroup>();
-            restPosition = rect.anchoredPosition;
+            if (!restSet)
+                restPosition = rect.anchoredPosition;
             seed = Random.value * 10f;
         }
 

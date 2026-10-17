@@ -91,32 +91,98 @@ namespace SickOfIt.Gameplay
             BuildDiamonds();
             BuildRewind();
 
-            objective = menu.AddText(menu.Root, "Objective", "", theme.caption, new Vector2(0f, 1f), new Vector2(436f, -150f),
-                new Vector2(800f, 44f), out _, 0f, null, theme.entrance);
-            objective.alignment = TextAlignmentOptions.MidlineLeft;
+            var place = Landscape.objective;
+            objective = menu.AddText(menu.Root, "Objective", "", theme.caption, place.anchor, place.offset,
+                place.size, out _, 0f, null, theme.entrance);
+            Lay(objective.transform.parent, l => l.objective, MenuElementKind.Text);
+            // Left-aligned under the health bar in landscape; centred in its own row on a portrait screen.
+            objective.alignment = MenuScreen.Portrait ? TextAlignmentOptions.Midline : TextAlignmentOptions.MidlineLeft;
 
-            banner = menu.AddText(menu.Root, "Banner", "", theme.title, new Vector2(0.5f, 0.52f), Vector2.zero,
-                new Vector2(1100f, 150f), out bannerMotion, Mathf.Min(theme.title.fontSize, 96f), menu.TitleFont, theme.titleEntrance,
+            place = Landscape.banner;
+            banner = menu.AddText(menu.Root, "Banner", "", theme.title, place.anchor, place.offset,
+                place.size, out bannerMotion, Mathf.Min(theme.title.fontSize, 96f), menu.TitleFont, theme.titleEntrance,
                 new MenuMotion { type = MenuMotionType.Wobble, amount = 0.6f, speed = 0.4f }, -1f);
+            Lay(banner.transform.parent, l => l.banner, MenuElementKind.Text);
             // Stay in the middle band, clear of the HUD row (objective, diamonds, pause, rewind) and the Overlord.
             banner.fontSizeMin = 36f;
-            subtitle = menu.AddText(menu.Root, "Subtitle", "", theme.subtitle, new Vector2(0.5f, 0.2f), Vector2.zero,
-                new Vector2(1600f, 90f), out subtitleMotion, 0f, null, theme.entrance);
+            place = Landscape.subtitle;
+            subtitle = menu.AddText(menu.Root, "Subtitle", "", theme.subtitle, place.anchor, place.offset,
+                place.size, out subtitleMotion, 0f, null, theme.entrance);
+            Lay(subtitle.transform.parent, l => l.subtitle, MenuElementKind.Text);
 
             BuildBossBar();
             BuildScreens();
         }
 
+        // ─── Layout: theme.json hud.landscape / hud.portrait ──────────
+
+        static readonly MenuHudLayout DefaultLandscape = MenuHudLayout.Landscape();
+        static readonly MenuHudLayout DefaultPortrait = MenuHudLayout.Portrait();
+
+        /// <summary>The landscape placements, each falling back to the built-in one when the theme leaves it off.</summary>
+        MenuHudLayout Landscape => landscapeLayout ??= Merge(style.landscape, DefaultLandscape);
+        MenuHudLayout landscapeLayout;
+
+        static MenuHudLayout Merge(MenuHudLayout layout, MenuHudLayout fallback)
+        {
+            if (layout == null)
+                return fallback;
+            MenuPlacement Or(MenuPlacement p, MenuPlacement f) => p != null && p.use ? p : f;
+            return new MenuHudLayout
+            {
+                health = Or(layout.health, fallback.health),
+                diamonds = Or(layout.diamonds, fallback.diamonds),
+                pause = Or(layout.pause, fallback.pause),
+                rewind = Or(layout.rewind, fallback.rewind),
+                floor = Or(layout.floor, fallback.floor),
+                bossBar = Or(layout.bossBar, fallback.bossBar),
+                bossBarWithFloor = Or(layout.bossBarWithFloor, fallback.bossBarWithFloor),
+                objective = Or(layout.objective, fallback.objective),
+                banner = Or(layout.banner, fallback.banner),
+                subtitle = Or(layout.subtitle, fallback.subtitle),
+                rewinding = Or(layout.rewinding, fallback.rewinding),
+                rewindHint = Or(layout.rewindHint, fallback.rewindHint),
+                progressBar = Or(layout.progressBar, fallback.progressBar),
+            };
+        }
+
+        /// <summary>
+        /// Puts a HUD element at its landscape placement, or its portrait one on a phone held upright (a portrait
+        /// placement left off keeps the landscape one, fitted to the screen).
+        /// </summary>
+        MenuResponsive Lay(Transform target, System.Func<MenuHudLayout, MenuPlacement> pick, MenuElementKind kind,
+            bool pivotAtAnchor = false, bool controlsSize = true, Vector2? landscapeSize = null, Vector2? portraitSize = null)
+        {
+            var landscape = Clone(pick(Landscape), landscapeSize);
+            var portrait = style.portrait != null ? pick(style.portrait) : pick(DefaultPortrait);
+            portrait = portrait != null && portrait.use ? Clone(portrait, portraitSize) : null;
+            return MenuResponsive.Track((RectTransform)target, landscape, portrait, kind, menu.Responsive, pivotAtAnchor, controlsSize);
+        }
+
+        static MenuPlacement Clone(MenuPlacement p, Vector2? size) => new MenuPlacement
+        {
+            use = true,
+            hide = p.hide,
+            anchor = p.anchor,
+            offset = p.offset,
+            size = size ?? p.size,
+        };
+
         // ─── Player health (top-left) and diamonds (top-right) ────────
+
+        const float HeartSize = 104f;
+
+        /// <summary>The health block's size for a bar of 'width' (the heart overlaps the bar's panel).</summary>
+        static Vector2 HealthSize(float width) => new Vector2(HeartSize * 0.6f + width, HeartSize);
 
         void BuildHealth()
         {
             healthRoot = MenuGraphics.NewRect("PlayerHealth", menu.Root);
             healthRoot.anchorMin = healthRoot.anchorMax = healthRoot.pivot = style.healthAnchor;
             healthRoot.anchoredPosition = style.healthOffset;
-            const float heartSize = 104f;
+            const float heartSize = HeartSize;
             const float panelHeight = 66f;
-            healthRoot.sizeDelta = new Vector2(heartSize * 0.6f + style.healthWidth, heartSize);
+            healthRoot.sizeDelta = HealthSize(style.healthWidth);
 
             // Panel behind the bar, tucked under the heart.
             var panel = MenuGraphics.NewRect("Panel", healthRoot);
@@ -166,6 +232,15 @@ namespace SickOfIt.Gameplay
 
             // The motion driver owns the slot's position, so hits shake the panel inside it.
             menu.AddMotion(healthRoot.gameObject, null, theme.entrance, 0f);
+
+            // Landscape: hud.healthAnchor/healthOffset/healthWidth, unless hud.landscape.health is set.
+            var landscape = style.landscape != null && style.landscape.health != null && style.landscape.health.use
+                ? style.landscape.health
+                : MenuPlacement.At(style.healthAnchor.x, style.healthAnchor.y, style.healthOffset.x, style.healthOffset.y, style.healthWidth);
+            var portrait = style.portrait != null ? style.portrait.health : DefaultPortrait.health;
+            MenuResponsive.Track(healthRoot, Clone(landscape, HealthSize(landscape.size.x > 0f ? landscape.size.x : style.healthWidth)),
+                portrait != null && portrait.use ? Clone(portrait, HealthSize(portrait.size.x > 0f ? portrait.size.x : style.healthWidth)) : null,
+                MenuElementKind.Panel, menu.Responsive, pivotAtAnchor: true);
         }
 
         // ─── Rewind: a labeled hold button (top-right), a rewinding overlay, and a hint on the first hit ───
@@ -190,17 +265,20 @@ namespace SickOfIt.Gameplay
             rewindTint = MenuGraphics.NewImage(transform, "RewindTint", Color.clear);
             rewindTint.sprite = MenuGraphics.Vignette();
             rewindTint.transform.SetSiblingIndex(1);
-            rewindingText = menu.AddText(menu.Root, "Rewinding", "\u25C4\u25C4  Rewinding", theme.title, new Vector2(0.5f, 0.8f),
-                Vector2.zero, new Vector2(1200f, 130f), out _, Mathf.Min(theme.title.fontSize, 84f), menu.TitleFont, null,
+            var place = Landscape.rewinding;
+            rewindingText = menu.AddText(menu.Root, "Rewinding", "\u25C4\u25C4  Rewinding", theme.title, place.anchor,
+                place.offset, place.size, out _, Mathf.Min(theme.title.fontSize, 84f), menu.TitleFont, null,
                 new MenuMotion { type = MenuMotionType.Pulse, amount = 0.05f, speed = 2.5f });
+            Lay(rewindingText.transform.parent, l => l.rewinding, MenuElementKind.Text);
             rewindingText.enableVertexGradient = false;
             rewindingText.color = style.rewind;
             rewindingText.transform.parent.gameObject.SetActive(false);
 
             var ink = theme.title.outlineColor;
+            place = Landscape.rewind;
             var buttonStyle = new MenuButtonStyle
             {
-                size = new Vector2(124f, 124f),
+                size = place.size,
                 surface = new MenuSurfaceStyle
                 {
                     shape = MenuShape.Circle,
@@ -226,7 +304,8 @@ namespace SickOfIt.Gameplay
                 pressScale = 0.9f,
                 hoverRotation = 8f,
             };
-            rewindButton = menu.AddButtonAt(new Vector2(1f, 1f), new Vector2(-112f, -214f), "\u25C4\u25C4", buttonStyle, null);
+            rewindButton = menu.AddButtonAt(place.anchor, place.offset, "\u25C4\u25C4", buttonStyle, null);
+            Lay(rewindButton.transform.parent, l => l.rewind, MenuElementKind.Button);
             rewindButton.Pressed += SickOfIt.Core.Rewind.RewindInput.Begin;
             rewindButton.Released += SickOfIt.Core.Rewind.RewindInput.End;
             // Keep it out of keyboard/gamepad navigation, so arrow keys never select it mid-fight.
@@ -242,9 +321,11 @@ namespace SickOfIt.Gameplay
 
             // Taught once per level: the first time you get hurt with juice to spend.
             string hint = Application.isMobilePlatform ? Texts.rewindHintTouch : Texts.rewindHint;
-            rewindHint = menu.AddText(menu.Root, "RewindHint", hint, theme.subtitle, new Vector2(1f, 1f), new Vector2(-520f, -300f),
-                new Vector2(760f, 70f), out rewindHintMotion, 34f, null, theme.entrance,
+            place = Landscape.rewindHint;
+            rewindHint = menu.AddText(menu.Root, "RewindHint", hint, theme.subtitle, place.anchor, place.offset,
+                place.size, out rewindHintMotion, 34f, null, theme.entrance,
                 new MenuMotion { type = MenuMotionType.Bob, amount = 5f, speed = 1.5f }, -3f);
+            Lay(rewindHint.transform.parent, l => l.rewindHint, MenuElementKind.Text);
             rewindHint.enableVertexGradient = false;
             rewindHint.color = style.rewind;
             rewindHint.transform.parent.gameObject.SetActive(false);
@@ -318,8 +399,9 @@ namespace SickOfIt.Gameplay
         void BuildDiamonds()
         {
             diamondsRoot = MenuGraphics.NewRect("Diamonds", menu.Root);
-            diamondsRoot.anchorMin = diamondsRoot.anchorMax = diamondsRoot.pivot = new Vector2(1f, 1f);
-            diamondsRoot.anchoredPosition = new Vector2(-140f, -48f); // right of it: the pause button
+            var place = Landscape.diamonds;
+            diamondsRoot.anchorMin = diamondsRoot.anchorMax = diamondsRoot.pivot = place.anchor;
+            diamondsRoot.anchoredPosition = place.offset; // right of it: the pause button
             var row = diamondsRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
             var padding = theme.chip.padding;
             row.padding = new RectOffset((int)padding.x, (int)padding.x, (int)padding.y, (int)padding.y);
@@ -333,6 +415,7 @@ namespace SickOfIt.Gameplay
             diamonds.enableVertexGradient = false;
             diamonds.color = theme.accent;
             menu.AddMotion(diamondsRoot.gameObject, null, theme.entrance, 0f);
+            Lay(diamondsRoot, l => l.diamonds, MenuElementKind.Panel, pivotAtAnchor: true, controlsSize: false);
         }
 
         void UpdateHealthAndDiamonds()
@@ -387,7 +470,8 @@ namespace SickOfIt.Gameplay
         void BuildBossBar()
         {
             bossRoot = MenuGraphics.NewRect("BossBar", menu.Root);
-            MenuGraphics.Place(bossRoot, new Vector2(0.5f, 1f), new Vector2(0f, -112f), new Vector2(780f, 54f));
+            var place = Landscape.bossBar;
+            MenuGraphics.Place(bossRoot, place.anchor, place.offset, place.size);
             MenuGraphics.Surface(bossRoot, theme.chip);
             bossBar = MenuBar.Create(bossRoot, "Bar");
             var barRect = (RectTransform)bossBar.transform;
@@ -407,6 +491,7 @@ namespace SickOfIt.Gameplay
             labelSlot.anchoredPosition = new Vector2(0f, 2f);
             bossLabel = MenuGraphics.Text(labelSlot, "Text", "", theme.heading, menu.TitleFont);
             menu.AddMotion(bossRoot.gameObject, null, theme.entrance, 0f);
+            Lay(bossRoot, l => l.bossBar, MenuElementKind.Panel);
             bossRoot.gameObject.SetActive(false);
         }
 
@@ -505,8 +590,9 @@ namespace SickOfIt.Gameplay
             if (world.Stage == null || !world.Stage.HasFloors)
                 return;
             floorRoot = MenuGraphics.NewRect("Floor", menu.Root);
-            floorRoot.anchorMin = floorRoot.anchorMax = floorRoot.pivot = new Vector2(0.5f, 1f);
-            floorRoot.anchoredPosition = new Vector2(0f, -40f);
+            var place = Landscape.floor;
+            floorRoot.anchorMin = floorRoot.anchorMax = floorRoot.pivot = place.anchor;
+            floorRoot.anchoredPosition = place.offset;
             var row = floorRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
             var padding = theme.chip.padding;
             row.padding = new RectOffset((int)padding.x + 12, (int)padding.x + 12, (int)padding.y, (int)padding.y);
@@ -520,9 +606,10 @@ namespace SickOfIt.Gameplay
             floorText.enableVertexGradient = false;
             floorText.color = theme.accent;
             menu.AddMotion(floorRoot.gameObject, null, theme.entrance, 0f);
+            Lay(floorRoot, l => l.floor, MenuElementKind.Panel, pivotAtAnchor: true, controlsSize: false);
             // The boss bar normally sits top-center too; move it under the readout.
             if (bossRoot != null)
-                bossRoot.anchoredPosition = new Vector2(bossRoot.anchoredPosition.x, -184f);
+                Lay(bossRoot, l => l.bossBarWithFloor, MenuElementKind.Panel);
         }
 
         void UpdateFloor()
@@ -557,7 +644,8 @@ namespace SickOfIt.Gameplay
             BuildFloor();
 
             progressRoot = MenuGraphics.NewRect("ProgressBar", menu.Root);
-            MenuGraphics.Place(progressRoot, new Vector2(0.5f, 0f), new Vector2(0f, 42f), new Vector2(1500f, 30f));
+            var place = Landscape.progressBar;
+            MenuGraphics.Place(progressRoot, place.anchor, place.offset, place.size);
             MenuGraphics.Surface(progressRoot, new MenuSurfaceStyle
             {
                 shape = MenuShape.Pill,
@@ -620,6 +708,7 @@ namespace SickOfIt.Gameplay
             rewindLabel = MenuGraphics.Text(rewindSlot, "Text", "", theme.caption, menu.Font, 24f);
             rewindLabel.alignment = TextAlignmentOptions.MidlineRight;
             menu.AddMotion(progressRoot.gameObject, null, theme.entrance, 0f);
+            Lay(progressRoot, l => l.progressBar, MenuElementKind.Panel);
         }
 
         static Image Bar(RectTransform parent, string name, Color color)
@@ -686,6 +775,7 @@ namespace SickOfIt.Gameplay
 
             var dim = MenuGraphics.NewImage(transform, "UpgradePicker", new Color(0.07f, 0.04f, 0.09f, 0.82f));
             dim.raycastTarget = true;
+            dim.gameObject.AddComponent<MenuLayer>();
             pickerRoot = dim.gameObject;
             var inner = MenuGraphics.NewRect("SafeArea", dim.transform);
             MenuGraphics.Fill(inner);
@@ -704,6 +794,7 @@ namespace SickOfIt.Gameplay
                 direction = MenuListDirection.Horizontal,
                 spacing = new Vector2(36f, 0f),
                 itemSize = new Vector2(400f, 440f),
+                portrait = menu.Responsive.screens?.upgradePicker,
             }, theme.card.size, inner);
 
             for (int i = 0; i < options.Count; i++)

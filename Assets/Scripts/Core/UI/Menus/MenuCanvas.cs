@@ -13,9 +13,11 @@ namespace SickOfIt.Core.UI.Menus
 {
     /// <summary>
     /// A menu screen built at runtime from a <see cref="MenuTheme"/> (the look) and a <see cref="MenuLayoutConfig"/>
-    /// (what goes where). The canvas scales a fixed reference space (1920x1080 by default) to fit any screen and
-    /// keeps inside the safe area, so layouts written once work on desktop, browsers and phones.
-    /// Screens add their own buttons, cards and chips through the Add* methods.
+    /// (what goes where). The canvas scales a fixed reference space sized on the screen's short side (1920x1080 in
+    /// landscape, theme responsive.portraitReferenceResolution on a phone held upright) and keeps inside the safe
+    /// area. Every element it adds is a <see cref="MenuResponsive"/>: it takes its portrait placement on a tall
+    /// screen, stays on screen, and buttons never get smaller than a thumb. Lists stack or wrap
+    /// (<see cref="MenuListLayout"/>). Screens add their own buttons, cards and chips through the Add* methods.
     /// </summary>
     public sealed class MenuCanvas : MonoBehaviour
     {
@@ -32,6 +34,11 @@ namespace SickOfIt.Core.UI.Menus
         readonly List<MenuButton> buttons = new List<MenuButton>();
         RectTransform stats;
         int entranceIndex;
+        CanvasScaler scaler;
+        bool? scaledPortrait;
+
+        /// <summary>Touch sizes, margins and portrait layouts (theme.json "responsive").</summary>
+        public MenuResponsiveStyle Responsive => Theme.responsive ?? (Theme.responsive = new MenuResponsiveStyle());
 
         /// <param name="owner">
         /// The object the menu belongs to. The canvas is put in its scene: scenes load additively, so the active scene
@@ -51,8 +58,6 @@ namespace SickOfIt.Core.UI.Menus
             canvas.sortingOrder = 20;
             var scaler = go.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = theme.referenceResolution.x > 0f && theme.referenceResolution.y > 0f
-                ? theme.referenceResolution : new Vector2(1920f, 1080f);
             // Expand: the whole reference space always fits on screen; extra space is added around it.
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
             scaler.referencePixelsPerUnit = 100f;
@@ -60,6 +65,8 @@ namespace SickOfIt.Core.UI.Menus
 
             var menu = go.AddComponent<MenuCanvas>();
             menu.Theme = theme;
+            menu.scaler = scaler;
+            menu.ApplyScaler();
             menu.Layout = layout;
             menu.Font = MenuGraphics.FontAsset(theme.font);
             menu.TitleFont = theme.titleFont != null ? MenuGraphics.FontAsset(theme.titleFont) : menu.Font;
@@ -159,6 +166,22 @@ namespace SickOfIt.Core.UI.Menus
             }
         }
 
+        /// <summary>
+        /// Landscape: the theme's reference space (1920x1080). Portrait: the portrait one (1080x1920), so on a phone
+        /// the scale comes from the screen's width, its short side, and a button is the same size in both.
+        /// </summary>
+        void ApplyScaler()
+        {
+            bool portrait = MenuScreen.Portrait;
+            if (scaler == null || scaledPortrait == portrait)
+                return;
+            scaledPortrait = portrait;
+            Vector2 landscape = Theme.referenceResolution.x > 0f && Theme.referenceResolution.y > 0f
+                ? Theme.referenceResolution : new Vector2(1920f, 1080f);
+            Vector2 tall = Responsive.portraitReferenceResolution;
+            scaler.referenceResolution = portrait && tall.x > 0f && tall.y > 0f ? tall : landscape;
+        }
+
         float NextDelay(MenuEntrance entrance) => entrance == null ? 0f : entrance.delay + entranceIndex++ * entrance.stagger;
 
         public MenuTextStyle StyleNamed(string name)
@@ -215,11 +238,13 @@ namespace SickOfIt.Core.UI.Menus
             if (label == null || !label.show || string.IsNullOrEmpty(label.text))
                 return null;
             var slot = MenuGraphics.NewRect(name, Root);
-            var text = MenuGraphics.Text(slot, "Text", label.text, style, font, label.fontSize, autoSize: false);
+            // Sized to the words; on a narrow screen the slot shrinks to fit and the words shrink with it.
+            var text = MenuGraphics.Text(slot, "Text", label.text, style, font, label.fontSize, autoSize: true);
             Vector2 size = text.GetPreferredValues(label.text, Theme.referenceResolution.x * 0.9f, 0f);
             size += new Vector2(40f, 20f);
             MenuGraphics.Place(slot, label.anchor, label.offset, size);
             AddMotion(slot.gameObject, label.motion, entrance, label.rotation);
+            MenuResponsive.Track(slot, MenuResponsive.From(label.anchor, label.offset, size), label.portrait, MenuElementKind.Text, Responsive);
             return text;
         }
 
@@ -268,6 +293,8 @@ namespace SickOfIt.Core.UI.Menus
             }
             MenuGraphics.Place(slot, decoration.anchor, decoration.offset, size);
             AddMotion(slot.gameObject, decoration.motion, Theme.entrance, decoration.rotation);
+            MenuResponsive.Track(slot, MenuResponsive.From(decoration.anchor, decoration.offset, size), decoration.portrait,
+                MenuElementKind.Text, Responsive);
         }
 
         /// <summary>
@@ -282,6 +309,7 @@ namespace SickOfIt.Core.UI.Menus
             MenuGraphics.Place(slot, anchor, offset, size);
             var text = MenuGraphics.Text(slot, "Text", value, style, font ?? Font, fontSize);
             motion = AddMotion(slot.gameObject, idle, entrance, rotation);
+            MenuResponsive.Track(slot, MenuResponsive.From(anchor, offset, size), null, MenuElementKind.Text, Responsive);
             return text;
         }
 
@@ -299,14 +327,12 @@ namespace SickOfIt.Core.UI.Menus
         // ─── Lists ────────────────────────────────────────────────────
 
         /// <summary>
-        /// The area items are laid out in (column, row or grid). Items that don't fit scroll with the wheel,
-        /// a drag or the keyboard. Returns the container to pass to <see cref="AddButton"/>.
+        /// The area items are laid out in (column, row or grid; on a portrait screen the list's "portrait" version).
+        /// Items that don't fit scroll with the wheel, a drag or the keyboard. Returns the container to pass to
+        /// <see cref="AddButton"/>.
         /// </summary>
         public RectTransform AddList(MenuList list, Vector2 defaultItemSize, Transform parent = null)
         {
-            Vector2 item = list.itemSize.sqrMagnitude > 0f ? list.itemSize : defaultItemSize;
-            const float pad = 36f; // room for hover scale and shadows inside the clipping viewport
-
             var area = MenuGraphics.NewRect("List", parent != null ? parent : Root);
             MenuGraphics.Place(area, list.anchor, list.offset, list.size);
             var viewport = MenuGraphics.NewRect("Viewport", area);
@@ -315,53 +341,31 @@ namespace SickOfIt.Core.UI.Menus
             viewport.gameObject.AddComponent<Image>().color = Color.clear; // catches drags/wheel on empty space
 
             var content = MenuGraphics.NewRect("Items", viewport);
-            var fitter = content.gameObject.AddComponent<ContentSizeFitter>();
-            var padding = new RectOffset((int)pad, (int)pad, (int)pad, (int)pad);
-            bool horizontal = list.direction == MenuListDirection.Horizontal;
-
-            if (list.direction == MenuListDirection.Grid)
-            {
-                content.anchorMin = new Vector2(0f, 0.5f);
-                content.anchorMax = new Vector2(1f, 0.5f);
-                content.pivot = new Vector2(0.5f, 0.5f);
-                content.sizeDelta = Vector2.zero;
-                var grid = content.gameObject.AddComponent<GridLayoutGroup>();
-                grid.cellSize = item;
-                grid.spacing = list.spacing;
-                grid.padding = padding;
-                grid.childAlignment = TextAnchor.MiddleCenter;
-                grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-                int fit = Mathf.Max(1, Mathf.FloorToInt((list.size.x - pad * 2f + list.spacing.x) / (item.x + list.spacing.x)));
-                grid.constraintCount = list.columns > 0 ? list.columns : fit;
-                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            }
-            else
-            {
-                content.anchorMin = content.anchorMax = content.pivot = new Vector2(0.5f, 0.5f);
-                HorizontalOrVerticalLayoutGroup group = horizontal
-                    ? content.gameObject.AddComponent<HorizontalLayoutGroup>()
-                    : (HorizontalOrVerticalLayoutGroup)content.gameObject.AddComponent<VerticalLayoutGroup>();
-                group.spacing = horizontal ? list.spacing.x : list.spacing.y;
-                group.padding = padding;
-                group.childAlignment = TextAnchor.MiddleCenter;
-                group.childControlWidth = group.childControlHeight = true;
-                group.childForceExpandWidth = group.childForceExpandHeight = false;
-                fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            }
+            content.gameObject.AddComponent<ContentSizeFitter>();
 
             var scroll = area.gameObject.AddComponent<ScrollRect>();
             scroll.viewport = viewport;
             scroll.content = content;
-            scroll.horizontal = horizontal;
-            scroll.vertical = !horizontal;
             scroll.movementType = ScrollRect.MovementType.Elastic;
             scroll.scrollSensitivity = 40f;
             scroll.inertia = true;
             area.gameObject.AddComponent<MenuScrollFollow>().Scroll = scroll;
 
             var marker = content.gameObject.AddComponent<MenuListMarker>();
-            marker.ItemSize = item;
+            var portrait = list.portrait;
+            MenuResponsive.Track(area, MenuResponsive.From(list.anchor, list.offset, list.size),
+                portrait != null && portrait.use ? MenuResponsive.From(portrait.anchor, portrait.offset, portrait.size) : null,
+                MenuElementKind.Container, Responsive);
+            var layout = area.gameObject.AddComponent<MenuListLayout>();
+            layout.Landscape = list;
+            layout.Portrait = portrait;
+            layout.DefaultItemSize = defaultItemSize;
+            layout.Content = content;
+            layout.Scroll = scroll;
+            layout.Marker = marker;
+            layout.Style = Responsive;
+            marker.Layout = layout;
+            layout.Apply();
             return content;
         }
 
@@ -371,27 +375,35 @@ namespace SickOfIt.Core.UI.Menus
         public MenuButton AddButton(RectTransform list, string text, MenuButtonStyle style, Action onClick)
         {
             var marker = list.GetComponent<MenuListMarker>();
-            Vector2 size = marker != null ? marker.ItemSize : style.size;
+            Vector2 size = marker != null ? (marker.Layout != null ? marker.Layout.ItemSize() : marker.ItemSize) : style.size;
             var slot = MenuGraphics.NewRect("Item", list);
             slot.sizeDelta = size;
             var element = slot.gameObject.AddComponent<LayoutElement>();
             element.preferredWidth = element.minWidth = size.x;
             element.preferredHeight = element.minHeight = size.y;
+            // A list sizes its own items; a button in any other group (a settings row) keeps the touch size itself.
+            if (marker == null)
+                MenuResponsive.TrackInGroup(slot, element, size, MenuElementKind.Button, Responsive);
             return Finish(MenuButton.Create(slot, style, text, Font, Theme.entrance, NextDelay(Theme.entrance), buttons.Count, Sounds), onClick);
         }
 
-        /// <summary>Adds a free-standing button at an anchor (like the back button).</summary>
-        public MenuButton AddButtonAt(Vector2 anchor, Vector2 offset, string text, MenuButtonStyle style, Action onClick, Transform parent = null)
+        /// <summary>
+        /// Adds a free-standing button at an anchor (like the back button), or at 'portrait' on a portrait screen.
+        /// It stays on screen and is at least the touch size there.
+        /// </summary>
+        public MenuButton AddButtonAt(Vector2 anchor, Vector2 offset, string text, MenuButtonStyle style, Action onClick, Transform parent = null,
+            MenuPlacement portrait = null)
         {
             var slot = MenuGraphics.NewRect("Button", parent != null ? parent : Root);
             MenuGraphics.Place(slot, anchor, offset, style.size);
+            MenuResponsive.Track(slot, MenuResponsive.From(anchor, offset, style.size), portrait, MenuElementKind.Button, Responsive);
             return Finish(MenuButton.Create(slot, style, text, Font, Theme.entrance, NextDelay(Theme.entrance), buttons.Count, Sounds), onClick);
         }
 
         public MenuButton AddBackButton(Action onClick)
         {
             Back = onClick;
-            return AddButtonAt(Layout.backAnchor, Layout.backOffset, Layout.backText, Theme.backButton, onClick);
+            return AddButtonAt(Layout.backAnchor, Layout.backOffset, Layout.backText, Theme.backButton, onClick, null, Layout.portraitBack);
         }
 
         MenuButton Finish(MenuButton button, Action onClick)
@@ -421,6 +433,8 @@ namespace SickOfIt.Core.UI.Menus
                 stats = MenuGraphics.NewRect("Stats", Root);
                 stats.anchorMin = stats.anchorMax = stats.pivot = Layout.statsAnchor;
                 stats.anchoredPosition = Layout.statsOffset;
+                MenuResponsive.Track(stats, MenuResponsive.From(Layout.statsAnchor, Layout.statsOffset, Vector2.zero), Layout.portraitStats,
+                    MenuElementKind.Panel, Responsive, pivotAtAnchor: true, controlsSize: false);
                 var row = stats.gameObject.AddComponent<HorizontalLayoutGroup>();
                 row.spacing = 18f;
                 row.childAlignment = TextAnchor.MiddleCenter;
@@ -463,6 +477,7 @@ namespace SickOfIt.Core.UI.Menus
 
         void Update()
         {
+            ApplyScaler();
             var keyboard = Keyboard.current;
             var gamepad = Gamepad.current;
             if (Back != null && ((keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
@@ -500,6 +515,7 @@ namespace SickOfIt.Core.UI.Menus
     public sealed class MenuListMarker : MonoBehaviour
     {
         public Vector2 ItemSize;
+        public MenuListLayout Layout;
     }
 
     /// <summary>Keeps the content inside the device's safe area (notches, rounded corners).</summary>
@@ -520,9 +536,11 @@ namespace SickOfIt.Core.UI.Menus
             var rect = (RectTransform)transform;
             // Extra margins keep the HUD, timeline and corner buttons (Rage Quit) clear of the home bar at the bottom and,
             // on the web, of the beta/build badge the page draws over the top-left corner. Fractions, so any screen fits.
-            bool portrait = Screen.height > Screen.width;
-            float bottom = 0.03f;
-            float top = Application.platform == RuntimePlatform.WebGLPlayer ? (portrait ? 0.065f : 0.1f) : 0f;
+            var menu = GetComponentInParent<MenuCanvas>(true);
+            var style = menu != null && menu.Theme != null ? menu.Responsive : new MenuResponsiveStyle();
+            bool portrait = MenuScreen.Portrait;
+            float bottom = style.bottomMargin;
+            float top = Application.platform == RuntimePlatform.WebGLPlayer ? (portrait ? style.webTopMarginPortrait : style.webTopMargin) : 0f;
             rect.anchorMin = new Vector2(safe.xMin / Screen.width, Mathf.Min(safe.yMin / Screen.height + bottom, 0.5f));
             rect.anchorMax = new Vector2(safe.xMax / Screen.width, Mathf.Max(safe.yMax / Screen.height - top, 0.5f));
             rect.offsetMin = rect.offsetMax = Vector2.zero;

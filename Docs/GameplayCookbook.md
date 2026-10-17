@@ -291,9 +291,33 @@ enemy health bars (enemies show a bar only once hurt; `healthBar.aboveBody` plac
 world and the generated loading screen pick up the theme font and ink outline too.
 
 Anchors are fractions of the screen (`[0,0]` bottom-left, `[1,1]` top-right); offsets and sizes are pixels in the
-1920x1080 reference space, which scales to fit any screen (and stays inside phone safe areas). Button labels:
+1920x1080 reference space, which scales to fit any screen (and stays inside phone safe areas; portrait: below). Button labels:
 `mainMenu.json` `labels`; card texts: `captionFormat`/`playText`/`lockedText`/`clearedText` (selection screens) and
 `buyFormat`/`maxedText`/`comingSoonText` (shop). Level and video cards show the level's/video's `thumbnail` sprite.
+
+### Phones, portrait and touch (one layout system)
+
+Every button, chip, bar and text the menus and the HUD place goes through `MenuResponsive` (and lists through
+`MenuListLayout`), with the numbers in `ui/theme.json` `responsive`:
+
+- **Sized on the short side.** Landscape lays out in `referenceResolution` (1920x1080); a screen taller than wide lays
+  out in `responsive.portraitReferenceResolution` (1080x1920), so its width (the short side) sets the scale and a
+  button is the same physical size held either way.
+- **Inside the safe area, always.** Everything is kept inside its parent (the safe area, a popup, a panel) and shrunk to
+  fit it (texts shrink their words). Portrait keeps `portraitMargin` from the edges; `bottomMargin` and
+  `webTopMargin`/`webTopMarginPortrait` keep clear of the home bar and the web page's beta/build badge.
+- **Thumb-sized.** On a portrait screen every button is at least `minTouchSize` (124 of 1080 ≈ 44 pt on a 390 pt phone);
+  `touchSizeInLandscape` does the same in landscape (off, so landscape keeps its look).
+- **Portrait placements.** Each `title`/`subtitle`/`decoration` has a `portrait` placement (`use`, `hide`, `anchor`,
+  `offset`, `size`), each `list` a `portrait` list (`direction`, `columns`, `itemSize`: a row becomes a column, a wide
+  grid two columns), and each layout `portraitBack`/`portraitStats`. With `use` off the landscape placement is used,
+  fitted. The HUD's placements are `hud.landscape` and `hud.portrait` (health, diamonds, pause, rewind, floor, boss bar,
+  objective, banner, subtitle, rewinding, hint, progress bar): in portrait the game is a 16:9 band in the middle, so the
+  readouts stack above it and the thumb controls (rewind, the progress bar) sit below it. `responsive.screens` has the
+  pause list, settings panel, results, upgrade picker and death scene's Rage Quit in portrait.
+
+Check it with the `layout` playtest (run with device "phone", 390x844): it opens each screen and reports any button that
+overlaps another button or a HUD panel, leaves the screen or is smaller than the touch size.
 
 ```json
 "decorations": [ { "text": "Now with
