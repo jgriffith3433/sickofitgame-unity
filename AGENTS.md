@@ -182,7 +182,9 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
 iOS/Android/desktop) is `Tools/Web/hawkes-sound.js`. Edit it here, not in the website: the deploy (step 7b) copies it
 to `Game/v<n>/` and puts its `<script>` first in the website's `Game/index.html` `<head>`, because it must wrap
 `window.AudioContext`/`Audio` before Unity's loader runs (Unity's `WEBAudio.audioContext` is private to the
-framework). Every playtest scenario presses it first (`hawkesSound.tap()` through `Plugins/WebGL/HawkesSound.jslib`);
+framework). Never make an AudioContext for Unity or hand it one that is already running: Unity only marks its audio
+as running when its own context *changes* to "running" (`onstatechange` in `_JS_Sound_Init`), so every sound would
+stay queued and the game would be silent. Track the context Unity makes and resume it. Every playtest scenario presses it first (`hawkesSound.tap()` through `Plugins/WebGL/HawkesSound.jslib`);
 a scripted press can't unlock real audio, so a playtest's "audio" state stays "suspended" unless the runner clicked.
 
 **The "Powered by HAWKES GEN" mark** on every website page except the game (and the Hawkes Biomedical link on the
