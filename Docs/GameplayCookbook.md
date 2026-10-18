@@ -396,6 +396,29 @@ lava-river shot, `clipStart` 17.6, `clipLength` 5).
 
 Same seed, same floors: platforms, props and pushes come from the level seed, so rewinds and bot playtests repeat.
 
+## A shortcut ("a collapsed stairwell that skips to Floor 840")
+
+Docs/Story.md, "Shortcuts". A choice point inside a stage that skips floors for a cost. Working example: the top of
+`levels/Level14.json` (*The Old Stair*, Floor 871 to 841). Write it in Story.md's Shortcuts table first.
+
+1. **The offer** (`offerShortcut`, in a `runSequence` once the hero is at the spot): pauses the game in the Grudge
+   picker's panel with two cards, card 1 `stayTitle`/`stayDescription` (keep climbing) and card 2 `title`/`description`
+   with the cost line (`costText`, `{0}` = the Grudge it takes; `costGrudges` 0 = free). Never say how far it goes. It
+   is offered once per play and the choice is final through rewinds. With no Grudge to pay, card 2 is stamped
+   `cantPayText` and can't be picked. `toFloor` and `nextLevel` say where it lets him out and which stage comes next.
+2. **The branch**: rules on `{ "type": "shortcutChosen", "shortcut": "<id>", "taken": true }` (and `false`) in the
+   same phase, each `goToPhase` to its own phase (a sequence dies with the phase that started it).
+3. **Taken**: lock input and rewind, the hero's line, walk him in (`walkPlayerTo`), the announcer's reaction, fade,
+   `{ "type": "setFloor", "floor": <toFloor>, "skipMilestones": true }`, fade back, a line, then the objective's
+   counter. No `offerUpgrades` (he paid a Grudge). The level then leads to `nextLevel` instead of `nextLevelNumber`,
+   the run goes on from there, and the Shaft climbs to the stage's last floor and jumps a dotted line up to `toFloor`
+   through the nearest crack in `ui/shaft.json` `shortcutHints` (`shortcutPath`, `shortcutSeconds`, `shortcutSound`).
+   Taken shortcuts are saved (`ShortcutProgress`) and stay drawn on the Shaft.
+4. **Kept climbing**: the stage's usual ending (clear banner, `offerUpgrades`, the counter).
+5. The playtest bot presses 1 on a picker, so it keeps climbing; the `shortcut` scenario sets it to take shortcuts
+   (`PlaytestBot.takeShortcuts`, presses 2). The level-n stage checks follow the branch played: a taken shortcut's
+   counter ends on `toFloor` with no Grudge pick, and lines in phases never entered aren't expected.
+
 ## The Shaft (Hell's map between levels)
 
 `ShaftScreen` (Core/Progression) answers `ShaftHook`: after the video in `ui/shaft.json` `plungeAfterVideo` (Video2)
