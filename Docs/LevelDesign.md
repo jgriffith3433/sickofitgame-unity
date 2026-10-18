@@ -1045,7 +1045,7 @@ order it can be built and played:
    islands, ceiling), the lava's surface, falls and geysers, the three stones with their steam and crumble frames, the
    village's rafts (cart, roof, sign, hay), the lift, counterweight, chains and the carved landing. Still to make: the
    counterweight sacks, the sack-swing imp, the damned soul (a grey, hunched, see-through figure with a looping idle
-   and a hiccup clip), the Imp Foreman and the Pile Keeper; for the set pieces, the hay cart's chute ride (908: the cart
+   and a hiccup clip) and the Pile Keeper (the Imp Foreman's own sheets were made 2026-10-18, `art/impForeman.json`); for the set pieces, the hay cart's chute ride (908: the cart
    upright with him in it), the sign standing in the lava on 998 (*WELCOME TO THE VILLAGE*, whole), the throne far
    above (four distances: speck, glow, silhouette, close) and the cooling crust. Until they exist, those draw as plain
    shapes and labeled placeholders.
