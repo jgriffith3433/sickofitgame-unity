@@ -20,10 +20,12 @@ inside Hell (a stretch of floors) is a travel stage: see "A stage that climbs th
 
 1. Copy an existing `levels/LevelN.json` to `levels/Level4.json` (the next story level). Change `levelName`, `displayName`, `levelNumber`,
    `music`, `backgrounds`, `deathConfigName`.
-2. Add `"Level4"` to the `"levels"` list in `game.json` right after the last story level (`Level3`), before
-   `CrackedRoad` and the `Arcade*` levels (the position is the level number). A level runs on into the next
-   position only through a video (its `nextVideoNumber`); `nextVideoNumber` 0 ends at the level select. Add the
-   level to the `story-path` playtest's `StoryPath` (`SickOfItPlaytest.cs`) once the path reaches it.
+2. Add `"Level7"` to the `"levels"` list in `game.json` right after the last story level (`Level6`), before
+   `CrackedRoad` and the `Arcade*` levels (the position is the level number). A level goes on to a video with
+   `nextVideoNumber`, or straight to another level with `nextLevelNumber` (results, the Shaft, then that level: how
+   the stages inside a Circle follow each other); with both 0 it ends at the level select. Set the previous stage's
+   `nextLevelNumber` to the new one, and add the level to the `story-path` playtest's `StoryPath`
+   (`SickOfItPlaytest.cs`, `(0, n)` for "no video before it") once the path reaches it.
 3. Write its `"script"` (below). Set `"enemies": []` — a script replaces the enemies list.
 4. Nothing to generate: the level select screen builds its buttons from the levels list at runtime. A new level unlocks after the one before it is completed.
 
@@ -346,6 +348,17 @@ signs in the world). Between hand-written story beats the **floor generator** fi
    stretch `"seed": 1` so it differs. End the stage with `{ "type": "floorReached", "floor": 951 }`.
 4. Floors outside travel: `setFloor`, `climbFloors` (a shortcut, an elevator); triggers `floorReached`,
    `distanceReached`; counters `floor` and `distance`.
+5. **Dress the stage** (Levels 3-6 do all of these):
+   - `world.props`: scenery for this stage only, drawn with the Circle's (same fields as a Circle's `props`): the
+     Spill's fence posts, cart and smoking hay. A prop with `sizeVariation` 0, `chance` 1 and `spacing` =
+     `unitsPerFloor` stands identical on every floor (the Loop's "same rock").
+   - `floors.sign`: words carved on a big sign where the hero lands (`"IMPS ONLY"`).
+   - `floors.repeat`: floors Hell makes him walk twice (`[957]`): that floor takes two floors' distance, two signs
+     show its number and the counter stays on it (telemetry `floorRepeat`). Add `unitsPerFloor` to `travelLength`
+     for each, and trigger the second pass with `distanceReached` (the floor doesn't change).
+   - A telegraphed falling hazard: a `startHazard` whose projectile is a harmless glow (`slagDrip`, team Neutral,
+     `lifetime` 1.2) with `"speed": 0`, whose `onDeath` spawns the real shot (`slag`) where it hung. Every drop is
+     then warned on its own spot, not just by the hazard's subtitle.
 
 **Backdrops that change as you go**: a background layer's `sequenceBy` is `Time` (seconds), `Distance` (units
 travelled) or `Floors` (floors climbed in this stage), so `"sequenceBy": "Floors", "sequenceStart": 3` swaps the

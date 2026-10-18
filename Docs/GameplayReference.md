@@ -1335,6 +1335,7 @@ The space the level happens in.
 | `travelSpeed` | number | `0.0` | Travel: the camera also moves forward on its own at least this fast (0 = only as the player goes). |
 | `travelLength` | number | `0.0` | Travel: the camera stops after this distance (0 = no end). |
 | `holdForPushes` | true/false | `true` | Travel: the camera waits while enemies of a generated push are alive, so the player fights instead of running past. |
+| `props` | list of [PropDef](#propdef) | `[]` | Travel: scenery for this stage only (the village debris in The Spill), drawn with its Circle's props. |
 
 ### FloorsDef
 
@@ -1347,6 +1348,8 @@ The floor counter: which floors of Hell a stage covers. Floors count down as the
 | `unitsPerFloor` | number | `0.0` | Travel stages: world units travelled per floor. The counter goes up a floor each time the camera covers this distance, and a floor sign stands where it happens. 0 = only actions (setFloor, climbFloors) change the floor. |
 | `circle` | string | `""` | The Circle of Hell (content/circles) the stage is in: track, props, backdrop, generated floors and milestone lines. (circle id) |
 | `signs` | true/false | `true` | Paint floor numbers into the world as signs on travel stages. |
+| `sign` | string | `""` | Travel stages: words carved on a big sign at the start of the stage (the place's own sign, e.g. "IMPS ONLY"). '' = none. |
+| `repeat` | list of integer | `[]` | Floors Hell makes the hero walk twice (The Loop): each one takes two floors' distance, its number stays on the counter and two signs show it. Add unitsPerFloor per repeat to travelLength. |
 
 ### CounterDef
 

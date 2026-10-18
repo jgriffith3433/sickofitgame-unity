@@ -56,7 +56,12 @@ namespace SickOfIt.Gameplay
             worldDef = script.world;
             floors = script.floors;
             track = circle != null ? circle.track : new TrackDef();
-            props = circle != null ? circle.props : new List<PropDef>();
+            props = new List<PropDef>();
+            if (circle != null)
+                props.AddRange(circle.props);
+            // The stage's own scenery after the Circle's (keys are by index, so the Circle's props keep their layout).
+            if (worldDef.props != null)
+                props.AddRange(worldDef.props);
             seed = world.Seed;
             up = worldDef.travelDirection == TravelDirection.Up;
             dir = up ? Vector2.up : Vector2.right;
@@ -312,10 +317,12 @@ namespace SickOfIt.Gameplay
             if (!floors.signs || floors.start <= 0 || floors.unitsPerFloor <= 0f)
                 return;
             float u = floors.unitsPerFloor;
-            int first = Mathf.Max(1, Mathf.FloorToInt((a - halfAlong - 2f) / u));
+            int lowest = Mathf.FloorToInt((a - halfAlong - 2f) / u);
+            // Sign 0 is the stage's own carved sign (floors.sign), the rest are floor numbers.
+            int first = Mathf.Max(string.IsNullOrEmpty(floors.sign) ? 1 : 0, lowest);
             int last = Mathf.FloorToInt((a + halfAlong + 2f + worldDef.travelLead) / u);
             if (floors.end > 0)
-                last = Mathf.Min(last, floors.start - floors.end);
+                last = Mathf.Min(last, floors.Steps > 0 ? floors.Steps : floors.start - floors.end);
 
             scratch.Clear();
             foreach (var pair in signs)
@@ -332,44 +339,75 @@ namespace SickOfIt.Gameplay
             for (int k = first; k <= last; k++)
             {
                 if (!signs.ContainsKey(k))
-                    signs[k] = BuildSign(k);
+                    signs[k] = k == 0 ? BuildStageSign() : BuildSign(k);
             }
         }
 
         /// <summary>A post with the floor number, standing where the counter ticks over to it.</summary>
         GameObject BuildSign(int k)
         {
-            int floor = floors.start - k;
+            // A repeated floor (floors.repeat) gets a second sign with the same number.
+            int floor = floors.FloorAfter(k);
             // The camera leads the player, so the floor ticks when the player is about 'travelLead' behind this point.
             float along = k * floors.unitsPerFloor - worldDef.travelLead;
             Vector2 at = up ? Point(along, halfAcross - 0.6f) : Point(along, track.groundY);
+            return Signpost("FloorSign_" + floor, at, floor.ToString(), new Vector2(0.78f, 0.36f), 0.9f, 2.4f);
+        }
 
-            var go = new GameObject("FloorSign_" + floor);
+        /// <summary>The stage's own carved sign (floors.sign), near the start where the hero lands.</summary>
+        GameObject BuildStageSign()
+        {
+            // Halfway between where the hero lands and the first floor sign.
+            float along = -0.5f * floors.unitsPerFloor;
+            Vector2 at = up ? Point(along, -halfAcross + 0.8f) : Point(along, track.groundY);
+            float width = Mathf.Clamp(0.22f * floors.sign.Length + 0.3f, 1.2f, 3.2f);
+            return Signpost("StageSign", at, floors.sign, new Vector2(width, 0.46f), 1.25f, 2.2f);
+        }
+
+        GameObject Signpost(string name, Vector2 at, string words, Vector2 boardSize, float postHeight, float fontSize)
+        {
+            var go = new GameObject(name);
             go.transform.SetParent(transform, false);
             go.transform.position = new Vector3(at.x, at.y, 0f);
-            var post = Quad(go.transform, "Post", new Vector2(0f, 0.45f), new Vector2(0.09f, 0.9f), new Color(0.1f, 0.06f, 0.06f, 1f), GroundOrder + 2);
+            float boardY = postHeight + boardSize.y * 0.14f;
+            var post = Quad(go.transform, "Post", new Vector2(0f, postHeight * 0.5f), new Vector2(0.09f, postHeight), new Color(0.1f, 0.06f, 0.06f, 1f), GroundOrder + 2);
             SpriteLayers.Apply(post, SpriteLayer.Background2, 900);
-            post.transform.localPosition = new Vector3(0f, 0.45f, 0f);
-            var board = Quad(go.transform, "Board", new Vector2(0f, 0.95f), new Vector2(0.78f, 0.36f), new Color(0.16f, 0.07f, 0.05f, 1f), GroundOrder + 3);
+            post.transform.localPosition = new Vector3(0f, postHeight * 0.5f, 0f);
+            var board = Quad(go.transform, "Board", new Vector2(0f, boardY), boardSize, new Color(0.16f, 0.07f, 0.05f, 1f), GroundOrder + 3);
             SpriteLayers.Apply(board, SpriteLayer.Background2, 901);
-            board.transform.localPosition = new Vector3(0f, 0.95f, 0f);
+            board.transform.localPosition = new Vector3(0f, boardY, 0f);
 
             var textGo = new GameObject("Number");
             textGo.transform.SetParent(go.transform, false);
-            textGo.transform.localPosition = new Vector3(0f, 0.95f, 0f);
+            textGo.transform.localPosition = new Vector3(0f, boardY, 0f);
             var text = textGo.AddComponent<TMPro.TextMeshPro>();
             var theme = GameDefinition.Instance != null ? GameDefinition.Instance.menuTheme : null;
             text.font = SickOfIt.Core.UI.Menus.MenuGraphics.FontAsset(theme != null ? theme.font : null);
-            text.text = floor.ToString();
+            text.text = words;
             text.alignment = TMPro.TextAlignmentOptions.Center;
             text.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
-            text.fontSize = 2.4f;
+            text.enableAutoSizing = true;
+            text.fontSizeMin = 0.8f;
+            text.fontSizeMax = fontSize;
             text.fontStyle = TMPro.FontStyles.Bold;
             text.color = track.groundEdgeColor.a > 0f ? Color.Lerp(track.groundEdgeColor, Color.white, 0.35f) : new Color(1f, 0.8f, 0.5f, 1f);
-            text.rectTransform.sizeDelta = new Vector2(0.78f, 0.36f);
+            text.rectTransform.sizeDelta = boardSize - new Vector2(0.08f, 0.04f);
             text.sortingLayerID = SortingLayer.NameToID(SpriteLayer.Background2.ToString());
             text.sortingOrder = 902;
             return go;
+        }
+
+        /// <summary>The words on the signs standing now (floor numbers, and the stage's own sign), for the playtest.</summary>
+        public List<string> SignWords()
+        {
+            var words = new List<string>();
+            foreach (var pair in signs)
+            {
+                var text = pair.Value != null ? pair.Value.GetComponentInChildren<TMPro.TextMeshPro>() : null;
+                if (text != null)
+                    words.Add(text.text);
+            }
+            return words;
         }
 
         /// <summary>Built-in silhouettes for props without art (white, tinted by the prop color, pivot at the base).</summary>

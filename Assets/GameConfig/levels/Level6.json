@@ -1,0 +1,456 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level6",
+  "displayName": "Floors 960-951: The Loop",
+  "levelNumber": 6,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Videos/Level3_Background2_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "deathConfigName": "Death1",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 0,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 90,
+    "floors": {
+      "start": 960,
+      "end": 951,
+      "unitsPerFloor": 3.0,
+      "circle": "emberWastes",
+      "signs": true,
+      "sign": "YOU ARE HERE. AGAIN.",
+      "repeat": [957]
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 32.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true,
+      "props": [
+        {
+          "name": "the same rock",
+          "shape": "Rock",
+          "color": "#160907",
+          "size": [1.0, 0.6],
+          "sizeVariation": 0.0,
+          "across": -2.5,
+          "parallax": 0.0,
+          "spacing": 3.0,
+          "chance": 1.0,
+          "layer": "Background2",
+          "sortingOrder": 6
+        },
+        {
+          "name": "the same crack",
+          "shape": "Glow",
+          "color": "#FF5A1AA6",
+          "size": [1.4, 0.26],
+          "sizeVariation": 0.0,
+          "across": -2.78,
+          "parallax": 0.0,
+          "spacing": 3.0,
+          "chance": 1.0,
+          "layer": "Player",
+          "sortingOrder": -17
+        }
+      ]
+    },
+    "markers": [
+      {
+        "floor": 957,
+        "label": "957"
+      },
+      {
+        "floor": 952,
+        "label": "THE TOP"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "phases": [
+      {
+        "name": "loop",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 960-951: THE LOOP",
+            "duration": 2.5,
+            "sound": "vo_loop_title",
+            "color": "#FFD27A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "quiet start over",
+            "when": {
+              "type": "after",
+              "seconds": 5.5
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "climb"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          {
+            "type": "unlockTravel"
+          },
+          {
+            "type": "generateFloors",
+            "untilFloor": 958,
+            "firstBreather": 1.5,
+            "seed": 1
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "toTheLoop"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "toTheLoop",
+        "rules": [
+          {
+            "name": "floor 957, the first time",
+            "when": {
+              "type": "floorReached",
+              "floor": 957
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "loopOnce"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "loopOnce",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOOR 957!",
+            "duration": 2.0,
+            "sound": "vo_loop_957",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "spawn",
+            "entity": "lavaBurst",
+            "anchor": "Camera",
+            "at": [1.4, -2.5],
+            "facePlayer": false
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [3.6, -1.4],
+                "tags": ["loopA"]
+              },
+              {
+                "type": "wait",
+                "seconds": 0.5
+              },
+              {
+                "type": "playAnimation",
+                "target": {
+                  "self": false,
+                  "tag": "loopA"
+                },
+                "state": "Hurt"
+              },
+              {
+                "type": "popText",
+                "text": "trip",
+                "anchor": "Camera",
+                "at": [3.6, -0.9],
+                "color": "#FFD27A",
+                "size": 0.8
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "the imp, the first time",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "loopA"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "loopWalk"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "loopWalk",
+        "rules": [
+          {
+            "name": "floor 957, again",
+            "when": {
+              "type": "distanceReached",
+              "units": 12.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "loopTwice"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "loopTwice",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOOR 957!",
+            "duration": 2.0,
+            "sound": "vo_loop_957",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "spawn",
+            "entity": "lavaBurst",
+            "anchor": "Camera",
+            "at": [1.4, -2.5],
+            "facePlayer": false
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [3.6, -1.4],
+                "tags": ["loopB"]
+              },
+              {
+                "type": "wait",
+                "seconds": 0.5
+              },
+              {
+                "type": "playAnimation",
+                "target": {
+                  "self": false,
+                  "tag": "loopB"
+                },
+                "state": "Hurt"
+              },
+              {
+                "type": "popText",
+                "text": "trip",
+                "anchor": "Camera",
+                "at": [3.6, -0.9],
+                "color": "#FFD27A",
+                "size": 0.8
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "the same imp, again",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "loopB"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "onPurpose"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "onPurpose",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "It's doing that on purpose.",
+            "duration": 2.5,
+            "sound": "vo_loop_purpose",
+            "style": "Subtitle"
+          }
+        ],
+        "rules": [
+          {
+            "name": "rewind is Hell's loop",
+            "when": {
+              "type": "after",
+              "seconds": 3.2
+            },
+            "do": [
+              {
+                "type": "showText",
+                "text": "Hell runs on a loop. So I can drag it back.",
+                "duration": 3.0,
+                "sound": "vo_loop_grab",
+                "style": "Subtitle"
+              }
+            ]
+          },
+          {
+            "name": "breather over",
+            "when": {
+              "type": "after",
+              "seconds": 6.8
+            },
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb2",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 952,
+            "firstBreather": 3.0,
+            "seed": 2
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "top"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "rules": [
+          {
+            "name": "stage clear",
+            "when": {
+              "type": "floorReached",
+              "floor": 951
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "lockTravel"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "THE LOOP: SURVIVED. AGAIN.",
+                    "duration": 2.0,
+                    "sound": "vo_loop_clear",
+                    "color": "#FF9A5C"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

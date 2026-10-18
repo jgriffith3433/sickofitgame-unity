@@ -85,6 +85,8 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Travel: the camera also moves forward on its own at least this fast (0 = only as the player goes).")] public float travelSpeed;
         [Doc("Travel: the camera stops after this distance (0 = no end).")] public float travelLength;
         [Doc("Travel: the camera waits while enemies of a generated push are alive, so the player fights instead of running past.")] public bool holdForPushes = true;
+        [Doc("Travel: scenery for this stage only (the village debris in The Spill), drawn with its Circle's props.")]
+        public List<PropDef> props = new List<PropDef>();
     }
 
     /// <summary>content/sequences/{id}.json</summary>

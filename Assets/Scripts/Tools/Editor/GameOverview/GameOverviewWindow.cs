@@ -362,6 +362,7 @@ namespace SickOfIt.Tools.Editor.GameOverview
             EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("deathConfigName"));
             EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("duration"));
             EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("nextVideoNumber"));
+            EditorGUILayout.PropertyField(levelProp.FindPropertyRelative("nextLevelNumber"));
 
             EditorGUILayout.Space(10);
 

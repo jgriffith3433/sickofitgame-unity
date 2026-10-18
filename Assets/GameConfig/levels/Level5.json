@@ -1,0 +1,362 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level5",
+  "displayName": "Floors 970-961: The Slag Falls",
+  "levelNumber": 5,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Videos/Level3_Background1_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "deathConfigName": "Death1",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 6,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 90,
+    "floors": {
+      "start": 970,
+      "end": 961,
+      "unitsPerFloor": 3.0,
+      "circle": "emberWastes",
+      "signs": true,
+      "sign": "MIND THE DRIP"
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true,
+      "props": [
+        {
+          "name": "lava falls",
+          "shape": "Glow",
+          "color": "#FF5A1A80",
+          "size": [0.9, 5.5],
+          "sizeVariation": 0.25,
+          "across": -2.6,
+          "parallax": 0.6,
+          "spacing": 3.5,
+          "chance": 0.75,
+          "layer": "Background2",
+          "sortingOrder": -1
+        },
+        {
+          "name": "cooling slag ledges",
+          "shape": "Block",
+          "color": "#2A1410",
+          "size": [2.2, 1.1],
+          "sizeVariation": 0.3,
+          "across": -2.5,
+          "parallax": 0.35,
+          "spacing": 5.0,
+          "chance": 0.6,
+          "layer": "Background2",
+          "sortingOrder": 3
+        },
+        {
+          "name": "slag drips on the ground",
+          "shape": "Glow",
+          "color": "#FFB04A90",
+          "size": [0.6, 0.2],
+          "sizeVariation": 0.3,
+          "across": -2.62,
+          "parallax": 0.0,
+          "spacing": 3.0,
+          "chance": 0.5,
+          "layer": "Player",
+          "sortingOrder": -17
+        }
+      ]
+    },
+    "markers": [
+      {
+        "floor": 969,
+        "label": "SLAG"
+      },
+      {
+        "floor": 966,
+        "label": "LEDGE"
+      },
+      {
+        "floor": 962,
+        "label": "THE TOP"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "phases": [
+      {
+        "name": "falls",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 970-961: THE SLAG FALLS",
+            "duration": 2.5,
+            "sound": "vo_slag_title",
+            "color": "#FFD27A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the hero takes it in",
+            "when": {
+              "type": "after",
+              "seconds": 2.8
+            },
+            "do": [
+              {
+                "type": "showText",
+                "text": "It's raining rock. Hot rock.",
+                "duration": 3.0,
+                "sound": "vo_slag_rock",
+                "style": "Subtitle"
+              }
+            ]
+          },
+          {
+            "name": "quiet start over",
+            "when": {
+              "type": "after",
+              "seconds": 5.5
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "firstDrip"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "firstDrip",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "The ceiling's melting.",
+            "duration": 2.5,
+            "sound": "vo_wastes_slag",
+            "style": "Subtitle"
+          }
+        ],
+        "rules": [
+          {
+            "name": "one drip, right ahead",
+            "when": {
+              "type": "after",
+              "seconds": 1.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "slagDrip",
+                "anchor": "Camera",
+                "at": [1.8, 2.2],
+                "tags": ["drip"],
+                "facePlayer": false
+              }
+            ]
+          },
+          {
+            "name": "two more",
+            "when": {
+              "type": "after",
+              "seconds": 3.2
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "slagDrip",
+                "anchor": "Camera",
+                "at": [-0.8, 2.2],
+                "tags": ["drip"],
+                "facePlayer": false
+              },
+              {
+                "type": "spawn",
+                "entity": "slagDrip",
+                "anchor": "Camera",
+                "at": [3.4, 2.2],
+                "tags": ["drip"],
+                "facePlayer": false
+              }
+            ]
+          },
+          {
+            "name": "up the falls",
+            "when": {
+              "type": "after",
+              "seconds": 6.5
+            },
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 966,
+            "firstBreather": 3.0,
+            "seed": 1
+          },
+          {
+            "type": "startHazard",
+            "id": "slagRain",
+            "projectile": "slagDrip",
+            "pattern": {
+              "type": "rain",
+              "count": 1,
+              "topInset": 0.25
+            },
+            "speed": 0.0,
+            "interval": 3.0,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "ledge"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ledge",
+        "rules": [
+          {
+            "name": "breather over",
+            "when": {
+              "type": "after",
+              "seconds": 4.5
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "climb2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb2",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 962,
+            "firstBreather": 3.0,
+            "seed": 2
+          },
+          {
+            "type": "startHazard",
+            "id": "slagRain",
+            "projectile": "slagDrip",
+            "pattern": {
+              "type": "rain",
+              "count": 1,
+              "topInset": 0.25
+            },
+            "speed": 0.0,
+            "interval": 2.4,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "top"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "rules": [
+          {
+            "name": "stage clear",
+            "when": {
+              "type": "floorReached",
+              "floor": 961
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "lockTravel"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "THE SLAG FALLS: SURVIVED",
+                    "duration": 2.0,
+                    "sound": "vo_slag_clear",
+                    "color": "#FF9A5C"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
