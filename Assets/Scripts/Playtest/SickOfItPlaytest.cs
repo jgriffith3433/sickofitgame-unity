@@ -57,6 +57,9 @@ namespace SickOfIt.Playtest
 
         static Session active;
 
+        /// <summary>The level the imp-death scenario plays: Level 1's "imps" phase brings four, one at a time first.</summary>
+        public const int ImpLevel = 1;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void Register()
         {
@@ -80,6 +83,8 @@ namespace SickOfIt.Playtest
                 float seconds = Mathf.Max(30f, level != null ? level.duration : 60f) + 30f;
                 list.Add(new PlaytestScenario("level-" + n, $"Level {n} ({name}), started directly (setup shortcut)", seconds, "full", "level"));
             }
+            list.Add(new PlaytestScenario("imp-death", $"Level {ImpLevel}'s imps, started directly (setup shortcut): the bot kills them and each imp's Die clip " +
+                "must play where it died; the first deaths run in slow motion so the clip can be seen", 90, "level"));
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close", 70, "menus"));
             list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu, level select, settings, " +
@@ -136,6 +141,8 @@ namespace SickOfIt.Playtest
                 yield return session.Site();
             else if (id == "layout")
                 yield return session.Layout();
+            else if (id == "imp-death")
+                yield return session.ImpDeath();
             else if (id.StartsWith("level-", StringComparison.Ordinal) && int.TryParse(id.Substring(6), out int n))
                 yield return session.LevelScenario(n);
             else
@@ -157,6 +164,13 @@ namespace SickOfIt.Playtest
             string lastOutcome;
             int deaths;
             int botRewinds;
+            int impDeaths;
+            bool impSlowMotion;
+            float slowMotionUntil;
+
+            /// <summary>imp-death: how many deaths play in slow motion, and how slow.</summary>
+            const int ImpSlowMotionDeaths = 3;
+            const float ImpSlowMotion = 0.3f;
 
             public Session(PlaytestRun run, PlaytestOptions options)
             {
@@ -262,12 +276,62 @@ namespace SickOfIt.Playtest
                         Run.Event("milestone", $"{level}: {e.Subject}");
                         break;
                     case "death" when e.Subject == "imp" && e.Detail == "Damage":
-                        Run.Event("imp-death", $"{level}: an imp died (death clip, flash and bits)");
+                        CheckImpDeath(log.World.FindBySerial(e.Value), level);
                         break;
                     case "floor":
                         Run.Metric("floor", e.Value);
                         break;
                 }
+            }
+
+            /// <summary>
+            /// An imp was killed: its "Die" clip must be playing where it died (Entity.Die plays it before the death is
+            /// recorded). In the imp-death scenario the first few play in slow motion so a recording shows the frames.
+            /// </summary>
+            void CheckImpDeath(Entity imp, string level)
+            {
+                impDeaths++;
+                Run.Metric("impDeaths", impDeaths);
+                if (imp == null || imp.Animation == null || !imp.Animation.TryGetClip(Entity.DieState, out var frames, out float fps)
+                    || frames == null || frames.Length == 0)
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"{level}: an imp died without a Die clip (no death frames, only the pop)");
+                    return;
+                }
+                bool playing = false;
+                foreach (var r in Object.FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None))
+                {
+                    if (r.name == "Flipbook" && r.gameObject.activeInHierarchy && Array.IndexOf(frames, r.sprite) >= 0)
+                    {
+                        playing = true;
+                        break;
+                    }
+                }
+                float fade = imp.Def.visual.deathFade > 0f ? imp.Def.visual.deathFade : 0.25f;
+                float seconds = frames.Length / Mathf.Max(0.01f, fps) + fade;
+                string sheet = frames[0] != null && frames[0].texture != null ? frames[0].texture.name : "?";
+                Run.Metric("impDieFrames", frames.Length);
+                Run.Metric("impDieSeconds", seconds);
+                Run.Event("imp-death", $"{level}: an imp died: Die clip {sheet}, {frames.Length} frames at {fps:0} fps " +
+                                       $"({seconds:0.00} s with the fade){(playing ? "" : ", NOT playing")}");
+                if (!playing)
+                    Run.Problem(PlaytestSeverity.Bug, $"{level}: an imp died but its Die clip ({sheet}) isn't playing where it died");
+                else if (impSlowMotion && impDeaths <= ImpSlowMotionDeaths && Time.timeScale > 0f)
+                {
+                    // Presentation pacing only (Time.timeScale), like the speed option: the simulation is untouched.
+                    Time.timeScale = Speed * ImpSlowMotion;
+                    slowMotionUntil = Time.realtimeSinceStartup + seconds / (Speed * ImpSlowMotion) + 0.2f;
+                    Run.Event("slow-motion", $"imp death {impDeaths} at {ImpSlowMotion:0.0}x");
+                }
+            }
+
+            void EndSlowMotion()
+            {
+                if (slowMotionUntil <= 0f)
+                    return;
+                slowMotionUntil = 0f;
+                if (Time.timeScale > 0f)
+                    Time.timeScale = Speed;
             }
 
             void OnLevelLog(GameplayTelemetry log, GameplayTelemetry.Summary s)
@@ -322,6 +386,30 @@ namespace SickOfIt.Playtest
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
                     : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
                     : PlaytestOutcome.Done);
+            }
+
+            /// <summary>
+            /// Plays Level 1 (where the imps arrive) until the bot has killed ImpSlowMotionDeaths imps and their Die
+            /// clips have played, or the level ends. Every kill is checked by CheckImpDeath.
+            /// </summary>
+            public IEnumerator ImpDeath()
+            {
+                impSlowMotion = true;
+                Run.Event("shortcut", $"load level {ImpLevel} directly");
+                var load = LoadLevel(ImpLevel);
+                if (load != null)
+                    yield return load;
+                yield return PlayLevel(ImpLevel, 0f, until: () => impDeaths >= ImpSlowMotionDeaths && slowMotionUntil <= 0f);
+                if (Run.Done)
+                    yield break;
+                Run.Metric("impDeaths", impDeaths);
+                if (impDeaths == 0)
+                    Run.Problem(PlaytestSeverity.Warning, $"imp-death: the bot killed no imp (level {lastOutcome}), so no Die clip was seen");
+                Run.Progress(1f);
+                End(impDeaths == 0 ? PlaytestOutcome.Done
+                    : lastOutcome == "died" ? PlaytestOutcome.Lost
+                    : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
+                    : PlaytestOutcome.Won);
             }
 
             public IEnumerator Smoke()
@@ -876,7 +964,8 @@ namespace SickOfIt.Playtest
             /// leaves for the death scene; otherwise the level ends at the fatal hit.
             /// </summary>
             IEnumerator PlayLevel(int n, float playSeconds, Func<float, IEnumerator> during = null,
-                float progressFrom = 0f, float progressTo = 1f, float realBudget = float.MaxValue, bool waitOutDeath = false)
+                float progressFrom = 0f, float progressTo = 1f, float realBudget = float.MaxValue, bool waitOutDeath = false,
+                Func<bool> until = null)
             {
                 lastOutcome = "not started";
                 Run.Scene("Level " + n);
@@ -907,6 +996,9 @@ namespace SickOfIt.Playtest
                     var clock = GameClock.Instance;
                     float now = clock != null ? clock.Time : 0f;
                     if (world.Director != null && world.Director.Completed) { outcome = "completed"; break; }
+                    if (slowMotionUntil > 0f && Time.realtimeSinceStartup >= slowMotionUntil)
+                        EndSlowMotion();
+                    if (until != null && until()) { outcome = "checked"; break; }
                     if (health != null && !health.IsAlive)
                     {
                         if (!dying)
@@ -969,6 +1061,7 @@ namespace SickOfIt.Playtest
                 }
                 bot = null;
                 input.ReleaseAll();
+                slowMotionUntil = 0f;
                 Time.timeScale = 1f;
                 // Ends the level's log (the level may already have: complete, died). Writes Logs/Playtest in the editor.
                 if (world != null && world.Telemetry != null)
