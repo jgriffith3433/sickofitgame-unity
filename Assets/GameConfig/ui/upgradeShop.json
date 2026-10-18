@@ -15,8 +15,8 @@
   "upgrades": [
     {
       "id": "extraJump",
-      "title": "Double Jump",
-      "description": "Jump. Then, against all physics, jump again.",
+      "title": "Bouncy Soles",
+      "description": "Slime in the boots. Jump, then bounce off nothing and jump again.",
       "costsPerLevel": [15, 35],
       "maxLevel": 2,
       "effect": "ExtraJump",
@@ -38,7 +38,7 @@
     },
     "title": {
       "show": true,
-      "text": "Shop",
+      "text": "Gloob's Goods",
       "anchor": [0.5, 0.885],
       "offset": [0.0, 0.0],
       "rotation": -3.0,
@@ -59,7 +59,7 @@
     },
     "subtitle": {
       "show": true,
-      "text": "Spend diamonds on upgrades that stick. Until New Game.",
+      "text": "Made fresh from diamonds and his own tummy. Yours to keep.",
       "anchor": [0.5, 0.77],
       "offset": [0.0, 0.0],
       "rotation": 0.0,
@@ -104,7 +104,7 @@
     "statsOffset": [-40.0, -40.0],
     "decorations": [
       {
-        "text": "No\nrefunds!",
+        "text": "No\ntabs!",
         "style": "caption",
         "fontSize": 28.0,
         "textColor": "#1E1220",
@@ -132,7 +132,7 @@
         }
       },
       {
-        "text": "♦ = diamonds. Shoot things, collect them.",
+        "text": "♦ = the village's diamonds. The imps took them. Shoot them back out.",
         "style": "caption",
         "fontSize": 24.0,
         "textColor": "#FFF4D6B3",

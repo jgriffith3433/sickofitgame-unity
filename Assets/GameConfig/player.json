@@ -235,8 +235,8 @@
   "availableUpgrades": [
     {
       "id": "moreHealth",
-      "title": "More health, duh",
-      "description": "+1 max health. Getting hit is a lifestyle.",
+      "title": "Goo Plaster",
+      "description": "+1 max health. A dab of Gloob over the dents. Sticks better than skin.",
       "costsPerLevel": [10, 20, 35, 55, 80],
       "maxLevel": 5,
       "effect": "MaxHealth",
@@ -244,8 +244,8 @@
     },
     {
       "id": "extraJump",
-      "title": "Double Jump",
-      "description": "Jump. Then, against all physics, jump again.",
+      "title": "Bouncy Soles",
+      "description": "Slime in the boots. Jump, then bounce off nothing and jump again.",
       "costsPerLevel": [15, 35],
       "maxLevel": 2,
       "effect": "ExtraJump",
@@ -253,8 +253,8 @@
     },
     {
       "id": "comfySneakers",
-      "title": "Running Late Shoes",
-      "description": "Run away from your problems 8% faster.",
+      "title": "Slick Heels",
+      "description": "Slime on the heels. Slide away from trouble 8% faster.",
       "costsPerLevel": [12, 25, 40],
       "maxLevel": 3,
       "effect": "MoveSpeed",
@@ -262,8 +262,8 @@
     },
     {
       "id": "triggerFinger",
-      "title": "Trigger Finger",
-      "description": "Shoot 10% faster. Ask questions never.",
+      "title": "Licked Trigger",
+      "description": "He licked it. It fires 10% faster now. Don't ask.",
       "costsPerLevel": [15, 30, 50],
       "maxLevel": 3,
       "effect": "FireRate",
@@ -271,8 +271,8 @@
     },
     {
       "id": "spicyFireballs",
-      "title": "Spicier Fireballs",
-      "description": "Same fireball. 15% more attitude.",
+      "title": "Tummy-Dipped Shots",
+      "description": "Every shot dipped in his stomach. 15% more sting.",
       "costsPerLevel": [20, 40, 70],
       "maxLevel": 3,
       "effect": "Damage",
@@ -280,8 +280,8 @@
     },
     {
       "id": "juiceBox",
-      "title": "Bigger Juice Box",
-      "description": "+1 second of rewind. More time for regret.",
+      "title": "Loop Jar",
+      "description": "A loop shard one of the damned dropped. He keeps it in a jar. +1 second of Déjà Vu.",
       "costsPerLevel": [12, 25, 40],
       "maxLevel": 3,
       "effect": "RewindJuice",
@@ -289,8 +289,8 @@
     },
     {
       "id": "diamondMagnet",
-      "title": "Diamond Magnet",
-      "description": "Diamonds come to you from farther away. As they should.",
+      "title": "Shiny Sniffer",
+      "description": "A wobbly bit of Gloob that sniffs out diamonds. They come to you from farther away.",
       "costsPerLevel": [8, 18],
       "maxLevel": 2,
       "effect": "Magnet",

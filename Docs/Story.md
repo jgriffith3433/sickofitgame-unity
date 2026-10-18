@@ -213,8 +213,22 @@ is proud of). His voice is `gloob` (designed for him: fast, wet, gurgling, a bit
   climb passed a milestone floor (999, 950, the Spill's 985 with the baker's cart), the Magma King is close (within
   30 floors; at his door, a whisper), the hero died on the way, a new Grudge was picked; else idle gossip. Each
   reaction is said once per save, then the next one up gets its turn. Some get a one-line reply from the hero.
-- **The shop** is Gloob's counter: he welcomes the hero in, comments on a buy (often coughing it up, still warm),
-  turns him away when he can't afford it (*no tabs, no pockets*), and says goodbye when he leaves.
+- **The shop** is Gloob's counter, **Gloob's Goods**: he welcomes the hero in, comments on a buy (often coughing it
+  up, still warm), turns him away when he can't afford it (*no tabs, no pockets*), and says goodbye when he leaves.
+  It is reached from every Shaft after his hello (**Visit Gloob**, beside Continue: the shop opens over the map, and
+  leaving it puts the hero back on the Shaft, Continue on to the next stage) and from the main menu. Paid in the
+  village's diamonds; what he makes is kept (New Game forgets it, like everything else).
+- **His goods** are things a village slime can make out of diamonds and his own stomach, each with a plain effect:
+
+  | Goods | Effect | What it is |
+  |---|---|---|
+  | Goo Plaster | +1 max health | a dab of Gloob over the dents |
+  | Bouncy Soles | an extra jump in the air | slime in the boots |
+  | Slick Heels | runs 8% faster | slime on the heels |
+  | Licked Trigger | fires 10% faster | he licked it |
+  | Tummy-Dipped Shots | 15% more damage | every shot dipped in his stomach |
+  | Loop Jar | +1 s of Déjà Vu (rewind) | a loop shard one of the damned dropped; he only keeps it in a jar |
+  | Shiny Sniffer | diamonds come from farther away | a wobbly bit of Gloob that sniffs out diamonds |
 - He gossips, he counts, he is proud of his stomach. He is never scared for long and never mean. Slimes are
   villagers: nobody in the game ever fights him or his kind.
 

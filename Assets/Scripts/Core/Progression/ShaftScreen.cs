@@ -21,7 +21,8 @@ namespace SickOfIt.Core.Progression
     /// The Shaft, Hell's map (Docs/Story.md, "The Shaft"): a tall cross-section with the Meadow (FLOOR 0) at the top,
     /// the 10 Circles stacked below it in their biome colours and FLOOR 1,000 at the bottom. <see cref="ShaftHook"/>
     /// brings it up after the plunge video (the fall from the Meadow to the bottom, the slam, the announcer's welcome)
-    /// and after every level with a floor range (the hero's marker climbs to the level's last floor). Continue goes on.
+    /// and after every level with a floor range (the hero's marker climbs to the level's last floor). Continue goes on;
+    /// once Gloob has met the hero, Visit Gloob beside it opens his shop over the Shaft and Back returns here.
     /// Built at runtime over the scene that just ended (like every menu), from ui/shaft.json and theme.json texts;
     /// shapes are painted placeholders until the Shaft art replaces them. Presentation only: it reads progress and
     /// remembers where the marker was (<see cref="ShaftProgress"/>), never touching the game itself.
@@ -74,6 +75,11 @@ namespace SickOfIt.Core.Progression
         public bool IsPreview => preview;
         /// <summary>Gloob's portrait on this Shaft, or null (before he has met the hero).</summary>
         public GloobPortrait Gloob => gloob;
+        /// <summary>Visit Gloob, beside Continue once he has met the hero, or null.</summary>
+        public MenuButton GloobButton => gloobButton;
+        public MenuButton ContinueButton => continueButton;
+        /// <summary>Gloob's shop is open over the Shaft (Visit Gloob).</summary>
+        public bool ShopOpen => shopOpen;
 
         /// <summary>One Circle as drawn: ui/shaft.json, with content/circles' name and floors where the circle exists.</summary>
         sealed class Band
@@ -106,7 +112,10 @@ namespace SickOfIt.Core.Progression
         TextMeshProUGUI subtitle;
         TextMeshProUGUI skipHint;
         MenuButton continueButton;
+        MenuButton gloobButton;
         GloobPortrait gloob;
+        bool shopOpen;
+        float keysFrom;
         readonly List<Band> bands = new List<Band>();
         readonly List<Behaviour> hidden = new List<Behaviour>();
         Action next;
@@ -977,14 +986,66 @@ namespace SickOfIt.Core.Progression
                 return;
             ShowSubtitle(null);
             skipHint.transform.parent.gameObject.SetActive(false);
-            var place = MenuScreen.Portrait && config.continueButtonPortrait.use ? config.continueButtonPortrait : config.continueButton;
-            continueButton = menu.AddButtonAt(config.continueButton.anchor, config.continueButton.offset, texts.continueText, menu.Theme.button,
-                Continue, stage, config.continueButtonPortrait);
+            // Gloob, once he has met the hero, keeps his shop open between floors: Visit Gloob stands beside Continue.
+            bool shop = gloob != null;
+            var landscape = shop ? config.continueBesideGloob : config.continueButton;
+            var portrait = shop ? config.continueBesideGloobPortrait : config.continueButtonPortrait;
+            var place = MenuScreen.Portrait && portrait.use ? portrait : landscape;
+            if (shop)
+            {
+                var style = menu.Theme.backButton.Clone();
+                if (config.gloobButton.size.x > 0f && config.gloobButton.size.y > 0f)
+                    style.size = config.gloobButton.size;
+                gloobButton = menu.AddButtonAt(config.gloobButton.anchor, config.gloobButton.offset, texts.shaftVisitGloob, style,
+                    VisitGloob, stage, config.gloobButtonPortrait);
+            }
+            continueButton = menu.AddButtonAt(landscape.anchor, landscape.offset, texts.continueText, menu.Theme.button,
+                Continue, stage, portrait);
             var events = EventSystem.current;
             if (events != null && continueButton != null)
                 events.SetSelectedGameObject(continueButton.gameObject);
             Ready = true;
-            Report("ready", $"FLOOR {Number(ShownFloor)}; Continue is up" + (place == config.continueButtonPortrait ? " (portrait)" : ""));
+            Report("ready", $"FLOOR {Number(ShownFloor)}; Continue is up" + (shop ? ", Visit Gloob beside it" : "") + (place == portrait ? " (portrait)" : ""));
+        }
+
+        // ─── Gloob's shop ─────────────────────────────────────────────
+
+        /// <summary>Visit Gloob: his shop opens over the Shaft; Back brings the Shaft back with Continue up.</summary>
+        void VisitGloob()
+        {
+            if (!Ready || continued || shopOpen)
+                return;
+            shopOpen = true;
+            SetShown(false);
+            Report("gloob-shop", $"Visit Gloob at FLOOR {Number(ShownFloor)}: his shop opens over the Shaft");
+            UpgradeShopManager.OpenOverShaft(BackFromShop);
+        }
+
+        void BackFromShop()
+        {
+            if (this == null)
+                return;
+            shopOpen = false;
+            // The key that closed the shop (Escape) must not also press Continue.
+            keysFrom = Time.unscaledTime + 0.35f;
+            SetShown(true);
+            var events = EventSystem.current;
+            if (events != null && continueButton != null)
+                events.SetSelectedGameObject(continueButton.gameObject);
+            Report("gloob-shop", $"back on the Shaft at FLOOR {Number(ShownFloor)}; Continue is up");
+        }
+
+        /// <summary>The Shaft's own canvas on or off (off under Gloob's shop, so nothing under it can be pressed).</summary>
+        void SetShown(bool shown)
+        {
+            if (menu == null)
+                return;
+            var canvas = menu.GetComponent<Canvas>();
+            if (canvas != null)
+                canvas.enabled = shown;
+            var raycaster = menu.GetComponent<GraphicRaycaster>();
+            if (raycaster != null)
+                raycaster.enabled = shown;
         }
 
         // ─── Every frame ──────────────────────────────────────────────
@@ -1001,7 +1062,7 @@ namespace SickOfIt.Core.Progression
             }
             stage.offsetMin = stage.offsetMax = shake;
 
-            if (continued || Time.unscaledTime - openedAt < 0.35f)
+            if (continued || shopOpen || Time.unscaledTime < keysFrom || Time.unscaledTime - openedAt < 0.35f)
                 return;
             var keyboard = Keyboard.current;
             var gamepad = Gamepad.current;
@@ -1038,11 +1099,13 @@ namespace SickOfIt.Core.Progression
 
         void Continue()
         {
-            if (!Ready || continued)
+            if (!Ready || continued || shopOpen)
                 return;
             continued = true;
             if (continueButton != null)
                 continueButton.interactable = false;
+            if (gloobButton != null)
+                gloobButton.interactable = false;
             Report("continue", $"from FLOOR {Number(ShownFloor)}" + (preview ? " (preview closes)" : ""));
             var then = next;
             next = null;
@@ -1084,6 +1147,9 @@ namespace SickOfIt.Core.Progression
         public void Close()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            if (shopOpen && UpgradeShopManager.OverShaft != null)
+                UpgradeShopManager.OverShaft.CloseOverlay(false);
+            shopOpen = false;
             if (preview)
             {
                 foreach (var behaviour in hidden)

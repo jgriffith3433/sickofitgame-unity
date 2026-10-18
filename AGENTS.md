@@ -94,7 +94,8 @@ Assets/GameConfig/
 - **Gloob** (`ui/gloob.json`, `GloobPortrait`): the village slime's talking portrait (idle/talk/laugh/cough sheets, a shape
   placeholder until painted) and lines on the Shaft (his hello after Video3, one reaction per climb) and in the shop. Lines
   are audio.json voices `gloob` (hero replies `player`); which line plays is `moment` + `floor` (Docs/Story.md, "Gloob between floors").
-- **Diamonds** drop from enemy `loot` as the `diamond` entity and are spent in the shop. **Shop upgrades** are
+- **Diamonds** drop from enemy `loot` as the `diamond` entity and are spent in Gloob's shop (main menu, or **Visit Gloob** on
+  the Shaft: `UpgradeShopManager.OpenOverShaft`, an overlay; Back returns to the Shaft). **Shop upgrades** are
   `player.json` `availableUpgrades` with an `effect` (MaxHealth, ExtraJump, MoveSpeed, FireRate, Damage, RewindJuice,
   Magnet); `RogueliteManager` stores levels, `UpgradeSystem.ApplyShop` applies them each level. Between-level picks are
   `content/upgrades`.
@@ -193,8 +194,9 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   beat, Level 10 ends at the Magma King's door with his voice heard ahead, then the level select; ~15 min), `shaft` (Video2 loaded directly with
   the Shaft's save reset, skipped: the first plunge past the 10 Circles to FLOOR 1,000, the welcome lines, Continue to Level 2, the
   bot plays it, then the marker's climb to 991 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
-  `menus` (level select, videos, shop, settings open and close, then a Shaft preview), `layout` (main menu, level select, settings,
-  a Shaft preview, level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or
+  `menus` (level select, videos, Gloob's shop, settings open and close, then a Shaft preview with Gloob met: Visit
+  Gloob opens his shop over it, Back returns to the Shaft), `layout` (main menu, level select, settings,
+  a Shaft preview with Visit Gloob beside Continue, Gloob's shop over it, level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or
   is under the touch size; meant for device "phone", 390x844), `imp-death` (level 1 until the bot has killed three
 imps: each imp's Die clip must be playing where it died, and those three play at 0.3x so a recording shows the frames;
 every other scenario checks imp kills the same way, without the slow motion), `cutscene` (the scene
@@ -206,7 +208,11 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   `video-2-tunnel` (Video2 loaded directly and watched with no input from the burning door through the fire tunnel to the
   lava river, 10.6–17.5 s: at each mark a screen capture of the box the old burned-in "COMING SOON" caption covered must
   not be caption-coloured, the frame on screen must match the clock and the soundtrack the clock, and the clip must be
-  as long as its soundtrack; `check` and `frame` events, `video.caption@<t>` metrics), `gloob` (Gloob, the village slime: his hello on the Shaft after Video3 with his talking portrait, every hello line voiced and the hero's reply, Continue to Level 3; then Shaft previews where he reacts to Floor 950, a death and the Magma King's door; then the shop: welcome, can't afford, buy, goodbye; `check` and `gloob` events; ~4 min), `portal-audio` (on the main menu, plays
+  as long as its soundtrack; `check` and `frame` events, `video.caption@<t>` metrics), `gloob` (Gloob, the village slime: his hello on the Shaft after Video3 with his talking portrait, every hello line voiced and the hero's reply, Continue to Level 3; then Shaft previews where he reacts to Floor 950, a death and the Magma King's door; then the shop: welcome, can't afford, buy, goodbye; `check` and `gloob` events; ~4 min), `gloob-shop` (Gloob's shop from the Shaft:
+  the Shaft after Video3 with his hello skipped, **Visit Gloob** beside Continue opens his shop over the Shaft (animated portrait,
+  voiced welcome, slime-made goods), can't afford, buy (diamonds spent, level saved), Back returns to the Shaft, Continue starts
+  Level 3 with the goods applied, the main menu's Visit Gloob shows them still bought, a climb preview shows the button again;
+  `check` events `shop <beat>`; ~3 min), `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
   page has neither; `Plugins/WebGL/HawkesSite.jslib`).
