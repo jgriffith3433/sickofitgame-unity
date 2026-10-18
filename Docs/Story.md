@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -13,7 +13,9 @@ Hell, all 1,000 floors of it, and Hell is dark, loud and the same forever. He wa
 meadow empty, has his imps steal the village's diamonds (they're what holds a portal open), and steps back
 through the portal to gather his army.
 
-The hero follows him through. The portal spits him out at the very bottom of Hell, **Floor 1,000**. The Overlord
+The hero doesn't follow him on purpose. He's just curious about the wrong hole: the Overlord's lasers come down
+one last time and burn a portal into the ground right next to him, and it swallows him (see *Prologue* below). The
+portal spits him out at the very bottom of Hell, **Floor 1,000**. The Overlord
 sits at the top, Floor 1, right under the meadow, feeding the diamonds into a gate that will tear Hell open onto
 the surface for good. The whole game is the climb back up: **1,000 floors, counting down**, to stop him before the
 gate opens.
@@ -31,18 +33,42 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 | Who | What | Voice / look | Footage |
 |---|---|---|---|
 | **The Hero** *(name working)* | Thirties, unimpressed, has had enough. Talks to himself in one-liners. Never gives speeches. | `audio.json` voice `player` | Player sprites |
-| **The Overlord** | Giant obsidian titan with red eyes. Ruler of Hell's 1,000 floors, as sick of Hell as the hero is of everything, and done waiting to take the surface. Never in a hurry; barely notices the hero until he can't ignore him. | Deep, slow, enormous *(voice to add)* | Video1, Level1 backgrounds |
-| **Gloob** *(working)* | The village's green slime and its gossip. Swallowed a handful of the village's diamonds to hide them from the imps, got sucked through the portal with the hero, and now trades and tinkers between floors out of his own stomach. **Slimes are villagers, never enemies.** | Friendly, chatty, wet *(voice to add)* | Video3 (the talking slime) |
+| **The Overlord** | Giant obsidian titan with red eyes. Ruler of Hell's 1,000 floors, as sick of Hell as the hero is of everything, and done waiting to take the surface. Never in a hurry; barely notices the hero until he can't ignore him. Says very little, and every word sounds like it cost him nothing. | `audio.json` voice `overlord` *(to add)*: deep, slow, enormous, barely bothered; a voice that fills a valley without being raised. Short lines, long pauses. | Video1, Level1 backgrounds |
+| **Gloob** *(working)* | The village's green slime and its gossip. Swallowed a handful of the village's diamonds to hide them from the imps, got sucked through the portal with the hero, and now trades and tinkers between floors out of his own stomach. **Slimes are villagers, never enemies.** | `audio.json` voice `gloob` *(to add)*: friendly, chatty, wet; talks fast, gurgles between words, never stops for breath, delighted to see anyone. | Video3 (the talking slime) |
 | **The Announcer** | Hell's own voice: loves a show, calls out floors, bosses and deaths like an arcade cabinet. | `announcer` | Floor titles, death screens |
 | **The Wardens** | One boss per Circle: the monster that rules it. Each guards its Circle's top floor. | Per Warden | Death videos, bosses |
+
+## Prologue: how the hero gets into Hell
+
+Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
+
+1. **Video1.** A nice afternoon. The Overlord rises over the hills; his imps drop in to loot the village.
+2. **Level 1, the Meadow.** The hero clears the imps and the cinders. Diamonds, a first taste of rewind.
+3. **The Grudge pick** (the level's `offerUpgrades`): his first grudge. It happens before the scene, so the scene
+   is never interrupted.
+4. **The portal.** The Overlord's lasers come down one last time, not at the hero (he isn't worth it yet) but at
+   the ground beside him. They burn a glowing hole into the meadow: a portal, lying flat on the ground.
+5. **The walk-over.** The hero walks over to it on his own, curious (scripted: the player's input is off).
+   Hero: *"That's a hole."* Beat. *"So that's where they keep coming from."*
+6. **The echo.** He leans over and shouts *"Hello?"* Hell answers: *"...hello? ...hello? ...hello?"*, each one
+   deeper than the last. It's the first hint that **Hell is repetition**: even its echo won't stop.
+7. **"Nope."** He turns to leave. The portal grabs him: he spins and shrinks into it, and he's gone.
+8. **Gloob.** A beat later a green village slime bounces past, wobbles at the edge, and is slurped in after him.
+   Nobody remarks on it. It pays off in Video3, when the same slime turns up at the bottom of Hell, talking.
+9. **Video2.** The burning door; the hero tumbling and spinning down the fire tunnel; the lava river at Floor
+   1,000.
+10. **The Shaft** (below): the camera plunges from the Meadow to the bottom of Hell, and the climb begins.
+
+The hero never chose to go. That matters to his voice: he isn't a hero on a quest, he's a man who fell down a
+hole and is now walking home the long way. He wants to stop the Overlord mostly because the Overlord is in the way.
 
 ## Structure: 1,000 floors
 
 ```
 THE MEADOW (Floor 0, the surface)          Prologue: the Overlord burns the village
-        │  through the portal              Video2: "I walked straight through the gateway"
+        │  sucked through the portal       Video2: the fire tunnel
         ▼
-FLOOR 1,000  ── bottom of Hell ──          "A THOUSAND MORE TO GO"
+FLOOR 1,000  ── bottom of Hell ──          "WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO."
    Circle X ... Circle I                   climb: floors count DOWN toward 1
 FLOOR 1  ── the top: the Overlord's door   Final boss
         │
@@ -52,14 +78,39 @@ THE MEADOW again                           Ending
 
 - Hell is **10 Circles of 100 floors**. Each Circle has one biome, one family of enemies and one Warden at its
   top floor (x01: Floor 901, 801, ... 101). Floor 1 is the Overlord.
+- **A level (stage) is 10 floors. A Circle is 10 levels. The 10th level of each Circle is its Warden's arena**,
+  Floors x10 to x01 (Circle X: Floors 910-901, the Magma King). So the whole climb is 100 levels plus the Meadow.
+- **Level numbers:** Level 1 is the Meadow (Floor 0). Level 2 is Floors 1000-991, *The Landing*; level *n* is
+  Floors `1000 - 10(n-2)` to `991 - 10(n-2)`; Level 11 is Floors 910-901, the Magma King; Level 12 starts Circle IX
+  at Floor 900. The current `levels/Level2-5.json` (Crossfire, Spin Cycle, Everything Everywhere, Fire Rain) are
+  the old arcade levels: **off the story path**, kept as files to be recast (their enemies and patterns reused
+  inside Circle stages) and then removed from game.json's story order. Level6 and Level7 (25-floor stages from the
+  first floor layout) are recast as Level 2 and Level 12.
 - The **floor number is always on screen** (HUD: `FLOOR 973`), and painted into the world as signs, carvings and
   doors, so the player feels how deep they are. Milestones get a beat: 999 ("only nine hundred ninety-nine to
-  go"), 900, 666, 500, 100, 13, 2.
-- A **stage** (one level file) is a stretch of floors, not a single screen. The player physically travels through
+  go"), 950 ("halfway through the Wastes"), 900, 666, 500, 100, 13, 2.
+- A **stage** (one level file) is a stretch of 10 floors, not a single screen. The player physically travels through
   it: climbing, walking right, riding something up. Floors tick by as they go (see *Engine* below).
 - Pacing target: a Circle takes about 8 to 10 minutes on a good run, the whole climb about 90 minutes. Most
   floors are short stretches inside a stage; Hell's **shortcuts** (elevators, collapsed stairwells, a demon who
   you spared) skip floors at a risk, which is a rogue choice and keeps 1,000 floors reachable.
+
+### The Shaft: Hell's map
+
+Hell is a hole, so its map is a **vertical shaft**: a tall cross-section with the Meadow (FLOOR 0) at the top,
+the 10 Circles stacked below it, each in its own biome colour, and FLOOR 1,000 at the bottom.
+
+- **First time, after Video2:** the camera plunges from the Meadow down the whole Shaft, past all 10 Circles, to
+  FLOOR 1,000, where the hero's marker lands. Announcer: *"WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO."*
+  Hero: *"...Great."*
+- **After every level:** the Shaft comes back and the hero's marker climbs to the floor he reached (Level 2 ends
+  at Floor 991, so the marker rises from 1,000 to 991). It is how the player feels the climb: a tiny dot, a very
+  tall hole.
+- **Wardens** sit at the top of each Circle as dark silhouettes marked **???** until the hero has met them; then
+  their name and portrait fill in.
+- **Shortcuts are hinted, not explained:** cracks in the shaft wall and dotted gaps between floors that the player
+  can't read yet. They become Hell's shortcuts (see *Engine*, Shortcuts) once that system is built.
+- The Shaft is a presentation screen: it reads progress, it never changes it.
 
 ### The Circles
 
@@ -83,12 +134,33 @@ build toward; the first two Circles reuse current art.
 
 | Act | Where | What happens | Media |
 |---|---|---|---|
-| Prologue | The Meadow (Level 1) | A nice day. The Overlord rises over the hills; his imps drop in to loot the village; he lasers it; he takes the diamonds and leaves through a burning portal. The hero, extremely done, follows. | Video1 → Level1 → Video2 |
-| Act 1 | Circles X–VIII | The portal drops the hero at Floor 1,000. Gloob turns up (sucked through too), coughs up a diamond, and starts helping. First Warden. The hero learns Hell repeats, and that he can rewind it. | Video2, Video3 (Gloob) |
+| Prologue | The Meadow (Level 1) | A nice day. The Overlord rises over the hills; his imps drop in to loot the village; he lasers it; his imps take the diamonds. His lasers burn a portal into the ground beside the hero, who goes to look, shouts down it, hears Hell echo back, says "Nope" and is sucked in. Gloob is slurped in after him. | Video1 → Level1 → portal scene → Video2 → the Shaft |
+| Act 1 | Circles X–VIII | The portal drops the hero at Floor 1,000. Gloob turns up (the slime slurped in after him), coughs up a diamond, and starts helping. First Warden. The hero learns Hell repeats, and that he can rewind it. | Video2, Video3 (Gloob) |
 | Act 2 | Circles VII–IV | Deeper strangeness: souls stuck in loops (Shades) show what Hell does to people. Hints the Overlord is just as stuck. Midpoint at Floor 500: the hero could take a shortcut home and doesn't. | new |
 | Act 3 | Circles III–I | The Overlord's own guard. The gate is almost open; daylight leaks down the stairs. The hero climbs toward it. | new |
 | Finale | Floor 1 | The Overlord at his gate. Phase 1: he doesn't take the hero seriously. Phase 2: he rewinds too (the loop was his first). Phase 3: the gate cracks open on the meadow behind him. | new |
 | Ending | The Meadow | The hero shoves the Overlord back down and the gate shuts on him. Home, the meadow regrowing, Gloob spitting the diamonds back out. The hero sits down for the first time in 1,000 floors. Something knocks from under the ground. (Post-credit: "Floor 1,001".) | new |
+
+### Circle X stage outline: the Ember Wastes (Levels 2-11)
+
+Ten stages of ten floors. Each one is a place with one beat; the enemy column follows the rules below (one new
+enemy at a time, alone; at most 3 on screen in Circle X). Lines are first drafts for the voices.
+
+| Level | Floors | Place | New | The beat |
+|---|---|---|---|---|
+| 2 | 1000-991 | **The Landing** | `imp` | The lava river where the portal spits everything out. Quiet start; one imp, alone, sees the hero and drops its ember in surprise. Floor 999 milestone: *"ONLY NINE HUNDRED NINETY-NINE TO GO!"* Hero: *"You said that already."* |
+| 3 | 990-981 | **The Spill** | `cinder` | Debris from the village that fell through with him: a fence, a cart wheel, a well bucket, still smoking. The sparks in it come alive and drift after him. Hero: *"That was the baker's cart."* |
+| 4 | 980-971 | **Imp Run** | (imps with sacks) | A trail of imps hauling the village's diamond sacks. Shoot a sack-carrier and it spills: the first stage where diamonds really pour. Hero: *"Those are ours."* |
+| 5 | 970-961 | **The Slag Falls** | hazard: falling slag | A climb up a wall of cooling lava falls. Slag drops from above, always with a glowing drip a second before. No new enemy: the stage is the wall. |
+| 6 | 960-951 | **The Loop** | (none) | Hell visibly repeats: the same broken sign, the same imp tripping on the same rock, the floor counter showing 957 twice. Hero: *"It's doing that on purpose."* The stage that explains why rewind works. |
+| 7 | 950-941 | **Halfway to 900** | (cinders that split) | Floor 950 milestone: *"FLOOR 950: HALFWAY THROUGH THE WASTES!"* Hero: *"Halfway through the first one."* A wide basin with the first real mixed push of imps and cinders. |
+| 8 | 940-931 | **The Crust** | (none) | The hero rides a cooling slag raft across the lava river; the raft only moves forward, imps throw from the banks. A travel stage with nowhere to stop. |
+| 9 | 930-921 | **The Sack Pile** | (imp guards) | The imps' camp, where they pile the stolen sacks before carrying them on. Heaviest imp fight of the Circle; a big diamond payoff for clearing it. |
+| 10 | 920-911 | **The Heat Stairs** | (none) | The approach to the throne: steps of slag, the heat rising, the Magma King's silhouette on the Shaft getting closer. Announcer builds it up; the hero doesn't. Breather before the arena. |
+| 11 | 910-901 | **The Slag Throne** | Warden: `magmaKing` | The Magma King's arena (a locked screen: the one kind of stage allowed to stand still). Beat him and his name fills in on the Shaft; Floor 901 is the Circle's Waystone. Announcer: *"THE MAGMA KING HAS FALLEN!"* Hero: *"He was sitting down the whole time."* |
+
+Video3 (Gloob, talking) plays after **The Landing**: the slime from the meadow turns up at the bottom of Hell,
+pleased to see a familiar face, and coughs up a diamond. From then on Gloob is the shop.
 
 ## The systems, in story terms
 
@@ -121,7 +193,7 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | `imp` | Imp | Meadow, X | The Overlord's raiders. They loot the village's diamonds, then guard the way down in the Wastes. Throw slow embers. Die like Hell's own fireworks: a shriek, eyes bulging, then a pop of soot and embers with the horns and the (empty) sack dropping out, because they are made of the Wastes' fire. | generated (`art/imp.json`, Docs/ArtPipeline.md) |
 | `cinder` | Cinder | Meadow, X | A spark from the burning village that came alive and followed the hero through the portal. Drifts toward you and pops. | `Fireball` (exists); spec ready (`art/cinder.json`) |
 | `magmaKing` | The Magma King | X (Warden, Floor 901) | Rules the Ember Wastes from a throne of slag. | spec ready (`art/magmaKing.json`); run the art pipeline |
-| `brimstoneDemon` | Brimstone Demon | IX | Born from the cracks in the Cracked Road: the rock splits and a demon climbs out to stop you climbing. Slow, heavy, plants itself in the road a few steps in front of you and breathes a short burst of fire (`brimstoneBreath`, sets you burning), so keep your distance. Sometimes drops a diamond: the imps' sacks leak on the road, the cracks swallow what falls, and the demons come out with it stuck in their rock. Not damned, so no loop shards. First met alone at the start of Level7. | `Demon1` (exists) until generated; spec ready (`art/brimstoneDemon.json`) |
+| `brimstoneDemon` | Brimstone Demon | IX | Born from the cracks in the Cracked Road: the rock splits and a demon climbs out to stop you climbing. Slow, heavy, plants itself in the road a few steps in front of you and breathes a short burst of fire (`brimstoneBreath`, sets you burning), so keep your distance. Sometimes drops a diamond: the imps' sacks leak on the road, the cracks swallow what falls, and the demons come out with it stuck in their rock. Not damned, so no loop shards. First met alone at the start of Circle IX (Level7 today; Level 12 in the 10-floor layout). | `Demon1` (exists) until generated; spec ready (`art/brimstoneDemon.json`) |
 | `fighter` → Drooler | Drooler | V | Cave beast; Death2 is it eating you. | `Fighter*` (exists) |
 | `sentinel` → Lurker | Lurker | V | Crouching cave hunter; Death3. | `Level3Enemy*` (exists) |
 | `chaser`, `swarmer`, `exploder`, `sludge`, `slimeGlob`, `slimeSplat` | (retired) | none | Slime enemies. Not in any level once the levels are rebuilt. Keep the files until nothing references them. | slime |
@@ -130,7 +202,7 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 ## Rules for levels
 
 - **A level is a place in the story**, named after the place. `displayName` is the place ("The Meadow",
-  "Floors 1000–976: The Landing").
+  "Floors 1000–991: The Landing").
 - **No work or office jokes** anywhere in the game: titles, lines, upgrades, results quips.
 - **It goes somewhere.** The player moves through a space and the floor counter moves. A single locked screen is
   only for boss arenas.
@@ -161,11 +233,27 @@ Built (2026-10-15; recipe: GameplayCookbook "A stage that climbs through Hell's 
    Circle IX is `crackedRoad`; its first stage is Level7, "Floors 900-876: The Cracked Road" (it comes right
    after Level6 for now: the stages for Floors 975-901 and the Magma King's arena are still to build).
 
+Note: Level6 and Level7 were built as 25-floor stages; the 10-floor layout above recasts them (Level 2 and
+Level 12).
+
+This milestone (*Into Hell*, approved 2026-10-18) builds:
+
+4. **Scripted scenes**: the end of Level 1 (after the Grudge pick): the Overlord's lasers burn the portal into the
+   ground, the hero is walked over with input off, the lines and the echo play, the portal pulls him in (spin and
+   shrink), Gloob bounces past and is slurped in. Rewind is off during the scene. The hero gets new animation
+   clips for it (look down, shout, turn, spin into the portal).
+5. **Video overlays**: Video2 shows the hero tumbling and spinning down the fire tunnel (about 10.5-14.5 s), as an
+   animated sprite drawn over the baked video.
+6. **The Shaft**: the vertical Hell map after Video2 (the plunge from FLOOR 0 to FLOOR 1,000 with the welcome
+   lines) and after every level (the marker climbs to the floor reached), Wardens as ??? silhouettes until met,
+   cracks and dotted gaps where shortcuts will be.
+7. **Voices**: `overlord` and `gloob` in `audio.json` `voices`, and the prologue, Shaft and Circle X lines.
+
 Not built yet:
 
-4. **Waystones and runs**: save the highest Waystone reached; New Run starts there; Grudges reset, diamonds and
+8. **Waystones and runs**: save the highest Waystone reached; New Run starts there; Grudges reset, diamonds and
    Gloob's upgrades persist.
-5. **Shortcuts**: a choice point that skips floors for a cost or a risk.
+9. **Shortcuts**: a choice point that skips floors for a cost or a risk.
 
 ## Art
 
