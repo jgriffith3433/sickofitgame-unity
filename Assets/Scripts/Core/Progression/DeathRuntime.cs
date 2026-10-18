@@ -238,7 +238,7 @@ namespace SickOfIt.Core.Progression
 
         private void StartExperience()
         {
-            if (config == null || config.timeline == null || config.timeline.events == null || config.timeline.events.Count == 0)
+            if (config == null || config.timeline == null || !config.timeline.HasContent)
                 return;
 
             experienceRunner = gameObject.AddComponent<ExperienceRunner>();

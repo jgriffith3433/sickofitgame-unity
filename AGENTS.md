@@ -106,7 +106,9 @@ Assets/GameConfig/
   and `node Tools/Art/art.mjs <id> --start`, which generates poses and clips on the ComfyUI GPU server, packs sheets
   into `Assets/Art/Enemies/` and writes the entity's `visual.animator`. Read [Docs/ArtPipeline.md](Docs/ArtPipeline.md).
 - **Videos, deaths and level/menu backgrounds** are baked sprite-sheet sequences played by `SpriteFramePlayer`, not
-  Unity video. `playbackFPS` is both bake and playback rate (change it, then re-bake); sizes are fixed per frame,
+  Unity video. Anything that moves over them (the hero falling down Video2's tunnel) is a keyframed
+  `timeline.overlays` entry, sampled from the clock so rewind plays it backward (cookbook: "Something moving over a video").
+  `playbackFPS` is both bake and playback rate (change it, then re-bake); sizes are fixed per frame,
   so never fix a video's size with the camera. Read [Docs/VideoPlayback.md](Docs/VideoPlayback.md) before touching them.
 - **Presentation code must stay out of the simulation**: sounds, effects and UI may read sim state but never change it,
   and use `UnityEngine.Random`/unscaled time only for cosmetics.
@@ -171,7 +173,9 @@ imps: each imp's Die clip must be playing where it died, and those three play at
 every other scenario checks imp kills the same way, without the slow motion), `cutscene` (the scene
   `content/scenes/cutsceneTest.json` on Level 1's stage: with input and rewind locked the hero walks to a point by
   himself and stops, turns, R does nothing, the camera zooms in and back, the screen fades to black and back, and he is
-  pulled into a point spinning and shrinking until he is gone; each beat is a `check` event), `site` (the website around the game: each page opened
+  pulled into a point spinning and shrinking until he is gone; each beat is a `check` event), `video-2` (Video2 loaded
+  directly and watched, not skipped: the hero's `heroFall` overlay appears at the burning door, spins 3+ turns and shrinks
+  into the tunnel and is gone by ~14.5 s; R held mid-spin turns it back; Escape skips; `overlay` and `check` events), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
   page has neither; `Plugins/WebGL/HawkesSite.jslib`).
 - **Start one:** in a browser `?playtest=smoke` (plus `&seed=`, `&speed=`), or `hawkesPlaytest.start("level-2")`; in the

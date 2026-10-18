@@ -124,6 +124,10 @@ namespace SickOfIt.Core.Progression
             config = timelineConfig;
             templateCache = templates;
 
+            // Overlays sample the game clock themselves, so they need no events and no hold.
+            if (config != null && config.overlays != null && config.overlays.Count > 0)
+                gameObject.AddComponent<TimelineOverlayPlayer>().Play(config.overlays);
+
             if (config == null || config.events == null || config.events.Count == 0)
             {
                 ////Debug.Log("[ExperienceRunner] No events to process");
@@ -171,8 +175,9 @@ namespace SickOfIt.Core.Progression
                     mainCamera.orthographicSize = cameraOriginalSize;
             }
 
-            // Restore time scale
-            Time.timeScale = 1f;
+            // Restore time scale (only events change it; an overlay-only timeline leaves it alone)
+            if (sortedEvents != null)
+                Time.timeScale = 1f;
         }
 
         public float ElapsedTime => elapsedTime;
