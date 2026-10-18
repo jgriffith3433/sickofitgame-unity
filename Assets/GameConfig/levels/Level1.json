@@ -737,12 +737,16 @@
             "type": "runSequence",
             "steps": [
               {
-                "type": "playPlayerAnimation",
-                "state": "Idle"
-              },
-              {
                 "type": "facePlayer",
                 "target": "portal"
+              },
+              {
+                "type": "playPlayerAnimation",
+                "state": "Curious"
+              },
+              {
+                "type": "emit",
+                "signal": "portal:anim:curious"
               },
               {
                 "type": "wait",
@@ -795,6 +799,14 @@
                 "seconds": 1.3
               },
               {
+                "type": "playPlayerAnimation",
+                "state": "Shout"
+              },
+              {
+                "type": "emit",
+                "signal": "portal:anim:shout"
+              },
+              {
                 "type": "showText",
                 "text": "Hello?",
                 "duration": 2.2,
@@ -807,7 +819,15 @@
               },
               {
                 "type": "wait",
-                "seconds": 2.4
+                "seconds": 1.6
+              },
+              {
+                "type": "playPlayerAnimation",
+                "state": "Curious"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
               },
               {
                 "type": "showText",
@@ -839,6 +859,10 @@
               {
                 "type": "emit",
                 "signal": "portal:line:nope"
+              },
+              {
+                "type": "playPlayerAnimation",
+                "state": "Idle"
               },
               {
                 "type": "wait",
@@ -890,6 +914,14 @@
                 "duration": 2.6,
                 "sound": "vo_portal_grabbed_1",
                 "style": "Subtitle"
+              },
+              {
+                "type": "playPlayerAnimation",
+                "state": "Grabbed"
+              },
+              {
+                "type": "emit",
+                "signal": "portal:anim:grabbed"
               },
               {
                 "type": "playSound",

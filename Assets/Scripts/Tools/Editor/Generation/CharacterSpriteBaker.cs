@@ -320,7 +320,11 @@ namespace SickOfIt.Tools.Editor.Generation
                 string mp4 = Path.Combine(sourceRoot, state.stateName, "Output", state.stateName + ".mp4");
                 if (!File.Exists(mp4))
                 {
-                    missing.Add(mp4);
+                    // A sheet baked elsewhere (the scene clips made on the server) is kept as it is.
+                    if (state.spriteSheet != null && string.IsNullOrEmpty(onlyState))
+                        Debug.Log($"[CharacterSpriteBaker] No {mp4}; keeping {AssetDatabase.GetAssetPath(state.spriteSheet)}.");
+                    else
+                        missing.Add(mp4);
                     continue;
                 }
 
