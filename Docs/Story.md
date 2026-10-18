@@ -408,7 +408,7 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 
 | System | In the story | Notes for design |
 |---|---|---|
-| **Rewind** (hold R) | **Déjà Vu.** Hell runs everything on a loop; the hero grabs the loop and pulls it backward. | The juice meter is "Déjà Vu". **Rewind orbs** are *loop shards* that drop only from the damned: souls stuck in Hell's loop, repeating a floor forever (in the Wastes, a damned soul on a ledge whose loop hiccups as the hero passes; deeper down, the Shades). Never from imps, cinders or guards. In a **scene** something bigger has hold of the loop (the portal's pull, a Warden's entrance), so he can't grab it: rewind is locked and the button says "Not now". |
+| **Rewind** (hold R) | **Déjà Vu.** Hell runs everything on a loop; the hero grabs the loop and pulls it backward. The floor is part of the loop too: a stone that sank comes back up, a ledge that fell is back in place, the lava drops to where it was. | The juice meter is "Déjà Vu". **Rewind orbs** are *loop shards* that drop only from the damned: souls stuck in Hell's loop, repeating a floor forever (in the Wastes, a damned soul on a ledge whose loop hiccups as the hero passes; deeper down, the Shades). Never from imps, cinders or guards. In a **scene** something bigger has hold of the loop (the portal's pull, a Warden's entrance), so he can't grab it: rewind is locked and the button says "Not now". |
 | **Death and runs** | Hell doesn't let you die; it sends you back to repeat the floors. "YOU OBVIOUSLY DIED." | A run restarts at the highest **Waystone** reached (the Landing, then the top of each Circle once its Warden is beaten); see *Waystones and runs*. Death videos are Hell's announcer gloating. |
 | **Between-level picks** (`content/upgrades`) | **Grudges.** Every floor gives the hero something new to be annoyed about, and spite is fuel. Lost when a run ends. | Titles are grudges: "Spite Rounds", "Short Fuse", "Not Today", "Déjà Vu". |
 | **Diamonds and the shop** | The village's diamonds, the portal fuel the imps stole; enemies drop them back. **Yooba** works them into the hero's gear between floors. Permanent. | Shop = Yooba. Shop upgrade names are things a village slime can make. |
@@ -451,8 +451,11 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
   "Floors 1000–991: The Landing").
 - **No work or office jokes** anywhere in the game: titles, lines, upgrades, results quips.
 - **A level is one floor, and it goes up.** The player climbs from the lava sea to the floor's landing and the
-  counter moves on; never a flat walk to the right. A single locked screen is only for a Warden's arena (floor bosses
-  fight on climbing arenas). The climb grammar and the toolkit are in [LevelDesign.md](LevelDesign.md).
+  counter moves on; never a flat walk to the right. A floor's way up turns (J, 2026-10-18: "some scrolling
+  horizontally"): up a lava fall, sideways across a lava river on a raft or ahead of a lava wave, up again, always
+  forward, the whole floor hanging over the lava sea far below. A single locked screen is only for a Warden's arena
+  (floor bosses fight on climbing arenas). The climb grammar, the path and the toolkit are in
+  [LevelDesign.md](LevelDesign.md).
 - **Pacing (arcade, but fair):**
   - the first 5 seconds of a level are quiet: title, one line, room to move;
   - one new idea per floor: a new obstacle or a new enemy type, never both; a new enemy arrives alone;
@@ -468,7 +471,9 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 
 The one-floor layout needs new rewind-safe pieces (sinking and crumbling stones, rafts, lifts, counterweights,
 updrafts, lava falls, rising lava, the climbing arena), a climbing playtest bot and a diamond-cost shortcut: the list
-is LevelDesign.md's *Building it*. What exists today:
+is LevelDesign.md's *Building it*. The floor toolkit and the path camera are built (2026-10-18, LevelDesign.md
+*The toolkit* and *A floor's path*; recipe: GameplayCookbook "A floor with a path"); the floors themselves are next.
+What exists today:
 
 Built (2026-10-15; recipe: GameplayCookbook "A stage that climbs through Hell's floors"):
 

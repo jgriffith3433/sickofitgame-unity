@@ -396,6 +396,58 @@ lava-river shot, `clipStart` 17.6, `clipLength` 5).
 
 Same seed, same floors: platforms, props and pushes come from the level seed, so rewinds and bot playtests repeat.
 
+## A floor with a path ("climb a lava fall, cross the river on a raft, climb again")
+
+The one-floor layout (Docs/LevelDesign.md, *A floor's path*): a level is one floor, and its way up turns. Working
+example: `content/scenes/climbTest.json` (the `climb` playtest plays it on Level 2's stage).
+
+1. **The path**: a Travel `world` with `path` instead of `travelDirection`. Each section goes `Up`, `Right`, `Left`,
+   `UpRight`, `UpLeft` for `length` units, or is an `Arena` (the camera holds until a `nextSection` action). `autoSpeed`
+   moves the camera on by itself (a raft ride, a chase), `lead` overrides the look-ahead, `turn` rounds the corner into
+   the next section. Entering a section emits `section:<name>`; the trigger `sectionReached` fires once the camera is in
+   it (or past it). The floor counter stays on its floor (`floors.start`, `unitsPerFloor` 0); a path floor has no
+   streamed ground: the hero lands on a spawned ledge.
+
+```json
+"floors": { "start": 1000, "circle": "emberWastes", "signs": false },
+"world": { "camera": "Travel", "travelLead": 1.2, "holdForPushes": false, "path": [
+  { "name": "climb", "direction": "Up", "length": 10, "spawns": [
+      { "entity": "lavaSea", "at": [0, -6], "id": "lavaSea" },
+      { "entity": "ledge", "at": [-4.5, -2.45], "scale": [2, 1] },
+      { "entity": "sinkingStone", "at": [-0.8, -1.2], "scale": [0.9, 1] } ] },
+  { "name": "river", "direction": "Right", "length": 18, "spawns": [
+      { "entity": "lavaRiver", "at": [19.5, 7], "scale": [2.8, 1] },
+      { "entity": "debrisRaft", "at": [7.6, 8.2], "scale": [1.3, 1] } ] },
+  { "name": "chase", "direction": "Right", "length": 14, "autoSpeed": 1.3, "spawns": [
+      { "entity": "lavaSurge", "at": [10, 10], "onEnter": true } ] } ] }
+```
+
+2. **Spawns**: each section's pieces, `at` measured from the path's origin (`anchor` `Path`, where the camera starts),
+   its own start (`Section`) or the `World`. They appear when the section before starts (sections 0 and 1 at the
+   start), so the next foothold is always there before he needs it; `onEnter` spawns when the section itself starts (a
+   chase's wave). `scale` stretches a piece (`[2, 1]` = twice as wide). Tag footholds `foothold` (the toolkit's
+   platforms already are): the playtest bot climbs from foothold to foothold.
+3. **The toolkit** (entities in `content/entities`, abilities in the reference): `ledge` (solid), `sinkingStone`
+   (`sink`), `crumblingStone` (`crumble`), `debrisRaft` (`raft`: `current`, `range`, bob, rock, tip, carries him),
+   `slagConveyor` (`conveyor`), `swingChain` (`swingChain`: grab by jumping in, Jump lets go with the swing's speed),
+   `chainLift` (`chainLift`), `counterweightLeft`/`counterweightRight` (spawn them with ids `weightLeft`/`weightRight`),
+   `heatUpdraft` (`updraft`), `lavaFall` (`lavaFall`), `lavaSea` / `lavaRiver` (`lavaSea` + `scald`), `lavaSurge`
+   (`surge` + `scald`), `floorLanding` (`carved`: `"{floor}"` and `words`). Variants: `"extends": "debrisRaft"` with
+   its own `abilities` list (lists replace).
+4. **Rising lava**: `lavaSea` rises at the counter `lavaSpeed` up to `lavaMax` units above where it spawned. Set both
+   with `setCounter`; each time the speed goes from 0 to more it bubbles and rumbles 2 s first. Set `lavaSpeed` to 0 on
+   a breather and back up for the next push.
+5. **The landing beat**: `{ "when": { "type": "playerOn", "target": { "id": "landing" } }, "maxTimes": 1, "do": [ lines,
+   { "type": "wait", "seconds": 3 }, { "type": "completeLevel" } ] }`.
+6. **Generated sections**: `{ "generate": 3 }` in the path is replaced by 3 chunks from the Circle's `chunks` (a section
+   with its spawns anchored to `Section`, `weight`, `fromFloor`), seeded by the level seed and the floor. A chunk's
+   footing starts at its section's y 0 and a climb ends `length` higher.
+7. **The world below** comes from the Circle's `sky` (`enabled`, colours, `seaLevel`, `seaParallax`, `layers` of
+   shapes with `parallax` [x, y], `onSea` spires, `hanging` islands, drifting smoke, `embers`, `shimmer`).
+
+Rewind needs nothing: every piece is an entity, so a stone that sank or a ledge that fell comes back. Check with the
+`climb` playtest (or a `level-<n>` one for a real floor).
+
 ## A shortcut ("a collapsed stairwell that skips to Floor 840")
 
 Docs/Story.md, "Shortcuts". A choice point inside a stage that skips floors for a cost. Working example: the top of

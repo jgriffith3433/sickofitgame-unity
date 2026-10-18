@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using SickOfIt.Core;
 using SickOfIt.Core.Input;
@@ -21,6 +22,12 @@ namespace SickOfIt.Gameplay
 
         Vector2 travelOrigin;
         StageTrack track;
+        FloorBackdrop backdrop;
+
+        // A floor's path (world.path), expanded (generated sections filled from the Circle's chunks).
+        readonly List<PathSectionDef> path = new List<PathSectionDef>();
+        Vector2[] sectionStart = new Vector2[0];
+        float[] sectionAt = new float[0];
 
         // The Static camera's starting view, where cameraReset goes back to.
         Vector2 homeBase;
@@ -36,6 +43,13 @@ namespace SickOfIt.Gameplay
         float moveStart, moveDuration;
         int moveEase;
 
+        // Path (saved): the section the camera is in, how far along the whole path it is, an Arena released by
+        // nextSection, and the last section whose spawns are out.
+        int section;
+        float pathDistance;
+        bool sectionReleased;
+        int spawnedThrough = -1;
+
         float shakeIntensity;
         float shakeEndsAt;
         float slowMotionEndsAt = -1f;
@@ -44,11 +58,25 @@ namespace SickOfIt.Gameplay
         public Vector2 CameraBase => cameraBase;
         public CameraMode Mode => worldDef != null ? worldDef.camera : CameraMode.Static;
         public StageTrack Track => track;
+        public FloorBackdrop Backdrop => backdrop;
+
+        /// <summary>The level follows a path of sections (world.path).</summary>
+        public bool HasPath => Mode == CameraMode.Travel && path.Count > 0;
+        /// <summary>The path's sections after generation (empty without a path).</summary>
+        public IReadOnlyList<PathSectionDef> Path => path;
+        /// <summary>Index of the section the camera is in (-1 without a path).</summary>
+        public int SectionIndex => HasPath ? section : -1;
+        public PathSectionDef CurrentSection => HasPath ? path[section] : null;
+        /// <summary>Where the path starts (the camera's first position).</summary>
+        public Vector2 PathOrigin => travelOrigin;
+        /// <summary>Where a section starts, in world coordinates.</summary>
+        public Vector2 SectionStart(int index) => index >= 0 && index < sectionStart.Length ? sectionStart[index] : travelOrigin;
 
         Vector2 TravelAxis => worldDef.travelDirection == TravelDirection.Up ? Vector2.up : Vector2.right;
 
         /// <summary>Travel stages: how far the camera has gone from where it started.</summary>
-        public float TravelDistance => Mode == CameraMode.Travel ? Mathf.Max(0f, Vector2.Dot(cameraBase - travelOrigin, TravelAxis)) : 0f;
+        public float TravelDistance => Mode != CameraMode.Travel ? 0f
+            : HasPath ? pathDistance : Mathf.Max(0f, Vector2.Dot(cameraBase - travelOrigin, TravelAxis));
 
         /// <summary>Travel stages: the camera doesn't move forward (lockTravel / unlockTravel).</summary>
         public bool TravelLocked
@@ -91,8 +119,224 @@ namespace SickOfIt.Gameplay
         {
             if (Mode != CameraMode.Travel || cameraTransform == null)
                 return;
+            if (worldDef.HasPath)
+            {
+                BuildPath(circle, script.floors.start);
+                if (circle != null && circle.sky != null && circle.sky.enabled)
+                    backdrop = FloorBackdrop.Create(world, circle.sky, travelOrigin);
+                // The first two sections are there before the level starts: the hero lands on the opening ledge.
+                SpawnThrough(Mathf.Min(1, path.Count - 1), false);
+                if (path.Count > 0)
+                    SpawnSection(0, onEnter: true);
+                return;
+            }
             track = StageTrack.Create(world, script, circle, travelOrigin);
             track.Refresh(cameraBase);
+        }
+
+        // ─── Path ─────────────────────────────────────────────────────
+
+        /// <summary>Expands generated sections from the Circle's chunks (seeded) and lays the sections end to end.</summary>
+        void BuildPath(CircleDef circle, int floor)
+        {
+            path.Clear();
+            for (int i = 0; i < worldDef.path.Count; i++)
+            {
+                var def = worldDef.path[i];
+                if (def == null)
+                    continue;
+                if (def.generate <= 0)
+                {
+                    path.Add(def);
+                    continue;
+                }
+                var random = DeterministicRandom.Derive(world.Seed ^ (uint)Mathf.Max(0, floor), 0xF100Du + (uint)i);
+                for (int n = 0; n < def.generate; n++)
+                {
+                    var chunk = PickChunk(circle, floor, ref random);
+                    if (chunk == null)
+                    {
+                        Debug.LogWarning($"[WorldEffects] Path section {i} asks for generated chunks, but the Circle has none for floor {floor}.");
+                        break;
+                    }
+                    var copy = chunk.section.Copy();
+                    if (string.IsNullOrEmpty(copy.name))
+                        copy.name = string.IsNullOrEmpty(chunk.name) ? "chunk" : chunk.name;
+                    copy.generate = 0;
+                    path.Add(copy);
+                    world.Telemetry.Record("chunk", copy.name, path.Count - 1);
+                }
+            }
+
+            sectionStart = new Vector2[path.Count];
+            sectionAt = new float[path.Count];
+            Vector2 at = travelOrigin;
+            float distance = 0f;
+            for (int i = 0; i < path.Count; i++)
+            {
+                sectionStart[i] = at;
+                sectionAt[i] = distance;
+                at += path[i].Axis * path[i].Length;
+                distance += path[i].Length;
+            }
+            section = 0;
+            pathDistance = 0f;
+            sectionReleased = false;
+            spawnedThrough = -1;
+            if (path.Count > 0)
+                world.Telemetry.Record("section", path[0].name, 0, path[0].direction.ToString());
+        }
+
+        static PathChunkDef PickChunk(CircleDef circle, int floor, ref DeterministicRandom random)
+        {
+            if (circle == null || circle.chunks == null)
+                return null;
+            float total = 0f;
+            foreach (var c in circle.chunks)
+            {
+                if (c != null && c.section != null && c.weight > 0f && (c.fromFloor <= 0 || floor <= c.fromFloor))
+                    total += c.weight;
+            }
+            if (total <= 0f)
+                return null;
+            float roll = random.Value() * total;
+            foreach (var c in circle.chunks)
+            {
+                if (c == null || c.section == null || c.weight <= 0f || (c.fromFloor > 0 && floor > c.fromFloor))
+                    continue;
+                roll -= c.weight;
+                if (roll <= 0f)
+                    return c;
+            }
+            return circle.chunks[circle.chunks.Count - 1];
+        }
+
+        /// <summary>The camera has reached the named section (or one after it).</summary>
+        public bool SectionReached(string name)
+        {
+            if (!HasPath || string.IsNullOrEmpty(name))
+                return false;
+            for (int i = 0; i <= section && i < path.Count; i++)
+            {
+                if (path[i].name == name)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>nextSection: an Arena section lets the camera go on.</summary>
+        public void ReleaseSection()
+        {
+            if (HasPath)
+                sectionReleased = true;
+        }
+
+        /// <summary>Puts out the spawns of every section up to 'last' (each section once).</summary>
+        void SpawnThrough(int last, bool entered)
+        {
+            for (int i = spawnedThrough + 1; i <= last && i < path.Count; i++)
+            {
+                SpawnSection(i, onEnter: false);
+                spawnedThrough = i;
+            }
+            if (entered)
+                SpawnSection(section, onEnter: true);
+        }
+
+        void SpawnSection(int index, bool onEnter)
+        {
+            var def = path[index];
+            if (def.spawns == null)
+                return;
+            foreach (var s in def.spawns)
+            {
+                if (s == null || s.onEnter != onEnter)
+                    continue;
+                Vector2 at = s.anchor == PathAnchor.World ? s.at
+                    : s.anchor == PathAnchor.Section ? sectionStart[index] + s.at
+                    : travelOrigin + s.at;
+                var options = new SpawnOptions { InstanceId = s.id ?? "", Facing = s.facing, FacePlayer = s.facing == 0f };
+                if (s.tags != null)
+                    options.Tags.AddRange(s.tags);
+                var entity = world.Spawn(s.entity, at, options);
+                if (entity != null && s.scale != Vector2.one && s.scale.x > 0f && s.scale.y > 0f)
+                {
+                    var t = entity.transform;
+                    t.localScale = new Vector3(t.localScale.x * s.scale.x, t.localScale.y * s.scale.y, t.localScale.z);
+                    // Abilities that remember where they started read it at spawn; the scale only changes the size.
+                    Physics2D.SyncTransforms();
+                }
+            }
+        }
+
+        /// <summary>The camera's point at 'distance' along the path, with the turns between sections rounded off.</summary>
+        Vector2 PathPoint(float distance)
+        {
+            for (int c = 1; c < path.Count; c++)
+            {
+                float r = Mathf.Min(Mathf.Max(0f, path[c - 1].turn), path[c - 1].Length * 0.5f, path[c].Length * 0.5f);
+                float corner = sectionAt[c];
+                if (r > 0.01f && Mathf.Abs(distance - corner) < r && path[c - 1].Axis != path[c].Axis)
+                {
+                    Vector2 a = StraightPoint(corner - r);
+                    Vector2 b = StraightPoint(corner + r);
+                    Vector2 k = sectionStart[c];
+                    float t = (distance - (corner - r)) / (2f * r);
+                    float u = 1f - t;
+                    return u * u * a + 2f * u * t * k + t * t * b;
+                }
+            }
+            return StraightPoint(distance);
+        }
+
+        Vector2 StraightPoint(float distance)
+        {
+            int k = path.Count - 1;
+            for (int i = 0; i < path.Count; i++)
+            {
+                if (distance < sectionAt[i] + path[i].Length || i == path.Count - 1)
+                {
+                    k = i;
+                    break;
+                }
+            }
+            return sectionStart[k] + path[k].Axis * Mathf.Clamp(distance - sectionAt[k], 0f, path[k].Length);
+        }
+
+        /// <summary>Forward only along the current section: follow the hero with a look-ahead, at least at autoSpeed, unless held.</summary>
+        Vector2 PathStep(float dt)
+        {
+            var def = path[section];
+            float start = sectionAt[section];
+            float end = start + def.Length;
+            bool arena = def.direction == PathDirection.Arena;
+            bool held = travelLocked || (worldDef.holdForPushes && world.Director != null && world.Director.GeneratorHoldsCamera)
+                        || (arena && !sectionReleased);
+            if (!held && !arena)
+            {
+                float target = pathDistance;
+                if (world.Player != null)
+                {
+                    float lead = def.lead >= 0f ? def.lead : worldDef.travelLead;
+                    float wanted = start + Vector2.Dot(world.Player.Position - sectionStart[section], def.Axis) + lead;
+                    float t = 1f - Mathf.Exp(-Mathf.Max(0.1f, worldDef.followSharpness) * dt);
+                    target = Mathf.Max(target, Mathf.Lerp(pathDistance, Mathf.Min(wanted, end), t));
+                }
+                target = Mathf.Max(target, pathDistance + Mathf.Max(0f, def.autoSpeed) * dt);
+                pathDistance = Mathf.Min(target, end);
+            }
+
+            bool done = arena ? sectionReleased : pathDistance >= end - 0.0001f;
+            if (done && section < path.Count - 1)
+            {
+                section++;
+                sectionReleased = false;
+                var next = path[section];
+                world.Emit("section:" + next.name);
+                world.Telemetry.Record("section", next.name, section, next.direction.ToString());
+                SpawnThrough(Mathf.Min(section + 1, path.Count - 1), true);
+            }
+            return PathPoint(pathDistance);
         }
 
         void BuildMovingBarriers()
@@ -108,7 +352,7 @@ namespace SickOfIt.Gameplay
                 // rises with the camera, so falling off the bottom of the screen just lands you on its edge.
                 Barrier(cameraTransform, "TravelEdge_Left", new Vector2(-w - 0.5f, 0f), new Vector2(1f, h * 4f), layer);
                 Barrier(cameraTransform, "TravelEdge_Right", new Vector2(w + 0.5f, 0f), new Vector2(1f, h * 4f), layer);
-                if (worldDef.travelDirection == TravelDirection.Up)
+                if (worldDef.travelDirection == TravelDirection.Up || worldDef.HasPath)
                     Barrier(cameraTransform, "TravelEdge_Bottom", new Vector2(0f, -h - 0.5f), new Vector2(w * 4f, 1f), layer);
             }
             else if (Mode == CameraMode.Scroll)
@@ -152,6 +396,12 @@ namespace SickOfIt.Gameplay
             Vector2 next = cameraBase;
             if (Mode == CameraMode.Travel)
             {
+                if (HasPath)
+                {
+                    cameraBase = PathStep(dt);
+                    movesCamera = true;
+                    return;
+                }
                 cameraBase = TravelStep(dt);
                 movesCamera = true;
                 track?.Refresh(cameraBase);
@@ -381,6 +631,10 @@ namespace SickOfIt.Gameplay
             w.Float(cameraBase.x);
             w.Float(cameraBase.y);
             w.Bool(travelLocked);
+            w.Int(section);
+            w.Float(pathDistance);
+            w.Bool(sectionReleased);
+            w.Int(spawnedThrough);
             w.Float(cameraSize);
             w.Bool(cameraMoving);
             w.Float(moveFrom.x); w.Float(moveFrom.y);
@@ -396,6 +650,10 @@ namespace SickOfIt.Gameplay
         {
             cameraBase = new Vector2(r.Float(), r.Float());
             travelLocked = r.Bool();
+            section = r.Int();
+            pathDistance = r.Float();
+            sectionReleased = r.Bool();
+            spawnedThrough = r.Int();
             cameraSize = r.Float();
             cameraMoving = r.Bool();
             moveFrom = new Vector2(r.Float(), r.Float());

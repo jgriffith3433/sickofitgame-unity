@@ -51,6 +51,13 @@ namespace SickOfIt.Gameplay.Content
         public LootDef loot = new LootDef();
     }
 
+    [Doc("What an entity without art is drawn as.")]
+    public enum PlaceholderShape
+    {
+        [Doc("A circle (with the id when placeholderLabel is on).")] Circle,
+        [Doc("A box exactly the size of the body: platforms, lava, columns of hot air.")] Box,
+    }
+
     [Doc("How the body moves and collides.")]
     public enum BodyKind
     {
@@ -93,6 +100,8 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Placeholder color when there is no art.")] public Color placeholderColor = new Color(0.9f, 0.3f, 0.3f, 1f);
         [Doc("Placeholder diameter in world units.")] public float placeholderSize = 0.6f;
         [Doc("Show the id on the placeholder.")] public bool placeholderLabel = true;
+        [Doc("Placeholder shape: a labeled Circle (an enemy without art) or a Box the size of the body (a platform, a slab of lava).")]
+        public PlaceholderShape placeholderShape = PlaceholderShape.Circle;
         [Doc("The art faces left when not flipped (most sprites face right).")] public bool facesLeft;
         [Doc("Draw order band.")] public SpriteLayer layer = SpriteLayer.Player;
         [Doc("Draw order within the band (-1 = the standard character order).")] public int sortingOrder = -1;

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "lava"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      40.0,
+      6.0
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#E8501A",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 6,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "lavaSea",
+      "speedCounter": "lavaSpeed",
+      "maxCounter": "lavaMax",
+      "telegraph": 2.0,
+      "followCamera": true,
+      "rumbleSound": "magma_rumble",
+      "surfaceColor": "#FFC860"
+    },
+    {
+      "type": "scald",
+      "damage": 1,
+      "launch": 9.5,
+      "interval": 0.8,
+      "effect": ""
+    }
+  ]
+}

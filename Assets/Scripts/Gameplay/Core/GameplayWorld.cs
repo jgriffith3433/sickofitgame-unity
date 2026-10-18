@@ -244,12 +244,21 @@ namespace SickOfIt.Gameplay
 
             Director.Tick(now);
 
+            carryThisTick = Vector2.zero;
+            heldThisTick = false;
             tickList.Clear();
             tickList.AddRange(live);
             foreach (var e in tickList)
             {
                 if (e != null && e.IsAlive && e.isActiveAndEnabled)
                     e.Tick(now, dt);
+            }
+            if (playerController != null)
+            {
+                // What he stands on carries him; nothing held him this tick, so he lets go.
+                playerController.CarrierVelocity = carryThisTick;
+                if (!heldThisTick && playerController.IsHeld)
+                    playerController.ReleaseHold();
             }
             Scripted.Tick(now, dt);
             if (Player != null && Player.isActiveAndEnabled)
@@ -353,6 +362,58 @@ namespace SickOfIt.Gameplay
                 return true;
             entity = null;
             return false;
+        }
+
+        // ─── Floor platforms: standing on, carried by, held by ───────
+
+        Vector2 carryThisTick;
+        bool heldThisTick;
+
+        /// <summary>
+        /// The hero stands on top of this entity's body: his feet on its top edge, inside its width, not on his way up
+        /// from a jump. Floor platforms (sinking stones, rafts, lifts) use it.
+        /// </summary>
+        public bool PlayerStandsOn(Entity platform)
+        {
+            if (platform == null || Player == null || !Player.IsAlive || playerController == null || playerController.IsHeld)
+                return false;
+            var feet = playerController.BodyCollider;
+            var body = platform.MainCollider;
+            if (feet == null || body == null || !body.enabled)
+                return false;
+            Bounds p = feet.bounds, b = body.bounds;
+            if (p.max.x < b.min.x + 0.05f || p.min.x > b.max.x - 0.05f)
+                return false;
+            float gap = p.min.y - b.max.y;
+            if (gap < -0.25f || gap > 0.12f)
+                return false;
+            float rising = Player.Body != null ? Player.Body.linearVelocity.y : 0f;
+            return rising < 2.5f;
+        }
+
+        /// <summary>This tick, what he stands on moves him at 'velocity' (sideways; up and down come from the collision).</summary>
+        public void CarryPlayer(Vector2 velocity) => carryThisTick = velocity;
+
+        /// <summary>This tick, something holds him at 'position' moving at 'velocity' (a chain). Jump lets go.</summary>
+        public void HoldPlayer(Vector2 position, Vector2 velocity)
+        {
+            if (playerController == null)
+                return;
+            heldThisTick = true;
+            playerController.Hold(position, velocity);
+        }
+
+        /// <summary>The live entity spawned with this instance id, or null.</summary>
+        public Entity FindById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return null;
+            foreach (var e in live)
+            {
+                if (e.IsAlive && e.InstanceId == id)
+                    return e;
+            }
+            return null;
         }
 
         public bool IsBoundary(Collider2D collider) => collider != null && collider.gameObject.layer == boundaryLayer;

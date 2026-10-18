@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "foothold"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      2.0,
+      0.45
+    ],
+    "solid": true
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#4A2A20",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 0,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "sink",
+      "sinkSpeed": 1.0,
+      "depth": 1.5,
+      "riseSpeed": 0.7,
+      "dip": 0.08,
+      "sound": "lava_bubble"
+    }
+  ]
+}

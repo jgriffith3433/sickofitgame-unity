@@ -185,6 +185,63 @@ namespace SickOfIt.Core.Input
         /// <summary>Physics and collisions are off (pullPlayerInto): a level script moves the player's transform.</summary>
         public bool Suspended { get; private set; }
 
+        /// <summary>
+        /// Velocity of what he stands on (a drifting raft, a slag conveyor), added to his own sideways speed. The gameplay
+        /// world sets it every simulation tick (zero when he stands on nothing that moves).
+        /// </summary>
+        public Vector2 CarrierVelocity { get; set; }
+
+        /// <summary>On the ground this frame (the ground check under his feet).</summary>
+        public bool IsGrounded => isGrounded;
+
+        /// <summary>His body's collider (standing checks for floor platforms).</summary>
+        public Collider2D BodyCollider => col;
+
+        /// <summary>Hanging from something (a swinging chain): gravity is off and the holder moves him; Jump lets go.</summary>
+        public bool IsHeld => held;
+
+        private bool held;
+        private Vector2 heldVelocity;
+        private float gravityBeforeHold;
+        private bool jumpedOffHold;
+        // Sideways speed kept from a chain's swing after jumping off it, fading out (or gone on landing).
+        private float swingMomentum;
+
+        /// <summary>Holds him at 'position' moving at 'velocity' (a chain he grabbed). Call every tick while holding.</summary>
+        public void Hold(Vector2 position, Vector2 velocity)
+        {
+            if (rb == null || Suspended)
+                return;
+            if (!held)
+            {
+                held = true;
+                gravityBeforeHold = rb.gravityScale;
+                rb.gravityScale = 0f;
+                airJumpsRemaining = maxAirJumps;
+            }
+            heldVelocity = velocity;
+            rb.position = position;
+            rb.linearVelocity = velocity;
+        }
+
+        /// <summary>Lets go (the holder is gone, or a rewind went back before the grab). Keeps his current velocity.</summary>
+        public void ReleaseHold()
+        {
+            if (!held)
+                return;
+            held = false;
+            if (rb != null)
+                rb.gravityScale = gravityBeforeHold;
+        }
+
+        /// <summary>True once after he jumped off what held him (the holder lets go of him).</summary>
+        public bool ConsumeJumpOff()
+        {
+            bool jumped = jumpedOffHold;
+            jumpedOffHold = false;
+            return jumped;
+        }
+
         private readonly System.Collections.Generic.Dictionary<GameObject, IProjectileDamage> shotDamage =
             new System.Collections.Generic.Dictionary<GameObject, IProjectileDamage>();
 
@@ -224,6 +281,8 @@ namespace SickOfIt.Core.Input
             if (Suspended == suspended)
                 return;
             Suspended = suspended;
+            if (suspended)
+                ReleaseHold();
             if (rb != null)
             {
                 rb.linearVelocity = Vector2.zero;
@@ -789,8 +848,20 @@ namespace SickOfIt.Core.Input
                 : InputLocked ? 0f
                 : Mathf.Clamp(moveInput.x, -1f, 1f);
             
+            if (held)
+            {
+                // The holder sets his position each tick; keep moving with it in between.
+                rb.linearVelocity = heldVelocity;
+                return;
+            }
+
+            if (isGrounded)
+                swingMomentum = 0f;
+            else
+                swingMomentum = Mathf.MoveTowards(swingMomentum, 0f, 3f * Time.fixedDeltaTime);
+
             Vector2 velocity = rb.linearVelocity;
-            velocity.x = horizontalInput * moveSpeed * MoveSpeedMultiplier;
+            velocity.x = horizontalInput * moveSpeed * MoveSpeedMultiplier + CarrierVelocity.x + swingMomentum;
             rb.linearVelocity = velocity;
         }
         
@@ -882,7 +953,18 @@ namespace SickOfIt.Core.Input
         {
             if (!jumpRequested) return;
             jumpRequested = false;
-            
+
+            if (held)
+            {
+                // Jumping off a chain: let go with its swing plus a jump.
+                ReleaseHold();
+                jumpedOffHold = true;
+                swingMomentum = heldVelocity.x;
+                isGrounded = false;
+                Jump();
+                return;
+            }
+
             if (isGrounded)
             {
                 Jump();

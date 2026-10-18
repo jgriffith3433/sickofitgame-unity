@@ -38,6 +38,10 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Volume of pushMusic (0-1, times the player's Music setting).")] public float pushMusicVolume = 1f;
         [Doc("Lines that play when the floor counter reaches a floor in this circle (any stage), e.g. 999: \"Only nine hundred ninety-nine to go.\"")]
         public List<MilestoneDef> milestones = new List<MilestoneDef>();
+        [Doc("Floors with a path in this Circle: the world below them (the lava sea, parallax layers, embers, shimmer).")]
+        public SkyDef sky = new SkyDef();
+        [Doc("Pieces of floor the generator fills a path's 'generate' sections with (a climb of sinking stones, a raft ride, a chase).")]
+        public List<PathChunkDef> chunks = new List<PathChunkDef>();
 
         /// <summary>0 at firstFloor, 1 at lastFloor.</summary>
         public float Progress(int floor)

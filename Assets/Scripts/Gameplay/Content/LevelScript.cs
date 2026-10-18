@@ -87,6 +87,13 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Travel: the camera waits while enemies of a generated push are alive, so the player fights instead of running past.")] public bool holdForPushes = true;
         [Doc("Travel: scenery for this stage only (the village debris in The Spill), drawn with its Circle's props.")]
         public List<PropDef> props = new List<PropDef>();
+        [Doc("Travel: a floor's path, section by section (climb up, run right or left, a diagonal, an arena), instead of one " +
+             "travelDirection. The camera follows it forward only with smooth turns; each section puts its stones, rafts and hazards " +
+             "on the floor (spawns). Floors with a path have no streamed ground: the hero starts on a spawned ledge above the lava. " +
+             "The path ends where the last section ends (travelLength is ignored). See Docs/GameplayCookbook.md, \"A floor with a path\".")]
+        public List<PathSectionDef> path = new List<PathSectionDef>();
+
+        public bool HasPath => camera == CameraMode.Travel && path != null && path.Count > 0;
     }
 
     /// <summary>content/sequences/{id}.json</summary>

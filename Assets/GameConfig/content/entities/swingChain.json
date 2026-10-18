@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "chain"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      0.35,
+      0.35
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#9A8A80",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 1,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "swingChain",
+      "length": 2.6,
+      "amplitude": 40.0,
+      "period": 2.8,
+      "phase": 0.0,
+      "grabRadius": 0.85,
+      "hang": 0.55,
+      "regrab": 0.6,
+      "chainColor": "#52423C",
+      "grabSound": "player_land"
+    }
+  ]
+}
