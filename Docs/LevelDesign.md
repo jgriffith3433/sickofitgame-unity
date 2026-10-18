@@ -7,9 +7,9 @@ doesn't explain, add it to Story.md first.
 Status: **design for review** (2026-10-18, J's decision m_daf635ad1287: one level = one floor, a floor boss every 10th
 floor, the Warden on the Circle's top floor, shortcuts skip stretches; revised the same day for J's *"some scrolling
 horizontally ... as immersive as you can"*: every floor's path, set piece, surprise, rewind moment and feel). The
-floor engine is built (see *Building it*); **Floors 1000-996 are built** (levels 2-6, `levels/Floor1000.json` to
-`Floor996.json`, 2026-10-18); after them the old 10-floor stages (flat walks to the right) still run from Floor 990 and
-are replaced floor by floor from this page (see *Building it*). Names marked *(working)* are placeholders. Lines are first drafts for the voices.
+floor engine is built (see *Building it*); **Floors 1000-991 are built** (levels 2-11, `levels/Floor1000.json` to
+`Floor991.json`, 2026-10-18; 995-991 the same day, ending on the Imp Foreman); after them the old 10-floor stages (flat
+walks to the right) still run from Floor 990 and are replaced floor by floor from this page (see *Building it*). Names marked *(working)* are placeholders. Lines are first drafts for the voices.
 
 ## The rules in one breath
 
@@ -201,8 +201,8 @@ platform or hazard type (saved in `SaveState`/`LoadState`, seeded) for the floor
 | **Swinging chains** | The imps' empty chains hang over the gaps and swing. Jump into one to grab it, swing with it, jump off with its speed. | The hauling route's chains, left swinging | It swings in plain sight, the same rhythm every time | 997 (one idea with the sack-swings: *the hauling chains*, some with an imp on, some empty for him; the imp is known from the Meadow) | yes (`swingChain`) |
 | **Lava geysers** | A vent in the rock blows a column of lava straight up. | The lava sea under pressure | The vent glows and spits for **1 s** before | 996 | yes (`geyserVent` + `lavaGeyser`: a `lavaFall` beat blowing upward, the vent's tell on its gurgle) |
 | **Slag flows** | A crust of slag sliding along on the lava like a conveyor: with it he runs faster, against it he barely moves. | The lava sea's current, crusted over | Its glowing seams crawl the way it moves | 908 (the cart run) | yes (`slagConveyor`, ability `conveyor`) |
-| **Hell's loop** | A set of stones, geysers or imps that does exactly the same thing over and over. Not a new object: a new way to use the old ones. | Hell is repetition | The first repeat is called out | 995 | config (seeded patterns) |
-| **Chain lifts** | A platform on a chain that rides up and down a shaft on a timer. | The imps' lifts for hauling sacks | The chain clanks and the lift jolts before it moves | 994 | yes (`chainLift`; `startOnStand` waits for him) |
+| **Hell's loop** | A set of stones, geysers or imps that does exactly the same thing over and over. Not a new object: a new way to use the old ones. | Hell is repetition | The first repeat is called out; each stone trembles and steams 1 s before it goes | 995 | yes (`sink` `loopPeriod`/`loopPhase`: stones that sink by themselves on the level's clock, so every lap is the same; `geyser` `worldClock`) |
+| **Chain lifts** | A platform on a chain that rides up and down a shaft on a timer. | The imps' lifts for hauling sacks | The chain clanks and the lift jolts before it moves | 994 | yes (`chainLift`; `startOnStand` waits for him; `cutterTag`: imps near it hack the chain and it drops a notch every few seconds until they're shot) |
 | **Crumbling stones** | Ledges of old slag that crack when stood on and fall after 1 s. They don't come back (except by rewind). | The Wastes' old floors, burned through | Cracks and dust the moment he lands | 992 | yes (`crumblingStone`, ability `crumble`) |
 | **Counterweights** | Two platforms on one chain over a pulley, one loaded with a diamond sack. Shoot the sack off and its side rises (with him on it). | The imps balance their lifts with the stolen sacks | The loaded side creaks, the sack sways | 960 | partly (`counterweightLeft`/`Right`: his weight sinks one side and lifts the other; the sack is new) |
 | **Heat updrafts** | Shimmering columns of hot air over the lava that carry him up while he's in them (and keep carrying a jump). | The lava sea's heat | Shimmer and floating ash show the column | 957 | yes (`heatUpdraft`) |
@@ -525,7 +525,17 @@ who runs the hauling.
   landing: **the Sack Lift** (shortcut 1). Landing carved *991*.
 - **Surprise:** on tier 3, losing, he spreads his wings and tries to fly. They're for show: he flaps, rises a hand's
   height, and drops back onto his sack.
-- **Rewind:** his tier-3 swing is a loop (the sack-swing, boss-sized): a rewind shows its passes.
+- **Rewind:** his swing is a loop (the sack-swing, boss-sized): a rewind shows its passes.
+- **As built (2026-10-18, J: "two phases with telegraphed attacks"):** two phases on two tiers. Tier 1 (the loading
+  floor, a locked screen): he whips the tier (a row of glows on the floor, each cracking 1.1 s later where it glowed) and
+  whistles sack imps onto the swings (two at most). At half health the lava takes tier 1 (a big shake), he hauls himself
+  up out of sight and the camera runs along the gantry (`»`, the lava wave behind) to a chain lift up to tier 2 (a
+  locked screen), where he swings on the lift's chain, dropping embers from his sack (a glow on the spot, the ember 1.1 s
+  later) and whipping the tier below; at a quarter his wings flap for nothing (*"Hnnngh... fly... FLY..."*, hero:
+  *"Those are for show, aren't they."*). Beaten: slow motion, his sack bursts into a pile of diamonds on tier 2, his
+  *"My... sack..."*, the announcer's call, the hero's *"Thank you."*, then a short climb to the landing. The Sack Lift
+  on his landing (shortcut 1) isn't built yet: the landing is carved *IMPS ONLY* and Floor 991 leads on to the old
+  stage at Floor 990.
 - **Feel:** a medium shake on each whip crack; a big shake when the lava takes a tier; slow motion as the sack bursts
   (diamonds hanging in the air); the roar swallows each tier.
 - **Lines:** Announcer: *"FLOOR NINE NINETY-ONE! THE IMP FOREMAN!"* Hero: *"That's the biggest sack yet. Ours too,
@@ -1017,9 +1027,13 @@ order it can be built and played:
    calls a milestone itself: Floor 999 opens on *"ONLY 999 TO GO"*), and the Grudge pick before `completeLevel`. Built
    with today's pieces, so some beats are simpler than the pages above: the fleeing imp on 1000 climbs straight up out
    of sight (no chain of its own), the village sign on 998 floats as a raft (it doesn't tip over and sink), and the damned
-   soul is a placeholder shape until its art is made. Floors 995-991 are next; until then Floor 996 leads on to the old
-   10-floor stage at Floor 990 (*The Spill*), so for now Grudges come on every floor (the rule in *Rewards*, a pick every
-   fifth floor, waits until the whole stretch is floors).
+   soul is a placeholder shape until its art is made. *Built 2026-10-18 too: Floors 995-991* (levels 7-11; the
+   `foreman-stretch` playtest plays them in a row). Simplified there: The Loop's laps are the same layout placed twice
+   (the stones sink on the level's clock, so both laps move together); the 994 lift that won't stop rides up past the
+   landing and comes back down (no jam); the sleeping imp on 993 falls as he comes near, not as he lands; the Foreman
+   fights two phases (J's request) instead of three. Floor 991 leads on to the old 10-floor stage at Floor 990 (*The
+   Spill*) until the Sack Lift and the long way exist, and Grudges still come on every floor (the rule in *Rewards*, a
+   pick every fifth floor, waits until the whole stretch is floors).
 4. **The Sack Lift, Floors 960-951, the King's Chimney, Floors 910-901** (Level 11's arena renumbered to Floor 901).
 5. **The long way:** a generated floor per skipped floor (one level template the generator fills from the floor
    number), with the long-way floor bosses.
