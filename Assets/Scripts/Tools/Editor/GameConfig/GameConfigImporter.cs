@@ -277,15 +277,21 @@ namespace SickOfIt.Tools.Editor.GameConfig
 
         static HashSet<string> VersionOnly() => new HashSet<string> { GameConfigLayout.VersionKey };
 
+        /// <summary>True when ApplyTo(target, loaded) would change target, i.e. target doesn't match the loaded JSON.</summary>
+        public static bool ApplyWouldChange(GameDefinition target, GameDefinition loaded)
+        {
+            loaded.name = target.name;
+            loaded.hideFlags = target.hideFlags;
+            return EditorJsonUtility.ToJson(loaded) != EditorJsonUtility.ToJson(target);
+        }
+
         /// <summary>
         /// Copies <paramref name="loaded"/> into the <paramref name="target"/> asset and saves it.
         /// Returns false, changing nothing, when the two already hold the same data.
         /// </summary>
         public static bool ApplyTo(GameDefinition target, GameDefinition loaded)
         {
-            loaded.name = target.name;
-            loaded.hideFlags = target.hideFlags;
-            if (EditorJsonUtility.ToJson(loaded) == EditorJsonUtility.ToJson(target))
+            if (!ApplyWouldChange(target, loaded))
                 return false;
 
             Undo.RecordObject(target, "Import Game Config");

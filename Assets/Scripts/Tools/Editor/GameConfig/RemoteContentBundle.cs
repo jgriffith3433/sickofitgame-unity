@@ -28,7 +28,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
         public static GameConfigReport Build(string path)
         {
             var report = new GameConfigReport("Build bundle", "pack content and level scripts for remote delivery");
-            if (!GameConfigSync.ImportIfChanged("building the remote content bundle"))
+            if (!GameConfigSync.ImportNow("building the remote content bundle").Success)
             {
                 report.Issues.Error("", "", "The config has errors; fix them first (see the import report).");
                 report.Write();
