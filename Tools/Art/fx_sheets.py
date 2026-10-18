@@ -127,8 +127,15 @@ def made(kind, rgba, count, seed):
             alpha = 0.55 + 0.45 * min(1.0, t / 0.5)
             frames.append(scaled_about(img, s, s * (0.9 + 0.1 * rng.random()), (w / 2, h), alpha))
         elif kind == "column":
-            # Crackle: the beam's texture scrolls downward, its width breathes, its brightness flickers.
-            arr = np.roll(rgba, int(i * h / count * 0.5), axis=0).astype(np.float32)
+            # Crackle: the shaft's texture scrolls downward, its width breathes, its brightness flickers.
+            # The bottom quarter (the splash where it lands) stays put; the shaft slides down under it and its
+            # own top rows refill the top, so nothing wide (a tapering beam's foot) wraps up to the sky.
+            foot = int(h * 0.75)
+            d = int(i * foot / count * 0.5)
+            arr = rgba.astype(np.float32).copy()
+            if d:
+                arr[d:foot] = rgba[:foot - d]
+                arr[:d] = rgba[:d]
             sx = 0.85 + 0.3 * rng.random()
             frame = Image.fromarray(arr.astype(np.uint8), "RGBA")
             frames.append(scaled_about(frame, sx, 1.0, (w / 2, h), 0.85 + 0.15 * rng.random()))
@@ -239,8 +246,9 @@ def pack(frames, clip, cell_w, cell_h, out_png, ppu, pivot):
         f.write("\n")
     write_meta(out_png + ".meta", cells, round(ppu, 3), pivot)
     side = os.path.splitext(out_png)[0] + ".sheet.json.meta"
+    guid = existing_guid(side)  # read before "w" truncates it
     with open(side, "w", encoding="utf-8", newline="\n") as f:
-        f.write(TEXT_META.format(guid=existing_guid(side)))
+        f.write(TEXT_META.format(guid=guid))
     return tex_w, tex_h
 
 
