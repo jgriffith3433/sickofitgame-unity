@@ -1,0 +1,24 @@
+{
+  "about": "The geyser's column (no entity yet: the column is still to build).",
+  "gpu": "image.generate lava/geyser seed 94798034 (asset a_0dd1229efd29751a, job j_6d3e9ee1e611), judged. Loop: video.i2v (Wan 2.2), the column surging, job j_9dcf757d9075 (asset a_16a9eda05f845f03).",
+  "out": "Assets/Art/Climb",
+  "name": "Geyser",
+  "key": "none",
+  "size": [
+    320,
+    640
+  ],
+  "pivot": [
+    160.0,
+    636
+  ],
+  "worldWidth": 1.0,
+  "widthPixels": 320,
+  "scale": 0.4,
+  "clips": {
+    "column": {
+      "frames": "/tmp/climbart/src/_prep/geyser/column",
+      "key": "none"
+    }
+  }
+}

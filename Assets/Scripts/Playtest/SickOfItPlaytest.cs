@@ -2696,6 +2696,7 @@ namespace SickOfIt.Playtest
                 public long ParallaxKey;
                 public Vector2 ParallaxCamera, ParallaxItem;
                 public bool LandingSeen;
+                public readonly HashSet<string> ArtMissing = new HashSet<string>();
             }
 
             ClimbWatch climb;
@@ -2706,6 +2707,62 @@ namespace SickOfIt.Playtest
                 "lava sea", "parallax", "climb up", "sinking stone", "rewind restores", "stone rises back", "crumbling stone", "run sideways",
                 "raft drifts", "raft carries", "chain swing", "chase", "climb again", "landing number", "level ends",
             };
+
+            /// <summary>The painted art of the climb (Docs/LevelDesign.md, "The art of the climb"): each piece on screen must be art, not its stand-in box.</summary>
+            static readonly string[] ClimbArtBeats =
+            {
+                "art far sea", "art parallax", "art lava surface", "art ledge", "art sinkingStone", "art stone steams", "art crumblingStone",
+                "art stone crumbles", "art raft", "art chain", "art chainLift", "art floorLanding",
+            };
+
+            /// <summary>The pieces whose painted art the climb checks (entity id → beat).</summary>
+            static readonly Dictionary<string, string> ClimbArtPieces = new Dictionary<string, string>
+            {
+                { "ledge", "art ledge" }, { "sinkingStone", "art sinkingStone" }, { "crumblingStone", "art crumblingStone" },
+                { "debrisRaft", "art raft" }, { "debrisRaftSign", "art raft" }, { "debrisRaftRoof", "art raft" }, { "debrisRaftHay", "art raft" },
+                { "chainLift", "art chainLift" }, { "floorLanding", "art floorLanding" },
+            };
+
+            /// <summary>The art check of a piece on screen: painted (its sprite) or still the stand-in box (a problem, once).</summary>
+            void ClimbArt(SickOfIt.Gameplay.Entity e, string beat)
+            {
+                if (climb.Passed.Contains(beat) || climb.ArtMissing.Contains(e.DefId))
+                    return;
+                bool standIn = e.transform.Find("Shape") != null;
+                var sprite = e.Sprite != null ? e.Sprite.sprite : null;
+                if (!standIn && sprite != null)
+                {
+                    ClimbCheck(beat, true, $"{Who(e)} is painted art ({sprite.name}, {sprite.bounds.size.x * Mathf.Abs(e.transform.lossyScale.x):0.0} units wide)");
+                }
+                else
+                {
+                    climb.ArtMissing.Add(e.DefId);
+                    Run.Problem(PlaytestSeverity.Bug, $"climb {beat}: {Who(e)} is still its stand-in box (no art in its visual)");
+                }
+            }
+
+            /// <summary>A frames check, reported once if it fails (it is looked at every frame).</summary>
+            void ArtFrames(string beat, bool ok, string detail)
+            {
+                if (climb.ArtMissing.Contains(beat))
+                    return;
+                if (!ok)
+                    climb.ArtMissing.Add(beat);
+                ClimbCheck(beat, ok, detail);
+            }
+
+            static bool StripShown(SickOfIt.Gameplay.Entity e, string name)
+            {
+                var holder = e.transform.Find(name);
+                if (holder == null)
+                    return false;
+                for (int i = 0; i < holder.childCount; i++)
+                {
+                    if (holder.GetChild(i).TryGetComponent<SpriteRenderer>(out var sr) && sr.enabled && sr.sprite != null)
+                        return true;
+                }
+                return false;
+            }
 
             public IEnumerator ClimbRun()
             {
@@ -2736,10 +2793,20 @@ namespace SickOfIt.Playtest
                     else
                         Run.Problem(PlaytestSeverity.Bug, $"climb: never saw \"{beat}\" (level {lastOutcome})");
                 }
+                int painted = 0;
+                foreach (var beat in ClimbArtBeats)
+                {
+                    if (climb.Passed.Contains(beat))
+                        painted++;
+                    else
+                        Run.Problem(PlaytestSeverity.Bug, $"climb: never saw \"{beat}\": that piece is still drawn as a stand-in");
+                }
+                Run.Metric("climb.art", painted);
+                passed += painted;
                 Run.Metric("climb.passed", passed);
                 Run.Metric("climb.failed", climb.Failed);
                 Run.Progress(1f);
-                bool ok = passed == ClimbBeats.Length && climb.Failed == 0;
+                bool ok = passed == ClimbBeats.Length + ClimbArtBeats.Length && climb.Failed == 0;
                 climb = null;
                 End(ok ? PlaytestOutcome.Won : lastOutcome == "softlock" ? PlaytestOutcome.Stuck : PlaytestOutcome.Done);
             }
@@ -2792,6 +2859,12 @@ namespace SickOfIt.Playtest
                 if (backdrop != null && sea != null && backdrop.LayerCount >= 3 && backdrop.ItemCount > 0)
                     ClimbCheck("lava sea", true, $"lava sea surface at y={sea.MainCollider.bounds.max.y:0.0} under the camera, the far sea's horizon at " +
                                                  $"y={backdrop.SeaTop:0.0}, {backdrop.LayerCount} parallax layers with {backdrop.ItemCount} shapes on screen");
+                if (backdrop != null && backdrop.SeaPainted)
+                    ClimbCheck("art far sea", true, $"the far sea is painted (its loop below the horizon at y={backdrop.SeaTop:0.0})");
+                if (backdrop != null && backdrop.PaintedCount > 0)
+                    ClimbCheck("art parallax", true, $"{backdrop.PaintedCount} painted spires, islands and smoke on screen in {backdrop.LayerCount} parallax layers");
+                if (sea != null && StripShown(sea, "SurfaceArt"))
+                    ClimbCheck("art lava surface", true, "the lava sea's surface is its painted loop");
                 if (backdrop != null && !climb.Passed.Contains("parallax"))
                 {
                     if (!climb.ParallaxArmed)
@@ -2848,7 +2921,16 @@ namespace SickOfIt.Playtest
                 {
                     if (e == null || !e.IsAlive)
                         continue;
+                    if (ClimbArtPieces.TryGetValue(e.DefId, out var artBeat) && e.MainCollider != null
+                        && Mathf.Abs(e.Position.x - cam.x) < world.Camera.orthographicSize * world.Camera.aspect
+                        && Mathf.Abs(e.Position.y - cam.y) < world.Camera.orthographicSize)
+                        ClimbArt(e, artBeat);
+                    if ((StripShown(e, "ChainArt")) && e.FindAbility<SickOfIt.Gameplay.Content.SwingChainAbility>() != null)
+                        ClimbCheck("art chain", true, $"{Who(e)} swings on painted chain links");
                     var sink = e.FindAbility<SickOfIt.Gameplay.Content.SinkAbility>();
+                    if (sink != null && world.PlayerStandsOn(e) && sink.Sunk >= 0.3f && !e.transform.Find("Shape"))
+                        ArtFrames("art stone steams", e.Animation.CurrentState == "Sink",
+                            $"{Who(e)} going under plays its steaming frames (state {e.Animation.CurrentState})");
                     if (sink != null)
                     {
                         climb.StoneSunk.TryGetValue(e.Serial, out float most);
@@ -2882,6 +2964,9 @@ namespace SickOfIt.Playtest
                     {
                         if (!climb.CrumbleHome.ContainsKey(e.Serial) && !crumble.Falling)
                             climb.CrumbleHome[e.Serial] = e.Position.y;
+                        if (crumble.Falling && !e.transform.Find("Shape"))
+                            ArtFrames("art stone crumbles", e.Animation.CurrentState == "Fall",
+                                $"{Who(e)} breaks up as it falls (state {e.Animation.CurrentState})");
                         if (crumble.Falling && climb.CrumbleHome.TryGetValue(e.Serial, out float home) && e.Position.y < home - 1.5f)
                             ClimbCheck("crumbling stone", true, $"{Who(e)} cracked under him, shook and fell {home - e.Position.y:0.0} units");
                     }

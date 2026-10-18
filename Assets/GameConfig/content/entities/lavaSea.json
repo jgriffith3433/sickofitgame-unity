@@ -16,7 +16,7 @@
   },
   "visual": {
     "scale": 1.0,
-    "placeholderColor": "#E8501A",
+    "placeholderColor": "#7A1A0A",
     "placeholderShape": "Box",
     "placeholderLabel": false,
     "layer": "Player",
@@ -35,7 +35,16 @@
       "telegraph": 2.0,
       "followCamera": true,
       "rumbleSound": "magma_rumble",
-      "surfaceColor": "#FFC860"
+      "surfaceColor": "#FFC860",
+      "surfaceArt": {
+        "sheet": "Art/Climb/LavaSurface_loop.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0.05,
+        "color": "#FFFFFF"
+      },
+      "surfaceHeight": 1.2,
+      "surfaceOffset": -0.55
     },
     {
       "type": "scald",

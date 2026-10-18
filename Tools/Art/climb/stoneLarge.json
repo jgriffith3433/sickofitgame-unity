@@ -1,0 +1,24 @@
+{
+  "about": "ledge: a solid basalt ledge, breather footing (large stone). Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/large, take seed 1336230847 (asset a_a8b1a96e0d34617c, job j_ead779f2a845), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "Ledge",
+  "key": "none",
+  "size": [
+    832,
+    363
+  ],
+  "pivot": [
+    416.5,
+    112.1
+  ],
+  "worldWidth": 2.057,
+  "widthPixels": 832,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/climbart/src/_prep/stoneLarge/idle",
+      "key": "none"
+    }
+  }
+}

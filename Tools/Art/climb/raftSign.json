@@ -1,0 +1,24 @@
+{
+  "about": "debrisRaftSign: the village's WELCOME TO sign, half burned. Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot raft/sign, take seed 831746888 (asset a_c48c0b66c9ea4328, job j_da51a6468bb7), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "RaftSign",
+  "key": "none",
+  "size": [
+    634,
+    187
+  ],
+  "pivot": [
+    315.5,
+    91.9
+  ],
+  "worldWidth": 2.082,
+  "widthPixels": 634,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/climbart/src/_prep/raftSign/idle",
+      "key": "none"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "about": "The geyser's vent and its 1 s tell (no entity yet).",
+  "gpu": "image.generate lava/vent seed 770587693 (asset a_24597f544de498f8, job j_cc7ce3a9c10e), judged. Tell: video.i2v (Wan 2.2), the crack glowing and spitting, 17 frames, job j_6b01d4c61d85 (asset a_6ff291cd43da62d4).",
+  "out": "Assets/Art/Climb",
+  "name": "Vent",
+  "key": "none",
+  "size": [
+    670,
+    403
+  ],
+  "pivot": [
+    335.0,
+    399
+  ],
+  "worldWidth": 1.4,
+  "widthPixels": 670,
+  "scale": 0.4,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/climbart/src/_prep/vent/idle",
+      "key": "none"
+    },
+    "tell": {
+      "frames": "/tmp/climbart/src/_prep/vent/tell",
+      "key": "none"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "about": "Far black spires standing in the lava sea (sky layer, onSea).",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/spires, take seed 415733628 (asset a_4ea810ace34df78f, job j_b144def4075d), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "Spires",
+  "key": "none",
+  "size": [
+    768,
+    900
+  ],
+  "pivot": [
+    384.0,
+    896
+  ],
+  "worldWidth": 2,
+  "widthPixels": 768,
+  "scale": 0.4,
+  "clips": {
+    "still": {
+      "frames": "/tmp/climbart/src/_prep/spires/still",
+      "key": "none"
+    }
+  }
+}

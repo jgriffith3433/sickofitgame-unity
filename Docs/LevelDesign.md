@@ -252,6 +252,28 @@ The test floor `content/scenes/climbTest.json` (the `climb` playtest) has one of
 crumbling stones, a raft ride across a lava river with a chain to swing from and an updraft under it, a chase on a slag
 flow ahead of the lava wave, a climb on a chain lift with the lava rising behind, and the landing.
 
+### The art of the climb
+
+Everything above the lava is painted in the Meadow's look (bold ink outlines, hand-painted comic fantasy) in Video2's
+lava-river palette: black basalt and charcoal slag, molten orange-yellow lava with white-hot seams, dull red smoke. The
+pieces are the Wastes' own and the village's wreckage, so the climb keeps telling the story: everything that fell
+through the portal ends up floating on the lava.
+
+| Piece | What it looks like | Moves |
+|---|---|---|
+| **The world below** (the Circle's `sky`) | The lava sea far below, seen from high up, its currents churning; smoke and heat haze over it; black spires standing in it; floating islands of rock; the black ceiling of the Wastes glowing red at the top of the screen. All of it repeats sideways and up, so a floor can climb for two minutes without a seam. | The sea churns and drifts (a loop); smoke drifts both ways; everything moves slower than the platforms, the farther the slower |
+| **The lava** (`lavaSea`, `lavaRiver`) | Its surface seen side-on: a bright wavy crest with bubbles and black crust bits, deepening to dark red under it | The crest rolls along; it flares while a rise is telegraphed |
+| **Lava falls** (`lavaFall`) | A curtain of molten streams | Pours down; thins and fades on its beat, gurgles back |
+| **Geysers** | A low basalt mound with a glowing crack; the column blasting out of it | The crack glows and spits for 1 s (the tell), then the column. *Art made; the column itself is still to build.* |
+| **Stones**, three sizes | Small: brittle old slag full of fine cracks (`crumblingStone`). Medium: a floe of cooled slag, its underside glowing where it sits in the lava (`sinkingStone`). Large: a heavy basalt ledge with a hanging point (`ledge`, breathers) | Medium steams and its cracks blaze while it sinks; small cracks, breaks into chunks and falls |
+| **The village's wreckage** (`debrisRaft` and its kin) | The hay cart on its side (`debrisRaft`), a slab of thatched roof (`debrisRaftRoof`), the WELCOME TO sign, half burned (`debrisRaftSign`), a hay bale burning at one end (`debrisRaftHay`) | Bob, drift and tip, each on its own rhythm |
+| **The imps' ironwork** | A chain lift: an iron grate floor on four chains meeting at a ring (`chainLift`); a counterweight: planks bound in iron with a pan under them (`counterweightLeft`/`Right`); heavy black chain links; the ring and hook at a swing chain's end (`swingChain`) | Chains are laid link by link from the pulley to the piece |
+| **The landing** (`floorLanding`) | Carved basalt blocks with a blank sunken panel on the front | The floor number is carved into the panel in ember orange, glowing faintly (`carved`, `onFace`) |
+
+Every walkable piece has a flat, readable top edge, and its art is fitted so that edge is exactly the top of its body.
+The art lives in `Assets/Art/Climb/`; how it was made (the Hawkes Gen takes, the keying, the fitting) is
+`Tools/Art/climb/climb.json` and `Tools/Art/climb_art.py`.
+
 ## 3. The route through Circle X
 
 About **30 played floors** in Circle X, in three stretches of ten, joined by two shortcuts. Each stretch ends on its
@@ -972,7 +994,7 @@ order it can be built and played:
    (`world.path`, Arena sections for the climbing arena's tiers), the lava sea and the world below it, every piece in
    the toolkit table marked *yes*, generated sections from the Circle's chunks, and the bot climbing a path (the `climb`
    playtest). Still to build: the geyser column, the sack on the counterweight, the imp riding a swing, a screen-space
-   heat distortion shader (today the shimmer is drawn bands), and art for every piece (they draw as plain shapes). `offerShortcut` with a diamond cost
+   heat distortion shader (today the shimmer is drawn bands). `offerShortcut` with a diamond cost
    (`costDiamonds`), and a trigger that a floor can read when a shortcut was taken to reach it (`shortcutTaken`, from
    `ShortcutProgress`). Grudge picks on every 5th floor and after bosses. **The damned soul** (`damnedSoul`, a new
    entity: harmless, no health, a looping idle, a proximity trigger that drops one `rewindOrb` once per play through
@@ -996,8 +1018,11 @@ order it can be built and played:
    Loop from 957 to 995, Halfway's 950 stays on the long way), the Shaft's climb (one floor per level), the playtest
    scenarios that name levels by number (`wastes-climb`, `story-path`, `shortcut`, `waystone`), Circle IX's stages
    (Levels 12-18, recut into floors the same way; the Old Stair's shortcut stays at Floor 871 to 841).
-7. **Art (GPU, priced):** the lava-sea backdrops (flying above the lava), the toolkit's props (stones, the village's
-   rafts, lifts, counterweight sacks, vents, the carved landings), the sack-swing imp, the damned soul (a grey,
-   hunched, see-through figure with a looping idle and a hiccup clip), the Imp Foreman and the Pile Keeper; for the set
-   pieces, the burning hay cart, the half-burned village sign raft (*WELCOME TO...*), the throne far above (four
-   distances: speck, glow, silhouette, close) and the cooling crust. Until they exist, pieces draw as the track's plain shapes and labeled placeholders.
+7. **Art (GPU, priced):** *Made 2026-10-18 (see "The art of the climb"):* the world below the lava (sea, haze, spires,
+   islands, ceiling), the lava's surface, falls and geysers, the three stones with their steam and crumble frames, the
+   village's rafts (cart, roof, sign, hay), the lift, counterweight, chains and the carved landing. Still to make: the
+   counterweight sacks, the sack-swing imp, the damned soul (a grey, hunched, see-through figure with a looping idle
+   and a hiccup clip), the Imp Foreman and the Pile Keeper; for the set pieces, the hay cart's chute ride (908: the cart
+   upright with him in it), the sign standing in the lava on 998 (*WELCOME TO THE VILLAGE*, whole), the throne far
+   above (four distances: speck, glow, silhouette, close) and the cooling crust. Until they exist, those draw as plain
+   shapes and labeled placeholders.

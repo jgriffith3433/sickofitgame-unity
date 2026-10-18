@@ -33,7 +33,15 @@
       "pour": 3.0,
       "off": 2.5,
       "offset": 0.0,
-      "color": "#FF7322E6"
+      "color": "#FF7322E6",
+      "art": {
+        "sheet": "Art/Climb/LavaFall_loop.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "artWidth": 1.4
     },
     {
       "type": "scald",

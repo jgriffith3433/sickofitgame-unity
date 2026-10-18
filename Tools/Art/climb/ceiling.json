@@ -1,0 +1,24 @@
+{
+  "about": "The black ceiling of the Wastes glowing red, at the top of the screen (sky band).",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/ceiling, take seed 434332048 (asset a_90bbfa4e832a27d7, job j_40dcd405328a), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "Ceiling",
+  "key": "none",
+  "size": [
+    1306,
+    315
+  ],
+  "pivot": [
+    653.0,
+    157.5
+  ],
+  "worldWidth": 6,
+  "widthPixels": 1306,
+  "scale": 0.5,
+  "clips": {
+    "band": {
+      "frames": "/tmp/climbart/src/_prep/ceiling/band",
+      "key": "none"
+    }
+  }
+}

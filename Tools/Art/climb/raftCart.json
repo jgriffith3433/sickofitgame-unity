@@ -1,0 +1,24 @@
+{
+  "about": "debrisRaft: the village's hay cart, fallen through the portal. Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot raft/cart, take seed 1148078072 (asset a_d64db1799fd2e96b, job j_4a72a4e61f00), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "RaftCart",
+  "key": "none",
+  "size": [
+    786,
+    211
+  ],
+  "pivot": [
+    394.5,
+    122.9
+  ],
+  "worldWidth": 2.044,
+  "widthPixels": 786,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/climbart/src/_prep/raftCart/idle",
+      "key": "none"
+    }
+  }
+}

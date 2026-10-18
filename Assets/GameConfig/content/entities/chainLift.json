@@ -22,7 +22,23 @@
     "layer": "Player",
     "sortingOrder": 0,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/ChainLift_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "color": "#FFFFFF",
+    "facesLeft": false
   },
   "healthBar": {
     "show": false
@@ -38,7 +54,16 @@
       "wait": 1.5,
       "jolt": 0.6,
       "startOnStand": true,
-      "chainColor": "#52423C"
+      "chainColor": "#52423C",
+      "chainArt": {
+        "sheet": "Art/Climb/Chain_links.png",
+        "spriteNameFilter": "",
+        "fps": 1,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "chainWidth": 0.2,
+      "chainFrom": 1.5
     }
   ]
 }

@@ -23,6 +23,7 @@ namespace SickOfIt.Gameplay
         SpriteRenderer seaFill;
         SpriteRenderer seaGlow;
         SpriteRenderer seaLine;
+        bool seaPainted;
         readonly List<SpriteRenderer> haze = new List<SpriteRenderer>();
         readonly List<SpriteRenderer> embers = new List<SpriteRenderer>();
         readonly Dictionary<long, SpriteRenderer> items = new Dictionary<long, SpriteRenderer>();
@@ -32,6 +33,20 @@ namespace SickOfIt.Gameplay
 
         /// <summary>Where the far sea's surface is on screen now (world y), for the playtest.</summary>
         public float SeaTop { get; private set; }
+        /// <summary>The far sea is painted art (the Circle's seaArt), not the gradient.</summary>
+        public bool SeaPainted => seaPainted;
+        /// <summary>Painted sky layers and bands on screen now (sprites with art, for the playtest).</summary>
+        public int PaintedCount
+        {
+            get
+            {
+                int n = 0;
+                foreach (var pair in items)
+                    if (pair.Value != null && sky.layers[(int)(pair.Key >> 40)].sprite != null)
+                        n++;
+                return n;
+            }
+        }
         /// <summary>Parallax shapes on screen now.</summary>
         public int ItemCount => items.Count;
         public int LayerCount => sky != null && sky.layers != null ? sky.layers.Count : 0;
@@ -153,8 +168,65 @@ namespace SickOfIt.Gameplay
                 Place(haze[i], new Vector2(cam.x + wobble, seaTop + 0.3f + i * 0.4f), new Vector2(w * 2f + 2f, 0.3f + 0.1f * Mathf.Sin(t * 2.9f + i) * sky.shimmer));
             }
 
+            PaintedSea(cam, w, h, seaTop, below, t);
+            Bands(cam, w, h, seaTop, t);
             Layers(cam, w, h, seaTop, t);
             Embers(cam, w, h, t);
+        }
+
+        const int MaxSeaRows = 6;
+
+        /// <summary>The painted far sea: rows of its loop from the horizon to the bottom of the screen (the gradient stays under it).</summary>
+        void PaintedSea(Vector2 cam, float w, float h, float seaTop, float below, float t)
+        {
+            var art = sky.seaArt;
+            var frames = FloorArt.Frames(art, world);
+            float row = Mathf.Max(0.5f, sky.seaArtHeight);
+            int rows = frames.Length > 0 ? Mathf.Min(MaxSeaRows, Mathf.CeilToInt(below / row)) : 0;
+            seaPainted = rows > 0;
+            // The painted sea replaces the gradient fill (its glow and horizon line stay over it).
+            seaFill.enabled = !seaPainted;
+            for (int i = 0; i < MaxSeaRows; i++)
+            {
+                if (i >= rows)
+                {
+                    FloorArt.Hide(transform, "SeaRow" + i);
+                    continue;
+                }
+                float y = seaTop - row * (i + 0.5f);
+                Across(art, frames, "SeaRow" + i, cam, w, y, row, sky.seaParallax, t, SeaOrder);
+            }
+        }
+
+        void Bands(Vector2 cam, float w, float h, float seaTop, float t)
+        {
+            var bands = sky.bands;
+            for (int i = 0; bands != null && i < bands.Count; i++)
+            {
+                var band = bands[i];
+                if (band == null)
+                    continue;
+                float y = band.anchor == SkyBandAnchor.Top ? cam.y + h - band.offset : seaTop + band.offset;
+                Across(band.art, FloorArt.Frames(band.art, world), "Band" + i, cam, w, y, band.height, band.parallax, t, LayerOrder + band.order);
+            }
+        }
+
+        /// <summary>A seamless strip across the whole screen at height y, moving across by 'parallax' as the camera travels.</summary>
+        void Across(ArtLoopDef art, Sprite[] frames, string name, Vector2 cam, float w, float y, float height, float parallax, float t, int order)
+        {
+            var frame = FloorArt.Frame(frames, art != null ? art.fps : 0f, t);
+            if (frame == null || height <= 0f)
+            {
+                FloorArt.Hide(transform, name);
+                return;
+            }
+            Vector2 native = frame.bounds.size;
+            float tile = height * native.x / Mathf.Max(0.0001f, native.y);
+            // Its tiles sit at origin + (camera travelled) * parallax, repeated every tile.
+            float anchorX = cam.x - (cam.x - origin.x) * (1f - Mathf.Clamp01(parallax));
+            float edge = cam.x - w - tile;
+            float left = edge - Mathf.Repeat(edge - anchorX, tile);
+            FloorArt.Strip(transform, name, art, frames, new Vector2(left, y), new Vector2(cam.x + w + tile, y), height, t, SpriteLayer.Background2, order, false);
         }
 
         void Layers(Vector2 cam, float w, float h, float seaTop, float t)
