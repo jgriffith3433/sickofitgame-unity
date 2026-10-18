@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level13",
+  "displayName": "Floors 890-881: The Rift",
+  "levelNumber": 13,
+  "thumbnail": "Videos/Level2_Background1_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Videos/Level2_Background1_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 14,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 90,
+    "floors": {
+      "start": 890,
+      "end": 881,
+      "unitsPerFloor": 3.0,
+      "circle": "crackedRoad",
+      "signs": true,
+      "sign": "KEEP TO THE ROAD"
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true,
+      "props": [
+        {
+          "name": "open rifts",
+          "shape": "Glow",
+          "color": "#FF5A12CC",
+          "size": [
+            1.6,
+            0.35
+          ],
+          "sizeVariation": 0.3,
+          "across": -2.78,
+          "parallax": 0.0,
+          "spacing": 4.5,
+          "chance": 0.6,
+          "layer": "Player",
+          "sortingOrder": -17
+        }
+      ]
+    },
+    "markers": [
+      {
+        "floor": 886,
+        "label": "RIFT"
+      },
+      {
+        "floor": 882,
+        "label": "THE TOP"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "phases": [
+      {
+        "name": "title",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 890-881: THE RIFT",
+            "duration": 2.5,
+            "sound": "vo_rift_title",
+            "color": "#FFB46A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the hero takes it in",
+            "when": {
+              "type": "after",
+              "seconds": 3.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "showText",
+                "text": "The road's coming apart. Can't blame it.",
+                "duration": 3.0,
+                "sound": "vo_rift_intro",
+                "style": "Subtitle"
+              }
+            ]
+          },
+          {
+            "name": "quiet start over",
+            "when": {
+              "type": "after",
+              "seconds": 6.5
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 885,
+            "firstBreather": 3.0,
+            "seed": 1
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "rift"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "rift",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "spawn",
+            "entity": "brimstoneDemon",
+            "anchor": "Camera",
+            "at": [
+              2.6,
+              -2.05
+            ],
+            "tags": [
+              "beat"
+            ],
+            "count": 2,
+            "spacing": [
+              1.3,
+              0.0
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "the beat is over",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "beat"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb2",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 882,
+            "firstBreather": 3.0,
+            "seed": 2
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "top"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "rules": [
+          {
+            "name": "stage clear",
+            "when": {
+              "type": "floorReached",
+              "floor": 881
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "lockTravel"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "THE RIFT: JUMPED",
+                    "duration": 2.0,
+                    "sound": "vo_rift_clear",
+                    "color": "#FFB46A"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
