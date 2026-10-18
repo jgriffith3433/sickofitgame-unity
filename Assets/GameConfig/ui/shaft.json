@@ -400,7 +400,7 @@
       124
     ]
   },
-  "gloobButton": {
+  "yoobaButton": {
     "use": true,
     "hide": false,
     "anchor": [
@@ -416,7 +416,7 @@
       84
     ]
   },
-  "gloobButtonPortrait": {
+  "yoobaButtonPortrait": {
     "use": true,
     "hide": false,
     "anchor": [
@@ -432,7 +432,7 @@
       124
     ]
   },
-  "continueBesideGloob": {
+  "continueBesideYooba": {
     "use": true,
     "hide": false,
     "anchor": [
@@ -448,7 +448,7 @@
       84
     ]
   },
-  "continueBesideGloobPortrait": {
+  "continueBesideYoobaPortrait": {
     "use": true,
     "hide": false,
     "anchor": [

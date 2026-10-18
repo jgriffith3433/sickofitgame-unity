@@ -309,10 +309,10 @@ comedic text beats (`showText` banners and subtitles, boss intros, upgrade descr
   "maxLevel": 3, "effect": "MaxHealth", "amountPerLevel": 1 }`. Effects: MaxHealth (+HP, also tops up carried health),
   ExtraJump (+air jumps), MoveSpeed / FireRate / Damage (+fraction, 0.1 = +10%), RewindJuice (+seconds), Magnet (+pickup
   range). No code needed for a new one; the shop lays out a card per entry.
-- **The shop is Gloob's** (Docs/Story.md, "Gloob between floors": titles are things a village slime makes from
-  diamonds and his stomach). It opens from the main menu (its own scene) and from every Shaft once Gloob has met the
-  hero: **Visit Gloob** beside Continue (`ui/shaft.json` `gloobButton`/`continueBesideGloob` and their portrait
-  placements, text `shaftVisitGloob`) builds the same shop over the Shaft (`UpgradeShopManager.OpenOverShaft`, no
+- **The shop is Yooba's** (Docs/Story.md, "Yooba between floors": titles are things a village slime makes from
+  diamonds and his stomach). It opens from the main menu (its own scene) and from every Shaft once Yooba has met the
+  hero: **Visit Yooba** beside Continue (`ui/shaft.json` `yoobaButton`/`continueBesideYooba` and their portrait
+  placements, text `shaftVisitYooba`) builds the same shop over the Shaft (`UpgradeShopManager.OpenOverShaft`, no
   scene load); its Back closes it and the Shaft's Continue goes on to the next level.
 - Between-level picks (content/upgrades) are separate: bigger, run-long boosts offered at the end of each level.
 

@@ -502,8 +502,8 @@ namespace SickOfIt.Data.Config
         public string shaftHero = "...Great.";
         [Tooltip("Small hint while the climb can be skipped.")]
         public string shaftSkipHint = "Tap to skip";
-        [Tooltip("The Shaft's button to Gloob's shop (Docs/Story.md, \"Gloob between floors\").")]
-        public string shaftVisitGloob = "Visit Gloob";
+        [Tooltip("The Shaft's button to Yooba's shop (Docs/Story.md, \"Yooba between floors\").")]
+        public string shaftVisitYooba = "Visit Yooba";
         [Tooltip("The Shaft's mark at each Waystone (the Landing, the top of each Circle).")]
         public string shaftWaystone = "Waystone";
         [Tooltip("Subtitle when Hell ends the first run (vo_shaft_first_drop).")]

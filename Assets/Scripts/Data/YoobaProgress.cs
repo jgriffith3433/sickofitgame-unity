@@ -5,16 +5,16 @@ using UnityEngine;
 namespace SickOfIt.Data
 {
     /// <summary>
-    /// What Gloob remembers (Docs/Story.md, "Gloob between floors"): whether he has met the hero, which of his
+    /// What Yooba remembers (Docs/Story.md, "Yooba between floors"): whether he has met the hero, which of his
     /// between-floor lines he has said, and the news since the last Shaft (a death, the Grudges held). New Game
     /// resets it. Presentation only: nothing in the game reads it.
     /// </summary>
-    public static class GloobProgress
+    public static class YoobaProgress
     {
-        const string MetKey = "Gloob_Met";
-        const string SaidKey = "Gloob_Said";
-        const string DiedKey = "Gloob_HeroDied";
-        const string GrudgesKey = "Gloob_Grudges";
+        const string MetKey = "Yooba_Met";
+        const string SaidKey = "Yooba_Said";
+        const string DiedKey = "Yooba_HeroDied";
+        const string GrudgesKey = "Yooba_Grudges";
 
         /// <summary>He has said hello (the Shaft after Video3).</summary>
         public static bool Met
@@ -27,7 +27,7 @@ namespace SickOfIt.Data
             }
         }
 
-        /// <summary>The hero died since the last Shaft (set by the level, cleared when Gloob has had his say).</summary>
+        /// <summary>The hero died since the last Shaft (set by the level, cleared when Yooba has had his say).</summary>
         public static bool HeroDied
         {
             get => PlayerPrefs.GetInt(DiedKey, 0) == 1;

@@ -237,8 +237,8 @@ namespace SickOfIt.Core.Progression
         private void OnPlayerDied()
         {
             gameplayWorld?.Telemetry?.Finish("died");
-            // Gloob hears about it on the next Shaft (presentation only).
-            GloobProgress.HeroDied = true;
+            // Yooba hears about it on the next Shaft (presentation only).
+            YoobaProgress.HeroDied = true;
             // Where the Shaft's drop back to the Waystone starts, if the death stands.
             RunFlow.HeroDied(gameplayWorld != null && gameplayWorld.Stage != null ? gameplayWorld.Stage.Floor : 0);
         }

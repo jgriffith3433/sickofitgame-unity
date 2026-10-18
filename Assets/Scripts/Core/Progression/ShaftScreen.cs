@@ -24,7 +24,7 @@ namespace SickOfIt.Core.Progression
     /// and after every level with a floor range (the hero's marker climbs to the level's last floor), and after a death
     /// that ends a run (the marker drops back to the Waystone, <see cref="RunFlow"/>). Waystones are marked on the
     /// map, lit once reached. Continue goes on;
-    /// once Gloob has met the hero, Visit Gloob beside it opens his shop over the Shaft and Back returns here.
+    /// once Yooba has met the hero, Visit Yooba beside it opens his shop over the Shaft and Back returns here.
     /// Built at runtime over the scene that just ended (like every menu), from ui/shaft.json and theme.json texts;
     /// shapes are painted placeholders until the Shaft art replaces them. Presentation only: it reads progress and
     /// remembers where the marker was (<see cref="ShaftProgress"/>), never touching the game itself.
@@ -37,7 +37,7 @@ namespace SickOfIt.Core.Progression
             Plunge,
             /// <summary>The marker climbs from where it was to the level's last floor.</summary>
             Climb,
-            /// <summary>No climb: Gloob says hello where the marker is (after the video he turns up in, Video3).</summary>
+            /// <summary>No climb: Yooba says hello where the marker is (after the video he turns up in, Video3).</summary>
             Meet,
             /// <summary>The run is over: the marker falls from where the hero died back to the Waystone (after the death scene).</summary>
             Drop,
@@ -77,8 +77,8 @@ namespace SickOfIt.Core.Progression
         public bool Continued => continued;
         /// <summary>A preview (playtest setup shortcut): Continue only closes it; nothing is saved.</summary>
         public bool IsPreview => preview;
-        /// <summary>Gloob's portrait on this Shaft, or null (before he has met the hero).</summary>
-        public GloobPortrait Gloob => gloob;
+        /// <summary>Yooba's portrait on this Shaft, or null (before he has met the hero).</summary>
+        public YoobaPortrait Yooba => yooba;
         /// <summary>Waystones marked on the map, and how many of them are lit (reached).</summary>
         public int WaystonesShown { get; private set; }
         public int WaystonesLit { get; private set; }
@@ -88,10 +88,10 @@ namespace SickOfIt.Core.Progression
         public int RestartLevel { get; private set; }
         /// <summary>Drop: the line under the map once it is over ("Next run: Floors 1000-991: The Landing").</summary>
         public string RestartText => restartText ?? "";
-        /// <summary>Visit Gloob, beside Continue once he has met the hero, or null.</summary>
-        public MenuButton GloobButton => gloobButton;
+        /// <summary>Visit Yooba, beside Continue once he has met the hero, or null.</summary>
+        public MenuButton YoobaButton => yoobaButton;
         public MenuButton ContinueButton => continueButton;
-        /// <summary>Gloob's shop is open over the Shaft (Visit Gloob).</summary>
+        /// <summary>Yooba's shop is open over the Shaft (Visit Yooba).</summary>
         public bool ShopOpen => shopOpen;
         /// <summary>Climb: a shortcut taken on the level (Docs/Story.md, "Shortcuts"): the floor it starts from and the one it lets him out on, else 0.</summary>
         public int ShortcutFrom => shortcutFrom;
@@ -135,8 +135,8 @@ namespace SickOfIt.Core.Progression
         TextMeshProUGUI subtitle;
         TextMeshProUGUI skipHint;
         MenuButton continueButton;
-        MenuButton gloobButton;
-        GloobPortrait gloob;
+        MenuButton yoobaButton;
+        YoobaPortrait yooba;
         bool shopOpen;
         bool firstDrop;
         string restartText;
@@ -178,9 +178,9 @@ namespace SickOfIt.Core.Progression
 
             if (stop.Kind == ShaftStopKind.AfterVideo)
             {
-                // Gloob's hello, the first time the video he turns up in leads on to a level.
-                var gloobConfig = definition.gloob;
-                if (gloobConfig != null && gloobConfig.enabled && stop.Video == gloobConfig.helloAfterVideo && stop.NextLevel > 0 && !GloobProgress.Met)
+                // Yooba's hello, the first time the video he turns up in leads on to a level.
+                var yoobaConfig = definition.yooba;
+                if (yoobaConfig != null && yoobaConfig.enabled && stop.Video == yoobaConfig.helloAfterVideo && stop.NextLevel > 0 && !YoobaProgress.Met)
                 {
                     int here = ShaftProgress.Floor > 0 ? ShaftProgress.Floor : config.bottomFloor;
                     Open(Mode.Meet, here, here, next, false);
@@ -224,7 +224,7 @@ namespace SickOfIt.Core.Progression
             return Open(fromFloor <= 0 ? Mode.Plunge : Mode.Climb, Mathf.Max(0, fromFloor), toFloor, closed, true);
         }
 
-        /// <summary>Gloob's hello at 'floor' without the story flow (playtest setup shortcut). Continue closes it; nothing is saved.</summary>
+        /// <summary>Yooba's hello at 'floor' without the story flow (playtest setup shortcut). Continue closes it; nothing is saved.</summary>
         /// <summary>A climb to 'toFloor' and a shortcut's jump on to 'jumpTo' without the story flow (playtest setup shortcut). Nothing is saved.</summary>
         public static ShaftScreen PreviewShortcut(int fromFloor, int toFloor, int jumpTo, Action closed = null)
         {
@@ -457,10 +457,10 @@ namespace SickOfIt.Core.Progression
             skipHint.color = theme.muted;
             skipHint.transform.parent.gameObject.SetActive(Skippable);
 
-            // Gloob, once he has met the hero (and for his hello), left of the shaft window (portrait: on its corner).
-            var gloobConfig = GameDefinition.Instance != null ? GameDefinition.Instance.gloob : null;
-            if (gloobConfig != null && gloobConfig.enabled && (Kind == Mode.Meet || (Kind == Mode.Climb || Kind == Mode.Drop) && GloobProgress.Met))
-                gloob = GloobPortrait.Create(menu, stage, gloobConfig, gloobConfig.shaftPortrait, gloobConfig.shaftPortraitPortrait);
+            // Yooba, once he has met the hero (and for his hello), left of the shaft window (portrait: on its corner).
+            var yoobaConfig = GameDefinition.Instance != null ? GameDefinition.Instance.yooba : null;
+            if (yoobaConfig != null && yoobaConfig.enabled && (Kind == Mode.Meet || (Kind == Mode.Climb || Kind == Mode.Drop) && YoobaProgress.Met))
+                yooba = YoobaPortrait.Create(menu, stage, yoobaConfig, yoobaConfig.shaftPortrait, yoobaConfig.shaftPortraitPortrait);
 
             flash = MenuGraphics.NewImage(stage, "Flash", new Color(1f, 0.95f, 0.85f, 0f));
             flash.rectTransform.offsetMin = new Vector2(-400f, -400f);
@@ -1127,19 +1127,19 @@ namespace SickOfIt.Core.Progression
                 yield return Wait(0.3f);
                 yield return WakeBand(waking);
             }
-            if (gloob != null && !skip)
+            if (yooba != null && !skip)
             {
-                // One line from Gloob about what just happened.
+                // One line from Yooba about what just happened.
                 var warden = NextWardenAbove(to);
-                var line = GloobPortrait.PickBetweenFloors(from, to, warden != null ? warden.Last : 0);
+                var line = YoobaPortrait.PickBetweenFloors(from, to, warden != null ? warden.Last : 0);
                 if (line != null)
                 {
                     yield return Wait(0.3f);
-                    yield return gloob.Say(line, ShowSubtitle, () => skip);
+                    yield return yooba.Say(line, ShowSubtitle, () => skip);
                 }
-                Report("gloob", line != null ? $"between floors: {line.moment} ({line.sound})" : "between floors: nothing to say");
+                Report("yooba", line != null ? $"between floors: {line.moment} ({line.sound})" : "between floors: nothing to say");
                 if (!preview)
-                    GloobPortrait.Heard(line);
+                    YoobaPortrait.Heard(line);
             }
             Finish();
         }
@@ -1207,18 +1207,18 @@ namespace SickOfIt.Core.Progression
             SetCounter(ToFloor);
             UpdateInfo(ToFloor);
             yield return Wait(0.6f);
-            var lines = GloobPortrait.HelloLines();
-            Report("gloob", $"hello at FLOOR {Number(ToFloor)}: {lines.Count} lines");
+            var lines = YoobaPortrait.HelloLines();
+            Report("yooba", $"hello at FLOOR {Number(ToFloor)}: {lines.Count} lines");
             foreach (var line in lines)
             {
-                if (gloob == null || skip)
+                if (yooba == null || skip)
                     break;
-                yield return gloob.Say(line, ShowSubtitle, () => skip);
+                yield return yooba.Say(line, ShowSubtitle, () => skip);
             }
             if (!preview)
             {
-                GloobProgress.Met = true;
-                GloobPortrait.Heard(null);
+                YoobaProgress.Met = true;
+                YoobaPortrait.Heard(null);
             }
             Finish();
         }
@@ -1331,18 +1331,18 @@ namespace SickOfIt.Core.Progression
                 return;
             ShowSubtitle(null);
             skipHint.transform.parent.gameObject.SetActive(false);
-            // Gloob, once he has met the hero, keeps his shop open between floors: Visit Gloob stands beside Continue.
-            bool shop = gloob != null;
-            var landscape = shop ? config.continueBesideGloob : config.continueButton;
-            var portrait = shop ? config.continueBesideGloobPortrait : config.continueButtonPortrait;
+            // Yooba, once he has met the hero, keeps his shop open between floors: Visit Yooba stands beside Continue.
+            bool shop = yooba != null;
+            var landscape = shop ? config.continueBesideYooba : config.continueButton;
+            var portrait = shop ? config.continueBesideYoobaPortrait : config.continueButtonPortrait;
             var place = MenuScreen.Portrait && portrait.use ? portrait : landscape;
             if (shop)
             {
                 var style = menu.Theme.backButton.Clone();
-                if (config.gloobButton.size.x > 0f && config.gloobButton.size.y > 0f)
-                    style.size = config.gloobButton.size;
-                gloobButton = menu.AddButtonAt(config.gloobButton.anchor, config.gloobButton.offset, texts.shaftVisitGloob, style,
-                    VisitGloob, stage, config.gloobButtonPortrait);
+                if (config.yoobaButton.size.x > 0f && config.yoobaButton.size.y > 0f)
+                    style.size = config.yoobaButton.size;
+                yoobaButton = menu.AddButtonAt(config.yoobaButton.anchor, config.yoobaButton.offset, texts.shaftVisitYooba, style,
+                    VisitYooba, stage, config.yoobaButtonPortrait);
             }
             continueButton = menu.AddButtonAt(landscape.anchor, landscape.offset, texts.continueText, menu.Theme.button,
                 Continue, stage, portrait);
@@ -1353,19 +1353,19 @@ namespace SickOfIt.Core.Progression
             // After a drop: where the next run starts, under the map.
             if (Kind == Mode.Drop && !string.IsNullOrEmpty(restartText))
                 ShowSubtitle(restartText);
-            Report("ready", $"FLOOR {Number(ShownFloor)}; Continue is up" + (shop ? ", Visit Gloob beside it" : "") + (place == portrait ? " (portrait)" : ""));
+            Report("ready", $"FLOOR {Number(ShownFloor)}; Continue is up" + (shop ? ", Visit Yooba beside it" : "") + (place == portrait ? " (portrait)" : ""));
         }
 
-        // ─── Gloob's shop ─────────────────────────────────────────────
+        // ─── Yooba's shop ─────────────────────────────────────────────
 
-        /// <summary>Visit Gloob: his shop opens over the Shaft; Back brings the Shaft back with Continue up.</summary>
-        void VisitGloob()
+        /// <summary>Visit Yooba: his shop opens over the Shaft; Back brings the Shaft back with Continue up.</summary>
+        void VisitYooba()
         {
             if (!Ready || continued || shopOpen)
                 return;
             shopOpen = true;
             SetShown(false);
-            Report("gloob-shop", $"Visit Gloob at FLOOR {Number(ShownFloor)}: his shop opens over the Shaft");
+            Report("yooba-shop", $"Visit Yooba at FLOOR {Number(ShownFloor)}: his shop opens over the Shaft");
             UpgradeShopManager.OpenOverShaft(BackFromShop);
         }
 
@@ -1380,10 +1380,10 @@ namespace SickOfIt.Core.Progression
             var events = EventSystem.current;
             if (events != null && continueButton != null)
                 events.SetSelectedGameObject(continueButton.gameObject);
-            Report("gloob-shop", $"back on the Shaft at FLOOR {Number(ShownFloor)}; Continue is up");
+            Report("yooba-shop", $"back on the Shaft at FLOOR {Number(ShownFloor)}; Continue is up");
         }
 
-        /// <summary>The Shaft's own canvas on or off (off under Gloob's shop, so nothing under it can be pressed).</summary>
+        /// <summary>The Shaft's own canvas on or off (off under Yooba's shop, so nothing under it can be pressed).</summary>
         void SetShown(bool shown)
         {
             if (menu == null)
@@ -1458,8 +1458,8 @@ namespace SickOfIt.Core.Progression
             continued = true;
             if (continueButton != null)
                 continueButton.interactable = false;
-            if (gloobButton != null)
-                gloobButton.interactable = false;
+            if (yoobaButton != null)
+                yoobaButton.interactable = false;
             Report("continue", $"from FLOOR {Number(ShownFloor)}" + (preview ? " (preview closes)" : ""));
             var then = next;
             next = null;

@@ -51,7 +51,7 @@
     }
   ],
   "onDeath": [
-    { "type": "playSound", "sound": "gloob_slurp" },
+    { "type": "playSound", "sound": "yooba_slurp" },
     { "type": "emit", "signal": "scene:slurped" }
   ]
 }
