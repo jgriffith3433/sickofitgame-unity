@@ -6,7 +6,8 @@
   "height": 0.75,
   "poses": {
     "stand": "hovering in mid-air on spread bat wings, legs dangling, the ember held up in one hand",
-    "dead": "dropping out of the air, crumbling into a cloud of grey ash and dying embers"
+    "struck": "just hit and caught mid-shriek: eyes bulging wide, mouth stretched open, horns and wings snapped straight up, tail whipped stiff, the ember flying out of its open hand and the diamond sack slipping off its shoulder, body tilted back with small cracks of orange light glowing through its crimson skin",
+    "dead": "bursting apart in a small round pop of black soot and bright orange embers, only its two curled horns and the empty sack tumbling out of the puff"
   },
   "clips": {
     "idle": {
@@ -25,10 +26,14 @@
       "seconds": 1
     },
     "die": {
-      "from": "stand",
+      "from": "struck",
       "to": "dead",
-      "action": "is hit, stiffens, and crumbles into grey ash and fading embers that fall away",
-      "seconds": 1.5
+      "action": "shrieks, swells up with orange light shining through the cracks in its skin, and pops like a firecracker into a puff of black soot and embers, its horns and empty sack dropping out of the smoke",
+      "seconds": 1.25
     }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
   }
 }

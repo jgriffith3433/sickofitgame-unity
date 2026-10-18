@@ -163,7 +163,9 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   every level in order through the real flow: results → Continue → video skipped with Escape; up to 3 tries per level;
   ~10 min), `menus` (level select, videos, shop, settings open and close), `layout` (main menu, level select, settings,
   level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or
-  is under the touch size; meant for device "phone", 390x844), `site` (the website around the game: each page opened
+  is under the touch size; meant for device "phone", 390x844), `imp-death` (level 1 until the bot has killed three
+imps: each imp's Die clip must be playing where it died, and those three play at 0.3x so a recording shows the frames;
+every other scenario checks imp kills the same way, without the slow motion), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
   page has neither; `Plugins/WebGL/HawkesSite.jslib`).
 - **Start one:** in a browser `?playtest=smoke` (plus `&seed=`, `&speed=`), or `hawkesPlaytest.start("level-2")`; in the
