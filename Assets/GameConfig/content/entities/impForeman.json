@@ -4,14 +4,10 @@
   "health": 40,
   "moveSpeed": 0,
   "activationRange": 0,
-  "tags": [
-    "boss",
-    "imp",
-    "impForeman"
-  ],
+  "tags": ["boss", "imp", "impForeman"],
   "body": {
     "shape": "Circle",
-    "radius": 1.0,
+    "radius": 0.66,
     "solid": false,
     "gravity": 0
   },
@@ -37,33 +33,33 @@
       "states": [
         {
           "stateName": "Idle",
-          "spriteSheet": "Art/Enemies/Imp/Imp_idle.png",
+          "spriteSheet": "Art/Enemies/ImpForeman/ImpForeman_idle.png",
           "fps": 12,
           "loop": true,
           "events": []
         },
         {
           "stateName": "Attack",
-          "spriteSheet": "Art/Enemies/Imp/Imp_attack.png",
+          "spriteSheet": "Art/Enemies/ImpForeman/ImpForeman_attack.png",
           "fps": 12,
           "loop": false,
           "events": [
             {
-              "frame": 5,
+              "frame": 11,
               "functionName": "FireProjectile"
             }
           ]
         },
         {
           "stateName": "Hurt",
-          "spriteSheet": "Art/Enemies/Imp/Imp_hurt.png",
+          "spriteSheet": "Art/Enemies/ImpForeman/ImpForeman_hurt.png",
           "fps": 12,
           "loop": false,
           "events": []
         },
         {
           "stateName": "Die",
-          "spriteSheet": "Art/Enemies/Imp/Imp_die.png",
+          "spriteSheet": "Art/Enemies/ImpForeman/ImpForeman_die.png",
           "fps": 12,
           "loop": false,
           "events": []
@@ -114,8 +110,7 @@
       "defaultStateName": "Idle"
     },
     "facesLeft": false,
-    "scale": 0.66,
-    "color": "#FFC9A0"
+    "scale": 1
   },
   "healthBar": {
     "show": false
@@ -178,16 +173,13 @@
           "projectile": "fmWarnWhip",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            3.4,
-            -0.9
-          ],
+          "muzzle": [3.4, -0.9],
           "interval": 99,
           "initialDelay": 0.2,
           "pattern": {
             "type": "line",
             "count": 5,
-            "spacing": 1.0
+            "spacing": 1
           },
           "animTrigger": "IsAttacking"
         }
@@ -204,7 +196,7 @@
           "to": "p1Whistle",
           "when": {
             "type": "after",
-            "seconds": 3.0
+            "seconds": 3
           }
         }
       ]
@@ -224,10 +216,7 @@
           "interval": 9,
           "initialDelay": 0.5,
           "maxAlive": 2,
-          "offset": [
-            2.6,
-            2.4
-          ]
+          "offset": [2.6, 2.4]
         }
       ],
       "transitions": [
@@ -264,11 +253,8 @@
       "abilities": [
         {
           "type": "hover",
-          "speed": 3.0,
-          "offset": [
-            8.2,
-            8.4
-          ],
+          "speed": 3,
+          "offset": [8.2, 8.4],
           "aroundSpawn": true,
           "keepSide": false,
           "bobHeight": 0
@@ -304,12 +290,12 @@
         {
           "type": "swingChain",
           "length": 2.4,
-          "amplitude": 48.0,
+          "amplitude": 48,
           "period": 4.2,
-          "phase": 0.0,
-          "grabRadius": -10.0,
-          "hang": 0.0,
-          "regrab": 99.0,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
           "chainColor": "#52423C",
           "grabSound": "",
           "chainArt": {
@@ -320,20 +306,14 @@
             "color": "#FFFFFF"
           },
           "chainWidth": 0.26,
-          "pivotOffset": [
-            8.2,
-            8.4
-          ]
+          "pivotOffset": [8.2, 8.4]
         },
         {
           "type": "shoot",
           "projectile": "fmSackDrip",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.0,
-            -0.6
-          ],
+          "muzzle": [0, -0.6],
           "interval": 1.4,
           "initialDelay": 1.2
         }
@@ -343,7 +323,7 @@
           "to": "p2Lash",
           "when": {
             "type": "after",
-            "seconds": 5.0
+            "seconds": 5
           }
         }
       ]
@@ -354,12 +334,12 @@
         {
           "type": "swingChain",
           "length": 2.4,
-          "amplitude": 48.0,
+          "amplitude": 48,
           "period": 4.2,
-          "phase": 0.0,
-          "grabRadius": -10.0,
-          "hang": 0.0,
-          "regrab": 99.0,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
           "chainColor": "#52423C",
           "grabSound": "",
           "chainArt": {
@@ -370,26 +350,20 @@
             "color": "#FFFFFF"
           },
           "chainWidth": 0.26,
-          "pivotOffset": [
-            8.2,
-            8.4
-          ]
+          "pivotOffset": [8.2, 8.4]
         },
         {
           "type": "shoot",
           "projectile": "fmWarnWhip",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.0,
-            -2.75
-          ],
+          "muzzle": [0, -2.75],
           "interval": 99,
           "initialDelay": 0.2,
           "pattern": {
             "type": "line",
             "count": 4,
-            "spacing": 1.0
+            "spacing": 1
           },
           "animTrigger": "IsAttacking"
         }
@@ -410,12 +384,12 @@
         {
           "type": "swingChain",
           "length": 2.4,
-          "amplitude": 48.0,
+          "amplitude": 48,
           "period": 4.2,
-          "phase": 0.0,
-          "grabRadius": -10.0,
-          "hang": 0.0,
-          "regrab": 99.0,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
           "chainColor": "#52423C",
           "grabSound": "",
           "chainArt": {
@@ -426,20 +400,14 @@
             "color": "#FFFFFF"
           },
           "chainWidth": 0.26,
-          "pivotOffset": [
-            8.2,
-            8.4
-          ]
+          "pivotOffset": [8.2, 8.4]
         },
         {
           "type": "shoot",
           "projectile": "fmSackDrip",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.0,
-            -0.6
-          ],
+          "muzzle": [0, -0.6],
           "interval": 1.2,
           "initialDelay": 0.4
         }
