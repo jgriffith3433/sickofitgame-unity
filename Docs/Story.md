@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -191,7 +191,8 @@ enemy at a time, alone; at most 3 on screen in Circle X). Lines are first drafts
 | 10 | 920-911 | **The Heat Stairs** | (none) | The approach to the throne under a carved *TO THE THRONE*: the heat rising, the hardest floors of the Circle, embers from above and his guard on the steps. Announcer builds it up (*"FLOOR 920! THE HEAT STAIRS! SOMEBODY'S WAITING AT THE TOP!"*); the hero doesn't (*"Every step's hotter. Of course."*). Twice the stairs rumble and the Magma King's voice comes down them from ahead: he's waiting, he knows the hero is coming, and he isn't getting up (*"I can hear you climbing, little spark."* / hero: *"Was that the stairs?"*; *"Come up, then. I'll stay seated."* / *"He knows I'm coming. Great."*). The stage ends at his door, a slab of obsidian carved *THE SLAG THRONE* (`floors.door`), where the camera stops; through it, one last chuckle (*"Mm-hm-hm. Knock, little spark."*), the announcer's *"THE HEAT STAIRS: CLIMBED! THE MAGMA KING AWAITS!"* and the Grudge pick. Level 11 opens on the other side of that door. |
 | 11 | 910-901 | **The Slag Throne** | Warden: `magmaKing` | The Magma King's arena (a locked screen: the one kind of stage allowed to stand still): one hall nine floors high, the throne on a slag mound at Floor 901. Three phases (seated; standing with his imps; enraged, the lava flood you rewind through). Beat him and the counter ticks to 901, the Waystone lights and his name fills in on the Shaft, where Circle IX wakes up. The fight is below (*The Magma King's fight*). Announcer: *"THE MAGMA KING HAS FALLEN!"* Hero: *"He got up for me. I'm touched."* |
 
-Built so far (2026-10-18): Levels 2-10, The Landing to The Heat Stairs, each with its title, lines, carved sign, beats,
+Built so far (2026-10-18): Levels 2-10, The Landing to The Heat Stairs, and Level 11, the Slag Throne (the Warden's
+arena, below), so Circle X is complete. Levels 2-10 each have their title, lines, carved sign, beats,
 generated floors between them, a breather and a Grudge pick at the end. Levels 7-10 climb toward the Warden: thatch
 cinders that split, the ember shower from Floor 940, the Magma King's guard from Floor 930, and his voice on the
 stairs; the generator's floors get harder the closer they are to 901. The village debris and the Loop's rock are
@@ -383,10 +384,10 @@ Built (2026-10-15; recipe: GameplayCookbook "A stage that climbs through Hell's 
    `Distance` or `Floors` (`sequenceBy`) and able to play part of a clip (`clipStart`/`clipLength`).
 3. **Floor generator**: `content/circles/<id>.json` (backdrop, track, props, enemy table, hazards, easiest/hardest
    difficulty, milestones) and the `generateFloors` action that fills floors between story beats, seeded, so
-   rewinds and playtests repeat. Circle X is `emberWastes`; its stages so far are Levels 2-10, "Floors 1000-991:
-   The Landing" to "Floors 920-911: The Heat Stairs". Circle IX is `crackedRoad`; its first stage is `CrackedRoad`,
-   "Floors 900-891: The Cracked Road" (off the path for now: the Magma King's arena, Floors 910-901, is still to
-   build).
+   rewinds and playtests repeat. Circle X is `emberWastes`; its stages are Levels 2-10, "Floors 1000-991:
+   The Landing" to "Floors 920-911: The Heat Stairs", and Level 11, "Floors 910-901: The Slag Throne" (the Magma
+   King's arena: a locked screen whose counter only moves by `climbFloors`). Circle IX is `crackedRoad`; its first
+   stage is `CrackedRoad`, "Floors 900-891: The Cracked Road" (off the path until Circle IX is rebuilt).
 
    *Stage dressing* (2026-10-18, with Levels 3-6): a stage's own scenery on top of its Circle's (`world.props`:
    the Spill's debris, the Loop's same rock), a carved sign where the hero lands (`floors.sign`), floors Hell makes

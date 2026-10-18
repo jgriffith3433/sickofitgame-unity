@@ -350,12 +350,6 @@
   "states": [
     {
       "name": "p1Throw",
-      "onEnter": [
-        {
-          "type": "emit",
-          "signal": "mkTelegraph"
-        }
-      ],
       "abilities": [
         {
           "type": "shoot",
@@ -397,12 +391,6 @@
     },
     {
       "name": "p1Slam",
-      "onEnter": [
-        {
-          "type": "emit",
-          "signal": "mkTelegraph"
-        }
-      ],
       "abilities": [
         {
           "type": "shoot",
@@ -449,12 +437,6 @@
     },
     {
       "name": "p1Throw2",
-      "onEnter": [
-        {
-          "type": "emit",
-          "signal": "mkTelegraph"
-        }
-      ],
       "abilities": [
         {
           "type": "shoot",
@@ -583,12 +565,6 @@
     },
     {
       "name": "p2Slam",
-      "onEnter": [
-        {
-          "type": "emit",
-          "signal": "mkTelegraph"
-        }
-      ],
       "abilities": [
         {
           "type": "shoot",
@@ -632,7 +608,7 @@
           "entity": "impGuard",
           "interval": 8,
           "initialDelay": 1.0,
-          "maxAlive": 1,
+          "maxAlive": 2,
           "offset": [1.9, 1.1]
         },
         {
@@ -640,7 +616,7 @@
           "entity": "impGuard",
           "interval": 8,
           "initialDelay": 5.0,
-          "maxAlive": 1,
+          "maxAlive": 2,
           "offset": [4.2, -0.2]
         }
       ],
@@ -663,12 +639,6 @@
     },
     {
       "name": "p2Breath",
-      "onEnter": [
-        {
-          "type": "emit",
-          "signal": "mkTelegraph"
-        }
-      ],
       "abilities": [
         {
           "type": "shoot",
@@ -702,7 +672,7 @@
           "entity": "impGuard",
           "interval": 8,
           "initialDelay": 3.0,
-          "maxAlive": 1,
+          "maxAlive": 2,
           "offset": [1.9, 1.1]
         }
       ],
@@ -765,10 +735,6 @@
         {
           "type": "emit",
           "signal": "mkFlood"
-        },
-        {
-          "type": "emit",
-          "signal": "mkTelegraph"
         }
       ],
       "abilities": [
@@ -815,12 +781,6 @@
     },
     {
       "name": "p3Breath",
-      "onEnter": [
-        {
-          "type": "emit",
-          "signal": "mkTelegraph"
-        }
-      ],
       "abilities": [
         {
           "type": "shoot",
@@ -862,12 +822,6 @@
     },
     {
       "name": "p3Slam",
-      "onEnter": [
-        {
-          "type": "emit",
-          "signal": "mkTelegraph"
-        }
-      ],
       "abilities": [
         {
           "type": "shoot",

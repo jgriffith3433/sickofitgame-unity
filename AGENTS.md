@@ -187,15 +187,24 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   a milestone like Level 7's Floor 950) before the first enemy, every scripted line shown with its voice, a
   `floors.door` standing at the top with a voice other than the hero's or the announcer's heard before it (Level 10:
   the Magma King's door), the Grudge; then the Shaft's climb and what comes next; `check`, `banner`, `line` (with the
-  time and speaker), `new-enemy`, `breather`, `sign`, `door` events), `full` (New Game, then
+  time and speaker), `new-enemy`, `breather`, `sign`, `door` events; a Warden's arena (a floor stage on a Static
+  screen, `IsArena`: Level 11, the Slag Throne) skips the breather and takes 60-240 s, and adds the boss checks: the
+  voiced intro (the throne rises, "FLOOR 901! THE WARDEN OF THE WASTES!", his taunt, the hero's line, the boss bar
+  before the fight), the phases in order from the fight's `emit` signals (`mkIntro`, `mkFight`, `mkStand`,
+  `mkPhase2`, `mkEnrage`, `mkFlood`, `mkDefeat`, `waystoneLit`) with his health at the stand (≤ half) and the enrage
+  (≤ a third), imp guards only in phase 2, every attack's `spawn` 1+ s after its warning glow (`ArenaTelegraphs`), the
+  defeat (slow motion, his last line, "HAS FALLEN"), the counter at 901 and "WAYSTONE LIT: FLOOR 901"; then the
+  Shaft's Waystone saved and Circle IX waking (`climbWaystone`, `climbWakes`); `boss`, `signal`, `telegraph`,
+  `attack`, `adds` events, plus the magma-king watch's checks), `full` (New Game, then
   every level in order through the real flow: results → Continue → the Shaft (Continue) → video skipped with Escape; up to 3 tries per level;
   ~10 min), `story-path` (New Game along the story path, each step a `check` event: Video1, Level 1, Video2, Level 2
   "Floors 1000-991: The Landing" with no other level between, its floor counter 1000 → 991 and the 999 milestone,
-  Video3 (Gloob) watched 8 s, then Levels 3-10 (The Spill, Imp Run, The Slag Falls, The Loop, Halfway Basin, The Crust,
-  The Sack Pile, The Heat Stairs) one after another with no video between, each with the stage checks below, then the
+  Video3 (Gloob) watched 8 s, then Levels 3-11 (The Spill, Imp Run, The Slag Falls, The Loop, Halfway Basin, The Crust,
+  The Sack Pile, The Heat Stairs, The Slag Throne) one after another with no video between, each with the stage checks below, then the
   level select, whose cards must list the story levels first and in order; ~35 min; the Shaft after Video2 and after each floor stage is checked too), `wastes-climb` (Level 6
-  loaded directly, then Levels 7-10 through the real flow with the stage checks on each: Level 7 opens on the Floor 950
-  beat, Level 10 ends at the Magma King's door with his voice heard ahead, then the level select; ~15 min), `shaft` (Video2 loaded directly with
+  loaded directly, then Levels 7-11 through the real flow with the stage checks on each: Level 7 opens on the Floor 950
+  beat, Level 10 ends at the Magma King's door with his voice heard ahead, Level 11 is his arena with the boss checks,
+  then the level select; ~18 min), `shaft` (Video2 loaded directly with
   the Shaft's save reset, skipped: the first plunge past the 10 Circles to FLOOR 1,000, the welcome lines, Continue to Level 2, the
   bot plays it, then the marker's climb to 991 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
   `menus` (level select, videos, Gloob's shop, settings open and close, then a Shaft preview with Gloob met: Visit
