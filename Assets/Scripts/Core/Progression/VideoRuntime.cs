@@ -238,7 +238,7 @@ namespace SickOfIt.Core.Progression
 
         private void StartExperience()
         {
-            if (config.timeline == null || config.timeline.events == null || config.timeline.events.Count == 0)
+            if (config.timeline == null || !config.timeline.HasContent)
                 return;
 
             experienceRunner = gameObject.AddComponent<ExperienceRunner>();
@@ -246,6 +246,7 @@ namespace SickOfIt.Core.Progression
         }
 
         private bool rewindButtonHeld;
+        private bool rewindKeyHeld;
         private float rewindPressedAt;
 
         private void OnRewindButtonDown()
@@ -278,6 +279,14 @@ namespace SickOfIt.Core.Progression
             if (rewindButtonHeld && gameClock != null && !gameClock.IsRewinding &&
                 Time.unscaledTime - rewindPressedAt >= RewindHoldSeconds() && gameClock.Time > 0.05f)
                 gameClock.StartRewind(RewindSpeed());
+
+            // Hold R to rewind, as in a level (the on-screen ◄◄ button does the same).
+            bool rewindKey = Keyboard.current != null && Keyboard.current.rKey.isPressed;
+            if (rewindKey && !rewindKeyHeld && gameClock != null && !gameClock.IsRewinding && gameClock.Time > 0.05f)
+                gameClock.StartRewind(RewindSpeed());
+            else if (!rewindKey && rewindKeyHeld && !rewindButtonHeld && gameClock != null && gameClock.IsRewinding)
+                gameClock.StopRewind();
+            rewindKeyHeld = rewindKey;
 
             if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
             {
