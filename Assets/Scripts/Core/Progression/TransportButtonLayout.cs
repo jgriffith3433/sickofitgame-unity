@@ -53,9 +53,15 @@ namespace SickOfIt.Core.Progression
             float y = Mathf.Clamp01(inset + lift);
             float gap = Mathf.Max(rewindRect.rect.width, 80f) * 0.6f + 8f;
 
-            Place(rewindRect, 0.5f, y, skipRect != null ? -gap : 0f);
+            // The parent is not always the whole screen, so anchor 0.5 of it can sit off the screen's centre: shift
+            // the row by however far the canvas centre is from the parent's.
+            float shift = 0f;
+            if (canvas != null && canvas.rootCanvas.transform is RectTransform root)
+                shift = parent.InverseTransformPoint(root.TransformPoint(root.rect.center)).x - parent.rect.center.x;
+
+            Place(rewindRect, 0.5f, y, shift + (skipRect != null ? -gap : 0f));
             if (skipRect != null)
-                Place(skipRect, 0.5f, y, gap);
+                Place(skipRect, 0.5f, y, shift + gap);
         }
 
         static void Size(RectTransform rect, Vector2 size, float touch)
