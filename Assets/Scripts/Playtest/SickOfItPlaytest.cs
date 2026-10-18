@@ -3191,6 +3191,19 @@ namespace SickOfIt.Playtest
                         break;
                     }
 
+                    // A stage that leads straight on must name the next story level, or Continue goes elsewhere (the
+                    // level select) and the wait for it below would stall. Old game data in the build does that: its
+                    // Level 4 was the arcade "Everything, Everywhere" with no next level.
+                    if (step + 1 < StoryPath.Length && StoryPath[step + 1].video == 0 && config.nextLevelNumber != StoryPath[step + 1].level)
+                    {
+                        int want = StoryPath[step + 1].level;
+                        StoryCheck("level" + n + "Next", false, $"level {n} ({config.levelName}, {config.displayName}) leads to " +
+                            (config.nextLevelNumber > 0 ? "level " + config.nextLevelNumber : config.nextVideoNumber > 0 ? "video " + config.nextVideoNumber : "the level select") +
+                            $", not level {want}; old game data in this build? (a good build log has \"Game config verified for the build\")");
+                        reachedEnd = false;
+                        break;
+                    }
+
                     // Results, then Continue: the game goes on by itself to the next video (or the level select).
                     previous = GameplayWorld.Instance;
                     yield return Run.Until(() => GameplayWorld.Instance == null || GameplayWorld.Instance.Hud == null || GameplayWorld.Instance.Hud.ResultsOpen,
