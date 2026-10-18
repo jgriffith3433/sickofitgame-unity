@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "extends": "diamond",
+  "tags": [
+    "pickup",
+    "glint"
+  ],
+  "abilities": [
+    {
+      "type": "collect",
+      "magnetRadius": 2.2,
+      "magnetSpeed": 9,
+      "do": [
+        {
+          "type": "addDiamonds",
+          "amount": 1
+        },
+        {
+          "type": "popText",
+          "text": "+1 \u2666",
+          "color": "#7FE8FF",
+          "size": 0.8
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "extends": "lavaFall",
+  "tags": [
+    "scenery"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      1.6,
+      9.0
+    ],
+    "solid": false
+  },
+  "visual": {
+    "layer": "Background2",
+    "sortingOrder": 3
+  },
+  "abilities": [
+    {
+      "type": "lavaFall",
+      "pour": 6.0,
+      "off": 1.5,
+      "offset": 0.0,
+      "color": "#FF7322E6",
+      "art": {
+        "sheet": "Art/Climb/LavaFall_loop.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "artWidth": 1.4
+    }
+  ]
+}

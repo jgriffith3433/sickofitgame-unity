@@ -291,6 +291,9 @@ namespace SickOfIt.Gameplay
                 if (e == null || !e.IsAlive || e.IsPlayer)
                     continue;
                 bool chain = e.FindAbility<SickOfIt.Gameplay.Content.SwingChainAbility>() != null;
+                // An imp riding a hauling chain (impSwing) swings the same way, but it burns: never jump into it.
+                if (chain && world.Player.IsHostileTo(e))
+                    continue;
                 if (!chain && !e.Tags.Contains("foothold"))
                     continue;
                 var col = e.MainCollider;

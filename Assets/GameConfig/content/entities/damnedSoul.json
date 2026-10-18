@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "damned"
+  ],
+  "body": {
+    "radius": 0.3,
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#A9B0B8A0",
+    "placeholderSize": 0.55,
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 1,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "hover",
+      "speed": 0.4,
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "aroundSpawn": true,
+      "keepSide": false,
+      "bobHeight": 0.05,
+      "bobSpeed": 2.4
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "distanceToPlayer",
+        "below": 1.6
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "spawn",
+          "entity": "rewindOrb",
+          "anchor": "Self",
+          "at": [
+            0.0,
+            0.45
+          ],
+          "facePlayer": false
+        },
+        {
+          "type": "playSound",
+          "sound": "pickup_rewind"
+        },
+        {
+          "type": "emit",
+          "signal": "damnedHiccup"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "extends": "swingChain",
+  "abilities": [
+    {
+      "type": "swingChain",
+      "length": 2.6,
+      "amplitude": 40.0,
+      "period": 2.8,
+      "phase": 0.5,
+      "grabRadius": 0.85,
+      "hang": 0.55,
+      "regrab": 0.6,
+      "chainColor": "#52423C",
+      "grabSound": "player_land",
+      "chainArt": {
+        "sheet": "Art/Climb/Chain_links.png",
+        "spriteNameFilter": "",
+        "fps": 1,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "chainWidth": 0.2
+    }
+  ]
+}

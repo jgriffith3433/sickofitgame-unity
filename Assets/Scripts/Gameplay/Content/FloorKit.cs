@@ -942,6 +942,89 @@ namespace SickOfIt.Gameplay.Content
         }
     }
 
+    [Serializable, JsonType("geyser")]
+    [Doc("A lava geyser: a basalt vent (the entity's own sprite, standing on the spot) that blows a column of lava straight up on a beat. " +
+         "It rests for 'off' seconds, its crack glows and spits for 'tell' seconds (at least 1: animator bool \"Telling\", the 'tellSound'), " +
+         "then the column blows for 'blow' seconds (animator bool \"Blowing\", the 'blowSound', a shake). Only the column hurts: give the " +
+         "body a box over it (body.offset up by half its height) and a scald. Hell's loop: the beat never changes, so a rewind shows the order.")]
+    public sealed class GeyserAbility : Ability
+    {
+        [Doc("Seconds it rests between blows (the tell is the last part of it).")] public float off = 3f;
+        [Doc("Seconds the vent glows and spits before it blows (at least 1).")] public float tell = 1f;
+        [Doc("Seconds the column blows.")] public float blow = 1.2f;
+        [Doc("Where in its beat it starts (seconds; 0 = the start of a rest).")] public float offset;
+        [Doc("Height of the column above the vent (units): match the body box.")] public float height = 3f;
+        [Doc("Width of the drawn column (units).")] public float width = 0.8f;
+        public Color color = new Color(1f, 0.55f, 0.15f, 0.95f);
+        [Doc("Painted column laid up from the vent (instead of the drawn box).")] public ArtLoopDef columnArt = new ArtLoopDef();
+        [SoundRef, Doc("Played as the vent starts to glow (a gurgle).")] public string tellSound = "";
+        [SoundRef, Doc("Played as it blows.")] public string blowSound = "";
+        [Doc("Camera shake as it blows, when the vent is on screen (0 = none).")] public float shake = 0.12f;
+
+        int lastPhase = -1;
+
+        public override void OnSpawn() => lastPhase = -1;
+
+        /// <summary>0 resting, 1 telling, 2 blowing (the playtest reads it).</summary>
+        public int Phase => Mathf.Max(0, lastPhase);
+
+        public override void Tick(float now, float dt)
+        {
+            float t1 = Mathf.Max(1f, tell), rest = Mathf.Max(t1, off), up = Mathf.Max(0.3f, blow);
+            float cycle = rest + up;
+            float t = Mathf.Repeat(now - Owner.SpawnTime + offset, cycle);
+            int phase = t < rest - t1 ? 0 : t < rest ? 1 : 2;
+            if (phase != lastPhase)
+            {
+                if (lastPhase >= 0)
+                {
+                    if (phase == 1)
+                    {
+                        SickOfIt.Core.Audio.Sfx.Play(tellSound);
+                        FloorKit.Record(Owner, "geyserTell");
+                    }
+                    else if (phase == 2)
+                    {
+                        SickOfIt.Core.Audio.Sfx.Play(blowSound);
+                        FloorKit.Record(Owner, "geyser");
+                        if (shake > 0f && Owner.World.View.Contains(Owner.Position))
+                            Owner.World.Effects.Shake(shake, 0.4f);
+                    }
+                }
+                lastPhase = phase;
+                Owner.RecordNow();
+            }
+            var c = Owner.MainCollider;
+            if (c != null)
+                c.enabled = phase == 2;
+            Owner.Animation.SetBool("Telling", phase == 1);
+            Owner.Animation.SetBool("Blowing", phase == 2);
+
+            // The column (cosmetic): rises fast as it blows, sinks back in its last 0.3 s; a stub of glow while it tells.
+            float rise = phase == 2 ? Mathf.Clamp01((t - rest) / 0.15f) * Mathf.Clamp01((cycle - t) / 0.3f) : phase == 1 ? 0.12f : 0f;
+            Vector2 foot = Owner.Position;
+            Vector2 top = foot + Vector2.up * Mathf.Max(0.01f, height * rise);
+            float alpha = phase == 2 ? 1f : phase == 1 ? 0.5f + 0.4f * Mathf.Sin((t - (rest - t1)) * 25f) : 0f;
+            bool drawn = rise > 0f && FloorArt.Strip(Owner.transform, "ColumnArt", columnArt, FloorArt.Frames(columnArt, Owner.World),
+                top, foot, width, now, Owner.Def.visual.layer, Owner.Def.visual.SortingOrder + 1, true, alpha);
+            var art = Owner.transform.Find("ColumnArt");
+            if (art != null && rise <= 0f)
+                art.gameObject.SetActive(false);
+            else if (art != null)
+                art.gameObject.SetActive(true);
+            var box = FloorKit.Child(Owner, "Column", Owner.Def.visual.layer, Owner.Def.visual.SortingOrder + 1);
+            box.enabled = !drawn && rise > 0f;
+            if (box.enabled)
+            {
+                box.color = new Color(color.r, color.g, color.b, color.a * alpha);
+                FloorKit.PlaceWorld(Owner, box, (foot + top) * 0.5f, new Vector2(width * 0.7f, (top - foot).y));
+            }
+        }
+
+        public override void SaveState(StateWriter writer) => writer.Int(lastPhase);
+        public override void LoadState(StateReader reader) => lastPhase = reader.Int();
+    }
+
     [Serializable, JsonType("carved")]
     [Doc("Words carved into a platform, glowing faintly: the floor's landing with its number (\"{floor}\" is the floor counter) and a word " +
          "or two the damned carved under it (KEEP MOVING).")]
