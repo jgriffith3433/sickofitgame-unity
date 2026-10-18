@@ -1145,8 +1145,8 @@ namespace SickOfIt.Core.Progression
             if (playerHealth != null)
                 RogueliteManager.Instance.SaveLevelEndHealth(levelNumber, playerHealth.CurrentHealth, playerHealth.MaxHealth);
 
-            if (config != null && !config.returnToMainMenuOnComplete)
-                GameProgressManager.Instance.UnlockVideo(levelNumber + 1);
+            if (config != null && !config.returnToMainMenuOnComplete && config.nextVideoNumber > 0)
+                GameProgressManager.Instance.UnlockVideo(config.nextVideoNumber);
         }
 
         private void FinishAndReturnToMainMenu()
@@ -1159,6 +1159,13 @@ namespace SickOfIt.Core.Progression
         {
             CommitCompletion();
 
+            // The Shaft (Hell's map) comes up between a cleared level and whatever is next.
+            ShaftHook.Run(new ShaftStop { Kind = ShaftStopKind.AfterLevel, Level = levelNumber, NextVideo = Mathf.Max(0, config.nextVideoNumber) },
+                LoadWhatComesNext);
+        }
+
+        private void LoadWhatComesNext()
+        {
             if (config.nextVideoNumber > 0)
             {
                 var nextVideo = gameDefinition != null ? gameDefinition.GetVideo(config.nextVideoNumber) : null;

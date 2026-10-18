@@ -39,6 +39,8 @@ namespace SickOfIt.Playtest
     /// video-2 (Video2 loaded directly and watched, not skipped: the hero's fall overlay appears at the burning door,
     /// spins and shrinks into the tunnel and is gone by ~14.5 s; R held mid-spin plays it backward; Escape skips).
     /// portal-audio (the prologue's portal scene sounds and the Meadow's lines played in order on the main menu).
+    /// story-path (New Game through the story path: Video1, the Meadow, Video2, the Landing with its floor counter
+    /// and the 999 beat, Video3 (Gloob), the Spill, then the level select with the story levels in order).
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
     /// </summary>
     public static class SickOfItPlaytest
@@ -78,6 +80,12 @@ namespace SickOfIt.Playtest
         /// <summary>The video-2 scenario: the video it watches and the timeline overlay it checks (the hero falling down the fire tunnel).</summary>
         public const int OverlayVideo = 2;
         public const string OverlayName = "heroFall";
+
+        /// <summary>The story-path scenario: the video that must play before each story level, in order (Docs/Story.md, "Level numbers").</summary>
+        static readonly (int video, int level)[] StoryPath = { (1, 1), (2, 2), (3, 3) };
+        /// <summary>The Landing (Level 2): the floors its counter must run through, and the milestone it must play.</summary>
+        public const int LandingLevel = 2, LandingFirstFloor = 1000, LandingLastFloor = 991, LandingMilestone = 999;
+        const float StoryPathSeconds = 900f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void Register()
@@ -124,6 +132,10 @@ namespace SickOfIt.Playtest
                 "from the burning door through the fire tunnel to the lava river (10.6-17.5 s): no COMING SOON caption in the tunnel (screen pixels in the box " +
                 "it used to cover), the frame on screen matches the clock, the soundtrack matches the clock, and the video is as long as its soundtrack", 60, "video"));
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
+            list.Add(new PlaytestScenario("story-path", "New Game through the story path with the real flow: Video1, Level 1 (the Meadow and its portal " +
+                $"scene), Video2, Level 2 (Floors {LandingFirstFloor}-{LandingLastFloor}: The Landing, no arcade level in between: its floor counter runs " +
+                $"{LandingFirstFloor} to {LandingLastFloor} and the \"ONLY {LandingMilestone} TO GO\" beat plays), Video3 (Gloob, watched a few seconds), Level 3 " +
+                "(The Spill), then the level select, whose cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close", 70, "menus"));
             list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu, level select, settings, " +
                 "level 1's HUD, the pause menu and its settings, and the death scene (loaded directly, a setup shortcut), no button overlaps another " +
@@ -175,6 +187,8 @@ namespace SickOfIt.Playtest
                 yield return session.Smoke();
             else if (id == "full")
                 yield return session.Full();
+            else if (id == "story-path")
+                yield return session.StoryPathRun();
             else if (id == "menus")
                 yield return session.Menus();
             else if (id == "site")
@@ -325,12 +339,15 @@ namespace SickOfIt.Playtest
                         break;
                     case "milestone":
                         Run.Event("milestone", $"{level}: {e.Subject}");
+                        story?.Milestones.Add((log.World.LevelNumber, e.Value));
                         break;
                     case "death" when e.Subject == "imp" && e.Detail == "Damage":
                         CheckImpDeath(log.World.FindBySerial(e.Value), level);
                         break;
                     case "floor":
                         Run.Metric("floor", e.Value);
+                        if (story != null && log.World.LevelNumber == LandingLevel)
+                            story.LandingFloors.Add(e.Value);
                         break;
                     case "cutscene" when scene != null || portal != null && portal.Started:
                         Run.Event("cutscene", $"{level}: {e.Subject}" + (string.IsNullOrEmpty(e.Detail) ? "" : " " + e.Detail));
@@ -1734,6 +1751,248 @@ namespace SickOfIt.Playtest
                     }
                     yield return null;
                 }
+            }
+
+            // ─── story-path: New Game along the story, every video and level checked ─────
+
+            /// <summary>What the story-path scenario has seen so far.</summary>
+            sealed class StoryWatch
+            {
+                public readonly List<int> LandingFloors = new List<int>();
+                public readonly List<(int level, int floor)> Milestones = new List<(int, int)>();
+                public int Passed, Failed;
+            }
+
+            StoryWatch story;
+
+            void StoryCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    story.Passed++;
+                    Run.Event("check", $"story {beat}: ok ({detail})");
+                }
+                else
+                {
+                    story.Failed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"story path {beat}: {detail}");
+                }
+                Run.Metric("story.passed", story.Passed);
+                Run.Metric("story.failed", story.Failed);
+            }
+
+            public IEnumerator StoryPathRun()
+            {
+                var definition = GameDefinition.Instance;
+                var labels = definition.mainMenuConfig.labels;
+                var texts = definition.menuTheme.texts;
+                story = new StoryWatch();
+                float deadline = Time.realtimeSinceStartup + StoryPathSeconds - 60f;
+
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                yield return ClickUntil(labels.newGame, () => Object.FindAnyObjectByType<VideoRuntime>() != null || GameplayWorld.Instance != null, 30f);
+                if (Run.Done) yield break;
+
+                bool reachedEnd = true;
+                GameplayWorld previous = null; // the level just left: it lingers until the next scene loads
+                for (int step = 0; step < StoryPath.Length; step++)
+                {
+                    var (video, n) = StoryPath[step];
+                    var config = definition.GetLevel(n);
+
+                    // The video before the level: it must be the one the story puts here, and no level may come first.
+                    yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null || NewWorld(previous) != null,
+                        60f, $"video {video} to start");
+                    if (Run.Done) yield break;
+                    bool inVideo = Object.FindAnyObjectByType<VideoRuntime>() != null;
+                    int playing = inVideo ? PlayerPrefs.GetInt("CurrentVideoNumber", 0) : 0;
+                    string videoName = playing > 0 && definition.GetVideo(playing) != null ? definition.GetVideo(playing).displayName : "none";
+                    StoryCheck("video" + video, inVideo && playing == video,
+                        inVideo ? $"video {playing} ({videoName}) plays before level {n}" : $"level {GameplayWorld.Instance.LevelNumber} started instead of video {video}");
+                    if (inVideo)
+                    {
+                        Run.Scene("Video " + playing);
+                        // Watch a moment for the recording (Video3 longer: Gloob turns up), then skip like a player.
+                        yield return WaitReal(video == 3 ? 8f : 2.5f);
+                        if (Run.Done) yield break;
+                        float skipUntil = Time.realtimeSinceStartup + 20f;
+                        while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && Time.realtimeSinceStartup < skipUntil)
+                        {
+                            yield return Tap(Key.Escape);
+                            Run.Event("skip", $"video {playing}");
+                            yield return WaitReal(2f);
+                        }
+                        if (Run.Done) yield break;
+                    }
+
+                    // The level after it: the story's level n, not an arcade level.
+                    yield return Run.Until(() => NewWorld(previous) != null && GameplayWorld.Instance.Player != null
+                                                 && GameClock.Instance != null && GameClock.Instance.Time > 0f, 60f, $"level {n} to start");
+                    if (Run.Done) yield break;
+                    var world = GameplayWorld.Instance;
+                    StoryCheck("level" + n, world.LevelNumber == n && world.LevelName == config.levelName,
+                        $"level {world.LevelNumber} ({world.LevelName}) started after video {video}; the story wants level {n}, {config.displayName}");
+                    if (world.LevelNumber != n)
+                    {
+                        reachedEnd = false;
+                        break;
+                    }
+
+                    // Play it through, with up to 3 tries (a death goes back through the death scene to the level).
+                    int attempts = 0;
+                    while (true)
+                    {
+                        attempts++;
+                        if (n == LandingLevel)
+                        {
+                            // The counter's first floor isn't a change, so it is read here (travel is locked at the start).
+                            story.LandingFloors.Clear();
+                            story.Milestones.Clear();
+                            var landing = GameplayWorld.Instance;
+                            if (landing != null && landing.Stage != null && landing.Stage.HasFloors)
+                                story.LandingFloors.Add(landing.Stage.Floor);
+                        }
+                        float left = deadline - Time.realtimeSinceStartup;
+                        if (left < 5f) { lastOutcome = "time up"; break; }
+                        float from = (float)step / (StoryPath.Length + 1), to = (float)(step + 1) / (StoryPath.Length + 1);
+                        yield return PlayLevel(n, 0f, null, from, to, left, waitOutDeath: true);
+                        if (Run.Done) yield break;
+                        if (lastOutcome == "completed" || lastOutcome != "died" || attempts >= 3)
+                            break;
+                        Run.Event("retry", $"level {n}, attempt {attempts + 1}");
+                        yield return ReachLevel(n);
+                        if (Run.Done) yield break;
+                    }
+                    if (n == LandingLevel)
+                        CheckLanding(lastOutcome);
+                    if (lastOutcome != "completed")
+                    {
+                        Run.Event("stopped", $"level {n}: {lastOutcome} after {attempts} attempt(s)");
+                        reachedEnd = false;
+                        break;
+                    }
+
+                    // Results, then Continue: the game goes on by itself to the next video (or the level select).
+                    previous = GameplayWorld.Instance;
+                    yield return Run.Until(() => GameplayWorld.Instance == null || GameplayWorld.Instance.Hud == null || GameplayWorld.Instance.Hud.ResultsOpen,
+                        30f, $"the level {n} results screen");
+                    if (Run.Done) yield break;
+                    if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
+                        yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
+                    if (Run.Done) yield break;
+                }
+
+                if (reachedEnd)
+                {
+                    // The path ends after the last story level: no video, straight to the level select.
+                    yield return Run.Until(() => Object.FindAnyObjectByType<LevelSelectionManager>() != null
+                                                 || Object.FindAnyObjectByType<VideoRuntime>() != null
+                                                 || NewWorld(previous) != null, 60f, "the level select after the last story level");
+                    if (Run.Done) yield break;
+                    bool select = Object.FindAnyObjectByType<LevelSelectionManager>() != null;
+                    StoryCheck("end", select, select ? $"level {StoryPath[StoryPath.Length - 1].level} leads to the level select"
+                        : $"level {StoryPath[StoryPath.Length - 1].level} led to {SceneName()} instead of the level select");
+                }
+                if (Object.FindAnyObjectByType<LevelSelectionManager>() == null)
+                {
+                    yield return ToMainMenu();
+                    if (Run.Done) yield break;
+                    yield return ClickUntil(labels.levelSelect, () => Object.FindAnyObjectByType<LevelSelectionManager>() != null, 20f);
+                    if (Run.Done) yield break;
+                }
+                Run.Scene("Level Select");
+                yield return WaitReal(2f);
+                if (Run.Done) yield break;
+                CheckLevelSelectOrder();
+                yield return WaitReal(2f);
+                Run.Progress(1f);
+                End(story.Failed > 0 ? PlaytestOutcome.Done : reachedEnd ? PlaytestOutcome.Won
+                    : lastOutcome == "died" ? PlaytestOutcome.Lost : PlaytestOutcome.Done);
+            }
+
+            /// <summary>The running level's world, unless it is still the one the bot just left (or there is none).</summary>
+            static GameplayWorld NewWorld(GameplayWorld previous)
+            {
+                var world = GameplayWorld.Instance;
+                return world != null && world != previous ? world : null;
+            }
+
+            /// <summary>The Landing's floor counter ran 1000 to 991 and the 999 milestone played on it.</summary>
+            void CheckLanding(string outcome)
+            {
+                var floors = story.LandingFloors;
+                string seen = floors.Count > 0 ? string.Join(" ", floors) : "none";
+                Run.Event("floors", $"level {LandingLevel}: {seen}");
+                int highest = int.MinValue, lowest = int.MaxValue;
+                foreach (int f in floors)
+                {
+                    highest = Mathf.Max(highest, f);
+                    lowest = Mathf.Min(lowest, f);
+                }
+                bool completed = outcome == "completed";
+                StoryCheck("landingFloors", floors.Count > 0 && floors[0] == LandingFirstFloor && highest == LandingFirstFloor
+                                            && (completed ? lowest == LandingLastFloor && floors[floors.Count - 1] == LandingLastFloor : lowest >= LandingLastFloor),
+                    $"the floor counter ran {seen} (want {LandingFirstFloor} down to {LandingLastFloor}; level {outcome})");
+                bool milestone = story.Milestones.Exists(m => m.level == LandingLevel && m.floor == LandingMilestone);
+                StoryCheck("landing" + LandingMilestone, milestone || !completed && lowest > LandingMilestone,
+                    milestone ? $"the floor {LandingMilestone} beat played" : $"no floor {LandingMilestone} beat (lowest floor {lowest})");
+            }
+
+            /// <summary>The level select's cards: the story levels come first, the Meadow then floors counting down, before any other level.</summary>
+            void CheckLevelSelectOrder()
+            {
+                var titles = new List<string>();
+                foreach (var canvas in Object.FindObjectsByType<MenuCanvas>(FindObjectsSortMode.None))
+                {
+                    if (canvas == null || canvas.name != "LevelSelectUI")
+                        continue;
+                    // Depth-first, so the cards come in their list order.
+                    foreach (var text in canvas.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
+                    {
+                        if (text.name == "Title" && text.GetComponentInParent<MenuButton>() != null)
+                            titles.Add(Tags.Replace(text.text ?? "", "").Trim());
+                    }
+                }
+                Run.Event("level-select", string.Join(" | ", titles));
+
+                var definition = GameDefinition.Instance;
+                var expected = new List<string>();
+                foreach (var (_, level) in StoryPath)
+                {
+                    var config = definition.GetLevel(level);
+                    expected.Add(config != null ? config.displayName : "?");
+                }
+                bool firstInOrder = titles.Count >= expected.Count;
+                for (int i = 0; firstInOrder && i < expected.Count; i++)
+                    firstInOrder = titles[i] == expected[i];
+                StoryCheck("levelSelect", firstInOrder,
+                    $"the first cards are {string.Join(" | ", titles.GetRange(0, Mathf.Min(titles.Count, expected.Count)))} (want {string.Join(" | ", expected)})");
+
+                // Every story stage ("Floors N-M: ...") after the Meadow counts down, and none comes after an arcade level.
+                var floorsTitle = new Regex(@"^Floors (\d+)-(\d+)");
+                int last = int.MaxValue;
+                bool arcadeSeen = false, ordered = true;
+                string why = "story levels first, floors counting down";
+                foreach (string title in titles)
+                {
+                    var match = floorsTitle.Match(title);
+                    if (!match.Success)
+                    {
+                        if (title != expected[0])
+                            arcadeSeen = true;
+                        continue;
+                    }
+                    int start = int.Parse(match.Groups[1].Value);
+                    if (arcadeSeen || start >= last)
+                    {
+                        ordered = false;
+                        why = $"\"{title}\" is out of order";
+                        break;
+                    }
+                    last = start;
+                }
+                StoryCheck("levelSelectStory", ordered, why);
             }
 
             public IEnumerator Menus()
