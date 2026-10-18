@@ -1,0 +1,452 @@
+fileFormatVersion: 2
+guid: 1de135dd913c48fc90a525bbb0b6345d
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 108.333
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: slamSeat_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 264
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b9c2bedf1cb46e70800000000000000
+      internalID: 9107611191516252594
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_01
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 264
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4025669df9c75d8b0800000000000000
+      internalID: -5128055574702435836
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_02
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 264
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b4f8311c1fa0aa70800000000000000
+      internalID: 8836255003983803573
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_03
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 264
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 063ac7fea8ba773b0800000000000000
+      internalID: -5514750605480123552
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_04
+      rect:
+        serializedVersion: 2
+        x: 976
+        y: 264
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fd00003d02cbb900800000000000000
+      internalID: 701367528881917431
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_05
+      rect:
+        serializedVersion: 2
+        x: 1220
+        y: 264
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c49260e06403a790800000000000000
+      internalID: -7520162138650667836
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_06
+      rect:
+        serializedVersion: 2
+        x: 1464
+        y: 264
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d71a136cfe4085af0800000000000000
+      internalID: -407570338408193667
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_07
+      rect:
+        serializedVersion: 2
+        x: 1708
+        y: 264
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51feb343ba880d000800000000000000
+      internalID: 58697064052944661
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_08
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 454b4cbe9e3e7eb20800000000000000
+      internalID: 3163747857073484884
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_09
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 0
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f86d0c5847e87340800000000000000
+      internalID: 4861890095714494705
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_10
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 0
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f2ec906b1b4898f0800000000000000
+      internalID: -533593974886309130
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_11
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 0
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d81bc96c017d03950800000000000000
+      internalID: 6426873135309304205
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_12
+      rect:
+        serializedVersion: 2
+        x: 976
+        y: 0
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 725b5c883514932a0800000000000000
+      internalID: -6757297938859969241
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamSeat_13
+      rect:
+        serializedVersion: 2
+        x: 1220
+        y: 0
+        width: 244
+        height: 264
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.502652}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f10f5e1917c17dce0800000000000000
+      internalID: -1380603486661119969
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      slamSeat_00: 9107611191516252594
+      slamSeat_01: -5128055574702435836
+      slamSeat_02: 8836255003983803573
+      slamSeat_03: -5514750605480123552
+      slamSeat_04: 701367528881917431
+      slamSeat_05: -7520162138650667836
+      slamSeat_06: -407570338408193667
+      slamSeat_07: 58697064052944661
+      slamSeat_08: 3163747857073484884
+      slamSeat_09: 4861890095714494705
+      slamSeat_10: -533593974886309130
+      slamSeat_11: 6426873135309304205
+      slamSeat_12: -6757297938859969241
+      slamSeat_13: -1380603486661119969
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

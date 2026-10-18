@@ -1,0 +1,613 @@
+fileFormatVersion: 2
+guid: 4711143829d341ce8d61d458e9f09d84
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 108.333
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: rise_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 598
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 554555fe7792d2160800000000000000
+      internalID: 7002298590724183125
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_01
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 598
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5d95057117fd7ce0800000000000000
+      internalID: -1405695854319919779
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_02
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 598
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d4be4580a6507530800000000000000
+      internalID: 3850672928833058001
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_03
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 598
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e6e04af4efd2ed20800000000000000
+      internalID: 3306451250987460325
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_04
+      rect:
+        serializedVersion: 2
+        x: 976
+        y: 598
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9f4ab2e70a572a30800000000000000
+      internalID: 4190416968206667678
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_05
+      rect:
+        serializedVersion: 2
+        x: 1220
+        y: 598
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3d6d37283e7e2ca0800000000000000
+      internalID: -6039751270615651011
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_06
+      rect:
+        serializedVersion: 2
+        x: 1464
+        y: 598
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95af1d7019c8883d0800000000000000
+      internalID: -3204156580344759719
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_07
+      rect:
+        serializedVersion: 2
+        x: 1708
+        y: 598
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bb2a79b4a9fe0700800000000000000
+      internalID: 508618293821189044
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_08
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 299
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab20dcf0b0e2d4d70800000000000000
+      internalID: 9028923452992324282
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_09
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 299
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bd7c8c0f722a53d0800000000000000
+      internalID: -3217221054736073289
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_10
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 299
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14e1a20171757f770800000000000000
+      internalID: 8644473766328016449
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_11
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 299
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b67f21dd730ce17a0800000000000000
+      internalID: -6404470273909524629
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_12
+      rect:
+        serializedVersion: 2
+        x: 976
+        y: 299
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e41e7de4bb9cc46d0800000000000000
+      internalID: -3004805045044125362
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_13
+      rect:
+        serializedVersion: 2
+        x: 1220
+        y: 299
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fa8c1a49853f5070800000000000000
+      internalID: 8097249518805617395
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_14
+      rect:
+        serializedVersion: 2
+        x: 1464
+        y: 299
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fdd8075ae36a2280800000000000000
+      internalID: -9067325041623376398
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_15
+      rect:
+        serializedVersion: 2
+        x: 1708
+        y: 299
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99ada73eab4472050800000000000000
+      internalID: 5775660616597035673
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0c86225bd11f79e0800000000000000
+      internalID: -1621557707156321269
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_17
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 0
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c1327b71026e6e10800000000000000
+      internalID: 2192797827081580992
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_18
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 0
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a51d08dbad39c8080800000000000000
+      internalID: -9183802972423794342
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_19
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 0
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea2f11649f239cec0800000000000000
+      internalID: -3546247185373728082
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rise_20
+      rect:
+        serializedVersion: 2
+        x: 976
+        y: 0
+        width: 244
+        height: 299
+      alignment: 9
+      pivot: {x: 0.499488, y: 0.473913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 896a54a614c505de0800000000000000
+      internalID: -1346474852558199144
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      rise_00: 7002298590724183125
+      rise_01: -1405695854319919779
+      rise_02: 3850672928833058001
+      rise_03: 3306451250987460325
+      rise_04: 4190416968206667678
+      rise_05: -6039751270615651011
+      rise_06: -3204156580344759719
+      rise_07: 508618293821189044
+      rise_08: 9028923452992324282
+      rise_09: -3217221054736073289
+      rise_10: 8644473766328016449
+      rise_11: -6404470273909524629
+      rise_12: -3004805045044125362
+      rise_13: 8097249518805617395
+      rise_14: -9067325041623376398
+      rise_15: 5775660616597035673
+      rise_16: -1621557707156321269
+      rise_17: 2192797827081580992
+      rise_18: -9183802972423794342
+      rise_19: -3546247185373728082
+      rise_20: -1346474852558199144
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

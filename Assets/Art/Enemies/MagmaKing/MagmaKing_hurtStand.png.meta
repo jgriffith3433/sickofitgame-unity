@@ -1,0 +1,429 @@
+fileFormatVersion: 2
+guid: 9da71108a940417e9f4e3fa9be0c2963
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 108.333
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: hurtStand_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d3140e1530920310800000000000000
+      internalID: 1369815794485302230
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_01
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e1adf05ef2928390800000000000000
+      internalID: -7817524382183611927
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_02
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47d25a11919686900800000000000000
+      internalID: 677907300310396276
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_03
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 668bd731a9edf56e0800000000000000
+      internalID: -1846512568865277850
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_04
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b19e9657406d794b0800000000000000
+      internalID: -5433639110761125605
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_05
+      rect:
+        serializedVersion: 2
+        x: 855
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2705379c34afbeaa0800000000000000
+      internalID: -6130531298685267854
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_06
+      rect:
+        serializedVersion: 2
+        x: 1026
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c2b52384911406a0800000000000000
+      internalID: -6484038233953553724
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_07
+      rect:
+        serializedVersion: 2
+        x: 1197
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1cc2311e5f30d390800000000000000
+      internalID: -7795661281730311139
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_08
+      rect:
+        serializedVersion: 2
+        x: 1368
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd49ec55efb314000800000000000000
+      internalID: 18361837033526491
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_09
+      rect:
+        serializedVersion: 2
+        x: 1539
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1827189f9caa79d0800000000000000
+      internalID: -2775716418869057505
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_10
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 276
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2be6a4d88a04dcb50800000000000000
+      internalID: 6615014520346275506
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_11
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b7ebda3a97e07d20800000000000000
+      internalID: 3274371578696820656
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurtStand_12
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 0
+        width: 171
+        height: 276
+      alignment: 9
+      pivot: {x: 0.465643, y: 0.477174}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a248f06572f60ca0800000000000000
+      internalID: -6050882463373704538
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      hurtStand_00: 1369815794485302230
+      hurtStand_01: -7817524382183611927
+      hurtStand_02: 677907300310396276
+      hurtStand_03: -1846512568865277850
+      hurtStand_04: -5433639110761125605
+      hurtStand_05: -6130531298685267854
+      hurtStand_06: -6484038233953553724
+      hurtStand_07: -7795661281730311139
+      hurtStand_08: 18361837033526491
+      hurtStand_09: -2775716418869057505
+      hurtStand_10: 6615014520346275506
+      hurtStand_11: 3274371578696820656
+      hurtStand_12: -6050882463373704538
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
