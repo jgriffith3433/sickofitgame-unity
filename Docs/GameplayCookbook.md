@@ -365,6 +365,7 @@ Every sound lives in `audio.json` as a prompt; the files are generated, never ha
 - **Hand-made sounds** (a clip processed from generated ones, e.g. the prologue's echo `vo_portal_echo` and
   `portal_swallow`): leave `prompt` empty and set `clip`, so the Sound Generator never remakes it, and keep the
   recipe as a script (`Tools/Audio/portal-mix.sh`, ffmpeg) to re-run when a source clip is remade.
+  The portal echo is made from the hero's own "Hello?" (`vo_portal_hello_1`) by `Tools/Audio/portal-mix.sh`.
 - Players control Volume / Music / Effects / Voices, screen shake and hints in Settings (main menu and pause menu).
 
 ## Game feel
