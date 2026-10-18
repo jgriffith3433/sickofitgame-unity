@@ -225,8 +225,12 @@ namespace SickOfIt.Core.Addressables
 
                 if (!loadSuccess)
                 {
-                    Debug.LogError($"Failed to load scene: {sceneName}");
+                    Debug.LogError($"Failed to load scene: {sceneName}. Going to the level select.");
                     if (shouldHideLoadingScreen) HideLoadingScreen();
+                    // The previous scene is already switched off: without a fallback the player is left on a dead
+                    // screen. The level select is in the base build (no Addressables) and replaces everything.
+                    currentGameplayScene = "";
+                    SceneManager.LoadScene(SceneTransitionManager.LEVEL_SELECTION_SCENE);
                     onComplete?.Invoke();
                     yield break;
                 }
