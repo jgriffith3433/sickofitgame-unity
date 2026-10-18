@@ -619,7 +619,8 @@
     "deathNoJuice": "No rewind juice left...",
     "rageQuit": "Rage Quit",
     "rewindHint": "Ouch! Hold R to undo that.",
-    "rewindHintTouch": "Ouch! Hold ◄◄ to undo that."
+    "rewindHintTouch": "Ouch! Hold ◄◄ to undo that.",
+    "rewindLocked": "Not now"
   },
   "grades": [
     {

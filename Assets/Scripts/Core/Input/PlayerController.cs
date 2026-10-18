@@ -165,6 +165,22 @@ namespace SickOfIt.Core.Input
         public int ExtraShots { get; set; }
         /// <summary>Degrees between the shots of a volley.</summary>
         public float ShotSpreadDegrees { get; set; } = 10f;
+        /// <summary>
+        /// Level scripts walking the player (walkPlayerTo): horizontal input from -1 to 1 that replaces the devices'
+        /// while set, even when InputLocked, so the Walk clip and the sprite flip play as if he walked himself.
+        /// </summary>
+        public float? ScriptedMove { get; set; }
+
+        /// <summary>World units per second at full input (move speed times MoveSpeedMultiplier).</summary>
+        public float CurrentMoveSpeed => moveSpeed * MoveSpeedMultiplier;
+
+        /// <summary>True while the sprite faces right (2D flip: negative X faces right).</summary>
+        public bool FacingRight => use2DFlip
+            ? graphicsTransform == null || graphicsTransform.localScale.x <= 0f
+            : Mathf.Abs(Mathf.DeltaAngle(currentYRotation, 180f)) > 90f;
+
+        /// <summary>Physics and collisions are off (pullPlayerInto): a level script moves the player's transform.</summary>
+        public bool Suspended { get; private set; }
 
         private readonly System.Collections.Generic.Dictionary<GameObject, IProjectileDamage> shotDamage =
             new System.Collections.Generic.Dictionary<GameObject, IProjectileDamage>();
@@ -173,6 +189,69 @@ namespace SickOfIt.Core.Input
         {
             if (rb != null)
                 rb.gravityScale = gravityScale * multiplier;
+        }
+
+        /// <summary>Turns the player to face right (direction &gt; 0) or left (&lt; 0) now. Moving or firing turns him again.</summary>
+        public void Face(float direction)
+        {
+            if (Mathf.Approximately(direction, 0f))
+                return;
+            bool right = direction > 0f;
+            targetYRotation = currentYRotation = right ? 0f : 180f;
+            if (graphicsTransform == null)
+                return;
+            if (use2DFlip)
+            {
+                Vector3 scale = graphicsTransform.localScale;
+                scale.x = right ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+                graphicsTransform.localScale = scale;
+            }
+            else
+            {
+                graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+            }
+        }
+
+        /// <summary>
+        /// Switches physics and collisions off (true) so a script can move, spin and scale the player's transform,
+        /// or back on (false). Nothing can hit him and he doesn't fall while suspended.
+        /// </summary>
+        public void SetSuspended(bool suspended)
+        {
+            if (Suspended == suspended)
+                return;
+            Suspended = suspended;
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+                rb.simulated = !suspended;
+            }
+        }
+
+        /// <summary>Stops sideways motion now (a scripted walk arriving), so he stops on the spot instead of sliding a step.</summary>
+        public void StopHorizontal()
+        {
+            if (rb == null || !rb.simulated)
+                return;
+            Vector2 velocity = rb.linearVelocity;
+            velocity.x = 0f;
+            rb.linearVelocity = velocity;
+        }
+
+        /// <summary>Plays a state of the player's Animator by name (playPlayerAnimation). False if there is no such state.</summary>
+        public bool PlayAnimatorState(string state, float crossFade = 0f)
+        {
+            if (animator == null || string.IsNullOrEmpty(state))
+                return false;
+            int hash = Animator.StringToHash(state);
+            if (!animator.HasState(0, hash))
+                return false;
+            if (crossFade > 0f)
+                animator.CrossFadeInFixedTime(hash, crossFade, 0);
+            else
+                animator.Play(hash, 0, 0f);
+            return true;
         }
 
         // Platform collision
@@ -462,13 +541,15 @@ namespace SickOfIt.Core.Input
                 fireDirection = InputOverride.FireDirection;
                 isFiring = fireDirection.sqrMagnitude > inputDeadzone * inputDeadzone;
             }
-            if (InputLocked)
+            if (InputLocked || Suspended)
             {
                 moveInput = Vector2.zero;
                 jumpRequested = false;
                 fireDirection = Vector2.zero;
                 isFiring = false;
             }
+            if (ScriptedMove.HasValue && !Suspended)
+                moveInput = new Vector2(Mathf.Clamp(ScriptedMove.Value, -1f, 1f), 0f);
         }
 
         /// <summary>
@@ -672,7 +753,12 @@ namespace SickOfIt.Core.Input
         {
             if (rb == null) return;
             
-            float horizontalInput = Mathf.Clamp(moveInput.x, -1f, 1f);
+            if (Suspended) return;
+
+            // A scripted walk drives the body directly; a lock stops it at once (moveInput is only read in Update).
+            float horizontalInput = ScriptedMove.HasValue ? Mathf.Clamp(ScriptedMove.Value, -1f, 1f)
+                : InputLocked ? 0f
+                : Mathf.Clamp(moveInput.x, -1f, 1f);
             
             Vector2 velocity = rb.linearVelocity;
             velocity.x = horizontalInput * moveSpeed * MoveSpeedMultiplier;

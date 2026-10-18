@@ -84,6 +84,45 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Relative to the camera center.")] Camera,
     }
 
+    [Doc("How a scripted move speeds up and slows down over its duration.")]
+    public enum Ease
+    {
+        [Doc("Constant speed.")] Linear,
+        [Doc("Starts slow, ends fast (being sucked in).")] In,
+        [Doc("Starts fast, ends slow (settling).")] Out,
+        [Doc("Slow at both ends (a camera move).")] InOut,
+    }
+
+    public static class Easing
+    {
+        /// <summary>Eased progress for t in 0..1.</summary>
+        public static float Apply(Ease ease, float t)
+        {
+            t = Mathf.Clamp01(t);
+            switch (ease)
+            {
+                case Ease.In: return t * t;
+                case Ease.Out: return 1f - (1f - t) * (1f - t);
+                case Ease.InOut: return t * t * (3f - 2f * t);
+                default: return t;
+            }
+        }
+    }
+
+    [Doc("Which way the player faces.")]
+    public enum FaceDirection
+    {
+        Left,
+        Right,
+    }
+
+    [Doc("What a fade does.")]
+    public enum FadeTo
+    {
+        [Doc("Fades the screen to 'color' (black) and holds it there.")] Black,
+        [Doc("Fades back to the game.")] Clear,
+    }
+
     // ─── Reference markers (checked by the content validator) ─────────────
 
     /// <summary>The string names an entity in content/entities.</summary>

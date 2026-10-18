@@ -476,6 +476,8 @@ namespace SickOfIt.Data.Config
 
         public string rewindHint = "Ouch! Hold R to undo that.";
         public string rewindHintTouch = "Ouch! Hold ◄◄ to undo that.";
+        [Tooltip("Under the HUD's rewind button while a scripted scene has locked rewind (lockRewind).")]
+        public string rewindLocked = "Not now";
 
         [Tooltip("The HUD's floor readout on stages with a floor counter; {0} is the floor number.")]
         public string floorFormat = "FLOOR {0}";
