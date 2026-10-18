@@ -230,9 +230,9 @@
     "seaParallax": 0.9,
     "seaMinOnScreen": 0.06,
     "seaArt": {
-      "sheet": "Art/Climb/FarSea_still.png",
+      "sheet": "Art/Climb/FarSea_loop.png",
       "spriteNameFilter": "",
-      "fps": 1,
+      "fps": 6,
       "scroll": 0.02,
       "color": "#B8786A"
     },

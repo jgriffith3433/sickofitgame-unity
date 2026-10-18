@@ -1,11 +1,11 @@
 {
-  "about": "The art of the climb (Docs/LevelDesign.md). Run: python Tools/Art/climb_art.py Tools/Art/climb/climb.json --src <SickOfItGameEnemies/Generated/climb>. Sources: the chosen Hawkes Gen takes, by piece.",
+  "about": "The art of the climb (Docs/LevelDesign.md, 'The art of the climb'). Each piece's 'gpu' names the Hawkes Gen jobs and assets its sources came from (entity sickofit/the-ember-wastes-climb-kit); download them into <src>/<piece>/ under the file names in its clips (hawkesgen_job save_to), then: python Tools/Art/climb_art.py Tools/Art/climb/climb.json --src <src>. The per-piece jobs beside this file are written by that run (their frame folders are in <src>/_prep).",
   "out": "Assets/Art/Climb",
   "pieces": {
     "stoneMedium": {
       "name": "SinkingStone",
       "about": "sinkingStone: a slab of cooled basalt floating on the lava (medium stone). Fitted so its walkable top is the body's width.",
-      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/medium, take seed 137943702 (asset a_29caf32896e315b9, job j_b6a06faed07d), picked by hawkesgen_entity_judge.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/medium, take seed 137943702 (asset a_29caf32896e315b9, job j_b6a06faed07d), picked by hawkesgen_entity_judge. Sink: video.i2v (Wan 2.2), the stone steaming, start = end = the still, job j_5b8cdabf33c9 (asset a_d9a12acde7d2f53c).",
       "worldWidth": 2.2,
       "body": 0.45,
       "scale": 0.5,
@@ -16,6 +16,12 @@
       "clips": {
         "idle": {
           "image": "still.png"
+        },
+        "sink": {
+          "video": "sink.mp4",
+          "fps": 12,
+          "count": 12,
+          "drop_last": true
         }
       },
       "bodyWidth": 2.0
@@ -23,7 +29,7 @@
     "stoneSmall": {
       "name": "CrumblingStone",
       "about": "crumblingStone: brittle old slag (small stone). Fitted so its walkable top is the body's width.",
-      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/small, take seed 234380667 (asset a_2a9210c05d92f7b1, job j_00672b5bbe13), picked by hawkesgen_entity_judge.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/small, take seed 234380667 (asset a_2a9210c05d92f7b1, job j_00672b5bbe13), picked by hawkesgen_entity_judge. Crack and fall: video.i2v (Wan 2.2), the stone cracking and breaking into falling chunks, from the still, job j_fdfcb0fb32e6 (asset a_e34adbb022d8b453).",
       "worldWidth": 2.2,
       "body": 0.45,
       "scale": 0.5,
@@ -34,6 +40,20 @@
       "clips": {
         "idle": {
           "image": "still.png"
+        },
+        "crack": {
+          "video": "crumble.mp4",
+          "fps": 12,
+          "start": 0,
+          "end": 0.75,
+          "count": 8
+        },
+        "fall": {
+          "video": "crumble.mp4",
+          "fps": 12,
+          "start": 0.75,
+          "end": 2.0,
+          "count": 12
         }
       },
       "bodyWidth": 2.0
@@ -222,7 +242,7 @@
     "lavaEdge": {
       "name": "LavaSurface",
       "about": "The rising lava's surface (lavaSea/lavaRiver surfaceArt strip, horizontal).",
-      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/edge, take seed 417543942 (asset a_7180aafce2c7c3df, job j_dcacd36d5f08), picked by hawkesgen_entity_judge.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/edge, take seed 417543942 (asset a_7180aafce2c7c3df, job j_dcacd36d5f08), picked by hawkesgen_entity_judge. Loop: video.i2v (Wan 2.2), the surface rippling, start = end = the still, job j_582a8dfd2cf8 (asset a_f97ec974eb40abd5).",
       "worldWidth": 3,
       "scale": 0.5,
       "prep": {
@@ -231,15 +251,18 @@
         "wrapShare": 0.15
       },
       "clips": {
-        "still": {
-          "image": "still.png"
+        "loop": {
+          "video": "loop.mp4",
+          "fps": 12,
+          "count": 16,
+          "drop_last": true
         }
       }
     },
     "fall": {
       "name": "LavaFall",
       "about": "A lava fall's curtain (lavaFall art strip, vertical).",
-      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/fall, take seed 797046756 (asset a_271ac055130d78dd, job j_18b182884acc), picked by hawkesgen_entity_judge.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/fall, take seed 797046756 (asset a_271ac055130d78dd, job j_18b182884acc), picked by hawkesgen_entity_judge. Loop: video.i2v (Wan 2.2), the lava pouring, start = end = the still, job j_98df0c3dc009 (asset a_5c56b8d99441c107).",
       "worldWidth": 1,
       "scale": 0.5,
       "prep": {
@@ -247,23 +270,31 @@
         "centre": 0.5
       },
       "clips": {
-        "still": {
-          "image": "still.png"
+        "loop": {
+          "video": "loop.mp4",
+          "fps": 12,
+          "count": 16,
+          "drop_last": true
         }
       }
     },
     "seaStill": {
       "name": "FarSea",
       "about": "The lava sea far below (sky seaArt rows).",
-      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/sea, take seed 317290558 (asset a_9d0a70b55c09870b, job j_2d378d7fade6), picked by hawkesgen_entity_judge.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/sea, take seed 317290558 (asset a_9d0a70b55c09870b, job j_2d378d7fade6), picked by hawkesgen_entity_judge. Loop: video.i2v (Wan 2.2), the sea churning, start = end = the still, job j_867fac013e9a (asset a_94db1caf9f298651).",
       "worldWidth": 6,
-      "scale": 0.5,
+      "scale": 0.6,
       "prep": {
-        "key": "none"
+        "key": "none",
+        "wrap": "x",
+        "wrapShare": 0.1
       },
       "clips": {
-        "still": {
-          "image": "still.png"
+        "loop": {
+          "video": "loop.mp4",
+          "fps": 8,
+          "count": 8,
+          "drop_last": true
         }
       }
     },
@@ -329,6 +360,46 @@
       "clips": {
         "still": {
           "image": "still.png"
+        }
+      }
+    },
+    "geyser": {
+      "name": "Geyser",
+      "about": "The geyser's column (no entity yet: the column is still to build).",
+      "gpu": "image.generate lava/geyser seed 94798034 (asset a_0dd1229efd29751a, job j_6d3e9ee1e611), judged. Loop: video.i2v (Wan 2.2), the column surging, job j_9dcf757d9075 (asset a_16a9eda05f845f03).",
+      "worldWidth": 1.0,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta",
+        "pivot": "bottom"
+      },
+      "clips": {
+        "column": {
+          "video": "loop.mp4",
+          "fps": 12,
+          "count": 12,
+          "drop_last": true
+        }
+      }
+    },
+    "vent": {
+      "name": "Vent",
+      "about": "The geyser's vent and its 1 s tell (no entity yet).",
+      "gpu": "image.generate lava/vent seed 770587693 (asset a_24597f544de498f8, job j_cc7ce3a9c10e), judged. Tell: video.i2v (Wan 2.2), the crack glowing and spitting, 17 frames, job j_6b01d4c61d85 (asset a_6ff291cd43da62d4).",
+      "worldWidth": 1.4,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta",
+        "pivot": "bottom"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        },
+        "tell": {
+          "video": "tell.mp4",
+          "fps": 12,
+          "count": 12
         }
       }
     }

@@ -37,10 +37,10 @@
       "rumbleSound": "magma_rumble",
       "surfaceColor": "#FFC860",
       "surfaceArt": {
-        "sheet": "Art/Climb/LavaSurface_still.png",
+        "sheet": "Art/Climb/LavaSurface_loop.png",
         "spriteNameFilter": "",
-        "fps": 1,
-        "scroll": 0.08,
+        "fps": 12,
+        "scroll": 0.05,
         "color": "#FFFFFF"
       },
       "surfaceHeight": 1.2,

@@ -1,23 +1,31 @@
 {
   "about": "crumblingStone: brittle old slag (small stone). Fitted so its walkable top is the body's width.",
-  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/small, take seed 234380667 (asset a_2a9210c05d92f7b1, job j_00672b5bbe13), picked by hawkesgen_entity_judge.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/small, take seed 234380667 (asset a_2a9210c05d92f7b1, job j_00672b5bbe13), picked by hawkesgen_entity_judge. Crack and fall: video.i2v (Wan 2.2), the stone cracking and breaking into falling chunks, from the still, job j_fdfcb0fb32e6 (asset a_e34adbb022d8b453).",
   "out": "Assets/Art/Climb",
   "name": "CrumblingStone",
   "key": "none",
   "size": [
-    635,
-    311
+    1024,
+    465
   ],
   "pivot": [
-    317.0,
-    78.9
+    506.0,
+    140.6
   ],
-  "worldWidth": 2.075,
-  "widthPixels": 635,
+  "worldWidth": 3.357,
+  "widthPixels": 1024,
   "scale": 0.5,
   "clips": {
     "idle": {
       "frames": "/tmp/climbart/src/_prep/stoneSmall/idle",
+      "key": "none"
+    },
+    "crack": {
+      "frames": "/tmp/climbart/src/_prep/stoneSmall/crack",
+      "key": "none"
+    },
+    "fall": {
+      "frames": "/tmp/climbart/src/_prep/stoneSmall/fall",
       "key": "none"
     }
   }

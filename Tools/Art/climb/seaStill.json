@@ -1,23 +1,23 @@
 {
   "about": "The lava sea far below (sky seaArt rows).",
-  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/sea, take seed 317290558 (asset a_9d0a70b55c09870b, job j_2d378d7fade6), picked by hawkesgen_entity_judge.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/sea, take seed 317290558 (asset a_9d0a70b55c09870b, job j_2d378d7fade6), picked by hawkesgen_entity_judge. Loop: video.i2v (Wan 2.2), the sea churning, start = end = the still, job j_867fac013e9a (asset a_94db1caf9f298651).",
   "out": "Assets/Art/Climb",
   "name": "FarSea",
   "key": "none",
   "size": [
-    1536,
-    768
+    749,
+    416
   ],
   "pivot": [
-    768.0,
-    384.0
+    374.5,
+    208.0
   ],
   "worldWidth": 6,
-  "widthPixels": 1536,
-  "scale": 0.5,
+  "widthPixels": 749,
+  "scale": 0.6,
   "clips": {
-    "still": {
-      "frames": "/tmp/climbart/src/_prep/seaStill/still",
+    "loop": {
+      "frames": "/tmp/climbart/src/_prep/seaStill/loop",
       "key": "none"
     }
   }

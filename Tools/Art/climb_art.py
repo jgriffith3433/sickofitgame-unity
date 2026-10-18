@@ -148,7 +148,7 @@ def prep(piece, spec, src, out_dir):
             else:
                 rgba = np.dstack([rgb, np.full(rgb.shape[:2], 255, np.uint8)])
             frames.append(rgba)
-            if key != "none" and p.get("trim", True):
+            if key != "none" and p.get("trim", True) and (rgba[..., 3] > 10).any():
                 b = trim_box(rgba[..., 3], p.get("pad", 4))
                 box = b if box is None else (min(box[0], b[0]), min(box[1], b[1]), max(box[2], b[2]), max(box[3], b[3]))
         keyed[clip] = frames

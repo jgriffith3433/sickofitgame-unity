@@ -24,7 +24,13 @@
     "hurtFlash": false,
     "deathPop": false,
     "animator": {
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "Sinking",
+          "type": "Bool",
+          "defaultValue": 0
+        }
+      ],
       "states": [
         {
           "stateName": "Idle",
@@ -32,9 +38,43 @@
           "fps": 12,
           "loop": true,
           "events": []
+        },
+        {
+          "stateName": "Sink",
+          "spriteSheet": "Art/Climb/SinkingStone_sink.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
         }
       ],
-      "transitions": [],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Sink",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Sinking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Sink",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Sinking",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        }
+      ],
       "defaultStateName": "Idle"
     },
     "color": "#FFFFFF",

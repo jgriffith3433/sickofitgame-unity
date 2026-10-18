@@ -1,23 +1,27 @@
 {
   "about": "sinkingStone: a slab of cooled basalt floating on the lava (medium stone). Fitted so its walkable top is the body's width.",
-  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/medium, take seed 137943702 (asset a_29caf32896e315b9, job j_b6a06faed07d), picked by hawkesgen_entity_judge.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/medium, take seed 137943702 (asset a_29caf32896e315b9, job j_b6a06faed07d), picked by hawkesgen_entity_judge. Sink: video.i2v (Wan 2.2), the stone steaming, start = end = the still, job j_5b8cdabf33c9 (asset a_d9a12acde7d2f53c).",
   "out": "Assets/Art/Climb",
   "name": "SinkingStone",
   "key": "none",
   "size": [
-    935,
-    280
+    972,
+    281
   ],
   "pivot": [
-    422.5,
+    459.5,
     204.6
   ],
-  "worldWidth": 2.272,
-  "widthPixels": 935,
+  "worldWidth": 2.362,
+  "widthPixels": 972,
   "scale": 0.5,
   "clips": {
     "idle": {
       "frames": "/tmp/climbart/src/_prep/stoneMedium/idle",
+      "key": "none"
+    },
+    "sink": {
+      "frames": "/tmp/climbart/src/_prep/stoneMedium/sink",
       "key": "none"
     }
   }
