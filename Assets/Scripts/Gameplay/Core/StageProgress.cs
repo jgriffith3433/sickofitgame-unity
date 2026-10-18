@@ -81,12 +81,16 @@ namespace SickOfIt.Gameplay
                 if (climbed > floorsFromDistance)
                 {
                     int current = Floor;
-                    int next = current - (climbed - floorsFromDistance);
+                    // A repeated floor (floors.repeat) takes two floors' distance and keeps its number.
+                    int next = current - (floors.FloorAfter(floorsFromDistance) - floors.FloorAfter(climbed));
                     // Travel alone never goes past the stage's last floor; actions still can.
                     if (floors.end > 0 && current >= floors.end)
                         next = Mathf.Max(next, floors.end);
                     floorsFromDistance = climbed;
-                    world.SetCounter(FloorCounter, next);
+                    if (next != current)
+                        world.SetCounter(FloorCounter, next);
+                    else
+                        world.Telemetry.Record("floorRepeat", world.LevelName, current);
                 }
             }
 

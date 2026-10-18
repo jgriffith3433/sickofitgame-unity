@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "body": {
+    "radius": 0.4,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.6,
+    "color": "#FF7A2A",
+    "layer": "Background2",
+    "sortingOrder": 2,
+    "hurtFlash": false,
+    "animator": {
+      "states": [
+        {
+          "stateName": "Charge",
+          "spriteSheet": "Art/Effects/Beam/Beam_charge.png",
+          "fps": 12,
+          "loop": false
+        }
+      ],
+      "defaultStateName": "Charge"
+    }
+  },
+  "healthBar": {
+    "show": false
+  },
+  "onSpawn": [
+    {
+      "type": "playSound",
+      "sound": "lava_bubble"
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "fireball",
+      "anchor": "Self",
+      "at": [
+        0.0,
+        0.2
+      ],
+      "velocity": [
+        -0.9,
+        4.2
+      ],
+      "facePlayer": false
+    },
+    {
+      "type": "spawn",
+      "entity": "fireball",
+      "anchor": "Self",
+      "at": [
+        0.0,
+        0.2
+      ],
+      "velocity": [
+        0.0,
+        4.8
+      ],
+      "facePlayer": false
+    },
+    {
+      "type": "spawn",
+      "entity": "fireball",
+      "anchor": "Self",
+      "at": [
+        0.0,
+        0.2
+      ],
+      "velocity": [
+        0.9,
+        4.2
+      ],
+      "facePlayer": false
+    },
+    {
+      "type": "playSound",
+      "sound": "lava_burst"
+    },
+    {
+      "type": "cameraShake",
+      "intensity": 0.08,
+      "duration": 0.2
+    }
+  ],
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 1.3
+    }
+  ]
+}

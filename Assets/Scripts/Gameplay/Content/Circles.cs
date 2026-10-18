@@ -171,6 +171,44 @@ namespace SickOfIt.Gameplay.Content
         [CircleRef, Doc("The Circle of Hell (content/circles) the stage is in: track, props, backdrop, generated floors and milestone lines.")]
         public string circle = "";
         [Doc("Paint floor numbers into the world as signs on travel stages.")] public bool signs = true;
+        [Doc("Travel stages: words carved on a big sign at the start of the stage (the place's own sign, e.g. \"IMPS ONLY\"). '' = none.")]
+        public string sign = "";
+        [Doc("Floors Hell makes the hero walk twice (The Loop): each one takes two floors' distance, its number stays on the counter " +
+             "and two signs show it. Add unitsPerFloor per repeat to travelLength.")]
+        public List<int> repeat = new List<int>();
+
+        /// <summary>The floor the counter shows after travelling 'steps' floors' distance from the start (repeats counted).</summary>
+        public int FloorAfter(int steps)
+        {
+            int floor = start, shown = 1;
+            for (int k = 1; k <= steps; k++)
+            {
+                if (repeat != null && repeat.Contains(floor) && shown < 2)
+                {
+                    shown++;
+                }
+                else
+                {
+                    floor--;
+                    shown = 1;
+                }
+            }
+            return floor;
+        }
+
+        /// <summary>Floors' distance from start to end, repeats included (the travelLength a stage needs, over unitsPerFloor).</summary>
+        public int Steps => start > 0 && end > 0 && end < start ? start - end + RepeatsBetween() : 0;
+
+        int RepeatsBetween()
+        {
+            int count = 0;
+            if (repeat == null)
+                return 0;
+            foreach (int f in repeat)
+                if (f <= start && f > end)
+                    count++;
+            return count;
+        }
     }
 
     [Doc("Which way a travel stage goes.")]

@@ -1160,7 +1160,8 @@ namespace SickOfIt.Core.Progression
             CommitCompletion();
 
             // The Shaft (Hell's map) comes up between a cleared level and whatever is next.
-            ShaftHook.Run(new ShaftStop { Kind = ShaftStopKind.AfterLevel, Level = levelNumber, NextVideo = Mathf.Max(0, config.nextVideoNumber) },
+            ShaftHook.Run(new ShaftStop { Kind = ShaftStopKind.AfterLevel, Level = levelNumber, NextVideo = Mathf.Max(0, config.nextVideoNumber),
+                    NextLevel = config.nextVideoNumber > 0 ? 0 : NextLevel() },
                 LoadWhatComesNext);
         }
 
@@ -1181,10 +1182,28 @@ namespace SickOfIt.Core.Progression
                 PlayerPrefs.Save();
                 SceneTransitionManager.Instance.LoadVideo(config.nextVideoNumber);
             }
+            else if (NextLevel() > 0)
+            {
+                SceneTransitionManager.Instance.LoadLevel(NextLevel());
+            }
             else
             {
                 SceneTransitionManager.Instance.LoadLevelSelection();
             }
+        }
+
+        /// <summary>The level this one leads straight on to (nextLevelNumber), if it exists; else 0.</summary>
+        private int NextLevel()
+        {
+            int next = config != null ? config.nextLevelNumber : 0;
+            if (next <= 0)
+                return 0;
+            if (gameDefinition == null || next > gameDefinition.TotalLevels)
+            {
+                Debug.LogWarning($"[LevelRuntime] nextLevelNumber {next} is not in game.json's levels. Going to the level select.");
+                return 0;
+            }
+            return next;
         }
 
         #endregion

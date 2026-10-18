@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "extends": "imp",
+  "health": 4,
+  "tags": ["imp", "impSack"],
+  "body": {
+    "radius": 1.0,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.33,
+    "color": "#FFE0A8"
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.25
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 1.7,
+      "distance": 1.3,
+      "pause": 0.25
+    },
+    {
+      "type": "react",
+      "when": { "type": "healthBelow", "amount": 4 },
+      "maxTimes": 1,
+      "do": [
+        { "type": "spawn", "entity": "diamond", "anchor": "Self", "at": [-0.25, 0.1], "facePlayer": false },
+        { "type": "playSound", "sound": "sack_spill" }
+      ]
+    },
+    {
+      "type": "react",
+      "when": { "type": "healthBelow", "amount": 3 },
+      "maxTimes": 1,
+      "do": [
+        { "type": "spawn", "entity": "diamond", "anchor": "Self", "at": [0.25, 0.1], "facePlayer": false },
+        { "type": "playSound", "sound": "sack_spill" }
+      ]
+    },
+    {
+      "type": "react",
+      "when": { "type": "healthBelow", "amount": 2 },
+      "maxTimes": 1,
+      "do": [
+        { "type": "spawn", "entity": "diamond", "anchor": "Self", "at": [0.0, 0.25], "facePlayer": false },
+        { "type": "playSound", "sound": "sack_spill" }
+      ]
+    }
+  ]
+}

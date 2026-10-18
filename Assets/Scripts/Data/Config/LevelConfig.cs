@@ -81,6 +81,9 @@ namespace SickOfIt.Data.Config
         public float completionDelay = 2f;
         [Tooltip("Video number to play after completing this level (0 = go to level select)")]
         public int nextVideoNumber;
+        [Tooltip("Level (position in game.json's levels) to play next, straight after the Shaft, when there is no next video " +
+                 "(0 = go to level select). Story stages in a row: The Spill leads on to Imp Run.")]
+        public int nextLevelNumber;
         [Tooltip("If true, completing this level returns to main menu instead of continuing")]
         public bool returnToMainMenuOnComplete;
 

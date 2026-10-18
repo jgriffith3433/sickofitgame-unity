@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level4",
+  "displayName": "Floors 980-971: Imp Run",
+  "levelNumber": 4,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Videos/Level3_Background2_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "deathConfigName": "Death1",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 5,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 90,
+    "floors": {
+      "start": 980,
+      "end": 971,
+      "unitsPerFloor": 3.0,
+      "circle": "emberWastes",
+      "signs": true,
+      "sign": "IMPS ONLY"
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true,
+      "props": [
+        {
+          "name": "dropped sacks",
+          "shape": "Rock",
+          "color": "#6B4A2A",
+          "size": [0.5, 0.42],
+          "sizeVariation": 0.2,
+          "across": -2.5,
+          "parallax": 0.0,
+          "spacing": 4.0,
+          "chance": 0.45,
+          "layer": "Background2",
+          "sortingOrder": 6
+        },
+        {
+          "name": "scuffed tracks",
+          "shape": "Glow",
+          "color": "#FF6A1F55",
+          "size": [1.2, 0.18],
+          "sizeVariation": 0.3,
+          "across": -2.76,
+          "parallax": 0.0,
+          "spacing": 2.5,
+          "chance": 0.6,
+          "layer": "Player",
+          "sortingOrder": -17
+        }
+      ]
+    },
+    "markers": [
+      {
+        "floor": 979,
+        "label": "SACKS"
+      },
+      {
+        "floor": 976,
+        "label": "BREATHER"
+      },
+      {
+        "floor": 972,
+        "label": "THE TOP"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "phases": [
+      {
+        "name": "run",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 980-971: IMP RUN",
+            "duration": 2.5,
+            "sound": "vo_imprun_title",
+            "color": "#FFD27A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "quiet start over",
+            "when": {
+              "type": "after",
+              "seconds": 5.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "firstSack"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "firstSack",
+        "onEnter": [
+          {
+            "type": "spawn",
+            "entity": "impSack",
+            "anchor": "Camera",
+            "at": [3.2, -1.4],
+            "tags": ["beat"]
+          },
+          {
+            "type": "showText",
+            "text": "Those are ours.",
+            "duration": 2.5,
+            "sound": "vo_imprun_ours",
+            "style": "Subtitle"
+          }
+        ],
+        "rules": [
+          {
+            "name": "sack imp down",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "beat"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 976,
+            "firstBreather": 3.0,
+            "seed": 1
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "haul"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "haul",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "One less sack for his gate.",
+            "duration": 3.0,
+            "sound": "vo_imprun_sack",
+            "style": "Subtitle"
+          }
+        ],
+        "rules": [
+          {
+            "name": "breather over",
+            "when": {
+              "type": "after",
+              "seconds": 5.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "climb2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb2",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 972,
+            "firstBreather": 3.0,
+            "seed": 2
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "top"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "rules": [
+          {
+            "name": "stage clear",
+            "when": {
+              "type": "floorReached",
+              "floor": 971
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "lockTravel"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "IMP RUN: SURVIVED",
+                    "duration": 2.0,
+                    "sound": "vo_imprun_clear",
+                    "color": "#FF9A5C"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
