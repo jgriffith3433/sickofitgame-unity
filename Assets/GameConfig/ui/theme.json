@@ -630,7 +630,8 @@
     "shaftUnknownWarden": "???",
     "shaftWelcome": "WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO.",
     "shaftHero": "...Great.",
-    "shaftSkipHint": "Tap to skip"
+    "shaftSkipHint": "Tap to skip",
+    "shaftVisitGloob": "Visit Gloob"
   },
   "grades": [
     {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -9,10 +10,12 @@ using SickOfIt.Data.Config;
 namespace SickOfIt.Core.Progression
 {
     /// <summary>
-    /// Manages the Upgrade Shop scene where players spend diamonds on permanent upgrades. A card per upgrade in the
-    /// catalog (player.availableUpgrades, else upgradeShopConfig.upgrades), built at runtime from
-    /// upgradeShopConfig.layout and ui/theme.json. Click a card to buy its next level. Gloob keeps the shop
-    /// (Docs/Story.md, "Gloob between floors"): his portrait and lines (welcome, buy, can't afford, leave) from ui/gloob.json.
+    /// Gloob's shop, where the hero spends diamonds on permanent upgrades: its own scene from the main menu, and
+    /// opened over the Shaft by its Visit Gloob button (<see cref="OpenOverShaft"/>; Back closes it and the Shaft
+    /// carries on to the next level). A card per upgrade in the catalog (player.availableUpgrades, else
+    /// upgradeShopConfig.upgrades), built at runtime from upgradeShopConfig.layout and ui/theme.json. Click a card to
+    /// buy its next level. Gloob keeps the shop (Docs/Story.md, "Gloob between floors"): his portrait and lines
+    /// (welcome, buy, can't afford, leave) from ui/gloob.json.
     /// </summary>
     public class UpgradeShopManager : MonoBehaviour
     {
@@ -25,16 +28,58 @@ namespace SickOfIt.Core.Progression
         private GloobPortrait gloob;
         private TextMeshProUGUI gloobSubtitle;
         private Coroutine gloobTalk;
+        private bool built;
+        private MenuButton backButton;
+
+        /// <summary>Back (for the playtest's virtual mouse).</summary>
+        public MenuButton BackButton => backButton;
+        private bool overlay;
+        private Action closed;
+
+        /// <summary>Gloob's shop open over the Shaft, or null.</summary>
+        public static UpgradeShopManager OverShaft { get; private set; }
+
+        /// <summary>Opened over the Shaft (Back closes it instead of loading the main menu).</summary>
+        public bool IsOverlay => overlay;
 
         /// <summary>Gloob behind the counter, or null (off in ui/gloob.json).</summary>
         public GloobPortrait Gloob => gloob;
         public string GloobSubtitle => gloobSubtitle != null && gloobSubtitle.transform.parent.gameObject.activeSelf ? gloobSubtitle.text : "";
 
-        private void Start()
+        /// <summary>
+        /// Gloob's shop over the Shaft (its Visit Gloob button): built at once on its own canvas above the Shaft's,
+        /// with no scene load, so leaving puts the Shaft back where it was. <paramref name="onClosed"/> runs on Back.
+        /// </summary>
+        public static UpgradeShopManager OpenOverShaft(Action onClosed)
         {
+            if (OverShaft != null)
+                OverShaft.CloseOverlay(false);
+            var go = new GameObject("GloobShop");
+            DontDestroyOnLoad(go);
+            var shop = go.AddComponent<UpgradeShopManager>();
+            shop.overlay = true;
+            shop.closed = onClosed;
+            OverShaft = shop;
+            shop.Build();
+            return shop;
+        }
+
+        private void Start() => Build();
+
+        private void Build()
+        {
+            if (built)
+                return;
+            built = true;
             var gd = GameDefinition.Instance;
             config = gd != null ? gd.upgradeShopConfig : new UpgradeShopConfig();
-            menu = MenuCanvas.Create("UpgradeShopUI", gd != null ? gd.menuTheme : null, config.layout, gameObject);
+            menu = MenuCanvas.Create("UpgradeShopUI", gd != null ? gd.menuTheme : null, config.layout, overlay ? null : gameObject);
+            if (overlay)
+            {
+                // Above the Shaft (60), and gone with this object.
+                menu.GetComponent<Canvas>().sortingOrder = 70;
+                menu.transform.SetParent(transform, false);
+            }
             var list = menu.AddList(config.layout.list, menu.Theme.card.size);
 
             foreach (var upgrade in RogueliteManager.ShopCatalog)
@@ -55,7 +100,7 @@ namespace SickOfIt.Core.Progression
             healthChip = menu.AddChip("");
             pointsChip = menu.AddChip("", menu.Theme.accent);
 
-            menu.AddBackButton(OnBackClicked);
+            backButton = menu.AddBackButton(OnBackClicked);
             // A testing aid: only in the editor and development builds.
             if (config.showDebugAddPoints && (Application.isEditor || Debug.isDebugBuild))
             {
@@ -190,8 +235,33 @@ namespace SickOfIt.Core.Progression
                     GloobPortrait.Announce("line", $"gloob ({line.moment}): {line.text} ({line.sound}{(SickOfIt.Core.Audio.Sfx.Has(line.sound) ? "" : ", no clip")})");
                 }
             }
+            if (overlay)
+            {
+                CloseOverlay(true);
+                return;
+            }
             SceneLoadingManager.ShowLoadingUI();
             SceneTransitionManager.Instance.LoadMainMenu();
+        }
+
+        /// <summary>Takes the shop off the Shaft (and tells the Shaft, when 'notify').</summary>
+        public void CloseOverlay(bool notify)
+        {
+            if (!overlay)
+                return;
+            var then = notify ? closed : null;
+            closed = null;
+            if (OverShaft == this)
+                OverShaft = null;
+            if (this != null)
+                Destroy(gameObject);
+            then?.Invoke();
+        }
+
+        private void OnDestroy()
+        {
+            if (OverShaft == this)
+                OverShaft = null;
         }
 
         private void OnAddPointsDebugClicked()

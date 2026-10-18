@@ -502,6 +502,8 @@ namespace SickOfIt.Data.Config
         public string shaftHero = "...Great.";
         [Tooltip("Small hint while the climb can be skipped.")]
         public string shaftSkipHint = "Tap to skip";
+        [Tooltip("The Shaft's button to Gloob's shop (Docs/Story.md, \"Gloob between floors\").")]
+        public string shaftVisitGloob = "Visit Gloob";
     }
 
     /// <summary>The shared look of every menu: fonts, text styles, buttons, cards, motion.</summary>

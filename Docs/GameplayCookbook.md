@@ -287,10 +287,15 @@ comedic text beats (`showText` banners and subtitles, boss intros, upgrade descr
   drops `value` pickups of `loot.entity` (empty = `diamond`, content/entities/diamond.json: bobs, magnets toward the
   player, lasts 10 s, pays +1 diamond once even across rewinds). Diamonds are kept across New Game.
 - **Shop upgrades** (permanent until New Game) are `player.json` `availableUpgrades`:
-  `{ "id": "moreHealth", "title": "More health, duh", "description": "...", "costsPerLevel": [10, 20, 35],
+  `{ "id": "moreHealth", "title": "Goo Plaster", "description": "...", "costsPerLevel": [10, 20, 35],
   "maxLevel": 3, "effect": "MaxHealth", "amountPerLevel": 1 }`. Effects: MaxHealth (+HP, also tops up carried health),
   ExtraJump (+air jumps), MoveSpeed / FireRate / Damage (+fraction, 0.1 = +10%), RewindJuice (+seconds), Magnet (+pickup
   range). No code needed for a new one; the shop lays out a card per entry.
+- **The shop is Gloob's** (Docs/Story.md, "Gloob between floors": titles are things a village slime makes from
+  diamonds and his stomach). It opens from the main menu (its own scene) and from every Shaft once Gloob has met the
+  hero: **Visit Gloob** beside Continue (`ui/shaft.json` `gloobButton`/`continueBesideGloob` and their portrait
+  placements, text `shaftVisitGloob`) builds the same shop over the Shaft (`UpgradeShopManager.OpenOverShaft`, no
+  scene load); its Back closes it and the Shaft's Continue goes on to the next level.
 - Between-level picks (content/upgrades) are separate: bigger, run-long boosts offered at the end of each level.
 
 ## Status effects (poison, slow, stun, shield)
