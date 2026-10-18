@@ -120,6 +120,9 @@ namespace SickOfIt.Playtest
         public const int ShaftLevel = 2;
         const float ShaftSeconds = 480f;
         const float GloobSeconds = 300f;
+        /// <summary>The waystone scenario: the stage the bot clears first (The Spill, for a Grudge), then dies on the next one.</summary>
+        public const int WaystoneLevel = 3;
+        const float WaystoneSeconds = 480f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void Register()
@@ -213,6 +216,14 @@ namespace SickOfIt.Playtest
                 "slime-made goods; a card clicked with 0 diamonds (can't afford), then with its price (bought: diamonds spent, level saved); Back (goodbye) " +
                 "returns to the Shaft and Continue starts Level 3 with the goods applied; the main menu's Visit Gloob shows them still bought; a climb " +
                 "between floors (preview) shows Visit Gloob again. Each beat is a check event", 240, "menus"));
+            list.Add(new PlaytestScenario("waystone", "Waystones and runs: a save where the Landing was cleared (setup shortcut: the Landing's Waystone, " +
+                $"Gloob met, diamonds, one of Gloob's goods bought), then level {WaystoneLevel} (The Spill) loaded directly and played by the bot, its Grudge " +
+                "picked with 1, the results, the Shaft's climb and Continue to the next stage, where the bot plays to lose (walks into the shots, no " +
+                "dodging, firing or rewinding) until Hell kills it: the death screen (\"YOU OBVIOUSLY DIED\", the announcer gloating with a voice), then " +
+                "the Shaft drops the hero's marker from the floor he died on back to the Waystone at FLOOR 1,000 with the Waystones marked on the map, " +
+                "the first death's voiced line (\"Hell doesn't let you die. It lets you do it again.\") and the hero's answer, not skippable; the Grudges " +
+                "are gone, the diamonds and Gloob's goods kept; Continue restarts the run at Level 2 (The Landing); then the main menu offers Continue " +
+                "(the current run) and New Run (from the Waystone), and New Run starts Level 2 again. Each beat is a check event", WaystoneSeconds, "full"));
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, Gloob's shop and settings (Sound off/on, Music -/+) each open and close, " +
                 "then the Shaft (a preview over the menu, setup shortcut, Gloob met) opens, its layout is checked, Visit Gloob opens his shop over it, " +
                 "Back returns to the Shaft and Continue closes it", 150, "menus"));
@@ -274,6 +285,8 @@ namespace SickOfIt.Playtest
                 yield return session.GloobRun();
             else if (id == "gloob-shop")
                 yield return session.GloobShopRun();
+            else if (id == "waystone")
+                yield return session.WaystoneRun();
             else if (id == "wastes-climb")
                 yield return session.WastesClimb();
             else if (id == "menus")
@@ -2428,9 +2441,24 @@ namespace SickOfIt.Playtest
             {
                 float end = Time.realtimeSinceStartup + 90f;
                 bool shortcut = false;
+                bool dropped = false;
                 float videoSeenAt = -1f;
                 while (!Run.Done && !LevelRunning(n))
                 {
+                    var restarted = GameplayWorld.Instance;
+                    if (dropped && restarted != null && restarted.LevelNumber != n && LevelRunning(restarted.LevelNumber))
+                    {
+                        // A death on a floor stage ended the run and it restarted at the Waystone (the waystone scenario
+                        // checks that); this scenario retries level n, so it opens it directly.
+                        dropped = false;
+                        Run.Event("shortcut", $"the run restarted at the Waystone on level {restarted.LevelNumber}; loading level {n} directly to retry it");
+                        restarted.Telemetry?.Finish("playtest left");
+                        var retry = LoadLevel(n);
+                        if (retry != null)
+                            yield return retry;
+                        yield return null;
+                        continue;
+                    }
                     if (Time.realtimeSinceStartup > end)
                     {
                         Run.Problem(PlaytestSeverity.Bug, $"never reached level {n} (stuck in {SceneName()})");
@@ -2440,6 +2468,8 @@ namespace SickOfIt.Playtest
                     if (ShaftScreen.Current != null)
                     {
                         // Hell's map between a video or level and the next: watch it, then Continue like a player.
+                        if (ShaftScreen.Current.Kind == ShaftScreen.Mode.Drop)
+                            dropped = true;
                         if (!ShaftScreen.Current.Continued)
                             yield return PassShaft();
                         else
@@ -3335,6 +3365,249 @@ namespace SickOfIt.Playtest
                 End(shaftFailed > 0 ? PlaytestOutcome.Done : lastOutcome == "completed" ? PlaytestOutcome.Won : PlaytestOutcome.Lost);
             }
 
+            // ─── waystone: a death ends the run, the drop back to the Waystone, the menu's Continue / New Run ─────
+
+            int waystonePassed, waystoneFailed;
+
+            void WaystoneCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    waystonePassed++;
+                    Run.Event("check", $"waystone {beat}: ok ({detail})");
+                }
+                else
+                {
+                    waystoneFailed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"waystone {beat}: {detail}");
+                }
+                Run.Metric("waystone.passed", waystonePassed);
+                Run.Metric("waystone.failed", waystoneFailed);
+            }
+
+            static int GrudgeCount()
+            {
+                int count = 0;
+                foreach (var pair in UpgradeProgress.Owned())
+                    count += pair.Value;
+                return count;
+            }
+
+            static string GrudgeList()
+            {
+                var parts = new List<string>();
+                foreach (var pair in UpgradeProgress.Owned())
+                    parts.Add($"{pair.Key} {pair.Value}");
+                return parts.Count > 0 ? string.Join(", ", parts) : "none";
+            }
+
+            /// <summary>
+            /// Waystones and runs (Docs/Story.md): the bot clears The Spill (a Grudge picked through real input), climbs on,
+            /// then plays to lose on the next stage; the death screen; the Shaft's drop back to the Landing's Waystone with
+            /// the first death's lines; Grudges gone, diamonds and Gloob's goods kept; the run restarting at the Landing;
+            /// the main menu's Continue and New Run.
+            /// </summary>
+            public IEnumerator WaystoneRun()
+            {
+                var definition = GameDefinition.Instance;
+                var labels = definition.mainMenuConfig.labels;
+                var texts = definition.menuTheme.texts;
+                var roguelite = RogueliteManager.Instance;
+                var progress = GameProgressManager.Instance;
+                int waystone = definition.shaft != null ? definition.shaft.bottomFloor : LandingFirstFloor;
+                float deadline = Time.realtimeSinceStartup + WaystoneSeconds - 60f;
+
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+
+                // Setup: a save where the Landing was played, Gloob met, and something bought from him.
+                roguelite.ResetAllRogueliteData();
+                progress.InitializeNewPlayer();
+                progress.SetLevelCompleted(1);
+                progress.SetLevelCompleted(LandingLevel);
+                ShaftProgress.Floor = LandingLastFloor;
+                ShaftProgress.Plunged = true;
+                GloobProgress.Met = true;
+                WaystoneProgress.Reach(waystone);
+                SickOfIt.Data.Config.UpgradeDefinition goods = null;
+                foreach (var upgrade in RogueliteManager.ShopCatalog)
+                    if (upgrade != null && upgrade.Effect != SickOfIt.Data.Config.ShopEffect.None && upgrade.Effect != SickOfIt.Data.Config.ShopEffect.MaxHealth
+                        && roguelite.GetNextCost(upgrade) > 0) { goods = upgrade; break; }
+                if (goods != null)
+                {
+                    roguelite.SetPoints(roguelite.GetNextCost(goods) + 40);
+                    roguelite.TryPurchase(goods);
+                }
+                else
+                    roguelite.SetPoints(40);
+                Run.Event("shortcut", $"fresh save as if the Landing was cleared: the Waystone on FLOOR {waystone} reached, the Shaft's marker at " +
+                                      $"{LandingLastFloor}, Gloob met, {(goods != null ? goods.title + " bought from Gloob, " : "")}{roguelite.GetPoints()} diamonds left");
+                Run.Progress(0.03f);
+
+                // 1. The Spill, played to its end: diamonds, its Grudge pick (the bot presses 1), the results, the climb.
+                Run.Event("shortcut", $"load level {WaystoneLevel} directly");
+                var load = LoadLevel(WaystoneLevel);
+                if (load != null)
+                    yield return load;
+                yield return PlayLevel(WaystoneLevel, 0f, null, 0.03f, 0.35f, Mathf.Max(30f, deadline - Time.realtimeSinceStartup - 150f), waitOutDeath: true);
+                if (Run.Done) yield break;
+                int deathLevel = WaystoneLevel;
+                if (lastOutcome == "completed")
+                {
+                    var cleared = definition.GetLevel(WaystoneLevel);
+                    int next = cleared != null && cleared.nextLevelNumber > 0 ? cleared.nextLevelNumber : WaystoneLevel + 1;
+                    yield return Run.Until(() => GameplayWorld.Instance == null || GameplayWorld.Instance.Hud == null || GameplayWorld.Instance.Hud.ResultsOpen,
+                        30f, $"the level {WaystoneLevel} results screen");
+                    if (Run.Done) yield break;
+                    if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
+                        yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
+                    if (Run.Done) yield break;
+                    yield return ReachLevel(next);
+                    if (Run.Done) yield break;
+                    deathLevel = next;
+                }
+                else if (lastOutcome != "died")
+                {
+                    Run.Event("stopped", $"level {WaystoneLevel}: {lastOutcome}");
+                    End(PlaytestOutcome.Stuck);
+                    yield break;
+                }
+                WaystoneCheck("grudgePicked", GrudgeCount() > 0 || lastOutcome == "died", $"Grudges before the death: {GrudgeList()}");
+                if (lastOutcome == "completed" && GrudgeCount() == 0)
+                {
+                    // The Spill was cleared without a pick: one Grudge is given so its loss can be seen.
+                    foreach (var id in GameContent.Current.Upgrades.Keys)
+                    {
+                        UpgradeProgress.Add(id);
+                        Run.Event("shortcut", $"Grudge {id} given (no pick was made on level {WaystoneLevel})");
+                        break;
+                    }
+                }
+                Run.Progress(0.4f);
+
+                // 2. The next stage (or The Spill again, if the bot died on it): the bot plays to lose until Hell kills it.
+                int grudges = GrudgeCount();
+                string grudgeList = GrudgeList();
+                int goodsLevel = goods != null ? roguelite.GetUpgradeLevel(goods.id) : 0;
+                int diamonds = roguelite.GetPoints();
+                if (lastOutcome != "died")
+                {
+                    reckless = true;
+                    try
+                    {
+                        yield return PlayLevel(deathLevel, 0f, now =>
+                        {
+                            diamonds = roguelite.GetPoints();
+                            return null;
+                        }, 0.4f, 0.6f, Mathf.Max(30f, deadline - Time.realtimeSinceStartup - 90f), waitOutDeath: true);
+                    }
+                    finally
+                    {
+                        reckless = false;
+                    }
+                    if (Run.Done) yield break;
+                }
+                Run.Event("before-death", $"level {deathLevel}: Grudges {grudgeList}; {diamonds} diamonds; {(goods != null ? $"{goods.title} level {goodsLevel}" : "no goods")}");
+                if (lastOutcome != "died")
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"waystone: the bot couldn't die on level {deathLevel} ({lastOutcome})");
+                    End(PlaytestOutcome.Done);
+                    yield break;
+                }
+
+                // 3. The death screen: "YOU OBVIOUSLY DIED" and the announcer gloating.
+                yield return Run.Until(() => DeathRuntime.Current != null, 30f, "the death screen");
+                if (Run.Done) yield break;
+                Run.Scene("Death");
+                var death = DeathRuntime.Current;
+                yield return WaitReal(4f);
+                if (Run.Done) yield break;
+                if (death != null)
+                {
+                    WaystoneCheck("deathScreen", death.TitleText.IndexOf("Obviously", StringComparison.OrdinalIgnoreCase) >= 0, $"title \"{death.TitleText}\"");
+                    var gloat = death.Gloat;
+                    WaystoneCheck("deathGloat", gloat != null && Sfx.Has(gloat.sound),
+                        gloat != null ? $"the announcer: \"{gloat.text}\" ({gloat.sound}{(Sfx.Has(gloat.sound) ? "" : ", no clip")})" : "no gloat line");
+                    WaystoneCheck("runEnded", death.RunEnded && death.RunStop.Waystone == waystone && death.RunStop.NextLevel == LandingLevel,
+                        death.RunEnded ? $"died on level {death.RunStop.Level} at FLOOR {death.RunStop.FromFloor}: back to the Waystone on FLOOR {death.RunStop.Waystone}, next run level {death.RunStop.NextLevel}"
+                            : $"the death on level {deathLevel} didn't end the run");
+                }
+                yield return Tap(Key.Escape);
+                Run.Event("skip", "death animation");
+                Run.Progress(0.65f);
+
+                // 4. The Shaft: the marker drops back to the Waystone; Grudges gone, diamonds and goods kept.
+                yield return Run.Until(() => ShaftScreen.Current != null || GameplayWorld.Instance != null, 30f, "the Shaft after the death");
+                if (Run.Done) yield break;
+                var screen = ShaftScreen.Current;
+                ShaftScreen.LevelFloors(deathLevel, out int start, out int end);
+                WaystoneCheck("dropOpens", screen != null && screen.Kind == ShaftScreen.Mode.Drop && screen.ToFloor == waystone && screen.FromFloor <= start && screen.FromFloor >= end,
+                    screen == null ? "no Shaft after the death screen (the level played again?)"
+                        : $"{screen.Kind} from FLOOR {screen.FromFloor} to FLOOR {screen.ToFloor} (died on level {deathLevel}, floors {start}-{end}; the Waystone is {waystone})");
+                if (screen == null) { End(PlaytestOutcome.Lost); yield break; }
+                WaystoneCheck("waystonesOnShaft", screen.WaystonesShown >= 2 && screen.WaystonesLit >= 1,
+                    $"{screen.WaystonesShown} Waystones marked on the map, {screen.WaystonesLit} lit (FLOORS {string.Join(", ", RunFlow.Waystones())})");
+                WaystoneCheck("grudgesGone", GrudgeCount() == 0, $"Grudges {grudgeList} before the death, {GrudgeList()} now");
+                WaystoneCheck("diamondsKept", roguelite.GetPoints() == diamonds, $"{diamonds} diamonds before the death, {roguelite.GetPoints()} now");
+                if (goods != null)
+                    WaystoneCheck("goodsKept", roguelite.GetUpgradeLevel(goods.id) == goodsLevel, $"{goods.title} level {goodsLevel} before, {roguelite.GetUpgradeLevel(goods.id)} now");
+                bool first = screen.FirstDrop;
+                yield return PassShaft(pressMidway: true, audit: $"Shaft drop {(MenuScreen.Portrait ? "portrait" : "landscape")}");
+                if (Run.Done) yield break;
+                var seen = lastShaft;
+                if (seen != null)
+                {
+                    WaystoneCheck("dropLands", seen.Shown == waystone, $"the marker fell from FLOOR {seen.From} and the counter stopped at FLOOR {seen.Shown}");
+                    string line = seen.Voices.Find(v => v.StartsWith("announcer", StringComparison.Ordinal)) ?? "";
+                    WaystoneCheck("dropLine", first && line.IndexOf("DO IT AGAIN", StringComparison.OrdinalIgnoreCase) >= 0 && line.IndexOf("no clip", StringComparison.Ordinal) < 0,
+                        line.Length > 0 ? (first ? "first death, " : "not the first death, ") + "the announcer: " + line : "no announcer line on the drop");
+                    string hero = seen.Voices.Find(v => v.StartsWith("hero", StringComparison.Ordinal)) ?? "";
+                    WaystoneCheck("dropHero", hero.Length > 0 && hero.IndexOf("no clip", StringComparison.Ordinal) < 0, hero.Length > 0 ? "the hero: " + hero : "no hero line");
+                    WaystoneCheck("dropNotSkipped", !seen.Skipped, seen.Skipped ? "Space skipped the first drop" : "Space mid-drop didn't skip it");
+                }
+                Run.Progress(0.75f);
+
+                // 5. Continue: the run restarts at the Waystone's level, the Landing, with no Grudges.
+                yield return Run.Until(() => LevelRunning(LandingLevel) || GameplayWorld.Instance != null && GameplayWorld.Instance.Player != null
+                                             && GameplayWorld.Instance.LevelNumber != deathLevel, 60f, "the next run's first level");
+                if (Run.Done) yield break;
+                var world = GameplayWorld.Instance;
+                WaystoneCheck("runRestarts", world != null && world.LevelNumber == LandingLevel,
+                    $"Continue started level {world?.LevelNumber} ({world?.LevelName}); the run restarts on level {LandingLevel} (FLOOR {waystone})");
+                WaystoneCheck("noGrudgesInRun", GrudgeCount() == 0, $"Grudges in the new run: {GrudgeList()}");
+                Run.Scene("Level " + LandingLevel + " (the next run)");
+                yield return WaitReal(5f);
+                if (Run.Done) yield break;
+                Run.Progress(0.85f);
+
+                // 6. The main menu: Continue (the current run) and New Run (from the Waystone).
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                string continueLabel = string.Format(labels.continueGame, LandingLevel);
+                string newRunLabel = string.Format(System.Globalization.CultureInfo.InvariantCulture, labels.newRun,
+                    waystone.ToString("N0", System.Globalization.CultureInfo.InvariantCulture));
+                var continueButton = FindButton(continueLabel);
+                var newRunButton = FindButton(newRunLabel);
+                WaystoneCheck("menuContinue", continueButton != null, continueButton != null ? $"\"{continueLabel}\" on the main menu" : $"no \"{continueLabel}\" button");
+                WaystoneCheck("menuNewRun", newRunButton != null, newRunButton != null ? $"\"{newRunLabel}\" on the main menu" : $"no \"{newRunLabel}\" button");
+                yield return WaitReal(1.5f);
+                if (Run.Done) yield break;
+                if (newRunButton != null)
+                {
+                    yield return ClickUntil(newRunLabel, () => Object.FindAnyObjectByType<MainMenuManager>() == null || GameplayWorld.Instance != null, 30f);
+                    if (Run.Done) yield break;
+                    yield return Run.Until(() => GameplayWorld.Instance != null && GameplayWorld.Instance.Player != null && ClockTime > 0f, 45f, "New Run's level");
+                    if (Run.Done) yield break;
+                    world = GameplayWorld.Instance;
+                    WaystoneCheck("newRunStarts", world != null && world.LevelNumber == LandingLevel && GrudgeCount() == 0,
+                        $"New Run started level {world?.LevelNumber} ({world?.LevelName}), Grudges {GrudgeList()}, {roguelite.GetPoints()} diamonds");
+                    Run.Scene("Level " + LandingLevel + " (New Run)");
+                    yield return WaitReal(4f);
+                }
+                Run.Progress(1f);
+                End(waystoneFailed > 0 ? PlaytestOutcome.Done : PlaytestOutcome.Won);
+            }
+
             // ─── Gloob ────────────────────────────────────────────────────
 
             int gloobPassed, gloobFailed;
@@ -3952,6 +4225,12 @@ namespace SickOfIt.Playtest
                 if (bot != null)
                     Object.Destroy(bot);
                 bot = PlaytestBot.Attach(world, (uint)(1000 * options.seed + n), input);
+                if (bot != null && reckless)
+                {
+                    bot.reckless = true;
+                    bot.useRewind = false;
+                    Run.Event("bot", $"level {n}: the bot plays to lose (walks into the shots, no dodging, firing or rewinding)");
+                }
                 Time.timeScale = Speed;
                 Run.Event("level-start", $"level {n}: {config.levelName}");
 
@@ -4042,6 +4321,9 @@ namespace SickOfIt.Playtest
                     world.Telemetry.Finish(outcome);
                 lastOutcome = outcome;
             }
+
+            /// <summary>PlayLevel's bot plays to lose (the waystone scenario's death through real input).</summary>
+            bool reckless;
 
             readonly HashSet<string> placeholderIds = new HashSet<string>();
 

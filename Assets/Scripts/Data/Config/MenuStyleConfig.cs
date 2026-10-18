@@ -504,6 +504,16 @@ namespace SickOfIt.Data.Config
         public string shaftSkipHint = "Tap to skip";
         [Tooltip("The Shaft's button to Gloob's shop (Docs/Story.md, \"Gloob between floors\").")]
         public string shaftVisitGloob = "Visit Gloob";
+        [Tooltip("The Shaft's mark at each Waystone (the Landing, the top of each Circle).")]
+        public string shaftWaystone = "Waystone";
+        [Tooltip("Subtitle when Hell ends the first run (vo_shaft_first_drop).")]
+        public string shaftFirstDrop = "HELL DOESN'T LET YOU DIE. IT LETS YOU DO IT AGAIN.";
+        [Tooltip("Subtitle for the hero's answer (vo_shaft_first_drop_hero).")]
+        public string shaftFirstDropHero = "Of course it does.";
+        [Tooltip("Subtitle on every drop after the first (vo_shaft_drop).")]
+        public string shaftDrop = "BACK TO THE WAYSTONE! DO IT AGAIN!";
+        [Tooltip("Under the map after a drop; {0} = the level the next run starts on.")]
+        public string shaftNextRunFormat = "Next run: {0}";
     }
 
     /// <summary>The shared look of every menu: fonts, text styles, buttons, cards, motion.</summary>
@@ -563,6 +573,8 @@ namespace SickOfIt.Data.Config
         [Tooltip("{0} = the level it continues from.")]
         public string continueGame = "Continue (Level {0})";
         public string newGame = "New Game";
+        [Tooltip("Starts a new run at the highest Waystone reached (Grudges reset); {0} = its floor.")]
+        public string newRun = "New Run (Floor {0})";
         public string levelSelect = "Level Select";
         public string videos = "Videos";
         public string shop = "Shop";

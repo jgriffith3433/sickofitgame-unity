@@ -15,6 +15,10 @@ namespace SickOfIt.Core.Progression
     /// <summary>
     /// Config-driven death scene runtime. Reads DeathConfig from GameDefinition
     /// and drives death animation via SpriteFramePlayer (no PlayableDirector).
+    /// Over it: "YOU OBVIOUSLY DIED" and Hell's announcer gloating (DeathConfig title and gloats). A death on a floor
+    /// stage ends the run (<see cref="RunFlow.EndRun"/>, as soon as the scene starts, so a Rage Quit can't keep it):
+    /// when the animation is over the Shaft drops the hero back to the Waystone and the next run starts there.
+    /// Anywhere else (the Meadow, the arcade levels) the level is played again.
     /// 
     /// Added directly to generated scenes by ProjectGenerator / DeathSceneGenerator.
     /// </summary>
@@ -39,6 +43,26 @@ namespace SickOfIt.Core.Progression
         private float rewindPressedAt;
         private DeathConfig config;
         private bool deathCompleted;
+        private int levelNumber;
+        private bool runEnded;
+        private ShaftStop runStop;
+        private DeathLine gloat;
+
+        /// <summary>The death scene on screen now, or null.</summary>
+        public static DeathRuntime Current { get; private set; }
+        /// <summary>The title over the death animation ("YOU OBVIOUSLY DIED"), as shown.</summary>
+        public string TitleText => titleText != null ? titleText.text : "";
+        /// <summary>The announcer's gloat on this death (its subtitle and audio.json voice), or null.</summary>
+        public DeathLine Gloat => gloat;
+        /// <summary>This death ended the run: the Shaft's drop to the Waystone comes next instead of the level again.</summary>
+        public bool RunEnded => runEnded;
+        public ShaftStop RunStop => runStop;
+
+        private TMPro.TextMeshProUGUI titleText;
+        private TMPro.TextMeshProUGUI gloatText;
+
+        /// <summary>Which gloat comes next (they are said in turn, one per death).</summary>
+        private const string GloatTurnKey = "Death_GloatTurn";
 
         private void Start()
         {
@@ -57,6 +81,11 @@ namespace SickOfIt.Core.Progression
                 if (config != null)
                     delayBeforeReload = config.delayBeforeReload > 0 ? config.delayBeforeReload : delayBeforeReload;
             }
+
+            Current = this;
+            // Hell ends the run here: the death stands once its scene starts.
+            levelNumber = PlayerPrefs.GetInt("CurrentLevelNumber", 1);
+            runEnded = RunFlow.EndRun(levelNumber, out runStop);
 
             gameClock = gameObject.AddComponent<GameClock>();
             gameObject.AddComponent<SickOfIt.Core.Rewind.RewindTimeline>();
@@ -88,6 +117,53 @@ namespace SickOfIt.Core.Progression
             // Bottom-right in landscape; top centre on a phone held upright, clear of the rewind/skip row.
             var portrait = menu.Responsive.screens != null ? menu.Responsive.screens.rageQuit : null;
             menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f, 96f), label, style, OnRageQuit, null, portrait);
+            BuildWords(menu);
+        }
+
+        /// <summary>"YOU OBVIOUSLY DIED" at the top, and under it the announcer's gloat once the animation starts.</summary>
+        private void BuildWords(SickOfIt.Core.UI.Menus.MenuCanvas menu)
+        {
+            var theme = menu.Theme;
+            string title = config != null && !string.IsNullOrEmpty(config.title) ? config.title : "You Obviously Died";
+            titleText = AddLine(menu, "Title", title, theme.title, 130f,
+                MenuPlacement.At(0.5f, 0.87f, 0f, 0f, 1500f, 170f), MenuPlacement.At(0.5f, 1f, 0f, -270f, 1000f, 150f), menu.TitleFont,
+                new SickOfIt.Data.Config.MenuMotion { type = SickOfIt.Data.Config.MenuMotionType.Jitter, amount = 5f, speed = 1f }, -3f);
+            gloatText = AddLine(menu, "Gloat", "", theme.subtitle, 46f,
+                MenuPlacement.At(0.5f, 0.75f, 0f, 0f, 1500f, 80f), MenuPlacement.At(0.5f, 1f, 0f, -390f, 1000f, 90f), null, null, 0f);
+            gloatText.transform.parent.gameObject.SetActive(false);
+
+            if (config != null && config.gloats != null && config.gloats.Count > 0)
+            {
+                int turn = PlayerPrefs.GetInt(GloatTurnKey, 0);
+                gloat = config.gloats[Mathf.Abs(turn) % config.gloats.Count];
+                PlayerPrefs.SetInt(GloatTurnKey, turn + 1);
+                PlayerPrefs.Save();
+            }
+            Debug.Log($"[Death] \"{title}\"" + (gloat != null ? $", the announcer: \"{gloat.text}\" ({gloat.sound})" : "")
+                      + (runEnded ? $"; the run is over: back to the Waystone on FLOOR {runStop.Waystone}, then level {runStop.NextLevel}" : $"; level {levelNumber} again"));
+        }
+
+        private static TMPro.TextMeshProUGUI AddLine(SickOfIt.Core.UI.Menus.MenuCanvas menu, string name, string value, SickOfIt.Data.Config.MenuTextStyle style,
+            float size, MenuPlacement landscape, MenuPlacement portrait, TMPro.TMP_FontAsset font, SickOfIt.Data.Config.MenuMotion idle, float rotation)
+        {
+            var text = menu.AddText(menu.Root, name, value, style, landscape.anchor, landscape.offset, landscape.size, out _, size, font, null, idle, rotation);
+            text.fontStyle |= TMPro.FontStyles.UpperCase;
+            text.enableAutoSizing = true;
+            text.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
+            SickOfIt.Core.UI.Menus.MenuResponsive.Track((RectTransform)text.transform.parent, landscape, portrait,
+                SickOfIt.Core.UI.Menus.MenuElementKind.Text, menu.Responsive);
+            return text;
+        }
+
+        /// <summary>The announcer gloats as the animation starts (over its soundtrack; Sfx plays outside the scene's clock).</summary>
+        private void PlayGloat()
+        {
+            if (gloat == null || gloatText == null)
+                return;
+            gloatText.transform.parent.gameObject.SetActive(!string.IsNullOrEmpty(gloat.text));
+            SickOfIt.Core.UI.Menus.MenuGraphics.SetText(gloatText, gloat.text ?? "");
+            if (!string.IsNullOrEmpty(gloat.sound))
+                SickOfIt.Core.Audio.Sfx.Play(gloat.sound);
         }
 
         private void OnRageQuit()
@@ -223,6 +299,7 @@ namespace SickOfIt.Core.Progression
         {
             if (experienceRunner != null)
                 experienceRunner.SetPlaybackHeld(false);
+            PlayGloat();
 
             if (audioSource == null || audioSource.clip == null)
                 return;
@@ -293,6 +370,8 @@ namespace SickOfIt.Core.Progression
 
         private void OnDestroy()
         {
+            if (Current == this)
+                Current = null;
             if (rewindButton != null && !rewindAlsoSkips)
             {
                 rewindButton.TapStartEvent.RemoveListener(OnRewindButtonDown);
@@ -331,9 +410,14 @@ namespace SickOfIt.Core.Progression
 
         private void ReloadLevel()
         {
-            // Read the level number directly — no scene name parsing needed
-            int levelNumber = PlayerPrefs.GetInt("CurrentLevelNumber", 1);
-            SceneTransitionManager.Instance.LoadLevel(levelNumber);
+            if (!runEnded)
+            {
+                SceneTransitionManager.Instance.LoadLevel(levelNumber);
+                return;
+            }
+            // The Shaft: the hero's marker drops back to the Waystone; its Continue starts the next run there.
+            int restart = runStop.NextLevel;
+            ShaftHook.Run(runStop, () => SceneTransitionManager.Instance.LoadLevel(restart));
         }
 
         static float CinematicOrthoSize()

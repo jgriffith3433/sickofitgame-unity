@@ -94,6 +94,10 @@ Assets/GameConfig/
 - **Gloob** (`ui/gloob.json`, `GloobPortrait`): the village slime's talking portrait (idle/talk/laugh/cough sheets, a shape
   placeholder until painted) and lines on the Shaft (his hello after Video3, one reaction per climb) and in the shop. Lines
   are audio.json voices `gloob` (hero replies `player`); which line plays is `moment` + `floor` (Docs/Story.md, "Gloob between floors").
+- **Waystones and runs** (Docs/Story.md): a death on a floor stage ends the run: the death screen, then the Shaft drops the
+  marker back to the highest Waystone (the Landing, Floor 1,000, then each Circle's top once its Warden is beaten) and the
+  run restarts there; Grudges reset, diamonds and Gloob's goods stay. Main menu: Continue (the run) / New Run (the
+  Waystone). `RunFlow`, `WaystoneProgress`; cookbook "Waystones and runs".
 - **Diamonds** drop from enemy `loot` as the `diamond` entity and are spent in Gloob's shop (main menu, or **Visit Gloob** on
   the Shaft: `UpgradeShopManager.OpenOverShaft`, an overlay; Back returns to the Shaft). **Shop upgrades** are
   `player.json` `availableUpgrades` with an `effect` (MaxHealth, ExtraJump, MoveSpeed, FireRate, Damage, RewindJuice,
@@ -212,7 +216,14 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   the Shaft after Video3 with his hello skipped, **Visit Gloob** beside Continue opens his shop over the Shaft (animated portrait,
   voiced welcome, slime-made goods), can't afford, buy (diamonds spent, level saved), Back returns to the Shaft, Continue starts
   Level 3 with the goods applied, the main menu's Visit Gloob shows them still bought, a climb preview shows the button again;
-  `check` events `shop <beat>`; ~3 min), `portal-audio` (on the main menu, plays
+  `check` events `shop <beat>`; ~3 min), `waystone` (Waystones and runs: a save with the Landing's Waystone, Gloob met and
+  one of his goods bought (setup shortcut), Level 3 loaded directly and cleared by the bot with its Grudge pick, the climb to
+  Level 4, where the bot plays to lose (`PlaytestBot.reckless`: walks into the shots) until Hell kills it; the death screen
+  ("YOU OBVIOUSLY DIED", the announcer's gloat), the Shaft's drop from the floor he died on to the Waystone at FLOOR 1,000 with
+  the Waystones marked, the first death's voiced line and the hero's answer, not skippable; Grudges gone, diamonds and goods
+  kept; Continue restarts the run at Level 2; the main menu shows Continue and New Run, and New Run starts Level 2; `check`
+  events `waystone <beat>`; ~6 min; a death in `full`/`story-path`/`wastes-climb` also drops back, and their retries reopen
+  the level directly), `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
   page has neither; `Plugins/WebGL/HawkesSite.jslib`).

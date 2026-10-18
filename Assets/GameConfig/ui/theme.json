@@ -631,7 +631,12 @@
     "shaftWelcome": "WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO.",
     "shaftHero": "...Great.",
     "shaftSkipHint": "Tap to skip",
-    "shaftVisitGloob": "Visit Gloob"
+    "shaftVisitGloob": "Visit Gloob",
+    "shaftWaystone": "Waystone",
+    "shaftFirstDrop": "HELL DOESN'T LET YOU DIE. IT LETS YOU DO IT AGAIN.",
+    "shaftFirstDropHero": "Of course it does.",
+    "shaftDrop": "BACK TO THE WAYSTONE! DO IT AGAIN!",
+    "shaftNextRunFormat": "Next run: {0}"
   },
   "grades": [
     {

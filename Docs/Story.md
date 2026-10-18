@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -137,6 +137,9 @@ the 10 Circles stacked below it, each in its own biome colour, and FLOOR 1,000 a
   cracked iron bell on his back and candles melting on his shoulders); the Gatekeeper (an armoured giant built like a
   gate, portcullis visor, tower shield); the Chain King (a jailer king wrapped in chains, an iron spike crown, keys at
   his belt); the Overlord (canon: giant obsidian titan, red eyes, a crown of black horns).
+- **Waystones** stand on the Shaft's wall at the bottom (the Landing, FLOOR 1,000) and at the top of every Circle
+  (901, 801, ... 101): a small standing stone with *WAYSTONE* beside it and a line across the shaft, glowing once
+  reached, dark stone above. When Hell ends a run the marker **drops** back down to one (see *Waystones and runs*).
 - **Shortcuts are hinted, not explained:** cracks in the shaft wall and dotted gaps between floors that the player
   can't read yet. They become Hell's shortcuts (see *Engine*, Shortcuts) once that system is built.
 - The Shaft is a presentation screen: it reads progress, it never changes it.
@@ -256,6 +259,30 @@ is proud of). His voice is `gloob` (designed for him: fast, wet, gurgling, a bit
 - He gossips, he counts, he is proud of his stomach. He is never scared for long and never mean. Slimes are
   villagers: nobody in the game ever fights him or his kind.
 
+## Waystones and runs
+
+Hell doesn't let you die. It sends you back to repeat the floors: the whole place runs on a loop, and the hero is
+just one more thing in it. A **run** is one climb from a Waystone until Hell kills him.
+
+- **Waystones** are the stones where Hell starts its loops over: the **Landing** at Floor 1,000 (the first, reached
+  when he lands there) and the top floor of every Circle once its Warden is beaten (Floor 901 when the Magma King
+  falls, then 801, ... 101). The highest one reached is saved; it is where every run starts from then on.
+- **Dying on a floor of Hell** (any stage with floors) ends the run. First the death screen: the death video with
+  *"YOU OBVIOUSLY DIED"* over it and Hell's announcer gloating (*"OHHH! HELL TAKES THE ROUND!"*, *"FLATTENED! WHAT A
+  FINISH... FOR HELL!"*, *"AND HE'S DOWN! BACK YOU GO!"*, in turn). Then the Shaft: the hero's marker sits on the
+  floor he died on, then falls, faster and faster, back down to the Waystone and lands with a slam. The run
+  restarts there, with the stage that starts on (or just above) it: from the Landing, Level 2.
+- **The first time** the announcer explains it, in story terms: *"HELL DOESN'T LET YOU DIE. IT LETS YOU DO IT
+  AGAIN."* Hero: *"Of course it does."* That first drop can't be skipped. After that, one jeer: *"BACK TO THE
+  WAYSTONE! DO IT AGAIN!"* (Gloob, on the next climb, has his own line about it: *"Back again? Hell does that."*)
+- **What Hell takes and what it can't:** the run's **Grudges** go (and the max health a Grudge gave), and the
+  health he carried from stage to stage, so a new run starts fresh. The **village's diamonds** and **Gloob's goods**
+  stay: they're real things, in his pockets and his boots, not spite. Gloob's shop is open on the drop too.
+- **The Meadow** is not Hell: a death there (and on the arcade levels, outside the Circles) just plays the level again.
+- **Main menu:** **Continue** goes on with the current run (the stage it is on); **New Run** (once a Waystone is
+  reached, *"New Run (Floor 1,000)"*) throws the current run away and starts a fresh one at the highest Waystone,
+  Grudges reset; **New Game** forgets everything and starts at the Meadow.
+
 ## The systems, in story terms
 
 Mechanics keep working as they do; their names and reasons come from here. Rename UI text (`ui/theme.json`
@@ -264,7 +291,7 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | System | In the story | Notes for design |
 |---|---|---|
 | **Rewind** (hold R) | **Déjà Vu.** Hell runs everything on a loop; the hero grabs the loop and pulls it backward. | The juice meter is "Déjà Vu". **Rewind orbs** are *loop shards* that drop from the damned (Shades, imps). In a **scene** something bigger has hold of the loop (the portal's pull, a Warden's entrance), so he can't grab it: rewind is locked and the button says "Not now". |
-| **Death and runs** | Hell doesn't let you die; it sends you back to repeat the floors. "YOU OBVIOUSLY DIED." | A run restarts at the last **Waystone** (top of each Circle once its Warden is beaten). Death videos are Hell's announcer gloating. |
+| **Death and runs** | Hell doesn't let you die; it sends you back to repeat the floors. "YOU OBVIOUSLY DIED." | A run restarts at the highest **Waystone** reached (the Landing, then the top of each Circle once its Warden is beaten); see *Waystones and runs*. Death videos are Hell's announcer gloating. |
 | **Between-level picks** (`content/upgrades`) | **Grudges.** Every floor gives the hero something new to be annoyed about, and spite is fuel. Lost when a run ends. | Titles are grudges: "Spite Rounds", "Short Fuse", "Not Today", "Déjà Vu". |
 | **Diamonds and the shop** | The village's diamonds, the portal fuel the imps stole; enemies drop them back. **Gloob** works them into the hero's gear between floors. Permanent. | Shop = Gloob. Shop upgrade names are things a village slime can make. |
 | **Floor counter and progress bar** | How far up you are. | Progress bar = floors left in the stage; markers = Warden, shortcut, milestone. |
@@ -397,10 +424,19 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    cleared levels. New Game resets it.
 7. **Voices**: `overlord` and `gloob` in `audio.json` `voices`, and the prologue, Shaft and Circle X lines.
 
+8. **Waystones and runs** (built 2026-10-18; see *Waystones and runs*): `RunFlow` (Core/Progression) and
+   `WaystoneProgress` (the save: highest Waystone, the run's level, runs ended). Waystones are `ui/shaft.json`'s
+   bottom floor and each band's top floor under the Overlord's. A level that starts on a Waystone reaches it (the
+   Landing), one that ends on one reaches it (a Warden's arena). The death scene of a death on a floor stage ends the
+   run (`RogueliteManager.EndRun`: Grudges, their max health and the carried health go) and its end hands the
+   Shaft an `AfterDeath` stop: `ShaftScreen` mode `Drop`, from the floor he died on to the Waystone, the lines in
+   theme.json `texts` (`shaftFirstDrop`, `shaftDrop`, ...) and `ui/shaft.json` (`firstDropVoice`, ...), the stones on
+   the map (`waystoneLit` / `waystoneDark`). The death screen's title and gloats are `deaths/*.json` `title` and
+   `gloats`. Main menu Continue opens the run's level; New Run (`mainMenu.json` `labels.newRun`) starts one at the
+   highest Waystone. Playtest: `waystone`.
+
 Not built yet:
 
-8. **Waystones and runs**: save the highest Waystone reached; New Run starts there; Grudges reset, diamonds and
-   Gloob's upgrades persist.
 9. **Shortcuts**: a choice point that skips floors for a cost or a risk.
 
 ## Art
