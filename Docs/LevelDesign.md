@@ -890,6 +890,11 @@ its own set piece, and the voice builds to the door. The King's Chimney lets out
   throne on its slag mound at the far end. The climbing is the nine floors of stairs before it. His title becomes
   *"FLOOR NINE OH ONE! THE SLAG THRONE!"*; after his defeat the hero walks up the broken throne's slag to the Waystone
   (*"WAYSTONE LIT! FLOOR NINE HUNDRED ONE!"*). Then the Shaft: Circle IX wakes up.
+- **Set piece:** the throne rising out of the slag with him on it, the glow he has watched for a hundred floors
+  finally close enough to touch.
+- **Surprise:** he stands. The King who never gets up gets up, at half health, the only time he ever does
+  (*"...You made me STAND."*).
+- **Rewind:** the flood: outrun it or drag it back.
 - **Feel:** as built for Level 11 (the throne rising, the big hit, his theme and its enrage variant, slow motion at
   his fall); the flood is the Wastes' last and loudest roar.
 - **Length:** 2-4 minutes.
