@@ -3052,11 +3052,14 @@ namespace SickOfIt.Playtest
                         }
                         case "portal:closed":
                         {
-                            bool scorch = FindLive(world, null, "portalScorch") != null;
+                            var mark = FindLive(world, null, "portalScorch");
+                            bool scorch = mark != null;
+                            float markOff = scorch ? Vector2.Distance(mark.Position, portal.Spot) : 99f;
                             int flare = FxCount("portal.Close");
                             int marks = FxCount("portalScorch.Scorch");
                             PortalCheck("portalFlare", flare >= 8 && marks >= 1, $"the portal flared shut through {flare} different Close frames to a scorch mark (scorch art={marks >= 1})");
-                            PortalCheck("closed", hole == null && scorch, $"the portal closed (gone={hole == null}) to a scorch (scorch={scorch})");
+                            PortalCheck("closed", hole == null && scorch && markOff <= SpotTolerance,
+                                $"the portal closed (gone={hole == null}) to a scorch (scorch={scorch}) {markOff:0.00} from the background's fire hole");
                             break;
                         }
                         case "portal:black":

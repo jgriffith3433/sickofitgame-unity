@@ -991,8 +991,8 @@
                     "type": "spawn",
                     "entity": "yoobaProp",
                     "id": "yooba",
-                    "anchor": "Camera",
-                    "at": [3.04, -2.37]
+                    "anchor": "Player",
+                    "at": [3.2, 0.15]
                   }
                 ],
                 "else": [
@@ -1000,8 +1000,8 @@
                     "type": "spawn",
                     "entity": "yoobaProp",
                     "id": "yooba",
-                    "anchor": "Camera",
-                    "at": [-3.36, -2.37]
+                    "anchor": "Player",
+                    "at": [-3.2, 0.15]
                   }
                 ]
               },
@@ -1079,8 +1079,8 @@
               {
                 "type": "spawn",
                 "entity": "portalScorch",
-                "anchor": "Camera",
-                "at": [-0.16, -2.52],
+                "anchor": "Player",
+                "at": [0.0, 0.0],
                 "facePlayer": false
               },
               {

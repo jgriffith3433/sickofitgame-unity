@@ -210,7 +210,8 @@ Then, on `atPortal`:
   the entity's own audio source and stops when it dies or is despawned.
 - A scene that must play on either side of the hero: set a counter from `playerInZone` on entry, then branch with
   `if` / `counter` (Level1.json's `portalRight`, measured from the portal's spot with `"anchor": "Camera"`). Once he
-  is pulled in, the hero stays hidden at the pull point.
+  is pulled in, the hero stays hidden at the pull point, so `"anchor": "Player"` places things at the portal (Yooba,
+  the scorch) even after a `cameraTo`.
 - Something on a spot painted in the level's background (Level 1's portal on the footage's fire hole): spawn it with
   `"anchor": "Camera"`. A Static level's background video is centred on the camera's starting view and as tall as it
   (2 x the ortho size, 5.6 at 2.8; 16:9 footage is 9.96 wide), so a point at fraction (u, v) of the frame from its top
