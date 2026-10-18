@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "levelName": "Level5",
-  "displayName": "Fire Rain",
+  "levelName": "ArcadeFireRain",
+  "displayName": "Arcade: Fire Rain",
   "levelNumber": 5,
   "thumbnail": "Videos/Level3_Background2_FirstFrame.png",
   "backgrounds": ["Videos/Level3_Background1.asset", "Videos/Level3_Background2.asset"],
