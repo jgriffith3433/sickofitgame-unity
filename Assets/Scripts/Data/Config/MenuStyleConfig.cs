@@ -481,6 +481,27 @@ namespace SickOfIt.Data.Config
 
         [Tooltip("The HUD's floor readout on stages with a floor counter; {0} is the floor number.")]
         public string floorFormat = "FLOOR {0}";
+
+        [Tooltip("The Shaft (Hell's map): the Meadow at the top.")]
+        public string shaftMeadow = "The Meadow";
+        [Tooltip("The Shaft's big counter; {0} is the floor (1,000).")]
+        public string shaftFloorFormat = "FLOOR {0}";
+        [Tooltip("A Circle's band; {0} its numeral, {1} its name, {2} its bottom floor, {3} its top floor.")]
+        public string shaftCircleFormat = "{0}  {1}  {2}-{3}";
+        [Tooltip("Under the counter: the Circle the hero is in; {0} numeral, {1} name.")]
+        public string shaftInCircleFormat = "Circle {0}: {1}";
+        [Tooltip("{0} = floors left to the top.")]
+        public string shaftFloorsLeftFormat = "{0} floors to the top";
+        [Tooltip("{0} = the next Warden's name (or the unknown mark), {1} = how many floors up.")]
+        public string shaftNextWardenFormat = "{0}: {1} floors up";
+        [Tooltip("A Warden the hero hasn't met yet.")]
+        public string shaftUnknownWarden = "???";
+        [Tooltip("Subtitle for the announcer at the bottom (the line itself is audio.json vo_shaft_welcome).")]
+        public string shaftWelcome = "WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO.";
+        [Tooltip("Subtitle for the hero's answer (vo_shaft_great).")]
+        public string shaftHero = "...Great.";
+        [Tooltip("Small hint while the climb can be skipped.")]
+        public string shaftSkipHint = "Tap to skip";
     }
 
     /// <summary>The shared look of every menu: fonts, text styles, buttons, cards, motion.</summary>

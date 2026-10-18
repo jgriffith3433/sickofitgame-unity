@@ -173,12 +173,15 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   ending, the portal scene, beat by beat: Grudge pick first, beam telegraphed and hitting beside the hero, portal open,
   move/jump/fire/R pressed and ignored, the walk, every line's subtitle and voice, the turn, the pull-in, the slime,
   the scorch, the fade, no damage; then Continue on the results and Video2 must start; `check`, `line`, `signal` events), `full` (New Game, then
-  every level in order through the real flow: results → Continue → video skipped with Escape; up to 3 tries per level;
+  every level in order through the real flow: results → Continue → the Shaft (Continue) → video skipped with Escape; up to 3 tries per level;
   ~10 min), `story-path` (New Game along the story path, each step a `check` event: Video1, Level 1, Video2, Level 2
   "Floors 1000-991: The Landing" with no other level between, its floor counter 1000 → 991 and the 999 milestone,
   Video3 (Gloob) watched 8 s, Level 3 "The Spill", then the level select, whose cards must list the story levels first
-  and in order; ~15 min), `menus` (level select, videos, shop, settings open and close), `layout` (main menu, level select, settings,
-  level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or
+  and in order; ~15 min; the Shaft after Video2 and after each floor stage is checked too), `shaft` (Video2 loaded directly with
+  the Shaft's save reset, skipped: the first plunge past the 10 Circles to FLOOR 1,000, the welcome lines, Continue to Level 2, the
+  bot plays it, then the marker's climb to 991 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
+  `menus` (level select, videos, shop, settings open and close, then a Shaft preview), `layout` (main menu, level select, settings,
+  a Shaft preview, level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or
   is under the touch size; meant for device "phone", 390x844), `imp-death` (level 1 until the bot has killed three
 imps: each imp's Die clip must be playing where it died, and those three play at 0.3x so a recording shows the frames;
 every other scenario checks imp kills the same way, without the slow motion), `cutscene` (the scene

@@ -1,0 +1,107 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace SickOfIt.Data.Config
+{
+    /// <summary>
+    /// One Circle of Hell on the Shaft: a band of floors in its biome's colour, with its Warden's mark at the top
+    /// (Docs/Story.md, "The Circles"). When content/circles has the circle, its displayName and floors are used.
+    /// </summary>
+    [Serializable]
+    public class ShaftBand
+    {
+        [Tooltip("The Circle's id in content/circles (empty if it isn't built yet). Its displayName, firstFloor and lastFloor win over the fields below.")]
+        public string circle = "";
+        [Tooltip("Roman numeral shown on the band: X at the bottom, I at the top.")]
+        public string numeral = "X";
+        [Tooltip("Name shown on the band when content/circles has no such circle.")]
+        public string name = "";
+        [Tooltip("Bottom floor of the band (e.g. 1000).")]
+        public int firstFloor = 1000;
+        [Tooltip("Top floor of the band, where its Warden sits (e.g. 901).")]
+        public int lastFloor = 901;
+        [Tooltip("The biome's colour (placeholder painting until the Shaft art replaces it).")]
+        public Color color = new Color(0.5f, 0.15f, 0.08f, 1f);
+        [Tooltip("The Warden's name, shown once the hero has reached the top of this Circle; '???' until then.")]
+        public string warden = "";
+    }
+
+    /// <summary>
+    /// The Shaft, Hell's map (Docs/Story.md, "The Shaft"): the plunge from the Meadow to FLOOR 1,000 after the plunge
+    /// video, and the hero's marker climbing after every level with a floor range. Presentation only: it reads
+    /// progress, never changes the game. Words are in ui/theme.json texts (shaft*).
+    /// </summary>
+    [Serializable]
+    public class ShaftConfig
+    {
+        [Tooltip("Off = the flow goes straight on (no Shaft).")]
+        public bool enabled = true;
+        [Tooltip("The video after which the Shaft plunges from the Meadow to the bottom (Video2: the fire tunnel).")]
+        public int plungeAfterVideo = 2;
+        [Tooltip("Where the plunge lands: the bottom of Hell.")]
+        public int bottomFloor = 1000;
+        [Tooltip("The top of Hell, the Overlord's floor ('floors left' counts to it).")]
+        public int topFloor = 1;
+
+        [Header("Timing (real seconds)")]
+        [Tooltip("How long the fall from the Meadow to the bottom takes.")]
+        public float plungeSeconds = 3.4f;
+        [Tooltip("Seconds per floor while the marker climbs after a level.")]
+        public float climbSecondsPerFloor = 0.16f;
+        [Tooltip("The climb never takes longer than this.")]
+        public float climbMaxSeconds = 3f;
+        [Tooltip("Pause before the marker starts to climb.")]
+        public float climbDelay = 0.6f;
+        [Tooltip("How hard the landing at the bottom shakes the screen, in pixels (Screen Shake setting off = none).")]
+        public float slamShake = 34f;
+
+        [Header("Look (placeholder painting)")]
+        [Tooltip("Pixels per floor inside the shaft (10 floors = one level tick).")]
+        public float pixelsPerFloor = 7f;
+        [Tooltip("Height of the Meadow at the top (FLOOR 0).")]
+        public float meadowHeight = 420f;
+        public Color backdrop = new Color(0.05f, 0.025f, 0.04f, 1f);
+        public Color wall = new Color(0.09f, 0.05f, 0.06f, 1f);
+        public Color sky = new Color(0.55f, 0.78f, 0.95f, 1f);
+        public Color grass = new Color(0.36f, 0.66f, 0.25f, 1f);
+        public Color marker = new Color(1f, 0.85f, 0.3f, 1f);
+        public Color crack = new Color(0f, 0f, 0f, 0.55f);
+        [Tooltip("Floors where a crack in the wall or a dotted gap hints at a shortcut (not explained yet).")]
+        public List<int> shortcutHints = new List<int>();
+
+        [Header("Sounds (ids in audio.json)")]
+        public string fallSound = "shaft_fall";
+        public string slamSound = "shaft_slam";
+        public string tickSound = "shaft_tick";
+        [Tooltip("The announcer at the bottom, after the plunge.")]
+        public string welcomeVoice = "vo_shaft_welcome";
+        [Tooltip("The hero's answer.")]
+        public string heroVoice = "vo_shaft_great";
+
+        [Header("Circles, bottom (X) to top (I)")]
+        public List<ShaftBand> bands = new List<ShaftBand>();
+
+        [Header("Placement")]
+        [Tooltip("The shaft window (landscape).")]
+        public MenuPlacement shaft = MenuPlacement.At(0.3f, 0.5f, 0f, 0f, 560f, 900f);
+        public MenuPlacement shaftPortrait = MenuPlacement.At(0.5f, 1f, 0f, -510f, 1000f, 900f);
+        [Tooltip("The big FLOOR counter.")]
+        public MenuPlacement counter = MenuPlacement.At(0.72f, 0.74f, 0f, 0f, 900f, 170f);
+        public MenuPlacement counterPortrait = MenuPlacement.At(0.5f, 0f, 0f, 640f, 1000f, 150f);
+        [Tooltip("The Circle the hero is in.")]
+        public MenuPlacement circleLine = MenuPlacement.At(0.72f, 0.62f, 0f, 0f, 900f, 70f);
+        public MenuPlacement circleLinePortrait = MenuPlacement.At(0.5f, 0f, 0f, 530f, 1000f, 60f);
+        [Tooltip("Floors left to the top.")]
+        public MenuPlacement floorsLeft = MenuPlacement.At(0.72f, 0.5f, 0f, 0f, 900f, 70f);
+        public MenuPlacement floorsLeftPortrait = MenuPlacement.At(0.5f, 0f, 0f, 460f, 1000f, 60f);
+        [Tooltip("The next Warden and how far up.")]
+        public MenuPlacement nextWarden = MenuPlacement.At(0.72f, 0.41f, 0f, 0f, 900f, 70f);
+        public MenuPlacement nextWardenPortrait = MenuPlacement.At(0.5f, 0f, 0f, 390f, 1000f, 60f);
+        [Tooltip("Spoken lines as subtitles.")]
+        public MenuPlacement subtitle = MenuPlacement.At(0.72f, 0.27f, 0f, 0f, 1000f, 110f);
+        public MenuPlacement subtitlePortrait = MenuPlacement.At(0.5f, 0f, 0f, 760f, 1000f, 110f);
+        public MenuPlacement continueButton = MenuPlacement.At(0.72f, 0.12f, 0f, 0f, 460f, 110f);
+        public MenuPlacement continueButtonPortrait = MenuPlacement.At(0.5f, 0f, 0f, 220f, 520f, 124f);
+    }
+}

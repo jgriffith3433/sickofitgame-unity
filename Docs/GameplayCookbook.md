@@ -354,6 +354,25 @@ lava-river shot, `clipStart` 17.6, `clipLength` 5).
 
 Same seed, same floors: platforms, props and pushes come from the level seed, so rewinds and bot playtests repeat.
 
+## The Shaft (Hell's map between levels)
+
+`ShaftScreen` (Core/Progression) answers `ShaftHook`: after the video in `ui/shaft.json` `plungeAfterVideo` (Video2)
+it plunges from the Meadow to `bottomFloor`; after any level whose script has `floors.end` it climbs the hero's marker
+to that floor. Levels without floors (the Meadow, the arcade levels) go straight on. Nothing to wire for a new stage:
+give it `floors` and the Shaft follows it.
+
+- **Circles** are `bands` in ui/shaft.json, bottom (X) to top (I): numeral, name, floors, colour, Warden. A band with
+  `circle` set takes its name and floors from `content/circles/<id>.json`. The Warden is named in "next Warden" and
+  drawn as ??? on the map until the hero has reached his Circle's top floor.
+- **Words** are theme.json `texts.shaft*` (counter, floors left, next Warden, the welcome subtitles); **sounds** are
+  the ids in ui/shaft.json (`shaft_fall`, `shaft_slam`, `shaft_tick`, `vo_shaft_welcome`, `vo_shaft_great`).
+- **Placement**: each readout has a landscape and a portrait `MenuPlacement` in ui/shaft.json; the shaft window is a
+  panel and Continue a button for the layout audit. `shortcutHints` are floors that get a wall crack or a dotted gap.
+- It is presentation only: `ShaftProgress` (Data) remembers the marker's floor and whether the first plunge was seen
+  (after that a tap or key skips it). New Game resets both.
+- Playtests: `shaft` (the plunge, The Landing, the climb, each beat a `check`), `menus`/`layout` open a preview
+  (`ShaftScreen.Preview(from, to)`), and `full`/`story-path` press Continue on it like a player.
+
 ## Art
 
 Entities without art draw as colored placeholders with their id, so gameplay can come first. **To make art for an
