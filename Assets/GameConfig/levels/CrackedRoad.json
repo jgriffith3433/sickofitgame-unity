@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "levelName": "Level7",
-  "displayName": "Floors 900-876: The Cracked Road",
-  "levelNumber": 7,
+  "levelName": "CrackedRoad",
+  "displayName": "Floors 900-891: The Cracked Road",
+  "levelNumber": 4,
   "thumbnail": "Videos/Level2_Background1_FirstFrame.png",
   "backgrounds": [],
   "backgroundLayers": [],
@@ -18,10 +18,10 @@
   "nextVideoNumber": 0,
   "returnToMainMenuOnComplete": false,
   "script": {
-    "length": 100,
+    "length": 75,
     "floors": {
       "start": 900,
-      "end": 876,
+      "end": 891,
       "unitsPerFloor": 3.0,
       "circle": "crackedRoad",
       "signs": true
@@ -30,13 +30,13 @@
       "camera": "Travel",
       "travelDirection": "Right",
       "travelLead": 1.5,
-      "travelLength": 74.0,
+      "travelLength": 29.0,
       "followSharpness": 4.0,
       "holdForPushes": true
     },
     "markers": [
       { "floor": 897, "label": "DEMON" },
-      { "floor": 877, "label": "THE TOP" }
+      { "floor": 892, "label": "THE TOP" }
     ],
     "objective": {
       "complete": { "type": "counter", "name": "cleared", "atLeast": 1 },
@@ -48,7 +48,7 @@
         "onEnter": [
           {
             "type": "showText",
-            "text": "FLOORS 900-876: THE CRACKED ROAD",
+            "text": "FLOORS 900-891: THE CRACKED ROAD",
             "duration": 2.5,
             "sound": "vo_road_title",
             "color": "#FFB46A"
@@ -130,7 +130,7 @@
       {
         "name": "climbToTop",
         "onEnter": [
-          { "type": "generateFloors", "untilFloor": 877, "firstBreather": 4.0 }
+          { "type": "generateFloors", "untilFloor": 892, "firstBreather": 4.0 }
         ],
         "rules": [
           {
@@ -154,7 +154,7 @@
         "rules": [
           {
             "name": "stage clear",
-            "when": { "type": "floorReached", "floor": 876 },
+            "when": { "type": "floorReached", "floor": 891 },
             "maxTimes": 1,
             "do": [
               {

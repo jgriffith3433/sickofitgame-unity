@@ -1,340 +1,138 @@
 {
   "schemaVersion": 1,
   "levelName": "Level3",
-  "displayName": "Spin Cycle",
+  "displayName": "Floors 990-981: The Spill",
   "levelNumber": 3,
-  "thumbnail": "Videos/Level3_Background1_FirstFrame.png",
-  "backgrounds": ["Videos/Level3_Background1.asset", "Videos/Level3_Background2.asset"],
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
   "backgroundLayers": [],
-  "ambientColor": "#FFFFFF",
   "music": "Videos/Level3_Background1_Audio.mp3",
-  "musicStartTime": 0.0,
   "musicVolume": 1.0,
-  "ambientSound": null,
-  "ambientVolume": 0.5,
-  "levelCompleteSound": null,
   "platforms": [],
   "placedSprites": [],
-  "generateBarriers": true,
-  "barrierThickness": 1.0,
-  "barrierOnBottom": true,
-  "barrierOnTop": true,
   "enemies": [],
   "playerSpawnPosition": [-4.0, 0.0],
-  "winZoneCenter": [6.5, 0.0],
-  "winZoneHalfSize": [0.5, 4.0],
-  "deathConfigName": "Death3",
+  "deathConfigName": "Death1",
   "duration": 150.0,
   "completionDelay": 2.0,
-  "nextVideoNumber": 4,
+  "nextVideoNumber": 0,
   "returnToMainMenuOnComplete": false,
-  "timeline": {
-    "duration": 60.0,
-    "events": [],
-    "overlays": [],
-    "tracks": []
-  },
   "script": {
-    "length": 95,
+    "length": 75,
+    "floors": {
+      "start": 990,
+      "end": 981,
+      "unitsPerFloor": 3.0,
+      "circle": "emberWastes",
+      "signs": true
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true
+    },
     "markers": [
-      {
-        "seconds": 40,
-        "label": "FIRE RAIN"
-      },
-      {
-        "seconds": 70,
-        "label": "FINAL WAVE"
-      }
+      { "floor": 989, "label": "CINDERS" },
+      { "floor": 982, "label": "THE TOP" }
     ],
     "objective": {
-      "complete": {
-        "type": "counter",
-        "name": "cleared",
-        "atLeast": 1
-      }
+      "complete": { "type": "counter", "name": "cleared", "atLeast": 1 },
+      "text": "Climb"
     },
     "phases": [
       {
-        "name": "spin",
+        "name": "spill",
         "onEnter": [
+          { "type": "lockTravel" },
           {
             "type": "showText",
-            "text": "LEVEL 3: SPIN CYCLE",
+            "text": "FLOORS 990-981: THE SPILL",
             "duration": 2.5,
-            "color": "#FFD27A",
-            "sound": "vo_l3_title"
-          },
-          {
-            "type": "showText",
-            "text": "Warning: contents may spin.",
-            "style": "Subtitle",
-            "duration": 3.0,
-            "sound": "vo_l3_intro"
-          },
-          {
-            "type": "spawn",
-            "entity": "spinner",
-            "anchor": "Camera",
-            "at": [3.8, -2.0],
-            "tags": ["wave"]
+            "sound": "vo_spill_title",
+            "color": "#FFD27A"
           }
         ],
         "rules": [
           {
-            "name": "drones",
-            "when": {
-              "type": "every",
-              "seconds": 8.0,
-              "startAfter": 6.0,
-              "maxTimes": 3
-            },
+            "when": { "type": "after", "seconds": 5.0 },
+            "do": [ { "type": "goToPhase", "phase": "firstCinder" } ]
+          }
+        ]
+      },
+      {
+        "name": "firstCinder",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "Sparks from the meadow. They followed me. Rude.",
+            "duration": 3.0,
+            "sound": "vo_landing_cinders",
+            "style": "Subtitle"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the first cinder, alone",
+            "when": { "type": "after", "seconds": 1.5 },
             "do": [
               {
                 "type": "spawn",
-                "entity": "drone",
+                "entity": "cinder",
                 "anchor": "Camera",
-                "at": [5.2, 2.0],
-                "tags": ["wave"]
+                "at": [4.2, 0.8],
+                "tags": ["beat"]
               }
             ]
           },
           {
-            "name": "swarmers",
-            "when": {
-              "type": "every",
-              "seconds": 4.5,
-              "startAfter": 3.0,
-              "maxTimes": 7
-            },
+            "name": "cinder out",
+            "when": { "type": "allDead", "target": { "tag": "beat" } },
+            "maxTimes": 1,
             "do": [
-              {
-                "type": "spawnWave",
-                "entity": "swarmer",
-                "count": 3,
-                "interval": 0.3,
-                "anchor": "Camera",
-                "points": [
-                  [-5.2, -2.0],
-                  [5.2, -2.0],
-                  [5.2, 1.0]
-                ],
-                "tags": ["wave"]
-              }
-            ]
-          },
-          {
-            "name": "second spinner",
-            "when": {
-              "type": "after",
-              "seconds": 18.0
-            },
-            "do": [
-              {
-                "type": "spawn",
-                "entity": "spinner",
-                "anchor": "Camera",
-                "at": [-3.8, -2.0],
-                "tags": ["wave"]
-              }
-            ]
-          },
-          {
-            "when": {
-              "type": "after",
-              "seconds": 40.0
-            },
-            "do": [
-              {
-                "type": "goToPhase",
-                "phase": "rain"
-              }
+              { "type": "unlockTravel" },
+              { "type": "goToPhase", "phase": "climb" }
             ]
           }
         ]
       },
       {
-        "name": "rain",
+        "name": "climb",
         "onEnter": [
-          {
-            "type": "showText",
-            "text": "Is it raining fire? It's raining fire.",
-            "style": "Subtitle",
-            "duration": 3.0,
-            "color": "#FF9966",
-            "sound": "vo_l3_fire"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 1
-            },
-            "speed": 2.6,
-            "interval": 1.6,
-            "initialDelay": 1.0,
-            "rampPerSecond": 0.015
-          }
+          { "type": "generateFloors", "untilFloor": 982, "firstBreather": 3.0, "seed": 1 }
         ],
         "rules": [
           {
-            "name": "chasers",
-            "when": {
-              "type": "every",
-              "seconds": 6.0,
-              "startAfter": 2.0,
-              "maxTimes": 4
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "chaser",
-                "count": 2,
-                "interval": 0.5,
-                "anchor": "Camera",
-                "points": [
-                  [5.2, -2.0],
-                  [-5.2, -2.0]
-                ],
-                "tags": ["wave"]
-              }
-            ]
-          },
-          {
-            "name": "drone",
-            "when": {
-              "type": "after",
-              "seconds": 12.0
-            },
-            "do": [
-              {
-                "type": "spawn",
-                "entity": "drone",
-                "anchor": "Camera",
-                "at": [-5.2, 2.0],
-                "tags": ["wave"]
-              }
-            ]
-          },
-          {
-            "when": {
-              "type": "after",
-              "seconds": 30.0
-            },
-            "do": [
-              {
-                "type": "goToPhase",
-                "phase": "final"
-              }
-            ]
+            "when": { "type": "signal", "name": "floorsDone" },
+            "maxTimes": 1,
+            "do": [ { "type": "goToPhase", "phase": "top" } ]
           }
         ]
       },
       {
-        "name": "final",
-        "onEnter": [
-          {
-            "type": "showText",
-            "text": "FINAL WAVE",
-            "duration": 2.0,
-            "color": "#FF7A5C",
-            "sound": "vo_final_wave"
-          },
-          {
-            "type": "showText",
-            "text": "The big one brought snacks. And violence.",
-            "style": "Subtitle",
-            "duration": 2.5,
-            "sound": "vo_l3_last"
-          },
-          {
-            "type": "startHazard",
-            "id": "lightRain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 1
-            },
-            "speed": 2.4,
-            "interval": 2.4
-          },
-          {
-            "type": "spawn",
-            "entity": "brute",
-            "anchor": "Camera",
-            "at": [4.8, -2.0],
-            "tags": ["wave"]
-          },
-          {
-            "type": "spawnWave",
-            "entity": "spinner",
-            "count": 2,
-            "interval": 1.5,
-            "anchor": "Camera",
-            "points": [
-              [-3.8, -2.0],
-              [2.0, 1.5]
-            ],
-            "tags": ["wave"]
-          },
-          {
-            "type": "spawnWave",
-            "entity": "drone",
-            "count": 2,
-            "interval": 3.0,
-            "anchor": "Camera",
-            "points": [
-              [5.2, 2.0],
-              [-5.2, 2.0]
-            ],
-            "tags": ["wave"]
-          }
-        ],
+        "name": "top",
         "rules": [
           {
-            "name": "clear",
-            "when": {
-              "type": "allDead",
-              "target": {
-                "tag": "wave"
-              }
-            },
+            "name": "stage clear",
+            "when": { "type": "floorReached", "floor": 981 },
+            "maxTimes": 1,
             "do": [
-              {
-                "type": "stopHazard",
-                "id": "lightRain"
-              },
               {
                 "type": "runSequence",
                 "steps": [
+                  { "type": "lockTravel" },
                   {
                     "type": "showText",
-                    "text": "LAUNDRY: DONE",
+                    "text": "THE SPILL: SURVIVED",
                     "duration": 2.0,
-                    "color": "#7CFF8A",
-                    "sound": "vo_l3_clear"
+                    "sound": "vo_spill_clear",
+                    "color": "#FF9A5C"
                   },
-                  {
-                    "type": "showText",
-                    "text": "One sock is still missing. Forever.",
-                    "style": "Subtitle",
-                    "duration": 2.0,
-                    "sound": "vo_l3_outro"
-                  },
-                  {
-                    "type": "wait",
-                    "seconds": 1.5
-                  },
-                  {
-                    "type": "offerUpgrades",
-                    "title": "Pick a grudge"
-                  },
-                  {
-                    "type": "setCounter",
-                    "name": "cleared",
-                    "value": 1
-                  }
+                  { "type": "wait", "seconds": 1.5 },
+                  { "type": "offerUpgrades", "title": "Pick a grudge" },
+                  { "type": "setCounter", "name": "cleared", "value": 1 }
                 ]
               }
             ]

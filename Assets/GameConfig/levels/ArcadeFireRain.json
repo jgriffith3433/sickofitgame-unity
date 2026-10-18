@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "levelName": "Level5",
-  "displayName": "Fire Rain",
+  "levelName": "ArcadeFireRain",
+  "displayName": "Arcade: Fire Rain",
   "levelNumber": 5,
   "thumbnail": "Videos/Level3_Background2_FirstFrame.png",
   "backgrounds": ["Videos/Level3_Background1.asset", "Videos/Level3_Background2.asset"],
@@ -84,7 +84,7 @@
         ],
         "rules": [
           {
-            "name": "swarmer waves",
+            "name": "imp waves",
             "when": {
               "type": "every",
               "seconds": 7.0,
@@ -94,7 +94,7 @@
             "do": [
               {
                 "type": "spawnWave",
-                "entity": "swarmer",
+                "entity": "imp",
                 "count": 4,
                 "interval": 0.3,
                 "anchor": "Camera",
@@ -116,7 +116,7 @@
             ]
           },
           {
-            "name": "exploders",
+            "name": "cinders",
             "when": {
               "type": "every",
               "seconds": 10.0,
@@ -126,7 +126,7 @@
             "do": [
               {
                 "type": "spawn",
-                "entity": "exploder",
+                "entity": "cinder",
                 "anchor": "Camera",
                 "at": [5.2, -2.0],
                 "tags": ["wave"]
