@@ -21,7 +21,9 @@ namespace SickOfIt.Core.Progression
     /// The Shaft, Hell's map (Docs/Story.md, "The Shaft"): a tall cross-section with the Meadow (FLOOR 0) at the top,
     /// the 10 Circles stacked below it in their biome colours and FLOOR 1,000 at the bottom. <see cref="ShaftHook"/>
     /// brings it up after the plunge video (the fall from the Meadow to the bottom, the slam, the announcer's welcome)
-    /// and after every level with a floor range (the hero's marker climbs to the level's last floor). Continue goes on;
+    /// and after every level with a floor range (the hero's marker climbs to the level's last floor), and after a death
+    /// that ends a run (the marker drops back to the Waystone, <see cref="RunFlow"/>). Waystones are marked on the
+    /// map, lit once reached. Continue goes on;
     /// once Gloob has met the hero, Visit Gloob beside it opens his shop over the Shaft and Back returns here.
     /// Built at runtime over the scene that just ended (like every menu), from ui/shaft.json and theme.json texts;
     /// shapes are painted placeholders until the Shaft art replaces them. Presentation only: it reads progress and
@@ -37,6 +39,8 @@ namespace SickOfIt.Core.Progression
             Climb,
             /// <summary>No climb: Gloob says hello where the marker is (after the video he turns up in, Video3).</summary>
             Meet,
+            /// <summary>The run is over: the marker falls from where the hero died back to the Waystone (after the death scene).</summary>
+            Drop,
         }
 
         /// <summary>The Shaft on screen now, or null.</summary>
@@ -75,6 +79,15 @@ namespace SickOfIt.Core.Progression
         public bool IsPreview => preview;
         /// <summary>Gloob's portrait on this Shaft, or null (before he has met the hero).</summary>
         public GloobPortrait Gloob => gloob;
+        /// <summary>Waystones marked on the map, and how many of them are lit (reached).</summary>
+        public int WaystonesShown { get; private set; }
+        public int WaystonesLit { get; private set; }
+        /// <summary>Drop: the first run Hell has ended (the announcer explains Waystones; it can't be skipped).</summary>
+        public bool FirstDrop => firstDrop;
+        /// <summary>Drop: the level the next run starts on.</summary>
+        public int RestartLevel { get; private set; }
+        /// <summary>Drop: the line under the map once it is over ("Next run: Floors 1000-991: The Landing").</summary>
+        public string RestartText => restartText ?? "";
         /// <summary>Visit Gloob, beside Continue once he has met the hero, or null.</summary>
         public MenuButton GloobButton => gloobButton;
         public MenuButton ContinueButton => continueButton;
@@ -115,6 +128,9 @@ namespace SickOfIt.Core.Progression
         MenuButton gloobButton;
         GloobPortrait gloob;
         bool shopOpen;
+        bool firstDrop;
+        string restartText;
+        readonly List<Image> waystoneGlows = new List<Image>();
         float keysFrom;
         readonly List<Band> bands = new List<Band>();
         readonly List<Behaviour> hidden = new List<Behaviour>();
@@ -160,6 +176,16 @@ namespace SickOfIt.Core.Progression
                 return true;
             }
 
+            if (stop.Kind == ShaftStopKind.AfterDeath)
+            {
+                // The run is over: from the floor he died on back down to the Waystone; Continue starts the next run.
+                if (stop.Waystone <= 0)
+                    return false;
+                var drop = Open(Mode.Drop, stop.FromFloor > 0 ? stop.FromFloor : stop.Waystone, stop.Waystone, next, false, WaystoneProgress.RunsEnded <= 1);
+                drop.SetRestart(stop.NextLevel);
+                return true;
+            }
+
             LevelFloors(stop.Level, out int start, out int end);
             if (end <= 0)
                 return false;
@@ -185,7 +211,26 @@ namespace SickOfIt.Core.Progression
             return Open(Mode.Meet, floor, floor, closed, true);
         }
 
-        static ShaftScreen Open(Mode mode, int from, int to, Action next, bool preview)
+        /// <summary>
+        /// The drop back to a Waystone without the story flow (playtest setup shortcut): the marker falls from 'fromFloor'
+        /// to 'waystone' with the first death's lines if 'first'. Continue closes it; nothing is saved.
+        /// </summary>
+        public static ShaftScreen PreviewDrop(int fromFloor, int waystone, int restartLevel, bool first, Action closed = null)
+        {
+            var screen = Open(Mode.Drop, fromFloor, waystone, closed, true, first);
+            screen.SetRestart(restartLevel);
+            return screen;
+        }
+
+        void SetRestart(int level)
+        {
+            RestartLevel = level;
+            var stage = level > 0 && GameDefinition.Instance != null ? GameDefinition.Instance.GetLevel(level) : null;
+            string name = stage != null ? (!string.IsNullOrEmpty(stage.displayName) ? stage.displayName : stage.levelName) : "";
+            restartText = string.IsNullOrEmpty(name) ? "" : string.Format(CultureInfo.InvariantCulture, texts.shaftNextRunFormat, name);
+        }
+
+        static ShaftScreen Open(Mode mode, int from, int to, Action next, bool preview, bool firstDrop = false)
         {
             if (Current != null)
                 Current.Close();
@@ -200,6 +245,7 @@ namespace SickOfIt.Core.Progression
             // It stays up until the next scene has loaded, then goes (Continue starts that load).
             DontDestroyOnLoad(menu.gameObject);
             var screen = menu.gameObject.AddComponent<ShaftScreen>();
+            screen.firstDrop = mode == Mode.Drop && firstDrop;
             screen.Begin(menu, definition, mode, from, to, next, preview);
             return screen;
         }
@@ -217,7 +263,8 @@ namespace SickOfIt.Core.Progression
             ToFloor = to;
             next = onContinue;
             preview = isPreview;
-            Skippable = ShaftProgress.Plunged;
+            // The first plunge and the first drop (Hell explains Waystones) are watched to the end.
+            Skippable = ShaftProgress.Plunged && !firstDrop;
             openedAt = Time.unscaledTime;
             menu.Back = null;
             // A scene that replaces the current one (Continue's, or any other) takes the Shaft with it.
@@ -230,7 +277,7 @@ namespace SickOfIt.Core.Progression
             SetCounter(from);
             UpdateInfo(from);
             Report("open", $"{mode.ToString().ToLowerInvariant()} from {from} to {to}" + (preview ? " (preview)" : "") + (Skippable ? ", skippable" : ""));
-            StartCoroutine(mode == Mode.Plunge ? PlungeRoutine() : mode == Mode.Meet ? MeetRoutine() : ClimbRoutine());
+            StartCoroutine(mode == Mode.Plunge ? PlungeRoutine() : mode == Mode.Meet ? MeetRoutine() : mode == Mode.Drop ? DropRoutine() : ClimbRoutine());
         }
 
         /// <summary>
@@ -350,9 +397,12 @@ namespace SickOfIt.Core.Progression
             BuildWalls();
             BuildTicks();
             BuildHints();
+            BuildWaystones();
             foreach (var band in bands)
                 BuildWarden(band);
             BuildMarker();
+            Report("waystones", $"{WaystonesShown} Waystones on the map (FLOORS {string.Join(", ", RunFlow.Waystones())}), {WaystonesLit} lit; "
+                                + $"highest reached: {(WaystoneProgress.Highest > 0 ? "FLOOR " + Number(WaystoneProgress.Highest) : "none yet")}");
             Report("art", $"{PaintedBands} of {bands.Count} Circle bands painted, meadow {(PaintedMeadow ? "painted" : "placeholder")}, "
                           + $"Wardens: {WardenSilhouettes} dark silhouettes, {WardenPortraits} met, {bands.Count - WardenSilhouettes - WardenPortraits} placeholder; "
                           + $"hero marker {(PaintedMarker ? "painted" : "placeholder")}");
@@ -377,7 +427,7 @@ namespace SickOfIt.Core.Progression
 
             // Gloob, once he has met the hero (and for his hello), left of the shaft window (portrait: on its corner).
             var gloobConfig = GameDefinition.Instance != null ? GameDefinition.Instance.gloob : null;
-            if (gloobConfig != null && gloobConfig.enabled && (Kind == Mode.Meet || Kind == Mode.Climb && GloobProgress.Met))
+            if (gloobConfig != null && gloobConfig.enabled && (Kind == Mode.Meet || (Kind == Mode.Climb || Kind == Mode.Drop) && GloobProgress.Met))
                 gloob = GloobPortrait.Create(menu, stage, gloobConfig, gloobConfig.shaftPortrait, gloobConfig.shaftPortraitPortrait);
 
             flash = MenuGraphics.NewImage(stage, "Flash", new Color(1f, 0.95f, 0.85f, 0f));
@@ -578,6 +628,38 @@ namespace SickOfIt.Core.Progression
                     for (int d = 0; d < 7; d++)
                         Dot("Gap", config.crack, 0.2f + d * 0.1f, Y(floor), new Vector2(9f, 9f));
                 }
+            }
+        }
+
+        /// <summary>
+        /// The Waystones (Docs/Story.md, "Waystones and runs"): a standing stone on the left wall at the Landing and at
+        /// the top of every Circle, with a line across the shaft and its name. Lit (glowing) once reached: the highest
+        /// Waystone reached and every one below it; dark stone above.
+        /// </summary>
+        void BuildWaystones()
+        {
+            int highest = WaystoneProgress.Highest;
+            if (Kind == Mode.Drop && (highest <= 0 || ToFloor < highest))
+                highest = ToFloor;
+            foreach (int floor in RunFlow.Waystones())
+            {
+                if (floor <= 0 || floor > Bottom)
+                    continue;
+                bool lit = highest > 0 && floor >= highest;
+                var color = lit ? config.waystoneLit : config.waystoneDark;
+                // At the bottom the stone stands on the lava's edge, inside the shaft; elsewhere on the Circle's top floor.
+                float y = floor >= Bottom ? Y(Bottom) - 22f : Y(floor) - 4f;
+                Strip("WaystoneLine", new Color(color.r, color.g, color.b, lit ? 0.6f : 0.3f), y + 18f, 3f, 0.12f, 0.88f);
+                var glow = Dot("WaystoneGlow", new Color(color.r, color.g, color.b, lit ? 0.45f : 0f), 0.165f, y, new Vector2(70f, 70f));
+                if (lit)
+                    waystoneGlows.Add(glow);
+                Dot("Waystone", color, 0.165f, y, new Vector2(30f, 40f), MenuShape.Rounded);
+                Dot("WaystoneCap", Color.Lerp(color, Color.black, 0.35f), 0.165f, y - 20f, new Vector2(38f, 8f), MenuShape.Rounded);
+                Label(content, "WaystoneName", texts.shaftWaystone, menu.Theme.caption, 18f, 0.2f, 0.42f, y - 12f, 26f,
+                    new Color(color.r, color.g, color.b, lit ? 1f : 0.7f));
+                WaystonesShown++;
+                if (lit)
+                    WaystonesLit++;
             }
         }
 
@@ -940,6 +1022,68 @@ namespace SickOfIt.Core.Progression
             Finish();
         }
 
+        /// <summary>
+        /// The run is over: a beat on the floor he died on, then the marker falls (faster and faster) back to the
+        /// Waystone, the slam, and Hell's announcer: the first time the rule (*"Hell doesn't let you die. It lets you
+        /// do it again."*, and the hero's answer), after that a short jeer. Under the map: where the next run starts.
+        /// </summary>
+        IEnumerator DropRoutine()
+        {
+            int from = FromFloor, to = ToFloor;
+            markerFloor = cameraFloor = from;
+            SetCounter(from);
+            UpdateInfo(from);
+            yield return Wait(0.8f);
+            int floors = Mathf.Abs(to - from);
+            if (floors > 0)
+            {
+                Sfx.Play(config.fallSound);
+                Report("drop-start", $"from FLOOR {Number(from)} back down to the Waystone on FLOOR {Number(to)}");
+                float duration = Mathf.Clamp(floors * Mathf.Max(0.005f, config.dropSecondsPerFloor), 0.6f, Mathf.Max(0.6f, config.dropMaxSeconds));
+                float t = 0f;
+                int shown = from;
+                while (t < 1f && !skip)
+                {
+                    t = Mathf.Min(1f, t + Time.unscaledDeltaTime / duration);
+                    float floor = Mathf.Lerp(from, to, t * t);
+                    markerFloor = cameraFloor = floor;
+                    int now = Mathf.RoundToInt(floor);
+                    if (now != shown)
+                    {
+                        shown = now;
+                        SetCounter(now);
+                    }
+                    yield return null;
+                }
+            }
+            markerFloor = cameraFloor = to;
+            SetCounter(to);
+            UpdateInfo(to);
+            Sfx.Play(config.slamSound);
+            if (!skip)
+                StartCoroutine(Slam());
+            if (!preview)
+                ShaftProgress.Floor = to;
+            Report("drop", $"from FLOOR {Number(from)} to the Waystone on FLOOR {Number(to)}: {FloorsLeftText}; {NextWardenText}; next run: level {RestartLevel}");
+            if (!skip)
+                yield return Wait(0.6f);
+
+            var lines = firstDrop
+                ? new[] { ("announcer", config.firstDropVoice, texts.shaftFirstDrop), ("hero", config.firstDropHeroVoice, texts.shaftFirstDropHero) }
+                : new[] { ("announcer", config.dropVoice, texts.shaftDrop) };
+            foreach (var (who, sound, text) in lines)
+            {
+                if (skip)
+                    break;
+                Sfx.Play(sound);
+                ShowSubtitle(text);
+                Report("voice", $"{who}: {text} ({sound}{(Sfx.Has(sound) ? "" : ", no clip")})");
+                float length = Sfx.LengthOf(sound);
+                yield return Wait((length > 0f ? length : 2.5f) + 0.3f);
+            }
+            Finish();
+        }
+
         IEnumerator FlashBand(Image image)
         {
             for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.35f)
@@ -1005,6 +1149,9 @@ namespace SickOfIt.Core.Progression
             if (events != null && continueButton != null)
                 events.SetSelectedGameObject(continueButton.gameObject);
             Ready = true;
+            // After a drop: where the next run starts, under the map.
+            if (Kind == Mode.Drop && !string.IsNullOrEmpty(restartText))
+                ShowSubtitle(restartText);
             Report("ready", $"FLOOR {Number(ShownFloor)}; Continue is up" + (shop ? ", Visit Gloob beside it" : "") + (place == portrait ? " (portrait)" : ""));
         }
 
@@ -1059,6 +1206,12 @@ namespace SickOfIt.Core.Progression
             {
                 float pulse = 1f + 0.18f * Mathf.Sin(Time.unscaledTime * 5f);
                 markerGlow.rectTransform.localScale = new Vector3(pulse, pulse, 1f);
+            }
+            float stone = 1f + 0.12f * Mathf.Sin(Time.unscaledTime * 2.4f);
+            foreach (var glow in waystoneGlows)
+            {
+                if (glow != null)
+                    glow.rectTransform.localScale = new Vector3(stone, stone, 1f);
             }
             stage.offsetMin = stage.offsetMax = shake;
 

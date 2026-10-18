@@ -204,6 +204,9 @@ namespace SickOfIt.Core.Progression
             });
 
             AnalyticsManager.Instance?.TrackLevelStart(levelNumber);
+            // A floor stage is where the run is now; the Landing is the first Waystone (Docs/Story.md, "Waystones and runs").
+            if (string.IsNullOrEmpty(SceneId))
+                RunFlow.LevelStarted(levelNumber);
             StartCoroutine(PlaybackStartGate.Hold(gameClock, backgroundPlayers, musicSource, StartLevelMusic));
 
             //Debug.Log($"[LevelRuntime] Level {levelNumber} '{config.displayName}' — {config.EnemyCount} enemies, {config.platforms?.Count ?? 0} platforms, {config.duration}s");
@@ -236,6 +239,8 @@ namespace SickOfIt.Core.Progression
             gameplayWorld?.Telemetry?.Finish("died");
             // Gloob hears about it on the next Shaft (presentation only).
             GloobProgress.HeroDied = true;
+            // Where the Shaft's drop back to the Waystone starts, if the death stands.
+            RunFlow.HeroDied(gameplayWorld != null && gameplayWorld.Stage != null ? gameplayWorld.Stage.Floor : 0);
         }
 
         private void Update()
@@ -1149,6 +1154,10 @@ namespace SickOfIt.Core.Progression
 
             if (config != null && !config.returnToMainMenuOnComplete && config.nextVideoNumber > 0)
                 GameProgressManager.Instance.UnlockVideo(config.nextVideoNumber);
+
+            // The run goes on from the next level (after a video: the level after this one, like ReturnToLevel).
+            int next = config == null || config.returnToMainMenuOnComplete ? 0 : config.nextVideoNumber > 0 ? levelNumber + 1 : NextLevel();
+            RunFlow.LevelCleared(levelNumber, next);
         }
 
         private void FinishAndReturnToMainMenu()

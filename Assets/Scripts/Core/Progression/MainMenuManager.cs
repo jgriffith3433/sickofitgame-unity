@@ -91,10 +91,16 @@ namespace SickOfIt.Core.Progression
             menu = MenuCanvas.Create("MainMenuUI", gd != null ? gd.menuTheme : null, config.layout, gameObject);
             var list = menu.AddList(config.layout.list, menu.Theme.button.size);
 
-            int currentLevel = GameProgressManager.Instance.GetCurrentLevel();
+            // Continue: the current run, where it left off. New Run: a fresh run from the highest Waystone reached
+            // (Docs/Story.md, "Waystones and runs"). New Game: everything from the Meadow again.
+            int currentLevel = RunFlow.ContinueLevel();
             int totalLevels = GameProgressManager.Instance.GetTotalLevels();
             if (config.showContinueButton && currentLevel <= totalLevels)
                 Add(list, string.Format(labels.continueGame, currentLevel), OnContinueClicked);
+            int waystone = WaystoneProgress.Highest;
+            if (waystone > 0 && RunFlow.LevelFrom(waystone) > 0)
+                Add(list, string.Format(System.Globalization.CultureInfo.InvariantCulture, labels.newRun,
+                    waystone.ToString("N0", System.Globalization.CultureInfo.InvariantCulture)), OnNewRunClicked);
             if (config.showNewGameButton)
                 Add(list, labels.newGame, OnNewGameClicked);
             if (config.showLevelSelectButton)
@@ -136,12 +142,35 @@ namespace SickOfIt.Core.Progression
             if (isTransitioning) return;
             isTransitioning = true;
 
+            int level = RunFlow.ContinueLevel();
             StartCoroutine(TransitionThenExecute(() =>
             {
                 if (sceneLoadingManager != null)
-                    sceneLoadingManager.ContinueGame();
+                    sceneLoadingManager.LoadLevel(level);
                 else
-                    SceneTransitionManager.Instance.ContinueGame();
+                    SceneTransitionManager.Instance.LoadLevel(level);
+            }));
+        }
+
+        /// <summary>A new run from the highest Waystone: the current run's Grudges go; diamonds and Gloob's goods stay.</summary>
+        private void OnNewRunClicked()
+        {
+            if (isTransitioning) return;
+            int level = RunFlow.NewRun();
+            if (level <= 0) return;
+            isTransitioning = true;
+
+            if (bundleDownloadManager != null)
+                bundleDownloadManager.StartDownloadForLevel(level);
+            else if (BundleDownloadManager.Instance != null)
+                BundleDownloadManager.Instance.StartDownloadForLevel(level);
+
+            StartCoroutine(TransitionThenExecute(() =>
+            {
+                if (sceneLoadingManager != null)
+                    sceneLoadingManager.LoadLevel(level);
+                else
+                    SceneTransitionManager.Instance.LoadLevel(level);
             }));
         }
 
