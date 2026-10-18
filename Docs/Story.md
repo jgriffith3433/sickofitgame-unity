@@ -233,8 +233,8 @@ Built (2026-10-15; recipe: GameplayCookbook "A stage that climbs through Hell's 
    Circle IX is `crackedRoad`; its first stage is Level7, "Floors 900-876: The Cracked Road" (it comes right
    after Level6 for now: the stages for Floors 975-901 and the Magma King's arena are still to build).
 
-Note: Level6 and Level7 were built as 25-floor stages; the 10-floor layout above recasts them (Level 2 and
-Level 12).
+Note: today's Level6 and Level7 are 25-floor stages from the first floor layout; they are recast in this
+milestone's level task (as Level 2 and Level 12 in the 10-floor layout above).
 
 This milestone (*Into Hell*, approved 2026-10-18) builds:
 
