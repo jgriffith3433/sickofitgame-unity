@@ -201,6 +201,10 @@ python Tools/Art/fx_sheets.py <job.json> --preview preview.png
   `black` for pure light (beams, glows, bursts: alpha from brightness, painted on `canvas: "000000"`).
 - Every clip of a job is cropped to one shared box, so the pivot (the ground point, given in the job's frame) is the
   same in every sheet: the portal's `open`, `loop`, `close` and the scorch line up exactly.
+- `crop` pins that box (every bake prints the one it used) and a video clip's `count` picks exactly that many frames,
+  so new art re-baked over old keeps the cell size, pivot, world size and frame count: no data or timing changes.
+  Level 1's Gen jobs (`portal.json`, `beam-*.json`) are pinned to the interim sheets' boxes this way.
+- On the magenta key, paint solid things solid: a translucent dark shadow (a scorch) on `ff00ff` keys to purple.
 - `make` turns one still into a clip without the GPU: `charge` (grows in and throbs), `column` (crackles), `burst`
   (flash, grow, fade).
 - It writes the sheet, its `.sheet.json` and a full `.png.meta` (sliced sprites) itself, so no editor is needed.

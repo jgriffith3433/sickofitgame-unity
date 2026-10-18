@@ -1,0 +1,14 @@
+{
+  "about": "The Overlord's beam charging on the ground (entity overlordBeamGlow, 1.25 s), Hawkes Gen art. Same cell (256x159), pivot and 15 frames as beam-charge-interim.json.",
+  "gpu": "Source, in --src: charge.png = image.paint j_f0596e9f03ee (a red-orange glow gathering on the grass, black plate).",
+  "out": "Assets/Art/Effects/Beam",
+  "name": "Beam",
+  "key": "black",
+  "size": [512, 320],
+  "pivot": [256, 270],
+  "crop": [0, 0, 512, 318],
+  "worldWidth": 1.1,
+  "widthPixels": 340,
+  "scale": 0.5,
+  "clips": { "charge": { "image": "charge.png", "make": "charge", "frames": 15 } }
+}

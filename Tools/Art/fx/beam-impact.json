@@ -1,0 +1,14 @@
+{
+  "about": "The burst where the Overlord's beam lands (entity overlordBeamImpact), Hawkes Gen art. Same cell (320x175), pivot and 11 frames as beam-impact-interim.json.",
+  "gpu": "Source, in --src: impact.png = image.paint j_b0a9e34c2544 (a fire burst throwing up turf, black plate).",
+  "out": "Assets/Art/Effects/Beam",
+  "name": "Beam",
+  "key": "black",
+  "size": [640, 400],
+  "pivot": [320, 340],
+  "crop": [0, 50, 640, 400],
+  "worldWidth": 2.2,
+  "widthPixels": 600,
+  "scale": 0.5,
+  "clips": { "impact": { "image": "impact.png", "make": "burst", "frames": 11 } }
+}

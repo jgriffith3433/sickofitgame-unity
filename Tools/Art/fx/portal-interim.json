@@ -1,6 +1,6 @@
 {
   "about": "Level 1's portal (entity portal + portalScorch), interim art made without the GPU by Tools/Art/fx_interim.py: Video2's fire tunnel squashed into the hole, a torn turf rim in the Meadow's palette. Sources: python Tools/Art/fx_interim.py <dir>, then --src <dir>/portal.",
-  "gpu": "Hawkes Gen art queued 2026-10-18 (no server came up): image.paint j_8e77cf45dddc (portal stills, 3 takes, magenta plate). Next: image.edit portal -> scorch, video.i2v scorch->portal (open), portal->portal (loop), portal->scorch (close) at 832x480; bake with key magenta, same size and pivot.",
+  "gpu": "Hawkes Gen art queued 2026-10-18 (no server came up; Gen version: portal.json): image.paint j_8e77cf45dddc (portal stills, 3 takes, magenta plate). Next: image.edit portal -> scorch, video.i2v scorch->portal (open), portal->portal (loop), portal->scorch (close) at 832x480; bake with key magenta, same size and pivot.",
   "out": "Assets/Art/Effects/Portal",
   "name": "Portal",
   "key": "none",
