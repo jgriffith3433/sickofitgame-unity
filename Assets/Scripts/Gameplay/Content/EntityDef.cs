@@ -101,6 +101,10 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Flash white when hurt.")] public bool hurtFlash = true;
         [Doc("Color of the bits that fly off when it's hit or dies. Transparent = cream.")] public Color fxColor = Color.clear;
         [Doc("Pop into bits when it dies (enemies with health).")] public bool deathPop = true;
+        [Doc("Death clip: squash-and-stretch pop (0 = none, 0.3 = a clear pop), then it shrinks and floats up as it fades.")] public float deathPunch;
+        [Doc("Death clip: a bright flash of fxColor at the moment of death.")] public bool deathFlash;
+        [Doc("Death clip: how many bits fly off (0 = the default 6).")] public int deathBits;
+        [Doc("Death clip: seconds the last frame takes to fade out (0 = the default 0.25).")] public float deathFade;
     }
 
     [Serializable]

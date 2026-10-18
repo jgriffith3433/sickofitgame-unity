@@ -261,6 +261,9 @@ namespace SickOfIt.Playtest
                     case "milestone":
                         Run.Event("milestone", $"{level}: {e.Subject}");
                         break;
+                    case "death" when e.Subject == "imp" && e.Detail == "Damage":
+                        Run.Event("imp-death", $"{level}: an imp died (death clip, flash and bits)");
+                        break;
                     case "floor":
                         Run.Metric("floor", e.Value);
                         break;

@@ -5,6 +5,10 @@
   "tags": ["imp"],
   "visual": {
     "fxColor": "#FF7A3A",
+    "deathPunch": 0.35,
+    "deathFlash": true,
+    "deathBits": 14,
+    "deathFade": 0.4,
     "animator": {
       "parameters": [
         {
