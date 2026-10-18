@@ -48,7 +48,11 @@ Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
 3. **The Grudge pick** (the level's `offerUpgrades`): his first grudge. It happens before the scene, so the scene
    is never interrupted.
 4. **The portal.** The Overlord's lasers come down one last time, not at the hero (he isn't worth it yet) but at
-   the ground beside him. They burn a glowing hole into the meadow: a portal, lying flat on the ground.
+   the meadow near him. They burn a glowing hole into the meadow: a portal, lying flat on the ground.
+   It is always the same spot: where the Overlord's laser hits the meadow in the background footage (Level 1's
+   laser clip, a little left of centre on the ground line), and the small fire left burning there in the aftermath
+   loop is this portal seen from afar. The game's beam, impact, portal and scorch sit right on top of it, wherever
+   the hero happens to be standing; he walks over to it from his side, and Yooba comes from the other.
    How it looks: first a red-orange glow gathers on the grass (the beam charging), then the beam drops out of the
    sky as one burning column and bursts on the ground. The grass scorches, cracks, and tears open into a ring of
    burning turf with fire swirling down inside it: **the same fire portal the hero falls through in Video2**,

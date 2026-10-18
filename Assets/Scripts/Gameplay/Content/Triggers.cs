@@ -214,11 +214,13 @@ namespace SickOfIt.Gameplay.Content
     }
 
     [Serializable, JsonType("playerInZone")]
-    [Doc("The player is inside a box: 'center' and 'size' in world units.")]
+    [Doc("The player is inside a box: 'center' and 'size' in world units, 'center' measured from 'anchor'.")]
     public sealed class PlayerInZoneTrigger : Trigger
     {
         public Vector2 center;
         public Vector2 size = new Vector2(1f, 1f);
+        [Doc("World, or Camera: from the camera's center (a spot painted on a level's background, which is placed on the camera).")]
+        public Anchor anchor = Anchor.World;
 
         public override bool Check(TriggerContext context)
         {
@@ -226,7 +228,8 @@ namespace SickOfIt.Gameplay.Content
             if (player == null)
                 return false;
             Vector2 p = player.Position;
-            return Mathf.Abs(p.x - center.x) <= size.x * 0.5f && Mathf.Abs(p.y - center.y) <= size.y * 0.5f;
+            Vector2 c = anchor == Anchor.Camera ? context.World.CameraCenter + center : center;
+            return Mathf.Abs(p.x - c.x) <= size.x * 0.5f && Mathf.Abs(p.y - c.y) <= size.y * 0.5f;
         }
     }
 
