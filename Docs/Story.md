@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -590,6 +590,24 @@ follows what the game has revealed:
   the early builds* and not on the climb. The old pages' Yooba-as-avenger, "chose to go" and "World 1/World 2" are
   corrected on the pages themselves, each in a *What changed* note: Yooba is the village slime, nobody chose the portal,
   and Hell is 1,000 floors.
+
+## Teasers
+
+Teasers and trailers (`Marketing/`, made from the game's own art through Hawkes Gen) tell the prologue's edges, never
+past it, the same way the website does. What they add to the story:
+
+- **The hut on the main menu is the hero's.** The thatched hut at the left of the menu's meadow, with the neighbours'
+  hut beside it, is where he lives. He sleeps in his armour, on a straw bed, his rocket launcher leaning on the wall.
+- **The nice afternoon** (Video1) starts with him asleep. Sunbeam, dust, a candle, a snore that rattles his visor. He
+  is already tired of everything, including sleeping.
+- **His eyes glow when he's had enough.** The visor's orange eyes (his sprite has them) are dark while he sleeps
+  and light up when he wakes into a grudge. Teaser01's line: *"I'm tired... of sleeping..."*
+- **The quiet village after:** the meadow with his hut gone and ash falling (the website's `QuietVillageAfter`)
+  is what the Overlord's afternoon leaves; teasers may cut to it as a flash-forward. They never show the portal, the
+  Shaft or a Warden the game hasn't revealed.
+
+Teaser01 (YouTube, 2026-10-18): the menu's meadow, a push into his doorway, the hut inside, the line, a boom, the
+village after, the title. Its shot list is `Marketing/Teaser01/README.md`.
 
 ## Art
 
