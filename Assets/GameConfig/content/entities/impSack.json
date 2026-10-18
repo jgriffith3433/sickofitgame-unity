@@ -16,12 +16,7 @@
     "count": 2,
     "value": 1
   },
-  "drops": [
-    {
-      "entity": "rewindOrb",
-      "chance": 0.25
-    }
-  ],
+  "drops": [],
   "abilities": [
     {
       "type": "contactDamage",
