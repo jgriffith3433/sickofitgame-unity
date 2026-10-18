@@ -892,7 +892,7 @@ namespace SickOfIt.Core.Progression
                 return;
             }
             // Stay up over the old scene until the next one has loaded (Continue starts that load).
-            Invoke(nameof(Close), 30f);
+            StartCoroutine(CloseAfter(30f));
             try
             {
                 then?.Invoke();
@@ -902,6 +902,15 @@ namespace SickOfIt.Core.Progression
                 Debug.LogException(e);
                 Close();
             }
+        }
+
+        /// <summary>A fallback if the next scene never loads (real time: the level may have stopped the clock).</summary>
+        IEnumerator CloseAfter(float seconds)
+        {
+            float end = Time.unscaledTime + seconds;
+            while (Time.unscaledTime < end)
+                yield return null;
+            Close();
         }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
