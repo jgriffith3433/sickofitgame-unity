@@ -783,6 +783,7 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Seconds it rumbles before it moves.")] public float telegraph = 1.5f;
         [Doc("x (from the path's origin) where it stops and sinks. 0 = it never stops.")] public float stopAt;
         [Doc("Stay level with the camera (a wall of lava filling the screen's height).")] public bool followCameraY = true;
+        [Doc("Stop and sink once the floor's path turns away from its run (the chase is over when the climb starts).")] public bool stopWhenPathTurns = true;
 
         float x;
         float sinking;
@@ -805,6 +806,9 @@ namespace SickOfIt.Gameplay.Content
             float halfWidth = Owner.MainCollider != null ? Owner.MainCollider.bounds.extents.x : 0.5f;
             float stop = world.Effects.PathOrigin.x + stopAt;
             bool stopped = stopAt != 0f && (dir > 0f ? x >= stop : x <= stop);
+            var section = world.Effects.CurrentSection;
+            if (stopWhenPathTurns && started && section != null && section.Axis.x * dir < 0.1f)
+                stopped = true;
             if (age >= Mathf.Max(0f, telegraph) && !stopped)
             {
                 if (!started)
@@ -893,11 +897,18 @@ namespace SickOfIt.Gameplay.Content
         public override void OnSpawn()
         {
             int floor = Owner.World.Stage != null ? Owner.World.Stage.Floor : 0;
-            Write("Carving", text.Replace("{floor}", floor > 0 ? floor.ToString() : ""), size, above + size * 0.5f);
-            Write("Words", words ?? "", size * 0.38f, above + size + size * 0.25f);
+            Write("Carving", text.Replace("{floor}", floor > 0 ? floor.ToString() : ""), size);
+            Write("Words", words ?? "", size * 0.38f);
         }
 
-        void Write(string name, string value, float height, float y)
+        // Laid out every tick: the platform may have been stretched after it spawned, and it may sink or ride.
+        public override void Tick(float now, float dt)
+        {
+            Layout("Carving", size, above + size * 0.5f);
+            Layout("Words", size * 0.38f, above + size + size * 0.25f);
+        }
+
+        void Write(string name, string value, float height)
         {
             var t = Owner.transform.Find(name);
             TMPro.TextMeshPro mesh;
@@ -926,11 +937,18 @@ namespace SickOfIt.Gameplay.Content
             mesh.enableAutoSizing = true;
             mesh.fontSizeMin = 0.5f;
             mesh.fontSizeMax = 12f * height;
-            float top = FloorKit.Top(Owner);
-            Vector3 scale = Owner.transform.lossyScale;
-            mesh.transform.position = new Vector3(Owner.Position.x, top + y, 0f);
-            mesh.transform.localScale = new Vector3(1f / Mathf.Max(0.0001f, scale.x), 1f / Mathf.Max(0.0001f, scale.y), 1f);
             mesh.rectTransform.sizeDelta = new Vector2(Mathf.Max(2f, height * Mathf.Max(1, value.Length) * 0.8f), height);
+            Layout(name, height, 0f);
+        }
+
+        void Layout(string name, float height, float y)
+        {
+            var t = Owner.transform.Find(name);
+            if (t == null || !t.gameObject.activeSelf)
+                return;
+            Vector3 scale = Owner.transform.lossyScale;
+            t.position = new Vector3(Owner.Position.x, FloorKit.Top(Owner) + y, 0f);
+            t.localScale = new Vector3(1f / Mathf.Max(0.0001f, Mathf.Abs(scale.x)), 1f / Mathf.Max(0.0001f, Mathf.Abs(scale.y)), 1f);
         }
 
         /// <summary>The carving's text now (the playtest reads it).</summary>

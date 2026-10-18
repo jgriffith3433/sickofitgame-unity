@@ -41,6 +41,8 @@ namespace SickOfIt.Gameplay.Content
         public List<string> tags = new List<string>();
         [Doc("Spawn when its own section starts instead of one section ahead.")] public bool onEnter;
         [Doc("Face this way: 1 right, -1 left, 0 = toward the player.")] public float facing;
+        [Doc("Stretch it: [width, height] multipliers on its size (a wider stone, a longer raft). The body stretches with it.")]
+        public Vector2 scale = Vector2.one;
     }
 
     [Serializable]

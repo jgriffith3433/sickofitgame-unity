@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "lava"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      1.0,
+      6.0
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#FF7322",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 7,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "lavaFall",
+      "pour": 3.0,
+      "off": 2.5,
+      "offset": 0.0,
+      "color": "#FF7322E6"
+    },
+    {
+      "type": "scald",
+      "damage": 1,
+      "launch": 6.0,
+      "interval": 0.8,
+      "effect": ""
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "foothold",
+    "landing"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      6.0,
+      0.6
+    ],
+    "solid": true
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#2B1712",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 0,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "carved",
+      "text": "{floor}",
+      "words": "",
+      "color": "#FFB866",
+      "size": 1.1,
+      "above": 0.15
+    }
+  ]
+}

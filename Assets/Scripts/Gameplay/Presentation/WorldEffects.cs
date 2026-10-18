@@ -256,7 +256,14 @@ namespace SickOfIt.Gameplay
                 var options = new SpawnOptions { InstanceId = s.id ?? "", Facing = s.facing, FacePlayer = s.facing == 0f };
                 if (s.tags != null)
                     options.Tags.AddRange(s.tags);
-                world.Spawn(s.entity, at, options);
+                var entity = world.Spawn(s.entity, at, options);
+                if (entity != null && s.scale != Vector2.one && s.scale.x > 0f && s.scale.y > 0f)
+                {
+                    var t = entity.transform;
+                    t.localScale = new Vector3(t.localScale.x * s.scale.x, t.localScale.y * s.scale.y, t.localScale.z);
+                    // Abilities that remember where they started read it at spawn; the scale only changes the size.
+                    Physics2D.SyncTransforms();
+                }
             }
         }
 

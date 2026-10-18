@@ -121,6 +121,11 @@ namespace SickOfIt.Playtest
         public const string CutsceneScene = "cutsceneTest";
         public const int CutsceneLevel = 1;
 
+        /// <summary>The climb scenario: the test floor it plays (content/scenes, a floor with a path) and the level whose stage it plays on.</summary>
+        public const string ClimbScene = "climbTest";
+        public const int ClimbLevel = 2;
+        const float ClimbSeconds = 200f;
+
         /// <summary>The level whose level-N scenario also watches the portal scene at its end (Level1.json, phases portalBeam to portalClose) and Video2 after it.</summary>
         public const int PortalLevel = 1;
 
@@ -227,6 +232,13 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario("cutscene", $"The scene \"{CutsceneScene}\" on level {CutsceneLevel}'s stage (setup shortcut): with input and rewind locked " +
                 "the hero walks to a point by himself and stops, turns left and right, R does nothing; the camera zooms in and back; the screen fades " +
                 "to black and back; he is pulled into a point, spinning and shrinking until he disappears. Each beat is checked", 75, "level"));
+            list.Add(new PlaytestScenario("climb", $"The floor toolkit on a test floor: the scene \"{ClimbScene}\" on level {ClimbLevel}'s stage (setup shortcut), " +
+                "one floor of Hell played by the bot through real input. Its path turns from a climb up a lava fall to a run sideways over a lava river " +
+                "and a chase, then up again, with the lava sea and the parallax world below it (far sea, spires, smoke, floating islands, embers). Each " +
+                "beat is a check event: the lava sea and parallax, the camera climbing, running sideways and climbing again, a stone sinking while he " +
+                "stands on it and rising back when he leaves, a crumbling stone falling, a raft drifting on the current and carrying him, the hero " +
+                "hanging from a swinging chain and jumping off, the lava wave chasing him sideways, a rewind (hold R) bringing a sunk stone back up, " +
+                "and the carved landing with the floor number, which ends the level", ClimbSeconds, "level"));
             list.Add(new PlaytestScenario("video-" + OverlayVideo, $"Video {OverlayVideo}, started directly (setup shortcut) and watched instead of skipped: " +
                 $"the overlay \"{OverlayName}\" (the hero) appears as the camera goes through the burning door, spins 3+ turns and shrinks into the tunnel's " +
                 "centre and is gone before the lava river (~14.5 s); holding R mid-spin plays it backward; then Escape skips the video. Each beat is checked", 75, "video"));
@@ -380,6 +392,8 @@ namespace SickOfIt.Playtest
                 yield return session.PortalAudio();
             else if (id == "cutscene")
                 yield return session.Cutscene();
+            else if (id == "climb")
+                yield return session.ClimbRun();
             else if (id == "magma-king")
                 yield return session.MagmaKingRun();
             else if (id == "video-" + OverlayVideo)
@@ -534,6 +548,13 @@ namespace SickOfIt.Playtest
                             stage.ShortcutTo = e.Value;
                             stage.ShortcutFrom = log.World.Shortcuts != null ? log.World.Shortcuts.TakenFromFloor : 0;
                         }
+                        break;
+                    case "section" when climb != null:
+                        Run.Event("section", $"{level}: section {e.Value} \"{e.Subject}\" ({e.Detail})");
+                        break;
+                    case "floorkit" when climb != null:
+                        Run.Event("floorkit", $"{level}: {e.Subject} ({e.Detail}) {e.Value}");
+                        climb.Kit.Add(e.Subject.Split(':')[0]);
                         break;
                     case "error":
                         Run.Problem(PlaytestSeverity.Bug, $"{level} script error in {e.Subject}: {e.Detail}");
@@ -2647,6 +2668,267 @@ namespace SickOfIt.Playtest
                     if (portal.Passed.Contains(beat)) passed++;
                 Run.Metric("portal.passed", passed);
                 Run.Metric("portal.failed", portal.Failed);
+            }
+
+            // ─── climb: the floor toolkit on a test floor ───────────────
+
+            /// <summary>What the climb scenario has seen so far.</summary>
+            sealed class ClimbWatch
+            {
+                public readonly HashSet<string> Passed = new HashSet<string>();
+                public readonly HashSet<string> Kit = new HashSet<string>();
+                public int Failed;
+                public bool Started;
+                public string Section = "";
+                public Vector2 SectionCamera;
+                public bool SawSideways;
+                public readonly Dictionary<int, float> StoneSunk = new Dictionary<int, float>();
+                public readonly Dictionary<int, float> CrumbleHome = new Dictionary<int, float>();
+                public readonly Dictionary<int, float> RaftStart = new Dictionary<int, float>();
+                public float RideStartX = float.NaN;
+                public float RideRaftStart;
+                public bool WasHeld;
+                public float SurgeStart = float.NaN;
+                public int RewindStone = -1;
+                public float RewindSunk;
+                public float RewindAskedAt = -1f;
+                public bool ParallaxArmed;
+                public long ParallaxKey;
+                public Vector2 ParallaxCamera, ParallaxItem;
+                public bool LandingSeen;
+            }
+
+            ClimbWatch climb;
+
+            /// <summary>What the climb scenario must see, in the order a good run shows them.</summary>
+            static readonly string[] ClimbBeats =
+            {
+                "lava sea", "parallax", "climb up", "sinking stone", "rewind restores", "stone rises back", "crumbling stone", "run sideways",
+                "raft drifts", "raft carries", "chain swing", "chase", "climb again", "landing number", "level ends",
+            };
+
+            public IEnumerator ClimbRun()
+            {
+                var content = SickOfIt.Gameplay.GameContent.Current;
+                if (content == null || !content.Scenes.ContainsKey(ClimbScene))
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"climb: there is no scene \"{ClimbScene}\" in content/scenes");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+                climb = new ClimbWatch();
+                Run.Event("shortcut", $"load level {ClimbLevel}'s stage with the test floor {ClimbScene} directly");
+                LevelRuntime.PendingScene = ClimbScene;
+                var load = LoadLevel(ClimbLevel);
+                if (load != null)
+                    yield return load;
+                yield return PlayLevel(ClimbLevel, ClimbSeconds, ClimbDuring, waitOutDeath: true);
+                LevelRuntime.PendingScene = null;
+                if (Run.Done)
+                    yield break;
+
+                ClimbCheck("level ends", lastOutcome == "completed", $"the level ended: {lastOutcome}");
+                int passed = 0;
+                foreach (var beat in ClimbBeats)
+                {
+                    if (climb.Passed.Contains(beat))
+                        passed++;
+                    else
+                        Run.Problem(PlaytestSeverity.Bug, $"climb: never saw \"{beat}\" (level {lastOutcome})");
+                }
+                Run.Metric("climb.passed", passed);
+                Run.Metric("climb.failed", climb.Failed);
+                Run.Progress(1f);
+                bool ok = passed == ClimbBeats.Length && climb.Failed == 0;
+                climb = null;
+                End(ok ? PlaytestOutcome.Won : lastOutcome == "softlock" ? PlaytestOutcome.Stuck : PlaytestOutcome.Done);
+            }
+
+            void ClimbCheck(string beat, bool ok, string detail)
+            {
+                if (climb == null || climb.Passed.Contains(beat))
+                    return;
+                if (ok)
+                {
+                    climb.Passed.Add(beat);
+                    Run.Event("check", $"climb {beat}: ok ({detail})");
+                }
+                else
+                {
+                    climb.Failed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"climb {beat}: {detail}");
+                }
+            }
+
+            static string Who(SickOfIt.Gameplay.Entity e) => string.IsNullOrEmpty(e.InstanceId) ? e.DefId + "#" + e.Serial : e.InstanceId;
+
+            /// <summary>Runs every frame of the test floor: watches the camera's path, the toolkit's pieces and the bot, and checks each beat.</summary>
+            IEnumerator ClimbDuring(float now)
+            {
+                var world = GameplayWorld.Instance;
+                if (world == null || climb == null || world.Effects == null)
+                    return null;
+                var fx = world.Effects;
+                var clock = GameClock.Instance;
+                bool rewinding = clock != null && clock.IsRewinding;
+                Vector2 cam = world.CameraCenter;
+                var section = fx.CurrentSection;
+                if (!climb.Started)
+                {
+                    climb.Started = true;
+                    var names = new List<string>();
+                    foreach (var sec in fx.Path)
+                        names.Add($"{sec.name} ({sec.direction}{(sec.autoSpeed > 0f ? $", auto {sec.autoSpeed:0.#}/s" : "")})");
+                    Run.Event("climb", fx.HasPath ? $"the floor's path: {string.Join(" → ", names)}" : "the test floor has no path");
+                    if (!fx.HasPath)
+                        ClimbCheck("climb up", false, "the scene has no world.path: the camera can't turn");
+                }
+                if (section == null || rewinding)
+                    return null;
+
+                // The lava sea and the world below it.
+                var backdrop = fx.Backdrop;
+                var sea = world.FindById("lavaSea");
+                if (backdrop != null && sea != null && backdrop.LayerCount >= 3 && backdrop.ItemCount > 0)
+                    ClimbCheck("lava sea", true, $"lava sea surface at y={sea.MainCollider.bounds.max.y:0.0} under the camera, the far sea's horizon at " +
+                                                 $"y={backdrop.SeaTop:0.0}, {backdrop.LayerCount} parallax layers with {backdrop.ItemCount} shapes on screen");
+                if (backdrop != null && !climb.Passed.Contains("parallax"))
+                {
+                    if (!climb.ParallaxArmed)
+                    {
+                        if (backdrop.TryGetItem(4, out var at, out var key) || backdrop.TryGetItem(2, out at, out key))
+                        {
+                            climb.ParallaxArmed = true;
+                            climb.ParallaxKey = key;
+                            climb.ParallaxCamera = cam;
+                            climb.ParallaxItem = at;
+                        }
+                    }
+                    else if (backdrop.TryGetItem(climb.ParallaxKey, out var at))
+                    {
+                        Vector2 camMoved = cam - climb.ParallaxCamera, itemMoved = at - climb.ParallaxItem;
+                        if (camMoved.magnitude >= 3f)
+                        {
+                            // A far shape follows the camera only part of the way: on screen it falls behind, slower than the platforms.
+                            float ratio = itemMoved.magnitude / camMoved.magnitude;
+                            ClimbCheck("parallax", ratio > 0.3f && ratio < 0.97f,
+                                $"camera moved {camMoved.magnitude:0.0}, a floating island moved {itemMoved.magnitude:0.0} with it (parallax {ratio:0.00}): it drifts by on screen slower than the platforms");
+                        }
+                    }
+                    else
+                    {
+                        climb.ParallaxArmed = false;
+                    }
+                }
+
+                // The path: up, sideways, up again.
+                if (section.name != climb.Section)
+                {
+                    climb.Section = section.name;
+                    climb.SectionCamera = cam;
+                    Run.Event("climb", $"section \"{section.name}\" ({section.direction}) at t={now:0.0}, camera {cam.x:0.0},{cam.y:0.0}");
+                }
+                Vector2 moved = cam - climb.SectionCamera;
+                if (section.direction == SickOfIt.Gameplay.Content.PathDirection.Up && moved.y >= 4f)
+                {
+                    if (!climb.SawSideways)
+                        ClimbCheck("climb up", true, $"section \"{section.name}\": the camera climbed {moved.y:0.0} units straight up");
+                    else
+                        ClimbCheck("climb again", true, $"section \"{section.name}\": after the run the camera turned and climbed {moved.y:0.0} units up again");
+                }
+                if ((section.direction == SickOfIt.Gameplay.Content.PathDirection.Right || section.direction == SickOfIt.Gameplay.Content.PathDirection.Left)
+                    && Mathf.Abs(moved.x) >= 4f && Mathf.Abs(moved.y) < 1f)
+                {
+                    climb.SawSideways = true;
+                    ClimbCheck("run sideways", true, $"section \"{section.name}\": the camera turned and ran {Mathf.Abs(moved.x):0.0} units {section.direction.ToString().ToLowerInvariant()}");
+                }
+
+                var controller = world.PlayerController;
+                foreach (var e in world.Live)
+                {
+                    if (e == null || !e.IsAlive)
+                        continue;
+                    var sink = e.FindAbility<SickOfIt.Gameplay.Content.SinkAbility>();
+                    if (sink != null)
+                    {
+                        climb.StoneSunk.TryGetValue(e.Serial, out float most);
+                        if (sink.Sunk > most)
+                            climb.StoneSunk[e.Serial] = sink.Sunk;
+                        bool on = world.PlayerStandsOn(e);
+                        if (on && sink.Sunk >= 0.5f)
+                            ClimbCheck("sinking stone", true, $"{Who(e)} sank {sink.Sunk:0.00} units while he stood on it");
+                        if (!on && most >= 0.4f && sink.Sunk <= 0.02f && e.Serial != climb.RewindStone)
+                            ClimbCheck("stone rises back", true, $"{Who(e)} sank {most:0.00} and bobbed back up once he stepped off");
+                        // Rewind as a level tool: once a stone is well under, hold R and see it come back.
+                        if (climb.RewindStone < 0 && on && sink.Sunk >= 0.6f && bot != null && bot.RewindNow(1.8f))
+                        {
+                            climb.RewindStone = e.Serial;
+                            climb.RewindSunk = sink.Sunk;
+                            climb.RewindAskedAt = Time.realtimeSinceStartup;
+                            Run.Event("rewind", $"climb: holding R with {Who(e)} sunk {sink.Sunk:0.00} under him");
+                        }
+                        if (e.Serial == climb.RewindStone && climb.RewindAskedAt > 0f && !input.IsHeld(Key.R)
+                            && Time.realtimeSinceStartup - climb.RewindAskedAt > 0.3f)
+                        {
+                            climb.RewindAskedAt = -1f;
+                            ClimbCheck("rewind restores", sink.Sunk <= climb.RewindSunk - 0.4f,
+                                $"{Who(e)} was {climb.RewindSunk:0.00} under; after the rewind it is {sink.Sunk:0.00} under");
+                            if (!climb.Passed.Contains("rewind restores"))
+                                climb.RewindStone = -2;
+                        }
+                    }
+                    var crumble = e.FindAbility<SickOfIt.Gameplay.Content.CrumbleAbility>();
+                    if (crumble != null)
+                    {
+                        if (!climb.CrumbleHome.ContainsKey(e.Serial) && !crumble.Falling)
+                            climb.CrumbleHome[e.Serial] = e.Position.y;
+                        if (crumble.Falling && climb.CrumbleHome.TryGetValue(e.Serial, out float home) && e.Position.y < home - 1.5f)
+                            ClimbCheck("crumbling stone", true, $"{Who(e)} cracked under him, shook and fell {home - e.Position.y:0.0} units");
+                    }
+                    var raft = e.FindAbility<SickOfIt.Gameplay.Content.RaftAbility>();
+                    if (raft != null)
+                    {
+                        if (!climb.RaftStart.ContainsKey(e.Serial))
+                            climb.RaftStart[e.Serial] = e.Position.x;
+                        if (Mathf.Abs(e.Position.x - climb.RaftStart[e.Serial]) >= 1.5f)
+                            ClimbCheck("raft drifts", true, $"{Who(e)} drifted {Mathf.Abs(e.Position.x - climb.RaftStart[e.Serial]):0.0} units on the lava's current");
+                        if (world.PlayerStandsOn(e))
+                        {
+                            if (float.IsNaN(climb.RideStartX))
+                            {
+                                climb.RideStartX = world.Player.Position.x;
+                                climb.RideRaftStart = e.Position.x;
+                            }
+                            float rode = e.Position.x - climb.RideRaftStart;
+                            if (Mathf.Abs(rode) >= 0.8f)
+                                ClimbCheck("raft carries", true, $"he stood on {Who(e)} while it carried him {Mathf.Abs(rode):0.0} units");
+                        }
+                    }
+                    var surge = e.FindAbility<SickOfIt.Gameplay.Content.SurgeAbility>();
+                    if (surge != null)
+                    {
+                        if (float.IsNaN(climb.SurgeStart))
+                            climb.SurgeStart = surge.X;
+                        float chased = Mathf.Abs(surge.X - climb.SurgeStart);
+                        if (chased >= 4f)
+                            ClimbCheck("chase", true, $"the lava wave chased him {chased:0.0} units sideways (section \"{section.name}\", the hero {world.Player.Position.x - surge.X:0.0} ahead of it)");
+                    }
+                    var carved = e.FindAbility<SickOfIt.Gameplay.Content.CarvedAbility>();
+                    if (carved != null && world.PlayerStandsOn(e) && !climb.LandingSeen)
+                    {
+                        climb.LandingSeen = true;
+                        string floor = world.Stage != null ? world.Stage.Floor.ToString() : "";
+                        ClimbCheck("landing number", carved.Carving == floor && floor.Length > 0, $"he stands on the landing carved \"{carved.Carving}\" (floor counter {floor})");
+                    }
+                }
+                if (controller != null)
+                {
+                    if (controller.IsHeld)
+                        climb.WasHeld = true;
+                    else if (climb.WasHeld && climb.Kit.Contains("swingRelease"))
+                        ClimbCheck("chain swing", true, "he grabbed the swinging chain, swung with it and jumped off");
+                }
+                return null;
             }
 
             // ─── cutscene: every scene action, checked beat by beat ─────

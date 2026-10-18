@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "foothold"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      2.0,
+      0.4
+    ],
+    "solid": true
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#4A3A35",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 0,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "chainLift",
+      "travel": [
+        0.0,
+        3.0
+      ],
+      "speed": 1.2,
+      "wait": 1.5,
+      "jolt": 0.6,
+      "startOnStand": true,
+      "chainColor": "#52423C"
+    }
+  ]
+}
