@@ -1,0 +1,528 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor992",
+  "displayName": "Floor 992: Bad Footing",
+  "levelNumber": 10,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 11,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 992,
+    "length": 90,
+    "floors": {
+      "start": 992,
+      "end": 991,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "wall",
+          "direction": "Up",
+          "length": 6.4,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                -0.8,
+                -1.1
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                1.6,
+                0.2
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -0.6,
+                1.5
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                1.8,
+                2.8
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                -0.4,
+                4.1
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                2.0,
+                5.2
+              ],
+              "id": "bridgeHead",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "bridge",
+          "direction": "Right",
+          "length": 20.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "crumblingStone",
+              "at": [
+                4.2,
+                5.0
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                6.2,
+                5.0
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                8.2,
+                5.0
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                10.2,
+                5.0
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                12.2,
+                5.0
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                14.2,
+                5.0
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                16.2,
+                5.0
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "swingChain",
+              "at": [
+                19.0,
+                7.4
+              ],
+              "id": "gapChain"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                22.0,
+                5.0
+              ],
+              "id": "farLedge",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 1.0
+        },
+        {
+          "name": "far",
+          "direction": "Up",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "crumblingStone",
+              "at": [
+                19.6,
+                6.3
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                22.2,
+                7.6
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                19.8,
+                8.9
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                22.4,
+                10.2
+              ],
+              "id": "top",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "imp",
+              "at": [
+                18.0,
+                11.6
+              ],
+              "id": "topImp",
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding992",
+              "at": [
+                26.6,
+                11.6
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the cinder pair",
+        "when": {
+          "type": "atTime",
+          "seconds": 7.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawn",
+            "entity": "cinder",
+            "anchor": "Camera",
+            "at": [
+              -4.2,
+              2.2
+            ],
+            "count": 2,
+            "spacing": [
+              8.4,
+              0.0
+            ],
+            "tags": [
+              "cinderPair"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the first crumble",
+        "when": {
+          "type": "atTime",
+          "seconds": 5.5
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "showText",
+            "text": "Nothing down here holds.",
+            "duration": 2.6,
+            "style": "Subtitle",
+            "sound": "vo_f992_holds"
+          }
+        ]
+      },
+      {
+        "name": "the middle of the bridge goes",
+        "when": {
+          "type": "sectionReached",
+          "section": "bridge"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 7.0
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.8
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the last span is gone",
+        "when": {
+          "type": "sectionReached",
+          "section": "bridge"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 12.5
+              },
+              {
+                "type": "showText",
+                "text": "Of course.",
+                "duration": 2.0,
+                "style": "Subtitle",
+                "sound": "vo_f992_course"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the far wall: the lava rises",
+        "when": {
+          "type": "sectionReached",
+          "section": "far"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "lavaMax",
+            "value": 12.0
+          },
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 991,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "BAD FOOTING: SURVIVED",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_f992_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 992: BAD FOOTING",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f992_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

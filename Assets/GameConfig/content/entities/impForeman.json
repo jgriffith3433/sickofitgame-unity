@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 40,
+  "moveSpeed": 0,
+  "activationRange": 0,
+  "tags": [
+    "boss",
+    "imp",
+    "impForeman"
+  ],
+  "body": {
+    "shape": "Circle",
+    "radius": 1.0,
+    "solid": false,
+    "gravity": 0
+  },
+  "visual": {
+    "fxColor": "#FFB040",
+    "deathPunch": 0.35,
+    "deathFlash": true,
+    "deathBits": 30,
+    "deathFade": 0.8,
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsAttacking",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/Imp/Imp_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/Imp/Imp_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 5,
+              "functionName": "FireProjectile"
+            }
+          ]
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/Imp/Imp_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/Imp/Imp_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false,
+    "scale": 0.66,
+    "color": "#FFC9A0"
+  },
+  "healthBar": {
+    "show": false
+  },
+  "loot": {
+    "chance": 1,
+    "count": 6,
+    "value": 1
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "healthBelow",
+        "fraction": 0.25
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "emit",
+          "signal": "fmFlap"
+        },
+        {
+          "type": "showText",
+          "text": "Hnnngh... fly... FLY...",
+          "style": "Subtitle",
+          "duration": 2.4,
+          "color": "#FFB040",
+          "sound": "vo_fm_flap"
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "intro",
+      "transitions": [
+        {
+          "to": "p1Whip",
+          "when": {
+            "type": "signal",
+            "name": "fmFight"
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Whip",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "fmWarnWhip",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            3.4,
+            -0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "line",
+            "count": 5,
+            "spacing": 1.0
+          },
+          "animTrigger": "IsAttacking"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climbing",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Whistle",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Whistle",
+      "onEnter": [
+        {
+          "type": "playSound",
+          "sound": "whip_crack"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "spawner",
+          "entity": "impHauler",
+          "interval": 9,
+          "initialDelay": 0.5,
+          "maxAlive": 2,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climbing",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Whip",
+          "when": {
+            "type": "after",
+            "seconds": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "climbing",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "fmClimb"
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "impHauler"
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            8.2,
+            8.4
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Swing",
+          "when": {
+            "type": "signal",
+            "name": "fmTier2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Swing",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "fmPhase2"
+        },
+        {
+          "type": "showText",
+          "text": "My sack! Nobody touches my sack! Up the chains!",
+          "style": "Subtitle",
+          "duration": 3.4,
+          "color": "#FFB040",
+          "sound": "vo_fm_phase2"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48.0,
+          "period": 4.2,
+          "phase": 0.0,
+          "grabRadius": -10.0,
+          "hang": 0.0,
+          "regrab": 99.0,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "fmSackDrip",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -0.6
+          ],
+          "interval": 1.4,
+          "initialDelay": 1.2
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Lash",
+          "when": {
+            "type": "after",
+            "seconds": 5.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Lash",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48.0,
+          "period": 4.2,
+          "phase": 0.0,
+          "grabRadius": -10.0,
+          "hang": 0.0,
+          "regrab": 99.0,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "fmWarnWhip",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -2.75
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "line",
+            "count": 4,
+            "spacing": 1.0
+          },
+          "animTrigger": "IsAttacking"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Drip",
+          "when": {
+            "type": "after",
+            "seconds": 2.4
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Drip",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48.0,
+          "period": 4.2,
+          "phase": 0.0,
+          "grabRadius": -10.0,
+          "hang": 0.0,
+          "regrab": 99.0,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "fmSackDrip",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -0.6
+          ],
+          "interval": 1.2,
+          "initialDelay": 0.4
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Lash",
+          "when": {
+            "type": "after",
+            "seconds": 4.6
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "extends": "slagDrip",
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 1.1
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "fmEmber",
+      "anchor": "Self",
+      "velocity": [
+        0.0,
+        -3.0
+      ],
+      "facePlayer": false
+    }
+  ]
+}

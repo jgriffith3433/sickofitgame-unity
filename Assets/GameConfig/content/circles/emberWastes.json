@@ -96,7 +96,7 @@
     {
       "entity": "imp",
       "weight": 2.0,
-      "fromFloor": 0,
+      "fromFloor": 993,
       "areaCenter": [3.6, -1.2],
       "areaSize": [1.2, 1.6]
     },
