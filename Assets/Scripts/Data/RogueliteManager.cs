@@ -457,6 +457,7 @@ namespace SickOfIt.Data
             PlayerPrefs.DeleteKey("HighestLevelReached");
             PlayerPrefs.DeleteKey("GameInitialized");
             ShaftProgress.Reset();
+            GloobProgress.Reset();
 
             PlayerPrefs.Save();
             ////Debug.Log("[RogueliteManager] All game and roguelite data reset.");

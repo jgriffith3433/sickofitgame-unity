@@ -98,6 +98,7 @@ namespace SickOfIt.Playtest
         /// <summary>The shaft scenario: the level after the plunge whose climb it watches (The Landing).</summary>
         public const int ShaftLevel = 2;
         const float ShaftSeconds = 480f;
+        const float GloobSeconds = 300f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void Register()
@@ -175,6 +176,11 @@ namespace SickOfIt.Playtest
                 $"Continue starts level {ShaftLevel}; the bot plays it; after its results the hero's marker climbs and the counter ticks to the floor " +
                 "reached with the floors left and the next Warden shown; Continue goes on. The layout is audited on both Shaft screens. Each beat is a check event",
                 ShaftSeconds, "full"));
+            list.Add(new PlaytestScenario("gloob", "Gloob, the village slime: his hello on the Shaft after Video3 (setup shortcut: his save reset, the marker at " +
+                "Floor 991; Video3 loaded directly and skipped after 6 s): his talking portrait (idle and talk loops), every hello line with its voice and the " +
+                "hero's one-line reply, then Continue starts Level 3. Then three Shaft previews over the menu (setup shortcuts) where he reacts to the floor: " +
+                "950, a death on the way, the Magma King's door. Then the shop with his portrait: welcome, a card clicked with 0 diamonds (can't afford), " +
+                "the same card with enough (buy), Back (goodbye). Each beat is a check event", GloobSeconds, "menus"));
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close, " +
                 "then the Shaft (a preview over the menu, setup shortcut) opens, its layout is checked and Continue closes it", 90, "menus"));
             list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu, level select, settings, " +
@@ -231,6 +237,8 @@ namespace SickOfIt.Playtest
                 yield return session.StoryPathRun();
             else if (id == "shaft")
                 yield return session.ShaftRun();
+            else if (id == "gloob")
+                yield return session.GloobRun();
             else if (id == "wastes-climb")
                 yield return session.WastesClimb();
             else if (id == "menus")
@@ -291,6 +299,7 @@ namespace SickOfIt.Playtest
                 GameplayTelemetry.Recorded += OnTelemetry;
                 GameplayTelemetry.Finished += OnLevelLog;
                 ShaftScreen.Reported += OnShaft;
+                GloobPortrait.Reported += OnGloob;
             }
 
             float Speed => Mathf.Clamp(options.speed, 0.25f, 4f);
@@ -322,6 +331,7 @@ namespace SickOfIt.Playtest
                 GameplayTelemetry.Recorded -= OnTelemetry;
                 GameplayTelemetry.Finished -= OnLevelLog;
                 ShaftScreen.Reported -= OnShaft;
+                GloobPortrait.Reported -= OnGloob;
                 if (bot != null)
                     Object.Destroy(bot);
                 input.Dispose();
@@ -2594,7 +2604,7 @@ namespace SickOfIt.Playtest
                         Run.Event("input", $"Space during the Shaft at FLOOR {screen.ShownFloor}");
                     }
                 }
-                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 40f, "the Shaft's Continue");
+                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 75f, "the Shaft's Continue (Gloob may be talking)");
                 if (Run.Done) yield break;
                 if (ShaftScreen.Current == screen)
                 {
@@ -2712,7 +2722,7 @@ namespace SickOfIt.Playtest
             {
                 Run.Event("shortcut", "open the Shaft over the main menu (preview: the marker climbs 1000 to 991)");
                 var screen = ShaftScreen.Preview(1000, 991);
-                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 20f, "the Shaft preview's Continue");
+                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 45f, "the Shaft preview's Continue");
                 if (Run.Done) yield break;
                 if (step > 0)
                     yield return Audit("Shaft", step, steps);
@@ -2818,6 +2828,235 @@ namespace SickOfIt.Playtest
                 Run.Progress(1f);
                 End(shaftFailed > 0 ? PlaytestOutcome.Done : lastOutcome == "completed" ? PlaytestOutcome.Won : PlaytestOutcome.Lost);
             }
+
+            // ─── Gloob ────────────────────────────────────────────────────
+
+            int gloobPassed, gloobFailed;
+            readonly List<string> gloobLines = new List<string>();
+            readonly List<string> gloobClips = new List<string>();
+
+            void OnGloob(string kind, string detail)
+            {
+                if (Run.Done)
+                    return;
+                Run.Event("gloob", $"{kind}: {detail}");
+                if (kind == "line")
+                    gloobLines.Add(detail);
+                else if (kind == "clip")
+                    gloobClips.Add(detail);
+            }
+
+            void GloobCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    gloobPassed++;
+                    Run.Event("check", $"gloob {beat}: ok ({detail})");
+                }
+                else
+                {
+                    gloobFailed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"gloob {beat}: {detail}");
+                }
+                Run.Metric("gloob.passed", gloobPassed);
+                Run.Metric("gloob.failed", gloobFailed);
+            }
+
+            /// <summary>Lines heard since 'from' (index into gloobLines) by Gloob ("gloob (...") or the hero, and how many had no clip.</summary>
+            (int gloob, int hero, int silent) LinesSince(int from)
+            {
+                int g = 0, h = 0, s = 0;
+                for (int i = from; i < gloobLines.Count; i++)
+                {
+                    if (gloobLines[i].StartsWith("gloob", StringComparison.Ordinal)) g++;
+                    else h++;
+                    if (gloobLines[i].Contains(", no clip")) s++;
+                }
+                return (g, h, s);
+            }
+
+            bool ClipSeenSince(int from, string clip)
+            {
+                for (int i = from; i < gloobClips.Count; i++)
+                    if (gloobClips[i].StartsWith(clip + " ", StringComparison.Ordinal))
+                        return true;
+                return false;
+            }
+
+            /// <summary>Moves the virtual mouse onto a button and clicks it.</summary>
+            IEnumerator ClickButton(MenuButton button, string what)
+            {
+                if (button == null)
+                    yield break;
+                input.MoveMouse(ScreenPoint(button));
+                yield return null;
+                yield return null;
+                input.SetMouseButton(true);
+                yield return null;
+                yield return null;
+                input.SetMouseButton(false);
+                Run.Event("click", what);
+            }
+
+            /// <summary>
+            /// Gloob (Docs/Story.md, "Gloob between floors"): his hello on the Shaft after Video3 through the real flow
+            /// (setup shortcut: his save reset and the marker put at Floor 991, where the Landing ends), his lines between
+            /// floors on Shaft previews over the main menu (950, a death, the Magma King's door: setup shortcuts), then
+            /// the shop: welcome, can't afford, buy and goodbye, clicked with the virtual mouse.
+            /// </summary>
+            public IEnumerator GloobRun()
+            {
+                var definition = GameDefinition.Instance;
+                var settings = definition.gloob;
+                string continueText = definition.menuTheme.texts.continueText;
+                int video = settings.helloAfterVideo;
+                var videoConfig = definition.GetVideo(video);
+                int nextLevel = videoConfig != null ? videoConfig.nextLevel : 3;
+
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+
+                // 1. The hello, after Video3, before the Spill.
+                Run.Event("shortcut", $"reset Gloob's save, put the Shaft's marker at Floor 991 (the Landing cleared), load video {video} directly");
+                GloobProgress.Reset();
+                ShaftProgress.Floor = 991;
+                ShaftProgress.Plunged = true;
+                PlayerPrefs.SetInt("ReturnToLevel", nextLevel);
+                PlayerPrefs.Save();
+                SceneTransitionManager.Instance.LoadVideo(video);
+                yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null && ClockTime > 0.1f, 60f, $"video {video} to start playing");
+                if (Run.Done) yield break;
+                Run.Scene("Video " + video);
+                yield return WaitReal(6f);
+                if (Run.Done) yield break;
+                yield return Tap(Key.Escape);
+                Run.Event("skip", "video " + video);
+                yield return Run.Until(() => ShaftScreen.Current != null || GameplayWorld.Instance != null, 20f, "the Shaft after the video");
+                if (Run.Done) yield break;
+                var screen = ShaftScreen.Current;
+                GloobCheck("helloShaft", screen != null && screen.Kind == ShaftScreen.Mode.Meet,
+                    screen != null ? $"the Shaft opened as {screen.Kind} at FLOOR {screen.ToFloor}" : "no Shaft after the video");
+                if (screen == null) { End(PlaytestOutcome.Lost); yield break; }
+                Run.Scene("Shaft: Gloob's hello");
+                Run.Progress(0.1f);
+                int lines0 = gloobLines.Count, clips0 = gloobClips.Count;
+                var portrait = screen.Gloob;
+                GloobCheck("portrait", portrait != null,
+                    portrait != null ? $"portrait up, {portrait.PaintedClips} painted loops" : "no Gloob portrait on the hello Shaft");
+                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 90f, "Gloob's hello to finish");
+                if (Run.Done) yield break;
+                var heard = LinesSince(lines0);
+                int hello = GloobPortrait.HelloLines().Count;
+                GloobCheck("helloLines", heard.gloob >= hello && heard.gloob > 0, $"{heard.gloob} of {hello} hello lines, {heard.hero} hero replies");
+                GloobCheck("helloVoiced", heard.silent == 0, heard.silent == 0 ? "every line had its voice" : $"{heard.silent} line(s) without a clip");
+                GloobCheck("talking", ClipSeenSince(clips0, "talk"), "the talk loop played while he spoke");
+                GloobCheck("idle", ClipSeenSince(clips0, "idle"), "the idle loop played between lines");
+                GloobCheck("met", GloobProgress.Met, "Gloob remembers meeting the hero");
+                yield return Audit("Shaft (Gloob)", 0, 1, 1f, progress: false);
+                if (Run.Done) yield break;
+                yield return ClickUntil(continueText, () => ShaftScreen.Current == null, 30f);
+                if (Run.Done) yield break;
+                yield return Run.Until(() => GameplayWorld.Instance != null, 60f, $"level {nextLevel} after the hello");
+                if (Run.Done) yield break;
+                GloobCheck("continueToLevel", GameplayWorld.Instance != null && GameplayWorld.Instance.LevelNumber == nextLevel,
+                    $"Continue started level {GameplayWorld.Instance?.LevelNumber}; want {nextLevel}");
+                yield return WaitReal(3f);
+                if (Run.Done) yield break;
+                Run.Progress(0.3f);
+
+                // 2. Between floors: Shaft previews over the main menu (setup shortcuts), one reaction each.
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                var climbs = new List<(int from, int to, bool died, string want, string label)>
+                {
+                    (951, 941, false, "Floor", "Floor 950 (Halfway Basin)"),
+                    (981, 971, true, "Death", "a death on the way (Imp Run)"),
+                    (921, 911, false, "NearWarden", "the Magma King's door (Heat Stairs)"),
+                };
+                int step = 0;
+                foreach (var climb in climbs)
+                {
+                    step++;
+                    Run.Event("shortcut", $"Shaft preview: the marker climbs {climb.from} to {climb.to}" + (climb.died ? ", the hero died on the way" : ""));
+                    GloobProgress.HeroDied = climb.died;
+                    int before = gloobLines.Count;
+                    var preview = ShaftScreen.Preview(climb.from, climb.to);
+                    Run.Scene("Shaft: " + climb.label);
+                    yield return Run.Until(() => ShaftScreen.Current != preview || preview.Ready, 60f, "Gloob's line between floors");
+                    if (Run.Done) yield break;
+                    var said = LinesSince(before);
+                    string first = before < gloobLines.Count ? gloobLines[before] : "";
+                    GloobCheck("betweenFloors." + climb.want, said.gloob > 0 && first.StartsWith("gloob (" + climb.want, StringComparison.Ordinal),
+                        said.gloob > 0 ? $"{climb.label}: {first}" : $"{climb.label}: Gloob said nothing");
+                    GloobCheck("betweenFloorsVoiced." + climb.want, said.silent == 0, $"{said.gloob} Gloob line(s), {said.hero} hero repl(ies), {said.silent} without a clip");
+                    yield return ClickUntil(continueText, () => ShaftScreen.Current == null, 15f);
+                    if (Run.Done) yield break;
+                    yield return WaitReal(0.8f);
+                    Run.Progress(0.3f + 0.3f * step / climbs.Count);
+                }
+                GloobProgress.HeroDied = false;
+
+                // 3. The shop: Gloob's counter.
+                var roguelite = RogueliteManager.Instance;
+                Run.Event("shortcut", "diamonds set to 0 before the shop (so the first click can't afford anything)");
+                roguelite.SetPoints(0);
+                yield return ClickUntil(definition.mainMenuConfig.labels.shop, () => Object.FindAnyObjectByType<UpgradeShopManager>() != null, 20f);
+                if (Run.Done) yield break;
+                Run.Scene("Shop");
+                var shop = Object.FindAnyObjectByType<UpgradeShopManager>();
+                int shop0 = gloobLines.Count;
+                yield return Run.Until(() => shop == null || shop.Gloob != null && !shop.Gloob.Speaking && gloobLines.Count > shop0, 20f, "Gloob's welcome");
+                if (Run.Done) yield break;
+                GloobCheck("shopPortrait", shop != null && shop.Gloob != null, "Gloob behind the shop counter");
+                GloobCheck("shopWelcome", ShopLineSince(shop0, "ShopWelcome"), FirstSince(shop0));
+                yield return Audit("Shop (Gloob)", 0, 1, 1f, progress: false);
+                if (Run.Done) yield break;
+
+                SickOfIt.Data.Config.UpgradeDefinition pick = null;
+                foreach (var upgrade in RogueliteManager.ShopCatalog)
+                    if (upgrade != null && upgrade.Effect != SickOfIt.Data.Config.ShopEffect.None && roguelite.GetNextCost(upgrade) > 0) { pick = upgrade; break; }
+                if (shop != null && pick != null)
+                {
+                    int broke0 = gloobLines.Count;
+                    yield return ClickButton(shop.CardButton(pick.id), pick.title + " (0 diamonds)");
+                    yield return Run.Until(() => gloobLines.Count > broke0 && !shop.Gloob.Speaking, 20f, "Gloob's can't-afford line");
+                    if (Run.Done) yield break;
+                    GloobCheck("shopBroke", ShopLineSince(broke0, "ShopBroke"), FirstSince(broke0));
+
+                    int cost = roguelite.GetNextCost(pick);
+                    Run.Event("shortcut", $"diamonds set to {cost} so {pick.title} can be bought");
+                    roguelite.SetPoints(cost);
+                    shop.RefreshUI();
+                    yield return WaitReal(0.5f);
+                    int buy0 = gloobLines.Count;
+                    yield return ClickButton(shop.CardButton(pick.id), pick.title + $" ({cost} diamonds)");
+                    yield return Run.Until(() => gloobLines.Count > buy0 && !shop.Gloob.Speaking, 20f, "Gloob's buy line");
+                    if (Run.Done) yield break;
+                    GloobCheck("shopBuy", ShopLineSince(buy0, "ShopBuy"), FirstSince(buy0));
+                }
+                else
+                {
+                    GloobCheck("shopCard", false, "no upgrade card to click in the shop");
+                }
+                int bye0 = gloobLines.Count;
+                yield return ClickUntil(definition.upgradeShopConfig.layout.backText, () => Object.FindAnyObjectByType<MainMenuManager>() != null, 20f);
+                if (Run.Done) yield break;
+                GloobCheck("shopLeave", ShopLineSince(bye0, "ShopLeave"), FirstSince(bye0));
+                Run.Scene("Main Menu");
+                yield return WaitReal(4f);
+                Run.Progress(1f);
+                End(gloobFailed > 0 ? PlaytestOutcome.Done : PlaytestOutcome.Won);
+            }
+
+            bool ShopLineSince(int from, string moment)
+            {
+                for (int i = from; i < gloobLines.Count; i++)
+                    if (gloobLines[i].StartsWith("gloob (" + moment, StringComparison.Ordinal) && !gloobLines[i].Contains(", no clip"))
+                        return true;
+                return false;
+            }
+
+            string FirstSince(int from) => from < gloobLines.Count ? gloobLines[from] : "nothing said";
 
             public IEnumerator Menus()
             {

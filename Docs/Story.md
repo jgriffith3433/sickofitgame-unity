@@ -34,7 +34,7 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 |---|---|---|---|
 | **The Hero** *(name working)* | Thirties, unimpressed, has had enough. Talks to himself in one-liners. Never gives speeches. | `audio.json` voice `player` | Player sprites |
 | **The Overlord** | Giant obsidian titan with red eyes. Ruler of Hell's 1,000 floors, as sick of Hell as the hero is of everything, and done waiting to take the surface. Never in a hurry; barely notices the hero until he can't ignore him. Says very little, and every word sounds like it cost him nothing. | `audio.json` voice `overlord`: deep, slow, enormous, barely bothered; a voice that fills a valley without being raised. Short lines, long pauses. When he lasers the portal open he barely notices the hero: *"Mm. ... Stay."* or a bored exhale. | Video1, Level1 backgrounds |
-| **Gloob** *(working)* | The village's green slime and its gossip. Swallowed a handful of the village's diamonds to hide them from the imps, got sucked through the portal with the hero, and now trades and tinkers between floors out of his own stomach. **Slimes are villagers, never enemies.** | `audio.json` voice `gloob` *(to add)*: friendly, chatty, wet; talks fast, gurgles between words, never stops for breath, delighted to see anyone. | Video3 (the talking slime) |
+| **Gloob** *(working)* | The village's green slime and its gossip. Swallowed a handful of the village's diamonds to hide them from the imps, got sucked through the portal with the hero, and now trades and tinkers between floors out of his own stomach. **Slimes are villagers, never enemies.** | `audio.json` voice `gloob`: friendly, chatty, wet; talks fast, gurgles between words, never stops for breath, delighted to see anyone, a bit too pleased with himself. | Video3 (the talking slime); his talking portrait (`ui/gloob.json`, see *Gloob between floors*) |
 | **The Announcer** | Hell's own voice: loves a show, calls out floors, bosses and deaths like an arcade cabinet. | `announcer` | Floor titles, death screens |
 | **The Wardens** | One boss per Circle: the monster that rules it. Each guards its Circle's top floor. | Per Warden | Death videos, bosses |
 | **The Magma King** | Circle X's Warden: a huge king of slag and obsidian with a lava crown, slouched on a throne of slag at Floor 901. He never gets up: the Wastes come to him. Smug where the Overlord is bored; he hears everything that climbs his stairs and enjoys the wait. | `audio.json` voice `magmaKing`: very deep, thick, gurgling bass; slow, smug, amused, lazy; chuckles (*"Mm-hm-hm."*), never shouts. Heard before he's seen, from ahead on the Heat Stairs. | `art/magmaKing.json` (spec) |
@@ -197,6 +197,26 @@ full sack: Hawkes Gen, priced, waiting for a GPU budget).
 
 Video3 (Gloob, talking) plays after **The Landing**: the slime from the meadow turns up at the bottom of Hell,
 pleased to see a familiar face, and coughs up a diamond. From then on Gloob is the shop.
+
+### Gloob between floors
+
+Gloob rides along in the gaps: on the Shaft between stages and behind the shop counter. He never fights and never
+appears inside a stage; he is the one friendly voice in Hell, and he talks far too much. He is drawn as a **talking
+portrait** (`ui/gloob.json`), made from Video3's own slime: the green blob with two eyestalks and big pink square
+teeth. Four loops: **idle** (a slow wobble), **talk**, **laugh**, and **cough** (he hacks up a diamond, the one trick he
+is proud of). His voice is `gloob` (designed for him: fast, wet, gurgling, a bit too pleased with himself).
+
+- **Hello** (the Shaft after Video3, at Floor 991, before the Spill): he says hello, repeats the announcer's
+  *"nine hundred ninety-nine"* back at the hero (he counted), and coughs up his first diamond. The hero answers with
+  one line. From then on Gloob is "met" (New Game forgets it).
+- **Between floors** (every Shaft climb after that): one line, picked by what just happened, first match wins: the
+  climb passed a milestone floor (999, 950, the Spill's 985 with the baker's cart), the Magma King is close (within
+  30 floors; at his door, a whisper), the hero died on the way, a new Grudge was picked; else idle gossip. Each
+  reaction is said once per save, then the next one up gets its turn. Some get a one-line reply from the hero.
+- **The shop** is Gloob's counter: he welcomes the hero in, comments on a buy (often coughing it up, still warm),
+  turns him away when he can't afford it (*no tabs, no pockets*), and says goodbye when he leaves.
+- He gossips, he counts, he is proud of his stomach. He is never scared for long and never mean. Slimes are
+  villagers: nobody in the game ever fights him or his kind.
 
 ## The systems, in story terms
 

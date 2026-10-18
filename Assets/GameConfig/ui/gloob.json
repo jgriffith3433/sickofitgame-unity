@@ -1,0 +1,374 @@
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "helloAfterVideo": 3,
+  "displayName": "GLOOB",
+  "speaker": "Gloob",
+  "heroSpeaker": "You",
+  "pause": 0.35,
+  "secondsPerCharacter": 0.06,
+  "frame": "#2B6B24",
+  "body": "#2B9E33",
+  "clips": [
+    {
+      "name": "idle",
+      "sheet": "Art/Gloob/gloob_idle.png",
+      "columns": 4,
+      "rows": 4,
+      "frames": 0,
+      "fps": 10.0
+    },
+    {
+      "name": "talk",
+      "sheet": "Art/Gloob/gloob_talk.png",
+      "columns": 4,
+      "rows": 4,
+      "frames": 0,
+      "fps": 12.0
+    },
+    {
+      "name": "laugh",
+      "sheet": "Art/Gloob/gloob_laugh.png",
+      "columns": 4,
+      "rows": 4,
+      "frames": 0,
+      "fps": 12.0
+    },
+    {
+      "name": "cough",
+      "sheet": "Art/Gloob/gloob_cough.png",
+      "columns": 4,
+      "rows": 4,
+      "frames": 0,
+      "fps": 10.0
+    }
+  ],
+  "lines": [
+    {
+      "moment": "Hello",
+      "floor": 0,
+      "sound": "vo_gloob_hello",
+      "text": "Ooh! You! From the village! It's me, Gloob! I came down the hole right after you. Bumpy slide, wasn't it?",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true
+    },
+    {
+      "moment": "Hello",
+      "floor": 0,
+      "sound": "vo_gloob_hello_count",
+      "text": "And that big loud voice? \"Nine hundred ninety-nine to go!\" He says that to everyone. I counted.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true
+    },
+    {
+      "moment": "Hello",
+      "floor": 0,
+      "sound": "vo_gloob_hello_diamond",
+      "text": "Oh! Nearly forgot. I swallowed the diamonds before the imps got 'em. Hrrk... there! Bring me more and I'll make you things.",
+      "clip": "cough",
+      "reply": "vo_hero_gloob_thanks",
+      "replyText": "...Thanks. I think.",
+      "once": true
+    },
+    {
+      "moment": "Floor",
+      "floor": 999,
+      "sound": "vo_gloob_999",
+      "text": "Nine hundred ninety-nine! The big voice loves that one. I've heard it four times now.",
+      "clip": "laugh",
+      "reply": "vo_hero_gloob_five",
+      "replyText": "Five.",
+      "once": true
+    },
+    {
+      "moment": "Floor",
+      "floor": 985,
+      "sound": "vo_gloob_cart",
+      "text": "Was that the baker's cart back there? Oh, he'll be furious. He's always furious. Lovely man.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true
+    },
+    {
+      "moment": "Floor",
+      "floor": 957,
+      "sound": "vo_gloob_loop",
+      "text": "Did you notice 957 came round twice? I did. I notice everything. It's a gift.",
+      "clip": "talk",
+      "reply": "vo_hero_gloob_noticed",
+      "replyText": "I noticed.",
+      "once": true
+    },
+    {
+      "moment": "Floor",
+      "floor": 950,
+      "sound": "vo_gloob_950",
+      "text": "Halfway! Well. Halfway to nine hundred. Which is not very far, really. But what a lovely round number!",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true
+    },
+    {
+      "moment": "NearWarden",
+      "floor": 10,
+      "sound": "vo_gloob_door",
+      "text": "Psst. That's his door. He can hear us. Hello, Your Majesty! ...He's horrible.",
+      "clip": "talk",
+      "reply": "vo_hero_gloob_quiet",
+      "replyText": "Stop waving.",
+      "once": true
+    },
+    {
+      "moment": "NearWarden",
+      "floor": 25,
+      "sound": "vo_gloob_stairs",
+      "text": "Those are the Magma King's stairs up there. He never gets up, you know. Not even for visitors. Rude, if you ask me.",
+      "clip": "talk",
+      "reply": "vo_hero_gloob_short",
+      "replyText": "Good. I'll keep it short.",
+      "once": true
+    },
+    {
+      "moment": "Death",
+      "floor": 0,
+      "sound": "vo_gloob_splat",
+      "text": "You went splat back there! Don't worry, I didn't tell anyone. ...I told everyone.",
+      "clip": "laugh",
+      "reply": "vo_hero_gloob_course",
+      "replyText": "Of course you did.",
+      "once": false
+    },
+    {
+      "moment": "Death",
+      "floor": 0,
+      "sound": "vo_gloob_again",
+      "text": "Back again? Hell does that. You go splat, it puts you back. Like me, after lunch.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "Grudge",
+      "floor": 0,
+      "sound": "vo_gloob_grudge",
+      "text": "Ooh, a new grudge! I can smell it on you. Smells like spite. Suits you.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true
+    },
+    {
+      "moment": "Grudge",
+      "floor": 0,
+      "sound": "vo_gloob_grudges",
+      "text": "Another grudge? You collect those like I collect diamonds. In my tummy.",
+      "clip": "talk",
+      "reply": "vo_hero_gloob_hobby",
+      "replyText": "Everybody needs a hobby.",
+      "once": true
+    },
+    {
+      "moment": "Chatter",
+      "floor": 0,
+      "sound": "vo_gloob_rock",
+      "text": "Did you know every floor down here has the same rock? I licked three. Same taste.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "Chatter",
+      "floor": 0,
+      "sound": "vo_gloob_sacks",
+      "text": "The imps keep dropping their sacks. Finders keepers, I say! Mostly keepers.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "Chatter",
+      "floor": 0,
+      "sound": "vo_gloob_gossip",
+      "text": "The baker's daughter fancies the blacksmith, by the way. Thought you should know. Before we're all toast.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "ShopWelcome",
+      "floor": 0,
+      "sound": "vo_gloob_shop_hello",
+      "text": "Welcome to Gloob's! Everything's made fresh. From my tummy.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "ShopWelcome",
+      "floor": 0,
+      "sound": "vo_gloob_shop_hello2",
+      "text": "Oh, it's you! My favourite! My only, but still. My favourite.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
+      "sound": "vo_gloob_shop_buy",
+      "text": "Hrrk... there you go! Still warm.",
+      "clip": "cough",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
+      "sound": "vo_gloob_shop_buy2",
+      "text": "Ooh, good choice! I'd have picked that. I did pick that. I made it.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "ShopBroke",
+      "floor": 0,
+      "sound": "vo_gloob_shop_broke",
+      "text": "Ooh, not enough shiny. Go bonk some imps, they're full of 'em.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "ShopBroke",
+      "floor": 0,
+      "sound": "vo_gloob_shop_broke2",
+      "text": "Diamonds first, dear. I don't do tabs. I don't have pockets.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "ShopLeave",
+      "floor": 0,
+      "sound": "vo_gloob_shop_bye",
+      "text": "Bye bye! Don't die! Well, do. But come back.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    }
+  ],
+  "shaftPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.0,
+      0.0
+    ],
+    "offset": [
+      150.0,
+      200.0
+    ],
+    "size": [
+      260.0,
+      260.0
+    ]
+  },
+  "shaftPortraitPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      1.0,
+      1.0
+    ],
+    "offset": [
+      -150.0,
+      -840.0
+    ],
+    "size": [
+      220.0,
+      220.0
+    ]
+  },
+  "shopPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.0,
+      1.0
+    ],
+    "offset": [
+      160.0,
+      -140.0
+    ],
+    "size": [
+      220.0,
+      220.0
+    ]
+  },
+  "shopPortraitPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.0,
+      1.0
+    ],
+    "offset": [
+      130.0,
+      -130.0
+    ],
+    "size": [
+      200.0,
+      200.0
+    ]
+  },
+  "shopSubtitle": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      0.0
+    ],
+    "offset": [
+      0.0,
+      40.0
+    ],
+    "size": [
+      1300.0,
+      70.0
+    ]
+  },
+  "shopSubtitlePortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      0.0
+    ],
+    "offset": [
+      150.0,
+      90.0
+    ],
+    "size": [
+      740.0,
+      90.0
+    ]
+  }
+}

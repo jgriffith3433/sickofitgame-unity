@@ -107,6 +107,8 @@ namespace SickOfIt.Data
         public UpgradeShopConfig upgradeShopConfig = new UpgradeShopConfig();
         [Tooltip("The Shaft, Hell's map between videos and levels (ui/shaft.json)")]
         public ShaftConfig shaft = new ShaftConfig();
+        [Tooltip("Gloob's talking portrait and lines on the Shaft and in the shop (ui/gloob.json)")]
+        public GloobConfig gloob = new GloobConfig();
         [Tooltip("Shared look of all menus (ui/theme.json)")]
         public MenuTheme menuTheme = new MenuTheme();
         [Tooltip("Sounds (generated with ElevenLabs) and which plays for each game event (audio.json)")]
