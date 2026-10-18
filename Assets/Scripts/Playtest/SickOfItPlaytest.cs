@@ -677,6 +677,8 @@ namespace SickOfIt.Playtest
                     yield return load;
                 // Level 1 ends in the portal scene: watch it beat by beat, then follow the game on into Video2.
                 portal = n == PortalLevel ? new PortalWatch() : null;
+                if (portal != null)
+                    CheckPortalData(definition.GetLevel(n));
                 // A floor stage: its title, lines, new enemy, breathers, then the Shaft's climb after it, each a check event.
                 stageChecksFailed = 0;
                 stage = portal == null && IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
@@ -692,9 +694,11 @@ namespace SickOfIt.Playtest
                 }
                 if (Run.Done)
                     yield break;
+                bool portalFailed = false;
                 if (portal != null)
                 {
                     yield return PortalEnd();
+                    portalFailed = portal.Failed > 0;
                     portal = null;
                     if (Run.Done)
                         yield break;
@@ -710,7 +714,7 @@ namespace SickOfIt.Playtest
                         yield break;
                 }
                 Run.Progress(1f);
-                End(stageChecksFailed > 0 ? PlaytestOutcome.Done
+                End(stageChecksFailed > 0 || portalFailed ? PlaytestOutcome.Done
                     : lastOutcome == "completed" ? PlaytestOutcome.Won
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
                     : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
@@ -2202,6 +2206,24 @@ namespace SickOfIt.Playtest
                 ("portal:line:grabbed", "Oh, come ON-", "vo_portal_grabbed_1"),
             };
 
+            /// <summary>
+            /// Level 1's loaded script must hold the portal scene (phase portalBeam, signal portal:locked). Without it the
+            /// build is playing an old GameDefinition (the pre-scene Meadow cleared right after the Grudge pick).
+            /// </summary>
+            void CheckPortalData(SickOfIt.Data.Config.LevelConfig config)
+            {
+                string script = config != null ? config.script : null;
+                bool ok = !string.IsNullOrEmpty(script) && script.Contains("\"portalBeam\"") && script.Contains("portal:locked");
+                if (ok)
+                {
+                    Run.Event("check", "portal data: ok (Level 1's script has the portal scene)");
+                    return;
+                }
+                portal.Failed++;
+                Run.Problem(PlaytestSeverity.Bug, "portal data: the loaded Level 1 has no portal scene (no portalBeam phase): the build's " +
+                                                  "GameDefinition is older than Assets/GameConfig/levels/Level1.json (look for \"Game config verified for the build\" in its log)");
+            }
+
             void PortalCheck(string beat, bool ok, string detail)
             {
                 if (ok)
@@ -2573,7 +2595,15 @@ namespace SickOfIt.Playtest
             {
                 if (!portal.Started)
                 {
-                    Run.Problem(PlaytestSeverity.Warning, $"portal scene: the bot didn't reach it (level 1 {lastOutcome})");
+                    if (lastOutcome == "completed")
+                    {
+                        // The scene sets the level's "cleared" counter: a clear without it is a skipped ending.
+                        portal.Failed++;
+                        Run.Problem(PlaytestSeverity.Bug, "portal scene: level 1 completed without the scene starting (no \"portal:locked\"); " +
+                                                          "the Grudge pick must lead into it, never straight to the results");
+                    }
+                    else
+                        Run.Problem(PlaytestSeverity.Warning, $"portal scene: the bot didn't reach it (level 1 {lastOutcome})");
                     yield break;
                 }
                 PortalCheck("levelComplete", lastOutcome == "completed", $"level 1 {lastOutcome} after the scene");
