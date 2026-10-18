@@ -146,7 +146,7 @@ namespace SickOfIt.Playtest
         /// (The Heat Stairs, ending at the Magma King's door). Docs/Story.md, "Circle X stage outline".
         /// </summary>
         public const int ClimbFrom = 6, ClimbTo = 11;
-        const float ClimbSeconds = 960f;
+        const float WastesClimbSeconds = 960f;
         /// <summary>The shaft scenario: the level after the plunge whose climb it watches (The Landing).</summary>
         public const int ShaftLevel = 2;
         const float ShaftSeconds = 480f;
@@ -260,7 +260,7 @@ namespace SickOfIt.Playtest
                 "enemies at once, length, Grudge). Level 7 must open on the Floor 950 beat (\"FLOOR 950: HALFWAY TO 900\" with its voice, before " +
                 "the first enemy); Level 10 must end at the Magma King's door (\"THE SLAG THRONE\") with his voice heard from ahead before it; " +
                 "Level 11 is his arena (the boss checks of level-11), and its Shaft climbs to 901 with the Waystone lit and Circle IX waking; " +
-                "then the level select. Up to 3 tries per stage; each beat is a check event", ClimbSeconds, "full"));
+                "then the level select. Up to 3 tries per stage; each beat is a check event", WastesClimbSeconds, "full"));
             list.Add(new PlaytestScenario("shortcut", $"Hell's first shortcut (Docs/Story.md, \"Shortcuts\"): level {ShortcutLevel} (Floors 880-871: The Old Stair, " +
                 "Circle IX) loaded directly with one Grudge in hand (setup shortcut: given if he has none). The bot plays it through real input to the " +
                 "collapsed stairwell at the top, where the choice comes up: card 1 keeps climbing, card 2 is the stairwell with its cost shown (a Grudge, " +
@@ -1347,7 +1347,7 @@ namespace SickOfIt.Playtest
             public IEnumerator WastesClimb()
             {
                 var texts = GameDefinition.Instance.menuTheme.texts;
-                float deadline = Time.realtimeSinceStartup + ClimbSeconds - 30f;
+                float deadline = Time.realtimeSinceStartup + WastesClimbSeconds - 30f;
                 stageChecksFailed = 0;
                 Run.Event("shortcut", $"load level {ClimbFrom} directly");
                 var load = LoadLevel(ClimbFrom);
