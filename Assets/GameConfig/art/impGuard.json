@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "entity": "impGuard",
+  "name": "ImpGuard",
+  "description": "a stocky hell imp of the Magma King's guard: dark red leathery skin, short curled horns poking through a dented helmet of black cooled slag with a glowing orange crack across it, a breastplate of slag plates, folded bat wings, a long whip tail with a spade tip, stern yellow eyes, three glowing orange embers held fanned out between the claws of one hand, no sack",
+  "height": 0.8,
+  "poses": {
+    "stand": "hovering in mid-air on spread bat wings, chest out, standing guard, the three embers held ready",
+    "struck": "just hit: helmet knocked crooked, eyes bulging, mouth open in a shriek, wings snapped up, the embers flying from its hand, cracks of orange light glowing through its skin",
+    "dead": "bursting apart in a small round pop of black soot and bright orange embers, only its slag helmet and two curled horns tumbling out of the puff"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers in place, flapping its wings steadily, tail swishing, watching straight ahead",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "draws its arm back and flings the three embers forward to the right in a fan, then hovers again",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with its helmet rattling, then squares up again",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "shrieks, swells up with orange light shining through the cracks, and pops like a firecracker into soot and embers, its helmet and horns dropping out of the smoke",
+      "seconds": 1.25
+    }
+  }
+}

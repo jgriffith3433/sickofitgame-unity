@@ -89,6 +89,12 @@ namespace SickOfIt.Playtest
         /// <summary>The Landing (Level 2): the floors its counter must run through, and the milestone it must play.</summary>
         public const int LandingLevel = 2, LandingFirstFloor = 1000, LandingLastFloor = 991, LandingMilestone = 999;
         const float StoryPathSeconds = 2100f;
+        /// <summary>
+        /// The wastes-climb scenario: the stage it loads directly (The Loop) and the last one it plays through the real flow
+        /// (The Heat Stairs, ending at the Magma King's door). Docs/Story.md, "Circle X stage outline".
+        /// </summary>
+        public const int ClimbFrom = 6, ClimbTo = 10;
+        const float ClimbSeconds = 960f;
         /// <summary>The shaft scenario: the level after the plunge whose climb it watches (The Landing).</summary>
         public const int ShaftLevel = 2;
         const float ShaftSeconds = 480f;
@@ -157,6 +163,12 @@ namespace SickOfIt.Playtest
                 "(940-931: The Crust), Level 9 (930-921: The Sack Pile), Level 10 (920-911: The Heat Stairs, ending at the Magma King's door with " +
                 "his voice heard ahead), each with its title, voiced lines, floor counter, new enemy alone and breather checked " +
                 "and the Shaft's climb after it; then the level select, whose cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
+            list.Add(new PlaytestScenario("wastes-climb", $"Level {ClimbFrom} (The Loop) loaded directly (setup shortcut), then the real flow on through " +
+                $"Level {ClimbTo}: results, Continue, the Shaft's climb, and the next stage with no video between, so Levels 7-10 play in order after Level 6 " +
+                "and the floors run 960 to 911. Each stage gets the level-n stage checks (title, voiced lines, floors, sign, new enemy alone, breather, " +
+                "enemies at once, length, Grudge). Level 7 must open on the Floor 950 beat (\"FLOOR 950: HALFWAY TO 900\" with its voice, before " +
+                "the first enemy); Level 10 must end at the Magma King's door (\"THE SLAG THRONE\") with his voice heard from ahead before it; " +
+                "then the level select. Up to 3 tries per stage; each beat is a check event", ClimbSeconds, "full"));
             list.Add(new PlaytestScenario("shaft", $"The Shaft, Hell's map, through the real flow: Video {OverlayVideo} loaded directly (setup shortcut; the Shaft's save is " +
                 "reset so this is the first plunge) and skipped, then the plunge from the Meadow past all 10 Circle bands to FLOOR 1,000 (Space pressed " +
                 "mid-fall must not skip the first one), the slam, the announcer's \"nine hundred ninety-nine to go\" and the hero's \"...Great.\"; " +
@@ -219,6 +231,8 @@ namespace SickOfIt.Playtest
                 yield return session.StoryPathRun();
             else if (id == "shaft")
                 yield return session.ShaftRun();
+            else if (id == "wastes-climb")
+                yield return session.WastesClimb();
             else if (id == "menus")
                 yield return session.Menus();
             else if (id == "site")
@@ -862,6 +876,98 @@ namespace SickOfIt.Playtest
                     check("level" + n + ".next", Object.FindAnyObjectByType<LevelSelectionManager>() != null, $"{SceneName()} came after the Shaft (want the level select)");
                 Run.Scene(world != null ? "Level " + world.LevelNumber : video ? "Video" : SceneName());
                 yield return WaitReal(3f);
+            }
+
+            /// <summary>
+            /// wastes-climb: Level ClimbFrom loaded directly, then each stage up to ClimbTo through the real flow (results,
+            /// Continue, the Shaft, the next stage), each with the floor-stage checks; a stage must follow the one before
+            /// with no video between, and the last one leads to the level select.
+            /// </summary>
+            public IEnumerator WastesClimb()
+            {
+                var texts = GameDefinition.Instance.menuTheme.texts;
+                float deadline = Time.realtimeSinceStartup + ClimbSeconds - 30f;
+                stageChecksFailed = 0;
+                Run.Event("shortcut", $"load level {ClimbFrom} directly");
+                var load = LoadLevel(ClimbFrom);
+                if (load != null)
+                    yield return load;
+                bool reachedEnd = true;
+                GameplayWorld previous = null;
+                for (int n = ClimbFrom; n <= ClimbTo; n++)
+                {
+                    if (n > ClimbFrom)
+                    {
+                        // Straight on from the Shaft: the next stage, not a video or the level select.
+                        yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null || Object.FindAnyObjectByType<LevelSelectionManager>() != null
+                                                     || NewWorld(previous) != null && GameplayWorld.Instance.Player != null
+                                                     && GameClock.Instance != null && GameClock.Instance.Time > 0f, 60f, $"level {n} to start");
+                        if (Run.Done) yield break;
+                        var next = NewWorld(previous);
+                        StageCheck("level" + n + ".order", next != null && next.LevelNumber == n,
+                            next != null ? $"level {next.LevelNumber} ({next.LevelName}) started straight after level {n - 1}'s Shaft"
+                                : $"{SceneName()} came after level {n - 1}'s Shaft (want level {n})");
+                        if (next == null || next.LevelNumber != n)
+                        {
+                            reachedEnd = false;
+                            break;
+                        }
+                    }
+                    int attempts = 0;
+                    while (true)
+                    {
+                        attempts++;
+                        float left = deadline - Time.realtimeSinceStartup;
+                        if (left < 5f) { lastOutcome = "time up"; break; }
+                        float from = (float)(n - ClimbFrom) / (ClimbTo - ClimbFrom + 1), to = (float)(n - ClimbFrom + 1) / (ClimbTo - ClimbFrom + 1);
+                        stage = IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
+                        yield return PlayLevel(n, 0f, stage != null ? StageDuring : (Func<float, IEnumerator>)null, from, to, left, waitOutDeath: true);
+                        if (Run.Done) yield break;
+                        if (stage != null && (lastOutcome != "died" || attempts >= 3))
+                            FinishStage(lastOutcome);
+                        stage = null;
+                        if (lastOutcome != "died" || attempts >= 3)
+                            break;
+                        Run.Event("retry", $"level {n}, attempt {attempts + 1}");
+                        yield return ReachLevel(n);
+                        if (Run.Done) yield break;
+                    }
+                    if (lastOutcome != "completed")
+                    {
+                        Run.Event("stopped", $"level {n}: {lastOutcome} after {attempts} attempt(s)");
+                        reachedEnd = false;
+                        break;
+                    }
+                    // The editor's PlayMode playtests load levels themselves and stop at the results.
+                    if (LoadLevel != DefaultLoadLevel)
+                        break;
+                    previous = GameplayWorld.Instance;
+                    yield return Run.Until(() => GameplayWorld.Instance == null || GameplayWorld.Instance.Hud == null || GameplayWorld.Instance.Hud.ResultsOpen,
+                        30f, $"the level {n} results screen");
+                    if (Run.Done) yield break;
+                    if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
+                        yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
+                    if (Run.Done) yield break;
+                    yield return WatchClimb(n, StageCheck);
+                    if (Run.Done) yield break;
+                }
+                if (reachedEnd && LoadLevel == DefaultLoadLevel)
+                {
+                    yield return Run.Until(() => Object.FindAnyObjectByType<LevelSelectionManager>() != null || Object.FindAnyObjectByType<VideoRuntime>() != null
+                                                 || NewWorld(previous) != null, 60f, $"what comes after level {ClimbTo}");
+                    if (Run.Done) yield break;
+                    bool select = Object.FindAnyObjectByType<LevelSelectionManager>() != null;
+                    StageCheck("level" + ClimbTo + ".next", select, select ? $"level {ClimbTo} leads to the level select (Level 11, his arena, is next to build)"
+                        : $"level {ClimbTo} led to {SceneName()} instead of the level select");
+                    Run.Scene(select ? "Level Select" : SceneName());
+                    yield return WaitReal(2f);
+                }
+                Run.Progress(1f);
+                End(stageChecksFailed > 0 ? PlaytestOutcome.Done
+                    : reachedEnd && lastOutcome == "completed" ? PlaytestOutcome.Won
+                    : lastOutcome == "died" ? PlaytestOutcome.Lost
+                    : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
+                    : PlaytestOutcome.Done);
             }
 
             /// <summary>
