@@ -166,6 +166,12 @@ instead of generated again. Batch mode fails with "another Unity instance is run
   (a sound inside the `com.unity.ai.generators` package) and never the cause. "The game config has errors" is: the
   job's Unity log has the real line right after `Game config import FAILED` (file + JSON path). The log's `Date:` line
   says when the build ran; check that against the last merge before fixing something beta already has.
+- **Every build imports the GameConfig, always.** The committed `GameDefinition.asset` is an old compile (an LFS
+  file nobody re-commits), so a build that skipped the import would ship old levels, scenes and clips with new code
+  and art (beta v139). The deploy's Step 0 and the player build hook run `GameConfigSync.ImportForBuild`: a full
+  import, never skipped as "unchanged", then a check that the asset matches the JSON; anything wrong stops the build.
+  A good build log has `Game config verified for the build ... fingerprint <hash>`; no such line, no current data.
+  To check an agent worktree the same way: `-executeMethod SickOfIt.Tools.Editor.GameConfig.GameConfigCommands.ImportForBuild`.
 
 - **Tests:** `-runTests -testPlatform EditMode` and `-runTests -testPlatform PlayMode` (add `-testResults <file>`).
 - **Playtest every level with a bot** (real Level scene, ~1 min per level; omit `-nographics`):

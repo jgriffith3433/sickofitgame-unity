@@ -10,7 +10,8 @@ namespace SickOfIt.Tools.Editor.GameConfig
     ///
     /// Command line (the editor must be closed; exit code 0 = success, 1 = config errors, 2 = crash):
     ///   Unity.exe -batchmode -nographics -projectPath &lt;project&gt; -logFile - -executeMethod SickOfIt.Tools.Editor.GameConfig.GameConfigCommands.Validate
-    /// Methods: Validate, Import, Export, VerifyRoundTrip. Each writes Logs/GameConfig.log.
+    /// Methods: Validate, Import, ImportForBuild (what every build runs first: a full import, then a check that
+    /// GameDefinition.asset matches the JSON; exit 1 if not), Export, VerifyRoundTrip. Each writes Logs/GameConfig.log.
     /// </summary>
     public static class GameConfigCommands
     {
@@ -41,6 +42,22 @@ namespace SickOfIt.Tools.Editor.GameConfig
 
         public static void Validate() => Run(() => GameConfigSync.ValidateNow("command line"));
         public static void Import() => Run(() => GameConfigSync.ImportNow("command line"));
+        public static void ImportForBuild()
+        {
+            int exitCode = 0;
+            try
+            {
+                GameConfigSync.ImportForBuild("command line");
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                exitCode = 1;
+            }
+            if (Application.isBatchMode)
+                EditorApplication.Exit(exitCode);
+        }
+
         public static void Export() => Run(() => GameConfigSync.ExportNow("command line"));
         public static void VerifyRoundTrip() => Run(() => GameConfigRoundTrip.Run());
         public static void ConvertLegacy() => Run(LegacyContentConverter.Convert);

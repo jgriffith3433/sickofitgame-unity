@@ -127,6 +127,44 @@ namespace SickOfIt.Tools.Editor.GameConfig
             return report;
         }
 
+        /// <summary>
+        /// Imports for a player or content build: always, never skipped as "unchanged". The change tracking in Library/
+        /// can't be trusted there: a checkout resets GameDefinition.asset to the committed (old) copy while the JSON
+        /// it was last imported from is the same, so ImportIfChanged would ship stale data (beta v139). Then checks that
+        /// GameDefinition really matches the JSON. Throws on any failure, so the build stops.
+        /// </summary>
+        public static void ImportForBuild(string reason)
+        {
+            var report = ImportNow(reason);
+            if (!report.Success)
+                throw new BuildFailedException($"Game config import FAILED ({reason}): the game config has errors. See {GameConfigReport.LogPath}.");
+
+            var check = GameConfigImporter.Load(new DiskConfigFiles(), new EditorAssetIdResolver());
+            try
+            {
+                if (check.Issues.HasErrors || check.Definition == null)
+                    throw new BuildFailedException($"Game config import FAILED ({reason}): the JSON didn't load again after the import. See {GameConfigReport.LogPath}.");
+                if (GameConfigImporter.ApplyWouldChange(LoadDefinition(), check.Definition))
+                    throw new BuildFailedException($"Game config import FAILED ({reason}): {DefinitionPath} still differs from Assets/GameConfig after the import, so the build would ship old game data.");
+            }
+            finally
+            {
+                if (check.Definition != null)
+                    Object.DestroyImmediate(check.Definition);
+            }
+            Debug.Log($"Game config verified for the build ({reason}): {DefinitionPath} matches Assets/GameConfig ({HashFiles().Count(p => p.Key != DefinitionKey)} files, fingerprint {Fingerprint()}).");
+        }
+
+        /// <summary>Short hash of every GameConfig file, logged with each build so a build's data can be matched to a commit.</summary>
+        public static string Fingerprint()
+        {
+            var sb = new StringBuilder();
+            foreach (var pair in HashFiles().Where(p => p.Key != DefinitionKey).OrderBy(p => p.Key, StringComparer.Ordinal))
+                sb.Append(pair.Key).Append('=').Append(pair.Value).Append('\n');
+            using (var sha = SHA1.Create())
+                return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString())), 0, 6).Replace("-", "").ToLowerInvariant();
+        }
+
         /// <summary>Loads and checks the JSON without changing GameDefinition.</summary>
         public static GameConfigReport ValidateNow(string reason)
         {
@@ -214,7 +252,11 @@ namespace SickOfIt.Tools.Editor.GameConfig
         // CHANGE TRACKING
         // =====================================================================
 
-        /// <summary>True when the JSON on disk differs from what was last imported or exported.</summary>
+        // The state also holds GameDefinition.asset's own hash: a git checkout or pull that puts back an older asset
+        // without touching the JSON must count as a change too.
+        const string DefinitionKey = "<GameDefinition.asset>";
+
+        /// <summary>True when the JSON on disk (or GameDefinition.asset) differs from what was last imported or exported.</summary>
         public static bool HasUnsyncedChanges()
         {
             var state = LoadState();
@@ -247,6 +289,8 @@ namespace SickOfIt.Tools.Editor.GameConfig
             {
                 foreach (string file in disk.ListAll())
                     hashes[file] = Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(disk.Read(file))));
+                if (File.Exists(DefinitionPath))
+                    hashes[DefinitionKey] = Convert.ToBase64String(sha.ComputeHash(File.ReadAllBytes(DefinitionPath)));
             }
             return hashes;
         }
@@ -294,8 +338,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
 
         public void OnPreprocessBuild(BuildReport report)
         {
-            if (!GameConfigSync.ImportIfChanged("building the player"))
-                throw new BuildFailedException($"The game config has errors. See {GameConfigReport.LogPath}.");
+            GameConfigSync.ImportForBuild("building the player");
         }
     }
 }

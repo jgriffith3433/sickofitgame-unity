@@ -259,6 +259,14 @@ namespace SickOfIt.Tools.Editor
         // Pipeline steps
         // ─────────────────────────────────────────────
 
+        private void Step_ImportGameConfig()
+        {
+            Log("Step 0: Importing the game config (Assets/GameConfig -> GameDefinition.asset)...");
+            // Always a full import: the committed GameDefinition.asset is an old compile, and the build must never ship it.
+            GameConfig.GameConfigSync.ImportForBuild("deploy");
+            Log($"  Game config imported and verified (fingerprint {GameConfig.GameConfigSync.Fingerprint()}).");
+        }
+
         private void Step_DeleteServerData()
         {
             Log("Step 1: Deleting ServerData\\WebGL...");
@@ -711,6 +719,9 @@ namespace SickOfIt.Tools.Editor
 
             try
             {
+                Step_ImportGameConfig();
+                Log("");
+
                 Step_DeleteServerData();
                 Log("");
 
