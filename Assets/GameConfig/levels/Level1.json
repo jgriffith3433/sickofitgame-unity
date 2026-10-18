@@ -554,8 +554,13 @@
                     "entity": "overlordBeam",
                     "anchor": "Player",
                     "at": [2.5, -0.3],
-                    "count": 8,
-                    "spacing": [0.0, 0.75],
+                    "facePlayer": false
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "overlordBeamImpact",
+                    "anchor": "Player",
+                    "at": [2.5, -0.3],
                     "facePlayer": false
                   }
                 ],
@@ -575,8 +580,13 @@
                     "entity": "overlordBeam",
                     "anchor": "Player",
                     "at": [-2.5, -0.3],
-                    "count": 8,
-                    "spacing": [0.0, 0.75],
+                    "facePlayer": false
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "overlordBeamImpact",
+                    "anchor": "Player",
+                    "at": [-2.5, -0.3],
                     "facePlayer": false
                   }
                 ]
@@ -1045,6 +1055,13 @@
                 "seconds": 0.8
               },
               {
+                "type": "playAnimation",
+                "target": {
+                  "id": "portal"
+                },
+                "state": "Close"
+              },
+              {
                 "type": "flash",
                 "color": "#FFB347",
                 "duration": 0.35
@@ -1058,6 +1075,10 @@
                 "type": "playSound",
                 "sound": "portal_suck_whoosh",
                 "volume": 0.5
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
               },
               {
                 "type": "despawn",
@@ -1078,7 +1099,7 @@
               },
               {
                 "type": "wait",
-                "seconds": 1.4
+                "seconds": 0.4
               },
               {
                 "type": "fade",

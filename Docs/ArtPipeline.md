@@ -187,6 +187,28 @@ This is **not** the `VideoSpriteSheetBaker` path ([VideoPlayback.md](VideoPlayba
 opaque story videos and backgrounds into chunked Addressables played by `SpriteFramePlayer`. Entity art needs alpha,
 a shared pivot and a small sheet per clip, which is what this pipeline makes.
 
+## Effects (portals, beams, bursts): `Tools/Art/fx_sheets.py`
+
+Effects aren't figures, so art.mjs's framing (feet on a ground line, a cutout model) doesn't fit them. Make the
+stills and clips through Hawkes Gen by hand (`image.paint` with the Meadow or a video frame as a style reference,
+`video.i2v` between stills), then bake them with one job file:
+
+```bash
+python Tools/Art/fx_sheets.py <job.json> --preview preview.png
+```
+
+- `key`: `magenta` for things with solid parts (paint them on `canvas: "ff00ff"`; fire *and* grass survive it),
+  `black` for pure light (beams, glows, bursts: alpha from brightness, painted on `canvas: "000000"`).
+- Every clip of a job is cropped to one shared box, so the pivot (the ground point, given in the job's frame) is the
+  same in every sheet: the portal's `open`, `loop`, `close` and the scorch line up exactly.
+- `make` turns one still into a clip without the GPU: `charge` (grows in and throbs), `column` (crackles), `burst`
+  (flash, grow, fade).
+- It writes the sheet, its `.sheet.json` and a full `.png.meta` (sliced sprites) itself, so no editor is needed.
+  The docstring lists every job field. Level 1's portal and beam jobs, with the Hawkes Gen job ids and prompts they
+  came from, are `Tools/Art/fx/*.json`; their sources (the chosen stills and mp4s) are in the work folder,
+  `SickOfItGameEnemies/Generated/fx/<job>/` next to this repo: `python Tools/Art/fx_sheets.py Tools/Art/fx/portal.json
+  --src ../SickOfItGameEnemies/Generated/fx/portal`.
+
 ## How the Unity side works
 
 - `GeneratedSheetImporter` (an `AssetPostprocessor`) slices any `X.png` that has an `X.sheet.json` beside it:

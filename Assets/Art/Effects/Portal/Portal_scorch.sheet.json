@@ -1,0 +1,17 @@
+{
+ "generatedBy": "Tools/Art/fx_sheets.py",
+ "pixelsPerUnit": 238.341,
+ "pivot": [
+  0.506438,
+  0.202128
+ ],
+ "sprites": [
+  {
+   "name": "scorch_00",
+   "x": 0,
+   "y": 0,
+   "w": 466,
+   "h": 251
+  }
+ ]
+}

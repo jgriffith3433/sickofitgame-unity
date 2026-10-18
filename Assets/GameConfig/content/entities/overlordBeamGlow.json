@@ -12,20 +12,23 @@
     "placeholderLabel": false,
     "layer": "Background2",
     "sortingOrder": 1,
-    "hurtFlash": false
+    "hurtFlash": false,
+    "animator": {
+      "states": [
+        {
+          "stateName": "Charge",
+          "spriteSheet": "Art/Effects/Beam/Beam_charge.png",
+          "fps": 12,
+          "loop": false
+        }
+      ],
+      "defaultStateName": "Charge"
+    }
   },
   "healthBar": {
     "show": false
   },
   "abilities": [
-    {
-      "type": "hover",
-      "aroundSpawn": true,
-      "offset": [0.0, 0.0],
-      "speed": 2.0,
-      "bobHeight": 0.03,
-      "bobSpeed": 14.0
-    },
     {
       "type": "lifetime",
       "seconds": 1.25

@@ -1,0 +1,13 @@
+{
+  "about": "The burst where the Overlord's beam lands (entity overlordBeamImpact), interim art by Tools/Art/fx_interim.py (--src <dir>/beam).",
+  "gpu": "Hawkes Gen still queued 2026-10-18: image.paint j_b0a9e34c2544 (black plate); bake it with key black and make burst.",
+  "out": "Assets/Art/Effects/Beam",
+  "name": "Beam",
+  "key": "none",
+  "size": [640, 400],
+  "pivot": [320, 340],
+  "worldWidth": 2.2,
+  "widthPixels": 600,
+  "scale": 0.5,
+  "clips": { "impact": { "frames": "impact" } }
+}

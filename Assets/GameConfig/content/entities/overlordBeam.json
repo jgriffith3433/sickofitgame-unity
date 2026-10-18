@@ -12,7 +12,18 @@
     "placeholderLabel": false,
     "layer": "Foreground1",
     "sortingOrder": 1,
-    "hurtFlash": false
+    "hurtFlash": false,
+    "animator": {
+      "states": [
+        {
+          "stateName": "Column",
+          "spriteSheet": "Art/Effects/Beam/Beam_column.png",
+          "fps": 16,
+          "loop": true
+        }
+      ],
+      "defaultStateName": "Column"
+    }
   },
   "healthBar": {
     "show": false

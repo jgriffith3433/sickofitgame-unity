@@ -187,6 +187,10 @@ Then, on `atPortal`:
 - A scene that must play on either side of the hero: set a counter from `playerInZone` on entry, then branch with
   `if` / `counter` (Level1.json's `portalRight`). Once he is pulled in, the hero stays hidden at the pull point, so
   `"anchor": "Player"` places things at the portal.
+- A prop with an opening, a loop and an ending (the portal): an animator whose default state is the non-looping
+  opening, a transition with `hasExitTime` (no conditions) into the loop, and a `playAnimation` from the script for
+  the ending. If something replaces it afterward (the scorch), bake both with one pivot so it lands on the same
+  spot: `Tools/Art/fx_sheets.py` crops every clip of an effect to one shared frame (Docs/ArtPipeline.md, "Effects").
 - The real one is the end of Level 1 (phases `portalBeam` to `portalClose`); the `level-1` playtest checks it beat
   by beat.
 

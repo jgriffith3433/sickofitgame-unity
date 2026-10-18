@@ -1,0 +1,13 @@
+{
+  "about": "The Overlord's beam charging on the ground (entity overlordBeamGlow, 1.25 s), interim art by Tools/Art/fx_interim.py (--src <dir>/beam).",
+  "gpu": "Hawkes Gen still queued 2026-10-18: image.paint j_f0596e9f03ee (black plate); bake it with key black and make charge.",
+  "out": "Assets/Art/Effects/Beam",
+  "name": "Beam",
+  "key": "none",
+  "size": [512, 320],
+  "pivot": [256, 270],
+  "worldWidth": 1.1,
+  "widthPixels": 340,
+  "scale": 0.5,
+  "clips": { "charge": { "frames": "charge" } }
+}

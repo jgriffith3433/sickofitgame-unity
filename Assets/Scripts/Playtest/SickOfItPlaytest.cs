@@ -103,8 +103,9 @@ namespace SickOfIt.Playtest
                 string what = $"Level {n} ({name}), started directly (setup shortcut)";
                 if (n == PortalLevel)
                 {
-                    what += ", then its ending, the portal scene, checked beat by beat: after the Grudge pick the Overlord's beam is telegraphed and " +
-                            "hits the ground beside the hero, a portal opens there, he walks to it by himself, the lines and the echo play with subtitles, " +
+                    what += ", then its ending, the portal scene, checked beat by beat: after the Grudge pick the Overlord's beam is telegraphed by a charge glow and " +
+                            "comes down as a burning column with an impact burst beside the hero, the ground tears open into a swirling fire portal " +
+                            "(the one from Video2) that loops while he's there and flares shut to a scorch at the end, he walks to it by himself, the lines and the echo play with subtitles, " +
                             "he turns to leave and is pulled in spinning and shrinking, a slime is slurped in after him, and Video2 starts (Continue on " +
                             "the results); move, jump, fire and R are pressed during it and must do nothing, and he takes no damage";
                     seconds += 30f;
@@ -888,6 +889,12 @@ namespace SickOfIt.Playtest
                 public readonly Dictionary<string, HashSet<string>> AnimFrames = new Dictionary<string, HashSet<string>>();
                 public readonly Dictionary<string, int> AnimMisses = new Dictionary<string, int>();
                 public string AnimOther;
+                // The portal's and the beam's art (Assets/Art/Effects): the distinct sheet frames seen on screen per
+                // "<entity>.<state>", how often the portal's Loop wrapped round, and entities drawn without art.
+                public readonly Dictionary<string, HashSet<string>> FxFrames = new Dictionary<string, HashSet<string>>();
+                public int LoopWraps;
+                public int LastLoopFrame = -1;
+                public readonly HashSet<string> FxNoArt = new HashSet<string>();
             }
 
             PortalWatch portal;
@@ -895,8 +902,9 @@ namespace SickOfIt.Playtest
             /// <summary>The beats the scene must pass, in order.</summary>
             static readonly string[] PortalBeats =
             {
-                "pickFirst", "locked", "telegraph", "beamHit", "portalOpen", "inputIgnored", "walkArrived", "curiousAnim", "shoutAnim", "lines", "turned",
-                "grabbedAnim", "pulledIn", "gloob", "slurped", "closed", "black", "untouched", "levelComplete", "video2",
+                "pickFirst", "locked", "telegraph", "beamCharge", "beamHit", "beamColumn", "impactBurst", "portalOpen", "inputIgnored", "portalTearOpen",
+                "walkArrived", "curiousAnim", "shoutAnim", "lines", "turned", "grabbedAnim", "portalSwirl", "pulledIn", "gloob", "slurped", "portalFlare",
+                "closed", "black", "untouched", "levelComplete", "video2",
             };
 
             /// <summary>The scene's spoken lines (Level1.json): the signal emitted with each, its subtitle and its voice.</summary>
@@ -946,6 +954,46 @@ namespace SickOfIt.Playtest
                 return null;
             }
 
+            /// <summary>Notes the sheet frame an effect entity shows this frame (its art, not a placeholder).</summary>
+            void WatchFx(Entity e)
+            {
+                if (e == null)
+                    return;
+                var sprite = e.Sprite != null ? e.Sprite.sprite : null;
+                if (e.Animation == null || !e.Animation.HasClips)
+                {
+                    if (portal.FxNoArt.Add(e.DefId))
+                        Run.Problem(PlaytestSeverity.Bug, $"portal scene: {e.DefId} is drawn without its art (placeholder)");
+                    return;
+                }
+                if (sprite == null)
+                    return;
+                string key = e.DefId + "." + e.Animation.CurrentState;
+                if (!portal.FxFrames.TryGetValue(key, out var seen))
+                {
+                    portal.FxFrames[key] = seen = new HashSet<string>();
+                    Run.Event("fx", $"{key} starts (sprite {sprite.name})");
+                }
+                seen.Add(sprite.name);
+                if (key == "portal.Loop")
+                {
+                    int us = sprite.name.LastIndexOf('_');
+                    if (us >= 0 && int.TryParse(sprite.name.Substring(us + 1), out int frame))
+                    {
+                        if (frame < portal.LastLoopFrame)
+                            portal.LoopWraps++;
+                        portal.LastLoopFrame = frame;
+                    }
+                }
+            }
+
+            int FxCount(string key)
+            {
+                int n = portal.FxFrames.TryGetValue(key, out var seen) ? seen.Count : 0;
+                Run.Metric("portal.fx." + key, n);
+                return n;
+            }
+
             static int CountLive(GameplayWorld world, string defId)
             {
                 int count = 0;
@@ -993,6 +1041,12 @@ namespace SickOfIt.Playtest
                         portal.AnimOther = sprite ?? "(no sprite)";
                     }
                 }
+
+                WatchFx(FindLive(world, "portal", "portal"));
+                WatchFx(FindLive(world, null, "overlordBeamGlow"));
+                WatchFx(FindLive(world, null, "overlordBeam"));
+                WatchFx(FindLive(world, null, "overlordBeamImpact"));
+                WatchFx(FindLive(world, null, "portalScorch"));
 
                 while (portal.Signals.Count > 0)
                 {
@@ -1052,8 +1106,10 @@ namespace SickOfIt.Playtest
                         {
                             int beams = CountLive(world, "overlordBeam");
                             float warned = portal.TelegraphAt >= 0f ? now - portal.TelegraphAt : 0f;
-                            PortalCheck("beamHit", beams >= 6 && warned >= 1f,
-                                $"the beam came down ({beams} beam pieces) {warned:0.00} s after the glow");
+                            int charge = FxCount("overlordBeamGlow.Charge");
+                            PortalCheck("beamCharge", charge >= 6, $"the charge glow gathered on the ground through {charge} different frames");
+                            PortalCheck("beamHit", beams >= 1 && warned >= 1f,
+                                $"the beam came down ({beams} column) {warned:0.00} s after the glow");
                             break;
                         }
                         case "portal:open":
@@ -1063,10 +1119,19 @@ namespace SickOfIt.Playtest
                             PortalCheck("portalOpen", hole != null && Mathf.Abs(dx) >= 2f && Mathf.Abs(dx) <= 3f && fromGlow < 0.3f,
                                 hole != null ? $"portal open at x={hole.Position.x:0.00}, {dx:+0.00;-0.00} from the hero, {fromGlow:0.00} from where the beam hit" : "no portal entity");
                             portal.InputTryAt = now + 0.3f;
+                            // The beam has had half a second on screen by now.
+                            int column = FxCount("overlordBeam.Column");
+                            PortalCheck("beamColumn", column >= 3, $"a burning beam column from the sky, {column} different frames");
+                            int burst = FxCount("overlordBeamImpact.Burst");
+                            PortalCheck("impactBurst", burst >= 4, $"an impact burst where it hit, {burst} different frames");
                             break;
                         }
                         case "portal:arrived":
                         {
+                            int open = FxCount("portal.Open");
+                            string state = hole != null && hole.Animation != null ? hole.Animation.CurrentState : "(none)";
+                            PortalCheck("portalTearOpen", open >= 10 && state == "Loop",
+                                $"the ground tore open through {open} different Open frames (scorch, crack, ring), now {state}");
                             float gap = hole != null ? Mathf.Abs(hole.Position.x - player.Position.x) : 99f;
                             float walked = Mathf.Abs(player.Position.x - portal.StartX);
                             bool locked = now < world.InputLockedUntil;
@@ -1085,6 +1150,11 @@ namespace SickOfIt.Playtest
                         }
                         case "portal:pulledIn":
                         {
+                            int swirl = FxCount("portal.Loop");
+                            Run.Metric("portal.loopWraps", portal.LoopWraps);
+                            string state = hole != null && hole.Animation != null ? hole.Animation.CurrentState : "(none)";
+                            PortalCheck("portalSwirl", swirl >= 12 && portal.LoopWraps >= 3 && state == "Loop",
+                                $"the fire swirled the whole time he was there: {swirl} different Loop frames, looped {portal.LoopWraps} times, still {state}");
                             if (portal.Anim == "Grabbed")
                                 AnimCheck("grabbedAnim", "Grabbed", "flails and tumbles while he's pulled in");
                             portal.Anim = null;
@@ -1111,6 +1181,9 @@ namespace SickOfIt.Playtest
                         case "portal:closed":
                         {
                             bool scorch = FindLive(world, null, "portalScorch") != null;
+                            int flare = FxCount("portal.Close");
+                            int marks = FxCount("portalScorch.Scorch");
+                            PortalCheck("portalFlare", flare >= 8 && marks >= 1, $"the portal flared shut through {flare} different Close frames to a scorch mark (scorch art={marks >= 1})");
                             PortalCheck("closed", hole == null && scorch, $"the portal closed (gone={hole == null}) to a scorch (scorch={scorch})");
                             break;
                         }
