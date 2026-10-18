@@ -149,6 +149,11 @@ audio.json through Hawkes Gen (start it first: `C:\Projects\hawkesgen\auto-start
 just those (even if up to date). A sound whose exact settings Hawkes Gen already made is downloaded from its library
 instead of generated again. Batch mode fails with "another Unity instance is running" while the editor is open.
 
+- **A failed build server build:** the `FSBTool ERROR ... FailedDownload.wav` line it leads with is in every build
+  (a sound inside the `com.unity.ai.generators` package) and never the cause. "The game config has errors" is: the
+  job's Unity log has the real line right after `Game config import FAILED` (file + JSON path). The log's `Date:` line
+  says when the build ran; check that against the last merge before fixing something beta already has.
+
 - **Tests:** `-runTests -testPlatform EditMode` and `-runTests -testPlatform PlayMode` (add `-testResults <file>`).
 - **Playtest every level with a bot** (real Level scene, ~1 min per level; omit `-nographics`):
   `-runTests -testPlatform PlayMode -testCategory Playtest -testResults Logs/Playtest/results.xml`, then read
