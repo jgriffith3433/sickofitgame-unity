@@ -25,6 +25,10 @@ namespace SickOfIt.Data.Config
         public Color color = new Color(0.5f, 0.15f, 0.08f, 1f);
         [Tooltip("The Warden's name, shown once the hero has reached the top of this Circle; '???' until then.")]
         public string warden = "";
+        [Tooltip("The Circle's painted band (Hawkes Gen, floor-backdrop preset; its top and bottom edges stack). It covers the band, cropped to fit. Empty = the colour above.")]
+        public Sprite art;
+        [Tooltip("The Warden's figure on a transparent background: drawn as a dark silhouette until met, in full colour after. Empty = a placeholder shape.")]
+        public Sprite wardenArt;
     }
 
     /// <summary>
@@ -56,7 +60,7 @@ namespace SickOfIt.Data.Config
         [Tooltip("How hard the landing at the bottom shakes the screen, in pixels (Screen Shake setting off = none).")]
         public float slamShake = 34f;
 
-        [Header("Look (placeholder painting)")]
+        [Header("Look")]
         [Tooltip("Pixels per floor inside the shaft (10 floors = one level tick).")]
         public float pixelsPerFloor = 7f;
         [Tooltip("Height of the Meadow at the top (FLOOR 0).")]
@@ -67,6 +71,18 @@ namespace SickOfIt.Data.Config
         public Color grass = new Color(0.36f, 0.66f, 0.25f, 1f);
         public Color marker = new Color(1f, 0.85f, 0.3f, 1f);
         public Color crack = new Color(0f, 0f, 0f, 0.55f);
+        [Tooltip("The Meadow at the top, with the burned hole and its daylight (cropped to fit). Empty = painted sky and grass.")]
+        public Sprite meadowArt;
+        [Tooltip("The hero's marker: his helmet and rocket launcher. Empty = a dot.")]
+        public Sprite markerArt;
+        [Tooltip("Height of the hero's marker art, in pixels.")]
+        public float markerSize = 64f;
+        [Tooltip("Height of a Warden's figure, in pixels.")]
+        public float wardenSize = 150f;
+        [Tooltip("A Warden not met yet: its figure tinted to this (a dark silhouette).")]
+        public Color wardenUnmet = new Color(0.035f, 0.012f, 0.02f, 0.97f);
+        [Tooltip("The shaft's side walls when the bands are painted (see-through, so the art shows behind them).")]
+        public Color wallOverArt = new Color(0.05f, 0.025f, 0.03f, 0.55f);
         [Tooltip("Floors where a crack in the wall or a dotted gap hints at a shortcut (not explained yet).")]
         public List<int> shortcutHints = new List<int>();
 
