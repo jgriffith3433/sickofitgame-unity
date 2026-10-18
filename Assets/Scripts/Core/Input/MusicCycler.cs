@@ -116,6 +116,9 @@ namespace SickOfIt.Core.Input
                 if (!hasLocations)
                 {
                     Debug.LogWarning($"MusicCycler: No addressable AudioClips labeled '{musicLabel}'. Level music plays from the level config.");
+                    // A next-song button with no songs to cycle does nothing: hide it.
+                    if (cycleButton != null)
+                        cycleButton.gameObject.SetActive(false);
                     return;
                 }
 
