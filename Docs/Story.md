@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md)). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -88,9 +88,21 @@ THE MEADOW again                           Ending
 
 - Hell is **10 Circles of 100 floors**. Each Circle has one biome, one family of enemies and one Warden at its
   top floor (x01: Floor 901, 801, ... 101). Floor 1 is the Overlord.
-- **A level (stage) is 10 floors. A Circle is 10 levels. The 10th level of each Circle is its Warden's arena**,
-  Floors x10 to x01 (Circle X: Floors 910-901, the Magma King). So the whole climb is 100 levels plus the Meadow.
-- **Level numbers:** Level 1 is the Meadow (Floor 0). Level 2 is Floors 1000-991, *The Landing*; level *n* is
+- **One level is one floor** (J, 2026-10-18; it replaces "a level is 10 floors"). Each floor of Hell is its own
+  level: 1 to 2 minutes, always **climbing upward** (from a ledge just above the lava sea, up through the floor's
+  obstacles, to a landing with the floor number carved in it and a door to the next floor), with its own obstacles,
+  its own monsters and its own set piece. How a floor is built, the toolkit every floor draws from and every played
+  floor of Circle X are in **[LevelDesign.md](LevelDesign.md)**; build floors from there.
+- **A floor boss every 10th floor** (the floors ending in 1: 991, 981, ... 911), on a climbing arena, one of its
+  Circle's family. **The Warden every 100 floors**, on its Circle's top floor (901, 801, ... 101); Floor 1 is the
+  Overlord.
+- **Hell's shortcuts skip stretches** of floors (see *Shortcuts*): a lift, a chimney, a fallen stair. A first climb
+  plays about **30 floors per Circle** (three stretches of ten, each ending on its floor boss or the Warden, joined by
+  two shortcuts); turning a shortcut down plays the floors it skips (the long way). On the Shaft the skipped floors are
+  the dotted jump.
+- **Today's build** still has the old layout (a stage of 10 floors walked to the right), described below as it is:
+  Levels 2-11 are replaced floor by floor from LevelDesign.md, Circle IX's Levels 12-18 after them.
+- **Level numbers (today's build, until the floors replace them):** Level 1 is the Meadow (Floor 0). Level 2 is Floors 1000-991, *The Landing*; level *n* is
   Floors `1000 - 10(n-2)` to `991 - 10(n-2)`; Level 11 is Floors 910-901, the Magma King; Level 12 starts Circle IX
   at Floor 900. Level *n* is position *n* in game.json's `levels` list, and the file is `levels/Level<n>.json`.
 - **The path today** (re-pathed 2026-10-18): New Game → Video1 → Level 1, the Meadow → Video2 → Level 2, *Floors
@@ -111,11 +123,12 @@ THE MEADOW again                           Ending
 - The **floor number is always on screen** (HUD: `FLOOR 973`), and painted into the world as signs, carvings and
   doors, so the player feels how deep they are. Milestones get a beat: 999 ("only nine hundred ninety-nine to
   go"), 950 ("halfway through the Wastes"), 900, 666, 500, 100, 13, 2.
-- A **stage** (one level file) is a stretch of 10 floors, not a single screen. The player physically travels through
-  it: climbing, walking right, riding something up. Floors tick by as they go (see *Engine* below).
-- Pacing target: a Circle takes about 8 to 10 minutes on a good run, the whole climb about 90 minutes. Most
-  floors are short stretches inside a stage; Hell's **shortcuts** (elevators, collapsed stairwells, a demon who
-  you spared) skip floors at a risk, which is a rogue choice and keeps 1,000 floors reachable.
+- A **floor** (one level file) is a climb, not a single screen: the player physically goes up through it, and the
+  counter ticks to the next floor at its landing. Only Wardens' arenas stand still.
+- Pacing target: a floor takes 60 to 120 seconds (floor bosses up to 3 minutes), so a Circle's played route (about 30
+  floors) takes 45 to 60 minutes and the whole climb, shortcuts taken, about 8 to 10 hours. Hell's
+  **shortcuts** (the imps' lifts, chimneys, collapsed stairwells, a demon you spared) skip stretches at a cost or a
+  risk, which is a rogue choice and keeps 1,000 floors reachable.
 
 ### The Shaft: Hell's map
 
@@ -125,8 +138,8 @@ the 10 Circles stacked below it, each in its own biome colour, and FLOOR 1,000 a
 - **First time, after Video2:** the camera plunges from the Meadow down the whole Shaft, past all 10 Circles, to
   FLOOR 1,000, where the hero's marker lands. Announcer: *"WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO."*
   Hero: *"...Great."*
-- **After every level:** the Shaft comes back and the hero's marker climbs to the floor he reached (Level 2 ends
-  at Floor 991, so the marker rises from 1,000 to 991). It is how the player feels the climb: a tiny dot, a very
+- **After every level:** the Shaft comes back and the hero's marker climbs to the floor he reached: one floor per
+  floor-level (today's 10-floor stages climb ten: Level 2 ends at Floor 991, so the marker rises from 1,000 to 991). It is how the player feels the climb: a tiny dot, a very
   tall hole.
 - **Wardens** sit at the top of each Circle as dark silhouettes marked **???** until the hero has met them; then
   their name and portrait fill in.
@@ -177,7 +190,14 @@ build toward; the first two Circles reuse current art.
 | Finale | Floor 1 | The Overlord at his gate. Phase 1: he doesn't take the hero seriously. Phase 2: he rewinds too (the loop was his first). Phase 3: the gate cracks open on the meadow behind him. | new |
 | Ending | The Meadow | The hero shoves the Overlord back down and the gate shuts on him. Home, the meadow regrowing, Gloob spitting the diamonds back out. The hero sits down for the first time in 1,000 floors. Something knocks from under the ground. (Post-credit: "Floor 1,001".) | new |
 
-### Circle X stage outline: the Ember Wastes (Levels 2-11)
+### Circle X stage outline: the Ember Wastes (Levels 2-11, today's build)
+
+**Being replaced.** Circle X's design is now one level per floor: the played route (Floors 1000-991, the Sack Lift,
+Floors 960-951, the King's Chimney, Floors 910-901), every floor's page and the floor bosses (the Imp Foreman at 991,
+the Pile Keeper at 951) are in [LevelDesign.md](LevelDesign.md). The beats below move onto single floors there (the
+Landing → 1000, *ONLY 999 TO GO* → 999, the Spill → 998, Imp Run → 997, the Slag Falls → 996, the Loop → 995, the Sack
+Pile → 952, the Heat Stairs → 910-902, the Slag Throne → 901; Halfway Basin's 950 and the Crust go to the long way).
+This table is what today's build plays until then.
 
 Ten stages of ten floors. Each one is a place with one beat; the enemy column follows the rules below (one new
 enemy at a time, alone; at most 3 on screen in Circle X). Lines are first drafts for the voices.
@@ -205,7 +225,9 @@ full sack: Hawkes Gen, priced, waiting for a GPU budget).
 
 #### The Magma King's fight
 
-The Floor 901 arena is **Level 11, *Floors 910-901: The Slag Throne*** (built 2026-10-18; `ArcadeFireRain` keeps the
+In the one-floor layout the arena is **Floor 901, *The Slag Throne***, through the door at the top of the Heat
+Stairs (Floor 902), and the fight below stays as it is; the hall is no longer counted as nine floors (LevelDesign.md,
+Floor 901). Today's build: the Floor 901 arena is **Level 11, *Floors 910-901: The Slag Throne*** (built 2026-10-18; `ArcadeFireRain` keeps the
 older two-phase fight as an off-path reference). Through the door at the top of the Heat Stairs is one hall, nine
 floors high: the hero comes in on its floor at **Floor 910**, and the throne sits at the far end on top of a mound of
 cooling slag that reaches **Floor 901**, the top of the Wastes. It is the one stage that stands still: a locked screen,
@@ -264,6 +286,8 @@ on screen, like Circle X (rising later in the Circle). Built 2026-10-18 as a fir
 floors to skip: each stage has its title, one or two hero lines, a carved sign, generated floors from `crackedRoad`
 with a breather and a Grudge pick. No new enemy after the demon (the Circle's family is still one creature); their
 beats are for the Circle IX task to deepen. Levels 19-21 (Floors 830-801, up to the Spire Fiend) are still to come.
+In the one-floor layout (LevelDesign.md) Circle IX is recut into floors like Circle X, with a floor boss every 10th
+floor and the Spire Fiend on 801; the Old Stair's shortcut stays where it is (Floor 871, out at 841).
 
 | Level | Floors | Place | New | The beat |
 |---|---|---|---|---|
@@ -313,7 +337,7 @@ is proud of). His voice is `gloob` (designed for him: fast, wet, gurgling, a bit
 
 Hell is repetition, so it hates a shortcut, and it leaves them lying around anyway: a stairwell that fell in, an
 elevator nobody trusts, a demon who owes you for sparing it. A **shortcut** is a choice point inside a stage that skips
-floors for a cost or a risk. It is the rogue choice that keeps 1,000 floors reachable in about 90 minutes.
+floors for a cost or a risk. It is the rogue choice that keeps 1,000 floors reachable in hours, not days.
 
 - **The choice** stops the stage (like a Grudge pick) and shows two cards: **keep climbing** (the long way: the stage
   ends as usual, with its Grudge pick) or **the shortcut**, with **its cost on the card**. The player is never told how
@@ -332,6 +356,8 @@ floors for a cost or a risk. It is the rogue choice that keeps 1,000 floors reac
 
 | Shortcut | Where | Cost | Skips | Lines |
 |---|---|---|---|---|
+| **The Sack Lift** (`sackLift`, designed) | Floor 991's landing, after the Imp Foreman: the imps' sack lift; the Shaft's crack at 975 | diamonds (the imps' fare, paid in the village's own diamonds) | Floors 990-961: out at **Floor 960** | Taking it: *"Paying them with our own diamonds. Lovely."* Announcer: *"HE'S RIDING THE SACK LIFT! THE CROWD IS DISGUSTED!"* (all lines: LevelDesign.md) |
+| **The King's Chimney** (`kingsChimney`, designed) | Floor 951's landing, after the Pile Keeper: the Magma King's heat vent; the Shaft's crack at 940 | a harder floor after it (the King heard him come up: Floor 910's lava rises faster) | Floors 950-911: out at **Floor 910** | Taking it: *"Hold your breath. Forever."* Announcer: *"UP THE CHIMNEY?! HE SKIPPED HALFWAY!"* |
 | **The Collapsed Stairwell** (`oldStair`) | Floor 871, the top of the Old Stair (Level 14), behind *STAIRS (CLOSED)*; the Shaft's crack at 870 | a Grudge | Floors 870-841 (Levels 15-17): out at **Floor 841**, Level 18 next | Hero, at the top: *"Stairs. Fallen in. Still going up, though."* Taking it: *"Fine. One less thing to hate."* Announcer, as he climbs in: *"WHAT'S THIS? A SHORTCUT?! THE CROWD HATES IT!"*, then, as the counter lands: *"FLOOR EIGHT FORTY-ONE! NOBODY TAKES THE STAIRS!"* Hero, coming out: *"That went further than stairs should."* Keeping on: *"Nah. Hell would love that."* |
 
 ## Waystones and runs
@@ -346,7 +372,7 @@ just one more thing in it. A **run** is one climb from a Waystone until Hell kil
   *"YOU OBVIOUSLY DIED"* over it and Hell's announcer gloating (*"OHHH! HELL TAKES THE ROUND!"*, *"FLATTENED! WHAT A
   FINISH... FOR HELL!"*, *"AND HE'S DOWN! BACK YOU GO!"*, in turn). Then the Shaft: the hero's marker sits on the
   floor he died on, then falls, faster and faster, back down to the Waystone and lands with a slam. The run
-  restarts there, with the stage that starts on (or just above) it: from the Landing, Level 2.
+  restarts there, with the stage that starts on (or just above) it: from the Landing, Floor 1,000 (Level 2).
 - **The first time** the announcer explains it, in story terms: *"HELL DOESN'T LET YOU DIE. IT LETS YOU DO IT
   AGAIN."* Hero: *"Of course it does."* That first drop can't be skipped. After that, one jeer: *"BACK TO THE
   WAYSTONE! DO IT AGAIN!"* (Gloob, on the next climb, has his own line about it: *"Back again? Hell does that."*)
@@ -365,7 +391,7 @@ synth leads, gated drums, a low choir of the damned. Every Circle gets its own l
 *is* the joke) and every Warden a theme. Made with Hawkes Gen's `audio.music` (ACE-Step), `floor-music` preset;
 the picks and the trims are recorded in `Tools/Audio/music.json` and made by `Tools/Audio/music-mix.py`.
 
-- **The Ember Wastes** (Circle X, Levels 2-10): a groove in D minor at 128 BPM that loops without a seam (each
+- **The Ember Wastes** (Circle X, its floors below the Warden): a groove in D minor at 128 BPM that loops without a seam (each
   stage's `music`). When Hell sends a **push** (a generated wave of enemies, or a hazard) the Circle's `pushMusic`,
   the same tune turned up (double kicks, shredding, alarms), takes over and drops back once the floor goes quiet.
 - **The Magma King** (Level 11): the Wastes' groove dies as his throne rises, and **one big hit** lands as he
@@ -424,20 +450,25 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 - **A level is a place in the story**, named after the place. `displayName` is the place ("The Meadow",
   "Floors 1000–991: The Landing").
 - **No work or office jokes** anywhere in the game: titles, lines, upgrades, results quips.
-- **It goes somewhere.** The player moves through a space and the floor counter moves. A single locked screen is
-  only for boss arenas.
+- **A level is one floor, and it goes up.** The player climbs from the lava sea to the floor's landing and the
+  counter moves on; never a flat walk to the right. A single locked screen is only for a Warden's arena (floor bosses
+  fight on climbing arenas). The climb grammar and the toolkit are in [LevelDesign.md](LevelDesign.md).
 - **Pacing (arcade, but fair):**
   - the first 5 seconds of a level are quiet: title, one line, room to move;
-  - a new enemy type arrives alone, at most one new type per stage;
+  - one new idea per floor: a new obstacle or a new enemy type, never both; a new enemy arrives alone;
   - no more than 3 enemies on screen in Circle X, rising slowly per Circle;
   - every hazard is telegraphed at least 1 second ahead;
-  - a stage has a breather (a few seconds with nothing attacking) between each push;
-  - target stage length 60 to 120 seconds; bosses separate.
+  - a floor has a breather (a few seconds with nothing attacking) between each push;
+  - target floor length 60 to 120 seconds; floor bosses up to 3 minutes; Wardens separate.
 - **Story beats are voiced**: one title line from the announcer, one or two lines from the hero, a beat at the
   end. Lines are written for the character's voice (see `audio.json` voices) and are short.
 - **Rewards make sense**: diamonds drop from things that were carrying them; loop shards from the damned.
 
 ## Engine work this story needs
+
+The one-floor layout needs new rewind-safe pieces (sinking and crumbling stones, rafts, lifts, counterweights,
+updrafts, lava falls, rising lava, the climbing arena), a climbing playtest bot and a diamond-cost shortcut: the list
+is LevelDesign.md's *Building it*. What exists today:
 
 Built (2026-10-15; recipe: GameplayCookbook "A stage that climbs through Hell's floors"):
 

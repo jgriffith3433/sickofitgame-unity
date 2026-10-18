@@ -10,7 +10,9 @@ recipes and [Docs/GameplayReference.md](Docs/GameplayReference.md) (generated) f
 are JSON-only edits; no C#, no Generate Project.
 
 **Story first.** [Docs/Story.md](Docs/Story.md) is the game's design: the 1,000-floor climb, the cast, which enemies
-live on which floors and why, how rewind/upgrades/diamonds fit the story, and the pacing rules for levels. Every new
+live on which floors and why, how rewind/upgrades/diamonds fit the story, and the pacing rules for levels. [Docs/LevelDesign.md](Docs/LevelDesign.md)
+is how a floor is built (one level = one floor, climbing up from the lava sea; the toolkit; the route through Circle X
+with its shortcuts and floor bosses; a page per played floor): build floors from it. Every new
 level, enemy, upgrade or voice line must fit it; if it doesn't yet, update the story first. No slime enemies (slimes
 are villagers).
 
