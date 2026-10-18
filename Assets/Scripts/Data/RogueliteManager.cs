@@ -421,6 +421,36 @@ namespace SickOfIt.Data
         }
 
         // =========================================================================
+        // RUNS (Docs/Story.md, "Waystones and runs")
+        // =========================================================================
+
+        /// <summary>
+        /// A run is over (Hell killed the hero and sends him back to a Waystone): his Grudges go, and the health he
+        /// carried from level to level, so the next run starts fresh. Diamonds, Gloob's goods (shop upgrades and the
+        /// max health they gave), level unlocks and the Waystones are kept.
+        /// </summary>
+        public void EndRun()
+        {
+            int totalLevels = GameDefinition.Instance?.TotalLevels ?? 100;
+            for (int i = 1; i <= totalLevels; i++)
+            {
+                PlayerPrefs.DeleteKey(string.Format(KEY_LEVEL_END_HEALTH, i));
+                PlayerPrefs.DeleteKey(string.Format(KEY_LEVEL_MAX_HEALTH, i));
+            }
+            UpgradeProgress.Reset();
+
+            // Max health is one number for both: a Grudge (thickSkin) raised it too. Back to the base plus Gloob's goods.
+            int fromShop = 0;
+            foreach (var upgrade in ShopCatalog)
+            {
+                if (upgrade != null && upgrade.Effect == ShopEffect.MaxHealth)
+                    fromShop += GetUpgradeLevel(upgrade.id) * Mathf.Max(1, Mathf.RoundToInt(upgrade.amountPerLevel));
+            }
+            SetMaxHealth(BaseMaxHealth + fromShop);
+            PlayerPrefs.Save();
+        }
+
+        // =========================================================================
         // RESET
         // =========================================================================
 
@@ -458,6 +488,7 @@ namespace SickOfIt.Data
             PlayerPrefs.DeleteKey("GameInitialized");
             ShaftProgress.Reset();
             GloobProgress.Reset();
+            WaystoneProgress.Reset();
 
             PlayerPrefs.Save();
             ////Debug.Log("[RogueliteManager] All game and roguelite data reset.");

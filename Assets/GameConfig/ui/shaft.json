@@ -8,6 +8,8 @@
   "climbSecondsPerFloor": 0.16,
   "climbMaxSeconds": 3,
   "climbDelay": 0.6,
+  "dropSecondsPerFloor": 0.03,
+  "dropMaxSeconds": 2.4,
   "slamShake": 34,
   "pixelsPerFloor": 7,
   "meadowHeight": 420,
@@ -23,6 +25,8 @@
   "wardenSize": 150,
   "wardenUnmet": "#090305F7",
   "wallOverArt": "#0D06088C",
+  "waystoneLit": "#9EFFE6",
+  "waystoneDark": "#4D4545F2",
   "shortcutHints": [
     975,
     940,
@@ -42,6 +46,9 @@
   "tickSound": "shaft_tick",
   "welcomeVoice": "vo_shaft_welcome",
   "heroVoice": "vo_shaft_great",
+  "firstDropVoice": "vo_shaft_first_drop",
+  "firstDropHeroVoice": "vo_shaft_first_drop_hero",
+  "dropVoice": "vo_shaft_drop",
   "bands": [
     {
       "circle": "emberWastes",

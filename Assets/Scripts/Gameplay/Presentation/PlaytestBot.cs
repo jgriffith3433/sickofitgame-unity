@@ -16,6 +16,11 @@ namespace SickOfIt.Gameplay
         public float preferredDistanceMin = 2.5f;
         public float preferredDistanceMax = 5f;
         public float dodgeRadius = 1.6f;
+        /// <summary>
+        /// Plays to lose (the waystone scenario, to see a death through real input): walks into the nearest shot or
+        /// enemy, never dodges, jumps, fires or rewinds. Still takes the upgrade picker and stops on pause and results.
+        /// </summary>
+        public bool reckless;
 
         GameplayWorld world;
         PlaytestInput input;
@@ -124,6 +129,20 @@ namespace SickOfIt.Gameplay
                     threat = e;
                     threatDistance = d;
                 }
+            }
+
+            if (reckless)
+            {
+                // Toward the closest thing that hurts: a shot first, else an enemy; with nothing near, on along the stage.
+                var into = threat != null ? threat : target;
+                float towards = into != null ? Mathf.Sign(into.Position.x - me.x) : 1f;
+                if (into != null && Mathf.Abs(into.Position.x - me.x) < 0.15f)
+                    towards = 0f;
+                FireDirection = Vector2.zero;
+                Move = new Vector2(towards, 0f);
+                input.SetMoveX(towards);
+                input.SetAim(Vector2.zero);
+                return;
             }
 
             FireDirection = target != null ? (target.Position + Vector2.up * 0.1f - me).normalized : Vector2.zero;

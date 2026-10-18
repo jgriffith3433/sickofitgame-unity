@@ -5,6 +5,12 @@
   "spriteFramesData": "Videos/Death2.asset",
   "audio": "Videos/Death2_Audio.mp3",
   "delayBeforeReload": 1.0,
+  "title": "You Obviously Died",
+  "gloats": [
+    { "text": "OHHH! HELL TAKES THE ROUND!", "sound": "vo_death_gloat_round" },
+    { "text": "FLATTENED! WHAT A FINISH... FOR HELL!", "sound": "vo_death_gloat_finish" },
+    { "text": "AND HE'S DOWN! BACK YOU GO!", "sound": "vo_death_gloat_down" }
+  ],
   "timeline": {
     "duration": 60.0,
     "events": [],

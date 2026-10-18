@@ -33,7 +33,8 @@ namespace SickOfIt.Data.Config
 
     /// <summary>
     /// The Shaft, Hell's map (Docs/Story.md, "The Shaft"): the plunge from the Meadow to FLOOR 1,000 after the plunge
-    /// video, and the hero's marker climbing after every level with a floor range. Presentation only: it reads
+    /// video, the hero's marker climbing after every level with a floor range, and dropping back to the Waystone when a
+    /// death ends a run (Waystones: the bottom floor and each band's lastFloor below topFloor). Presentation only: it reads
     /// progress, never changes the game. Words are in ui/theme.json texts (shaft*).
     /// </summary>
     [Serializable]
@@ -57,6 +58,10 @@ namespace SickOfIt.Data.Config
         public float climbMaxSeconds = 3f;
         [Tooltip("Pause before the marker starts to climb.")]
         public float climbDelay = 0.6f;
+        [Tooltip("Seconds per floor while the marker drops back to the Waystone after a run ends.")]
+        public float dropSecondsPerFloor = 0.03f;
+        [Tooltip("The drop never takes longer than this.")]
+        public float dropMaxSeconds = 2.4f;
         [Tooltip("How hard the landing at the bottom shakes the screen, in pixels (Screen Shake setting off = none).")]
         public float slamShake = 34f;
 
@@ -83,6 +88,10 @@ namespace SickOfIt.Data.Config
         public Color wardenUnmet = new Color(0.035f, 0.012f, 0.02f, 0.97f);
         [Tooltip("The shaft's side walls when the bands are painted (see-through, so the art shows behind them).")]
         public Color wallOverArt = new Color(0.05f, 0.025f, 0.03f, 0.55f);
+        [Tooltip("A Waystone the hero has reached: its stone glows this colour.")]
+        public Color waystoneLit = new Color(0.62f, 1f, 0.9f, 1f);
+        [Tooltip("A Waystone not reached yet: dark stone.")]
+        public Color waystoneDark = new Color(0.3f, 0.27f, 0.27f, 0.95f);
         [Tooltip("Floors where a crack in the wall or a dotted gap hints at a shortcut (not explained yet).")]
         public List<int> shortcutHints = new List<int>();
 
@@ -94,6 +103,12 @@ namespace SickOfIt.Data.Config
         public string welcomeVoice = "vo_shaft_welcome";
         [Tooltip("The hero's answer.")]
         public string heroVoice = "vo_shaft_great";
+        [Tooltip("The announcer when Hell ends the first run (the drop back to the Waystone): the rule, in story terms.")]
+        public string firstDropVoice = "vo_shaft_first_drop";
+        [Tooltip("The hero's answer to it.")]
+        public string firstDropHeroVoice = "vo_shaft_first_drop_hero";
+        [Tooltip("The announcer on every drop after the first.")]
+        public string dropVoice = "vo_shaft_drop";
 
         [Header("Circles, bottom (X) to top (I)")]
         public List<ShaftBand> bands = new List<ShaftBand>();

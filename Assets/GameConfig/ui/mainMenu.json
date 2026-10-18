@@ -146,6 +146,7 @@
   "labels": {
     "continueGame": "Continue (Lvl {0})",
     "newGame": "New Game",
+    "newRun": "New Run (Floor {0})",
     "levelSelect": "Pick a Level",
     "videos": "Rewatch Stuff",
     "shop": "Visit Gloob",

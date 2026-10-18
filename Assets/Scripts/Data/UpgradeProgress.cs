@@ -6,8 +6,9 @@ using UnityEngine;
 namespace SickOfIt.Data
 {
     /// <summary>
-    /// Which gameplay upgrades the player owns, and at what level. Saved in PlayerPrefs and cleared on New Game
-    /// (RogueliteManager.ResetAllRogueliteData). Upgrades are defined in content/upgrades.
+    /// Which gameplay upgrades (Grudges) the player owns, and at what level. Saved in PlayerPrefs and cleared when a
+    /// run ends (RogueliteManager.EndRun, a death on a floor stage) and on New Game (ResetAllRogueliteData).
+    /// Upgrades are defined in content/upgrades.
     /// </summary>
     public static class UpgradeProgress
     {

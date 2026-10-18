@@ -405,6 +405,25 @@ give it `floors` and the Shaft follows it.
   `plungeWardenSilhouettes`, `plungeHeroMarker` and the same on the climb), `menus`/`layout` open a preview
   (`ShaftScreen.Preview(from, to)`), and `full`/`story-path` press Continue on it like a player.
 
+### Waystones and runs (a death in Hell)
+
+Docs/Story.md, "Waystones and runs". `RunFlow` (Core/Progression) does the rules, `WaystoneProgress` (Data) saves them.
+
+- **Waystones** are ui/shaft.json's `bottomFloor` (the Landing) and each band's `lastFloor` under `topFloor`. A level
+  whose `floors.start` is one reaches it when it starts; one whose `floors.end` is one reaches it when cleared (a
+  Warden's arena ending on Floor 901). A run starts at a Waystone with the level whose `floors.start` is the Waystone
+  or one floor above it (900 above 901), so a new Circle's first stage needs nothing else.
+- **A death on a stage with floors** ends the run when the death scene starts (`DeathRuntime` → `RunFlow.EndRun` →
+  `RogueliteManager.EndRun`: Grudges, their max health and the carried health reset; diamonds and shop goods kept);
+  when the animation is over `ShaftHook` gets an `AfterDeath` stop and `ShaftScreen` plays mode `Drop` (from the floor
+  he died on to the Waystone; first drop: `vo_shaft_first_drop` + `vo_shaft_first_drop_hero`, not skippable; later:
+  `vo_shaft_drop`), then Continue loads the restart level. Levels without floors reload as before.
+- **Death screen words**: `deaths/<Death>.json` `title` and `gloats` (`text` + audio.json `sound`, one per death in turn).
+- **Main menu**: Continue opens `WaystoneProgress.RunLevel` (set when a floor stage starts or a level is cleared);
+  New Run (`labels.newRun`, shown once a Waystone is reached) calls `RunFlow.NewRun()`.
+- Playtest: `waystone`. The `full`/`story-path`/`wastes-climb` retries follow the drop and reopen the level they retry
+  (a logged shortcut).
+
 ## Art
 
 Entities without art draw as colored placeholders with their id, so gameplay can come first. **To make art for an
