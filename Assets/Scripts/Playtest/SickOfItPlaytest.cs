@@ -2604,7 +2604,7 @@ namespace SickOfIt.Playtest
                         Run.Event("input", $"Space during the Shaft at FLOOR {screen.ShownFloor}");
                     }
                 }
-                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 40f, "the Shaft's Continue");
+                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 75f, "the Shaft's Continue (Gloob may be talking)");
                 if (Run.Done) yield break;
                 if (ShaftScreen.Current == screen)
                 {
@@ -2722,7 +2722,7 @@ namespace SickOfIt.Playtest
             {
                 Run.Event("shortcut", "open the Shaft over the main menu (preview: the marker climbs 1000 to 991)");
                 var screen = ShaftScreen.Preview(1000, 991);
-                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 20f, "the Shaft preview's Continue");
+                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 45f, "the Shaft preview's Continue");
                 if (Run.Done) yield break;
                 if (step > 0)
                     yield return Audit("Shaft", step, steps);
