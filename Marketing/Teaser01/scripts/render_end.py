@@ -106,8 +106,9 @@ for f in (PREVIEW or range(int(SECONDS * FPS))):
     hell = lum * np.array([0.55, 0.22, 0.16]) + np.array([18, 4, 8])   # the meadow goes ember-dark under the title
     arr = arr * (1 - dim) + (hell * VIGNETTE) * dim
     arr = arr + (255 - arr) * flash * 0.85
-    frame = Image.fromarray(arr.clip(0, 255).astype(np.uint8)).convert('RGBA')
-    draw_particles(frame, t + 3, 1.0)
+    frame = Image.fromarray(arr.clip(0, 255).astype(np.uint8))
+    draw_particles(frame, t + 3, 1.0)                # on RGB, so their alpha blends
+    frame = frame.convert('RGBA')
     if t >= TITLE_AT:
         k = (t - TITLE_AT)
         s = 1 + 0.35 * math.exp(-k * 9)               # slams in and settles

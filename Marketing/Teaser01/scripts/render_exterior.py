@@ -15,6 +15,14 @@ FADE = (15.6, 17.5)
 
 big = Image.open(sys.argv[1]).convert('RGB')
 S = big.width / BASE_W
+# the menu's dark doorway has a few bright specks that the upscale sharpens into "stars": paint them out
+dx0, dx1, dy0, dy1 = [int(v * S) for v in (586, 640, 568, 682)]
+door = np.asarray(big, np.float32)[dy0:dy1, dx0:dx1]
+lum = door.mean(2)
+base = np.median(door.reshape(-1, 3), axis=0)
+door[lum > np.median(lum) + 18] = base
+arr_big = np.asarray(big).copy(); arr_big[dy0:dy1, dx0:dx1] = door.astype(np.uint8)
+big = Image.fromarray(arr_big)
 levels = [(S, big)]
 while levels[-1][0] > 1.01:
     s, im = levels[-1]
@@ -65,7 +73,7 @@ for f in (PREVIEW or range(total)):
     y0 = min(max(cy - vh / 2, 0), BASE_H - vh)
     scale, src = next(((sc, im) for sc, im in levels if vw * sc >= W * 0.95), levels[-1])
     box = (x0 * scale, y0 * scale, (x0 + vw) * scale, (y0 + vh) * scale)
-    frame = src.resize((W, H), Image.BICUBIC if vw * scale < W else Image.LANCZOS, box=box).convert('RGBA')
+    frame = src.resize((W, H), Image.BICUBIC if vw * scale < W else Image.LANCZOS, box=box).convert('RGB')   # draw on RGB: ImageDraw blends only there
     # drifting motes, fading out as we reach the doorway
     d = ImageDraw.Draw(frame, 'RGBA')
     vis = 1 - smooth((p - 0.5) / 0.2)
