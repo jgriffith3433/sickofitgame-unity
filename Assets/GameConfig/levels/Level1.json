@@ -460,8 +460,9 @@
             "type": "if",
             "condition": {
               "type": "playerInZone",
-              "center": [-50.0, 0.0],
-              "size": [100.0, 200.0]
+              "center": [-50.16, 0.0],
+              "size": [100.0, 200.0],
+              "anchor": "Camera"
             },
             "then": [
               {
@@ -475,6 +476,29 @@
                 "type": "setCounter",
                 "name": "portalRight",
                 "value": 0
+              }
+            ]
+          },
+          {
+            "type": "if",
+            "condition": {
+              "type": "playerInZone",
+              "center": [-0.16, 0.0],
+              "size": [5.0, 200.0],
+              "anchor": "Camera"
+            },
+            "then": [
+              {
+                "type": "setCounter",
+                "name": "portalFar",
+                "value": 0
+              }
+            ],
+            "else": [
+              {
+                "type": "setCounter",
+                "name": "portalFar",
+                "value": 1
               }
             ]
           },
@@ -498,30 +522,11 @@
                 "seconds": 1.0
               },
               {
-                "type": "if",
-                "condition": {
-                  "type": "counter",
-                  "name": "portalRight",
-                  "atLeast": 1
-                },
-                "then": [
-                  {
-                    "type": "spawn",
-                    "entity": "overlordBeamGlow",
-                    "anchor": "Player",
-                    "at": [2.5, -0.3],
-                    "facePlayer": false
-                  }
-                ],
-                "else": [
-                  {
-                    "type": "spawn",
-                    "entity": "overlordBeamGlow",
-                    "anchor": "Player",
-                    "at": [-2.5, -0.3],
-                    "facePlayer": false
-                  }
-                ]
+                "type": "spawn",
+                "entity": "overlordBeamGlow",
+                "anchor": "Camera",
+                "at": [-0.16, -2.52],
+                "facePlayer": false
               },
               {
                 "type": "emit",
@@ -532,64 +537,28 @@
                 "seconds": 1.25
               },
               {
-                "type": "if",
-                "condition": {
-                  "type": "counter",
-                  "name": "portalRight",
-                  "atLeast": 1
-                },
-                "then": [
-                  {
-                    "type": "flash",
-                    "color": "#FF5A3C",
-                    "duration": 0.3
-                  },
-                  {
-                    "type": "cameraShake",
-                    "intensity": 0.25,
-                    "duration": 0.7
-                  },
-                  {
-                    "type": "spawn",
-                    "entity": "overlordBeam",
-                    "anchor": "Player",
-                    "at": [2.5, -0.3],
-                    "facePlayer": false
-                  },
-                  {
-                    "type": "spawn",
-                    "entity": "overlordBeamImpact",
-                    "anchor": "Player",
-                    "at": [2.5, -0.3],
-                    "facePlayer": false
-                  }
-                ],
-                "else": [
-                  {
-                    "type": "flash",
-                    "color": "#FF5A3C",
-                    "duration": 0.3
-                  },
-                  {
-                    "type": "cameraShake",
-                    "intensity": 0.25,
-                    "duration": 0.7
-                  },
-                  {
-                    "type": "spawn",
-                    "entity": "overlordBeam",
-                    "anchor": "Player",
-                    "at": [-2.5, -0.3],
-                    "facePlayer": false
-                  },
-                  {
-                    "type": "spawn",
-                    "entity": "overlordBeamImpact",
-                    "anchor": "Player",
-                    "at": [-2.5, -0.3],
-                    "facePlayer": false
-                  }
-                ]
+                "type": "flash",
+                "color": "#FF5A3C",
+                "duration": 0.3
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.7
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordBeam",
+                "anchor": "Camera",
+                "at": [-0.16, -2.52],
+                "facePlayer": false
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordBeamImpact",
+                "anchor": "Camera",
+                "at": [-0.16, -2.52],
+                "facePlayer": false
               },
               {
                 "type": "playSound",
@@ -612,32 +581,12 @@
                 "seconds": 0.5
               },
               {
-                "type": "if",
-                "condition": {
-                  "type": "counter",
-                  "name": "portalRight",
-                  "atLeast": 1
-                },
-                "then": [
-                  {
-                    "type": "spawn",
-                    "entity": "portal",
-                    "id": "portal",
-                    "anchor": "Player",
-                    "at": [2.5, -0.3],
-                    "facePlayer": false
-                  }
-                ],
-                "else": [
-                  {
-                    "type": "spawn",
-                    "entity": "portal",
-                    "id": "portal",
-                    "anchor": "Player",
-                    "at": [-2.5, -0.3],
-                    "facePlayer": false
-                  }
-                ]
+                "type": "spawn",
+                "entity": "portal",
+                "id": "portal",
+                "anchor": "Camera",
+                "at": [-0.16, -2.52],
+                "facePlayer": false
               },
               {
                 "type": "playSound",
@@ -666,7 +615,8 @@
                 "then": [
                   {
                     "type": "cameraTo",
-                    "at": [-0.35, -0.35],
+                    "at": [-0.56, -0.35],
+                    "anchor": "Camera",
                     "size": 2.45,
                     "duration": 1.6,
                     "ease": "InOut"
@@ -675,7 +625,8 @@
                 "else": [
                   {
                     "type": "cameraTo",
-                    "at": [0.35, -0.35],
+                    "at": [0.24, -0.35],
+                    "anchor": "Camera",
                     "size": 2.45,
                     "duration": 1.6,
                     "ease": "InOut"
@@ -699,20 +650,58 @@
                 },
                 "then": [
                   {
-                    "type": "walkPlayerTo",
-                    "target": "portal",
-                    "x": -0.8,
-                    "speed": 0.45,
-                    "emit": "portal:arrived"
+                    "type": "if",
+                    "condition": {
+                      "type": "counter",
+                      "name": "portalFar",
+                      "atLeast": 1
+                    },
+                    "then": [
+                      {
+                        "type": "walkPlayerTo",
+                        "target": "portal",
+                        "x": -0.8,
+                        "speed": 0.7,
+                        "emit": "portal:arrived"
+                      }
+                    ],
+                    "else": [
+                      {
+                        "type": "walkPlayerTo",
+                        "target": "portal",
+                        "x": -0.8,
+                        "speed": 0.45,
+                        "emit": "portal:arrived"
+                      }
+                    ]
                   }
                 ],
                 "else": [
                   {
-                    "type": "walkPlayerTo",
-                    "target": "portal",
-                    "x": 0.8,
-                    "speed": 0.45,
-                    "emit": "portal:arrived"
+                    "type": "if",
+                    "condition": {
+                      "type": "counter",
+                      "name": "portalFar",
+                      "atLeast": 1
+                    },
+                    "then": [
+                      {
+                        "type": "walkPlayerTo",
+                        "target": "portal",
+                        "x": 0.8,
+                        "speed": 0.7,
+                        "emit": "portal:arrived"
+                      }
+                    ],
+                    "else": [
+                      {
+                        "type": "walkPlayerTo",
+                        "target": "portal",
+                        "x": 0.8,
+                        "speed": 0.45,
+                        "emit": "portal:arrived"
+                      }
+                    ]
                   }
                 ]
               },
@@ -1128,6 +1117,10 @@
     "counters": [
       {
         "name": "portalRight",
+        "value": 0
+      },
+      {
+        "name": "portalFar",
         "value": 0
       }
     ]

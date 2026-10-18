@@ -594,12 +594,13 @@ No fields.
 
 ### playerInZone
 
-The player is inside a box: 'center' and 'size' in world units.
+The player is inside a box: 'center' and 'size' in world units, 'center' measured from 'anchor'.
 
 | Field | Type | Default | Notes |
 |---|---|---|---|
 | `center` | [x, y] | `[0.0,0.0]` |  |
 | `size` | [x, y] | `[1.0,1.0]` |  |
+| `anchor` | [Anchor](#anchor) | `"World"` | World, or Camera: from the camera's center (a spot painted on a level's background, which is placed on the camera). |
 
 ### randomAfter
 

@@ -223,8 +223,9 @@ namespace SickOfIt.Playtest
                 if (n == PortalLevel)
                 {
                     what += ", then its ending, the portal scene, checked beat by beat: after the Grudge pick the Overlord's beam is telegraphed by a charge glow and " +
-                            "comes down as a burning column with an impact burst beside the hero, the ground tears open into a swirling fire portal " +
-                            "(the one from Video2) that loops while he's there and flares shut to a scorch at the end, he walks to it by himself, the lines and the echo play with subtitles, " +
+                            "comes down as a burning column with an impact burst on the background's fire hole (where the footage's laser hit, wherever the hero stands), the ground tears open into a swirling fire portal " +
+                            "(the one from Video2) right on top of the background's fire (screen captures before and after), that loops while he's there and flares shut to a scorch at the end, " +
+                            "he walks to it by himself from his side, the lines and the echo play with subtitles, " +
                             "he turns to leave and is pulled in spinning and shrinking, a slime is slurped in after him, and Video2 starts (Continue on " +
                             "the results); move, jump, fire and R are pressed during it and must do nothing, and he takes no damage";
                     seconds += 30f;
@@ -2590,6 +2591,14 @@ namespace SickOfIt.Playtest
                 public int Hits;
                 public float StartX;
                 public float GlowX;
+                // The background's fire hole: where Level 1's footage puts it (Spot), and what the screen showed there
+                // before the beam (the background's own fire) and with the portal open.
+                public Vector2 Spot;
+                public bool SpotKnown;
+                public float BgFireX = float.NaN;
+                public float BgFireDensity;
+                public bool CaptureBefore;
+                public bool CaptureAfter;
                 public float TelegraphAt = -1f;
                 public float InputTryAt = -1f;
                 public float LastAngle;
@@ -2614,7 +2623,7 @@ namespace SickOfIt.Playtest
             /// <summary>The beats the scene must pass, in order.</summary>
             static readonly string[] PortalBeats =
             {
-                "pickFirst", "locked", "telegraph", "beamCharge", "beamHit", "beamColumn", "impactBurst", "portalOpen", "inputIgnored", "portalTearOpen",
+                "pickFirst", "locked", "bgFire", "telegraph", "beamCharge", "beamHit", "beamColumn", "impactBurst", "portalOpen", "onSpot", "overFire", "inputIgnored", "portalTearOpen",
                 "walkArrived", "curiousAnim", "shoutAnim", "lines", "turned", "grabbedAnim", "portalSwirl", "pulledIn", "yooba", "slurped", "portalFlare",
                 "closed", "black", "untouched", "levelComplete", "video2",
             };
@@ -2735,6 +2744,116 @@ namespace SickOfIt.Playtest
                 return count;
             }
 
+            /// <summary>
+            /// The fire hole in Level 1's background (Level1_Background3's laser strike, Level1_Background4's aftermath fire),
+            /// as a fraction of the 1920x1080 footage from its top left: the ring's centre on the ground line.
+            /// </summary>
+            const float BgFireU = 930f / 1920f, BgFireV = 1025f / 1080f;
+            /// <summary>How far a portal effect may sit from the background's fire hole (world units).</summary>
+            const float SpotTolerance = 0.15f;
+
+            /// <summary>The background's fire hole in world space, from the background layer on screen (placed and scaled on the camera).</summary>
+            static bool BackgroundFireSpot(out Vector2 spot)
+            {
+                spot = default;
+                foreach (var frames in Object.FindObjectsByType<SpriteFramePlayer>(FindObjectsSortMode.None))
+                {
+                    if (!frames.name.StartsWith("Level1_Background", StringComparison.Ordinal) ||
+                        !frames.TryGetComponent(out SpriteRenderer renderer) || !renderer.enabled || renderer.sprite == null)
+                        continue;
+                    var b = renderer.bounds;
+                    spot = new Vector2(b.min.x + BgFireU * b.size.x, b.max.y - BgFireV * b.size.y);
+                    return true;
+                }
+                return false;
+            }
+
+            /// <summary>
+            /// A screen capture of the box around <paramref name="around"/> (x +-1, from 0.1 to 0.9 above it, in world units; the
+            /// HUD's progress bar along the screen's bottom left out): how much of it is fire-orange (per square world unit) and
+            /// where that fire is (world x). The background's own fire is a small flame; the game's portal is a big burning ring.
+            /// </summary>
+            static bool ScanFire(Vector2 around, out float density, out float fireX, out int pixels)
+            {
+                density = 0f;
+                fireX = float.NaN;
+                pixels = 0;
+                var camera = Camera.main != null ? Camera.main : Object.FindAnyObjectByType<Camera>();
+                if (camera == null || !camera.orthographic)
+                    return false;
+                Vector3 lo = camera.WorldToScreenPoint(new Vector3(around.x - 1f, around.y + 0.1f, 0f));
+                Vector3 hi = camera.WorldToScreenPoint(new Vector3(around.x + 1f, around.y + 0.9f, 0f));
+                var shot = ScreenCapture.CaptureScreenshotAsTexture();
+                try
+                {
+                    int bar = Mathf.CeilToInt(shot.height * 75f / 1080f);
+                    int x0 = Mathf.Clamp(Mathf.RoundToInt(lo.x), 0, shot.width - 1), x1 = Mathf.Clamp(Mathf.RoundToInt(hi.x), 0, shot.width - 1);
+                    int y0 = Mathf.Clamp(Mathf.RoundToInt(lo.y), bar, shot.height - 1), y1 = Mathf.Clamp(Mathf.RoundToInt(hi.y), 0, shot.height - 1);
+                    if (x1 <= x0 || y1 <= y0)
+                        return false;
+                    var colors = shot.GetPixels32();
+                    long sumX = 0;
+                    for (int y = y0; y <= y1; y++)
+                    for (int x = x0; x <= x1; x++)
+                    {
+                        var c = colors[y * shot.width + x];
+                        if (c.r > 200 && c.g > 70 && c.g < 190 && c.b < 110 && c.r - c.g > 50)
+                        {
+                            pixels++;
+                            sumX += x;
+                        }
+                    }
+                    float perUnit = shot.height / (2f * camera.orthographicSize);
+                    density = pixels / (perUnit * perUnit);
+                    if (pixels > 0)
+                        fireX = camera.ScreenToWorldPoint(new Vector3((float)sumX / pixels, 0f, -camera.transform.position.z)).x;
+                    return true;
+                }
+                finally
+                {
+                    Object.Destroy(shot);
+                }
+            }
+
+            /// <summary>Before the beam: the background's own fire must be on screen where the footage puts it.</summary>
+            IEnumerator CaptureBackgroundFire()
+            {
+                yield return new WaitForEndOfFrame();
+                if (portal == null || !portal.SpotKnown)
+                    yield break;
+                if (!ScanFire(portal.Spot, out float density, out float fireX, out int pixels))
+                {
+                    PortalCheck("bgFire", false, "no screen capture of the background's fire hole (camera not found or the box is off screen)");
+                    yield break;
+                }
+                portal.BgFireX = fireX;
+                portal.BgFireDensity = density;
+                Run.Metric("portal.bgFireX", float.IsNaN(fireX) ? -99f : fireX);
+                Run.Metric("portal.bgFireDensity", density);
+                PortalCheck("bgFire", pixels >= 20 && Mathf.Abs(fireX - portal.Spot.x) < 0.25f,
+                    pixels > 0 ? $"screen capture: the background's fire burns at world x={fireX:0.00} ({pixels} fire pixels, {density:0} per unit²), the footage's spot x={portal.Spot.x:0.00}"
+                               : $"screen capture: no fire on the background around world x={portal.Spot.x:0.00} (Level1_Background4 not on screen?)");
+            }
+
+            /// <summary>The portal open, the camera settled: the capture must show the game's portal over the background's fire.</summary>
+            IEnumerator CapturePortalOverFire()
+            {
+                yield return new WaitForEndOfFrame();
+                var world = GameplayWorld.Instance;
+                var hole = world != null ? FindLive(world, "portal", "portal") : null;
+                if (portal == null || hole == null)
+                    yield break;
+                Vector2 at = float.IsNaN(portal.BgFireX) ? portal.Spot : new Vector2(portal.BgFireX, portal.Spot.y);
+                bool scanned = ScanFire(at, out float density, out float fireX, out int pixels);
+                var art = hole.Sprite != null ? hole.Sprite.bounds : new Bounds((Vector3)hole.Position, Vector3.zero);
+                bool covers = art.min.x < at.x - 0.3f && art.max.x > at.x + 0.3f && art.min.y <= at.y && art.max.y > at.y + 0.3f;
+                float grew = portal.BgFireDensity > 0f ? density / portal.BgFireDensity : 0f;
+                Run.Metric("portal.overFireDensity", density);
+                PortalCheck("overFire", scanned && covers && grew >= 3f && Mathf.Abs(fireX - at.x) < 0.25f,
+                    $"screen capture with the portal open: {pixels} fire pixels ({density:0} per unit², {grew:0.0}x the background's own fire) centred at world x={fireX:0.00}, " +
+                    $"the background's fire at x={at.x:0.00}; the portal's art spans x {art.min.x:0.00}..{art.max.x:0.00}, y {art.min.y:0.00}..{art.max.y:0.00}");
+            }
+
             /// <summary>Runs every frame of level 1: from the scene's first signal, hands the hero to the scene and checks each beat.</summary>
             IEnumerator PortalDuring(float now)
             {
@@ -2811,8 +2930,13 @@ namespace SickOfIt.Playtest
                             if (bot != null)
                                 bot.enabled = false;
                             input.ReleaseAll();
-                            portal.Right = player.Position.x < 0f;
+                            portal.SpotKnown = BackgroundFireSpot(out portal.Spot);
+                            if (!portal.SpotKnown)
+                                Run.Problem(PlaytestSeverity.Bug, "portal scene: no Level1_Background layer on screen to find the fire hole on");
+                            portal.Right = player.Position.x < portal.Spot.x;
                             portal.StartX = player.Position.x;
+                            portal.CaptureBefore = portal.SpotKnown;
+                            Run.Event("portal", $"the background's fire hole is at world ({portal.Spot.x:0.00}, {portal.Spot.y:0.00}); the hero is {(portal.Right ? "left" : "right")} of it");
                             portal.Health = player.GetComponentInChildren<PlayerHealth>();
                             portal.HealthAtStart = portal.Health != null ? portal.Health.CurrentHealth : 0;
                             bool picker = world.Hud != null && world.Hud.PickerOpen;
@@ -2825,29 +2949,41 @@ namespace SickOfIt.Playtest
                         case "portal:telegraph":
                         {
                             var glow = FindLive(world, null, "overlordBeamGlow");
-                            float dx = glow != null ? glow.Position.x - player.Position.x : 0f;
+                            Vector2 off = glow != null ? glow.Position - portal.Spot : Vector2.zero;
                             portal.GlowX = glow != null ? glow.Position.x : float.NaN;
                             portal.TelegraphAt = now;
-                            PortalCheck("telegraph", glow != null && Mathf.Abs(dx) >= 2f && Mathf.Abs(dx) <= 3f && dx > 0f == portal.Right,
-                                glow != null ? $"red glow on the ground {dx:+0.00;-0.00} from the hero (x={portal.GlowX:0.00})" : "no overlordBeamGlow on the ground");
+                            PortalCheck("telegraph", glow != null && portal.SpotKnown && Mathf.Abs(off.x) <= SpotTolerance && Mathf.Abs(off.y) <= SpotTolerance,
+                                glow != null ? $"red glow on the background's fire hole: x={portal.GlowX:0.00}, {off.x:+0.00;-0.00}/{off.y:+0.00;-0.00} from it, the hero at x={player.Position.x:0.00}" : "no overlordBeamGlow on the ground");
                             break;
                         }
                         case "portal:beamHit":
                         {
                             int beams = CountLive(world, "overlordBeam");
+                            var column = FindLive(world, null, "overlordBeam");
+                            var impact = FindLive(world, null, "overlordBeamImpact");
+                            float beamOff = column != null ? Vector2.Distance(column.Position, portal.Spot) : 99f;
+                            float impactOff = impact != null ? Vector2.Distance(impact.Position, portal.Spot) : 99f;
                             float warned = portal.TelegraphAt >= 0f ? now - portal.TelegraphAt : 0f;
                             int charge = FxCount("overlordBeamGlow.Charge");
                             PortalCheck("beamCharge", charge >= 6, $"the charge glow gathered on the ground through {charge} different frames");
-                            PortalCheck("beamHit", beams >= 1 && warned >= 1f,
-                                $"the beam came down ({beams} column) {warned:0.00} s after the glow");
+                            PortalCheck("beamHit", beams >= 1 && warned >= 1f && beamOff <= SpotTolerance && impactOff <= SpotTolerance,
+                                $"the beam came down ({beams} column) {warned:0.00} s after the glow, on the background's fire hole (column {beamOff:0.00} and burst {impactOff:0.00} from it)");
                             break;
                         }
                         case "portal:open":
                         {
-                            float dx = hole != null ? hole.Position.x - player.Position.x : 0f;
                             float fromGlow = hole != null ? Mathf.Abs(hole.Position.x - portal.GlowX) : 99f;
-                            PortalCheck("portalOpen", hole != null && Mathf.Abs(dx) >= 2f && Mathf.Abs(dx) <= 3f && fromGlow < 0.3f,
-                                hole != null ? $"portal open at x={hole.Position.x:0.00}, {dx:+0.00;-0.00} from the hero, {fromGlow:0.00} from where the beam hit" : "no portal entity");
+                            PortalCheck("portalOpen", hole != null && fromGlow < 0.05f,
+                                hole != null ? $"portal open at x={hole.Position.x:0.00}, {fromGlow:0.00} from where the beam hit, the hero at x={player.Position.x:0.00}" : "no portal entity");
+                            Vector2 fromSpot = hole != null ? hole.Position - portal.Spot : Vector2.zero;
+                            if (hole != null)
+                            {
+                                Run.Metric("portal.worldX", hole.Position.x);
+                                Run.Metric("portal.worldY", hole.Position.y);
+                            }
+                            PortalCheck("onSpot", hole != null && portal.SpotKnown && Mathf.Abs(fromSpot.x) <= SpotTolerance && Mathf.Abs(fromSpot.y) <= SpotTolerance,
+                                hole != null ? $"portal at world x={hole.Position.x:0.00}, y={hole.Position.y:0.00}; the background's fire hole at x={portal.Spot.x:0.00}, y={portal.Spot.y:0.00} " +
+                                               $"({fromSpot.x:+0.00;-0.00}/{fromSpot.y:+0.00;-0.00})" : "no portal entity");
                             portal.InputTryAt = now + 0.3f;
                             // The beam has had half a second on screen by now.
                             int column = FxCount("overlordBeam.Column");
@@ -2856,6 +2992,10 @@ namespace SickOfIt.Playtest
                             PortalCheck("impactBurst", burst >= 4, $"an impact burst where it hit, {burst} different frames");
                             break;
                         }
+                        case "portal:walk":
+                            // The zoom and the shakes are over: look at the screen.
+                            portal.CaptureAfter = true;
+                            break;
                         case "portal:arrived":
                         {
                             int open = FxCount("portal.Open");
@@ -2865,8 +3005,9 @@ namespace SickOfIt.Playtest
                             float gap = hole != null ? Mathf.Abs(hole.Position.x - player.Position.x) : 99f;
                             float walked = Mathf.Abs(player.Position.x - portal.StartX);
                             bool locked = now < world.InputLockedUntil;
-                            PortalCheck("walkArrived", hole != null && gap < 1.2f && walked > 0.8f && !world.Scripted.Walking && locked,
-                                $"walked by himself {walked:0.00} to {gap:0.00} from the portal's centre, input locked={locked}");
+                            bool ownSide = hole != null && player.Position.x < hole.Position.x == portal.Right;
+                            PortalCheck("walkArrived", hole != null && gap > 0.5f && gap < 1.2f && ownSide && !world.Scripted.Walking && locked,
+                                $"walked by himself {walked:0.00} from x={portal.StartX:0.00} to {gap:0.00} from the portal's centre, on his side ({(portal.Right ? "left" : "right")}: {ownSide}), input locked={locked}");
                             break;
                         }
                         case "portal:curious":
@@ -2897,9 +3038,10 @@ namespace SickOfIt.Playtest
                         case "portal:yooba":
                         {
                             var yooba = FindLive(world, "yooba", "yoobaProp");
-                            float dx = yooba != null && hole != null ? Mathf.Abs(yooba.Position.x - hole.Position.x) : 0f;
-                            PortalCheck("yooba", yooba != null && hole != null && dx > 2.5f,
-                                yooba != null ? $"a green slime bounces in {dx:0.00} from the portal" : "no yoobaProp slime");
+                            float dx = yooba != null && hole != null ? yooba.Position.x - hole.Position.x : 0f;
+                            bool farSide = dx > 0f == portal.Right;
+                            PortalCheck("yooba", yooba != null && hole != null && Mathf.Abs(dx) > 2.5f && farSide,
+                                yooba != null ? $"a green slime bounces in {dx:+0.00;-0.00} from the portal, from the far side={farSide}" : "no yoobaProp slime");
                             break;
                         }
                         case "portal:slurped":
@@ -2910,11 +3052,14 @@ namespace SickOfIt.Playtest
                         }
                         case "portal:closed":
                         {
-                            bool scorch = FindLive(world, null, "portalScorch") != null;
+                            var mark = FindLive(world, null, "portalScorch");
+                            bool scorch = mark != null;
+                            float markOff = scorch ? Vector2.Distance(mark.Position, portal.Spot) : 99f;
                             int flare = FxCount("portal.Close");
                             int marks = FxCount("portalScorch.Scorch");
                             PortalCheck("portalFlare", flare >= 8 && marks >= 1, $"the portal flared shut through {flare} different Close frames to a scorch mark (scorch art={marks >= 1})");
-                            PortalCheck("closed", hole == null && scorch, $"the portal closed (gone={hole == null}) to a scorch (scorch={scorch})");
+                            PortalCheck("closed", hole == null && scorch && markOff <= SpotTolerance,
+                                $"the portal closed (gone={hole == null}) to a scorch (scorch={scorch}) {markOff:0.00} from the background's fire hole");
                             break;
                         }
                         case "portal:black":
@@ -2950,6 +3095,16 @@ namespace SickOfIt.Playtest
                     }
                 }
 
+                if (portal.CaptureBefore)
+                {
+                    portal.CaptureBefore = false;
+                    return CaptureBackgroundFire();
+                }
+                if (portal.CaptureAfter)
+                {
+                    portal.CaptureAfter = false;
+                    return CapturePortalOverFire();
+                }
                 if (portal.InputTryAt >= 0f && now >= portal.InputTryAt)
                 {
                     portal.InputTryAt = -1f;

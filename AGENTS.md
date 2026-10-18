@@ -195,7 +195,7 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
 
 - **Scenarios:** `smoke` (main menu, New Game, skip the video, level 1 for ~30 s with one rewind and a P pause/resume,
   quit to menu), `level-<n>` per level in game.json (loads the level directly, a setup shortcut; `level-1` also checks its
-  ending, the portal scene, beat by beat: Grudge pick first, beam telegraphed and hitting beside the hero, portal open,
+  ending, the portal scene, beat by beat: Grudge pick first, beam telegraphed and hitting on the background's fire hole (world point from the background layer), portal open on it (a `check` with its world x; screen captures before and after: the background's fire found, then the portal drawn over it),
   move/jump/fire/R pressed and ignored, the walk, every line's subtitle and voice, the turn, the pull-in, the slime,
   the scorch, the fade, no damage; then Continue on the results and Video2 must start; `check`, `line`, `signal` events;
   a floor (one level = one floor, Levels 2-6: Floors 1000-996) is checked like a stage, with a "FLOOR N: PLACE" banner, the
