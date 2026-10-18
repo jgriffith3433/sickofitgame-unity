@@ -360,6 +360,7 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
 #### Floor 954: The Guard Post
 
 - **New:** the imp guard (`impGuard`).
+- **Debut:** the guard debuts here under the one-floor route; this replaces its old Floor 930 debut from the 10-floor layout.
 - **Obstacles:** counterweights and solid ledges, known pieces only.
 - **Monsters:** the Magma King's guard: the first stands alone on a ledge at the top of the first push, doesn't run,
   doesn't carry anything, and throws three embers in a fan. Later a guard with a plain imp. Guards drop nothing.
