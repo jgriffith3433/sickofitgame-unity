@@ -173,12 +173,17 @@ namespace SickOfIt.Gameplay
                 && world.Effects.Track != null && world.Director.Script.world.travelDirection == SickOfIt.Gameplay.Content.TravelDirection.Right;
             if (travelling && target == null)
                 moveX = 1f;
-            if (now < strafeUntil)
-                moveX = strafeDirection;
-            else if (random.Value() < 0.004f)
+            // A floor with a path: climb it foothold by foothold (no random strafes or hops, they'd drop him in the lava).
+            bool climbing = Climb(me, ref moveX, out bool climbJump);
+            if (!climbing)
             {
-                strafeDirection = random.Value() < 0.5f ? -1f : 1f;
-                strafeUntil = now + random.Range(0.3f, 0.8f);
+                if (now < strafeUntil)
+                    moveX = strafeDirection;
+                else if (random.Value() < 0.004f)
+                {
+                    strafeDirection = random.Value() < 0.5f ? -1f : 1f;
+                    strafeUntil = now + random.Range(0.3f, 0.8f);
+                }
             }
 
             // Dodge: find the shot that will pass closest within the next second and step out of its way.
@@ -221,13 +226,166 @@ namespace SickOfIt.Gameplay
             input.SetMoveX(moveX);
             input.SetAim(FireDirection);
 
-            if (now >= nextJumpCheck)
+            if (climbing)
+            {
+                if (climbJump && releaseJumpFrame < 0 && !input.IsHeld(Key.Space))
+                    Press(Key.Space, ref releaseJumpFrame);
+            }
+            else if (now >= nextJumpCheck)
             {
                 nextJumpCheck = now + 0.2f;
                 if ((jumpToDodge || (threat != null && threatDistance < dodgeRadius * 0.5f) || random.Value() < 0.04f)
                     && releaseJumpFrame < 0 && !input.IsHeld(Key.Space))
                     Press(Key.Space, ref releaseJumpFrame);
             }
+        }
+
+        // ─── Floors with a path: climb like a player would ───────────
+
+        /// <summary>The foothold the bot is heading for on a floor with a path (null = none in reach).</summary>
+        public Entity ClimbTarget { get; private set; }
+        float lastClimbJump = -99f;
+
+        /// <summary>
+        /// On a floor with a path (world.path), picks the next foothold ahead along the current section (a stone, a raft, a ledge,
+        /// a chain's handle) within a jump, walks to it and jumps at the right moment; on a chain, lets go when the swing carries
+        /// him forward. Only real input: it moves and presses Space. False when the level has no path or the section is an arena.
+        /// </summary>
+        bool Climb(Vector2 me, ref float moveX, out bool jump)
+        {
+            jump = false;
+            ClimbTarget = null;
+            var effects = world.Effects;
+            var controller = world.PlayerController;
+            var section = effects != null && effects.HasPath ? effects.CurrentSection : null;
+            if (section == null || controller == null || controller.BodyCollider == null)
+                return false;
+            Vector2 forward = section.Axis;
+            if (forward == Vector2.zero)
+                return false;
+            var feetBounds = controller.BodyCollider.bounds;
+            float feet = feetBounds.min.y;
+            float now = Time.time;
+
+            if (controller.IsHeld)
+            {
+                // Hanging on a chain: let go when the swing throws him toward the way on.
+                moveX = 0f;
+                Vector2 v = world.Player.Body != null ? world.Player.Body.linearVelocity : Vector2.zero;
+                float way = Mathf.Abs(forward.x) > 0.1f ? Mathf.Sign(forward.x) : NextFootholdSide(me);
+                if (v.x * way > 1.2f && now - lastClimbJump > 0.3f)
+                {
+                    jump = true;
+                    lastClimbJump = now;
+                }
+                return true;
+            }
+
+            Entity standingOn = null;
+            Entity best = null;
+            float bestScore = float.MaxValue;
+            Bounds bestBounds = default;
+            bool bestIsChain = false;
+            foreach (var e in world.Live)
+            {
+                if (e == null || !e.IsAlive || e.IsPlayer)
+                    continue;
+                bool chain = e.FindAbility<SickOfIt.Gameplay.Content.SwingChainAbility>() != null;
+                if (!chain && !e.Tags.Contains("foothold"))
+                    continue;
+                var col = e.MainCollider;
+                if (col == null || !col.enabled)
+                    continue;
+                if (!chain && world.PlayerStandsOn(e))
+                {
+                    standingOn = e;
+                    continue;
+                }
+                var crumble = e.FindAbility<SickOfIt.Gameplay.Content.CrumbleAbility>();
+                if (crumble != null && crumble.Falling)
+                    continue;
+                var sink = e.FindAbility<SickOfIt.Gameplay.Content.SinkAbility>();
+                if (sink != null && sink.Sunk > sink.depth * 0.6f)
+                    continue;
+                var b = col.bounds;
+                float topY = chain ? e.Position.y - 0.5f : b.max.y;
+                float rise = topY - feet;
+                if (rise > (chain ? 2.6f : 1.9f) || rise < -3.5f)
+                    continue;
+                float edge = Mathf.Max(0f, Mathf.Max(b.min.x - me.x, me.x - b.max.x));
+                if (edge > 3.2f)
+                    continue;
+                // Ahead along the path: higher on a climb, further on a run.
+                Vector2 point = new Vector2(Mathf.Clamp(me.x, b.min.x, b.max.x), topY);
+                float gain = Vector2.Dot(point - new Vector2(me.x, feet), forward);
+                if (Mathf.Abs(forward.x) > 0.1f)
+                    gain = Mathf.Max(gain, (b.center.x - me.x) * Mathf.Sign(forward.x) - 0.3f);
+                if (gain < 0.35f)
+                    continue;
+                float score = gain + edge * 0.8f - (chain ? 0.6f : 0f);
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    best = e;
+                    bestBounds = b;
+                    bestIsChain = chain;
+                }
+            }
+
+            bool grounded = controller.IsGrounded;
+            if (best == null)
+            {
+                // Nothing in reach: ride what carries him (a raft), else keep going the path's way.
+                bool riding = standingOn != null && standingOn.FindAbility<SickOfIt.Gameplay.Content.RaftAbility>() != null;
+                moveX = riding ? 0f : Mathf.Abs(forward.x) > 0.1f ? Mathf.Sign(forward.x) : 0f;
+                return true;
+            }
+            ClimbTarget = best;
+
+            float targetX = bestIsChain ? best.Position.x : Mathf.Clamp(me.x, bestBounds.min.x + 0.35f, bestBounds.max.x - 0.35f);
+            float dx = targetX - me.x;
+            float edgeGap = bestIsChain ? Mathf.Abs(dx) : Mathf.Max(0f, Mathf.Max(bestBounds.min.x - me.x, me.x - bestBounds.max.x));
+            float up = (bestIsChain ? best.Position.y - 0.5f : bestBounds.max.y) - feet;
+            moveX = Mathf.Abs(dx) > 0.12f ? Mathf.Sign(dx) : 0f;
+
+            if (grounded && now - lastClimbJump > 0.35f)
+            {
+                bool higher = up > 0.3f && edgeGap < (bestIsChain ? 1.0f : 1.3f);
+                // Same height or lower across a gap: jump from the edge of what he stands on.
+                bool atEdge = false;
+                if (!higher && standingOn != null && standingOn.MainCollider != null && edgeGap > 0.05f)
+                {
+                    var own = standingOn.MainCollider.bounds;
+                    atEdge = dx > 0f ? own.max.x - me.x < 0.4f : me.x - own.min.x < 0.4f;
+                }
+                if (higher || atEdge)
+                {
+                    jump = true;
+                    lastClimbJump = now;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>Which side the nearest foothold above him is on (-1 left, 1 right).</summary>
+        float NextFootholdSide(Vector2 me)
+        {
+            float best = float.MaxValue, side = 1f;
+            foreach (var e in world.Live)
+            {
+                if (e == null || !e.IsAlive || !e.Tags.Contains("foothold") || e.MainCollider == null)
+                    continue;
+                var b = e.MainCollider.bounds;
+                if (b.max.y < me.y - 1f)
+                    continue;
+                float d = Mathf.Abs(b.center.x - me.x) + Mathf.Abs(b.max.y - me.y);
+                if (d < best)
+                {
+                    best = d;
+                    side = Mathf.Sign(b.center.x - me.x);
+                }
+            }
+            return side;
         }
 
         /// <summary>

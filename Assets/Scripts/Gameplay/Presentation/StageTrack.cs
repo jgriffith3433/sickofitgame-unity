@@ -459,7 +459,7 @@ namespace SickOfIt.Gameplay
         }
 
         /// <summary>Built-in silhouettes for props without art (white, tinted by the prop color, pivot at the base).</summary>
-        static class PropShapes
+        internal static class PropShapes
         {
             static readonly Dictionary<PropShape, Sprite> cache = new Dictionary<PropShape, Sprite>();
 
