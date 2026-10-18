@@ -179,7 +179,8 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   `video-2-tunnel` (Video2 loaded directly and watched with no input from the burning door through the fire tunnel to the
   lava river, 10.6–17.5 s: at each mark a screen capture of the box the old burned-in "COMING SOON" caption covered must
   not be caption-coloured, the frame on screen must match the clock and the soundtrack the clock, and the clip must be
-  as long as its soundtrack; `check` and `frame` events, `video.caption@<t>` metrics), `site` (the website around the game: each page opened
+  as long as its soundtrack; `check` and `frame` events, `video.caption@<t>` metrics), `portal-audio` (on the main menu, plays
+the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
   page has neither; `Plugins/WebGL/HawkesSite.jslib`).
 - **Start one:** in a browser `?playtest=smoke` (plus `&seed=`, `&speed=`), or `hawkesPlaytest.start("level-2")`; in the

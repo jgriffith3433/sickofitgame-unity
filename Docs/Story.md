@@ -33,7 +33,7 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 | Who | What | Voice / look | Footage |
 |---|---|---|---|
 | **The Hero** *(name working)* | Thirties, unimpressed, has had enough. Talks to himself in one-liners. Never gives speeches. | `audio.json` voice `player` | Player sprites |
-| **The Overlord** | Giant obsidian titan with red eyes. Ruler of Hell's 1,000 floors, as sick of Hell as the hero is of everything, and done waiting to take the surface. Never in a hurry; barely notices the hero until he can't ignore him. Says very little, and every word sounds like it cost him nothing. | `audio.json` voice `overlord` *(to add)*: deep, slow, enormous, barely bothered; a voice that fills a valley without being raised. Short lines, long pauses. | Video1, Level1 backgrounds |
+| **The Overlord** | Giant obsidian titan with red eyes. Ruler of Hell's 1,000 floors, as sick of Hell as the hero is of everything, and done waiting to take the surface. Never in a hurry; barely notices the hero until he can't ignore him. Says very little, and every word sounds like it cost him nothing. | `audio.json` voice `overlord`: deep, slow, enormous, barely bothered; a voice that fills a valley without being raised. Short lines, long pauses. When he lasers the portal open he barely notices the hero: *"Mm. ... Stay."* or a bored exhale. | Video1, Level1 backgrounds |
 | **Gloob** *(working)* | The village's green slime and its gossip. Swallowed a handful of the village's diamonds to hide them from the imps, got sucked through the portal with the hero, and now trades and tinkers between floors out of his own stomach. **Slimes are villagers, never enemies.** | `audio.json` voice `gloob` *(to add)*: friendly, chatty, wet; talks fast, gurgles between words, never stops for breath, delighted to see anyone. | Video3 (the talking slime) |
 | **The Announcer** | Hell's own voice: loves a show, calls out floors, bosses and deaths like an arcade cabinet. | `announcer` | Floor titles, death screens |
 | **The Wardens** | One boss per Circle: the monster that rules it. Each guards its Circle's top floor. | Per Warden | Death videos, bosses |
@@ -52,6 +52,8 @@ Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
    Hero: *"That's a hole."* Beat. *"So that's where they keep coming from."*
 6. **The echo.** He leans over and shouts *"Hello?"* Hell answers: *"...hello? ...hello? ...hello?"*, each one
    deeper than the last. It's the first hint that **Hell is repetition**: even its echo won't stop.
+   The echo is his own voice coming back, slower, darker and more broken each time: the loop answering him
+   (`vo_portal_echo`).
 7. **"Nope."** He turns to leave. The portal grabs him: he spins and shrinks into it, and he's gone.
 8. **Gloob.** A beat later a green village slime bounces past, wobbles at the edge, and is slurped in after him.
    Nobody remarks on it. It pays off in Video3, when the same slime turns up at the bottom of Hell, talking.
