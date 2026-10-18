@@ -27,6 +27,8 @@
   "wallOverArt": "#0D06088C",
   "waystoneLit": "#9EFFE6",
   "waystoneDark": "#4D4545F2",
+  "shortcutPath": "#FFB84DF2",
+  "shortcutSeconds": 1.6,
   "shortcutHints": [
     975,
     940,
@@ -44,6 +46,7 @@
   "fallSound": "shaft_fall",
   "slamSound": "shaft_slam",
   "tickSound": "shaft_tick",
+  "shortcutSound": "shaft_shortcut",
   "plungeMusic": "shaft_plunge_music",
   "climbMusic": "shaft_climb_music",
   "welcomeVoice": "vo_shaft_welcome",

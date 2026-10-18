@@ -810,16 +810,64 @@ namespace SickOfIt.Gameplay
         GameObject pickerRoot;
         System.Action<int> onPick;
         int pickerCount;
+        HashSet<int> pickerLocked;
+        bool pickerIsShortcut;
         float timeScaleBeforePicker = 1f;
 
         public bool PickerOpen => pickerRoot != null;
 
         public void ShowUpgradePicker(string title, List<UpgradeDef> options, System.Action<int> picked)
         {
-            if (PickerOpen || options.Count == 0)
+            var cards = new List<MenuCardData>();
+            var colors = new List<Color>();
+            for (int i = 0; i < options.Count; i++)
+            {
+                var def = options[i];
+                int level = UpgradeProgress.LevelOf(def.id);
+                cards.Add(new MenuCardData
+                {
+                    Badge = (i + 1).ToString(),
+                    Caption = $"Level {level + 1}/{def.maxLevel}",
+                    Title = def.title,
+                    Description = def.description,
+                    Status = "Take it",
+                    StatusColor = def.color,
+                });
+                colors.Add(def.color);
+            }
+            ShowPicker(title, "Click a card or press its number", cards, colors, picked, null);
+        }
+
+        /// <summary>A shortcut (Docs/Story.md, "Shortcuts") is being offered: the picker's cards are "keep climbing" and the shortcut.</summary>
+        public bool ShortcutOpen => PickerOpen && pickerIsShortcut;
+
+        /// <summary>The cost line on the shortcut's card, as shown (the playtest reads it).</summary>
+        public string ShortcutCostShown { get; private set; } = "";
+
+        /// <summary>
+        /// A shortcut's choice point, in the picker's panel (pauses the game the same way): card 1 keeps climbing,
+        /// card 2 takes the shortcut, with its cost on it ('lockedStamp' greys it out when it can't be paid).
+        /// </summary>
+        public void ShowShortcutChoice(string title, MenuCardData stay, MenuCardData take, Color takeColor, string costShown, string lockedStamp, System.Action<int> picked)
+        {
+            if (PickerOpen)
+                return;
+            take.LockedStamp = lockedStamp;
+            ShortcutCostShown = costShown ?? "";
+            var locked = string.IsNullOrEmpty(lockedStamp) ? null : new HashSet<int> { 1 };
+            ShowPicker(title, "Click a card or press its number", new List<MenuCardData> { stay, take },
+                new List<Color> { theme.muted, takeColor }, picked, locked);
+            pickerIsShortcut = PickerOpen;
+        }
+
+        void ShowPicker(string title, string hint, List<MenuCardData> cards, List<Color> colors, System.Action<int> picked, HashSet<int> locked)
+        {
+            if (PickerOpen || cards.Count == 0)
                 return;
             onPick = picked;
-            pickerCount = options.Count;
+            pickerCount = cards.Count;
+            pickerLocked = locked;
+            pickerIsShortcut = false;
             Sfx.Play(Sfx.Events.upgradeOffer);
             timeScaleBeforePicker = Time.timeScale;
             Time.timeScale = 0f;
@@ -835,7 +883,7 @@ namespace SickOfIt.Gameplay
             menu.AddText(inner, "Title", title, theme.title, new Vector2(0.5f, 0.84f), Vector2.zero, new Vector2(1700f, 170f),
                 out _, Mathf.Min(theme.title.fontSize, 110f), menu.TitleFont, theme.titleEntrance,
                 new MenuMotion { type = MenuMotionType.Wobble, amount = 1.2f, speed = 0.4f }, -2f);
-            menu.AddText(inner, "Hint", "Click a card or press its number", theme.caption, new Vector2(0.5f, 0.12f), Vector2.zero,
+            menu.AddText(inner, "Hint", hint, theme.caption, new Vector2(0.5f, 0.12f), Vector2.zero,
                 new Vector2(1200f, 50f), out _, 0f, null, theme.entrance);
 
             var list = menu.AddList(new MenuList
@@ -848,34 +896,26 @@ namespace SickOfIt.Gameplay
                 portrait = menu.Responsive.screens?.upgradePicker,
             }, theme.card.size, inner);
 
-            for (int i = 0; i < options.Count; i++)
+            for (int i = 0; i < cards.Count; i++)
             {
-                var def = options[i];
                 int index = i;
-                int level = UpgradeProgress.LevelOf(def.id);
-                var view = MenuCard.Add(menu, list, new MenuCardData
-                {
-                    Badge = (i + 1).ToString(),
-                    Caption = $"Level {level + 1}/{def.maxLevel}",
-                    Title = def.title,
-                    Description = def.description,
-                    Status = "Take it",
-                    StatusColor = def.color,
-                }, () => Choose(index));
-                if (view.Title != null)
+                var view = MenuCard.Add(menu, list, cards[i], () => Choose(index));
+                if (view.Title != null && i < colors.Count)
                 {
                     view.Title.enableVertexGradient = false;
-                    view.Title.color = Color.Lerp(def.color, Color.white, 0.25f);
+                    view.Title.color = Color.Lerp(colors[i], Color.white, 0.25f);
                 }
             }
         }
 
         public void Choose(int index)
         {
-            if (!PickerOpen || index < 0 || index >= pickerCount)
+            if (!PickerOpen || index < 0 || index >= pickerCount || (pickerLocked != null && pickerLocked.Contains(index)))
                 return;
             Destroy(pickerRoot);
             pickerRoot = null;
+            pickerLocked = null;
+            pickerIsShortcut = false;
             Sfx.Play(Sfx.Events.upgradePick);
             Time.timeScale = timeScaleBeforePicker <= 0f ? 1f : timeScaleBeforePicker;
             var callback = onPick;

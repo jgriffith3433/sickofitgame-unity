@@ -1,0 +1,494 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level14",
+  "displayName": "Floors 880-871: The Old Stair",
+  "levelNumber": 14,
+  "thumbnail": "Videos/Level2_Background1_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Videos/Level2_Background1_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 15,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 90,
+    "floors": {
+      "start": 880,
+      "end": 871,
+      "unitsPerFloor": 3.0,
+      "circle": "crackedRoad",
+      "signs": true,
+      "sign": "TO THE OLD STAIR",
+      "door": "STAIRS (CLOSED)"
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true,
+      "props": [
+        {
+          "name": "carved steps",
+          "shape": "Block",
+          "color": "#1E1A22",
+          "size": [
+            0.9,
+            0.28
+          ],
+          "sizeVariation": 0.25,
+          "across": -2.5,
+          "parallax": 0.0,
+          "spacing": 2.4,
+          "chance": 0.7,
+          "layer": "Background2",
+          "sortingOrder": 6
+        },
+        {
+          "name": "stairs in the spires",
+          "shape": "Block",
+          "color": "#141018CC",
+          "size": [
+            0.6,
+            0.18
+          ],
+          "sizeVariation": 0.2,
+          "across": -1.2,
+          "parallax": 0.6,
+          "spacing": 1.6,
+          "chance": 0.6,
+          "layer": "Background2",
+          "sortingOrder": 2
+        }
+      ]
+    },
+    "markers": [
+      {
+        "floor": 876,
+        "label": "STEPS"
+      },
+      {
+        "floor": 872,
+        "label": "THE STAIRWELL"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "phases": [
+      {
+        "name": "title",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 880-871: THE OLD STAIR",
+            "duration": 2.5,
+            "sound": "vo_stair_title",
+            "color": "#FFB46A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the hero takes it in",
+            "when": {
+              "type": "after",
+              "seconds": 3.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "showText",
+                "text": "Somebody carved stairs into these. A long time ago.",
+                "duration": 3.0,
+                "sound": "vo_stair_intro",
+                "style": "Subtitle"
+              }
+            ]
+          },
+          {
+            "name": "quiet start over",
+            "when": {
+              "type": "after",
+              "seconds": 6.5
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 876,
+            "firstBreather": 3.0,
+            "seed": 1
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "steps"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "steps",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "spawn",
+            "entity": "brimstoneDemon",
+            "anchor": "Camera",
+            "at": [
+              3.0,
+              -2.05
+            ],
+            "tags": [
+              "beat"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "the beat is over",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "beat"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb2",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 872,
+            "firstBreather": 3.0,
+            "seed": 2
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "lastFloor"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "lastFloor",
+        "rules": [
+          {
+            "name": "the last floor",
+            "when": {
+              "type": "floorReached",
+              "floor": 871
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "stairTop"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "stairTop",
+        "rules": [
+          {
+            "name": "the stairwell's mouth",
+            "when": {
+              "type": "distanceReached",
+              "units": 28.5
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "lockTravel"
+                  },
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.12,
+                    "duration": 1.0
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.8
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Stairs. Fallen in. Still going up, though.",
+                    "duration": 3.0,
+                    "sound": "vo_stair_top",
+                    "style": "Subtitle"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.2
+                  },
+                  {
+                    "type": "offerShortcut",
+                    "id": "oldStair",
+                    "prompt": "The collapsed stairwell",
+                    "title": "Squeeze up the stairs",
+                    "description": "The old stair, fallen in. It goes up. Hell won't say how far.",
+                    "stayTitle": "Keep to the road",
+                    "stayDescription": "The long way, floor by floor. Pick a Grudge at the top.",
+                    "costGrudges": 1,
+                    "costText": "Costs a Grudge: {0}",
+                    "cantPayText": "NO GRUDGE TO GIVE",
+                    "toFloor": 841,
+                    "nextLevel": 18,
+                    "color": "#FF9A3D"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "takes the stairwell",
+            "when": {
+              "type": "shortcutChosen",
+              "shortcut": "oldStair",
+              "taken": true
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "stairwell"
+              }
+            ]
+          },
+          {
+            "name": "keeps to the road",
+            "when": {
+              "type": "shortcutChosen",
+              "shortcut": "oldStair",
+              "taken": false
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "longWay"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "stairwell",
+        "onEnter": [
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "playerInvincible",
+            "seconds": 20.0
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "Fine. One less thing to hate.",
+                "duration": 2.5,
+                "sound": "vo_stair_take",
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "walkPlayerTo",
+                "x": 2.6,
+                "anchor": "Camera",
+                "speed": 0.6,
+                "emit": "stair:in"
+              },
+              {
+                "type": "showText",
+                "text": "A SHORTCUT?! THE CROWD HATES IT!",
+                "duration": 3.0,
+                "sound": "vo_stair_shortcut",
+                "color": "#FF9A3D"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "fade",
+                "to": "Black",
+                "duration": 0.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.2,
+                "duration": 0.8
+              },
+              {
+                "type": "setFloor",
+                "floor": 841,
+                "skipMilestones": true
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "fade",
+                "to": "Clear",
+                "duration": 0.8
+              },
+              {
+                "type": "showText",
+                "text": "FLOOR 841! NOBODY TAKES THE STAIRS!",
+                "duration": 3.0,
+                "sound": "vo_stair_841",
+                "color": "#FF9A3D"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "showText",
+                "text": "That went further than stairs should.",
+                "duration": 3.0,
+                "sound": "vo_stair_out",
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "longWay",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "Nah. Hell would love that.",
+                "duration": 2.5,
+                "sound": "vo_stair_stay",
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "showText",
+                "text": "THE OLD STAIR: CLIMBED",
+                "duration": 2.0,
+                "sound": "vo_stair_clear",
+                "color": "#FFB46A"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.5
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

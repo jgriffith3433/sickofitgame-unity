@@ -93,6 +93,13 @@ namespace SickOfIt.Core.Progression
         public MenuButton ContinueButton => continueButton;
         /// <summary>Gloob's shop is open over the Shaft (Visit Gloob).</summary>
         public bool ShopOpen => shopOpen;
+        /// <summary>Climb: a shortcut taken on the level (Docs/Story.md, "Shortcuts"): the floor it starts from and the one it lets him out on, else 0.</summary>
+        public int ShortcutFrom => shortcutFrom;
+        public int ShortcutTo => shortcutTo;
+        /// <summary>The marker has jumped the shortcut (the dotted line is drawn up to ShortcutTo).</summary>
+        public bool ShortcutJumped { get; private set; }
+        /// <summary>Dots drawn for shortcuts on this map (the one jumped now and the ones taken before).</summary>
+        public int ShortcutDots { get; private set; }
 
         /// <summary>One Circle as drawn: ui/shaft.json, with content/circles' name and floors where the circle exists.</summary>
         sealed class Band
@@ -144,6 +151,12 @@ namespace SickOfIt.Core.Progression
         float openedAt;
         float cameraFloor;
         float markerFloor;
+        /// <summary>Where the marker is across the shaft (0.5 = the middle; a shortcut's jump swings it out through a crack).</summary>
+        float markerAcross = 0.5f;
+        int shortcutFrom;
+        int shortcutTo;
+        static int pendingShortcutFrom;
+        static int pendingShortcutTo;
         float contentHeight;
         Vector2 shake;
 
@@ -195,6 +208,9 @@ namespace SickOfIt.Core.Progression
             // From where the marker was, if that is below this level's end and inside its range; else the level's start.
             int saved = ShaftProgress.Floor;
             int from = saved > end && saved <= Mathf.Max(start, end) ? saved : start > end ? start : end;
+            // A shortcut taken on the level: after the climb the marker jumps on up a dotted line to where it let him out.
+            pendingShortcutFrom = stop.ShortcutTo > 0 ? (stop.ShortcutFrom > 0 ? stop.ShortcutFrom : end) : 0;
+            pendingShortcutTo = stop.ShortcutTo > 0 && stop.ShortcutTo < end ? stop.ShortcutTo : 0;
             Open(Mode.Climb, from, end, next, false);
             return true;
         }
@@ -209,6 +225,14 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>Gloob's hello at 'floor' without the story flow (playtest setup shortcut). Continue closes it; nothing is saved.</summary>
+        /// <summary>A climb to 'toFloor' and a shortcut's jump on to 'jumpTo' without the story flow (playtest setup shortcut). Nothing is saved.</summary>
+        public static ShaftScreen PreviewShortcut(int fromFloor, int toFloor, int jumpTo, Action closed = null)
+        {
+            pendingShortcutFrom = toFloor;
+            pendingShortcutTo = jumpTo > 0 && jumpTo < toFloor ? jumpTo : 0;
+            return Open(Mode.Climb, fromFloor, toFloor, closed, true);
+        }
+
         public static ShaftScreen PreviewMeet(int floor, Action closed = null)
         {
             return Open(Mode.Meet, floor, floor, closed, true);
@@ -264,6 +288,9 @@ namespace SickOfIt.Core.Progression
             Kind = mode;
             FromFloor = from;
             ToFloor = to;
+            shortcutFrom = mode == Mode.Climb && pendingShortcutTo > 0 ? pendingShortcutFrom : 0;
+            shortcutTo = mode == Mode.Climb ? pendingShortcutTo : 0;
+            pendingShortcutFrom = pendingShortcutTo = 0;
             next = onContinue;
             preview = isPreview;
             // The first plunge and the first drop (Hell explains Waystones) are watched to the end.
@@ -279,7 +306,8 @@ namespace SickOfIt.Core.Progression
             cameraFloor = markerFloor = from;
             SetCounter(from);
             UpdateInfo(from);
-            Report("open", $"{mode.ToString().ToLowerInvariant()} from {from} to {to}" + (preview ? " (preview)" : "") + (Skippable ? ", skippable" : ""));
+            Report("open", $"{mode.ToString().ToLowerInvariant()} from {from} to {to}" + (shortcutTo > 0 ? $", then a shortcut from {shortcutFrom} to {shortcutTo}" : "")
+                           + (preview ? " (preview)" : "") + (Skippable ? ", skippable" : ""));
             StartCoroutine(mode == Mode.Plunge ? PlungeRoutine() : mode == Mode.Meet ? MeetRoutine() : mode == Mode.Drop ? DropRoutine() : ClimbRoutine());
         }
 
@@ -634,6 +662,58 @@ namespace SickOfIt.Core.Progression
                         Dot("Gap", config.crack, 0.2f + d * 0.1f, Y(floor), new Vector2(9f, 9f));
                 }
             }
+
+            // The shortcuts he has taken: a dotted jump up through the crack, drawn for good (the one jumped now draws as he goes).
+            foreach (var taken in ShortcutProgress.All())
+            {
+                if (taken.FromFloor <= taken.ToFloor || (shortcutTo > 0 && taken.ToFloor == shortcutTo))
+                    continue;
+                foreach (var dot in ShortcutPath(taken.FromFloor, taken.ToFloor))
+                    ShortcutDot(dot);
+            }
+        }
+
+        /// <summary>The side of the shaft a shortcut leaves through: the wall of the crack hinted nearest to it (left 0.14, right 0.86), or the middle for a gap.</summary>
+        float ShortcutSide(int fromFloor, int toFloor)
+        {
+            int best = -1;
+            float bestDistance = float.MaxValue;
+            for (int i = 0; i < config.shortcutHints.Count; i++)
+            {
+                int floor = config.shortcutHints[i];
+                float distance = floor <= fromFloor && floor >= toFloor ? 0f : Mathf.Min(Mathf.Abs(floor - fromFloor), Mathf.Abs(floor - toFloor));
+                if (distance < bestDistance)
+                {
+                    best = i;
+                    bestDistance = distance;
+                }
+            }
+            if (best < 0 || best % 2 != 0)
+                return 0.75f;
+            return best % 4 == 0 ? 0.14f : 0.86f;
+        }
+
+        /// <summary>A point on a shortcut's jump: t 0 = where he took it (the middle of the shaft), out to the crack's wall and back in at 'toFloor'.</summary>
+        Vector2 ShortcutPoint(int fromFloor, int toFloor, float side, float t)
+        {
+            float across = Mathf.Lerp(0.5f, side, Mathf.Sin(Mathf.PI * Mathf.Clamp01(t)));
+            return new Vector2(across, Mathf.Lerp(fromFloor, toFloor, t));
+        }
+
+        List<Vector2> ShortcutPath(int fromFloor, int toFloor)
+        {
+            float side = ShortcutSide(fromFloor, toFloor);
+            int count = Mathf.Clamp(Mathf.Abs(fromFloor - toFloor) / 2, 8, 40);
+            var dots = new List<Vector2>();
+            for (int i = 1; i < count; i++)
+                dots.Add(ShortcutPoint(fromFloor, toFloor, side, i / (float)count));
+            return dots;
+        }
+
+        void ShortcutDot(Vector2 point)
+        {
+            Dot("ShortcutDot", config.shortcutPath, point.x, Y(point.y), new Vector2(10f, 10f));
+            ShortcutDots++;
         }
 
         /// <summary>
@@ -1028,6 +1108,12 @@ namespace SickOfIt.Core.Progression
             UpdateInfo(to);
             if (counterMotion != null && !skip)
                 StartCoroutine(Punch(1.18f));
+            if (shortcutTo > 0)
+            {
+                yield return JumpShortcut(shortcutFrom > 0 ? shortcutFrom : to, shortcutTo);
+                to = shortcutTo;
+                ToFloor = to;
+            }
             if (!preview)
             {
                 ShaftProgress.Floor = to;
@@ -1056,6 +1142,53 @@ namespace SickOfIt.Core.Progression
                     GloobPortrait.Heard(line);
             }
             Finish();
+        }
+
+        /// <summary>
+        /// A shortcut (Docs/Story.md, "Shortcuts"): the marker leaves the shaft through the crack it hinted at and
+        /// jumps on up a dotted line, the counter racing, to the floor the shortcut let him out on.
+        /// </summary>
+        IEnumerator JumpShortcut(int from, int to)
+        {
+            Report("shortcut-start", $"from FLOOR {Number(from)} to FLOOR {Number(to)}");
+            if (!skip)
+                yield return Wait(0.35f);
+            var dots = ShortcutPath(from, to);
+            float side = ShortcutSide(from, to);
+            int drawn = 0;
+            float duration = Mathf.Max(0.4f, config.shortcutSeconds);
+            float t = 0f;
+            int shown = from;
+            if (!string.IsNullOrEmpty(config.shortcutSound))
+                Sfx.Play(config.shortcutSound);
+            while (t < 1f && !skip)
+            {
+                t = Mathf.Min(1f, t + Time.unscaledDeltaTime / duration);
+                float eased = SmoothStep(t);
+                var point = ShortcutPoint(from, to, side, eased);
+                markerAcross = point.x;
+                markerFloor = cameraFloor = point.y;
+                while (drawn < dots.Count && (drawn + 1f) / (dots.Count + 1f) <= eased)
+                    ShortcutDot(dots[drawn++]);
+                int now = Mathf.RoundToInt(point.y);
+                if (now != shown)
+                {
+                    shown = now;
+                    SetCounter(now);
+                }
+                yield return null;
+            }
+            while (drawn < dots.Count)
+                ShortcutDot(dots[drawn++]);
+            markerAcross = 0.5f;
+            markerFloor = cameraFloor = to;
+            SetCounter(to);
+            UpdateInfo(to);
+            ShortcutJumped = true;
+            if (counterMotion != null && !skip)
+                StartCoroutine(Punch(1.3f));
+            Report("shortcut", $"jumped from FLOOR {Number(from)} to FLOOR {Number(to)} ({Mathf.Abs(from - to)} floors skipped), a dotted line of {dots.Count} through the "
+                               + (side < 0.5f ? "left wall's crack" : side > 0.8f ? "right wall's crack" : "gap") + $": {FloorsLeftText}");
         }
 
         /// <summary>One of the Shaft's music cues (an audio.json sound, played over the map like its effects).</summary>
@@ -1313,7 +1446,7 @@ namespace SickOfIt.Core.Progression
             // On the Meadow the camera keeps the sky in view; lower down the marker sits a little above the middle.
             float scroll = Mathf.Clamp(centre - view * 0.55f, 0f, Mathf.Max(0f, contentHeight - view));
             content.anchoredPosition = new Vector2(0f, scroll);
-            markerRect.anchoredPosition = new Vector2(0f, -(markerFloor <= 0f ? Meadow - 40f : Y(markerFloor)));
+            markerRect.anchoredPosition = new Vector2(content.rect.width * (markerAcross - 0.5f), -(markerFloor <= 0f ? Meadow - 40f : Y(markerFloor)));
         }
 
         // ─── Leaving ──────────────────────────────────────────────────

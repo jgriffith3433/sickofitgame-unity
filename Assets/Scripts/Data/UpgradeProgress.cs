@@ -36,6 +36,20 @@ namespace SickOfIt.Data
             Save(owned);
         }
 
+        /// <summary>Takes one level of an upgrade away (a shortcut's cost). False if it isn't owned.</summary>
+        public static bool Remove(string id)
+        {
+            var owned = Owned();
+            if (!owned.TryGetValue(id, out int level) || level <= 0)
+                return false;
+            if (level == 1)
+                owned.Remove(id);
+            else
+                owned[id] = level - 1;
+            Save(owned);
+            return true;
+        }
+
         public static void Reset()
         {
             PlayerPrefs.DeleteKey(Key);

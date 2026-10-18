@@ -94,6 +94,11 @@ Assets/GameConfig/
 - **Gloob** (`ui/gloob.json`, `GloobPortrait`): the village slime's talking portrait (idle/talk/laugh/cough sheets, a shape
   placeholder until painted) and lines on the Shaft (his hello after Video3, one reaction per climb) and in the shop. Lines
   are audio.json voices `gloob` (hero replies `player`); which line plays is `moment` + `floor` (Docs/Story.md, "Gloob between floors").
+- **Shortcuts** (Docs/Story.md, "Shortcuts"): a choice point in a stage (`offerShortcut`: keep climbing or the shortcut,
+  its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
+  stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the
+  Shaft jumps a dotted line up through a hinted crack (`ShortcutProgress`). First one: Level 14's Old Stair, 871 to 841,
+  Level 18 next. Cookbook "A shortcut".
 - **Waystones and runs** (Docs/Story.md): a death on a floor stage ends the run: the death screen, then the Shaft drops the
   marker back to the highest Waystone (the Landing, Floor 1,000, then each Circle's top once its Warden is beaten) and the
   run restarts there; Grudges reset, diamonds and Gloob's goods stay. Main menu: Continue (the run) / New Run (the
@@ -236,7 +241,12 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   the Waystones marked, the first death's voiced line and the hero's answer, not skippable; Grudges gone, diamonds and goods
   kept; Continue restarts the run at Level 2; the main menu shows Continue and New Run, and New Run starts Level 2; `check`
   events `waystone <beat>`; ~6 min; a death in `full`/`story-path`/`wastes-climb` also drops back, and their retries reopen
-  the level directly), `portal-audio` (on the main menu, plays
+  the level directly), `shortcut` (Hell's first shortcut: Level 14, The Old Stair, loaded directly with one Grudge in hand (setup shortcut);
+  the bot plays to the collapsed stairwell at the top and presses 2 on its choice: the choice with its cost on screen,
+  the Grudge paid, the hero's line and the announcer's reaction, the counter jumping 871 to 841 with no Grudge pick; the
+  Shaft climbs to 871 and jumps a dotted line to 841 (`climbShortcut14`); Continue starts Level 18 (Floors 840-831),
+  skipping 15-17, played with the stage checks; `check` events `shortcut <beat>`, `shortcut-offer`/`shortcut-taken`; ~6 min),
+  `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
   page has neither; `Plugins/WebGL/HawkesSite.jslib`).

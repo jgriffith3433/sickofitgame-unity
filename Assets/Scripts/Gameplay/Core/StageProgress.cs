@@ -57,7 +57,7 @@ namespace SickOfIt.Gameplay
             lastFloor = floors.start;
         }
 
-        public void SetFloor(int floor)
+        public void SetFloor(int floor, bool skipMilestones = false)
         {
             if (!HasFloors)
             {
@@ -65,6 +65,12 @@ namespace SickOfIt.Gameplay
                 return;
             }
             world.SetCounter(FloorCounter, floor);
+            if (skipMilestones && floor != lastFloor)
+            {
+                // Seen as already there, so Tick plays no milestone for the floors jumped over.
+                world.Telemetry.Record("floor", world.LevelName, floor);
+                lastFloor = floor;
+            }
         }
 
         /// <summary>After the camera moved: distance and floors from travel, then lines for any floor reached.</summary>

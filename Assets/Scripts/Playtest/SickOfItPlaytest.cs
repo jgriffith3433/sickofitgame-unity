@@ -152,6 +152,13 @@ namespace SickOfIt.Playtest
         /// <summary>The waystone scenario: the stage the bot clears first (The Spill, for a Grudge), then dies on the next one.</summary>
         public const int WaystoneLevel = 3;
         const float WaystoneSeconds = 480f;
+        /// <summary>
+        /// The shortcut scenario (Docs/Story.md, "Shortcuts"): the stage with Hell's first shortcut (The Old Stair, Floors
+        /// 880-871, the collapsed stairwell at its top), the floor it lets him out on, and the stage it leads to, past the
+        /// ones it skips (Levels 15-17).
+        /// </summary>
+        public const int ShortcutLevel = 14, ShortcutToFloor = 841, ShortcutNextLevel = 18;
+        const float ShortcutSeconds = 480f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void Register()
@@ -242,6 +249,13 @@ namespace SickOfIt.Playtest
                 "the first enemy); Level 10 must end at the Magma King's door (\"THE SLAG THRONE\") with his voice heard from ahead before it; " +
                 "Level 11 is his arena (the boss checks of level-11), and its Shaft climbs to 901 with the Waystone lit and Circle IX waking; " +
                 "then the level select. Up to 3 tries per stage; each beat is a check event", ClimbSeconds, "full"));
+            list.Add(new PlaytestScenario("shortcut", $"Hell's first shortcut (Docs/Story.md, \"Shortcuts\"): level {ShortcutLevel} (Floors 880-871: The Old Stair, " +
+                "Circle IX) loaded directly with one Grudge in hand (setup shortcut: given if he has none). The bot plays it through real input to the " +
+                "collapsed stairwell at the top, where the choice comes up: card 1 keeps climbing, card 2 is the stairwell with its cost shown (a Grudge, " +
+                "named); the bot presses 2. Checked: the choice and its cost on screen, the Grudge paid, the hero's line and the announcer's reaction voiced, " +
+                $"the floor counter jumping from 871 to {ShortcutToFloor} with no Grudge pick after; then the results, the Shaft (the marker climbs to 871, " +
+                $"then jumps a dotted line up through the wall's crack to FLOOR {ShortcutToFloor}), Continue, and the next stage is level {ShortcutNextLevel} " +
+                $"(Floors 840-831), skipping levels {ShortcutLevel + 1}-{ShortcutNextLevel - 1}; the bot plays it with the stage checks. Each beat is a check event", ShortcutSeconds, "full"));
             list.Add(new PlaytestScenario("shaft", $"The Shaft, Hell's map, through the real flow: Video {OverlayVideo} loaded directly (setup shortcut; the Shaft's save is " +
                 "reset so this is the first plunge) and skipped, then the plunge from the Meadow past all 10 Circle bands to FLOOR 1,000 (Space pressed " +
                 "mid-fall must not skip the first one), the slam, the announcer's \"nine hundred ninety-nine to go\" and the hero's \"...Great.\"; " +
@@ -349,6 +363,8 @@ namespace SickOfIt.Playtest
                 yield return session.WaystoneRun();
             else if (id == "wastes-climb")
                 yield return session.WastesClimb();
+            else if (id == "shortcut")
+                yield return session.ShortcutRun();
             else if (id == "menus")
                 yield return session.Menus();
             else if (id == "site")
@@ -495,6 +511,26 @@ namespace SickOfIt.Playtest
                 {
                     case "phase":
                         Run.Event("phase", $"{level}: {e.Subject}");
+                        if (stage != null && stage.Level == log.World.LevelNumber)
+                            stage.Entered.Add(e.Subject);
+                        break;
+                    case "shortcut-offer":
+                        Run.Event("shortcut-offer", $"{level}: {e.Subject} at FLOOR {e.Value}: {e.Detail}");
+                        if (stage != null && stage.Level == log.World.LevelNumber)
+                            stage.ShortcutOffer = e.Detail;
+                        break;
+                    case "shortcut-declined":
+                        Run.Event("shortcut-declined", $"{level}: {e.Subject} at FLOOR {e.Value}: kept climbing");
+                        if (stage != null && stage.Level == log.World.LevelNumber)
+                            stage.ShortcutDeclined = e.Subject;
+                        break;
+                    case "shortcut":
+                        Run.Event("shortcut-taken", $"{level}: {e.Subject}: {e.Detail}");
+                        if (stage != null && stage.Level == log.World.LevelNumber)
+                        {
+                            stage.ShortcutTo = e.Value;
+                            stage.ShortcutFrom = log.World.Shortcuts != null ? log.World.Shortcuts.TakenFromFloor : 0;
+                        }
                         break;
                     case "error":
                         Run.Problem(PlaytestSeverity.Bug, $"{level} script error in {e.Subject}: {e.Detail}");
@@ -707,6 +743,12 @@ namespace SickOfIt.Playtest
                 public string LastBanner = "", LastLine = "";
                 public int NewSerial = -1, OthersAtNewSpawn = -1, MaxEnemies, MostSameSign;
                 public bool NewAlone = true, SignSeen, DoorSeen, Picked;
+                /// <summary>Hell's shortcuts (Docs/Story.md, "Shortcuts"): the cost the choice showed, and where a taken one let him out (0 = not taken).</summary>
+                public string ShortcutOffer = "", ShortcutDeclined = "";
+                public int ShortcutTo, ShortcutFrom;
+                /// <summary>The phase each scripted line belongs to, and the phases entered: a branch not taken (a shortcut's) has lines nobody hears.</summary>
+                public readonly Dictionary<string, string> PhaseOf = new Dictionary<string, string>();
+                public readonly HashSet<string> Entered = new HashSet<string>();
                 public float FirstHostileAt = -1f, QuietSince = -1f, LongestQuiet, Clock, DoorSeenAt = -1f;
 
                 // ─── A Warden's arena (IsArena): the boss, his fight's signals and his telegraphs ───
@@ -755,6 +797,18 @@ namespace SickOfIt.Playtest
                         actions.AddRange(phase.onEnter);
                         foreach (var rule in phase.rules)
                             actions.AddRange(rule.@do);
+                    }
+                    foreach (var phase in script.phases)
+                    {
+                        var own = new List<SickOfIt.Gameplay.Content.GameAction>(phase.onEnter);
+                        foreach (var rule in phase.rules)
+                            own.AddRange(rule.@do);
+                        for (int i = 0; i < own.Count; i++)
+                        {
+                            if (own[i] is SickOfIt.Gameplay.Content.ShowTextAction line && !string.IsNullOrEmpty(line.text) && !PhaseOf.ContainsKey(line.text))
+                                PhaseOf[line.text] = phase.name ?? "";
+                            own[i]?.CollectChildren(own);
+                        }
                     }
                     var spawned = new HashSet<string>();
                     var sequences = new HashSet<string>();
@@ -1067,8 +1121,10 @@ namespace SickOfIt.Playtest
                 string seen = s.Floors.Count > 0 ? string.Join(" ", s.Floors) : "none";
                 Run.Event("floors", $"level {s.Level}: {seen}");
                 int lowest = s.Floors.Count > 0 ? s.Floors[s.Floors.Count - 1] : int.MaxValue;
-                check(prefix + "floors", s.Floors.Count > 0 && s.Floors[0] == s.Start && (completed ? lowest == s.End : lowest >= s.End),
-                    $"the floor counter ran {seen} (want {s.Start} down to {s.End}; level {outcome})");
+                // A shortcut taken on the stage ends it where the shortcut let him out, past the stage's own last floor.
+                int wantEnd = s.ShortcutTo > 0 ? s.ShortcutTo : s.End;
+                check(prefix + "floors", s.Floors.Count > 0 && s.Floors[0] == s.Start && (completed ? lowest == wantEnd : lowest >= Mathf.Min(s.End, wantEnd)),
+                    $"the floor counter ran {seen} (want {s.Start} down to {s.End}{(s.ShortcutTo > 0 ? $", then the shortcut's jump to {s.ShortcutTo}" : "")}; level {outcome})");
                 if (s.Sign.Length > 0)
                     check(prefix + "sign", s.SignSeen, s.SignSeen ? $"the stage's sign \"{s.Sign}\" stood at the start" : $"no \"{s.Sign}\" sign seen");
 
@@ -1100,8 +1156,13 @@ namespace SickOfIt.Playtest
                         if (s.Speakers.TryGetValue(pair.Key, out string who) && who.Length > 0 && who != "player" && who != "announcer"
                             && (!s.DoorSeen || pair.Value <= s.DoorSeenAt) && s.Lines.Exists(l => l.text == pair.Key && l.voiced))
                             ahead.Add($"{who}: \"{pair.Key}\" at {pair.Value:0.0} s");
-                    check(prefix + "voiceAhead", ahead.Count > 0,
-                        ahead.Count > 0 ? string.Join(" | ", ahead) : "no voiced line from whoever waits behind the door before it");
+                    // Only a door someone waits behind (the stage has lines in another voice): a shortcut's stairwell has nobody.
+                    bool someone = false;
+                    foreach (var who in s.Speakers.Values)
+                        someone |= who.Length > 0 && who != "player" && who != "announcer";
+                    if (someone)
+                        check(prefix + "voiceAhead", ahead.Count > 0,
+                            ahead.Count > 0 ? string.Join(" | ", ahead) : "no voiced line from whoever waits behind the door before it");
                 }
                 if (s.Repeat.Count > 0)
                     check(prefix + "loop", s.MostSameSign >= 2, $"{s.MostSameSign} signs with the repeated floor ({string.Join(", ", s.Repeat)}) seen at once (want 2: Hell repeats it)");
@@ -1111,10 +1172,13 @@ namespace SickOfIt.Playtest
                         check(prefix + "length", s.Clock >= 60f && s.Clock <= 240f, $"the arena cleared in {s.Clock:0} s of game time (a boss fight: target 60-240)");
                     else
                         check(prefix + "length", s.Clock >= 60f && s.Clock <= 120f, $"cleared in {s.Clock:0} s of game time (target 60-120)");
-                    check(prefix + "grudge", s.Picked, s.Picked ? "a Grudge was picked at the end" : "no Grudge pick at the end");
+                    // A shortcut is paid with a Grudge instead of picking one.
+                    check(prefix + "grudge", s.Picked || s.ShortcutTo > 0, s.Picked ? "a Grudge was picked at the end"
+                        : s.ShortcutTo > 0 ? "no Grudge pick: the shortcut cost one instead" : "no Grudge pick at the end");
                     var unheard = new List<string>();
                     foreach (var pair in s.Sounds)
-                        if (pair.Value.Length > 0 && !s.Banners.Exists(b => b.text == pair.Key && b.voiced) && !s.Lines.Exists(l => l.text == pair.Key && l.voiced))
+                        if (pair.Value.Length > 0 && !s.Banners.Exists(b => b.text == pair.Key && b.voiced) && !s.Lines.Exists(l => l.text == pair.Key && l.voiced)
+                            && !(s.PhaseOf.TryGetValue(pair.Key, out string phaseName) && s.Entered.Count > 0 && !s.Entered.Contains(phaseName)))
                             unheard.Add(pair.Key);
                     int scripted = s.Sounds.Count - unheard.Count;
                     check(prefix + "lines", unheard.Count == 0,
@@ -1334,6 +1398,177 @@ namespace SickOfIt.Playtest
                 Run.Progress(1f);
                 End(stageChecksFailed > 0 ? PlaytestOutcome.Done
                     : reachedEnd && lastOutcome == "completed" ? PlaytestOutcome.Won
+                    : lastOutcome == "died" ? PlaytestOutcome.Lost
+                    : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
+                    : PlaytestOutcome.Done);
+            }
+
+            int shortcutPassed, shortcutFailed;
+
+            void ShortcutCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    shortcutPassed++;
+                    Run.Event("check", $"shortcut {beat}: ok ({detail})");
+                }
+                else
+                {
+                    shortcutFailed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"shortcut {beat}: {detail}");
+                }
+                Run.Metric("shortcut.passed", shortcutPassed);
+                Run.Metric("shortcut.failed", shortcutFailed);
+            }
+
+            /// <summary>
+            /// shortcut: Hell's first shortcut (Docs/Story.md, "Shortcuts"). Level ShortcutLevel loaded directly with a Grudge
+            /// in hand; the bot (takeShortcuts) plays to the stairwell and presses 2 on its choice; the choice and its cost,
+            /// the Grudge paid, the counter's jump, the Shaft's dotted jump and the next stage (ShortcutNextLevel, past the
+            /// skipped ones) are checked, then that stage is played with the stage checks.
+            /// </summary>
+            public IEnumerator ShortcutRun()
+            {
+                var texts = GameDefinition.Instance.menuTheme.texts;
+                float deadline = Time.realtimeSinceStartup + ShortcutSeconds - 20f;
+                stageChecksFailed = 0;
+                int n = ShortcutLevel;
+                ShaftScreen.LevelFloors(ShortcutNextLevel, out int nextStart, out int nextEnd);
+                ShortcutCheck("levels", IsFloorStage(n) && nextStart == ShortcutToFloor - 1,
+                    $"level {n} {(IsFloorStage(n) ? "is a floor stage" : "has NO floors")}; level {ShortcutNextLevel} starts on FLOOR {nextStart} (want {ShortcutToFloor - 1})");
+
+                bool seenChoice = false;
+                string costShown = "";
+                int grudgesBefore = 0;
+                takeShortcuts = true;
+                try
+                {
+                    int attempts = 0;
+                    while (true)
+                    {
+                        attempts++;
+                        if (GrudgeCount() == 0)
+                        {
+                            foreach (var id in GameContent.Current.Upgrades.Keys)
+                            {
+                                UpgradeProgress.Add(id);
+                                Run.Event("shortcut", $"Grudge {id} given, so the shortcut's cost can be paid");
+                                break;
+                            }
+                        }
+                        grudgesBefore = GrudgeCount();
+                        Run.Event("before-shortcut", $"Grudges: {GrudgeList()}");
+                        if (attempts == 1)
+                        {
+                            Run.Event("shortcut", $"load level {n} directly");
+                            var load = LoadLevel(n);
+                            if (load != null)
+                                yield return load;
+                        }
+                        stage = new StageWatch(n, StageCheck);
+                        yield return PlayLevel(n, 0f, now =>
+                        {
+                            var hud = GameplayWorld.Instance != null ? GameplayWorld.Instance.Hud : null;
+                            if (!seenChoice && hud != null && hud.ShortcutOpen)
+                            {
+                                seenChoice = true;
+                                costShown = hud.ShortcutCostShown;
+                                int floor = GameplayWorld.Instance.Stage.Floor;
+                                ShortcutCheck("choice", costShown.IndexOf("Grudge", StringComparison.OrdinalIgnoreCase) >= 0,
+                                    $"the shortcut's choice is on screen at FLOOR {floor}, its cost shown: \"{costShown}\"");
+                            }
+                            return StageDuring(now);
+                        }, 0.02f, 0.6f, Mathf.Max(30f, deadline - Time.realtimeSinceStartup - 200f), waitOutDeath: true);
+                        if (Run.Done) yield break;
+                        if (lastOutcome != "died" || attempts >= 3)
+                            break;
+                        stage = null;
+                        Run.Event("retry", $"level {n}, attempt {attempts + 1}");
+                        seenChoice = false;
+                        yield return ReachLevel(n);
+                        if (Run.Done) yield break;
+                    }
+                    var watched = stage;
+                    if (stage != null)
+                        FinishStage(lastOutcome);
+                    stage = null;
+                    if (lastOutcome != "completed" || watched == null)
+                    {
+                        ShortcutCheck("reached", false, $"level {n} ended: {lastOutcome}, before the shortcut could be taken");
+                        End(lastOutcome == "softlock" ? PlaytestOutcome.Stuck : PlaytestOutcome.Lost);
+                        yield break;
+                    }
+                    if (!seenChoice)
+                        ShortcutCheck("choice", false, "no shortcut choice came up on the stage");
+                    ShortcutCheck("taken", watched.ShortcutTo == ShortcutToFloor,
+                        watched.ShortcutTo > 0 ? $"taken: the shortcut lets him out on FLOOR {watched.ShortcutTo} (want {ShortcutToFloor}); offered as \"{watched.ShortcutOffer}\""
+                            : watched.ShortcutDeclined.Length > 0 ? "the bot kept climbing instead" : "never taken");
+                    int grudgesAfter = GrudgeCount();
+                    ShortcutCheck("paid", grudgesAfter == grudgesBefore - 1,
+                        $"Grudges {grudgesBefore} before, {grudgesAfter} after ({GrudgeList()}): the stairwell took one");
+                    int last = watched.Floors.Count > 0 ? watched.Floors[watched.Floors.Count - 1] : 0;
+                    ShortcutCheck("counterJump", watched.Floors.Contains(watched.End) && last == ShortcutToFloor
+                                                 && !watched.Floors.Exists(f => f < watched.End && f > ShortcutToFloor),
+                        $"the floor counter ran {string.Join(" ", watched.Floors)}: up to {watched.End}, then straight to {last} (want {ShortcutToFloor}, no floors between)");
+                    ShortcutCheck("noPick", !watched.Picked, watched.Picked ? "a Grudge pick came after the shortcut (it costs one; there's no pick)" : "no Grudge pick after it: it cost one instead");
+                    var reaction = new List<string>();
+                    foreach (var pair in watched.ShownAt)
+                        if (watched.PhaseOf.TryGetValue(pair.Key, out string phase) && phase == "stairwell" && watched.Speakers.TryGetValue(pair.Key, out string who))
+                            reaction.Add($"{who}: \"{pair.Key}\"");
+                    bool announcer = reaction.Exists(r => r.StartsWith("announcer", StringComparison.Ordinal));
+                    bool hero = reaction.Exists(r => r.StartsWith("player", StringComparison.Ordinal));
+                    ShortcutCheck("lines", announcer && hero, reaction.Count > 0 ? string.Join(" | ", reaction) : "no lines in the stairwell phase");
+
+                    // The Shaft: the climb to the stage's top, then the dotted jump.
+                    if (LoadLevel != DefaultLoadLevel)
+                    {
+                        End(shortcutFailed + stageChecksFailed > 0 ? PlaytestOutcome.Done : PlaytestOutcome.Won);
+                        yield break;
+                    }
+                    var previous = GameplayWorld.Instance;
+                    yield return Run.Until(() => GameplayWorld.Instance == null || GameplayWorld.Instance.Hud == null || GameplayWorld.Instance.Hud.ResultsOpen,
+                        30f, $"the level {n} results screen");
+                    if (Run.Done) yield break;
+                    if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
+                        yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
+                    if (Run.Done) yield break;
+                    Run.Progress(0.65f);
+                    yield return WatchClimb(n, ShortcutCheck);
+                    if (Run.Done) yield break;
+                    ShortcutCheck("saved", ShortcutProgress.All().Exists(t => t.ToFloor == ShortcutToFloor) && ShaftProgress.Floor == ShortcutToFloor,
+                        $"the save: the Shaft's marker on FLOOR {ShaftProgress.Floor}, shortcuts taken: " +
+                        string.Join(", ", ShortcutProgress.All().ConvertAll(t => $"{t.Id} {t.FromFloor}->{t.ToFloor}")));
+
+                    // The next stage: the one after the skipped ones.
+                    yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null || Object.FindAnyObjectByType<LevelSelectionManager>() != null
+                                                 || NewWorld(previous) != null && GameplayWorld.Instance.Player != null
+                                                 && GameClock.Instance != null && GameClock.Instance.Time > 0f, 60f, $"level {ShortcutNextLevel} to start");
+                    if (Run.Done) yield break;
+                    var next = NewWorld(previous);
+                    ShortcutCheck("nextLevel", next != null && next.LevelNumber == ShortcutNextLevel && WaystoneProgress.RunLevel == ShortcutNextLevel,
+                        next != null ? $"level {next.LevelNumber} ({next.LevelName}, FLOOR {(next.Stage != null ? next.Stage.Floor : 0)}) started after the Shaft; the run is on level " +
+                                       $"{WaystoneProgress.RunLevel} (want {ShortcutNextLevel}: levels {n + 1}-{ShortcutNextLevel - 1} skipped)"
+                            : $"{SceneName()} came after the Shaft (want level {ShortcutNextLevel})");
+                    if (next == null || next.LevelNumber != ShortcutNextLevel)
+                    {
+                        End(PlaytestOutcome.Done);
+                        yield break;
+                    }
+                    Run.Scene("Level " + ShortcutNextLevel);
+                    stage = new StageWatch(ShortcutNextLevel, StageCheck);
+                    yield return PlayLevel(ShortcutNextLevel, 0f, StageDuring, 0.7f, 1f, Mathf.Max(30f, deadline - Time.realtimeSinceStartup), waitOutDeath: true);
+                    if (Run.Done) yield break;
+                    if (stage != null)
+                        FinishStage(lastOutcome);
+                    stage = null;
+                }
+                finally
+                {
+                    takeShortcuts = false;
+                }
+                Run.Progress(1f);
+                End(shortcutFailed + stageChecksFailed > 0 ? PlaytestOutcome.Done
+                    : lastOutcome == "completed" ? PlaytestOutcome.Won
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
                     : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
                     : PlaytestOutcome.Done);
@@ -3251,11 +3486,21 @@ namespace SickOfIt.Playtest
                 if (screen == null)
                     yield break;
                 ArtChecks(screen, check, "climb" + n);
+                // A shortcut taken on the level: after the climb the marker jumps a dotted line on up to where it let him out.
+                int jumpTo = screen.ShortcutTo;
+                int climbed = end;
                 yield return PassShaft(audit: audit);
                 if (Run.Done) yield break;
                 var seen = lastShaft;
                 if (seen == null)
                     yield break;
+                if (jumpTo > 0)
+                {
+                    check("climbShortcut" + n, screen.ShortcutJumped && screen.ShortcutDots > 0 && seen.Shown == jumpTo,
+                        $"after the climb to FLOOR {climbed} the marker {(screen.ShortcutJumped ? "jumped" : "did NOT jump")} the shortcut to FLOOR {seen.Shown} " +
+                        $"(want {jumpTo}) along {screen.ShortcutDots} dots; saved marker FLOOR {ShaftProgress.Floor}");
+                    end = jumpTo;
+                }
                 string left = Mathf.Max(0, end - config.topFloor).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
                 SickOfIt.Data.Config.ShaftBand warden = null;
                 foreach (var band in config.bands)
@@ -3263,7 +3508,8 @@ namespace SickOfIt.Playtest
                         warden = band;
                 string distance = warden != null ? (end - warden.lastFloor).ToString("N0", System.Globalization.CultureInfo.InvariantCulture) : "";
                 check("climbCounter" + n, seen.From > seen.To && seen.Shown == end,
-                    $"the marker climbed from FLOOR {seen.From} and the counter ticked to FLOOR {seen.Shown} (level {n} ends on {end})");
+                    $"the marker climbed from FLOOR {seen.From} and the counter ticked to FLOOR {seen.Shown} (level {n} ends on {climbed}" +
+                    (jumpTo > 0 ? $", the shortcut on to {jumpTo})" : ")"));
                 check("climbFloorsLeft" + n, seen.FloorsLeft.Contains(left), $"\"{seen.FloorsLeft}\" (want {left} floors left)");
                 check("climbWarden" + n, warden != null && seen.NextWarden.IndexOf(warden.warden, StringComparison.OrdinalIgnoreCase) >= 0 && seen.NextWarden.Contains(distance),
                     $"\"{seen.NextWarden}\" (want {(warden != null ? warden.warden : "?")}, {distance} floors up)");
@@ -4672,6 +4918,11 @@ namespace SickOfIt.Playtest
                 if (bot != null)
                     Object.Destroy(bot);
                 bot = PlaytestBot.Attach(world, (uint)(1000 * options.seed + n), input);
+                if (bot != null && takeShortcuts)
+                {
+                    bot.takeShortcuts = true;
+                    Run.Event("bot", $"level {n}: the bot takes Hell's shortcuts (presses 2 on a shortcut's choice)");
+                }
                 if (bot != null && reckless)
                 {
                     bot.reckless = true;
@@ -4771,6 +5022,8 @@ namespace SickOfIt.Playtest
 
             /// <summary>PlayLevel's bot plays to lose (the waystone scenario's death through real input).</summary>
             bool reckless;
+            /// <summary>PlayLevel's bot takes a shortcut when one is offered (the shortcut scenario).</summary>
+            bool takeShortcuts;
 
             readonly HashSet<string> placeholderIds = new HashSet<string>();
 

@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level15",
+  "displayName": "Floors 870-861: Shard Fall",
+  "levelNumber": 15,
+  "thumbnail": "Videos/Level2_Background1_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Videos/Level2_Background1_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 16,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 90,
+    "floors": {
+      "start": 870,
+      "end": 861,
+      "unitsPerFloor": 3.0,
+      "circle": "crackedRoad",
+      "signs": true,
+      "sign": "HARD HATS"
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true,
+      "props": [
+        {
+          "name": "fallen shards",
+          "shape": "Spire",
+          "color": "#120E14",
+          "size": [
+            0.35,
+            0.6
+          ],
+          "sizeVariation": 0.4,
+          "across": -2.5,
+          "parallax": 0.0,
+          "spacing": 2.2,
+          "chance": 0.6,
+          "layer": "Background2",
+          "sortingOrder": 6
+        }
+      ]
+    },
+    "markers": [
+      {
+        "floor": 866,
+        "label": "SHED"
+      },
+      {
+        "floor": 862,
+        "label": "THE TOP"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "phases": [
+      {
+        "name": "title",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 870-861: SHARD FALL",
+            "duration": 2.5,
+            "sound": "vo_shards_title",
+            "color": "#FFB46A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the hero takes it in",
+            "when": {
+              "type": "after",
+              "seconds": 3.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "showText",
+                "text": "Even the scenery wants me dead.",
+                "duration": 3.0,
+                "sound": "vo_shards_intro",
+                "style": "Subtitle"
+              }
+            ]
+          },
+          {
+            "name": "quiet start over",
+            "when": {
+              "type": "after",
+              "seconds": 6.5
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 865,
+            "firstBreather": 3.0,
+            "seed": 1
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "shed"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "shed",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "spawn",
+            "entity": "brimstoneDemon",
+            "anchor": "Camera",
+            "at": [
+              3.4,
+              -2.05
+            ],
+            "tags": [
+              "beat"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "the beat is over",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "beat"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb2",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 862,
+            "firstBreather": 3.0,
+            "seed": 2
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "top"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "rules": [
+          {
+            "name": "stage clear",
+            "when": {
+              "type": "floorReached",
+              "floor": 861
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "lockTravel"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "SHARD FALL: SURVIVED",
+                    "duration": 2.0,
+                    "sound": "vo_shards_clear",
+                    "color": "#FFB46A"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

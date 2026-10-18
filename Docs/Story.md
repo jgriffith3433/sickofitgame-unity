@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -99,8 +99,10 @@ THE MEADOW again                           Ending
   Halfway Basin* → Level 8, *Floors 940-931: The Crust* → Level 9, *Floors 930-921: The Sack Pile* → Level 10, *Floors
   920-911: The Heat Stairs* (ending at the Magma King's door) → Level 11, *Floors 910-901: The Slag Throne* (his arena; built 2026-10-18) → the Shaft (Circle IX wakes up) → the level select, until Circle IX's stages are rebuilt. Inside a Circle the stages run straight on from one to the next (a level's
   `nextLevelNumber`): results, the Shaft's climb, the next stage, with no video between them. After them in the list, off the path
-  (reachable from the level select only, once unlocked): `CrackedRoad` (*Floors 900-891*, cut to 10 floors and
-  numbered for Level 12; its beats are still the first layout's, for the Circle IX task to rebuild) and the old
+  (reachable from the level select only, once unlocked): Circle IX's first stretch, `CrackedRoad` (*Floors 900-891*,
+  cut to 10 floors and numbered for Level 12; its beats are still the first layout's, for the Circle IX task to rebuild)
+  and Levels 13-18 (*Floors 890-831*, first pass, see *Circle IX stage outline*; they run straight on from the Cracked
+  Road, and the Old Stair's shortcut can skip three of them), and after those the old
   arcade levels `ArcadeCrossfire`, `ArcadeSpinCycle`, `ArcadeEverything` and `ArcadeFireRain` (titled "Arcade:
   ...", outside the Circles, their slime enemies swapped for imps and cinders), kept to be recast: their
   enemies and patterns reused inside Circle stages, Fire Rain's Magma King fight as the reference for the Floor 901 arena. Their
@@ -141,7 +143,9 @@ the 10 Circles stacked below it, each in its own biome colour, and FLOOR 1,000 a
   (901, 801, ... 101): a small standing stone with *WAYSTONE* beside it and a line across the shaft, glowing once
   reached, dark stone above. When Hell ends a run the marker **drops** back down to one (see *Waystones and runs*).
 - **Shortcuts are hinted, not explained:** cracks in the shaft wall and dotted gaps between floors that the player
-  can't read yet. They become Hell's shortcuts (see *Engine*, Shortcuts) once that system is built.
+  can't read yet. Some of them are Hell's shortcuts (see *Shortcuts*): once the hero has taken one, the Shaft shows
+  it as a **dotted jump**: the marker leaves the shaft through the crack it hinted at and comes back in floors higher
+  up, and the dotted line stays on the map from then on.
 - The Shaft is a presentation screen: it reads progress, it never changes it.
 
 ### The Circles
@@ -252,6 +256,25 @@ the fire, and the whole stretch of floor the flood will cover glowing red before
 Video3 (Gloob, talking) plays after **The Landing**: the slime from the meadow turns up at the bottom of Hell,
 pleased to see a familiar face, and coughs up a diamond. From then on Gloob is the shop.
 
+### Circle IX stage outline: the Cracked Road (Levels 12-18, first pass)
+
+Black spires with glowing seams over a road of cooling rock. The road is the only way up, and it keeps splitting: the
+**Brimstone Demons** climb out of the cracks to keep him off it, and the spires shed shards from Floor 890. At most 3
+on screen, like Circle X (rising later in the Circle). Built 2026-10-18 as a first pass so Hell's first shortcut has
+floors to skip: each stage has its title, one or two hero lines, a carved sign, generated floors from `crackedRoad`
+with a breather and a Grudge pick. No new enemy after the demon (the Circle's family is still one creature); their
+beats are for the Circle IX task to deepen. Levels 19-21 (Floors 830-801, up to the Spire Fiend) are still to come.
+
+| Level | Floors | Place | New | The beat |
+|---|---|---|---|---|
+| 12 | 900-891 | **The Cracked Road** | `brimstoneDemon` | The first demon climbs out of the road, alone (`levels/CrackedRoad.json`, the first layout's beats). |
+| 13 | 890-881 | **The Rift** | (none) | The road cracks wide open under a carved *KEEP TO THE ROAD*; demons come out in twos. Hero: *"The road's coming apart. Can't blame it."* |
+| 14 | 880-871 | **The Old Stair** | **Shortcut** | A road past a staircase someone carved into the spires long ago, fallen in. At the top it ends at the stairwell's mouth, a slab carved *STAIRS (CLOSED)* (`floors.door`). Hero: *"Stairs. Fallen in. Still going up, though."* The first shortcut (below). |
+| 15 | 870-861 | **Shard Fall** | (none) | The spires shed in earnest under a carved *HARD HATS*. Hero: *"Even the scenery wants me dead."* |
+| 16 | 860-851 | **Demon Row** | (none) | Three demons planted in a row across the road under *ONE AT A TIME*. Hero: *"They're queuing now."* |
+| 17 | 850-841 | **Halfway Up the Road** | (none) | Floor 850, the Circle's milestone (*"FLOOR 850: HALFWAY UP THE ROAD"*). Hero: *"Halfway. Again."* |
+| 18 | 840-831 | **The Stairhead** | (none) | Where the Old Stair comes out: rubble spilling from a crack in a spire, the road and the stair meeting under *MIND THE RUBBLE*. Hero: *"So that's where the stairs come out."* (true whichever way he came). For now the level select follows. |
+
 ### Gloob between floors
 
 Gloob rides along in the gaps: on the Shaft between stages and behind the shop counter. He never fights and never
@@ -285,6 +308,31 @@ is proud of). His voice is `gloob` (designed for him: fast, wet, gurgling, a bit
   | Shiny Sniffer | diamonds come from farther away | a wobbly bit of Gloob that sniffs out diamonds |
 - He gossips, he counts, he is proud of his stomach. He is never scared for long and never mean. Slimes are
   villagers: nobody in the game ever fights him or his kind.
+
+## Shortcuts
+
+Hell is repetition, so it hates a shortcut, and it leaves them lying around anyway: a stairwell that fell in, an
+elevator nobody trusts, a demon who owes you for sparing it. A **shortcut** is a choice point inside a stage that skips
+floors for a cost or a risk. It is the rogue choice that keeps 1,000 floors reachable in about 90 minutes.
+
+- **The choice** stops the stage (like a Grudge pick) and shows two cards: **keep climbing** (the long way: the stage
+  ends as usual, with its Grudge pick) or **the shortcut**, with **its cost on the card**. The player is never told how
+  far a shortcut goes: the card says what it is, not where it ends. The choice is made once per play and is final;
+  Déjà Vu can't undo it (Hell's loop runs the same way again), and the cost is paid once.
+- **Costs** come from the story: a Grudge (spite is what keeps him climbing; the easy way takes some out of him), a
+  harder stage after it, or the village's diamonds. One cost per shortcut. A Grudge cost takes the one he has most of
+  (and the max health it gave); with no Grudge to give, the card is stamped *NO GRUDGE TO GIVE* and he climbs on.
+- **Taking it** jumps the floor counter and the story path past the stages it skips: the stage ends where the
+  shortcut lets him out, with no Grudge pick (he just paid one), and the next stage is the one after the skipped ones.
+  On the Shaft the marker climbs to where he took it, then jumps a dotted line up through the crack it hinted at.
+- Every shortcut gets a voiced hero line when he takes it and the **announcer's reaction**: Hell's show hates a cheat
+  and loves a twist.
+- Where they are: hinted on the Shaft (`ui/shaft.json` `shortcutHints`) long before he can take them. Act 2's midpoint
+  (Floor 500) is the one he doesn't take: a way home, and he climbs on.
+
+| Shortcut | Where | Cost | Skips | Lines |
+|---|---|---|---|---|
+| **The Collapsed Stairwell** (`oldStair`) | Floor 871, the top of the Old Stair (Level 14), behind *STAIRS (CLOSED)*; the Shaft's crack at 870 | a Grudge | Floors 870-841 (Levels 15-17): out at **Floor 841**, Level 18 next | Hero, at the top: *"Stairs. Fallen in. Still going up, though."* Taking it: *"Fine. One less thing to hate."* Announcer, as he climbs in: *"WHAT'S THIS? A SHORTCUT?! THE CROWD HATES IT!"*, then, as the counter lands: *"FLOOR EIGHT FORTY-ONE! NOBODY TAKES THE STAIRS!"* Hero, coming out: *"That went further than stairs should."* Keeping on: *"Nah. Hell would love that."* |
 
 ## Waystones and runs
 
@@ -479,9 +527,11 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    `gloats`. Main menu Continue opens the run's level; New Run (`mainMenu.json` `labels.newRun`) starts one at the
    highest Waystone. Playtest: `waystone`.
 
-Not built yet:
-
-9. **Shortcuts**: a choice point that skips floors for a cost or a risk.
+9. **Shortcuts** (built 2026-10-18; see *Shortcuts*; recipe: GameplayCookbook "A shortcut"): the level action
+   `offerShortcut` (the two cards, the cost, paid once, final through rewinds) and the trigger `shortcutChosen` the
+   script branches on; a taken shortcut's `nextLevel` replaces the stage's `nextLevelNumber`, the run goes on from it,
+   and `ShortcutProgress` (Data) keeps it for the Shaft's dotted jump (`ShaftStop.ShortcutFrom`/`ShortcutTo`). The
+   first one is the Old Stair's (Level 14, Floor 871 to 841). Playtest: `shortcut`.
 
 ## Art
 

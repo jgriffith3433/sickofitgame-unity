@@ -28,6 +28,9 @@ namespace SickOfIt.Core.Flow
         public int NextLevel;
         /// <summary>The video that comes next, or 0.</summary>
         public int NextVideo;
+        /// <summary>AfterLevel: a shortcut was taken on the level (Docs/Story.md, "Shortcuts"): the floor it was taken on and the floor it let him out on, else 0.</summary>
+        public int ShortcutFrom;
+        public int ShortcutTo;
     }
 
     /// <summary>

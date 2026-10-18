@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level17",
+  "displayName": "Floors 850-841: Halfway Up the Road",
+  "levelNumber": 17,
+  "thumbnail": "Videos/Level2_Background1_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Videos/Level2_Background1_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 18,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 90,
+    "floors": {
+      "start": 850,
+      "end": 841,
+      "unitsPerFloor": 3.0,
+      "circle": "crackedRoad",
+      "signs": true,
+      "sign": "HALFWAY (TO 800)"
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true
+    },
+    "markers": [
+      {
+        "floor": 846,
+        "label": "PAIR"
+      },
+      {
+        "floor": 842,
+        "label": "THE TOP"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "phases": [
+      {
+        "name": "title",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 850-841: HALFWAY UP THE ROAD",
+            "duration": 2.5,
+            "sound": "vo_halfroad_title",
+            "color": "#FFB46A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "floor 850: halfway up the road",
+            "when": {
+              "type": "after",
+              "seconds": 3.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "showText",
+                "text": "FLOOR 850: HALFWAY UP THE ROAD",
+                "duration": 2.5,
+                "sound": "vo_floor_850",
+                "color": "#FFB46A"
+              }
+            ]
+          },
+          {
+            "name": "the hero takes it in",
+            "when": {
+              "type": "after",
+              "seconds": 6.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "showText",
+                "text": "Halfway. Again.",
+                "duration": 3.0,
+                "sound": "vo_halfroad_intro",
+                "style": "Subtitle"
+              }
+            ]
+          },
+          {
+            "name": "quiet start over",
+            "when": {
+              "type": "after",
+              "seconds": 9.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 845,
+            "firstBreather": 3.0,
+            "seed": 1
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "pair"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "pair",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "spawn",
+            "entity": "brimstoneDemon",
+            "anchor": "Camera",
+            "at": [
+              2.6,
+              -2.05
+            ],
+            "tags": [
+              "beat"
+            ],
+            "count": 2,
+            "spacing": [
+              1.3,
+              0.0
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "the beat is over",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "beat"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb2",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 842,
+            "firstBreather": 3.0,
+            "seed": 2
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "top"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "rules": [
+          {
+            "name": "stage clear",
+            "when": {
+              "type": "floorReached",
+              "floor": 841
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "lockTravel"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "HALFWAY UP THE ROAD: PASSED",
+                    "duration": 2.0,
+                    "sound": "vo_halfroad_clear",
+                    "color": "#FFB46A"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
