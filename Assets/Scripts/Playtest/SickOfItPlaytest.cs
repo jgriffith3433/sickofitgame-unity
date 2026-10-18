@@ -138,7 +138,7 @@ namespace SickOfIt.Playtest
         /// starts straight after the Shaft that follows the one before). Docs/Story.md, "Level numbers".
         /// </summary>
         static readonly (int video, int level)[] StoryPath =
-            { (1, 1), (2, 2), (3, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11), (0, 12), (0, 13), (0, 14), (0, 15) };
+            { (1, 1), (2, 2), (3, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11), (0, 12), (0, 13), (0, 14), (0, 15), (0, 16), (0, 17), (0, 18), (0, 19), (0, 20) };
         /// <summary>
         /// The Landing (Level 2, Floor 1000, one level = one floor): the floors its counter must run through (1000, ticking to 999
         /// on its landing), and the milestone beat, which plays as Floor 999 (MilestoneLevel) opens.
@@ -151,18 +151,40 @@ namespace SickOfIt.Playtest
         /// </summary>
         public const int StretchFrom = 2, StretchTo = 6;
         const float StretchSeconds = 900f;
+        /// <summary>
+        /// The foreman-stretch scenario: Floors 995-991 (Docs/LevelDesign.md), Level 7 (The Loop) loaded directly, then the real flow
+        /// through Level 11, the Imp Foreman's climbing arena (the first floor boss), each floor with its own idea checked.
+        /// </summary>
+        public const int ForemanFrom = 7, ForemanTo = 11;
+        const float ForemanSeconds = 1080f;
+        /// <summary>A floor boss's telegraphs (Floor 991, the Imp Foreman): each attack and the glow that must come 1+ s before it, on its spot.</summary>
+        static readonly (string attack, string warning, string what)[] FloorBossTelegraphs =
+        {
+            ("fmLash", "fmWarnWhip", "whip crack"),
+            ("fmEmber", "fmSackDrip", "sack embers"),
+        };
+        /// <summary>The Foreman's fight in order (signals): the intro, phase 1 on tier 1, the lava taking tier 1, phase 2 on tier 2, the defeat and the pile.</summary>
+        static readonly (string signal, string beat)[] FloorBossSignals =
+        {
+            ("fmIntro", "intro: the Foreman on his sack"),
+            ("fmFight", "phase 1: tier 1, the whip and the haulers"),
+            ("fmClimb", "half health: the lava takes tier 1, he climbs"),
+            ("fmPhase2", "phase 2: tier 2, swinging on the lift's chain"),
+            ("fmDefeat", "defeat"),
+            ("fmPile", "the diamond pile"),
+        };
         const float StoryPathSeconds = 2100f;
         /// <summary>
         /// The wastes-climb scenario: the stage it loads directly (The Loop) and the last one it plays through the real flow
         /// (The Heat Stairs, ending at the Magma King's door). Docs/Story.md, "Circle X stage outline".
         /// </summary>
-        public const int ClimbFrom = 10, ClimbTo = 15;
+        public const int ClimbFrom = 15, ClimbTo = 20;
         const float WastesClimbSeconds = 960f;
         /// <summary>The shaft scenario: the level after the plunge whose climb it watches (The Landing).</summary>
         public const int ShaftLevel = 2;
         const float ShaftSeconds = 480f;
         /// <summary>The music scenario: after the shaft scenario's run, the Warden's arena it loads directly (the Magma King).</summary>
-        public const int MusicBossLevel = 15;
+        public const int MusicBossLevel = 20;
         const float MusicBossSeconds = 420f;
         const float YoobaSeconds = 300f;
         /// <summary>The waystone scenario: the stage the bot clears first (Floor 999, for a Grudge), then dies on the next one (Floor 998, The Spill).</summary>
@@ -173,7 +195,7 @@ namespace SickOfIt.Playtest
         /// 880-871, the collapsed stairwell at its top), the floor it lets him out on, and the stage it leads to, past the
         /// ones it skips (Levels 19-21).
         /// </summary>
-        public const int ShortcutLevel = 18, ShortcutToFloor = 841, ShortcutNextLevel = 22;
+        public const int ShortcutLevel = 23, ShortcutToFloor = 841, ShortcutNextLevel = 27;
         const float ShortcutSeconds = 480f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -281,7 +303,7 @@ namespace SickOfIt.Playtest
                 "and the floors run 960 to 901. Each stage gets the level-n stage checks (title, voiced lines, floors, sign, new enemy alone, breather, " +
                 $"enemies at once, length, Grudge). Level {ClimbFrom + 1} must open on the Floor 950 beat (\"FLOOR 950: HALFWAY TO 900\" with its voice, before " +
                 $"the first enemy); Level {ClimbTo - 1} must end at the Magma King's door (\"THE SLAG THRONE\") with his voice heard from ahead before it; " +
-                $"Level {ClimbTo} is his arena (the boss checks of level-11), and its Shaft climbs to 901 with the Waystone lit and Circle IX waking; " +
+                $"Level {ClimbTo} is his arena (the boss checks of a Warden's arena), and its Shaft climbs to 901 with the Waystone lit and Circle IX waking; " +
                 "then the level select. Up to 3 tries per stage; each beat is a check event", WastesClimbSeconds, "full"));
             list.Add(new PlaytestScenario("landing-stretch", $"The first floors of Hell, one level per floor (Docs/LevelDesign.md): level {StretchFrom} (Floor 1000, " +
                 $"The Landing) loaded directly (setup shortcut), then the real flow on through level {StretchTo} (Floor 996): results, Continue, the Shaft " +
@@ -292,6 +314,18 @@ namespace SickOfIt.Playtest
                 "sinking under him and the cinders; 997 sack imps swinging on the hauling chains and an empty chain ridden; 996 lava falls and geysers " +
                 "blowing on their beat. Up to 3 tries per floor; then Floor 996 must lead on to the next level. Each beat is a check event",
                 StretchSeconds, "full"));
+            list.Add(new PlaytestScenario("foreman-stretch", $"Floors 995-991, one level per floor (Docs/LevelDesign.md): level {ForemanFrom} (Floor 995, " +
+                $"The Loop) loaded directly (setup shortcut), then the real flow on through level {ForemanTo} (Floor 991, the Imp Foreman): results, Continue, " +
+                "the Shaft climbing exactly one floor after each, and the next floor. Each floor gets the stage checks (title \"FLOOR N: PLACE\" voiced, hero " +
+                "line, counter ticking to the next floor on the landing, new enemy alone, at most 3 enemies, every line voiced, the Grudge pick) and its own " +
+                "idea: 995 the same stones sinking by themselves in the same order lap after lap (each loop stone sinks twice or more, the second lap called " +
+                "out, \"It's doing that on purpose.\"); 994 two chain lifts ridden while imps hack at the chains (the lift drops a notch); 993 the imps that " +
+                "throw, the camera holding on the hollows until both are down, the sleeper falling off its own ledge; 992 crumbling stones and the collapsing " +
+                "bridge; 991 the first floor boss on a climbing arena: the voiced intro (announcer, the Foreman, the hero), the boss bar, phase 1 on tier 1 " +
+                "(whip cracks after a 1 s glow on the floor, sack imps whistled onto the swings), at half health the lava taking tier 1 and the run along the " +
+                "gantry, a chain lift to tier 2, phase 2 (he swings on the lift's chain dropping embers, each after a 1 s glow on its spot), his wings for show, " +
+                "the defeat in slow motion with a pile of diamonds, the announcer's call; 60-180 s. Up to 3 tries per floor; then Floor 991 leads on to the next level. " +
+                "Each beat is a check event", ForemanSeconds, "full"));
             list.Add(new PlaytestScenario("shortcut", $"Hell's first shortcut (Docs/Story.md, \"Shortcuts\"): level {ShortcutLevel} (Floors 880-871: The Old Stair, " +
                 "Circle IX) loaded directly with one Grudge in hand (setup shortcut: given if he has none). The bot plays it through real input to the " +
                 "collapsed stairwell at the top, where the choice comes up: card 1 keeps climbing, card 2 is the stairwell with its cost shown (a Grudge, " +
@@ -411,6 +445,8 @@ namespace SickOfIt.Playtest
                 yield return session.WastesClimb();
             else if (id == "landing-stretch")
                 yield return session.WastesClimb(StretchFrom, StretchTo, StretchSeconds);
+            else if (id == "foreman-stretch")
+                yield return session.WastesClimb(ForemanFrom, ForemanTo, ForemanSeconds);
             else if (id == "shortcut")
                 yield return session.ShortcutRun();
             else if (id == "menus")
@@ -571,6 +607,19 @@ namespace SickOfIt.Playtest
                     {
                         stage.Spawned.TryGetValue(e.Subject, out int had);
                         stage.Spawned[e.Subject] = had + 1;
+                        if (!stage.SpawnTimes.TryGetValue(e.Subject, out var times))
+                            stage.SpawnTimes[e.Subject] = times = new List<float>();
+                        times.Add(e.Time);
+                        foreach (var t in FloorBossTelegraphs)
+                            if (e.Subject == t.attack)
+                                Run.Event("attack", $"{level} at {e.Time:0.0} s: {t.what} ({t.attack})");
+                    }
+                    else if (e.Kind == "signal")
+                    {
+                        if (!stage.Signals.ContainsKey(e.Subject))
+                            stage.Signals[e.Subject] = e.Time;
+                        if (Array.Exists(FloorBossSignals, x => x.signal == e.Subject) || e.Subject == "loopRepeat" || e.Subject == "liftCut" || e.Subject == "sleeperFell")
+                            Run.Event("signal", $"{level} at {e.Time:0.0} s: {e.Subject}");
                     }
                 }
                 switch (e.Kind)
@@ -845,6 +894,10 @@ namespace SickOfIt.Playtest
                 public bool OneFloor => Start > 0 && Start - End == 1;
                 /// <summary>Floor-kit events ("sink@sinkingStone", "swingGrab@swingChain", "geyser@lavaGeyser") and spawns by entity id.</summary>
                 public readonly Dictionary<string, int> Kit = new Dictionary<string, int>(), Spawned = new Dictionary<string, int>();
+                /// <summary>When each entity id spawned (game seconds): a floor boss's telegraphs are measured glow to attack.</summary>
+                public readonly Dictionary<string, List<float>> SpawnTimes = new Dictionary<string, List<float>>();
+                /// <summary>A floor boss (every 10th floor, the floors ending in 1): longer, and the boss checks.</summary>
+                public bool FloorBoss => OneFloor && Start % 10 == 1;
                 /// <summary>The lava sea's surface (lowest and highest seen) and when the wave first chased him.</summary>
                 public float LavaLow = float.MaxValue, LavaHigh = float.MinValue;
 
@@ -1081,6 +1134,17 @@ namespace SickOfIt.Playtest
 
                 if (s.Arena)
                     ArenaDuring(s, world, now);
+                if (s.FloorBoss && world.Hud != null && world.Hud.BossBarShown.Length > 0 && s.BossBar.Length == 0)
+                {
+                    s.BossBar = world.Hud.BossBarShown;
+                    s.BossBarAt = now;
+                    Run.Event("boss", $"level {s.Level} at {now:0.0} s: the boss bar shows \"{s.BossBar}\"");
+                }
+                if (s.FloorBoss && s.SlowMotionAt < 0f && s.Signals.ContainsKey("fmDefeat") && GameClock.Instance != null && GameClock.Instance.TimeScale < 0.9f)
+                {
+                    s.SlowMotionAt = now;
+                    Run.Event("boss", $"level {s.Level} at {now:0.0} s: slow motion ({GameClock.Instance.TimeScale:0.00}x) as the Foreman falls");
+                }
                 if (s.OneFloor)
                 {
                     var sea = world.FindById("lavaSea");
@@ -1300,6 +1364,8 @@ namespace SickOfIt.Playtest
                 {
                     if (s.Arena)
                         check(prefix + "length", s.Clock >= 60f && s.Clock <= 240f, $"the arena cleared in {s.Clock:0} s of game time (a boss fight: target 60-240)");
+                    else if (s.FloorBoss)
+                        check(prefix + "length", s.Clock >= 60f && s.Clock <= 180f, $"the floor boss cleared in {s.Clock:0} s of game time (target 60-180)");
                     else
                         check(prefix + "length", s.Clock >= 60f && s.Clock <= 120f, $"cleared in {s.Clock:0} s of game time (target 60-120)");
                     // A shortcut is paid with a Grudge instead of picking one.
@@ -1370,6 +1436,57 @@ namespace SickOfIt.Playtest
                             $"{spilled} diamond(s) spilled; floor kit: {kit}");
                         break;
                     }
+                    case 995:
+                    {
+                        // Hell's loop: the same stones sink by themselves in the same order, lap after lap.
+                        var laps = new List<string>();
+                        int repeated = 0;
+                        for (int i = 1; i <= 5; i++)
+                        {
+                            int n = s.KitCount("loopSink", "loopStone" + i);
+                            laps.Add($"stone {i} x{n}");
+                            if (n >= 2) repeated++;
+                        }
+                        bool called = s.Signals.ContainsKey("loopRepeat");
+                        bool purpose = s.Lines.Exists(l => l.text == "It's doing that on purpose." && l.voiced);
+                        s.Check(prefix, repeated >= 4 && called && (purpose || !completed),
+                            $"loop stones sank by themselves: {string.Join(", ", laps)} ({repeated} of 5 sank 2+ times, want 4+: the pattern repeats); " +
+                            $"the second lap {(called ? "called out" : "NOT reached")}; \"It's doing that on purpose.\" {(purpose ? "voiced" : "NOT voiced")}; " +
+                            $"he stood on stones {s.KitCount("sink", "loopStone")} time(s); floor kit: {kit}");
+                        break;
+                    }
+                    case 994:
+                    {
+                        int lifts = s.KitCount("liftStart", "chainLift994");
+                        int cuts = s.KitCount("liftCut", "chainLift994");
+                        int cutters = s.SpawnCount("impCutter");
+                        s.Check(prefix, lifts >= 2 && cutters >= 3 || !completed && lifts >= 1,
+                            $"he rode {lifts} chain lift(s) (want 2), {cutters} imp(s) came to cut the chains (want 3), the chain gave {cuts} time(s); floor kit: {kit}");
+                        break;
+                    }
+                    case 993:
+                    {
+                        s.Spawned.TryGetValue("imp", out int imps);
+                        bool sleeper = s.Signals.ContainsKey("sleeperFell");
+                        int lift = s.KitCount("liftStart", "chainLift993");
+                        s.Check(prefix, imps >= 3 && (sleeper && lift >= 1 || !completed),
+                            $"{imps} throwing imp(s) came (want 3: one alone, then two in the hollows), the sleeper {(sleeper ? "fell off its own ledge" : "never woke")}, " +
+                            $"the lift ridden {lift} time(s); floor kit: {kit}");
+                        break;
+                    }
+                    case 992:
+                    {
+                        int cracks = s.KitCount("crack", "crumblingStone");
+                        int falls = s.KitCount("fall", "crumblingStone");
+                        int swings = s.KitCount("swingGrab", "swingChain");
+                        s.Check(prefix, cracks >= 5 && falls >= 3 && (swings >= 1 || !completed),
+                            $"crumbling stones cracked under him {cracks} time(s) (want 5+) and {falls} fell (want 3+: the wall and the bridge behind him), " +
+                            $"the chain over the gap ridden {swings} time(s); floor kit: {kit}");
+                        break;
+                    }
+                    case 991:
+                        FinishFloorBoss(s, completed);
+                        break;
                     case 996:
                     {
                         int blows = s.KitCount("geyser", "lavaGeyser");
@@ -1379,6 +1496,71 @@ namespace SickOfIt.Playtest
                         break;
                     }
                 }
+            }
+
+            /// <summary>
+            /// A floor boss on its climbing arena (Docs/LevelDesign.md, "Floor bosses": Floor 991, the Imp Foreman): the voiced intro
+            /// (announcer, boss, hero) and the boss bar, the fight's beats in order, every attack 1+ s after its glow, the defeat in
+            /// slow motion with a pile of diamonds and the announcer's call.
+            /// </summary>
+            void FinishFloorBoss(StageWatch s, bool completed)
+            {
+                string prefix = "level" + s.Level + ".boss.";
+                float At(string signal) => s.Signals.TryGetValue(signal, out float t) ? t : -1f;
+                bool Voiced(string text) => s.Banners.Exists(b => b.text == text && b.voiced) || s.Lines.Exists(l => l.text == text && l.voiced);
+                var intro = new[] { "FLOOR 991: THE IMP FOREMAN", "Who's this? Get back in the sack!", "That's the biggest sack yet. Ours too, I bet." };
+                var missing = Array.FindAll(intro, t => !Voiced(t));
+                s.Check(prefix + "intro", missing.Length == 0 && s.BossBar.Length > 0 && At("fmIntro") >= 0f,
+                    (missing.Length == 0 ? "the announcer, the Foreman and the hero all voiced" : $"not voiced: {string.Join(" | ", missing)}") +
+                    $"; boss bar {(s.BossBar.Length > 0 ? $"\"{s.BossBar}\" at {s.BossBarAt:0.0} s" : "NEVER shown")}; the fight starts at {(At("fmFight") >= 0f ? At("fmFight").ToString("0.0") + " s" : "never")}");
+                var order = new List<string>();
+                float last = -1f;
+                bool inOrder = true;
+                foreach (var (signal, beat) in FloorBossSignals)
+                {
+                    float t = At(signal);
+                    if (t < 0f) { if (completed) inOrder = false; order.Add($"{beat}: never"); continue; }
+                    if (t < last) inOrder = false;
+                    last = t;
+                    order.Add($"{beat} at {t:0.0} s");
+                }
+                s.Check(prefix + "phases", completed ? inOrder : At("fmFight") >= 0f, string.Join("; ", order));
+                var attacks = new List<string>();
+                bool telegraphed = true;
+                foreach (var t in FloorBossTelegraphs)
+                {
+                    s.SpawnTimes.TryGetValue(t.attack, out var hits);
+                    s.SpawnTimes.TryGetValue(t.warning, out var glows);
+                    if (hits == null || hits.Count == 0) { attacks.Add($"{t.what}: never"); if (completed) telegraphed = false; continue; }
+                    float shortest = float.MaxValue;
+                    int unwarned = 0;
+                    foreach (float h in hits)
+                    {
+                        float best = -1f;
+                        if (glows != null)
+                            foreach (float g in glows)
+                                if (g <= h + 0.001f && g > best) best = g;
+                        // Every glow becomes its attack where it hung: the lead is the glow's life (1.1 s), never less than 1.
+                        if (best < 0f) unwarned++;
+                        else shortest = Mathf.Min(shortest, h - best);
+                    }
+                    if (unwarned > 0 || shortest < 1f) telegraphed = false;
+                    attacks.Add($"{t.what}: {hits.Count}, shortest warning {(shortest < float.MaxValue ? shortest.ToString("0.00") : "-")} s{(unwarned > 0 ? $", {unwarned} WITHOUT a glow" : "")}");
+                }
+                s.Check(prefix + "telegraphs", telegraphed, string.Join("; ", attacks) + " (want every one 1.0+ s after its glow on the spot)");
+                int haulers = s.SpawnCount("impHauler");
+                s.Check(prefix + "adds", s.MaxEnemies <= 3 && (haulers >= 1 || !completed), $"{haulers} sack imp(s) whistled onto the swings, at most {s.MaxEnemies} enemies at once counting him");
+                if (!completed)
+                    return;
+                float defeat = At("fmDefeat");
+                int pile = 0;
+                if (s.SpawnTimes.TryGetValue("diamond", out var diamonds))
+                    foreach (float d in diamonds)
+                        if (defeat >= 0f && d >= defeat - 0.05f) pile++;
+                const string down = "THE FOREMAN IS DOWN! HIS SACK, HOWEVER, IS UP FOR GRABS!";
+                s.Check(prefix + "defeat", defeat >= 0f && s.SlowMotionAt >= 0f && pile >= 20 && Voiced(down) && Voiced("My... sack..."),
+                    $"defeat at {(defeat >= 0f ? defeat.ToString("0.0") + " s" : "never")}; slow motion {(s.SlowMotionAt >= 0f ? $"at {s.SlowMotionAt:0.0} s" : "NOT seen")}; " +
+                    $"{pile} diamonds in the pile (want 20+); his last line {(Voiced("My... sack...") ? "voiced" : "NOT voiced")}; the announcer's call {(Voiced(down) ? "voiced" : "NOT voiced")}");
             }
 
             /// <summary>
