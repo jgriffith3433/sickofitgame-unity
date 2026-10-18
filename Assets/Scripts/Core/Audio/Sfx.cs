@@ -93,6 +93,34 @@ namespace SickOfIt.Core.Audio
             poolIds[System.Array.IndexOf(pool, source)] = id;
         }
 
+        /// <summary>
+        /// Plays a sound by id on 'source', looping, until the caller stops the source (an entity's sounds.loopSound,
+        /// e.g. the portal's hum). Uses the sound's own volume and the Effects (or Voices) setting. False if it has no clip.
+        /// </summary>
+        public static bool PlayLoop(AudioSource source, string id, float volume = 1f)
+        {
+            if (source == null || string.IsNullOrEmpty(id) || !Application.isPlaying)
+                return false;
+            _ = Config;
+            if (!byId.TryGetValue(id, out var sound))
+            {
+                WarnOnce(id, $"[Sfx] No sound \"{id}\" in audio.json.");
+                return false;
+            }
+            if (sound.clip == null)
+            {
+                WarnOnce(id, $"[Sfx] Sound \"{id}\" has no clip yet. Generate it: SickOfIt > Audio > Sound Generator.");
+                return false;
+            }
+            float setting = sound.kind == SoundKind.Voice ? GameSettings.VoiceVolume : GameSettings.SfxVolume;
+            source.clip = sound.clip;
+            source.loop = true;
+            source.pitch = 1f;
+            source.volume = Mathf.Clamp01(sound.volume * volume * setting);
+            source.Play();
+            return true;
+        }
+
         /// <summary>Length in seconds of a sound's clip, or 0 if it has none (yet).</summary>
         public static float LengthOf(string id)
         {

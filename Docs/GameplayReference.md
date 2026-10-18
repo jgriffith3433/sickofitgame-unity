@@ -172,6 +172,7 @@ Floating health bar.
 | `hurtThreshold` | number | `1.0` | Hurt sounds only play at or below this fraction of health. |
 | `hurtSound` | string | `""` | audio.json sound for hits, used when 'hurt' has no clips. Empty = the game's enemyHurt sound (enemies only). |
 | `deathSound` | string | `""` | audio.json sound for deaths, used when 'death' has no clips. Empty = the game's enemyDie sound (enemies only). |
+| `loopSound` | string | `""` | audio.json sound played on a loop while it is alive (a portal's hum, an engine). Stops when it dies or despawns. |
 | `pitchVariation` | number | `0.1` |  |
 | `volume` | number | `1.0` |  |
 

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "body": {
+    "radius": 0.4,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#FF2A1A99",
+    "placeholderSize": 1.0,
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 1,
+    "hurtFlash": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "hover",
+      "aroundSpawn": true,
+      "offset": [0.0, 0.0],
+      "speed": 2.0,
+      "bobHeight": 0.03,
+      "bobSpeed": 14.0
+    },
+    {
+      "type": "lifetime",
+      "seconds": 1.25
+    }
+  ]
+}

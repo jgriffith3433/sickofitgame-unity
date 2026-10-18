@@ -72,6 +72,9 @@ namespace SickOfIt.Playtest
         public const string CutsceneScene = "cutsceneTest";
         public const int CutsceneLevel = 1;
 
+        /// <summary>The level whose level-N scenario also watches the portal scene at its end (Level1.json, phases portalBeam to portalClose) and Video2 after it.</summary>
+        public const int PortalLevel = 1;
+
         /// <summary>The video-2 scenario: the video it watches and the timeline overlay it checks (the hero falling down the fire tunnel).</summary>
         public const int OverlayVideo = 2;
         public const string OverlayName = "heroFall";
@@ -97,7 +100,16 @@ namespace SickOfIt.Playtest
                 var level = definition.levels[n - 1];
                 string name = level != null && !string.IsNullOrEmpty(level.displayName) ? level.displayName : level?.levelName;
                 float seconds = Mathf.Max(30f, level != null ? level.duration : 60f) + 30f;
-                list.Add(new PlaytestScenario("level-" + n, $"Level {n} ({name}), started directly (setup shortcut)", seconds, "full", "level"));
+                string what = $"Level {n} ({name}), started directly (setup shortcut)";
+                if (n == PortalLevel)
+                {
+                    what += ", then its ending, the portal scene, checked beat by beat: after the Grudge pick the Overlord's beam is telegraphed and " +
+                            "hits the ground beside the hero, a portal opens there, he walks to it by himself, the lines and the echo play with subtitles, " +
+                            "he turns to leave and is pulled in spinning and shrinking, a slime is slurped in after him, and Video2 starts (Continue on " +
+                            "the results); move, jump, fire and R are pressed during it and must do nothing, and he takes no damage";
+                    seconds += 30f;
+                }
+                list.Add(new PlaytestScenario("level-" + n, what, seconds, "full", "level"));
             }
             list.Add(new PlaytestScenario("imp-death", $"Level {ImpLevel}'s imps, started directly (setup shortcut): the bot kills them and each imp's Die clip " +
                 "must play where it died; the first deaths run in slow motion so the clip can be seen", 90, "level"));
@@ -307,6 +319,8 @@ namespace SickOfIt.Playtest
                         break;
                     case "upgrade":
                         Run.Event("upgrade", $"{level}: {e.Subject} -> {e.Value}");
+                        if (portal != null && !portal.Started)
+                            portal.Picked = true;
                         break;
                     case "milestone":
                         Run.Event("milestone", $"{level}: {e.Subject}");
@@ -317,12 +331,20 @@ namespace SickOfIt.Playtest
                     case "floor":
                         Run.Metric("floor", e.Value);
                         break;
-                    case "cutscene" when scene != null:
+                    case "cutscene" when scene != null || portal != null && portal.Started:
                         Run.Event("cutscene", $"{level}: {e.Subject}" + (string.IsNullOrEmpty(e.Detail) ? "" : " " + e.Detail));
                         break;
                     case "signal" when scene != null:
                         Run.Event("signal", $"{level}: {e.Subject}");
                         scene.Signals.Enqueue(e.Subject);
+                        break;
+                    case "signal" when portal != null && e.Subject.StartsWith("portal:", StringComparison.Ordinal):
+                        Run.Event("signal", $"{level}: {e.Subject}");
+                        portal.Signals.Enqueue(e.Subject);
+                        break;
+                    case "playerHit" when portal != null && portal.Started:
+                        portal.Hits++;
+                        Run.Event("hit", $"{level}: the hero was hit during the portal scene ({e.Subject})");
                         break;
                 }
             }
@@ -420,10 +442,19 @@ namespace SickOfIt.Playtest
                 var load = LoadLevel(n);
                 if (load != null)
                     yield return load;
-                yield return PlayLevel(n, 0f);
+                // Level 1 ends in the portal scene: watch it beat by beat, then follow the game on into Video2.
+                portal = n == PortalLevel ? new PortalWatch() : null;
+                yield return PlayLevel(n, 0f, portal != null ? PortalDuring : (Func<float, IEnumerator>)null);
                 LastLevelOutcome = lastOutcome;
                 if (Run.Done)
                     yield break;
+                if (portal != null)
+                {
+                    yield return PortalEnd();
+                    portal = null;
+                    if (Run.Done)
+                        yield break;
+                }
                 Run.Progress(1f);
                 End(lastOutcome == "completed" ? PlaytestOutcome.Won
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
@@ -827,6 +858,350 @@ namespace SickOfIt.Playtest
                 {
                     Object.Destroy(shot);
                 }
+            }
+
+            // ─── level-1: the Meadow's ending, the portal scene ─────
+
+            /// <summary>What the level-1 scenario has seen of the portal scene so far.</summary>
+            sealed class PortalWatch
+            {
+                public readonly Queue<string> Signals = new Queue<string>();
+                public readonly HashSet<string> Passed = new HashSet<string>();
+                public readonly HashSet<string> LinesSeen = new HashSet<string>();
+                public int Failed;
+                public bool Picked;
+                public bool Started;
+                public bool Right;
+                public PlayerHealth Health;
+                public int HealthAtStart;
+                public int Hits;
+                public float StartX;
+                public float GlowX;
+                public float TelegraphAt = -1f;
+                public float InputTryAt = -1f;
+                public float LastAngle;
+                public float Spun;
+                public float BiggestScale;
+            }
+
+            PortalWatch portal;
+
+            /// <summary>The beats the scene must pass, in order.</summary>
+            static readonly string[] PortalBeats =
+            {
+                "pickFirst", "locked", "telegraph", "beamHit", "portalOpen", "inputIgnored", "walkArrived", "lines", "turned",
+                "pulledIn", "gloob", "slurped", "closed", "black", "untouched", "levelComplete", "video2",
+            };
+
+            /// <summary>The scene's spoken lines (Level1.json): the signal emitted with each, its subtitle and its voice.</summary>
+            static readonly (string signal, string text, string sound)[] PortalLines =
+            {
+                ("portal:beamHit", "Mm. ... Stay.", "vo_portal_overlord_stay"),
+                ("portal:line:hole", "That's a hole.", "vo_portal_hole_1"),
+                ("portal:line:source", "So that's where they keep coming from.", "vo_portal_source_1"),
+                ("portal:line:hello", "Hello?", "vo_portal_hello_1"),
+                ("portal:line:echo", "...hello? ...hello? ...hello?", "vo_portal_echo"),
+                ("portal:line:nope", "Nope.", "vo_portal_nope_1"),
+                ("portal:line:grabbed", "Oh, come ON-", "vo_portal_grabbed_1"),
+            };
+
+            void PortalCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    portal.Passed.Add(beat);
+                    Run.Event("check", $"portal {beat}: ok ({detail})");
+                }
+                else
+                {
+                    portal.Failed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"portal scene {beat}: {detail}");
+                }
+            }
+
+            static Entity FindLive(GameplayWorld world, string instanceId, string defId = null)
+            {
+                foreach (var e in world.Live)
+                {
+                    if (e != null && e.IsAlive && (instanceId == null || e.InstanceId == instanceId) && (defId == null || e.DefId == defId))
+                        return e;
+                }
+                return null;
+            }
+
+            static int CountLive(GameplayWorld world, string defId)
+            {
+                int count = 0;
+                foreach (var e in world.Live)
+                {
+                    if (e != null && e.IsAlive && e.DefId == defId)
+                        count++;
+                }
+                return count;
+            }
+
+            /// <summary>Runs every frame of level 1: from the scene's first signal, hands the hero to the scene and checks each beat.</summary>
+            IEnumerator PortalDuring(float now)
+            {
+                var world = GameplayWorld.Instance;
+                if (world == null || world.Player == null || portal == null)
+                    return null;
+                var player = world.Player;
+                var controller = world.PlayerController;
+
+                if (world.Scripted.Pulling)
+                {
+                    float angle = player.transform.eulerAngles.z;
+                    portal.Spun += Mathf.Abs(Mathf.DeltaAngle(portal.LastAngle, angle));
+                    portal.LastAngle = angle;
+                    portal.BiggestScale = Mathf.Max(portal.BiggestScale, player.transform.localScale.y);
+                }
+                else
+                {
+                    portal.LastAngle = player.transform.eulerAngles.z;
+                }
+
+                while (portal.Signals.Count > 0)
+                {
+                    string signal = portal.Signals.Dequeue();
+                    var hole = FindLive(world, "portal", "portal");
+                    switch (signal)
+                    {
+                        case "portal:locked":
+                        {
+                            portal.Started = true;
+                            // The scene drives the hero now: the bot keeps its hands off the keys.
+                            if (bot != null)
+                                bot.enabled = false;
+                            input.ReleaseAll();
+                            portal.Right = player.Position.x < 0f;
+                            portal.StartX = player.Position.x;
+                            portal.Health = player.GetComponentInChildren<PlayerHealth>();
+                            portal.HealthAtStart = portal.Health != null ? portal.Health.CurrentHealth : 0;
+                            bool picker = world.Hud != null && world.Hud.PickerOpen;
+                            PortalCheck("pickFirst", portal.Picked && !picker, $"the Grudge pick came first (picked={portal.Picked}, picker open={picker})");
+                            bool locked = now < world.InputLockedUntil;
+                            PortalCheck("locked", locked && world.RewindLocked,
+                                $"input locked={locked}, rewind locked={world.RewindLocked}; hero at x={portal.StartX:0.00}, hp {portal.HealthAtStart}; no keys from the bot from here");
+                            break;
+                        }
+                        case "portal:telegraph":
+                        {
+                            var glow = FindLive(world, null, "overlordBeamGlow");
+                            float dx = glow != null ? glow.Position.x - player.Position.x : 0f;
+                            portal.GlowX = glow != null ? glow.Position.x : float.NaN;
+                            portal.TelegraphAt = now;
+                            PortalCheck("telegraph", glow != null && Mathf.Abs(dx) >= 2f && Mathf.Abs(dx) <= 3f && dx > 0f == portal.Right,
+                                glow != null ? $"red glow on the ground {dx:+0.00;-0.00} from the hero (x={portal.GlowX:0.00})" : "no overlordBeamGlow on the ground");
+                            break;
+                        }
+                        case "portal:beamHit":
+                        {
+                            int beams = CountLive(world, "overlordBeam");
+                            float warned = portal.TelegraphAt >= 0f ? now - portal.TelegraphAt : 0f;
+                            PortalCheck("beamHit", beams >= 6 && warned >= 1f,
+                                $"the beam came down ({beams} beam pieces) {warned:0.00} s after the glow");
+                            break;
+                        }
+                        case "portal:open":
+                        {
+                            float dx = hole != null ? hole.Position.x - player.Position.x : 0f;
+                            float fromGlow = hole != null ? Mathf.Abs(hole.Position.x - portal.GlowX) : 99f;
+                            PortalCheck("portalOpen", hole != null && Mathf.Abs(dx) >= 2f && Mathf.Abs(dx) <= 3f && fromGlow < 0.3f,
+                                hole != null ? $"portal open at x={hole.Position.x:0.00}, {dx:+0.00;-0.00} from the hero, {fromGlow:0.00} from where the beam hit" : "no portal entity");
+                            portal.InputTryAt = now + 0.3f;
+                            break;
+                        }
+                        case "portal:arrived":
+                        {
+                            float gap = hole != null ? Mathf.Abs(hole.Position.x - player.Position.x) : 99f;
+                            float walked = Mathf.Abs(player.Position.x - portal.StartX);
+                            bool locked = now < world.InputLockedUntil;
+                            PortalCheck("walkArrived", hole != null && gap < 1.2f && walked > 0.8f && !world.Scripted.Walking && locked,
+                                $"walked by himself {walked:0.00} to {gap:0.00} from the portal's centre, input locked={locked}");
+                            break;
+                        }
+                        case "portal:curious":
+                            Run.Event("portal", "\"?\" pops up over the hero");
+                            break;
+                        case "portal:turned":
+                        {
+                            bool away = controller != null && controller.FacingRight != portal.Right;
+                            PortalCheck("turned", away, $"turned away from the portal (facing {(controller != null && controller.FacingRight ? "right" : "left")})");
+                            break;
+                        }
+                        case "portal:pulledIn":
+                        {
+                            float scale = player.transform.localScale.y;
+                            float off = hole != null ? Vector2.Distance(player.Position, hole.Position) : 99f;
+                            PortalCheck("pulledIn", world.Scripted.Hidden && scale < 0.01f && portal.Spun >= 600f && portal.BiggestScale > 0.05f && off < 0.3f,
+                                $"spun {portal.Spun:0} degrees, shrank from {portal.BiggestScale:0.00} to {scale:0.00}, {off:0.00} from the portal, hidden={world.Scripted.Hidden}");
+                            break;
+                        }
+                        case "portal:gloob":
+                        {
+                            var gloob = FindLive(world, "gloob", "gloobProp");
+                            float dx = gloob != null && hole != null ? Mathf.Abs(gloob.Position.x - hole.Position.x) : 0f;
+                            PortalCheck("gloob", gloob != null && hole != null && dx > 2.5f,
+                                gloob != null ? $"a green slime bounces in {dx:0.00} from the portal" : "no gloobProp slime");
+                            break;
+                        }
+                        case "portal:slurped":
+                        {
+                            bool gone = FindLive(world, "gloob") == null;
+                            PortalCheck("slurped", gone && hole != null, $"the slime was slurped into the portal (gone={gone}, sound {(Sfx.Has("gloob_slurp") ? "gloob_slurp" : "MISSING")})");
+                            break;
+                        }
+                        case "portal:closed":
+                        {
+                            bool scorch = FindLive(world, null, "portalScorch") != null;
+                            PortalCheck("closed", hole == null && scorch, $"the portal closed (gone={hole == null}) to a scorch (scorch={scorch})");
+                            break;
+                        }
+                        case "portal:black":
+                        {
+                            float alpha = world.Hud != null ? world.Hud.FadeAlpha : 0f;
+                            PortalCheck("black", alpha > 0.99f, $"faded to black ({alpha:0.00})");
+                            int hp = portal.Health != null ? portal.Health.CurrentHealth : 0;
+                            PortalCheck("untouched", portal.Hits == 0 && hp == portal.HealthAtStart,
+                                $"no damage during the scene: {portal.Hits} hits, hp {portal.HealthAtStart} -> {hp}");
+                            break;
+                        }
+                    }
+
+                    foreach (var line in PortalLines)
+                    {
+                        if (line.signal != signal)
+                            continue;
+                        string shown = world.Hud != null ? world.Hud.SubtitleShown : "";
+                        bool voiced = Sfx.Has(line.sound);
+                        Run.Event("line", $"\"{shown}\" ({line.sound}, {Sfx.LengthOf(line.sound):0.0} s{(voiced ? "" : ", NO CLIP")})");
+                        if (shown == line.text && voiced)
+                            portal.LinesSeen.Add(line.signal);
+                        else
+                            Run.Problem(PlaytestSeverity.Bug, $"portal scene line \"{line.text}\": subtitle \"{shown}\", voice {line.sound} {(voiced ? "ok" : "has no clip")}");
+                        if (signal == "portal:line:hole")
+                        {
+                            bool facing = controller != null && hole != null && controller.FacingRight == hole.Position.x > player.Position.x;
+                            if (!facing)
+                                Run.Problem(PlaytestSeverity.Bug, "portal scene: the hero isn't facing the portal while he looks at it");
+                        }
+                        if (portal.LinesSeen.Count == PortalLines.Length)
+                            PortalCheck("lines", true, $"all {PortalLines.Length} lines shown as subtitles with their voices, the echo included");
+                    }
+                }
+
+                if (portal.InputTryAt >= 0f && now >= portal.InputTryAt)
+                {
+                    portal.InputTryAt = -1f;
+                    return TryLockedInput();
+                }
+                return null;
+            }
+
+            /// <summary>
+            /// Presses everything a player would during the scene (move away, jump, aim and fire, hold R): the hero must not
+            /// move, jump or shoot, and the clock must not go backward.
+            /// </summary>
+            IEnumerator TryLockedInput()
+            {
+                var world = GameplayWorld.Instance;
+                var controller = world != null ? world.PlayerController : null;
+                if (world == null || controller == null || world.Player == null)
+                    yield break;
+                var player = world.Player;
+                var clock = GameClock.Instance;
+                Vector2 start = player.Position;
+                float fired = controller.LastFireTime;
+                float before = clock != null ? clock.Time : 0f;
+                float drift = 0f, rise = 0f;
+                bool rewound = false;
+                Key away = portal.Right ? Key.A : Key.D;
+                Run.Event("input", $"portal scene: hold {(portal.Right ? "A" : "D")}, tap Space, aim and fire with the right stick, then hold R for 0.8 s");
+
+                void Watch()
+                {
+                    if (world == null || world.Player == null || world.Scripted.Walking || world.Scripted.Pulling)
+                        return;
+                    drift = Mathf.Max(drift, Mathf.Abs(world.Player.Position.x - start.x));
+                    rise = Mathf.Max(rise, world.Player.Position.y - start.y);
+                    if (clock != null && clock.IsRewinding)
+                        rewound = true;
+                }
+
+                input.SetKey(away, true);
+                input.SetAim(new Vector2(portal.Right ? -1f : 1f, 0.2f));
+                yield return Tap(Key.Space);
+                float end = Time.realtimeSinceStartup + 0.7f;
+                while (!Run.Done && Time.realtimeSinceStartup < end)
+                {
+                    Watch();
+                    yield return null;
+                }
+                input.SetKey(away, false);
+                input.SetAim(Vector2.zero);
+                input.SetKey(Key.R, true);
+                end = Time.realtimeSinceStartup + 0.8f;
+                while (!Run.Done && Time.realtimeSinceStartup < end)
+                {
+                    Watch();
+                    yield return null;
+                }
+                input.SetKey(Key.R, false);
+                if (Run.Done || world == null)
+                    yield break;
+                float after = clock != null ? clock.Time : 0f;
+                bool shot = !Mathf.Approximately(controller.LastFireTime, fired);
+                PortalCheck("inputIgnored", drift < 0.05f && rise < 0.05f && !shot && !rewound && after > before,
+                    $"moved {drift:0.00}, rose {rise:0.00}, shot={shot}, rewound={rewound}, clock {before:0.0} -> {after:0.0} s");
+            }
+
+            /// <summary>After level 1: the scene's missing beats, then Continue on the results and Video2 must start.</summary>
+            IEnumerator PortalEnd()
+            {
+                if (!portal.Started)
+                {
+                    Run.Problem(PlaytestSeverity.Warning, $"portal scene: the bot didn't reach it (level 1 {lastOutcome})");
+                    yield break;
+                }
+                PortalCheck("levelComplete", lastOutcome == "completed", $"level 1 {lastOutcome} after the scene");
+                if (lastOutcome == "completed")
+                {
+                    if (LoadLevel != DefaultLoadLevel)
+                    {
+                        // The PlayMode playtest loads scenes itself: the video after the level isn't part of it.
+                        Run.Event("portal", "video 2 not followed (editor scene loader)");
+                        portal.Passed.Add("video2");
+                    }
+                    else
+                    {
+                        var texts = GameDefinition.Instance.menuTheme.texts;
+                        yield return Run.Until(() => GameplayWorld.Instance == null || GameplayWorld.Instance.Hud == null || GameplayWorld.Instance.Hud.ResultsOpen,
+                            30f, "the level 1 results screen");
+                        if (Run.Done) yield break;
+                        if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
+                            yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
+                        if (Run.Done) yield break;
+                        yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null, 30f, "video 2 to start");
+                        if (Run.Done) yield break;
+                        int video = PlayerPrefs.GetInt("CurrentVideoNumber", 0);
+                        Run.Scene("Video " + video);
+                        PortalCheck("video2", video == 2, $"video {video} started after the portal scene");
+                        // Watch the start of the fall for the recording.
+                        yield return WaitReal(4f);
+                        if (Run.Done) yield break;
+                    }
+                }
+                foreach (var beat in PortalBeats)
+                {
+                    if (!portal.Passed.Contains(beat))
+                        Run.Problem(PlaytestSeverity.Bug, $"portal scene: never saw \"{beat}\" pass (level 1 {lastOutcome})");
+                }
+                int passed = 0;
+                foreach (var beat in PortalBeats)
+                    if (portal.Passed.Contains(beat)) passed++;
+                Run.Metric("portal.passed", passed);
+                Run.Metric("portal.failed", portal.Failed);
             }
 
             // ─── cutscene: every scene action, checked beat by beat ─────

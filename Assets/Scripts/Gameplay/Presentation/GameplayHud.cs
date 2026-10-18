@@ -566,6 +566,9 @@ namespace SickOfIt.Gameplay
         /// <summary>How covered the screen is by the script's fade, 0 (clear) to 1 (held black).</summary>
         public float FadeAlpha => FadeAt(world != null ? world.Now : 0f);
 
+        /// <summary>The subtitle on screen now ("" when none), for the playtest's checks of scene lines.</summary>
+        public string SubtitleShown => world != null && world.Now < subtitleUntil ? subtitleText : "";
+
         /// <summary>Fades the screen to 'color' (alpha 1, held) or back to clear over 'duration' seconds of game time.</summary>
         public void Fade(bool toColor, Color color, float duration, float now)
         {

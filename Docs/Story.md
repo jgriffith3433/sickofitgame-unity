@@ -247,8 +247,19 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    *Built so far* (2026-10-18; recipe: GameplayCookbook "A scene with the hero"): the scene actions a level script
    uses for it: walk the hero somewhere by himself, turn him, play one of his clips, pull him into a point
    (spinning and shrinking until he is gone), move and zoom the camera, fade to black, and lock rewind while it
-   plays. `content/scenes/cutsceneTest.json` runs every one of them on the Meadow for the playtest; the real
-   portal scene still needs its portal, its lines and the hero's new clips.
+   plays. `content/scenes/cutsceneTest.json` runs every one of them on the Meadow for the playtest.
+   *The scene itself* (2026-10-18): Level1.json's last phases, `portalBeam` → `portalLook` → `portalGloob` →
+   `portalClose`. After the Grudge pick: input and rewind lock, the hero can't be hurt (`sceneUntouchable`) and
+   the music drops. The Overlord's beam is telegraphed by a red glow on the ground 2.5 units from the hero, on
+   the side toward the middle of the meadow, for 1.25 s, then strikes (flash, shake, a column of beam, *"Mm. ...
+   Stay."*) and the ground burns open into the `portal` (humming, drawn behind the hero). The camera closes in a
+   little, he walks to its edge, the lines and the echo play, a "?" pops over him, *"Nope."*, he turns and takes
+   one step, *"Oh, come ON-"* and he is pulled in (1.2 s, 2.5 turns). A beat later `gloobProp` (Gloob: the
+   village slime, slime art, harmless) hops in from the far side and is slurped in. The portal flares and
+   closes to a scorch, the screen fades to black, and the level ends: results, then Video2. The hero no
+   longer says *"Fine. I'll go get them."*: he never chose to go. Still to come: the portal's art (its spin
+   belongs in its clip, since it lies flat on the ground), the beam's art, and the hero's scene clips (look
+   down, shout, turn); today he uses Idle and Walk.
 5. **Video overlays**: Video2 shows the hero tumbling and spinning down the fire tunnel (about 10.5-14.5 s), as an
    animated sprite drawn over the baked video.
 6. **The Shaft**: the vertical Hell map after Video2 (the plunge from FLOOR 0 to FLOOR 1,000 with the welcome

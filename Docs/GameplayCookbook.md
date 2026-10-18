@@ -174,6 +174,15 @@ Then, on `atPortal`:
 - `fade` `"Black"` holds the screen black (texts and the pause menu still show on top); `"Clear"` brings the game back.
 - `unlockInput` / `unlockRewind` hand control back if the level goes on.
 - All of it is saved for rewind, so rewinding through a scene (after `unlockRewind`) replays it.
+- Keep the hero safe in a scene with an `invulnerable` status (`content/effects/sceneUntouchable.json`, `applyStatus`
+  on `"player": true`) rather than `playerInvincible`, which makes him blink the whole time.
+- Something that hums while it exists (a portal): `sounds.loopSound` on its entity, an audio.json id; it loops on
+  the entity's own audio source and stops when it dies or is despawned.
+- A scene that must play on either side of the hero: set a counter from `playerInZone` on entry, then branch with
+  `if` / `counter` (Level1.json's `portalRight`). Once he is pulled in, the hero stays hidden at the pull point, so
+  `"anchor": "Player"` places things at the portal.
+- The real one is the end of Level 1 (phases `portalBeam` to `portalClose`); the `level-1` playtest checks it beat
+  by beat.
 
 **Trying a scene without its level:** put a level script in `content/scenes/<id>.json` (same fields as a level's
 `script`, no `objective` needed). The playtest's `cutscene` scenario plays `content/scenes/cutsceneTest.json` on

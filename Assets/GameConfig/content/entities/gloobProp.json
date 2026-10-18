@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.08,
+    "color": "#9CFF7A",
+    "hurtFlash": false,
+    "deathPunch": 0.6,
+    "deathFade": 0.3,
+    "animator": {
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Sprites/Enemies/slime_idle.png",
+          "fps": 12,
+          "loop": true
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Sprites/Enemies/slime_idle.png",
+          "firstFrame": 4,
+          "frameCount": 4,
+          "fps": 16,
+          "loop": false
+        }
+      ],
+      "defaultStateName": "Idle"
+    }
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "hover",
+      "offset": [0.0, 0.05],
+      "keepSide": false,
+      "speed": 1.6,
+      "bobHeight": 0.12,
+      "bobSpeed": 11.0
+    },
+    {
+      "type": "lifetime",
+      "seconds": 2.6
+    }
+  ],
+  "onDeath": [
+    { "type": "playSound", "sound": "gloob_slurp" },
+    { "type": "emit", "signal": "scene:slurped" }
+  ]
+}

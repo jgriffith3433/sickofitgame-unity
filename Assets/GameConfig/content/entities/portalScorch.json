@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "body": {
+    "radius": 0.4,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#24140CD9",
+    "placeholderSize": 1.1,
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 1,
+    "hurtFlash": false
+  },
+  "healthBar": {
+    "show": false
+  }
+}
