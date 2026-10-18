@@ -3928,8 +3928,8 @@ namespace SickOfIt.Playtest
                 StoryCheck("levelSelect", firstInOrder,
                     $"the first cards are {string.Join(" | ", titles.GetRange(0, Mathf.Min(titles.Count, expected.Count)))} (want {string.Join(" | ", expected)})");
 
-                // Every story stage ("Floors N-M: ...") after the Meadow counts down, and none comes after an arcade level.
-                var floorsTitle = new Regex(@"^Floors (\d+)-(\d+)");
+                // Every floor ("Floor N: ...") and story stage ("Floors N-M: ...") after the Meadow counts down, and none comes after an arcade level.
+                var floorsTitle = new Regex(@"^Floors? (\d+)(?:-(\d+))?:");
                 int last = int.MaxValue;
                 bool arcadeSeen = false, ordered = true;
                 string why = "story levels first, floors counting down";
