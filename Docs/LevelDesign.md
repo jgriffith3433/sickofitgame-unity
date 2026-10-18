@@ -58,7 +58,13 @@ Every floor is the same sentence with different words, so the player always know
 ### Rewards
 
 - **Diamonds** come from things carrying them: sack imps, sack swings, counterweight sacks, the floor bosses' piles.
-- **Loop shards** (rewind orbs) come from the damned: plain imps and cinders, not guards.
+- **Loop shards** (rewind orbs) come only from **the damned**: souls stuck in Hell's loop, repeating one floor
+  forever. Never from imps (the Overlord's raiders), cinders (sparks of the village) or guards. In the Wastes a damned
+  soul *(working: `damnedSoul`)* sits on a ledge doing the same small thing over and over: climbing the same three
+  steps, scraping the same patch of slag, counting the same stones. It doesn't fight and can't be hurt. When the hero
+  passes close by, his own loop brushes theirs, the soul's loop hiccups and a shard drops onto the ledge (once per
+  play, never re-paid by a rewind). They sit on breather ledges and landings, about one or two per floor, so the
+  quiet stretches are where Déjà Vu refills. The soul goes straight back to what it was doing.
 - **Grudges** are picked on the landing of every **fifth floor** and after every floor boss (so about two per
   stretch of ten), not on every floor: with a floor every 90 seconds, a pick per floor would bury the climb in menus.
 
@@ -72,7 +78,7 @@ Hell is repetition, so Hell's hazards repeat, and rewind (Déjà Vu) is the hero
   a raft that tips) is fair on the second, because the loop is the same. Floors are seeded: a rewind replays the same
   future (AGENTS.md).
 - **Some floors teach it.** The Loop (995) makes the hero notice; later floors (953, 906) assume it.
-- **Juice is limited**, so rewind is a save, not a crutch: the loop shards from the damned refill it.
+- **Juice is limited**, so rewind is a save, not a crutch: the loop shards the damned souls drop on the ledges refill it.
 
 ## 2. The toolkit
 
@@ -583,7 +589,10 @@ order it can be built and played:
    that stops under marked ledges), plus a climbing floor layout (`world.camera` Travel Up with hand-placed and
    generated footholds) and the climbing arena (tiers, a camera step per phase). `offerShortcut` with a diamond cost
    (`costDiamonds`), and a trigger that a floor can read when a shortcut was taken to reach it (`shortcutTaken`, from
-   `ShortcutProgress`). Grudge picks on every 5th floor and after bosses.
+   `ShortcutProgress`). Grudge picks on every 5th floor and after bosses. **The damned soul** (`damnedSoul`, a new
+   entity: harmless, no health, a looping idle, a proximity trigger that drops one `rewindOrb` once per play through
+   `GameplayWorld.TryGrantOnce`), and the `rewindOrb` drop taken off `imp` (today `imp.json` drops one 20% of the
+   time; imps aren't damned).
 2. **The playtest bot learns to climb:** jump between moving footholds and keep moving off sinking stones (today's
    bot walks right; the old Slag Falls stage waited on this).
 3. **Floors 1000-991 first** (the stretch J sees first), one level file per floor, in climb order in game.json, each
@@ -596,5 +605,5 @@ order it can be built and played:
    scenarios that name levels by number (`wastes-climb`, `story-path`, `shortcut`, `waystone`), Circle IX's stages
    (Levels 12-18, recut into floors the same way; the Old Stair's shortcut stays at Floor 871 to 841).
 7. **Art (GPU, priced):** the lava-sea backdrops (flying above the lava), the toolkit's props (stones, the village's
-   rafts, lifts, counterweight sacks, vents, the carved landings), the sack-swing imp, the Imp Foreman and the Pile
-   Keeper. Until they exist, pieces draw as the track's plain shapes and labeled placeholders.
+   rafts, lifts, counterweight sacks, vents, the carved landings), the sack-swing imp, the damned soul (a grey,
+   hunched, see-through figure with a looping idle and a hiccup clip), the Imp Foreman and the Pile Keeper. Until they exist, pieces draw as the track's plain shapes and labeled placeholders.
