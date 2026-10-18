@@ -392,25 +392,31 @@ namespace SickOfIt.Core.Progression
                 return;
             }
 
+            int levelToLoad;
             if (PlayerPrefs.HasKey("ReturnToLevel"))
             {
-                int levelToLoad = PlayerPrefs.GetInt("ReturnToLevel");
+                levelToLoad = PlayerPrefs.GetInt("ReturnToLevel");
                 PlayerPrefs.DeleteKey("ReturnToLevel");
                 PlayerPrefs.Save();
 
                 if (levelToLoad == -1)
+                {
                     SceneTransitionManager.Instance.LoadMainMenu();
-                else
-                    SceneTransitionManager.Instance.LoadLevel(levelToLoad);
+                    return;
+                }
             }
             else if (config.nextLevel > 0)
             {
-                SceneTransitionManager.Instance.LoadLevel(config.nextLevel);
+                levelToLoad = config.nextLevel;
             }
             else
             {
-                SceneTransitionManager.Instance.LoadLevel(videoNumber);
+                levelToLoad = videoNumber;
             }
+
+            // The Shaft (Hell's map) comes up between a video and the level after it (after Video2: the plunge).
+            ShaftHook.Run(new ShaftStop { Kind = ShaftStopKind.AfterVideo, Video = videoNumber, NextLevel = levelToLoad },
+                () => SceneTransitionManager.Instance.LoadLevel(levelToLoad));
         }
 
         static float CinematicOrthoSize()

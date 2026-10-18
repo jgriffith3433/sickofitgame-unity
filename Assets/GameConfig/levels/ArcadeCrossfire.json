@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "levelName": "ArcadeCrossfire",
+  "displayName": "Arcade: Crossfire",
+  "levelNumber": 2,
+  "thumbnail": "Videos/Level2_Background1_FirstFrame.png",
+  "backgrounds": ["Videos/Level2_Background1.asset", "Videos/Level2_Background2.asset"],
+  "backgroundLayers": [],
+  "ambientColor": "#FFFFFF",
+  "music": "Videos/Level2_Background1_Audio.mp3",
+  "musicStartTime": 0.0,
+  "musicVolume": 1.0,
+  "ambientSound": null,
+  "ambientVolume": 0.5,
+  "levelCompleteSound": null,
+  "platforms": [],
+  "placedSprites": [],
+  "generateBarriers": true,
+  "barrierThickness": 1.0,
+  "barrierOnBottom": true,
+  "barrierOnTop": true,
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "winZoneCenter": [6.5, 0.0],
+  "winZoneHalfSize": [0.5, 4.0],
+  "deathConfigName": "Death2",
+  "duration": 120.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "returnToMainMenuOnComplete": false,
+  "timeline": {
+    "duration": 60.0,
+    "events": [],
+    "overlays": [],
+    "tracks": []
+  },
+  "script": {
+    "length": 85,
+    "markers": [
+      {
+        "seconds": 62,
+        "label": "FINAL WAVE"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      }
+    },
+    "phases": [
+      {
+        "name": "crossfire",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "LEVEL 2: CROSSFIRE",
+            "duration": 2.5,
+            "color": "#FFD27A",
+            "sound": "vo_l2_title"
+          },
+          {
+            "type": "showText",
+            "text": "Everyone has an opinion. And a gun.",
+            "style": "Subtitle",
+            "duration": 3.0,
+            "sound": "vo_l2_intro"
+          }
+        ],
+        "rules": [
+          {
+            "name": "gunner pairs",
+            "when": {
+              "type": "every",
+              "seconds": 9.0,
+              "startAfter": 2.0,
+              "maxTimes": 3
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "gunner",
+                "count": 2,
+                "interval": 0.5,
+                "anchor": "Camera",
+                "points": [
+                  [4.6, -2.0],
+                  [-4.6, -2.0]
+                ],
+                "tags": ["wave"],
+                "modifiers": [
+                  {
+                    "stat": "AttackSpeed",
+                    "multiply": 1.0,
+                    "multiplyPerRepeat": 0.12
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "imps",
+            "when": {
+              "type": "every",
+              "seconds": 4.0,
+              "startAfter": 5.0,
+              "maxTimes": 6
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "imp",
+                "count": 2,
+                "interval": 0.3,
+                "anchor": "Camera",
+                "points": [
+                  [5.2, 0.5],
+                  [-5.2, 0.5]
+                ],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 30.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "boom"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "boom",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "Oh good. They explode.",
+            "style": "Subtitle",
+            "duration": 2.5,
+            "color": "#FF9966",
+            "sound": "vo_l2_exploders"
+          }
+        ],
+        "rules": [
+          {
+            "name": "cinders",
+            "when": {
+              "type": "every",
+              "seconds": 5.0,
+              "startAfter": 1.0,
+              "maxTimes": 5
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "cinder",
+                "anchor": "Camera",
+                "at": [5.2, -2.0],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "name": "gunner",
+            "when": {
+              "type": "every",
+              "seconds": 10.0,
+              "startAfter": 4.0,
+              "maxTimes": 2
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "gunner",
+                "anchor": "Camera",
+                "at": [0.0, 1.8],
+                "tags": ["wave"]
+              }
+            ]
+          },
+          {
+            "when": {
+              "type": "after",
+              "seconds": 28.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "final"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "final",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "FINAL WAVE",
+            "duration": 2.0,
+            "color": "#FF7A5C",
+            "sound": "vo_final_wave"
+          },
+          {
+            "type": "showText",
+            "text": "Duck. Literally, if possible.",
+            "style": "Subtitle",
+            "duration": 2.5,
+            "sound": "vo_l2_last"
+          },
+          {
+            "type": "spawn",
+            "entity": "sprayer",
+            "anchor": "Camera",
+            "at": [4.4, -1.8],
+            "tags": ["wave"]
+          },
+          {
+            "type": "spawnWave",
+            "entity": "gunner",
+            "count": 2,
+            "interval": 1.0,
+            "anchor": "Camera",
+            "points": [
+              [-4.6, -2.0],
+              [-4.6, 1.2]
+            ],
+            "tags": ["wave"]
+          },
+          {
+            "type": "spawnWave",
+            "entity": "cinder",
+            "count": 2,
+            "interval": 2.5,
+            "anchor": "Camera",
+            "points": [
+              [5.2, -2.0],
+              [-5.2, -2.0]
+            ],
+            "tags": ["wave"]
+          }
+        ],
+        "rules": [
+          {
+            "name": "clear",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "wave"
+              }
+            },
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "showText",
+                    "text": "CROSSFIRE: SURVIVED",
+                    "duration": 2.0,
+                    "color": "#7CFF8A",
+                    "sound": "vo_l2_clear"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "That was a lot of shooting for one road.",
+                    "style": "Subtitle",
+                    "duration": 2.0,
+                    "sound": "vo_l2_outro"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

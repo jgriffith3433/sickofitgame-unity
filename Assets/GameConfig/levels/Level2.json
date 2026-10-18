@@ -1,293 +1,176 @@
 {
   "schemaVersion": 1,
   "levelName": "Level2",
-  "displayName": "Crossfire",
+  "displayName": "Floors 1000-991: The Landing",
   "levelNumber": 2,
-  "thumbnail": "Videos/Level2_Background1_FirstFrame.png",
-  "backgrounds": ["Videos/Level2_Background1.asset", "Videos/Level2_Background2.asset"],
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
   "backgroundLayers": [],
-  "ambientColor": "#FFFFFF",
-  "music": "Videos/Level2_Background1_Audio.mp3",
-  "musicStartTime": 0.0,
+  "music": "Videos/Level3_Background1_Audio.mp3",
   "musicVolume": 1.0,
-  "ambientSound": null,
-  "ambientVolume": 0.5,
-  "levelCompleteSound": null,
   "platforms": [],
   "placedSprites": [],
-  "generateBarriers": true,
-  "barrierThickness": 1.0,
-  "barrierOnBottom": true,
-  "barrierOnTop": true,
   "enemies": [],
   "playerSpawnPosition": [-4.0, 0.0],
-  "winZoneCenter": [6.5, 0.0],
-  "winZoneHalfSize": [0.5, 4.0],
-  "deathConfigName": "Death2",
-  "duration": 120.0,
+  "deathConfigName": "Death1",
+  "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 3,
   "returnToMainMenuOnComplete": false,
-  "timeline": {
-    "duration": 60.0,
-    "events": [],
-    "overlays": [],
-    "tracks": []
-  },
   "script": {
-    "length": 85,
+    "length": 75,
+    "floors": {
+      "start": 1000,
+      "end": 991,
+      "unitsPerFloor": 3.0,
+      "circle": "emberWastes",
+      "signs": true
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true
+    },
     "markers": [
-      {
-        "seconds": 62,
-        "label": "FINAL WAVE"
-      }
+      { "floor": 999, "label": "999 TO GO" },
+      { "floor": 992, "label": "THE TOP" }
     ],
     "objective": {
-      "complete": {
-        "type": "counter",
-        "name": "cleared",
-        "atLeast": 1
-      }
+      "complete": { "type": "counter", "name": "cleared", "atLeast": 1 },
+      "text": "Climb"
     },
+    "rules": [
+      {
+        "name": "the hero answers the 999 milestone",
+        "when": { "type": "floorReached", "floor": 999 },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              { "type": "wait", "seconds": 2.8 },
+              {
+                "type": "showText",
+                "text": "You said that already.",
+                "duration": 2.5,
+                "sound": "vo_landing_999",
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      }
+    ],
     "phases": [
       {
-        "name": "crossfire",
+        "name": "landing",
         "onEnter": [
+          { "type": "lockTravel" },
           {
             "type": "showText",
-            "text": "LEVEL 2: CROSSFIRE",
+            "text": "FLOORS 1000-991: THE LANDING",
             "duration": 2.5,
-            "color": "#FFD27A",
-            "sound": "vo_l2_title"
-          },
-          {
-            "type": "showText",
-            "text": "Everyone has an opinion. And a gun.",
-            "style": "Subtitle",
-            "duration": 3.0,
-            "sound": "vo_l2_intro"
+            "sound": "vo_landing_title",
+            "color": "#FFD27A"
           }
         ],
         "rules": [
           {
-            "name": "gunner pairs",
-            "when": {
-              "type": "every",
-              "seconds": 9.0,
-              "startAfter": 2.0,
-              "maxTimes": 3
-            },
+            "name": "the hero takes it in",
+            "when": { "type": "after", "seconds": 2.8 },
             "do": [
               {
-                "type": "spawnWave",
-                "entity": "gunner",
-                "count": 2,
-                "interval": 0.5,
-                "anchor": "Camera",
-                "points": [
-                  [4.6, -2.0],
-                  [-4.6, -2.0]
-                ],
-                "tags": ["wave"],
-                "modifiers": [
-                  {
-                    "stat": "AttackSpeed",
-                    "multiply": 1.0,
-                    "multiplyPerRepeat": 0.12
-                  }
-                ]
+                "type": "showText",
+                "text": "Floor one thousand. Of course it's a thousand.",
+                "duration": 3.0,
+                "sound": "vo_landing_intro",
+                "style": "Subtitle"
               }
             ]
           },
           {
-            "name": "swarmers",
-            "when": {
-              "type": "every",
-              "seconds": 4.0,
-              "startAfter": 5.0,
-              "maxTimes": 6
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "swarmer",
-                "count": 2,
-                "interval": 0.3,
-                "anchor": "Camera",
-                "points": [
-                  [5.2, 0.5],
-                  [-5.2, 0.5]
-                ],
-                "tags": ["wave"]
-              }
-            ]
-          },
-          {
-            "when": {
-              "type": "after",
-              "seconds": 30.0
-            },
-            "do": [
-              {
-                "type": "goToPhase",
-                "phase": "boom"
-              }
-            ]
+            "when": { "type": "after", "seconds": 6.0 },
+            "do": [ { "type": "goToPhase", "phase": "firstImp" } ]
           }
         ]
       },
       {
-        "name": "boom",
+        "name": "firstImp",
         "onEnter": [
-          {
-            "type": "showText",
-            "text": "Oh good. They explode.",
-            "style": "Subtitle",
-            "duration": 2.5,
-            "color": "#FF9966",
-            "sound": "vo_l2_exploders"
-          }
-        ],
-        "rules": [
-          {
-            "name": "exploders",
-            "when": {
-              "type": "every",
-              "seconds": 5.0,
-              "startAfter": 1.0,
-              "maxTimes": 5
-            },
-            "do": [
-              {
-                "type": "spawn",
-                "entity": "exploder",
-                "anchor": "Camera",
-                "at": [5.2, -2.0],
-                "tags": ["wave"]
-              }
-            ]
-          },
-          {
-            "name": "gunner",
-            "when": {
-              "type": "every",
-              "seconds": 10.0,
-              "startAfter": 4.0,
-              "maxTimes": 2
-            },
-            "do": [
-              {
-                "type": "spawn",
-                "entity": "gunner",
-                "anchor": "Camera",
-                "at": [0.0, 1.8],
-                "tags": ["wave"]
-              }
-            ]
-          },
-          {
-            "when": {
-              "type": "after",
-              "seconds": 28.0
-            },
-            "do": [
-              {
-                "type": "goToPhase",
-                "phase": "final"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "final",
-        "onEnter": [
-          {
-            "type": "showText",
-            "text": "FINAL WAVE",
-            "duration": 2.0,
-            "color": "#FF7A5C",
-            "sound": "vo_final_wave"
-          },
-          {
-            "type": "showText",
-            "text": "Duck. Literally, if possible.",
-            "style": "Subtitle",
-            "duration": 2.5,
-            "sound": "vo_l2_last"
-          },
           {
             "type": "spawn",
-            "entity": "sprayer",
+            "entity": "imp",
             "anchor": "Camera",
-            "at": [4.4, -1.8],
-            "tags": ["wave"]
+            "at": [3.6, -1.4],
+            "tags": ["beat"]
           },
           {
-            "type": "spawnWave",
-            "entity": "gunner",
-            "count": 2,
-            "interval": 1.0,
-            "anchor": "Camera",
-            "points": [
-              [-4.6, -2.0],
-              [-4.6, 1.2]
-            ],
-            "tags": ["wave"]
-          },
-          {
-            "type": "spawnWave",
-            "entity": "exploder",
-            "count": 2,
-            "interval": 2.5,
-            "anchor": "Camera",
-            "points": [
-              [5.2, -2.0],
-              [-5.2, -2.0]
-            ],
-            "tags": ["wave"]
+            "type": "showText",
+            "text": "An imp. Holding our diamond. Hi.",
+            "duration": 3.0,
+            "sound": "vo_landing_imp",
+            "style": "Subtitle"
           }
         ],
         "rules": [
           {
-            "name": "clear",
-            "when": {
-              "type": "allDead",
-              "target": {
-                "tag": "wave"
-              }
-            },
+            "name": "imp down",
+            "when": { "type": "allDead", "target": { "tag": "beat" } },
+            "maxTimes": 1,
+            "do": [
+              { "type": "unlockTravel" },
+              { "type": "goToPhase", "phase": "climb" }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          { "type": "generateFloors", "untilFloor": 992, "firstBreather": 3.0 }
+        ],
+        "rules": [
+          {
+            "when": { "type": "signal", "name": "floorsDone" },
+            "maxTimes": 1,
+            "do": [ { "type": "goToPhase", "phase": "top" } ]
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "Ten floors. Nine hundred ninety to go.",
+            "duration": 3.5,
+            "sound": "vo_landing_top",
+            "style": "Subtitle"
+          }
+        ],
+        "rules": [
+          {
+            "name": "stage clear",
+            "when": { "type": "floorReached", "floor": 991 },
+            "maxTimes": 1,
             "do": [
               {
                 "type": "runSequence",
                 "steps": [
+                  { "type": "lockTravel" },
                   {
                     "type": "showText",
-                    "text": "CROSSFIRE: SURVIVED",
+                    "text": "THE LANDING: SURVIVED",
                     "duration": 2.0,
-                    "color": "#7CFF8A",
-                    "sound": "vo_l2_clear"
+                    "sound": "vo_landing_clear",
+                    "color": "#FF9A5C"
                   },
-                  {
-                    "type": "showText",
-                    "text": "That was a lot of shooting for one road.",
-                    "style": "Subtitle",
-                    "duration": 2.0,
-                    "sound": "vo_l2_outro"
-                  },
-                  {
-                    "type": "wait",
-                    "seconds": 1.5
-                  },
-                  {
-                    "type": "offerUpgrades",
-                    "title": "Pick a grudge"
-                  },
-                  {
-                    "type": "setCounter",
-                    "name": "cleared",
-                    "value": 1
-                  }
+                  { "type": "wait", "seconds": 1.5 },
+                  { "type": "offerUpgrades", "title": "Pick a grudge" },
+                  { "type": "setCounter", "name": "cleared", "value": 1 }
                 ]
               }
             ]

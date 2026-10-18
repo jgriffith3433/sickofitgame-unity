@@ -91,10 +91,17 @@ THE MEADOW again                           Ending
   Floors x10 to x01 (Circle X: Floors 910-901, the Magma King). So the whole climb is 100 levels plus the Meadow.
 - **Level numbers:** Level 1 is the Meadow (Floor 0). Level 2 is Floors 1000-991, *The Landing*; level *n* is
   Floors `1000 - 10(n-2)` to `991 - 10(n-2)`; Level 11 is Floors 910-901, the Magma King; Level 12 starts Circle IX
-  at Floor 900. The current `levels/Level2-5.json` (Crossfire, Spin Cycle, Everything Everywhere, Fire Rain) are
-  the old arcade levels: **off the story path**, kept as files to be recast (their enemies and patterns reused
-  inside Circle stages) and then removed from game.json's story order. Level6 and Level7 (25-floor stages from the
-  first floor layout) are recast as Level 2 and Level 12.
+  at Floor 900. Level *n* is position *n* in game.json's `levels` list, and the file is `levels/Level<n>.json`.
+- **The path today** (re-pathed 2026-10-18): New Game → Video1 → Level 1, the Meadow → Video2 → Level 2, *Floors
+  1000-991: The Landing* → Video3 (Gloob) → Level 3, *Floors 990-981: The Spill* (a first pass: its cinders, no
+  debris yet) → the level select, until the next Circle X stages are built. After them in the list, off the path
+  (reachable from the level select only, once unlocked): `CrackedRoad` (*Floors 900-891*, cut to 10 floors and
+  numbered for Level 12; its beats are still the first layout's, for the Circle IX task to rebuild) and the old
+  arcade levels `ArcadeCrossfire`, `ArcadeSpinCycle`, `ArcadeEverything` and `ArcadeFireRain` (titled "Arcade:
+  ...", outside the Circles, their slime enemies swapped for imps and cinders), kept to be recast: their
+  enemies and patterns reused inside Circle stages, Fire Rain's Magma King fight as the reference for the Floor 901 arena. Their
+  `levelNumber` still names their source footage (`Level2_Background1` is Crossfire's). Video4 (the blue bridge and
+  the forest) is off the early path: it is watched from the video select and belongs to Circles VIII-VII.
 - The **floor number is always on screen** (HUD: `FLOOR 973`), and painted into the world as signs, carvings and
   doors, so the player feels how deep they are. Milestones get a beat: 999 ("only nine hundred ninety-nine to
   go"), 950 ("halfway through the Wastes"), 900, 666, 500, 100, 13, 2.
@@ -168,6 +175,9 @@ enemy at a time, alone; at most 3 on screen in Circle X). Lines are first drafts
 | 10 | 920-911 | **The Heat Stairs** | (none) | The approach to the throne: steps of slag, the heat rising, the Magma King's silhouette on the Shaft getting closer. Announcer builds it up; the hero doesn't. Breather before the arena. |
 | 11 | 910-901 | **The Slag Throne** | Warden: `magmaKing` | The Magma King's arena (a locked screen: the one kind of stage allowed to stand still). Beat him and his name fills in on the Shaft; Floor 901 is the Circle's Waystone. Announcer: *"THE MAGMA KING HAS FALLEN!"* Hero: *"He was sitting down the whole time."* |
 
+Built so far: The Landing (Level 2) and a first pass of The Spill (Level 3: its title, the first cinder alone,
+generated floors, the Grudge pick; the village debris and the cart line come with its full build).
+
 Video3 (Gloob, talking) plays after **The Landing**: the slime from the meadow turns up at the bottom of Hell,
 pleased to see a familiar face, and coughs up a diamond. From then on Gloob is the shop.
 
@@ -202,7 +212,7 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | `imp` | Imp | Meadow, X | The Overlord's raiders. They loot the village's diamonds, then guard the way down in the Wastes. Throw slow embers. Die like Hell's own fireworks: a shriek, eyes bulging, then a pop of soot and embers with the horns and the (empty) sack dropping out, because they are made of the Wastes' fire. | generated (`art/imp.json`, Docs/ArtPipeline.md) |
 | `cinder` | Cinder | Meadow, X | A spark from the burning village that came alive and followed the hero through the portal. Drifts toward you and pops. | `Fireball` (exists); spec ready (`art/cinder.json`) |
 | `magmaKing` | The Magma King | X (Warden, Floor 901) | Rules the Ember Wastes from a throne of slag. | spec ready (`art/magmaKing.json`); run the art pipeline |
-| `brimstoneDemon` | Brimstone Demon | IX | Born from the cracks in the Cracked Road: the rock splits and a demon climbs out to stop you climbing. Slow, heavy, plants itself in the road a few steps in front of you and breathes a short burst of fire (`brimstoneBreath`, sets you burning), so keep your distance. Sometimes drops a diamond: the imps' sacks leak on the road, the cracks swallow what falls, and the demons come out with it stuck in their rock. Not damned, so no loop shards. First met alone at the start of Circle IX (Level7 today; Level 12 in the 10-floor layout). | `Demon1` (exists) until generated; spec ready (`art/brimstoneDemon.json`) |
+| `brimstoneDemon` | Brimstone Demon | IX | Born from the cracks in the Cracked Road: the rock splits and a demon climbs out to stop you climbing. Slow, heavy, plants itself in the road a few steps in front of you and breathes a short burst of fire (`brimstoneBreath`, sets you burning), so keep your distance. Sometimes drops a diamond: the imps' sacks leak on the road, the cracks swallow what falls, and the demons come out with it stuck in their rock. Not damned, so no loop shards. First met alone at the start of Circle IX (`levels/CrackedRoad.json` today; Level 12 in the 10-floor layout). | `Demon1` (exists) until generated; spec ready (`art/brimstoneDemon.json`) |
 | `fighter` → Drooler | Drooler | V | Cave beast; Death2 is it eating you. | `Fighter*` (exists) |
 | `sentinel` → Lurker | Lurker | V | Crouching cave hunter; Death3. | `Level3Enemy*` (exists) |
 | `chaser`, `swarmer`, `exploder`, `sludge`, `slimeGlob`, `slimeSplat` | (retired) | none | Slime enemies. Not in any level once the levels are rebuilt. Keep the files until nothing references them. | slime |
@@ -238,12 +248,14 @@ Built (2026-10-15; recipe: GameplayCookbook "A stage that climbs through Hell's 
    `Distance` or `Floors` (`sequenceBy`) and able to play part of a clip (`clipStart`/`clipLength`).
 3. **Floor generator**: `content/circles/<id>.json` (backdrop, track, props, enemy table, hazards, easiest/hardest
    difficulty, milestones) and the `generateFloors` action that fills floors between story beats, seeded, so
-   rewinds and playtests repeat. Circle X is `emberWastes`; its first stage is Level6, "Floors 1000-976: The Landing".
-   Circle IX is `crackedRoad`; its first stage is Level7, "Floors 900-876: The Cracked Road" (it comes right
-   after Level6 for now: the stages for Floors 975-901 and the Magma King's arena are still to build).
+   rewinds and playtests repeat. Circle X is `emberWastes`; its first stages are Level 2, "Floors 1000-991: The
+   Landing", and Level 3, "Floors 990-981: The Spill". Circle IX is `crackedRoad`; its first stage is
+   `CrackedRoad`, "Floors 900-891: The Cracked Road" (off the path for now: the stages for Floors 980-901 and the
+   Magma King's arena are still to build).
 
-Note: today's Level6 and Level7 are 25-floor stages from the first floor layout; they are recast in this
-milestone's level task (as Level 2 and Level 12 in the 10-floor layout above).
+Note: the Landing was recut from the first layout's 25-floor stage to Floors 1000-991 (2026-10-18), and its
+cinders moved up to the Spill, where the Story puts them. `CrackedRoad` was cut the same way to Floors
+900-891 (Level 12's floors); its beats are still the first layout's until the Circle IX task rebuilds it.
 
 This milestone (*Into Hell*, approved 2026-10-18) builds:
 
@@ -276,7 +288,8 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    `overlordBeamImpact` (the burst where it lands).
 5. **Video overlays**: Video2 shows the hero tumbling and spinning down the fire tunnel (about 10.5-14.5 s), as an
    animated sprite drawn over the baked video.
-6. **The Shaft**: the vertical Hell map after Video2 (the plunge from FLOOR 0 to FLOOR 1,000 with the welcome
+6. **The Shaft**: (hook point: `ShaftHook` in `Core/Flow`, called after every video before its level and after
+   every cleared level before what comes next; nothing shows yet) the vertical Hell map after Video2 (the plunge from FLOOR 0 to FLOOR 1,000 with the welcome
    lines) and after every level (the marker climbs to the floor reached), Wardens as ??? silhouettes until met,
    cracks and dotted gaps where shortcuts will be.
 7. **Voices**: `overlord` and `gloob` in `audio.json` `voices`, and the prologue, Shaft and Circle X lines.
