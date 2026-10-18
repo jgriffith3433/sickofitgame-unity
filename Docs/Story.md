@@ -48,7 +48,11 @@ Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
 3. **The Grudge pick** (the level's `offerUpgrades`): his first grudge. It happens before the scene, so the scene
    is never interrupted.
 4. **The portal.** The Overlord's lasers come down one last time, not at the hero (he isn't worth it yet) but at
-   the ground beside him. They burn a glowing hole into the meadow: a portal, lying flat on the ground.
+   the meadow near him. They burn a glowing hole into the meadow: a portal, lying flat on the ground.
+   It is always the same spot: where the Overlord's laser hits the meadow in the background footage (Level 1's
+   laser clip, a little left of centre on the ground line), and the small fire left burning there in the aftermath
+   loop is this portal seen from afar. The game's beam, impact, portal and scorch sit right on top of it, wherever
+   the hero happens to be standing; he walks over to it from his side, and Yooba comes from the other.
    How it looks: first a red-orange glow gathers on the grass (the beam charging), then the beam drops out of the
    sky as one burning column and bursts on the ground. The grass scorches, cracks, and tears open into a ring of
    burning turf with fire swirling down inside it: **the same fire portal the hero falls through in Video2**,
@@ -200,7 +204,7 @@ build toward; the first two Circles reuse current art.
 
 | Act | Where | What happens | Media |
 |---|---|---|---|
-| Prologue | The Meadow (Level 1) | A nice day. The Overlord rises over the hills; his imps drop in to loot the village; he lasers it; his imps take the diamonds. His lasers burn a portal into the ground beside the hero, who goes to look, shouts down it, hears Hell echo back, says "Nope" and is sucked in. Yooba is slurped in after him. | Video1 → Level1 → portal scene → Video2 → the Shaft |
+| Prologue | The Meadow (Level 1) | A nice day. The Overlord rises over the hills; his imps drop in to loot the village; he lasers it; his imps take the diamonds. His lasers burn a portal into the ground near the hero (the fire hole in the footage), who goes to look, shouts down it, hears Hell echo back, says "Nope" and is sucked in. Yooba is slurped in after him. | Video1 → Level1 → portal scene → Video2 → the Shaft |
 | Act 1 | Circles X–VIII | The portal drops the hero at Floor 1,000. Yooba turns up (the slime slurped in after him), coughs up a diamond, and starts helping. First Warden. The hero learns Hell repeats, and that he can rewind it. | Video2, Video3 (Yooba) |
 | Act 2 | Circles VII–IV | Deeper strangeness: souls stuck in loops (Shades) show what Hell does to people. Hints the Overlord is just as stuck. Midpoint at Floor 500: the hero could take a shortcut home and doesn't. | new |
 | Act 3 | Circles III–I | The Overlord's own guard. The gate is almost open; daylight leaks down the stairs. The hero climbs toward it. | new |

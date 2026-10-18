@@ -209,8 +209,14 @@ Then, on `atPortal`:
 - Something that hums while it exists (a portal): `sounds.loopSound` on its entity, an audio.json id; it loops on
   the entity's own audio source and stops when it dies or is despawned.
 - A scene that must play on either side of the hero: set a counter from `playerInZone` on entry, then branch with
-  `if` / `counter` (Level1.json's `portalRight`). Once he is pulled in, the hero stays hidden at the pull point, so
-  `"anchor": "Player"` places things at the portal.
+  `if` / `counter` (Level1.json's `portalRight`, measured from the portal's spot with `"anchor": "Camera"`). Once he
+  is pulled in, the hero stays hidden at the pull point, so `"anchor": "Player"` places things at the portal (Yooba,
+  the scorch) even after a `cameraTo`.
+- Something on a spot painted in the level's background (Level 1's portal on the footage's fire hole): spawn it with
+  `"anchor": "Camera"`. A Static level's background video is centred on the camera's starting view and as tall as it
+  (2 x the ortho size, 5.6 at 2.8; 16:9 footage is 9.96 wide), so a point at fraction (u, v) of the frame from its top
+  left is `[(u - 0.5) * 9.96, (0.5 - v) * 5.6]` from the camera. Do it before any `cameraTo` (the anchor follows the
+  camera; the background doesn't). Level 1's fire hole, (930, 1025) of 1920x1080, is `[-0.16, -2.52]`.
 - A prop with an opening, a loop and an ending (the portal): an animator whose default state is the non-looping
   opening, a transition with `hasExitTime` (no conditions) into the loop, and a `playAnimation` from the script for
   the ending. `playAnimation`, `setState` and `setAnimParam` target `self` by default and JSON only overrides the
