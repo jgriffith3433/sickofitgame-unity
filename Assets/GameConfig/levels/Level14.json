@@ -405,7 +405,8 @@
               },
               {
                 "type": "setFloor",
-                "floor": 841
+                "floor": 841,
+                "skipMilestones": true
               },
               {
                 "type": "wait",

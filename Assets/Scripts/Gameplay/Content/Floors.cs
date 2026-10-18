@@ -14,7 +14,8 @@ namespace SickOfIt.Gameplay.Content
     public sealed class SetFloorAction : GameAction
     {
         public int floor = 1000;
-        public override void Run(ActionContext context) => context.World.Stage.SetFloor(floor);
+        [Doc("Jump straight there without the milestone lines of the floors in between (a shortcut skips them too).")] public bool skipMilestones;
+        public override void Run(ActionContext context) => context.World.Stage.SetFloor(floor, skipMilestones);
     }
 
     [Serializable, JsonType("climbFloors")]
