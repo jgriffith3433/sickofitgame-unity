@@ -31,13 +31,13 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Hazards the generator can use instead of an enemy push. Each is telegraphed first.")] public List<CircleHazardDef> hazards = new List<CircleHazardDef>();
         [Doc("Generator settings at the circle's first (bottom) floor.")] public DifficultyDef easiest = new DifficultyDef();
         [Doc("Generator settings at its last (top) floor; floors in between are interpolated.")] public DifficultyDef hardest = new DifficultyDef();
-        [Doc("Lines that play when the floor counter reaches a floor in this circle (any stage), e.g. 999: \"Only nine hundred ninety-nine to go.\"")]
-        public List<MilestoneDef> milestones = new List<MilestoneDef>();
         [Doc("The Circle's push music: on floor stages here it takes over from the stage's music while a generated push (enemies or a " +
              "hazard) is on, and the stage's music comes back a moment after it ends. Same tempo as the stages' music, so the beat carries " +
              "over. null = the stage's music plays throughout.")]
         public AudioClip pushMusic;
         [Doc("Volume of pushMusic (0-1, times the player's Music setting).")] public float pushMusicVolume = 1f;
+        [Doc("Lines that play when the floor counter reaches a floor in this circle (any stage), e.g. 999: \"Only nine hundred ninety-nine to go.\"")]
+        public List<MilestoneDef> milestones = new List<MilestoneDef>();
 
         /// <summary>0 at firstFloor, 1 at lastFloor.</summary>
         public float Progress(int floor)

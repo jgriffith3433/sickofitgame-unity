@@ -554,6 +554,11 @@ Every sound lives in `audio.json` as a prompt; the files are generated, never ha
   `portal_swallow`): leave `prompt` empty and set `clip`, so the Sound Generator never remakes it, and keep the
   recipe as a script (`Tools/Audio/portal-mix.sh`, ffmpeg) to re-run when a source clip is remade.
   The portal echo is made from the hero's own "Hello?" (`vo_portal_hello_1`) by `Tools/Audio/portal-mix.sh`.
+- **Music** is a level's `music` (its loop), a script's `playMusic` (a Warden's theme, its enrage: saved for rewind, so a
+  rewind past it brings the old track back) and a Circle's `pushMusic`, which takes over on its floor stages while a generated
+  push is on and cross-fades back after it (`StageMusic`). The Shaft's `plungeMusic`/`climbMusic` are audio.json sounds. Tracks
+  are made with Hawkes Gen's `audio.music` and cut into seamless loops and stings by `Tools/Audio/music-mix.py` from the takes
+  recorded in `Tools/Audio/music.json` (Docs/Story.md, "Music").
 - Players control Volume / Music / Effects / Voices, screen shake and hints in Settings (main menu and pause menu).
 
 ## Game feel

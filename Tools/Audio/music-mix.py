@@ -9,8 +9,9 @@ saved by hawkesgen_job save_to) and how to cut it:
   loop    a seamless loop: the stretch of whole bars between 'minSeconds' and 'maxSeconds' whose end best matches its
           start (onset envelope, then the waveform), the bar after it cross-faded into its first 'crossfade' seconds,
           so the last sample runs straight into the first. Skips 'skipIntro' seconds of the take's intro.
-  riser   a riser into a slam: the take's biggest hit is moved to 'hitAt' seconds (silence before it is padded or the
-          riser cut), 'tail' seconds kept after it, faded out.
+  riser   a riser into a slam: the take's biggest hit (between 'searchFrom' and 'searchTo') is moved to 'hitAt' seconds
+          (silence before it is padded or the riser cut), 'tail' seconds kept after it, faded out. 'stretchFrom' slows
+          the take's riser (from there to the hit) to fill 'hitAt'; 'riserRamp' [from, to] swells its gain into the hit.
   hit     a one-shot: from just before the first strong onset, 'length' seconds, faded out over 'fade'.
   sting   a short sting: leading silence trimmed, 'length' seconds, faded out over 'fade'.
 
@@ -73,6 +74,28 @@ def onset_envelope(mono, hop):
     return energy, flux
 
 
+def band_energies(mono, hop, bands=48):
+    """Log energy in log-spaced bands per hop (60 Hz-8 kHz): what is playing, not just when."""
+    size = 2048
+    frames = (len(mono) - size) // hop
+    window = np.hanning(size).astype(np.float32)
+    idx = np.arange(size)[None, :] + hop * np.arange(frames)[:, None]
+    spec = np.abs(np.fft.rfft(mono[idx] * window, axis=1))
+    freqs = np.fft.rfftfreq(size, 1.0 / RATE)
+    edges = np.geomspace(60, 8000, bands + 1)
+    out = np.zeros((frames, bands), np.float32)
+    for b in range(bands):
+        sel = (freqs >= edges[b]) & (freqs < edges[b + 1])
+        out[:, b] = np.log(spec[:, sel].sum(axis=1) + 1e-3)
+    return out
+
+
+def corr(a, b):
+    a = a - a.mean()
+    b = b - b.mean()
+    return float(np.sum(a * b) / (np.sqrt(np.sum(a * a) * np.sum(b * b)) + 1e-9))
+
+
 def fade(n, out=True):
     t = np.linspace(0.0, 1.0, n, endpoint=False) if n > 0 else np.zeros(0)
     curve = np.cos(t * np.pi / 2) if out else np.sin(t * np.pi / 2)
@@ -85,6 +108,7 @@ def make_loop(audio, spec):
     hop = 441  # 10 ms
     mono = audio.mean(axis=1)
     energy, flux = onset_envelope(mono, hop)
+    bands = band_energies(mono, hop)
     fps = RATE / hop
     total = len(mono) / RATE
     xf = spec.get("crossfade", 0.25)
@@ -108,17 +132,22 @@ def make_loop(audio, spec):
     best = None
     min_bars = int(np.ceil(spec["minSeconds"] / bar))
     max_bars = int(np.floor(spec["maxSeconds"] / bar))
+    phrase = spec.get("phraseBars", 4)  # loops are whole phrases, so the seam falls where the music turns anyway
     for bars in range(max_bars, min_bars - 1, -1):
+        if bars % phrase:
+            continue
         length = bars * bar
         for start in np.arange(skip, total - length - xf - tail_guard, 0.05):
             s, e = int(start * fps), int((start + length) * fps)
-            if e + window >= len(flux):
+            if e + window >= len(bands):
                 break
-            a, b = flux[s:s + window], flux[e:e + window]
             ea, eb = energy[s:s + window], energy[e:e + window]
-            corr = float(np.dot(a - a.mean(), b - b.mean()) / (np.std(a) * np.std(b) * window + 1e-9))
+            rhythm = corr(flux[s:s + window], flux[e:e + window])
+            # Just before the seam too: what plays into the loop's end should sound like what plays into its start.
+            harmony = corr(bands[s:s + window], bands[e:e + window]) * 0.5 + corr(bands[max(0, s - window):s], bands[e - window:e]) * 0.5 \
+                if s >= window else corr(bands[s:s + window], bands[e:e + window])
             balance = float(min(ea.mean(), eb.mean()) / (max(ea.mean(), eb.mean()) + 1e-9))
-            score = corr * balance
+            score = (0.4 * rhythm + 0.6 * harmony) * balance
             if best is None or score > best[0]:
                 best = (score, start, length, bars)
         if best is not None and best[0] > spec.get("goodEnough", 0.8):
@@ -152,7 +181,7 @@ def make_loop(audio, spec):
     return loop, info
 
 
-def biggest_hit(audio, after=0.0):
+def biggest_hit(audio, after=0.0, before=None):
     hop = 441
     mono = audio.mean(axis=1)
     energy, flux = onset_envelope(mono, hop)
@@ -161,7 +190,8 @@ def biggest_hit(audio, after=0.0):
     sustain = np.convolve(energy, np.ones(20) / 20, mode="full")[19:len(energy) + 19]
     score = flux * sustain[:len(flux)]
     first = int(after * fps)
-    i = first + int(np.argmax(score[first:]))
+    last = len(score) if before is None else int(before * fps)
+    i = first + int(np.argmax(score[first:last]))
     return i / fps
 
 
@@ -174,9 +204,38 @@ def first_onset(audio, threshold_db=-30.0):
     return (above[0] if len(above) else 0) * hop / RATE
 
 
+def stretch(audio, factor):
+    """Slower (factor < 1) or faster without changing pitch: ffmpeg's atempo, chained to stay in its 0.5-2 range."""
+    steps = []
+    while factor < 0.5:
+        steps.append(0.5)
+        factor /= 0.5
+    steps.append(factor)
+    chain = ",".join(f"atempo={f:.5f}" for f in steps)
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-f", "f32le", "-ac", "2", "-ar", str(RATE), "-i", "-", "-af", chain,
+                          "-f", "f32le", "-ac", "2", "-ar", str(RATE), "-"],
+                         input=audio.astype(np.float32).tobytes(), check=True, capture_output=True).stdout
+    return np.frombuffer(raw, dtype=np.float32).reshape(-1, 2).copy()
+
+
 def make_riser(audio, spec):
-    hit = biggest_hit(audio, spec.get("searchFrom", 1.0))
+    hit = biggest_hit(audio, spec.get("searchFrom", 1.0), spec.get("searchTo"))
     hit_at, tail = spec["hitAt"], spec["tail"]
+    if "stretchFrom" in spec:
+        # The take's riser (stretchFrom to the hit) slowed down to fill hitAt, so a short build fills a long fall.
+        s, h = int(spec["stretchFrom"] * RATE), int(hit * RATE)
+        riser = stretch(audio[s:h], (h - s) / RATE / hit_at)
+        audio = np.concatenate([riser, audio[h:]])
+        hit = len(riser) / RATE
+        note = f"riser {spec['stretchFrom']:.2f}-{h / RATE:.2f} s stretched to {hit:.2f} s; "
+    else:
+        note = ""
+    if "riserRamp" in spec:
+        # A crescendo into the hit: the gain goes from the first value to the second over the riser.
+        h = int(hit * RATE)
+        lo, hi = spec["riserRamp"]
+        audio = audio.copy()
+        audio[:h] *= np.geomspace(lo, hi, h, dtype=np.float32)[:, None]
     start = hit - hit_at
     if start < 0:
         audio = np.concatenate([np.zeros((int(-start * RATE), 2), np.float32), audio])
@@ -187,7 +246,7 @@ def make_riser(audio, spec):
     out[-k:] *= fade(k)
     k = int(0.05 * RATE)
     out[:k] *= fade(k, out=False)
-    return out, f"hit at {hit:.2f} s in the take, now at {hit_at:.2f} s; {len(out) / RATE:.2f} s"
+    return out, f"{note}hit at {hit:.2f} s, now at {hit_at:.2f} s; {len(out) / RATE:.2f} s"
 
 
 def make_hit(audio, spec):

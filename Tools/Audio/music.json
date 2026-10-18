@@ -1,0 +1,48 @@
+{
+  "about": "Hell's soundtrack (Docs/Story.md, \"Music\"): which Hawkes Gen take each game file is cut from and how. Made by Tools/Audio/music-mix.py from the takes (hawkesgen_job <job> save_to <folder>). Takes made 2026-10-18 with audio.music (ACE-Step 1.5 XL turbo); the loops with the sickofit floor-music preset. Picked from waveforms and spectrograms against the brief.",
+  "lufs": -16,
+  "tracks": [
+    {
+      "id": "wastes_loop", "job": "j_c0b6df4b358f", "asset": "a_5747de5d2b4ed4a5", "take": "audio-music-172877681-song.mp3",
+      "why": "Full groove from the first bar (the other take spends 14 s on an intro), with a breakdown midway that keeps a 90 s loop from droning.",
+      "mode": "loop", "bpm": 128, "minSeconds": 84, "maxSeconds": 98, "skipIntro": 0.5, "tailGuard": 7, "crossfade": 0.25,
+      "out": "Assets/Audio/Music/wastes_loop.ogg"
+    },
+    {
+      "id": "wastes_push", "job": "j_ebbd99827bf7", "asset": "a_8c1a54a99233677b", "take": "audio-music-238873595-song.mp3",
+      "why": "After its intro, 80 s at full tilt with no breakdown: a push is heard in 10-25 s bursts, so it must be intense everywhere.",
+      "mode": "loop", "bpm": 128, "minSeconds": 64, "maxSeconds": 80, "skipIntro": 15, "tailGuard": 7, "crossfade": 0.25,
+      "out": "Assets/Audio/Music/wastes_push.ogg"
+    },
+    {
+      "id": "magma_king_theme", "job": "j_95323ded231e", "asset": "a_b821c782442afe85", "take": "audio-music-731082667-song.mp3",
+      "why": "A steady, swaggering main section with a lead line that develops across it; the other take breaks down halfway.",
+      "mode": "loop", "bpm": 140, "minSeconds": 50, "maxSeconds": 70, "skipIntro": 13, "tailGuard": 9, "crossfade": 0.25,
+      "out": "Assets/Audio/Music/magma_king_theme.ogg"
+    },
+    {
+      "id": "magma_king_enrage", "job": "j_3ce6c72de9c1", "asset": "a_da95e76af1243343", "take": "audio-music-955107955-song.mp3",
+      "why": "Busy, fast lead runs over the whole take (the solo); the other is a flat wall of sound.",
+      "mode": "loop", "bpm": 160, "minSeconds": 54, "maxSeconds": 74, "skipIntro": 0.5, "tailGuard": 11, "crossfade": 0.2,
+      "out": "Assets/Audio/Music/magma_king_enrage.ogg"
+    },
+    {
+      "id": "magma_king_intro", "job": "j_619b74632737", "asset": "a_4b7eac0a2c034686", "take": "audio-music-1468683922-song.mp3",
+      "why": "The only take that swells into one big accent (at ~6.4 s) and then just rings out; cut to a short swell, the hit and the ring.",
+      "mode": "riser", "searchFrom": 6.0, "searchTo": 7.0, "hitAt": 0.4, "tail": 3.6, "fade": 2.0,
+      "out": "Assets/Audio/Music/magma_king_intro.ogg"
+    },
+    {
+      "id": "shaft_plunge", "job": "j_6664cf26e988", "asset": "a_eb26f3f0319006ec", "take": "audio-music-666227768-song.mp3",
+      "why": "The only take with a rising sweep into a slam (at ~1.8 s); the sweep is slowed to fill the 3.4 s fall so the slam lands on FLOOR 1,000.",
+      "mode": "riser", "searchFrom": 1.0, "searchTo": 2.5, "stretchFrom": 0.0, "riserRamp": [0.5, 2.0], "hitAt": 3.4, "tail": 3.2, "fade": 1.6,
+      "out": "Assets/Audio/Music/shaft_plunge.ogg"
+    },
+    {
+      "id": "shaft_climb", "job": "j_f501e582d9aa", "asset": "a_ca15c481a1f9d5df", "take": "audio-music-1730539897-song.mp3",
+      "why": "Its notes climb into a held high chord; cut so the chord lands about as the marker arrives (a 9-10 floor climb).",
+      "mode": "riser", "searchFrom": 4.1, "searchTo": 4.6, "hitAt": 1.5, "tail": 2.0, "fade": 1.2,
+      "out": "Assets/Audio/Music/shaft_climb.ogg"
+    }
+  ]
+}

@@ -3100,10 +3100,10 @@ namespace SickOfIt.Playtest
                 if (Run.Done)
                     return;
                 Run.Event("shaft", $"{kind}: {detail}");
-                if (shaftWatch == null)
-                    return;
                 if (kind == "music")
                     shaftMusic.Add(detail);
+                if (shaftWatch == null)
+                    return;
                 if (kind == "voice")
                     shaftWatch.Voices.Add(detail);
                 else if (kind == "skip")
