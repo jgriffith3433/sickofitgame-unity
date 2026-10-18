@@ -204,7 +204,7 @@ build toward; the first two Circles reuse current art.
 | Finale | Floor 1 | The Overlord at his gate. Phase 1: he doesn't take the hero seriously. Phase 2: he rewinds too (the loop was his first). Phase 3: the gate cracks open on the meadow behind him. | new |
 | Ending | The Meadow | The hero shoves the Overlord back down and the gate shuts on him. Home, the meadow regrowing, Yooba spitting the diamonds back out. The hero sits down for the first time in 1,000 floors. Something knocks from under the ground. (Post-credit: "Floor 1,001".) | new |
 
-### Circle X stage outline: the Ember Wastes (Levels 2-11, today's build)
+### Circle X stage outline: the Ember Wastes (the old 10-floor stages; Floors 1000-991 are now one level per floor, LevelDesign.md)
 
 **Being replaced.** Circle X's design is now one level per floor: the played route (Floors 1000-991, the Sack Lift,
 Floors 960-951, the King's Chimney, Floors 910-901), every floor's page and the floor bosses (the Imp Foreman at 991,
@@ -374,7 +374,7 @@ floors for a cost or a risk. It is the rogue choice that keeps 1,000 floors reac
 |---|---|---|---|---|
 | **The Sack Lift** (`sackLift`, designed) | Floor 991's landing, after the Imp Foreman: the imps' sack lift; the Shaft's crack at 975 | diamonds (the imps' fare, paid in the village's own diamonds) | Floors 990-961: out at **Floor 960** | Taking it: *"Paying them with our own diamonds. Lovely."* Announcer: *"HE'S RIDING THE SACK LIFT! THE CROWD IS DISGUSTED!"* (all lines: LevelDesign.md) |
 | **The King's Chimney** (`kingsChimney`, designed) | Floor 951's landing, after the Pile Keeper: the Magma King's heat vent; the Shaft's crack at 940 | a harder floor after it (the King heard him come up: Floor 910's lava rises faster) | Floors 950-911: out at **Floor 910** | Taking it: *"Hold your breath. Forever."* Announcer: *"UP THE CHIMNEY?! HE SKIPPED HALFWAY!"* |
-| **The Collapsed Stairwell** (`oldStair`) | Floor 871, the top of the Old Stair (Level 14), behind *STAIRS (CLOSED)*; the Shaft's crack at 870 | a Grudge | Floors 870-841 (Levels 15-17): out at **Floor 841**, Level 18 next | Hero, at the top: *"Stairs. Fallen in. Still going up, though."* Taking it: *"Fine. One less thing to hate."* Announcer, as he climbs in: *"WHAT'S THIS? A SHORTCUT?! THE CROWD HATES IT!"*, then, as the counter lands: *"FLOOR EIGHT FORTY-ONE! NOBODY TAKES THE STAIRS!"* Hero, coming out: *"That went further than stairs should."* Keeping on: *"Nah. Hell would love that."* |
+| **The Collapsed Stairwell** (`oldStair`) | Floor 871, the top of the Old Stair (`levels/Level14.json`, level 18), behind *STAIRS (CLOSED)*; the Shaft's crack at 870 | a Grudge | Floors 870-841 (levels 19-21): out at **Floor 841**, level 22 next | Hero, at the top: *"Stairs. Fallen in. Still going up, though."* Taking it: *"Fine. One less thing to hate."* Announcer, as he climbs in: *"WHAT'S THIS? A SHORTCUT?! THE CROWD HATES IT!"*, then, as the counter lands: *"FLOOR EIGHT FORTY-ONE! NOBODY TAKES THE STAIRS!"* Hero, coming out: *"That went further than stairs should."* Keeping on: *"Nah. Hell would love that."* |
 
 ## Waystones and runs
 
