@@ -13,6 +13,7 @@
   "timeline": {
     "duration": 60.0,
     "events": [],
+    "overlays": [],
     "tracks": []
   }
 }

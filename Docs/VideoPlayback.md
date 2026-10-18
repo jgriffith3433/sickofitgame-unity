@@ -125,11 +125,19 @@ URL to force one.
 
 | Caller | What it does |
 |---|---|
-| `VideoRuntime` | Story video. Game clock plus a `RewindableAudioSource` for the soundtrack. `PlaybackStartGate.Hold` keeps the clock at 0 until frames and audio are loaded, then starts them together. |
+| `VideoRuntime` | Story video. Game clock plus a `RewindableAudioSource` for the soundtrack; hold R or the ◄◄ button rewinds, Escape skips. `PlaybackStartGate.Hold` keeps the clock at 0 until frames and audio are loaded, then starts them together. |
 | `DeathRuntime` | Same, for death scenes. |
 | `LevelRuntime` | Background layers. A plain animated layer loops on the game clock. **Sequenced layers** (`sequenceStart` / `sequenceDuration` / `sequenceLoop`) play back to back as one timeline: each segment is preloaded with `PrepareForSequence` while the previous one is on screen, posed on the frame the cut lands on, and only shown once it has drawn (`HasDrawnFrame`). Rewinding across a cut works the same way in reverse. |
 | `PlacedSpriteBuilder` / `MainMenuManager` | Main-menu loops and the explosion, on their own clock. |
 | `BundleDownloadManager` | Doesn't play anything. It prefetches a level's chunks into the browser cache from the main menu, so the first play doesn't stall. |
+
+## Overlays on top
+
+A video's (or death's, or level's) `timeline.overlays` draws keyframed pictures over the clip: a sprite or a sheet's
+frames, a sort layer, and keyframes `{ time, position, rotation, scale, alpha, ease }`. `ExperienceRunner` adds a
+`TimelineOverlayPlayer`, which samples every overlay from `GameClock.Time` each frame, exactly like the clip itself,
+so rewind, seeking and skipping need nothing extra. Recipe: GameplayCookbook, "Something moving over a video".
+`timeline.tracks` are legacy and never play; `events` fire once when the clock crosses them.
 
 ## Recipes
 

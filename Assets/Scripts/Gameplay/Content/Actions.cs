@@ -468,6 +468,209 @@ namespace SickOfIt.Gameplay.Content
         public override void Run(ActionContext context) => context.World.SetInputLocked(0f);
     }
 
+    // =====================================================================
+    // SCENES: directing the hero (input and rewind usually locked)
+    // =====================================================================
+
+    /// <summary>Where an instance id ("id" given by spawn) is now, if that entity is alive.</summary>
+    static class SceneTargets
+    {
+        public static bool TryFind(ActionContext context, string id, out Entity entity)
+        {
+            entity = null;
+            if (string.IsNullOrEmpty(id))
+                return false;
+            if (id == "player")
+            {
+                entity = context.World.Player;
+                return entity != null;
+            }
+            foreach (var e in context.World.Live)
+            {
+                if (e.IsAlive && e.InstanceId == id)
+                {
+                    entity = e;
+                    return true;
+                }
+            }
+            if (context.World.Telemetry != null)
+                context.World.Telemetry.Record("error", "scene target", 0, $"no live entity with id \"{id}\"");
+            return false;
+        }
+    }
+
+    [Serializable, JsonType("walkPlayerTo")]
+    [Doc("Walks the player to a point by himself, with his own Walk clip and turning, even while input is locked (lockInput). " +
+         "He stops there (or after 1.5 s without getting closer, e.g. against a wall) and 'emit' fires.")]
+    public sealed class WalkPlayerToAction : GameAction
+    {
+        [Doc("Where to stop (world x), measured from 'anchor'; with 'target', an offset from that entity.")] public float x;
+        public Anchor anchor = Anchor.World;
+        [Doc("Instance id (spawn 'id') of an entity to walk up to, instead of a fixed x.")] public string target = "";
+        [Doc("Fraction of his normal running speed (1 = full speed, 0.5 = a stroll).")] public float speed = 0.6f;
+        [Doc("Signal emitted when he arrives.")] public string emit = "";
+
+        public override void Run(ActionContext context)
+        {
+            float to;
+            if (!string.IsNullOrEmpty(target))
+            {
+                if (!SceneTargets.TryFind(context, target, out var entity))
+                    return;
+                to = entity.Position.x + x;
+            }
+            else
+            {
+                to = context.Resolve(new Vector2(x, 0f), anchor).x;
+            }
+            context.World.Scripted.WalkTo(to, speed, emit, context.Now);
+        }
+    }
+
+    [Serializable, JsonType("facePlayer")]
+    [Doc("Turns the player left or right, or toward an entity. Moving or firing turns him again.")]
+    public sealed class FacePlayerAction : GameAction
+    {
+        public FaceDirection direction = FaceDirection.Right;
+        [Doc("Instance id of an entity to face instead of 'direction'.")] public string target = "";
+
+        public override void Run(ActionContext context)
+        {
+            var controller = context.World.PlayerController;
+            if (controller == null || context.World.Player == null)
+                return;
+            float dir = direction == FaceDirection.Right ? 1f : -1f;
+            if (!string.IsNullOrEmpty(target))
+            {
+                if (!SceneTargets.TryFind(context, target, out var entity))
+                    return;
+                dir = entity.Position.x >= context.World.Player.Position.x ? 1f : -1f;
+            }
+            controller.Face(dir);
+            context.World.Telemetry.Record("cutscene", "facePlayer", (int)dir, dir > 0f ? "right" : "left");
+        }
+    }
+
+    [Serializable, JsonType("pullPlayerInto")]
+    [Doc("Pulls the player into a point (a portal): gravity and collisions off, he slides into it spinning and shrinking, then " +
+         "is gone (hidden, nothing can hit him) for the rest of the level. 'emit' fires when he disappears.")]
+    public sealed class PullPlayerIntoAction : GameAction
+    {
+        [Doc("The point, measured from 'anchor' (used when 'target' is empty).")] public Vector2 at;
+        public Anchor anchor = Anchor.World;
+        [Doc("Instance id of an entity to be pulled into (followed if it moves).")] public string target = "";
+        [Doc("Seconds from the first tug to gone.")] public float duration = 1.5f;
+        [Doc("Degrees he turns on the way in (positive = clockwise; 720 = two turns).")] public float spin = 720f;
+        [Doc("His size at the end, as a fraction of normal (0 = shrinks to nothing).")] public float endScale;
+        [Doc("In = slow first tug, fast swallow.")] public Ease ease = Ease.In;
+        [Doc("Signal emitted when he is gone.")] public string emit = "";
+
+        public override void Run(ActionContext context)
+        {
+            Vector2 point;
+            if (!string.IsNullOrEmpty(target))
+            {
+                if (!SceneTargets.TryFind(context, target, out var entity))
+                    return;
+                point = entity.Position;
+            }
+            else
+            {
+                point = context.Resolve(at, anchor);
+            }
+            context.World.Scripted.PullInto(target, point, duration, spin, endScale, ease, emit, context.Now);
+        }
+    }
+
+    [Serializable, JsonType("playPlayerAnimation")]
+    [Doc("Plays a state of the player's Animator by name (player.json animationConfig: Idle, Walk, Jump, Fall, Fire, and scene clips added there). " +
+         "His own movement takes over again through the Animator's transitions.")]
+    public sealed class PlayPlayerAnimationAction : GameAction
+    {
+        [Required] public string state = "";
+        [Doc("Seconds to blend into it (0 = cut).")] public float crossFade;
+        public override void Run(ActionContext context) => context.World.PlayPlayerAnimation(state, crossFade);
+    }
+
+    [Serializable, JsonType("lockRewind")]
+    [Doc("No rewind until unlockRewind (a scene the hero can't undo): R and the HUD button do nothing, and the button says so.")]
+    public sealed class LockRewindAction : GameAction
+    {
+        public override void Run(ActionContext context) => context.World.SetRewindLocked(true);
+    }
+
+    [Serializable, JsonType("unlockRewind")]
+    [Doc("Allows rewinding again after lockRewind.")]
+    public sealed class UnlockRewindAction : GameAction
+    {
+        public override void Run(ActionContext context) => context.World.SetRewindLocked(false);
+    }
+
+    [Serializable, JsonType("cameraTo")]
+    [Doc("Moves the camera to a point (and zooms, with 'size') over 'duration' seconds. Static camera only (world.camera); cameraReset goes back.")]
+    public sealed class CameraToAction : GameAction
+    {
+        [Doc("The new center, measured from 'anchor'.")] public Vector2 at;
+        public Anchor anchor = Anchor.World;
+        [Doc("Half the visible height in world units (the level's is 2.8; smaller = closer). 0 = keep the current zoom.")] public float size;
+        public float duration = 1f;
+        public Ease ease = Ease.InOut;
+        public override void Run(ActionContext context) => SceneCamera.Move(context, context.Resolve(at, anchor), size, duration, ease);
+    }
+
+    [Serializable, JsonType("cameraZoom")]
+    [Doc("Zooms the camera where it is to 'size' over 'duration' seconds. Static camera only; cameraReset goes back.")]
+    public sealed class CameraZoomAction : GameAction
+    {
+        [Doc("Half the visible height in world units (the level's is 2.8; smaller = closer).")] public float size = 2f;
+        public float duration = 1f;
+        public Ease ease = Ease.InOut;
+        public override void Run(ActionContext context) => SceneCamera.Move(context, context.World.Effects.CameraBase, size, duration, ease);
+    }
+
+    [Serializable, JsonType("cameraReset")]
+    [Doc("Moves and zooms the camera back to the level's own view after cameraTo / cameraZoom.")]
+    public sealed class CameraResetAction : GameAction
+    {
+        public float duration = 1f;
+        public Ease ease = Ease.InOut;
+
+        public override void Run(ActionContext context)
+        {
+            if (!context.World.Effects.ResetCamera(duration, ease, context.Now))
+                SceneCamera.WarnNotStatic(context);
+        }
+    }
+
+    static class SceneCamera
+    {
+        public static void Move(ActionContext context, Vector2 center, float size, float duration, Ease ease)
+        {
+            if (!context.World.Effects.MoveCamera(center, size, duration, ease, context.Now))
+                WarnNotStatic(context);
+        }
+
+        public static void WarnNotStatic(ActionContext context)
+        {
+            context.World.Telemetry.Record("error", "camera", 0, $"camera actions need world.camera \"Static\" (this level is {context.World.Effects.Mode})");
+        }
+    }
+
+    [Serializable, JsonType("fade")]
+    [Doc("Fades the screen to black and holds it, or back to clear (to: Clear). Lines (showText) and the pause menu still show over it.")]
+    public sealed class FadeAction : GameAction
+    {
+        public FadeTo to = FadeTo.Black;
+        public float duration = 1f;
+        [Doc("The color it fades to.")] public Color color = Color.black;
+
+        public override void Run(ActionContext context)
+        {
+            context.World.Hud.Fade(to == FadeTo.Black, color, duration, context.Now);
+            context.World.Telemetry.Record("cutscene", "fade", to == FadeTo.Black ? 1 : 0, to.ToString());
+        }
+    }
+
     [Serializable, JsonType("completeLevel")]
     [Doc("Completes the level now (the level's completionDelay and next video still apply).")]
     public sealed class CompleteLevelAction : GameAction
@@ -523,7 +726,13 @@ namespace SickOfIt.Gameplay.Content
     {
         public TargetSelector target = TargetSelector.Self();
         [Required] public string state = "";
-        public override void Run(ActionContext context) => context.World.ForEachTarget(target, context.Self, e => e.Animation.Play(state));
+        public override void Run(ActionContext context) => context.World.ForEachTarget(target, context.Self, e =>
+        {
+            if (e.IsPlayer)
+                context.World.PlayPlayerAnimation(state);
+            else
+                e.Animation.Play(state);
+        });
     }
 
     [Serializable, JsonType("setAnimParam")]
@@ -533,6 +742,6 @@ namespace SickOfIt.Gameplay.Content
         public TargetSelector target = TargetSelector.Self();
         [Required] public string param = "";
         public float value = 1f;
-        public override void Run(ActionContext context) => context.World.ForEachTarget(target, context.Self, e => e.Animation.SetValue(param, value));
+        public override void Run(ActionContext context) => context.World.ForEachTarget(target, context.Self, e => e.Animation?.SetValue(param, value));
     }
 }

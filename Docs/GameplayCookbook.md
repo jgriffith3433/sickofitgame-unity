@@ -135,6 +135,82 @@ Put steps in a sequence (inline `steps` or a file in `content/sequences/`); `wai
   { "type": "playMusic", "clip": "Videos/Level3_Background1_Audio.mp3" } ] }
 ```
 
+## A scene with the hero ("walk him to the portal, he gets sucked in")
+
+A scene directs the hero himself. Lock input and rewind first (the hero can't undo a scene), then chain the beats
+with signals: each move `emit`s when it is done, and a `signal` rule (or `goToPhase`) starts the next.
+
+```json
+{ "type": "lockInput" },
+{ "type": "lockRewind" },
+{ "type": "walkPlayerTo", "x": 2.5, "speed": 0.6, "emit": "atPortal" }
+```
+
+Then, on `atPortal`:
+
+```json
+{ "type": "runSequence", "steps": [
+  { "type": "facePlayer", "direction": "Right" },
+  { "type": "playPlayerAnimation", "state": "Idle" },
+  { "type": "cameraTo", "at": [0, 0.9], "anchor": "Player", "size": 1.4, "duration": 1.5 },
+  { "type": "wait", "seconds": 2 },
+  { "type": "pullPlayerInto", "target": "portal", "duration": 1.8, "spin": 720, "endScale": 0, "emit": "gone" },
+  { "type": "wait", "seconds": 2 },
+  { "type": "fade", "to": "Black", "duration": 1 },
+  { "type": "wait", "seconds": 1.2 },
+  { "type": "playVideo", "video": 2 } ] }
+```
+
+- `walkPlayerTo` drives his own movement (Walk clip, turning), even with input locked; `x` is measured from `anchor`,
+  or use `target` (a spawn `id`) to walk up to an entity. He stops on the point, or after 1.5 s stuck against a wall.
+- `facePlayer`: `"direction": "Left"`/`"Right"`, or `"target"` to face an entity.
+- `pullPlayerInto`: a `target` id (followed if it moves) or an `at` point. Gravity and collisions go off, he slides in
+  spinning (`spin` degrees, clockwise) and shrinking (`endScale`), then he is hidden for the rest of the level.
+- `playPlayerAnimation` plays a state of the player's Animator by name (`player.json` `animationConfig`). New scene
+  clips (Curious, Grabbed) go there first.
+- `cameraTo` / `cameraZoom` / `cameraReset` move and zoom the **Static** camera (`size` is the orthographic half-height;
+  the levels use 2.8, smaller is closer); `cameraReset` goes back to the level's view. Other camera modes ignore them
+  (the validator warns).
+- `fade` `"Black"` holds the screen black (texts and the pause menu still show on top); `"Clear"` brings the game back.
+- `unlockInput` / `unlockRewind` hand control back if the level goes on.
+- All of it is saved for rewind, so rewinding through a scene (after `unlockRewind`) replays it.
+
+**Trying a scene without its level:** put a level script in `content/scenes/<id>.json` (same fields as a level's
+`script`, no `objective` needed). The playtest's `cutscene` scenario plays `content/scenes/cutsceneTest.json` on
+Level 1's stage (`LevelRuntime.PendingScene`, a setup shortcut) and checks every action above.
+
+## Something moving over a video ("the hero tumbles down the fire tunnel")
+
+Videos, deaths and levels have a `timeline.overlays` list: pictures drawn over the scene and moved by keyframes.
+Each frame the pose is **sampled from the clock time**, never tweened, so holding rewind plays it backward, a seek
+lands on the right pose, and nothing needs saving. It is hidden before its first keyframe and after its last.
+
+```json
+"timeline": {
+  "overlays": [
+    {
+      "name": "heroFall",
+      "spriteSheet": "Art/Sprites/Player/Fall.png",  // or "sprite": "Images/X.png#X_0" for a still
+      "fps": 12.0, "loop": true,                      // sheet frames play from the first keyframe
+      "sortLayer": "Player", "sortOrder": 0,          // the video itself is Background1
+      "tint": "#FFE6CC",
+      "keyframes": [
+        { "time": 10.45, "position": [0.9, 0.9], "rotation": 20.0, "scale": 1.25, "alpha": 0.0, "ease": "Out" },
+        { "time": 14.4,  "position": [0.0, -0.18], "rotation": -1390.0, "scale": 0.03, "alpha": 0.0, "ease": "Linear" }
+      ]
+    }
+  ]
+}
+```
+
+- `position` is in world units: the camera looks at (0, 0) and a video frame is 10.24 wide and 5.76 high.
+- `rotation` is degrees and is not wrapped: 1080 from 0 is three turns; negative turns clockwise.
+- `ease` (`Linear`, `In`, `Out`, `InOut`, `Hold`) shapes the move from that keyframe to the next.
+- The sheet must be one some config already uses (the asset registry holds its sprites); the player's sheets are.
+- Keyframes must be in time order; the import report flags it, and a missing sprite or keyframe.
+- Video2 uses it for the hero's fall (10.45-14.4 s). In a video, hold R or the ◄◄ button to rewind; Escape skips.
+  The playtest's `video-2` scenario watches it and checks each beat.
+
 ## Branching: secret exits, alternate paths
 
 ```json

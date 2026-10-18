@@ -273,6 +273,14 @@ namespace SickOfIt.Data
                     issues.Add($"Enemy type '{enemyTypes[i].displayName}': No prefab assigned");
             }
 
+            // Timeline overlays (keyframed pictures over a video, death or level)
+            for (int i = 0; i < levels.Count; i++)
+                AddOverlayIssues(issues, $"Level {i + 1} ({levels[i].levelName})", levels[i].timeline);
+            for (int i = 0; i < videos.Count; i++)
+                AddOverlayIssues(issues, $"Video {i + 1} ({videos[i].videoName})", videos[i].timeline);
+            for (int i = 0; i < deaths.Count; i++)
+                AddOverlayIssues(issues, $"Death #{i + 1} ({deaths[i].deathName})", deaths[i].timeline);
+
             // Player validation
             if (player.baseMaxHealth <= 0)
                 issues.Add("Player: Base max health is 0 or negative");
@@ -280,9 +288,43 @@ namespace SickOfIt.Data
             return issues;
         }
 
+        static void AddOverlayIssues(List<string> issues, string prefix, TimelineConfig timeline)
+        {
+            if (timeline == null || timeline.overlays == null)
+                return;
+            foreach (var overlay in timeline.overlays)
+            {
+                if (overlay == null)
+                {
+                    issues.Add($"{prefix}: timeline.overlays has an empty entry");
+                    continue;
+                }
+                foreach (string problem in overlay.Problems())
+                    issues.Add($"{prefix}: timeline {problem}");
+            }
+        }
+
         // =========================================================================
         // ACCESSORS
         // =========================================================================
+
+        /// <summary>
+        /// The sprites cut from a sheet, in name order, from the asset registry (a texture's sprites can't be
+        /// listed at runtime otherwise). Empty if no config uses the sheet.
+        /// </summary>
+        public Sprite[] SpritesOf(Texture2D sheet)
+        {
+            if (sheet != null && assetRegistry != null)
+            {
+                for (int i = 0; i < assetRegistry.Count; i++)
+                {
+                    var entry = assetRegistry[i];
+                    if (entry != null && entry.asset == sheet && entry.sprites != null)
+                        return entry.sprites;
+                }
+            }
+            return System.Array.Empty<Sprite>();
+        }
 
         /// <summary>
         /// Find a projectile config by its ID string (e.g. "Player", "Enemy", "Laser").

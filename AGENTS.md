@@ -36,6 +36,8 @@ Assets/GameConfig/
   content/upgrades/         player upgrades offered between levels (saved; reset on New Game)
   content/circles/          Circles of Hell: backdrop, track, props, enemy table, hazards, difficulty, milestones
                             (travel stages and the floor generator use them; see the cookbook)
+  content/scenes/           scenes: a level script played on a level's stage instead of its own (the playtest's
+                            cutscene scenario plays cutsceneTest on Level 1's; cookbook "A scene with the hero")
 ```
 
 - **Order matters.** `GetLevel(n)` and `GetVideo(n)` use the position in game.json's list, not `levelNumber`.
@@ -97,13 +99,16 @@ Assets/GameConfig/
   pause (Esc/P/Start), settings (Sound on/off, volumes, shake, hints in `GameSettings`; Sound/Music/Effects are the
   Hawkes standard `hawkes.sound` JSON `{ on, music, sfx }` in PlayerPrefs), "undo your death" countdown
   (`player.deathRewindWindow`), Rage Quit on the death scene. All presentation; none of it touches the simulation.
-  Rewind is **hold R** (`RewindController`) or the HUD's ◄◄ button (`RewindInput`). The input asset also binds R to an
+  Rewind is **hold R** (`RewindController`) or the HUD's ◄◄ button (`RewindInput`); a script's `lockRewind` sets
+  `RewindInput.Locked` (both refuse, the button says so, the bot doesn't try). The input asset also binds R to an
   unused "DashRight" action; don't give R another job.
 - **Enemy art** comes from the art pipeline: a spec in `Assets/GameConfig/art/<id>.json` (description, poses, clips)
   and `node Tools/Art/art.mjs <id> --start`, which generates poses and clips on the ComfyUI GPU server, packs sheets
   into `Assets/Art/Enemies/` and writes the entity's `visual.animator`. Read [Docs/ArtPipeline.md](Docs/ArtPipeline.md).
 - **Videos, deaths and level/menu backgrounds** are baked sprite-sheet sequences played by `SpriteFramePlayer`, not
-  Unity video. `playbackFPS` is both bake and playback rate (change it, then re-bake); sizes are fixed per frame,
+  Unity video. Anything that moves over them (the hero falling down Video2's tunnel) is a keyframed
+  `timeline.overlays` entry, sampled from the clock so rewind plays it backward (cookbook: "Something moving over a video").
+  `playbackFPS` is both bake and playback rate (change it, then re-bake); sizes are fixed per frame,
   so never fix a video's size with the camera. Read [Docs/VideoPlayback.md](Docs/VideoPlayback.md) before touching them.
 - **Presentation code must stay out of the simulation**: sounds, effects and UI may read sim state but never change it,
   and use `UnityEngine.Random`/unscaled time only for cosmetics.
@@ -165,7 +170,12 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or
   is under the touch size; meant for device "phone", 390x844), `imp-death` (level 1 until the bot has killed three
 imps: each imp's Die clip must be playing where it died, and those three play at 0.3x so a recording shows the frames;
-every other scenario checks imp kills the same way, without the slow motion), `portal-audio` (on the main menu, plays
+every other scenario checks imp kills the same way, without the slow motion), `cutscene` (the scene
+  `content/scenes/cutsceneTest.json` on Level 1's stage: with input and rewind locked the hero walks to a point by
+  himself and stops, turns, R does nothing, the camera zooms in and back, the screen fades to black and back, and he is
+  pulled into a point spinning and shrinking until he is gone; each beat is a `check` event), `video-2` (Video2 loaded
+  directly and watched, not skipped: the hero's `heroFall` overlay appears at the burning door, spins 3+ turns and shrinks
+  into the tunnel and is gone by ~14.5 s; R held mid-spin turns it back; Escape skips; `overlay` and `check` events), `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
   page has neither; `Plugins/WebGL/HawkesSite.jslib`).

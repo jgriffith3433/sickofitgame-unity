@@ -21,9 +21,19 @@ namespace SickOfIt.Gameplay
         Vector2 travelOrigin;
         StageTrack track;
 
+        // The Static camera's starting view, where cameraReset goes back to.
+        Vector2 homeBase;
+        float homeSize;
+
         // ─── Saved state ──────────────────────────────────────────────
         Vector2 cameraBase;
         bool travelLocked;
+        float cameraSize;
+        bool cameraMoving;
+        Vector2 moveFrom, moveTo;
+        float sizeFrom, sizeTo;
+        float moveStart, moveDuration;
+        int moveEase;
 
         float shakeIntensity;
         float shakeEndsAt;
@@ -58,6 +68,8 @@ namespace SickOfIt.Gameplay
                 cameraZ = cameraTransform.position.z;
             }
             travelOrigin = cameraBase;
+            homeBase = cameraBase;
+            homeSize = cameraSize = world.Camera != null && world.Camera.orthographic ? world.Camera.orthographicSize : 0f;
 
             if (Mode != CameraMode.Static && cameraTransform != null)
             {
@@ -126,6 +138,8 @@ namespace SickOfIt.Gameplay
 
         public void Tick(float now, float dt)
         {
+            if (cameraTransform != null && cameraMoving)
+                TickCameraMove(now);
             if (cameraTransform == null || Mode == CameraMode.Static)
                 return;
 
@@ -169,6 +183,54 @@ namespace SickOfIt.Gameplay
             if (worldDef.travelLength > 0f)
                 target = Mathf.Min(target, Mathf.Max(current, worldDef.travelLength));
             return travelOrigin + axis * target;
+        }
+
+        // ─── Scripted camera (Static camera only): cameraTo, cameraZoom, cameraReset ───
+
+        public float CameraSize => cameraSize;
+        public float HomeSize => homeSize;
+        public bool CameraMoving => cameraMoving;
+
+        /// <summary>
+        /// Moves the Static camera to 'center' and zooms it to 'size' (orthographic half-height; 0 keeps the current
+        /// one) over 'duration' seconds. Returns false (and does nothing) for the other camera modes.
+        /// </summary>
+        public bool MoveCamera(Vector2 center, float size, float duration, Ease ease, float now)
+        {
+            if (cameraTransform == null || Mode != CameraMode.Static)
+                return false;
+            moveFrom = cameraBase;
+            moveTo = center;
+            sizeFrom = cameraSize;
+            sizeTo = size > 0f ? size : cameraSize;
+            moveStart = now;
+            moveDuration = Mathf.Max(0f, duration);
+            moveEase = (int)ease;
+            cameraMoving = true;
+            world.Telemetry.Record("cutscene", "camera", Mathf.RoundToInt(sizeTo * 100f), $"{center.x:0.##},{center.y:0.##}");
+            TickCameraMove(now);
+            return true;
+        }
+
+        /// <summary>Back to the level's starting view.</summary>
+        public bool ResetCamera(float duration, Ease ease, float now) => MoveCamera(homeBase, homeSize, duration, ease, now);
+
+        void TickCameraMove(float now)
+        {
+            float t = moveDuration > 0f ? Mathf.Clamp01((now - moveStart) / moveDuration) : 1f;
+            float k = Easing.Apply((Ease)moveEase, t);
+            cameraBase = Vector2.Lerp(moveFrom, moveTo, k);
+            cameraSize = Mathf.Lerp(sizeFrom, sizeTo, k);
+            ApplyCameraSize();
+            movesCamera = true;
+            if (t >= 1f)
+                cameraMoving = false;
+        }
+
+        void ApplyCameraSize()
+        {
+            if (world.Camera != null && world.Camera.orthographic && cameraSize > 0f)
+                world.Camera.orthographicSize = cameraSize;
         }
 
         Vector2 ClampToBounds(Vector2 center)
@@ -316,13 +378,29 @@ namespace SickOfIt.Gameplay
             w.Float(cameraBase.x);
             w.Float(cameraBase.y);
             w.Bool(travelLocked);
+            w.Float(cameraSize);
+            w.Bool(cameraMoving);
+            w.Float(moveFrom.x); w.Float(moveFrom.y);
+            w.Float(moveTo.x); w.Float(moveTo.y);
+            w.Float(sizeFrom); w.Float(sizeTo);
+            w.Float(moveStart); w.Float(moveDuration);
+            w.Int(moveEase);
         }
 
         public void LoadState(StateReader r)
         {
             cameraBase = new Vector2(r.Float(), r.Float());
             travelLocked = r.Bool();
-            if (Mode != CameraMode.Static && cameraTransform != null)
+            cameraSize = r.Float();
+            cameraMoving = r.Bool();
+            moveFrom = new Vector2(r.Float(), r.Float());
+            moveTo = new Vector2(r.Float(), r.Float());
+            sizeFrom = r.Float(); sizeTo = r.Float();
+            moveStart = r.Float(); moveDuration = r.Float();
+            moveEase = r.Int();
+            ApplyCameraSize();
+            // The Static camera only moves for a script (cameraTo); put it back wherever that left it.
+            if (cameraTransform != null)
                 cameraTransform.position = new Vector3(cameraBase.x, cameraBase.y, cameraZ);
             track?.Refresh(cameraBase);
         }
