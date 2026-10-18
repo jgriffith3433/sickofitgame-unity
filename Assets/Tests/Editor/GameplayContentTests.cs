@@ -150,6 +150,22 @@ namespace SickOfIt.Tests.Editor
         }
 
         [Test]
+        public void ScenesLoadAndAreValidatedLikeLevelScripts()
+        {
+            var c = Build(new Dictionary<string, string>
+            {
+                ["scenes/intro.json"] = "{ 'schemaVersion': 1, 'world': { 'camera': 'Travel' }, 'phases': [ { 'name': 'a', 'onEnter': [ " +
+                                        "{ 'type': 'walkPlayerTo', 'x': 2, 'emit': 'there' }, { 'type': 'cameraZoom', 'size': 1.5 }, " +
+                                        "{ 'type': 'goToPhase', 'phase': 'nope' } ] } ] }",
+            });
+            Assert.That(c.Scenes.ContainsKey("intro"), Is.True);
+            string all = Errors(c);
+            Assert.That(all, Does.Contain("No phase \"nope\""));
+            Assert.That(all, Does.Contain("only move the Static camera"));
+            Assert.That(all, Does.Not.Contain("No win condition"), "a scene ends through its own actions");
+        }
+
+        [Test]
         public void ValidatorCatchesBrokenReferences()
         {
             const string script = @"{

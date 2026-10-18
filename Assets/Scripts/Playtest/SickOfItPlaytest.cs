@@ -31,6 +31,9 @@ namespace SickOfIt.Playtest
     /// website pages around the game show "Powered by HAWKES GEN", the landing page links Hawkes Biomedical, and the
     /// game page itself has neither), layout (every screen's buttons on screen, apart and thumb-sized: main menu,
     /// level select, settings, the level HUD, pause and its settings, the death scene; meant for device "phone").
+    /// cutscene (the scene content/scenes/cutsceneTest.json on level 1's stage, a setup shortcut: the hero walks there
+    /// by himself and stops, turns, can't rewind, the camera zooms in and back, the screen fades to black and back, and
+    /// he is pulled into a point, spinning and shrinking until he is gone; each beat is checked).
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
     /// </summary>
     public static class SickOfItPlaytest
@@ -60,6 +63,10 @@ namespace SickOfIt.Playtest
         /// <summary>The level the imp-death scenario plays: Level 1's "imps" phase brings four, one at a time first.</summary>
         public const int ImpLevel = 1;
 
+        /// <summary>The cutscene scenario: the scene it plays (content/scenes) and the level whose stage it plays on.</summary>
+        public const string CutsceneScene = "cutsceneTest";
+        public const int CutsceneLevel = 1;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void Register()
         {
@@ -85,6 +92,9 @@ namespace SickOfIt.Playtest
             }
             list.Add(new PlaytestScenario("imp-death", $"Level {ImpLevel}'s imps, started directly (setup shortcut): the bot kills them and each imp's Die clip " +
                 "must play where it died; the first deaths run in slow motion so the clip can be seen", 90, "level"));
+            list.Add(new PlaytestScenario("cutscene", $"The scene \"{CutsceneScene}\" on level {CutsceneLevel}'s stage (setup shortcut): with input and rewind locked " +
+                "the hero walks to a point by himself and stops, turns left and right, R does nothing; the camera zooms in and back; the screen fades " +
+                "to black and back; he is pulled into a point, spinning and shrinking until he disappears. Each beat is checked", 75, "level"));
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close", 70, "menus"));
             list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu, level select, settings, " +
@@ -143,6 +153,8 @@ namespace SickOfIt.Playtest
                 yield return session.Layout();
             else if (id == "imp-death")
                 yield return session.ImpDeath();
+            else if (id == "cutscene")
+                yield return session.Cutscene();
             else if (id.StartsWith("level-", StringComparison.Ordinal) && int.TryParse(id.Substring(6), out int n))
                 yield return session.LevelScenario(n);
             else
@@ -281,6 +293,13 @@ namespace SickOfIt.Playtest
                     case "floor":
                         Run.Metric("floor", e.Value);
                         break;
+                    case "cutscene" when scene != null:
+                        Run.Event("cutscene", $"{level}: {e.Subject}" + (string.IsNullOrEmpty(e.Detail) ? "" : " " + e.Detail));
+                        break;
+                    case "signal" when scene != null:
+                        Run.Event("signal", $"{level}: {e.Subject}");
+                        scene.Signals.Enqueue(e.Subject);
+                        break;
                 }
             }
 
@@ -410,6 +429,225 @@ namespace SickOfIt.Playtest
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
                     : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
                     : PlaytestOutcome.Won);
+            }
+
+            // ─── cutscene: every scene action, checked beat by beat ─────
+
+            /// <summary>What the cutscene scenario has seen so far.</summary>
+            sealed class SceneWatch
+            {
+                public readonly Queue<string> Signals = new Queue<string>();
+                public readonly HashSet<string> Passed = new HashSet<string>();
+                public int Failed;
+                public bool Done;
+                public bool Started;
+                public float StartX;
+                public float HomeSize;
+                public Vector3 HomeCamera;
+                public float StopCheckAt = -1f;
+                public float ArrivedX;
+                public bool SawFacingLeft;
+                public bool RewindTry;
+                public float LastAngle;
+                public float Spun;
+                public float SmallestScale = float.MaxValue;
+                public float BiggestScaleSeen;
+            }
+
+            SceneWatch scene;
+
+            /// <summary>The beats the scene must reach, in order (signals it emits).</summary>
+            static readonly string[] SceneBeats = { "walked", "faced", "rewindLocked", "zoomedIn", "zoomedBack", "fadedBlack", "fadedClear", "pulledIn" };
+
+            public IEnumerator Cutscene()
+            {
+                var content = SickOfIt.Gameplay.GameContent.Current;
+                if (content == null || !content.Scenes.ContainsKey(CutsceneScene))
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"cutscene: there is no scene \"{CutsceneScene}\" in content/scenes");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+                scene = new SceneWatch();
+                Run.Event("shortcut", $"load level {CutsceneLevel}'s stage with the scene {CutsceneScene} directly");
+                LevelRuntime.PendingScene = CutsceneScene;
+                var load = LoadLevel(CutsceneLevel);
+                if (load != null)
+                    yield return load;
+                yield return PlayLevel(CutsceneLevel, 60f, SceneDuring, until: () => scene.Done);
+                LevelRuntime.PendingScene = null;
+                if (Run.Done)
+                    yield break;
+
+                foreach (var beat in SceneBeats)
+                {
+                    if (!scene.Passed.Contains(beat))
+                        Run.Problem(PlaytestSeverity.Bug, $"cutscene: never saw \"{beat}\" pass (level {lastOutcome})");
+                }
+                int passed = 0;
+                foreach (var beat in SceneBeats)
+                    if (scene.Passed.Contains(beat)) passed++;
+                Run.Metric("cutscene.passed", passed);
+                Run.Metric("cutscene.failed", scene.Failed);
+                Run.Progress(1f);
+                bool ok = passed == SceneBeats.Length && scene.Failed == 0;
+                scene = null;
+                End(ok ? PlaytestOutcome.Won : lastOutcome == "softlock" ? PlaytestOutcome.Stuck : PlaytestOutcome.Done);
+            }
+
+            void SceneCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    scene.Passed.Add(beat);
+                    Run.Event("check", $"cutscene {beat}: ok ({detail})");
+                }
+                else
+                {
+                    scene.Failed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"cutscene {beat}: {detail}");
+                }
+            }
+
+            /// <summary>Runs every frame of the scene: hands the hero to the scene, watches the pull, checks each beat.</summary>
+            IEnumerator SceneDuring(float now)
+            {
+                var world = GameplayWorld.Instance;
+                if (world == null || world.Player == null || scene == null)
+                    return null;
+                var player = world.Player;
+                var controller = world.PlayerController;
+                if (!scene.Started)
+                {
+                    scene.Started = true;
+                    // The scene drives the hero: the bot keeps its hands off the keys (it would hold R and move).
+                    if (bot != null)
+                        bot.enabled = false;
+                    input.ReleaseAll();
+                    scene.StartX = player.Position.x;
+                    scene.HomeSize = world.Effects.HomeSize;
+                    scene.HomeCamera = world.Camera != null ? world.Camera.transform.position : Vector3.zero;
+                    scene.LastAngle = player.transform.eulerAngles.z;
+                    Run.Event("cutscene", $"hero starts at x={scene.StartX:0.00}; no keys pressed from here");
+                }
+
+                if (controller != null && !controller.FacingRight && world.Director != null && world.Director.PhaseName == "look")
+                    scene.SawFacingLeft = true;
+                if (world.Scripted.Pulling)
+                {
+                    float angle = player.transform.eulerAngles.z;
+                    scene.Spun += Mathf.Abs(Mathf.DeltaAngle(scene.LastAngle, angle));
+                    scene.LastAngle = angle;
+                    float scale = player.transform.localScale.y;
+                    scene.BiggestScaleSeen = Mathf.Max(scene.BiggestScaleSeen, scale);
+                    scene.SmallestScale = Mathf.Min(scene.SmallestScale, scale);
+                }
+                else
+                {
+                    scene.LastAngle = player.transform.eulerAngles.z;
+                }
+
+                if (scene.StopCheckAt >= 0f && now >= scene.StopCheckAt)
+                {
+                    scene.StopCheckAt = -1f;
+                    float x = player.Position.x;
+                    float vx = player.Body != null ? player.Body.linearVelocity.x : 0f;
+                    bool locked = now < world.InputLockedUntil;
+                    SceneCheck("walked", x - scene.StartX > 2f && Mathf.Abs(x - world.Scripted.WalkTargetX) < 0.3f && Mathf.Abs(vx) < 0.05f
+                                         && !world.Scripted.Walking && locked && world.RewindLocked,
+                        $"walked by himself from x={scene.StartX:0.00} to x={x:0.00} (target {world.Scripted.WalkTargetX:0.00}), stopped (vx={vx:0.00}), " +
+                        $"input locked={locked}, rewind locked={world.RewindLocked}");
+                    scene.ArrivedX = x;
+                }
+
+                while (scene.Signals.Count > 0)
+                {
+                    string signal = scene.Signals.Dequeue();
+                    switch (signal)
+                    {
+                        case "scene:arrived":
+                            scene.StopCheckAt = now + 0.4f;
+                            break;
+                        case "scene:faced":
+                        {
+                            bool right = controller != null && controller.FacingRight;
+                            float drift = Mathf.Abs(player.Position.x - scene.ArrivedX);
+                            SceneCheck("faced", right && scene.SawFacingLeft && drift < 0.1f,
+                                $"turned left then right (left seen={scene.SawFacingLeft}, now right={right}), stayed put (moved {drift:0.00})");
+                            scene.RewindTry = true;
+                            break;
+                        }
+                        case "scene:zoomed":
+                        {
+                            float size = world.Camera != null ? world.Camera.orthographicSize : 0f;
+                            SceneCheck("zoomedIn", scene.HomeSize > 0f && size < scene.HomeSize * 0.7f,
+                                $"camera size {size:0.00} (level's {scene.HomeSize:0.00}), centred near the hero");
+                            break;
+                        }
+                        case "scene:unzoomed":
+                        {
+                            float size = world.Camera != null ? world.Camera.orthographicSize : 0f;
+                            Vector3 at = world.Camera != null ? world.Camera.transform.position : Vector3.zero;
+                            float off = Vector2.Distance(at, scene.HomeCamera);
+                            SceneCheck("zoomedBack", Mathf.Abs(size - scene.HomeSize) < 0.02f && off < 0.3f,
+                                $"camera size back to {size:0.00} (level's {scene.HomeSize:0.00}), {off:0.00} from its start");
+                            break;
+                        }
+                        case "scene:black":
+                        {
+                            float alpha = world.Hud != null ? world.Hud.FadeAlpha : 0f;
+                            SceneCheck("fadedBlack", alpha > 0.99f, $"screen covered {alpha:0.00}");
+                            break;
+                        }
+                        case "scene:clear":
+                        {
+                            float alpha = world.Hud != null ? world.Hud.FadeAlpha : 1f;
+                            SceneCheck("fadedClear", alpha < 0.01f, $"screen covered {alpha:0.00}");
+                            break;
+                        }
+                        case "scene:gone":
+                        {
+                            float scale = player.transform.localScale.y;
+                            float off = Vector2.Distance(player.Position, world.Scripted.PullPoint);
+                            SceneCheck("pulledIn", world.Scripted.Hidden && scale < 0.01f && scene.Spun > 300f && scene.BiggestScaleSeen > 0.05f && off < 0.2f,
+                                $"spun {scene.Spun:0} degrees, shrank from {scene.BiggestScaleSeen:0.00} to {scale:0.00}, {off:0.00} from the point, hidden={world.Scripted.Hidden}");
+                            break;
+                        }
+                        case "scene:done":
+                            scene.Done = true;
+                            break;
+                    }
+                }
+
+                if (scene.RewindTry)
+                {
+                    scene.RewindTry = false;
+                    return TryLockedRewind();
+                }
+                return null;
+            }
+
+            /// <summary>Holds R like a player would while the scene has rewind locked: the clock must keep running forward.</summary>
+            IEnumerator TryLockedRewind()
+            {
+                var clock = GameClock.Instance;
+                var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
+                float juice = budget != null ? budget.Juice : -1f;
+                float before = clock != null ? clock.Time : 0f;
+                Run.Event("rewind", "cutscene: hold R for 0.8 s while the scene has rewind locked");
+                input.SetKey(Key.R, true);
+                bool rewound = false;
+                float end = Time.realtimeSinceStartup + 0.8f;
+                while (!Run.Done && Time.realtimeSinceStartup < end)
+                {
+                    if (clock != null && clock.IsRewinding)
+                        rewound = true;
+                    yield return null;
+                }
+                input.SetKey(Key.R, false);
+                float after = clock != null ? clock.Time : 0f;
+                SceneCheck("rewindLocked", !rewound && after > before && SickOfIt.Core.Rewind.RewindInput.Locked,
+                    $"R held: rewound={rewound}, clock {before:0.0} -> {after:0.0} s, juice {juice:0.0} s, locked={SickOfIt.Core.Rewind.RewindInput.Locked}");
             }
 
             public IEnumerator Smoke()

@@ -97,7 +97,7 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 
 | System | In the story | Notes for design |
 |---|---|---|
-| **Rewind** (hold R) | **Déjà Vu.** Hell runs everything on a loop; the hero grabs the loop and pulls it backward. | The juice meter is "Déjà Vu". **Rewind orbs** are *loop shards* that drop from the damned (Shades, imps). |
+| **Rewind** (hold R) | **Déjà Vu.** Hell runs everything on a loop; the hero grabs the loop and pulls it backward. | The juice meter is "Déjà Vu". **Rewind orbs** are *loop shards* that drop from the damned (Shades, imps). In a **scene** something bigger has hold of the loop (the portal's pull, a Warden's entrance), so he can't grab it: rewind is locked and the button says "Not now". |
 | **Death and runs** | Hell doesn't let you die; it sends you back to repeat the floors. "YOU OBVIOUSLY DIED." | A run restarts at the last **Waystone** (top of each Circle once its Warden is beaten). Death videos are Hell's announcer gloating. |
 | **Between-level picks** (`content/upgrades`) | **Grudges.** Every floor gives the hero something new to be annoyed about, and spite is fuel. Lost when a run ends. | Titles are grudges: "Spite Rounds", "Short Fuse", "Not Today", "Déjà Vu". |
 | **Diamonds and the shop** | The village's diamonds, the portal fuel the imps stole; enemies drop them back. **Gloob** works them into the hero's gear between floors. Permanent. | Shop = Gloob. Shop upgrade names are things a village slime can make. |
@@ -161,11 +161,19 @@ Built (2026-10-15; recipe: GameplayCookbook "A stage that climbs through Hell's 
    Circle IX is `crackedRoad`; its first stage is Level7, "Floors 900-876: The Cracked Road" (it comes right
    after Level6 for now: the stages for Floors 975-901 and the Magma King's arena are still to build).
 
+4. **Scenes** (2026-10-18; recipe: GameplayCookbook "A scene with the hero"): a level script can take the hero
+   over: walk him somewhere by himself, turn him, play one of his clips, pull him into a point (spinning and
+   shrinking until he is gone), move and zoom the camera, fade to black, and lock rewind while it plays. Built for
+   the Prologue's last beat (Level 1: after the Grudge pick the Overlord lasers a portal into the ground, the hero
+   walks over, has a curious look, and is sucked in, into Video2's fire tunnel). `content/scenes/cutsceneTest.json`
+   runs every one of these on the Meadow for the playtest; the real portal scene still needs its portal and the
+   hero's Curious and Grabbed clips.
+
 Not built yet:
 
-4. **Waystones and runs**: save the highest Waystone reached; New Run starts there; Grudges reset, diamonds and
+5. **Waystones and runs**: save the highest Waystone reached; New Run starts there; Grudges reset, diamonds and
    Gloob's upgrades persist.
-5. **Shortcuts**: a choice point that skips floors for a cost or a risk.
+6. **Shortcuts**: a choice point that skips floors for a cost or a risk.
 
 ## Art
 

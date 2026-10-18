@@ -41,7 +41,7 @@
       "name": "camera",
       "onEnter": [
         { "type": "runSequence", "steps": [
-          { "type": "cameraTo", "at": [0.0, 0.6], "anchor": "Player", "size": 1.4, "duration": 1.5, "ease": "InOut" },
+          { "type": "cameraTo", "at": [0.0, 0.9], "anchor": "Player", "size": 1.4, "duration": 1.5, "ease": "InOut" },
           { "type": "wait", "seconds": 1.8 },
           { "type": "emit", "signal": "scene:zoomed" },
           { "type": "wait", "seconds": 1.2 },
