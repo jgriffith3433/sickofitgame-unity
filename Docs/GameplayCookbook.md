@@ -362,6 +362,9 @@ Every sound lives in `audio.json` as a prompt; the files are generated, never ha
 - **When they play:** `events` maps game moments to sound ids (playerShoot, enemyDie, rewindStart, levelClear, uiClick,
   ...; empty = silent). Per enemy: `sounds.hurtSound` / `sounds.deathSound`; pickups: `collect.soundId`; scripts:
   `{ "type": "playSound", "sound": "vo_final_wave" }`. Ids are validated on import.
+- **Hand-made sounds** (a clip processed from generated ones, e.g. the prologue's echo `vo_portal_echo` and
+  `portal_swallow`): leave `prompt` empty and set `clip`, so the Sound Generator never remakes it, and keep the
+  recipe as a script (`Tools/Audio/portal-mix.sh`, ffmpeg) to re-run when a source clip is remade.
 - Players control Volume / Music / Effects / Voices, screen shake and hints in Settings (main menu and pause menu).
 
 ## Game feel

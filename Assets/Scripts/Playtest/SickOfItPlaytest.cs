@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using SickOfIt.Combat.Health;
 using SickOfIt.Core;
+using SickOfIt.Core.Audio;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.Progression;
 using SickOfIt.Core.UI.Menus;
@@ -30,7 +31,8 @@ namespace SickOfIt.Playtest
     /// select, videos, shop and settings open and close; settings turns Sound off and on and steps Music), site (the
     /// website pages around the game show "Powered by HAWKES GEN", the landing page links Hawkes Biomedical, and the
     /// game page itself has neither), layout (every screen's buttons on screen, apart and thumb-sized: main menu,
-    /// level select, settings, the level HUD, pause and its settings, the death scene; meant for device "phone").
+    /// level select, settings, the level HUD, pause and its settings, the death scene; meant for device "phone"),
+    /// portal-audio (the prologue's portal scene sounds and the Meadow's lines played in order on the main menu).
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
     /// </summary>
     public static class SickOfItPlaytest
@@ -90,6 +92,8 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu, level select, settings, " +
                 "level 1's HUD, the pause menu and its settings, and the death scene (loaded directly, a setup shortcut), no button overlaps another " +
                 "or a HUD panel, none leaves the screen, and every button is thumb-sized", 120, "menus"));
+            list.Add(new PlaytestScenario("portal-audio", "The prologue's portal scene, by ear, on the main menu: every Overlord line, hero take, " +
+                "Hell's echo (three repeats, each deeper) and effect plays in scene order, then the Meadow's lines; any without a clip is a bug", 150, "menus", "audio"));
             list.Add(new PlaytestScenario("site", "The game's main menu (no credit on the game page), then the landing page, blog and sub pages each opened over it: Powered by HAWKES GEN on every one, Hawkes Biomedical on the landing page", 60, "menus"));
             return list.ToArray();
         }
@@ -143,6 +147,8 @@ namespace SickOfIt.Playtest
                 yield return session.Layout();
             else if (id == "imp-death")
                 yield return session.ImpDeath();
+            else if (id == "portal-audio")
+                yield return session.PortalAudio();
             else if (id.StartsWith("level-", StringComparison.Ordinal) && int.TryParse(id.Substring(6), out int n))
                 yield return session.LevelScenario(n);
             else
@@ -410,6 +416,83 @@ namespace SickOfIt.Playtest
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
                     : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
                     : PlaytestOutcome.Won);
+            }
+
+            /// <summary>
+            /// The portal scene's sounds (audio.json ids; the scene itself is a later task), in the order the Prologue in
+            /// Docs/Story.md plays them, then the other takes and the Meadow's lines. A sound and the next one: how long
+            /// to wait after starting it (0 = its clip's length), so the portal's hum runs under the lines as it will in the scene.
+            /// </summary>
+            static readonly (string id, string text, float wait)[] PortalSounds =
+            {
+                ("overlord_beam_charge", "(the Overlord's beam charges)", 0f),
+                ("vo_portal_overlord_stay", "Overlord: Mm. ... Stay.", 0f),
+                ("overlord_beam_strike", "(the beam strikes the ground beside the hero)", 1.2f),
+                ("ground_burn_open", "(the ground cracks and burns open)", 0f),
+                ("portal_hum_loop", "(the portal hums)", 0.8f),
+                ("vo_portal_hole_1", "Hero: That's a hole.", 0f),
+                ("vo_portal_source_1", "Hero: So that's where they keep coming from.", 0f),
+                ("vo_portal_hello_1", "Hero: Hello?", 0f),
+                ("vo_portal_echo", "Hell: ...hello? ...hello? ...hello? (each repeat deeper)", 0f),
+                ("vo_portal_nope_1", "Hero: Nope.", 0f),
+                ("vo_portal_grabbed_1", "Hero: Oh, come ON-", 0f),
+                ("portal_suck_whoosh", "(the portal sucks him in)", 0f),
+                ("portal_swallow", "(whoosh + his yelp falling away)", 0f),
+                ("gloob_slurp", "(Gloob is slurped in after him)", 0f),
+                ("vo_portal_overlord_exhale", "Overlord: (a bored exhale) Mm.", 0f),
+                ("vo_portal_hole_2", "Hero, take 2: Huh. That's a hole.", 0f),
+                ("vo_portal_hole_3", "Hero, take 3: That is... a hole.", 0f),
+                ("vo_portal_source_2", "Hero, take 2: Oh. So that's where they keep coming from.", 0f),
+                ("vo_portal_source_3", "Hero, take 3: So that's where they keep coming from. Great.", 0f),
+                ("vo_portal_hello_2", "Hero, take 2: Hellooo?", 0f),
+                ("vo_portal_hello_3", "Hero, take 3: ...Hello?", 0f),
+                ("vo_portal_nope_2", "Hero, take 2: Nope. Nope.", 0f),
+                ("vo_portal_nope_3", "Hero, take 3: Yeah, no. Nope.", 0f),
+                ("vo_portal_grabbed_2", "Hero, take 2: Oh, come on, come ON-", 0f),
+                ("vo_portal_grabbed_3", "Hero, take 3: Wait wait wait- oh, come ON-", 0f),
+                ("vo_meadow_title", "Announcer: Prologue! The Meadow!", 0f),
+                ("vo_meadow_intro", "Hero: Nice day. Nothing could possibly go wrong.", 0f),
+                ("vo_meadow_imps", "Hero: That's not a cloud. Those are not birds.", 0f),
+                ("vo_meadow_laser", "Hero: Oh, he's lasering the village. Cool. Cool cool cool.", 0f),
+                ("vo_meadow_leaving", "Hero: He's leaving. Through a hole in the sky. With our diamonds.", 0f),
+                ("vo_meadow_clear", "Announcer: The Meadow... is TOAST!", 0f),
+                ("vo_meadow_outro", "Hero: Fine. I'll go get them.", 0f),
+            };
+
+            /// <summary>
+            /// portal-audio: plays every PortalSounds entry through Sfx (presentation only, nothing in the simulation), one
+            /// event per sound with its clip length; a sound without a clip is a bug. The echo is vo_portal_echo, made by
+            /// Tools/Audio/portal-mix.sh: the hero's "Hello?" three times at 0.84x, 0.68x and 0.52x speed and pitch.
+            /// </summary>
+            public IEnumerator PortalAudio()
+            {
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                Run.Event("audio", $"sound {(GameSettings.SoundOn ? "on" : "off")}, page audio {PageSound.State()}, voices {GameSettings.VoiceVolume:0.##}, effects {GameSettings.SfxVolume:0.##}");
+                int missing = 0;
+                for (int i = 0; i < PortalSounds.Length && !Run.Done; i++)
+                {
+                    var (id, text, wait) = PortalSounds[i];
+                    float length = Sfx.LengthOf(id);
+                    Run.Progress((float)i / PortalSounds.Length);
+                    if (!Sfx.Has(id))
+                    {
+                        missing++;
+                        Run.Problem(PlaytestSeverity.Bug, $"portal-audio: \"{id}\" has no clip");
+                        continue;
+                    }
+                    Run.Note(text);
+                    Run.Event("sound", $"{id} ({length:0.0} s): {text}");
+                    if (id == "vo_portal_echo")
+                        Run.Event("echo", $"{id}: three repeats of the hero's Hello? at 0.84x, 0.68x and 0.52x pitch, {length:0.0} s");
+                    Sfx.Play(id);
+                    yield return WaitReal((wait > 0f ? wait : length) + 0.5f);
+                }
+                if (Run.Done) yield break;
+                Run.Metric("portalSounds", PortalSounds.Length - missing);
+                Run.Metric("portalSoundsMissing", missing);
+                Run.Progress(1f);
+                End(PlaytestOutcome.Done);
             }
 
             public IEnumerator Smoke()
