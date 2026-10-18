@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "entity": "impForeman",
+  "name": "Imp Foreman",
+  "description": "the fattest hell imp in the Ember Wastes, the foreman of the diamond haulers: a round pot-bellied crimson imp with leathery skin, short curled horns, a smug toothy grin and yellow eyes, tiny useless bat wings far too small for his body, a heavy black iron chain whip coiled in one clawed fist, sitting astride an enormous bulging cloth sack of stolen glittering diamonds that is bigger than he is, diamonds peeking out of a torn seam",
+  "height": 1.65,
+  "visualScale": false,
+  "poses": {
+    "stand": "sitting on top of his giant diamond sack, belly out, the chain whip coiled in one fist, tiny wings folded",
+    "struck": "jolted on his sack, eyes bulging, mouth open in a squawk, a few diamonds spilling out of the sack",
+    "dead": "the giant sack bursting open in a fountain of glittering diamonds while he tumbles backward off it, wings flailing"
+  },
+  "clips": {
+    "idle": { "from": "stand", "action": "bobs on his sack, wheezing, tapping the coiled whip against his palm, tiny wings twitching", "seconds": 2 },
+    "attack": { "from": "stand", "action": "raises the chain whip over his head and cracks it down hard forward to the right, then settles back on the sack", "seconds": 1.5, "event": "FireProjectile" },
+    "hurt": { "from": "stand", "action": "is struck, squawks and wobbles on his sack, then glares", "seconds": 1 },
+    "die": { "from": "struck", "to": "dead", "action": "the sack bursts open in a fountain of diamonds and he tumbles backward off it", "seconds": 1.5 }
+  },
+  "takes": { "pose": 2, "clip": 1 }
+}
