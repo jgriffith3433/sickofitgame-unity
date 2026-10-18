@@ -113,6 +113,20 @@
       "fromFloor": 980,
       "areaCenter": [3.4, -1.3],
       "areaSize": [1.0, 0.8]
+    },
+    {
+      "entity": "cinderThatch",
+      "weight": 0.8,
+      "fromFloor": 950,
+      "areaCenter": [4.0, 0.9],
+      "areaSize": [0.6, 1.0]
+    },
+    {
+      "entity": "impGuard",
+      "weight": 1.0,
+      "fromFloor": 930,
+      "areaCenter": [3.7, -1.3],
+      "areaSize": [1.0, 0.6]
     }
   ],
   "hazards": [
@@ -155,6 +169,26 @@
         }
       ],
       "duration": 8.0
+    },
+    {
+      "name": "ember shower",
+      "weight": 1.2,
+      "fromFloor": 940,
+      "warning": "Now it's raining fire.",
+      "warningSound": "vo_wastes_fire",
+      "telegraph": 1.5,
+      "actions": [
+        {
+          "type": "startHazard",
+          "id": "emberShower",
+          "projectile": "fireball",
+          "pattern": { "type": "rain", "count": 2 },
+          "speed": 2.4,
+          "interval": 1.3,
+          "duration": 6.0
+        }
+      ],
+      "duration": 7.5
     }
   ],
   "easiest": {
@@ -180,14 +214,6 @@
       "floor": 999,
       "text": "ONLY 999 TO GO",
       "sound": "vo_floor_999",
-      "style": "Banner",
-      "color": "#FFD27A",
-      "duration": 2.5
-    },
-    {
-      "floor": 950,
-      "text": "FLOOR 950: HALFWAY THROUGH THE WASTES",
-      "sound": "vo_floor_950",
       "style": "Banner",
       "color": "#FFD27A",
       "duration": 2.5

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "extends": "imp",
+  "health": 3,
+  "tags": ["imp", "impGuard"],
+  "visual": {
+    "scale": 0.33,
+    "color": "#E07060",
+    "fxColor": "#FF5B3A"
+  },
+  "loot": {
+    "chance": 0.35,
+    "count": 1,
+    "value": 1
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "pattern": { "type": "spread", "count": 3, "angle": 28 },
+      "speed": 3.0,
+      "aim": "Player",
+      "muzzle": [0.09, 0.09375],
+      "interval": 3.4,
+      "initialDelay": 1.8,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile",
+      "damage": 1
+    }
+  ]
+}

@@ -173,6 +173,9 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Paint floor numbers into the world as signs on travel stages.")] public bool signs = true;
         [Doc("Travel stages: words carved on a big sign at the start of the stage (the place's own sign, e.g. \"IMPS ONLY\"). '' = none.")]
         public string sign = "";
+        [Doc("Travel stages: words carved over a big door standing at the top of the stage, where the camera stops (the Heat Stairs end at " +
+             "the Magma King's door, \"THE SLAG THRONE\"). '' = none.")]
+        public string door = "";
         [Doc("Floors Hell makes the hero walk twice (The Loop): each one takes two floors' distance, its number stays on the counter " +
              "and two signs show it. Add unitsPerFloor per repeat to travelLength.")]
         public List<int> repeat = new List<int>();

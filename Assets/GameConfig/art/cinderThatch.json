@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "entity": "cinderThatch",
+  "name": "ThatchCinder",
+  "description": "a living clump of burning straw thatch torn off a village roof: a round tangled ball of golden straw stalks wrapped in orange flames, glowing hot embers deep inside, two bright black beady eyes and a scowling mouth peering out of the straw, wisps of smoke and loose burning stalks trailing behind it",
+  "height": 0.5,
+  "poses": {
+    "stand": "floating in the air, flames licking up off the straw",
+    "popped": "bursting apart into loose burning stalks, two bright sparks shooting out of the middle and a puff of smoke"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "floats in place, its straw bristling and its flames flickering, blinking its eyes",
+      "seconds": 1.5
+    },
+    "move": {
+      "from": "stand",
+      "action": "leans forward and drifts toward the right, its flames and loose stalks streaming backward, staying in the same spot in the frame",
+      "seconds": 1.5
+    },
+    "die": {
+      "from": "stand",
+      "to": "popped",
+      "action": "swells and bursts apart into burning stalks, two bright sparks flying out of it",
+      "seconds": 1
+    }
+  }
+}

@@ -7,11 +7,12 @@ description: Design and build a Sick Of It stage (a level file): its place among
 
 A stage is `Assets/GameConfig/levels/LevelN.json` (listed in `game.json` `levels`, in order) whose `script` runs it.
 Story stages inside Hell are **travel stages** that climb a stretch of floors in one Circle. References:
-`levels/Level6.json` ("Floors 1000-976: The Landing") and `content/circles/emberWastes.json` (Circle X).
+`levels/Level4.json` ("Floors 980-971: Imp Run", a new enemy alone), `levels/Level10.json` ("Floors 920-911: The Heat
+Stairs", a stage that ends at a door) and `content/circles/emberWastes.json` (Circle X).
 
 ## 0. Where it goes
 
-From `Docs/Story.md`: the next stretch of floors after the last stage (Level6 ends at 976, so the next is 975–951),
+From `Docs/Story.md`: the next stretch of floors after the last stage (Level10 ends at 911, so the next is 910–901),
 its Circle (biome, enemy family, Warden at x01), the act's beat, and the milestones it passes (999, 900, 666, 500, 100,
 13, 2). Names are places: `displayName` "Floors 975-951: <place>". No work or office jokes; slimes are villagers.
 
@@ -26,7 +27,7 @@ the pacing rules: quiet first 5 s, ≤ 3 enemies on screen in Circle X (rising s
 
 Cookbook recipes (`Docs/GameplayCookbook.md`): "Make a new level", "A stage that climbs through Hell's floors",
 "A boss fight", "Branching". Steps:
-1. Copy Level6.json to the next LevelN.json; set `levelName`, `displayName`, `levelNumber`, `music`, `deathConfigName`.
+1. Copy Level10.json to the next LevelN.json; set `levelName`, `displayName`, `levelNumber`, `music`, `deathConfigName`.
 2. Add `"LevelN"` to the end of `game.json` `levels`.
 3. `script.floors` (`start`, `end`, `unitsPerFloor`, `circle`), `world` Travel with `travelLength` ≈ (start − end) ×
    unitsPerFloor + 2, `markers` for beats; phases alternating `generateFloors` stretches and scripted beats; end on

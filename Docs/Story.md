@@ -37,6 +37,7 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 | **Gloob** *(working)* | The village's green slime and its gossip. Swallowed a handful of the village's diamonds to hide them from the imps, got sucked through the portal with the hero, and now trades and tinkers between floors out of his own stomach. **Slimes are villagers, never enemies.** | `audio.json` voice `gloob` *(to add)*: friendly, chatty, wet; talks fast, gurgles between words, never stops for breath, delighted to see anyone. | Video3 (the talking slime) |
 | **The Announcer** | Hell's own voice: loves a show, calls out floors, bosses and deaths like an arcade cabinet. | `announcer` | Floor titles, death screens |
 | **The Wardens** | One boss per Circle: the monster that rules it. Each guards its Circle's top floor. | Per Warden | Death videos, bosses |
+| **The Magma King** | Circle X's Warden: a huge king of slag and obsidian with a lava crown, slouched on a throne of slag at Floor 901. He never gets up: the Wastes come to him. Smug where the Overlord is bored; he hears everything that climbs his stairs and enjoys the wait. | `audio.json` voice `magmaKing`: very deep, thick, gurgling bass; slow, smug, amused, lazy; chuckles (*"Mm-hm-hm."*), never shouts. Heard before he's seen, from ahead on the Heat Stairs. | `art/magmaKing.json` (spec) |
 
 ## Prologue: how the hero gets into Hell
 
@@ -94,8 +95,9 @@ THE MEADOW again                           Ending
   at Floor 900. Level *n* is position *n* in game.json's `levels` list, and the file is `levels/Level<n>.json`.
 - **The path today** (re-pathed 2026-10-18): New Game → Video1 → Level 1, the Meadow → Video2 → Level 2, *Floors
   1000-991: The Landing* → Video3 (Gloob) → Level 3, *Floors 990-981: The Spill* → Level 4, *Floors 980-971: Imp
-  Run* → Level 5, *Floors 970-961: The Slag Falls* → Level 6, *Floors 960-951: The Loop* → the level select, until
-  the next Circle X stages are built. Inside a Circle the stages run straight on from one to the next (a level's
+  Run* → Level 5, *Floors 970-961: The Slag Falls* → Level 6, *Floors 960-951: The Loop* → Level 7, *Floors 950-941:
+  Halfway Basin* → Level 8, *Floors 940-931: The Crust* → Level 9, *Floors 930-921: The Sack Pile* → Level 10, *Floors
+  920-911: The Heat Stairs* (ending at the Magma King's door) → the level select, until Level 11, his arena, is built. Inside a Circle the stages run straight on from one to the next (a level's
   `nextLevelNumber`): results, the Shaft's climb, the next stage, with no video between them. After them in the list, off the path
   (reachable from the level select only, once unlocked): `CrackedRoad` (*Floors 900-891*, cut to 10 floors and
   numbered for Level 12; its beats are still the first layout's, for the Circle IX task to rebuild) and the old
@@ -180,14 +182,16 @@ enemy at a time, alone; at most 3 on screen in Circle X). Lines are first drafts
 | 4 | 980-971 | **Imp Run** | `impSack` (imps with sacks) | A trail of imps hauling the village's diamond sacks down, dropped sacks along the path, a carved *IMPS ONLY*. A sack imp doesn't throw: it runs back and forth with its sack, and every hit tears it and spills a diamond (three hits, three diamonds, two more when it pops): the first stage where diamonds really pour. The first one comes alone. Hero: *"Those are ours."*; at the breather, *"One less sack for his gate."* |
 | 5 | 970-961 | **The Slag Falls** | hazard: falling slag | The path along the foot of the lava falls, glowing falls behind and cooling ledges of slag (*MIND THE DRIP*). Slag drops from above, always with a glowing drip a second before (`slagDrip`, then `slag`); the first three drip one by one while he stands still, then they fall through the whole stage. No new enemy: the stage is the falls. Hero: *"It's raining rock. Hot rock."*, then *"The ceiling's melting."* (the slag hazard's warning). It is walked to the right for now; a real climb up the wall (`travelDirection` Up) waits for a bot that can climb ledges. |
 | 6 | 960-951 | **The Loop** | (none) | Hell visibly repeats: the same rock and the same lava crack on every floor, a carved *YOU ARE HERE. AGAIN.*, and Floor 957 twice (`floors.repeat`: two signs say 957 and the counter stays on it). At each 957 the announcer calls *"FLOOR 957!"*, the same lava burst goes off in the same crack and the same imp trips on the same spot. After the second: *"It's doing that on purpose."* and *"Hell runs on a loop. So I can drag it back."* The stage that explains why rewind works. Clear: *"THE LOOP: SURVIVED. AGAIN."* |
-| 7 | 950-941 | **Halfway to 900** | (cinders that split) | Floor 950 milestone: *"FLOOR 950: HALFWAY THROUGH THE WASTES!"* Hero: *"Halfway through the first one."* A wide basin with the first real mixed push of imps and cinders. |
-| 8 | 940-931 | **The Crust** | (none) | The hero rides a cooling slag raft across the lava river; the raft only moves forward, imps throw from the banks. A travel stage with nowhere to stop. |
-| 9 | 930-921 | **The Sack Pile** | (imp guards) | The imps' camp, where they pile the stolen sacks before carrying them on. Heaviest imp fight of the Circle; a big diamond payoff for clearing it. |
-| 10 | 920-911 | **The Heat Stairs** | (none) | The approach to the throne: steps of slag, the heat rising, the Magma King's silhouette on the Shaft getting closer. Announcer builds it up; the hero doesn't. Breather before the arena. |
+| 7 | 950-941 | **Halfway Basin** | `cinderThatch` (cinders that split) | Floor 950, halfway to 900, opens the stage: after the title the announcer calls *"FLOOR 950! HALFWAY TO NINE HUNDRED!"* and the hero answers *"Halfway through the first one."* A wide basin under a carved *HALFWAY! (TO 900)*, where the village's burning thatch fell: the first thatch cinder comes alone and bursts into two sparks when shot (*"That was somebody's roof."*). Then the first real mixed pushes of imps, cinders and sack imps; at the breather, *"Fifty floors. Then him."* |
+| 8 | 940-931 | **The Crust** | hazard: ember shower | The lava river has a skin of cooling slag (*DON'T STOP*). It holds only while he keeps moving and sinks back into the lava behind him: between fights the screen keeps pushing him on (`travelSpeed`), imps throw from the far bank. More fire from above: the river's steam rains embers, two at a time (`emberShower`), first on its own with its warning, *"Now it's raining fire."* Hero: *"It sinks if I stop. So I don't stop."* |
+| 9 | 930-921 | **The Sack Pile** | `impGuard` (the Magma King's guard) | The imps' camp under a carved *KEEP OFF THE PILE*, where they pile the stolen sacks before carrying them up to the throne. The imps get organised: the Magma King's own guard doesn't carry sacks or run; it stands its ground and throws three embers at once. The first guard comes alone (*"This one's not carrying anything. Bad sign."*); later three of them hold the pile in a line, throwing on a count. Clear the line and the pile spills: a heap of diamonds (*"He keeps guards. So he's expecting someone."*). Heaviest imp fight of the Circle. |
+| 10 | 920-911 | **The Heat Stairs** | (none) | The approach to the throne under a carved *TO THE THRONE*: the heat rising, the hardest floors of the Circle, embers from above and his guard on the steps. Announcer builds it up (*"FLOOR 920! THE HEAT STAIRS! SOMEBODY'S WAITING AT THE TOP!"*); the hero doesn't (*"Every step's hotter. Of course."*). Twice the stairs rumble and the Magma King's voice comes down them from ahead: he's waiting, he knows the hero is coming, and he isn't getting up (*"I can hear you climbing, little spark."* / hero: *"Was that the stairs?"*; *"Come up, then. I'll stay seated."* / *"He knows I'm coming. Great."*). The stage ends at his door, a slab of obsidian carved *THE SLAG THRONE* (`floors.door`), where the camera stops; through it, one last chuckle (*"Mm-hm-hm. Knock, little spark."*), the announcer's *"THE HEAT STAIRS: CLIMBED! THE MAGMA KING AWAITS!"* and the Grudge pick. Level 11 opens on the other side of that door. |
 | 11 | 910-901 | **The Slag Throne** | Warden: `magmaKing` | The Magma King's arena (a locked screen: the one kind of stage allowed to stand still). Beat him and his name fills in on the Shaft; Floor 901 is the Circle's Waystone. Announcer: *"THE MAGMA KING HAS FALLEN!"* Hero: *"He was sitting down the whole time."* |
 
-Built so far (2026-10-18): Levels 2-6, The Landing to The Loop, each with its title, lines, carved sign, beats,
-generated floors between them, a breather and a Grudge pick at the end. The village debris and the Loop's rock are
+Built so far (2026-10-18): Levels 2-10, The Landing to The Heat Stairs, each with its title, lines, carved sign, beats,
+generated floors between them, a breather and a Grudge pick at the end. Levels 7-10 climb toward the Warden: thatch
+cinders that split, the ember shower from Floor 940, the Magma King's guard from Floor 930, and his voice on the
+stairs; the generator's floors get harder the closer they are to 901. The village debris and the Loop's rock are
 drawn as the track's plain shapes until their art is made (a cart, the village sign, hay bales, a sack imp with a
 full sack: Hawkes Gen, priced, waiting for a GPU budget).
 
@@ -227,7 +231,10 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | `impSack` | Sack imp | X (from Floor 980, Imp Run) | An imp hauling one of the village's diamond sacks down to the Overlord's gate. Too busy carrying to throw anything: it runs back and forth with the sack, and every hit tears the sack and spills a diamond. Diamonds from a sack: rewards that make sense. | the imp's art, tinted warm until its own sheet (an imp with a full sack) is made |
 | `slagDrip`, `slag` | Falling slag (hazard) | X (from Floor 970, the Slag Falls) | Molten rock from the falls. A glowing drip gathers for 1.2 s (the telegraph, with a hiss), then a lump of slag falls from that spot and sets you burning. Not a creature; nothing to kill. | `Fireball`, tinted |
 | `lavaBurst` | Lava burst (hazard) | X (the Loop) | A bubble swelling in a crack (1.3 s of glow), then three embers burst up out of it. In the Loop it goes off in the same crack every time. | the beam's charge glow, tinted |
-| `magmaKing` | The Magma King | X (Warden, Floor 901) | Rules the Ember Wastes from a throne of slag. | spec ready (`art/magmaKing.json`); run the art pipeline |
+| `cinderThatch`, `cinderSpark` | Thatch cinder | X (from Floor 950, Halfway Basin) | A burning clump of the village's thatch roofs that fell through with everything else and came alive like the other sparks. Bigger and slower than a cinder; shot, it bursts into two sparks (`cinderSpark`) that dart at you for two seconds and go out (they can't be shot, only dodged). | `Fireball`, scaled up and tinted straw-orange, until its own sheet |
+| `impGuard` | Imp guard | X (from Floor 930, the Sack Pile) | An imp: the same family (it `extends` `imp`), one the Magma King keeps at his pile and on his stairs instead of sending it up with a sack. It carries no diamonds and doesn't run; it plants itself and throws three embers in a fan, so guards are the first imps that fight together (lines of three on the Sack Pile and the Heat Stairs). It drops nothing: `"drops": []` replaces the imp's drops, so no loop shard (rewind orb) falls from it. The only diamond it gives up is its pay from the pile, now and then (`loot`). | the imp's own art, tinted dark red, until `art/impGuard.json` (an imp in a slag helmet with a spear) is made: a tinted sprite of the same creature, which rule 5 allows |
+| `emberShower` | Ember shower (hazard) | X (from Floor 940, the Crust) | Steam off the lava river raining embers two at a time; announced by the hero (*"Now it's raining fire."*) 1.5 s before the first. | `fireball` |
+| `magmaKing` | The Magma King | X (Warden, Floor 901) | Rules the Ember Wastes from a throne of slag. Heard (voice `magmaKing`) on the Heat Stairs before he is met. | spec ready (`art/magmaKing.json`); run the art pipeline |
 | `brimstoneDemon` | Brimstone Demon | IX | Born from the cracks in the Cracked Road: the rock splits and a demon climbs out to stop you climbing. Slow, heavy, plants itself in the road a few steps in front of you and breathes a short burst of fire (`brimstoneBreath`, sets you burning), so keep your distance. Sometimes drops a diamond: the imps' sacks leak on the road, the cracks swallow what falls, and the demons come out with it stuck in their rock. Not damned, so no loop shards. First met alone at the start of Circle IX (`levels/CrackedRoad.json` today; Level 12 in the 10-floor layout). | `Demon1` (exists) until generated; spec ready (`art/brimstoneDemon.json`) |
 | `fighter` → Drooler | Drooler | V | Cave beast; Death2 is it eating you. | `Fighter*` (exists) |
 | `sentinel` → Lurker | Lurker | V | Crouching cave hunter; Death3. | `Level3Enemy*` (exists) |
@@ -264,15 +271,16 @@ Built (2026-10-15; recipe: GameplayCookbook "A stage that climbs through Hell's 
    `Distance` or `Floors` (`sequenceBy`) and able to play part of a clip (`clipStart`/`clipLength`).
 3. **Floor generator**: `content/circles/<id>.json` (backdrop, track, props, enemy table, hazards, easiest/hardest
    difficulty, milestones) and the `generateFloors` action that fills floors between story beats, seeded, so
-   rewinds and playtests repeat. Circle X is `emberWastes`; its first stages are Levels 2-6, "Floors 1000-991: The
-   Landing" to "Floors 960-951: The Loop". Circle IX is `crackedRoad`; its first stage is `CrackedRoad`, "Floors
-   900-891: The Cracked Road" (off the path for now: the stages for Floors 950-901 and the Magma King's arena are
-   still to build).
+   rewinds and playtests repeat. Circle X is `emberWastes`; its stages so far are Levels 2-10, "Floors 1000-991:
+   The Landing" to "Floors 920-911: The Heat Stairs". Circle IX is `crackedRoad`; its first stage is `CrackedRoad`,
+   "Floors 900-891: The Cracked Road" (off the path for now: the Magma King's arena, Floors 910-901, is still to
+   build).
 
    *Stage dressing* (2026-10-18, with Levels 3-6): a stage's own scenery on top of its Circle's (`world.props`:
    the Spill's debris, the Loop's same rock), a carved sign where the hero lands (`floors.sign`), floors Hell makes
    him walk twice (`floors.repeat`, the Loop's 957), and stages that lead straight on to the next one through the
-   Shaft (`nextLevelNumber`).
+   Shaft (`nextLevelNumber`). With Levels 7-10: a door carved with words at the top of a stage, where the camera
+   stops (`floors.door`, the Magma King's *THE SLAG THRONE*).
 
 Note: the Landing was recut from the first layout's 25-floor stage to Floors 1000-991 (2026-10-18), and its
 cinders moved up to the Spill, where the Story puts them. `CrackedRoad` was cut the same way to Floors
