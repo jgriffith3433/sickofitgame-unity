@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "extends": "lavaGeyser",
+  "abilities": [
+    {
+      "type": "geyser",
+      "off": 3.0,
+      "tell": 1.0,
+      "blow": 1.2,
+      "offset": 1.4,
+      "height": 3.2,
+      "width": 0.9,
+      "color": "#FF8C2AF2",
+      "columnArt": {
+        "sheet": "Art/Climb/Geyser_column.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "tellSound": "lava_bubble",
+      "blowSound": "lava_burst",
+      "shake": 0.12
+    },
+    {
+      "type": "scald",
+      "damage": 1,
+      "launch": 7.0,
+      "interval": 0.8,
+      "effect": ""
+    }
+  ]
+}

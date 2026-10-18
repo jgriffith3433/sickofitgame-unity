@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "extends": "impSwing",
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "swingChain",
+      "length": 2.4,
+      "amplitude": 42.0,
+      "period": 3.6,
+      "phase": 0.5,
+      "grabRadius": -10.0,
+      "hang": 0.0,
+      "regrab": 99.0,
+      "chainColor": "#52423C",
+      "grabSound": "",
+      "chainArt": {
+        "sheet": "Art/Climb/Chain_links.png",
+        "spriteNameFilter": "",
+        "fps": 1,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "chainWidth": 0.2
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "healthBelow",
+        "amount": 4
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "spawn",
+          "entity": "diamond",
+          "anchor": "Self",
+          "at": [
+            -0.25,
+            0.1
+          ],
+          "facePlayer": false
+        },
+        {
+          "type": "playSound",
+          "sound": "sack_spill"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "healthBelow",
+        "amount": 3
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "spawn",
+          "entity": "diamond",
+          "anchor": "Self",
+          "at": [
+            0.25,
+            0.1
+          ],
+          "facePlayer": false
+        },
+        {
+          "type": "playSound",
+          "sound": "sack_spill"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "healthBelow",
+        "amount": 2
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "spawn",
+          "entity": "diamond",
+          "anchor": "Self",
+          "at": [
+            0.0,
+            0.25
+          ],
+          "facePlayer": false
+        },
+        {
+          "type": "playSound",
+          "sound": "sack_spill"
+        }
+      ]
+    }
+  ]
+}

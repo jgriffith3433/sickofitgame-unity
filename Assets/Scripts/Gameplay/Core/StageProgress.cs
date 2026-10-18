@@ -37,12 +37,15 @@ namespace SickOfIt.Gameplay
         public CircleDef Circle =>
             !string.IsNullOrEmpty(floors.circle) && world.Content.Circles.TryGetValue(floors.circle, out var circle) ? circle : null;
 
-        /// <summary>0 at floors.start, 1 at floors.end; -1 when the stage doesn't measure floors.</summary>
+        /// <summary>
+        /// 0 at floors.start, 1 at floors.end; -1 when the stage doesn't measure floors. A one-floor level (end = the
+        /// floor above, Docs/LevelDesign.md) only ticks at its landing, so its progress bar runs on time instead.
+        /// </summary>
         public float FloorProgress
         {
             get
             {
-                if (!HasFloors || floors.end <= 0 || floors.end >= floors.start)
+                if (!HasFloors || floors.end <= 0 || floors.end >= floors.start - 1)
                     return -1f;
                 return Mathf.Clamp01((float)(floors.start - Floor) / (floors.start - floors.end));
             }

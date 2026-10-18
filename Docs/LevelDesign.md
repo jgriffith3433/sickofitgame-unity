@@ -7,9 +7,9 @@ doesn't explain, add it to Story.md first.
 Status: **design for review** (2026-10-18, J's decision m_daf635ad1287: one level = one floor, a floor boss every 10th
 floor, the Warden on the Circle's top floor, shortcuts skip stretches; revised the same day for J's *"some scrolling
 horizontally ... as immersive as you can"*: every floor's path, set piece, surprise, rewind moment and feel). The
-floor engine is built (see *Building it*); the floors themselves are not yet: today's
-Levels 2-11 are the old 10-floor stages (flat walks to the right) and are replaced floor by floor from this page (see
-*Building it*). Names marked *(working)* are placeholders. Lines are first drafts for the voices.
+floor engine is built (see *Building it*); **Floors 1000-996 are built** (levels 2-6, `levels/Floor1000.json` to
+`Floor996.json`, 2026-10-18); after them the old 10-floor stages (flat walks to the right) still run from Floor 990 and
+are replaced floor by floor from this page (see *Building it*). Names marked *(working)* are placeholders. Lines are first drafts for the voices.
 
 ## The rules in one breath
 
@@ -197,9 +197,9 @@ platform or hazard type (saved in `SaveState`/`LoadState`, seeded) for the floor
 | **Sinking stones** | Slabs of cooled slag floating on the lava. Stand on one and it sinks (about 1.5 s to go under); step off and it bobs back up. Keep moving. | The lava sea's crust, broken into floes | The stone dips and hisses the moment he lands | 1000 | yes (`sinkingStone`, ability `sink`) |
 | **Rising lava** | The lava sea climbs the screen, slowly, behind the hero: the push upward. Stops below each breather ledge and the landing. | The Wastes breathing in | A rumble, a line of bubbles across the screen, 2 s ahead; the announcer the first time | 999 | yes (`lavaSea`: counters `lavaSpeed`, `lavaMax`) |
 | **Bobbing debris rafts** | Bigger floating things (the village's carts, roofs, fences) bob on their own rhythm and drift sideways. They don't sink when stood on; they tip if he stands at the edge. | Everything that fell through the portal ends up in the lava | They rock before they tip | 998 (as sinking debris), 959 (bobbing and drifting) | yes (`debrisRaft`, ability `raft`: drifts on a current and carries him) |
-| **Imp sack-swings** | Imps swinging across the gap on chains, carrying the village's diamond sacks. Hit the sack: diamonds. Touch the imp: a burn. Their swing is a rhythm he can ride over or shoot through. | The imps haul the diamonds up through the Wastes to the gate | The chain rattles before each swing | 997 | partly (the chain's pendulum is `swingChain`; the imp riding it is new) |
+| **Imp sack-swings** | Imps swinging across the gap on chains, carrying the village's diamond sacks. Hit the sack: diamonds. Touch the imp: a burn. Their swing is a rhythm he can ride over or shoot through. | The imps haul the diamonds up through the Wastes to the gate | The chain rattles before each swing | 997 | yes (`impSwing`: a sack imp with the `swingChain` pendulum, which nobody can grab) |
 | **Swinging chains** | The imps' empty chains hang over the gaps and swing. Jump into one to grab it, swing with it, jump off with its speed. | The hauling route's chains, left swinging | It swings in plain sight, the same rhythm every time | 997 (one idea with the sack-swings: *the hauling chains*, some with an imp on, some empty for him; the imp is known from the Meadow) | yes (`swingChain`) |
-| **Lava geysers** | A vent in the rock blows a column of lava straight up. | The lava sea under pressure | The vent glows and spits for **1 s** before | 996 | partly (`lavaBurst` is the glow and burst; the column is new) |
+| **Lava geysers** | A vent in the rock blows a column of lava straight up. | The lava sea under pressure | The vent glows and spits for **1 s** before | 996 | yes (`geyserVent` + `lavaGeyser`: a `lavaFall` beat blowing upward, the vent's tell on its gurgle) |
 | **Slag flows** | A crust of slag sliding along on the lava like a conveyor: with it he runs faster, against it he barely moves. | The lava sea's current, crusted over | Its glowing seams crawl the way it moves | 908 (the cart run) | yes (`slagConveyor`, ability `conveyor`) |
 | **Hell's loop** | A set of stones, geysers or imps that does exactly the same thing over and over. Not a new object: a new way to use the old ones. | Hell is repetition | The first repeat is called out | 995 | config (seeded patterns) |
 | **Chain lifts** | A platform on a chain that rides up and down a shaft on a timer. | The imps' lifts for hauling sacks | The chain clanks and the lift jolts before it moves | 994 | yes (`chainLift`; `startOnStand` waits for him) |
@@ -1010,7 +1010,16 @@ order it can be built and played:
 2. **The playtest bot learns to climb:** jump between moving footholds and keep moving off sinking stones (today's
    bot walks right; the old Slag Falls stage waited on this).
 3. **Floors 1000-991 first** (the stretch J sees first), one level file per floor, in climb order in game.json, each
-   leading to the next (`nextLevelNumber`); its playtest is `level-<n>` per floor and `story-path`.
+   leading to the next (`nextLevelNumber`); its playtest is `level-<n>` per floor and `story-path`. *Built 2026-10-18:
+   Floors 1000-996* (`levels/Floor<floor>.json`, levels 2-6; the `landing-stretch` playtest plays them in a row).
+   How a floor level is set up: `floors.start` its floor, `floors.end` the floor above (the Shaft climbs to it),
+   `unitsPerFloor` 0, the landing's beat `setFloor` to the floor above with `skipMilestones` (the next floor's title
+   calls a milestone itself: Floor 999 opens on *"ONLY 999 TO GO"*), and the Grudge pick before `completeLevel`. Built
+   with today's pieces, so some beats are simpler than the pages above: the fleeing imp on 1000 climbs straight up out
+   of sight (no chain of its own), the village sign on 998 floats as a raft (it doesn't tip over and sink), and the damned
+   soul is a placeholder shape until its art is made. Floors 995-991 are next; until then Floor 996 leads on to the old
+   10-floor stage at Floor 990 (*The Spill*), so for now Grudges come on every floor (the rule in *Rewards*, a pick every
+   fifth floor, waits until the whole stretch is floors).
 4. **The Sack Lift, Floors 960-951, the King's Chimney, Floors 910-901** (Level 11's arena renumbered to Floor 901).
 5. **The long way:** a generated floor per skipped floor (one level template the generator fills from the floor
    number), with the long-way floor bosses.

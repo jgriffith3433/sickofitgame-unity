@@ -103,14 +103,14 @@
     {
       "entity": "cinder",
       "weight": 1.0,
-      "fromFloor": 990,
+      "fromFloor": 998,
       "areaCenter": [4.0, 0.8],
       "areaSize": [0.6, 1.0]
     },
     {
       "entity": "impSack",
       "weight": 0.8,
-      "fromFloor": 980,
+      "fromFloor": 997,
       "areaCenter": [3.4, -1.3],
       "areaSize": [1.0, 0.8]
     },

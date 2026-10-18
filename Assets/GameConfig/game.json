@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "levels": ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6", "Level7", "Level8", "Level9", "Level10", "Level11", "CrackedRoad", "Level13", "Level14", "Level15", "Level16", "Level17", "Level18", "ArcadeCrossfire", "ArcadeSpinCycle", "ArcadeEverything", "ArcadeFireRain"],
+  "levels": ["Level1", "Floor1000", "Floor999", "Floor998", "Floor997", "Floor996", "Level3", "Level4", "Level5", "Level6", "Level7", "Level8", "Level9", "Level10", "Level11", "CrackedRoad", "Level13", "Level14", "Level15", "Level16", "Level17", "Level18", "ArcadeCrossfire", "ArcadeSpinCycle", "ArcadeEverything", "ArcadeFireRain"],
   "videos": ["Video1", "Video2", "Video3", "Video4"],
   "deaths": ["Death1", "Death2", "Death3"],
   "enemyTypes": ["Chaser", "Fighter", "Sentinel", "Shooter"],
