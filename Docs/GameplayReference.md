@@ -81,6 +81,10 @@ How it looks. Without art it is drawn as a colored placeholder with its id, so g
 | `hurtFlash` | true/false | `true` | Flash white when hurt. |
 | `fxColor` | color | `"#00000000"` | Color of the bits that fly off when it's hit or dies. Transparent = cream. |
 | `deathPop` | true/false | `true` | Pop into bits when it dies (enemies with health). |
+| `deathPunch` | number | `0.0` | Death clip: squash-and-stretch pop (0 = none, 0.3 = a clear pop), then it shrinks and floats up as it fades. |
+| `deathFlash` | true/false | `false` | Death clip: a bright flash of fxColor at the moment of death. |
+| `deathBits` | integer | `0` | Death clip: how many bits fly off (0 = the default 6). |
+| `deathFade` | number | `0.0` | Death clip: seconds the last frame takes to fade out (0 = the default 0.25). |
 
 ### AnimatorDef
 

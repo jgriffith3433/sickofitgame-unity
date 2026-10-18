@@ -48,11 +48,11 @@ namespace SickOfIt.Core.Fx
         /// gone from the simulation). The last frame fades out over fadeTime.
         /// </summary>
         public static void Flipbook(Sprite[] frames, float fps, Vector3 position, Vector3 scale, bool flipX, Color tint, SpriteLayer layer,
-            int sortingOrder, float fadeTime = 0.25f)
+            int sortingOrder, float fadeTime = 0.25f, float punch = 0f)
         {
             var runner = FxRunner.Get();
             if (runner != null && frames != null && frames.Length > 0)
-                runner.PlayFlipbook(frames, fps, position, scale, flipX, tint, layer, sortingOrder, fadeTime);
+                runner.PlayFlipbook(frames, fps, position, scale, flipX, tint, layer, sortingOrder, fadeTime, punch);
         }
 
         /// <summary>A puff of dust at the feet (jump, land).</summary>
@@ -93,7 +93,8 @@ namespace SickOfIt.Core.Fx
         {
             public SpriteRenderer Renderer;
             public Sprite[] Frames;
-            public float Fps, Age, Fade;
+            public float Fps, Age, Fade, Punch;
+            public Vector3 Scale, Position;
             public Color Tint;
         }
 
@@ -139,7 +140,7 @@ namespace SickOfIt.Core.Fx
         }
 
         public void PlayFlipbook(Sprite[] frames, float fps, Vector3 position, Vector3 scale, bool flipX, Color tint, SpriteLayer layer, int sortingOrder,
-            float fade)
+            float fade, float punch = 0f)
         {
             Book book = null;
             foreach (var b in books)
@@ -163,6 +164,9 @@ namespace SickOfIt.Core.Fx
             book.Age = 0f;
             book.Fade = Mathf.Max(0f, fade);
             book.Tint = tint;
+            book.Punch = punch;
+            book.Scale = scale;
+            book.Position = position;
             book.Renderer.flipX = flipX;
             book.Renderer.sprite = frames[0];
             book.Renderer.color = tint;
@@ -190,6 +194,26 @@ namespace SickOfIt.Core.Fx
                 if (book.Age > length)
                     c.a *= 1f - (book.Age - length) / Mathf.Max(0.001f, book.Fade);
                 book.Renderer.color = c;
+                if (book.Punch > 0f)
+                {
+                    // Squash and stretch: a quick tall-and-thin pop, then it shrinks and drifts up as it fades.
+                    const float popTime = 0.18f;
+                    float sx = 1f, sy = 1f, rise = 0f;
+                    if (book.Age < popTime)
+                    {
+                        float k = Mathf.Sin(book.Age / popTime * Mathf.PI) * book.Punch;
+                        sx = 1f - 0.5f * k;
+                        sy = 1f + k;
+                    }
+                    if (book.Age > length)
+                    {
+                        float f = Mathf.Clamp01((book.Age - length) / Mathf.Max(0.001f, book.Fade));
+                        sx = sy = 1f - 0.35f * f;
+                        rise = 0.25f * f * book.Scale.y;
+                    }
+                    book.Renderer.transform.localScale = new Vector3(book.Scale.x * sx, book.Scale.y * sy, book.Scale.z);
+                    book.Renderer.transform.position = book.Position + new Vector3(0f, rise, 0f);
+                }
             }
             for (int i = 0; i < bits.Length; i++)
             {

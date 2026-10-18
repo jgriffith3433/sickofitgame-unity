@@ -715,9 +715,15 @@ namespace SickOfIt.Gameplay
                 if (Animation != null && Animation.TryGetClip(DieState, out var dieFrames, out float dieFps))
                 {
                     SickOfIt.Core.Fx.Fx.Flipbook(dieFrames, dieFps, transform.position, transform.lossyScale, Sprite != null && Sprite.flipX,
-                        Sprite != null ? Sprite.color : Color.white, Def.visual.layer, Def.visual.SortingOrder);
+                        Sprite != null ? Sprite.color : Color.white, Def.visual.layer, Def.visual.SortingOrder,
+                        Def.visual.deathFade > 0f ? Def.visual.deathFade : 0.25f, Def.visual.deathPunch);
                     if (maxHealth > 0 && Def.visual.deathPop)
-                        SickOfIt.Core.Fx.Fx.Burst(at, FxColor, 6, 2f + radius * 2f, Mathf.Clamp(radius * 0.3f, 0.05f, 0.2f));
+                    {
+                        if (Def.visual.deathFlash)
+                            SickOfIt.Core.Fx.Fx.Flash(at, Color.Lerp(FxColor, Color.white, 0.6f), Mathf.Clamp(radius * 3f, 0.5f, 2.5f), 0.16f);
+                        SickOfIt.Core.Fx.Fx.Burst(at, FxColor, Def.visual.deathBits > 0 ? Def.visual.deathBits : 6, 2f + radius * 2f,
+                            Mathf.Clamp(radius * 0.3f, 0.05f, 0.2f));
+                    }
                 }
                 else if (maxHealth > 0 && Def.visual.deathPop)
                 {
