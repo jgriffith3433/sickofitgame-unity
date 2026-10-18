@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "body": {
+    "radius": 0.3,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#FF4A2AE6",
+    "placeholderSize": 0.85,
+    "placeholderLabel": false,
+    "layer": "Foreground1",
+    "sortingOrder": 1,
+    "hurtFlash": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 0.5
+    }
+  ]
+}

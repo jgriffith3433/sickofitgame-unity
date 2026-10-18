@@ -174,6 +174,9 @@ namespace SickOfIt.Core.Input
         /// <summary>World units per second at full input (move speed times MoveSpeedMultiplier).</summary>
         public float CurrentMoveSpeed => moveSpeed * MoveSpeedMultiplier;
 
+        /// <summary>Game-clock time of the last shot (read by the playtest: no shot may leave while input is locked).</summary>
+        public float LastFireTime => lastFireTime;
+
         /// <summary>True while the sprite faces right (2D flip: negative X faces right).</summary>
         public bool FacingRight => use2DFlip
             ? graphicsTransform == null || graphicsTransform.localScale.x <= 0f

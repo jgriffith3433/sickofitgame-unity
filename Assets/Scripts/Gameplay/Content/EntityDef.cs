@@ -214,6 +214,8 @@ namespace SickOfIt.Gameplay.Content
         [SoundRef] public string hurtSound = "";
         [Doc("audio.json sound for deaths, used when 'death' has no clips. Empty = the game's enemyDie sound (enemies only).")]
         [SoundRef] public string deathSound = "";
+        [Doc("audio.json sound played on a loop while it is alive (a portal's hum, an engine). Stops when it dies or despawns.")]
+        [SoundRef] public string loopSound = "";
         public float pitchVariation = 0.1f;
         public float volume = 1f;
     }

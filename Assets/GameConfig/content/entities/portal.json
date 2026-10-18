@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "tags": ["portal"],
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#FF7A1AE6",
+    "placeholderSize": 1.3,
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 2,
+    "hurtFlash": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "sounds": {
+    "loopSound": "portal_hum_loop"
+  },
+  "abilities": [
+    {
+      "type": "hover",
+      "aroundSpawn": true,
+      "offset": [0.0, 0.0],
+      "speed": 1.0,
+      "bobHeight": 0.04,
+      "bobSpeed": 3.0
+    }
+  ]
+}

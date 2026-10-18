@@ -164,7 +164,10 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
 `Assets/Scripts/Playtest/SickOfItPlaytest.cs` registers the scenarios at startup; nothing runs until one starts.
 
 - **Scenarios:** `smoke` (main menu, New Game, skip the video, level 1 for ~30 s with one rewind and a P pause/resume,
-  quit to menu), `level-<n>` per level in game.json (loads the level directly, a setup shortcut), `full` (New Game, then
+  quit to menu), `level-<n>` per level in game.json (loads the level directly, a setup shortcut; `level-1` also checks its
+  ending, the portal scene, beat by beat: Grudge pick first, beam telegraphed and hitting beside the hero, portal open,
+  move/jump/fire/R pressed and ignored, the walk, every line's subtitle and voice, the turn, the pull-in, the slime,
+  the scorch, the fade, no damage; then Continue on the results and Video2 must start; `check`, `line`, `signal` events), `full` (New Game, then
   every level in order through the real flow: results → Continue → video skipped with Escape; up to 3 tries per level;
   ~10 min), `menus` (level select, videos, shop, settings open and close), `layout` (main menu, level select, settings,
   level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or

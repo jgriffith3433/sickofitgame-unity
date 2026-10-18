@@ -67,6 +67,7 @@ namespace SickOfIt.Gameplay
 
         SimHistory history;
         AudioSource audioSource;
+        AudioSource loopSource;
         ObjectPool pool;
         Collider2D[] colliders;
         EntityHealthBar healthBar;
@@ -157,11 +158,15 @@ namespace SickOfIt.Gameplay
         void OnEnable()
         {
             if (alive && World != null)
+            {
                 World.Register(this);
+                StartLoopSound();
+            }
         }
 
         void OnDisable()
         {
+            StopLoopSound();
             World?.Unregister(this);
         }
 
@@ -280,6 +285,7 @@ namespace SickOfIt.Gameplay
             world.Register(this);
 
             PlayRandom(def.sounds.spawn);
+            StartLoopSound();
             if (def.onSpawn.Count > 0)
                 RunActions(def.onSpawn, 0);
             dirty = true;
@@ -694,6 +700,7 @@ namespace SickOfIt.Gameplay
             }
 
             alive = false;
+            StopLoopSound();
             Vector2 at = Position;
 
             if (cause != DeathCause.Despawn)
@@ -1064,6 +1071,30 @@ namespace SickOfIt.Gameplay
                 return;
             audioSource.pitch = 1f + random.Range(-Def.sounds.pitchVariation, Def.sounds.pitchVariation);
             audioSource.PlayOneShot(clip, Def.sounds.volume);
+        }
+
+        /// <summary>
+        /// sounds.loopSound plays on its own source while the entity is alive and active (presentation only); it stops
+        /// when the entity dies, despawns or is switched off (pool return, a rewind back to before it spawned).
+        /// </summary>
+        void StartLoopSound()
+        {
+            if (Def == null || string.IsNullOrEmpty(Def.sounds.loopSound) || !alive)
+                return;
+            if (loopSource == null)
+            {
+                loopSource = gameObject.AddComponent<AudioSource>();
+                loopSource.playOnAwake = false;
+                loopSource.spatialBlend = 0f;
+            }
+            if (!loopSource.isPlaying)
+                SickOfIt.Core.Audio.Sfx.PlayLoop(loopSource, Def.sounds.loopSound, Def.sounds.volume);
+        }
+
+        void StopLoopSound()
+        {
+            if (loopSource != null && loopSource.isPlaying)
+                loopSource.Stop();
         }
 
         static bool IsRewinding => GameClock.Instance != null && GameClock.Instance.IsRewinding;
