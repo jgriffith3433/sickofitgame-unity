@@ -186,7 +186,8 @@ namespace SickOfIt.Gameplay
                     int count = selector.SetCount();
                     bool defaultsToSelf = owner is HealthBelowTrigger;
                     if (count > 1)
-                        issues.Error(file, path, $"Set only one of player, self, id, tag, entity, all (found {count}).");
+                        issues.Error(file, path, $"Set only one of player, self, id, tag, entity, all (found {count})." +
+                            (selector.self && count == 2 ? " This target defaults to self: add \"self\": false." : ""));
                     else if (count == 0 && !defaultsToSelf)
                         issues.Error(file, path, "Say what to target: one of player, self, id, tag, entity, all.");
                 }
