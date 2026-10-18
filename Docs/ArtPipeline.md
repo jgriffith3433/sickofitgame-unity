@@ -53,18 +53,19 @@ enemy must fit [Story.md](Story.md).
 | `name`, `description` | Who it is and what it looks like. The same description goes into every image and clip, so be specific about colors, body and props. Say what makes it *this* Circle's creature. |
 | `height` | How tall the standing figure is in the game, in world units (the screen is 5.76 tall). Imp 0.75, Cinder 0.35, Magma King 1.8. |
 | `poses` | Stills the clips start and end on, each a phrase ("crouched low, ..."). `stand` is made first from the description; every other pose is made from `stand` so it keeps the same look, size and ground line. Only poses a clip uses are made. |
-| `clips` | Any of `idle`, `move`, `attack`, `hurt`, `die`. `idle` is required. |
+| `clips` | Any of `idle`, `move`, `attack`, `hurt`, `die` (wired by themselves); `idle` is required. Other names (a boss's `throw`, `rise`, `slam`...) are states of their own, wired by `animator.transitions`. |
 | `reference` | Optional: start `stand` from existing art (`"Images/Demon2.png"`, or an absolute path) instead of from text. |
 | `style`, `background`, `negative`, `prompts`, `takes`, `frameFill` | Overrides of the defaults in `Tools/Art/art.mjs` `DEFAULTS`; `art/_defaults.json` overrides them for every enemy (the game-wide style line lives there if you change it). |
 | `pixels` | Standing height in sheet pixels (default `height × 280`, 96–400). |
 | `visualScale` | Set the entity's `visual.scale` too (normally the entity's own is kept). |
 | `keepTint` | Keep a placeholder `visual.color` tint (normally removed: real art isn't tinted). |
-| `animator` | `attackParam`, `attackEvent`, `moveParam` when the entity's abilities don't already name them. |
+| `animator` | `attackParam`, `attackEvent`, `moveParam` when the entity's abilities don't already name them. Or the whole graph: `parameters` (`{ name, type }`) and `transitions` (`{ from, to, when: ["Param", "!Param"], exit: true }`), used instead of the built-in wiring; transitions to a clip not made yet are left out (`art/magmaKing.json`). |
 
 Per clip:
 
 | Field | |
 |---|---|
+| `state`, `event` | The animator state's name (default: `Idle`... for the five, else the clip name in PascalCase) and an event fired on the clip's hit frame (the ability it times needs `fireOnEvent` with that name). |
 | `from`, `to` | The poses it starts and ends on (default `stand`; `to` defaults to `from`). Same pose = it loops cleanly. |
 | `action` | What happens, as a verb phrase after the name ("hurls the ember forward"). In place: the game moves the entity. |
 | `seconds` | Length to generate (Wan makes 16 fps). Moves read best at 1–1.5 s. |
@@ -78,6 +79,11 @@ Write descriptions the way the cookbook's art rules want: one creature, side vie
 background or the camera; the prompts add that.
 
 ## 2. Run it
+
+On the Linux agent server (no DoD `.venv`, no rembg): make a venv with `numpy pillow`, then run with
+`SOI_ART_PYTHON=<venv>/bin/python DOD_ROOT=/srv/hawkes/doseofdestructionwebsite SOI_ART_WORK=<a writable folder>`
+and `HAWKESGEN_KEY` (the agent's MCP config has it; with a key, files are uploaded as blobs) and `--no-unity`.
+Stills on flat green are keyed by colour; BiRefNet is only missing for takes with a busy backdrop.
 
 ```bash
 node Tools/Art/art.mjs imp            # everything missing or out of date, then build, apply, import

@@ -10,8 +10,15 @@
   "poses": {
     "stand": "slouched lazily on his huge throne of piled black slag and glowing rock, one elbow on the throne's arm, chin resting on his fist, smug and bored",
     "risen": "standing up at his full height in front of his slag throne, fists clenched at his sides, the lava in his cracks still a dull orange glow",
-    "standing": "standing tall in front of his slag throne, enraged, fists clenched, shoulders hunched forward, the cracks all over his body blazing bright yellow-white with molten light, lava pouring from his crown",
-    "dead": "collapsed into a low heap of cooling dark slag and smoke at the foot of his empty throne, the throne split down the middle by a big glowing crack, his rock crown lying on top of the heap"
+    "standing": {
+      "from": "risen",
+      "action": "still standing on his feet in front of his slag throne, now enraged: fists clenched, shoulders hunched forward, the cracks all over his body blazing bright yellow-white with molten light, lava pouring from his crown"
+    },
+    "dead": {
+      "from": "risen",
+      "action": "gone: only a heap of cooling slag rubble is left in front of his cracked, empty throne",
+      "prompt": "Image 1 shows a demon king standing in front of his throne. Remove the demon king completely: no body, no legs, no arms, no head left. In his place, on the ground in front of the empty throne, draw a low wide heap of cooling black slag rubble glowing orange in the cracks, with thin grey smoke rising from it and his jagged rock crown lying on top of the heap. The empty throne is split down the middle by a big glowing orange crack. Keep the throne, the art style, the size and the position the same as image 1. {background}"
+    }
   },
   "clips": {
     "idle": {
@@ -88,28 +95,117 @@
   },
   "animator": {
     "parameters": [
-      { "name": "Standing", "type": "Bool" },
-      { "name": "Throw", "type": "Trigger" },
-      { "name": "Slam", "type": "Trigger" },
-      { "name": "Breath", "type": "Trigger" },
-      { "name": "Hurt", "type": "Trigger" }
+      {
+        "name": "Standing",
+        "type": "Bool"
+      },
+      {
+        "name": "Throw",
+        "type": "Trigger"
+      },
+      {
+        "name": "Slam",
+        "type": "Trigger"
+      },
+      {
+        "name": "Breath",
+        "type": "Trigger"
+      },
+      {
+        "name": "Hurt",
+        "type": "Trigger"
+      }
     ],
     "transitions": [
-      { "from": "Idle", "to": "Rise", "when": ["Standing"] },
-      { "from": "Idle", "to": "Throw", "when": ["Throw"] },
-      { "from": "Idle", "to": "SlamSeat", "when": ["Slam"] },
-      { "from": "Idle", "to": "Hurt", "when": ["Hurt"] },
-      { "from": "Throw", "to": "Idle", "exit": true },
-      { "from": "SlamSeat", "to": "Idle", "exit": true },
-      { "from": "Hurt", "to": "Idle", "exit": true },
-      { "from": "Rise", "to": "Enrage", "exit": true },
-      { "from": "Enrage", "to": "IdleStand", "exit": true },
-      { "from": "IdleStand", "to": "Slam", "when": ["Slam"] },
-      { "from": "IdleStand", "to": "Breath", "when": ["Breath"] },
-      { "from": "IdleStand", "to": "HurtStand", "when": ["Hurt"] },
-      { "from": "Slam", "to": "IdleStand", "exit": true },
-      { "from": "Breath", "to": "IdleStand", "exit": true },
-      { "from": "HurtStand", "to": "IdleStand", "exit": true }
+      {
+        "from": "Idle",
+        "to": "Rise",
+        "when": [
+          "Standing"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "Throw",
+        "when": [
+          "Throw"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "SlamSeat",
+        "when": [
+          "Slam"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Throw",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "SlamSeat",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Hurt",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Rise",
+        "to": "Enrage",
+        "exit": true
+      },
+      {
+        "from": "Enrage",
+        "to": "IdleStand",
+        "exit": true
+      },
+      {
+        "from": "IdleStand",
+        "to": "Slam",
+        "when": [
+          "Slam"
+        ]
+      },
+      {
+        "from": "IdleStand",
+        "to": "Breath",
+        "when": [
+          "Breath"
+        ]
+      },
+      {
+        "from": "IdleStand",
+        "to": "HurtStand",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Slam",
+        "to": "IdleStand",
+        "exit": true
+      },
+      {
+        "from": "Breath",
+        "to": "IdleStand",
+        "exit": true
+      },
+      {
+        "from": "HurtStand",
+        "to": "IdleStand",
+        "exit": true
+      }
     ]
   },
   "takes": {

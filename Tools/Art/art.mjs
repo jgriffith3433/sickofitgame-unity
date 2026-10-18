@@ -118,7 +118,17 @@ function loadSpec(id) {
   spec.entity ??= id;
   spec.name ??= pascal(id);
   spec.prefix ??= pascal(spec.entity);
-  spec.poses = { stand: 'standing in its normal stance', ...(raw.poses ?? {}) };
+  // A pose is a phrase, or { "from": "<pose>", "action": "..." } to be made from another pose instead of stand (a boss that
+  // stands up: poses edited from a seated stand stay seated).
+  spec.poseBase = {};
+  spec.posePrompt = {};
+  spec.poses = { stand: 'standing in its normal stance' };
+  for (const [pose, v] of Object.entries(raw.poses ?? {})) {
+    spec.poses[pose] = typeof v === 'string' ? v : v.action;
+    if (typeof v === 'object' && v.from && pose !== 'stand') spec.poseBase[pose] = v.from;
+    // "prompt" replaces the pose template ("Show the exact same creature..."), e.g. to take him out of the picture.
+    if (typeof v === 'object' && v.prompt && pose !== 'stand') spec.posePrompt[pose] = v.prompt;
+  }
   spec.clips = raw.clips ?? {};
   const problems = [];
   if (!spec.description) problems.push('"description" is required');
@@ -129,6 +139,10 @@ function loadSpec(id) {
     if (c.video) continue;
     for (const k of ['from', 'to']) if (c[k] && !spec.poses[c[k]]) problems.push(`clip "${name}": no pose "${c[k]}" in "poses"`);
     if (!c.action) problems.push(`clip "${name}": "action" is required (what happens in it)`);
+  }
+  for (const [pose, base] of Object.entries(spec.poseBase)) {
+    const order = Object.keys(spec.poses);
+    if (!spec.poses[base] || order.indexOf(base) > order.indexOf(pose)) problems.push(`pose "${pose}": "from" must be a pose listed before it`);
   }
   if (problems.length) throw new Error(`${path.relative(REPO, file)}:\n  ${problems.join('\n  ')}`);
   return spec;
@@ -202,7 +216,12 @@ function keys(spec, P) {
   const k = {};
   const standSrc = spec.reference ? resolveAsset(spec.reference) : null;
   k.stand = sha({ d: spec.description, s: spec.style, b: spec.background, a: spec.poses.stand, r: standSrc && fs.existsSync(standSrc) ? fs.statSync(standSrc).size : null });
-  for (const pose of Object.keys(spec.poses)) if (pose !== 'stand') k[`pose:${pose}`] = sha({ stand: k.stand, a: spec.poses[pose], b: spec.background });
+  for (const pose of Object.keys(spec.poses)) {
+    if (pose === 'stand') continue;
+    const base = spec.poseBase[pose];
+    const p = spec.posePrompt[pose];
+    k[`pose:${pose}`] = sha({ ...(base ? { base: poseKey(k, base) } : { stand: k.stand }), a: spec.poses[pose], b: spec.background, ...(p ? { p } : {}) });
+  }
   for (const [name, c] of Object.entries(spec.clips)) {
     if (c.video) continue;
     const from = c.from ?? 'stand';
@@ -318,9 +337,9 @@ async function makePose(spec, P, pose, key, opts) {
       prompt = fill(spec.prompts.standFromText, { description: `${spec.description}, ${spec.poses.stand}`, style: spec.style, background: spec.background });
     }
   } else {
-    input = P.pose('stand');
+    input = P.pose(spec.poseBase[pose] ?? 'stand');
     const air = /air|fly|hover|float|leap|jump/i.test(`${spec.poses[pose]} ${spec.poses.stand}`);
-    prompt = fill(spec.prompts.pose, { action: spec.poses[pose], background: spec.background, ground: air ? '' : ', feet on the same ground line as image 1' });
+    prompt = fill(spec.posePrompt[pose] ?? spec.prompts.pose, { action: spec.poses[pose], background: spec.background, ground: air ? '' : ', feet on the same ground line as image 1' });
   }
   const n = opts.takes ?? (pose === 'stand' ? spec.takes.stand : spec.takes.pose);
   const seeds = Array.from({ length: n }, (_, i) => seedFor(opts, i, key, opts.redo.has(pose)));
