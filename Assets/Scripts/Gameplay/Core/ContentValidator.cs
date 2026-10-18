@@ -126,10 +126,20 @@ namespace SickOfIt.Gameplay
                 issues.Warning(file, At("objective.complete"), "No win condition: the level only ends through a completeLevel action or the player dying.");
             if (script.world.camera != CameraMode.Static)
             {
-                ContentWalker.Walk(script, (owner, field, value, path) =>
+                void CheckCamera(object value, string path)
                 {
                     if (value is CameraToAction || value is CameraZoomAction || value is CameraResetAction)
                         issues.Warning(file, At(path), $"Camera actions only move the Static camera; this script's world.camera is {script.world.camera}, so it does nothing.");
+                }
+                // The walker hands over a list (onEnter, do, steps) as one value, so look inside it too.
+                ContentWalker.Walk(script, (owner, field, value, path) =>
+                {
+                    CheckCamera(value, path);
+                    if (value is List<GameAction> actions)
+                    {
+                        for (int i = 0; i < actions.Count; i++)
+                            CheckCamera(actions[i], $"{path}[{i}]");
+                    }
                 });
             }
         }
