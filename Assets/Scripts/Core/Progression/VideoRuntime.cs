@@ -76,6 +76,9 @@ namespace SickOfIt.Core.Progression
             gameClock = gameObject.AddComponent<GameClock>();
             gameObject.AddComponent<SickOfIt.Core.Rewind.RewindTimeline>();
 
+            // R still held from the level counts as a hold, not a new press.
+            rewindKeyHeld = Keyboard.current != null && Keyboard.current.rKey.isPressed;
+
             EnsurePlaybackCamera();
             EnsureEventSystem();
             AutoDiscoverReferences();

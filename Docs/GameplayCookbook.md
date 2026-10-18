@@ -179,6 +179,38 @@ Then, on `atPortal`:
 `script`, no `objective` needed). The playtest's `cutscene` scenario plays `content/scenes/cutsceneTest.json` on
 Level 1's stage (`LevelRuntime.PendingScene`, a setup shortcut) and checks every action above.
 
+## Something moving over a video ("the hero tumbles down the fire tunnel")
+
+Videos, deaths and levels have a `timeline.overlays` list: pictures drawn over the scene and moved by keyframes.
+Each frame the pose is **sampled from the clock time**, never tweened, so holding rewind plays it backward, a seek
+lands on the right pose, and nothing needs saving. It is hidden before its first keyframe and after its last.
+
+```json
+"timeline": {
+  "overlays": [
+    {
+      "name": "heroFall",
+      "spriteSheet": "Art/Sprites/Player/Fall.png",  // or "sprite": "Images/X.png#X_0" for a still
+      "fps": 12.0, "loop": true,                      // sheet frames play from the first keyframe
+      "sortLayer": "Player", "sortOrder": 0,          // the video itself is Background1
+      "tint": "#FFE6CC",
+      "keyframes": [
+        { "time": 10.45, "position": [0.9, 0.9], "rotation": 20.0, "scale": 1.25, "alpha": 0.0, "ease": "Out" },
+        { "time": 14.4,  "position": [0.0, -0.18], "rotation": -1390.0, "scale": 0.03, "alpha": 0.0, "ease": "Linear" }
+      ]
+    }
+  ]
+}
+```
+
+- `position` is in world units: the camera looks at (0, 0) and a video frame is 10.24 wide and 5.76 high.
+- `rotation` is degrees and is not wrapped: 1080 from 0 is three turns; negative turns clockwise.
+- `ease` (`Linear`, `In`, `Out`, `InOut`, `Hold`) shapes the move from that keyframe to the next.
+- The sheet must be one some config already uses (the asset registry holds its sprites); the player's sheets are.
+- Keyframes must be in time order; the import report flags it, and a missing sprite or keyframe.
+- Video2 uses it for the hero's fall (10.45-14.4 s). In a video, hold R or the ◄◄ button to rewind; Escape skips.
+  The playtest's `video-2` scenario watches it and checks each beat.
+
 ## Branching: secret exits, alternate paths
 
 ```json

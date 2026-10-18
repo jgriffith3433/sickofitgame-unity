@@ -34,6 +34,8 @@ namespace SickOfIt.Playtest
     /// cutscene (the scene content/scenes/cutsceneTest.json on level 1's stage, a setup shortcut: the hero walks there
     /// by himself and stops, turns, can't rewind, the camera zooms in and back, the screen fades to black and back, and
     /// he is pulled into a point, spinning and shrinking until he is gone; each beat is checked).
+    /// video-2 (Video2 loaded directly and watched, not skipped: the hero's fall overlay appears at the burning door,
+    /// spins and shrinks into the tunnel and is gone by ~14.5 s; R held mid-spin plays it backward; Escape skips).
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
     /// </summary>
     public static class SickOfItPlaytest
@@ -67,6 +69,10 @@ namespace SickOfIt.Playtest
         public const string CutsceneScene = "cutsceneTest";
         public const int CutsceneLevel = 1;
 
+        /// <summary>The video-2 scenario: the video it watches and the timeline overlay it checks (the hero falling down the fire tunnel).</summary>
+        public const int OverlayVideo = 2;
+        public const string OverlayName = "heroFall";
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void Register()
         {
@@ -95,6 +101,9 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario("cutscene", $"The scene \"{CutsceneScene}\" on level {CutsceneLevel}'s stage (setup shortcut): with input and rewind locked " +
                 "the hero walks to a point by himself and stops, turns left and right, R does nothing; the camera zooms in and back; the screen fades " +
                 "to black and back; he is pulled into a point, spinning and shrinking until he disappears. Each beat is checked", 75, "level"));
+            list.Add(new PlaytestScenario("video-" + OverlayVideo, $"Video {OverlayVideo}, started directly (setup shortcut) and watched instead of skipped: " +
+                $"the overlay \"{OverlayName}\" (the hero) appears as the camera goes through the burning door, spins 3+ turns and shrinks into the tunnel's " +
+                "centre and is gone before the lava river (~14.5 s); holding R mid-spin plays it backward; then Escape skips the video. Each beat is checked", 75, "video"));
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close", 70, "menus"));
             list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu, level select, settings, " +
@@ -155,6 +164,8 @@ namespace SickOfIt.Playtest
                 yield return session.ImpDeath();
             else if (id == "cutscene")
                 yield return session.Cutscene();
+            else if (id == "video-" + OverlayVideo)
+                yield return session.VideoOverlay();
             else if (id.StartsWith("level-", StringComparison.Ordinal) && int.TryParse(id.Substring(6), out int n))
                 yield return session.LevelScenario(n);
             else
@@ -223,6 +234,7 @@ namespace SickOfIt.Playtest
             public void Dispose()
             {
                 Application.logMessageReceived -= OnLog;
+                TimelineOverlayPlayer.VisibilityChanged -= OnOverlayVisibility;
                 GameplayTelemetry.Recorded -= OnTelemetry;
                 GameplayTelemetry.Finished -= OnLevelLog;
                 if (bot != null)
@@ -429,6 +441,163 @@ namespace SickOfIt.Playtest
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
                     : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
                     : PlaytestOutcome.Won);
+            }
+
+            // ─── video-2: the hero's fall down the fire tunnel (a timeline overlay) ─────
+
+            float overlayShownAt = -1f;
+            float overlayHiddenAt = -1f;
+            int overlayFailed;
+            readonly HashSet<string> overlayPassed = new HashSet<string>();
+            static readonly string[] OverlayBeats = { "appeared", "spun", "shrank", "gone", "rewound", "skipped" };
+
+            void OnOverlayVisibility(string name, bool shown, float time)
+            {
+                if (name != OverlayName)
+                    return;
+                bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
+                Run.Event("overlay", $"{name} {(shown ? "shown" : "hidden")} at {time:0.00}s{(rewinding ? " (rewinding)" : "")}");
+                if (rewinding)
+                    return;
+                if (shown && overlayShownAt < 0f)
+                    overlayShownAt = time;
+                if (!shown)
+                    overlayHiddenAt = time;
+            }
+
+            void OverlayCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    overlayPassed.Add(beat);
+                    Run.Event("check", $"video {beat}: ok ({detail})");
+                }
+                else
+                {
+                    overlayFailed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"video {beat}: {detail}");
+                }
+            }
+
+            static float ClockTime => GameClock.Instance != null ? GameClock.Instance.Time : 0f;
+
+            /// <summary>
+            /// Loads the video directly (setup shortcut) and watches it instead of skipping: the overlay must appear at
+            /// its first keyframe, spin and shrink toward the tunnel's centre and be gone after its last; R held
+            /// mid-spin must turn it back; Escape must still skip the video.
+            /// </summary>
+            public IEnumerator VideoOverlay()
+            {
+                var definition = GameDefinition.Instance;
+                var video = definition.TotalVideos >= OverlayVideo ? definition.GetVideo(OverlayVideo) : null;
+                var overlay = video?.timeline?.overlays?.Find(o => o != null && o.name == OverlayName);
+                if (overlay == null || overlay.keyframes.Count < 2)
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"video-{OverlayVideo}: video {OverlayVideo} has no timeline overlay \"{OverlayName}\" with keyframes");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+                float start = overlay.StartTime, end = overlay.EndTime;
+                float firstRotation = overlay.keyframes[0].rotation;
+                TimelineOverlayPlayer.VisibilityChanged -= OnOverlayVisibility;
+                TimelineOverlayPlayer.VisibilityChanged += OnOverlayVisibility;
+
+                Run.Event("shortcut", $"load video {OverlayVideo} directly; watch it (no Escape) to {end + 0.5f:0.0}s");
+                SceneTransitionManager.Instance.LoadVideo(OverlayVideo);
+                yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null && ClockTime > 0.1f, 60f, $"video {OverlayVideo} to start playing");
+                if (Run.Done)
+                    yield break;
+                Run.Scene("Video");
+
+                // Forward to just past the middle of the spin, watching how far he turned and how small he got.
+                float maxTurned = 0f, biggest = 0f, smallest = float.MaxValue;
+                Vector2 lastPosition = Vector2.zero;
+                void Watch()
+                {
+                    if (!TimelineOverlayPlayer.TryGetPose(OverlayName, out bool visible, out var pose, out _) || !visible || pose == null)
+                        return;
+                    if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                        return;
+                    maxTurned = Mathf.Max(maxTurned, Mathf.Abs(pose.rotation - firstRotation));
+                    if (pose.alpha > 0.05f)
+                    {
+                        biggest = Mathf.Max(biggest, pose.scale);
+                        smallest = Mathf.Min(smallest, pose.scale);
+                        lastPosition = pose.position;
+                    }
+                }
+
+                float rewindAt = Mathf.Lerp(start, end, 0.6f);
+                Run.Note($"watching the video to {rewindAt:0.0}s");
+                yield return Run.Until(() => { Watch(); return ClockTime >= rewindAt; }, rewindAt + 40f, $"video {OverlayVideo} to reach {rewindAt:0.0}s");
+                if (Run.Done)
+                    yield break;
+                Run.Progress(0.4f);
+
+                // Hold R: the clock runs backward and the spin with it.
+                TimelineOverlayPlayer.TryGetPose(OverlayName, out _, out var before, out _);
+                float clockBefore = ClockTime;
+                float turnBefore = before != null ? Mathf.Abs(before.rotation - firstRotation) : 0f;
+                float scaleBefore = before != null ? before.scale : 0f;
+                input.SetKey(Key.R, true);
+                Run.Event("input", $"hold R (rewind) at {clockBefore:0.00}s");
+                float lowestClock = clockBefore, leastTurn = turnBefore, mostScale = scaleBefore;
+                bool stayedVisible = true;
+                float holdUntil = Time.realtimeSinceStartup + 0.45f;
+                while (!Run.Done && Time.realtimeSinceStartup < holdUntil)
+                {
+                    yield return null;
+                    lowestClock = Mathf.Min(lowestClock, ClockTime);
+                    if (TimelineOverlayPlayer.TryGetPose(OverlayName, out bool visible, out var pose, out _) && pose != null)
+                    {
+                        stayedVisible &= visible;
+                        leastTurn = Mathf.Min(leastTurn, Mathf.Abs(pose.rotation - firstRotation));
+                        mostScale = Mathf.Max(mostScale, pose.scale);
+                    }
+                }
+                input.SetKey(Key.R, false);
+                yield return null;
+                Run.Event("input", $"release R at {ClockTime:0.00}s");
+                OverlayCheck("rewound", lowestClock < clockBefore - 0.3f && leastTurn < turnBefore - 30f && mostScale > scaleBefore,
+                    $"clock went back from {clockBefore:0.00}s to {lowestClock:0.00}s; the hero turned back from {turnBefore / 360f:0.00} to " +
+                    $"{leastTurn / 360f:0.00} turns and grew from {scaleBefore:0.00} to {mostScale:0.00}; on screen the whole time: {stayedVisible}");
+
+                // Forward again, past the end of the fall.
+                float watchUntil = end + 0.5f;
+                Run.Note($"watching the video to {watchUntil:0.0}s");
+                yield return Run.Until(() => { Watch(); return ClockTime >= watchUntil && (GameClock.Instance == null || !GameClock.Instance.IsRewinding); },
+                    watchUntil + 40f, $"video {OverlayVideo} to reach {watchUntil:0.0}s");
+                if (Run.Done)
+                    yield break;
+                Run.Progress(0.8f);
+
+                TimelineOverlayPlayer.TryGetPose(OverlayName, out bool stillVisible, out _, out _);
+                OverlayCheck("appeared", overlayShownAt >= 0f && Mathf.Abs(overlayShownAt - start) < 0.5f,
+                    $"shown at {overlayShownAt:0.00}s (first keyframe {start:0.00}s, as the camera goes through the door)");
+                OverlayCheck("spun", maxTurned >= 3f * 360f, $"turned {maxTurned / 360f:0.0} full turns");
+                OverlayCheck("shrank", biggest > 0f && smallest < biggest * 0.15f && lastPosition.magnitude < 0.6f,
+                    $"scale {biggest:0.00} down to {smallest:0.00}, last seen at ({lastPosition.x:0.00}, {lastPosition.y:0.00}) near the tunnel's centre");
+                OverlayCheck("gone", !stillVisible && overlayHiddenAt >= end - 0.1f && overlayHiddenAt <= 14.8f,
+                    $"hidden at {overlayHiddenAt:0.00}s (last keyframe {end:0.00}s), not on screen at {ClockTime:0.00}s");
+
+                // Escape still skips the video.
+                yield return Tap(Key.Escape);
+                Run.Event("input", $"Escape (skip) at {ClockTime:0.00}s");
+                float pressed = Time.realtimeSinceStartup;
+                while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && Time.realtimeSinceStartup - pressed < 20f)
+                    yield return null;
+                bool left = Object.FindAnyObjectByType<VideoRuntime>() == null;
+                OverlayCheck("skipped", left, left ? $"the video closed {Time.realtimeSinceStartup - pressed:0.0}s after Escape ({SceneName()})"
+                    : "the video was still playing 20 s after Escape");
+
+                TimelineOverlayPlayer.VisibilityChanged -= OnOverlayVisibility;
+                int passed = 0;
+                foreach (var beat in OverlayBeats)
+                    if (overlayPassed.Contains(beat)) passed++;
+                Run.Metric("video.passed", passed);
+                Run.Metric("video.failed", overlayFailed);
+                Run.Progress(1f);
+                End(passed == OverlayBeats.Length && overlayFailed == 0 ? PlaytestOutcome.Won : PlaytestOutcome.Done);
             }
 
             // ─── cutscene: every scene action, checked beat by beat ─────
