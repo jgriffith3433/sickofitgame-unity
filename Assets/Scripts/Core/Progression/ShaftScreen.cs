@@ -58,6 +58,8 @@ namespace SickOfIt.Core.Progression
         public string NextWardenText => nextWarden != null ? nextWarden.text : "";
         public string CircleText => circleLine != null ? circleLine.text : "";
         public string SubtitleText => subtitle != null && subtitle.gameObject.activeInHierarchy ? subtitle.text : "";
+        /// <summary>Continue was pressed: the next scene is loading under it.</summary>
+        public bool Continued => continued;
         /// <summary>A preview (playtest setup shortcut): Continue only closes it; nothing is saved.</summary>
         public bool IsPreview => preview;
 
@@ -180,6 +182,8 @@ namespace SickOfIt.Core.Progression
             Skippable = ShaftProgress.Plunged;
             openedAt = Time.unscaledTime;
             menu.Back = null;
+            // A scene that replaces the current one (Continue's, or any other) takes the Shaft with it.
+            SceneManager.sceneLoaded += OnSceneLoaded;
 
             HideTheRest();
             ResolveBands();
@@ -888,7 +892,6 @@ namespace SickOfIt.Core.Progression
                 return;
             }
             // Stay up over the old scene until the next one has loaded (Continue starts that load).
-            SceneManager.sceneLoaded += OnSceneLoaded;
             Invoke(nameof(Close), 30f);
             try
             {
@@ -901,7 +904,11 @@ namespace SickOfIt.Core.Progression
             }
         }
 
-        void OnSceneLoaded(Scene scene, LoadSceneMode mode) => Close();
+        void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (mode == LoadSceneMode.Single || continued)
+                Close();
+        }
 
         /// <summary>Takes the Shaft off the screen (a preview puts back what it covered).</summary>
         public void Close()

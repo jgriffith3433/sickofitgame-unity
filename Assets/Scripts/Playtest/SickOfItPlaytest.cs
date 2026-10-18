@@ -86,6 +86,9 @@ namespace SickOfIt.Playtest
         /// <summary>The Landing (Level 2): the floors its counter must run through, and the milestone it must play.</summary>
         public const int LandingLevel = 2, LandingFirstFloor = 1000, LandingLastFloor = 991, LandingMilestone = 999;
         const float StoryPathSeconds = 900f;
+        /// <summary>The shaft scenario: the level after the plunge whose climb it watches (The Landing).</summary>
+        public const int ShaftLevel = 2;
+        const float ShaftSeconds = 480f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void Register()
@@ -136,9 +139,16 @@ namespace SickOfIt.Playtest
                 $"scene), Video2, Level 2 (Floors {LandingFirstFloor}-{LandingLastFloor}: The Landing, no arcade level in between: its floor counter runs " +
                 $"{LandingFirstFloor} to {LandingLastFloor} and the \"ONLY {LandingMilestone} TO GO\" beat plays), Video3 (Gloob, watched a few seconds), Level 3 " +
                 "(The Spill), then the level select, whose cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
-            list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close", 70, "menus"));
+            list.Add(new PlaytestScenario("shaft", $"The Shaft, Hell's map, through the real flow: Video {OverlayVideo} loaded directly (setup shortcut; the Shaft's save is " +
+                "reset so this is the first plunge) and skipped, then the plunge from the Meadow past all 10 Circle bands to FLOOR 1,000 (Space pressed " +
+                "mid-fall must not skip the first one), the slam, the announcer's \"nine hundred ninety-nine to go\" and the hero's \"...Great.\"; " +
+                $"Continue starts level {ShaftLevel}; the bot plays it; after its results the hero's marker climbs and the counter ticks to the floor " +
+                "reached with the floors left and the next Warden shown; Continue goes on. The layout is audited on both Shaft screens. Each beat is a check event",
+                ShaftSeconds, "full"));
+            list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close, " +
+                "then the Shaft (a preview over the menu, setup shortcut) opens, its layout is checked and Continue closes it", 90, "menus"));
             list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu, level select, settings, " +
-                "level 1's HUD, the pause menu and its settings, and the death scene (loaded directly, a setup shortcut), no button overlaps another " +
+                "level 1's HUD, the pause menu and its settings, the Shaft (a preview over the menu, setup shortcut) and the death scene (loaded directly, a setup shortcut), no button overlaps another " +
                 "or a HUD panel, none leaves the screen, and every button is thumb-sized", 120, "menus"));
             list.Add(new PlaytestScenario("portal-audio", "The prologue's portal scene, by ear, on the main menu: every Overlord line, hero take, " +
                 "Hell's echo (three repeats, each deeper) and effect plays in scene order, then the Meadow's lines; any without a clip is a bug", 150, "menus", "audio"));
@@ -189,6 +199,8 @@ namespace SickOfIt.Playtest
                 yield return session.Full();
             else if (id == "story-path")
                 yield return session.StoryPathRun();
+            else if (id == "shaft")
+                yield return session.ShaftRun();
             else if (id == "menus")
                 yield return session.Menus();
             else if (id == "site")
@@ -246,6 +258,7 @@ namespace SickOfIt.Playtest
                 Application.logMessageReceived += OnLog;
                 GameplayTelemetry.Recorded += OnTelemetry;
                 GameplayTelemetry.Finished += OnLevelLog;
+                ShaftScreen.Reported += OnShaft;
             }
 
             float Speed => Mathf.Clamp(options.speed, 0.25f, 4f);
@@ -276,6 +289,7 @@ namespace SickOfIt.Playtest
                 TimelineOverlayPlayer.VisibilityChanged -= OnOverlayVisibility;
                 GameplayTelemetry.Recorded -= OnTelemetry;
                 GameplayTelemetry.Finished -= OnLevelLog;
+                ShaftScreen.Reported -= OnShaft;
                 if (bot != null)
                     Object.Destroy(bot);
                 input.Dispose();
@@ -722,11 +736,13 @@ namespace SickOfIt.Playtest
                 yield return Tap(Key.Escape);
                 Run.Event("input", $"Escape (skip) at {ClockTime:0.00}s");
                 float pressed = Time.realtimeSinceStartup;
-                while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && Time.realtimeSinceStartup - pressed < 20f)
+                while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && ShaftScreen.Current == null && Time.realtimeSinceStartup - pressed < 20f)
                     yield return null;
-                bool left = Object.FindAnyObjectByType<VideoRuntime>() == null;
-                OverlayCheck("skipped", left, left ? $"the video closed {Time.realtimeSinceStartup - pressed:0.0}s after Escape ({SceneName()})"
-                    : "the video was still playing 20 s after Escape");
+                bool shaftUp = ShaftScreen.Current != null;
+                bool left = Object.FindAnyObjectByType<VideoRuntime>() == null || shaftUp;
+                OverlayCheck("skipped", left, !left ? "the video was still playing 20 s after Escape"
+                    : shaftUp ? $"the video ended {Time.realtimeSinceStartup - pressed:0.0}s after Escape and the Shaft came up"
+                    : $"the video closed {Time.realtimeSinceStartup - pressed:0.0}s after Escape ({SceneName()})");
 
                 TimelineOverlayPlayer.VisibilityChanged -= OnOverlayVisibility;
                 int passed = 0;
@@ -1724,6 +1740,15 @@ namespace SickOfIt.Playtest
                         End(PlaytestOutcome.Stuck);
                         yield break;
                     }
+                    if (ShaftScreen.Current != null)
+                    {
+                        // Hell's map between a video or level and the next: watch it, then Continue like a player.
+                        if (!ShaftScreen.Current.Continued)
+                            yield return PassShaft();
+                        else
+                            yield return null;
+                        continue;
+                    }
                     bool inVideo = Object.FindAnyObjectByType<VideoRuntime>() != null;
                     bool inDeath = Object.FindAnyObjectByType<DeathRuntime>() != null;
                     if (inVideo || inDeath)
@@ -1817,13 +1842,25 @@ namespace SickOfIt.Playtest
                         yield return WaitReal(video == 3 ? 8f : 2.5f);
                         if (Run.Done) yield break;
                         float skipUntil = Time.realtimeSinceStartup + 20f;
-                        while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && Time.realtimeSinceStartup < skipUntil)
+                        while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && ShaftScreen.Current == null && Time.realtimeSinceStartup < skipUntil)
                         {
                             yield return Tap(Key.Escape);
                             Run.Event("skip", $"video {playing}");
                             yield return WaitReal(2f);
                         }
                         if (Run.Done) yield break;
+                        if (playing == definition.shaft.plungeAfterVideo)
+                        {
+                            yield return Run.Until(() => ShaftScreen.Current != null || NewWorld(previous) != null, 15f, "the Shaft after video " + playing);
+                            if (Run.Done) yield break;
+                            yield return WatchPlunge(StoryCheck);
+                            if (Run.Done) yield break;
+                        }
+                        else if (ShaftScreen.Current != null)
+                        {
+                            yield return PassShaft();
+                            if (Run.Done) yield break;
+                        }
                     }
 
                     // The level after it: the story's level n, not an arcade level.
@@ -1880,6 +1917,8 @@ namespace SickOfIt.Playtest
                     if (Run.Done) yield break;
                     if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
                         yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
+                    if (Run.Done) yield break;
+                    yield return WatchClimb(n, StoryCheck);
                     if (Run.Done) yield break;
                 }
 
@@ -1995,6 +2034,286 @@ namespace SickOfIt.Playtest
                 StoryCheck("levelSelectStory", ordered, why);
             }
 
+            // ─── The Shaft: Hell's map between videos and levels ──────────
+
+            /// <summary>What one Shaft showed, from its open to its Continue.</summary>
+            sealed class ShaftSeen
+            {
+                public ShaftScreen.Mode Kind;
+                public int From, To, Shown, Bands, BandCount;
+                public bool Skippable, Skipped, Slam;
+                public string FloorsLeft = "", NextWarden = "", Circle = "";
+                public readonly List<string> Voices = new List<string>();
+            }
+
+            ShaftSeen shaftWatch;
+            int shaftPassed, shaftFailed;
+
+            void OnShaft(string kind, string detail)
+            {
+                if (Run.Done)
+                    return;
+                Run.Event("shaft", $"{kind}: {detail}");
+                if (shaftWatch == null)
+                    return;
+                if (kind == "voice")
+                    shaftWatch.Voices.Add(detail);
+                else if (kind == "skip")
+                    shaftWatch.Skipped = true;
+                else if (kind == "slam")
+                    shaftWatch.Slam = true;
+            }
+
+            void ShaftCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    shaftPassed++;
+                    Run.Event("check", $"shaft {beat}: ok ({detail})");
+                }
+                else
+                {
+                    shaftFailed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"shaft {beat}: {detail}");
+                }
+                Run.Metric("shaft.passed", shaftPassed);
+                Run.Metric("shaft.failed", shaftFailed);
+            }
+
+            /// <summary>
+            /// Watches the Shaft on screen until its Continue is up, optionally checks its layout, then presses Continue
+            /// with the virtual mouse. 'pressMidway' presses Space during the animation (the first Shaft must not skip).
+            /// </summary>
+            IEnumerator PassShaft(bool pressMidway = false, string audit = null)
+            {
+                var screen = ShaftScreen.Current;
+                if (screen == null || screen.Continued)
+                    yield break;
+                Run.Scene("Shaft");
+                var seen = shaftWatch = new ShaftSeen
+                {
+                    Kind = screen.Kind, From = screen.FromFloor, To = screen.ToFloor, Skippable = screen.Skippable, BandCount = screen.BandCount,
+                };
+                if (pressMidway)
+                {
+                    yield return WaitReal(1.6f);
+                    if (Run.Done) yield break;
+                    if (ShaftScreen.Current == screen && !screen.Ready)
+                    {
+                        yield return Tap(Key.Space);
+                        Run.Event("input", $"Space during the Shaft at FLOOR {screen.ShownFloor}");
+                    }
+                }
+                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 40f, "the Shaft's Continue");
+                if (Run.Done) yield break;
+                if (ShaftScreen.Current == screen)
+                {
+                    seen.Shown = screen.ShownFloor;
+                    seen.Bands = screen.BandsPassed;
+                    seen.FloorsLeft = screen.FloorsLeftText;
+                    seen.NextWarden = screen.NextWardenText;
+                    seen.Circle = screen.CircleText;
+                    Run.Event("shaft-shown", $"{seen.Kind} {seen.From}->{seen.To}: counter FLOOR {seen.Shown}, {seen.Circle}, {seen.FloorsLeft}, {seen.NextWarden}");
+                    // A moment on the finished map for the recording.
+                    yield return WaitReal(1.5f);
+                    if (Run.Done) yield break;
+                    if (!string.IsNullOrEmpty(audit))
+                    {
+                        yield return Audit(audit, 0, 1, 0.2f, progress: false);
+                        if (Run.Done) yield break;
+                    }
+                    string continueText = GameDefinition.Instance.menuTheme.texts.continueText;
+                    yield return ClickUntil(continueText, () => ShaftScreen.Current != screen || screen.Continued, 15f);
+                }
+                lastShaft = seen;
+                shaftWatch = null;
+            }
+
+            /// <summary>The first plunge after the plunge video: past every Circle to the bottom, the slam and the welcome, not skippable.</summary>
+            IEnumerator WatchPlunge(Action<string, bool, string> check, string audit = null)
+            {
+                var config = GameDefinition.Instance.shaft;
+                var screen = ShaftScreen.Current;
+                check("plungeOpens", screen != null && screen.Kind == ShaftScreen.Mode.Plunge && screen.FromFloor == 0 && screen.ToFloor == config.bottomFloor,
+                    screen == null ? $"no Shaft after video {config.plungeAfterVideo}"
+                        : $"{screen.Kind} from FLOOR {screen.FromFloor} to FLOOR {screen.ToFloor} (want the plunge from 0 to {config.bottomFloor})");
+                if (screen == null)
+                    yield break;
+                bool first = !screen.Skippable;
+                yield return PassShaft(pressMidway: first, audit: audit);
+                if (Run.Done) yield break;
+                var seen = lastShaft;
+                if (seen == null)
+                    yield break;
+                check("plungeBands", seen.BandCount >= 10 && seen.Bands == seen.BandCount,
+                    $"fell past {seen.Bands} of {seen.BandCount} Circle bands (Meadow at the top, {seen.BandCount} Circles)");
+                check("plungeBottom", seen.Shown == config.bottomFloor && seen.Slam,
+                    $"the counter stopped at FLOOR {seen.Shown}{(seen.Slam ? " with the slam" : ", no slam")}");
+                string welcome = seen.Voices.Find(v => v.StartsWith("announcer", StringComparison.Ordinal)) ?? "";
+                check("plungeWelcome", welcome.IndexOf("NINE HUNDRED NINETY-NINE", StringComparison.OrdinalIgnoreCase) >= 0 && welcome.IndexOf("no clip", StringComparison.Ordinal) < 0,
+                    welcome.Length > 0 ? "the announcer: " + welcome : "no announcer line at the bottom");
+                string hero = seen.Voices.Find(v => v.StartsWith("hero", StringComparison.Ordinal)) ?? "";
+                check("plungeHero", hero.Length > 0 && hero.IndexOf("no clip", StringComparison.Ordinal) < 0, hero.Length > 0 ? "the hero: " + hero : "no hero line");
+                if (first)
+                    check("plungeNotSkipped", !seen.Skipped, seen.Skipped ? "Space skipped the first plunge" : "Space mid-fall didn't skip the first plunge");
+                check("plungeInfo", seen.FloorsLeft.Length > 0 && seen.NextWarden.Length > 0, $"{seen.FloorsLeft}; {seen.NextWarden}");
+            }
+
+            ShaftSeen lastShaft;
+
+            /// <summary>
+            /// After level n's results: a level with a floor range brings up the Shaft, whose marker climbs from where it
+            /// was to the level's last floor, with the floors left and the next Warden; a level without one goes straight on.
+            /// </summary>
+            IEnumerator WatchClimb(int n, Action<string, bool, string> check, string audit = null)
+            {
+                ShaftScreen.LevelFloors(n, out int start, out int end);
+                yield return Run.Until(() => ShaftScreen.Current != null || Object.FindAnyObjectByType<VideoRuntime>() != null
+                                             || Object.FindAnyObjectByType<LevelSelectionManager>() != null
+                                             || Object.FindAnyObjectByType<MainMenuManager>() != null, 20f, $"what comes after level {n}");
+                if (Run.Done) yield break;
+                var screen = ShaftScreen.Current;
+                if (end <= 0)
+                {
+                    if (screen != null)
+                        yield return PassShaft();
+                    yield break;
+                }
+                var config = GameDefinition.Instance.shaft;
+                check("climbOpens" + n, screen != null && screen.Kind == ShaftScreen.Mode.Climb && screen.ToFloor == end,
+                    screen == null ? $"no Shaft after level {n} (floors {start}-{end})" : $"{screen.Kind} from FLOOR {screen.FromFloor} to FLOOR {screen.ToFloor} (level {n} ends on {end})");
+                if (screen == null)
+                    yield break;
+                yield return PassShaft(audit: audit);
+                if (Run.Done) yield break;
+                var seen = lastShaft;
+                if (seen == null)
+                    yield break;
+                string left = Mathf.Max(0, end - config.topFloor).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+                SickOfIt.Data.Config.ShaftBand warden = null;
+                foreach (var band in config.bands)
+                    if (band != null && band.lastFloor < end && (warden == null || band.lastFloor > warden.lastFloor))
+                        warden = band;
+                string distance = warden != null ? (end - warden.lastFloor).ToString("N0", System.Globalization.CultureInfo.InvariantCulture) : "";
+                check("climbCounter" + n, seen.From > seen.To && seen.Shown == end,
+                    $"the marker climbed from FLOOR {seen.From} and the counter ticked to FLOOR {seen.Shown} (level {n} ends on {end})");
+                check("climbFloorsLeft" + n, seen.FloorsLeft.Contains(left), $"\"{seen.FloorsLeft}\" (want {left} floors left)");
+                check("climbWarden" + n, warden != null && seen.NextWarden.IndexOf(warden.warden, StringComparison.OrdinalIgnoreCase) >= 0 && seen.NextWarden.Contains(distance),
+                    $"\"{seen.NextWarden}\" (want {(warden != null ? warden.warden : "?")}, {distance} floors up)");
+            }
+
+            /// <summary>The Shaft over the main menu (setup shortcut: a preview climb, nothing saved), its layout checked, then Continue closes it.</summary>
+            IEnumerator PreviewShaft(int step = 0, int steps = 0)
+            {
+                Run.Event("shortcut", "open the Shaft over the main menu (preview: the marker climbs 1000 to 991)");
+                var screen = ShaftScreen.Preview(1000, 991);
+                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 20f, "the Shaft preview's Continue");
+                if (Run.Done) yield break;
+                if (step > 0)
+                    yield return Audit("Shaft", step, steps);
+                else
+                    yield return Audit("Shaft", 0, 1, 1f, progress: false);
+                if (Run.Done) yield break;
+                string continueText = GameDefinition.Instance.menuTheme.texts.continueText;
+                yield return ClickUntil(continueText, () => ShaftScreen.Current == null, 15f);
+                if (Run.Done) yield break;
+                Run.Scene("Main Menu");
+                yield return WaitReal(0.8f);
+            }
+
+            /// <summary>
+            /// The Shaft through the real flow: Video2 (loaded directly, skipped) → the first plunge → Continue →
+            /// The Landing played by the bot → its results → the climb → Continue → what comes next.
+            /// </summary>
+            public IEnumerator ShaftRun()
+            {
+                var definition = GameDefinition.Instance;
+                var config = definition.shaft;
+                var texts = definition.menuTheme.texts;
+                int video = config.plungeAfterVideo;
+                float deadline = Time.realtimeSinceStartup + ShaftSeconds - 40f;
+
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                Run.Event("shortcut", $"reset the Shaft's save (first plunge again), load video {video} directly, then level {ShaftLevel} after it");
+                ShaftProgress.Reset();
+                PlayerPrefs.SetInt("ReturnToLevel", ShaftLevel);
+                PlayerPrefs.Save();
+                SceneTransitionManager.Instance.LoadVideo(video);
+                yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null && ClockTime > 0.1f, 60f, $"video {video} to start playing");
+                if (Run.Done) yield break;
+                Run.Scene("Video " + video);
+                yield return WaitReal(2.5f);
+                if (Run.Done) yield break;
+                yield return Tap(Key.Escape);
+                Run.Event("skip", "video " + video);
+                yield return Run.Until(() => ShaftScreen.Current != null || GameplayWorld.Instance != null, 20f, "the Shaft after the video");
+                if (Run.Done) yield break;
+                Run.Progress(0.1f);
+
+                // 1. The plunge, then Continue goes to the level.
+                yield return WatchPlunge(ShaftCheck, $"Shaft plunge {(MenuScreen.Portrait ? "portrait" : "landscape")}");
+                if (Run.Done) yield break;
+                yield return Run.Until(() => LevelRunning(ShaftLevel) || GameplayWorld.Instance != null && GameplayWorld.Instance.LevelNumber != ShaftLevel,
+                    60f, $"level {ShaftLevel} after the Shaft's Continue");
+                if (Run.Done) yield break;
+                var world = GameplayWorld.Instance;
+                ShaftCheck("continueToLevel", world != null && world.LevelNumber == ShaftLevel,
+                    $"Continue started level {world?.LevelNumber} ({world?.LevelName}); want level {ShaftLevel}");
+                Run.Progress(0.25f);
+
+                // 2. The level, up to 3 tries.
+                int attempts = 0;
+                while (true)
+                {
+                    attempts++;
+                    float left = deadline - Time.realtimeSinceStartup;
+                    if (left < 5f) { lastOutcome = "time up"; break; }
+                    yield return PlayLevel(ShaftLevel, 0f, null, 0.25f, 0.8f, left, waitOutDeath: true);
+                    if (Run.Done) yield break;
+                    if (lastOutcome == "completed" || lastOutcome != "died" || attempts >= 3)
+                        break;
+                    Run.Event("retry", $"level {ShaftLevel}, attempt {attempts + 1}");
+                    yield return ReachLevel(ShaftLevel);
+                    if (Run.Done) yield break;
+                }
+
+                if (lastOutcome == "completed")
+                {
+                    yield return Run.Until(() => GameplayWorld.Instance == null || GameplayWorld.Instance.Hud == null || GameplayWorld.Instance.Hud.ResultsOpen,
+                        30f, $"the level {ShaftLevel} results screen");
+                    if (Run.Done) yield break;
+                    if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
+                        yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
+                    if (Run.Done) yield break;
+
+                    // 3. The climb, then Continue goes on to whatever the story has next.
+                    yield return WatchClimb(ShaftLevel, ShaftCheck, $"Shaft climb {(MenuScreen.Portrait ? "portrait" : "landscape")}");
+                    if (Run.Done) yield break;
+                    yield return Run.Until(() => ShaftScreen.Current == null && (Object.FindAnyObjectByType<VideoRuntime>() != null || GameplayWorld.Instance == null
+                                                                                 || GameplayWorld.Instance.LevelNumber != ShaftLevel), 60f, "the scene after the Shaft");
+                    if (Run.Done) yield break;
+                    bool video3 = Object.FindAnyObjectByType<VideoRuntime>() != null;
+                    var after = definition.GetLevel(ShaftLevel);
+                    int nextVideo = after != null ? after.nextVideoNumber : 0;
+                    ShaftCheck("continueOn", nextVideo <= 0 || video3 && PlayerPrefs.GetInt("CurrentVideoNumber", 0) == nextVideo,
+                        video3 ? $"Continue went on to video {PlayerPrefs.GetInt("CurrentVideoNumber", 0)}" : $"Continue went on to {SceneName()}");
+                    Run.Scene(video3 ? "Video " + PlayerPrefs.GetInt("CurrentVideoNumber", 0) : SceneName());
+                    yield return WaitReal(2f);
+                }
+                else
+                {
+                    // The bot couldn't clear the level: the climb is still shown, as a preview (setup shortcut), so it can be judged.
+                    Run.Event("stopped", $"level {ShaftLevel}: {lastOutcome} after {attempts} attempt(s); showing the climb as a preview instead");
+                    yield return ToMainMenu();
+                    if (Run.Done) yield break;
+                    yield return PreviewShaft();
+                    if (Run.Done) yield break;
+                }
+                Run.Progress(1f);
+                End(shaftFailed > 0 ? PlaytestOutcome.Done : lastOutcome == "completed" ? PlaytestOutcome.Won : PlaytestOutcome.Lost);
+            }
+
             public IEnumerator Menus()
             {
                 var definition = GameDefinition.Instance;
@@ -2051,6 +2370,8 @@ namespace SickOfIt.Playtest
                     Run.Scene("Main Menu");
                     Run.Event("menu-close", "Settings");
                 }
+                yield return PreviewShaft();
+                if (Run.Done) yield break;
                 Run.Progress(1f);
                 End(PlaytestOutcome.Done);
             }
@@ -2072,7 +2393,7 @@ namespace SickOfIt.Playtest
                 Run.Event("layout-screen", $"{Screen.width}x{Screen.height} {(MenuScreen.Portrait ? "portrait" : "landscape")}, safe area {Screen.safeArea}, " +
                                            $"touch size {MenuScreen.MinTouchPixels(definition.menuTheme.responsive):0} px" +
                                            (MenuScreen.Portrait ? "" : " (landscape: run it with device \"phone\" for the portrait layout)"));
-                const int steps = 7;
+                const int steps = 8;
                 int step = 0;
 
                 yield return ToMainMenu();
@@ -2097,6 +2418,8 @@ namespace SickOfIt.Playtest
                     yield return ClickUntil(done, () => FindButton(done) == null, 15f);
                     if (Run.Done) yield break;
                 }
+                yield return PreviewShaft(++step, steps);
+                if (Run.Done) yield break;
 
                 Run.Event("shortcut", "load level 1 directly");
                 var load = LoadLevel(1);
@@ -2138,7 +2461,7 @@ namespace SickOfIt.Playtest
             int layoutProblems;
 
             /// <summary>Lets the screen settle (entrances), then checks its layout and reports each problem once per screen.</summary>
-            IEnumerator Audit(string screen, int step, int steps, float settle = 1.5f)
+            IEnumerator Audit(string screen, int step, int steps, float settle = 1.5f, bool progress = true)
             {
                 Run.Scene(screen);
                 yield return WaitReal(settle);
@@ -2160,7 +2483,8 @@ namespace SickOfIt.Playtest
                 Run.Metric("layout." + screen.Replace(" ", "") + ".problems", result.Problems.Count);
                 Run.Event("layout", $"{screen}: {buttons} buttons and {result.Boxes.Count - buttons} panels/texts checked, " +
                                     (result.Problems.Count == 0 ? "no overlaps, all on screen and thumb-sized" : $"{result.Problems.Count} problem(s)"));
-                Run.Progress((float)step / (steps + 1));
+                if (progress)
+                    Run.Progress((float)step / (steps + 1));
             }
 
             /// <summary>

@@ -289,9 +289,21 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
 5. **Video overlays**: Video2 shows the hero tumbling and spinning down the fire tunnel (about 10.5-14.5 s), as an
    animated sprite drawn over the baked video.
 6. **The Shaft**: (hook point: `ShaftHook` in `Core/Flow`, called after every video before its level and after
-   every cleared level before what comes next; nothing shows yet) the vertical Hell map after Video2 (the plunge from FLOOR 0 to FLOOR 1,000 with the welcome
+   every cleared level before what comes next) the vertical Hell map after Video2 (the plunge from FLOOR 0 to FLOOR 1,000 with the welcome
    lines) and after every level (the marker climbs to the floor reached), Wardens as ??? silhouettes until met,
    cracks and dotted gaps where shortcuts will be.
+   *Built* (2026-10-18, first pass; recipe: GameplayCookbook "The Shaft"): `ShaftScreen` answers the hook with a
+   map painted from placeholder shapes (the Shaft-art task replaces them), configured in `ui/shaft.json`, its words
+   in theme.json `texts`. After Video2 the view falls from the Meadow's burned hole past the 10 Circle bands, the
+   counter racing, and slams onto FLOOR 1,000 (shake, flash, *"WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO
+   GO."*, *"...Great."*). After every stage with a floor range the marker climbs to the stage's last floor, the
+   counter ticking a floor at a time, and the screen says how many floors are left to the top (Floor 1) and which
+   Warden is next and how far: *"THE MAGMA KING: 90 FLOORS UP"*. The next Warden is always named there (Hell's
+   announcer loves a show and tells you who is waiting); on the map itself the Warden stays a **???** silhouette
+   until the hero has beaten him (reached the top floor of his Circle). The Meadow and the arcade levels have no
+   floors, so no Shaft follows them. The first Shaft can't be skipped; every one after it can (a tap or a key).
+   It remembers the floor its marker was last shown on; the deepest floor reached is the lowest last floor of the
+   cleared levels. New Game resets it.
 7. **Voices**: `overlord` and `gloob` in `audio.json` `voices`, and the prologue, Shaft and Circle X lines.
 
 Not built yet:
