@@ -124,6 +124,15 @@ the 10 Circles stacked below it, each in its own biome colour, and FLOOR 1,000 a
   tall hole.
 - **Wardens** sit at the top of each Circle as dark silhouettes marked **???** until the hero has met them; then
   their name and portrait fill in.
+- **The Wardens' shapes** *(working looks, for the silhouettes; each gets its full design when its Circle is built)*:
+  the Magma King (`art/magmaKing.json`: slag and obsidian, lava crown, slouched); the Spire Fiend (gaunt basalt
+  demon bristling with rock spires, glowing seams); the Bridge Wraith (floating hooded wraith, a lantern of blue
+  runes, no legs); the Hollow King (a dead hollow tree with yellow eyes in its trunk and a crown of branches); the
+  Drowned Queen (soaked hair over her face, waterlogged gown, a weed-wound crown, green ghost lights); the Mother Maw
+  (a cave beast that is mostly mouth: teeth, drool, many small eyes); the Bell Ringer (a hooded gargoyle monk with a
+  cracked iron bell on his back and candles melting on his shoulders); the Gatekeeper (an armoured giant built like a
+  gate, portcullis visor, tower shield); the Chain King (a jailer king wrapped in chains, an iron spike crown, keys at
+  his belt); the Overlord (canon: giant obsidian titan, red eyes, a crown of black horns).
 - **Shortcuts are hinted, not explained:** cracks in the shaft wall and dotted gaps between floors that the player
   can't read yet. They become Hell's shortcuts (see *Engine*, Shortcuts) once that system is built.
 - The Shaft is a presentation screen: it reads progress, it never changes it.
@@ -293,7 +302,10 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    lines) and after every level (the marker climbs to the floor reached), Wardens as ??? silhouettes until met,
    cracks and dotted gaps where shortcuts will be.
    *Built* (2026-10-18, first pass; recipe: GameplayCookbook "The Shaft"): `ShaftScreen` answers the hook with a
-   map painted from placeholder shapes (the Shaft-art task replaces them), configured in `ui/shaft.json`, its words
+   map configured in `ui/shaft.json` (art, 2026-10-18: each Circle a painted band of its biome stacked bottom to
+   top, the Meadow's daylight hole at the very top, each Warden's own figure kept black against its Circle's glow
+   until met, and the hero's marker his own helmet and rocket launcher; placeholder shapes only where a painting
+   is still missing), its words
    in theme.json `texts`. After Video2 the view falls from the Meadow's burned hole past the 10 Circle bands, the
    counter racing, and slams onto FLOOR 1,000 (shake, flash, *"WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO
    GO."*, *"...Great."*). After every stage with a floor range the marker climbs to the stage's last floor, the

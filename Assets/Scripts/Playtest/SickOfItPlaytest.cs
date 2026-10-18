@@ -2139,6 +2139,7 @@ namespace SickOfIt.Playtest
                         : $"{screen.Kind} from FLOOR {screen.FromFloor} to FLOOR {screen.ToFloor} (want the plunge from 0 to {config.bottomFloor})");
                 if (screen == null)
                     yield break;
+                ArtChecks(screen, check, "plunge");
                 bool first = !screen.Skippable;
                 yield return PassShaft(pressMidway: first, audit: audit);
                 if (Run.Done) yield break;
@@ -2160,6 +2161,19 @@ namespace SickOfIt.Playtest
             }
 
             ShaftSeen lastShaft;
+
+            /// <summary>
+            /// The Shaft's paintings: a painted band for every Circle and the Meadow on top, every Warden drawn from its
+            /// art (a dark silhouette until met, at least one still dark), and the hero's marker drawn from his art.
+            /// </summary>
+            static void ArtChecks(ShaftScreen screen, Action<string, bool, string> check, string prefix)
+            {
+                check(prefix + "PaintedBands", screen.BandCount >= 10 && screen.PaintedBands == screen.BandCount && screen.PaintedMeadow,
+                    $"{screen.PaintedBands} of {screen.BandCount} Circle bands painted, the Meadow {(screen.PaintedMeadow ? "painted" : "a placeholder")}");
+                check(prefix + "WardenSilhouettes", screen.WardenSilhouettes + screen.WardenPortraits == screen.BandCount && screen.WardenSilhouettes > 0,
+                    $"{screen.WardenSilhouettes} Wardens as dark silhouettes, {screen.WardenPortraits} met (in colour), of {screen.BandCount}");
+                check(prefix + "HeroMarker", screen.PaintedMarker, screen.PaintedMarker ? "the hero's marker is his helmet and rocket launcher" : "the hero's marker is a placeholder dot");
+            }
 
             /// <summary>
             /// After level n's results: a level with a floor range brings up the Shaft, whose marker climbs from where it
@@ -2184,6 +2198,7 @@ namespace SickOfIt.Playtest
                     screen == null ? $"no Shaft after level {n} (floors {start}-{end})" : $"{screen.Kind} from FLOOR {screen.FromFloor} to FLOOR {screen.ToFloor} (level {n} ends on {end})");
                 if (screen == null)
                     yield break;
+                ArtChecks(screen, check, "climb" + n);
                 yield return PassShaft(audit: audit);
                 if (Run.Done) yield break;
                 var seen = lastShaft;

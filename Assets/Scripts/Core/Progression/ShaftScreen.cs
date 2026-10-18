@@ -58,6 +58,14 @@ namespace SickOfIt.Core.Progression
         public string NextWardenText => nextWarden != null ? nextWarden.text : "";
         public string CircleText => circleLine != null ? circleLine.text : "";
         public string SubtitleText => subtitle != null && subtitle.gameObject.activeInHierarchy ? subtitle.text : "";
+        /// <summary>Circle bands drawn with their painted art (the rest are colour placeholders).</summary>
+        public int PaintedBands { get; private set; }
+        /// <summary>Wardens drawn from their art: as a dark silhouette (not met yet) and in colour (met).</summary>
+        public int WardenSilhouettes { get; private set; }
+        public int WardenPortraits { get; private set; }
+        /// <summary>The Meadow and the hero's marker are drawn from their art.</summary>
+        public bool PaintedMeadow { get; private set; }
+        public bool PaintedMarker { get; private set; }
         /// <summary>Continue was pressed: the next scene is loading under it.</summary>
         public bool Continued => continued;
         /// <summary>A preview (playtest setup shortcut): Continue only closes it; nothing is saved.</summary>
@@ -72,6 +80,8 @@ namespace SickOfIt.Core.Progression
             public int Last;
             public Color Color;
             public string Warden;
+            public Sprite Art;
+            public Sprite WardenArt;
             public Image Flash;
         }
 
@@ -258,6 +268,8 @@ namespace SickOfIt.Core.Progression
                     Last = band.lastFloor,
                     Color = band.color,
                     Warden = band.warden,
+                    Art = band.art,
+                    WardenArt = band.wardenArt,
                 };
                 if (!string.IsNullOrEmpty(band.circle) && circles != null && circles.TryGetValue(band.circle, out var circle) && circle != null)
                 {
@@ -313,6 +325,9 @@ namespace SickOfIt.Core.Progression
             foreach (var band in bands)
                 BuildWarden(band);
             BuildMarker();
+            Report("art", $"{PaintedBands} of {bands.Count} Circle bands painted, meadow {(PaintedMeadow ? "painted" : "placeholder")}, "
+                          + $"Wardens: {WardenSilhouettes} dark silhouettes, {WardenPortraits} met, {bands.Count - WardenSilhouettes - WardenPortraits} placeholder; "
+                          + $"hero marker {(PaintedMarker ? "painted" : "placeholder")}");
 
             // The readouts beside (landscape) or under (portrait) the shaft.
             counter = Line("Counter", "", theme.title, 120f, config.counter, config.counterPortrait, out counterMotion);
@@ -396,9 +411,43 @@ namespace SickOfIt.Core.Progression
             return text;
         }
 
+        /// <summary>
+        /// A painted picture filling 'parent' the way a background does: scaled to cover it, centred, the overflow
+        /// clipped (the shaft is 560 wide in landscape and 1000 in portrait, so the crop changes with the screen).
+        /// </summary>
+        Image Cover(Transform parent, string name, Sprite sprite)
+        {
+            var clip = MenuGraphics.NewRect(name, parent);
+            MenuGraphics.Fill(clip);
+            clip.gameObject.AddComponent<RectMask2D>();
+            var rect = MenuGraphics.NewRect("Art", clip);
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+            var image = rect.gameObject.AddComponent<Image>();
+            image.sprite = sprite;
+            image.raycastTarget = false;
+            var fitter = rect.gameObject.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = sprite.rect.height > 0f ? sprite.rect.width / sprite.rect.height : 1f;
+            return image;
+        }
+
         void BuildMeadow()
         {
             float grass = 70f;
+            if (config.meadowArt != null)
+            {
+                // The painted Meadow has its own sky, grass and burned hole; the daylight still falls down the shaft.
+                var meadow = Strip("Meadow", config.sky, 0f, Meadow);
+                Cover(meadow.transform, "Painting", config.meadowArt);
+                Strip("Daylight", new Color(1f, 0.95f, 0.7f, 0.14f), Meadow, 420f, 0.38f, 0.62f);
+                PaintedMeadow = true;
+                var sign = new Color(1f, 1f, 1f, 0.95f);
+                Strip("NameBack", new Color(0f, 0f, 0f, 0.35f), 34f, 110f, 0.1f, 0.9f);
+                Label(content, "MeadowName", texts.shaftMeadow, menu.Theme.heading, 40f, 0.05f, 0.95f, 40f, 60f, sign);
+                Label(content, "MeadowFloor", string.Format(CultureInfo.InvariantCulture, texts.shaftFloorFormat, 0), menu.Theme.caption, 28f,
+                    0.05f, 0.95f, 104f, 40f, sign);
+                return;
+            }
             Strip("Sky", config.sky, 0f, Meadow - grass);
             Strip("SkyGlow", new Color(1f, 0.97f, 0.8f, 0.35f), Meadow - grass - 90f, 90f);
             Strip("Grass", config.grass, Meadow - grass, grass);
@@ -417,13 +466,26 @@ namespace SickOfIt.Core.Progression
             float top = Y(band.Last - 1);
             float height = Mathf.Max(Ppf, Y(band.First) - top);
             var fill = Strip("Band " + band.Numeral, band.Color, top, height);
-            // A darker lower half and a bright seam at the top: depth, until the painted art comes.
-            Strip("Shade", new Color(0f, 0f, 0f, 0.28f), height * 0.45f, height * 0.55f, 0f, 1f, fill.transform);
+            if (band.Art != null)
+            {
+                // The Circle's painting, a little darker at the bottom where it meets the Circle below.
+                Cover(fill.transform, "Painting", band.Art);
+                Strip("Shade", new Color(0f, 0f, 0f, 0.22f), height * 0.8f, height * 0.2f, 0f, 1f, fill.transform);
+                PaintedBands++;
+            }
+            else
+            {
+                // A darker lower half: depth, for a Circle without its painting.
+                Strip("Shade", new Color(0f, 0f, 0f, 0.28f), height * 0.45f, height * 0.55f, 0f, 1f, fill.transform);
+            }
+            // A bright seam in the biome's colour at the top: where one Circle stacks on the next.
             Strip("Seam", Color.Lerp(band.Color, Color.white, 0.45f), 0f, 6f, 0f, 1f, fill.transform);
             band.Flash = Strip("Flash", new Color(1f, 1f, 1f, 0f), 0f, height, 0f, 1f, fill.transform);
             string name = string.Format(CultureInfo.InvariantCulture, texts.shaftCircleFormat, band.Numeral, band.Name,
                 band.First.ToString("N0", CultureInfo.InvariantCulture), band.Last.ToString("N0", CultureInfo.InvariantCulture));
-            Label(fill.transform, "Name", name, menu.Theme.caption, 26f, 0.14f, 0.86f, height * 0.5f - 20f, 40f, new Color(1f, 1f, 1f, 0.8f));
+            if (band.Art != null)
+                Strip("NameBack", new Color(0f, 0f, 0f, 0.5f), height * 0.5f - 24f, 48f, 0.12f, 0.88f, fill.transform);
+            Label(fill.transform, "Name", name, menu.Theme.caption, 26f, 0.14f, 0.86f, height * 0.5f - 20f, 40f, new Color(1f, 1f, 1f, band.Art != null ? 0.95f : 0.8f));
         }
 
         void BuildBottom()
@@ -439,8 +501,10 @@ namespace SickOfIt.Core.Progression
         {
             float top = Meadow;
             float height = Y(Bottom) - Meadow;
-            Strip("WallLeft", config.wall, top, height, 0f, 0.11f);
-            Strip("WallRight", config.wall, top, height, 0.89f, 1f);
+            // Over painted bands the walls only darken the edges, so the paintings read across the whole shaft.
+            var wall = PaintedBands > 0 ? config.wallOverArt : config.wall;
+            Strip("WallLeft", wall, top, height, 0f, 0.11f);
+            Strip("WallRight", wall, top, height, 0.89f, 1f);
             Strip("EdgeLeft", new Color(0f, 0f, 0f, 0.5f), top, height, 0.11f, 0.12f);
             Strip("EdgeRight", new Color(0f, 0f, 0f, 0.5f), top, height, 0.88f, 0.89f);
         }
@@ -489,6 +553,26 @@ namespace SickOfIt.Core.Progression
         {
             bool met = WardenMet(band);
             float y = Y(band.Last) - Ppf * 0.5f + 46f;
+            if (band.WardenArt != null)
+            {
+                // The Warden's own figure: a black shape against its Circle's glow until the hero has beaten it.
+                float size = Mathf.Max(40f, config.wardenSize);
+                y = Y(band.Last) - Ppf * 0.5f + size * 0.5f + 8f;
+                var halo = Dot("WardenGlow", Color.Lerp(band.Color, Color.white, 0.35f), 0.5f, y, new Vector2(size * 1.15f, size * 1.15f));
+                halo.color = new Color(halo.color.r, halo.color.g, halo.color.b, met ? 0.45f : 0.8f);
+                var figure = Dot("Warden", met ? Color.white : config.wardenUnmet, 0.5f, y, new Vector2(size, size), MenuShape.Rectangle);
+                figure.sprite = band.WardenArt;
+                figure.enabled = true;
+                figure.type = Image.Type.Simple;
+                figure.preserveAspect = true;
+                if (met)
+                    WardenPortraits++;
+                else
+                    WardenSilhouettes++;
+                Label(content, "WardenName", met ? band.Warden : texts.shaftUnknownWarden, menu.Theme.caption, met ? 24f : 34f, 0.13f, 0.87f, y + size * 0.5f + 2f, 36f,
+                    met ? Color.white : new Color(1f, 1f, 1f, 0.9f));
+                return;
+            }
             var glow = Dot("WardenGlow", new Color(band.Color.r, band.Color.g, band.Color.b, 0.6f), 0.5f, y, new Vector2(110f, 110f));
             glow.color = Color.Lerp(band.Color, Color.white, 0.25f);
             Dot("Warden", met ? Color.Lerp(band.Color, Color.white, 0.55f) : new Color(0.03f, 0.01f, 0.02f, 1f), 0.5f, y, new Vector2(84f, 84f));
@@ -504,6 +588,23 @@ namespace SickOfIt.Core.Progression
             markerRect.pivot = new Vector2(0.5f, 0.5f);
             markerRect.sizeDelta = new Vector2(44f, 44f);
             markerGlow = NewCircle(markerRect, "Glow", new Color(config.marker.r, config.marker.g, config.marker.b, 0.35f), 96f);
+            if (config.markerArt != null)
+            {
+                // The hero himself, small: his helmet and the rocket launcher on his shoulder, over a warm glow.
+                float height = Mathf.Max(24f, config.markerSize);
+                var sprite = config.markerArt;
+                float width = sprite.rect.height > 0f ? height * sprite.rect.width / sprite.rect.height : height;
+                markerGlow.rectTransform.sizeDelta = new Vector2(height * 1.6f, height * 1.6f);
+                var rect = MenuGraphics.NewRect("Hero", markerRect);
+                rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.sizeDelta = new Vector2(width, height);
+                var image = rect.gameObject.AddComponent<Image>();
+                image.sprite = sprite;
+                image.preserveAspect = true;
+                image.raycastTarget = false;
+                PaintedMarker = true;
+                return;
+            }
             NewCircle(markerRect, "Ring", Color.white, 44f);
             NewCircle(markerRect, "Dot", config.marker, 32f);
         }

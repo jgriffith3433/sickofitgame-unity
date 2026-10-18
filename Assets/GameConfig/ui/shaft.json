@@ -17,6 +17,12 @@
   "grass": "#5CA840",
   "marker": "#FFD94D",
   "crack": "#0000008C",
+  "meadowArt": null,
+  "markerArt": "Art/Shaft/marker.png",
+  "markerSize": 64,
+  "wardenSize": 150,
+  "wardenUnmet": "#090305F7",
+  "wallOverArt": "#0D06088C",
   "shortcutHints": [
     975,
     940,
@@ -44,7 +50,9 @@
       "firstFloor": 1000,
       "lastFloor": 901,
       "color": "#B3381A",
-      "warden": "The Magma King"
+      "warden": "The Magma King",
+      "art": null,
+      "wardenArt": null
     },
     {
       "circle": "crackedRoad",
@@ -53,7 +61,9 @@
       "firstFloor": 900,
       "lastFloor": 801,
       "color": "#4D2A30",
-      "warden": "The Spire Fiend"
+      "warden": "The Spire Fiend",
+      "art": null,
+      "wardenArt": null
     },
     {
       "circle": "",
@@ -62,7 +72,9 @@
       "firstFloor": 800,
       "lastFloor": 701,
       "color": "#2B4A8A",
-      "warden": "The Bridge Wraith"
+      "warden": "The Bridge Wraith",
+      "art": null,
+      "wardenArt": null
     },
     {
       "circle": "",
@@ -71,7 +83,9 @@
       "firstFloor": 700,
       "lastFloor": 601,
       "color": "#33402A",
-      "warden": "The Hollow King"
+      "warden": "The Hollow King",
+      "art": null,
+      "wardenArt": null
     },
     {
       "circle": "",
@@ -80,7 +94,9 @@
       "firstFloor": 600,
       "lastFloor": 501,
       "color": "#2D5C4C",
-      "warden": "The Drowned Queen"
+      "warden": "The Drowned Queen",
+      "art": null,
+      "wardenArt": null
     },
     {
       "circle": "",
@@ -89,7 +105,9 @@
       "firstFloor": 500,
       "lastFloor": 401,
       "color": "#6E3A4C",
-      "warden": "The Mother Maw"
+      "warden": "The Mother Maw",
+      "art": null,
+      "wardenArt": null
     },
     {
       "circle": "",
@@ -98,7 +116,9 @@
       "firstFloor": 400,
       "lastFloor": 301,
       "color": "#4A5674",
-      "warden": "The Bell Ringer"
+      "warden": "The Bell Ringer",
+      "art": null,
+      "wardenArt": null
     },
     {
       "circle": "",
@@ -107,7 +127,9 @@
       "firstFloor": 300,
       "lastFloor": 201,
       "color": "#5E544A",
-      "warden": "The Gatekeeper"
+      "warden": "The Gatekeeper",
+      "art": null,
+      "wardenArt": null
     },
     {
       "circle": "",
@@ -116,7 +138,9 @@
       "firstFloor": 200,
       "lastFloor": 101,
       "color": "#5C3C22",
-      "warden": "The Chain King"
+      "warden": "The Chain King",
+      "art": null,
+      "wardenArt": null
     },
     {
       "circle": "",
@@ -125,7 +149,9 @@
       "firstFloor": 100,
       "lastFloor": 1,
       "color": "#7D1F1F",
-      "warden": "The Overlord"
+      "warden": "The Overlord",
+      "art": null,
+      "wardenArt": null
     }
   ],
   "shaft": {

@@ -1,0 +1,94 @@
+{
+  "_about": "The Shaft's paintings: Tools/Art/shaft_art.py turns each slot's source into Assets/Art/Shaft/<slot>.png and wires ui/shaft.json. job = the Hawkes Gen job that makes it (2 takes each; pick with hawkesgen_entity_judge or by eye).",
+  "slots": {
+    "band.X": {
+      "job": "j_53012ce0b07b",
+      "source": ""
+    },
+    "band.IX": {
+      "job": "j_eb64e1133cd6",
+      "source": ""
+    },
+    "band.VIII": {
+      "job": "j_942597fae455",
+      "source": ""
+    },
+    "band.VII": {
+      "job": "j_cee11c43ac95",
+      "source": ""
+    },
+    "band.VI": {
+      "job": "j_117290ddd872",
+      "source": ""
+    },
+    "band.V": {
+      "job": "j_a8f2773d5e8d",
+      "source": ""
+    },
+    "band.IV": {
+      "job": "j_7f9fcd0f5243",
+      "source": ""
+    },
+    "band.III": {
+      "job": "j_ad9501fbf761",
+      "source": ""
+    },
+    "band.II": {
+      "job": "j_2815f87d9902",
+      "source": ""
+    },
+    "band.I": {
+      "job": "j_7a8de3c78400",
+      "source": ""
+    },
+    "meadow": {
+      "job": "j_5c1d6f3e9b7a",
+      "source": ""
+    },
+    "warden.X": {
+      "job": "j_9086a87ab37a",
+      "source": ""
+    },
+    "warden.IX": {
+      "job": "j_2c58d14ebee8",
+      "source": ""
+    },
+    "warden.VIII": {
+      "job": "j_835b60d0d41b",
+      "source": ""
+    },
+    "warden.VII": {
+      "job": "j_adc5bc47fb4c",
+      "source": ""
+    },
+    "warden.VI": {
+      "job": "j_7d17fec0b0fc",
+      "source": ""
+    },
+    "warden.V": {
+      "job": "j_0726cb869db0",
+      "source": ""
+    },
+    "warden.IV": {
+      "job": "j_3400d3ea9f95",
+      "source": ""
+    },
+    "warden.III": {
+      "job": "j_34b8b08cfb01",
+      "source": ""
+    },
+    "warden.II": {
+      "job": "j_0ca687d62dc5",
+      "source": ""
+    },
+    "warden.I": {
+      "job": "j_83a044260539",
+      "source": ""
+    },
+    "marker": {
+      "job": "",
+      "source": "Assets/Art/Shaft/marker.png",
+      "note": "cropped from the hero's Idle source video (/srv/hawkes/SickOfItGamePlayer/Idle/Raw), black background flood-filled out: on-model, no GPU"
+    }
+  }
+}
