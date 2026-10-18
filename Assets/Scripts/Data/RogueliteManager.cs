@@ -221,7 +221,7 @@ namespace SickOfIt.Data
         }
 
         /// <summary>
-        /// Get the cumulative health — the health Yooba would start the next unplayed level with.
+        /// Get the cumulative health — the health the hero would start the next unplayed level with.
         /// This is the end health of the last completed level in sequence,
         /// clamped to current max health.
         /// If no levels completed, returns max health.
@@ -426,7 +426,7 @@ namespace SickOfIt.Data
 
         /// <summary>
         /// A run is over (Hell killed the hero and sends him back to a Waystone): his Grudges go, and the health he
-        /// carried from level to level, so the next run starts fresh. Diamonds, Gloob's goods (shop upgrades and the
+        /// carried from level to level, so the next run starts fresh. Diamonds, Yooba's goods (shop upgrades and the
         /// max health they gave), level unlocks and the Waystones are kept.
         /// </summary>
         public void EndRun()
@@ -439,7 +439,7 @@ namespace SickOfIt.Data
             }
             UpgradeProgress.Reset();
 
-            // Max health is one number for both: a Grudge (thickSkin) raised it too. Back to the base plus Gloob's goods.
+            // Max health is one number for both: a Grudge (thickSkin) raised it too. Back to the base plus Yooba's goods.
             int fromShop = 0;
             foreach (var upgrade in ShopCatalog)
             {
@@ -488,7 +488,7 @@ namespace SickOfIt.Data
             PlayerPrefs.DeleteKey("GameInitialized");
             ShaftProgress.Reset();
             ShortcutProgress.Reset();
-            GloobProgress.Reset();
+            YoobaProgress.Reset();
             WaystoneProgress.Reset();
 
             PlayerPrefs.Save();

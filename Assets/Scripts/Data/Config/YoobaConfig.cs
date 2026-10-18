@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace SickOfIt.Data.Config
 {
-    /// <summary>When Gloob says a line (Docs/Story.md, "Gloob between floors").</summary>
-    public enum GloobMoment
+    /// <summary>When Yooba says a line (Docs/Story.md, "Yooba between floors").</summary>
+    public enum YoobaMoment
     {
         /// <summary>The Shaft after the hello video (Video3): his first meeting with the hero, every hello line in order.</summary>
         Hello,
@@ -29,9 +29,9 @@ namespace SickOfIt.Data.Config
         ShopLeave,
     }
 
-    /// <summary>One of Gloob's portrait loops: a sprite sheet cut into equal cells, read left to right, top to bottom.</summary>
+    /// <summary>One of Yooba's portrait loops: a sprite sheet cut into equal cells, read left to right, top to bottom.</summary>
     [Serializable]
-    public class GloobClip
+    public class YoobaClip
     {
         [Tooltip("idle, talk, laugh or cough.")]
         public string name = "idle";
@@ -44,11 +44,11 @@ namespace SickOfIt.Data.Config
         public float fps = 12f;
     }
 
-    /// <summary>A line Gloob says (a Voice sound in audio.json with voice "gloob") and an optional one-liner back from the hero.</summary>
+    /// <summary>A line Yooba says (a Voice sound in audio.json with voice "yooba") and an optional one-liner back from the hero.</summary>
     [Serializable]
-    public class GloobLine
+    public class YoobaLine
     {
-        public GloobMoment moment = GloobMoment.Chatter;
+        public YoobaMoment moment = YoobaMoment.Chatter;
         [Tooltip("Floor: the floor the climb must pass. NearWarden: how many floors below the Warden.")]
         public int floor;
         [Tooltip("Sound id in audio.json.")]
@@ -65,20 +65,20 @@ namespace SickOfIt.Data.Config
     }
 
     /// <summary>
-    /// Gloob, the village's slime and the hero's one friend in Hell (Docs/Story.md, "Gloob between floors"): his
-    /// talking portrait and lines on the Shaft and in the shop (ui/gloob.json). Presentation only.
+    /// Yooba, the village's slime and the hero's one friend in Hell (Docs/Story.md, "Yooba between floors"): his
+    /// talking portrait and lines on the Shaft and in the shop (ui/yooba.json). Presentation only.
     /// </summary>
     [Serializable]
-    public class GloobConfig
+    public class YoobaConfig
     {
-        [Tooltip("Off = no Gloob on the Shaft or in the shop.")]
+        [Tooltip("Off = no Yooba on the Shaft or in the shop.")]
         public bool enabled = true;
         [Tooltip("The video he turns up in: the Shaft after it is his hello.")]
         public int helloAfterVideo = 3;
         [Tooltip("The name over his portrait.")]
-        public string displayName = "GLOOB";
+        public string displayName = "YOOBA";
         [Tooltip("Subtitle speaker labels.")]
-        public string speaker = "Gloob";
+        public string speaker = "Yooba";
         public string heroSpeaker = "You";
         [Tooltip("Seconds between his line and the hero's answer, and after the last one.")]
         public float pause = 0.35f;
@@ -88,10 +88,10 @@ namespace SickOfIt.Data.Config
         public Color body = new Color(0.17f, 0.62f, 0.2f, 1f);
 
         [Header("Portrait loops (idle, talk, laugh, cough)")]
-        public List<GloobClip> clips = new List<GloobClip>();
+        public List<YoobaClip> clips = new List<YoobaClip>();
 
         [Header("Lines")]
-        public List<GloobLine> lines = new List<GloobLine>();
+        public List<YoobaLine> lines = new List<YoobaLine>();
 
         [Header("Placement")]
         [Tooltip("His portrait on the Shaft (left of the shaft window).")]

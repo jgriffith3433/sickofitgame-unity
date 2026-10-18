@@ -8,7 +8,7 @@ namespace SickOfIt.Core.Progression
 {
     /// <summary>
     /// Manages the Level Selection scene: a card per level (thumbnail, name, locked/cleared state and the health
-    /// Yooba finished it with), built at runtime from levelSelectionConfig.layout and ui/theme.json.
+    /// the hero finished it with), built at runtime from levelSelectionConfig.layout and ui/theme.json.
     /// </summary>
     public class LevelSelectionManager : MonoBehaviour
     {

@@ -969,14 +969,14 @@
             "do": [
               {
                 "type": "goToPhase",
-                "phase": "portalGloob"
+                "phase": "portalYooba"
               }
             ]
           }
         ]
       },
       {
-        "name": "portalGloob",
+        "name": "portalYooba",
         "onEnter": [
           {
             "type": "runSequence",
@@ -1000,8 +1000,8 @@
                 "then": [
                   {
                     "type": "spawn",
-                    "entity": "gloobProp",
-                    "id": "gloob",
+                    "entity": "yoobaProp",
+                    "id": "yooba",
                     "anchor": "Player",
                     "at": [3.2, 0.15]
                   }
@@ -1009,8 +1009,8 @@
                 "else": [
                   {
                     "type": "spawn",
-                    "entity": "gloobProp",
-                    "id": "gloob",
+                    "entity": "yoobaProp",
+                    "id": "yooba",
                     "anchor": "Player",
                     "at": [-3.2, 0.15]
                   }
@@ -1018,7 +1018,7 @@
               },
               {
                 "type": "emit",
-                "signal": "portal:gloob"
+                "signal": "portal:yooba"
               }
             ]
           }

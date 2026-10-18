@@ -601,7 +601,7 @@ order it can be built and played:
 4. **The Sack Lift, Floors 960-951, the King's Chimney, Floors 910-901** (Level 11's arena renumbered to Floor 901).
 5. **The long way:** a generated floor per skipped floor (one level template the generator fills from the floor
    number), with the long-way floor bosses.
-6. **Data that follows the renumbering:** Gloob's floor reactions (`ui/gloob.json`: the Spill moves from 985 to 998, the
+6. **Data that follows the renumbering:** Yooba's floor reactions (`ui/yooba.json`: the Spill moves from 985 to 998, the
    Loop from 957 to 995, Halfway's 950 stays on the long way), the Shaft's climb (one floor per level), the playtest
    scenarios that name levels by number (`wastes-climb`, `story-path`, `shortcut`, `waystone`), Circle IX's stages
    (Levels 12-18, recut into floors the same way; the Old Stair's shortcut stays at Floor 871 to 841).

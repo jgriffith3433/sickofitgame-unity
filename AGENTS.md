@@ -93,9 +93,9 @@ Assets/GameConfig/
   sound ids. `voices` defines who speaks (`player` for subtitles, `announcer` for banners); lines use `eleven_v3` with
   delivery tags like `[sighs]`. A `showText` voices its line through `"sound"`. Prompting rules are in the cookbook;
   the API rejects effects under 0.5 s. This project holds no ElevenLabs key: Hawkes Gen does.
-- **Gloob** (`ui/gloob.json`, `GloobPortrait`): the village slime's talking portrait (idle/talk/laugh/cough sheets, a shape
+- **Yooba** (`ui/yooba.json`, `YoobaPortrait`): the village slime's talking portrait (idle/talk/laugh/cough sheets, a shape
   placeholder until painted) and lines on the Shaft (his hello after Video3, one reaction per climb) and in the shop. Lines
-  are audio.json voices `gloob` (hero replies `player`); which line plays is `moment` + `floor` (Docs/Story.md, "Gloob between floors").
+  are audio.json voices `yooba` (hero replies `player`); which line plays is `moment` + `floor` (Docs/Story.md, "Yooba between floors").
 - **Shortcuts** (Docs/Story.md, "Shortcuts"): a choice point in a stage (`offerShortcut`: keep climbing or the shortcut,
   its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
   stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the
@@ -103,9 +103,9 @@ Assets/GameConfig/
   Level 18 next. Cookbook "A shortcut".
 - **Waystones and runs** (Docs/Story.md): a death on a floor stage ends the run: the death screen, then the Shaft drops the
   marker back to the highest Waystone (the Landing, Floor 1,000, then each Circle's top once its Warden is beaten) and the
-  run restarts there; Grudges reset, diamonds and Gloob's goods stay. Main menu: Continue (the run) / New Run (the
+  run restarts there; Grudges reset, diamonds and Yooba's goods stay. Main menu: Continue (the run) / New Run (the
   Waystone). `RunFlow`, `WaystoneProgress`; cookbook "Waystones and runs".
-- **Diamonds** drop from enemy `loot` as the `diamond` entity and are spent in Gloob's shop (main menu, or **Visit Gloob** on
+- **Diamonds** drop from enemy `loot` as the `diamond` entity and are spent in Yooba's shop (main menu, or **Visit Yooba** on
   the Shaft: `UpgradeShopManager.OpenOverShaft`, an overlay; Back returns to the Shaft). **Shop upgrades** are
   `player.json` `availableUpgrades` with an `effect` (MaxHealth, ExtraJump, MoveSpeed, FireRate, Damage, RewindJuice,
   Magnet); `RogueliteManager` stores levels, `UpgradeSystem.ApplyShop` applies them each level. Between-level picks are
@@ -212,7 +212,7 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   every level in order through the real flow: results → Continue → the Shaft (Continue) → video skipped with Escape; up to 3 tries per level;
   ~10 min), `story-path` (New Game along the story path, each step a `check` event: Video1, Level 1, Video2, Level 2
   "Floors 1000-991: The Landing" with no other level between, its floor counter 1000 → 991 and the 999 milestone,
-  Video3 (Gloob) watched 8 s, then Levels 3-11 (The Spill, Imp Run, The Slag Falls, The Loop, Halfway Basin, The Crust,
+  Video3 (Yooba) watched 8 s, then Levels 3-11 (The Spill, Imp Run, The Slag Falls, The Loop, Halfway Basin, The Crust,
   The Sack Pile, The Heat Stairs, The Slag Throne) one after another with no video between, each with the stage checks below, then the
   level select, whose cards must list the story levels first and in order; ~35 min; the Shaft after Video2 and after each floor stage is checked too), `wastes-climb` (Level 6
   loaded directly, then Levels 7-11 through the real flow with the stage checks on each: Level 7 opens on the Floor 950
@@ -224,9 +224,9 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   until the enrage: the plunge's riser and slam, the Ember Wastes loop on Level 2 and the push music taking over in a generated push,
   the climb's sting, the Magma King's theme when the fight starts and the enrage variant after `mkEnrage`; `music` events (every
   switch, from `StageMusic` telemetry and the Shaft's reports) and `check` events `music <beat>`; ~15 min),
-  `menus` (level select, videos, Gloob's shop, settings open and close, then a Shaft preview with Gloob met: Visit
-  Gloob opens his shop over it, Back returns to the Shaft), `layout` (main menu, level select, settings,
-  a Shaft preview with Visit Gloob beside Continue, Gloob's shop over it, level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or
+  `menus` (level select, videos, Yooba's shop, settings open and close, then a Shaft preview with Yooba met: Visit
+  Yooba opens his shop over it, Back returns to the Shaft), `layout` (main menu, level select, settings,
+  a Shaft preview with Visit Yooba beside Continue, Yooba's shop over it, level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or
   is under the touch size; meant for device "phone", 390x844), `imp-death` (level 1 until the bot has killed three
 imps: each imp's Die clip must be playing where it died, and those three play at 0.3x so a recording shows the frames;
 every other scenario checks imp kills the same way, without the slow motion), `cutscene` (the scene
@@ -238,11 +238,11 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   `video-2-tunnel` (Video2 loaded directly and watched with no input from the burning door through the fire tunnel to the
   lava river, 10.6–17.5 s: at each mark a screen capture of the box the old burned-in "COMING SOON" caption covered must
   not be caption-coloured, the frame on screen must match the clock and the soundtrack the clock, and the clip must be
-  as long as its soundtrack; `check` and `frame` events, `video.caption@<t>` metrics), `gloob` (Gloob, the village slime: his hello on the Shaft after Video3 with his talking portrait, every hello line voiced and the hero's reply, Continue to Level 3; then Shaft previews where he reacts to Floor 950, a death and the Magma King's door; then the shop: welcome, can't afford, buy, goodbye; `check` and `gloob` events; ~4 min), `gloob-shop` (Gloob's shop from the Shaft:
-  the Shaft after Video3 with his hello skipped, **Visit Gloob** beside Continue opens his shop over the Shaft (animated portrait,
+  as long as its soundtrack; `check` and `frame` events, `video.caption@<t>` metrics), `yooba` (Yooba, the village slime: his hello on the Shaft after Video3 with his talking portrait, every hello line voiced and the hero's reply, Continue to Level 3; then Shaft previews where he reacts to Floor 950, a death and the Magma King's door; then the shop: welcome, can't afford, buy, goodbye; `check` and `yooba` events; ~4 min), `yooba-shop` (Yooba's shop from the Shaft:
+  the Shaft after Video3 with his hello skipped, **Visit Yooba** beside Continue opens his shop over the Shaft (animated portrait,
   voiced welcome, slime-made goods), can't afford, buy (diamonds spent, level saved), Back returns to the Shaft, Continue starts
-  Level 3 with the goods applied, the main menu's Visit Gloob shows them still bought, a climb preview shows the button again;
-  `check` events `shop <beat>`; ~3 min), `waystone` (Waystones and runs: a save with the Landing's Waystone, Gloob met and
+  Level 3 with the goods applied, the main menu's Visit Yooba shows them still bought, a climb preview shows the button again;
+  `check` events `shop <beat>`; ~3 min), `waystone` (Waystones and runs: a save with the Landing's Waystone, Yooba met and
   one of his goods bought (setup shortcut), Level 3 loaded directly and cleared by the bot with its Grudge pick, the climb to
   Level 4, where the bot plays to lose (`PlaytestBot.reckless`: walks into the shots) until Hell kills it; the death screen
   ("YOU OBVIOUSLY DIED", the announcer's gloat), the Shaft's drop from the floor he died on to the Waystone at FLOOR 1,000 with

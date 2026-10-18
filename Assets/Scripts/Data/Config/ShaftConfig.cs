@@ -147,11 +147,11 @@ namespace SickOfIt.Data.Config
         public MenuPlacement subtitlePortrait = MenuPlacement.At(0.5f, 0f, 0f, 760f, 1000f, 110f);
         public MenuPlacement continueButton = MenuPlacement.At(0.72f, 0.12f, 0f, 0f, 460f, 110f);
         public MenuPlacement continueButtonPortrait = MenuPlacement.At(0.5f, 0f, 0f, 220f, 520f, 124f);
-        [Tooltip("Visit Gloob, next to Continue once Gloob has met the hero: opens his shop over the Shaft (size = the button's).")]
-        public MenuPlacement gloobButton = MenuPlacement.At(0.8f, 0.12f, -460f, 0f, 380f, 84f);
-        public MenuPlacement gloobButtonPortrait = MenuPlacement.At(0.5f, 0f, -250f, 220f, 440f, 124f);
-        [Tooltip("Continue when Visit Gloob stands beside it (moved over to make room).")]
-        public MenuPlacement continueBesideGloob = MenuPlacement.At(0.8f, 0.12f, 20f, 0f, 520f, 84f);
-        public MenuPlacement continueBesideGloobPortrait = MenuPlacement.At(0.5f, 0f, 260f, 220f, 480f, 124f);
+        [Tooltip("Visit Yooba, next to Continue once Yooba has met the hero: opens his shop over the Shaft (size = the button's).")]
+        public MenuPlacement yoobaButton = MenuPlacement.At(0.8f, 0.12f, -460f, 0f, 380f, 84f);
+        public MenuPlacement yoobaButtonPortrait = MenuPlacement.At(0.5f, 0f, -250f, 220f, 440f, 124f);
+        [Tooltip("Continue when Visit Yooba stands beside it (moved over to make room).")]
+        public MenuPlacement continueBesideYooba = MenuPlacement.At(0.8f, 0.12f, 20f, 0f, 520f, 84f);
+        public MenuPlacement continueBesideYoobaPortrait = MenuPlacement.At(0.5f, 0f, 260f, 220f, 480f, 124f);
     }
 }

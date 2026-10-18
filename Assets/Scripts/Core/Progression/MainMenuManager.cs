@@ -152,7 +152,7 @@ namespace SickOfIt.Core.Progression
             }));
         }
 
-        /// <summary>A new run from the highest Waystone: the current run's Grudges go; diamonds and Gloob's goods stay.</summary>
+        /// <summary>A new run from the highest Waystone: the current run's Grudges go; diamonds and Yooba's goods stay.</summary>
         private void OnNewRunClicked()
         {
             if (isTransitioning) return;

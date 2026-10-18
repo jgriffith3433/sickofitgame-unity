@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md)). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md)). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -32,9 +32,9 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 
 | Who | What | Voice / look | Footage |
 |---|---|---|---|
-| **The Hero** *(name working)* | Thirties, unimpressed, has had enough. Talks to himself in one-liners. Never gives speeches. | `audio.json` voice `player` | Player sprites |
+| **The Hero** | No name, on purpose (J, 2026-10-18: it goes with the absurdity); everyone, the announcer included, calls him "the hero". Thirties, unimpressed, has had enough. Talks to himself in one-liners. Never gives speeches. | `audio.json` voice `player` | Player sprites |
 | **The Overlord** | Giant obsidian titan with red eyes. Ruler of Hell's 1,000 floors, as sick of Hell as the hero is of everything, and done waiting to take the surface. Never in a hurry; barely notices the hero until he can't ignore him. Says very little, and every word sounds like it cost him nothing. | `audio.json` voice `overlord`: deep, slow, enormous, barely bothered; a voice that fills a valley without being raised. Short lines, long pauses. When he lasers the portal open he barely notices the hero: *"Mm. ... Stay."* or a bored exhale. | Video1, Level1 backgrounds |
-| **Gloob** *(working)* | The village's green slime and its gossip. Swallowed a handful of the village's diamonds to hide them from the imps, got sucked through the portal with the hero, and now trades and tinkers between floors out of his own stomach. **Slimes are villagers, never enemies.** | `audio.json` voice `gloob`: friendly, chatty, wet; talks fast, gurgles between words, never stops for breath, delighted to see anyone, a bit too pleased with himself. | Video3 (the talking slime); his talking portrait (`ui/gloob.json`, see *Gloob between floors*) |
+| **Yooba** | The village's green slime and its gossip, and J's own character (the same Yooba as Yooba Land; his name is final, not a working one). Swallowed a handful of the village's diamonds to hide them from the imps, got sucked through the portal with the hero, and now trades and tinkers between floors out of his own stomach. **Slimes are villagers, never enemies.** | `audio.json` voice `yooba`: friendly, chatty, wet; talks fast, gurgles between words, never stops for breath, delighted to see anyone, a bit too pleased with himself. | Video3 (the talking slime); his talking portrait (`ui/yooba.json`, see *Yooba between floors*) |
 | **The Announcer** | Hell's own voice: loves a show, calls out floors, bosses and deaths like an arcade cabinet. | `announcer` | Floor titles, death screens |
 | **The Wardens** | One boss per Circle: the monster that rules it. Each guards its Circle's top floor. | Per Warden | Death videos, bosses |
 | **The Magma King** | Circle X's Warden: a huge king of slag and obsidian with a lava crown, slouched on a throne of slag at Floor 901. He never gets up, unless you make him: the Wastes come to him. Smug where the Overlord is bored; proud, loves an audience and takes Hell's show seriously (a challenger is the best entertainment the Wastes have had in ages). He hears everything that climbs his stairs and enjoys the wait. Making him stand is what enrages him (see *The Magma King's fight*). | `audio.json` voice `magmaKing`: very deep, thick, gurgling bass; slow, smug, amused, lazy, proud; chuckles (*"Mm-hm-hm."*), never shouts. The one line with weight is when he stands. Heard before he's seen, from ahead on the Heat Stairs. | `art/magmaKing.json`: generated sheets in `Assets/Art/Enemies/MagmaKing/` |
@@ -53,7 +53,7 @@ Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
    sky as one burning column and bursts on the ground. The grass scorches, cracks, and tears open into a ring of
    burning turf with fire swirling down inside it: **the same fire portal the hero falls through in Video2**,
    seen side-on from the meadow, so the player recognises it when Video2 starts. It swirls the whole time he
-   stands at its edge, and once it has had him (and Gloob) it flares and shrinks to a black scorch mark.
+   stands at its edge, and once it has had him (and Yooba) it flares and shrinks to a black scorch mark.
 5. **The walk-over.** The hero walks over to it on his own, curious (scripted: the player's input is off), and
    leans in to peer down at it, head tilted (his `Curious` clip).
    Hero: *"That's a hole."* Beat. *"So that's where they keep coming from."*
@@ -63,7 +63,7 @@ Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
    (`vo_portal_echo`).
 7. **"Nope."** He turns to leave. The portal grabs him: yanked off his feet backward, flailing (`Grabbed`), he
    spins and shrinks into it, and he's gone. He is still tumbling the same way down Video2's fire tunnel.
-8. **Gloob.** A beat later a green village slime bounces past, wobbles at the edge, and is slurped in after him.
+8. **Yooba.** A beat later a green village slime bounces past, wobbles at the edge, and is slurped in after him.
    Nobody remarks on it. It pays off in Video3, when the same slime turns up at the bottom of Hell, talking.
 9. **Video2.** The burning door; the hero tumbling and spinning down the fire tunnel; the lava river at Floor
    1,000.
@@ -106,7 +106,7 @@ THE MEADOW again                           Ending
   Floors `1000 - 10(n-2)` to `991 - 10(n-2)`; Level 11 is Floors 910-901, the Magma King; Level 12 starts Circle IX
   at Floor 900. Level *n* is position *n* in game.json's `levels` list, and the file is `levels/Level<n>.json`.
 - **The path today** (re-pathed 2026-10-18): New Game → Video1 → Level 1, the Meadow → Video2 → Level 2, *Floors
-  1000-991: The Landing* → Video3 (Gloob) → Level 3, *Floors 990-981: The Spill* → Level 4, *Floors 980-971: Imp
+  1000-991: The Landing* → Video3 (Yooba) → Level 3, *Floors 990-981: The Spill* → Level 4, *Floors 980-971: Imp
   Run* → Level 5, *Floors 970-961: The Slag Falls* → Level 6, *Floors 960-951: The Loop* → Level 7, *Floors 950-941:
   Halfway Basin* → Level 8, *Floors 940-931: The Crust* → Level 9, *Floors 930-921: The Sack Pile* → Level 10, *Floors
   920-911: The Heat Stairs* (ending at the Magma King's door) → Level 11, *Floors 910-901: The Slag Throne* (his arena; built 2026-10-18) → the Shaft (Circle IX wakes up) → the level select, until Circle IX's stages are rebuilt. Inside a Circle the stages run straight on from one to the next (a level's
@@ -183,12 +183,12 @@ build toward; the first two Circles reuse current art.
 
 | Act | Where | What happens | Media |
 |---|---|---|---|
-| Prologue | The Meadow (Level 1) | A nice day. The Overlord rises over the hills; his imps drop in to loot the village; he lasers it; his imps take the diamonds. His lasers burn a portal into the ground beside the hero, who goes to look, shouts down it, hears Hell echo back, says "Nope" and is sucked in. Gloob is slurped in after him. | Video1 → Level1 → portal scene → Video2 → the Shaft |
-| Act 1 | Circles X–VIII | The portal drops the hero at Floor 1,000. Gloob turns up (the slime slurped in after him), coughs up a diamond, and starts helping. First Warden. The hero learns Hell repeats, and that he can rewind it. | Video2, Video3 (Gloob) |
+| Prologue | The Meadow (Level 1) | A nice day. The Overlord rises over the hills; his imps drop in to loot the village; he lasers it; his imps take the diamonds. His lasers burn a portal into the ground beside the hero, who goes to look, shouts down it, hears Hell echo back, says "Nope" and is sucked in. Yooba is slurped in after him. | Video1 → Level1 → portal scene → Video2 → the Shaft |
+| Act 1 | Circles X–VIII | The portal drops the hero at Floor 1,000. Yooba turns up (the slime slurped in after him), coughs up a diamond, and starts helping. First Warden. The hero learns Hell repeats, and that he can rewind it. | Video2, Video3 (Yooba) |
 | Act 2 | Circles VII–IV | Deeper strangeness: souls stuck in loops (Shades) show what Hell does to people. Hints the Overlord is just as stuck. Midpoint at Floor 500: the hero could take a shortcut home and doesn't. | new |
 | Act 3 | Circles III–I | The Overlord's own guard. The gate is almost open; daylight leaks down the stairs. The hero climbs toward it. | new |
 | Finale | Floor 1 | The Overlord at his gate. Phase 1: he doesn't take the hero seriously. Phase 2: he rewinds too (the loop was his first). Phase 3: the gate cracks open on the meadow behind him. | new |
-| Ending | The Meadow | The hero shoves the Overlord back down and the gate shuts on him. Home, the meadow regrowing, Gloob spitting the diamonds back out. The hero sits down for the first time in 1,000 floors. Something knocks from under the ground. (Post-credit: "Floor 1,001".) | new |
+| Ending | The Meadow | The hero shoves the Overlord back down and the gate shuts on him. Home, the meadow regrowing, Yooba spitting the diamonds back out. The hero sits down for the first time in 1,000 floors. Something knocks from under the ground. (Post-credit: "Floor 1,001".) | new |
 
 ### Circle X stage outline: the Ember Wastes (Levels 2-11, today's build)
 
@@ -275,8 +275,8 @@ the fire, and the whole stretch of floor the flood will cover glowing red before
    Next Warden: the Spire Fiend. Circle IX's stages are still to be rebuilt in the 10-floor layout, so for now the
    level select follows.
 
-Video3 (Gloob, talking) plays after **The Landing**: the slime from the meadow turns up at the bottom of Hell,
-pleased to see a familiar face, and coughs up a diamond. From then on Gloob is the shop.
+Video3 (Yooba, talking) plays after **The Landing**: the slime from the meadow turns up at the bottom of Hell,
+pleased to see a familiar face, and coughs up a diamond. From then on Yooba is the shop.
 
 ### Circle IX stage outline: the Cracked Road (Levels 12-18, first pass)
 
@@ -299,37 +299,37 @@ floor and the Spire Fiend on 801; the Old Stair's shortcut stays where it is (Fl
 | 17 | 850-841 | **Halfway Up the Road** | (none) | Floor 850, the Circle's milestone (*"FLOOR 850: HALFWAY UP THE ROAD"*). Hero: *"Halfway. Again."* |
 | 18 | 840-831 | **The Stairhead** | (none) | Where the Old Stair comes out: rubble spilling from a crack in a spire, the road and the stair meeting under *MIND THE RUBBLE*. Hero: *"So that's where the stairs come out."* (true whichever way he came). For now the level select follows. |
 
-### Gloob between floors
+### Yooba between floors
 
-Gloob rides along in the gaps: on the Shaft between stages and behind the shop counter. He never fights and never
+Yooba rides along in the gaps: on the Shaft between stages and behind the shop counter. He never fights and never
 appears inside a stage; he is the one friendly voice in Hell, and he talks far too much. He is drawn as a **talking
-portrait** (`ui/gloob.json`), made from Video3's own slime: the green blob with two eyestalks and big pink square
+portrait** (`ui/yooba.json`), made from Video3's own slime: the green blob with two eyestalks and big pink square
 teeth. Four loops: **idle** (a slow wobble), **talk**, **laugh**, and **cough** (he hacks up a diamond, the one trick he
-is proud of). His voice is `gloob` (designed for him: fast, wet, gurgling, a bit too pleased with himself).
+is proud of). His voice is `yooba` (designed for him: fast, wet, gurgling, a bit too pleased with himself).
 
 - **Hello** (the Shaft after Video3, at Floor 991, before the Spill): he says hello, repeats the announcer's
   *"nine hundred ninety-nine"* back at the hero (he counted), and coughs up his first diamond. The hero answers with
-  one line. From then on Gloob is "met" (New Game forgets it).
+  one line. From then on Yooba is "met" (New Game forgets it).
 - **Between floors** (every Shaft climb after that): one line, picked by what just happened, first match wins: the
   climb passed a milestone floor (999, 950, the Spill's 985 with the baker's cart), the Magma King is close (within
   30 floors; at his door, a whisper), the hero died on the way, a new Grudge was picked; else idle gossip. Each
   reaction is said once per save, then the next one up gets its turn. Some get a one-line reply from the hero.
-- **The shop** is Gloob's counter, **Gloob's Goods**: he welcomes the hero in, comments on a buy (often coughing it
+- **The shop** is Yooba's counter, **Yooba's Goods**: he welcomes the hero in, comments on a buy (often coughing it
   up, still warm), turns him away when he can't afford it (*no tabs, no pockets*), and says goodbye when he leaves.
-  It is reached from every Shaft after his hello (**Visit Gloob**, beside Continue: the shop opens over the map, and
+  It is reached from every Shaft after his hello (**Visit Yooba**, beside Continue: the shop opens over the map, and
   leaving it puts the hero back on the Shaft, Continue on to the next stage) and from the main menu. Paid in the
   village's diamonds; what he makes is kept (New Game forgets it, like everything else).
 - **His goods** are things a village slime can make out of diamonds and his own stomach, each with a plain effect:
 
   | Goods | Effect | What it is |
   |---|---|---|
-  | Goo Plaster | +1 max health | a dab of Gloob over the dents |
+  | Goo Plaster | +1 max health | a dab of Yooba over the dents |
   | Bouncy Soles | an extra jump in the air | slime in the boots |
   | Slick Heels | runs 8% faster | slime on the heels |
   | Licked Trigger | fires 10% faster | he licked it |
   | Tummy-Dipped Shots | 15% more damage | every shot dipped in his stomach |
   | Loop Jar | +1 s of Déjà Vu (rewind) | a loop shard one of the damned dropped; he only keeps it in a jar |
-  | Shiny Sniffer | diamonds come from farther away | a wobbly bit of Gloob that sniffs out diamonds |
+  | Shiny Sniffer | diamonds come from farther away | a wobbly bit of Yooba that sniffs out diamonds |
 - He gossips, he counts, he is proud of his stomach. He is never scared for long and never mean. Slimes are
   villagers: nobody in the game ever fights him or his kind.
 
@@ -375,10 +375,10 @@ just one more thing in it. A **run** is one climb from a Waystone until Hell kil
   restarts there, with the stage that starts on (or just above) it: from the Landing, Floor 1,000 (Level 2).
 - **The first time** the announcer explains it, in story terms: *"HELL DOESN'T LET YOU DIE. IT LETS YOU DO IT
   AGAIN."* Hero: *"Of course it does."* That first drop can't be skipped. After that, one jeer: *"BACK TO THE
-  WAYSTONE! DO IT AGAIN!"* (Gloob, on the next climb, has his own line about it: *"Back again? Hell does that."*)
+  WAYSTONE! DO IT AGAIN!"* (Yooba, on the next climb, has his own line about it: *"Back again? Hell does that."*)
 - **What Hell takes and what it can't:** the run's **Grudges** go (and the max health a Grudge gave), and the
-  health he carried from stage to stage, so a new run starts fresh. The **village's diamonds** and **Gloob's goods**
-  stay: they're real things, in his pockets and his boots, not spite. Gloob's shop is open on the drop too.
+  health he carried from stage to stage, so a new run starts fresh. The **village's diamonds** and **Yooba's goods**
+  stay: they're real things, in his pockets and his boots, not spite. Yooba's shop is open on the drop too.
 - **The Meadow** is not Hell: a death there (and on the arcade levels, outside the Circles) just plays the level again.
 - **Main menu:** **Continue** goes on with the current run (the stage it is on); **New Run** (once a Waystone is
   reached, *"New Run (Floor 1,000)"*) throws the current run away and starts a fresh one at the highest Waystone,
@@ -411,7 +411,7 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | **Rewind** (hold R) | **Déjà Vu.** Hell runs everything on a loop; the hero grabs the loop and pulls it backward. | The juice meter is "Déjà Vu". **Rewind orbs** are *loop shards* that drop only from the damned: souls stuck in Hell's loop, repeating a floor forever (in the Wastes, a damned soul on a ledge whose loop hiccups as the hero passes; deeper down, the Shades). Never from imps, cinders or guards. In a **scene** something bigger has hold of the loop (the portal's pull, a Warden's entrance), so he can't grab it: rewind is locked and the button says "Not now". |
 | **Death and runs** | Hell doesn't let you die; it sends you back to repeat the floors. "YOU OBVIOUSLY DIED." | A run restarts at the highest **Waystone** reached (the Landing, then the top of each Circle once its Warden is beaten); see *Waystones and runs*. Death videos are Hell's announcer gloating. |
 | **Between-level picks** (`content/upgrades`) | **Grudges.** Every floor gives the hero something new to be annoyed about, and spite is fuel. Lost when a run ends. | Titles are grudges: "Spite Rounds", "Short Fuse", "Not Today", "Déjà Vu". |
-| **Diamonds and the shop** | The village's diamonds, the portal fuel the imps stole; enemies drop them back. **Gloob** works them into the hero's gear between floors. Permanent. | Shop = Gloob. Shop upgrade names are things a village slime can make. |
+| **Diamonds and the shop** | The village's diamonds, the portal fuel the imps stole; enemies drop them back. **Yooba** works them into the hero's gear between floors. Permanent. | Shop = Yooba. Shop upgrade names are things a village slime can make. |
 | **Floor counter and progress bar** | How far up you are. | Progress bar = floors left in the stage; markers = Warden, shortcut, milestone. |
 
 ## Rules for enemies
@@ -421,7 +421,7 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 2. **One Circle, one family.** An enemy belongs to the Circle whose biome it fits; at most it shows up again in
    the next Circle up, promoted (tougher, recolored, renamed).
 3. **Introduce one new enemy at a time, alone**, with room to read it before it's mixed with others.
-4. **Slimes are friends.** Gloob is a slime; the village's slimes are villagers. No slime enemies.
+4. **Slimes are friends.** Yooba is a slime; the village's slimes are villagers. No slime enemies.
 5. The look comes from the art pipeline (see *Art*), never from tinting a sprite of a different creature.
    Placeholder tints are fine while art is being made, and the table here says which art is pending.
 
@@ -499,19 +499,19 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
 
 4. **Scripted scenes**: the end of Level 1 (after the Grudge pick): the Overlord's lasers burn the portal into the
    ground, the hero is walked over with input off, the lines and the echo play, the portal pulls him in (spin and
-   shrink), Gloob bounces past and is slurped in. Rewind is off during the scene. The hero gets new animation
+   shrink), Yooba bounces past and is slurped in. Rewind is off during the scene. The hero gets new animation
    clips for it (look down, shout, turn, spin into the portal).
    *Built so far* (2026-10-18; recipe: GameplayCookbook "A scene with the hero"): the scene actions a level script
    uses for it: walk the hero somewhere by himself, turn him, play one of his clips, pull him into a point
    (spinning and shrinking until he is gone), move and zoom the camera, fade to black, and lock rewind while it
    plays. `content/scenes/cutsceneTest.json` runs every one of them on the Meadow for the playtest.
-   *The scene itself* (2026-10-18): Level1.json's last phases, `portalBeam` → `portalLook` → `portalGloob` →
+   *The scene itself* (2026-10-18): Level1.json's last phases, `portalBeam` → `portalLook` → `portalYooba` →
    `portalClose`. After the Grudge pick: input and rewind lock, the hero can't be hurt (`sceneUntouchable`) and
    the music drops. The Overlord's beam is telegraphed by a red glow on the ground 2.5 units from the hero, on
    the side toward the middle of the meadow, for 1.25 s, then strikes (flash, shake, a column of beam, *"Mm. ...
    Stay."*) and the ground burns open into the `portal` (humming, drawn behind the hero). The camera closes in a
    little, he walks to its edge, the lines and the echo play, a "?" pops over him, *"Nope."*, he turns and takes
-   one step, *"Oh, come ON-"* and he is pulled in (1.2 s, 2.5 turns). A beat later `gloobProp` (Gloob: the
+   one step, *"Oh, come ON-"* and he is pulled in (1.2 s, 2.5 turns). A beat later `yoobaProp` (Yooba: the
    village slime, slime art, harmless) hops in from the far side and is slurped in. The portal flares and
    closes to a scorch, the screen fades to black, and the level ends: results, then Video2. The hero no
    longer says *"Fine. I'll go get them."*: he never chose to go. Still to come: the hero's scene clips (look
@@ -545,7 +545,7 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    floors, so no Shaft follows them. The first Shaft can't be skipped; every one after it can (a tap or a key).
    It remembers the floor its marker was last shown on; the deepest floor reached is the lowest last floor of the
    cleared levels. New Game resets it.
-7. **Voices**: `overlord` and `gloob` in `audio.json` `voices`, and the prologue, Shaft and Circle X lines.
+7. **Voices**: `overlord` and `yooba` in `audio.json` `voices`, and the prologue, Shaft and Circle X lines.
 
 8. **Waystones and runs** (built 2026-10-18; see *Waystones and runs*): `RunFlow` (Core/Progression) and
    `WaystoneProgress` (the save: highest Waystone, the run's level, runs ended). Waystones are `ui/shaft.json`'s
