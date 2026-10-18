@@ -1,89 +1,131 @@
 {
-  "_about": "The Shaft's paintings: Tools/Art/shaft_art.py turns each slot's source into Assets/Art/Shaft/<slot>.png and wires ui/shaft.json. job = the Hawkes Gen job that makes it (2 takes each; pick with hawkesgen_entity_judge or by eye).",
+  "_about": "The Shaft's paintings: Tools/Art/shaft_art.py turns each slot's source into Assets/Art/Shaft/<slot>.png and wires ui/shaft.json. job = the Hawkes Gen job that makes it (2 takes each; pick with hawkesgen_entity_judge or by eye). Picked takes are also current in the Gen library entity sickofit/the-shaft.",
   "slots": {
     "band.X": {
       "job": "j_53012ce0b07b",
-      "source": ""
+      "source": "Temp/shaft_takes/band.X/image-generate-1023786473-Save_Image.png",
+      "asset": "a_d0f7fa18f184cb44",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot band/x); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "band.IX": {
       "job": "j_eb64e1133cd6",
-      "source": ""
+      "source": "Temp/shaft_takes/band.IX/image-generate-1362895296-Save_Image.png",
+      "asset": "a_d4a042362b8acb27",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot band/ix); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "band.VIII": {
       "job": "j_942597fae455",
-      "source": ""
+      "source": "Temp/shaft_takes/band.VIII/image-generate-1523690423-Save_Image.png",
+      "asset": "a_d52c9f62b5d50175",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot band/viii); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "band.VII": {
       "job": "j_cee11c43ac95",
-      "source": ""
+      "source": "Temp/shaft_takes/band.VII/image-generate-418577238-Save_Image.png",
+      "asset": "a_d5ce375eb7da441a",
+      "note": "take 1, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot band/vii); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "band.VI": {
       "job": "j_117290ddd872",
-      "source": ""
+      "source": "Temp/shaft_takes/band.VI/image-generate-1718582180-Save_Image.png",
+      "asset": "a_a71859e8032f50dd",
+      "note": "take 1, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot band/vi); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "band.V": {
       "job": "j_a8f2773d5e8d",
-      "source": ""
+      "source": "Temp/shaft_takes/band.V/image-generate-348757212-Save_Image.png",
+      "asset": "a_0ac473191c6f9b13",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot band/v); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "band.IV": {
       "job": "j_7f9fcd0f5243",
-      "source": ""
+      "source": "Temp/shaft_takes/band.IV/image-generate-2039587957-Save_Image.png",
+      "asset": "a_43bbb1e961163b65",
+      "note": "take 1, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot band/iv); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "band.III": {
       "job": "j_ad9501fbf761",
-      "source": ""
+      "source": "Temp/shaft_takes/band.III/image-generate-1327677340-Save_Image.png",
+      "asset": "a_20d5d1bcc20e9ae0",
+      "note": "take 1, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot band/iii); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "band.II": {
       "job": "j_2815f87d9902",
-      "source": ""
+      "source": "Temp/shaft_takes/band.II/image-generate-1368398057-Save_Image.png",
+      "asset": "a_bea7f89477f82aae",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot band/ii); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "band.I": {
       "job": "j_7a8de3c78400",
-      "source": ""
+      "source": "Temp/shaft_takes/band.I/image-generate-1420747216-Save_Image.png",
+      "asset": "a_1eec65916be7f69c",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot band/i); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "meadow": {
       "job": "j_5c1d6f3e9b7a",
-      "source": ""
+      "source": "Temp/shaft_takes/meadow/image-generate-659963483-Save_Image.png",
+      "asset": "a_f90ef95c92e40e36",
+      "note": "take 1, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot meadow); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "warden.X": {
       "job": "j_9086a87ab37a",
-      "source": ""
+      "source": "Temp/shaft_takes/warden.X/image-generate-1340966027-Save_Image.png",
+      "asset": "a_6348e55c1d368412",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot warden/x); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "warden.IX": {
       "job": "j_2c58d14ebee8",
-      "source": ""
+      "source": "Temp/shaft_takes/warden.IX/image-generate-1062924738-Save_Image.png",
+      "asset": "a_a22497314438b3b4",
+      "note": "take 1, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot warden/ix); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "warden.VIII": {
       "job": "j_835b60d0d41b",
-      "source": ""
+      "source": "Temp/shaft_takes/warden.VIII/image-generate-1584802524-Save_Image.png",
+      "asset": "a_f659bf8581c1ee37",
+      "note": "take 1, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot warden/viii); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "warden.VII": {
       "job": "j_adc5bc47fb4c",
-      "source": ""
+      "source": "Temp/shaft_takes/warden.VII/image-generate-184252193-Save_Image.png",
+      "asset": "a_25f5019d548016cc",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot warden/vii); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "warden.VI": {
       "job": "j_7d17fec0b0fc",
-      "source": ""
+      "source": "Temp/shaft_takes/warden.VI/image-generate-1299762456-Save_Image.png",
+      "asset": "a_922cf71874a8a977",
+      "note": "take 1, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot warden/vi); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "warden.V": {
       "job": "j_0726cb869db0",
-      "source": ""
+      "source": "Temp/shaft_takes/warden.V/image-generate-1912165725-Save_Image.png",
+      "asset": "a_ce2017b40ef4d92a",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot warden/v); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "warden.IV": {
       "job": "j_3400d3ea9f95",
-      "source": ""
+      "source": "Temp/shaft_takes/warden.IV/image-generate-1936971122-Save_Image.png",
+      "asset": "a_2f4fc503e086fcd6",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot warden/iv); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "warden.III": {
       "job": "j_34b8b08cfb01",
-      "source": ""
+      "source": "Temp/shaft_takes/warden.III/image-generate-396936910-Save_Image.png",
+      "asset": "a_c4ffe34f50cc7ec2",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot warden/iii); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "warden.II": {
       "job": "j_0ca687d62dc5",
-      "source": ""
+      "source": "Temp/shaft_takes/warden.II/image-generate-1600689531-Save_Image.png",
+      "asset": "a_4903135b4076e6f7",
+      "note": "take 1, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot warden/ii); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "warden.I": {
       "job": "j_83a044260539",
-      "source": ""
+      "source": "Temp/shaft_takes/warden.I/image-generate-778311879-Save_Image.png",
+      "asset": "a_ad2b0c9afa6c2b55",
+      "note": "take 2, picked 2026-10-18 by hawkesgen_entity_judge (sickofit/the-shaft, slot warden/i); source is hawkesgen_job save_to (Temp/, not committed): re-save with the job id or fetch the asset"
     },
     "marker": {
       "job": "",

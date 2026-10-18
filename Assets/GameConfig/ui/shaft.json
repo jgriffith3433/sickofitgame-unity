@@ -19,7 +19,7 @@
   "grass": "#5CA840",
   "marker": "#FFD94D",
   "crack": "#0000008C",
-  "meadowArt": null,
+  "meadowArt": "Art/Shaft/meadow.png",
   "markerArt": "Art/Shaft/marker.png",
   "markerSize": 64,
   "wardenSize": 150,
@@ -58,8 +58,8 @@
       "lastFloor": 901,
       "color": "#B3381A",
       "warden": "The Magma King",
-      "art": null,
-      "wardenArt": null,
+      "art": "Art/Shaft/band_X.png",
+      "wardenArt": "Art/Shaft/warden_X.png",
       "wakeVoice": ""
     },
     {
@@ -70,8 +70,8 @@
       "lastFloor": 801,
       "color": "#4D2A30",
       "warden": "The Spire Fiend",
-      "art": null,
-      "wardenArt": null,
+      "art": "Art/Shaft/band_IX.png",
+      "wardenArt": "Art/Shaft/warden_IX.png",
       "wakeVoice": "vo_shaft_wake_ix"
     },
     {
@@ -82,8 +82,8 @@
       "lastFloor": 701,
       "color": "#2B4A8A",
       "warden": "The Bridge Wraith",
-      "art": null,
-      "wardenArt": null,
+      "art": "Art/Shaft/band_VIII.png",
+      "wardenArt": "Art/Shaft/warden_VIII.png",
       "wakeVoice": ""
     },
     {
@@ -94,8 +94,8 @@
       "lastFloor": 601,
       "color": "#33402A",
       "warden": "The Hollow King",
-      "art": null,
-      "wardenArt": null,
+      "art": "Art/Shaft/band_VII.png",
+      "wardenArt": "Art/Shaft/warden_VII.png",
       "wakeVoice": ""
     },
     {
@@ -106,8 +106,8 @@
       "lastFloor": 501,
       "color": "#2D5C4C",
       "warden": "The Drowned Queen",
-      "art": null,
-      "wardenArt": null,
+      "art": "Art/Shaft/band_VI.png",
+      "wardenArt": "Art/Shaft/warden_VI.png",
       "wakeVoice": ""
     },
     {
@@ -118,8 +118,8 @@
       "lastFloor": 401,
       "color": "#6E3A4C",
       "warden": "The Mother Maw",
-      "art": null,
-      "wardenArt": null,
+      "art": "Art/Shaft/band_V.png",
+      "wardenArt": "Art/Shaft/warden_V.png",
       "wakeVoice": ""
     },
     {
@@ -130,8 +130,8 @@
       "lastFloor": 301,
       "color": "#4A5674",
       "warden": "The Bell Ringer",
-      "art": null,
-      "wardenArt": null,
+      "art": "Art/Shaft/band_IV.png",
+      "wardenArt": "Art/Shaft/warden_IV.png",
       "wakeVoice": ""
     },
     {
@@ -142,8 +142,8 @@
       "lastFloor": 201,
       "color": "#5E544A",
       "warden": "The Gatekeeper",
-      "art": null,
-      "wardenArt": null,
+      "art": "Art/Shaft/band_III.png",
+      "wardenArt": "Art/Shaft/warden_III.png",
       "wakeVoice": ""
     },
     {
@@ -154,8 +154,8 @@
       "lastFloor": 101,
       "color": "#5C3C22",
       "warden": "The Chain King",
-      "art": null,
-      "wardenArt": null,
+      "art": "Art/Shaft/band_II.png",
+      "wardenArt": "Art/Shaft/warden_II.png",
       "wakeVoice": ""
     },
     {
@@ -166,8 +166,8 @@
       "lastFloor": 1,
       "color": "#7D1F1F",
       "warden": "The Overlord",
-      "art": null,
-      "wardenArt": null,
+      "art": "Art/Shaft/band_I.png",
+      "wardenArt": "Art/Shaft/warden_I.png",
       "wakeVoice": ""
     }
   ],
