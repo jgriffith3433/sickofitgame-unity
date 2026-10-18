@@ -146,7 +146,7 @@
         "onEnter": [
           {
             "type": "showText",
-            "text": "Eight seventy-six. Still not one.",
+            "text": "Eight ninety-two. Still not one.",
             "duration": 3.0,
             "sound": "vo_road_top",
             "style": "Subtitle"

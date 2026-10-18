@@ -74,10 +74,27 @@
         ],
         "rules": [
           {
-            "name": "the hero takes it in",
+            "name": "floor 850: halfway up the road",
             "when": {
               "type": "after",
               "seconds": 3.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "showText",
+                "text": "FLOOR 850: HALFWAY UP THE ROAD",
+                "duration": 2.5,
+                "sound": "vo_floor_850",
+                "color": "#FFB46A"
+              }
+            ]
+          },
+          {
+            "name": "the hero takes it in",
+            "when": {
+              "type": "after",
+              "seconds": 6.0
             },
             "maxTimes": 1,
             "do": [
@@ -94,7 +111,7 @@
             "name": "quiet start over",
             "when": {
               "type": "after",
-              "seconds": 6.5
+              "seconds": 9.0
             },
             "maxTimes": 1,
             "do": [
