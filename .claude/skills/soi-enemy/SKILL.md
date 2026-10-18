@@ -16,7 +16,7 @@ Read `Docs/Story.md` ("Structure", "The Circles", "Rules for enemies", "Roster")
   Throne Stair: the Overlord's personal guard). Each Circle has one biome and one family of enemies; the Story table
   already proposes them (Brimstone Demons in IX, Watchers in VIII…). Use the proposal unless the request says otherwise.
 - **A reason to be there**: who it works for, what it wants. Write it into Story.md's Roster table *first*.
-- **Never a slime** (slimes are villagers; Gloob is a slime). **No work or office jokes.**
+- **Never a slime** (slimes are villagers; Yooba is a slime). **No work or office jokes.**
 - If the request doesn't fit the story (wrong Circle, a slime), say so and propose the closest thing that fits.
 
 ## 1. Gameplay: the entity

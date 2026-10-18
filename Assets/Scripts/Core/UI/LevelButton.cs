@@ -17,7 +17,7 @@ namespace SickOfIt.Core.UI
         [SerializeField] private GameObject lockedIndicator; // Lock icon, etc.
 
         [Header("Roguelite Health Display")]
-        [Tooltip("Shows the health Yooba ended this level with (e.g. '2/3').")]
+        [Tooltip("Shows the health the hero ended this level with (e.g. '2/3').")]
         [SerializeField] private TextMeshProUGUI healthInfoText;
 
         [Header("Visual Feedback (Optional)")]
@@ -44,7 +44,7 @@ namespace SickOfIt.Core.UI
         /// <param name="completed">Whether the level has been completed</param>
         /// <param name="unlocked">Whether the level is accessible</param>
         /// <param name="onClickAction">Callback when button is tapped</param>
-        /// <param name="endHealth">Health Yooba ended with (-1 if not completed)</param>
+        /// <param name="endHealth">Health the hero ended with (-1 if not completed)</param>
         /// <param name="maxHealth">Max health for display</param>
         public void Setup(int level, bool completed, bool unlocked, System.Action onClickAction, int endHealth = -1, int maxHealth = 3)
         {

@@ -13,14 +13,14 @@ using SickOfIt.Data.Config;
 namespace SickOfIt.Core.Progression
 {
     /// <summary>
-    /// Gloob's talking portrait (Docs/Story.md, "Gloob between floors"; ui/gloob.json): his loops (idle, talk, laugh,
+    /// Yooba's talking portrait (Docs/Story.md, "Yooba between floors"; ui/yooba.json): his loops (idle, talk, laugh,
     /// cough) cut from their sprite sheets and played on unscaled time, in a rounded frame with his name. A loop
     /// without a sheet is drawn as a placeholder slime (green blob, two eyestalks, a mouth that opens while he talks).
     /// Lives in menus (the Shaft, the shop): presentation only.
     /// </summary>
-    public sealed class GloobPortrait : MonoBehaviour
+    public sealed class YoobaPortrait : MonoBehaviour
     {
-        /// <summary>What Gloob did, for the playtest and the log: (kind, detail), e.g. ("clip", "talk (painted)") or ("line", "...").</summary>
+        /// <summary>What Yooba did, for the playtest and the log: (kind, detail), e.g. ("clip", "talk (painted)") or ("line", "...").</summary>
         public static event Action<string, string> Reported;
 
         /// <summary>The loop playing now (idle, talk, laugh, cough).</summary>
@@ -32,7 +32,7 @@ namespace SickOfIt.Core.Progression
         /// <summary>A line is being said right now.</summary>
         public bool Speaking { get; private set; }
 
-        GloobConfig config;
+        YoobaConfig config;
         readonly Dictionary<string, List<Sprite>> frames = new Dictionary<string, List<Sprite>>();
         readonly Dictionary<string, float> rates = new Dictionary<string, float>();
         RectTransform body;
@@ -43,17 +43,17 @@ namespace SickOfIt.Core.Progression
         float clipEnds = -1f;
 
         /// <summary>Builds the portrait under 'parent', placed (and kept on screen) like any menu element.</summary>
-        public static GloobPortrait Create(MenuCanvas menu, Transform parent, GloobConfig config, MenuPlacement landscape, MenuPlacement portrait)
+        public static YoobaPortrait Create(MenuCanvas menu, Transform parent, YoobaConfig config, MenuPlacement landscape, MenuPlacement portrait)
         {
-            var slot = MenuGraphics.NewRect("Gloob", parent != null ? parent : menu.Root);
+            var slot = MenuGraphics.NewRect("Yooba", parent != null ? parent : menu.Root);
             MenuGraphics.Place(slot, landscape.anchor, landscape.offset, landscape.size);
             MenuResponsive.Track(slot, landscape, portrait, MenuElementKind.Text, menu.Responsive);
-            var view = slot.gameObject.AddComponent<GloobPortrait>();
+            var view = slot.gameObject.AddComponent<YoobaPortrait>();
             view.Build(menu, config);
             return view;
         }
 
-        void Build(MenuCanvas menu, GloobConfig settings)
+        void Build(MenuCanvas menu, YoobaConfig settings)
         {
             config = settings;
             var rect = (RectTransform)transform;
@@ -103,7 +103,7 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>A loop's sheet cut into its cells (left to right, top to bottom).</summary>
-        void Cut(GloobClip clip)
+        void Cut(YoobaClip clip)
         {
             if (clip == null || string.IsNullOrEmpty(clip.name) || clip.sheet == null || clip.sheet.texture == null)
                 return;
@@ -117,7 +117,7 @@ namespace SickOfIt.Core.Progression
                 int col = i % columns, row = i / columns;
                 var cell = new Rect(source.x + col * w, source.y + source.height - (row + 1) * h, w, h);
                 var sprite = Sprite.Create(clip.sheet.texture, cell, new Vector2(0.5f, 0f), 100f, 0, SpriteMeshType.FullRect);
-                sprite.name = $"gloob_{clip.name}_{i}";
+                sprite.name = $"yooba_{clip.name}_{i}";
                 list.Add(sprite);
             }
             frames[clip.name] = list;
@@ -202,7 +202,7 @@ namespace SickOfIt.Core.Progression
         /// Says one line: his voice and subtitle with his loop, then the hero's one-liner back if it has one. Shows
         /// words through 'subtitle' (null = hide). Ends early when 'skipped' says so (the voice plays out).
         /// </summary>
-        public IEnumerator Say(GloobLine line, Action<string> subtitle, Func<bool> skipped = null)
+        public IEnumerator Say(YoobaLine line, Action<string> subtitle, Func<bool> skipped = null)
         {
             if (line == null)
                 yield break;
@@ -211,7 +211,7 @@ namespace SickOfIt.Core.Progression
             Sfx.Play(line.sound);
             Play(string.IsNullOrEmpty(line.clip) ? "talk" : line.clip, length);
             subtitle?.Invoke($"{config.speaker}: {line.text}");
-            Report("line", $"gloob ({line.moment}{(line.moment == GloobMoment.Floor || line.moment == GloobMoment.NearWarden ? " " + line.floor.ToString(CultureInfo.InvariantCulture) : "")}, {Clip}): {line.text} ({line.sound}{(Sfx.Has(line.sound) ? "" : ", no clip")})");
+            Report("line", $"yooba ({line.moment}{(line.moment == YoobaMoment.Floor || line.moment == YoobaMoment.NearWarden ? " " + line.floor.ToString(CultureInfo.InvariantCulture) : "")}, {Clip}): {line.text} ({line.sound}{(Sfx.Has(line.sound) ? "" : ", no clip")})");
             yield return Wait(length + config.pause, skipped);
             if (!string.IsNullOrEmpty(line.reply) && !(skipped != null && skipped()))
             {
@@ -241,18 +241,18 @@ namespace SickOfIt.Core.Progression
 
         // ─── Which line ───────────────────────────────────────────────
 
-        static GloobConfig Config => GameDefinition.Instance != null ? GameDefinition.Instance.gloob : null;
+        static YoobaConfig Config => GameDefinition.Instance != null ? GameDefinition.Instance.yooba : null;
 
-        /// <summary>Gloob is on: configured, and (for the Shaft) he has met the hero.</summary>
+        /// <summary>Yooba is on: configured, and (for the Shaft) he has met the hero.</summary>
         public static bool Enabled => Config != null && Config.enabled;
 
         /// <summary>His hello lines, in order.</summary>
-        public static List<GloobLine> HelloLines()
+        public static List<YoobaLine> HelloLines()
         {
-            var list = new List<GloobLine>();
+            var list = new List<YoobaLine>();
             if (Enabled)
                 foreach (var line in Config.lines)
-                    if (line != null && line.moment == GloobMoment.Hello)
+                    if (line != null && line.moment == YoobaMoment.Hello)
                         list.Add(line);
             return list;
         }
@@ -270,32 +270,32 @@ namespace SickOfIt.Core.Progression
         /// moment that matches, in order milestone floor, near the Warden, a death, a new Grudge, gossip. Inside a
         /// moment the first line not said yet wins; once all are said, a repeatable one (not 'once') comes back.
         /// </summary>
-        public static GloobLine PickBetweenFloors(int from, int to, int wardenFloor)
+        public static YoobaLine PickBetweenFloors(int from, int to, int wardenFloor)
         {
             if (!Enabled)
                 return null;
             int grudges = GrudgesHeld();
-            int seen = GloobProgress.GrudgesSeen;
-            var order = new[] { GloobMoment.Floor, GloobMoment.NearWarden, GloobMoment.Death, GloobMoment.Grudge, GloobMoment.Chatter };
+            int seen = YoobaProgress.GrudgesSeen;
+            var order = new[] { YoobaMoment.Floor, YoobaMoment.NearWarden, YoobaMoment.Death, YoobaMoment.Grudge, YoobaMoment.Chatter };
             foreach (var moment in order)
             {
-                if (moment == GloobMoment.Death && !GloobProgress.HeroDied)
+                if (moment == YoobaMoment.Death && !YoobaProgress.HeroDied)
                     continue;
-                if (moment == GloobMoment.Grudge && !(seen >= 0 && grudges > seen))
+                if (moment == YoobaMoment.Grudge && !(seen >= 0 && grudges > seen))
                     continue;
-                var candidates = new List<GloobLine>();
+                var candidates = new List<YoobaLine>();
                 foreach (var line in Config.lines)
                 {
                     if (line == null || line.moment != moment)
                         continue;
-                    if (moment == GloobMoment.Floor && !(from > line.floor && to <= line.floor))
+                    if (moment == YoobaMoment.Floor && !(from > line.floor && to <= line.floor))
                         continue;
-                    if (moment == GloobMoment.NearWarden && !(wardenFloor > 0 && to > wardenFloor && to - wardenFloor <= line.floor))
+                    if (moment == YoobaMoment.NearWarden && !(wardenFloor > 0 && to > wardenFloor && to - wardenFloor <= line.floor))
                         continue;
                     candidates.Add(line);
                 }
                 // The closest call first (the door before the stairs).
-                if (moment == GloobMoment.NearWarden)
+                if (moment == YoobaMoment.NearWarden)
                     candidates.Sort((a, b) => a.floor.CompareTo(b.floor));
                 var line0 = Choose(candidates);
                 if (line0 != null)
@@ -305,11 +305,11 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>A shop line for the moment: the next one not said in this visit's rotation.</summary>
-        public static GloobLine PickShop(GloobMoment moment)
+        public static YoobaLine PickShop(YoobaMoment moment)
         {
             if (!Enabled)
                 return null;
-            var candidates = new List<GloobLine>();
+            var candidates = new List<YoobaLine>();
             foreach (var line in Config.lines)
                 if (line != null && line.moment == moment)
                     candidates.Add(line);
@@ -323,29 +323,29 @@ namespace SickOfIt.Core.Progression
 
         static readonly Dictionary<int, int> shopTurn = new Dictionary<int, int>();
 
-        static GloobLine Choose(List<GloobLine> candidates)
+        static YoobaLine Choose(List<YoobaLine> candidates)
         {
             foreach (var line in candidates)
-                if (!GloobProgress.HasSaid(line.sound))
+                if (!YoobaProgress.HasSaid(line.sound))
                     return line;
             var again = candidates.FindAll(l => !l.once);
             return again.Count > 0 ? again[UnityEngine.Random.Range(0, again.Count)] : null;
         }
 
         /// <summary>After a Shaft: the line is said and the news is old.</summary>
-        public static void Heard(GloobLine line)
+        public static void Heard(YoobaLine line)
         {
             if (line != null)
-                GloobProgress.MarkSaid(line.sound);
-            GloobProgress.HeroDied = false;
-            GloobProgress.GrudgesSeen = GrudgesHeld();
+                YoobaProgress.MarkSaid(line.sound);
+            YoobaProgress.HeroDied = false;
+            YoobaProgress.GrudgesSeen = GrudgesHeld();
         }
 
         void Report(string kind, string detail) => Announce(kind, detail);
 
         public static void Announce(string kind, string detail)
         {
-            Debug.Log($"[Gloob] {kind}: {detail}");
+            Debug.Log($"[Yooba] {kind}: {detail}");
             try
             {
                 Reported?.Invoke(kind, detail);

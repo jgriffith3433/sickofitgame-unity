@@ -11,7 +11,7 @@ namespace SickOfIt.Core.Progression
     /// of every Circle once its Warden is beaten (901, 801, ... 101: the Shaft's bands, ui/shaft.json). Dying on a
     /// floor stage ends the run: the death scene, then the Shaft drops the hero's marker back to the highest Waystone
     /// reached and the run restarts with the level that starts there. Grudges and the health carried between levels
-    /// go with the run; diamonds and Gloob's goods stay. The Meadow and the arcade levels have no floors, so a death
+    /// go with the run; diamonds and Yooba's goods stay. The Meadow and the arcade levels have no floors, so a death
     /// there just plays the level again. Saved in <see cref="WaystoneProgress"/>.
     /// </summary>
     public static class RunFlow

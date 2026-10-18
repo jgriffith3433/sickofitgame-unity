@@ -236,7 +236,7 @@
     {
       "id": "moreHealth",
       "title": "Goo Plaster",
-      "description": "+1 max health. A dab of Gloob over the dents. Sticks better than skin.",
+      "description": "+1 max health. A dab of Yooba over the dents. Sticks better than skin.",
       "costsPerLevel": [10, 20, 35, 55, 80],
       "maxLevel": 5,
       "effect": "MaxHealth",
@@ -290,7 +290,7 @@
     {
       "id": "diamondMagnet",
       "title": "Shiny Sniffer",
-      "description": "A wobbly bit of Gloob that sniffs out diamonds. They come to you from farther away.",
+      "description": "A wobbly bit of Yooba that sniffs out diamonds. They come to you from farther away.",
       "costsPerLevel": [8, 18],
       "maxLevel": 2,
       "effect": "Magnet",
