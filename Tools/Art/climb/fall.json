@@ -1,0 +1,24 @@
+{
+  "about": "A lava fall's curtain (lavaFall art strip, vertical).",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/fall, take seed 797046756 (asset a_271ac055130d78dd, job j_18b182884acc), picked by hawkesgen_entity_judge. Loop: video.i2v (Wan 2.2), the lava pouring, start = end = the still, job j_98df0c3dc009 (asset a_5c56b8d99441c107).",
+  "out": "Assets/Art/Climb",
+  "name": "LavaFall",
+  "key": "none",
+  "size": [
+    126,
+    592
+  ],
+  "pivot": [
+    63.0,
+    296.0
+  ],
+  "worldWidth": 1,
+  "widthPixels": 126,
+  "scale": 0.5,
+  "clips": {
+    "loop": {
+      "frames": "/tmp/climbart/src/_prep/fall/loop",
+      "key": "none"
+    }
+  }
+}

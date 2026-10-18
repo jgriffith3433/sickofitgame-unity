@@ -120,6 +120,10 @@ Assets/GameConfig/
 - **Enemy art** comes from the art pipeline: a spec in `Assets/GameConfig/art/<id>.json` (description, poses, clips)
   and `node Tools/Art/art.mjs <id> --start`, which generates poses and clips on the ComfyUI GPU server, packs sheets
   into `Assets/Art/Enemies/` and writes the entity's `visual.animator`. Read [Docs/ArtPipeline.md](Docs/ArtPipeline.md).
+- **Climb art** (the world below the lava, stones, rafts, lifts, chains, lava, the landing; Docs/LevelDesign.md "The art
+  of the climb") is `Assets/Art/Climb/`, baked by `Tools/Art/climb_art.py` from `Tools/Art/climb/climb.json` (which
+  Hawkes Gen takes, keying, fitting each platform's walkable top to its body). Strips (chains, lava surface/falls, the
+  far sea, sky bands) are `ArtLoopDef` fields (`FloorArt`); stones switch animator states on `Sinking`/`Cracked`/`Falling`.
 - **Videos, deaths and level/menu backgrounds** are baked sprite-sheet sequences played by `SpriteFramePlayer`, not
   Unity video. Anything that moves over them (the hero falling down Video2's tunnel) is a keyframed
   `timeline.overlays` entry, sampled from the clock so rewind plays it backward (cookbook: "Something moving over a video").

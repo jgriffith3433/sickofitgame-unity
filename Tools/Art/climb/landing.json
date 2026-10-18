@@ -1,0 +1,24 @@
+{
+  "about": "floorLanding: carved basalt blocks with a blank panel where the floor number is carved (CarvedAbility onFace). Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot landing/slab, take seed 801363586 (asset a_5470ae82366c5ccd, job j_c3b903e593d6), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "Landing",
+  "key": "none",
+  "size": [
+    1183,
+    286
+  ],
+  "pivot": [
+    586.0,
+    56.9
+  ],
+  "worldWidth": 7.112,
+  "widthPixels": 1183,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/climbart/src/_prep/landing/idle",
+      "key": "none"
+    }
+  }
+}

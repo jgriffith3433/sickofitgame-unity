@@ -1,0 +1,407 @@
+{
+  "about": "The art of the climb (Docs/LevelDesign.md, 'The art of the climb'). Each piece's 'gpu' names the Hawkes Gen jobs and assets its sources came from (entity sickofit/the-ember-wastes-climb-kit); download them into <src>/<piece>/ under the file names in its clips (hawkesgen_job save_to), then: python Tools/Art/climb_art.py Tools/Art/climb/climb.json --src <src>. The per-piece jobs beside this file are written by that run (their frame folders are in <src>/_prep).",
+  "out": "Assets/Art/Climb",
+  "pieces": {
+    "stoneMedium": {
+      "name": "SinkingStone",
+      "about": "sinkingStone: a slab of cooled basalt floating on the lava (medium stone). Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/medium, take seed 137943702 (asset a_29caf32896e315b9, job j_b6a06faed07d), picked by hawkesgen_entity_judge. Sink: video.i2v (Wan 2.2), the stone steaming, start = end = the still, job j_5b8cdabf33c9 (asset a_d9a12acde7d2f53c).",
+      "worldWidth": 2.2,
+      "body": 0.45,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        },
+        "sink": {
+          "video": "sink.mp4",
+          "fps": 12,
+          "count": 12,
+          "drop_last": true
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "stoneSmall": {
+      "name": "CrumblingStone",
+      "about": "crumblingStone: brittle old slag (small stone). Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/small, take seed 234380667 (asset a_2a9210c05d92f7b1, job j_00672b5bbe13), picked by hawkesgen_entity_judge. Crack and fall: video.i2v (Wan 2.2), the stone cracking and breaking into falling chunks, from the still, job j_fdfcb0fb32e6 (asset a_e34adbb022d8b453).",
+      "worldWidth": 2.2,
+      "body": 0.45,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        },
+        "crack": {
+          "video": "crumble.mp4",
+          "fps": 12,
+          "start": 0,
+          "end": 0.75,
+          "count": 8
+        },
+        "fall": {
+          "video": "crumble.mp4",
+          "fps": 12,
+          "start": 0.75,
+          "end": 2.0,
+          "count": 12
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "stoneLarge": {
+      "name": "Ledge",
+      "about": "ledge: a solid basalt ledge, breather footing (large stone). Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot stone/large, take seed 1336230847 (asset a_a8b1a96e0d34617c, job j_ead779f2a845), picked by hawkesgen_entity_judge.",
+      "worldWidth": 2.2,
+      "body": 0.5,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "raftCart": {
+      "name": "RaftCart",
+      "about": "debrisRaft: the village's hay cart, fallen through the portal. Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot raft/cart, take seed 1148078072 (asset a_d64db1799fd2e96b, job j_4a72a4e61f00), picked by hawkesgen_entity_judge.",
+      "worldWidth": 2.2,
+      "body": 0.4,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "raftRoof": {
+      "name": "RaftRoof",
+      "about": "debrisRaftRoof: a piece of a cottage's thatched roof. Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot raft/roof, take seed 177050505 (asset a_b25be49a03e9918a, job j_86b0d267743c), picked by hawkesgen_entity_judge.",
+      "worldWidth": 2.2,
+      "body": 0.4,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "raftSign": {
+      "name": "RaftSign",
+      "about": "debrisRaftSign: the village's WELCOME TO sign, half burned. Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot raft/sign, take seed 831746888 (asset a_c48c0b66c9ea4328, job j_da51a6468bb7), picked by hawkesgen_entity_judge.",
+      "worldWidth": 2.2,
+      "body": 0.4,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "raftHay": {
+      "name": "RaftHay",
+      "about": "debrisRaftHay: a bale of hay, one end on fire. Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot raft/hay, take seed 91161154 (asset a_4358501002424c35, job j_41b02e82a525), picked by hawkesgen_entity_judge.",
+      "worldWidth": 2.2,
+      "body": 0.4,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "lift": {
+      "name": "ChainLift",
+      "about": "chainLift: the imps' lift platform, its chains meeting at a ring (the lift's chain runs up from the ring). Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lift/platform, take seed 1143222281 (asset a_401ee36114b63eaf, job j_cdca001504c0), picked by hawkesgen_entity_judge.",
+      "worldWidth": 2.2,
+      "body": 0.4,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "counterweight": {
+      "name": "Counterweight",
+      "about": "counterweightLeft/Right: a plank platform on chains with a pan under it. Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot counterweight/platform, take seed 2074319775 (asset a_737ffaf2e0931273, job j_37452921aca6), picked by hawkesgen_entity_judge.",
+      "worldWidth": 2.2,
+      "body": 0.4,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "landing": {
+      "name": "Landing",
+      "about": "floorLanding: carved basalt blocks with a blank panel where the floor number is carved (CarvedAbility onFace). Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot landing/slab, take seed 801363586 (asset a_5470ae82366c5ccd, job j_c3b903e593d6), picked by hawkesgen_entity_judge.",
+      "worldWidth": 6.2,
+      "body": 0.6,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top",
+        "cropX": [
+          0.115,
+          0.885
+        ]
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 6.0
+    },
+    "handle": {
+      "name": "ChainHandle",
+      "about": "swingChain: the ring and hook at the end of an imps' hauling chain.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot chain/handle, take seed 2124270775 (asset a_26c81de8d660f6b1, job j_92dfbeac6a11), picked by hawkesgen_entity_judge.",
+      "worldWidth": 0.4,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      }
+    },
+    "chain": {
+      "name": "Chain",
+      "about": "Chain links laid along swing chains and chain lifts (ArtLoopDef strip, vertical).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot chain/links, take seed 1564953695 (asset a_67da1cf06fb6dd08, job j_5a9ca07600e9), picked by hawkesgen_entity_judge.",
+      "worldWidth": 0.3,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "centre": 0.45,
+        "wrap": "y",
+        "wrapShare": 0.04
+      },
+      "clips": {
+        "links": {
+          "image": "still.png"
+        }
+      }
+    },
+    "lavaEdge": {
+      "name": "LavaSurface",
+      "about": "The rising lava's surface (lavaSea/lavaRiver surfaceArt strip, horizontal).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/edge, take seed 417543942 (asset a_7180aafce2c7c3df, job j_dcacd36d5f08), picked by hawkesgen_entity_judge. Loop: video.i2v (Wan 2.2), the surface rippling, start = end = the still, job j_582a8dfd2cf8 (asset a_f97ec974eb40abd5).",
+      "worldWidth": 3,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "wrap": "x",
+        "wrapShare": 0.15
+      },
+      "clips": {
+        "loop": {
+          "video": "loop.mp4",
+          "fps": 12,
+          "count": 16,
+          "drop_last": true
+        }
+      }
+    },
+    "fall": {
+      "name": "LavaFall",
+      "about": "A lava fall's curtain (lavaFall art strip, vertical).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/fall, take seed 797046756 (asset a_271ac055130d78dd, job j_18b182884acc), picked by hawkesgen_entity_judge. Loop: video.i2v (Wan 2.2), the lava pouring, start = end = the still, job j_98df0c3dc009 (asset a_5c56b8d99441c107).",
+      "worldWidth": 1,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "centre": 0.5
+      },
+      "clips": {
+        "loop": {
+          "video": "loop.mp4",
+          "fps": 12,
+          "count": 16,
+          "drop_last": true
+        }
+      }
+    },
+    "seaStill": {
+      "name": "FarSea",
+      "about": "The lava sea far below (sky seaArt rows).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/sea, take seed 317290558 (asset a_9d0a70b55c09870b, job j_2d378d7fade6), picked by hawkesgen_entity_judge. Loop: video.i2v (Wan 2.2), the sea churning, start = end = the still, job j_867fac013e9a (asset a_94db1caf9f298651).",
+      "worldWidth": 6,
+      "scale": 0.6,
+      "prep": {
+        "key": "none",
+        "wrap": "x",
+        "wrapShare": 0.1
+      },
+      "clips": {
+        "loop": {
+          "video": "loop.mp4",
+          "fps": 8,
+          "count": 8,
+          "drop_last": true
+        }
+      }
+    },
+    "haze": {
+      "name": "Haze",
+      "about": "Smoke and heat haze over the far sea (sky band).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/haze, take seed 1851001411 (asset a_1025f13b3330980b, job j_7145cf515655), picked by hawkesgen_entity_judge.",
+      "worldWidth": 6,
+      "scale": 0.5,
+      "prep": {
+        "key": "black",
+        "wrap": "x",
+        "wrapShare": 0.1
+      },
+      "clips": {
+        "band": {
+          "image": "still.png"
+        }
+      }
+    },
+    "ceiling": {
+      "name": "Ceiling",
+      "about": "The black ceiling of the Wastes glowing red, at the top of the screen (sky band).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/ceiling, take seed 434332048 (asset a_90bbfa4e832a27d7, job j_40dcd405328a), picked by hawkesgen_entity_judge.",
+      "worldWidth": 6,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "wrap": "x",
+        "wrapShare": 0.15
+      },
+      "clips": {
+        "band": {
+          "image": "still.png"
+        }
+      }
+    },
+    "spires": {
+      "name": "Spires",
+      "about": "Far black spires standing in the lava sea (sky layer, onSea).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/spires, take seed 415733628 (asset a_4ea810ace34df78f, job j_b144def4075d), picked by hawkesgen_entity_judge.",
+      "worldWidth": 2,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta",
+        "pivot": "bottom"
+      },
+      "clips": {
+        "still": {
+          "image": "still.png"
+        }
+      }
+    },
+    "island": {
+      "name": "Island",
+      "about": "Floating rock islands (sky layers).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/island, take seed 1295352059 (asset a_7bc8dc55f360fa09, job j_ec29bfe8f296), picked by hawkesgen_entity_judge.",
+      "worldWidth": 2,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta"
+      },
+      "clips": {
+        "still": {
+          "image": "still.png"
+        }
+      }
+    },
+    "geyser": {
+      "name": "Geyser",
+      "about": "The geyser's column (no entity yet: the column is still to build).",
+      "gpu": "image.generate lava/geyser seed 94798034 (asset a_0dd1229efd29751a, job j_6d3e9ee1e611), judged. Loop: video.i2v (Wan 2.2), the column surging, job j_9dcf757d9075 (asset a_16a9eda05f845f03).",
+      "worldWidth": 1.0,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta",
+        "pivot": "bottom"
+      },
+      "clips": {
+        "column": {
+          "video": "loop.mp4",
+          "fps": 12,
+          "count": 12,
+          "drop_last": true
+        }
+      }
+    },
+    "vent": {
+      "name": "Vent",
+      "about": "The geyser's vent and its 1 s tell (no entity yet).",
+      "gpu": "image.generate lava/vent seed 770587693 (asset a_24597f544de498f8, job j_cc7ce3a9c10e), judged. Tell: video.i2v (Wan 2.2), the crack glowing and spitting, 17 frames, job j_6b01d4c61d85 (asset a_6ff291cd43da62d4).",
+      "worldWidth": 1.4,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta",
+        "pivot": "bottom"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        },
+        "tell": {
+          "video": "tell.mp4",
+          "fps": 12,
+          "count": 12
+        }
+      }
+    }
+  }
+}

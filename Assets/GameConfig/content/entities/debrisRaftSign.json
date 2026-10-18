@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "foothold"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      2.0,
+      0.4
+    ],
+    "solid": true
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#6B4A2A",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 0,
+    "hurtFlash": false,
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/RaftSign_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "color": "#FFFFFF",
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "raft",
+      "current": [
+        0.8,
+        0.0
+      ],
+      "range": 6.0,
+      "bob": 0.09,
+      "bobPeriod": 2.2,
+      "rock": 3.0,
+      "tip": 8.0,
+      "phase": 0.6
+    }
+  ]
+}

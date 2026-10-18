@@ -1,0 +1,406 @@
+fileFormatVersion: 2
+guid: bb3351bd57d7412fbcc6c1d46ba3c6fb
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 191.429
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tell_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 161
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87a7895b63bf43800800000000000000
+      internalID: 591373663485852280
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_01
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 161
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 630bd61dd5fb3e4a0800000000000000
+      internalID: -6565193422109560778
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_02
+      rect:
+        serializedVersion: 2
+        x: 536
+        y: 161
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1e7d671c771004f0800000000000000
+      internalID: -864665306718700005
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_03
+      rect:
+        serializedVersion: 2
+        x: 804
+        y: 161
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61c3ecb4110091c10800000000000000
+      internalID: 2024649581765999638
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_04
+      rect:
+        serializedVersion: 2
+        x: 1072
+        y: 161
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 606f0246981113070800000000000000
+      internalID: 8084262087894824454
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_05
+      rect:
+        serializedVersion: 2
+        x: 1340
+        y: 161
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7491952b79fc5030800000000000000
+      internalID: 3484934518984512634
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_06
+      rect:
+        serializedVersion: 2
+        x: 1608
+        y: 161
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29be6f47011df8e70800000000000000
+      internalID: 9119737639060564882
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_07
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26ef4c134e2cacbc0800000000000000
+      internalID: -3761980253371302302
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_08
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 0
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 942c113eab1268720800000000000000
+      internalID: 2848000900915642953
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_09
+      rect:
+        serializedVersion: 2
+        x: 536
+        y: 0
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8091b7e5900bccf90800000000000000
+      internalID: -6931972172143716088
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_10
+      rect:
+        serializedVersion: 2
+        x: 804
+        y: 0
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b130a399c68793840800000000000000
+      internalID: 5204323252225835803
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tell_11
+      rect:
+        serializedVersion: 2
+        x: 1072
+        y: 0
+        width: 268
+        height: 161
+      alignment: 9
+      pivot: {x: 0.500000, y: 0.009926}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80df842a52a94d620800000000000000
+      internalID: 2798030754931080456
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tell_00: 591373663485852280
+      tell_01: -6565193422109560778
+      tell_02: -864665306718700005
+      tell_03: 2024649581765999638
+      tell_04: 8084262087894824454
+      tell_05: 3484934518984512634
+      tell_06: 9119737639060564882
+      tell_07: -3761980253371302302
+      tell_08: 2848000900915642953
+      tell_09: -6931972172143716088
+      tell_10: 5204323252225835803
+      tell_11: 2798030754931080456
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,24 @@
+{
+  "about": "The rising lava's surface (lavaSea/lavaRiver surfaceArt strip, horizontal).",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/edge, take seed 417543942 (asset a_7180aafce2c7c3df, job j_dcacd36d5f08), picked by hawkesgen_entity_judge. Loop: video.i2v (Wan 2.2), the surface rippling, start = end = the still, job j_582a8dfd2cf8 (asset a_f97ec974eb40abd5).",
+  "out": "Assets/Art/Climb",
+  "name": "LavaSurface",
+  "key": "none",
+  "size": [
+    735,
+    244
+  ],
+  "pivot": [
+    367.5,
+    122.0
+  ],
+  "worldWidth": 3,
+  "widthPixels": 735,
+  "scale": 0.5,
+  "clips": {
+    "loop": {
+      "frames": "/tmp/climbart/src/_prep/lavaEdge/loop",
+      "key": "none"
+    }
+  }
+}

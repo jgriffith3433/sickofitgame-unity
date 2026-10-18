@@ -1,0 +1,24 @@
+{
+  "about": "Floating rock islands (sky layers).",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/island, take seed 1295352059 (asset a_7bc8dc55f360fa09, job j_ec29bfe8f296), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "Island",
+  "key": "none",
+  "size": [
+    638,
+    371
+  ],
+  "pivot": [
+    319.0,
+    185.5
+  ],
+  "worldWidth": 2,
+  "widthPixels": 638,
+  "scale": 0.4,
+  "clips": {
+    "still": {
+      "frames": "/tmp/climbart/src/_prep/island/still",
+      "key": "none"
+    }
+  }
+}

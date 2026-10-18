@@ -1,0 +1,24 @@
+{
+  "about": "swingChain: the ring and hook at the end of an imps' hauling chain.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot chain/handle, take seed 2124270775 (asset a_26c81de8d660f6b1, job j_92dfbeac6a11), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "ChainHandle",
+  "key": "none",
+  "size": [
+    172,
+    432
+  ],
+  "pivot": [
+    86.0,
+    216.0
+  ],
+  "worldWidth": 0.4,
+  "widthPixels": 172,
+  "scale": 0.4,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/climbart/src/_prep/handle/idle",
+      "key": "none"
+    }
+  }
+}

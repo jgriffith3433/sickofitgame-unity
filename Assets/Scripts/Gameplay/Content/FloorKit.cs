@@ -35,6 +35,9 @@ namespace SickOfIt.Gameplay.Content
                 sr.color = color;
         }
 
+        /// <summary>The piece has its painted art (no box placeholder).</summary>
+        public static bool HasArt(Entity owner) => owner.transform.Find("Shape") == null;
+
         public static Color BaseColor(Entity owner) =>
             owner.Def.visual.placeholderShape == PlaceholderShape.Box ? owner.Def.visual.placeholderColor : owner.Def.visual.color;
 
@@ -130,8 +133,11 @@ namespace SickOfIt.Gameplay.Content
             stoodOn = on;
             sunk = on ? Mathf.Min(depth, sunk + sinkSpeed * dt) : Mathf.Max(0f, sunk - riseSpeed * dt);
             FloorKit.Moved(Owner, home + Vector2.down * sunk, dt);
-            // Hot as it goes under (cosmetic).
-            FloorKit.Tint(Owner, Color.Lerp(FloorKit.BaseColor(Owner), new Color(1f, 0.4f, 0.1f, 1f), Mathf.Clamp01(sunk / Mathf.Max(0.01f, depth)) * 0.7f));
+            // Painted art steams while it is stood on and going under (animator bool "Sinking").
+            Owner.Animation.SetBool("Sinking", on || sunk > dip);
+            // Hot as it goes under (cosmetic; the art is only warmed a little, its steam frames do the rest).
+            float heat = Mathf.Clamp01(sunk / Mathf.Max(0.01f, depth)) * (FloorKit.HasArt(Owner) ? 0.35f : 0.7f);
+            FloorKit.Tint(Owner, Color.Lerp(FloorKit.BaseColor(Owner), new Color(1f, 0.4f, 0.1f, 1f), heat));
         }
 
         /// <summary>How far down it is now (the playtest reads it).</summary>
@@ -198,7 +204,7 @@ namespace SickOfIt.Gameplay.Content
                 float t = now - crackedAt;
                 // Shakes harder as it gives.
                 want += new Vector2(Mathf.Sin(t * 55f) * shake * (0.5f + t / Mathf.Max(0.1f, delay)), 0f);
-                FloorKit.Tint(Owner, Color.Lerp(FloorKit.BaseColor(Owner), new Color(0.9f, 0.75f, 0.6f, 1f), Mathf.PingPong(t * 6f, 1f) * 0.5f));
+                FloorKit.Tint(Owner, Color.Lerp(FloorKit.BaseColor(Owner), new Color(0.9f, 0.75f, 0.6f, 1f), Mathf.PingPong(t * 6f, 1f) * (FloorKit.HasArt(Owner) ? 0.2f : 0.5f)));
                 if (t >= Mathf.Max(1f, delay))
                 {
                     falling = true;
@@ -216,6 +222,9 @@ namespace SickOfIt.Gameplay.Content
                 want = home + Vector2.down * fallen;
             if (crackedAt < 0f)
                 FloorKit.Tint(Owner, FloorKit.BaseColor(Owner));
+            // Painted art: cracks the moment he lands, breaks up as it falls (animator bools "Cracked", "Falling").
+            Owner.Animation.SetBool("Cracked", crackedAt >= 0f);
+            Owner.Animation.SetBool("Falling", falling);
             FloorKit.Moved(Owner, want, dt);
         }
 
@@ -369,6 +378,8 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Where he hangs below the handle (units).")] public float hang = 0.55f;
         [Doc("Seconds after letting go before he can grab it again.")] public float regrab = 0.6f;
         public Color chainColor = new Color(0.32f, 0.26f, 0.24f, 1f);
+        [Doc("Painted chain links laid from the pivot to the handle (instead of the drawn line).")] public ArtLoopDef chainArt = new ArtLoopDef();
+        [Doc("Width of the painted chain (units).")] public float chainWidth = 0.22f;
         [SoundRef, Doc("Played when he grabs it.")] public string grabSound = "";
 
         Vector2 pivot;
@@ -433,6 +444,8 @@ namespace SickOfIt.Gameplay.Content
             var chain = FloorKit.Child(Owner, "Chain", Owner.Def.visual.layer, SpriteLayers.Platform);
             chain.color = chainColor;
             FloorKit.PlaceWorld(Owner, chain, (pivot + handle) * 0.5f, new Vector2(0.08f, length), angle * Mathf.Rad2Deg);
+            chain.enabled = !FloorArt.Strip(Owner.transform, "ChainArt", chainArt, FloorArt.Frames(chainArt, world), pivot, handle, chainWidth, now,
+                Owner.Def.visual.layer, SpriteLayers.Platform, true);
             var anchor = FloorKit.Child(Owner, "Pivot", Owner.Def.visual.layer, SpriteLayers.Platform);
             anchor.color = chainColor;
             FloorKit.PlaceWorld(Owner, anchor, pivot, new Vector2(0.3f, 0.2f));
@@ -468,6 +481,9 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Seconds it jolts before it moves.")] public float jolt = 0.6f;
         [Doc("Wait at the bottom until he stands on it.")] public bool startOnStand = true;
         public Color chainColor = new Color(0.32f, 0.26f, 0.24f, 1f);
+        [Doc("Painted chain it hangs from (instead of the drawn line).")] public ArtLoopDef chainArt = new ArtLoopDef();
+        [Doc("Width of the painted chain (units).")] public float chainWidth = 0.22f;
+        [Doc("Where the chain meets the platform, above its centre (units): the ring of its painted art.")] public float chainFrom = 0.2f;
         [SoundRef, Doc("Played on each jolt (clank).")] public string joltSound = "";
 
         Vector2 home;
@@ -522,6 +538,9 @@ namespace SickOfIt.Gameplay.Content
             float top = home.y + Mathf.Max(0f, travel.y) + 4f;
             float y = Owner.Position.y;
             FloorKit.PlaceWorld(Owner, chain, new Vector2(Owner.Position.x, (top + y) * 0.5f), new Vector2(0.07f, Mathf.Max(0.1f, top - y)));
+            chain.enabled = !FloorArt.Strip(Owner.transform, "ChainArt", chainArt, FloorArt.Frames(chainArt, Owner.World),
+                new Vector2(Owner.Position.x, top), new Vector2(Owner.Position.x, y + chainFrom), chainWidth, now,
+                Owner.Def.visual.layer, SpriteLayers.Platform - 1, true);
         }
 
         public override void SaveState(StateWriter writer)
@@ -548,6 +567,9 @@ namespace SickOfIt.Gameplay.Content
         [Required, Doc("Instance id of the other side.")] public string partner = "";
         [Doc("How far each side moves (units).")] public float drop = 2.4f;
         [Doc("Units per second.")] public float speed = 1.2f;
+        [Doc("Painted chain going up from it to the pulley (none without art).")] public ArtLoopDef chainArt = new ArtLoopDef();
+        [Doc("How far above where it spawned the pulley is (units).")] public float chainHeight = 4f;
+        [Doc("Width of the painted chain (units).")] public float chainWidth = 0.2f;
 
         Vector2 home;
         float offset;
@@ -565,6 +587,9 @@ namespace SickOfIt.Gameplay.Content
             float target = world.PlayerStandsOn(Owner) ? drop : other != null && world.PlayerStandsOn(other) ? -drop : offset;
             offset = Mathf.MoveTowards(offset, target, speed * dt);
             FloorKit.Moved(Owner, home + Vector2.down * offset, dt);
+            FloorArt.Strip(Owner.transform, "ChainArt", chainArt, FloorArt.Frames(chainArt, world),
+                new Vector2(Owner.Position.x, home.y + chainHeight), new Vector2(Owner.Position.x, Owner.Position.y), chainWidth, now,
+                Owner.Def.visual.layer, SpriteLayers.Platform - 1, true);
         }
 
         public override void SaveState(StateWriter writer)
@@ -680,6 +705,11 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Stay under the camera sideways (a sea, not a pool).")] public bool followCamera = true;
         [SoundRef, Doc("The rumble played when a rise is telegraphed.")] public string rumbleSound = "";
         public Color surfaceColor = new Color(1f, 0.8f, 0.35f, 1f);
+        [Doc("Painted surface: a strip laid along the top (its glowing edge and the lava under it), instead of the drawn line.")]
+        public ArtLoopDef surfaceArt = new ArtLoopDef();
+        [Doc("Height of the painted surface strip (units).")] public float surfaceHeight = 1.2f;
+        [Doc("Where the strip's centre sits from the top of the lava (units; negative = below, so its edge lines up with the top).")]
+        public float surfaceOffset = -0.25f;
 
         Vector2 home;
         float risen;
@@ -731,6 +761,15 @@ namespace SickOfIt.Gameplay.Content
             float pulse = bubbling ? 0.5f + 0.5f * Mathf.Sin(now * 18f) : 0.15f * Mathf.Sin(now * 3f);
             surface.color = Color.Lerp(surfaceColor, Color.white, Mathf.Max(0f, pulse) * 0.5f);
             FloorKit.PlaceWorld(Owner, surface, new Vector2(b.center.x, b.max.y - 0.04f), new Vector2(b.size.x, bubbling ? 0.16f : 0.09f));
+            float y = b.max.y + surfaceOffset;
+            // The painted surface flares while a rise is telegraphed (the same tell as the drawn line).
+            bool painted = FloorArt.Strip(Owner.transform, "SurfaceArt", surfaceArt, FloorArt.Frames(surfaceArt, Owner.World),
+                new Vector2(b.min.x, y), new Vector2(b.max.x, y), surfaceHeight, now, Owner.Def.visual.layer,
+                Mathf.Max(SpriteLayers.Projectile + 1, Owner.Def.visual.SortingOrder + 1), false);
+            if (painted)
+            {
+                surface.color = new Color(1f, 0.95f, 0.7f, bubbling ? 0.35f + 0.35f * Mathf.Max(0f, pulse) : 0f);
+            }
             // Heat shimmer: faint bands wobbling over the surface (cosmetic).
             for (int i = 0; i < 3; i++)
             {
@@ -856,6 +895,8 @@ namespace SickOfIt.Gameplay.Content
         public float off = 2.5f;
         [Doc("Where in its beat it starts (seconds).")] public float offset;
         public Color color = new Color(1f, 0.45f, 0.1f, 0.9f);
+        [Doc("Painted curtain laid down the fall (instead of the box); it thins and fades on the same beat.")] public ArtLoopDef art = new ArtLoopDef();
+        [Doc("Width of the painted curtain at full pour, as a share of the body's width (the art has a margin at its sides).")] public float artWidth = 1.6f;
 
         public override void Tick(float now, float dt)
         {
@@ -867,6 +908,24 @@ namespace SickOfIt.Gameplay.Content
             var c = Owner.MainCollider;
             if (c != null)
                 c.enabled = pouring;
+            Owner.Animation.SetBool("Pouring", pouring);
+            if (c != null && art.IsSet)
+            {
+                // Painted: the curtain narrows as it thins and fades between pours, then gurgles back.
+                var size = Owner.Def.body.size;
+                Vector3 scale = Owner.transform.lossyScale;
+                float top = Owner.Position.y + size.y * 0.5f * Mathf.Abs(scale.y), bottom = Owner.Position.y - size.y * 0.5f * Mathf.Abs(scale.y);
+                float width = (pouring ? Mathf.Lerp(0.35f, 1f, thin) : 0.2f + gurgle * 0.2f) * size.x * Mathf.Abs(scale.x) * artWidth;
+                float alpha = pouring ? Mathf.Lerp(0.6f, 1f, thin) : gurgle * 0.6f;
+                bool drawn = FloorArt.Strip(Owner.transform, "FallArt", art, FloorArt.Frames(art, Owner.World),
+                    new Vector2(Owner.Position.x, top), new Vector2(Owner.Position.x, bottom), width, now, Owner.Def.visual.layer, Owner.Def.visual.SortingOrder, true, alpha);
+                var box = FloorKit.Look(Owner);
+                if (drawn && box != null)
+                {
+                    box.enabled = false;
+                    return;
+                }
+            }
             var look = FloorKit.Look(Owner);
             if (look != null)
             {
@@ -892,7 +951,8 @@ namespace SickOfIt.Gameplay.Content
         [Doc("A smaller line under it ('' = none).")] public string words = "";
         public Color color = new Color(1f, 0.72f, 0.4f, 1f);
         [Doc("Height of the big carving (world units).")] public float size = 1.1f;
-        [Doc("Where it stands above the platform's top.")] public float above = 0.15f;
+        [Doc("Where it stands above the platform's top (negative = down on the platform's face).")] public float above = 0.15f;
+        [Doc("Carved into the platform's painted face: drawn in front of it (its own layer) instead of standing behind it.")] public bool onFace;
 
         public override void OnSpawn()
         {
@@ -927,8 +987,8 @@ namespace SickOfIt.Gameplay.Content
                 mesh.alignment = TMPro.TextAlignmentOptions.Center;
                 mesh.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
                 mesh.fontStyle = TMPro.FontStyles.Bold;
-                mesh.sortingLayerID = SortingLayer.NameToID(SpriteLayer.Background2.ToString());
-                mesh.sortingOrder = 903;
+                mesh.sortingLayerID = SortingLayer.NameToID((onFace ? Owner.Def.visual.layer : SpriteLayer.Background2).ToString());
+                mesh.sortingOrder = onFace ? Owner.Def.visual.SortingOrder + 1 : 903;
             }
             else
             {

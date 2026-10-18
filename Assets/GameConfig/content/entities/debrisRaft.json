@@ -22,7 +22,23 @@
     "layer": "Player",
     "sortingOrder": 0,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/RaftCart_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "color": "#FFFFFF",
+    "facesLeft": false
   },
   "healthBar": {
     "show": false

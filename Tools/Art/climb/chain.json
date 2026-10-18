@@ -1,0 +1,24 @@
+{
+  "about": "Chain links laid along swing chains and chain lifts (ArtLoopDef strip, vertical).",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot chain/links, take seed 1564953695 (asset a_67da1cf06fb6dd08, job j_5a9ca07600e9), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "Chain",
+  "key": "none",
+  "size": [
+    89,
+    984
+  ],
+  "pivot": [
+    44.5,
+    492.0
+  ],
+  "worldWidth": 0.3,
+  "widthPixels": 89,
+  "scale": 0.5,
+  "clips": {
+    "links": {
+      "frames": "/tmp/climbart/src/_prep/chain/links",
+      "key": "none"
+    }
+  }
+}

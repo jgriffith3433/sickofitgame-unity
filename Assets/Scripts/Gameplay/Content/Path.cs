@@ -119,10 +119,37 @@ namespace SickOfIt.Gameplay.Content
         public float seaParallax = 0.9f;
         [Doc("Lowest the sea's horizon gets on screen, as a fraction of the screen height from the bottom (it never quite leaves).")]
         public float seaMinOnScreen = 0.06f;
+        [Doc("Painted far sea: a seamless loop laid in rows below the horizon, drifting by its scroll (the sea colours stay for the glow). " +
+             "Without it the far sea is a gradient.")]
+        public ArtLoopDef seaArt = new ArtLoopDef();
+        [Doc("Height of one row of the painted sea (units).")] public float seaArtHeight = 3f;
         public List<SkyLayerDef> layers = new List<SkyLayerDef>();
+        [Doc("Painted bands across the whole sky: smoke over the far sea, the black ceiling of the Wastes at the top of the screen.")]
+        public List<SkyBandDef> bands = new List<SkyBandDef>();
         [Doc("Embers drifting up across the screen at once.")] public int embers = 28;
         public Color emberColor = new Color(1f, 0.6f, 0.2f, 0.85f);
         [Doc("Heat shimmer over the far sea: how strongly its haze bands wobble (0 = none).")] public float shimmer = 0.6f;
+    }
+
+    [Doc("What a sky band hangs from.")]
+    public enum SkyBandAnchor
+    {
+        [Doc("The far sea's horizon: the band sits 'offset' above it and drops away with it (smoke, haze).")] Sea,
+        [Doc("The top of the screen: the band hangs 'offset' below it, always there as he climbs (the ceiling's glow).")] Top,
+    }
+
+    [Serializable]
+    [Doc("A painted band laid edge to edge across the sky: its art is a seamless strip repeated sideways, moving across with the camera by " +
+         "'parallax' and drifting by its art's scroll. Drawn only.")]
+    public class SkyBandDef
+    {
+        [Doc("For reports.")] public string name = "";
+        public ArtLoopDef art = new ArtLoopDef();
+        public SkyBandAnchor anchor = SkyBandAnchor.Sea;
+        [Doc("Distance of its centre from the anchor (units): above the horizon, or below the top of the screen.")] public float offset = 1f;
+        [Doc("Height (units).")] public float height = 2f;
+        [Doc("How much it follows the camera across (1 = stuck to the screen, far away; 0 = fixed in the world).")] public float parallax = 0.9f;
+        [Doc("Draw order inside the sky (higher is nearer; the layers' orders).")] public int order;
     }
 
     [Serializable]

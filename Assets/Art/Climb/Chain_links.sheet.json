@@ -1,0 +1,17 @@
+{
+ "generatedBy": "Tools/Art/fx_sheets.py",
+ "pixelsPerUnit": 148.333,
+ "pivot": [
+  0.5,
+  0.52457
+ ],
+ "sprites": [
+  {
+   "name": "links_00",
+   "x": 0,
+   "y": 0,
+   "w": 44,
+   "h": 407
+  }
+ ]
+}
