@@ -183,6 +183,21 @@ namespace SickOfIt.Gameplay
 
         static void AddPlaceholder(GameObject go, EntityDef def, SpriteRenderer rootSprite)
         {
+            if (def.visual.placeholderShape == PlaceholderShape.Box)
+            {
+                // A plain box the size of the body (floor pieces): named Shape, not Placeholder, since it's their intended look until art.
+                var box = new GameObject("Shape");
+                box.transform.SetParent(go.transform, false);
+                Vector2 boxSize = def.body.shape == ShapeKind.Box ? def.body.size : Vector2.one * def.body.radius * 2f;
+                box.transform.localPosition = new Vector3(def.body.offset.x, def.body.offset.y, 0f);
+                box.transform.localScale = new Vector3(boxSize.x, boxSize.y, 1f);
+                var boxSprite = box.AddComponent<SpriteRenderer>();
+                boxSprite.sprite = WhiteSquare;
+                boxSprite.color = def.visual.placeholderColor;
+                SpriteLayers.Apply(boxSprite, def.visual.layer, def.visual.SortingOrder);
+                return;
+            }
+
             // Root sprite stays empty; the placeholder child keeps a fixed world size.
             float scale = Mathf.Max(0.0001f, def.visual.scale);
             var child = new GameObject("Placeholder");

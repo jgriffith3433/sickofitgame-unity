@@ -121,6 +121,19 @@ namespace SickOfIt.Gameplay
         public int MaxHealth => IsPlayer ? (playerHealth != null ? playerHealth.MaxHealth : 0) : maxHealth;
         public int CurrentHealth => Health;
         public Vector2 Position => transform.position;
+        /// <summary>Its first ability of type T (always-on first, then the states'), or null. For the playtest and tools.</summary>
+        public T FindAbility<T>() where T : Ability
+        {
+            foreach (var a in always)
+                if (a is T t) return t;
+            foreach (var s in states)
+                foreach (var a in s.Abilities)
+                    if (a is T t) return t;
+            return null;
+        }
+
+        /// <summary>Its first collider (the body), for standing checks.</summary>
+        public Collider2D MainCollider => colliders != null && colliders.Length > 0 ? colliders[0] : null;
         /// <summary>+1 facing right, -1 facing left.</summary>
         public float Facing => facing;
         public float SpawnTime => spawnTime;
