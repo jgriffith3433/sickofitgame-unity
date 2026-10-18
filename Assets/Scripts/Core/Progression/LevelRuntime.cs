@@ -66,6 +66,16 @@ namespace SickOfIt.Core.Progression
 
         /// <summary>The level's gameplay script, or null for a level that uses the enemies list.</summary>
         public LevelScript Script => script;
+
+        /// <summary>
+        /// A scene (content/scenes/{id}.json) to play on the next level's stage instead of its own script: the level
+        /// supplies the backdrop, music, ground and hero; the scene supplies everything that happens. Read once when
+        /// the level starts, then cleared (the playtest's "cutscene" scenario sets it).
+        /// </summary>
+        public static string PendingScene;
+
+        /// <summary>The scene playing instead of the level's script, or "" for the level itself.</summary>
+        public string SceneId { get; private set; } = "";
         public GameplayWorld World => gameplayWorld;
         private Transform enemyContainer;
         private Transform platformContainer;
@@ -136,6 +146,20 @@ namespace SickOfIt.Core.Progression
             // A level with a gameplay script hands spawning and winning to the script.
             var content = GameContent.Current;
             content.LevelScripts.TryGetValue(config.levelName, out script);
+            string scene = PendingScene;
+            PendingScene = null;
+            if (!string.IsNullOrEmpty(scene))
+            {
+                if (content.Scenes.TryGetValue(scene, out var sceneScript))
+                {
+                    script = sceneScript;
+                    SceneId = scene;
+                }
+                else
+                {
+                    Debug.LogError($"[LevelRuntime] No scene \"{scene}\" in content/scenes; playing the level's own script.");
+                }
+            }
 
             // Build level content
             SetupContainers();
@@ -202,6 +226,8 @@ namespace SickOfIt.Core.Progression
                 return;
             Debug.Log("[LevelRuntime] Game config changed — restarting the level with the new content.");
             gameplayWorld?.Telemetry?.Finish("reloaded");
+            if (!string.IsNullOrEmpty(SceneId))
+                PendingScene = SceneId;
             SceneTransitionManager.Instance.LoadLevel(levelNumber);
         }
 

@@ -2,7 +2,7 @@
 
 > Generated from the code by `GameplayReferenceGenerator` — don't edit by hand. See AGENTS.md for the workflow and Docs/GameplayCookbook.md for worked examples.
 
-Gameplay is data. **Entities** (enemies, bosses, projectiles, hazards) live in `Assets/GameConfig/content/entities/{id}.json`, reusable **sequences** in `content/sequences/{id}.json`, **status effects** in `content/effects/{id}.json`, the **Circles of Hell** (biome, enemy table, hazards, difficulty) in `content/circles/{id}.json`, and each level's **script** in the `"script"` field of `levels/{name}.json`. Every content file starts with `"schemaVersion": 1`; the id is the file name. Polymorphic things (abilities, triggers, actions, patterns) are objects with a `"type"`.
+Gameplay is data. **Entities** (enemies, bosses, projectiles, hazards) live in `Assets/GameConfig/content/entities/{id}.json`, reusable **sequences** in `content/sequences/{id}.json`, **status effects** in `content/effects/{id}.json`, the **Circles of Hell** (biome, enemy table, hazards, difficulty) in `content/circles/{id}.json`, **scenes** (a level script played on a level's stage, for scripted scenes and their tests) in `content/scenes/{id}.json`, and each level's **script** in the `"script"` field of `levels/{name}.json`. Every content file starts with `"schemaVersion": 1`; the id is the file name. Polymorphic things (abilities, triggers, actions, patterns) are objects with a `"type"`.
 
 Missing fields use the defaults below; unknown fields are errors. Assets are paths under `Assets/` (e.g. `"Images/Fireball.png"`).
 
@@ -621,7 +621,7 @@ Another rule, sequence, or entity emitted this signal (action 'emit').
 
 Something that happens: spawn, change phase, show text, apply a status...
 
-[`addCounter`](#addcounter) · [`addDiamonds`](#adddiamonds) · [`addRewind`](#addrewind) · [`applyStatus`](#applystatus) · [`bossBar`](#bossbar) · [`cameraShake`](#camerashake) · [`climbFloors`](#climbfloors) · [`completeLevel`](#completelevel) · [`damage`](#damage) · [`despawn`](#despawn) · [`emit`](#emit) · [`failLevel`](#faillevel) · [`flash`](#flash) · [`generateFloors`](#generatefloors) · [`goToLevel`](#gotolevel) · [`goToPhase`](#gotophase) · [`grantUpgrade`](#grantupgrade) · [`heal`](#heal) · [`hideBossBar`](#hidebossbar) · [`hideText`](#hidetext) · [`if`](#if) · [`kill`](#kill) · [`lockInput`](#lockinput) · [`lockTravel`](#locktravel) · [`modifier`](#modifier) · [`musicVolume`](#musicvolume) · [`objectiveText`](#objectivetext) · [`offerUpgrades`](#offerupgrades) · [`playAnimation`](#playanimation) · [`playMusic`](#playmusic) · [`playSound`](#playsound) · [`playVideo`](#playvideo) · [`playerInvincible`](#playerinvincible) · [`popText`](#poptext) · [`random`](#random) · [`removeStatus`](#removestatus) · [`returnToMenu`](#returntomenu) · [`runSequence`](#runsequence) · [`setAnimParam`](#setanimparam) · [`setCounter`](#setcounter) · [`setFloor`](#setfloor) · [`setState`](#setstate) · [`showText`](#showtext) · [`slowMotion`](#slowmotion) · [`spawn`](#spawn) · [`spawnWave`](#spawnwave) · [`startHazard`](#starthazard) · [`stopGenerator`](#stopgenerator) · [`stopHazard`](#stophazard) · [`unlockInput`](#unlockinput) · [`unlockTravel`](#unlocktravel) · [`wait`](#wait)
+[`addCounter`](#addcounter) · [`addDiamonds`](#adddiamonds) · [`addRewind`](#addrewind) · [`applyStatus`](#applystatus) · [`bossBar`](#bossbar) · [`cameraReset`](#camerareset) · [`cameraShake`](#camerashake) · [`cameraTo`](#camerato) · [`cameraZoom`](#camerazoom) · [`climbFloors`](#climbfloors) · [`completeLevel`](#completelevel) · [`damage`](#damage) · [`despawn`](#despawn) · [`emit`](#emit) · [`facePlayer`](#faceplayer) · [`fade`](#fade) · [`failLevel`](#faillevel) · [`flash`](#flash) · [`generateFloors`](#generatefloors) · [`goToLevel`](#gotolevel) · [`goToPhase`](#gotophase) · [`grantUpgrade`](#grantupgrade) · [`heal`](#heal) · [`hideBossBar`](#hidebossbar) · [`hideText`](#hidetext) · [`if`](#if) · [`kill`](#kill) · [`lockInput`](#lockinput) · [`lockRewind`](#lockrewind) · [`lockTravel`](#locktravel) · [`modifier`](#modifier) · [`musicVolume`](#musicvolume) · [`objectiveText`](#objectivetext) · [`offerUpgrades`](#offerupgrades) · [`playAnimation`](#playanimation) · [`playMusic`](#playmusic) · [`playPlayerAnimation`](#playplayeranimation) · [`playSound`](#playsound) · [`playVideo`](#playvideo) · [`playerInvincible`](#playerinvincible) · [`popText`](#poptext) · [`pullPlayerInto`](#pullplayerinto) · [`random`](#random) · [`removeStatus`](#removestatus) · [`returnToMenu`](#returntomenu) · [`runSequence`](#runsequence) · [`setAnimParam`](#setanimparam) · [`setCounter`](#setcounter) · [`setFloor`](#setfloor) · [`setState`](#setstate) · [`showText`](#showtext) · [`slowMotion`](#slowmotion) · [`spawn`](#spawn) · [`spawnWave`](#spawnwave) · [`startHazard`](#starthazard) · [`stopGenerator`](#stopgenerator) · [`stopHazard`](#stophazard) · [`unlockInput`](#unlockinput) · [`unlockRewind`](#unlockrewind) · [`unlockTravel`](#unlocktravel) · [`wait`](#wait) · [`walkPlayerTo`](#walkplayerto)
 
 ### addCounter
 
@@ -667,6 +667,15 @@ Shows a big health bar for an entity.
 | `target` | [TargetSelector](#targetselector) | (object) |  |
 | `label` | string | `""` |  |
 
+### cameraReset
+
+Moves and zooms the camera back to the level's own view after cameraTo / cameraZoom.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `duration` | number | `1.0` |  |
+| `ease` | [Ease](#ease) | `"InOut"` |  |
+
 ### cameraShake
 
 Something that happens: spawn, change phase, show text, apply a status...
@@ -675,6 +684,28 @@ Something that happens: spawn, change phase, show text, apply a status...
 |---|---|---|---|
 | `intensity` | number | `0.2` |  |
 | `duration` | number | `0.3` |  |
+
+### cameraTo
+
+Moves the camera to a point (and zooms, with 'size') over 'duration' seconds. Static camera only (world.camera); cameraReset goes back.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `at` | [x, y] | `[0.0,0.0]` | The new center, measured from 'anchor'. |
+| `anchor` | [Anchor](#anchor) | `"World"` |  |
+| `size` | number | `0.0` | Half the visible height in world units (the level's is 2.8; smaller = closer). 0 = keep the current zoom. |
+| `duration` | number | `1.0` |  |
+| `ease` | [Ease](#ease) | `"InOut"` |  |
+
+### cameraZoom
+
+Zooms the camera where it is to 'size' over 'duration' seconds. Static camera only; cameraReset goes back.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `size` | number | `2.0` | Half the visible height in world units (the level's is 2.8; smaller = closer). |
+| `duration` | number | `1.0` |  |
+| `ease` | [Ease](#ease) | `"InOut"` |  |
 
 ### climbFloors
 
@@ -715,6 +746,25 @@ Emits a signal that 'signal' triggers react to (next tick).
 | Field | Type | Default | Notes |
 |---|---|---|---|
 | `signal` | string | `""` | **Required.** |
+
+### facePlayer
+
+Turns the player left or right, or toward an entity. Moving or firing turns him again.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `direction` | [FaceDirection](#facedirection) | `"Right"` |  |
+| `target` | string | `""` | Instance id of an entity to face instead of 'direction'. |
+
+### fade
+
+Fades the screen to black and holds it, or back to clear (to: Clear). Lines (showText) and the pause menu still show over it.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `to` | [FadeTo](#fadeto) | `"Black"` |  |
+| `duration` | number | `1.0` |  |
+| `color` | color | `"#000000"` | The color it fades to. |
 
 ### failLevel
 
@@ -818,6 +868,12 @@ Stops the player from moving and shooting for 'seconds' (0 = until unlockInput).
 |---|---|---|---|
 | `seconds` | number | `0.0` |  |
 
+### lockRewind
+
+No rewind until unlockRewind (a scene the hero can't undo): R and the HUD button do nothing, and the button says so.
+
+No fields.
+
 ### lockTravel
 
 Travel stages: the camera stops moving forward (an arena moment, a boss, a cutscene) until unlockTravel.
@@ -879,6 +935,15 @@ Switches the level music.
 | `clip` | asset (AudioClip) | — |  |
 | `volume` | number | `1.0` |  |
 
+### playPlayerAnimation
+
+Plays a state of the player's Animator by name (player.json animationConfig: Idle, Walk, Jump, Fall, Fire, and scene clips added there). His own movement takes over again through the Animator's transitions.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `state` | string | `""` | **Required.** |
+| `crossFade` | number | `0.0` | Seconds to blend into it (0 = cut). |
+
 ### playSound
 
 Plays a sound: an audio.json sound id (announcer lines, stings) or a clip.
@@ -916,6 +981,21 @@ Floats a short text up from a point (damage numbers, jokes, "NICE").
 | `at` | [x, y] | `[0.0,0.0]` |  |
 | `anchor` | [Anchor](#anchor) | `"Self"` |  |
 | `size` | number | `1.0` |  |
+
+### pullPlayerInto
+
+Pulls the player into a point (a portal): gravity and collisions off, he slides into it spinning and shrinking, then is gone (hidden, nothing can hit him) for the rest of the level. 'emit' fires when he disappears.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `at` | [x, y] | `[0.0,0.0]` | The point, measured from 'anchor' (used when 'target' is empty). |
+| `anchor` | [Anchor](#anchor) | `"World"` |  |
+| `target` | string | `""` | Instance id of an entity to be pulled into (followed if it moves). |
+| `duration` | number | `1.5` | Seconds from the first tug to gone. |
+| `spin` | number | `720.0` | Degrees he turns on the way in (positive = clockwise; 720 = two turns). |
+| `endScale` | number | `0.0` | His size at the end, as a fraction of normal (0 = shrinks to nothing). |
+| `ease` | [Ease](#ease) | `"In"` | In = slow first tug, fast swallow. |
+| `emit` | string | `""` | Signal emitted when he is gone. |
 
 ### random
 
@@ -1084,6 +1164,12 @@ Something that happens: spawn, change phase, show text, apply a status...
 
 No fields.
 
+### unlockRewind
+
+Allows rewinding again after lockRewind.
+
+No fields.
+
 ### unlockTravel
 
 Travel stages: the camera moves forward again after lockTravel.
@@ -1097,6 +1183,19 @@ Inside a sequence: pause before the next step.
 | Field | Type | Default | Notes |
 |---|---|---|---|
 | `seconds` | number | `1.0` |  |
+
+### walkPlayerTo
+
+Walks the player to a point by himself, with his own Walk clip and turning, even while input is locked (lockInput). He stops there (or after 1.5 s without getting closer, e.g. against a wall) and 'emit' fires.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `x` | number | `0.0` | Where to stop (world x), measured from 'anchor'; with 'target', an offset from that entity. |
+| `anchor` | [Anchor](#anchor) | `"World"` |  |
+| `target` | string | `""` | Instance id (spawn 'id') of an entity to walk up to, instead of a fixed x. |
+| `speed` | number | `0.6` | Fraction of his normal running speed (1 = full speed, 0.5 = a stroll). |
+| `emit` | string | `""` | Signal emitted when he arrives. |
+
 
 ## Patterns
 
@@ -1527,6 +1626,29 @@ How the camera behaves.
 - `Follow` — Follows the player inside 'bounds'.
 - `Scroll` — Moves at 'scrollSpeed'; the player is kept on screen.
 - `Travel` — Travels through the stage in 'travelDirection': follows the player forward, never back. The ground runs along with it, platforms and props stream in ahead and are removed behind. The counter "distance" is how far it has gone.
+
+### Ease
+
+How a scripted move speeds up and slows down over its duration.
+
+- `Linear` — Constant speed.
+- `In` — Starts slow, ends fast (being sucked in).
+- `Out` — Starts fast, ends slow (settling).
+- `InOut` — Slow at both ends (a camera move).
+
+### FaceDirection
+
+Which way the player faces.
+
+- `Left`
+- `Right`
+
+### FadeTo
+
+What a fade does.
+
+- `Black` — Fades the screen to 'color' (black) and holds it there.
+- `Clear` — Fades back to the game.
 
 ### PropShape
 

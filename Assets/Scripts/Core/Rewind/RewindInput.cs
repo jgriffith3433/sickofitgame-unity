@@ -13,6 +13,12 @@ namespace SickOfIt.Core.Rewind
 
         public static bool Available => begin != null;
 
+        /// <summary>
+        /// A level script has locked rewind (lockRewind, during a scripted scene): no control may start one. The
+        /// level's GameplayWorld sets it from its own (rewound) state; it is cleared when a level starts or ends.
+        /// </summary>
+        public static bool Locked { get; set; }
+
         public static void Register(Action onBegin, Action onEnd)
         {
             begin = onBegin;

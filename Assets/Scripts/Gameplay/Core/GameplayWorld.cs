@@ -62,6 +62,10 @@ namespace SickOfIt.Gameplay
         public int LevelNumber { get; private set; }
         public string LevelName { get; private set; } = "";
         public SpriteRenderer[] PlayerRenderers { get; private set; }
+        /// <summary>The hero in a scripted scene: walks and pulls (walkPlayerTo, pullPlayerInto).</summary>
+        public ScriptedPlayer Scripted { get; private set; }
+        /// <summary>The player's controller, or null in tests without one.</summary>
+        public PlayerController PlayerController => playerController;
 
         readonly List<Entity> live = new List<Entity>();
         readonly List<Entity> tickList = new List<Entity>();
@@ -84,8 +88,11 @@ namespace SickOfIt.Gameplay
         readonly HashSet<string> signalsNow = new HashSet<string>(StringComparer.Ordinal);
         readonly List<string> signalsNext = new List<string>();
         float inputLockedUntil;
+        bool rewindLocked;
 
         public float InputLockedUntil => inputLockedUntil;
+        /// <summary>A script locked rewind (lockRewind): no control can start one until unlockRewind.</summary>
+        public bool RewindLocked => rewindLocked;
         public float Now => GameClock.Instance != null ? GameClock.Instance.Time : 0f;
         public IReadOnlyList<Entity> Live => live;
 
@@ -111,7 +118,10 @@ namespace SickOfIt.Gameplay
         void OnDestroy()
         {
             if (Instance == this)
+            {
                 Instance = null;
+                SickOfIt.Core.Rewind.RewindInput.Locked = false;
+            }
             Telemetry?.Finish("scene unloaded");
         }
 
@@ -138,6 +148,8 @@ namespace SickOfIt.Gameplay
 
             if (setup.Player != null)
                 WrapPlayer(setup.Player);
+            Scripted = new ScriptedPlayer(this, playerController);
+            SickOfIt.Core.Rewind.RewindInput.Locked = false;
             if (playerController != null && setup.Script != null && !Mathf.Approximately(setup.Script.world.playerGravity, 1f))
                 playerController.SetGravityMultiplier(setup.Script.world.playerGravity);
 
@@ -236,6 +248,7 @@ namespace SickOfIt.Gameplay
                 if (e != null && e.IsAlive && e.isActiveAndEnabled)
                     e.Tick(now, dt);
             }
+            Scripted.Tick(now, dt);
             if (Player != null && Player.isActiveAndEnabled)
                 Player.Tick(now, dt);
 
@@ -536,6 +549,25 @@ namespace SickOfIt.Gameplay
             inputLockedUntil = until;
         }
 
+        public void SetRewindLocked(bool locked)
+        {
+            if (rewindLocked != locked)
+                Telemetry.Record("cutscene", locked ? "lockRewind" : "unlockRewind", 0);
+            rewindLocked = locked;
+            SickOfIt.Core.Rewind.RewindInput.Locked = locked;
+        }
+
+        /// <summary>Plays a named state of the player's Animator (playPlayerAnimation, or playAnimation on the player).</summary>
+        public void PlayPlayerAnimation(string state, float crossFade = 0f)
+        {
+            if (playerController == null)
+                return;
+            if (playerController.PlayAnimatorState(state, crossFade))
+                Telemetry.Record("cutscene", "playPlayerAnimation", 0, state);
+            else if (warned.Add("playerAnim:" + state))
+                Debug.LogWarning($"[GameplayWorld] The player's Animator has no state \"{state}\" (player.json animationConfig).");
+        }
+
         // =====================================================================
         // GEOMETRY
         // =====================================================================
@@ -580,6 +612,7 @@ namespace SickOfIt.Gameplay
         {
             w.Int(nextSerial);
             w.Float(inputLockedUntil);
+            w.Bool(rewindLocked);
             w.Int(counters.Count);
             foreach (var pair in counters)
             {
@@ -593,12 +626,15 @@ namespace SickOfIt.Gameplay
             Hud.SaveState(w);
             Effects.SaveState(w);
             Stage.SaveState(w);
+            Scripted.SaveState(w);
         }
 
         public void LoadState(StateReader r)
         {
             nextSerial = r.Int();
             inputLockedUntil = r.Float();
+            rewindLocked = r.Bool();
+            SickOfIt.Core.Rewind.RewindInput.Locked = rewindLocked;
             counters.Clear();
             int counterCount = r.Int();
             for (int i = 0; i < counterCount; i++)
@@ -611,6 +647,7 @@ namespace SickOfIt.Gameplay
             Hud.LoadState(r);
             Effects.LoadState(r);
             Stage.LoadState(r);
+            Scripted.LoadState(r);
         }
     }
 }

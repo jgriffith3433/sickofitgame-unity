@@ -28,7 +28,9 @@ namespace SickOfIt.Gameplay
             foreach (var pair in content.Circles.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateCircle(content, pair.Value, issues);
             foreach (var pair in content.LevelScripts.OrderBy(p => p.Key, StringComparer.Ordinal))
-                ValidateScript(content, pair.Value, issues);
+                ValidateScript(content, pair.Value, issues, "script");
+            foreach (var pair in content.Scenes.OrderBy(p => p.Key, StringComparer.Ordinal))
+                ValidateScript(content, pair.Value, issues, "");
         }
 
         static void ValidateCircle(GameContent content, CircleDef circle, JsonIssueList issues)
@@ -98,26 +100,38 @@ namespace SickOfIt.Gameplay
             });
         }
 
-        static void ValidateScript(GameContent content, LevelScript script, JsonIssueList issues)
+        /// <summary>A level's script ('root' "script", in levels/{name}.json) or a scene (root "", content/scenes/{id}.json).</summary>
+        static void ValidateScript(GameContent content, LevelScript script, JsonIssueList issues, string root)
         {
             string file = content.SourceOf(script);
+            string At(string path) => string.IsNullOrEmpty(root) ? path : root + "." + path;
+            bool scene = string.IsNullOrEmpty(root);
             var phases = new HashSet<string>(StringComparer.Ordinal);
             for (int i = 0; i < script.phases.Count; i++)
             {
                 if (!phases.Add(script.phases[i].name))
-                    issues.Error(file, $"script.phases[{i}].name", $"Phase \"{script.phases[i].name}\" is defined twice.");
+                    issues.Error(file, At($"phases[{i}].name"), $"Phase \"{script.phases[i].name}\" is defined twice.");
             }
-            ValidateObject(content, script, file, "script", null, phases, issues, inSequence: false);
+            ValidateObject(content, script, file, root, null, phases, issues, inSequence: false);
             if (script.phases.Count == 0 && script.rules.Count == 0)
-                issues.Warning(file, "script", "The script has no phases and no rules, so nothing happens.");
+                issues.Warning(file, root, "The script has no phases and no rules, so nothing happens.");
             if (script.floors.unitsPerFloor > 0f && script.floors.start <= 0)
-                issues.Warning(file, "script.floors.unitsPerFloor", "unitsPerFloor does nothing without floors.start.");
+                issues.Warning(file, At("floors.unitsPerFloor"), "unitsPerFloor does nothing without floors.start.");
             if (script.floors.end > script.floors.start && script.floors.start > 0)
-                issues.Error(file, "script.floors.end", "Floors count down as the hero climbs: end must be a lower floor than start.");
+                issues.Error(file, At("floors.end"), "Floors count down as the hero climbs: end must be a lower floor than start.");
             if (script.world.camera == CameraMode.Travel && string.IsNullOrEmpty(script.floors.circle))
-                issues.Warning(file, "script.floors.circle", "A Travel stage without a circle uses plain default ground and no props.");
-            if (script.objective.complete == null)
-                issues.Warning(file, "script.objective.complete", "No win condition: the level only ends through a completeLevel action or the player dying.");
+                issues.Warning(file, At("floors.circle"), "A Travel stage without a circle uses plain default ground and no props.");
+            // A scene ends through its own actions (returnToMenu, playVideo, goToLevel); a level needs a way to win.
+            if (script.objective.complete == null && !scene)
+                issues.Warning(file, At("objective.complete"), "No win condition: the level only ends through a completeLevel action or the player dying.");
+            if (script.world.camera != CameraMode.Static)
+            {
+                ContentWalker.Walk(script, (owner, field, value, path) =>
+                {
+                    if (value is CameraToAction || value is CameraZoomAction || value is CameraResetAction)
+                        issues.Warning(file, At(path), $"Camera actions only move the Static camera; this script's world.camera is {script.world.camera}, so it does nothing.");
+                });
+            }
         }
 
         static void ValidateObject(GameContent content, object root, string file, string rootPath, EntityDef entity, HashSet<string> phases,

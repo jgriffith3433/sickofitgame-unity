@@ -61,6 +61,12 @@ namespace SickOfIt.Gameplay
         float flashDuration;
         Color flashColor;
 
+        // The script's fade (fade action): game time, so it is saved and rewinds with the scene.
+        Image fade;
+        Color fadeColor = Color.black;
+        float fadeFrom, fadeTo;
+        float fadeStart, fadeDuration;
+
         public static GameplayHud Create(GameplayWorld world)
         {
             var theme = GameDefinition.Instance != null ? GameDefinition.Instance.menuTheme : new MenuTheme();
@@ -86,6 +92,10 @@ namespace SickOfIt.Gameplay
         {
             flash = MenuGraphics.NewImage(transform, "Flash", new Color(1f, 1f, 1f, 0f));
             flash.transform.SetAsFirstSibling();
+            // Under the HUD's own widgets, so lines and the pause menu still show over a black screen.
+            fade = MenuGraphics.NewImage(transform, "Fade", Color.clear);
+            fade.raycastTarget = false;
+            fade.transform.SetAsFirstSibling();
 
             BuildHealth();
             BuildDiamonds();
@@ -264,7 +274,7 @@ namespace SickOfIt.Gameplay
             // Overlay while rewinding: a teal vignette wash and a big pulsing "<<".
             rewindTint = MenuGraphics.NewImage(transform, "RewindTint", Color.clear);
             rewindTint.sprite = MenuGraphics.Vignette();
-            rewindTint.transform.SetSiblingIndex(1);
+            rewindTint.transform.SetSiblingIndex(flash.transform.GetSiblingIndex() + 1);
             var place = Landscape.rewinding;
             rewindingText = menu.AddText(menu.Root, "Rewinding", "\u25C4\u25C4  Rewinding", theme.title, place.anchor,
                 place.offset, place.size, out _, Mathf.Min(theme.title.fontSize, 84f), menu.TitleFont, null,
@@ -340,14 +350,15 @@ namespace SickOfIt.Gameplay
             bool rewinding = clock != null && clock.IsRewinding;
             bool canRewind = SickOfIt.Core.Rewind.RewindInput.Available;
             bool hasJuice = budget == null || budget.CanRewind;
+            bool locked = SickOfIt.Core.Rewind.RewindInput.Locked;
 
             if (rewindRoot.gameObject.activeSelf != canRewind)
                 rewindRoot.gameObject.SetActive(canRewind);
             if (!rewinding)
-                rewindButton.interactable = hasJuice;
-            MenuGraphics.SetText(rewindKey, hasJuice ? RewindKeyText : "Out of juice");
+                rewindButton.interactable = hasJuice && !locked;
+            MenuGraphics.SetText(rewindKey, locked ? Texts.rewindLocked : hasJuice ? RewindKeyText : "Out of juice");
             rewindKey.enableVertexGradient = false;
-            rewindKey.color = hasJuice ? new Color(1f, 0.96f, 0.84f, 1f) : style.rewindEmpty;
+            rewindKey.color = hasJuice && !locked ? new Color(1f, 0.96f, 0.84f, 1f) : style.rewindEmpty;
 
             if (rewinding != wasRewinding)
             {
@@ -552,6 +563,36 @@ namespace SickOfIt.Gameplay
             flashEndsAt = Time.unscaledTime + flashDuration;
         }
 
+        /// <summary>How covered the screen is by the script's fade, 0 (clear) to 1 (held black).</summary>
+        public float FadeAlpha => FadeAt(world != null ? world.Now : 0f);
+
+        /// <summary>Fades the screen to 'color' (alpha 1, held) or back to clear over 'duration' seconds of game time.</summary>
+        public void Fade(bool toColor, Color color, float duration, float now)
+        {
+            fadeFrom = FadeAt(now);
+            fadeTo = toColor ? 1f : 0f;
+            if (toColor)
+                fadeColor = color;
+            fadeStart = now;
+            fadeDuration = Mathf.Max(0f, duration);
+            UpdateFade();
+        }
+
+        float FadeAt(float now)
+        {
+            float t = fadeDuration > 0f ? Mathf.Clamp01((now - fadeStart) / fadeDuration) : 1f;
+            return Mathf.Lerp(fadeFrom, fadeTo, t);
+        }
+
+        void UpdateFade()
+        {
+            if (fade == null || world == null)
+                return;
+            var c = fadeColor;
+            c.a = FadeAlpha;
+            fade.color = c;
+        }
+
         public void Tick(float now) => Refresh(now);
 
         void Update()
@@ -562,6 +603,7 @@ namespace SickOfIt.Gameplay
             var c = flashColor;
             c.a = left > 0f ? flashColor.a * (left / flashDuration) : 0f;
             flash.color = c;
+            UpdateFade();
             UpdateHealthAndDiamonds();
             UpdateProgressBar();
             UpdateRewind();
@@ -923,6 +965,9 @@ namespace SickOfIt.Gameplay
             w.String(bossTarget.id);
             w.String(bossTarget.tag);
             w.String(bossTarget.entity);
+            SaveColor(w, fadeColor);
+            w.Float(fadeFrom); w.Float(fadeTo);
+            w.Float(fadeStart); w.Float(fadeDuration);
         }
 
         public void LoadState(StateReader r)
@@ -937,6 +982,10 @@ namespace SickOfIt.Gameplay
             bossTarget.id = r.String();
             bossTarget.tag = r.String();
             bossTarget.entity = r.String();
+            fadeColor = LoadColor(r);
+            fadeFrom = r.Float(); fadeTo = r.Float();
+            fadeStart = r.Float(); fadeDuration = r.Float();
+            UpdateFade();
             Refresh(world.Now);
         }
 

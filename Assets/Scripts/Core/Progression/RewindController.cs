@@ -54,6 +54,8 @@ namespace SickOfIt.Core.Progression
             if (GameClock.Instance.IsRewinding) return;
             if (GameClock.Instance.Time < minimumTimeBeforeRewind) return;
             if (GameClock.Instance.IsPaused) return;
+            // A scripted scene holds the loop (lockRewind): nothing happens until it lets go.
+            if (SickOfIt.Core.Rewind.RewindInput.Locked) return;
             // Out of rewind juice: nothing happens until a pickup refills it.
             var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
             if (budget != null && !budget.CanRewind) return;

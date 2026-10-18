@@ -55,7 +55,8 @@ namespace SickOfIt.Tools.Editor.GameConfig
             sb.AppendLine();
             sb.AppendLine("Gameplay is data. **Entities** (enemies, bosses, projectiles, hazards) live in `Assets/GameConfig/content/entities/{id}.json`, " +
                           "reusable **sequences** in `content/sequences/{id}.json`, **status effects** in `content/effects/{id}.json`, the **Circles of Hell** " +
-                          "(biome, enemy table, hazards, difficulty) in `content/circles/{id}.json`, and each level's " +
+                          "(biome, enemy table, hazards, difficulty) in `content/circles/{id}.json`, **scenes** (a level script played on a level's stage, " +
+                          "for scripted scenes and their tests) in `content/scenes/{id}.json`, and each level's " +
                           "**script** in the `\"script\"` field of `levels/{name}.json`. Every content file starts with `\"schemaVersion\": 1`; " +
                           "the id is the file name. Polymorphic things (abilities, triggers, actions, patterns) are objects with a `\"type\"`.");
             sb.AppendLine();

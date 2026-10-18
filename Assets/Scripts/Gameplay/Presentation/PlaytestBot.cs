@@ -208,6 +208,9 @@ namespace SickOfIt.Gameplay
             var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
             if (budget != null && !budget.CanRewind)
                 return false;
+            // A scripted scene locked rewind (lockRewind): a player would see the button say so and not try.
+            if (SickOfIt.Core.Rewind.RewindInput.Locked)
+                return false;
             rewindTarget = clock.Time - seconds;
             holdStartedAt = Time.unscaledTime;
             input.SetKey(Key.R, true);

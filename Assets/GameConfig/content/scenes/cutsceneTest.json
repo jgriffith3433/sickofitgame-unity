@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "seed": 4242,
+  "length": 34,
+  "objective": { "text": "" },
+  "phases": [
+    {
+      "name": "walk",
+      "onEnter": [
+        { "type": "lockInput" },
+        { "type": "lockRewind" },
+        { "type": "runSequence", "steps": [
+          { "type": "wait", "seconds": 1.5 },
+          { "type": "showText", "text": "Something's glowing over there. Great.", "duration": 2.5, "style": "Subtitle" },
+          { "type": "wait", "seconds": 0.5 },
+          { "type": "walkPlayerTo", "x": 2.5, "speed": 0.6, "emit": "scene:arrived" }
+        ] }
+      ],
+      "rules": [
+        { "name": "arrived", "when": { "type": "signal", "name": "scene:arrived" }, "do": [ { "type": "goToPhase", "phase": "look" } ] }
+      ]
+    },
+    {
+      "name": "look",
+      "onEnter": [
+        { "type": "runSequence", "steps": [
+          { "type": "playPlayerAnimation", "state": "Idle" },
+          { "type": "wait", "seconds": 0.6 },
+          { "type": "facePlayer", "direction": "Left" },
+          { "type": "wait", "seconds": 0.8 },
+          { "type": "facePlayer", "direction": "Right" },
+          { "type": "wait", "seconds": 0.4 },
+          { "type": "emit", "signal": "scene:faced" },
+          { "type": "showText", "text": "Nope. Still glowing.", "duration": 2.5, "style": "Subtitle" },
+          { "type": "wait", "seconds": 2.6 },
+          { "type": "goToPhase", "phase": "camera" }
+        ] }
+      ]
+    },
+    {
+      "name": "camera",
+      "onEnter": [
+        { "type": "runSequence", "steps": [
+          { "type": "cameraTo", "at": [0.0, 0.9], "anchor": "Player", "size": 1.4, "duration": 1.5, "ease": "InOut" },
+          { "type": "wait", "seconds": 1.8 },
+          { "type": "emit", "signal": "scene:zoomed" },
+          { "type": "wait", "seconds": 1.2 },
+          { "type": "cameraReset", "duration": 1.5, "ease": "InOut" },
+          { "type": "wait", "seconds": 1.8 },
+          { "type": "emit", "signal": "scene:unzoomed" },
+          { "type": "goToPhase", "phase": "fade" }
+        ] }
+      ]
+    },
+    {
+      "name": "fade",
+      "onEnter": [
+        { "type": "runSequence", "steps": [
+          { "type": "fade", "to": "Black", "duration": 1.0 },
+          { "type": "wait", "seconds": 1.3 },
+          { "type": "emit", "signal": "scene:black" },
+          { "type": "wait", "seconds": 0.8 },
+          { "type": "fade", "to": "Clear", "duration": 1.0 },
+          { "type": "wait", "seconds": 1.3 },
+          { "type": "emit", "signal": "scene:clear" },
+          { "type": "goToPhase", "phase": "pull" }
+        ] }
+      ]
+    },
+    {
+      "name": "pull",
+      "onEnter": [
+        { "type": "runSequence", "steps": [
+          { "type": "showText", "text": "Oh, come on.", "duration": 2.0, "style": "Subtitle" },
+          { "type": "wait", "seconds": 0.8 },
+          { "type": "cameraShake", "intensity": 0.08, "duration": 1.8 },
+          { "type": "pullPlayerInto", "at": [1.2, 0.0], "anchor": "Player", "duration": 1.8, "spin": 720, "endScale": 0.0, "ease": "In", "emit": "scene:gone" }
+        ] }
+      ],
+      "rules": [
+        { "name": "gone", "when": { "type": "signal", "name": "scene:gone" }, "do": [
+          { "type": "flash", "color": "#FFB347", "duration": 0.4 },
+          { "type": "showText", "text": "AND DOWN HE GOES!", "duration": 3.0, "color": "#FFD27A" },
+          { "type": "runSequence", "steps": [
+            { "type": "wait", "seconds": 3.0 },
+            { "type": "emit", "signal": "scene:done" }
+          ] }
+        ] }
+      ]
+    }
+  ]
+}

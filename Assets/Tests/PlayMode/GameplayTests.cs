@@ -96,6 +96,36 @@ namespace SickOfIt.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator SceneCameraFadeAndRewindLockAreRewound()
+        {
+            const string script = @"{
+                'phases': [ { 'name': 'scene', 'onEnter': [
+                    { 'type': 'lockRewind' },
+                    { 'type': 'cameraTo', 'at': [1, 0.5], 'size': 2, 'duration': 0.5 },
+                    { 'type': 'fade', 'to': 'Black', 'duration': 0.5 } ] } ]
+            }";
+            level = TestLevel.Create(TestLevel.BuildContent(Basics, script));
+            var camera = level.World.Camera;
+            Assert.That(level.World.Effects.HomeSize, Is.EqualTo(4f));
+            yield return level.Until(0.8f);
+            Assert.That(camera.orthographicSize, Is.EqualTo(2f).Within(0.01f));
+            Assert.That(Vector2.Distance(camera.transform.position, new Vector2(1f, 0.5f)), Is.LessThan(0.01f));
+            Assert.That(level.World.Hud.FadeAlpha, Is.EqualTo(1f).Within(0.001f));
+            Assert.That(SickOfIt.Core.Rewind.RewindInput.Locked, Is.True);
+
+            // A rewind replays the moves: back near the start the camera is wide again and the screen nearly clear.
+            yield return level.RewindTo(0.1f);
+            Assert.That(camera.orthographicSize, Is.GreaterThan(3.4f));
+            Assert.That(level.World.Hud.FadeAlpha, Is.LessThan(0.35f));
+            Assert.That(SickOfIt.Core.Rewind.RewindInput.Locked, Is.True);
+            yield return level.Until(1f);
+            Assert.That(camera.orthographicSize, Is.EqualTo(2f).Within(0.01f));
+
+            level.World.SetRewindLocked(false);
+            Assert.That(SickOfIt.Core.Rewind.RewindInput.Locked, Is.False);
+        }
+
+        [UnityTest]
         public IEnumerator ScriptRunsPhasesAndCompletesOnBossDeath()
         {
             const string script = @"{

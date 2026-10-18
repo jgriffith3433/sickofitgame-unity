@@ -169,7 +169,7 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 
 | System | In the story | Notes for design |
 |---|---|---|
-| **Rewind** (hold R) | **Déjà Vu.** Hell runs everything on a loop; the hero grabs the loop and pulls it backward. | The juice meter is "Déjà Vu". **Rewind orbs** are *loop shards* that drop from the damned (Shades, imps). |
+| **Rewind** (hold R) | **Déjà Vu.** Hell runs everything on a loop; the hero grabs the loop and pulls it backward. | The juice meter is "Déjà Vu". **Rewind orbs** are *loop shards* that drop from the damned (Shades, imps). In a **scene** something bigger has hold of the loop (the portal's pull, a Warden's entrance), so he can't grab it: rewind is locked and the button says "Not now". |
 | **Death and runs** | Hell doesn't let you die; it sends you back to repeat the floors. "YOU OBVIOUSLY DIED." | A run restarts at the last **Waystone** (top of each Circle once its Warden is beaten). Death videos are Hell's announcer gloating. |
 | **Between-level picks** (`content/upgrades`) | **Grudges.** Every floor gives the hero something new to be annoyed about, and spite is fuel. Lost when a run ends. | Titles are grudges: "Spite Rounds", "Short Fuse", "Not Today", "Déjà Vu". |
 | **Diamonds and the shop** | The village's diamonds, the portal fuel the imps stole; enemies drop them back. **Gloob** works them into the hero's gear between floors. Permanent. | Shop = Gloob. Shop upgrade names are things a village slime can make. |
@@ -242,6 +242,11 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    ground, the hero is walked over with input off, the lines and the echo play, the portal pulls him in (spin and
    shrink), Gloob bounces past and is slurped in. Rewind is off during the scene. The hero gets new animation
    clips for it (look down, shout, turn, spin into the portal).
+   *Built so far* (2026-10-18; recipe: GameplayCookbook "A scene with the hero"): the scene actions a level script
+   uses for it: walk the hero somewhere by himself, turn him, play one of his clips, pull him into a point
+   (spinning and shrinking until he is gone), move and zoom the camera, fade to black, and lock rewind while it
+   plays. `content/scenes/cutsceneTest.json` runs every one of them on the Meadow for the playtest; the real
+   portal scene still needs its portal, its lines and the hero's new clips.
 5. **Video overlays**: Video2 shows the hero tumbling and spinning down the fire tunnel (about 10.5-14.5 s), as an
    animated sprite drawn over the baked video.
 6. **The Shaft**: the vertical Hell map after Video2 (the plunge from FLOOR 0 to FLOOR 1,000 with the welcome

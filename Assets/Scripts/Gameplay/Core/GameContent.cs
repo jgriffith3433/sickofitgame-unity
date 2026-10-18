@@ -11,7 +11,7 @@ using SickOfIt.Json;
 namespace SickOfIt.Gameplay
 {
     /// <summary>
-    /// All gameplay content, parsed: entities, sequences, status effects, upgrades, circles, and level scripts.
+    /// All gameplay content, parsed: entities, sequences, status effects, upgrades, circles, scenes, and level scripts.
     ///
     /// At runtime it is built from the JSON embedded in GameDefinition (or a remote bundle that replaces it),
     /// resolving asset ids through the asset registry. The editor builds it from the source files with line
@@ -24,6 +24,7 @@ namespace SickOfIt.Gameplay
         public const string EffectsFolder = "effects/";
         public const string UpgradesFolder = "upgrades/";
         public const string CirclesFolder = "circles/";
+        public const string ScenesFolder = "scenes/";
         const string ExtendsKey = "extends";
         const string VersionKey = "schemaVersion";
 
@@ -32,6 +33,8 @@ namespace SickOfIt.Gameplay
         public readonly Dictionary<string, StatusEffectDef> Effects = new Dictionary<string, StatusEffectDef>(StringComparer.Ordinal);
         public readonly Dictionary<string, UpgradeDef> Upgrades = new Dictionary<string, UpgradeDef>(StringComparer.Ordinal);
         public readonly Dictionary<string, CircleDef> Circles = new Dictionary<string, CircleDef>(StringComparer.Ordinal);
+        /// <summary>Scenes (content/scenes/{id}.json): level scripts played on a level's stage instead of its own script.</summary>
+        public readonly Dictionary<string, LevelScript> Scenes = new Dictionary<string, LevelScript>(StringComparer.Ordinal);
         /// <summary>Level scripts by level name.</summary>
         public readonly Dictionary<string, LevelScript> LevelScripts = new Dictionary<string, LevelScript>(StringComparer.Ordinal);
         /// <summary>Where each definition came from, for messages.</summary>
@@ -196,9 +199,16 @@ namespace SickOfIt.Gameplay
                     content.Circles[id] = def;
                     content.SourceFiles[def] = file.DisplayPath;
                 }
+                else if (file.Path.StartsWith(ScenesFolder, StringComparison.Ordinal))
+                {
+                    var def = new LevelScript();
+                    serializer.PopulateFields(obj, def, skip, content.Issues, file.DisplayPath);
+                    content.Scenes[id] = def;
+                    content.SourceFiles[def] = file.DisplayPath;
+                }
                 else
                 {
-                    content.Issues.Error(file.DisplayPath, "", $"Content files go in {EntitiesFolder}, {SequencesFolder}, {EffectsFolder}, {UpgradesFolder}, or {CirclesFolder}.");
+                    content.Issues.Error(file.DisplayPath, "", $"Content files go in {EntitiesFolder}, {SequencesFolder}, {EffectsFolder}, {UpgradesFolder}, {CirclesFolder}, or {ScenesFolder}.");
                 }
             }
 
