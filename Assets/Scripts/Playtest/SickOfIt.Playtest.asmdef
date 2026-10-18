@@ -8,6 +8,7 @@
     "SickOfIt.Core.Progression",
     "SickOfIt.Combat",
     "SickOfIt.Gameplay",
+    "SickOfIt.VideoFrameExtractor.Runtime",
     "Unity.TextMeshPro",
     "Unity.InputSystem",
     "HawkesPlaytest.Runtime"
