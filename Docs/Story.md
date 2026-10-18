@@ -95,10 +95,11 @@ THE MEADOW again                           Ending
 - **The path today** (re-pathed 2026-10-18): New Game → Video1 → Level 1, the Meadow → Video2 → Level 2, *Floors
   1000-991: The Landing* → Video3 (Gloob) → Level 3, *Floors 990-981: The Spill* (a first pass: its cinders, no
   debris yet) → the level select, until the next Circle X stages are built. After them in the list, off the path
-  (reachable from the level select only, once unlocked): `CrackedRoad` (*Floors 900-876*, a 25-floor stage from
-  the first layout, to be recast as Level 12) and the old arcade levels `ArcadeCrossfire`, `ArcadeSpinCycle`,
-  `ArcadeEverything` and `ArcadeFireRain` (titled "Arcade: ..."), kept to be recast: their enemies and patterns
-  reused inside Circle stages, Fire Rain's Magma King fight as the reference for the Floor 901 arena. Their
+  (reachable from the level select only, once unlocked): `CrackedRoad` (*Floors 900-891*, cut to 10 floors and
+  numbered for Level 12; its beats are still the first layout's, for the Circle IX task to rebuild) and the old
+  arcade levels `ArcadeCrossfire`, `ArcadeSpinCycle`, `ArcadeEverything` and `ArcadeFireRain` (titled "Arcade:
+  ...", outside the Circles, their slime enemies swapped for imps and cinders), kept to be recast: their
+  enemies and patterns reused inside Circle stages, Fire Rain's Magma King fight as the reference for the Floor 901 arena. Their
   `levelNumber` still names their source footage (`Level2_Background1` is Crossfire's). Video4 (the blue bridge and
   the forest) is off the early path: it is watched from the video select and belongs to Circles VIII-VII.
 - The **floor number is always on screen** (HUD: `FLOOR 973`), and painted into the world as signs, carvings and
@@ -249,12 +250,12 @@ Built (2026-10-15; recipe: GameplayCookbook "A stage that climbs through Hell's 
    difficulty, milestones) and the `generateFloors` action that fills floors between story beats, seeded, so
    rewinds and playtests repeat. Circle X is `emberWastes`; its first stages are Level 2, "Floors 1000-991: The
    Landing", and Level 3, "Floors 990-981: The Spill". Circle IX is `crackedRoad`; its first stage is
-   `CrackedRoad`, "Floors 900-876: The Cracked Road" (off the path for now: the stages for Floors 980-901 and the
+   `CrackedRoad`, "Floors 900-891: The Cracked Road" (off the path for now: the stages for Floors 980-901 and the
    Magma King's arena are still to build).
 
 Note: the Landing was recut from the first layout's 25-floor stage to Floors 1000-991 (2026-10-18), and its
-cinders moved up to the Spill, where the Story puts them. `CrackedRoad` is still a 25-floor stage; it is recast
-as Level 12.
+cinders moved up to the Spill, where the Story puts them. `CrackedRoad` was cut the same way to Floors
+900-891 (Level 12's floors); its beats are still the first layout's until the Circle IX task rebuilds it.
 
 This milestone (*Into Hell*, approved 2026-10-18) builds:
 

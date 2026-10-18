@@ -100,7 +100,7 @@
             ]
           },
           {
-            "name": "swarmers",
+            "name": "imps",
             "when": {
               "type": "every",
               "seconds": 4.0,
@@ -110,7 +110,7 @@
             "do": [
               {
                 "type": "spawnWave",
-                "entity": "swarmer",
+                "entity": "imp",
                 "count": 2,
                 "interval": 0.3,
                 "anchor": "Camera",
@@ -150,7 +150,7 @@
         ],
         "rules": [
           {
-            "name": "exploders",
+            "name": "cinders",
             "when": {
               "type": "every",
               "seconds": 5.0,
@@ -160,7 +160,7 @@
             "do": [
               {
                 "type": "spawn",
-                "entity": "exploder",
+                "entity": "cinder",
                 "anchor": "Camera",
                 "at": [5.2, -2.0],
                 "tags": ["wave"]
@@ -237,7 +237,7 @@
           },
           {
             "type": "spawnWave",
-            "entity": "exploder",
+            "entity": "cinder",
             "count": 2,
             "interval": 2.5,
             "anchor": "Camera",

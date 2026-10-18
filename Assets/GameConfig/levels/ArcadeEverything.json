@@ -106,7 +106,7 @@
                     "do": [
                       {
                         "type": "spawnWave",
-                        "entity": "swarmer",
+                        "entity": "imp",
                         "count": 4,
                         "interval": 0.25,
                         "anchor": "Camera",
@@ -125,7 +125,7 @@
                     "do": [
                       {
                         "type": "spawn",
-                        "entity": "exploder",
+                        "entity": "cinder",
                         "anchor": "Camera",
                         "at": [-5.2, -2.0],
                         "count": 2,

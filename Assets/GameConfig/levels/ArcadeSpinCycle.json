@@ -99,7 +99,7 @@
             ]
           },
           {
-            "name": "swarmers",
+            "name": "imps",
             "when": {
               "type": "every",
               "seconds": 4.5,
@@ -109,7 +109,7 @@
             "do": [
               {
                 "type": "spawnWave",
-                "entity": "swarmer",
+                "entity": "imp",
                 "count": 3,
                 "interval": 0.3,
                 "anchor": "Camera",
@@ -179,7 +179,7 @@
         ],
         "rules": [
           {
-            "name": "chasers",
+            "name": "imp rush",
             "when": {
               "type": "every",
               "seconds": 6.0,
@@ -189,7 +189,7 @@
             "do": [
               {
                 "type": "spawnWave",
-                "entity": "chaser",
+                "entity": "imp",
                 "count": 2,
                 "interval": 0.5,
                 "anchor": "Camera",
