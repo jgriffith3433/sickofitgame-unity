@@ -48,6 +48,11 @@ Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
    is never interrupted.
 4. **The portal.** The Overlord's lasers come down one last time, not at the hero (he isn't worth it yet) but at
    the ground beside him. They burn a glowing hole into the meadow: a portal, lying flat on the ground.
+   How it looks: first a red-orange glow gathers on the grass (the beam charging), then the beam drops out of the
+   sky as one burning column and bursts on the ground. The grass scorches, cracks, and tears open into a ring of
+   burning turf with fire swirling down inside it: **the same fire portal the hero falls through in Video2**,
+   seen side-on from the meadow, so the player recognises it when Video2 starts. It swirls the whole time he
+   stands at its edge, and once it has had him (and Gloob) it flares and shrinks to a black scorch mark.
 5. **The walk-over.** The hero walks over to it on his own, curious (scripted: the player's input is off), and
    leans in to peer down at it, head tilted (his `Curious` clip).
    Hero: *"That's a hole."* Beat. *"So that's where they keep coming from."*
@@ -259,9 +264,16 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    one step, *"Oh, come ON-"* and he is pulled in (1.2 s, 2.5 turns). A beat later `gloobProp` (Gloob: the
    village slime, slime art, harmless) hops in from the far side and is slurped in. The portal flares and
    closes to a scorch, the screen fades to black, and the level ends: results, then Video2. The hero no
-   longer says *"Fine. I'll go get them."*: he never chose to go. Still to come: the portal's art (its spin
-   belongs in its clip, since it lies flat on the ground), the beam's art, and the hero's scene clips (look
+   longer says *"Fine. I'll go get them."*: he never chose to go. Still to come: the hero's scene clips (look
    down, shout, turn); today he uses Idle and Walk.
+   *Portal and beam art* (2026-10-18): baked by `Tools/Art/fx_sheets.py` into `Assets/Art/Effects/`. Today's is
+   the no-GPU first pass (`Tools/Art/fx_interim.py`): the swirl inside the portal is Video2's own fire tunnel
+   squashed into the hole, in a torn turf rim in the Meadow's palette. The Hawkes Gen version (Qwen paintings
+   styled on the Meadow and Video2, Wan clips between them) is queued and replaces the same sheets. The
+   `portal` opens (scorch → crack → ring tears open), loops its swirl while the hero is there, and plays its
+   closing flare down to the scorch, which `portalScorch` then holds. The beam is three entities:
+   `overlordBeamGlow` (the charge glow, 1.25 s), `overlordBeam` (one column from the sky) and
+   `overlordBeamImpact` (the burst where it lands).
 5. **Video overlays**: Video2 shows the hero tumbling and spinning down the fire tunnel (about 10.5-14.5 s), as an
    animated sprite drawn over the baked video.
 6. **The Shaft**: the vertical Hell map after Video2 (the plunge from FLOOR 0 to FLOOR 1,000 with the welcome

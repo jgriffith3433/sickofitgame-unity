@@ -12,7 +12,18 @@
     "placeholderLabel": false,
     "layer": "Background2",
     "sortingOrder": 1,
-    "hurtFlash": false
+    "hurtFlash": false,
+    "animator": {
+      "states": [
+        {
+          "stateName": "Scorch",
+          "spriteSheet": "Art/Effects/Portal/Portal_scorch.png",
+          "fps": 12,
+          "loop": false
+        }
+      ],
+      "defaultStateName": "Scorch"
+    }
   },
   "healthBar": {
     "show": false

@@ -13,22 +13,43 @@
     "placeholderLabel": false,
     "layer": "Background2",
     "sortingOrder": 2,
-    "hurtFlash": false
+    "hurtFlash": false,
+    "animator": {
+      "states": [
+        {
+          "stateName": "Open",
+          "spriteSheet": "Art/Effects/Portal/Portal_open.png",
+          "fps": 16,
+          "loop": false
+        },
+        {
+          "stateName": "Loop",
+          "spriteSheet": "Art/Effects/Portal/Portal_loop.png",
+          "fps": 16,
+          "loop": true
+        },
+        {
+          "stateName": "Close",
+          "spriteSheet": "Art/Effects/Portal/Portal_close.png",
+          "fps": 24,
+          "loop": false
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Open",
+          "toState": "Loop",
+          "hasExitTime": true,
+          "exitTime": 1.0
+        }
+      ],
+      "defaultStateName": "Open"
+    }
   },
   "healthBar": {
     "show": false
   },
   "sounds": {
     "loopSound": "portal_hum_loop"
-  },
-  "abilities": [
-    {
-      "type": "hover",
-      "aroundSpawn": true,
-      "offset": [0.0, 0.0],
-      "speed": 1.0,
-      "bobHeight": 0.04,
-      "bobSpeed": 3.0
-    }
-  ]
+  }
 }

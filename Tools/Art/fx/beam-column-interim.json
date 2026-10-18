@@ -1,0 +1,13 @@
+{
+  "about": "The Overlord's beam column from the sky (entity overlordBeam), interim art by Tools/Art/fx_interim.py (--src <dir>/beam). Pivot at its foot; 7 units tall.",
+  "gpu": "Hawkes Gen still queued 2026-10-18: image.paint j_f85d344defd1 (black plate, 512x1536); bake it with key black and make column.",
+  "out": "Assets/Art/Effects/Beam",
+  "name": "Beam",
+  "key": "none",
+  "size": [192, 1536],
+  "pivot": [96, 1536],
+  "worldWidth": 7.0,
+  "widthPixels": 1536,
+  "scale": 0.5,
+  "clips": { "column": { "frames": "column" } }
+}
