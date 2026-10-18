@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 0,
+  "shootable": false,
+  "body": {
+    "shape": "Box",
+    "size": [
+      0.9,
+      0.7
+    ],
+    "solid": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#FFB050",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "lifetime",
+      "seconds": 0.35
+    }
+  ]
+}

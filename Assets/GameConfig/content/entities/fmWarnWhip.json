@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "body": {
+    "radius": 0.4,
+    "solid": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "visual": {
+    "scale": 0.1,
+    "color": "#FFD27A",
+    "sortingOrder": 4,
+    "hurtFlash": false,
+    "animator": {
+      "states": [
+        {
+          "stateName": "Glow",
+          "spriteSheet": "Images/Fireball.png",
+          "fps": 16,
+          "loop": true
+        }
+      ],
+      "defaultStateName": "Glow"
+    }
+  },
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 1.1
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "fmLash",
+      "anchor": "Self",
+      "facePlayer": false
+    },
+    {
+      "type": "playSound",
+      "sound": "whip_crack"
+    }
+  ]
+}

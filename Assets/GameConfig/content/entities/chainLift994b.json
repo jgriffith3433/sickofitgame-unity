@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "extends": "chainLift",
+  "abilities": [
+    {
+      "type": "chainLift",
+      "travel": [
+        0.0,
+        8.4
+      ],
+      "speed": 0.6,
+      "wait": 2.0,
+      "jolt": 0.8,
+      "startOnStand": true,
+      "chainColor": "#52423C",
+      "chainArt": {
+        "sheet": "Art/Climb/Chain_links.png",
+        "spriteNameFilter": "",
+        "fps": 1,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "chainWidth": 0.2,
+      "chainFrom": 1.5,
+      "joltSound": "chain_cut",
+      "cutterTag": "cutter",
+      "cutRange": 9.0,
+      "cutEvery": 3.5,
+      "notch": 0.5,
+      "maxCut": 1.0,
+      "cutSound": "chain_cut",
+      "cutSignal": "liftCut"
+    }
+  ]
+}

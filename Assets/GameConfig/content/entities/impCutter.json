@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "extends": "imp",
+  "health": 2,
+  "tags": [
+    "imp",
+    "cutter"
+  ],
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "hover",
+      "speed": 0.5,
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "aroundSpawn": true,
+      "keepSide": false,
+      "bobHeight": 0.12,
+      "bobSpeed": 5.0
+    }
+  ]
+}

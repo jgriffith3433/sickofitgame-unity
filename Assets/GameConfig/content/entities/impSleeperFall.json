@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "extends": "imp",
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "imp"
+  ],
+  "loot": {
+    "chance": 0.0,
+    "count": 0,
+    "value": 0
+  },
+  "drops": [],
+  "body": {
+    "radius": 1.0,
+    "solid": false,
+    "gravity": 0.0
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "move",
+      "speed": 0.0,
+      "direction": [
+        0.4,
+        -1.0
+      ],
+      "homing": 0.0,
+      "acceleration": 9.0
+    },
+    {
+      "type": "spin",
+      "degreesPerSecond": 420.0
+    },
+    {
+      "type": "lifetime",
+      "seconds": 1.6
+    }
+  ]
+}

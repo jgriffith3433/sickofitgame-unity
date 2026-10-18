@@ -1,0 +1,446 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor993",
+  "displayName": "Floor 993: Ember Ledges",
+  "levelNumber": 9,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 10,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 993,
+    "length": 85,
+    "floors": {
+      "start": 993,
+      "end": 992,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "ledges",
+          "direction": "Up",
+          "length": 4.4,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                -1.0,
+                -1.1
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                1.4,
+                0.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                -0.8,
+                1.5
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                1.8,
+                2.8
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "slope",
+          "direction": "UpRight",
+          "length": 4.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "sinkingStone",
+              "at": [
+                4.0,
+                4.0
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                6.4,
+                5.3
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "imp",
+              "at": [
+                5.0,
+                8.0
+              ],
+              "id": "firstImp",
+              "onEnter": true,
+              "tags": [
+                "firstImp"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "hollows",
+          "direction": "Arena",
+          "length": 0.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                1.2,
+                6.6
+              ],
+              "id": "hollowLeft",
+              "scale": [
+                1.4,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                4.0,
+                7.9
+              ],
+              "id": "hollowMid",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                1.6,
+                7.25
+              ],
+              "id": "counterSoul"
+            },
+            {
+              "entity": "imp",
+              "at": [
+                -1.4,
+                9.4
+              ],
+              "id": "hollowImp1",
+              "onEnter": true,
+              "tags": [
+                "hollowImp"
+              ]
+            },
+            {
+              "entity": "imp",
+              "at": [
+                7.2,
+                9.6
+              ],
+              "id": "hollowImp2",
+              "onEnter": true,
+              "tags": [
+                "hollowImp"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "lift",
+          "direction": "Up",
+          "length": 4.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "chainLift993",
+              "at": [
+                6.6,
+                7.65
+              ],
+              "id": "lift"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                4.0,
+                11.6
+              ],
+              "id": "sleeperLedge",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "impSleeper",
+              "at": [
+                3.6,
+                12.25
+              ],
+              "id": "sleeper"
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding993",
+              "at": [
+                8.2,
+                12.9
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the first throw",
+        "when": {
+          "type": "sectionReached",
+          "section": "slope"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "showText",
+                "text": "Oh, this one throws.",
+                "duration": 2.4,
+                "style": "Subtitle",
+                "sound": "vo_f993_throws"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the hollows are clear",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "sectionReached",
+              "section": "hollows"
+            },
+            {
+              "type": "allDead",
+              "target": {
+                "tag": "hollowImp"
+              }
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "nextSection"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the sleeper falls off its own ledge",
+        "when": {
+          "type": "signal",
+          "name": "sleeperFell"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "showText",
+                "text": "One less.",
+                "duration": 2.2,
+                "style": "Subtitle",
+                "sound": "vo_f993_less"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 992,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "EMBER LEDGES: SURVIVED",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_f993_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 993: EMBER LEDGES",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f993_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

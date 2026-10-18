@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "extends": "ledge",
+  "abilities": [
+    {
+      "type": "carved",
+      "text": "YOU ARE HERE.",
+      "words": "AGAIN.",
+      "color": "#FFB45C",
+      "size": 0.32,
+      "above": 0.95,
+      "onFace": false
+    }
+  ]
+}

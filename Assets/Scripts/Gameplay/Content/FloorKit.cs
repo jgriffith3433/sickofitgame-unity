@@ -97,11 +97,19 @@ namespace SickOfIt.Gameplay.Content
         [Doc("The dip the moment he lands (the telegraph), in units.")] public float dip = 0.08f;
         [SoundRef, Doc("Played when he lands on it (a hiss).")] public string sound = "";
         [Doc("Signal emitted the first time he stands on it ('' = none).")] public string signal = "";
+        [Doc("Hell's loop (The Loop, 995): it also sinks by itself every 'loopPeriod' seconds of the game clock (0 = only when stood on). " +
+             "The clock is the level's, not the stone's, so every stone with the same loop settings does the same thing at the same time, " +
+             "lap after lap, and a rewind replays it exactly.")]
+        public float loopPeriod;
+        [Doc("Where in the loop it sinks (0-1 of loopPeriod): stones in a row with rising phases sink in order.")] public float loopPhase;
+        [Doc("Seconds it shakes and hisses before it sinks by itself (at least 1: the telegraph).")] public float loopTell = 1f;
+        [Doc("Seconds it stays under before it bobs back up.")] public float loopDown = 1.5f;
 
         Vector2 home;
         float sunk;
         bool stoodOn;
         bool signalled;
+        int loopStage = -1;
 
         public override void OnSpawn()
         {
@@ -109,10 +117,53 @@ namespace SickOfIt.Gameplay.Content
             sunk = 0f;
             stoodOn = false;
             signalled = false;
+            loopStage = -1;
+        }
+
+        /// <summary>The loop's stage now: 0 up, 1 telling (shaking), 2 going under / under; -1 no loop.</summary>
+        int LoopStage(float now)
+        {
+            if (loopPeriod <= 0f)
+                return -1;
+            float period = Mathf.Max(loopPeriod, Mathf.Max(1f, loopTell) + loopDown + 0.5f);
+            float t = Mathf.Repeat(now - loopPhase * period, period);
+            float tell = Mathf.Max(1f, loopTell);
+            return t < tell ? 1 : t < tell + Mathf.Max(0.2f, loopDown) ? 2 : 0;
         }
 
         public override void Tick(float now, float dt)
         {
+            int stage = LoopStage(now);
+            if (stage != loopStage)
+            {
+                if (stage == 1)
+                    FloorKit.Record(Owner, "loopTell");
+                else if (stage == 2)
+                {
+                    SickOfIt.Core.Audio.Sfx.Play(sound);
+                    FloorKit.Record(Owner, "loopSink");
+                }
+                loopStage = stage;
+                Owner.RecordNow();
+            }
+            if (stage == 2)
+            {
+                sunk = Mathf.Min(depth, sunk + sinkSpeed * 1.4f * dt);
+                FloorKit.Moved(Owner, home + Vector2.down * sunk, dt);
+                Owner.Animation.SetBool("Sinking", true);
+                FloorKit.Tint(Owner, Color.Lerp(FloorKit.BaseColor(Owner), new Color(1f, 0.4f, 0.1f, 1f), FloorKit.HasArt(Owner) ? 0.35f : 0.7f));
+                stoodOn = Owner.World.PlayerStandsOn(Owner);
+                return;
+            }
+            if (stage == 1)
+            {
+                // The tell: it trembles and steams on the spot for a second before it goes.
+                float shake = Mathf.Sin(now * 60f) * 0.05f;
+                FloorKit.Moved(Owner, home + new Vector2(shake, -Mathf.Max(sunk, dip)), dt);
+                Owner.Animation.SetBool("Sinking", true);
+                stoodOn = Owner.World.PlayerStandsOn(Owner);
+                return;
+            }
             bool on = Owner.World.PlayerStandsOn(Owner);
             if (on && !stoodOn)
             {
@@ -150,6 +201,7 @@ namespace SickOfIt.Gameplay.Content
             writer.Float(sunk);
             writer.Bool(stoodOn);
             writer.Bool(signalled);
+            writer.Int(loopStage);
         }
 
         public override void LoadState(StateReader reader)
@@ -158,6 +210,7 @@ namespace SickOfIt.Gameplay.Content
             sunk = reader.Float();
             stoodOn = reader.Bool();
             signalled = reader.Bool();
+            loopStage = reader.Int();
         }
     }
 
@@ -381,6 +434,8 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Painted chain links laid from the pivot to the handle (instead of the drawn line).")] public ArtLoopDef chainArt = new ArtLoopDef();
         [Doc("Width of the painted chain (units).")] public float chainWidth = 0.22f;
         [SoundRef, Doc("Played when he grabs it.")] public string grabSound = "";
+        [Doc("Moves the pivot from straight above the spawn point (units): a boss whose swing hangs over a higher tier.")]
+        public Vector2 pivotOffset;
 
         Vector2 pivot;
         bool holding;
@@ -388,7 +443,7 @@ namespace SickOfIt.Gameplay.Content
 
         public override void OnSpawn()
         {
-            pivot = Owner.Position + Vector2.up * length;
+            pivot = Owner.Position + Vector2.up * length + pivotOffset;
             holding = false;
             releasedAt = -99f;
         }
@@ -485,16 +540,59 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Width of the painted chain (units).")] public float chainWidth = 0.22f;
         [Doc("Where the chain meets the platform, above its centre (units): the ring of its painted art.")] public float chainFrom = 0.2f;
         [SoundRef, Doc("Played on each jolt (clank).")] public string joltSound = "";
+        [Doc("Imps cutting its chain (Chain Lift, 994): while a live enemy with this tag is within cutRange of the lift and it is running, " +
+             "every cutEvery seconds the chain gives and the lift drops a notch (sparks, a jolt, the cutSound). Shoot the cutters and it holds. '' = none.")]
+        public string cutterTag = "";
+        public float cutRange = 6f;
+        [Doc("Seconds between cuts (the first comes a full cutEvery after he steps on: the telegraph is the imp hacking at the chain).")] public float cutEvery = 3f;
+        [Doc("How far each cut drops it (units).")] public float notch = 0.5f;
+        [Doc("Most it can drop in all.")] public float maxCut = 2f;
+        [SoundRef, Doc("Played when the chain gives.")] public string cutSound = "";
+        [Doc("Signal emitted each time the chain gives ('' = none): the hero's line at the first jolt.")] public string cutSignal = "";
 
         Vector2 home;
         float startedAt = -1f;
         int lastStage = -1;
+        float cut;
+        float cutClock;
 
         public override void OnSpawn()
         {
             home = Owner.Position;
             startedAt = startOnStand ? -1f : Owner.SpawnTime;
             lastStage = -1;
+            cut = 0f;
+            cutClock = 0f;
+        }
+
+        bool CutterNear()
+        {
+            foreach (var e in Owner.World.Live)
+                if (e != null && e.IsAlive && e.MaxHealth > 0 && e.Tags.Contains(cutterTag) && Vector2.Distance(e.Position, Owner.Position) <= cutRange)
+                    return true;
+            return false;
+        }
+
+        /// <summary>How far the imps' cuts have dropped it (the playtest reads it).</summary>
+        public float Cut => cut;
+
+        void TickCut(float dt)
+        {
+            if (string.IsNullOrEmpty(cutterTag) || startedAt < 0f || cut >= maxCut || !CutterNear())
+                return;
+            cutClock += dt;
+            if (cutClock < Mathf.Max(1f, cutEvery))
+                return;
+            cutClock = 0f;
+            cut = Mathf.Min(maxCut, cut + notch);
+            SickOfIt.Core.Audio.Sfx.Play(cutSound);
+            SickOfIt.Core.Fx.Fx.Dust(new Vector2(Owner.Position.x, FloorKit.Top(Owner)), 0.6f);
+            if (Owner.World.View.Contains(Owner.Position))
+                Owner.World.Effects.Shake(0.12f, 0.4f);
+            FloorKit.Record(Owner, "liftCut", Mathf.RoundToInt(cut * 100f));
+            Owner.RecordNow();
+            if (!string.IsNullOrEmpty(cutSignal))
+                Owner.World.Emit(cutSignal);
         }
 
         public override void Tick(float now, float dt)
@@ -505,6 +603,7 @@ namespace SickOfIt.Gameplay.Content
                 FloorKit.Record(Owner, "liftStart");
                 Owner.RecordNow();
             }
+            TickCut(dt);
             float distance = travel.magnitude;
             float move = distance / Mathf.Max(0.05f, speed);
             float j = Mathf.Max(0f, jolt);
@@ -529,7 +628,7 @@ namespace SickOfIt.Gameplay.Content
                 lastStage = stage;
             }
             float e = k * k * (3f - 2f * k);
-            Vector2 want = home + travel * e + new Vector2(0f, shake * Mathf.Sin(now * 70f) * 0.04f);
+            Vector2 want = home + travel * e + new Vector2(0f, shake * Mathf.Sin(now * 70f) * 0.04f - cut);
             FloorKit.Moved(Owner, want, dt);
 
             // The chain it hangs from, up past the top of its ride (cosmetic).
@@ -549,6 +648,8 @@ namespace SickOfIt.Gameplay.Content
             writer.Float(home.y);
             writer.Float(startedAt);
             writer.Int(lastStage);
+            writer.Float(cut);
+            writer.Float(cutClock);
         }
 
         public override void LoadState(StateReader reader)
@@ -556,6 +657,8 @@ namespace SickOfIt.Gameplay.Content
             home = new Vector2(reader.Float(), reader.Float());
             startedAt = reader.Float();
             lastStage = reader.Int();
+            cut = reader.Float();
+            cutClock = reader.Float();
         }
     }
 
@@ -960,6 +1063,8 @@ namespace SickOfIt.Gameplay.Content
         [SoundRef, Doc("Played as the vent starts to glow (a gurgle).")] public string tellSound = "";
         [SoundRef, Doc("Played as it blows.")] public string blowSound = "";
         [Doc("Camera shake as it blows, when the vent is on screen (0 = none).")] public float shake = 0.12f;
+        [Doc("Beat on the level's clock instead of from its own spawn (Hell's loop: two vents with the same offset blow together, wherever they stand).")]
+        public bool worldClock;
 
         int lastPhase = -1;
 
@@ -972,7 +1077,7 @@ namespace SickOfIt.Gameplay.Content
         {
             float t1 = Mathf.Max(1f, tell), rest = Mathf.Max(t1, off), up = Mathf.Max(0.3f, blow);
             float cycle = rest + up;
-            float t = Mathf.Repeat(now - Owner.SpawnTime + offset, cycle);
+            float t = Mathf.Repeat(now - (worldClock ? 0f : Owner.SpawnTime) + offset, cycle);
             int phase = t < rest - t1 ? 0 : t < rest ? 1 : 2;
             if (phase != lastPhase)
             {
