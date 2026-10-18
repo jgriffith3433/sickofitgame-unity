@@ -44,6 +44,8 @@
   "fallSound": "shaft_fall",
   "slamSound": "shaft_slam",
   "tickSound": "shaft_tick",
+  "plungeMusic": "shaft_plunge_music",
+  "climbMusic": "shaft_climb_music",
   "welcomeVoice": "vo_shaft_welcome",
   "heroVoice": "vo_shaft_great",
   "firstDropVoice": "vo_shaft_first_drop",

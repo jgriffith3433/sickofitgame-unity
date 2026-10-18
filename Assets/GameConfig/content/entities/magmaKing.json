@@ -713,6 +713,11 @@
         {
           "type": "emit",
           "signal": "mkEnrage"
+        },
+        {
+          "type": "playMusic",
+          "clip": "Audio/Music/magma_king_enrage.ogg",
+          "volume": 0.9
         }
       ],
       "transitions": [

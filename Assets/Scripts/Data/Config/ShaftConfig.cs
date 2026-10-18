@@ -101,6 +101,11 @@ namespace SickOfIt.Data.Config
         public string fallSound = "shaft_fall";
         public string slamSound = "shaft_slam";
         public string tickSound = "shaft_tick";
+        [Tooltip("Music on the first plunge: a falling riser whose slam lands as the marker hits the bottom (it starts with fallSound, " +
+                 "plungeSeconds before the slam).")]
+        public string plungeMusic = "";
+        [Tooltip("Music on every climb after a level: a short rising sting as the marker goes up.")]
+        public string climbMusic = "";
         [Tooltip("The announcer at the bottom, after the plunge.")]
         public string welcomeVoice = "vo_shaft_welcome";
         [Tooltip("The hero's answer.")]

@@ -38,6 +38,9 @@ namespace SickOfIt.Gameplay
 
         public bool GeneratorRunning => genMode != GenMode.Off;
 
+        /// <summary>A generated push (enemies or a hazard) is on: the Circle's push music plays (StageMusic).</summary>
+        public bool GeneratorPushing => genMode == GenMode.Hazard || GeneratorHoldsCamera;
+
         public void StartGenerator(GenerateFloorsAction action, ActionContext context)
         {
             var circle = GeneratorCircle(action);

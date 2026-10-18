@@ -18,8 +18,8 @@
       "clipLength": 5.0
     }
   ],
-  "music": "Videos/Level3_Background1_Audio.mp3",
-  "musicVolume": 1.0,
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.6,
   "platforms": [],
   "placedSprites": [],
   "enemies": [],
@@ -91,6 +91,10 @@
                 "type": "runSequence",
                 "steps": [
                   {
+                    "type": "musicVolume",
+                    "volume": 0.0
+                  },
+                  {
                     "type": "playSound",
                     "sound": "magma_rumble"
                   },
@@ -124,6 +128,10 @@
                   {
                     "type": "emit",
                     "signal": "mkIntro"
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "mk_theme_intro"
                   },
                   {
                     "type": "wait",
@@ -221,6 +229,11 @@
             "signal": "mkFight"
           },
           {
+            "type": "playMusic",
+            "clip": "Audio/Music/magma_king_theme.ogg",
+            "volume": 0.9
+          },
+          {
             "type": "showText",
             "text": "Dance for me, little spark. Hell loves a show.",
             "style": "Subtitle",
@@ -300,6 +313,10 @@
             "type": "slowMotion",
             "scale": 0.3,
             "duration": 2.0
+          },
+          {
+            "type": "musicVolume",
+            "volume": 0.25
           },
           {
             "type": "cameraShake",

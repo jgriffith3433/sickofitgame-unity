@@ -23,6 +23,14 @@ namespace SickOfIt.Core.Audio
             binder.Apply();
         }
 
+        /// <summary>The volume last given to <see cref="Set"/> (the source's own volume if it never was).</summary>
+        public static float AuthoredOf(AudioSource source)
+        {
+            if (source == null)
+                return 0f;
+            return source.TryGetComponent<MusicVolume>(out var binder) ? binder.authored : source.volume;
+        }
+
         void OnEnable() => GameSettings.Changed += Apply;
         void OnDisable() => GameSettings.Changed -= Apply;
 

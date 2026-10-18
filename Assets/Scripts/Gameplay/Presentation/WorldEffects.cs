@@ -14,6 +14,7 @@ namespace SickOfIt.Gameplay
     {
         GameplayWorld world;
         AudioSource music;
+        StageMusic stageMusic;
         WorldDef worldDef;
         Transform cameraTransform;
         float cameraZ;
@@ -61,6 +62,11 @@ namespace SickOfIt.Gameplay
             world = owner;
             music = musicSource;
             worldDef = def;
+            if (music != null)
+            {
+                stageMusic = gameObject.AddComponent<StageMusic>();
+                stageMusic.Init(owner, music);
+            }
             if (world.Camera != null)
             {
                 cameraTransform = world.Camera.transform;
@@ -359,16 +365,13 @@ namespace SickOfIt.Gameplay
         {
             if (music == null || clip == null)
                 return;
-            music.clip = clip;
-            SickOfIt.Core.Audio.MusicVolume.Set(music, volume);
-            music.loop = true;
-            music.Play();
+            stageMusic.Play(clip, volume);
         }
 
         public void MusicVolume(float volume)
         {
-            if (music != null)
-                SickOfIt.Core.Audio.MusicVolume.Set(music, volume);
+            if (stageMusic != null)
+                stageMusic.SetVolume(volume);
         }
 
         // ─── Rewind ───────────────────────────────────────────────────
@@ -385,6 +388,8 @@ namespace SickOfIt.Gameplay
             w.Float(sizeFrom); w.Float(sizeTo);
             w.Float(moveStart); w.Float(moveDuration);
             w.Int(moveEase);
+            if (stageMusic != null)
+                stageMusic.SaveState(w);
         }
 
         public void LoadState(StateReader r)
@@ -398,6 +403,8 @@ namespace SickOfIt.Gameplay
             sizeFrom = r.Float(); sizeTo = r.Float();
             moveStart = r.Float(); moveDuration = r.Float();
             moveEase = r.Int();
+            if (stageMusic != null)
+                stageMusic.LoadState(r);
             ApplyCameraSize();
             // The Static camera only moves for a script (cameraTo); put it back wherever that left it.
             if (cameraTransform != null)
