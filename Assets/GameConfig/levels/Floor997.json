@@ -1,0 +1,496 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor997",
+  "displayName": "Floor 997: Imp Run",
+  "levelNumber": 5,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 6,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 997,
+    "length": 85,
+    "floors": {
+      "start": 997,
+      "end": 996,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "ledges",
+          "direction": "Up",
+          "length": 4.6,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                -0.6,
+                -1.0
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                1.8,
+                0.3
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                4.0,
+                1.6
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                6.0,
+                2.9
+              ],
+              "id": "edge",
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "gap",
+          "direction": "Right",
+          "length": 7.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "swingChain",
+              "at": [
+                9.0,
+                5.4
+              ],
+              "id": "chain1"
+            },
+            {
+              "entity": "impSwing",
+              "at": [
+                11.4,
+                6.6
+              ],
+              "id": "impFirst",
+              "onEnter": true
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                13.0,
+                4.5
+              ],
+              "id": "mid",
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "gap2",
+          "direction": "Right",
+          "length": 13.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "swingChainB",
+              "at": [
+                16.4,
+                6.7
+              ],
+              "id": "chain2"
+            },
+            {
+              "entity": "impSwing",
+              "at": [
+                14.6,
+                7.0
+              ],
+              "id": "impA",
+              "onEnter": true
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                18.4,
+                7.0
+              ],
+              "id": "impB",
+              "onEnter": true
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                20.4,
+                5.9
+              ],
+              "id": "far",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "wall",
+          "direction": "Up",
+          "length": 5.6,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                17.6,
+                7.3
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                20.0,
+                8.6
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                17.8,
+                9.9
+              ],
+              "id": "breather",
+              "scale": [
+                1.1,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "higher",
+          "direction": "Left",
+          "length": 13.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "swingChain",
+              "at": [
+                14.6,
+                12.2
+              ],
+              "id": "chain3"
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                12.2,
+                12.3
+              ],
+              "id": "impFace",
+              "onEnter": true
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                10.8,
+                10.2
+              ],
+              "id": "mid2",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                10.6,
+                10.85
+              ],
+              "id": "glint"
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                8.2,
+                10.4
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                5.6,
+                10.6
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "top",
+          "direction": "Up",
+          "length": 4.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                3.4,
+                11.9
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "floorLanding997",
+              "at": [
+                7.4,
+                13.3
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the first imp swings by",
+        "when": {
+          "type": "sectionReached",
+          "section": "gap"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Those are ours.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_imprun_ours"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the breather: the first imps are behind him",
+        "when": {
+          "type": "sectionReached",
+          "section": "wall"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "id": "impFirst"
+            }
+          },
+          {
+            "type": "despawn",
+            "target": {
+              "id": "impA"
+            }
+          },
+          {
+            "type": "despawn",
+            "target": {
+              "id": "impB"
+            }
+          }
+        ]
+      },
+      {
+        "name": "one less sack",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "breather"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "showText",
+            "text": "One less sack for his gate.",
+            "duration": 2.6,
+            "style": "Subtitle",
+            "sound": "vo_imprun_sack"
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 996,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "IMP RUN: SURVIVED",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_imprun_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 997: IMP RUN",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f997_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

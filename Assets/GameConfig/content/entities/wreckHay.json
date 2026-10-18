@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "extends": "debrisRaftHay",
+  "tags": [
+    "foothold",
+    "wreck"
+  ],
+  "abilities": [
+    {
+      "type": "raft",
+      "current": [
+        0.3,
+        0.0
+      ],
+      "range": 0.6,
+      "bob": 0.11,
+      "bobPeriod": 2.6,
+      "rock": 3.0,
+      "tip": 8.0,
+      "phase": 0.15
+    }
+  ]
+}

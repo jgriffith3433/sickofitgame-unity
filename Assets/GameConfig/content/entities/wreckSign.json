@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "extends": "debrisRaftSign",
+  "tags": [
+    "foothold",
+    "wreck"
+  ],
+  "abilities": [
+    {
+      "type": "sink",
+      "sinkSpeed": 0.3,
+      "depth": 1.2,
+      "riseSpeed": 0.5,
+      "dip": 0.08,
+      "sound": "lava_bubble",
+      "signal": ""
+    }
+  ]
+}

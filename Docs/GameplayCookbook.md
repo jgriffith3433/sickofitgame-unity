@@ -16,7 +16,8 @@ and its story beat. Follow the pacing rules there (quiet first 5 seconds, new en
 pushes). `levels/Level1.json` (The Meadow) is the reference: phases timed to the backdrop footage, one new enemy
 at a time, a voiced line per beat, and a final phase that only checks for the clear after the last spawn. A stage
 inside Hell (a stretch of floors) is a travel stage: see "A stage that climbs through Hell's floors" below, with
-`levels/Level2.json` (The Landing) as the reference.
+`levels/Level3.json` (the old 10-floor Spill) as the reference; a floor with a path (one level = one floor, the
+layout every new floor uses) is "A floor with a path", with `levels/Floor1000.json` (The Landing) as the reference.
 
 1. Copy an existing `levels/LevelN.json` to `levels/Level11.json` (the next story level). Change `levelName`, `displayName`, `levelNumber`,
    `music`, `backgrounds`, `deathConfigName`.
@@ -335,7 +336,7 @@ for floaty jumps.
 Story stages are **travel stages**: the camera follows the player forward (never back), the ground runs along with
 it, platforms and scenery stream in ahead, and the **floor counter** ticks down as they go (HUD `FLOOR 973`, floor
 signs in the world). Between hand-written story beats the **floor generator** fills the floors from the stage's
-**Circle** (`content/circles/{id}.json`). Working example: `levels/Level2.json` ("Floors 1000-991: The Landing") in
+**Circle** (`content/circles/{id}.json`). Working example: `levels/Level3.json` ("Floors 990-981: The Spill") in
 `content/circles/emberWastes.json` (Circle X).
 
 1. **The circle** (one per Circle of Hell, shared by its stages; skip if it exists). Its `firstFloor`/`lastFloor`,
@@ -399,7 +400,15 @@ Same seed, same floors: platforms, props and pushes come from the level seed, so
 ## A floor with a path ("climb a lava fall, cross the river on a raft, climb again")
 
 The one-floor layout (Docs/LevelDesign.md, *A floor's path*): a level is one floor, and its way up turns. Working
-example: `content/scenes/climbTest.json` (the `climb` playtest plays it on Level 2's stage).
+examples: `levels/Floor1000.json` to `Floor996.json` (the first five floors) and `content/scenes/climbTest.json` (the
+`climb` playtest plays it on Level 2's stage). A floor level is `levels/Floor<floor>.json`, its `floors` are `start`
+its floor and `end` the floor above (the Shaft climbs one floor to it), and its landing beat sets the counter to `end`
+with `"skipMilestones": true` before the Grudge pick.
+
+Two layout rules the camera and the bot need: the camera only leaves a section once the hero is within the look-ahead
+(`travelLead`, 1.2) of its end, so the last foothold of an `Up` section must stand within about 1.5 of the section's
+top (a `Right` section's must reach to within 1.2 of its end), or the floor stops there. And don't hang a foothold
+less than about 1.6 over another one: jumping up from the lower one bumps his head on it (the bot can't see that).
 
 1. **The path**: a Travel `world` with `path` instead of `travelDirection`. Each section goes `Up`, `Right`, `Left`,
    `UpRight`, `UpLeft` for `length` units, or is an `Arena` (the camera holds until a `nextSection` action). `autoSpeed`

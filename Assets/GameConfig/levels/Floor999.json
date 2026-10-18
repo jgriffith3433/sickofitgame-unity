@@ -1,0 +1,476 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor999",
+  "displayName": "Floor 999: Only 999 To Go",
+  "levelNumber": 3,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 4,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 999,
+    "length": 75,
+    "floors": {
+      "start": 999,
+      "end": 998,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "ledges",
+          "direction": "Up",
+          "length": 3.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                -0.6,
+                -1.2
+              ],
+              "id": "stone1",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                1.5,
+                0.1
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                3.6,
+                1.4
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "shelf",
+          "direction": "Right",
+          "length": 9.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                5.6,
+                2.6
+              ],
+              "id": "shelf",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                5.8,
+                3.25
+              ],
+              "id": "counter"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                9.0,
+                2.6
+              ],
+              "id": "shelfEnd",
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "climb",
+          "direction": "Up",
+          "length": 9.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "sinkingStone",
+              "at": [
+                11.6,
+                3.9
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                9.6,
+                5.2
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                11.8,
+                6.5
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                9.6,
+                7.8
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                11.8,
+                9.1
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                9.4,
+                10.4
+              ],
+              "id": "lip",
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "chase",
+          "direction": "Right",
+          "length": 12.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                13.0,
+                11.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                15.8,
+                10.8
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                18.6,
+                10.9
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                21.4,
+                10.9
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "lavaSurge",
+              "at": [
+                3.0,
+                12.0
+              ],
+              "id": "wave",
+              "onEnter": true,
+              "facing": 1.0
+            }
+          ],
+          "autoSpeed": 1.0
+        },
+        {
+          "name": "up",
+          "direction": "Right",
+          "length": 4.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding999",
+              "at": [
+                25.4,
+                12.6
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the lava starts to climb",
+        "when": {
+          "type": "sectionReached",
+          "section": "climb"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.12,
+                "duration": 0.4
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.06,
+                "duration": 1.5
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaMax",
+                "value": 12.8
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.6
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "THE LAVA'S RISING! CLIMB, LITTLE MAN!",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_f999_rising",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "showText",
+                "text": "It's following me. Of course.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_f999_following"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the shelf runs out: the lava comes along it",
+        "when": {
+          "type": "sectionReached",
+          "section": "chase"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "playSound",
+            "sound": "magma_rumble"
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.25,
+            "duration": 0.8
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 998,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "999: SURVIVED! 998 TO GO!",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_f999_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 999: ONLY 999 TO GO",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_floor_999",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "showText",
+                "text": "You said that already.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_landing_999"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

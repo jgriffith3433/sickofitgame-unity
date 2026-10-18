@@ -1,0 +1,452 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor1000",
+  "displayName": "Floor 1000: The Landing",
+  "levelNumber": 2,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 3,
+  "nextLevelNumber": 0,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 1000,
+    "length": 70,
+    "floors": {
+      "start": 1000,
+      "end": 999,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "slope",
+          "direction": "Up",
+          "length": 7.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                -0.6,
+                -1.6
+              ],
+              "id": "stone1",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                1.6,
+                -0.3
+              ],
+              "id": "stone2",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                3.6,
+                1.0
+              ],
+              "id": "stone3",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                1.2,
+                2.3
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                -1.2,
+                3.6
+              ],
+              "id": "stone4",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                1.0,
+                4.9
+              ],
+              "id": "stone5",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                3.4,
+                6.2
+              ],
+              "id": "bank",
+              "scale": [
+                1.4,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "drift",
+          "direction": "Right",
+          "length": 19.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaRiver",
+              "at": [
+                11.5,
+                4.9
+              ],
+              "id": "river",
+              "scale": [
+                2.2,
+                1
+              ]
+            },
+            {
+              "entity": "floeRaft",
+              "at": [
+                6.4,
+                6.2
+              ],
+              "id": "floe",
+              "scale": [
+                1.6,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                21.4,
+                6.6
+              ],
+              "id": "farBank",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.45
+        },
+        {
+          "name": "bank",
+          "direction": "Up",
+          "length": 7.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                19.0,
+                8.1
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                16.8,
+                9.4
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                18.9,
+                10.7
+              ],
+              "id": "stone6",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                21.2,
+                12.0
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                18.9,
+                13.3
+              ],
+              "id": "lastLedge",
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "top",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding1000",
+              "at": [
+                23.6,
+                14.4
+              ],
+              "id": "landing"
+            },
+            {
+              "entity": "impFleeing",
+              "at": [
+                25.6,
+                15.3
+              ],
+              "id": "fleeingImp",
+              "onEnter": true,
+              "facing": -1
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                25.9,
+                15.0
+              ],
+              "id": "glint",
+              "onEnter": true
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the first stone sinks under him",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "stone1"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "cameraShake",
+            "intensity": 0.05,
+            "duration": 0.2
+          },
+          {
+            "type": "showText",
+            "text": "Even the floor wants me gone.",
+            "duration": 2.6,
+            "style": "Subtitle",
+            "sound": "vo_f1000_floor"
+          }
+        ]
+      },
+      {
+        "name": "the imp on the landing",
+        "when": {
+          "type": "sectionReached",
+          "section": "top"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "showText",
+                "text": "Hey. That's ours.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_f1000_ours"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 999,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "THE LANDING: SURVIVED",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_landing_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 1000: THE LANDING",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_landing_title",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "showText",
+                "text": "Floor one thousand. Of course it's a thousand.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "sound": "vo_landing_intro"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
