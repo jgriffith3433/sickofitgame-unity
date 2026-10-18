@@ -1,0 +1,24 @@
+{
+  "about": "The lava sea far below (sky seaArt rows).",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/sea, take seed 317290558 (asset a_9d0a70b55c09870b, job j_2d378d7fade6), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "FarSea",
+  "key": "none",
+  "size": [
+    1536,
+    768
+  ],
+  "pivot": [
+    768.0,
+    384.0
+  ],
+  "worldWidth": 6,
+  "widthPixels": 1536,
+  "scale": 0.5,
+  "clips": {
+    "still": {
+      "frames": "/tmp/climbart/src/_prep/seaStill/still",
+      "key": "none"
+    }
+  }
+}

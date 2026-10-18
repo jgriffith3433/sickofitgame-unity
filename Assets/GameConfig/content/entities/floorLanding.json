@@ -23,7 +23,23 @@
     "layer": "Player",
     "sortingOrder": 0,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/Landing_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "color": "#FFFFFF",
+    "facesLeft": false
   },
   "healthBar": {
     "show": false
@@ -33,9 +49,10 @@
       "type": "carved",
       "text": "{floor}",
       "words": "",
-      "color": "#FFB866",
-      "size": 1.1,
-      "above": 0.15
+      "color": "#FFB45C",
+      "size": 0.6,
+      "above": -1.1,
+      "onFace": true
     }
   ]
 }

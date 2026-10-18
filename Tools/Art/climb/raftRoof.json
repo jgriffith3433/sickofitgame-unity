@@ -1,0 +1,24 @@
+{
+  "about": "debrisRaftRoof: a piece of a cottage's thatched roof. Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot raft/roof, take seed 177050505 (asset a_b25be49a03e9918a, job j_86b0d267743c), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "RaftRoof",
+  "key": "none",
+  "size": [
+    844,
+    222
+  ],
+  "pivot": [
+    417.0,
+    155.2
+  ],
+  "worldWidth": 2.187,
+  "widthPixels": 844,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/climbart/src/_prep/raftRoof/idle",
+      "key": "none"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "about": "chainLift: the imps' lift platform, its chains meeting at a ring (the lift's chain runs up from the ring). Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lift/platform, take seed 1143222281 (asset a_401ee36114b63eaf, job j_cdca001504c0), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "ChainLift",
+  "key": "none",
+  "size": [
+    1024,
+    640
+  ],
+  "pivot": [
+    514.0,
+    510.4
+  ],
+  "worldWidth": 3.507,
+  "widthPixels": 1024,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/climbart/src/_prep/lift/idle",
+      "key": "none"
+    }
+  }
+}

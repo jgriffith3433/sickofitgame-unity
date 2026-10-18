@@ -1,0 +1,24 @@
+{
+  "about": "counterweightLeft/Right: a plank platform on chains with a pan under it. Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot counterweight/platform, take seed 2074319775 (asset a_737ffaf2e0931273, job j_37452921aca6), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "Counterweight",
+  "key": "none",
+  "size": [
+    822,
+    358
+  ],
+  "pivot": [
+    411.5,
+    261.1
+  ],
+  "worldWidth": 2.027,
+  "widthPixels": 822,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/climbart/src/_prep/counterweight/idle",
+      "key": "none"
+    }
+  }
+}

@@ -229,15 +229,24 @@
     "seaLevel": -6.0,
     "seaParallax": 0.9,
     "seaMinOnScreen": 0.06,
+    "seaArt": {
+      "sheet": "Art/Climb/FarSea_still.png",
+      "spriteNameFilter": "",
+      "fps": 1,
+      "scroll": 0.02,
+      "color": "#B8786A"
+    },
+    "seaArtHeight": 2.4,
     "layers": [
       {
         "name": "far spires",
+        "sprite": "Art/Climb/Spires_still.png#still_00",
         "shape": "Spire",
-        "color": "#2A0C08D9",
-        "size": [1.0, 3.4],
+        "color": "#6A4A44C0",
+        "size": [2.0, 2.4],
         "sizeVariation": 0.35,
         "parallax": [0.92, 0.9],
-        "spacing": [2.2, 1.0],
+        "spacing": [3.0, 1.0],
         "chance": 0.75,
         "onSea": true,
         "order": 0
@@ -256,39 +265,89 @@
       },
       {
         "name": "far islands",
+        "sprite": "Art/Climb/Island_still.png#still_00",
         "shape": "Rock",
-        "color": "#2E0F0A",
-        "size": [1.2, 0.9],
+        "color": "#6A4C46D0",
+        "size": [1.5, 0.9],
         "sizeVariation": 0.35,
         "parallax": [0.88, 0.8],
         "spacing": [4.0, 3.5],
         "chance": 0.45,
-        "hanging": true,
+        "hanging": false,
         "order": 2
       },
       {
         "name": "near spires",
+        "sprite": "Art/Climb/Spires_still.png#still_00",
         "shape": "Spire",
-        "color": "#1A0706",
-        "size": [1.6, 5.0],
+        "color": "#B09088",
+        "size": [3.2, 3.8],
         "sizeVariation": 0.3,
         "parallax": [0.8, 0.9],
-        "spacing": [3.4, 1.0],
+        "spacing": [4.6, 1.0],
         "chance": 0.6,
         "onSea": true,
         "order": 3
       },
       {
         "name": "floating islands",
+        "sprite": "Art/Climb/Island_still.png#still_00",
         "shape": "Rock",
-        "color": "#1C0907",
-        "size": [2.2, 1.6],
+        "color": "#C0A49C",
+        "size": [2.6, 1.5],
         "sizeVariation": 0.3,
         "parallax": [0.7, 0.6],
         "spacing": [6.0, 5.0],
         "chance": 0.45,
-        "hanging": true,
+        "hanging": false,
         "order": 4
+      }
+    ],
+    "bands": [
+      {
+        "name": "low haze",
+        "art": {
+          "sheet": "Art/Climb/Haze_band.png",
+          "spriteNameFilter": "",
+          "fps": 1,
+          "scroll": 0.03,
+          "color": "#FFFFFFB0"
+        },
+        "anchor": "Sea",
+        "offset": 0.9,
+        "height": 2.0,
+        "parallax": 0.9,
+        "order": 1
+      },
+      {
+        "name": "high haze",
+        "art": {
+          "sheet": "Art/Climb/Haze_band.png",
+          "spriteNameFilter": "",
+          "fps": 1,
+          "scroll": -0.02,
+          "color": "#FFFFFF60"
+        },
+        "anchor": "Sea",
+        "offset": 4.2,
+        "height": 2.6,
+        "parallax": 0.82,
+        "order": 3
+      },
+      {
+        "name": "ceiling glow",
+        "art": {
+          "sheet": "Art/Climb/Ceiling_band.png",
+          "spriteNameFilter": "",
+          "fps": 1,
+          "scroll": 0,
+          "color": "#C08070"
+        },
+        "anchor": "Top",
+        "offset": 0.35,
+        "height": 1.1,
+        "parallax": 0.95,
+        "order": -1
       }
     ],
     "embers": 28,
@@ -376,7 +435,47 @@
             "scale": [1.2, 1]
           },
           {
-            "entity": "debrisRaft",
+            "entity": "debrisRaftRoof",
+            "at": [7.0, -1.6],
+            "anchor": "Section"
+          },
+          {
+            "entity": "ledge",
+            "at": [10.5, -0.25],
+            "anchor": "Section",
+            "scale": [1.2, 1]
+          }
+        ]
+      }
+    },
+    {
+      "name": "wreck drift",
+      "weight": 0.8,
+      "fromFloor": 996,
+      "section": {
+        "name": "wreck drift",
+        "direction": "Right",
+        "length": 10.0,
+        "spawns": [
+          {
+            "entity": "ledge",
+            "at": [0.0, -0.25],
+            "anchor": "Section",
+            "scale": [1.2, 1]
+          },
+          {
+            "entity": "lavaRiver",
+            "at": [6.0, -2.0],
+            "anchor": "Section"
+          },
+          {
+            "entity": "debrisRaftSign",
+            "at": [3.0, -1.6],
+            "anchor": "Section",
+            "scale": [1.2, 1]
+          },
+          {
+            "entity": "debrisRaftHay",
             "at": [7.0, -1.6],
             "anchor": "Section"
           },

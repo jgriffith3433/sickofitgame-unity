@@ -1,0 +1,24 @@
+{
+  "about": "Smoke and heat haze over the far sea (sky band).",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot backdrop/haze, take seed 1851001411 (asset a_1025f13b3330980b, job j_7145cf515655), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "Haze",
+  "key": "none",
+  "size": [
+    1383,
+    478
+  ],
+  "pivot": [
+    691.5,
+    239.0
+  ],
+  "worldWidth": 6,
+  "widthPixels": 1383,
+  "scale": 0.5,
+  "clips": {
+    "band": {
+      "frames": "/tmp/climbart/src/_prep/haze/band",
+      "key": "none"
+    }
+  }
+}

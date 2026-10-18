@@ -1,0 +1,24 @@
+{
+  "about": "debrisRaftHay: a bale of hay, one end on fire. Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot raft/hay, take seed 91161154 (asset a_4358501002424c35, job j_41b02e82a525), picked by hawkesgen_entity_judge.",
+  "out": "Assets/Art/Climb",
+  "name": "RaftHay",
+  "key": "none",
+  "size": [
+    818,
+    249
+  ],
+  "pivot": [
+    393.5,
+    85.9
+  ],
+  "worldWidth": 2.214,
+  "widthPixels": 818,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/climbart/src/_prep/raftHay/idle",
+      "key": "none"
+    }
+  }
+}
