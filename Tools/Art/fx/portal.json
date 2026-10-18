@@ -1,0 +1,19 @@
+{
+  "about": "Level 1's portal (entity portal + portalScorch), Hawkes Gen art. Replaces portal-interim.json's sheets with the same cell (466x251), pivot and frame counts (open 24, loop 32, close 24), so no data or timing changes: crop and count pin them.",
+  "gpu": "Sources, in --src: portal.png = the take of image.paint j_8e77cf45dddc (3 takes, magenta plate) picked by hawkesgen_entity_judge against the Meadow art and Video2's fire tunnel (10.6-14.5 s); scorch.png = image.edit of that take (the hole burnt out to an opaque black-and-brown charred patch on the same turf; a translucent shadow keys to purple on magenta); open.mp4 = video.i2v scorch.png -> portal.png, loop.mp4 = video.i2v portal.png -> portal.png, close.mp4 = video.i2v portal.png -> scorch.png (flare and shrink), all 832x480 on the magenta plate. If a piece judges worse than the interim art, keep the interim sheet (don't bake that clip).",
+  "out": "Assets/Art/Effects/Portal",
+  "name": "Portal",
+  "key": "magenta",
+  "size": [832, 480],
+  "pivot": [416, 300],
+  "crop": [62, 0, 761, 376],
+  "worldWidth": 1.5,
+  "widthPixels": 536,
+  "scale": 0.667,
+  "clips": {
+    "open": { "video": "open.mp4", "fps": 16, "count": 24 },
+    "loop": { "video": "loop.mp4", "fps": 16, "drop_last": true, "count": 32 },
+    "close": { "video": "close.mp4", "fps": 24, "count": 24 },
+    "scorch": { "image": "scorch.png" }
+  }
+}

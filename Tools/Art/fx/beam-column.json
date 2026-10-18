@@ -1,0 +1,14 @@
+{
+  "about": "The Overlord's beam column from the sky (entity overlordBeam), Hawkes Gen art. Same cell (96x768), pivot (its foot) and 6 frames as beam-column-interim.json; 7 units tall.",
+  "gpu": "Source, in --src: column.png = image.paint j_f85d344defd1 (one burning column, black plate, 512x1536; squeezed into the 192-wide frame like the interim).",
+  "out": "Assets/Art/Effects/Beam",
+  "name": "Beam",
+  "key": "black",
+  "size": [192, 1536],
+  "pivot": [96, 1536],
+  "crop": [0, 0, 192, 1536],
+  "worldWidth": 7.0,
+  "widthPixels": 1536,
+  "scale": 0.5,
+  "clips": { "column": { "image": "column.png", "make": "column", "frames": 6 } }
+}

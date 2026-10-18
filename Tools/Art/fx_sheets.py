@@ -15,9 +15,12 @@ A job file says what to bake:
       "pivot": [416, 262],                         the pivot in that frame (the ground point the entity stands on)
       "worldWidth": 1.5, "widthPixels": 600,       pixels per unit = widthPixels * scale / worldWidth
       "scale": 0.5,                                cells are scaled by this after cropping
+      "crop": [x0, y0, x1, y1],                    optional: a fixed box in that frame instead of the art's own bounds
+                                                   (every bake prints the box it used; copy it to keep a re-bake's
+                                                   cell size, pivot and world size identical)
       "clips": {
         "open":   { "video": "open.mp4", "fps": 16, "start": 0, "end": 0, "drop_last": false },
-        "loop":   { "video": "loop.mp4", "fps": 16, "drop_last": true },
+        "loop":   { "video": "loop.mp4", "fps": 16, "drop_last": true, "count": 32 },   count: exactly this many frames
         "scorch": { "image": "scorch.png" },
         "swirl":  { "frames": "swirl/", "key": "none" },   a folder of PNGs; key "none" keeps their own alpha
         "charge": { "image": "glow.png", "make": "charge", "frames": 15 }
@@ -259,7 +262,7 @@ def main():
             clip_key = {"magenta": key_magenta, "black": key_black, "none": None}[c["key"]] if "key" in c else keyer
             keyed = (lambda im: clip_key(np.asarray(im.convert("RGB").resize(size, Image.LANCZOS)))) if clip_key else \
                 (lambda im: np.asarray(im.convert("RGBA").resize(size, Image.LANCZOS)))
-            if "frames" in c:
+            if isinstance(c.get("frames"), str):
                 folder = src(c["frames"])
                 frames = [keyed(Image.open(os.path.join(folder, f))).astype(np.float32)
                           for f in sorted(os.listdir(folder)) if f.lower().endswith(".png")]
@@ -269,6 +272,10 @@ def main():
                     raw = raw[:-1]
                 if c.get("reverse"):
                     raw = raw[::-1]
+                if c.get("count") and len(raw) != c["count"]:
+                    # Exactly count frames, picked evenly, so a clip of any length keeps the entity's frame count and timing.
+                    n = c["count"]
+                    raw = [raw[min(len(raw) - 1, int(i * len(raw) / n))] for i in range(n)]
                 frames = [keyed(f).astype(np.float32) for f in raw]
             else:
                 still = keyed(Image.open(src(c["image"]))).astype(np.float32)
@@ -287,8 +294,16 @@ def main():
         sys.exit("everything keyed out")
     px, py = job["pivot"]
     pad = 4
-    x0, x1 = max(0, xs.min() - pad), min(size[0], xs.max() + 1 + pad)
-    y0, y1 = max(0, ys.min() - pad), min(size[1], ys.max() + 1 + pad)
+    if "crop" in job:
+        # A fixed box: a new take re-baked over an old one keeps its cell size, pivot and world size exactly.
+        x0, y0, x1, y1 = job["crop"]
+        if xs.min() < x0 or ys.min() < y0 or xs.max() >= x1 or ys.max() >= y1:
+            print(f"warning: art reaches outside crop {job['crop']} (it spans {xs.min()},{ys.min()},{xs.max() + 1},{ys.max() + 1}); "
+                  "the edge is cut off")
+    else:
+        x0, x1 = max(0, xs.min() - pad), min(size[0], xs.max() + 1 + pad)
+        y0, y1 = max(0, ys.min() - pad), min(size[1], ys.max() + 1 + pad)
+    print(f"crop: [{x0}, {y0}, {x1}, {y1}]")
     scale = job.get("scale", 1.0)
     cell_w, cell_h = max(1, round((x1 - x0) * scale)), max(1, round((y1 - y0) * scale))
     pivot = ((px - x0) / (x1 - x0), 1.0 - (py - y0) / (y1 - y0))
