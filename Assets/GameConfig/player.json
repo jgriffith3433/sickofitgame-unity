@@ -281,7 +281,7 @@
     {
       "id": "juiceBox",
       "title": "Loop Jar",
-      "description": "A loop shard he swallowed, coughed up in a jar. +1 second of Déjà Vu.",
+      "description": "A loop shard one of the damned dropped. He keeps it in a jar. +1 second of Déjà Vu.",
       "costsPerLevel": [12, 25, 40],
       "maxLevel": 3,
       "effect": "RewindJuice",

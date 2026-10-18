@@ -227,7 +227,7 @@ is proud of). His voice is `gloob` (designed for him: fast, wet, gurgling, a bit
   | Slick Heels | runs 8% faster | slime on the heels |
   | Licked Trigger | fires 10% faster | he licked it |
   | Tummy-Dipped Shots | 15% more damage | every shot dipped in his stomach |
-  | Loop Jar | +1 s of Déjà Vu (rewind) | a loop shard he swallowed, coughed up in a jar |
+  | Loop Jar | +1 s of Déjà Vu (rewind) | a loop shard one of the damned dropped; he only keeps it in a jar |
   | Shiny Sniffer | diamonds come from farther away | a wobbly bit of Gloob that sniffs out diamonds |
 - He gossips, he counts, he is proud of his stomach. He is never scared for long and never mean. Slimes are
   villagers: nobody in the game ever fights him or his kind.
