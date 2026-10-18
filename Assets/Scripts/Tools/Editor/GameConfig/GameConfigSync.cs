@@ -135,6 +135,10 @@ namespace SickOfIt.Tools.Editor.GameConfig
         /// </summary>
         public static void ImportForBuild(string reason)
         {
+            // A checkout without Git LFS leaves the 130-byte pointer text in place of the asset; say so instead of "not found".
+            if (File.Exists(DefinitionPath) && File.ReadAllText(DefinitionPath).StartsWith("version https://git-lfs", StringComparison.Ordinal))
+                throw new BuildFailedException($"Game config import FAILED ({reason}): {DefinitionPath} is a Git LFS pointer, not the asset. Run `git lfs pull` on this checkout.");
+
             var report = ImportNow(reason);
             if (!report.Success)
                 throw new BuildFailedException($"Game config import FAILED ({reason}): the game config has errors. See {GameConfigReport.LogPath}.");
@@ -152,7 +156,17 @@ namespace SickOfIt.Tools.Editor.GameConfig
                 if (check.Definition != null)
                     Object.DestroyImmediate(check.Definition);
             }
-            Debug.Log($"Game config verified for the build ({reason}): {DefinitionPath} matches Assets/GameConfig ({HashFiles().Count(p => p.Key != DefinitionKey)} files, fingerprint {Fingerprint()}).");
+            var definition = LoadDefinition();
+            // One line per build: the JSON's fingerprint (matches a commit), the hash of the data the player will load,
+            // and its level count, so a stale build shows in the Unity log without playing it.
+            Debug.Log($"Game config verified for the build ({reason}): {DefinitionPath} matches Assets/GameConfig ({HashFiles().Count(p => p.Key != DefinitionKey)} files, fingerprint {Fingerprint()}, data {DataHash(definition)}, {definition.levels.Count} levels, {(report.Notes.Contains("GameDefinition updated from JSON.") ? "rewritten from JSON" : "already current")}).");
+        }
+
+        /// <summary>Short hash of GameDefinition's serialized data: what the built player actually loads.</summary>
+        public static string DataHash(GameDefinition definition)
+        {
+            using (var sha = SHA1.Create())
+                return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(EditorJsonUtility.ToJson(definition))), 0, 6).Replace("-", "").ToLowerInvariant();
         }
 
         /// <summary>Short hash of every GameConfig file, logged with each build so a build's data can be matched to a commit.</summary>
