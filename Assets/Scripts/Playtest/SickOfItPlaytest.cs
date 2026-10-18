@@ -81,11 +81,14 @@ namespace SickOfIt.Playtest
         public const int OverlayVideo = 2;
         public const string OverlayName = "heroFall";
 
-        /// <summary>The story-path scenario: the video that must play before each story level, in order (Docs/Story.md, "Level numbers").</summary>
-        static readonly (int video, int level)[] StoryPath = { (1, 1), (2, 2), (3, 3) };
+        /// <summary>
+        /// The story-path scenario: each story level in order and the video that must play before it (0 = none: the level
+        /// starts straight after the Shaft that follows the one before). Docs/Story.md, "Level numbers".
+        /// </summary>
+        static readonly (int video, int level)[] StoryPath = { (1, 1), (2, 2), (3, 3), (0, 4), (0, 5), (0, 6) };
         /// <summary>The Landing (Level 2): the floors its counter must run through, and the milestone it must play.</summary>
         public const int LandingLevel = 2, LandingFirstFloor = 1000, LandingLastFloor = 991, LandingMilestone = 999;
-        const float StoryPathSeconds = 900f;
+        const float StoryPathSeconds = 1500f;
         /// <summary>The shaft scenario: the level after the plunge whose climb it watches (The Landing).</summary>
         public const int ShaftLevel = 2;
         const float ShaftSeconds = 480f;
@@ -121,6 +124,15 @@ namespace SickOfIt.Playtest
                             "the results); move, jump, fire and R are pressed during it and must do nothing, and he takes no damage";
                     seconds += 30f;
                 }
+                else if (name != null && name.StartsWith("Floors ", StringComparison.Ordinal))
+                {
+                    what += ": a stage of Hell, checked as it plays: its title banner (\"FLOORS N-M: PLACE\") and hero lines with their voices, the floor " +
+                            "counter running from its first floor to its last, its carved sign at the start, at most one new enemy type and the first one alone, " +
+                            "a breather of 3+ s with nothing attacking, no more than 3 enemies at once, a repeated floor shown on two signs where the stage has one " +
+                            "(The Loop), 60-120 s, the Grudge pick; then Continue on the results, the Shaft's climb to its last floor, and what comes next " +
+                            "(the next stage, video or the level select)";
+                    seconds += 40f;
+                }
                 list.Add(new PlaytestScenario("level-" + n, what, seconds, "full", "level"));
             }
             list.Add(new PlaytestScenario("imp-death", $"Level {ImpLevel}'s imps, started directly (setup shortcut): the bot kills them and each imp's Die clip " +
@@ -137,8 +149,10 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
             list.Add(new PlaytestScenario("story-path", "New Game through the story path with the real flow: Video1, Level 1 (the Meadow and its portal " +
                 $"scene), Video2, Level 2 (Floors {LandingFirstFloor}-{LandingLastFloor}: The Landing, no arcade level in between: its floor counter runs " +
-                $"{LandingFirstFloor} to {LandingLastFloor} and the \"ONLY {LandingMilestone} TO GO\" beat plays), Video3 (Gloob, watched a few seconds), Level 3 " +
-                "(The Spill), then the level select, whose cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
+                $"{LandingFirstFloor} to {LandingLastFloor} and the \"ONLY {LandingMilestone} TO GO\" beat plays), Video3 (Gloob, watched a few seconds), then the " +
+                "Ember Wastes stages one after another with no video between them: Level 3 (Floors 990-981: The Spill), Level 4 (980-971: Imp Run), Level 5 " +
+                "(970-961: The Slag Falls), Level 6 (960-951: The Loop), each with its title, voiced lines, floor counter, new enemy alone and breather checked " +
+                "and the Shaft's climb after it; then the level select, whose cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
             list.Add(new PlaytestScenario("shaft", $"The Shaft, Hell's map, through the real flow: Video {OverlayVideo} loaded directly (setup shortcut; the Shaft's save is " +
                 "reset so this is the first plunge) and skipped, then the plunge from the Meadow past all 10 Circle bands to FLOOR 1,000 (Space pressed " +
                 "mid-fall must not skip the first one), the slam, the announcer's \"nine hundred ninety-nine to go\" and the hero's \"...Great.\"; " +
@@ -350,6 +364,8 @@ namespace SickOfIt.Playtest
                         Run.Event("upgrade", $"{level}: {e.Subject} -> {e.Value}");
                         if (portal != null && !portal.Started)
                             portal.Picked = true;
+                        if (stage != null && stage.Level == log.World.LevelNumber)
+                            stage.Picked = true;
                         break;
                     case "milestone":
                         Run.Event("milestone", $"{level}: {e.Subject}");
@@ -476,7 +492,11 @@ namespace SickOfIt.Playtest
                     yield return load;
                 // Level 1 ends in the portal scene: watch it beat by beat, then follow the game on into Video2.
                 portal = n == PortalLevel ? new PortalWatch() : null;
-                yield return PlayLevel(n, 0f, portal != null ? PortalDuring : (Func<float, IEnumerator>)null);
+                // A floor stage: its title, lines, new enemy, breathers, then the Shaft's climb after it, each a check event.
+                stageChecksFailed = 0;
+                stage = portal == null && IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
+                yield return PlayLevel(n, 0f, portal != null ? PortalDuring : stage != null ? StageDuring : (Func<float, IEnumerator>)null,
+                    0f, stage != null ? 0.85f : 1f);
                 LastLevelOutcome = lastOutcome;
                 if (Run.Done)
                     yield break;
@@ -487,11 +507,294 @@ namespace SickOfIt.Playtest
                     if (Run.Done)
                         yield break;
                 }
+                if (stage != null)
+                {
+                    FinishStage(lastOutcome);
+                    // The editor's PlayMode playtests load levels themselves and stop at the results; the build follows the flow on.
+                    if (lastOutcome == "completed" && LoadLevel == DefaultLoadLevel)
+                        yield return StageAfter(n, StageCheck);
+                    stage = null;
+                    if (Run.Done)
+                        yield break;
+                }
                 Run.Progress(1f);
-                End(lastOutcome == "completed" ? PlaytestOutcome.Won
+                End(stageChecksFailed > 0 ? PlaytestOutcome.Done
+                    : lastOutcome == "completed" ? PlaytestOutcome.Won
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
                     : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
                     : PlaytestOutcome.Done);
+            }
+
+            // ─── Floor stages: what each level-n (and the story path) checks on a stage of Hell ─────
+
+            /// <summary>
+            /// What a floor stage showed while the bot played it: banners and subtitles (with their voices), the floor
+            /// counter, its own carved sign, the stage's new enemy (Circle entries whose fromFloor is inside the stage)
+            /// and whether it came alone, the longest stretch with nothing hostile alive, and the most enemies at once.
+            /// </summary>
+            sealed class StageWatch
+            {
+                public readonly int Level;
+                public readonly Action<string, bool, string> Check;
+                public readonly int Start, End;
+                public readonly string Place, Sign;
+                public readonly List<int> Repeat = new List<int>();
+                public readonly List<string> NewTypes = new List<string>();
+                public readonly Dictionary<string, string> Sounds = new Dictionary<string, string>();
+                public readonly List<int> Floors = new List<int>();
+                public readonly List<(string text, bool voiced)> Banners = new List<(string, bool)>(), Lines = new List<(string, bool)>();
+                public string LastBanner = "", LastLine = "";
+                public int NewSerial = -1, OthersAtNewSpawn = -1, MaxEnemies, MostSameSign;
+                public bool NewAlone = true, SignSeen, Picked;
+                public float FirstHostileAt = -1f, QuietSince = -1f, LongestQuiet, Clock;
+
+                public StageWatch(int level, Action<string, bool, string> check)
+                {
+                    Level = level;
+                    Check = check;
+                    var config = GameDefinition.Instance.GetLevel(level);
+                    string display = config != null ? config.displayName ?? "" : "";
+                    int colon = display.IndexOf(": ", StringComparison.Ordinal);
+                    Place = colon >= 0 ? display.Substring(colon + 2) : display;
+                    var content = GameContent.Current;
+                    SickOfIt.Gameplay.Content.LevelScript script = null;
+                    if (config != null && content != null)
+                        content.LevelScripts.TryGetValue(config.levelName, out script);
+                    if (script == null)
+                        return;
+                    Start = script.floors.start;
+                    End = script.floors.end;
+                    Sign = script.floors.sign ?? "";
+                    if (script.floors.repeat != null)
+                        Repeat.AddRange(script.floors.repeat);
+                    if (content.Circles.TryGetValue(script.floors.circle ?? "", out var circle))
+                        foreach (var e in circle.enemies)
+                            if (e.fromFloor <= Start && e.fromFloor >= End && !NewTypes.Contains(e.entity))
+                                NewTypes.Add(e.entity);
+                    // Which sound each on-screen line speaks with, so a shown line can be checked for its voice.
+                    var actions = new List<SickOfIt.Gameplay.Content.GameAction>();
+                    foreach (var rule in script.rules)
+                        actions.AddRange(rule.@do);
+                    foreach (var phase in script.phases)
+                    {
+                        actions.AddRange(phase.onEnter);
+                        foreach (var rule in phase.rules)
+                            actions.AddRange(rule.@do);
+                    }
+                    for (int i = 0; i < actions.Count; i++)
+                    {
+                        if (actions[i] is SickOfIt.Gameplay.Content.ShowTextAction show && !string.IsNullOrEmpty(show.text))
+                            Sounds[show.text] = show.sound ?? "";
+                        actions[i]?.CollectChildren(actions);
+                    }
+                }
+            }
+
+            StageWatch stage;
+            int stageChecksPassed, stageChecksFailed;
+
+            static bool IsFloorStage(int n)
+            {
+                ShaftScreen.LevelFloors(n, out int start, out int end);
+                return start > 0 && end > 0;
+            }
+
+            void StageCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    stageChecksPassed++;
+                    Run.Event("check", $"stage {beat}: ok ({detail})");
+                }
+                else
+                {
+                    stageChecksFailed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"stage {beat}: {detail}");
+                }
+                Run.Metric("stage.passed", stageChecksPassed);
+                Run.Metric("stage.failed", stageChecksFailed);
+            }
+
+            /// <summary>Called every frame of a floor stage (PlayLevel's 'during'): reads what is on screen, changes nothing.</summary>
+            IEnumerator StageDuring(float now)
+            {
+                var s = stage;
+                var world = GameplayWorld.Instance;
+                if (s == null || world == null || world.Player == null)
+                    return null;
+                s.Clock = now;
+                if (world.Stage != null && world.Stage.HasFloors && (s.Floors.Count == 0 || s.Floors[s.Floors.Count - 1] != world.Stage.Floor))
+                    s.Floors.Add(world.Stage.Floor);
+
+                var hud = world.Hud;
+                if (hud != null)
+                {
+                    string banner = hud.BannerShown, line = hud.SubtitleShown;
+                    if (banner.Length > 0 && banner != s.LastBanner)
+                        s.Banners.Add((banner, SaidAs(s, "banner", banner)));
+                    if (line.Length > 0 && line != s.LastLine)
+                        s.Lines.Add((line, SaidAs(s, "line", line)));
+                    s.LastBanner = banner;
+                    s.LastLine = line;
+                }
+
+                // Enemies (hostile, with health) and anything hostile at all (shots, slag) for the breathers.
+                int enemies = 0, hostile = 0;
+                Entity fresh = null;
+                foreach (var e in world.Live)
+                {
+                    if (e == null || !e.IsAlive || !world.Player.IsHostileTo(e))
+                        continue;
+                    hostile++;
+                    if (e.MaxHealth <= 0)
+                        continue;
+                    enemies++;
+                    if (s.NewSerial < 0 && s.NewTypes.Contains(e.DefId))
+                        fresh = e;
+                }
+                s.MaxEnemies = Mathf.Max(s.MaxEnemies, enemies);
+                if (fresh != null)
+                {
+                    s.NewSerial = fresh.Serial;
+                    s.OthersAtNewSpawn = enemies - 1;
+                    Run.Event("new-enemy", $"level {s.Level}: the first {fresh.DefId} arrives at {now:0.0} s with {enemies - 1} other enemies alive");
+                }
+                else if (s.NewSerial >= 0 && s.NewAlone)
+                {
+                    var first = world.FindBySerial(s.NewSerial);
+                    if (first != null && first.IsAlive && enemies > 1)
+                    {
+                        s.NewAlone = false;
+                        Run.Event("new-enemy", $"level {s.Level}: another enemy joined the first {first.DefId} at {now:0.0} s");
+                    }
+                }
+                if (hostile > 0)
+                {
+                    if (s.FirstHostileAt < 0f)
+                        s.FirstHostileAt = now;
+                    if (s.QuietSince >= 0f && now - s.QuietSince >= 3f)
+                        Run.Event("breather", $"level {s.Level}: {now - s.QuietSince:0.0} s with nothing attacking, until {now:0.0} s");
+                    s.QuietSince = -1f;
+                }
+                else if (s.FirstHostileAt >= 0f)
+                {
+                    if (s.QuietSince < 0f)
+                        s.QuietSince = now;
+                    s.LongestQuiet = Mathf.Max(s.LongestQuiet, now - s.QuietSince);
+                }
+
+                var track = world.Effects != null ? world.Effects.Track : null;
+                if (track != null)
+                {
+                    var words = track.SignWords();
+                    if (s.Sign.Length > 0 && !s.SignSeen && words.Contains(s.Sign))
+                    {
+                        s.SignSeen = true;
+                        Run.Event("sign", $"level {s.Level}: \"{s.Sign}\" stands at the start");
+                    }
+                    foreach (int f in s.Repeat)
+                    {
+                        int same = words.FindAll(w => w == f.ToString()).Count;
+                        if (same > s.MostSameSign)
+                        {
+                            s.MostSameSign = same;
+                            Run.Event("sign", $"level {s.Level}: {same} signs read {f} at once (FLOOR {world.Stage?.Floor} on the counter)");
+                        }
+                    }
+                }
+                return null;
+            }
+
+            /// <summary>A banner or subtitle just appeared: logs it with its voice (the script's sound for that text).</summary>
+            bool SaidAs(StageWatch s, string kind, string text)
+            {
+                s.Sounds.TryGetValue(text, out string sound);
+                bool voiced = !string.IsNullOrEmpty(sound) && Sfx.Has(sound);
+                Run.Event(kind, $"level {s.Level}: \"{text}\" ({(string.IsNullOrEmpty(sound) ? "no sound" : sound)}" +
+                                $"{(string.IsNullOrEmpty(sound) ? "" : $", {Sfx.LengthOf(sound):0.0} s{(voiced ? "" : ", NO CLIP")}")})");
+                return voiced;
+            }
+
+            /// <summary>The stage's checks once the bot is done with it (Docs/Story.md, "Rules for levels").</summary>
+            void FinishStage(string outcome)
+            {
+                var s = stage;
+                if (s == null)
+                    return;
+                bool completed = outcome == "completed";
+                var check = s.Check;
+                string prefix = "level" + s.Level + ".";
+
+                string wantTitle = $"FLOORS {s.Start}-{s.End}: {s.Place.ToUpperInvariant()}";
+                var title = s.Banners.Find(b => b.text == wantTitle);
+                check(prefix + "title", title.text != null && title.voiced,
+                    title.text != null ? $"\"{title.text}\" {(title.voiced ? "voiced by the announcer" : "shown WITHOUT its voice")}"
+                        : $"no \"{wantTitle}\" banner (saw {string.Join(" | ", s.Banners.ConvertAll(b => b.text))})");
+                int voicedLines = s.Lines.FindAll(l => l.voiced).Count;
+                check(prefix + "heroLine", voicedLines >= 1,
+                    $"{voicedLines} voiced subtitle line(s): {string.Join(" | ", s.Lines.ConvertAll(l => l.text + (l.voiced ? "" : " (no voice)")))}");
+
+                string seen = s.Floors.Count > 0 ? string.Join(" ", s.Floors) : "none";
+                Run.Event("floors", $"level {s.Level}: {seen}");
+                int lowest = s.Floors.Count > 0 ? s.Floors[s.Floors.Count - 1] : int.MaxValue;
+                check(prefix + "floors", s.Floors.Count > 0 && s.Floors[0] == s.Start && (completed ? lowest == s.End : lowest >= s.End),
+                    $"the floor counter ran {seen} (want {s.Start} down to {s.End}; level {outcome})");
+                if (s.Sign.Length > 0)
+                    check(prefix + "sign", s.SignSeen, s.SignSeen ? $"the stage's sign \"{s.Sign}\" stood at the start" : $"no \"{s.Sign}\" sign seen");
+
+                if (s.NewTypes.Count == 0)
+                    check(prefix + "newEnemy", true, "no new enemy type on this stage");
+                else
+                    check(prefix + "newEnemy", s.NewTypes.Count == 1 && s.NewSerial >= 0 && s.OthersAtNewSpawn == 0 && s.NewAlone,
+                        s.NewTypes.Count > 1 ? $"{s.NewTypes.Count} new enemy types: {string.Join(", ", s.NewTypes)} (at most one per stage)"
+                        : s.NewSerial < 0 ? $"the new enemy ({s.NewTypes[0]}) never appeared"
+                        : $"the first {s.NewTypes[0]} arrived with {s.OthersAtNewSpawn} other enemies alive{(s.NewAlone ? " and stayed alone" : ", and another joined it")}");
+                check(prefix + "breather", s.LongestQuiet >= 3f, $"longest stretch with nothing attacking after the first push: {s.LongestQuiet:0.0} s (want 3+)");
+                check(prefix + "maxEnemies", s.MaxEnemies <= 3, $"at most {s.MaxEnemies} enemies on screen at once (Circle X allows 3)");
+                if (s.Repeat.Count > 0)
+                    check(prefix + "loop", s.MostSameSign >= 2, $"{s.MostSameSign} signs with the repeated floor ({string.Join(", ", s.Repeat)}) seen at once (want 2: Hell repeats it)");
+                if (completed)
+                {
+                    check(prefix + "length", s.Clock >= 60f && s.Clock <= 120f, $"cleared in {s.Clock:0} s of game time (target 60-120)");
+                    check(prefix + "grudge", s.Picked, s.Picked ? "a Grudge was picked at the end" : "no Grudge pick at the end");
+                }
+            }
+
+            /// <summary>After a cleared stage: Continue on the results, the Shaft's climb, then the next level (or video, or the level select).</summary>
+            IEnumerator StageAfter(int n, Action<string, bool, string> check)
+            {
+                var texts = GameDefinition.Instance.menuTheme.texts;
+                var left = GameplayWorld.Instance;
+                yield return Run.Until(() => GameplayWorld.Instance == null || GameplayWorld.Instance.Hud == null || GameplayWorld.Instance.Hud.ResultsOpen,
+                    30f, $"the level {n} results screen");
+                if (Run.Done) yield break;
+                if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
+                    yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
+                if (Run.Done) yield break;
+                Run.Progress(0.9f);
+                yield return WatchClimb(n, check);
+                if (Run.Done) yield break;
+
+                var config = GameDefinition.Instance.GetLevel(n);
+                int nextLevel = config != null && config.nextVideoNumber <= 0 ? config.nextLevelNumber : 0;
+                int nextVideo = config != null ? config.nextVideoNumber : 0;
+                yield return Run.Until(() => ShaftScreen.Current == null && (Object.FindAnyObjectByType<VideoRuntime>() != null
+                                                                             || Object.FindAnyObjectByType<LevelSelectionManager>() != null
+                                                                             || GameplayWorld.Instance != null && GameplayWorld.Instance != left),
+                    60f, $"what comes after level {n}'s Shaft");
+                if (Run.Done) yield break;
+                var world = GameplayWorld.Instance != left ? GameplayWorld.Instance : null;
+                bool video = Object.FindAnyObjectByType<VideoRuntime>() != null;
+                if (nextLevel > 0)
+                    check("level" + n + ".next", world != null && world.LevelNumber == nextLevel,
+                        world != null ? $"level {world.LevelNumber} ({world.LevelName}) starts after the Shaft" : $"{SceneName()} came after the Shaft (want level {nextLevel})");
+                else if (nextVideo > 0)
+                    check("level" + n + ".next", video && PlayerPrefs.GetInt("CurrentVideoNumber", 0) == nextVideo,
+                        video ? $"video {PlayerPrefs.GetInt("CurrentVideoNumber", 0)} plays after the Shaft" : $"{SceneName()} came after the Shaft (want video {nextVideo})");
+                else
+                    check("level" + n + ".next", Object.FindAnyObjectByType<LevelSelectionManager>() != null, $"{SceneName()} came after the Shaft (want the level select)");
+                Run.Scene(world != null ? "Level " + world.LevelNumber : video ? "Video" : SceneName());
+                yield return WaitReal(3f);
             }
 
             /// <summary>
@@ -1828,13 +2131,22 @@ namespace SickOfIt.Playtest
 
                     // The video before the level: it must be the one the story puts here, and no level may come first.
                     yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null || NewWorld(previous) != null,
-                        60f, $"video {video} to start");
+                        60f, video > 0 ? $"video {video} to start" : $"level {n} to start");
                     if (Run.Done) yield break;
                     bool inVideo = Object.FindAnyObjectByType<VideoRuntime>() != null;
                     int playing = inVideo ? PlayerPrefs.GetInt("CurrentVideoNumber", 0) : 0;
                     string videoName = playing > 0 && definition.GetVideo(playing) != null ? definition.GetVideo(playing).displayName : "none";
-                    StoryCheck("video" + video, inVideo && playing == video,
-                        inVideo ? $"video {playing} ({videoName}) plays before level {n}" : $"level {GameplayWorld.Instance.LevelNumber} started instead of video {video}");
+                    if (video == 0)
+                    {
+                        // A stage that follows the last one directly: no video, straight from the Shaft into the level.
+                        StoryCheck("level" + n + "Direct", !inVideo, inVideo ? $"video {playing} ({videoName}) played before level {n}"
+                            : $"level {n} started straight after the Shaft");
+                    }
+                    else
+                    {
+                        StoryCheck("video" + video, inVideo && playing == video,
+                            inVideo ? $"video {playing} ({videoName}) plays before level {n}" : $"level {GameplayWorld.Instance.LevelNumber} started instead of video {video}");
+                    }
                     if (inVideo)
                     {
                         Run.Scene("Video " + playing);
@@ -1869,7 +2181,7 @@ namespace SickOfIt.Playtest
                     if (Run.Done) yield break;
                     var world = GameplayWorld.Instance;
                     StoryCheck("level" + n, world.LevelNumber == n && world.LevelName == config.levelName,
-                        $"level {world.LevelNumber} ({world.LevelName}) started after video {video}; the story wants level {n}, {config.displayName}");
+                        $"level {world.LevelNumber} ({world.LevelName}) started after {(video > 0 ? "video " + video : "the Shaft")}; the story wants level {n}, {config.displayName}");
                     if (world.LevelNumber != n)
                     {
                         reachedEnd = false;
@@ -1893,8 +2205,13 @@ namespace SickOfIt.Playtest
                         float left = deadline - Time.realtimeSinceStartup;
                         if (left < 5f) { lastOutcome = "time up"; break; }
                         float from = (float)step / (StoryPath.Length + 1), to = (float)(step + 1) / (StoryPath.Length + 1);
-                        yield return PlayLevel(n, 0f, null, from, to, left, waitOutDeath: true);
+                        // The Ember Wastes stages after the Landing get the stage checks (title, lines, floors, new enemy, breather).
+                        stage = n > LandingLevel && IsFloorStage(n) ? new StageWatch(n, StoryCheck) : null;
+                        yield return PlayLevel(n, 0f, stage != null ? StageDuring : (Func<float, IEnumerator>)null, from, to, left, waitOutDeath: true);
                         if (Run.Done) yield break;
+                        if (stage != null && (lastOutcome == "completed" || lastOutcome != "died" || attempts >= 3))
+                            FinishStage(lastOutcome);
+                        stage = null;
                         if (lastOutcome == "completed" || lastOutcome != "died" || attempts >= 3)
                             break;
                         Run.Event("retry", $"level {n}, attempt {attempts + 1}");
