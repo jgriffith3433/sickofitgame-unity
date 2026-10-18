@@ -105,7 +105,10 @@ namespace SickOfIt.Core.Progression
             public string Warden;
             public Sprite Art;
             public Sprite WardenArt;
+            public string WakeVoice;
             public Image Flash;
+            /// <summary>Darkness over a Circle still asleep (only on the climb that wakes it).</summary>
+            public Image Dim;
         }
 
         ShaftConfig config;
@@ -345,6 +348,7 @@ namespace SickOfIt.Core.Progression
                     Warden = band.warden,
                     Art = band.art,
                     WardenArt = band.wardenArt,
+                    WakeVoice = band.wakeVoice,
                 };
                 if (!string.IsNullOrEmpty(band.circle) && circles != null && circles.TryGetValue(band.circle, out var circle) && circle != null)
                 {
@@ -569,6 +573,7 @@ namespace SickOfIt.Core.Progression
             if (band.Art != null)
                 Strip("NameBack", new Color(0f, 0f, 0f, 0.5f), height * 0.5f - 24f, 48f, 0.12f, 0.88f, fill.transform);
             Label(fill.transform, "Name", name, menu.Theme.caption, 26f, 0.14f, 0.86f, height * 0.5f - 20f, 40f, new Color(1f, 1f, 1f, band.Art != null ? 0.95f : 0.8f));
+            band.Dim = Strip("Asleep", new Color(0f, 0f, 0f, 0f), 0f, height, 0f, 1f, fill.transform);
         }
 
         void BuildBottom()
@@ -948,9 +953,51 @@ namespace SickOfIt.Core.Progression
             Finish();
         }
 
+        /// <summary>
+        /// The Circle that wakes up on this climb: the one above a Waystone the climb has just reached at the top of a
+        /// Circle (Floor 901 when the Magma King falls: Circle IX). Null on every other climb and on previews.
+        /// </summary>
+        Band WakingBand()
+        {
+            if (Kind != Mode.Climb || preview || ToFloor >= FromFloor || ToFloor == config.bottomFloor || !RunFlow.IsWaystone(ToFloor))
+                return null;
+            return BandAt(ToFloor - 1);
+        }
+
+        /// <summary>The Circle above wakes up: its band brightens out of the dark, flashes, and the announcer calls it.</summary>
+        IEnumerator WakeBand(Band band)
+        {
+            string text = string.Format(CultureInfo.InvariantCulture, texts.shaftWakeFormat ?? "", band.Numeral, (band.Name ?? "").ToUpperInvariant());
+            Report("waystone-lit", $"the Waystone at FLOOR {Number(ToFloor)} glows ({(WaystoneProgress.Highest > 0 && WaystoneProgress.Highest <= ToFloor ? "saved: the highest reached" : "NOT saved as reached")})");
+            Report("band-wakes", $"Circle {band.Numeral}, {band.Name} ({band.First}-{band.Last}) wakes above the Waystone at FLOOR {Number(ToFloor)}; next Warden {band.Warden}");
+            if (!string.IsNullOrEmpty(band.WakeVoice))
+            {
+                Sfx.Play(band.WakeVoice);
+                Report("voice", $"announcer: {text} ({band.WakeVoice}{(Sfx.Has(band.WakeVoice) ? "" : ", no clip")})");
+            }
+            ShowSubtitle(text);
+            if (band.Flash != null)
+                StartCoroutine(FlashBand(band.Flash));
+            float fade = 1.4f;
+            for (float t = 0f; t < 1f && !skip; t += Time.unscaledDeltaTime / fade)
+            {
+                if (band.Dim != null)
+                    band.Dim.color = new Color(0f, 0f, 0f, 0.75f * (1f - SmoothStep(Mathf.Clamp01(t))));
+                yield return null;
+            }
+            if (band.Dim != null)
+                band.Dim.color = new Color(0f, 0f, 0f, 0f);
+            float voice = string.IsNullOrEmpty(band.WakeVoice) ? 0f : Sfx.LengthOf(band.WakeVoice);
+            yield return Wait(Mathf.Max(0.6f, voice - fade + 0.3f));
+        }
+
         IEnumerator ClimbRoutine()
         {
             int from = FromFloor, to = ToFloor;
+            // A Circle about to wake starts the climb asleep: dark over its painting.
+            var waking = WakingBand();
+            if (waking != null && waking.Dim != null)
+                waking.Dim.color = new Color(0f, 0f, 0f, 0.75f);
             yield return Wait(Mathf.Max(0f, config.climbDelay));
             int floors = Mathf.Abs(from - to);
             float duration = Mathf.Clamp(floors * Mathf.Max(0.01f, config.climbSecondsPerFloor), 0.4f, Mathf.Max(0.4f, config.climbMaxSeconds));
@@ -983,6 +1030,13 @@ namespace SickOfIt.Core.Progression
                 ShaftProgress.Plunged = true;
             }
             Report("climb", $"from FLOOR {Number(from)} to FLOOR {Number(to)}: {FloorsLeftText}; {NextWardenText}");
+            if (waking != null)
+            {
+                if (skip && waking.Dim != null)
+                    waking.Dim.color = new Color(0f, 0f, 0f, 0f);
+                yield return Wait(0.3f);
+                yield return WakeBand(waking);
+            }
             if (gloob != null && !skip)
             {
                 // One line from Gloob about what just happened.

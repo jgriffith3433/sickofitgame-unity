@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "extends": "lavaWave",
+  "body": {
+    "shape": "Box",
+    "size": [3.0, 1.6],
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.24,
+    "color": "#FFB050",
+    "sortingOrder": 4,
+    "hurtFlash": false,
+    "fxColor": "#FF8A2A"
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1
+    },
+    {
+      "type": "lifetime",
+      "seconds": 3.0
+    }
+  ]
+}

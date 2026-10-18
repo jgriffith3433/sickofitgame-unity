@@ -636,7 +636,8 @@
     "shaftFirstDrop": "HELL DOESN'T LET YOU DIE. IT LETS YOU DO IT AGAIN.",
     "shaftFirstDropHero": "Of course it does.",
     "shaftDrop": "BACK TO THE WAYSTONE! DO IT AGAIN!",
-    "shaftNextRunFormat": "Next run: {0}"
+    "shaftNextRunFormat": "Next run: {0}",
+    "shaftWakeFormat": "CIRCLE {0}! {1}!"
   },
   "grades": [
     {

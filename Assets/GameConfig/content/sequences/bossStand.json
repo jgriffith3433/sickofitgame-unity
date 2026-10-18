@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "steps": [
+    {
+      "type": "playSound",
+      "sound": "magma_rumble"
+    },
+    {
+      "type": "cameraShake",
+      "intensity": 0.2,
+      "duration": 2.0
+    },
+    {
+      "type": "wait",
+      "seconds": 1.2
+    },
+    {
+      "type": "showText",
+      "text": "...You made me STAND.",
+      "style": "Subtitle",
+      "duration": 4.0,
+      "color": "#FFAA66",
+      "sound": "vo_mk_enrage"
+    },
+    {
+      "type": "wait",
+      "seconds": 1.8
+    },
+    {
+      "type": "cameraShake",
+      "intensity": 0.3,
+      "duration": 0.6
+    }
+  ]
+}

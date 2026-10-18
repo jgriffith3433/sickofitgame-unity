@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "team": "Enemy",
-  "health": 75,
+  "health": 80,
   "moveSpeed": 0,
   "activationRange": 0,
   "tags": ["boss"],
@@ -219,7 +219,7 @@
         },
         {
           "fromState": "Rise",
-          "toState": "Enrage",
+          "toState": "IdleStand",
           "hasExitTime": true,
           "exitTime": 1,
           "conditions": []
@@ -311,50 +311,71 @@
     {
       "type": "contactDamage",
       "damage": 1
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "healthBelow",
+        "fraction": 0.85
+      },
+      "do": [
+        {
+          "type": "showText",
+          "text": "Mm. That one tickled.",
+          "style": "Subtitle",
+          "duration": 3,
+          "color": "#FF8A3D",
+          "sound": "vo_mk_hurt1"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "healthBelow",
+        "fraction": 0.15
+      },
+      "do": [
+        {
+          "type": "showText",
+          "text": "You're ruining... my show.",
+          "style": "Subtitle",
+          "duration": 3,
+          "color": "#FF8A3D",
+          "sound": "vo_mk_hurt2"
+        }
+      ]
     }
   ],
   "states": [
     {
-      "name": "throne",
+      "name": "p1Throw",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "mkTelegraph"
+        }
+      ],
       "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [0.7, 0.6],
+          "interval": 99,
+          "initialDelay": 0
+        },
         {
           "type": "shoot",
           "projectile": "magmaBoulder",
           "speed": 6.5,
           "aim": "Player",
           "muzzle": [0.7, 0.6],
-          "interval": 3.2,
-          "initialDelay": 2.5,
+          "interval": 99,
+          "initialDelay": 1.0,
           "animTrigger": "Throw",
           "fireOnEvent": "throw"
-        },
-        {
-          "type": "shoot",
-          "projectile": "lavaWave",
-          "speed": 3.2,
-          "aim": "Facing",
-          "muzzle": [1, -0.95],
-          "interval": 6,
-          "initialDelay": 5.5,
-          "animTrigger": "Slam",
-          "fireOnEvent": "slam"
-        },
-        {
-          "type": "react",
-          "when": {
-            "type": "healthBelow",
-            "fraction": 0.85
-          },
-          "do": [
-            {
-              "type": "showText",
-              "text": "Mm. That one tickled.",
-              "style": "Subtitle",
-              "duration": 3,
-              "color": "#FF8A3D",
-              "sound": "vo_mk_hurt1"
-            }
-          ]
         }
       ],
       "transitions": [
@@ -363,6 +384,146 @@
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Slam",
+          "when": {
+            "type": "after",
+            "seconds": 2.8
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Slam",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "mkTelegraph"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnFloor",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [3.3, -1.15],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 1.25
+          }
+        },
+        {
+          "type": "shoot",
+          "projectile": "slamShockwave",
+          "speed": 3.6,
+          "aim": "Facing",
+          "muzzle": [1.0, -0.95],
+          "interval": 99,
+          "initialDelay": 1.0,
+          "animTrigger": "Slam",
+          "fireOnEvent": "slam"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "rising",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Throw2",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Throw2",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "mkTelegraph"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [0.7, 0.6],
+          "interval": 99,
+          "initialDelay": 0
+        },
+        {
+          "type": "shoot",
+          "projectile": "magmaBoulder",
+          "speed": 6.5,
+          "aim": "Player",
+          "muzzle": [0.7, 0.6],
+          "interval": 99,
+          "initialDelay": 1.0,
+          "animTrigger": "Throw",
+          "fireOnEvent": "throw"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "rising",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Slam",
+          "when": {
+            "type": "after",
+            "seconds": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "emerging",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 0.75,
+          "offset": [0, 1.2],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0
+        }
+      ],
+      "transitions": [
+        {
+          "to": "waiting",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "waiting",
+      "transitions": [
+        {
+          "to": "p1Throw",
+          "when": {
+            "type": "signal",
+            "name": "mkFight"
           }
         }
       ]
@@ -377,12 +538,16 @@
         },
         {
           "type": "runSequence",
-          "sequence": "bossEnrage"
+          "sequence": "bossStand"
+        },
+        {
+          "type": "emit",
+          "signal": "mkStand"
         }
       ],
       "transitions": [
         {
-          "to": "standing",
+          "to": "p2Guards",
           "when": {
             "type": "after",
             "seconds": 4.5
@@ -391,26 +556,62 @@
       ]
     },
     {
-      "name": "standing",
+      "name": "p2Guards",
       "onEnter": [
         {
           "type": "showText",
-          "text": "Now. Let's give them a real show.",
+          "text": "Guards. Make some noise for our guest.",
           "style": "Subtitle",
           "duration": 3.5,
           "color": "#FF8A3D",
-          "sound": "vo_mk_phase2"
+          "sound": "vo_mk_guards"
+        },
+        {
+          "type": "emit",
+          "signal": "mkPhase2"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Slam",
+          "when": {
+            "type": "after",
+            "seconds": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Slam",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "mkTelegraph"
         }
       ],
       "abilities": [
         {
           "type": "shoot",
-          "projectile": "lavaWave",
-          "speed": 4,
+          "projectile": "mkWarnFloor",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [3.3, -1.15],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 1.25
+          }
+        },
+        {
+          "type": "shoot",
+          "projectile": "slamShockwave",
+          "speed": 4.0,
           "aim": "Facing",
-          "muzzle": [1, -0.95],
-          "interval": 4.6,
-          "initialDelay": 2,
+          "muzzle": [1.0, -0.95],
+          "interval": 99,
+          "initialDelay": 1.0,
           "animTrigger": "Slam",
           "fireOnEvent": "slam"
         },
@@ -423,8 +624,60 @@
             "angleJitter": 0
           },
           "speed": 0,
-          "interval": 4.6,
-          "initialDelay": 2
+          "interval": 0,
+          "fireOnEvent": "slam"
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 8,
+          "initialDelay": 1.0,
+          "maxAlive": 1,
+          "offset": [1.9, 1.1]
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 8,
+          "initialDelay": 5.0,
+          "maxAlive": 1,
+          "offset": [4.2, -0.2]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "enraging",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Breath",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Breath",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "mkTelegraph"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnMouth",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [0.8, 0.9],
+          "interval": 99,
+          "initialDelay": 0
         },
         {
           "type": "shoot",
@@ -437,29 +690,230 @@
           "speed": 4.2,
           "aim": "Player",
           "muzzle": [0.8, 0.9],
-          "interval": 4.6,
-          "initialDelay": 4.3,
+          "interval": 99,
+          "initialDelay": 1.0,
           "burst": 2,
           "burstInterval": 0.25,
           "animTrigger": "Breath",
           "fireOnEvent": "breath"
         },
         {
-          "type": "react",
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 8,
+          "initialDelay": 3.0,
+          "maxAlive": 1,
+          "offset": [1.9, 1.1]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "enraging",
           "when": {
             "type": "healthBelow",
-            "fraction": 0.2
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Slam",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "enraging",
+      "onEnter": [
+        {
+          "type": "playAnimation",
+          "state": "Enrage"
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "impGuard"
+          }
+        },
+        {
+          "type": "runSequence",
+          "sequence": "bossEnrage"
+        },
+        {
+          "type": "emit",
+          "signal": "mkEnrage"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Flood",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Flood",
+      "onEnter": [
+        {
+          "type": "playSound",
+          "sound": "magma_rumble"
+        },
+        {
+          "type": "emit",
+          "signal": "mkFlood"
+        },
+        {
+          "type": "emit",
+          "signal": "mkTelegraph"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnFlood",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [3.7, -1.15],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 1.0
+          }
+        },
+        {
+          "type": "shoot",
+          "projectile": "lavaFlood",
+          "pattern": {
+            "type": "line",
+            "count": 8,
+            "spacing": 0.4
           },
-          "do": [
-            {
-              "type": "showText",
-              "text": "You're ruining... my show.",
-              "style": "Subtitle",
-              "duration": 3,
-              "color": "#FF8A3D",
-              "sound": "vo_mk_hurt2"
-            }
-          ]
+          "speed": 4.5,
+          "aim": "Facing",
+          "muzzle": [1.2, 0.45],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "animTrigger": "Slam",
+          "fireOnEvent": "slam"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Breath",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Breath",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "mkTelegraph"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnMouth",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [0.8, 0.9],
+          "interval": 99,
+          "initialDelay": 0
+        },
+        {
+          "type": "shoot",
+          "projectile": "fireball",
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 50
+          },
+          "speed": 4.2,
+          "aim": "Player",
+          "muzzle": [0.8, 0.9],
+          "interval": 99,
+          "initialDelay": 1.0,
+          "burst": 2,
+          "burstInterval": 0.25,
+          "animTrigger": "Breath",
+          "fireOnEvent": "breath"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Slam",
+          "when": {
+            "type": "after",
+            "seconds": 2.8
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Slam",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "mkTelegraph"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnFloor",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [3.3, -1.15],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 1.25
+          }
+        },
+        {
+          "type": "shoot",
+          "projectile": "slamShockwave",
+          "speed": 4.4,
+          "aim": "Facing",
+          "muzzle": [1.0, -0.95],
+          "interval": 99,
+          "initialDelay": 1.0,
+          "animTrigger": "Slam",
+          "fireOnEvent": "slam"
+        },
+        {
+          "type": "shoot",
+          "projectile": "slagDrip",
+          "pattern": {
+            "type": "rain",
+            "count": 3,
+            "angleJitter": 0
+          },
+          "speed": 0,
+          "interval": 0,
+          "fireOnEvent": "slam"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Flood",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
         }
       ]
     }
@@ -469,9 +923,13 @@
       "type": "showText",
       "text": "The show... must go... on...",
       "style": "Subtitle",
-      "duration": 4,
+      "duration": 4.5,
       "color": "#FF8A3D",
       "sound": "vo_mk_defeat"
+    },
+    {
+      "type": "emit",
+      "signal": "mkFallen"
     }
   ]
 }

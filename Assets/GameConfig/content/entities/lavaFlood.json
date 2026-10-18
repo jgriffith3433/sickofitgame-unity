@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "extends": "lavaWave",
+  "body": {
+    "shape": "Circle",
+    "radius": 1.0,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.45,
+    "color": "#FF5A1A",
+    "sortingOrder": 5,
+    "hurtFlash": false,
+    "fxColor": "#FF6A1F"
+  },
+  "onSpawn": [],
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "effect": "burning"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 1.15
+    }
+  ]
+}

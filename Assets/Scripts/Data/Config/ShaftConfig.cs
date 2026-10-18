@@ -29,6 +29,8 @@ namespace SickOfIt.Data.Config
         public Sprite art;
         [Tooltip("The Warden's figure on a transparent background: drawn as a dark silhouette until met, in full colour after. Empty = a placeholder shape.")]
         public Sprite wardenArt;
+        [Tooltip("audio.json id of the announcer calling this Circle when it wakes up: the climb that lights the Waystone at the top of the Circle below (Docs/Story.md, \"The Magma King's fight\"). Empty = it wakes without a voice.")]
+        public string wakeVoice = "";
     }
 
     /// <summary>
