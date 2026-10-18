@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "extends": "fireball",
+  "body": {
+    "shape": "Box",
+    "size": [2.6, 1.6],
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.24,
+    "color": "#FF8A2A",
+    "sortingOrder": 4,
+    "hurtFlash": false,
+    "fxColor": "#FF6A1F"
+  },
+  "onSpawn": [
+    {
+      "type": "playSound",
+      "sound": "lava_burst"
+    }
+  ],
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "effect": "burning"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 3.5
+    }
+  ]
+}

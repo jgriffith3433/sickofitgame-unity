@@ -43,7 +43,10 @@ const ENTITIES = path.join(REPO, 'Assets', 'GameConfig', 'content', 'entities');
 const SHEETS = path.join(REPO, 'Assets', 'Art', 'Enemies');
 const SHEETS_PY = path.join(REPO, 'Tools', 'Art', 'sheets.py');
 const UNITY = process.env.UNITY_EXE || 'C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.7f1\\Editor\\Unity.exe';
-const PYTHON = [path.join(DOD, '.venv', 'Scripts', 'python.exe'), path.join(DOD, '.venv', 'bin', 'python')].find((p) => fs.existsSync(p))
+// SOI_ART_PYTHON: any Python with Pillow + numpy (the Linux server has no DoD .venv; rembg is only needed for takes
+// whose backdrop isn't flat, see preflight).
+const PYTHON = process.env.SOI_ART_PYTHON
+  ?? [path.join(DOD, '.venv', 'Scripts', 'python.exe'), path.join(DOD, '.venv', 'bin', 'python')].find((p) => fs.existsSync(p))
   ?? (process.platform === 'win32' ? 'python' : 'python3');
 
 /** What a spec leaves out. Assets/GameConfig/art/_defaults.json overrides these for every enemy. */
@@ -64,8 +67,10 @@ const DEFAULTS = {
   },
 };
 
-// Animator state for each clip name; the engine knows these (Docs/ArtPipeline.md "Wiring").
+// Animator state for each clip name; the engine knows these (Docs/ArtPipeline.md "Wiring"). Any other clip name is a
+// state of its own ("state", default the name in PascalCase), wired by the spec's "animator" graph.
 const STATE = { idle: 'Idle', move: 'Move', attack: 'Attack', hurt: 'Hurt', die: 'Die' };
+const stateOf = (spec, name) => spec.clips[name]?.state ?? STATE[name] ?? pascal(name);
 const LOOPS = new Set(['idle', 'move']);
 
 // ------------------------------------------------------------------ helpers
@@ -109,20 +114,35 @@ function loadSpec(id) {
   const d = { ...DEFAULTS, ...base, takes: { ...DEFAULTS.takes, ...base.takes }, prompts: { ...DEFAULTS.prompts, ...base.prompts } };
   const spec = { ...d, ...raw, takes: { ...d.takes, ...raw.takes }, prompts: { ...d.prompts, ...raw.prompts } };
   spec.id = id;
+  spec.raw = raw;
   spec.entity ??= id;
   spec.name ??= pascal(id);
   spec.prefix ??= pascal(spec.entity);
-  spec.poses = { stand: 'standing in its normal stance', ...(raw.poses ?? {}) };
+  // A pose is a phrase, or { "from": "<pose>", "action": "..." } to be made from another pose instead of stand (a boss that
+  // stands up: poses edited from a seated stand stay seated).
+  spec.poseBase = {};
+  spec.posePrompt = {};
+  spec.poses = { stand: 'standing in its normal stance' };
+  for (const [pose, v] of Object.entries(raw.poses ?? {})) {
+    spec.poses[pose] = typeof v === 'string' ? v : v.action;
+    if (typeof v === 'object' && v.from && pose !== 'stand') spec.poseBase[pose] = v.from;
+    // "prompt" replaces the pose template ("Show the exact same creature..."), e.g. to take him out of the picture.
+    if (typeof v === 'object' && v.prompt && pose !== 'stand') spec.posePrompt[pose] = v.prompt;
+  }
   spec.clips = raw.clips ?? {};
   const problems = [];
   if (!spec.description) problems.push('"description" is required');
   if (!(spec.height > 0)) problems.push('"height" (world units the standing figure is tall) is required');
   if (!spec.clips.idle) problems.push('"clips" needs at least "idle"');
   for (const [name, c] of Object.entries(spec.clips)) {
-    if (!STATE[name]) problems.push(`clip "${name}": use one of ${Object.keys(STATE).join(', ')}`);
+    if (!STATE[name] && !spec.raw.animator?.transitions) problems.push(`clip "${name}": use one of ${Object.keys(STATE).join(', ')}, or wire it in the spec's "animator" graph`);
     if (c.video) continue;
     for (const k of ['from', 'to']) if (c[k] && !spec.poses[c[k]]) problems.push(`clip "${name}": no pose "${c[k]}" in "poses"`);
     if (!c.action) problems.push(`clip "${name}": "action" is required (what happens in it)`);
+  }
+  for (const [pose, base] of Object.entries(spec.poseBase)) {
+    const order = Object.keys(spec.poses);
+    if (!spec.poses[base] || order.indexOf(base) > order.indexOf(pose)) problems.push(`pose "${pose}": "from" must be a pose listed before it`);
   }
   if (problems.length) throw new Error(`${path.relative(REPO, file)}:\n  ${problems.join('\n  ')}`);
   return spec;
@@ -146,18 +166,24 @@ async function preflight(spec) {
   const probe = [
     'import json, sys, os',
     'missing = []',
-    "for m in ('PIL', 'numpy', 'rembg'):",
+    "for m in ('PIL', 'numpy'):",
     '    try: __import__(m)',
     '    except Exception as e: missing.append(f"{m} ({e.__class__.__name__})")',
     "sys.path[:0] = [os.environ['DOD_ROOT'], os.path.join(os.environ['DOD_ROOT'], 'tools')]",
     "for m in ('_build_anims', 'cutout'):",
     '    try: __import__(m)',
     '    except Exception as e: missing.append(f"DoD {m} ({e.__class__.__name__}: {e})")',
-    'print(json.dumps(missing))',
+    'try: __import__("rembg"); cut = True',
+    'except Exception: cut = False',
+    'print(json.dumps({"missing": missing, "rembg": cut}))',
   ].join('\n');
   let missing;
   try {
-    missing = JSON.parse((await run(PYTHON, ['-c', probe], { quiet: true })).trim().split(/\r?\n/).pop());
+    const r = JSON.parse((await run(PYTHON, ['-c', probe], { quiet: true })).trim().split(/\r?\n/).pop());
+    missing = r.missing;
+    // Qwen paints on flat green, which sheets.py keys by colour; BiRefNet (rembg) is only for a take whose backdrop
+    // isn't flat, and without it such a take is keyed by colour anyway (and usually scores low).
+    if (!r.rembg) log('note: rembg is not installed here; stills are keyed by colour only (fine on a flat green backdrop)');
   } catch (e) {
     missing = [`python (${PYTHON}): ${e.message.split('\n')[0]}`];
   }
@@ -190,7 +216,12 @@ function keys(spec, P) {
   const k = {};
   const standSrc = spec.reference ? resolveAsset(spec.reference) : null;
   k.stand = sha({ d: spec.description, s: spec.style, b: spec.background, a: spec.poses.stand, r: standSrc && fs.existsSync(standSrc) ? fs.statSync(standSrc).size : null });
-  for (const pose of Object.keys(spec.poses)) if (pose !== 'stand') k[`pose:${pose}`] = sha({ stand: k.stand, a: spec.poses[pose], b: spec.background });
+  for (const pose of Object.keys(spec.poses)) {
+    if (pose === 'stand') continue;
+    const base = spec.poseBase[pose];
+    const p = spec.posePrompt[pose];
+    k[`pose:${pose}`] = sha({ ...(base ? { base: poseKey(k, base) } : { stand: k.stand }), a: spec.poses[pose], b: spec.background, ...(p ? { p } : {}) });
+  }
   for (const [name, c] of Object.entries(spec.clips)) {
     if (c.video) continue;
     const from = c.from ?? 'stand';
@@ -306,9 +337,9 @@ async function makePose(spec, P, pose, key, opts) {
       prompt = fill(spec.prompts.standFromText, { description: `${spec.description}, ${spec.poses.stand}`, style: spec.style, background: spec.background });
     }
   } else {
-    input = P.pose('stand');
+    input = P.pose(spec.poseBase[pose] ?? 'stand');
     const air = /air|fly|hover|float|leap|jump/i.test(`${spec.poses[pose]} ${spec.poses.stand}`);
-    prompt = fill(spec.prompts.pose, { action: spec.poses[pose], background: spec.background, ground: air ? '' : ', feet on the same ground line as image 1' });
+    prompt = fill(spec.posePrompt[pose] ?? spec.prompts.pose, { action: spec.poses[pose], background: spec.background, ground: air ? '' : ', feet on the same ground line as image 1' });
   }
   const n = opts.takes ?? (pose === 'stand' ? spec.takes.stand : spec.takes.pose);
   const seeds = Array.from({ length: n }, (_, i) => seedFor(opts, i, key, opts.redo.has(pose)));
@@ -424,11 +455,28 @@ function animatorFor(spec, built, w) {
   const transitions = [];
   const t = (fromState, toState, extra) => transitions.push({ fromState, toState, hasExitTime: false, exitTime: 1, conditions: [], ...extra });
   const cond = (parameterName, mode) => ({ parameterName, mode, threshold: 0 });
-  for (const name of Object.keys(STATE)) {
+  const order = [...Object.keys(STATE), ...Object.keys(spec.clips).filter((n) => !STATE[n])];
+  for (const name of order) {
     if (!built[name]) continue;
     const m = built[name];
-    const events = name === 'attack' && w.attackEvent ? [{ frame: m.hit ?? Math.floor(m.frames / 2), functionName: w.attackEvent }] : [];
-    states.push({ stateName: STATE[name], spriteSheet: sheet(name), fps: m.fps, loop: m.loop, events });
+    const fn = spec.clips[name]?.event ?? (name === 'attack' ? w.attackEvent : null);
+    const events = fn ? [{ frame: m.hit ?? Math.floor(m.frames / 2), functionName: fn }] : [];
+    states.push({ stateName: stateOf(spec, name), spriteSheet: sheet(name), fps: m.fps, loop: m.loop, events });
+  }
+  const graph = spec.animator?.transitions;
+  if (graph) {
+    // The spec draws the graph itself: { from, to, when: [bool or trigger names, "!Name" = not], exit: true }.
+    // Transitions to or from a state without a sheet yet are left out until it is made.
+    const made = new Set(states.map((s) => s.stateName));
+    for (const g of graph) {
+      if (!made.has(g.to) || !(g.from === 'Any' || made.has(g.from))) continue;
+      t(g.from, g.to, {
+        hasExitTime: Boolean(g.exit), exitTime: g.exitTime ?? 1,
+        conditions: (g.when ?? []).map((c) => (c.startsWith('!') ? cond(c.slice(1), 'IfNot') : cond(c, 'If'))),
+      });
+    }
+    for (const p of spec.animator.parameters ?? []) params.push({ name: p.name, type: p.type ?? 'Bool', defaultValue: p.defaultValue ?? 0 });
+    return { parameters: params, states, transitions, defaultStateName: spec.animator.default ?? 'Idle' };
   }
   const has = (n) => Boolean(built[n]);
   const calm = ['Idle', ...(has('move') ? ['Move'] : [])];
@@ -462,7 +510,7 @@ async function build(spec, P) {
     clips[name] = {
       video, loop: c.loop ?? LOOPS.has(name), fps: c.fps ?? spec.fps, speed: c.speed ?? 1, start: c.start, end: c.end,
       flip: c.flip, tolerance: c.tolerance, size: c.size, hit: c.hit, autotrim: c.autotrim,
-      event: name === 'attack', measure: handMade || !frame,
+      event: name === 'attack' || Boolean(c.event), measure: handMade || !frame,
     };
   }
   if (!clips.idle) throw new Error('There is no idle clip to build from yet.');
@@ -502,6 +550,7 @@ function apply(spec, built, visualScale) {
   log(`wrote visual.animator into ${path.relative(REPO, file)}`);
   const notes = [];
   if (tinted) notes.push('removed the placeholder visual.color tint (set "keepTint": true in the spec to keep it)');
+  for (const [name, c] of Object.entries(spec.clips)) if (built[name] && c.event) notes.push(`${stateOf(spec, name)} fires "${c.event}" on frame ${built[name].hit}: the ability it times needs "fireOnEvent": "${c.event}"`);
   if (built.attack && !w.hasAttacker) notes.push(`no ability pulses an attack parameter: set "animTrigger": "${w.attackParam}" on its shoot/melee ability so Attack plays`);
   if (built.attack && !w.attackEvent) notes.push('the Attack state fires no event: give the shoot ability "fireOnEvent" (or melee "hitEvent") to time hits to the animation');
   if (built.move && !w.hasMover) notes.push(`no ability sets "${w.moveParam}": add "animBool": "${w.moveParam}" to its movement ability so Move plays`);

@@ -37,7 +37,7 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 | **Gloob** *(working)* | The village's green slime and its gossip. Swallowed a handful of the village's diamonds to hide them from the imps, got sucked through the portal with the hero, and now trades and tinkers between floors out of his own stomach. **Slimes are villagers, never enemies.** | `audio.json` voice `gloob`: friendly, chatty, wet; talks fast, gurgles between words, never stops for breath, delighted to see anyone, a bit too pleased with himself. | Video3 (the talking slime); his talking portrait (`ui/gloob.json`, see *Gloob between floors*) |
 | **The Announcer** | Hell's own voice: loves a show, calls out floors, bosses and deaths like an arcade cabinet. | `announcer` | Floor titles, death screens |
 | **The Wardens** | One boss per Circle: the monster that rules it. Each guards its Circle's top floor. | Per Warden | Death videos, bosses |
-| **The Magma King** | Circle X's Warden: a huge king of slag and obsidian with a lava crown, slouched on a throne of slag at Floor 901. He never gets up: the Wastes come to him. Smug where the Overlord is bored; he hears everything that climbs his stairs and enjoys the wait. | `audio.json` voice `magmaKing`: very deep, thick, gurgling bass; slow, smug, amused, lazy; chuckles (*"Mm-hm-hm."*), never shouts. Heard before he's seen, from ahead on the Heat Stairs. | `art/magmaKing.json` (spec) |
+| **The Magma King** | Circle X's Warden: a huge king of slag and obsidian with a lava crown, slouched on a throne of slag at Floor 901. He never gets up, unless you make him: the Wastes come to him. Smug where the Overlord is bored; proud, loves an audience and takes Hell's show seriously (a challenger is the best entertainment the Wastes have had in ages). He hears everything that climbs his stairs and enjoys the wait. Making him stand is what enrages him (see *The Magma King's fight*). | `audio.json` voice `magmaKing`: very deep, thick, gurgling bass; slow, smug, amused, lazy, proud; chuckles (*"Mm-hm-hm."*), never shouts. The one line with weight is when he stands. Heard before he's seen, from ahead on the Heat Stairs. | `art/magmaKing.json`: generated sheets in `Assets/Art/Enemies/MagmaKing/` |
 
 ## Prologue: how the hero gets into Hell
 
@@ -189,7 +189,7 @@ enemy at a time, alone; at most 3 on screen in Circle X). Lines are first drafts
 | 8 | 940-931 | **The Crust** | hazard: ember shower | The lava river has a skin of cooling slag (*DON'T STOP*). It holds only while he keeps moving and sinks back into the lava behind him: between fights the screen keeps pushing him on (`travelSpeed`), imps throw from the far bank. More fire from above: the river's steam rains embers, two at a time (`emberShower`), first on its own with its warning, *"Now it's raining fire."* Hero: *"It sinks if I stop. So I don't stop."* |
 | 9 | 930-921 | **The Sack Pile** | `impGuard` (the Magma King's guard) | The imps' camp under a carved *KEEP OFF THE PILE*, where they pile the stolen sacks before carrying them up to the throne. The imps get organised: the Magma King's own guard doesn't carry sacks or run; it stands its ground and throws three embers at once. The first guard comes alone (*"This one's not carrying anything. Bad sign."*); later three of them hold the pile in a line, throwing on a count. Clear the line and the pile spills: a heap of diamonds (*"He keeps guards. So he's expecting someone."*). Heaviest imp fight of the Circle. |
 | 10 | 920-911 | **The Heat Stairs** | (none) | The approach to the throne under a carved *TO THE THRONE*: the heat rising, the hardest floors of the Circle, embers from above and his guard on the steps. Announcer builds it up (*"FLOOR 920! THE HEAT STAIRS! SOMEBODY'S WAITING AT THE TOP!"*); the hero doesn't (*"Every step's hotter. Of course."*). Twice the stairs rumble and the Magma King's voice comes down them from ahead: he's waiting, he knows the hero is coming, and he isn't getting up (*"I can hear you climbing, little spark."* / hero: *"Was that the stairs?"*; *"Come up, then. I'll stay seated."* / *"He knows I'm coming. Great."*). The stage ends at his door, a slab of obsidian carved *THE SLAG THRONE* (`floors.door`), where the camera stops; through it, one last chuckle (*"Mm-hm-hm. Knock, little spark."*), the announcer's *"THE HEAT STAIRS: CLIMBED! THE MAGMA KING AWAITS!"* and the Grudge pick. Level 11 opens on the other side of that door. |
-| 11 | 910-901 | **The Slag Throne** | Warden: `magmaKing` | The Magma King's arena (a locked screen: the one kind of stage allowed to stand still). Beat him and his name fills in on the Shaft; Floor 901 is the Circle's Waystone. Announcer: *"THE MAGMA KING HAS FALLEN!"* Hero: *"He was sitting down the whole time."* |
+| 11 | 910-901 | **The Slag Throne** | Warden: `magmaKing` | The Magma King's arena (a locked screen: the one kind of stage allowed to stand still). Beat him and his name fills in on the Shaft; Floor 901 is the Circle's Waystone. The fight is below (*The Magma King's fight*). Announcer: *"THE MAGMA KING HAS FALLEN!"* Hero: *"He got up for me. I'm touched."* |
 
 Built so far (2026-10-18): Levels 2-10, The Landing to The Heat Stairs, each with its title, lines, carved sign, beats,
 generated floors between them, a breather and a Grudge pick at the end. Levels 7-10 climb toward the Warden: thatch
@@ -197,6 +197,30 @@ cinders that split, the ember shower from Floor 940, the Magma King's guard from
 stairs; the generator's floors get harder the closer they are to 901. The village debris and the Loop's rock are
 drawn as the track's plain shapes until their art is made (a cart, the village sign, hay bales, a sack imp with a
 full sack: Hawkes Gen, priced, waiting for a GPU budget).
+
+#### The Magma King's fight
+
+The Floor 901 arena: the Slag Throne at the right of a locked screen, the hero on the floor in front of it. It is
+played today in `ArcadeFireRain` (the reference fight, off the path) until Level 11 is built; the fight lives in
+the `magmaKing` entity and the `bossIntro`/`bossEnrage` sequences, so Level 11 only has to spawn him. He is big:
+seated on the throne he stands about 2.4 units tall (over two heroes), and standing more.
+
+1. **Intro** (`bossIntro`). The room rumbles, the announcer calls *"THE... MAGMA... KING!"*, and he is already there,
+   slouched on his throne, delighted: *"Mm-hm-hm. An audience, at last. Welcome to the Slag Throne, little spark."*
+   Hero: *"He's not getting up, is he."*
+2. **Phase 1: from the throne.** He doesn't get up for this. He scoops molten boulders from beside the throne and
+   lobs them in an arc (`magmaBoulder`), and slams his fist on the throne's arm to send a lava wave along the floor
+   at the hero (`lavaWave`: jump it). Opening line: *"Dance for me, little spark. Hell loves a show."* The first
+   real hit: *"Mm. That one tickled."*
+3. **Half health: he stands** (`bossEnrage`). The only time he ever gets up: he pushes himself off the throne (the
+   rise), then roars as his cracks flare from orange to white-hot (the enrage). With weight, not a shout:
+   *"...You made me STAND."*
+4. **Phase 2: standing.** Now he means it: he ground-pounds with both fists (a lava wave and a shower of slag from
+   the ceiling) and breathes a fan of fire and lava across the room. *"Now. Let's give them a real show."* Near the
+   end: *"You're ruining... my show."*
+5. **Defeat.** He cracks apart and collapses into slag at the foot of his throne, and the throne splits down the
+   middle. His last words: *"The show... must go... on..."* Announcer: *"THE MAGMA KING HAS FALLEN!"* Hero: *"He got
+   up for me. I'm touched."*
 
 Video3 (Gloob, talking) plays after **The Landing**: the slime from the meadow turns up at the bottom of Hell,
 pleased to see a familiar face, and coughs up a diamond. From then on Gloob is the shop.
@@ -295,7 +319,8 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | `cinderThatch`, `cinderSpark` | Thatch cinder | X (from Floor 950, Halfway Basin) | A burning clump of the village's thatch roofs that fell through with everything else and came alive like the other sparks. Bigger and slower than a cinder; shot, it bursts into two sparks (`cinderSpark`) that dart at you for two seconds and go out (they can't be shot, only dodged). | `Fireball`, scaled up and tinted straw-orange, until its own sheet |
 | `impGuard` | Imp guard | X (from Floor 930, the Sack Pile) | An imp: the same family (it `extends` `imp`), one the Magma King keeps at his pile and on his stairs instead of sending it up with a sack. It carries no diamonds and doesn't run; it plants itself and throws three embers in a fan, so guards are the first imps that fight together (lines of three on the Sack Pile and the Heat Stairs). It drops nothing: `"drops": []` replaces the imp's drops, so no loop shard (rewind orb) falls from it. The only diamond it gives up is its pay from the pile, now and then (`loot`). | the imp's own art, tinted dark red, until `art/impGuard.json` (an imp in a slag helmet with a spear) is made: a tinted sprite of the same creature, which rule 5 allows |
 | `emberShower` | Ember shower (hazard) | X (from Floor 940, the Crust) | Steam off the lava river raining embers two at a time; announced by the hero (*"Now it's raining fire."*) 1.5 s before the first. | `fireball` |
-| `magmaKing` | The Magma King | X (Warden, Floor 901) | Rules the Ember Wastes from a throne of slag. Heard (voice `magmaKing`) on the Heat Stairs before he is met. | spec ready (`art/magmaKing.json`); run the art pipeline |
+| `magmaKing` | The Magma King | X (Warden, Floor 901) | Rules the Ember Wastes from a throne of slag. Heard (voice `magmaKing`) on the Heat Stairs before he is met. Fights seated (boulders `magmaBoulder`, fist slam → `lavaWave`) until half health, then stands for the only time and fights standing (ground-pound, fire breath); see *The Magma King's fight*. Drops ten diamonds: his share of the stolen pile. | generated (`art/magmaKing.json`): idle, throw, slamSeat, hurt seated; rise, enrage; idleStand, slam, breath, hurtStand standing; die |
+| `magmaBoulder`, `lavaWave` | Boulder, lava wave | X (his arena) | The Magma King's attacks: a lump of molten slag lobbed in an arc that sets you burning, and a low wave of lava that runs along the floor (jump it). | `Fireball`, scaled and tinted |
 | `brimstoneDemon` | Brimstone Demon | IX | Born from the cracks in the Cracked Road: the rock splits and a demon climbs out to stop you climbing. Slow, heavy, plants itself in the road a few steps in front of you and breathes a short burst of fire (`brimstoneBreath`, sets you burning), so keep your distance. Sometimes drops a diamond: the imps' sacks leak on the road, the cracks swallow what falls, and the demons come out with it stuck in their rock. Not damned, so no loop shards. First met alone at the start of Circle IX (`levels/CrackedRoad.json` today; Level 12 in the 10-floor layout). | `Demon1` (exists) until generated; spec ready (`art/brimstoneDemon.json`) |
 | `fighter` → Drooler | Drooler | V | Cave beast; Death2 is it eating you. | `Fighter*` (exists) |
 | `sentinel` → Lurker | Lurker | V | Crouching cave hunter; Death3. | `Level3Enemy*` (exists) |

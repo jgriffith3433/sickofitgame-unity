@@ -1,17 +1,300 @@
 {
   "schemaVersion": 1,
-  "extends": "shooter",
+  "team": "Enemy",
   "health": 75,
-  "moveSpeed": 1.5,
+  "moveSpeed": 0,
   "activationRange": 0,
   "tags": ["boss"],
   "body": {
-    "radius": 1.0
+    "shape": "Box",
+    "size": [1.7, 2.3],
+    "solid": true,
+    "gravity": 0
   },
   "visual": {
-    "scale": 0.6,
-    "color": "#FF7755",
-    "fxColor": "#FF7A3D"
+    "scale": 1,
+    "fxColor": "#FF7A3D",
+    "placeholderSize": 2.2,
+    "deathFade": 1.2,
+    "animator": {
+      "parameters": [
+        {
+          "name": "Standing",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "Throw",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Slam",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Breath",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Throw",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_throw.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 9,
+              "functionName": "throw"
+            }
+          ]
+        },
+        {
+          "stateName": "SlamSeat",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_slamSeat.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 6,
+              "functionName": "slam"
+            }
+          ]
+        },
+        {
+          "stateName": "Rise",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_rise.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Enrage",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_enrage.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "IdleStand",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_idleStand.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Slam",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_slam.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 5,
+              "functionName": "slam"
+            }
+          ]
+        },
+        {
+          "stateName": "Breath",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_breath.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 8,
+              "functionName": "breath"
+            }
+          ]
+        },
+        {
+          "stateName": "HurtStand",
+          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_hurtStand.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Rise",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Standing",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Throw",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Throw",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "SlamSeat",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Slam",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Throw",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "SlamSeat",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Rise",
+          "toState": "Enrage",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Enrage",
+          "toState": "IdleStand",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "IdleStand",
+          "toState": "Slam",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Slam",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "IdleStand",
+          "toState": "Breath",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Breath",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "IdleStand",
+          "toState": "HurtStand",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Slam",
+          "toState": "IdleStand",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Breath",
+          "toState": "IdleStand",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "HurtStand",
+          "toState": "IdleStand",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": false
@@ -23,9 +306,7 @@
   },
   "abilities": [
     {
-      "type": "hover",
-      "offset": [3, 1.2],
-      "speed": 1.5
+      "type": "faceTarget"
     },
     {
       "type": "contactDamage",
@@ -34,25 +315,51 @@
   ],
   "states": [
     {
-      "name": "fanning",
+      "name": "throne",
       "abilities": [
         {
           "type": "shoot",
-          "projectile": "fireball",
-          "pattern": {
-            "type": "spread",
-            "count": 3,
-            "angle": 30
+          "projectile": "magmaBoulder",
+          "speed": 6.5,
+          "aim": "Player",
+          "muzzle": [0.7, 0.6],
+          "interval": 3.2,
+          "initialDelay": 2.5,
+          "animTrigger": "Throw",
+          "fireOnEvent": "throw"
+        },
+        {
+          "type": "shoot",
+          "projectile": "lavaWave",
+          "speed": 3.2,
+          "aim": "Facing",
+          "muzzle": [1, -0.95],
+          "interval": 6,
+          "initialDelay": 5.5,
+          "animTrigger": "Slam",
+          "fireOnEvent": "slam"
+        },
+        {
+          "type": "react",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.85
           },
-          "speed": 4,
-          "interval": 2,
-          "initialDelay": 2,
-          "animTrigger": "IsAttacking"
+          "do": [
+            {
+              "type": "showText",
+              "text": "Mm. That one tickled.",
+              "style": "Subtitle",
+              "duration": 3,
+              "color": "#FF8A3D",
+              "sound": "vo_mk_hurt1"
+            }
+          ]
         }
       ],
       "transitions": [
         {
-          "to": "enraged",
+          "to": "rising",
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
@@ -61,35 +368,110 @@
       ]
     },
     {
-      "name": "enraged",
+      "name": "rising",
       "onEnter": [
+        {
+          "type": "setAnimParam",
+          "param": "Standing",
+          "value": 1
+        },
         {
           "type": "runSequence",
           "sequence": "bossEnrage"
         }
       ],
+      "transitions": [
+        {
+          "to": "standing",
+          "when": {
+            "type": "after",
+            "seconds": 4.5
+          }
+        }
+      ]
+    },
+    {
+      "name": "standing",
+      "onEnter": [
+        {
+          "type": "showText",
+          "text": "Now. Let's give them a real show.",
+          "style": "Subtitle",
+          "duration": 3.5,
+          "color": "#FF8A3D",
+          "sound": "vo_mk_phase2"
+        }
+      ],
       "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "lavaWave",
+          "speed": 4,
+          "aim": "Facing",
+          "muzzle": [1, -0.95],
+          "interval": 4.6,
+          "initialDelay": 2,
+          "animTrigger": "Slam",
+          "fireOnEvent": "slam"
+        },
+        {
+          "type": "shoot",
+          "projectile": "slagDrip",
+          "pattern": {
+            "type": "rain",
+            "count": 2,
+            "angleJitter": 0
+          },
+          "speed": 0,
+          "interval": 4.6,
+          "initialDelay": 2
+        },
         {
           "type": "shoot",
           "projectile": "fireball",
           "pattern": {
-            "type": "radial",
-            "count": 10,
-            "rotationPerVolley": 12
+            "type": "spread",
+            "count": 5,
+            "angle": 50
           },
-          "speed": 3.5,
-          "interval": 1.6,
-          "initialDelay": 1,
-          "animTrigger": "IsAttacking"
+          "speed": 4.2,
+          "aim": "Player",
+          "muzzle": [0.8, 0.9],
+          "interval": 4.6,
+          "initialDelay": 4.3,
+          "burst": 2,
+          "burstInterval": 0.25,
+          "animTrigger": "Breath",
+          "fireOnEvent": "breath"
         },
         {
-          "type": "spawner",
-          "entity": "exploder",
-          "interval": 6,
-          "initialDelay": 2,
-          "maxAlive": 2
+          "type": "react",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.2
+          },
+          "do": [
+            {
+              "type": "showText",
+              "text": "You're ruining... my show.",
+              "style": "Subtitle",
+              "duration": 3,
+              "color": "#FF8A3D",
+              "sound": "vo_mk_hurt2"
+            }
+          ]
         }
       ]
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "showText",
+      "text": "The show... must go... on...",
+      "style": "Subtitle",
+      "duration": 4,
+      "color": "#FF8A3D",
+      "sound": "vo_mk_defeat"
     }
   ]
 }

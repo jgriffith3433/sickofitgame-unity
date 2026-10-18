@@ -57,7 +57,12 @@ def cutout(src):
     flat, bg = flat_border(img)
     if flat > 0.9:
         return dod.drop_specks(dod.key(img, bg, 40)), "key"
-    import cutout as dod_cutout  # BiRefNet via rembg (DoD's .venv has it)
+    try:
+        import cutout as dod_cutout  # BiRefNet via rembg (DoD's .venv has it)
+        import rembg  # noqa: F401
+    except ImportError:
+        # No rembg here (the Linux server): key by colour anyway; a take on a busy backdrop then scores low.
+        return dod.drop_specks(dod.key(img, bg, 40)), "key (no rembg)"
 
     a = dod_cutout.mask("birefnet", "soi-" + Path(src).stem, Path(src)).resize(img.size, Image.BILINEAR)
     out = img.convert("RGBA")

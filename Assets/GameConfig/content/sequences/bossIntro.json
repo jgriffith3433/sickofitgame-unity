@@ -3,11 +3,15 @@
   "steps": [
     {
       "type": "lockInput",
-      "seconds": 2.5
+      "seconds": 4.0
     },
     {
       "type": "playerInvincible",
-      "seconds": 3.5
+      "seconds": 12.0
+    },
+    {
+      "type": "playSound",
+      "sound": "magma_rumble"
     },
     {
       "type": "cameraShake",
@@ -15,36 +19,60 @@
       "duration": 1.0
     },
     {
-      "type": "showText",
-      "text": "MAGMA KING",
-      "duration": 2.0,
-      "color": "#FF6633",
-      "sound": "vo_boss_title"
-    },
-    {
-      "type": "showText",
-      "text": "He's hot, he's angry, and he skipped lunch.",
-      "style": "Subtitle",
-      "duration": 2.5,
-      "sound": "vo_boss_intro"
-    },
-    {
-      "type": "wait",
-      "seconds": 1.2
-    },
-    {
       "type": "spawn",
       "entity": "magmaKing",
       "id": "boss",
       "anchor": "Camera",
-      "at": [4, 1]
+      "at": [3.6, -1.3]
     },
     {
       "type": "bossBar",
       "target": {
         "id": "boss"
       },
-      "label": "Magma King (furious)"
+      "label": "The Magma King"
+    },
+    {
+      "type": "showText",
+      "text": "THE MAGMA KING",
+      "duration": 2.0,
+      "color": "#FF6633",
+      "sound": "vo_boss_title"
+    },
+    {
+      "type": "wait",
+      "seconds": 2.2
+    },
+    {
+      "type": "showText",
+      "text": "Mm-hm-hm. An audience, at last. Welcome to the Slag Throne, little spark.",
+      "style": "Subtitle",
+      "duration": 9.0,
+      "color": "#FF8A3D",
+      "sound": "vo_mk_intro"
+    },
+    {
+      "type": "wait",
+      "seconds": 9.4
+    },
+    {
+      "type": "showText",
+      "text": "He's not getting up, is he.",
+      "style": "Subtitle",
+      "duration": 2.4,
+      "sound": "vo_mk_hero_intro"
+    },
+    {
+      "type": "wait",
+      "seconds": 2.6
+    },
+    {
+      "type": "showText",
+      "text": "Dance for me, little spark. Hell loves a show.",
+      "style": "Subtitle",
+      "duration": 5.5,
+      "color": "#FF8A3D",
+      "sound": "vo_mk_phase1"
     }
   ]
 }

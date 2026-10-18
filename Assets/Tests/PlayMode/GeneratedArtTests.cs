@@ -54,5 +54,39 @@ namespace SickOfIt.Tests.PlayMode
             Assert.That(flipbook, Is.Not.Null, "Die didn't play");
             Assert.That(die, Does.Contain(flipbook.sprite));
         }
+
+        /// <summary>
+        /// The Magma King (Docs/Story.md, "The Magma King's fight"): seated he throws a boulder on his Throw clip's event;
+        /// at half health he rises (Rise, Enrage) and stands (IdleStand); death plays Die.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator MagmaKingThrowsRisesAndDies()
+        {
+            level = TestLevel.Create(GameContent.FromDefinition(GameDefinition.Instance), playerAt: new Vector2(-3f, -2f));
+            var king = level.World.Spawn("magmaKing", new Vector2(3.6f, -1.3f), new SpawnOptions());
+            Assert.That(king.Animation.HasClips, Is.True, "the Magma King has no animator");
+            Assert.That(king.Animation.TryGetClip(Entity.DieState, out var die, out _), Is.True, "the Magma King has no Die clip");
+            yield return new WaitForFixedUpdate();
+            Assert.That(king.Sprite.sprite, Is.Not.Null, "his sheet has no sprites (not sliced or not in the registry)");
+            Assert.That(king.Animation.CurrentState, Is.EqualTo("Idle"));
+
+            yield return level.UntilCondition(() => king.Animation.CurrentState == "Throw", 10f);
+            Assert.That(king.Animation.CurrentState, Is.EqualTo("Throw"));
+            yield return level.UntilCondition(() => level.Alive("magmaBoulder").Count > 0, 5f);
+            Assert.That(level.Alive("magmaBoulder").Count, Is.GreaterThan(0), "the Throw clip's event never threw the boulder");
+
+            king.Damage(king.Health / 2 + 1, null, true);
+            yield return level.UntilCondition(() => king.Animation.CurrentState == "Rise", 10f);
+            Assert.That(king.Animation.CurrentState, Is.EqualTo("Rise"), "below half health he must stand up");
+            yield return level.UntilCondition(() => king.Animation.CurrentState == "IdleStand", 10f);
+            Assert.That(king.Animation.CurrentState, Is.EqualTo("IdleStand"), "after Rise and Enrage he stays standing");
+
+            king.Damage(king.Health, null, true);
+            yield return null;
+            Assert.That(king.IsAlive, Is.False);
+            var flipbook = Object.FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None).FirstOrDefault(r => r.name == "Flipbook" && r.gameObject.activeInHierarchy);
+            Assert.That(flipbook, Is.Not.Null, "Die didn't play");
+            Assert.That(die, Does.Contain(flipbook.sprite));
+        }
     }
 }
