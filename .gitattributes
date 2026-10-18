@@ -93,3 +93,6 @@
 *.a filter=lfs diff=lfs merge=lfs -text
 *.so filter=lfs diff=lfs merge=lfs -text
 *.dylib filter=lfs diff=lfs merge=lfs -text
+
+# The website content (Tools/Web/site) ships as plain files, not LFS
+Tools/Web/site/**/*.webp binary

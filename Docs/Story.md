@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; On the website, 2026-10-18). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -532,6 +532,25 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    script branches on; a taken shortcut's `nextLevel` replaces the stage's `nextLevelNumber`, the run goes on from it,
    and `ShortcutProgress` (Data) keeps it for the Shaft's dotted jump (`ShaftStop.ShortcutFrom`/`ShortcutTo`). The
    first one is the Old Stair's (Level 14, Floor 871 to 841). Playtest: `shortcut`.
+
+## On the website
+
+The website's lore (`Tools/Web/site`, installed by the deploy; built 2026-10-18) is this page told for visitors, the
+way the hero got it: *the Descent* (`blog/lore.html`) falls from the Meadow (Floor 0) through Circles I to X to Floor
+1,000, like the Shaft's first plunge, then a page per character, resident, hazard, place and rule. What it shows
+follows what the game has revealed:
+
+- **Wardens** are black figures with **???** until the hero has beaten them in the game; hovering or tapping one shows
+  only a hint from its working look (a cracked bell, a lantern of blue runes), never its name. Exceptions, as on the
+  Shaft: the Magma King (beaten, named, painted), the Spire Fiend (the next Warden, so named on hover) and the Overlord
+  (known from the prologue).
+- **Circles not built yet** show their biome, and their enemy families marked *(rumoured)*: this table is still a
+  proposal.
+- **No finale spoilers:** the Overlord's fight at Floor 1 and the ending stay off the site ("Hell hasn't shown anyone yet").
+- **The early builds:** Bork, Slobber and Sintinel (the arcade version's monsters) keep their old pages, marked *from
+  the early builds* and not on the climb. The old pages' Yooba-as-avenger, "chose to go" and "World 1/World 2" are
+  corrected on the pages themselves, each in a *What changed* note: Yooba is the village slime, nobody chose the portal,
+  and Hell is 1,000 floors.
 
 ## Art
 

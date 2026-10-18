@@ -255,7 +255,10 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
-  page has neither; `Plugins/WebGL/HawkesSite.jslib`).
+  page has neither; then the lore (the Descent, whose floor counter must read 1,000 at the bottom, and the new lore
+  pages) and the engine post, linked from the blog and Development; on every page no link or button overlaps another
+  or leaves the screen and nothing scrolls sideways (run it on device "phone"); `check` and `site-layout` events;
+  `Plugins/WebGL/HawkesSite.jslib`).
 - **Start one:** in a browser `?playtest=smoke` (plus `&seed=`, `&speed=`), or `hawkesPlaytest.start("level-2")`; in the
   editor or a test, `HawkesPlaytest.StartScenario("level-2")`. Note: `smoke` and `full` press New Game, which resets
   the save in that browser.
@@ -290,6 +293,18 @@ level (and killed the playtest run). Updates on an already-controlled page still
 landing page) is written by the deploy too (step 7c, `GameDeployWindow.InstallCredit`), into a fresh copy of the
 website's main, between `<!-- Hawkes credit: ... -->` comments. Change its words or look there, not in the website: an
 edit in the website is replaced on the next deploy. New site pages get it automatically.
+
+**The website's lore and blog posts** live here too, in `Tools/Web/site/` (it mirrors the website's paths:
+`blog/lore.html`, `blog/lore/**`, `blog/posts/the-engine.html`). The deploy (step 7d, `SiteContent`, before the
+credit) copies every file there over a fresh copy of the website, so they reach the beta site with the build and go
+live with the game; `site.json` inserts snippets (a post's card on the blog index and Development, a note on an old
+post) into pages this repo doesn't own, between `<!-- Hawkes site: <id> -->` comments. Edit the pages here, never in
+the website (the next deploy overwrites them). The lore is the Story told for visitors: change `Docs/Story.md` first,
+then the page; Wardens the game hasn't revealed stay ??? (Docs/Story.md, "On the website"). `blog/lore.html` is "the
+Descent" (`blog/lore/assets/descent.css`/`.js`: floor counter, Circle bands, embers, sound only after a tap, reduced
+motion respected); its art is the game's own, made small by `Tools/Web/site-images.sh`. Check it without Unity:
+`node Tools/Web/site-check.mjs <website checkout> [--install <dir>]` (links, anchors, inserts, banned words; `--install`
+builds a local copy to look at). Never start a browser on the agents' server: J asks for the `site` playtest.
 
 **Deploy in batch mode** (the build server): `-batchmode -projectPath C:/Projects/sickofitgame-unity -executeMethod
 SickOfIt.Tools.Editor.GameDeployWindow.FullDeployBatch` runs Tools > Run Full Deploy without a window (Addressables, new

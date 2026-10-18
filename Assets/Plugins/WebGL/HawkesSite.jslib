@@ -1,10 +1,14 @@
 // The playtest's look at the website around the game (the "site" scenario in SickOfIt.Playtest): opens a site page
 // in a full-screen frame over the game, so the recording shows it, and reads its Hawkes credit (the
-// "Powered by HAWKES GEN" mark the deploy installs, GameDeployWindow step 7c). Only the playtest calls these.
+// "Powered by HAWKES GEN" mark the deploy installs, GameDeployWindow step 7c), checks its layout at the frame's size
+// (on device "phone", 390 wide: links and buttons overlapping each other or leaving the screen, a page wider than the
+// screen) and, on the lore's Descent, the floor counter once scrolled to the bottom. Only the playtest calls these.
 mergeInto(LibraryManager.library, {
-    // Opens 'path' (relative to the site root, "" = the landing page) and starts checking it.
-    HawkesSiteOpen: function (pathPtr) {
+    // Opens 'path' (relative to the site root, "" = the landing page) and starts checking it. 'expect' (may be
+    // empty) is a CSS selector the page should have, e.g. a link to a new post.
+    HawkesSiteOpen: function (pathPtr, expectPtr) {
         var path = UTF8ToString(pathPtr);
+        var expect = expectPtr ? UTF8ToString(expectPtr) : "";
         var check = window.hawkesSiteCheck = { path: path, done: false };
         var root = new URL("../", location.href);  // the game is Game/index.html
         var url = new URL(path, root).href;
@@ -41,6 +45,48 @@ mergeInto(LibraryManager.library, {
                     visible: box.width > 0 && box.height > 0 && style.visibility !== "hidden" && style.display !== "none" && parseFloat(style.opacity || "1") > 0
                 };
             }
+            // Layout at the top of the page, as a visitor first sees it.
+            function scrolls(el) {
+                for (var p = el.parentElement; p && p !== doc.body; p = p.parentElement) {
+                    var o = view.getComputedStyle(p).overflowX;
+                    if (o === "auto" || o === "scroll" || o === "hidden") return true;
+                }
+                return false;
+            }
+            function label(el) {
+                return (el.tagName.toLowerCase() + " \"" + (el.textContent || el.getAttribute("aria-label") || "").replace(/\s+/g, " ").trim().slice(0, 40) + "\"");
+            }
+            var width = view.innerWidth, items = [], overlaps = [], offscreen = [];
+            doc.querySelectorAll('a[href], button, [role="button"], input, select').forEach(function (el) {
+                var style = view.getComputedStyle(el);
+                if (style.visibility === "hidden" || style.display === "none" || parseFloat(style.opacity || "1") === 0) return;
+                var rects = Array.prototype.filter.call(el.getClientRects(), function (r) { return r.width > 1 && r.height > 1; });
+                if (!rects.length) return;
+                items.push({ el: el, rects: rects });
+                if (!scrolls(el) && rects.some(function (r) { return r.right > width + 1 || r.left < -1; }))
+                    offscreen.push(label(el));
+            });
+            for (var i = 0; i < items.length && overlaps.length < 8; i++) {
+                for (var j = i + 1; j < items.length && overlaps.length < 8; j++) {
+                    var a = items[i], b = items[j];
+                    if (a.el.contains(b.el) || b.el.contains(a.el)) continue;
+                    var hit = a.rects.some(function (r) {
+                        return b.rects.some(function (q) {
+                            return Math.min(r.right, q.right) - Math.max(r.left, q.left) > 2 && Math.min(r.bottom, q.bottom) - Math.max(r.top, q.top) > 2;
+                        });
+                    });
+                    if (hit) overlaps.push(label(a.el) + " / " + label(b.el));
+                }
+            }
+            var layout = {
+                width: width,
+                pageWidth: doc.documentElement.scrollWidth,
+                overflowX: doc.documentElement.scrollWidth > width + 1,
+                overlaps: overlaps,
+                offscreen: offscreen.slice(0, 8)
+            };
+            var expected = !expect || !!doc.querySelector(expect);
+
             var gen = doc.querySelector('a[href^="https://hawkesgen.com"]');
             // Bring the mark into view and ring it for the recording (only in this frame, only now).
             if (gen) {
@@ -53,11 +99,19 @@ mergeInto(LibraryManager.library, {
                 parent.style.outline = "2px solid #2ecc71";
                 parent.style.outlineOffset = "4px";
             }
-            finish({
-                title: doc.title || "",
-                gen: link('a[href^="https://hawkesgen.com"]'),
-                parent: link('a[href^="https://hawkesbiomedical.com"]')
-            });
+            // The Descent counts floors as it scrolls: at the credit (the bottom of the page) it should read 1,000.
+            setTimeout(function () {
+                var floor = -1;
+                try { if (view.hellDescent) floor = view.hellDescent.floor(); } catch (e) { }
+                finish({
+                    title: doc.title || "",
+                    gen: link('a[href^="https://hawkesgen.com"]'),
+                    parent: link('a[href^="https://hawkesbiomedical.com"]'),
+                    layout: layout,
+                    expected: expected,
+                    floor: floor
+                });
+            }, 700);
         }
 
         fetch(url, { cache: "no-store" }).then(function (response) {

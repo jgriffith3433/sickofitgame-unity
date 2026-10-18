@@ -155,6 +155,9 @@ namespace SickOfIt.Tools.Editor
                 if (GUILayout.Button("7b. Install the Tap-to-Play Sound Prompt"))
                     RunStep(() => Step_InstallSoundPrompt());
 
+                if (GUILayout.Button("7d. Install the Site Content (lore pages, blog posts)"))
+                    RunStep(() => Step_InstallSiteContent());
+
                 if (GUILayout.Button("7c. Install the Powered by HAWKES GEN Mark on the Site"))
                     RunStep(() => Step_InstallCredit());
 
@@ -183,6 +186,7 @@ namespace SickOfIt.Tools.Editor
                         $"6. Build WebGL to v{newVersion}\\SickOfIt\n" +
                         $"7. Replace v{detectedVersion} → v{newVersion} in website\n" +
                         $"7b. Install the tap-to-play sound prompt in Game\\index.html\n" +
+                        $"7d. Install the site content from Tools\\Web\\site (lore, blog posts)\n" +
                         $"7c. Put Powered by HAWKES GEN on every site page (not the game)\n" +
                         $"8. Run auto-start.bat & open browser\n\n" +
                         $"Continue?", "Deploy", "Cancel"))
@@ -514,6 +518,18 @@ namespace SickOfIt.Tools.Editor
             return without.Substring(0, at) + insert + without.Substring(at);
         }
 
+        /// <summary>
+        /// The website content this repo owns (Tools/Web/site: the lore pages, the descent's art and script, blog
+        /// posts and their cards on the blog's lists), copied into the website so it ships with this build. Runs
+        /// before step 7c, which then puts the credit on the new pages too. See <see cref="SiteContent"/>.
+        /// </summary>
+        private void Step_InstallSiteContent()
+        {
+            Log("Step 7d: Installing the site content (Tools/Web/site)...");
+            int missed = SiteContent.Install(SiteContent.SourceFolder, WebsiteProjectPath, Log);
+            Log(missed == 0 ? "  Done." : $"  Done, {missed} insert(s) skipped (see the warnings above).");
+        }
+
         // ─────────────────────────────────────────────
         // Hawkes credit (Powered by HAWKES GEN, and the parent company on the landing page)
         // ─────────────────────────────────────────────
@@ -744,6 +760,10 @@ namespace SickOfIt.Tools.Editor
                 Log("");
 
                 Step_InstallSoundPrompt();
+                Log("");
+
+                // Before the credit, so the new pages get it too.
+                Step_InstallSiteContent();
                 Log("");
 
                 Step_InstallCredit();
