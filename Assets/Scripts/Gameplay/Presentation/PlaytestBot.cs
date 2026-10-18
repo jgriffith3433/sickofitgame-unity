@@ -21,6 +21,11 @@ namespace SickOfIt.Gameplay
         /// enemy, never dodges, jumps, fires or rewinds. Still takes the upgrade picker and stops on pause and results.
         /// </summary>
         public bool reckless;
+        /// <summary>
+        /// Takes Hell's shortcuts when one is offered (the shortcut scenario): presses 2, the shortcut's card. Otherwise
+        /// it presses 1 like on every picker, and keeps climbing the long way.
+        /// </summary>
+        public bool takeShortcuts;
 
         GameplayWorld world;
         PlaytestInput input;
@@ -31,6 +36,7 @@ namespace SickOfIt.Gameplay
         float strafeDirection = 1f;
         int releaseJumpFrame = -1;
         int releasePickFrame = -1;
+        Key pickKey = Key.Digit1;
 
         public Vector2 Move { get; private set; }
         public Vector2 FireDirection { get; private set; }
@@ -75,7 +81,7 @@ namespace SickOfIt.Gameplay
             }
             if (releasePickFrame >= 0 && Time.frameCount >= releasePickFrame)
             {
-                input.SetKey(Key.Digit1, false);
+                input.SetKey(pickKey, false);
                 releasePickFrame = -1;
             }
         }
@@ -96,8 +102,12 @@ namespace SickOfIt.Gameplay
             if (world.Hud != null && world.Hud.PickerOpen)
             {
                 Idle();
-                if (releasePickFrame < 0 && !input.IsHeld(Key.Digit1))
-                    Press(Key.Digit1, ref releasePickFrame);
+                var key = takeShortcuts && world.Hud.ShortcutOpen ? Key.Digit2 : Key.Digit1;
+                if (releasePickFrame < 0 && !input.IsHeld(key))
+                {
+                    pickKey = key;
+                    Press(key, ref releasePickFrame);
+                }
                 return;
             }
             if (world.Hud != null && (world.Hud.Paused || world.Hud.ResultsOpen))

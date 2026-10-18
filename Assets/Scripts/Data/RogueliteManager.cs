@@ -487,6 +487,7 @@ namespace SickOfIt.Data
             PlayerPrefs.DeleteKey("HighestLevelReached");
             PlayerPrefs.DeleteKey("GameInitialized");
             ShaftProgress.Reset();
+            ShortcutProgress.Reset();
             GloobProgress.Reset();
             WaystoneProgress.Reset();
 

@@ -54,6 +54,8 @@ namespace SickOfIt.Gameplay
         public ILevelHost Host { get; private set; }
         public GameplayTelemetry Telemetry { get; private set; }
         public UpgradeSystem Upgrades { get; private set; }
+        /// <summary>Hell's shortcuts offered in this level (offerShortcut) and the one taken, if any.</summary>
+        public ShortcutSystem Shortcuts { get; private set; }
         /// <summary>Expected level length in seconds, for the progress bar.</summary>
         public float LevelLength { get; private set; } = 60f;
         public ObjectPool PickupPool { get; private set; }
@@ -166,6 +168,7 @@ namespace SickOfIt.Gameplay
                 budget.Configure(setup.RewindBudget.startSeconds, setup.RewindBudget.maxSeconds, setup.RewindBudget.costPerSecond);
             }
             Upgrades = new UpgradeSystem(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
+            Shortcuts = new ShortcutSystem(this, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             Upgrades.ApplyOwned();
             Upgrades.ApplyShop();
             Hud.BuildProgressBar();

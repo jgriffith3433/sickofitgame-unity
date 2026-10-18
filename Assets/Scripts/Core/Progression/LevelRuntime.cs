@@ -1155,6 +1155,11 @@ namespace SickOfIt.Core.Progression
             if (config != null && !config.returnToMainMenuOnComplete && config.nextVideoNumber > 0)
                 GameProgressManager.Instance.UnlockVideo(config.nextVideoNumber);
 
+            // A shortcut taken on the way up is kept for the Shaft (its dotted jump), from now on.
+            var shortcut = TakenShortcut();
+            if (shortcut != null)
+                SickOfIt.Data.ShortcutProgress.Record(shortcut.id, gameplayWorld.Shortcuts.TakenFromFloor, shortcut.toFloor);
+
             // The run goes on from the next level (after a video: the level after this one, like ReturnToLevel).
             int next = config == null || config.returnToMainMenuOnComplete ? 0 : config.nextVideoNumber > 0 ? levelNumber + 1 : NextLevel();
             RunFlow.LevelCleared(levelNumber, next);
@@ -1171,8 +1176,11 @@ namespace SickOfIt.Core.Progression
             CommitCompletion();
 
             // The Shaft (Hell's map) comes up between a cleared level and whatever is next.
+            var shortcut = TakenShortcut();
             ShaftHook.Run(new ShaftStop { Kind = ShaftStopKind.AfterLevel, Level = levelNumber, NextVideo = Mathf.Max(0, config.nextVideoNumber),
-                    NextLevel = config.nextVideoNumber > 0 ? 0 : NextLevel() },
+                    NextLevel = config.nextVideoNumber > 0 ? 0 : NextLevel(),
+                    ShortcutFrom = shortcut != null ? gameplayWorld.Shortcuts.TakenFromFloor : 0,
+                    ShortcutTo = shortcut != null ? shortcut.toFloor : 0 },
                 LoadWhatComesNext);
         }
 
@@ -1203,10 +1211,20 @@ namespace SickOfIt.Core.Progression
             }
         }
 
-        /// <summary>The level this one leads straight on to (nextLevelNumber), if it exists; else 0.</summary>
+        /// <summary>The shortcut taken in this play of the level (offerShortcut), or null.</summary>
+        private SickOfIt.Gameplay.Content.OfferShortcutAction TakenShortcut()
+        {
+            return gameplayWorld != null && gameplayWorld.Shortcuts != null ? gameplayWorld.Shortcuts.Taken : null;
+        }
+
+        /// <summary>
+        /// The level this one leads straight on to (nextLevelNumber, or a taken shortcut's nextLevel, past the
+        /// levels it skipped), if it exists; else 0.
+        /// </summary>
         private int NextLevel()
         {
-            int next = config != null ? config.nextLevelNumber : 0;
+            var shortcut = TakenShortcut();
+            int next = shortcut != null && shortcut.nextLevel > 0 ? shortcut.nextLevel : config != null ? config.nextLevelNumber : 0;
             if (next <= 0)
                 return 0;
             if (gameDefinition == null || next > gameDefinition.TotalLevels)

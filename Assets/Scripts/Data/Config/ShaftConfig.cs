@@ -96,11 +96,17 @@ namespace SickOfIt.Data.Config
         public Color waystoneDark = new Color(0.3f, 0.27f, 0.27f, 0.95f);
         [Tooltip("Floors where a crack in the wall or a dotted gap hints at a shortcut (not explained yet).")]
         public List<int> shortcutHints = new List<int>();
+        [Tooltip("A shortcut the hero has taken: the dotted jump up the wall from the floor he took it on to the floor it let him out on.")]
+        public Color shortcutPath = new Color(1f, 0.72f, 0.3f, 0.95f);
+        [Tooltip("Seconds the marker takes to jump a shortcut.")]
+        public float shortcutSeconds = 1.6f;
 
         [Header("Sounds (ids in audio.json)")]
         public string fallSound = "shaft_fall";
         public string slamSound = "shaft_slam";
         public string tickSound = "shaft_tick";
+        [Tooltip("The whoosh as the marker jumps a shortcut.")]
+        public string shortcutSound = "";
         [Tooltip("Music on the first plunge: a falling riser whose slam lands as the marker hits the bottom (it starts with fallSound, " +
                  "plungeSeconds before the slam).")]
         public string plungeMusic = "";
