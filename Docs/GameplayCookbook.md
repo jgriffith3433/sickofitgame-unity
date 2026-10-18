@@ -166,8 +166,14 @@ Then, on `atPortal`:
 - `facePlayer`: `"direction": "Left"`/`"Right"`, or `"target"` to face an entity.
 - `pullPlayerInto`: a `target` id (followed if it moves) or an `at` point. Gravity and collisions go off, he slides in
   spinning (`spin` degrees, clockwise) and shrinking (`endScale`), then he is hidden for the rest of the level.
-- `playPlayerAnimation` plays a state of the player's Animator by name (`player.json` `animationConfig`). New scene
-  clips (Curious, Grabbed) go there first.
+- `playPlayerAnimation` plays a state of the player's Animator by name (`player.json` `animationConfig`). The hero's
+  scene clips are `Curious` (leans in and peers down, loops), `Shout` (cups a hand and calls down, once) and `Grabbed`
+  (yanked off his feet, flailing and tumbling, loops). A state isn't left by itself (no transitions out of the scene
+  clips): play `Idle` before he walks again. A state in player.json that the generated controller doesn't have yet
+  (Generate Project not run since it was added) still plays, straight from its sheet (`PlayerSceneClip`).
+- New hero clips: generate the mp4 from an Idle frame (Hawkes Gen `video.i2v`, start = end for a loop, black
+  background, same framing), bake it with `Tools/Art/player_clip_sheet.py` (604x340 cells like every hero sheet; see
+  its header) and add the state to `player.json`.
 - `cameraTo` / `cameraZoom` / `cameraReset` move and zoom the **Static** camera (`size` is the orthographic half-height;
   the levels use 2.8, smaller is closer); `cameraReset` goes back to the level's view. Other camera modes ignore them
   (the validator warns).

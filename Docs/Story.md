@@ -48,13 +48,15 @@ Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
    is never interrupted.
 4. **The portal.** The Overlord's lasers come down one last time, not at the hero (he isn't worth it yet) but at
    the ground beside him. They burn a glowing hole into the meadow: a portal, lying flat on the ground.
-5. **The walk-over.** The hero walks over to it on his own, curious (scripted: the player's input is off).
+5. **The walk-over.** The hero walks over to it on his own, curious (scripted: the player's input is off), and
+   leans in to peer down at it, head tilted (his `Curious` clip).
    Hero: *"That's a hole."* Beat. *"So that's where they keep coming from."*
-6. **The echo.** He leans over and shouts *"Hello?"* Hell answers: *"...hello? ...hello? ...hello?"*, each one
+6. **The echo.** He cups a hand and shouts down *"Hello?"* (`Shout`) Hell answers: *"...hello? ...hello? ...hello?"*, each one
    deeper than the last. It's the first hint that **Hell is repetition**: even its echo won't stop.
    The echo is his own voice coming back, slower, darker and more broken each time: the loop answering him
    (`vo_portal_echo`).
-7. **"Nope."** He turns to leave. The portal grabs him: he spins and shrinks into it, and he's gone.
+7. **"Nope."** He turns to leave. The portal grabs him: yanked off his feet backward, flailing (`Grabbed`), he
+   spins and shrinks into it, and he's gone. He is still tumbling the same way down Video2's fire tunnel.
 8. **Gloob.** A beat later a green village slime bounces past, wobbles at the edge, and is slurped in after him.
    Nobody remarks on it. It pays off in Video3, when the same slime turns up at the bottom of Hell, talking.
 9. **Video2.** The burning door; the hero tumbling and spinning down the fire tunnel; the lava river at Floor
