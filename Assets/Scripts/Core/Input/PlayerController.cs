@@ -281,6 +281,8 @@ namespace SickOfIt.Core.Input
             if (Suspended == suspended)
                 return;
             Suspended = suspended;
+            if (suspended)
+                ReleaseHold();
             if (rb != null)
             {
                 rb.linearVelocity = Vector2.zero;

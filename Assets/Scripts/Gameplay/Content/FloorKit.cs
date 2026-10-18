@@ -904,6 +904,11 @@ namespace SickOfIt.Gameplay.Content
         // Laid out every tick: the platform may have been stretched after it spawned, and it may sink or ride.
         public override void Tick(float now, float dt)
         {
+            // The counter can move between the spawn (a section ahead) and his arrival.
+            int floor = Owner.World.Stage != null ? Owner.World.Stage.Floor : 0;
+            string carving = text.Replace("{floor}", floor > 0 ? floor.ToString() : "");
+            if (carving != Carving)
+                Write("Carving", carving, size);
             Layout("Carving", size, above + size * 0.5f);
             Layout("Words", size * 0.38f, above + size + size * 0.25f);
         }

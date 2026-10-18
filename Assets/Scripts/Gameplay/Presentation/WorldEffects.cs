@@ -126,6 +126,8 @@ namespace SickOfIt.Gameplay
                     backdrop = FloorBackdrop.Create(world, circle.sky, travelOrigin);
                 // The first two sections are there before the level starts: the hero lands on the opening ledge.
                 SpawnThrough(Mathf.Min(1, path.Count - 1), false);
+                if (path.Count > 0)
+                    SpawnSection(0, onEnter: true);
                 return;
             }
             track = StageTrack.Create(world, script, circle, travelOrigin);
