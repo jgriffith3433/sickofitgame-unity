@@ -99,8 +99,8 @@ Assets/GameConfig/
 - **Shortcuts** (Docs/Story.md, "Shortcuts"): a choice point in a stage (`offerShortcut`: keep climbing or the shortcut,
   its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
   stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the
-  Shaft jumps a dotted line up through a hinted crack (`ShortcutProgress`). First one: Level 14's Old Stair, 871 to 841,
-  Level 18 next. Cookbook "A shortcut".
+  Shaft jumps a dotted line up through a hinted crack (`ShortcutProgress`). First one: the Old Stair (`levels/Level14.json`, level 18), 871 to 841,
+  level 22 (`Level18.json`) next. Cookbook "A shortcut".
 - **Waystones and runs** (Docs/Story.md): a death on a floor stage ends the run: the death screen, then the Shaft drops the
   marker back to the highest Waystone (the Landing, Floor 1,000, then each Circle's top once its Warden is beaten) and the
   run restarts there; Grudges reset, diamonds and Yooba's goods stay. Main menu: Continue (the run) / New Run (the
@@ -198,14 +198,17 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   ending, the portal scene, beat by beat: Grudge pick first, beam telegraphed and hitting beside the hero, portal open,
   move/jump/fire/R pressed and ignored, the walk, every line's subtitle and voice, the turn, the pull-in, the slime,
   the scorch, the fade, no damage; then Continue on the results and Video2 must start; `check`, `line`, `signal` events;
-  a floor stage, Level 2 on, is checked as it plays: its "FLOORS N-M: PLACE" banner and hero lines with their voices,
+  a floor (one level = one floor, Levels 2-6: Floors 1000-996) is checked like a stage, with a "FLOOR N: PLACE" banner, the
+  counter ticking to the next floor on its landing and the floor's own new idea (1000 sinking stones, 999 the rising lava
+  and its wave, 998 the village's wreckage and cinders, 997 sack imps on the hauling chains and an empty chain ridden,
+  996 lava falls and geysers; `FinishFloorIdea`); a floor stage, Level 7 on, is checked as it plays: its "FLOORS N-M: PLACE" banner and hero lines with their voices,
   the floor counter start → end, its carved `floors.sign`, at most one new enemy type and the first one alone, a 3+ s
   breather, ≤ 3 enemies at once, a repeated floor on two signs (The Loop), 60-120 s, the first phase's lines (title,
   a milestone like Level 7's Floor 950) before the first enemy, every scripted line shown with its voice, a
   `floors.door` standing at the top with a voice other than the hero's or the announcer's heard before it (Level 10:
   the Magma King's door), the Grudge; then the Shaft's climb and what comes next; `check`, `banner`, `line` (with the
   time and speaker), `new-enemy`, `breather`, `sign`, `door` events; a Warden's arena (a floor stage on a Static
-  screen, `IsArena`: Level 11, the Slag Throne) skips the breather and takes 60-240 s, and adds the boss checks: the
+  screen, `IsArena`: Level 15, the Slag Throne) skips the breather and takes 60-240 s, and adds the boss checks: the
   voiced intro (the throne rises, "FLOOR 901! THE WARDEN OF THE WASTES!", his taunt, the hero's line, the boss bar
   before the fight), the phases in order from the fight's `emit` signals (`mkIntro`, `mkFight`, `mkStand`,
   `mkPhase2`, `mkEnrage`, `mkFlood`, `mkDefeat`, `waystoneLit`) with his health at the stand (≤ half) and the enrage
@@ -215,17 +218,22 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   `attack`, `adds` events, plus the magma-king watch's checks), `full` (New Game, then
   every level in order through the real flow: results → Continue → the Shaft (Continue) → video skipped with Escape; up to 3 tries per level;
   ~10 min), `story-path` (New Game along the story path, each step a `check` event: Video1, Level 1, Video2, Level 2
-  "Floors 1000-991: The Landing" with no other level between, its floor counter 1000 → 991 and the 999 milestone,
-  Video3 (Yooba) watched 8 s, then Levels 3-11 (The Spill, Imp Run, The Slag Falls, The Loop, Halfway Basin, The Crust,
-  The Sack Pile, The Heat Stairs, The Slag Throne) one after another with no video between, each with the stage checks below, then the
-  level select, whose cards must list the story levels first and in order; ~35 min; the Shaft after Video2 and after each floor stage is checked too), `wastes-climb` (Level 6
-  loaded directly, then Levels 7-11 through the real flow with the stage checks on each: Level 7 opens on the Floor 950
-  beat, Level 10 ends at the Magma King's door with his voice heard ahead, Level 11 is his arena with the boss checks,
-  then the level select; ~18 min), `shaft` (Video2 loaded directly with
+  "Floor 1000: The Landing" with no other level between, its floor counter 1000 → 999, Video3 (Yooba) watched 8 s,
+  Level 3 (Floor 999) opening on the 999 milestone, Levels 4-6 (Floors 998-996), then Levels 7-15 (the old stages: The
+  Spill, Imp Run, The Slag Falls, The Loop, Halfway Basin, The Crust, The Sack Pile, The Heat Stairs, The Slag Throne)
+  one after another with no video between, each with the stage checks below, then the
+  level select, whose cards must list the story levels first and in order; ~35 min; the Shaft after Video2 and after each floor stage is checked too), `wastes-climb` (Level 10
+  loaded directly, then Levels 11-15 through the real flow with the stage checks on each: Level 11 opens on the Floor 950
+  beat, Level 14 ends at the Magma King's door with his voice heard ahead, Level 15 is his arena with the boss checks,
+  then the level select; ~18 min), `landing-stretch` (the first floors, one level per floor: Level 2, Floor 1000,
+  loaded directly, then Levels 3-6 through the real flow, Video3 and Yooba's hello skipped after Floor 1000; each floor
+  with the stage checks and its own idea, the Shaft climbing exactly one floor after each (`climbOneFloor`), then Floor
+  996 leading on to Level 7; ~15 min; Docs/LevelDesign.md), `shaft` (Video2 loaded directly with
   the Shaft's save reset, skipped: the first plunge past the 10 Circles to FLOOR 1,000, the welcome lines, Continue to Level 2, the
-  bot plays it, then the marker's climb to 991 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
-  `music` (Hell's soundtrack, Docs/Story.md "Music": the `shaft` run listening to the music, then Level 11 loaded directly and fought
-  until the enrage: the plunge's riser and slam, the Ember Wastes loop on Level 2 and the push music taking over in a generated push,
+  bot plays it, then the marker's climb to 999 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
+  `music` (Hell's soundtrack, Docs/Story.md "Music": the `shaft` run listening to the music, then Level 15 loaded directly and fought
+  until the enrage: the plunge's riser and slam, the Ember Wastes loop on Level 2 and the push music taking over in a generated push (Floor 1000 has
+  no push: that check needs a generated stage),
   the climb's sting, the Magma King's theme when the fight starts and the enrage variant after `mkEnrage`; `music` events (every
   switch, from `StageMusic` telemetry and the Shaft's reports) and `check` events `music <beat>`; ~15 min),
   `menus` (level select, videos, Yooba's shop, settings open and close, then a Shaft preview with Yooba met: Visit
@@ -247,17 +255,17 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   voiced welcome, slime-made goods), can't afford, buy (diamonds spent, level saved), Back returns to the Shaft, Continue starts
   Level 3 with the goods applied, the main menu's Visit Yooba shows them still bought, a climb preview shows the button again;
   `check` events `shop <beat>`; ~3 min), `waystone` (Waystones and runs: a save with the Landing's Waystone, Yooba met and
-  one of his goods bought (setup shortcut), Level 3 loaded directly and cleared by the bot with its Grudge pick, the climb to
-  Level 4, where the bot plays to lose (`PlaytestBot.reckless`: walks into the shots) until Hell kills it; the death screen
+  one of his goods bought (setup shortcut), Level 3 (Floor 999) loaded directly and cleared by the bot with its Grudge pick, the climb to
+  Level 4 (Floor 998), where the bot plays to lose (`PlaytestBot.reckless`: walks into the shots) until Hell kills it; the death screen
   ("YOU OBVIOUSLY DIED", the announcer's gloat), the Shaft's drop from the floor he died on to the Waystone at FLOOR 1,000 with
   the Waystones marked, the first death's voiced line and the hero's answer, not skippable; Grudges gone, diamonds and goods
   kept; Continue restarts the run at Level 2; the main menu shows Continue and New Run, and New Run starts Level 2; `check`
   events `waystone <beat>`; ~6 min; a death in `full`/`story-path`/`wastes-climb` also drops back, and their retries reopen
-  the level directly), `shortcut` (Hell's first shortcut: Level 14, The Old Stair, loaded directly with one Grudge in hand (setup shortcut);
+  the level directly), `shortcut` (Hell's first shortcut: Level 18, The Old Stair, loaded directly with one Grudge in hand (setup shortcut);
   the bot plays to the collapsed stairwell at the top and presses 2 on its choice: the choice with its cost on screen,
   the Grudge paid, the hero's line and the announcer's reaction, the counter jumping 871 to 841 with no Grudge pick; the
-  Shaft climbs to 871 and jumps a dotted line to 841 (`climbShortcut14`); Continue starts Level 18 (Floors 840-831),
-  skipping 15-17, played with the stage checks; `check` events `shortcut <beat>`, `shortcut-offer`/`shortcut-taken`; ~6 min),
+  Shaft climbs to 871 and jumps a dotted line to 841 (`climbShortcut14`); Continue starts Level 22 (Floors 840-831),
+  skipping 19-21, played with the stage checks; `check` events `shortcut <beat>`, `shortcut-offer`/`shortcut-taken`; ~6 min),
   `climb` (the floor toolkit on a test floor: `content/scenes/climbTest.json` on Level 2's stage, setup shortcut; the bot
   climbs it through real input: the path's climb, sideways run and chase, climb again, the lava sea and parallax, a
   stone sinking and rising back, a crumbling stone falling, a raft drifting and carrying him, a chain swing, the lava

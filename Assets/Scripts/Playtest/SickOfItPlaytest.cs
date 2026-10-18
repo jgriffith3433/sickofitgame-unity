@@ -137,32 +137,43 @@ namespace SickOfIt.Playtest
         /// The story-path scenario: each story level in order and the video that must play before it (0 = none: the level
         /// starts straight after the Shaft that follows the one before). Docs/Story.md, "Level numbers".
         /// </summary>
-        static readonly (int video, int level)[] StoryPath = { (1, 1), (2, 2), (3, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11) };
-        /// <summary>The Landing (Level 2): the floors its counter must run through, and the milestone it must play.</summary>
-        public const int LandingLevel = 2, LandingFirstFloor = 1000, LandingLastFloor = 991, LandingMilestone = 999;
+        static readonly (int video, int level)[] StoryPath =
+            { (1, 1), (2, 2), (3, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11), (0, 12), (0, 13), (0, 14), (0, 15) };
+        /// <summary>
+        /// The Landing (Level 2, Floor 1000, one level = one floor): the floors its counter must run through (1000, ticking to 999
+        /// on its landing), and the milestone beat, which plays as Floor 999 (MilestoneLevel) opens.
+        /// </summary>
+        public const int LandingLevel = 2, LandingFirstFloor = 1000, LandingLastFloor = 999, LandingMilestone = 999, MilestoneLevel = 3;
+        /// <summary>
+        /// The landing-stretch scenario: the first floors built one level per floor (Docs/LevelDesign.md, Floors 1000-996), Level 2
+        /// loaded directly, then the real flow through Level 6, each with the stage checks and its own new idea checked, the Shaft
+        /// climbing one floor after each; Video3 and Yooba's hello come after Floor 1000.
+        /// </summary>
+        public const int StretchFrom = 2, StretchTo = 6;
+        const float StretchSeconds = 900f;
         const float StoryPathSeconds = 2100f;
         /// <summary>
         /// The wastes-climb scenario: the stage it loads directly (The Loop) and the last one it plays through the real flow
         /// (The Heat Stairs, ending at the Magma King's door). Docs/Story.md, "Circle X stage outline".
         /// </summary>
-        public const int ClimbFrom = 6, ClimbTo = 11;
+        public const int ClimbFrom = 10, ClimbTo = 15;
         const float WastesClimbSeconds = 960f;
         /// <summary>The shaft scenario: the level after the plunge whose climb it watches (The Landing).</summary>
         public const int ShaftLevel = 2;
         const float ShaftSeconds = 480f;
         /// <summary>The music scenario: after the shaft scenario's run, the Warden's arena it loads directly (the Magma King).</summary>
-        public const int MusicBossLevel = 11;
+        public const int MusicBossLevel = 15;
         const float MusicBossSeconds = 420f;
         const float YoobaSeconds = 300f;
-        /// <summary>The waystone scenario: the stage the bot clears first (The Spill, for a Grudge), then dies on the next one.</summary>
+        /// <summary>The waystone scenario: the stage the bot clears first (Floor 999, for a Grudge), then dies on the next one (Floor 998, The Spill).</summary>
         public const int WaystoneLevel = 3;
         const float WaystoneSeconds = 480f;
         /// <summary>
         /// The shortcut scenario (Docs/Story.md, "Shortcuts"): the stage with Hell's first shortcut (The Old Stair, Floors
         /// 880-871, the collapsed stairwell at its top), the floor it lets him out on, and the stage it leads to, past the
-        /// ones it skips (Levels 15-17).
+        /// ones it skips (Levels 19-21).
         /// </summary>
-        public const int ShortcutLevel = 14, ShortcutToFloor = 841, ShortcutNextLevel = 18;
+        public const int ShortcutLevel = 18, ShortcutToFloor = 841, ShortcutNextLevel = 22;
         const float ShortcutSeconds = 480f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -208,6 +219,16 @@ namespace SickOfIt.Playtest
                             "results, the Shaft's climb to 901 with that Waystone saved and lit and Circle IX's band waking up (voiced), and the level select";
                     seconds += 60f;
                 }
+                else if (name != null && name.StartsWith("Floor ", StringComparison.Ordinal))
+                {
+                    what += ": one floor of Hell (one level = one floor), checked as it plays: its title banner (\"FLOOR N: PLACE\") and hero lines " +
+                            "with their voices, the floor counter on its floor and ticking to the next on the landing, the floor's own new idea (1000 sinking " +
+                            "stones, 999 the rising lava and its wave, 998 the village's wreckage with cinders, 997 imps swinging with diamond sacks and an " +
+                            "empty chain ridden, 996 lava falls and geysers), at most one new enemy type and the first one alone, a 3+ s breather where it " +
+                            "has enemies, no more than 3 enemies at once, 60-120 s, every scripted line with its voice, the Grudge pick; then Continue on " +
+                            "the results, the Shaft climbing one floor, and what comes next";
+                    seconds += 40f;
+                }
                 else if (name != null && name.StartsWith("Floors ", StringComparison.Ordinal))
                 {
                     what += ": a stage of Hell, checked as it plays: its title banner (\"FLOORS N-M: PLACE\") and hero lines with their voices, the floor " +
@@ -247,20 +268,30 @@ namespace SickOfIt.Playtest
                 "it used to cover), the frame on screen matches the clock, the soundtrack matches the clock, and the video is as long as its soundtrack", 60, "video"));
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
             list.Add(new PlaytestScenario("story-path", "New Game through the story path with the real flow: Video1, Level 1 (the Meadow and its portal " +
-                $"scene), Video2, Level 2 (Floors {LandingFirstFloor}-{LandingLastFloor}: The Landing, no arcade level in between: its floor counter runs " +
-                $"{LandingFirstFloor} to {LandingLastFloor} and the \"ONLY {LandingMilestone} TO GO\" beat plays), Video3 (Yooba, watched a few seconds), then the " +
-                "Ember Wastes stages one after another with no video between them: Level 3 (Floors 990-981: The Spill), Level 4 (980-971: Imp Run), Level 5 " +
-                "(970-961: The Slag Falls), Level 6 (960-951: The Loop), Level 7 (950-941: Halfway Basin, opening on the Floor 950 beat), Level 8 " +
-                "(940-931: The Crust), Level 9 (930-921: The Sack Pile), Level 10 (920-911: The Heat Stairs, ending at the Magma King's door with " +
-                "his voice heard ahead), Level 11 (910-901: The Slag Throne, the Magma King's arena, his Waystone at 901 and Circle IX waking on the Shaft), each with its title, voiced lines, floor counter, new enemy alone and breather checked " +
+                $"scene), Video2, Level 2 (Floor {LandingFirstFloor}: The Landing, no arcade level in between: its floor counter on {LandingFirstFloor}, " +
+                $"ticking to {LandingLastFloor} on its landing), Video3 (Yooba, watched a few seconds), then the floors one after another with no video " +
+                $"between them: Level 3 (Floor 999, opening on the \"ONLY {LandingMilestone} TO GO\" beat), Level 4 (Floor 998: The Spill), Level 5 (Floor 997: " +
+                "Imp Run), Level 6 (Floor 996: The Slag Falls), then the old 10-floor stages: Level 7 (Floors 990-981: The Spill), Level 8 (980-971: Imp Run), " +
+                "Level 9 (970-961: The Slag Falls), Level 10 (960-951: The Loop), Level 11 (950-941: Halfway Basin, opening on the Floor 950 beat), Level 12 " +
+                "(940-931: The Crust), Level 13 (930-921: The Sack Pile), Level 14 (920-911: The Heat Stairs, ending at the Magma King's door with " +
+                "his voice heard ahead), Level 15 (910-901: The Slag Throne, the Magma King's arena, his Waystone at 901 and Circle IX waking on the Shaft), each with its title, voiced lines, floor counter, new enemy alone and breather checked " +
                 "and the Shaft's climb after it; then the level select, whose cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
             list.Add(new PlaytestScenario("wastes-climb", $"Level {ClimbFrom} (The Loop) loaded directly (setup shortcut), then the real flow on through " +
-                $"Level {ClimbTo}: results, Continue, the Shaft's climb, and the next stage with no video between, so Levels 7-11 play in order after Level 6 " +
+                $"Level {ClimbTo}: results, Continue, the Shaft's climb, and the next stage with no video between, so Levels {ClimbFrom + 1}-{ClimbTo} play in order after Level {ClimbFrom} " +
                 "and the floors run 960 to 901. Each stage gets the level-n stage checks (title, voiced lines, floors, sign, new enemy alone, breather, " +
-                "enemies at once, length, Grudge). Level 7 must open on the Floor 950 beat (\"FLOOR 950: HALFWAY TO 900\" with its voice, before " +
-                "the first enemy); Level 10 must end at the Magma King's door (\"THE SLAG THRONE\") with his voice heard from ahead before it; " +
-                "Level 11 is his arena (the boss checks of level-11), and its Shaft climbs to 901 with the Waystone lit and Circle IX waking; " +
+                $"enemies at once, length, Grudge). Level {ClimbFrom + 1} must open on the Floor 950 beat (\"FLOOR 950: HALFWAY TO 900\" with its voice, before " +
+                $"the first enemy); Level {ClimbTo - 1} must end at the Magma King's door (\"THE SLAG THRONE\") with his voice heard from ahead before it; " +
+                $"Level {ClimbTo} is his arena (the boss checks of level-11), and its Shaft climbs to 901 with the Waystone lit and Circle IX waking; " +
                 "then the level select. Up to 3 tries per stage; each beat is a check event", WastesClimbSeconds, "full"));
+            list.Add(new PlaytestScenario("landing-stretch", $"The first floors of Hell, one level per floor (Docs/LevelDesign.md): level {StretchFrom} (Floor 1000, " +
+                $"The Landing) loaded directly (setup shortcut), then the real flow on through level {StretchTo} (Floor 996): results, Continue, the Shaft " +
+                "climbing exactly one floor (1000 to 999, ... 996 to 995), Video3 and Yooba's hello after Floor 1000 (skipped like a player), and the next " +
+                "floor. Each floor gets the stage checks (title \"FLOOR N: PLACE\" voiced, hero line, counter ticking to the next floor on the landing, new " +
+                "enemy alone, breather, at most 3 enemies, 60-120 s, every line voiced, the Grudge pick) and its own idea: 1000 sinking stones taking his " +
+                "weight; 999 the lava rising behind him with the \"ONLY 999 TO GO\" beat and its wave chasing him sideways; 998 the village's wreckage " +
+                "sinking under him and the cinders; 997 sack imps swinging on the hauling chains and an empty chain ridden; 996 lava falls and geysers " +
+                "blowing on their beat. Up to 3 tries per floor; then Floor 996 must lead on to the next level. Each beat is a check event",
+                StretchSeconds, "full"));
             list.Add(new PlaytestScenario("shortcut", $"Hell's first shortcut (Docs/Story.md, \"Shortcuts\"): level {ShortcutLevel} (Floors 880-871: The Old Stair, " +
                 "Circle IX) loaded directly with one Grudge in hand (setup shortcut: given if he has none). The bot plays it through real input to the " +
                 "collapsed stairwell at the top, where the choice comes up: card 1 keeps climbing, card 2 is the stairwell with its cost shown (a Grudge, " +
@@ -280,17 +311,17 @@ namespace SickOfIt.Playtest
                 "plays its rising sting, the Magma King's fight starts on his theme and turns to the enrage variant after mkEnrage. Each music switch is a " +
                 "music event, each beat a check event", ShaftSeconds + MusicBossSeconds, "full"));
             list.Add(new PlaytestScenario("yooba", "Yooba, the village slime: his hello on the Shaft after Video3 (setup shortcut: his save reset, the marker at " +
-                "Floor 991; Video3 loaded directly and skipped after 6 s): his talking portrait (idle and talk loops), every hello line with its voice and the " +
+                "Floor 999; Video3 loaded directly and skipped after 6 s): his talking portrait (idle and talk loops), every hello line with its voice and the " +
                 "hero's one-line reply, then Continue starts Level 3. Then three Shaft previews over the menu (setup shortcuts) where he reacts to the floor: " +
                 "950, a death on the way, the Magma King's door. Then the shop with his portrait: welcome, a card clicked with 0 diamonds (can't afford), " +
                 "the same card with enough (buy), Back (goodbye). Each beat is a check event", YoobaSeconds, "menus"));
             list.Add(new PlaytestScenario("yooba-shop", "Yooba's shop from the Shaft: the Shaft after Video3 (setup shortcut: Yooba's save reset, the marker " +
-                "at Floor 991, his hello skipped), Visit Yooba beside Continue opens his shop over the Shaft with his animated portrait and voiced welcome, " +
+                "at Floor 999, his hello skipped), Visit Yooba beside Continue opens his shop over the Shaft with his animated portrait and voiced welcome, " +
                 "slime-made goods; a card clicked with 0 diamonds (can't afford), then with its price (bought: diamonds spent, level saved); Back (goodbye) " +
                 "returns to the Shaft and Continue starts Level 3 with the goods applied; the main menu's Visit Yooba shows them still bought; a climb " +
                 "between floors (preview) shows Visit Yooba again. Each beat is a check event", 240, "menus"));
             list.Add(new PlaytestScenario("waystone", "Waystones and runs: a save where the Landing was cleared (setup shortcut: the Landing's Waystone, " +
-                $"Yooba met, diamonds, one of Yooba's goods bought), then level {WaystoneLevel} (The Spill) loaded directly and played by the bot, its Grudge " +
+                $"Yooba met, diamonds, one of Yooba's goods bought), then level {WaystoneLevel} (Floor 999) loaded directly and played by the bot, its Grudge " +
                 "picked with 1, the results, the Shaft's climb and Continue to the next stage, where the bot plays to lose (walks into the shots, no " +
                 "dodging, firing or rewinding) until Hell kills it: the death screen (\"YOU OBVIOUSLY DIED\", the announcer gloating with a voice), then " +
                 "the Shaft drops the hero's marker from the floor he died on back to the Waystone at FLOOR 1,000 with the Waystones marked on the map, " +
@@ -378,6 +409,8 @@ namespace SickOfIt.Playtest
                 yield return session.WaystoneRun();
             else if (id == "wastes-climb")
                 yield return session.WastesClimb();
+            else if (id == "landing-stretch")
+                yield return session.WastesClimb(StretchFrom, StretchTo, StretchSeconds);
             else if (id == "shortcut")
                 yield return session.ShortcutRun();
             else if (id == "menus")
@@ -524,6 +557,22 @@ namespace SickOfIt.Playtest
                 if (Run.Done)
                     return;
                 string level = "level " + log.World.LevelNumber;
+                if (stage != null && stage.OneFloor && stage.Level == log.World.LevelNumber)
+                {
+                    if (e.Kind == "floorkit")
+                    {
+                        string key = e.Subject.Split(':')[0] + "@" + e.Detail;
+                        stage.Kit.TryGetValue(key, out int had);
+                        stage.Kit[key] = had + 1;
+                        if (e.Subject.StartsWith("geyser:", StringComparison.Ordinal) || e.Subject.StartsWith("swingGrab:", StringComparison.Ordinal))
+                            Run.Event("floorkit", $"{level}: {e.Subject} ({e.Detail})");
+                    }
+                    else if (e.Kind == "spawn")
+                    {
+                        stage.Spawned.TryGetValue(e.Subject, out int had);
+                        stage.Spawned[e.Subject] = had + 1;
+                    }
+                }
                 switch (e.Kind)
                 {
                     case "phase":
@@ -791,6 +840,35 @@ namespace SickOfIt.Playtest
                 public string BossBar = "", LastBossState = "";
                 public float BossBarAt = -1f, SlowMotionAt = -1f, BossFirstAt = -1f;
 
+                // ─── One level = one floor (Docs/LevelDesign.md): what the floor's own pieces did ───
+                /// <summary>A floor level: floors.end is the floor above floors.start.</summary>
+                public bool OneFloor => Start > 0 && Start - End == 1;
+                /// <summary>Floor-kit events ("sink@sinkingStone", "swingGrab@swingChain", "geyser@lavaGeyser") and spawns by entity id.</summary>
+                public readonly Dictionary<string, int> Kit = new Dictionary<string, int>(), Spawned = new Dictionary<string, int>();
+                /// <summary>The lava sea's surface (lowest and highest seen) and when the wave first chased him.</summary>
+                public float LavaLow = float.MaxValue, LavaHigh = float.MinValue;
+
+                public int KitCount(string what, string entityPrefix = "")
+                {
+                    int n = 0;
+                    foreach (var pair in Kit)
+                    {
+                        int at = pair.Key.IndexOf('@');
+                        if (at > 0 && pair.Key.Substring(0, at) == what && pair.Key.Substring(at + 1).StartsWith(entityPrefix, StringComparison.Ordinal))
+                            n += pair.Value;
+                    }
+                    return n;
+                }
+
+                public int SpawnCount(string entityPrefix)
+                {
+                    int n = 0;
+                    foreach (var pair in Spawned)
+                        if (pair.Key.StartsWith(entityPrefix, StringComparison.Ordinal))
+                            n += pair.Value;
+                    return n;
+                }
+
                 public StageWatch(int level, Action<string, bool, string> check)
                 {
                     Level = level;
@@ -812,9 +890,11 @@ namespace SickOfIt.Playtest
                     Door = script.floors.door ?? "";
                     if (script.floors.repeat != null)
                         Repeat.AddRange(script.floors.repeat);
+                    // A floor level's new enemy is the one the Circle introduces on that floor (the floor above is the next level's).
+                    int lastFloor = Start - End == 1 ? Start : End;
                     if (content.Circles.TryGetValue(script.floors.circle ?? "", out var circle))
                         foreach (var e in circle.enemies)
-                            if (e.fromFloor <= Start && e.fromFloor >= End && !NewTypes.Contains(e.entity))
+                            if (e.fromFloor <= Start && e.fromFloor >= lastFloor && !NewTypes.Contains(e.entity))
                                 NewTypes.Add(e.entity);
                     // Which sound each on-screen line speaks with, so a shown line can be checked for its voice.
                     var actions = new List<SickOfIt.Gameplay.Content.GameAction>();
@@ -937,7 +1017,16 @@ namespace SickOfIt.Playtest
                 {
                     string banner = hud.BannerShown, line = hud.SubtitleShown;
                     if (banner.Length > 0 && banner != s.LastBanner)
+                    {
                         s.Banners.Add((banner, SaidAs(s, "banner", banner)));
+                        // The 999 milestone is Floor 999's own title now (one level = one floor), not a Circle milestone passed.
+                        if (story != null && world.Stage != null && world.Stage.Floor == LandingMilestone
+                            && banner.IndexOf($"ONLY {LandingMilestone} TO GO", StringComparison.Ordinal) >= 0)
+                        {
+                            Run.Event("milestone", $"level {s.Level}: {banner}");
+                            story.Milestones.Add((s.Level, LandingMilestone));
+                        }
+                    }
                     if (line.Length > 0 && line != s.LastLine)
                         s.Lines.Add((line, SaidAs(s, "line", line)));
                     s.LastBanner = banner;
@@ -955,7 +1044,8 @@ namespace SickOfIt.Playtest
                     if (e.MaxHealth <= 0)
                         continue;
                     enemies++;
-                    if (s.NewSerial < 0 && s.NewTypes.Contains(e.DefId))
+                    // Its variants count too (a sack imp on a swing is tagged impSack).
+                    if (s.NewSerial < 0 && s.NewTypes.Exists(t => t == e.DefId || e.Tags.Contains(t)))
                         fresh = e;
                 }
                 s.MaxEnemies = Mathf.Max(s.MaxEnemies, enemies);
@@ -991,6 +1081,16 @@ namespace SickOfIt.Playtest
 
                 if (s.Arena)
                     ArenaDuring(s, world, now);
+                if (s.OneFloor)
+                {
+                    var sea = world.FindById("lavaSea");
+                    if (sea != null && sea.IsAlive && sea.MainCollider != null)
+                    {
+                        float top = sea.MainCollider.bounds.max.y;
+                        s.LavaLow = Mathf.Min(s.LavaLow, top);
+                        s.LavaHigh = Mathf.Max(s.LavaHigh, top);
+                    }
+                }
 
                 var track = world.Effects != null ? world.Effects.Track : null;
                 if (track != null)
@@ -1137,7 +1237,7 @@ namespace SickOfIt.Playtest
                 var check = s.Check;
                 string prefix = "level" + s.Level + ".";
 
-                string wantTitle = $"FLOORS {s.Start}-{s.End}: {s.Place.ToUpperInvariant()}";
+                string wantTitle = s.OneFloor ? $"FLOOR {s.Start}: {s.Place.ToUpperInvariant()}" : $"FLOORS {s.Start}-{s.End}: {s.Place.ToUpperInvariant()}";
                 var title = s.Banners.Find(b => b.text == wantTitle);
                 check(prefix + "title", title.text != null && title.voiced,
                     title.text != null ? $"\"{title.text}\" {(title.voiced ? "voiced by the announcer" : "shown WITHOUT its voice")}"
@@ -1165,7 +1265,9 @@ namespace SickOfIt.Playtest
                         : $"the first {s.NewTypes[0]} arrived with {s.OthersAtNewSpawn} other enemies alive{(s.NewAlone ? " and stayed alone" : ", and another joined it")}");
                 // A Warden's arena is one fight with the boss alive throughout: its pauses are the phase changes (FinishArena).
                 if (!s.Arena)
-                    check(prefix + "breather", s.LongestQuiet >= 3f, $"longest stretch with nothing attacking after the first push: {s.LongestQuiet:0.0} s (want 3+)");
+                    check(prefix + "breather", s.LongestQuiet >= 3f || s.OneFloor && s.FirstHostileAt < 0f,
+                        s.FirstHostileAt < 0f ? "nothing attacked on this floor (its lava and stones are the floor)"
+                            : $"longest stretch with nothing attacking after the first push: {s.LongestQuiet:0.0} s (want 3+)");
                 check(prefix + "maxEnemies", s.MaxEnemies <= 3, $"at most {s.MaxEnemies} enemies on screen at once (Circle X allows 3)");
                 if (s.Opening.Count > 0)
                 {
@@ -1215,6 +1317,68 @@ namespace SickOfIt.Playtest
                 }
                 if (s.Arena)
                     FinishArena(s, completed);
+                if (s.OneFloor)
+                    FinishFloorIdea(s, completed);
+            }
+
+            /// <summary>
+            /// A floor's own new idea (Docs/LevelDesign.md, the floor's page), from what its pieces reported: the landing-stretch
+            /// floors 1000-996. Floors without a page here only get the stage checks.
+            /// </summary>
+            void FinishFloorIdea(StageWatch s, bool completed)
+            {
+                string prefix = "level" + s.Level + ".idea";
+                var kitSeen = new List<string>();
+                foreach (var pair in s.Kit)
+                    kitSeen.Add($"{pair.Key} x{pair.Value}");
+                string kit = kitSeen.Count > 0 ? string.Join(", ", kitSeen) : "nothing";
+                float rose = s.LavaHigh > s.LavaLow ? s.LavaHigh - s.LavaLow : 0f;
+                switch (s.Start)
+                {
+                    case 1000:
+                    {
+                        int sinks = s.KitCount("sink", "sinkingStone");
+                        s.Check(prefix, sinks >= 3 || !completed && sinks >= 1,
+                            $"sinking stones took his weight {sinks} time(s) (want 3+: the floor teaches them); floor kit: {kit}");
+                        break;
+                    }
+                    case 999:
+                    {
+                        bool beat = s.Banners.Exists(b => b.text.Contains("ONLY 999 TO GO") && b.voiced);
+                        bool rising = s.Banners.Exists(b => b.text.StartsWith("THE LAVA'S RISING", StringComparison.Ordinal) && b.voiced);
+                        int wave = s.SpawnCount("lavaSurge");
+                        s.Check(prefix, beat && rising && rose >= 4f && (wave > 0 || !completed),
+                            $"the 999 beat {(beat ? "voiced" : "NOT voiced")}; \"THE LAVA'S RISING\" {(rising ? "voiced" : "NOT voiced")}; the lava rose {rose:0.0} units " +
+                            $"(want 4+); the wave {(wave > 0 ? "chased him" : "never came")}");
+                        break;
+                    }
+                    case 998:
+                    {
+                        int wrecks = s.KitCount("sink", "wreck");
+                        int cinders = s.SpawnCount("cinder");
+                        s.Check(prefix, wrecks >= 3 && cinders >= 1,
+                            $"the village's wreckage sank under him {wrecks} time(s) (want 3+), {cinders} cinder(s) came; floor kit: {kit}");
+                        break;
+                    }
+                    case 997:
+                    {
+                        int imps = s.SpawnCount("impSwing");
+                        int grabs = s.KitCount("swingGrab", "swingChain");
+                        int spilled = s.SpawnCount("diamond");
+                        s.Check(prefix, imps >= 3 && grabs >= 1,
+                            $"{imps} sack imp(s) swung on the hauling chains (want 3+), he rode an empty chain {grabs} time(s) (want 1+), " +
+                            $"{spilled} diamond(s) spilled; floor kit: {kit}");
+                        break;
+                    }
+                    case 996:
+                    {
+                        int blows = s.KitCount("geyser", "lavaGeyser");
+                        int falls = s.SpawnCount("lavaFallScenery");
+                        s.Check(prefix, blows >= 3 && falls >= 1,
+                            $"geysers blew {blows} time(s) (want 3+, each after its 1 s tell), {falls} lava fall(s) poured behind the run; floor kit: {kit}");
+                        break;
+                    }
+                }
             }
 
             /// <summary>
@@ -1340,25 +1504,59 @@ namespace SickOfIt.Playtest
             }
 
             /// <summary>
-            /// wastes-climb: Level ClimbFrom loaded directly, then each stage up to ClimbTo through the real flow (results,
-            /// Continue, the Shaft, the next stage), each with the floor-stage checks; a stage must follow the one before
-            /// with no video between, and the last one leads to the level select.
+            /// wastes-climb (and landing-stretch): level 'first' loaded directly, then each level up to 'last' through the real
+            /// flow (results, Continue, the Shaft, a video and Yooba's hello where the story puts one, the next level), each with
+            /// the floor-stage checks; a one-floor level's Shaft must climb exactly one floor; the last one leads to the level
+            /// select, or to the level it names (the old stages after Floor 996).
             /// </summary>
-            public IEnumerator WastesClimb()
+            public IEnumerator WastesClimb(int first = ClimbFrom, int last = ClimbTo, float seconds = WastesClimbSeconds)
             {
-                var texts = GameDefinition.Instance.menuTheme.texts;
-                float deadline = Time.realtimeSinceStartup + WastesClimbSeconds - 30f;
+                var definition = GameDefinition.Instance;
+                var texts = definition.menuTheme.texts;
+                float deadline = Time.realtimeSinceStartup + seconds - 30f;
                 stageChecksFailed = 0;
-                Run.Event("shortcut", $"load level {ClimbFrom} directly");
-                var load = LoadLevel(ClimbFrom);
+                Run.Event("shortcut", $"load level {first} directly");
+                var load = LoadLevel(first);
                 if (load != null)
                     yield return load;
                 bool reachedEnd = true;
                 GameplayWorld previous = null;
-                for (int n = ClimbFrom; n <= ClimbTo; n++)
+                for (int n = first; n <= last; n++)
                 {
-                    if (n > ClimbFrom)
+                    if (n > first)
                     {
+                        // A video the story puts here (Video3, Yooba, after Floor 1000): watch a moment, skip it, pass his hello.
+                        var before = definition.GetLevel(n - 1);
+                        if (before != null && before.nextVideoNumber > 0)
+                        {
+                            yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null || NewWorld(previous) != null, 60f, $"video {before.nextVideoNumber} to start");
+                            if (Run.Done) yield break;
+                            bool inVideo = Object.FindAnyObjectByType<VideoRuntime>() != null;
+                            int playing = inVideo ? PlayerPrefs.GetInt("CurrentVideoNumber", 0) : 0;
+                            StageCheck("level" + (n - 1) + ".video", inVideo && playing == before.nextVideoNumber,
+                                inVideo ? $"video {playing} plays after level {n - 1}" : $"no video after level {n - 1} (want video {before.nextVideoNumber})");
+                            if (inVideo)
+                            {
+                                Run.Scene("Video " + playing);
+                                yield return WaitReal(4f);
+                                if (Run.Done) yield break;
+                                float skipUntil = Time.realtimeSinceStartup + 20f;
+                                while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && ShaftScreen.Current == null && Time.realtimeSinceStartup < skipUntil)
+                                {
+                                    yield return Tap(Key.Escape);
+                                    Run.Event("skip", $"video {playing}");
+                                    yield return WaitReal(2f);
+                                }
+                                if (Run.Done) yield break;
+                                yield return Run.Until(() => ShaftScreen.Current != null || NewWorld(previous) != null, 15f, "Yooba's hello on the Shaft after video " + playing);
+                                if (Run.Done) yield break;
+                                if (ShaftScreen.Current != null)
+                                {
+                                    yield return PassShaft();
+                                    if (Run.Done) yield break;
+                                }
+                            }
+                        }
                         // Straight on from the Shaft: the next stage, not a video or the level select.
                         yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null || Object.FindAnyObjectByType<LevelSelectionManager>() != null
                                                      || NewWorld(previous) != null && GameplayWorld.Instance.Player != null
@@ -1380,7 +1578,7 @@ namespace SickOfIt.Playtest
                         attempts++;
                         float left = deadline - Time.realtimeSinceStartup;
                         if (left < 5f) { lastOutcome = "time up"; break; }
-                        float from = (float)(n - ClimbFrom) / (ClimbTo - ClimbFrom + 1), to = (float)(n - ClimbFrom + 1) / (ClimbTo - ClimbFrom + 1);
+                        float from = (float)(n - first) / (last - first + 1), to = (float)(n - first + 1) / (last - first + 1);
                         stage = IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
                         yield return PlayLevel(n, 0f, stage != null ? StageDuring : (Func<float, IEnumerator>)null, from, to, left, waitOutDeath: true);
                         if (Run.Done) yield break;
@@ -1409,19 +1607,40 @@ namespace SickOfIt.Playtest
                     if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
                         yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
                     if (Run.Done) yield break;
+                    lastShaft = null;
                     yield return WatchClimb(n, StageCheck);
                     if (Run.Done) yield break;
+                    // One level = one floor: the marker climbs one floor (Docs/Story.md, "The Shaft").
+                    ShaftScreen.LevelFloors(n, out int floorStart, out int floorEnd);
+                    if (floorStart - floorEnd == 1)
+                        StageCheck("level" + n + ".climbOneFloor", lastShaft != null && lastShaft.From == floorStart && lastShaft.Shown == floorEnd,
+                            lastShaft != null ? $"the Shaft's marker climbed from FLOOR {lastShaft.From} to FLOOR {lastShaft.Shown} (want {floorStart} to {floorEnd}: one floor)"
+                                : "no Shaft climb seen");
                 }
                 if (reachedEnd && LoadLevel == DefaultLoadLevel)
                 {
+                    var lastConfig = definition.GetLevel(last);
+                    int after = lastConfig != null && lastConfig.nextVideoNumber <= 0 ? lastConfig.nextLevelNumber : 0;
                     yield return Run.Until(() => Object.FindAnyObjectByType<LevelSelectionManager>() != null || Object.FindAnyObjectByType<VideoRuntime>() != null
-                                                 || NewWorld(previous) != null, 60f, $"what comes after level {ClimbTo}");
+                                                 || NewWorld(previous) != null, 60f, $"what comes after level {last}");
                     if (Run.Done) yield break;
-                    bool select = Object.FindAnyObjectByType<LevelSelectionManager>() != null;
-                    StageCheck("level" + ClimbTo + ".next", select, select ? $"level {ClimbTo} leads to the level select (Circle IX's stages are next to rebuild)"
-                        : $"level {ClimbTo} led to {SceneName()} instead of the level select");
-                    Run.Scene(select ? "Level Select" : SceneName());
-                    yield return WaitReal(2f);
+                    if (after > 0)
+                    {
+                        var world = NewWorld(previous);
+                        StageCheck("level" + last + ".next", world != null && world.LevelNumber == after,
+                            world != null ? $"level {world.LevelNumber} ({world.LevelName}) starts after level {last}'s Shaft (want level {after})"
+                                : $"level {last} led to {SceneName()} instead of level {after}");
+                        Run.Scene(world != null ? "Level " + world.LevelNumber : SceneName());
+                        yield return WaitReal(4f);
+                    }
+                    else
+                    {
+                        bool select = Object.FindAnyObjectByType<LevelSelectionManager>() != null;
+                        StageCheck("level" + last + ".next", select, select ? $"level {last} leads to the level select (Circle IX's stages are next to rebuild)"
+                            : $"level {last} led to {SceneName()} instead of the level select");
+                        Run.Scene(select ? "Level Select" : SceneName());
+                        yield return WaitReal(2f);
+                    }
                 }
                 Run.Progress(1f);
                 End(stageChecksFailed > 0 ? PlaytestOutcome.Done
@@ -3569,8 +3788,8 @@ namespace SickOfIt.Playtest
                         float left = deadline - Time.realtimeSinceStartup;
                         if (left < 5f) { lastOutcome = "time up"; break; }
                         float from = (float)step / (StoryPath.Length + 1), to = (float)(step + 1) / (StoryPath.Length + 1);
-                        // The Ember Wastes stages after the Landing get the stage checks (title, lines, floors, new enemy, breather).
-                        stage = n > LandingLevel && IsFloorStage(n) ? new StageWatch(n, StoryCheck) : null;
+                        // The floors and stages of Hell, the Landing on, get the stage checks (title, lines, floors, new enemy, breather).
+                        stage = n >= LandingLevel && IsFloorStage(n) ? new StageWatch(n, StoryCheck) : null;
                         yield return PlayLevel(n, 0f, stage != null ? StageDuring : (Func<float, IEnumerator>)null, from, to, left, waitOutDeath: true);
                         if (Run.Done) yield break;
                         if (stage != null && (lastOutcome == "completed" || lastOutcome != "died" || attempts >= 3))
@@ -3584,6 +3803,8 @@ namespace SickOfIt.Playtest
                     }
                     if (n == LandingLevel)
                         CheckLanding(lastOutcome);
+                    if (n == MilestoneLevel)
+                        CheckMilestone(lastOutcome);
                     if (lastOutcome != "completed")
                     {
                         Run.Event("stopped", $"level {n}: {lastOutcome} after {attempts} attempt(s)");
@@ -3651,7 +3872,7 @@ namespace SickOfIt.Playtest
                 return world != null && world != previous ? world : null;
             }
 
-            /// <summary>The Landing's floor counter ran 1000 to 991 and the 999 milestone played on it.</summary>
+            /// <summary>The Landing's floor counter read 1000 and ticked to 999 on its landing.</summary>
             void CheckLanding(string outcome)
             {
                 var floors = story.LandingFloors;
@@ -3667,9 +3888,14 @@ namespace SickOfIt.Playtest
                 StoryCheck("landingFloors", floors.Count > 0 && floors[0] == LandingFirstFloor && highest == LandingFirstFloor
                                             && (completed ? lowest == LandingLastFloor && floors[floors.Count - 1] == LandingLastFloor : lowest >= LandingLastFloor),
                     $"the floor counter ran {seen} (want {LandingFirstFloor} down to {LandingLastFloor}; level {outcome})");
-                bool milestone = story.Milestones.Exists(m => m.level == LandingLevel && m.floor == LandingMilestone);
-                StoryCheck("landing" + LandingMilestone, milestone || !completed && lowest > LandingMilestone,
-                    milestone ? $"the floor {LandingMilestone} beat played" : $"no floor {LandingMilestone} beat (lowest floor {lowest})");
+            }
+
+            /// <summary>The 999 milestone: Floor 999 (level MilestoneLevel) opens on "ONLY 999 TO GO".</summary>
+            void CheckMilestone(string outcome)
+            {
+                bool milestone = story.Milestones.Exists(m => m.level == MilestoneLevel && m.floor == LandingMilestone);
+                StoryCheck("landing" + LandingMilestone, milestone,
+                    milestone ? $"the floor {LandingMilestone} beat played as Floor {LandingMilestone} opened" : $"no floor {LandingMilestone} beat on level {MilestoneLevel} (level {outcome})");
             }
 
             /// <summary>The level select's cards: the story levels come first, the Meadow then floors counting down, before any other level.</summary>
@@ -3953,8 +4179,8 @@ namespace SickOfIt.Playtest
                         Run.Event("shortcut", "Yooba marked as met (so the Shaft shows Visit Yooba); put back afterwards");
                         YoobaProgress.Met = true;
                     }
-                    Run.Event("shortcut", "open the Shaft over the main menu (preview: the marker climbs 1000 to 991)");
-                    var screen = ShaftScreen.Preview(1000, 991);
+                    Run.Event("shortcut", "open the Shaft over the main menu (preview: the marker climbs 1000 to 999)");
+                    var screen = ShaftScreen.Preview(1000, 999);
                     yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 75f, "the Shaft preview's Continue");
                     if (Run.Done) yield break;
                     if (step > 0)
@@ -4093,7 +4319,7 @@ namespace SickOfIt.Playtest
 
             /// <summary>
             /// Yooba's shop from the Shaft, through the real flow (acceptance criteria of the shop task): his hello Shaft
-            /// after Video3 (setup shortcut: his save reset, the marker at Floor 991, his hello skipped), Visit Yooba beside
+            /// after Video3 (setup shortcut: his save reset, the marker at Floor 999, his hello skipped), Visit Yooba beside
             /// Continue opens his shop over the Shaft (portrait, voiced welcome, slime-made goods), a card with 0 diamonds
             /// (can't afford), the same card with its price in diamonds (bought: diamonds spent, level saved), Back (goodbye)
             /// returns to the Shaft, Continue starts Level 3 with the goods applied; then the main menu's Visit Yooba shows
@@ -4112,9 +4338,9 @@ namespace SickOfIt.Playtest
                 if (Run.Done) yield break;
 
                 // 1. The Shaft after Video3 (Yooba's hello), skipped to its end.
-                Run.Event("shortcut", $"reset Yooba's save, put the Shaft's marker at Floor 991 (the Landing cleared), diamonds to 0, load video {video} directly");
+                Run.Event("shortcut", $"reset Yooba's save, put the Shaft's marker at Floor 999 (the Landing cleared), diamonds to 0, load video {video} directly");
                 YoobaProgress.Reset();
-                ShaftProgress.Floor = 991;
+                ShaftProgress.Floor = 999;
                 ShaftProgress.Plunged = true;
                 roguelite.SetPoints(0);
                 PlayerPrefs.SetInt("ReturnToLevel", nextLevel);
@@ -4234,8 +4460,8 @@ namespace SickOfIt.Playtest
                 Run.Progress(0.75f);
 
                 // 6. Between floors: a climb (preview over the menu, setup shortcut) shows Visit Yooba beside Continue again.
-                Run.Event("shortcut", "Shaft preview: the marker climbs 991 to 981 (the Spill cleared)");
-                var climb = ShaftScreen.Preview(991, 981);
+                Run.Event("shortcut", "Shaft preview: the marker climbs 999 to 998 (Floor 999 cleared)");
+                var climb = ShaftScreen.Preview(999, 998);
                 Run.Scene("Shaft: between floors");
                 yield return Run.Until(() => ShaftScreen.Current != climb || climb.Ready, 60f, "the climb's Continue");
                 if (Run.Done) yield break;
@@ -4418,6 +4644,11 @@ namespace SickOfIt.Playtest
                     var loop = stageMusic.Find(m => m.Why == "start");
                     var push = stageMusic.Find(m => m.Why == "push");
                     MusicCheck("stageLoop", loop != null, $"level {ShaftLevel}: {Tracks(stageMusic)}");
+                    // Floor 1000 has no push and no push music (Docs/LevelDesign.md, its page); the push music plays from Floor 999's lava on.
+                    ShaftScreen.LevelFloors(ShaftLevel, out int shaftStart, out int shaftEnd);
+                    if (push == null && shaftStart - shaftEnd == 1)
+                        MusicCheck("stagePush", loop != null, $"level {ShaftLevel} is one floor with no push (the Landing): {Tracks(stageMusic)}");
+                    else
                     MusicCheck("stagePush", push != null && loop != null && push.Track != loop.Track,
                         push != null ? $"a push changed it up to {push.Track} at {push.Time:0.0} s; back to the loop " +
                                        $"{stageMusic.FindAll(m => m.Why == "level").Count} time(s)" : $"no push music on level {ShaftLevel}: {Tracks(stageMusic)}");
@@ -4785,7 +5016,7 @@ namespace SickOfIt.Playtest
 
             /// <summary>
             /// Yooba (Docs/Story.md, "Yooba between floors"): his hello on the Shaft after Video3 through the real flow
-            /// (setup shortcut: his save reset and the marker put at Floor 991, where the Landing ends), his lines between
+            /// (setup shortcut: his save reset and the marker put at Floor 999, where the Landing ends), his lines between
             /// floors on Shaft previews over the main menu (950, a death, the Magma King's door: setup shortcuts), then
             /// the shop: welcome, can't afford, buy and goodbye, clicked with the virtual mouse.
             /// </summary>
@@ -4802,9 +5033,9 @@ namespace SickOfIt.Playtest
                 if (Run.Done) yield break;
 
                 // 1. The hello, after Video3, before the Spill.
-                Run.Event("shortcut", $"reset Yooba's save, put the Shaft's marker at Floor 991 (the Landing cleared), load video {video} directly");
+                Run.Event("shortcut", $"reset Yooba's save, put the Shaft's marker at Floor 999 (the Landing cleared), load video {video} directly");
                 YoobaProgress.Reset();
-                ShaftProgress.Floor = 991;
+                ShaftProgress.Floor = 999;
                 ShaftProgress.Plunged = true;
                 PlayerPrefs.SetInt("ReturnToLevel", nextLevel);
                 PlayerPrefs.Save();
