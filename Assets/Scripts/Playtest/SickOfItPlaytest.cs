@@ -14,6 +14,7 @@ using SickOfIt.Core.Progression;
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
 using SickOfIt.Gameplay;
+using SickOfIt.VideoFrameExtractor.Runtime;
 using Object = UnityEngine.Object;
 using PlaytestBot = SickOfIt.Gameplay.PlaytestBot;
 
@@ -106,6 +107,9 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario("video-" + OverlayVideo, $"Video {OverlayVideo}, started directly (setup shortcut) and watched instead of skipped: " +
                 $"the overlay \"{OverlayName}\" (the hero) appears as the camera goes through the burning door, spins 3+ turns and shrinks into the tunnel's " +
                 "centre and is gone before the lava river (~14.5 s); holding R mid-spin plays it backward; then Escape skips the video. Each beat is checked", 75, "video"));
+            list.Add(new PlaytestScenario("video-" + OverlayVideo + "-tunnel", $"Video {OverlayVideo}, started directly (setup shortcut) and watched with no input " +
+                "from the burning door through the fire tunnel to the lava river (10.6-17.5 s): no COMING SOON caption in the tunnel (screen pixels in the box " +
+                "it used to cover), the frame on screen matches the clock, the soundtrack matches the clock, and the video is as long as its soundtrack", 60, "video"));
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, shop and settings (Sound off/on, Music -/+) each open and close", 70, "menus"));
             list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu, level select, settings, " +
@@ -172,6 +176,8 @@ namespace SickOfIt.Playtest
                 yield return session.Cutscene();
             else if (id == "video-" + OverlayVideo)
                 yield return session.VideoOverlay();
+            else if (id == "video-" + OverlayVideo + "-tunnel")
+                yield return session.VideoTunnel();
             else if (id.StartsWith("level-", StringComparison.Ordinal) && int.TryParse(id.Substring(6), out int n))
                 yield return session.LevelScenario(n);
             else
@@ -681,6 +687,146 @@ namespace SickOfIt.Playtest
                 Run.Metric("video.failed", overlayFailed);
                 Run.Progress(1f);
                 End(passed == OverlayBeats.Length && overlayFailed == 0 ? PlaytestOutcome.Won : PlaytestOutcome.Done);
+            }
+
+            // ─── video-2-tunnel: the fire tunnel with no caption, in sync, the same length ─────
+
+            /// <summary>
+            /// Loads the video directly (setup shortcut) and watches it with no input from the burning door through the
+            /// tunnel to the lava river. Where the source used to have "COMING SOON" burned in (11.4-16.4 s), each mark
+            /// captures the screen and counts caption-coloured pixels (near-black fill, pure-red outline) in the box the
+            /// caption sat in; every mark also checks the frame on screen against the clock and the soundtrack's time.
+            /// </summary>
+            public IEnumerator VideoTunnel()
+            {
+                var definition = GameDefinition.Instance;
+                var video = definition.TotalVideos >= OverlayVideo ? definition.GetVideo(OverlayVideo) : null;
+                if (video == null)
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"video-{OverlayVideo}-tunnel: there is no video {OverlayVideo}");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+
+                Run.Event("shortcut", $"load video {OverlayVideo} directly; watch it (no input) to {TunnelMarks[TunnelMarks.Length - 1]:0.0}s");
+                SceneTransitionManager.Instance.LoadVideo(OverlayVideo);
+                yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null && ClockTime > 0.1f, 60f, $"video {OverlayVideo} to start playing");
+                if (Run.Done)
+                    yield break;
+                Run.Scene("Video");
+
+                SpriteFramePlayer frames = null;
+                foreach (var p in Object.FindObjectsByType<SpriteFramePlayer>(FindObjectsSortMode.None))
+                    if (p != null && p.IsReady && (frames == null || p.TotalFrames > frames.TotalFrames))
+                        frames = p;
+                AudioSource sound = null;
+                foreach (var a in Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None))
+                    if (a != null && a.clip != null && a.clip == video.audio)
+                        sound = a;
+                if (frames == null)
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"video {OverlayVideo}: no sprite frame player is ready");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+
+                int failed = 0, passed = 0;
+                void Check(string what, bool ok, string detail)
+                {
+                    if (ok) { passed++; Run.Event("check", $"video {what}: ok ({detail})"); }
+                    else { failed++; Run.Problem(PlaytestSeverity.Bug, $"video {what}: {detail}"); }
+                }
+
+                float fps = frames.TotalFrames > 0 && frames.Duration > 0f ? frames.TotalFrames / frames.Duration : 0f;
+                float soundLength = sound != null ? sound.clip.length : 0f;
+                Run.Metric("video.seconds", frames.Duration);
+                Run.Metric("video.frames", frames.TotalFrames);
+                if (sound != null)
+                    Check("length", Mathf.Abs(frames.Duration - soundLength) < 0.25f,
+                        $"{frames.TotalFrames} frames at {fps:0.#} fps = {frames.Duration:0.00}s; soundtrack {soundLength:0.00}s");
+                else
+                    Run.Event("check", $"video length: {frames.Duration:0.00}s ({frames.TotalFrames} frames); no soundtrack found to compare");
+
+                float lastAudio = -1f;
+                foreach (float mark in TunnelMarks)
+                {
+                    yield return Run.Until(() => ClockTime >= mark, mark + 40f, $"video {OverlayVideo} to reach {mark:0.0}s");
+                    if (Run.Done)
+                        yield break;
+                    yield return new WaitForEndOfFrame();
+                    float clock = ClockTime;
+                    int expected = Mathf.FloorToInt(clock * fps);
+                    string shot = TunnelShot(clock);
+                    Check($"frame at {clock:0.00}s", Mathf.Abs(frames.CurrentFrame - expected) <= 1,
+                        $"{shot}: frame {frames.CurrentFrame}, clock says {expected}");
+
+                    float caption = CaptionPixels(frames);
+                    Run.Metric($"video.caption@{mark:0.0}", caption);
+                    if (mark >= CaptionFrom && mark <= CaptionTo)
+                        Check($"no caption at {clock:0.00}s", caption < 0.35f,
+                            $"{caption:P0} of the old COMING SOON box is caption-coloured (the burned-in text was ~70%)");
+                    else
+                        Run.Event("frame", $"{shot} at {clock:0.00}s (caption box {caption:P0} dark/red)");
+
+                    if (sound != null && sound.isPlaying && sound.time > lastAudio + 0.05f)
+                        Check($"sound at {clock:0.00}s", Mathf.Abs(sound.time - clock) <= 0.15f, $"soundtrack at {sound.time:0.00}s");
+                    else
+                        Run.Event("check", $"video sound at {clock:0.00}s: soundtrack not running in this browser (audio {(sound != null ? sound.time : -1f):0.00}s); picture follows the clock");
+                    if (sound != null)
+                        lastAudio = sound.time;
+                    Run.Progress(0.1f + 0.8f * mark / TunnelMarks[TunnelMarks.Length - 1]);
+                }
+
+                yield return Tap(Key.Escape);
+                Run.Event("input", $"Escape (skip) at {ClockTime:0.00}s");
+                Run.Metric("video.passed", passed);
+                Run.Metric("video.failed", failed);
+                Run.Progress(1f);
+                End(failed == 0 ? PlaytestOutcome.Won : PlaytestOutcome.Done);
+            }
+
+            /// <summary>Clock times the tunnel scenario looks at: the door, the tunnel (where the caption was) and the lava river.</summary>
+            static readonly float[] TunnelMarks = { 10.6f, 11.5f, 12.5f, 13.5f, 14.5f, 15.5f, 16.3f, 17.5f };
+            const float CaptionFrom = 11.4f, CaptionTo = 16.4f;
+
+            static string TunnelShot(float t) => t < 11.2f ? "burning door" : t < 16.45f ? "fire tunnel" : "lava river";
+
+            /// <summary>
+            /// Share of the screen pixels, inside the box Video2's burned-in caption covered (x 331-947, y 361-434 of a
+            /// 1280x720 frame), that are caption-coloured: near-black fill or its pure-red outline. The fire tunnel has neither.
+            /// </summary>
+            static float CaptionPixels(SpriteFramePlayer frames)
+            {
+                var camera = Camera.main != null ? Camera.main : Object.FindAnyObjectByType<Camera>();
+                if (camera == null || !frames.TryGetComponent(out SpriteRenderer renderer))
+                    return 0f;
+                var b = renderer.bounds;
+                Vector3 World(float u, float v) => new Vector3(b.min.x + u * b.size.x, b.max.y - v * b.size.y, b.center.z);
+                Vector3 lo = camera.WorldToScreenPoint(World(331f / 1280f, 434f / 720f));
+                Vector3 hi = camera.WorldToScreenPoint(World(947f / 1280f, 361f / 720f));
+                var shot = ScreenCapture.CaptureScreenshotAsTexture();
+                try
+                {
+                    int x0 = Mathf.Clamp(Mathf.RoundToInt(lo.x), 0, shot.width - 1), x1 = Mathf.Clamp(Mathf.RoundToInt(hi.x), 0, shot.width - 1);
+                    int y0 = Mathf.Clamp(Mathf.RoundToInt(lo.y), 0, shot.height - 1), y1 = Mathf.Clamp(Mathf.RoundToInt(hi.y), 0, shot.height - 1);
+                    if (x1 <= x0 || y1 <= y0)
+                        return 0f;
+                    var pixels = shot.GetPixels32();
+                    int hits = 0, total = 0;
+                    for (int y = y0; y <= y1; y += 2)
+                    for (int x = x0; x <= x1; x += 2)
+                    {
+                        var c = pixels[y * shot.width + x];
+                        total++;
+                        if (c.r + c.g + c.b < 120 || (c.r > 150 && c.g < 70 && c.b < 70))
+                            hits++;
+                    }
+                    return total > 0 ? (float)hits / total : 0f;
+                }
+                finally
+                {
+                    Object.Destroy(shot);
+                }
             }
 
             // ─── cutscene: every scene action, checked beat by beat ─────

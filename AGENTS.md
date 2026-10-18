@@ -175,7 +175,11 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   himself and stops, turns, R does nothing, the camera zooms in and back, the screen fades to black and back, and he is
   pulled into a point spinning and shrinking until he is gone; each beat is a `check` event), `video-2` (Video2 loaded
   directly and watched, not skipped: the hero's `heroFall` overlay appears at the burning door, spins 3+ turns and shrinks
-  into the tunnel and is gone by ~14.5 s; R held mid-spin turns it back; Escape skips; `overlay` and `check` events), `portal-audio` (on the main menu, plays
+  into the tunnel and is gone by ~14.5 s; R held mid-spin turns it back; Escape skips; `overlay` and `check` events),
+  `video-2-tunnel` (Video2 loaded directly and watched with no input from the burning door through the fire tunnel to the
+  lava river, 10.6–17.5 s: at each mark a screen capture of the box the old burned-in "COMING SOON" caption covered must
+  not be caption-coloured, the frame on screen must match the clock and the soundtrack the clock, and the clip must be
+  as long as its soundtrack; `check` and `frame` events, `video.caption@<t>` metrics), `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
   page has neither; `Plugins/WebGL/HawkesSite.jslib`).

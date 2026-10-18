@@ -76,6 +76,15 @@ After any bake: rebuild Addressables (both texture variants), then the WebGL pla
 
 These favor download size and memory over smoothness and sharpness.
 
+### Source notes
+
+- **Video2**: the delivered mp4 had "COMING SOON" burned into the fire tunnel (source frames 342–492, 11.40–16.43 s).
+  The repainted copy is `Assets/Videos/Video2.mp4` in this repo (each caption pixel filled along its ring of the
+  tunnel; the same 2,863 frames re-encoded, the soundtrack copied bit for bit). Copy it over
+  `<videoRoot>\Video2\Output\Video2.mp4` (keep the old one as `Video2\Raw\Video2_captioned.mp4`) before baking Video2
+  or running *Regenerate All Sheets*, or the caption comes back. The repaint touched baked frames 114–164, so only
+  `Video2_sheet_0004` and `_0005` changed.
+
 ## Playing
 
 `SpriteFramePlayer` sits on a GameObject with a `SpriteRenderer`. Callers create it and call
