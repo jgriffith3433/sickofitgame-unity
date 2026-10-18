@@ -1,0 +1,304 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level8",
+  "displayName": "Floors 940-931: The Crust",
+  "levelNumber": 8,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Videos/Level3_Background2_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "deathConfigName": "Death1",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 9,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 90,
+    "floors": {
+      "start": 940,
+      "end": 931,
+      "unitsPerFloor": 3.0,
+      "circle": "emberWastes",
+      "signs": true,
+      "sign": "DON'T STOP"
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelSpeed": 0.45,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true,
+      "props": [
+        {
+          "name": "lava under the crust",
+          "shape": "Glow",
+          "color": "#FF7A2AB0",
+          "size": [2.2, 0.32],
+          "sizeVariation": 0.3,
+          "across": -2.78,
+          "parallax": 0.0,
+          "spacing": 2.0,
+          "chance": 0.8,
+          "layer": "Player",
+          "sortingOrder": -17
+        },
+        {
+          "name": "sinking slabs",
+          "shape": "Block",
+          "color": "#2A1410",
+          "size": [0.9, 0.12],
+          "sizeVariation": 0.3,
+          "across": -2.55,
+          "parallax": 0.0,
+          "spacing": 3.0,
+          "chance": 0.5,
+          "layer": "Background2",
+          "sortingOrder": 6
+        }
+      ]
+    },
+    "markers": [
+      {
+        "floor": 939,
+        "label": "FIRE"
+      },
+      {
+        "floor": 935,
+        "label": "BREATHER"
+      },
+      {
+        "floor": 932,
+        "label": "THE TOP"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "phases": [
+      {
+        "name": "crust",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 940-931: THE CRUST",
+            "duration": 2.5,
+            "sound": "vo_crust_title",
+            "color": "#FFD27A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the hero takes it in",
+            "when": {
+              "type": "after",
+              "seconds": 3.8
+            },
+            "do": [
+              {
+                "type": "showText",
+                "text": "It sinks if I stop. So I don't stop.",
+                "duration": 3.0,
+                "sound": "vo_crust_sink",
+                "style": "Subtitle"
+              }
+            ]
+          },
+          {
+            "name": "quiet start over",
+            "when": {
+              "type": "after",
+              "seconds": 7.0
+            },
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "firstShower"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "firstShower",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "Now it's raining fire.",
+            "duration": 2.5,
+            "sound": "vo_wastes_fire",
+            "style": "Subtitle"
+          },
+          {
+            "type": "startHazard",
+            "id": "firstShower",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 2.4,
+            "interval": 1.3,
+            "initialDelay": 1.5,
+            "duration": 6.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "the first shower is over",
+            "when": {
+              "type": "after",
+              "seconds": 8.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "climb"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 936,
+            "firstBreather": 2.5,
+            "seed": 1
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "breather"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "breather",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "Still sinking. Still walking.",
+            "duration": 2.5,
+            "sound": "vo_crust_walk",
+            "style": "Subtitle"
+          }
+        ],
+        "rules": [
+          {
+            "name": "breather over",
+            "when": {
+              "type": "after",
+              "seconds": 5.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "climb2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb2",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 932,
+            "firstBreather": 3.0,
+            "seed": 2
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "top"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "rules": [
+          {
+            "name": "stage clear",
+            "when": {
+              "type": "floorReached",
+              "floor": 931
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "lockTravel"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "THE CRUST: CROSSED",
+                    "duration": 2.0,
+                    "sound": "vo_crust_clear",
+                    "color": "#FF9A5C"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

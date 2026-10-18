@@ -1,0 +1,316 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level7",
+  "displayName": "Floors 950-941: Halfway Basin",
+  "levelNumber": 7,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Videos/Level3_Background1_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "deathConfigName": "Death1",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 8,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 90,
+    "floors": {
+      "start": 950,
+      "end": 941,
+      "unitsPerFloor": 3.0,
+      "circle": "emberWastes",
+      "signs": true,
+      "sign": "HALFWAY! (TO 900)"
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true,
+      "props": [
+        {
+          "name": "fallen thatch",
+          "shape": "Rock",
+          "color": "#8A5A22",
+          "size": [0.7, 0.35],
+          "sizeVariation": 0.3,
+          "across": -2.5,
+          "parallax": 0.0,
+          "spacing": 3.5,
+          "chance": 0.5,
+          "layer": "Background2",
+          "sortingOrder": 6
+        },
+        {
+          "name": "smouldering straw",
+          "shape": "Glow",
+          "color": "#FFB45C66",
+          "size": [1.0, 0.2],
+          "sizeVariation": 0.3,
+          "across": -2.76,
+          "parallax": 0.0,
+          "spacing": 2.5,
+          "chance": 0.55,
+          "layer": "Player",
+          "sortingOrder": -17
+        }
+      ]
+    },
+    "markers": [
+      {
+        "floor": 949,
+        "label": "THATCH"
+      },
+      {
+        "floor": 945,
+        "label": "BREATHER"
+      },
+      {
+        "floor": 942,
+        "label": "THE TOP"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "phases": [
+      {
+        "name": "basin",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 950-941: HALFWAY BASIN",
+            "duration": 2.5,
+            "sound": "vo_basin_title",
+            "color": "#FFD27A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "floor 950: halfway to 900",
+            "when": {
+              "type": "after",
+              "seconds": 4.5
+            },
+            "do": [
+              {
+                "type": "showText",
+                "text": "FLOOR 950: HALFWAY TO 900",
+                "duration": 2.8,
+                "sound": "vo_floor_950",
+                "color": "#FFD27A"
+              }
+            ]
+          },
+          {
+            "name": "the hero answers it",
+            "when": {
+              "type": "after",
+              "seconds": 8.4
+            },
+            "do": [
+              {
+                "type": "showText",
+                "text": "Halfway through the first one.",
+                "duration": 2.5,
+                "sound": "vo_basin_first",
+                "style": "Subtitle"
+              }
+            ]
+          },
+          {
+            "name": "quiet start over",
+            "when": {
+              "type": "after",
+              "seconds": 10.6
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "firstThatch"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "firstThatch",
+        "onEnter": [
+          {
+            "type": "spawn",
+            "entity": "cinderThatch",
+            "anchor": "Camera",
+            "at": [3.4, 0.6],
+            "tags": ["beat"]
+          },
+          {
+            "type": "showText",
+            "text": "That was somebody's roof.",
+            "duration": 2.5,
+            "sound": "vo_basin_roof",
+            "style": "Subtitle"
+          }
+        ],
+        "rules": [
+          {
+            "name": "thatch cinder down",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "beat"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 946,
+            "firstBreather": 3.0,
+            "seed": 1
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "breather"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "breather",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "Fifty floors. Then him.",
+            "duration": 3.0,
+            "sound": "vo_basin_fifty",
+            "style": "Subtitle"
+          }
+        ],
+        "rules": [
+          {
+            "name": "breather over",
+            "when": {
+              "type": "after",
+              "seconds": 5.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "climb2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb2",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 942,
+            "firstBreather": 3.0,
+            "seed": 2
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "top"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "rules": [
+          {
+            "name": "stage clear",
+            "when": {
+              "type": "floorReached",
+              "floor": 941
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "lockTravel"
+                  },
+                  {
+                    "type": "showText",
+                    "text": "HALFWAY BASIN: SURVIVED",
+                    "duration": 2.0,
+                    "sound": "vo_basin_clear",
+                    "color": "#FF9A5C"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

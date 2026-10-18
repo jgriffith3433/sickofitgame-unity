@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "extends": "cinder",
+  "health": 2,
+  "moveSpeed": 1.1,
+  "tags": ["cinder", "cinderThatch"],
+  "visual": {
+    "scale": 0.17,
+    "color": "#FFD08A",
+    "fxColor": "#FFB45C"
+  },
+  "loot": {
+    "chance": 0.2,
+    "count": 1,
+    "value": 1
+  },
+  "onDeath": [
+    { "type": "spawn", "entity": "cinderSpark", "anchor": "Self", "at": [-0.3, 0.2], "facePlayer": false },
+    { "type": "spawn", "entity": "cinderSpark", "anchor": "Self", "at": [0.3, 0.2], "facePlayer": false },
+    { "type": "playSound", "sound": "thatch_burst" }
+  ]
+}

@@ -1,0 +1,439 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level10",
+  "displayName": "Floors 920-911: The Heat Stairs",
+  "levelNumber": 10,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Videos/Level3_Background2_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "deathConfigName": "Death1",
+  "duration": 150.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 0,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 90,
+    "floors": {
+      "start": 920,
+      "end": 911,
+      "unitsPerFloor": 3.0,
+      "circle": "emberWastes",
+      "signs": true,
+      "sign": "TO THE THRONE",
+      "door": "THE SLAG THRONE"
+    },
+    "world": {
+      "camera": "Travel",
+      "travelDirection": "Right",
+      "travelLead": 1.5,
+      "travelLength": 29.0,
+      "followSharpness": 4.0,
+      "holdForPushes": true,
+      "props": [
+        {
+          "name": "slag steps",
+          "shape": "Block",
+          "color": "#2A130E",
+          "size": [1.0, 0.3],
+          "sizeVariation": 0.25,
+          "across": -2.5,
+          "parallax": 0.0,
+          "spacing": 2.0,
+          "chance": 0.8,
+          "layer": "Background2",
+          "sortingOrder": 6
+        },
+        {
+          "name": "heat haze",
+          "shape": "Glow",
+          "color": "#FF5A1A40",
+          "size": [3.0, 0.9],
+          "sizeVariation": 0.3,
+          "across": -1.2,
+          "parallax": 0.5,
+          "spacing": 4.0,
+          "chance": 0.6,
+          "layer": "Background2",
+          "sortingOrder": 1
+        }
+      ]
+    },
+    "markers": [
+      {
+        "floor": 917,
+        "label": "RUMBLE"
+      },
+      {
+        "floor": 913,
+        "label": "HIS VOICE"
+      },
+      {
+        "floor": 911,
+        "label": "THE DOOR"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "phases": [
+      {
+        "name": "stairs",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 920-911: THE HEAT STAIRS",
+            "duration": 2.5,
+            "sound": "vo_stairs_title",
+            "color": "#FFD27A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the hero doesn't build it up",
+            "when": {
+              "type": "after",
+              "seconds": 5.4
+            },
+            "do": [
+              {
+                "type": "showText",
+                "text": "Every step's hotter. Of course.",
+                "duration": 2.5,
+                "sound": "vo_stairs_hotter",
+                "style": "Subtitle"
+              }
+            ]
+          },
+          {
+            "name": "quiet start over",
+            "when": {
+              "type": "after",
+              "seconds": 8.0
+            },
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 917,
+            "firstBreather": 2.0,
+            "seed": 1
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "rumble1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "rumble1",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.25,
+            "duration": 1.6
+          },
+          {
+            "type": "playSound",
+            "sound": "magma_rumble"
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "showText",
+                "text": "I can hear you climbing, little spark.",
+                "duration": 3.2,
+                "sound": "vo_mk_climbing",
+                "style": "Subtitle",
+                "color": "#FF8A3D"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.2
+              },
+              {
+                "type": "showText",
+                "text": "Was that the stairs?",
+                "duration": 2.5,
+                "sound": "vo_stairs_was",
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "his voice, from ahead",
+            "when": {
+              "type": "after",
+              "seconds": 8.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "guards"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "guards",
+        "onEnter": [
+          {
+            "type": "spawn",
+            "entity": "impGuard",
+            "anchor": "Camera",
+            "at": [2.6, -1.4],
+            "count": 2,
+            "spacing": [1.2, 0.0],
+            "tags": ["guards"]
+          }
+        ],
+        "rules": [
+          {
+            "name": "his guard on the steps",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "guards"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climb2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "climb2",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "untilFloor": 913,
+            "firstBreather": 3.0,
+            "seed": 2
+          }
+        ],
+        "rules": [
+          {
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "rumble2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "rumble2",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.35,
+            "duration": 1.6
+          },
+          {
+            "type": "playSound",
+            "sound": "magma_rumble"
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "showText",
+                "text": "Come up, then. I'll stay seated.",
+                "duration": 3.2,
+                "sound": "vo_mk_seated",
+                "style": "Subtitle",
+                "color": "#FF8A3D"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.8
+              },
+              {
+                "type": "showText",
+                "text": "He knows I'm coming. Great.",
+                "duration": 2.5,
+                "sound": "vo_stairs_knows",
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "breather before the arena",
+            "when": {
+              "type": "after",
+              "seconds": 8.0
+            },
+            "do": [
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "lastSteps"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "lastSteps",
+        "rules": [
+          {
+            "name": "the last floor",
+            "when": {
+              "type": "floorReached",
+              "floor": 911
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "top"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "rules": [
+          {
+            "name": "stage clear",
+            "when": {
+              "type": "distanceReached",
+              "units": 28.5
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "lockTravel"
+                  },
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.2,
+                    "duration": 1.6
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "magma_rumble"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.0
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Mm-hm-hm. Knock, little spark.",
+                    "duration": 5.5,
+                    "sound": "vo_mk_knock",
+                    "style": "Subtitle",
+                    "color": "#FF8A3D"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 5.9
+                  },
+                  {
+                    "type": "showText",
+                    "text": "THE HEAT STAIRS: CLIMBED",
+                    "duration": 3.5,
+                    "sound": "vo_stairs_clear",
+                    "color": "#FF9A5C"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

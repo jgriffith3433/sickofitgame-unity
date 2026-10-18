@@ -1349,6 +1349,7 @@ The floor counter: which floors of Hell a stage covers. Floors count down as the
 | `circle` | string | `""` | The Circle of Hell (content/circles) the stage is in: track, props, backdrop, generated floors and milestone lines. (circle id) |
 | `signs` | true/false | `true` | Paint floor numbers into the world as signs on travel stages. |
 | `sign` | string | `""` | Travel stages: words carved on a big sign at the start of the stage (the place's own sign, e.g. "IMPS ONLY"). '' = none. |
+| `door` | string | `""` | Travel stages: words carved over a big door standing at the top of the stage, where the camera stops (the Heat Stairs end at the Magma King's door, "THE SLAG THRONE"). '' = none. |
 | `repeat` | list of integer | `[]` | Floors Hell makes the hero walk twice (The Loop): each one takes two floors' distance, its number stays on the counter and two signs show it. Add unitsPerFloor per repeat to travelLength. |
 
 ### CounterDef

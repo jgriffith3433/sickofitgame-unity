@@ -18,9 +18,9 @@ at a time, a voiced line per beat, and a final phase that only checks for the cl
 inside Hell (a stretch of floors) is a travel stage: see "A stage that climbs through Hell's floors" below, with
 `levels/Level2.json` (The Landing) as the reference.
 
-1. Copy an existing `levels/LevelN.json` to `levels/Level4.json` (the next story level). Change `levelName`, `displayName`, `levelNumber`,
+1. Copy an existing `levels/LevelN.json` to `levels/Level11.json` (the next story level). Change `levelName`, `displayName`, `levelNumber`,
    `music`, `backgrounds`, `deathConfigName`.
-2. Add `"Level7"` to the `"levels"` list in `game.json` right after the last story level (`Level6`), before
+2. Add `"Level11"` to the `"levels"` list in `game.json` right after the last story level (`Level10`), before
    `CrackedRoad` and the `Arcade*` levels (the position is the level number). A level goes on to a video with
    `nextVideoNumber`, or straight to another level with `nextLevelNumber` (results, the Shaft, then that level: how
    the stages inside a Circle follow each other); with both 0 it ends at the level select. Set the previous stage's
@@ -348,11 +348,17 @@ signs in the world). Between hand-written story beats the **floor generator** fi
    stretch `"seed": 1` so it differs. End the stage with `{ "type": "floorReached", "floor": 951 }`.
 4. Floors outside travel: `setFloor`, `climbFloors` (a shortcut, an elevator); triggers `floorReached`,
    `distanceReached`; counters `floor` and `distance`.
-5. **Dress the stage** (Levels 3-6 do all of these):
+5. **Dress the stage** (Levels 3-10 do all of these):
    - `world.props`: scenery for this stage only, drawn with the Circle's (same fields as a Circle's `props`): the
      Spill's fence posts, cart and smoking hay. A prop with `sizeVariation` 0, `chance` 1 and `spacing` =
      `unitsPerFloor` stands identical on every floor (the Loop's "same rock").
    - `floors.sign`: words carved on a big sign where the hero lands (`"IMPS ONLY"`).
+   - `floors.door`: words carved over a big door at the top of the stage, standing on screen once the camera has
+     stopped at `travelLength` (the Heat Stairs end at the Magma King's `"THE SLAG THRONE"`). End such a stage on
+     `{ "type": "distanceReached", "units": travelLength - 0.5 }` instead of `floorReached`, so the camera has
+     arrived and the door is in view when the last beat plays.
+   - `world.travelSpeed`: the camera also moves on its own at least this fast, and the screen's left edge pushes the
+     hero along (the Crust's sinking slag: between fights he can't stop). Generated pushes still hold it.
    - `floors.repeat`: floors Hell makes him walk twice (`[957]`): that floor takes two floors' distance, two signs
      show its number and the counter stays on it (telemetry `floorRepeat`). Add `unitsPerFloor` to `travelLength`
      for each, and trigger the second pass with `distanceReached` (the floor doesn't change).

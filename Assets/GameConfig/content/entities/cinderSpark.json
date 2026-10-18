@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "extends": "cinder",
+  "health": 0,
+  "moveSpeed": 1.9,
+  "shootable": false,
+  "tags": ["cinderSpark"],
+  "visual": {
+    "scale": 0.07,
+    "color": "#FFE6B0",
+    "fxColor": "#FFB45C"
+  },
+  "healthBar": {
+    "show": false
+  },
+  "loot": {
+    "chance": 0.0,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1,
+      "dieOnHit": true
+    },
+    {
+      "type": "chase",
+      "stopDistance": 0.0,
+      "face": true
+    },
+    {
+      "type": "lifetime",
+      "seconds": 2.0
+    }
+  ],
+  "onDeath": []
+}

@@ -149,7 +149,7 @@ namespace SickOfIt.Gameplay
             scratch.Clear();
             foreach (var pair in platforms)
             {
-                if (pair.Key < first || pair.Key > last)
+                if (pair.Key != DoorKey && (pair.Key < first || pair.Key > last))
                     scratch.Add(pair.Key);
             }
             foreach (int i in scratch)
@@ -327,7 +327,7 @@ namespace SickOfIt.Gameplay
             scratch.Clear();
             foreach (var pair in signs)
             {
-                if (pair.Key < first || pair.Key > last)
+                if (pair.Key != DoorKey && (pair.Key < first || pair.Key > last))
                     scratch.Add(pair.Key);
             }
             foreach (int k in scratch)
@@ -341,6 +341,54 @@ namespace SickOfIt.Gameplay
                 if (!signs.ContainsKey(k))
                     signs[k] = k == 0 ? BuildStageSign() : BuildSign(k);
             }
+            RefreshDoor(a);
+        }
+
+        // The door at the top of the stage (floors.door), kept with the signs under its own key.
+        const int DoorKey = -1;
+
+        void RefreshDoor(float a)
+        {
+            if (string.IsNullOrEmpty(floors.door) || worldDef.travelLength <= 0f)
+                return;
+            float along = DoorAlong;
+            bool near = Mathf.Abs(along - a) <= halfAlong + 2f;
+            signs.TryGetValue(DoorKey, out var door);
+            if (near && door == null)
+                signs[DoorKey] = BuildDoor(along);
+            else if (!near && door != null)
+            {
+                Destroy(door);
+                signs.Remove(DoorKey);
+            }
+        }
+
+        /// <summary>Where the door stands: on screen, ahead of the hero, once the camera has stopped at travelLength.</summary>
+        float DoorAlong => worldDef.travelLength + halfAlong * 0.55f;
+
+        /// <summary>A tall slab of obsidian with a glowing seam and the words carved over it (floors.door).</summary>
+        GameObject BuildDoor(float along)
+        {
+            Vector2 at = up ? Point(along, halfAcross - 0.6f) : Point(along, track.groundY);
+            var go = new GameObject("StageDoor");
+            go.transform.SetParent(transform, false);
+            go.transform.position = new Vector3(at.x, at.y, 0f);
+            Color glow = track.groundEdgeColor.a > 0f ? track.groundEdgeColor : new Color(1f, 0.45f, 0.15f, 1f);
+            const float width = 1.7f, height = 2.9f;
+            var frame = Quad(go.transform, "Frame", new Vector2(0f, (height + 0.16f) * 0.5f), new Vector2(width + 0.22f, height + 0.16f), glow, GroundOrder + 2);
+            SpriteLayers.Apply(frame, SpriteLayer.Background2, 895);
+            var slab = Quad(go.transform, "Slab", new Vector2(0f, height * 0.5f), new Vector2(width, height), new Color(0.06f, 0.03f, 0.03f, 1f), GroundOrder + 3);
+            SpriteLayers.Apply(slab, SpriteLayer.Background2, 896);
+            var seam = Quad(go.transform, "Seam", new Vector2(0f, height * 0.4f), new Vector2(0.06f, height * 0.8f), glow, GroundOrder + 4);
+            SpriteLayers.Apply(seam, SpriteLayer.Background2, 897);
+            // The words on a lintel above it, read like any other sign (SignWords, for the playtest).
+            float lintel = Mathf.Clamp(0.2f * floors.door.Length + 0.3f, width + 0.3f, 3.4f);
+            var sign = Signpost("DoorWords", at, floors.door, new Vector2(lintel, 0.42f), height + 0.1f, 2.2f);
+            sign.transform.SetParent(go.transform, true);
+            var post = sign.transform.Find("Post");
+            if (post != null)
+                post.gameObject.SetActive(false);
+            return go;
         }
 
         /// <summary>A post with the floor number, standing where the counter ticks over to it.</summary>
