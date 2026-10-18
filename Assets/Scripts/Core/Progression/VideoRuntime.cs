@@ -45,6 +45,7 @@ namespace SickOfIt.Core.Progression
         private float lastClockTime = -1f;
         private float stalledSeconds;
         private const float StallSecondsBeforeAdvance = 6f;
+        private const float AudioDriftSeconds = 0.3f;
 
         private void Start()
         {
@@ -286,6 +287,8 @@ namespace SickOfIt.Core.Progression
 
             if (gameClock != null && gameClock.IsRewinding) return;
 
+            KeepAudioInSync();
+
             // Progress is frame/total and never reaches 1, so also test the last frame and the clock itself.
             if (spritePlayer != null && spritePlayer.IsReady &&
                 (spritePlayer.Progress >= 0.99f || spritePlayer.CurrentFrame >= spritePlayer.TotalFrames - 1 ||
@@ -311,6 +314,28 @@ namespace SickOfIt.Core.Progression
                     OnVideoComplete();
                 }
             }
+        }
+
+        /// <summary>
+        /// The picture follows the game clock but the sound runs on the browser's audio clock. A hidden tab
+        /// stops the frame loop (the picture waits) while the audio keeps going, or the audio context is
+        /// suspended while the picture goes on, so they drift. Pull the audio back to the clock when they differ.
+        /// </summary>
+        private void KeepAudioInSync()
+        {
+            if (!playbackBegun || playbackAudio == null || playbackAudio.clip == null || gameClock == null) return;
+            if (!playbackAudio.gameObject.activeInHierarchy) return;
+
+            float length = playbackAudio.clip.length;
+            float clock = gameClock.Time;
+            if (clock < 0f || clock >= length - 0.05f) return;
+
+            bool stopped = !playbackAudio.isPlaying;
+            if (!stopped && Mathf.Abs(playbackAudio.time - clock) <= AudioDriftSeconds) return;
+
+            Debug.Log($"[VideoRuntime] Audio {(stopped ? "stopped" : "drifted")} (audio {playbackAudio.time:F2}s, video {clock:F2}s); re-syncing.");
+            playbackAudio.time = clock;
+            if (stopped) playbackAudio.Play();
         }
 
         private void OnDestroy()
