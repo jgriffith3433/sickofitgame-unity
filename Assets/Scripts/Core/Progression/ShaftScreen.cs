@@ -878,6 +878,7 @@ namespace SickOfIt.Core.Progression
             int bottom = ToFloor;
             yield return Wait(0.7f);
             Sfx.Play(config.fallSound);
+            PlayMusic(config.plungeMusic, "the plunge's riser and slam");
             Report("fall", $"from FLOOR 0 down to FLOOR {Number(bottom)}");
             float duration = Mathf.Max(0.5f, config.plungeSeconds);
             float t = 0f;
@@ -1004,7 +1005,10 @@ namespace SickOfIt.Core.Progression
             float t = 0f;
             int shown = from;
             if (floors > 0)
+            {
+                PlayMusic(config.climbMusic, "the climb's rising sting");
                 Report("climb-start", $"from FLOOR {Number(from)} to FLOOR {Number(to)}");
+            }
             while (floors > 0 && t < 1f && !skip)
             {
                 t = Mathf.Min(1f, t + Time.unscaledDeltaTime / duration);
@@ -1052,6 +1056,16 @@ namespace SickOfIt.Core.Progression
                     GloobPortrait.Heard(line);
             }
             Finish();
+        }
+
+        /// <summary>One of the Shaft's music cues (an audio.json sound, played over the map like its effects).</summary>
+        void PlayMusic(string sound, string what)
+        {
+            if (string.IsNullOrEmpty(sound))
+                return;
+            Sfx.Play(sound);
+            float length = Sfx.LengthOf(sound);
+            Report("music", $"{what} ({sound}{(Sfx.Has(sound) ? $", {length:0.0} s" : ", no clip")})");
         }
 
         IEnumerator MeetRoutine()

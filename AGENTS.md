@@ -207,6 +207,10 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   then the level select; ~18 min), `shaft` (Video2 loaded directly with
   the Shaft's save reset, skipped: the first plunge past the 10 Circles to FLOOR 1,000, the welcome lines, Continue to Level 2, the
   bot plays it, then the marker's climb to 991 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
+  `music` (Hell's soundtrack, Docs/Story.md "Music": the `shaft` run listening to the music, then Level 11 loaded directly and fought
+  until the enrage: the plunge's riser and slam, the Ember Wastes loop on Level 2 and the push music taking over in a generated push,
+  the climb's sting, the Magma King's theme when the fight starts and the enrage variant after `mkEnrage`; `music` events (every
+  switch, from `StageMusic` telemetry and the Shaft's reports) and `check` events `music <beat>`; ~15 min),
   `menus` (level select, videos, Gloob's shop, settings open and close, then a Shaft preview with Gloob met: Visit
   Gloob opens his shop over it, Back returns to the Shaft), `layout` (main menu, level select, settings,
   a Shaft preview with Visit Gloob beside Continue, Gloob's shop over it, level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or

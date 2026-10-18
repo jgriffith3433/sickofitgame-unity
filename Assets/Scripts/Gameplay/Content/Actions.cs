@@ -428,7 +428,8 @@ namespace SickOfIt.Gameplay.Content
     }
 
     [Serializable, JsonType("playMusic")]
-    [Doc("Switches the level music.")]
+    [Doc("Switches the level music to this track, from the top (a Warden's theme, its enrage). It stays until the next playMusic; " +
+         "a rewind past it brings back the track before. Floor stages' push music doesn't override it.")]
     public sealed class PlayMusicAction : GameAction
     {
         public AudioClip clip;

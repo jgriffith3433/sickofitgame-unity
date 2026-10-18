@@ -310,6 +310,23 @@ just one more thing in it. A **run** is one climb from a Waystone until Hell kil
   reached, *"New Run (Floor 1,000)"*) throws the current run away and starts a fresh one at the highest Waystone,
   Grudges reset; **New Game** forgets everything and starts at the Meadow.
 
+## Music: Hell's arcade soundtrack
+
+Hell puts on a show, so it has a soundtrack: a 90s arcade cabinet played through a furnace. Distorted guitars, FM
+synth leads, gated drums, a low choir of the damned. Every Circle gets its own loop (Hell is repetition: the loop
+*is* the joke) and every Warden a theme. Made with Hawkes Gen's `audio.music` (ACE-Step), `floor-music` preset;
+the picks and the trims are recorded in `Tools/Audio/music.json` and made by `Tools/Audio/music-mix.py`.
+
+- **The Ember Wastes** (Circle X, Levels 2-10): a groove in D minor at 128 BPM that loops without a seam (each
+  stage's `music`). When Hell sends a **push** (a generated wave of enemies, or a hazard) the Circle's `pushMusic`,
+  the same tune turned up (double kicks, shredding, alarms), takes over and drops back once the floor goes quiet.
+- **The Magma King** (Level 11): the Wastes' groove dies as his throne rises, and **one big hit** lands as he
+  appears. The fight starts on his theme: swaggering doom metal and organ, a king who loves an audience. When he
+  loses his temper (the **enrage**) it turns frantic: blast beats, a screaming solo, sirens. When he falls, the
+  music sinks under the slow motion.
+- **The Shaft:** the plunge after Video2 is a **falling riser** that **slams** as the marker hits Floor 1,000; each
+  climb gets a **short rising sting** as the marker goes up.
+
 ## The systems, in story terms
 
 Mechanics keep working as they do; their names and reasons come from here. Rename UI text (`ui/theme.json`

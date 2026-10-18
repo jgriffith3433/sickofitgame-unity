@@ -145,6 +145,9 @@ namespace SickOfIt.Playtest
         /// <summary>The shaft scenario: the level after the plunge whose climb it watches (The Landing).</summary>
         public const int ShaftLevel = 2;
         const float ShaftSeconds = 480f;
+        /// <summary>The music scenario: after the shaft scenario's run, the Warden's arena it loads directly (the Magma King).</summary>
+        public const int MusicBossLevel = 11;
+        const float MusicBossSeconds = 420f;
         const float GloobSeconds = 300f;
         /// <summary>The waystone scenario: the stage the bot clears first (The Spill, for a Grudge), then dies on the next one.</summary>
         public const int WaystoneLevel = 3;
@@ -245,6 +248,11 @@ namespace SickOfIt.Playtest
                 $"Continue starts level {ShaftLevel}; the bot plays it; after its results the hero's marker climbs and the counter ticks to the floor " +
                 "reached with the floors left and the next Warden shown; Continue goes on. The layout is audited on both Shaft screens. Each beat is a check event",
                 ShaftSeconds, "full"));
+            list.Add(new PlaytestScenario("music", "Hell's soundtrack (Docs/Story.md, \"Music\"): the shaft scenario's run (Video 2 skipped, the first plunge, " +
+                $"level {ShaftLevel}, the climb) listening to the music, then level {MusicBossLevel} loaded directly (setup shortcut) and fought: the plunge " +
+                "plays its falling riser and slam, the Ember Wastes loop plays on the stage and the push music takes over in a generated push, the climb " +
+                "plays its rising sting, the Magma King's fight starts on his theme and turns to the enrage variant after mkEnrage. Each music switch is a " +
+                "music event, each beat a check event", ShaftSeconds + MusicBossSeconds, "full"));
             list.Add(new PlaytestScenario("gloob", "Gloob, the village slime: his hello on the Shaft after Video3 (setup shortcut: his save reset, the marker at " +
                 "Floor 991; Video3 loaded directly and skipped after 6 s): his talking portrait (idle and talk loops), every hello line with its voice and the " +
                 "hero's one-line reply, then Continue starts Level 3. Then three Shaft previews over the menu (setup shortcuts) where he reacts to the floor: " +
@@ -331,6 +339,8 @@ namespace SickOfIt.Playtest
                 yield return session.StoryPathRun();
             else if (id == "shaft")
                 yield return session.ShaftRun();
+            else if (id == "music")
+                yield return session.ShaftRun(music: true);
             else if (id == "gloob")
                 yield return session.GloobRun();
             else if (id == "gloob-shop")
@@ -495,6 +505,9 @@ namespace SickOfIt.Playtest
                             portal.Picked = true;
                         if (stage != null && stage.Level == log.World.LevelNumber)
                             stage.Picked = true;
+                        break;
+                    case "music":
+                        OnMusic(log, e, level);
                         break;
                     case "milestone":
                         Run.Event("milestone", $"{level}: {e.Subject}");
@@ -3087,6 +3100,8 @@ namespace SickOfIt.Playtest
                 if (Run.Done)
                     return;
                 Run.Event("shaft", $"{kind}: {detail}");
+                if (kind == "music")
+                    shaftMusic.Add(detail);
                 if (shaftWatch == null)
                     return;
                 if (kind == "voice")
@@ -3581,8 +3596,111 @@ namespace SickOfIt.Playtest
             /// The Shaft through the real flow: Video2 (loaded directly, skipped) → the first plunge → Continue →
             /// The Landing played by the bot → its results → the climb → Continue → what comes next.
             /// </summary>
-            public IEnumerator ShaftRun()
+            // ─── music: what plays on the Shaft, a floor stage and the Magma King's fight ──────────
+
+            sealed class MusicHeard
             {
+                public int Level;
+                public string Track, Why;
+                public float Time;
+                public bool AfterEnrage;
+            }
+
+            readonly List<MusicHeard> musicHeard = new List<MusicHeard>();
+            readonly List<string> shaftMusic = new List<string>();
+            int musicPassed, musicFailed;
+
+            void MusicCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    musicPassed++;
+                    Run.Event("check", $"music {beat}: ok ({detail})");
+                }
+                else
+                {
+                    musicFailed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"music {beat}: {detail}");
+                }
+                Run.Metric("music.passed", musicPassed);
+                Run.Metric("music.failed", musicFailed);
+            }
+
+            /// <summary>StageMusic switched tracks (or started): the level's own, the Circle's push music, or a script's playMusic.</summary>
+            void OnMusic(GameplayTelemetry log, GameplayTelemetry.Event e, string level)
+            {
+                bool enraged = false;
+                foreach (var ev in log.Events)
+                {
+                    if (ev.Kind == "signal" && ev.Subject == "mkEnrage")
+                    {
+                        enraged = true;
+                        break;
+                    }
+                }
+                musicHeard.Add(new MusicHeard { Level = log.World.LevelNumber, Track = e.Subject, Why = e.Detail, Time = e.Time, AfterEnrage = enraged });
+                Run.Event("music", $"{level}: {e.Subject} ({e.Detail}{(enraged ? ", after the enrage" : "")}) at {e.Time:0.0} s");
+            }
+
+            static string Tracks(List<MusicHeard> heard)
+            {
+                var parts = new List<string>();
+                foreach (var m in heard)
+                    parts.Add($"{m.Track} ({m.Why}{(m.AfterEnrage ? ", enraged" : "")}) at {m.Time:0.0} s");
+                return parts.Count > 0 ? string.Join(", ", parts) : "no music";
+            }
+
+            void CheckShaftMusic(string beat, string sound, string what)
+            {
+                string heard = shaftMusic.Find(m => m.IndexOf(what, StringComparison.Ordinal) >= 0) ?? "";
+                MusicCheck(beat, !string.IsNullOrEmpty(sound) && heard.Length > 0 && heard.IndexOf("no clip", StringComparison.Ordinal) < 0,
+                    string.IsNullOrEmpty(sound) ? $"ui/shaft.json sets no sound for {what}" : heard.Length > 0 ? heard : $"{what} ({sound}) never played");
+            }
+
+            /// <summary>The Magma King's arena (loaded directly): his theme when the fight starts, the enrage variant after mkEnrage.</summary>
+            IEnumerator MusicBoss()
+            {
+                float deadline = Time.realtimeSinceStartup + MusicBossSeconds - 20f;
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                Run.Event("shortcut", $"load level {MusicBossLevel} (the Magma King's arena) directly");
+                var load = LoadLevel(MusicBossLevel);
+                if (load != null)
+                    yield return load;
+                int attempts = 0;
+                while (true)
+                {
+                    attempts++;
+                    float left = deadline - Time.realtimeSinceStartup;
+                    if (left < 5f) { lastOutcome = "time up"; break; }
+                    yield return PlayLevel(MusicBossLevel, 0f, null, 0.6f, 0.95f, left, waitOutDeath: true,
+                        until: () => musicHeard.Exists(m => m.Level == MusicBossLevel && m.AfterEnrage && m.Why == "script"));
+                    if (Run.Done) yield break;
+                    if (musicHeard.Exists(m => m.Level == MusicBossLevel && m.AfterEnrage && m.Why == "script"))
+                    {
+                        // A moment of the enrage music for the recording.
+                        yield return WaitReal(6f);
+                        if (Run.Done) yield break;
+                        break;
+                    }
+                    if (lastOutcome != "died" || attempts >= 3)
+                        break;
+                    Run.Event("retry", $"level {MusicBossLevel}, attempt {attempts + 1}");
+                    yield return ReachLevel(MusicBossLevel);
+                    if (Run.Done) yield break;
+                }
+                var heard = musicHeard.FindAll(m => m.Level == MusicBossLevel);
+                var theme = heard.Find(m => m.Why == "script" && !m.AfterEnrage);
+                var enrage = heard.Find(m => m.Why == "script" && m.AfterEnrage);
+                MusicCheck("bossTheme", theme != null, $"level {MusicBossLevel}: {Tracks(heard)}");
+                MusicCheck("bossEnrage", theme != null && enrage != null && enrage.Track != theme.Track,
+                    enrage != null ? $"after mkEnrage: {enrage.Track}" : $"no enrage music ({lastOutcome}, {attempts} attempt(s)): {Tracks(heard)}");
+            }
+
+            public IEnumerator ShaftRun(bool music = false)
+            {
+                musicHeard.Clear();
+                shaftMusic.Clear();
                 var definition = GameDefinition.Instance;
                 var config = definition.shaft;
                 var texts = definition.menuTheme.texts;
@@ -3610,6 +3728,8 @@ namespace SickOfIt.Playtest
                 // 1. The plunge, then Continue goes to the level.
                 yield return WatchPlunge(ShaftCheck, $"Shaft plunge {(MenuScreen.Portrait ? "portrait" : "landscape")}");
                 if (Run.Done) yield break;
+                if (music)
+                    CheckShaftMusic("plungeRiser", config.plungeMusic, "the plunge's riser and slam");
                 yield return Run.Until(() => LevelRunning(ShaftLevel) || GameplayWorld.Instance != null && GameplayWorld.Instance.LevelNumber != ShaftLevel,
                     60f, $"level {ShaftLevel} after the Shaft's Continue");
                 if (Run.Done) yield break;
@@ -3633,6 +3753,16 @@ namespace SickOfIt.Playtest
                     yield return ReachLevel(ShaftLevel);
                     if (Run.Done) yield break;
                 }
+                if (music)
+                {
+                    var stageMusic = musicHeard.FindAll(m => m.Level == ShaftLevel);
+                    var loop = stageMusic.Find(m => m.Why == "start");
+                    var push = stageMusic.Find(m => m.Why == "push");
+                    MusicCheck("stageLoop", loop != null, $"level {ShaftLevel}: {Tracks(stageMusic)}");
+                    MusicCheck("stagePush", push != null && loop != null && push.Track != loop.Track,
+                        push != null ? $"a push changed it up to {push.Track} at {push.Time:0.0} s; back to the loop " +
+                                       $"{stageMusic.FindAll(m => m.Why == "level").Count} time(s)" : $"no push music on level {ShaftLevel}: {Tracks(stageMusic)}");
+                }
 
                 if (lastOutcome == "completed")
                 {
@@ -3646,6 +3776,8 @@ namespace SickOfIt.Playtest
                     // 3. The climb, then Continue goes on to whatever the story has next.
                     yield return WatchClimb(ShaftLevel, ShaftCheck, $"Shaft climb {(MenuScreen.Portrait ? "portrait" : "landscape")}");
                     if (Run.Done) yield break;
+                    if (music)
+                        CheckShaftMusic("climbSting", config.climbMusic, "the climb's rising sting");
                     yield return Run.Until(() => ShaftScreen.Current == null && (Object.FindAnyObjectByType<VideoRuntime>() != null || GameplayWorld.Instance == null
                                                                                  || GameplayWorld.Instance.LevelNumber != ShaftLevel), 60f, "the scene after the Shaft");
                     if (Run.Done) yield break;
@@ -3665,6 +3797,16 @@ namespace SickOfIt.Playtest
                     if (Run.Done) yield break;
                     yield return PreviewShaft();
                     if (Run.Done) yield break;
+                    if (music)
+                        CheckShaftMusic("climbSting", config.climbMusic, "the climb's rising sting");
+                }
+                if (music)
+                {
+                    yield return MusicBoss();
+                    if (Run.Done) yield break;
+                    Run.Progress(1f);
+                    End(shaftFailed > 0 || musicFailed > 0 ? PlaytestOutcome.Done : PlaytestOutcome.Won);
+                    yield break;
                 }
                 Run.Progress(1f);
                 End(shaftFailed > 0 ? PlaytestOutcome.Done : lastOutcome == "completed" ? PlaytestOutcome.Won : PlaytestOutcome.Lost);

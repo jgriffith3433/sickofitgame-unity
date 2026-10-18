@@ -209,6 +209,8 @@
     "healthMultiplier": 1.6,
     "pushTimeout": 25.0
   },
+  "pushMusic": "Audio/Music/wastes_push.ogg",
+  "pushMusicVolume": 0.85,
   "milestones": [
     {
       "floor": 999,
