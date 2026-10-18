@@ -254,6 +254,11 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   the Grudge paid, the hero's line and the announcer's reaction, the counter jumping 871 to 841 with no Grudge pick; the
   Shaft climbs to 871 and jumps a dotted line to 841 (`climbShortcut14`); Continue starts Level 18 (Floors 840-831),
   skipping 15-17, played with the stage checks; `check` events `shortcut <beat>`, `shortcut-offer`/`shortcut-taken`; ~6 min),
+  `climb` (the floor toolkit on a test floor: `content/scenes/climbTest.json` on Level 2's stage, setup shortcut; the bot
+  climbs it through real input: the path's climb, sideways run and chase, climb again, the lava sea and parallax, a
+  stone sinking and rising back, a crumbling stone falling, a raft drifting and carrying him, a chain swing, the lava
+  wave chasing him, a hold of R bringing a sunk stone back up, the carved landing ending the level; `check`,
+  `section`, `floorkit` events; ~3 min; Docs/LevelDesign.md "A floor's path"),
   `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game

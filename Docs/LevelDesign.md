@@ -11,7 +11,8 @@ Levels 2-11 are the old 10-floor stages (flat walks to the right) and are replac
 
 ## The rules in one breath
 
-- **One level is one floor.** 60-120 seconds, always climbing up, never a walk to the right.
+- **One level is one floor.** 60-120 seconds, always going up: climbs joined by sideways runs (a raft across a lava
+  river, a chase ahead of a lava wave), never a flat walk to the right from start to end.
 - **A floor boss every 10th floor** (the floors ending in 1: 991, 981, ... 911), **the Warden on the Circle's top
   floor** (901, 801, ... 101).
 - **Hell's shortcuts skip stretches** of floors at a cost or a risk, so 1,000 floors stay playable in hours.
@@ -29,10 +30,13 @@ Every floor is the same sentence with different words, so the player always know
    bottom of every floor of the Wastes. The camera is low; the lava fills the bottom of the screen. The announcer
    calls the floor (*"FLOOR NINE HUNDRED NINETY-EIGHT! THE SPILL!"*), the hero says one line, and nothing attacks
    for the first **5 seconds** (title, line, room to move).
-2. **The climb.** About **6 to 10 screens up**. The camera only goes up (it follows the hero up and never back down;
-   whatever drops below the screen's bottom edge is gone, into the lava). The way up is the floor's obstacles: stones,
-   rafts, lifts, updrafts, ledges. The background is the world falling away below: the lava sea, the rock walls, chains
-   and the imps' lifts hanging in the dark, and the next floor's light far above.
+2. **The climb.** About **6 to 10 screens up**, along the floor's **path** (see *A floor's path* below): sections that
+   go up, sideways (left or right), diagonally, or hold still for a fight, with smooth turns between them. The camera
+   only goes forward along the path (it follows the hero with a look-ahead and never back; whatever drops below the
+   screen's bottom edge is gone, into the lava). The way on is the floor's obstacles: stones, rafts, lifts, chains,
+   updrafts, ledges. The background is the world falling away below: the lava sea far below with its glow and haze,
+   spires standing in it, smoke, islands of rock floating in the dark, embers drifting up, and the next floor's light
+   far above.
 3. **Pushes and breathers.** The climb is cut into 2 to 4 **pushes** (the lava rises, monsters arrive, the hazards
    speed up) with a **breather** of a few seconds between each (a solid ledge, nothing attacking, maybe a hero line).
    The last push is the hardest.
@@ -88,18 +92,21 @@ platform or hazard type (saved in `SaveState`/`LoadState`, seeded) for the floor
 
 | Piece | What it does | Why it's in Hell | Telegraph | First floor | Engine |
 |---|---|---|---|---|---|
-| **Sinking stones** | Slabs of cooled slag floating on the lava. Stand on one and it sinks (about 1.5 s to go under); step off and it bobs back up. Keep moving. | The lava sea's crust, broken into floes | The stone dips and hisses the moment he lands | 1000 | new |
-| **Rising lava** | The lava sea climbs the screen, slowly, behind the hero: the push upward. Stops below each breather ledge and the landing. | The Wastes breathing in | A rumble, a line of bubbles across the screen, 2 s ahead; the announcer the first time | 999 | new |
-| **Bobbing debris rafts** | Bigger floating things (the village's carts, roofs, fences) bob on their own rhythm and drift sideways. They don't sink when stood on; they tip if he stands at the edge. | Everything that fell through the portal ends up in the lava | They rock before they tip | 998 (as sinking debris), 959 (bobbing and drifting) | new |
-| **Imp sack-swings** | Imps swinging across the gap on chains, carrying the village's diamond sacks. Hit the sack: diamonds. Touch the imp: a burn. Their swing is a rhythm he can ride over or shoot through. | The imps haul the diamonds up through the Wastes to the gate | The chain rattles before each swing | 997 | new (an `impSack` on a pendulum path) |
+| **Sinking stones** | Slabs of cooled slag floating on the lava. Stand on one and it sinks (about 1.5 s to go under); step off and it bobs back up. Keep moving. | The lava sea's crust, broken into floes | The stone dips and hisses the moment he lands | 1000 | yes (`sinkingStone`, ability `sink`) |
+| **Rising lava** | The lava sea climbs the screen, slowly, behind the hero: the push upward. Stops below each breather ledge and the landing. | The Wastes breathing in | A rumble, a line of bubbles across the screen, 2 s ahead; the announcer the first time | 999 | yes (`lavaSea`: counters `lavaSpeed`, `lavaMax`) |
+| **Bobbing debris rafts** | Bigger floating things (the village's carts, roofs, fences) bob on their own rhythm and drift sideways. They don't sink when stood on; they tip if he stands at the edge. | Everything that fell through the portal ends up in the lava | They rock before they tip | 998 (as sinking debris), 959 (bobbing and drifting) | yes (`debrisRaft`, ability `raft`: drifts on a current and carries him) |
+| **Imp sack-swings** | Imps swinging across the gap on chains, carrying the village's diamond sacks. Hit the sack: diamonds. Touch the imp: a burn. Their swing is a rhythm he can ride over or shoot through. | The imps haul the diamonds up through the Wastes to the gate | The chain rattles before each swing | 997 | partly (the chain's pendulum is `swingChain`; the imp riding it is new) |
+| **Swinging chains** | The imps' empty chains hang over the gaps and swing. Jump into one to grab it, swing with it, jump off with its speed. | The hauling route's chains, left swinging | It swings in plain sight, the same rhythm every time | not placed yet (a floor with no other new idea) | yes (`swingChain`) |
 | **Lava geysers** | A vent in the rock blows a column of lava straight up. | The lava sea under pressure | The vent glows and spits for **1 s** before | 996 | partly (`lavaBurst` is the glow and burst; the column is new) |
+| **Slag flows** | A crust of slag sliding along on the lava like a conveyor: with it he runs faster, against it he barely moves. | The lava sea's current, crusted over | Its glowing seams crawl the way it moves | not placed yet (a floor with no other new idea) | yes (`slagConveyor`, ability `conveyor`) |
 | **Hell's loop** | A set of stones, geysers or imps that does exactly the same thing over and over. Not a new object: a new way to use the old ones. | Hell is repetition | The first repeat is called out | 995 | config (seeded patterns) |
-| **Chain lifts** | A platform on a chain that rides up and down a shaft on a timer. | The imps' lifts for hauling sacks | The chain clanks and the lift jolts before it moves | 994 | new |
-| **Crumbling stones** | Ledges of old slag that crack when stood on and fall after 1 s. They don't come back. | The Wastes' old floors, burned through | Cracks and dust the moment he lands | 992 | new |
-| **Counterweights** | Two platforms on one chain over a pulley, one loaded with a diamond sack. Shoot the sack off and its side rises (with him on it). | The imps balance their lifts with the stolen sacks | The loaded side creaks, the sack sways | 960 | new |
-| **Heat updrafts** | Shimmering columns of hot air over the lava that carry him up while he's in them (and keep carrying a jump). | The lava sea's heat | Shimmer and floating ash show the column | 957 | new |
+| **Chain lifts** | A platform on a chain that rides up and down a shaft on a timer. | The imps' lifts for hauling sacks | The chain clanks and the lift jolts before it moves | 994 | yes (`chainLift`; `startOnStand` waits for him) |
+| **Crumbling stones** | Ledges of old slag that crack when stood on and fall after 1 s. They don't come back (except by rewind). | The Wastes' old floors, burned through | Cracks and dust the moment he lands | 992 | yes (`crumblingStone`, ability `crumble`) |
+| **Counterweights** | Two platforms on one chain over a pulley, one loaded with a diamond sack. Shoot the sack off and its side rises (with him on it). | The imps balance their lifts with the stolen sacks | The loaded side creaks, the sack sways | 960 | partly (`counterweightLeft`/`Right`: his weight sinks one side and lifts the other; the sack is new) |
+| **Heat updrafts** | Shimmering columns of hot air over the lava that carry him up while he's in them (and keep carrying a jump). | The lava sea's heat | Shimmer and floating ash show the column | 957 | yes (`heatUpdraft`) |
 | **Falling slag** | Lumps of molten rock dropping from the ceiling. | The floor above is melting | A glowing drip gathers for 1.2 s | 956 | yes (`slagDrip`, `slag`) |
-| **Lava falls** | Curtains of lava pouring down the wall. They pour, thin to a trickle and stop on a beat, then pour again: pass while they're off. | The floor above spills over | The fall thins and sputters 1 s before it stops, and gurgles 1 s before it pours | 955 | new |
+| **Lava falls** | Curtains of lava pouring down the wall. They pour, thin to a trickle and stop on a beat, then pour again: pass while they're off. | The floor above spills over | The fall thins and sputters 1 s before it stops, and gurgles 1 s before it pours | 955 | yes (`lavaFall`) |
+| **The lava wave** | A wall of lava rolls after him sideways, never far behind the screen's edge: a run where stopping means a burn. It sinks away when the path turns up. | The lava sea surging | A rumble, the screen shakes, the announcer's *"RUN!"*, 1.5 s before it moves | 905 (the stair collapse), and runs before it | yes (`lavaSurge`, ability `surge`, with a section's `autoSpeed`) |
 | **Ember shower** | Steam off the lava sea raining embers two at a time. | The lava sea's steam | The hero's warning line, 1.5 s before the first | 909 | yes (`emberShower`) |
 
 Monsters the floors draw from (Circle X's one family: the Overlord's imps, and the sparks of the burning village):
@@ -111,6 +118,32 @@ Monsters the floors draw from (Circle X's one family: the Overlord's imps, and t
 | `imp` | Perches on a ledge above and throws slow embers down | The Overlord's raiders, guarding the way up | 993 |
 | `cinderThatch` | A burning clump of thatch; shot, it bursts into two darting sparks | The village's roofs fell through too | 958 |
 | `impGuard` | Plants itself on a ledge and throws three embers in a fan; drops nothing | The Magma King's own guard, keeping his pile and his stairs | 954 |
+
+### A floor's path
+
+A floor is a sequence of **sections** (`world.path` in its level file): each one goes **Up**, **Right**, **Left**,
+**UpRight** or **UpLeft** for some distance, or is an **Arena** (the camera holds until the fight on that tier is
+over). The camera follows the hero along the current section with a look-ahead, forward only, and rounds off the turn
+into the next; a section can also move on by itself (`autoSpeed`: a raft ride, a chase). Each section puts its stones,
+rafts, chains and hazards on the floor a section ahead of the hero, so the next foothold is always there before he
+needs it. A good floor mixes them: climb a lava fall, cross a river on a raft, run ahead of a wave, climb again.
+
+- **The lava sea** is always below: the near sea (`lavaSea`, the one that burns and rises) under the camera, the far
+  sea, spires, smoke and floating islands drawn behind (the Circle's `sky`), dropping away as he climbs.
+- **Lava is a hot bath, not a pit.** Touching lava burns (one hit) and throws him up out of it (`scald`), so a lost step
+  costs health and time, never the whole floor.
+- **Rewind restores the floor.** Every piece is rewound with everything else: a stone that sank, a ledge that fell, a
+  lift that left, the lava that rose all come back. Pieces that loop (lifts, falls, chains, a raft's current) keep the
+  same beat every time, so a rewind replays the same future.
+- **The landing** is the last foothold: `floorLanding`, the floor number carved into it (`carved`, `{floor}`) and a word
+  or two under it; standing on it plays the arrive beat (`playerOn` → lines → `completeLevel`).
+- **Generated floors** (the long way): a section with `generate: N` is filled with N chunks from the Circle's
+  `chunks` (each a section with its pieces, anchored to the section's start), picked by weight and `fromFloor`, seeded
+  by the level seed and the floor, so the same floor is always the same floor.
+
+The test floor `content/scenes/climbTest.json` (the `climb` playtest) has one of everything: a climb of sinking and
+crumbling stones, a raft ride across a lava river with a chain to swing from and an updraft under it, a chase on a slag
+flow ahead of the lava wave, a climb on a chain lift with the lava rising behind, and the landing.
 
 ## 3. The route through Circle X
 
@@ -588,7 +621,11 @@ order it can be built and played:
 1. **Engine (C#, new rewind-safe types):** sinking stones, crumbling stones, rafts (bob, drift, tip), chain lifts and
    counterweights, heat updrafts, lava falls, a geyser column, and **rising lava** (a kill plane with a telegraphed rise
    that stops under marked ledges), plus a climbing floor layout (`world.camera` Travel Up with hand-placed and
-   generated footholds) and the climbing arena (tiers, a camera step per phase). `offerShortcut` with a diamond cost
+   generated footholds) and the climbing arena (tiers, a camera step per phase). *Built 2026-10-18:* the path camera
+   (`world.path`, Arena sections for the climbing arena's tiers), the lava sea and the world below it, every piece in
+   the toolkit table marked *yes*, generated sections from the Circle's chunks, and the bot climbing a path (the `climb`
+   playtest). Still to build: the geyser column, the sack on the counterweight, the imp riding a swing, a screen-space
+   heat distortion shader (today the shimmer is drawn bands), and art for every piece (they draw as plain shapes). `offerShortcut` with a diamond cost
    (`costDiamonds`), and a trigger that a floor can read when a shortcut was taken to reach it (`shortcutTaken`, from
    `ShortcutProgress`). Grudge picks on every 5th floor and after bosses. **The damned soul** (`damnedSoul`, a new
    entity: harmless, no health, a looping idle, a proximity trigger that drops one `rewindOrb` once per play through
