@@ -91,6 +91,9 @@ Assets/GameConfig/
   sound ids. `voices` defines who speaks (`player` for subtitles, `announcer` for banners); lines use `eleven_v3` with
   delivery tags like `[sighs]`. A `showText` voices its line through `"sound"`. Prompting rules are in the cookbook;
   the API rejects effects under 0.5 s. This project holds no ElevenLabs key: Hawkes Gen does.
+- **Gloob** (`ui/gloob.json`, `GloobPortrait`): the village slime's talking portrait (idle/talk/laugh/cough sheets, a shape
+  placeholder until painted) and lines on the Shaft (his hello after Video3, one reaction per climb) and in the shop. Lines
+  are audio.json voices `gloob` (hero replies `player`); which line plays is `moment` + `floor` (Docs/Story.md, "Gloob between floors").
 - **Diamonds** drop from enemy `loot` as the `diamond` entity and are spent in the shop. **Shop upgrades** are
   `player.json` `availableUpgrades` with an `effect` (MaxHealth, ExtraJump, MoveSpeed, FireRate, Damage, RewindJuice,
   Magnet); `RogueliteManager` stores levels, `UpgradeSystem.ApplyShop` applies them each level. Between-level picks are
@@ -203,7 +206,7 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   `video-2-tunnel` (Video2 loaded directly and watched with no input from the burning door through the fire tunnel to the
   lava river, 10.6–17.5 s: at each mark a screen capture of the box the old burned-in "COMING SOON" caption covered must
   not be caption-coloured, the frame on screen must match the clock and the soundtrack the clock, and the clip must be
-  as long as its soundtrack; `check` and `frame` events, `video.caption@<t>` metrics), `portal-audio` (on the main menu, plays
+  as long as its soundtrack; `check` and `frame` events, `video.caption@<t>` metrics), `gloob` (Gloob, the village slime: his hello on the Shaft after Video3 with his talking portrait, every hello line voiced and the hero's reply, Continue to Level 3; then Shaft previews where he reacts to Floor 950, a death and the Magma King's door; then the shop: welcome, can't afford, buy, goodbye; `check` and `gloob` events; ~4 min), `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
   page has neither; `Plugins/WebGL/HawkesSite.jslib`).

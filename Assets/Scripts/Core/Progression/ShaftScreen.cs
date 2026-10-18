@@ -34,6 +34,8 @@ namespace SickOfIt.Core.Progression
             Plunge,
             /// <summary>The marker climbs from where it was to the level's last floor.</summary>
             Climb,
+            /// <summary>No climb: Gloob says hello where the marker is (after the video he turns up in, Video3).</summary>
+            Meet,
         }
 
         /// <summary>The Shaft on screen now, or null.</summary>
@@ -70,6 +72,8 @@ namespace SickOfIt.Core.Progression
         public bool Continued => continued;
         /// <summary>A preview (playtest setup shortcut): Continue only closes it; nothing is saved.</summary>
         public bool IsPreview => preview;
+        /// <summary>Gloob's portrait on this Shaft, or null (before he has met the hero).</summary>
+        public GloobPortrait Gloob => gloob;
 
         /// <summary>One Circle as drawn: ui/shaft.json, with content/circles' name and floors where the circle exists.</summary>
         sealed class Band
@@ -102,6 +106,7 @@ namespace SickOfIt.Core.Progression
         TextMeshProUGUI subtitle;
         TextMeshProUGUI skipHint;
         MenuButton continueButton;
+        GloobPortrait gloob;
         readonly List<Band> bands = new List<Band>();
         readonly List<Behaviour> hidden = new List<Behaviour>();
         Action next;
@@ -132,6 +137,14 @@ namespace SickOfIt.Core.Progression
 
             if (stop.Kind == ShaftStopKind.AfterVideo)
             {
+                // Gloob's hello, the first time the video he turns up in leads on to a level.
+                var gloobConfig = definition.gloob;
+                if (gloobConfig != null && gloobConfig.enabled && stop.Video == gloobConfig.helloAfterVideo && stop.NextLevel > 0 && !GloobProgress.Met)
+                {
+                    int here = ShaftProgress.Floor > 0 ? ShaftProgress.Floor : config.bottomFloor;
+                    Open(Mode.Meet, here, here, next, false);
+                    return true;
+                }
                 if (stop.Video != config.plungeAfterVideo || stop.NextLevel <= 0)
                     return false;
                 Open(Mode.Plunge, 0, config.bottomFloor, next, false);
@@ -155,6 +168,12 @@ namespace SickOfIt.Core.Progression
         public static ShaftScreen Preview(int fromFloor, int toFloor, Action closed = null)
         {
             return Open(fromFloor <= 0 ? Mode.Plunge : Mode.Climb, Mathf.Max(0, fromFloor), toFloor, closed, true);
+        }
+
+        /// <summary>Gloob's hello at 'floor' without the story flow (playtest setup shortcut). Continue closes it; nothing is saved.</summary>
+        public static ShaftScreen PreviewMeet(int floor, Action closed = null)
+        {
+            return Open(Mode.Meet, floor, floor, closed, true);
         }
 
         static ShaftScreen Open(Mode mode, int from, int to, Action next, bool preview)
@@ -202,7 +221,7 @@ namespace SickOfIt.Core.Progression
             SetCounter(from);
             UpdateInfo(from);
             Report("open", $"{mode.ToString().ToLowerInvariant()} from {from} to {to}" + (preview ? " (preview)" : "") + (Skippable ? ", skippable" : ""));
-            StartCoroutine(mode == Mode.Plunge ? PlungeRoutine() : ClimbRoutine());
+            StartCoroutine(mode == Mode.Plunge ? PlungeRoutine() : mode == Mode.Meet ? MeetRoutine() : ClimbRoutine());
         }
 
         /// <summary>
@@ -346,6 +365,11 @@ namespace SickOfIt.Core.Progression
             skipHint.enableVertexGradient = false;
             skipHint.color = theme.muted;
             skipHint.transform.parent.gameObject.SetActive(Skippable);
+
+            // Gloob, once he has met the hero (and for his hello), left of the shaft window (portrait: on its corner).
+            var gloobConfig = GameDefinition.Instance != null ? GameDefinition.Instance.gloob : null;
+            if (gloobConfig != null && gloobConfig.enabled && (Kind == Mode.Meet || Kind == Mode.Climb && GloobProgress.Met))
+                gloob = GloobPortrait.Create(menu, stage, gloobConfig, gloobConfig.shaftPortrait, gloobConfig.shaftPortraitPortrait);
 
             flash = MenuGraphics.NewImage(stage, "Flash", new Color(1f, 0.95f, 0.85f, 0f));
             flash.rectTransform.offsetMin = new Vector2(-400f, -400f);
@@ -868,6 +892,42 @@ namespace SickOfIt.Core.Progression
                 ShaftProgress.Plunged = true;
             }
             Report("climb", $"from FLOOR {Number(from)} to FLOOR {Number(to)}: {FloorsLeftText}; {NextWardenText}");
+            if (gloob != null && !skip)
+            {
+                // One line from Gloob about what just happened.
+                var warden = NextWardenAbove(to);
+                var line = GloobPortrait.PickBetweenFloors(from, to, warden != null ? warden.Last : 0);
+                if (line != null)
+                {
+                    yield return Wait(0.3f);
+                    yield return gloob.Say(line, ShowSubtitle, () => skip);
+                }
+                Report("gloob", line != null ? $"between floors: {line.moment} ({line.sound})" : "between floors: nothing to say");
+                if (!preview)
+                    GloobPortrait.Heard(line);
+            }
+            Finish();
+        }
+
+        IEnumerator MeetRoutine()
+        {
+            markerFloor = cameraFloor = ToFloor;
+            SetCounter(ToFloor);
+            UpdateInfo(ToFloor);
+            yield return Wait(0.6f);
+            var lines = GloobPortrait.HelloLines();
+            Report("gloob", $"hello at FLOOR {Number(ToFloor)}: {lines.Count} lines");
+            foreach (var line in lines)
+            {
+                if (gloob == null || skip)
+                    break;
+                yield return gloob.Say(line, ShowSubtitle, () => skip);
+            }
+            if (!preview)
+            {
+                GloobProgress.Met = true;
+                GloobPortrait.Heard(null);
+            }
             Finish();
         }
 

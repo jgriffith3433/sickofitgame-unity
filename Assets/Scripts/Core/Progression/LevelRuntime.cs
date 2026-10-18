@@ -234,6 +234,8 @@ namespace SickOfIt.Core.Progression
         private void OnPlayerDied()
         {
             gameplayWorld?.Telemetry?.Finish("died");
+            // Gloob hears about it on the next Shaft (presentation only).
+            GloobProgress.HeroDied = true;
         }
 
         private void Update()
