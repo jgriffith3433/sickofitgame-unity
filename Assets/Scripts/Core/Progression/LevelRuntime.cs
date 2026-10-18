@@ -37,6 +37,7 @@ namespace SickOfIt.Core.Progression
         [SerializeField] private HealthUI healthUI;
 
         [Header("Projectile Pools (wired by generator)")]
+        private const int PlayerShotPoolSize = 160;
         [SerializeField] private ObjectPool playerProjectilePool;
         [SerializeField] private ObjectPool enemyProjectilePool;
         [SerializeField] private ObjectPool laserPool;
@@ -350,6 +351,11 @@ namespace SickOfIt.Core.Progression
             // Resolve PlayerHealth from character
             if (characterObject != null && playerHealth == null)
                 playerHealth = characterObject.GetComponentInChildren<PlayerHealth>();
+
+            // Shots are held for the rewind window (30 s at 0.3 s fire rate is ~100), so
+            // prewarm here; growing one instance at a time during play hitched the game.
+            if (playerProjectilePool != null)
+                playerProjectilePool.EnsureCapacity(PlayerShotPoolSize);
 
             // Wire player projectile pool
             if (characterObject != null && playerProjectilePool != null)

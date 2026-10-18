@@ -14,7 +14,7 @@
   "lifetime": 2.0,
   "layerName": "",
   "tag": "",
-  "poolSize": 20,
+  "poolSize": 160,
   "fireSound": null,
   "hitSound": null,
   "expireSound": null,

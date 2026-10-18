@@ -126,6 +126,17 @@ namespace SickOfIt.Core
         }
 
         /// <summary>
+        /// Grow the free list up front so a busy level never instantiates mid-play.
+        /// Fired shots stay held for the whole rewind window, so a pool needs
+        /// fire rate x window instances, far more than the shots in flight.
+        /// </summary>
+        public void EnsureCapacity(int size)
+        {
+            if (prefab == null || poolContainer == null) return;
+            Prewarm(Mathf.Max(0, size - available.Count - active.Count - cooling.Count));
+        }
+
+        /// <summary>
         /// Pre-instantiate pool objects. Called once during Awake.
         /// </summary>
         private void Prewarm(int count)
