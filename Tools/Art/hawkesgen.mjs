@@ -62,7 +62,9 @@ export class HawkesGen {
     this.url = (url ?? env.HAWKESGEN_URL ?? file.genUrl ?? 'http://127.0.0.1:8790').replace(/\/$/, '');
     this.key = key ?? env.HAWKESGEN_KEY ?? file.genKey ?? null;
     this.project = project ?? null;
-    this.local = /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/.test(this.url);
+    // Gen reads local paths only from a caller without a key (this PC's own tools); a keyed caller on the same machine
+    // (an agent on the Linux server) is a remote caller and must upload its files.
+    this.local = !this.key && /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/.test(this.url);
   }
 
   async request(path, { method = 'GET', body, headers = {}, raw = false, signal } = {}) {

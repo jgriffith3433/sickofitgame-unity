@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "extends": "fireball",
+  "body": {
+    "kind": "Dynamic",
+    "radius": 0.9,
+    "solid": false,
+    "gravity": 0.6
+  },
+  "visual": {
+    "scale": 0.2,
+    "color": "#D2551E",
+    "sortingOrder": 4,
+    "hurtFlash": false,
+    "fxColor": "#FF6A1F"
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "dieOnSolid": true,
+      "effect": "burning"
+    },
+    {
+      "type": "spin",
+      "degreesPerSecond": 240
+    },
+    {
+      "type": "lifetime",
+      "seconds": 4
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "playSound",
+      "sound": "lava_burst"
+    }
+  ]
+}

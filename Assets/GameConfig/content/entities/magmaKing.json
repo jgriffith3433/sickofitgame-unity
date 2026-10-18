@@ -1,17 +1,22 @@
 {
   "schemaVersion": 1,
-  "extends": "shooter",
+  "team": "Enemy",
   "health": 75,
-  "moveSpeed": 1.5,
+  "moveSpeed": 0,
   "activationRange": 0,
   "tags": ["boss"],
   "body": {
-    "radius": 1.0
+    "shape": "Box",
+    "size": [1.7, 2.3],
+    "solid": true,
+    "gravity": 0
   },
   "visual": {
-    "scale": 0.6,
+    "scale": 1,
     "color": "#FF7755",
-    "fxColor": "#FF7A3D"
+    "fxColor": "#FF7A3D",
+    "placeholderSize": 2.2,
+    "deathFade": 1.2
   },
   "healthBar": {
     "show": false
@@ -23,9 +28,7 @@
   },
   "abilities": [
     {
-      "type": "hover",
-      "offset": [3, 1.2],
-      "speed": 1.5
+      "type": "faceTarget"
     },
     {
       "type": "contactDamage",
@@ -34,25 +37,49 @@
   ],
   "states": [
     {
-      "name": "fanning",
+      "name": "throne",
       "abilities": [
         {
           "type": "shoot",
-          "projectile": "fireball",
-          "pattern": {
-            "type": "spread",
-            "count": 3,
-            "angle": 30
+          "projectile": "magmaBoulder",
+          "speed": 6.5,
+          "aim": "Player",
+          "muzzle": [0.7, 0.6],
+          "interval": 3.2,
+          "initialDelay": 2.5,
+          "animTrigger": "Throw"
+        },
+        {
+          "type": "shoot",
+          "projectile": "lavaWave",
+          "speed": 3.2,
+          "aim": "Facing",
+          "muzzle": [1.0, -0.85],
+          "interval": 6,
+          "initialDelay": 5.5,
+          "animTrigger": "Slam"
+        },
+        {
+          "type": "react",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.85
           },
-          "speed": 4,
-          "interval": 2,
-          "initialDelay": 2,
-          "animTrigger": "IsAttacking"
+          "do": [
+            {
+              "type": "showText",
+              "text": "Mm. That one tickled.",
+              "style": "Subtitle",
+              "duration": 3.0,
+              "color": "#FF8A3D",
+              "sound": "vo_mk_hurt1"
+            }
+          ]
         }
       ],
       "transitions": [
         {
-          "to": "enraged",
+          "to": "rising",
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
@@ -61,35 +88,108 @@
       ]
     },
     {
-      "name": "enraged",
+      "name": "rising",
       "onEnter": [
+        {
+          "type": "setAnimParam",
+          "param": "Standing",
+          "value": 1
+        },
         {
           "type": "runSequence",
           "sequence": "bossEnrage"
         }
       ],
+      "transitions": [
+        {
+          "to": "standing",
+          "when": {
+            "type": "after",
+            "seconds": 4.5
+          }
+        }
+      ]
+    },
+    {
+      "name": "standing",
+      "onEnter": [
+        {
+          "type": "showText",
+          "text": "Now. Let's give them a real show.",
+          "style": "Subtitle",
+          "duration": 3.5,
+          "color": "#FF8A3D",
+          "sound": "vo_mk_phase2"
+        }
+      ],
       "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "lavaWave",
+          "speed": 4.0,
+          "aim": "Facing",
+          "muzzle": [1.0, -0.85],
+          "interval": 4.6,
+          "initialDelay": 2.0,
+          "animTrigger": "Slam"
+        },
+        {
+          "type": "shoot",
+          "projectile": "slagDrip",
+          "pattern": {
+            "type": "rain",
+            "count": 2,
+            "angleJitter": 0
+          },
+          "speed": 0,
+          "interval": 4.6,
+          "initialDelay": 2.0
+        },
         {
           "type": "shoot",
           "projectile": "fireball",
           "pattern": {
-            "type": "radial",
-            "count": 10,
-            "rotationPerVolley": 12
+            "type": "spread",
+            "count": 5,
+            "angle": 50
           },
-          "speed": 3.5,
-          "interval": 1.6,
-          "initialDelay": 1,
-          "animTrigger": "IsAttacking"
+          "speed": 4.2,
+          "aim": "Player",
+          "muzzle": [0.9, 1.6],
+          "interval": 4.6,
+          "initialDelay": 4.3,
+          "burst": 2,
+          "burstInterval": 0.25,
+          "animTrigger": "Breath"
         },
         {
-          "type": "spawner",
-          "entity": "exploder",
-          "interval": 6,
-          "initialDelay": 2,
-          "maxAlive": 2
+          "type": "react",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.2
+          },
+          "do": [
+            {
+              "type": "showText",
+              "text": "You're ruining... my show.",
+              "style": "Subtitle",
+              "duration": 3.0,
+              "color": "#FF8A3D",
+              "sound": "vo_mk_hurt2"
+            }
+          ]
         }
       ]
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "showText",
+      "text": "The show... must go... on...",
+      "style": "Subtitle",
+      "duration": 4.0,
+      "color": "#FF8A3D",
+      "sound": "vo_mk_defeat"
     }
   ]
 }

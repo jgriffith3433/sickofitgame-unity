@@ -70,6 +70,27 @@ namespace SickOfIt.Playtest
         /// <summary>The level the imp-death scenario plays: Level 1's "imps" phase brings four, one at a time first.</summary>
         public const int ImpLevel = 1;
 
+        /// <summary>
+        /// The magma-king scenario: the level that holds his fight (the reference fight, Docs/Story.md "The Magma King's
+        /// fight"), the animation states he must be seen in, and his lines (text, audio.json sound, who must voice it).
+        /// </summary>
+        public const string MagmaKingLevel = "ArcadeFireRain", MagmaKingId = "magmaKing";
+        const float MagmaKingSeconds = 300f;
+        static readonly string[] MagmaKingStates = { "Idle", "Throw", "SlamSeat", "Hurt", "Rise", "Enrage", "IdleStand", "Slam", "Breath", "HurtStand" };
+        static readonly (string beat, string text, string sound, string voice)[] MagmaKingLines =
+        {
+            ("intro", "Mm-hm-hm. An audience, at last. Welcome to the Slag Throne, little spark.", "vo_mk_intro", "magmaKing"),
+            ("hero intro", "He's not getting up, is he.", "vo_mk_hero_intro", "player"),
+            ("phase 1", "Dance for me, little spark. Hell loves a show.", "vo_mk_phase1", "magmaKing"),
+            ("hurt", "Mm. That one tickled.", "vo_mk_hurt1", "magmaKing"),
+            ("enrage", "...You made me STAND.", "vo_mk_enrage", "magmaKing"),
+            ("phase 2", "Now. Let's give them a real show.", "vo_mk_phase2", "magmaKing"),
+            ("hurt 2", "You're ruining... my show.", "vo_mk_hurt2", "magmaKing"),
+            ("defeat", "The show... must go... on...", "vo_mk_defeat", "magmaKing"),
+            ("fallen", "THE MAGMA KING HAS FALLEN!", "vo_mk_fallen", "announcer"),
+            ("hero defeat", "He got up for me. I'm touched.", "vo_mk_hero_defeat", "player"),
+        };
+
         /// <summary>The cutscene scenario: the scene it plays (content/scenes) and the level whose stage it plays on.</summary>
         public const string CutsceneScene = "cutsceneTest";
         public const int CutsceneLevel = 1;
@@ -146,6 +167,12 @@ namespace SickOfIt.Playtest
             }
             list.Add(new PlaytestScenario("imp-death", $"Level {ImpLevel}'s imps, started directly (setup shortcut): the bot kills them and each imp's Die clip " +
                 "must play where it died; the first deaths run in slow motion so the clip can be seen", 90, "level"));
+            list.Add(new PlaytestScenario("magma-king", $"The Magma King's fight in \"{MagmaKingLevel}\" (loaded directly, a setup shortcut; the bot plays " +
+                "the fire rain and then the fight through real input, up to 3 tries): his generated animations seen at game size, each a check event: Idle, " +
+                "Throw (molten boulder) and SlamSeat (fist on the throne's arm, lava wave) from the throne, Hurt, then at half health Rise and Enrage " +
+                "(the only time he stands), IdleStand, Slam (ground-pound), Breath and HurtStand standing, and his Die clip playing where he fell; " +
+                "his on-screen height; every line with its subtitle and his own voice (intro, phase 1, hurt, enrage, phase 2, hurt, defeat), the " +
+                "announcer's \"HAS FALLEN\" and the hero's replies", MagmaKingSeconds, "level"));
             list.Add(new PlaytestScenario("cutscene", $"The scene \"{CutsceneScene}\" on level {CutsceneLevel}'s stage (setup shortcut): with input and rewind locked " +
                 "the hero walks to a point by himself and stops, turns left and right, R does nothing; the camera zooms in and back; the screen fades " +
                 "to black and back; he is pulled into a point, spinning and shrinking until he disappears. Each beat is checked", 75, "level"));
@@ -261,6 +288,8 @@ namespace SickOfIt.Playtest
                 yield return session.PortalAudio();
             else if (id == "cutscene")
                 yield return session.Cutscene();
+            else if (id == "magma-king")
+                yield return session.MagmaKingRun();
             else if (id == "video-" + OverlayVideo)
                 yield return session.VideoOverlay();
             else if (id == "video-" + OverlayVideo + "-tunnel")
@@ -287,6 +316,7 @@ namespace SickOfIt.Playtest
             int deaths;
             int botRewinds;
             int impDeaths;
+            MagmaWatch magma;
             bool impSlowMotion;
             float slowMotionUntil;
 
@@ -406,6 +436,9 @@ namespace SickOfIt.Playtest
                     case "milestone":
                         Run.Event("milestone", $"{level}: {e.Subject}");
                         story?.Milestones.Add((log.World.LevelNumber, e.Value));
+                        break;
+                    case "death" when e.Subject == MagmaKingId && magma != null:
+                        CheckMagmaKingDeath(log.World.FindBySerial(e.Value));
                         break;
                     case "death" when e.Subject == "imp" && e.Detail == "Damage":
                         CheckImpDeath(log.World.FindBySerial(e.Value), level);
@@ -1010,6 +1043,176 @@ namespace SickOfIt.Playtest
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
                     : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
                     : PlaytestOutcome.Won);
+            }
+
+            // ─── magma-king ───────────────────────────────────────────────
+
+            /// <summary>What the magma-king scenario has seen of the Warden (across tries).</summary>
+            sealed class MagmaWatch
+            {
+                public readonly Dictionary<string, float> States = new Dictionary<string, float>();
+                public readonly Dictionary<string, string> Lines = new Dictionary<string, string>();
+                public readonly HashSet<string> Passed = new HashSet<string>();
+                public int Failed;
+                public string LastState = "", LastLine = "", LastBanner = "";
+                public float ScreenShare = -1f, Clock;
+                public bool Seen, Art, DiePlayed;
+                public string DieDetail = "he was never killed";
+            }
+
+            void MagmaCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    magma.Passed.Add(beat);
+                    Run.Event("check", $"magma-king {beat}: ok ({detail})");
+                }
+                else
+                {
+                    magma.Failed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"magma-king {beat}: {detail}");
+                }
+            }
+
+            /// <summary>
+            /// Plays the level with his fight (the fire rain first, then the boss phase) through real input, up to 3 tries,
+            /// watching him (animation states, size on screen) and the lines; then checks what the fight must show.
+            /// </summary>
+            public IEnumerator MagmaKingRun()
+            {
+                var definition = GameDefinition.Instance;
+                int n = definition.levels.FindIndex(l => l != null && l.levelName == MagmaKingLevel) + 1;
+                if (n <= 0)
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"magma-king: no level \"{MagmaKingLevel}\" in game.json");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+                magma = new MagmaWatch();
+                for (int attempt = 1; attempt <= 3 && !Run.Done; attempt++)
+                {
+                    Run.Event("shortcut", $"load level {n} ({MagmaKingLevel}) directly, try {attempt}");
+                    var load = LoadLevel(n);
+                    if (load != null)
+                        yield return load;
+                    yield return PlayLevel(n, 0f, MagmaDuring, (attempt - 1) / 3f, attempt / 3f);
+                    if (Run.Done)
+                        yield break;
+                    if (lastOutcome == "completed")
+                        break;
+                }
+                FinishMagma();
+                Run.Progress(1f);
+                // A failed check is a Bug problem (MagmaCheck); the outcome is how the fight went.
+                End(lastOutcome == "completed" ? PlaytestOutcome.Won
+                    : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
+                    : PlaytestOutcome.Lost);
+            }
+
+            /// <summary>Every frame of the fight (PlayLevel's 'during'): reads what is on screen, changes nothing.</summary>
+            IEnumerator MagmaDuring(float now)
+            {
+                var m = magma;
+                var world = GameplayWorld.Instance;
+                if (m == null || world == null)
+                    return null;
+                m.Clock = now;
+                Entity king = null;
+                foreach (var e in world.Live)
+                {
+                    if (e != null && e.IsAlive && e.DefId == MagmaKingId)
+                    {
+                        king = e;
+                        break;
+                    }
+                }
+                if (king != null)
+                {
+                    if (!m.Seen)
+                    {
+                        m.Seen = true;
+                        m.Art = king.Animation != null && king.Animation.HasClips && king.Sprite != null && king.Sprite.sprite != null;
+                        Run.Event("boss", $"the Magma King appears at {now:0.0} s ({(m.Art ? "generated sheets" : "NO ART: placeholder")})");
+                    }
+                    string state = king.Animation != null ? king.Animation.CurrentState : "";
+                    if (state != m.LastState && state.Length > 0)
+                    {
+                        m.LastState = state;
+                        if (!m.States.ContainsKey(state))
+                            m.States[state] = now;
+                        Run.Event("anim", $"Magma King: {state} at {now:0.0} s");
+                    }
+                    if (m.ScreenShare < 0f && king.Sprite != null && king.Sprite.sprite != null && world.Camera != null && world.Camera.orthographic)
+                    {
+                        m.ScreenShare = king.Sprite.bounds.size.y / (2f * world.Camera.orthographicSize);
+                        Run.Metric("magmaKing.screenShare", m.ScreenShare);
+                        Run.Event("boss", $"the Magma King is {king.Sprite.bounds.size.y:0.00} units tall on screen, {m.ScreenShare:P0} of its height");
+                    }
+                }
+                var hud = world.Hud;
+                if (hud != null)
+                {
+                    string banner = hud.BannerShown, line = hud.SubtitleShown;
+                    if (line.Length > 0 && line != m.LastLine)
+                        SawMagmaLine(line, now);
+                    if (banner.Length > 0 && banner != m.LastBanner)
+                        SawMagmaLine(banner, now);
+                    m.LastLine = line;
+                    m.LastBanner = banner;
+                }
+                return null;
+            }
+
+            void SawMagmaLine(string text, float now)
+            {
+                foreach (var l in MagmaKingLines)
+                {
+                    if (l.text != text || magma.Lines.ContainsKey(l.beat))
+                        continue;
+                    var def = GameDefinition.Instance.audio?.sounds?.Find(x => x != null && x.id == l.sound);
+                    string voice = def != null ? def.voice : "";
+                    bool voiced = Sfx.Has(l.sound);
+                    magma.Lines[l.beat] = voiced && voice == l.voice ? "" : $"{l.sound}: {(voiced ? "" : "no clip, ")}voice \"{voice}\" (want \"{l.voice}\")";
+                    Run.Event("line", $"at {now:0.0} s, {voice}: \"{text}\" ({l.sound}, {Sfx.LengthOf(l.sound):0.0} s{(voiced ? "" : ", NO CLIP")})");
+                }
+            }
+
+            /// <summary>He was killed: his "Die" clip (collapsing into slag, the throne cracking) must be playing where he fell.</summary>
+            void CheckMagmaKingDeath(Entity king)
+            {
+                if (king == null || king.Animation == null || !king.Animation.TryGetClip(Entity.DieState, out var frames, out float fps) || frames.Length == 0)
+                {
+                    magma.DieDetail = "he died without a Die clip";
+                    return;
+                }
+                foreach (var r in Object.FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None))
+                {
+                    if (r.name == "Flipbook" && r.gameObject.activeInHierarchy && Array.IndexOf(frames, r.sprite) >= 0)
+                    {
+                        magma.DiePlayed = true;
+                        break;
+                    }
+                }
+                string sheet = frames[0] != null && frames[0].texture != null ? frames[0].texture.name : "?";
+                magma.DieDetail = $"Die clip {sheet}, {frames.Length} frames at {fps:0} fps{(magma.DiePlayed ? "" : ", NOT playing where he fell")}";
+                Run.Event("anim", $"Magma King: Die at {magma.Clock:0.0} s ({magma.DieDetail})");
+            }
+
+            void FinishMagma()
+            {
+                var m = magma;
+                MagmaCheck("appears", m.Seen, m.Seen ? "the boss phase spawned him" : $"he never appeared (last outcome {lastOutcome})");
+                MagmaCheck("art", m.Art, m.Art ? "drawn from his generated sheets" : "no generated sheets: he is a placeholder");
+                MagmaCheck("size", m.ScreenShare >= 0.3f, $"{(m.ScreenShare < 0f ? "never measured" : m.ScreenShare.ToString("P0"))} of the screen's height (want 30%+)");
+                foreach (string state in MagmaKingStates)
+                    MagmaCheck("anim " + state, m.States.ContainsKey(state),
+                        m.States.TryGetValue(state, out float at) ? $"first seen at {at:0.0} s" : "never played");
+                MagmaCheck("anim Die", m.DiePlayed, m.DieDetail);
+                foreach (var l in MagmaKingLines)
+                    MagmaCheck("line " + l.beat, m.Lines.TryGetValue(l.beat, out string why) && why.Length == 0,
+                        !m.Lines.ContainsKey(l.beat) ? $"\"{l.text}\" never shown" : why.Length == 0 ? $"\"{l.text}\" shown, voiced by {l.voice}" : why);
+                Run.Metric("magmaKing.passed", m.Passed.Count);
+                Run.Metric("magmaKing.failed", m.Failed);
             }
 
             /// <summary>

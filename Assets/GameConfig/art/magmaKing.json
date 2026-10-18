@@ -2,39 +2,119 @@
   "schemaVersion": 1,
   "entity": "magmaKing",
   "name": "The Magma King",
-  "description": "the Warden of the Ember Wastes: a hulking demon king made of cooling black slag and cracked obsidian with molten orange lava glowing through the cracks, a jagged crown of volcanic rock fused to his head, a heavy cloak of dripping lava, burning eyes, slouched and bored like he has ruled this place forever",
-  "height": 1.8,
+  "description": "the Warden of the Ember Wastes, a huge hulking demon king made of cooling black slag and cracked obsidian, molten orange lava glowing through the cracks in his body, massive shoulders, thick arms and huge rock fists, a jagged crown of volcanic rock fused to his head with lava dripping from it, a heavy cloak of dripping lava, burning yellow eyes and a smug grin, with his great throne of piled black slag and glowing rock",
+  "height": 2.4,
+  "pixels": 260,
+  "frameFill": 0.5,
+  "visualScale": 1,
   "poses": {
-    "stand": "hovering a little above the ground on a cushion of heat haze and embers, arms folded",
-    "dead": "cracking apart and collapsing into a heap of cooling slag and smoke"
+    "stand": "slouched lazily on his huge throne of piled black slag and glowing rock, one elbow on the throne's arm, chin resting on his fist, smug and bored",
+    "risen": "standing up at his full height in front of his slag throne, fists clenched at his sides, the lava in his cracks still a dull orange glow",
+    "standing": "standing tall in front of his slag throne, enraged, fists clenched, shoulders hunched forward, the cracks all over his body blazing bright yellow-white with molten light, lava pouring from his crown",
+    "dead": "collapsed into a low heap of cooling dark slag and smoke at the foot of his empty throne, the throne split down the middle by a big glowing crack, his rock crown lying on top of the heap"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "hovers in place, breathing slowly, lava pulsing through his cracks, cloak dripping",
+      "action": "sits slouched on his throne, breathing slowly, lava pulsing through his cracks, drumming the fingers of his free hand on the throne's arm",
       "seconds": 2
     },
-    "move": {
+    "throw": {
       "from": "stand",
-      "action": "glides forward to the right on the heat haze, cloak trailing, staying in the same spot in the frame",
-      "seconds": 2
+      "state": "Throw",
+      "event": "throw",
+      "action": "stays seated, scoops a glowing molten boulder up from beside the throne and lobs it forward to the right with one arm, then slouches back",
+      "seconds": 1.5
     },
-    "attack": {
+    "slamSeat": {
       "from": "stand",
-      "to": "stand",
-      "action": "draws his arms back and flings them forward, hurling a spray of molten fireballs to the right, then folds his arms again",
+      "state": "SlamSeat",
+      "event": "slam",
+      "action": "stays seated, lifts his fist and slams it down on the arm of his throne, lava splashing out along the floor to the right, then slouches back",
       "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck and reels back, lava spurting from a crack in his chest, then straightens up again",
+      "action": "flinches on his throne as he is struck, lava spurting from a crack in his shoulder, then settles back, annoyed",
+      "seconds": 1
+    },
+    "rise": {
+      "from": "stand",
+      "to": "risen",
+      "state": "Rise",
+      "action": "pushes himself up off his throne with both arms and slowly stands up to his full height, rock grinding, slag crumbling off his body",
+      "seconds": 2
+    },
+    "enrage": {
+      "from": "risen",
+      "to": "standing",
+      "state": "Enrage",
+      "action": "throws his head back and roars as the cracks across his whole body flare from dull orange to blazing yellow-white, lava bursting from his crown",
+      "seconds": 1.5
+    },
+    "idleStand": {
+      "from": "standing",
+      "state": "IdleStand",
+      "loop": true,
+      "action": "stands enraged in front of his throne, chest heaving, molten light pulsing bright through his cracks, lava dripping from his fists",
+      "seconds": 2
+    },
+    "slam": {
+      "from": "standing",
+      "state": "Slam",
+      "event": "slam",
+      "action": "raises both fists high over his head and slams them down onto the ground in front of him, a wave of lava bursting out along the floor to the right, then straightens up",
+      "seconds": 1.5
+    },
+    "breath": {
+      "from": "standing",
+      "state": "Breath",
+      "event": "breath",
+      "action": "leans forward and breathes a long roaring gout of fire and molten lava to the right from his open mouth, then straightens up",
+      "seconds": 1.5
+    },
+    "hurtStand": {
+      "from": "standing",
+      "state": "HurtStand",
+      "action": "is struck and staggers back half a step, lava spurting from a crack in his chest, then straightens up",
       "seconds": 1
     },
     "die": {
-      "from": "stand",
+      "from": "standing",
       "to": "dead",
-      "action": "roars, cracks split across his body, and he collapses into a smoking heap of slag",
+      "action": "roars, cracks split across his whole body, and he collapses into a smoking heap of slag at the foot of his throne as the throne cracks down the middle",
       "seconds": 2
     }
+  },
+  "animator": {
+    "parameters": [
+      { "name": "Standing", "type": "Bool" },
+      { "name": "Throw", "type": "Trigger" },
+      { "name": "Slam", "type": "Trigger" },
+      { "name": "Breath", "type": "Trigger" },
+      { "name": "Hurt", "type": "Trigger" }
+    ],
+    "transitions": [
+      { "from": "Idle", "to": "Rise", "when": ["Standing"] },
+      { "from": "Idle", "to": "Throw", "when": ["Throw"] },
+      { "from": "Idle", "to": "SlamSeat", "when": ["Slam"] },
+      { "from": "Idle", "to": "Hurt", "when": ["Hurt"] },
+      { "from": "Throw", "to": "Idle", "exit": true },
+      { "from": "SlamSeat", "to": "Idle", "exit": true },
+      { "from": "Hurt", "to": "Idle", "exit": true },
+      { "from": "Rise", "to": "Enrage", "exit": true },
+      { "from": "Enrage", "to": "IdleStand", "exit": true },
+      { "from": "IdleStand", "to": "Slam", "when": ["Slam"] },
+      { "from": "IdleStand", "to": "Breath", "when": ["Breath"] },
+      { "from": "IdleStand", "to": "HurtStand", "when": ["Hurt"] },
+      { "from": "Slam", "to": "IdleStand", "exit": true },
+      { "from": "Breath", "to": "IdleStand", "exit": true },
+      { "from": "HurtStand", "to": "IdleStand", "exit": true }
+    ]
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

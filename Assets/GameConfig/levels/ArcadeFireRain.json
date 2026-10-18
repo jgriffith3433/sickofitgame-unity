@@ -227,22 +227,30 @@
                     "duration": 1.2
                   },
                   {
-                    "type": "showText",
-                    "text": "THE MAGMA KING HAS LEFT THE CHAT",
-                    "duration": 3.0,
-                    "color": "#7CFF8A",
-                    "sound": "vo_l5_clear"
+                    "type": "wait",
+                    "seconds": 4.6
                   },
                   {
                     "type": "showText",
-                    "text": "He'll be back. They always come back.",
-                    "style": "Subtitle",
+                    "text": "THE MAGMA KING HAS FALLEN!",
                     "duration": 3.0,
-                    "sound": "vo_l5_outro"
+                    "color": "#7CFF8A",
+                    "sound": "vo_mk_fallen"
                   },
                   {
                     "type": "wait",
-                    "seconds": 2.5
+                    "seconds": 3.4
+                  },
+                  {
+                    "type": "showText",
+                    "text": "He got up for me. I'm touched.",
+                    "style": "Subtitle",
+                    "duration": 3.5,
+                    "sound": "vo_mk_hero_defeat"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.5
                   },
                   {
                     "type": "setCounter",
