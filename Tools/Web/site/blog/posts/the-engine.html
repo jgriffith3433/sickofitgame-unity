@@ -115,7 +115,7 @@
         </div>
         <div class="part-card">
           <h5>Seeded dice</h5>
-          <p class="mb-0">Every random choice (where an imp throws, which floor Hell builds next) comes from a seeded stream that belongs to that entity. Rewind it and it rolls the same numbers again. That's what makes the Loop, Floors 960-951, work: the same lava burst in the same crack, the same imp tripping on the same spot.</p>
+          <p class="mb-0">Every random choice (where an imp throws, which floor Hell builds next) comes from a seeded stream that belongs to that entity. Rewind it and it rolls the same numbers again. That's what makes the Loop work: the same lava burst in the same crack, the same imp tripping on the same spot.</p>
         </div>
         <div class="part-card">
           <h5>Presentation keeps its hands off</h5>
@@ -138,14 +138,14 @@
 
       <section class="mb-5" data-reaction-target="post:the-engine#floors">
         <h2>4. 1,000 floors and the climb toolkit</h2>
-        <p>A stage in Sick Of It is ten floors of Hell that you actually travel through, not one screen. The engine has a toolkit for that:</p>
+        <p>A level in Sick Of It goes somewhere: you travel through it, and the floor counter moves. Today's stages are stretches of ten floors walked to the right; the next version of the climb makes every floor its own level, a climb up out of the lava sea to a landing with the floor's number carved in it, with a floor boss every tenth floor. Same engine, same toolkit:</p>
         <ul>
           <li><b>The floor counter.</b> Always on screen (<span class="announce">FLOOR 973</span>), ticking down as you go, with milestones that get a line (999, 950, ...).</li>
-          <li><b>Travelling stages.</b> A camera that only goes forward, ground that keeps coming, scenery streamed in ahead and dropped behind.</li>
+          <li><b>Travelling stages.</b> A camera that only goes forward (right, or up), ground that keeps coming, scenery streamed in ahead and dropped behind.</li>
           <li><b>The floor generator.</b> Each Circle of Hell is one file: its backdrop, its track, its props, its monsters, its hazards, how hard its easiest and hardest floors are. Between the story's beats, the generator builds the floors, seeded, so a rewind (and a bot) sees the same ones.</li>
           <li><b>Stage dressing.</b> A carved sign where you land (<i>IMPS ONLY</i>, <i>DON'T STOP</i>), floors Hell makes you walk twice, a door at the top with words on it (<i>THE SLAG THRONE</i>).</li>
         </ul>
-        <p>The Loop's whole trick is two lines of its level file:</p>
+        <p>In today's build, the Loop's whole trick is two lines of its level file:</p>
 <pre class="engine-code"><code>"sign": "YOU ARE HERE. AGAIN.",
 "repeat": [957]</code></pre>
         <p>Between stages comes <b>the Shaft</b>: Hell's map, a tall cross-section of all ten Circles with a tiny marker for the hero. It plunges you to the bottom the first time, climbs you up after every stage, drops you back to a Waystone when Hell wins, and jumps a dotted line through a crack in the wall when you take one of Hell's shortcuts. It reads your progress; it never changes it. (The <a href="../lore.html">lore pages</a> borrow its paintings.)</p>
@@ -189,7 +189,7 @@
 
       <section class="mb-5" data-reaction-target="post:the-engine#next">
         <h2>Next floor</h2>
-        <p>The Ember Wastes are done, the Magma King has fallen, and the Cracked Road is waking up. 899 floors to go. The engine doesn't have to change much for any of it: a new Circle is a new file, a new monster is a new file, a new line is a new prompt. Hell is repetition. The engine is too, on purpose.</p>
+        <p>The Ember Wastes are playable, the Magma King has fallen, the Cracked Road is waking up, and the Wastes are being rebuilt one floor at a time. 899 floors to go. The engine doesn't have to change much for any of it: a new Circle is a new file, a new monster is a new file, a new line is a new prompt. Hell is repetition. The engine is too, on purpose.</p>
         <p><a href="../../Game/" class="btn btn-primary">Play it</a> <a href="../lore.html" class="btn btn-outline-light">Fall through the lore</a></p>
       </section>
 
