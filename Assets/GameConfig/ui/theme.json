@@ -620,7 +620,17 @@
     "rageQuit": "Rage Quit",
     "rewindHint": "Ouch! Hold R to undo that.",
     "rewindHintTouch": "Ouch! Hold ◄◄ to undo that.",
-    "rewindLocked": "Not now"
+    "rewindLocked": "Not now",
+    "shaftMeadow": "The Meadow",
+    "shaftFloorFormat": "FLOOR {0}",
+    "shaftCircleFormat": "{0}  {1}  {2}-{3}",
+    "shaftInCircleFormat": "Circle {0}: {1}",
+    "shaftFloorsLeftFormat": "{0} floors to the top",
+    "shaftNextWardenFormat": "{0}: {1} floors up",
+    "shaftUnknownWarden": "???",
+    "shaftWelcome": "WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO.",
+    "shaftHero": "...Great.",
+    "shaftSkipHint": "Tap to skip"
   },
   "grades": [
     {

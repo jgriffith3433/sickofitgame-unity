@@ -105,6 +105,8 @@ namespace SickOfIt.Data
         public SelectionSceneConfig videoSelectionConfig = new SelectionSceneConfig();
         [Tooltip("Configuration for UpgradeShop scene generation")]
         public UpgradeShopConfig upgradeShopConfig = new UpgradeShopConfig();
+        [Tooltip("The Shaft, Hell's map between videos and levels (ui/shaft.json)")]
+        public ShaftConfig shaft = new ShaftConfig();
         [Tooltip("Shared look of all menus (ui/theme.json)")]
         public MenuTheme menuTheme = new MenuTheme();
         [Tooltip("Sounds (generated with ElevenLabs) and which plays for each game event (audio.json)")]

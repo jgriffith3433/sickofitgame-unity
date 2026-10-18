@@ -1,0 +1,355 @@
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "plungeAfterVideo": 2,
+  "bottomFloor": 1000,
+  "topFloor": 1,
+  "plungeSeconds": 3.4,
+  "climbSecondsPerFloor": 0.16,
+  "climbMaxSeconds": 3,
+  "climbDelay": 0.6,
+  "slamShake": 34,
+  "pixelsPerFloor": 7,
+  "meadowHeight": 420,
+  "backdrop": "#0D060A",
+  "wall": "#170D10",
+  "sky": "#8CC7F2",
+  "grass": "#5CA840",
+  "marker": "#FFD94D",
+  "crack": "#0000008C",
+  "shortcutHints": [
+    975,
+    940,
+    870,
+    777,
+    690,
+    555,
+    500,
+    420,
+    333,
+    250,
+    166,
+    66
+  ],
+  "fallSound": "shaft_fall",
+  "slamSound": "shaft_slam",
+  "tickSound": "shaft_tick",
+  "welcomeVoice": "vo_shaft_welcome",
+  "heroVoice": "vo_shaft_great",
+  "bands": [
+    {
+      "circle": "emberWastes",
+      "numeral": "X",
+      "name": "The Ember Wastes",
+      "firstFloor": 1000,
+      "lastFloor": 901,
+      "color": "#B3381A",
+      "warden": "The Magma King"
+    },
+    {
+      "circle": "crackedRoad",
+      "numeral": "IX",
+      "name": "The Cracked Road",
+      "firstFloor": 900,
+      "lastFloor": 801,
+      "color": "#4D2A30",
+      "warden": "The Spire Fiend"
+    },
+    {
+      "circle": "",
+      "numeral": "VIII",
+      "name": "The Rune Bridges",
+      "firstFloor": 800,
+      "lastFloor": 701,
+      "color": "#2B4A8A",
+      "warden": "The Bridge Wraith"
+    },
+    {
+      "circle": "",
+      "numeral": "VII",
+      "name": "The Gloomwood",
+      "firstFloor": 700,
+      "lastFloor": 601,
+      "color": "#33402A",
+      "warden": "The Hollow King"
+    },
+    {
+      "circle": "",
+      "numeral": "VI",
+      "name": "The Mire",
+      "firstFloor": 600,
+      "lastFloor": 501,
+      "color": "#2D5C4C",
+      "warden": "The Drowned Queen"
+    },
+    {
+      "circle": "",
+      "numeral": "V",
+      "name": "The Caverns",
+      "firstFloor": 500,
+      "lastFloor": 401,
+      "color": "#6E3A4C",
+      "warden": "The Mother Maw"
+    },
+    {
+      "circle": "",
+      "numeral": "IV",
+      "name": "The Dead Peaks",
+      "firstFloor": 400,
+      "lastFloor": 301,
+      "color": "#4A5674",
+      "warden": "The Bell Ringer"
+    },
+    {
+      "circle": "",
+      "numeral": "III",
+      "name": "The Bastion",
+      "firstFloor": 300,
+      "lastFloor": 201,
+      "color": "#5E544A",
+      "warden": "The Gatekeeper"
+    },
+    {
+      "circle": "",
+      "numeral": "II",
+      "name": "The Keep",
+      "firstFloor": 200,
+      "lastFloor": 101,
+      "color": "#5C3C22",
+      "warden": "The Chain King"
+    },
+    {
+      "circle": "",
+      "numeral": "I",
+      "name": "The Throne Stair",
+      "firstFloor": 100,
+      "lastFloor": 1,
+      "color": "#7D1F1F",
+      "warden": "The Overlord"
+    }
+  ],
+  "shaft": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.3,
+      0.5
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "size": [
+      560,
+      900
+    ]
+  },
+  "shaftPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      1
+    ],
+    "offset": [
+      0,
+      -510
+    ],
+    "size": [
+      1000,
+      900
+    ]
+  },
+  "counter": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.72,
+      0.74
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "size": [
+      900,
+      170
+    ]
+  },
+  "counterPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      0
+    ],
+    "offset": [
+      0,
+      640
+    ],
+    "size": [
+      1000,
+      150
+    ]
+  },
+  "circleLine": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.72,
+      0.62
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "size": [
+      900,
+      70
+    ]
+  },
+  "circleLinePortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      0
+    ],
+    "offset": [
+      0,
+      530
+    ],
+    "size": [
+      1000,
+      60
+    ]
+  },
+  "floorsLeft": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.72,
+      0.5
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "size": [
+      900,
+      70
+    ]
+  },
+  "floorsLeftPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      0
+    ],
+    "offset": [
+      0,
+      460
+    ],
+    "size": [
+      1000,
+      60
+    ]
+  },
+  "nextWarden": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.72,
+      0.41
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "size": [
+      900,
+      70
+    ]
+  },
+  "nextWardenPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      0
+    ],
+    "offset": [
+      0,
+      390
+    ],
+    "size": [
+      1000,
+      60
+    ]
+  },
+  "subtitle": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.72,
+      0.27
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "size": [
+      1000,
+      110
+    ]
+  },
+  "subtitlePortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      0
+    ],
+    "offset": [
+      0,
+      760
+    ],
+    "size": [
+      1000,
+      110
+    ]
+  },
+  "continueButton": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.72,
+      0.12
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "size": [
+      460,
+      110
+    ]
+  },
+  "continueButtonPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      0
+    ],
+    "offset": [
+      0,
+      220
+    ],
+    "size": [
+      520,
+      124
+    ]
+  }
+}
