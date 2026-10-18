@@ -198,6 +198,15 @@ namespace SickOfIt.Gameplay
             var view = world.View;
             if (me.x < view.xMin + 0.8f) moveX = 1f;
             if (me.x > view.xMax - 0.8f) moveX = -1f;
+            // A wall of shots too tall to jump (the Magma King's lava flood): run away from it instead, and hold at the
+            // screen's edge rather than turning back into it. Caught anyway, the rewind above has another go.
+            float wall = WallComing(me);
+            if (wall != 0f)
+            {
+                jumpToDodge = false;
+                bool atEdge = wall < 0f ? me.x < view.xMin + 0.5f : me.x > view.xMax - 0.5f;
+                moveX = atEdge ? 0f : wall;
+            }
             Move = new Vector2(moveX, 0f);
             input.SetMoveX(moveX);
             input.SetAim(FireDirection);
@@ -209,6 +218,37 @@ namespace SickOfIt.Gameplay
                     && releaseJumpFrame < 0 && !input.IsHeld(Key.Space))
                     Press(Key.Space, ref releaseJumpFrame);
             }
+        }
+
+        /// <summary>
+        /// A wall rolling at the bot: hostile shots moving sideways toward it, stacked over a column taller than a jump
+        /// clears, within a few units. Returns the way to run (-1 left, 1 right), or 0 when there is none.
+        /// </summary>
+        float WallComing(Vector2 me)
+        {
+            float bestDistance = 6f, flee = 0f;
+            foreach (var e in world.Live)
+            {
+                if (!e.IsAlive || e.MaxHealth > 0 || !world.Player.IsHostileTo(e) || e.Body == null)
+                    continue;
+                Vector2 v = e.Body.linearVelocity;
+                float dx = e.Position.x - me.x;
+                if (Mathf.Abs(v.x) < 0.5f || Mathf.Abs(v.y) > Mathf.Abs(v.x) * 0.3f || Mathf.Sign(v.x) == Mathf.Sign(dx) || Mathf.Abs(dx) >= bestDistance)
+                    continue;
+                float low = e.Position.y, high = e.Position.y;
+                foreach (var o in world.Live)
+                {
+                    if (o == e || !o.IsAlive || o.MaxHealth > 0 || !world.Player.IsHostileTo(o) || Mathf.Abs(o.Position.x - e.Position.x) > 0.5f)
+                        continue;
+                    low = Mathf.Min(low, o.Position.y);
+                    high = Mathf.Max(high, o.Position.y);
+                }
+                if (high - low < 1.6f)
+                    continue;
+                bestDistance = Mathf.Abs(dx);
+                flee = -Mathf.Sign(dx);
+            }
+            return flee;
         }
 
         // ─── Rewind like a player would: when hit, hold R for about a second if there's juice ───

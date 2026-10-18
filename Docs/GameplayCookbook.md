@@ -127,6 +127,24 @@ A boss is an entity with a state machine; health thresholds switch its attacks. 
 In the level: a `boss` phase whose `onEnter` runs an intro sequence (lock input, text, camera shake, then spawn the
 boss with `"id": "boss"` and show a `bossBar`), and `"objective": { "complete": { "type": "allDead", "target": { "id": "boss" } } }`.
 
+**A Warden's arena** (`levels/Level11.json`, the Magma King; Story.md "The Magma King's fight") goes further:
+- A floor stage on a **Static** camera: `floors` with `unitsPerFloor` 0 (the counter only moves by `climbFloors` /
+  `setFloor`), no `floors.sign`/`door` (those need a travel track). The playtest treats it as an arena (`IsArena`).
+- **The intro** is a scene: `lockInput`, `lockRewind`, `sceneUntouchable` on the player, spawn the boss and
+  `setState` him into an intro state (`emerging`: a `hover` with `aroundSpawn` and `offset` that lifts him into
+  place; `waiting` until a `signal`), `cameraTo`/`cameraReset`, the lines, then `bossBar` and `goToPhase` to the fight.
+  His first state is the fight, so a level that just spawns him (the arcade fight) works too.
+- **Phases are boss states** with `healthBelow` transitions; each attack is its own short state that cycles to the
+  next with `after`. **Telegraphs:** in that state, a `shoot` of a harmless warning glow (team Neutral, `speed` 0,
+  `aim` Down, `initialDelay` 0; a `line` pattern lays a row along the floor) and the real `shoot` with
+  `initialDelay` 1 and `fireOnEvent` on his clip, so the shot leaves 1 s + the clip's wind-up after the glow.
+- **Signals for the playtest:** `emit` from his states (`mkStand`, `mkEnrage`, ...) and from the script; the level's
+  rules can answer them too (the hero's line at the first flood).
+- **The ending** is an `allDead` rule → a defeat phase (lock input and rewind, `slowMotion`, lines, `climbFloors`
+  ticks to the top floor, the Waystone beat), then `offerUpgrades` and a `cleared` counter as the objective. A level
+  ending on a Circle's top floor reaches that Waystone when cleared (`RunFlow`); the Shaft's climb to it wakes the
+  Circle above (`ui/shaft.json` band `wakeVoice`, theme `shaftWakeFormat`).
+
 ## A cutscene moment / unique scripted beat
 
 Put steps in a sequence (inline `steps` or a file in `content/sequences/`); `wait` pauses between steps.

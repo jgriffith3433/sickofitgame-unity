@@ -71,10 +71,10 @@ namespace SickOfIt.Playtest
         public const int ImpLevel = 1;
 
         /// <summary>
-        /// The magma-king scenario: the level that holds his fight (the reference fight, Docs/Story.md "The Magma King's
-        /// fight"), the animation states he must be seen in, and his lines (text, audio.json sound, who must voice it).
+        /// The magma-king scenario: the level that holds his fight (Level 11, the Slag Throne: Docs/Story.md "The Magma
+        /// King's fight"), the animation states he must be seen in, and his lines (text, audio.json sound, who must voice it).
         /// </summary>
-        public const string MagmaKingLevel = "ArcadeFireRain", MagmaKingId = "magmaKing";
+        public const string MagmaKingLevel = "Level11", MagmaKingId = "magmaKing";
         const float MagmaKingSeconds = 300f;
         static readonly string[] MagmaKingStates = { "Idle", "Throw", "SlamSeat", "Hurt", "Rise", "Enrage", "IdleStand", "Slam", "Breath", "HurtStand" };
         static readonly (string beat, string text, string sound, string voice)[] MagmaKingLines =
@@ -83,12 +83,38 @@ namespace SickOfIt.Playtest
             ("hero intro", "He's not getting up, is he.", "vo_mk_hero_intro", "player"),
             ("phase 1", "Dance for me, little spark. Hell loves a show.", "vo_mk_phase1", "magmaKing"),
             ("hurt", "Mm. That one tickled.", "vo_mk_hurt1", "magmaKing"),
-            ("enrage", "...You made me STAND.", "vo_mk_enrage", "magmaKing"),
-            ("phase 2", "Now. Let's give them a real show.", "vo_mk_phase2", "magmaKing"),
+            ("stand", "...You made me STAND.", "vo_mk_enrage", "magmaKing"),
+            ("guards", "Guards. Make some noise for our guest.", "vo_mk_guards", "magmaKing"),
+            ("enrage", "Now. Let's give them a real show.", "vo_mk_phase2", "magmaKing"),
             ("hurt 2", "You're ruining... my show.", "vo_mk_hurt2", "magmaKing"),
             ("defeat", "The show... must go... on...", "vo_mk_defeat", "magmaKing"),
             ("fallen", "THE MAGMA KING HAS FALLEN!", "vo_mk_fallen", "announcer"),
             ("hero defeat", "He got up for me. I'm touched.", "vo_mk_hero_defeat", "player"),
+        };
+
+        /// <summary>
+        /// A Warden's arena (a floor stage with a locked Static screen, Level 11): each attack and the warning glow that
+        /// must come at least ArenaTelegraphSeconds before it, and the signals its fight emits in order (intro, the three
+        /// phases, the enrage, the flood, the defeat, the Waystone). Docs/Story.md, "The Magma King's fight".
+        /// </summary>
+        static readonly (string attack, string warning, string what)[] ArenaTelegraphs =
+        {
+            ("magmaBoulder", "mkWarnHand", "boulder"),
+            ("slamShockwave", "mkWarnFloor", "shockwave"),
+            ("lavaFlood", "mkWarnFlood", "lava flood"),
+            ("fireball", "mkWarnMouth", "fire breath"),
+        };
+        const float ArenaTelegraphSeconds = 1f;
+        static readonly (string signal, string beat)[] ArenaSignals =
+        {
+            ("mkIntro", "intro: the throne rises"),
+            ("mkFight", "phase 1: from the throne"),
+            ("mkStand", "half health: he stands"),
+            ("mkPhase2", "phase 2: standing, with his guard"),
+            ("mkEnrage", "a third: the enrage"),
+            ("mkFlood", "phase 3: the flood"),
+            ("mkDefeat", "defeat"),
+            ("waystoneLit", "the Waystone lights"),
         };
 
         /// <summary>The cutscene scenario: the scene it plays (content/scenes) and the level whose stage it plays on.</summary>
@@ -106,7 +132,7 @@ namespace SickOfIt.Playtest
         /// The story-path scenario: each story level in order and the video that must play before it (0 = none: the level
         /// starts straight after the Shaft that follows the one before). Docs/Story.md, "Level numbers".
         /// </summary>
-        static readonly (int video, int level)[] StoryPath = { (1, 1), (2, 2), (3, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10) };
+        static readonly (int video, int level)[] StoryPath = { (1, 1), (2, 2), (3, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11) };
         /// <summary>The Landing (Level 2): the floors its counter must run through, and the milestone it must play.</summary>
         public const int LandingLevel = 2, LandingFirstFloor = 1000, LandingLastFloor = 991, LandingMilestone = 999;
         const float StoryPathSeconds = 2100f;
@@ -114,7 +140,7 @@ namespace SickOfIt.Playtest
         /// The wastes-climb scenario: the stage it loads directly (The Loop) and the last one it plays through the real flow
         /// (The Heat Stairs, ending at the Magma King's door). Docs/Story.md, "Circle X stage outline".
         /// </summary>
-        public const int ClimbFrom = 6, ClimbTo = 10;
+        public const int ClimbFrom = 6, ClimbTo = 11;
         const float ClimbSeconds = 960f;
         /// <summary>The shaft scenario: the level after the plunge whose climb it watches (The Landing).</summary>
         public const int ShaftLevel = 2;
@@ -155,6 +181,18 @@ namespace SickOfIt.Playtest
                             "the results); move, jump, fire and R are pressed during it and must do nothing, and he takes no damage";
                     seconds += 30f;
                 }
+                else if (IsArena(n))
+                {
+                    what += ": a Warden's arena (a locked screen), checked as it plays: the title banner (\"FLOORS N-M: PLACE\") with its voice, then the " +
+                            "intro (input and rewind locked: the camera pans up to the throne as it rises out of the slag, the announcer's \"FLOOR 901! THE WARDEN " +
+                            "OF THE WASTES!\" and \"THE MAGMA KING\", his voiced taunt, the hero's one-liner, the boss bar), the fight's three phases in order " +
+                            "(from the throne; at half health he stands and calls his imp guard, the only phase with adds; at a third he enrages and floods the hall), " +
+                            "every attack (boulder, shockwave, fire breath, lava flood) after its warning glow 1+ s ahead, no more than 3 enemies at once, every line " +
+                            "with its voice; his defeat: slow motion, his Die clip (collapsing into slag), his last line, \"THE MAGMA KING HAS FALLEN!\", the floor " +
+                            "counter ticking from 910 to 901 and the Waystone lighting there (\"WAYSTONE LIT: FLOOR 901\"), the Grudge pick; then Continue on the " +
+                            "results, the Shaft's climb to 901 with that Waystone saved and lit and Circle IX's band waking up (voiced), and the level select";
+                    seconds += 60f;
+                }
                 else if (name != null && name.StartsWith("Floors ", StringComparison.Ordinal))
                 {
                     what += ": a stage of Hell, checked as it plays: its title banner (\"FLOORS N-M: PLACE\") and hero lines with their voices, the floor " +
@@ -170,11 +208,11 @@ namespace SickOfIt.Playtest
             }
             list.Add(new PlaytestScenario("imp-death", $"Level {ImpLevel}'s imps, started directly (setup shortcut): the bot kills them and each imp's Die clip " +
                 "must play where it died; the first deaths run in slow motion so the clip can be seen", 90, "level"));
-            list.Add(new PlaytestScenario("magma-king", $"The Magma King's fight in \"{MagmaKingLevel}\" (loaded directly, a setup shortcut; the bot plays " +
-                "the fire rain and then the fight through real input, up to 3 tries): his generated animations seen at game size, each a check event: Idle, " +
-                "Throw (molten boulder) and SlamSeat (fist on the throne's arm, lava wave) from the throne, Hurt, then at half health Rise and Enrage " +
-                "(the only time he stands), IdleStand, Slam (ground-pound), Breath and HurtStand standing, and his Die clip playing where he fell; " +
-                "his on-screen height; every line with its subtitle and his own voice (intro, phase 1, hurt, enrage, phase 2, hurt, defeat), the " +
+            list.Add(new PlaytestScenario("magma-king", $"The Magma King's fight in \"{MagmaKingLevel}\" (the Slag Throne, loaded directly, a setup shortcut; " +
+                "the bot plays the fight through real input, up to 3 tries): his generated animations seen at game size, each a check event: Idle, " +
+                "Throw (molten boulder) and SlamSeat (fist on the throne's arm, shockwave) from the throne, Hurt, then at half health Rise " +
+                "(the only time he stands), IdleStand, Slam (ground-pound), Breath and HurtStand standing, Enrage at a third, and his Die clip playing where he fell; " +
+                "his on-screen height; every line with its subtitle and his own voice (intro, phase 1, hurt, stand, guards, enrage, hurt, defeat), the " +
                 "announcer's \"HAS FALLEN\" and the hero's replies", MagmaKingSeconds, "level"));
             list.Add(new PlaytestScenario("cutscene", $"The scene \"{CutsceneScene}\" on level {CutsceneLevel}'s stage (setup shortcut): with input and rewind locked " +
                 "the hero walks to a point by himself and stops, turns left and right, R does nothing; the camera zooms in and back; the screen fades " +
@@ -192,13 +230,14 @@ namespace SickOfIt.Playtest
                 "Ember Wastes stages one after another with no video between them: Level 3 (Floors 990-981: The Spill), Level 4 (980-971: Imp Run), Level 5 " +
                 "(970-961: The Slag Falls), Level 6 (960-951: The Loop), Level 7 (950-941: Halfway Basin, opening on the Floor 950 beat), Level 8 " +
                 "(940-931: The Crust), Level 9 (930-921: The Sack Pile), Level 10 (920-911: The Heat Stairs, ending at the Magma King's door with " +
-                "his voice heard ahead), each with its title, voiced lines, floor counter, new enemy alone and breather checked " +
+                "his voice heard ahead), Level 11 (910-901: The Slag Throne, the Magma King's arena, his Waystone at 901 and Circle IX waking on the Shaft), each with its title, voiced lines, floor counter, new enemy alone and breather checked " +
                 "and the Shaft's climb after it; then the level select, whose cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
             list.Add(new PlaytestScenario("wastes-climb", $"Level {ClimbFrom} (The Loop) loaded directly (setup shortcut), then the real flow on through " +
-                $"Level {ClimbTo}: results, Continue, the Shaft's climb, and the next stage with no video between, so Levels 7-10 play in order after Level 6 " +
-                "and the floors run 960 to 911. Each stage gets the level-n stage checks (title, voiced lines, floors, sign, new enemy alone, breather, " +
+                $"Level {ClimbTo}: results, Continue, the Shaft's climb, and the next stage with no video between, so Levels 7-11 play in order after Level 6 " +
+                "and the floors run 960 to 901. Each stage gets the level-n stage checks (title, voiced lines, floors, sign, new enemy alone, breather, " +
                 "enemies at once, length, Grudge). Level 7 must open on the Floor 950 beat (\"FLOOR 950: HALFWAY TO 900\" with its voice, before " +
                 "the first enemy); Level 10 must end at the Magma King's door (\"THE SLAG THRONE\") with his voice heard from ahead before it; " +
+                "Level 11 is his arena (the boss checks of level-11), and its Shaft climbs to 901 with the Waystone lit and Circle IX waking; " +
                 "then the level select. Up to 3 tries per stage; each beat is a check event", ClimbSeconds, "full"));
             list.Add(new PlaytestScenario("shaft", $"The Shaft, Hell's map, through the real flow: Video {OverlayVideo} loaded directly (setup shortcut; the Shaft's save is " +
                 "reset so this is the first plunge) and skipped, then the plunge from the Meadow past all 10 Circle bands to FLOOR 1,000 (Space pressed " +
@@ -234,6 +273,17 @@ namespace SickOfIt.Playtest
                 "Hell's echo (three repeats, each deeper) and effect plays in scene order, then the Meadow's lines; any without a clip is a bug", 150, "menus", "audio"));
             list.Add(new PlaytestScenario("site", "The game's main menu (no credit on the game page), then the landing page, blog and sub pages each opened over it: Powered by HAWKES GEN on every one, Hawkes Biomedical on the landing page", 60, "menus"));
             return list.ToArray();
+        }
+
+        /// <summary>A Warden's arena: a stage with floors on a locked Static screen (Level 11, the Slag Throne).</summary>
+        public static bool IsArena(int n)
+        {
+            var definition = GameDefinition.Instance;
+            var level = definition != null && n > 0 && n <= definition.TotalLevels ? definition.GetLevel(n) : null;
+            var content = GameContent.Current;
+            return level != null && content != null && content.LevelScripts.TryGetValue(level.levelName ?? "", out var script) && script != null
+                   && script.floors != null && script.floors.start > 0 && script.floors.end > 0
+                   && script.world.camera == SickOfIt.Gameplay.Content.CameraMode.Static;
         }
 
         static bool IsReady()
@@ -464,6 +514,10 @@ namespace SickOfIt.Playtest
                     case "cutscene" when scene != null || portal != null && portal.Started:
                         Run.Event("cutscene", $"{level}: {e.Subject}" + (string.IsNullOrEmpty(e.Detail) ? "" : " " + e.Detail));
                         break;
+                    case "signal" when stage != null && stage.Arena && stage.Level == log.World.LevelNumber:
+                    case "spawn" when stage != null && stage.Arena && stage.Level == log.World.LevelNumber:
+                        ArenaTelemetry(stage, e);
+                        break;
                     case "signal" when scene != null:
                         Run.Event("signal", $"{level}: {e.Subject}");
                         scene.Signals.Enqueue(e.Subject);
@@ -577,9 +631,16 @@ namespace SickOfIt.Playtest
                 // A floor stage: its title, lines, new enemy, breathers, then the Shaft's climb after it, each a check event.
                 stageChecksFailed = 0;
                 stage = portal == null && IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
+                // A Warden's arena also gets the magma-king watch: his animations, size, Die clip and lines.
+                magma = stage != null && stage.Arena ? new MagmaWatch() : null;
                 yield return PlayLevel(n, 0f, portal != null ? PortalDuring : stage != null ? StageDuring : (Func<float, IEnumerator>)null,
                     0f, stage != null ? 0.85f : 1f);
                 LastLevelOutcome = lastOutcome;
+                if (magma != null && !Run.Done)
+                {
+                    FinishMagma();
+                    magma = null;
+                }
                 if (Run.Done)
                     yield break;
                 if (portal != null)
@@ -635,10 +696,23 @@ namespace SickOfIt.Playtest
                 public bool NewAlone = true, SignSeen, DoorSeen, Picked;
                 public float FirstHostileAt = -1f, QuietSince = -1f, LongestQuiet, Clock, DoorSeenAt = -1f;
 
+                // ─── A Warden's arena (IsArena): the boss, his fight's signals and his telegraphs ───
+                public readonly bool Arena;
+                /// <summary>When each of the fight's signals was first seen, and the boss's state machine as it went (game seconds).</summary>
+                public readonly Dictionary<string, float> Signals = new Dictionary<string, float>();
+                public readonly List<(string state, float at, float health)> BossStates = new List<(string, float, float)>();
+                /// <summary>Last time each warning glow spawned; per attack: how many, the shortest lead, how many came with no warning.</summary>
+                public readonly Dictionary<string, float> WarnedAt = new Dictionary<string, float>();
+                public readonly Dictionary<string, (int count, float minLead, int unwarned)> Attacks = new Dictionary<string, (int, float, int)>();
+                public readonly List<float> GuardSpawns = new List<float>();
+                public string BossBar = "", LastBossState = "";
+                public float BossBarAt = -1f, SlowMotionAt = -1f, BossFirstAt = -1f;
+
                 public StageWatch(int level, Action<string, bool, string> check)
                 {
                     Level = level;
                     Check = check;
+                    Arena = IsArena(level);
                     var config = GameDefinition.Instance.GetLevel(level);
                     string display = config != null ? config.displayName ?? "" : "";
                     int colon = display.IndexOf(": ", StringComparison.Ordinal);
@@ -669,17 +743,30 @@ namespace SickOfIt.Playtest
                         foreach (var rule in phase.rules)
                             actions.AddRange(rule.@do);
                     }
+                    var spawned = new HashSet<string>();
+                    var sequences = new HashSet<string>();
                     for (int i = 0; i < actions.Count; i++)
                     {
                         if (actions[i] is SickOfIt.Gameplay.Content.ShowTextAction show && !string.IsNullOrEmpty(show.text))
                             Sounds[show.text] = show.sound ?? "";
                         actions[i]?.CollectChildren(actions);
+                        // An arena's lines are also the boss's own (his states, reactions and death) and his named sequences.
+                        if (!Arena)
+                            continue;
+                        if (actions[i] is SickOfIt.Gameplay.Content.SpawnAction spawn && spawned.Add(spawn.entity)
+                            && content.Entities.TryGetValue(spawn.entity, out var def) && def != null)
+                            actions.AddRange(EntityActions(def));
+                        if (actions[i] is SickOfIt.Gameplay.Content.RunSequenceAction run && !string.IsNullOrEmpty(run.sequence)
+                            && sequences.Add(run.sequence) && content.Sequences.TryGetValue(run.sequence, out var sequence) && sequence != null)
+                            actions.AddRange(sequence.steps);
                     }
                     if (script.phases.Count > 0)
                     {
                         var first = new List<SickOfIt.Gameplay.Content.GameAction>(script.phases[0].onEnter);
-                        foreach (var rule in script.phases[0].rules)
-                            first.AddRange(rule.@do);
+                        // An arena's first phase is the boss's intro: only its title must come before him.
+                        if (!Arena)
+                            foreach (var rule in script.phases[0].rules)
+                                first.AddRange(rule.@do);
                         for (int i = 0; i < first.Count; i++)
                         {
                             if (first[i] is SickOfIt.Gameplay.Content.ShowTextAction show && !string.IsNullOrEmpty(show.text) && !Opening.Contains(show.text))
@@ -694,6 +781,23 @@ namespace SickOfIt.Playtest
                             var def = audio.sounds.Find(d => d != null && d.id == pair.Value);
                             Speakers[pair.Key] = def != null ? def.voice ?? "" : "";
                         }
+                }
+
+                static IEnumerable<SickOfIt.Gameplay.Content.GameAction> EntityActions(SickOfIt.Gameplay.Content.EntityDef def)
+                {
+                    foreach (var a in def.onSpawn) yield return a;
+                    foreach (var a in def.onDeath) yield return a;
+                    foreach (var ability in def.abilities)
+                        if (ability is SickOfIt.Gameplay.Content.ReactAbility react)
+                            foreach (var a in react.@do) yield return a;
+                    foreach (var state in def.states)
+                    {
+                        foreach (var a in state.onEnter) yield return a;
+                        foreach (var a in state.onExit) yield return a;
+                        foreach (var ability in state.abilities)
+                            if (ability is SickOfIt.Gameplay.Content.ReactAbility react)
+                                foreach (var a in react.@do) yield return a;
+                    }
                 }
             }
 
@@ -790,6 +894,9 @@ namespace SickOfIt.Playtest
                     s.LongestQuiet = Mathf.Max(s.LongestQuiet, now - s.QuietSince);
                 }
 
+                if (s.Arena)
+                    ArenaDuring(s, world, now);
+
                 var track = world.Effects != null ? world.Effects.Track : null;
                 if (track != null)
                 {
@@ -816,6 +923,99 @@ namespace SickOfIt.Playtest
                     }
                 }
                 return null;
+            }
+
+            /// <summary>
+            /// A Warden's arena, every frame: the boss's state machine (with his health as it changes phase), the boss bar,
+            /// and slow motion after his defeat. His animations and lines also go to the magma-king watch when it is on.
+            /// </summary>
+            void ArenaDuring(StageWatch s, GameplayWorld world, float now)
+            {
+                if (magma != null)
+                    MagmaDuring(now);
+                Entity boss = null;
+                foreach (var e in world.Live)
+                    if (e != null && e.IsAlive && e.Tags.Contains("boss"))
+                    {
+                        boss = e;
+                        break;
+                    }
+                if (boss != null)
+                {
+                    if (s.BossFirstAt < 0f)
+                        s.BossFirstAt = now;
+                    string state = boss.StateName ?? "";
+                    if (state.Length > 0 && state != s.LastBossState)
+                    {
+                        s.LastBossState = state;
+                        float health = boss.MaxHealth > 0 ? (float)boss.Health / boss.MaxHealth : 0f;
+                        s.BossStates.Add((state, now, health));
+                        Run.Event("boss", $"level {s.Level} at {now:0.0} s: {boss.DefId} enters \"{state}\" at {health:P0} health");
+                    }
+                }
+                string bar = world.Hud != null ? world.Hud.BossBarShown : "";
+                if (bar.Length > 0 && s.BossBar.Length == 0)
+                {
+                    s.BossBar = bar;
+                    s.BossBarAt = now;
+                    Run.Event("boss", $"level {s.Level} at {now:0.0} s: the boss bar shows \"{bar}\"");
+                }
+                if (s.SlowMotionAt < 0f && s.Signals.ContainsKey("mkDefeat") && GameClock.Instance != null && GameClock.Instance.TimeScale < 0.9f)
+                {
+                    s.SlowMotionAt = now;
+                    Run.Event("boss", $"level {s.Level} at {now:0.0} s: slow motion ({GameClock.Instance.TimeScale:0.00}x) as he falls");
+                }
+            }
+
+            /// <summary>An arena's telemetry: the fight's signals, the warning glows and the attacks after them, his guard's spawns.</summary>
+            void ArenaTelemetry(StageWatch s, GameplayTelemetry.Event e)
+            {
+                if (e.Kind == "signal")
+                {
+                    if (!s.Signals.ContainsKey(e.Subject))
+                        s.Signals[e.Subject] = e.Time;
+                    if (Array.Exists(ArenaSignals, x => x.signal == e.Subject))
+                        Run.Event("signal", $"level {s.Level} at {e.Time:0.0} s: {e.Subject}");
+                    return;
+                }
+                if (e.Kind != "spawn")
+                    return;
+                if (e.Subject == "impGuard")
+                {
+                    s.GuardSpawns.Add(e.Time);
+                    Run.Event("adds", $"level {s.Level} at {e.Time:0.0} s: an imp guard comes down");
+                    return;
+                }
+                foreach (var t in ArenaTelegraphs)
+                {
+                    if (e.Subject == t.warning)
+                    {
+                        // One volley spawns a row of glows at once: the first one is the warning's time.
+                        if (!s.WarnedAt.TryGetValue(t.warning, out float last) || e.Time - last > 0.05f || e.Time < last)
+                        {
+                            s.WarnedAt[t.warning] = e.Time;
+                            Run.Event("telegraph", $"level {s.Level} at {e.Time:0.0} s: {t.what} warning ({t.warning})");
+                        }
+                        return;
+                    }
+                    if (e.Subject != t.attack)
+                        continue;
+                    s.Attacks.TryGetValue(t.attack, out var seen);
+                    bool warned = s.WarnedAt.TryGetValue(t.warning, out float at) && at <= e.Time;
+                    float lead = warned ? e.Time - at : -1f;
+                    // A volley (a fan of fire, the flood's column) is one attack: shots within 0.6 s of the last one belong to it.
+                    if (seen.count > 0 && s.WarnedAt.ContainsKey(t.attack + "@") && e.Time - s.WarnedAt[t.attack + "@"] < 0.6f && e.Time >= s.WarnedAt[t.attack + "@"])
+                        return;
+                    s.WarnedAt[t.attack + "@"] = e.Time;
+                    seen.count++;
+                    if (!warned)
+                        seen.unwarned++;
+                    else
+                        seen.minLead = seen.count == 1 || seen.minLead <= 0f ? lead : Mathf.Min(seen.minLead, lead);
+                    s.Attacks[t.attack] = seen;
+                    Run.Event("attack", $"level {s.Level} at {e.Time:0.0} s: {t.what} ({t.attack}), {(warned ? $"warned {lead:0.00} s ahead" : "NO WARNING")}");
+                    return;
+                }
             }
 
             /// <summary>A banner or subtitle just appeared: logs it with its voice (the script's sound for that text).</summary>
@@ -866,7 +1066,9 @@ namespace SickOfIt.Playtest
                         s.NewTypes.Count > 1 ? $"{s.NewTypes.Count} new enemy types: {string.Join(", ", s.NewTypes)} (at most one per stage)"
                         : s.NewSerial < 0 ? $"the new enemy ({s.NewTypes[0]}) never appeared"
                         : $"the first {s.NewTypes[0]} arrived with {s.OthersAtNewSpawn} other enemies alive{(s.NewAlone ? " and stayed alone" : ", and another joined it")}");
-                check(prefix + "breather", s.LongestQuiet >= 3f, $"longest stretch with nothing attacking after the first push: {s.LongestQuiet:0.0} s (want 3+)");
+                // A Warden's arena is one fight with the boss alive throughout: its pauses are the phase changes (FinishArena).
+                if (!s.Arena)
+                    check(prefix + "breather", s.LongestQuiet >= 3f, $"longest stretch with nothing attacking after the first push: {s.LongestQuiet:0.0} s (want 3+)");
                 check(prefix + "maxEnemies", s.MaxEnemies <= 3, $"at most {s.MaxEnemies} enemies on screen at once (Circle X allows 3)");
                 if (s.Opening.Count > 0)
                 {
@@ -892,7 +1094,10 @@ namespace SickOfIt.Playtest
                     check(prefix + "loop", s.MostSameSign >= 2, $"{s.MostSameSign} signs with the repeated floor ({string.Join(", ", s.Repeat)}) seen at once (want 2: Hell repeats it)");
                 if (completed)
                 {
-                    check(prefix + "length", s.Clock >= 60f && s.Clock <= 120f, $"cleared in {s.Clock:0} s of game time (target 60-120)");
+                    if (s.Arena)
+                        check(prefix + "length", s.Clock >= 60f && s.Clock <= 240f, $"the arena cleared in {s.Clock:0} s of game time (a boss fight: target 60-240)");
+                    else
+                        check(prefix + "length", s.Clock >= 60f && s.Clock <= 120f, $"cleared in {s.Clock:0} s of game time (target 60-120)");
                     check(prefix + "grudge", s.Picked, s.Picked ? "a Grudge was picked at the end" : "no Grudge pick at the end");
                     var unheard = new List<string>();
                     foreach (var pair in s.Sounds)
@@ -903,6 +1108,93 @@ namespace SickOfIt.Playtest
                         unheard.Count == 0 ? $"all {scripted} scripted lines shown with their voices"
                             : $"{unheard.Count} scripted line(s) not shown with their voice: {string.Join(" | ", unheard)}");
                 }
+                if (s.Arena)
+                    FinishArena(s, completed);
+            }
+
+            /// <summary>
+            /// A Warden's arena (Docs/Story.md, "The Magma King's fight"): the voiced intro and the boss bar, the three phases
+            /// in order at their health, adds only in phase 2, every attack telegraphed 1+ s ahead, then his defeat in slow
+            /// motion, his last line, the counter at the stage's last floor and the Waystone lighting there.
+            /// </summary>
+            void FinishArena(StageWatch s, bool completed)
+            {
+                var check = s.Check;
+                string prefix = "level" + s.Level + ".";
+                float At(string signal) => s.Signals.TryGetValue(signal, out float t) ? t : -1f;
+                bool Voiced(string text) => s.Banners.Exists(b => b.text == text && b.voiced) || s.Lines.Exists(l => l.text == text && l.voiced);
+
+                // The intro: the announcer calls it, he taunts, the hero answers, the boss bar comes up, then the fight.
+                var introLines = new[] { "FLOOR 901! THE WARDEN OF THE WASTES!", "THE MAGMA KING",
+                    "Mm-hm-hm. An audience, at last. Welcome to the Slag Throne, little spark.", "He's not getting up, is he." };
+                var missing = Array.FindAll(introLines, t => !Voiced(t));
+                float fight = At("mkFight");
+                check(prefix + "intro", At("mkIntro") >= 0f && missing.Length == 0 && s.BossBar.Length > 0 && (fight < 0f || s.BossBarAt <= fight + 0.1f),
+                    $"throne rises {(At("mkIntro") >= 0f ? $"at {At("mkIntro"):0.0} s" : "NEVER")}; " +
+                    (missing.Length == 0 ? "the announcer, his taunt and the hero's line all voiced" : $"not voiced: {string.Join(" | ", missing)}") +
+                    $"; boss bar {(s.BossBar.Length > 0 ? $"\"{s.BossBar}\" at {s.BossBarAt:0.0} s" : "NEVER shown")}; the fight starts at {(fight >= 0f ? fight.ToString("0.0") + " s" : "never")}");
+
+                // The phases, in order, each at its share of his health.
+                var order = new List<string>();
+                float last = -1f;
+                bool inOrder = true;
+                foreach (var (signal, beat) in ArenaSignals)
+                {
+                    float t = At(signal);
+                    if (t < 0f)
+                    {
+                        if (completed && signal != "mkFlood") inOrder = false;
+                        order.Add($"{beat}: never");
+                        continue;
+                    }
+                    if (t < last) inOrder = false;
+                    last = t;
+                    order.Add($"{beat} at {t:0.0} s");
+                }
+                check(prefix + "phases", completed ? inOrder : At("mkFight") >= 0f, string.Join("; ", order));
+                float HealthAt(string prefixState)
+                {
+                    var hit = s.BossStates.Find(x => x.state.StartsWith(prefixState, StringComparison.Ordinal));
+                    return hit.state != null ? hit.health : -1f;
+                }
+                float standAt = HealthAt("rising"), enrageAt = HealthAt("enraging");
+                check(prefix + "enrage", completed ? standAt > 0f && standAt <= 0.5f && enrageAt > 0f && enrageAt <= 0.34f && At("mkEnrage") > At("mkStand") : true,
+                    $"he stands at {(standAt >= 0f ? standAt.ToString("P0") : "never")} health (want half or less), enrages at {(enrageAt >= 0f ? enrageAt.ToString("P0") : "never")} (want a third or less)" +
+                    $"; states: {string.Join(" > ", s.BossStates.ConvertAll(x => x.state))}");
+                float p2 = At("mkPhase2"), p3 = At("mkEnrage");
+                var stray = s.GuardSpawns.FindAll(t => p2 < 0f || t < p2 || p3 >= 0f && t > p3 + 0.05f);
+                check(prefix + "adds", stray.Count == 0 && (!completed || s.GuardSpawns.Count > 0),
+                    $"{s.GuardSpawns.Count} imp guard(s) came down, {stray.Count} outside phase 2 (phase 2 from {(p2 >= 0f ? p2.ToString("0.0") : "?")} s to {(p3 >= 0f ? p3.ToString("0.0") : "?")} s)");
+
+                // Every attack after its warning.
+                var attacks = new List<string>();
+                bool telegraphed = true;
+                foreach (var t in ArenaTelegraphs)
+                {
+                    if (!s.Attacks.TryGetValue(t.attack, out var a))
+                    {
+                        attacks.Add($"{t.what}: never");
+                        if (completed) telegraphed = false;
+                        continue;
+                    }
+                    if (a.unwarned > 0 || a.minLead < ArenaTelegraphSeconds) telegraphed = false;
+                    attacks.Add($"{t.what}: {a.count}, shortest warning {a.minLead:0.00} s{(a.unwarned > 0 ? $", {a.unwarned} WITHOUT a warning" : "")}");
+                }
+                check(prefix + "telegraphs", telegraphed, string.Join("; ", attacks) + $" (want every one {ArenaTelegraphSeconds:0.0}+ s after its glow)");
+
+                if (!completed)
+                    return;
+                // His defeat: slow motion, his last line, the announcer, the counter at the top floor, the Waystone.
+                float defeat = At("mkDefeat");
+                bool lastLine = Voiced("The show... must go... on...");
+                check(prefix + "defeat", defeat >= 0f && s.SlowMotionAt >= 0f && lastLine && Voiced("THE MAGMA KING HAS FALLEN!"),
+                    $"defeat at {(defeat >= 0f ? defeat.ToString("0.0") + " s" : "never")}; slow motion {(s.SlowMotionAt >= 0f ? $"at {s.SlowMotionAt:0.0} s" : "NOT seen")}; " +
+                    $"his last line {(lastLine ? "voiced" : "NOT voiced")}; \"THE MAGMA KING HAS FALLEN!\" {(Voiced("THE MAGMA KING HAS FALLEN!") ? "voiced" : "NOT voiced")}");
+                string waystone = $"WAYSTONE LIT: FLOOR {s.End}";
+                bool top = s.Floors.Count > 0 && s.Floors[s.Floors.Count - 1] == s.End;
+                check(prefix + "waystone", top && At("waystoneLit") > defeat && Voiced(waystone),
+                    $"the counter ended on FLOOR {(s.Floors.Count > 0 ? s.Floors[s.Floors.Count - 1].ToString() : "?")} (want {s.End}); " +
+                    $"\"{waystone}\" {(Voiced(waystone) ? "voiced" : "NOT voiced")} at {(At("waystoneLit") >= 0f ? At("waystoneLit").ToString("0.0") + " s" : "never")}");
             }
 
             /// <summary>After a cleared stage: Continue on the results, the Shaft's climb, then the next level (or video, or the level select).</summary>
@@ -1021,7 +1313,7 @@ namespace SickOfIt.Playtest
                                                  || NewWorld(previous) != null, 60f, $"what comes after level {ClimbTo}");
                     if (Run.Done) yield break;
                     bool select = Object.FindAnyObjectByType<LevelSelectionManager>() != null;
-                    StageCheck("level" + ClimbTo + ".next", select, select ? $"level {ClimbTo} leads to the level select (Level 11, his arena, is next to build)"
+                    StageCheck("level" + ClimbTo + ".next", select, select ? $"level {ClimbTo} leads to the level select (Circle IX's stages are next to rebuild)"
                         : $"level {ClimbTo} led to {SceneName()} instead of the level select");
                     Run.Scene(select ? "Level Select" : SceneName());
                     yield return WaitReal(2f);
@@ -2783,7 +3075,7 @@ namespace SickOfIt.Playtest
                 public ShaftScreen.Mode Kind;
                 public int From, To, Shown, Bands, BandCount;
                 public bool Skippable, Skipped, Slam;
-                public string FloorsLeft = "", NextWarden = "", Circle = "";
+                public string FloorsLeft = "", NextWarden = "", Circle = "", Wakes = "", WaystoneLit = "";
                 public readonly List<string> Voices = new List<string>();
             }
 
@@ -2803,6 +3095,10 @@ namespace SickOfIt.Playtest
                     shaftWatch.Skipped = true;
                 else if (kind == "slam")
                     shaftWatch.Slam = true;
+                else if (kind == "band-wakes")
+                    shaftWatch.Wakes = detail;
+                else if (kind == "waystone-lit")
+                    shaftWatch.WaystoneLit = detail;
             }
 
             void ShaftCheck(string beat, bool ok, string detail)
@@ -2956,6 +3252,15 @@ namespace SickOfIt.Playtest
                 check("climbFloorsLeft" + n, seen.FloorsLeft.Contains(left), $"\"{seen.FloorsLeft}\" (want {left} floors left)");
                 check("climbWarden" + n, warden != null && seen.NextWarden.IndexOf(warden.warden, StringComparison.OrdinalIgnoreCase) >= 0 && seen.NextWarden.Contains(distance),
                     $"\"{seen.NextWarden}\" (want {(warden != null ? warden.warden : "?")}, {distance} floors up)");
+                // A Warden's floor: the climb lights its Waystone (saved as the run's new start) and the Circle above wakes up.
+                if (end != config.bottomFloor && RunFlow.IsWaystone(end))
+                {
+                    check("climbWaystone" + n, WaystoneProgress.Highest > 0 && WaystoneProgress.Highest <= end && seen.WaystoneLit.Length > 0,
+                        $"highest Waystone saved: FLOOR {WaystoneProgress.Highest} (want {end}); on the map: {(seen.WaystoneLit.Length > 0 ? seen.WaystoneLit : "no waystone-lit beat")}");
+                    bool voiced = seen.Voices.Exists(v => v.StartsWith("announcer: CIRCLE", StringComparison.Ordinal) && !v.Contains("no clip"));
+                    check("climbWakes" + n, seen.Wakes.Length > 0 && (seen.Skipped || voiced),
+                        seen.Wakes.Length > 0 ? $"{seen.Wakes}; the announcer {(voiced ? "calls it" : seen.Skipped ? "(skipped)" : "is NOT heard")}" : "no Circle woke up on the climb");
+                }
             }
 
             /// <summary>

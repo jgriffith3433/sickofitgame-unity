@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "extends": "overlordBeamGlow",
+  "visual": {
+    "color": "#FF3A1A",
+    "placeholderColor": "#FF3A1A",
+    "scale": 0.75
+  },
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 1.75
+    }
+  ]
+}

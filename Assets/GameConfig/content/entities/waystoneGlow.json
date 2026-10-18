@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "extends": "overlordBeamGlow",
+  "visual": {
+    "scale": 1.1,
+    "color": "#9EFFE6",
+    "placeholderColor": "#9EFFE699",
+    "layer": "Background2",
+    "sortingOrder": 3
+  },
+  "abilities": []
+}

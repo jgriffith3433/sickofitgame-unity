@@ -59,7 +59,8 @@
       "color": "#B3381A",
       "warden": "The Magma King",
       "art": null,
-      "wardenArt": null
+      "wardenArt": null,
+      "wakeVoice": ""
     },
     {
       "circle": "crackedRoad",
@@ -70,7 +71,8 @@
       "color": "#4D2A30",
       "warden": "The Spire Fiend",
       "art": null,
-      "wardenArt": null
+      "wardenArt": null,
+      "wakeVoice": "vo_shaft_wake_ix"
     },
     {
       "circle": "",
@@ -81,7 +83,8 @@
       "color": "#2B4A8A",
       "warden": "The Bridge Wraith",
       "art": null,
-      "wardenArt": null
+      "wardenArt": null,
+      "wakeVoice": ""
     },
     {
       "circle": "",
@@ -92,7 +95,8 @@
       "color": "#33402A",
       "warden": "The Hollow King",
       "art": null,
-      "wardenArt": null
+      "wardenArt": null,
+      "wakeVoice": ""
     },
     {
       "circle": "",
@@ -103,7 +107,8 @@
       "color": "#2D5C4C",
       "warden": "The Drowned Queen",
       "art": null,
-      "wardenArt": null
+      "wardenArt": null,
+      "wakeVoice": ""
     },
     {
       "circle": "",
@@ -114,7 +119,8 @@
       "color": "#6E3A4C",
       "warden": "The Mother Maw",
       "art": null,
-      "wardenArt": null
+      "wardenArt": null,
+      "wakeVoice": ""
     },
     {
       "circle": "",
@@ -125,7 +131,8 @@
       "color": "#4A5674",
       "warden": "The Bell Ringer",
       "art": null,
-      "wardenArt": null
+      "wardenArt": null,
+      "wakeVoice": ""
     },
     {
       "circle": "",
@@ -136,7 +143,8 @@
       "color": "#5E544A",
       "warden": "The Gatekeeper",
       "art": null,
-      "wardenArt": null
+      "wardenArt": null,
+      "wakeVoice": ""
     },
     {
       "circle": "",
@@ -147,7 +155,8 @@
       "color": "#5C3C22",
       "warden": "The Chain King",
       "art": null,
-      "wardenArt": null
+      "wardenArt": null,
+      "wakeVoice": ""
     },
     {
       "circle": "",
@@ -158,7 +167,8 @@
       "color": "#7D1F1F",
       "warden": "The Overlord",
       "art": null,
-      "wardenArt": null
+      "wardenArt": null,
+      "wakeVoice": ""
     }
   ],
   "shaft": {

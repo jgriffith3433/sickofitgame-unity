@@ -57,7 +57,7 @@ namespace SickOfIt.Tests.PlayMode
 
         /// <summary>
         /// The Magma King (Docs/Story.md, "The Magma King's fight"): seated he throws a boulder on his Throw clip's event;
-        /// at half health he rises (Rise, Enrage) and stands (IdleStand); death plays Die.
+        /// at half health he rises (Rise) and stands (IdleStand; Enrage comes at a third); death plays Die.
         /// </summary>
         [UnityTest]
         public IEnumerator MagmaKingThrowsRisesAndDies()
@@ -79,7 +79,7 @@ namespace SickOfIt.Tests.PlayMode
             yield return level.UntilCondition(() => king.Animation.CurrentState == "Rise", 10f);
             Assert.That(king.Animation.CurrentState, Is.EqualTo("Rise"), "below half health he must stand up");
             yield return level.UntilCondition(() => king.Animation.CurrentState == "IdleStand", 10f);
-            Assert.That(king.Animation.CurrentState, Is.EqualTo("IdleStand"), "after Rise and Enrage he stays standing");
+            Assert.That(king.Animation.CurrentState, Is.EqualTo("IdleStand"), "after Rise he stays standing");
 
             king.Damage(king.Health, null, true);
             yield return null;

@@ -569,6 +569,9 @@ namespace SickOfIt.Gameplay
         /// <summary>The subtitle on screen now ("" when none), for the playtest's checks of scene lines.</summary>
         public string SubtitleShown => world != null && world.Now < subtitleUntil ? subtitleText : "";
 
+        /// <summary>The boss bar's label while the bar is on screen ("" when it isn't), for the playtest's checks of a boss intro.</summary>
+        public string BossBarShown => bossRoot != null && bossRoot.gameObject.activeSelf ? bossName : "";
+
         /// <summary>The banner on screen now ("" when none), for the playtest's checks of stage titles.</summary>
         public string BannerShown => world != null && world.Now < bannerUntil ? bannerText : "";
 

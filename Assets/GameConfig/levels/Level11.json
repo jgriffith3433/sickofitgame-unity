@@ -1,0 +1,546 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Level11",
+  "displayName": "Floors 910-901: The Slag Throne",
+  "levelNumber": 11,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [
+    {
+      "name": "Throne_LavaRiver",
+      "spriteFramesData": "Videos/Video2.asset",
+      "layer": "Background1",
+      "sequenceBy": "Time",
+      "sequenceStart": 0,
+      "sequenceDuration": 0,
+      "sequenceLoop": true,
+      "clipStart": 17.6,
+      "clipLength": 5.0
+    }
+  ],
+  "music": "Videos/Level3_Background1_Audio.mp3",
+  "musicVolume": 1.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [-4.0, 0.0],
+  "deathConfigName": "Death2",
+  "duration": 300.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 0,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 150,
+    "floors": {
+      "start": 910,
+      "end": 901,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "markers": [
+      {
+        "floor": 901,
+        "label": "WAYSTONE"
+      }
+    ],
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Defeat the Magma King"
+    },
+    "phases": [
+      {
+        "name": "intro",
+        "onEnter": [
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "applyStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "showText",
+            "text": "FLOORS 910-901: THE SLAG THRONE",
+            "duration": 2.8,
+            "sound": "vo_throne_title",
+            "color": "#FFD27A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the throne rises",
+            "when": {
+              "type": "after",
+              "seconds": 3.2
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "playSound",
+                    "sound": "magma_rumble"
+                  },
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.3,
+                    "duration": 1.8
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "magmaKing",
+                    "id": "boss",
+                    "anchor": "Camera",
+                    "at": [3.6, -2.5]
+                  },
+                  {
+                    "type": "setState",
+                    "target": {
+                      "self": false,
+                      "id": "boss"
+                    },
+                    "state": "emerging"
+                  },
+                  {
+                    "type": "cameraTo",
+                    "anchor": "Camera",
+                    "at": [2.2, 0.5],
+                    "size": 2.0,
+                    "duration": 2.0
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "mkIntro"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 2.4
+                  },
+                  {
+                    "type": "flash",
+                    "color": "#FF6A1F88",
+                    "duration": 0.4
+                  },
+                  {
+                    "type": "showText",
+                    "text": "FLOOR 901! THE WARDEN OF THE WASTES!",
+                    "duration": 3.0,
+                    "sound": "vo_throne_warden",
+                    "color": "#FF9A5C"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.2
+                  },
+                  {
+                    "type": "showText",
+                    "text": "THE MAGMA KING",
+                    "duration": 2.4,
+                    "sound": "vo_boss_title",
+                    "color": "#FF6633"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 2.6
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Mm-hm-hm. An audience, at last. Welcome to the Slag Throne, little spark.",
+                    "style": "Subtitle",
+                    "duration": 6.5,
+                    "sound": "vo_mk_intro",
+                    "color": "#FF8A3D"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 6.8
+                  },
+                  {
+                    "type": "cameraReset",
+                    "duration": 1.2
+                  },
+                  {
+                    "type": "showText",
+                    "text": "He's not getting up, is he.",
+                    "style": "Subtitle",
+                    "duration": 2.6,
+                    "sound": "vo_mk_hero_intro"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 2.8
+                  },
+                  {
+                    "type": "bossBar",
+                    "target": {
+                      "id": "boss"
+                    },
+                    "label": "The Magma King"
+                  },
+                  {
+                    "type": "goToPhase",
+                    "phase": "fight"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "fight",
+        "onEnter": [
+          {
+            "type": "unlockInput"
+          },
+          {
+            "type": "unlockRewind"
+          },
+          {
+            "type": "removeStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "emit",
+            "signal": "mkFight"
+          },
+          {
+            "type": "showText",
+            "text": "Dance for me, little spark. Hell loves a show.",
+            "style": "Subtitle",
+            "duration": 4.5,
+            "sound": "vo_mk_phase1",
+            "color": "#FF8A3D"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the first flood",
+            "when": {
+              "type": "signal",
+              "name": "mkFlood"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 2.6
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Can't jump that. ...Can do it again, though.",
+                    "style": "Subtitle",
+                    "duration": 3.5,
+                    "sound": "vo_throne_flood"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "he falls",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "id": "boss"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "defeat"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "defeat",
+        "onEnter": [
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "applyStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "despawn",
+            "target": {
+              "entity": "impGuard"
+            }
+          },
+          {
+            "type": "slowMotion",
+            "scale": 0.3,
+            "duration": 2.0
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.4,
+            "duration": 1.5
+          },
+          {
+            "type": "playSound",
+            "sound": "magma_rumble"
+          },
+          {
+            "type": "emit",
+            "signal": "mkDefeat"
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 5.0
+              },
+              {
+                "type": "showText",
+                "text": "THE MAGMA KING HAS FALLEN!",
+                "duration": 3.0,
+                "sound": "vo_mk_fallen",
+                "color": "#7CFF8A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "showText",
+                "text": "He got up for me. I'm touched.",
+                "style": "Subtitle",
+                "duration": 3.0,
+                "sound": "vo_mk_hero_defeat"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "hideBossBar"
+              },
+              {
+                "type": "walkPlayerTo",
+                "anchor": "Camera",
+                "x": 1.4,
+                "speed": 0.7,
+                "emit": "atThrone"
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "up the broken throne",
+            "when": {
+              "type": "signal",
+              "name": "atThrone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "climbFloors",
+                    "count": 1
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "shaft_tick"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.3
+                  },
+                  {
+                    "type": "climbFloors",
+                    "count": 1
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "shaft_tick"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.3
+                  },
+                  {
+                    "type": "climbFloors",
+                    "count": 1
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "shaft_tick"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.3
+                  },
+                  {
+                    "type": "climbFloors",
+                    "count": 1
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "shaft_tick"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.3
+                  },
+                  {
+                    "type": "climbFloors",
+                    "count": 1
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "shaft_tick"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.3
+                  },
+                  {
+                    "type": "climbFloors",
+                    "count": 1
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "shaft_tick"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.3
+                  },
+                  {
+                    "type": "climbFloors",
+                    "count": 1
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "shaft_tick"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.3
+                  },
+                  {
+                    "type": "climbFloors",
+                    "count": 1
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "shaft_tick"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.3
+                  },
+                  {
+                    "type": "climbFloors",
+                    "count": 1
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "shaft_tick"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.3
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "waystoneGlow",
+                    "anchor": "Player",
+                    "at": [1.1, -0.3],
+                    "facePlayer": false
+                  },
+                  {
+                    "type": "flash",
+                    "color": "#9EFFE6AA",
+                    "duration": 0.6
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "waystone_lit"
+                  },
+                  {
+                    "type": "popText",
+                    "text": "WAYSTONE",
+                    "color": "#9EFFE6",
+                    "anchor": "Player",
+                    "at": [1.1, 1.0],
+                    "size": 1.2
+                  },
+                  {
+                    "type": "showText",
+                    "text": "WAYSTONE LIT: FLOOR 901",
+                    "duration": 3.2,
+                    "sound": "vo_waystone_lit",
+                    "color": "#9EFFE6"
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "waystoneLit"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.4
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Great. Now Hell starts me here.",
+                    "style": "Subtitle",
+                    "duration": 2.8,
+                    "sound": "vo_waystone_hero"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.0
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

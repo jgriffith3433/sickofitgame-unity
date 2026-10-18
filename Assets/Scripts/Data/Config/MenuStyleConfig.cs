@@ -514,6 +514,8 @@ namespace SickOfIt.Data.Config
         public string shaftDrop = "BACK TO THE WAYSTONE! DO IT AGAIN!";
         [Tooltip("Under the map after a drop; {0} = the level the next run starts on.")]
         public string shaftNextRunFormat = "Next run: {0}";
+        [Tooltip("Subtitle when the Circle above a newly lit Waystone wakes up on the Shaft; {0} = its numeral, {1} = its name (the line is the band's wakeVoice).")]
+        public string shaftWakeFormat = "CIRCLE {0}! {1}!";
     }
 
     /// <summary>The shared look of every menu: fonts, text styles, buttons, cards, motion.</summary>

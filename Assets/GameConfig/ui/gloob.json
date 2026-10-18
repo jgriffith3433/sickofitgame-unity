@@ -76,6 +76,16 @@
     },
     {
       "moment": "Floor",
+      "floor": 901,
+      "sound": "vo_gloob_901",
+      "text": "You melted the Magma King! He's a puddle! Oh, I'm telling everyone. Everyone!",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true
+    },
+    {
+      "moment": "Floor",
       "floor": 999,
       "sound": "vo_gloob_999",
       "text": "Nine hundred ninety-nine! The big voice loves that one. I've heard it four times now.",
