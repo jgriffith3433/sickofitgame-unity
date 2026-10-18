@@ -312,7 +312,9 @@ is proud of). His voice is `yooba` (designed for him: fast, wet, gurgling, a bit
   one line. From then on Yooba is "met" (New Game forgets it).
 - **Between floors** (every Shaft climb after that): one line, picked by what just happened, first match wins: the
   climb passed a milestone floor (999, 950, the Spill's 985 with the baker's cart), the Magma King is close (within
-  30 floors; at his door, a whisper), the hero died on the way, a new Grudge was picked; else idle gossip. Each
+  30 floors; at his door, a whisper), the hero died on the way, a new Grudge was picked, the hero walked past a
+  diamond glinting off the path (he can smell his village's diamonds from the Shaft: *"You left one on nine-ninety-six.
+  I can smell it from here."*; LevelDesign.md, *Glimpses, glints and the damned*); else idle gossip. Each
   reaction is said once per save, then the next one up gets its turn. Some get a one-line reply from the hero.
 - **The shop** is Yooba's counter, **Yooba's Goods**: he welcomes the hero in, comments on a buy (often coughing it
   up, still warm), turns him away when he can't afford it (*no tabs, no pockets*), and says goodbye when he leaves.
@@ -456,6 +458,12 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
   forward, the whole floor hanging over the lava sea far below. A single locked screen is only for a Warden's arena
   (floor bosses fight on climbing arenas). The climb grammar, the path and the toolkit are in
   [LevelDesign.md](LevelDesign.md).
+- **Every floor is a ride** (J, 2026-10-18: *"Be creative here! Make the gameplay and levels as immersive as you
+  can."*): each one mixes climbs with sideways runs, raft rides on the lava's currents and chases, and has a set piece
+  (the bridge that falls behind him, the village's burning cart down a slag chute), a surprise that is never a new
+  rule, a spot where rewind is the clever move, and its own feel: the screen shaking on eruptions, slow motion on near
+  misses, the lava's roar rising with the lava, the announcer calling the floor. The throne glows far above every floor
+  of the Wastes and gets closer as he climbs. All of it per floor in [LevelDesign.md](LevelDesign.md).
 - **Pacing (arcade, but fair):**
   - the first 5 seconds of a level are quiet: title, one line, room to move;
   - one new idea per floor: a new obstacle or a new enemy type, never both; a new enemy arrives alone;
