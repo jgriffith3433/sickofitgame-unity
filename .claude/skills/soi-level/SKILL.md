@@ -12,6 +12,9 @@ Stairs", a stage that ends at a door) and `content/circles/emberWastes.json` (Ci
 
 ## 0. Where it goes
 
+**One level is one floor** (J, 2026-10-18): build from `Docs/LevelDesign.md` (the climb grammar, the toolkit, the
+floor's own page). The 10-floor travel stages below are today's build, being replaced floor by floor.
+
 From `Docs/Story.md`: the next stretch of floors after the last stage (Level10 ends at 911, so the next is 910–901),
 its Circle (biome, enemy family, Warden at x01), the act's beat, and the milestones it passes (999, 900, 666, 500, 100,
 13, 2). Names are places: `displayName` "Floors 975-951: <place>". No work or office jokes; slimes are villagers.
