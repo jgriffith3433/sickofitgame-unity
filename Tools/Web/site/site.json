@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "about": "Website content owned by this repo. Every file under Tools/Web/site (except this file, README.md and _inserts/) is copied over the website at the same path by the deploy (GameDeployWindow step 7d). Each insert puts a snippet into a website page this repo doesn't own, between <!-- Hawkes site: <id> --> comments: right after the first match of 'after' (a regex), replacing everything up to the first match of 'until' when it is set. Re-running replaces the marked block.",
+  "inserts": [
+    {
+      "id": "engine-latest",
+      "page": "blog/index.html",
+      "after": "<h2[^>]*>Latest Post</h2>",
+      "until": "</section>",
+      "file": "_inserts/blog-index-latest.html"
+    },
+    {
+      "id": "engine-recent",
+      "page": "blog/index.html",
+      "after": "<h2[^>]*>Recent Posts</h2>\\s*<div[^>]*>",
+      "file": "_inserts/blog-index-recent.html"
+    },
+    {
+      "id": "engine-development",
+      "page": "blog/development.html",
+      "after": "<h2[^>]*>Development Posts</h2>\\s*<div[^>]*>",
+      "file": "_inserts/development-engine.html"
+    },
+    {
+      "id": "yooba-post-retcon",
+      "page": "blog/posts/yooba.html",
+      "after": "<span class=\"me-3\">February 15, 2026</span>\\s*</div>\\s*</div>",
+      "file": "_inserts/yooba-post-retcon.html"
+    }
+  ]
+}

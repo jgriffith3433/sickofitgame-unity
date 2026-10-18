@@ -293,7 +293,10 @@ namespace SickOfIt.Playtest
                 "or a HUD panel, none leaves the screen, and every button is thumb-sized", 120, "menus"));
             list.Add(new PlaytestScenario("portal-audio", "The prologue's portal scene, by ear, on the main menu: every Overlord line, hero take, " +
                 "Hell's echo (three repeats, each deeper) and effect plays in scene order, then the Meadow's lines; any without a clip is a bug", 150, "menus", "audio"));
-            list.Add(new PlaytestScenario("site", "The game's main menu (no credit on the game page), then the landing page, blog and sub pages each opened over it: Powered by HAWKES GEN on every one, Hawkes Biomedical on the landing page", 60, "menus"));
+            list.Add(new PlaytestScenario("site", "The game's main menu (no credit on the game page), then the landing page, blog and sub pages each opened over it: " +
+                "Powered by HAWKES GEN on every one, Hawkes Biomedical on the landing page; the lore (the Descent, its floor counter at 1,000 at the bottom, " +
+                "the new lore pages) and the post about the engine, linked from the blog and Development; on each page no link or button overlaps " +
+                "another or leaves the screen and the page is no wider than the screen (run it on device \"phone\" for the phone check)", 150, "menus"));
             return list.ToArray();
         }
 
@@ -4774,9 +4777,9 @@ namespace SickOfIt.Playtest
                 int passed = 0;
                 for (int i = 0; i < SitePages.Pages.Length && !Run.Done; i++)
                 {
-                    var (path, name, landing) = SitePages.Pages[i];
+                    var (path, name, landing, expect) = SitePages.Pages[i];
                     Run.Scene("Site: " + name);
-                    SitePages.Open(path);
+                    SitePages.Open(path, expect);
                     string json = "";
                     yield return Run.Until(() => (json = SitePages.Result()).Length > 0, 25f, $"the {name} page to load");
                     if (Run.Done) break;
@@ -4792,6 +4795,7 @@ namespace SickOfIt.Playtest
                         ok &= Expect(name, path, "Powered by HAWKES GEN", "https://hawkesgen.com", check.gen, "powered by hawkes gen");
                         if (landing)
                             ok &= Expect(name, path, "Hawkes Biomedical", "https://hawkesbiomedical.com", check.parent, "hawkes biomedical");
+                        ok &= SiteLayout(name, path, expect, check);
                     }
                     if (ok)
                         passed++;
@@ -4807,6 +4811,55 @@ namespace SickOfIt.Playtest
                 yield return WaitReal(1.5f);
                 Run.Progress(1f);
                 End(PlaytestOutcome.Done);
+            }
+
+            /// <summary>
+            /// The page as laid out in the frame (the screen's size: a phone's on device "phone"): no link or button on
+            /// another, none off the side, no sideways scrolling; the page's expected element (a new post's card); and
+            /// the Descent's floor counter at 1,000 once scrolled to the bottom.
+            /// </summary>
+            bool SiteLayout(string page, string path, string expect, SitePages.Check check)
+            {
+                bool ok = true;
+                var layout = check.layout;
+                if (layout != null)
+                {
+                    Run.Event("site-layout", $"{page} at {layout.width}px: {(layout.overlaps?.Length ?? 0)} overlap(s), {(layout.offscreen?.Length ?? 0)} off screen, page {layout.pageWidth}px wide");
+                    if (layout.overlaps != null && layout.overlaps.Length > 0)
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"site page {page} (/{path}) at {layout.width}px: links/buttons overlap: {string.Join("; ", layout.overlaps)}");
+                        ok = false;
+                    }
+                    if (layout.offscreen != null && layout.offscreen.Length > 0)
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"site page {page} (/{path}) at {layout.width}px: off the side of the screen: {string.Join("; ", layout.offscreen)}");
+                        ok = false;
+                    }
+                    if (layout.overflowX)
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"site page {page} (/{path}) is {layout.pageWidth}px wide on a {layout.width}px screen (scrolls sideways)");
+                        ok = false;
+                    }
+                }
+                if (!string.IsNullOrEmpty(expect))
+                {
+                    Run.Event("check", $"site {page}: {expect} {(check.expected ? "found" : "MISSING")}");
+                    if (!check.expected)
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"site page {page} (/{path}) has no {expect}");
+                        ok = false;
+                    }
+                }
+                if (check.floor >= 0)
+                {
+                    Run.Event("check", $"site {page}: the floor counter reads {check.floor} at the bottom of the page");
+                    if (check.floor != 1000)
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"site page {page} (/{path}): scrolled to the bottom, the floor counter reads {check.floor}, not 1000");
+                        ok = false;
+                    }
+                }
+                return ok;
             }
 
             bool Expect(string page, string path, string what, string url, SitePages.Link link, string text)
@@ -5238,17 +5291,41 @@ namespace SickOfIt.Playtest
         /// </summary>
         static class SitePages
         {
-            /// <summary>Paths from the site root, a name for the timeline, and whether it's the landing page.</summary>
-            public static readonly (string path, string name, bool landing)[] Pages =
+            /// <summary>
+            /// Paths from the site root, a name for the timeline, whether it's the landing page, and a CSS selector the
+            /// page must have ("" for none). The lore pages and the engine post come from Tools/Web/site (deploy step 7d).
+            /// </summary>
+            public static readonly (string path, string name, bool landing, string expect)[] Pages =
             {
-                ("", "Landing", true),
-                ("blog/index.html", "Blog", false),
-                ("blog/lore.html", "Lore", false),
-                ("blog/lore/characters/overlord.html", "Lore: The Overlord", false),
-                ("blog/posts/diamonds.html", "Blog post: Diamonds", false),
-                ("blog/posts/resend-saved-my-sanity.html", "Blog post without a footer", false),
-                ("offline.html", "Offline", false),
+                ("", "Landing", true, ""),
+                ("blog/index.html", "Blog", false, "a[href=\"posts/the-engine.html\"]"),
+                ("blog/development.html", "Development", false, "a[href=\"posts/the-engine.html\"]"),
+                ("blog/posts/the-engine.html", "Blog post: The Engine", false, "h1"),
+                ("blog/lore.html", "Lore: The Descent", false, "[data-hell-floor]"),
+                ("blog/lore/story/prologue.html", "Lore: The Prologue", false, ""),
+                ("blog/lore/worlds/the-shaft.html", "Lore: The Shaft", false, ""),
+                ("blog/lore/characters/hero.html", "Lore: The Hero", false, ""),
+                ("blog/lore/characters/overlord.html", "Lore: The Overlord", false, ""),
+                ("blog/lore/characters/yooba.html", "Lore: Yooba", false, ".yooba-portrait"),
+                ("blog/lore/characters/magma-king.html", "Lore: The Magma King", false, ""),
+                ("blog/lore/characters/imps.html", "Lore: Imps", false, ""),
+                ("blog/lore/hazards/the-wastes.html", "Lore: The Wastes' Hazards", false, ""),
+                ("blog/lore/systems/rules-of-hell.html", "Lore: The Rules of Hell", false, ""),
+                ("blog/lore/worlds/cracked-road.html", "Lore: The Cracked Road", false, ".warden"),
+                ("blog/posts/diamonds.html", "Blog post: Diamonds", false, ""),
+                ("blog/posts/resend-saved-my-sanity.html", "Blog post without a footer", false, ""),
+                ("offline.html", "Offline", false, ""),
             };
+
+            [Serializable]
+            public class Layout
+            {
+                public int width;
+                public int pageWidth;
+                public bool overflowX;
+                public string[] overlaps;
+                public string[] offscreen;
+            }
 
             [Serializable]
             public class Link
@@ -5268,11 +5345,14 @@ namespace SickOfIt.Playtest
                 public string title;
                 public Link gen;
                 public Link parent;
+                public Layout layout;
+                public bool expected = true;
+                public int floor = -1;
             }
 
 #if UNITY_WEBGL && !UNITY_EDITOR
             [DllImport("__Internal")]
-            static extern void HawkesSiteOpen(string path);
+            static extern void HawkesSiteOpen(string path, string expect);
 
             [DllImport("__Internal")]
             static extern string HawkesSiteResult();
@@ -5284,13 +5364,13 @@ namespace SickOfIt.Playtest
             static extern int HawkesSiteGamePageCredits();
 
             public static bool Available => true;
-            public static void Open(string path) => HawkesSiteOpen(path);
+            public static void Open(string path, string expect) => HawkesSiteOpen(path, expect ?? "");
             public static string Result() => HawkesSiteResult() ?? "";
             public static void Close() => HawkesSiteClose();
             public static int GamePageCredits() => HawkesSiteGamePageCredits();
 #else
             public static bool Available => false;
-            public static void Open(string path) { }
+            public static void Open(string path, string expect) { }
             public static string Result() => "";
             public static void Close() { }
             public static int GamePageCredits() => 0;
