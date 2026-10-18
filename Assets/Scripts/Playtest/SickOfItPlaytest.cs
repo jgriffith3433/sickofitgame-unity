@@ -882,6 +882,12 @@ namespace SickOfIt.Playtest
                 public float LastAngle;
                 public float Spun;
                 public float BiggestScale;
+                // The hero's scene clips (Curious, Shout, Grabbed): the one the scene just asked for, the distinct
+                // sheet frames seen on screen for each, and frames where something else was showing.
+                public string Anim;
+                public readonly Dictionary<string, HashSet<string>> AnimFrames = new Dictionary<string, HashSet<string>>();
+                public readonly Dictionary<string, int> AnimMisses = new Dictionary<string, int>();
+                public string AnimOther;
             }
 
             PortalWatch portal;
@@ -889,8 +895,8 @@ namespace SickOfIt.Playtest
             /// <summary>The beats the scene must pass, in order.</summary>
             static readonly string[] PortalBeats =
             {
-                "pickFirst", "locked", "telegraph", "beamHit", "portalOpen", "inputIgnored", "walkArrived", "lines", "turned",
-                "pulledIn", "gloob", "slurped", "closed", "black", "untouched", "levelComplete", "video2",
+                "pickFirst", "locked", "telegraph", "beamHit", "portalOpen", "inputIgnored", "walkArrived", "curiousAnim", "shoutAnim", "lines", "turned",
+                "grabbedAnim", "pulledIn", "gloob", "slurped", "closed", "black", "untouched", "levelComplete", "video2",
             };
 
             /// <summary>The scene's spoken lines (Level1.json): the signal emitted with each, its subtitle and its voice.</summary>
@@ -917,6 +923,17 @@ namespace SickOfIt.Playtest
                     portal.Failed++;
                     Run.Problem(PlaytestSeverity.Bug, $"portal scene {beat}: {detail}");
                 }
+            }
+
+            /// <summary>The hero showed <paramref name="state"/>'s own sheet frames, animating (several distinct frames), the whole time it was asked for.</summary>
+            void AnimCheck(string beat, string state, string what, bool countMisses = true)
+            {
+                int frames = portal.AnimFrames.TryGetValue(state, out var seen) ? seen.Count : 0;
+                portal.AnimMisses.TryGetValue(state, out int misses);
+                Run.Metric($"portal.{state.ToLowerInvariant()}Frames", frames);
+                bool ok = frames >= 6 && (!countMisses || misses <= 2);
+                PortalCheck(beat, ok, $"{what}: {frames} different {state} frames on screen" +
+                    (countMisses ? $", {misses} frames of something else{(misses > 0 ? $" (last: {portal.AnimOther})" : "")}" : ""));
             }
 
             static Entity FindLive(GameplayWorld world, string instanceId, string defId = null)
@@ -961,12 +978,48 @@ namespace SickOfIt.Playtest
                     portal.LastAngle = player.transform.eulerAngles.z;
                 }
 
+                if (portal.Anim != null && controller != null)
+                {
+                    if (!portal.AnimFrames.TryGetValue(portal.Anim, out var seen))
+                        portal.AnimFrames[portal.Anim] = seen = new HashSet<string>();
+                    if (controller.ShowsState(portal.Anim, out string sprite))
+                    {
+                        seen.Add(sprite);
+                    }
+                    else
+                    {
+                        portal.AnimMisses.TryGetValue(portal.Anim, out int misses);
+                        portal.AnimMisses[portal.Anim] = misses + 1;
+                        portal.AnimOther = sprite ?? "(no sprite)";
+                    }
+                }
+
                 while (portal.Signals.Count > 0)
                 {
                     string signal = portal.Signals.Dequeue();
                     var hole = FindLive(world, "portal", "portal");
                     switch (signal)
                     {
+                        case "portal:anim:curious":
+                        case "portal:anim:shout":
+                        case "portal:anim:grabbed":
+                        {
+                            string state = signal == "portal:anim:curious" ? "Curious" : signal == "portal:anim:shout" ? "Shout" : "Grabbed";
+                            if (portal.Anim == "Curious")
+                                AnimCheck("curiousAnim", "Curious", "peers into the portal");
+                            portal.Anim = state;
+                            Run.Event("anim", $"hero plays {state} (sprite {(controller != null && controller.ShowsState(state, out string sprite) ? sprite : "NOT a " + state + " frame")})");
+                            break;
+                        }
+                        case "portal:line:echo":
+                            // Shout has played out (1.5 s) and he's back to peering at the hole for the echo.
+                            if (portal.Anim == "Shout")
+                                AnimCheck("shoutAnim", "Shout", "cups a hand and calls down", countMisses: false);
+                            portal.Anim = null;
+                            break;
+                        case "portal:line:nope":
+                            portal.Anim = null;
+                            break;
                         case "portal:locked":
                         {
                             portal.Started = true;
@@ -1032,6 +1085,9 @@ namespace SickOfIt.Playtest
                         }
                         case "portal:pulledIn":
                         {
+                            if (portal.Anim == "Grabbed")
+                                AnimCheck("grabbedAnim", "Grabbed", "flails and tumbles while he's pulled in");
+                            portal.Anim = null;
                             float scale = player.transform.localScale.y;
                             float off = hole != null ? Vector2.Distance(player.Position, hole.Position) : 99f;
                             PortalCheck("pulledIn", world.Scripted.Hidden && scale < 0.01f && portal.Spun >= 600f && portal.BiggestScale > 0.05f && off < 0.3f,

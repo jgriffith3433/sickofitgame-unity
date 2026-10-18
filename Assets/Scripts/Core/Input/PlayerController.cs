@@ -242,19 +242,45 @@ namespace SickOfIt.Core.Input
             rb.linearVelocity = velocity;
         }
 
-        /// <summary>Plays a state of the player's Animator by name (playPlayerAnimation). False if there is no such state.</summary>
+        /// <summary>
+        /// Plays a state of the player's Animator by name (playPlayerAnimation). A player.json state the generated
+        /// controller doesn't have yet plays from its sheet instead (<see cref="PlayerSceneClip"/>). False if neither has it.
+        /// </summary>
         public bool PlayAnimatorState(string state, float crossFade = 0f)
         {
             if (animator == null || string.IsNullOrEmpty(state))
                 return false;
             int hash = Animator.StringToHash(state);
             if (!animator.HasState(0, hash))
-                return false;
+            {
+                if (!TryGetComponent(out PlayerSceneClip clip))
+                    clip = gameObject.AddComponent<PlayerSceneClip>();
+                return clip.Play(animator, state);
+            }
+            if (TryGetComponent(out PlayerSceneClip playing))
+                playing.Stop();
             if (crossFade > 0f)
                 animator.CrossFadeInFixedTime(hash, crossFade, 0);
             else
                 animator.Play(hash, 0, 0f);
             return true;
+        }
+
+        /// <summary>
+        /// The sprite on screen is a frame of this player.json state (its sheet's sprites are named "State_0000", ...),
+        /// whether the Animator or <see cref="PlayerSceneClip"/> drew it. For the playtest.
+        /// </summary>
+        public bool ShowsState(string state, out string spriteName)
+        {
+            spriteName = null;
+            if (animator == null)
+                return false;
+            if (!animator.TryGetComponent(out SpriteRenderer renderer))
+                renderer = animator.GetComponentInChildren<SpriteRenderer>();
+            if (renderer == null || renderer.sprite == null)
+                return false;
+            spriteName = renderer.sprite.name;
+            return spriteName.StartsWith(state + "_", System.StringComparison.Ordinal);
         }
 
         // Platform collision
