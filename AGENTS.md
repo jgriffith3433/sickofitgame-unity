@@ -185,7 +185,9 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   "Floors 1000-991: The Landing" with no other level between, its floor counter 1000 → 991 and the 999 milestone,
   Video3 (Gloob) watched 8 s, then Levels 3-10 (The Spill, Imp Run, The Slag Falls, The Loop, Halfway Basin, The Crust,
   The Sack Pile, The Heat Stairs) one after another with no video between, each with the stage checks below, then the
-  level select, whose cards must list the story levels first and in order; ~35 min; the Shaft after Video2 and after each floor stage is checked too), `shaft` (Video2 loaded directly with
+  level select, whose cards must list the story levels first and in order; ~35 min; the Shaft after Video2 and after each floor stage is checked too), `wastes-climb` (Level 6
+  loaded directly, then Levels 7-10 through the real flow with the stage checks on each: Level 7 opens on the Floor 950
+  beat, Level 10 ends at the Magma King's door with his voice heard ahead, then the level select; ~15 min), `shaft` (Video2 loaded directly with
   the Shaft's save reset, skipped: the first plunge past the 10 Circles to FLOOR 1,000, the welcome lines, Continue to Level 2, the
   bot plays it, then the marker's climb to 991 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
   `menus` (level select, videos, shop, settings open and close, then a Shaft preview), `layout` (main menu, level select, settings,
