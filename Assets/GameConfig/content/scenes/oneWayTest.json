@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "seed": 1001,
+  "length": 60,
+  "floors": {
+    "start": 1000,
+    "end": 0,
+    "unitsPerFloor": 0.0,
+    "circle": "emberWastes",
+    "signs": false
+  },
+  "world": {
+    "camera": "Travel",
+    "travelLead": 1.2,
+    "followSharpness": 4.0,
+    "holdForPushes": false,
+    "path": [
+      {
+        "name": "up",
+        "direction": "Up",
+        "length": 5.0,
+        "turn": 2.5,
+        "spawns": [
+          {
+            "entity": "lavaSea",
+            "at": [
+              0.0,
+              -6.0
+            ],
+            "id": "lavaSea"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              -4.5,
+              -2.45
+            ],
+            "scale": [
+              2.0,
+              1
+            ],
+            "id": "start"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              -4.0,
+              -0.75
+            ],
+            "scale": [
+              1.0,
+              1
+            ],
+            "id": "over1"
+          },
+          {
+            "entity": "sinkingStone",
+            "at": [
+              -2.6,
+              1.0
+            ],
+            "scale": [
+              1.0,
+              1
+            ],
+            "id": "over2"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              -1.0,
+              2.75
+            ],
+            "scale": [
+              1.2,
+              1
+            ],
+            "id": "over3"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              3.5,
+              4.5
+            ],
+            "scale": [
+              4.0,
+              1
+            ],
+            "id": "shelf"
+          }
+        ]
+      },
+      {
+        "name": "down",
+        "direction": "Right",
+        "length": 16.0,
+        "turn": 2.5,
+        "spawns": [
+          {
+            "entity": "ledge",
+            "at": [
+              6.0,
+              2.6
+            ],
+            "scale": [
+              2.0,
+              1
+            ],
+            "id": "cellar"
+          },
+          {
+            "entity": "sinkingStone",
+            "at": [
+              9.2,
+              2.6
+            ],
+            "scale": [
+              0.7,
+              1
+            ],
+            "id": "stoneDrop"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              10.0,
+              1.0
+            ],
+            "scale": [
+              2.0,
+              1
+            ],
+            "id": "sub"
+          },
+          {
+            "entity": "floorLanding",
+            "at": [
+              15.2,
+              1.0
+            ],
+            "id": "landing"
+          }
+        ]
+      }
+    ]
+  },
+  "objective": {
+    "text": "Up through, down through"
+  },
+  "counters": [
+    {
+      "name": "lavaSpeed",
+      "value": 0.0
+    },
+    {
+      "name": "lavaMax",
+      "value": 0.0
+    }
+  ],
+  "rules": [
+    {
+      "name": "the first ledge overhead",
+      "when": {
+        "type": "playerOn",
+        "target": {
+          "id": "over1"
+        }
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "showText",
+          "text": "Floors you can jump through. Hell cuts corners.",
+          "duration": 2.5,
+          "style": "Subtitle"
+        }
+      ]
+    },
+    {
+      "name": "the shelf",
+      "when": {
+        "type": "playerOn",
+        "target": {
+          "id": "shelf"
+        }
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "showText",
+          "text": "And down is just... down. Fine.",
+          "duration": 2.5,
+          "style": "Subtitle"
+        }
+      ]
+    },
+    {
+      "name": "the landing",
+      "when": {
+        "type": "playerOn",
+        "target": {
+          "id": "landing"
+        }
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "emit",
+          "signal": "landed"
+        },
+        {
+          "type": "runSequence",
+          "steps": [
+            {
+              "type": "showText",
+              "text": "THE GROUND! IT HOLDS!",
+              "duration": 2.5,
+              "style": "Banner",
+              "color": "#FFD27A"
+            },
+            {
+              "type": "wait",
+              "seconds": 4.0
+            },
+            {
+              "type": "completeLevel"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "name": "climb",
+      "onEnter": []
+    }
+  ]
+}

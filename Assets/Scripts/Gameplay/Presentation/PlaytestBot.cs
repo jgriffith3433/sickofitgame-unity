@@ -26,6 +26,16 @@ namespace SickOfIt.Gameplay
         /// it presses 1 like on every picker, and keeps climbing the long way.
         /// </summary>
         public bool takeShortcuts;
+        /// <summary>Holds down wherever it stands (the one-way scenario, on solid ground: it must not drop through).</summary>
+        public bool holdDown;
+
+        /// <summary>Drops through a one-way platform it started (holding S, or the gamepad's left stick down, every other one).</summary>
+        public int DropsStarted { get; private set; }
+        /// <summary>What the last drop was held with: "keyboard" (S) or "gamepad" (left stick down).</summary>
+        public string LastDropDevice { get; private set; } = "";
+        /// <summary>The foothold under him it dropped through a platform for (its climb's next target), or null.</summary>
+        public Entity LastDropTarget { get; private set; }
+        bool dropping;
 
         GameplayWorld world;
         PlaytestInput input;
@@ -92,6 +102,21 @@ namespace SickOfIt.Gameplay
             FireDirection = Vector2.zero;
             input.SetMoveX(0f);
             input.SetAim(Vector2.zero);
+            HoldDown(false);
+        }
+
+        /// <summary>Holds down (to drop through what it stands on): S for one drop, the gamepad's left stick for the next.</summary>
+        void HoldDown(bool down)
+        {
+            if (down && !dropping)
+            {
+                LastDropDevice = DropsStarted % 2 == 0 ? "keyboard" : "gamepad";
+                DropsStarted++;
+            }
+            dropping = down;
+            bool stick = down && LastDropDevice == "gamepad";
+            input.SetDown(down && !stick);
+            input.SetMoveStick(stick ? Vector2.down : Vector2.zero);
         }
 
         void Update()
@@ -174,7 +199,7 @@ namespace SickOfIt.Gameplay
             if (travelling && target == null)
                 moveX = 1f;
             // A floor with a path: climb it foothold by foothold (no random strafes or hops, they'd drop him in the lava).
-            bool climbing = Climb(me, ref moveX, out bool climbJump);
+            bool climbing = Climb(me, ref moveX, out bool climbJump, out bool climbDrop);
             if (!climbing)
             {
                 if (now < strafeUntil)
@@ -222,9 +247,13 @@ namespace SickOfIt.Gameplay
                 bool atEdge = wall < 0f ? me.x < view.xMin + 0.5f : me.x > view.xMax - 0.5f;
                 moveX = atEdge ? 0f : wall;
             }
-            Move = new Vector2(moveX, 0f);
+            bool down = (climbing && climbDrop) || holdDown;
+            if (down)
+                moveX = 0f;
+            Move = new Vector2(moveX, down ? -1f : 0f);
             input.SetMoveX(moveX);
             input.SetAim(FireDirection);
+            HoldDown(down);
 
             if (climbing)
             {
@@ -248,12 +277,15 @@ namespace SickOfIt.Gameplay
 
         /// <summary>
         /// On a floor with a path (world.path), picks the next foothold ahead along the current section (a stone, a raft, a ledge,
-        /// a chain's handle) within a jump, walks to it and jumps at the right moment; on a chain, lets go when the swing carries
-        /// him forward. Only real input: it moves and presses Space. False when the level has no path or the section is an arena.
+        /// a chain's handle) within a jump, walks to it and jumps at the right moment (up through a one-way piece above him, too);
+        /// with the next one right under the one-way piece he stands on, holds down to drop through; on a chain, lets go when
+        /// the swing carries him forward. Only real input: it moves, presses Space and holds down. False when the level has no
+        /// path or the section is an arena.
         /// </summary>
-        bool Climb(Vector2 me, ref float moveX, out bool jump)
+        bool Climb(Vector2 me, ref float moveX, out bool jump, out bool drop)
         {
             jump = false;
+            drop = false;
             ClimbTarget = null;
             var effects = world.Effects;
             var controller = world.PlayerController;
@@ -350,6 +382,16 @@ namespace SickOfIt.Gameplay
             float edgeGap = bestIsChain ? Mathf.Abs(dx) : Mathf.Max(0f, Mathf.Max(bestBounds.min.x - me.x, me.x - bestBounds.max.x));
             float up = (bestIsChain ? best.Position.y - 0.5f : bestBounds.max.y) - feet;
             moveX = Mathf.Abs(dx) > 0.12f ? Mathf.Sign(dx) : 0f;
+
+            // The next foothold is right under the one-way piece he stands on: drop through it.
+            if (!bestIsChain && grounded && up < -0.4f && controller.OnOneWayPlatform
+                && me.x > bestBounds.min.x + 0.2f && me.x < bestBounds.max.x - 0.2f)
+            {
+                moveX = 0f;
+                drop = true;
+                LastDropTarget = best;
+                return true;
+            }
 
             if (grounded && now - lastClimbJump > 0.35f)
             {

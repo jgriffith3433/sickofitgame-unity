@@ -238,6 +238,10 @@ needs it. A good floor mixes them: climb a lava fall, cross a river on a raft, r
 
 - **The lava sea** is always below: the near sea (`lavaSea`, the one that burns and rises) under the camera, the far
   sea, spires, smoke and floating islands drawn behind (the Circle's `sky`), dropping away as he climbs.
+- **Footholds are one-way.** Every stone, ledge, raft, lift and counterweight (`body.oneWay`) can be jumped up through
+  from below (he lands on top) and dropped through by holding down (S, the stick, the move touch pulled down); the
+  landing, the slag flows, the ground and the walls stay solid. So a foothold straight over another is a way up, and
+  one straight under the piece he stands on is a way down (the bot drops for it). The `one-way` playtest shows both.
 - **Lava is a hot bath, not a pit.** Touching lava burns (one hit) and throws him up out of it (`scald`), so a lost step
   costs health and time, never the whole floor.
 - **Rewind restores the floor.** Every piece is rewound with everything else: a stone that sank, a ledge that fell, a

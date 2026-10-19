@@ -129,6 +129,11 @@ namespace SickOfIt.Playtest
         public const int ClimbLevel = 2;
         const float ClimbSeconds = 200f;
 
+        /// <summary>The one-way scenario: the test floor it plays (content/scenes) and the level whose stage it plays on.</summary>
+        public const string OneWayScene = "oneWayTest";
+        public const int OneWayLevel = 2;
+        const float OneWaySeconds = 90f;
+
         /// <summary>The level whose level-N scenario also watches the portal scene at its end (Level1.json, phases portalBeam to portalClose) and Video2 after it.</summary>
         public const int PortalLevel = 1;
 
@@ -318,6 +323,11 @@ namespace SickOfIt.Playtest
                 "stands on it and rising back when he leaves, a crumbling stone falling, a raft drifting on the current and carrying him, the hero " +
                 "hanging from a swinging chain and jumping off, the lava wave chasing him sideways, a rewind (hold R) bringing a sunk stone back up, " +
                 "and the carved landing with the floor number, which ends the level", ClimbSeconds, "level"));
+            list.Add(new PlaytestScenario("one-way", $"One-way platforms on a test floor: the scene \"{OneWayScene}\" on level {OneWayLevel}'s stage (setup shortcut), " +
+                "played by the bot through real input. A climb where each ledge and stone hangs right over the last: the hero jumps up through each " +
+                "from below and lands on top. Then a run where the way on is down: he holds S on the shelf and drops through it onto the ledge under " +
+                "it, then holds the gamepad's left stick down on a sinking stone and drops through that; on the carved landing (solid ground) he holds " +
+                "down and stays on it. Each beat is a check event, every pass a one-way event", OneWaySeconds, "level"));
             list.Add(new PlaytestScenario("video-" + OverlayVideo, $"Video {OverlayVideo}, started directly (setup shortcut) and watched instead of skipped: " +
                 $"the overlay \"{OverlayName}\" (the hero) appears as the camera goes through the burning door, spins 3+ turns and shrinks into the tunnel's " +
                 "centre and is gone before the lava river (~14.5 s); holding R mid-spin plays it backward; then Escape skips the video. Each beat is checked", 75, "video"));
@@ -527,6 +537,8 @@ namespace SickOfIt.Playtest
                 yield return session.Cutscene();
             else if (id == "climb")
                 yield return session.ClimbRun();
+            else if (id == "one-way")
+                yield return session.OneWayRun();
             else if (id == "magma-king")
                 yield return session.MagmaKingRun();
             else if (id == "video-" + OverlayVideo)
@@ -3911,6 +3923,162 @@ namespace SickOfIt.Playtest
                     if (portal.Passed.Contains(beat)) passed++;
                 Run.Metric("portal.passed", passed);
                 Run.Metric("portal.failed", portal.Failed);
+            }
+
+            // ─── one-way: jump up through platforms, hold down to drop through ───
+
+            /// <summary>What the one-way scenario has seen so far.</summary>
+            sealed class OneWayWatch
+            {
+                public readonly HashSet<string> Passed = new HashSet<string>();
+                public int Failed;
+                public int JumpsThrough, Drops;
+                public float HoldOnGroundSince = -1f;
+                public bool DroppedThroughGround;
+            }
+
+            OneWayWatch oneWay;
+
+            /// <summary>What the one-way scenario must see (acceptance: up through, down through on keyboard and gamepad, the ground holds).</summary>
+            static readonly string[] OneWayBeats =
+            {
+                "jump up through", "drop through keyboard", "drop through gamepad", "drop through a stone", "bot drops for its path", "ground holds", "level ends",
+            };
+
+            public IEnumerator OneWayRun()
+            {
+                var content = SickOfIt.Gameplay.GameContent.Current;
+                if (content == null || !content.Scenes.ContainsKey(OneWayScene))
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"one-way: there is no scene \"{OneWayScene}\" in content/scenes");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+                oneWay = new OneWayWatch();
+                Run.Event("shortcut", $"load level {OneWayLevel}'s stage with the test floor {OneWayScene} directly");
+                Run.Event("one-way", "touch: the move touch pulled down feeds the same hold-down as S and the stick (player.json mobileDropThreshold); " +
+                                     "the bot has no touchscreen, so try that one on a phone");
+                SickOfIt.Core.Input.PlayerController.JumpedUpThrough += OnJumpedUpThrough;
+                SickOfIt.Core.Input.PlayerController.DroppedThrough += OnDroppedThrough;
+                LevelRuntime.PendingScene = OneWayScene;
+                var load = LoadLevel(OneWayLevel);
+                if (load != null)
+                    yield return load;
+                yield return PlayLevel(OneWayLevel, OneWaySeconds, OneWayDuring, waitOutDeath: true);
+                LevelRuntime.PendingScene = null;
+                SickOfIt.Core.Input.PlayerController.JumpedUpThrough -= OnJumpedUpThrough;
+                SickOfIt.Core.Input.PlayerController.DroppedThrough -= OnDroppedThrough;
+                if (Run.Done)
+                {
+                    oneWay = null;
+                    yield break;
+                }
+
+                OneWayCheck("level ends", lastOutcome == "completed", $"the level ended: {lastOutcome}");
+                int passed = 0;
+                foreach (var beat in OneWayBeats)
+                {
+                    if (oneWay.Passed.Contains(beat))
+                        passed++;
+                    else
+                        Run.Problem(PlaytestSeverity.Bug, $"one-way: never saw \"{beat}\" (level {lastOutcome})");
+                }
+                Run.Metric("oneWay.jumpsThrough", oneWay.JumpsThrough);
+                Run.Metric("oneWay.drops", oneWay.Drops);
+                Run.Metric("oneWay.passed", passed);
+                Run.Metric("oneWay.failed", oneWay.Failed);
+                Run.Progress(1f);
+                bool ok = passed == OneWayBeats.Length && oneWay.Failed == 0;
+                oneWay = null;
+                End(ok ? PlaytestOutcome.Won : lastOutcome == "softlock" ? PlaytestOutcome.Stuck : PlaytestOutcome.Done);
+            }
+
+            void OneWayCheck(string beat, bool ok, string detail)
+            {
+                if (oneWay == null || oneWay.Passed.Contains(beat))
+                    return;
+                if (ok)
+                {
+                    oneWay.Passed.Add(beat);
+                    Run.Event("check", $"one-way {beat}: ok ({detail})");
+                }
+                else
+                {
+                    oneWay.Failed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"one-way {beat}: {detail}");
+                }
+            }
+
+            static string PieceName(Collider2D piece)
+            {
+                if (piece == null)
+                    return "a platform";
+                return piece.TryGetComponent<SickOfIt.Gameplay.Entity>(out var e) ? Who(e) : piece.name;
+            }
+
+            void OnJumpedUpThrough(SickOfIt.Core.Input.PlayerController controller, Collider2D piece)
+            {
+                if (oneWay == null)
+                    return;
+                oneWay.JumpsThrough++;
+                var feet = controller.BodyCollider != null ? controller.BodyCollider.bounds.min.y : controller.transform.position.y;
+                Run.Event("one-way", $"jumped up through {PieceName(piece)} from below and landed on top (feet at y={feet:0.00}, its top y={piece.bounds.max.y:0.00})");
+                OneWayCheck("jump up through", true, $"the hero jumped up through {PieceName(piece)} from below and stands on top of it");
+            }
+
+            void OnDroppedThrough(SickOfIt.Core.Input.PlayerController controller, Collider2D piece)
+            {
+                if (oneWay == null)
+                    return;
+                oneWay.Drops++;
+                string device = bot != null && bot.DropsStarted > 0 ? bot.LastDropDevice : "?";
+                bool landing = piece != null && piece.TryGetComponent<SickOfIt.Gameplay.Entity>(out var e) && e.Tags.Contains("landing");
+                bool stone = piece != null && piece.TryGetComponent<SickOfIt.Gameplay.Entity>(out var s) && s.FindAbility<SickOfIt.Gameplay.Content.SinkAbility>() != null;
+                Run.Event("one-way", $"held down ({(device == "keyboard" ? "S" : device == "gamepad" ? "gamepad left stick" : device)}) on {PieceName(piece)} and dropped through it");
+                if (landing)
+                {
+                    oneWay.DroppedThroughGround = true;
+                    OneWayCheck("ground holds", false, $"holding down on the landing dropped him through it: the ground must stay solid");
+                    return;
+                }
+                if (device == "keyboard")
+                    OneWayCheck("drop through keyboard", true, $"holding S on {PieceName(piece)} dropped him through it");
+                if (device == "gamepad")
+                    OneWayCheck("drop through gamepad", true, $"holding the gamepad's left stick down on {PieceName(piece)} dropped him through it");
+                if (stone)
+                    OneWayCheck("drop through a stone", true, $"he dropped through the climb stone {PieceName(piece)}");
+                var target = bot != null ? bot.LastDropTarget : null;
+                if (target != null && target.MainCollider != null && target.MainCollider.bounds.max.y < piece.bounds.min.y)
+                    OneWayCheck("bot drops for its path", true, $"the bot's next foothold, {Who(target)}, was under {PieceName(piece)}, so it dropped through");
+            }
+
+            /// <summary>Runs every frame of the one-way test floor: on the landing (solid ground) the bot holds down and he must stay on it.</summary>
+            IEnumerator OneWayDuring(float now)
+            {
+                var world = GameplayWorld.Instance;
+                if (world == null || oneWay == null || bot == null)
+                    return null;
+                var landing = world.FindById("landing");
+                bool onLanding = landing != null && world.PlayerStandsOn(landing);
+                if (oneWay.HoldOnGroundSince < 0f)
+                {
+                    if (onLanding)
+                    {
+                        oneWay.HoldOnGroundSince = now;
+                        bot.holdDown = true;
+                        Run.Event("one-way", "on the landing (solid ground): the bot holds S down");
+                    }
+                }
+                else if (!oneWay.Passed.Contains("ground holds") && !oneWay.DroppedThroughGround && now - oneWay.HoldOnGroundSince >= 1.5f)
+                {
+                    var controller = world.PlayerController;
+                    bool grounded = controller != null && controller.IsGrounded;
+                    OneWayCheck("ground holds", onLanding && grounded,
+                        onLanding && grounded ? "1.5 s of holding down on the landing and he still stands on it"
+                                              : "holding down on the landing he left it: the ground must stay solid");
+                    bot.holdDown = false;
+                }
+                return null;
             }
 
             // ─── climb: the floor toolkit on a test floor ───────────────

@@ -332,7 +332,12 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   climbs it through real input: the path's climb, sideways run and chase, climb again, the lava sea and parallax, a
   stone sinking and rising back, a crumbling stone falling, a raft drifting and carrying him, a chain swing, the lava
   wave chasing him, a hold of R bringing a sunk stone back up, the carved landing ending the level; `check`,
-  `section`, `floorkit` events; ~3 min; Docs/LevelDesign.md "A floor's path"),
+  `section`, `floorkit` events; ~3 min; Docs/LevelDesign.md "A floor's path"), `one-way` (one-way platforms:
+  `content/scenes/oneWayTest.json` on Level 2's stage, setup shortcut; the bot jumps up through ledges and a stone hung
+  straight over each other and lands on top, then drops down through the shelf holding S and through a sinking stone
+  holding the gamepad's left stick down (its next foothold right under them), and holds down on the carved landing,
+  which stays solid; `PlayerController.JumpedUpThrough`/`DroppedThrough`; `check` and `one-way` events; ~2 min; the
+  move touch pulled down takes the same path but the bot has no touchscreen),
   `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
