@@ -1,0 +1,423 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor860",
+  "displayName": "Floor 860: The Carver's Yard",
+  "levelNumber": 42,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 43,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 860,
+    "length": 90,
+    "floors": {
+      "start": 860,
+      "end": 859,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "crack",
+          "direction": "Up",
+          "length": 3.15,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -1.0,
+                -1.15
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                0.8,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -0.8,
+                1.45
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "creep",
+          "direction": "Right",
+          "length": 13.15,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadCreep",
+              "at": [
+                2.4,
+                1.45
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadCreep",
+              "at": [
+                5.0,
+                1.45
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                7.4,
+                1.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadCreep",
+              "at": [
+                9.7,
+                1.45
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                12.2,
+                1.45
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                13.2,
+                2.15
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                12.4,
+                2.25
+              ],
+              "id": "soul860"
+            }
+          ]
+        },
+        {
+          "name": "climb",
+          "direction": "Up",
+          "length": 3.87,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "settleSlab",
+              "at": [
+                14.4,
+                2.75
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                12.2,
+                4.05
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                14.4,
+                5.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                10.8,
+                4.65
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                16.4,
+                6.6
+              ]
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.8,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding860",
+              "at": [
+                18.0,
+                5.35
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the carvings",
+        "when": {
+          "type": "sectionReached",
+          "section": "crack"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "showText",
+                "text": "Who carves all these?",
+                "duration": 2.7,
+                "style": "Subtitle",
+                "sound": "vo_f860_carves"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the creeping road",
+        "when": {
+          "type": "sectionReached",
+          "section": "creep"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "The road's sliding back. Of course it is.",
+                "duration": 3.8,
+                "style": "Subtitle",
+                "sound": "vo_f860_creep"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the climb: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "climb"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 859,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "Still warm. Somebody just carved that.",
+                "duration": 3.8,
+                "style": "Subtitle",
+                "sound": "vo_f860_fresh"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "showText",
+                "text": "THE CARVER'S YARD: TRESPASSED",
+                "duration": 3.23,
+                "style": "Banner",
+                "sound": "vo_f860_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 860: THE CARVER'S YARD",
+                "duration": 3.17,
+                "style": "Banner",
+                "sound": "vo_f860_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

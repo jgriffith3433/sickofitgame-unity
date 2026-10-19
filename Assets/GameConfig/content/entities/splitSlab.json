@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "extends": "crumblingStone",
+  "tags": [
+    "foothold",
+    "road"
+  ],
+  "visual": {
+    "color": "#C0A8B0",
+    "placeholderColor": "#3A2A2E"
+  },
+  "abilities": [
+    {
+      "type": "crumble",
+      "delay": 0.8,
+      "shake": 0.05,
+      "gravity": 16.0,
+      "fallDistance": 14.0,
+      "crackSound": "slag_drip",
+      "fallSound": "lava_burst"
+    }
+  ]
+}

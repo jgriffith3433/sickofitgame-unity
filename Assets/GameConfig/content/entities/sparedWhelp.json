@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "sparedWhelp"
+  ],
+  "body": {
+    "radius": 0.3,
+    "solid": false,
+    "gravity": 0.0
+  },
+  "visual": {
+    "scale": 0.19,
+    "color": "#FF9A7A",
+    "hurtFlash": false,
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Images/Demon1.png",
+          "fps": 8,
+          "loop": true
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "hover",
+      "speed": 0.4,
+      "offset": [
+        0,
+        0
+      ],
+      "aroundSpawn": true,
+      "keepSide": false,
+      "bobHeight": 0.06,
+      "bobSpeed": 9.0
+    }
+  ]
+}

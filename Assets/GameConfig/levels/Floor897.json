@@ -1,0 +1,384 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor897",
+  "displayName": "Floor 897: The Whelps",
+  "levelNumber": 35,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 36,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 897,
+    "length": 90,
+    "floors": {
+      "start": 897,
+      "end": 896,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "slabs",
+          "direction": "UpRight",
+          "length": 2.77,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -0.4,
+                -1.2
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                1.8,
+                0.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "road",
+          "direction": "Right",
+          "length": 9.99,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                4.2,
+                0.05
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                6.6,
+                0.05
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                8.8,
+                0.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                11.0,
+                0.05
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                9.6,
+                0.65
+              ],
+              "id": "firstWhelp",
+              "onEnter": true
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                11.4,
+                0.85
+              ],
+              "id": "soul897"
+            }
+          ]
+        },
+        {
+          "name": "climb",
+          "direction": "Up",
+          "length": 4.99,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "settleSlab",
+              "at": [
+                13.4,
+                1.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                11.2,
+                2.65
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                13.4,
+                3.95
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                11.4,
+                5.25
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "whelpDiamond",
+              "at": [
+                14.6,
+                4.6
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                9.4,
+                5.95
+              ],
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 6.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding897",
+              "at": [
+                17.0,
+                5.25
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the first whelp",
+        "when": {
+          "type": "sectionReached",
+          "section": "road"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "showText",
+                "text": "That one's small. And angry.",
+                "duration": 3.17,
+                "style": "Subtitle",
+                "sound": "vo_f897_angry"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the climb: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "climb"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "showText",
+                "text": "That one had a diamond in its mouth.",
+                "duration": 3.7,
+                "style": "Subtitle",
+                "sound": "vo_f897_diamond"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 896,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "THE WHELPS: UNFED",
+                "duration": 2.43,
+                "style": "Banner",
+                "sound": "vo_f897_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 897: THE WHELPS",
+                "duration": 2.7,
+                "style": "Banner",
+                "sound": "vo_f897_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

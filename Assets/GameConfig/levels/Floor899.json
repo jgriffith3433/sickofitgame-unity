@@ -1,0 +1,375 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor899",
+  "displayName": "Floor 899: Split Ends",
+  "levelNumber": 33,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 34,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 899,
+    "length": 90,
+    "floors": {
+      "start": 899,
+      "end": 898,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "wall",
+          "direction": "Up",
+          "length": 5.75,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                -1.0,
+                -1.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.2,
+                0.15
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                -1.0,
+                1.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                1.2,
+                2.75
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -1.0,
+                4.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "shelf",
+          "direction": "Right",
+          "length": 4.75,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.4,
+                5.35
+              ],
+              "id": "shelf",
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                3.8,
+                5.35
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                1.4,
+                6.15
+              ],
+              "id": "gluingSoul"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                3.8,
+                7.3
+              ]
+            }
+          ]
+        },
+        {
+          "name": "slope",
+          "direction": "UpRight",
+          "length": 8.94,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "splitSlab",
+              "at": [
+                5.6,
+                6.6
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                7.3,
+                7.85
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                9.0,
+                9.1
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                10.7,
+                10.35
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                11.5,
+                11.1
+              ],
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.18,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding899",
+              "at": [
+                15.3,
+                10.35
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the first split",
+        "when": {
+          "type": "sectionReached",
+          "section": "wall"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "Even the road's falling apart.",
+                "duration": 3.3,
+                "style": "Subtitle",
+                "sound": "vo_f899_apart"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the slope: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "slope"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 898,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "SPLIT ENDS: STILL IN ONE PIECE",
+                "duration": 3.3,
+                "style": "Banner",
+                "sound": "vo_f899_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 899: SPLIT ENDS",
+                "duration": 2.7,
+                "style": "Banner",
+                "sound": "vo_f899_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

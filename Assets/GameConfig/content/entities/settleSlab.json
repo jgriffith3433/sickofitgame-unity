@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "extends": "sinkingStone",
+  "tags": [
+    "foothold",
+    "road"
+  ],
+  "visual": {
+    "color": "#B4A6B8",
+    "placeholderColor": "#2A2028"
+  }
+}

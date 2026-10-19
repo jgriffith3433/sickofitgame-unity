@@ -1,0 +1,389 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor808",
+  "displayName": "Floor 808: The Creeping Stair",
+  "levelNumber": 54,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 55,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 808,
+    "length": 90,
+    "floors": {
+      "start": 808,
+      "end": 807,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "foot",
+          "direction": "UpRight",
+          "length": 2.29,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                -0.6,
+                -1.2
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.1,
+                0.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "creep",
+          "direction": "Right",
+          "length": 12.43,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadCreep",
+              "at": [
+                3.4,
+                0.05
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                5.8,
+                0.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadCreep",
+              "at": [
+                8.1,
+                0.05
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadCreep",
+              "at": [
+                10.7,
+                0.05
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                13.1,
+                0.05
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                9.4,
+                0.65
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                12.0,
+                0.65
+              ],
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "up",
+          "direction": "Up",
+          "length": 5.33,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "settleSlab",
+              "at": [
+                15.2,
+                1.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                13.0,
+                2.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                15.2,
+                3.95
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                13.1,
+                5.25
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                12.9,
+                6.05
+              ],
+              "id": "soul808"
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.4,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding808",
+              "at": [
+                18.5,
+                5.25
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the creeping stair",
+        "when": {
+          "type": "sectionReached",
+          "section": "creep"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.4
+              },
+              {
+                "type": "showText",
+                "text": "Stairs going down. Me going up.",
+                "duration": 3.37,
+                "style": "Subtitle",
+                "sound": "vo_f808_stairs"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the Rift rises: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "up"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "lavaMax",
+            "value": 7.6
+          },
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.3
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 807,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "THE CREEPING STAIR: OUTWALKED",
+                "duration": 3.23,
+                "style": "Banner",
+                "sound": "vo_f808_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 808: THE CREEPING STAIR",
+                "duration": 3.23,
+                "style": "Banner",
+                "sound": "vo_f808_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

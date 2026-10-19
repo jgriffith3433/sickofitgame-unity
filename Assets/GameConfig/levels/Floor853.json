@@ -1,0 +1,476 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor853",
+  "displayName": "Floor 853: Dust",
+  "levelNumber": 49,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 50,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 853,
+    "length": 90,
+    "floors": {
+      "start": 853,
+      "end": 852,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "up",
+          "direction": "Up",
+          "length": 1.83,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -1.0,
+                -1.15
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                1.2,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "dust",
+          "direction": "Right",
+          "length": 13.45,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                3.6,
+                0.15
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                5.8,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneVent",
+              "at": [
+                6.95,
+                0.15
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                8.1,
+                0.15
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                10.3,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                12.5,
+                0.15
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                11.2,
+                0.75
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                12.8,
+                0.95
+              ],
+              "id": "soul853"
+            }
+          ]
+        },
+        {
+          "name": "slope",
+          "direction": "UpRight",
+          "length": 6.02,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "splitSlab",
+              "at": [
+                14.4,
+                1.4
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                16.1,
+                2.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                17.8,
+                3.9
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                19.0,
+                4.5
+              ],
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.14,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding853",
+              "at": [
+                21.9,
+                3.9
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the dust",
+        "when": {
+          "type": "sectionReached",
+          "section": "dust"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "fade",
+                "to": "Black",
+                "duration": 0.6
+              },
+              {
+                "type": "wait",
+                "seconds": 0.4
+              },
+              {
+                "type": "fade",
+                "to": "Clear",
+                "duration": 1.4
+              },
+              {
+                "type": "showText",
+                "text": "Can't see a thing. Hell's improving.",
+                "duration": 3.7,
+                "style": "Subtitle",
+                "sound": "vo_f853_see"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  0.6,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  2.2,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -0.6,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  1.4,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the slope: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "slope"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  1.0,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  2.4,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  0.2,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 852,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "DUST: SETTLED",
+                "duration": 2.17,
+                "style": "Banner",
+                "sound": "vo_f853_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 853: DUST",
+                "duration": 2.3,
+                "style": "Banner",
+                "sound": "vo_f853_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

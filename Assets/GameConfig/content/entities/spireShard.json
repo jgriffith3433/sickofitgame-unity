@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "extends": "slagDrip",
+  "visual": {
+    "color": "#FFB070"
+  },
+  "onSpawn": [
+    {
+      "type": "playSound",
+      "sound": "slag_drip"
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "shard",
+      "anchor": "Self",
+      "velocity": [
+        0.0,
+        -3.6
+      ],
+      "facePlayer": false
+    }
+  ]
+}

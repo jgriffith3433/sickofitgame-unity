@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "extends": "brimstoneDemon",
+  "health": 3,
+  "moveSpeed": 0,
+  "tags": [
+    "demonLobber"
+  ],
+  "visual": {
+    "scale": 0.28,
+    "color": "#B0A4A8",
+    "fxColor": "#FFB43A"
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    }
+  ],
+  "states": [
+    {
+      "name": "wait",
+      "transitions": [
+        {
+          "to": "idle",
+          "when": {
+            "type": "distanceToPlayer",
+            "below": 7.5
+          }
+        }
+      ]
+    },
+    {
+      "name": "idle",
+      "transitions": [
+        {
+          "to": "throw",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "throw",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "lobberGlow",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.35
+          ],
+          "facePlayer": false
+        },
+        {
+          "type": "playSound",
+          "sound": "slag_drip"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "idle",
+          "when": {
+            "type": "after",
+            "seconds": 1.0
+          }
+        }
+      ]
+    }
+  ]
+}

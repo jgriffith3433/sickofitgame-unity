@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "extends": "ledge",
+  "tags": [
+    "foothold",
+    "road"
+  ],
+  "visual": {
+    "color": "#B4A6B8",
+    "placeholderColor": "#26202A"
+  }
+}

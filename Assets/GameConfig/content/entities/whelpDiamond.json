@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "extends": "demonWhelp",
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  }
+}

@@ -1,0 +1,388 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor809",
+  "displayName": "Floor 809: Updraft Round the Spire",
+  "levelNumber": 53,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 54,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 809,
+    "length": 90,
+    "floors": {
+      "start": 809,
+      "end": 808,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "up",
+          "direction": "Up",
+          "length": 1.83,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -1.0,
+                -1.15
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                1.2,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "columns",
+          "direction": "Right",
+          "length": 11.95,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                3.6,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "heatUpdraft",
+              "at": [
+                4.9,
+                1.6
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                6.2,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "heatUpdraft",
+              "at": [
+                7.5,
+                1.6
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                8.8,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                11.0,
+                0.15
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                13.6,
+                2.8
+              ],
+              "scale": [
+                0.6,
+                1
+              ]
+            },
+            {
+              "entity": "demonLobber",
+              "at": [
+                13.6,
+                3.5
+              ],
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "tall",
+          "direction": "Up",
+          "length": 5.22,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                13.2,
+                1.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                11.0,
+                2.75
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                13.2,
+                4.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                11.2,
+                5.35
+              ]
+            },
+            {
+              "entity": "heatUpdraftTall",
+              "at": [
+                9.4,
+                3.6
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                11.4,
+                6.15
+              ],
+              "id": "soul809"
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.6,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding809",
+              "at": [
+                16.6,
+                5.35
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the columns",
+        "when": {
+          "type": "sectionReached",
+          "section": "columns"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.5
+              },
+              {
+                "type": "showText",
+                "text": "Hot air. Familiar.",
+                "duration": 2.5,
+                "style": "Subtitle",
+                "sound": "vo_f809_air"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the tall column: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "tall"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 808,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "UPDRAFT: RIDDEN",
+                "duration": 2.3,
+                "style": "Banner",
+                "sound": "vo_f809_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 809: UPDRAFT ROUND THE SPIRE",
+                "duration": 3.57,
+                "style": "Banner",
+                "sound": "vo_f809_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "extends": "spireShard",
+  "visual": {
+    "scale": 0.14,
+    "color": "#FFB070"
+  },
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "shardBig",
+      "anchor": "Self",
+      "velocity": [
+        0.0,
+        -3.0
+      ],
+      "facePlayer": false
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "extends": "floorLanding",
+  "abilities": [
+    {
+      "type": "carved",
+      "text": "805",
+      "words": "MADE IT",
+      "color": "#FFB45C",
+      "size": 0.6,
+      "above": -1.1,
+      "onFace": true
+    }
+  ]
+}
