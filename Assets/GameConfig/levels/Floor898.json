@@ -1,0 +1,575 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor898",
+  "displayName": "Floor 898: Shard Fall",
+  "levelNumber": 34,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 35,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 898,
+    "length": 90,
+    "floors": {
+      "start": 898,
+      "end": 897,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "under",
+          "direction": "Right",
+          "length": 6.95,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -0.6,
+                -2.45
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                1.6,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                3.8,
+                -2.45
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                6.0,
+                -2.45
+              ]
+            }
+          ]
+        },
+        {
+          "name": "flank",
+          "direction": "Up",
+          "length": 5.75,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                8.6,
+                -1.15
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                6.4,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                8.6,
+                1.45
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                6.4,
+                2.75
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                8.6,
+                4.05
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                8.8,
+                4.85
+              ],
+              "id": "soul898"
+            }
+          ]
+        },
+        {
+          "name": "back",
+          "direction": "Left",
+          "length": 6.1,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                6.2,
+                5.35
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                4.0,
+                5.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.8,
+                5.35
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                0.4,
+                6.05
+              ],
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "up",
+          "direction": "Up",
+          "length": 3.9,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                -0.4,
+                6.65
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.8,
+                7.95
+              ],
+              "id": "shardStep",
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 6.7,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding898",
+              "at": [
+                6.6,
+                7.95
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the spires shed",
+        "when": {
+          "type": "sectionReached",
+          "section": "under"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "showText",
+                "text": "Even the scenery wants me dead.",
+                "duration": 3.37,
+                "style": "Subtitle",
+                "sound": "vo_f898_scenery"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  0.8,
+                  2.4
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  2.2,
+                  2.4
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -0.4,
+                  2.4
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "shards on the flank",
+        "when": {
+          "type": "sectionReached",
+          "section": "flank"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -1.4,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  1.6,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  0.2,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -1.0,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the ledge run: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "back"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -1.6,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.8
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  0.6,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.8
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -0.4,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.8
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  1.4,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.8
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -1.8,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "breather",
+        "when": {
+          "type": "sectionReached",
+          "section": "up"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 897,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "SHARD FALL: UNSKEWERED",
+                "duration": 2.77,
+                "style": "Banner",
+                "sound": "vo_f898_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 898: SHARD FALL",
+                "duration": 2.7,
+                "style": "Banner",
+                "sound": "vo_f898_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

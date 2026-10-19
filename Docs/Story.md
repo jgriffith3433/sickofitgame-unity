@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; Circle X's played route built to Floor 901, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -109,7 +109,10 @@ THE MEADOW again                           Ending
   (ending on the Pile Keeper), **the King's Chimney** (951 to 910), Floors 910-902 (the Heat Stairs, up to the Magma
   King's door) and **Floor 901**, his arena. The long way (the floors the two shortcuts skip) isn't built as floors yet:
   until it is, turning a shortcut down plays the old 10-floor stages over those floors as its stand-in, off the story
-  path. Circle IX's stages come after them, still in the 10-floor layout.
+  path. **Circle IX's played route** is built the same way (2026-10-19, LevelDesign.md section 6): Floors 900-891
+  (ending on the Road Breaker), **the Spared Demon** (891 to 860), Floors 860-851 (ending on the Carver), **the Hollow
+  Spire** (851 to 810) and Floors 810-802, the Needle Stair up to the door of the Spire Fiend's arena on Floor 801 (his
+  fight is its own task, k_e16304d7a504). Its long way is played by Circle IX's first-pass 10-floor stages as stand-ins.
 - **Level numbers:** Level *n* is position *n* in game.json's `levels` list. Level 1 is the Meadow (Floor 0). Levels
   2-11 are **Floor 1000** *The Landing*, **999** *Only 999 To Go*, **998** *The Spill*, **997** *Imp Run*, **996** *The
   Slag Falls*, **995** *The Loop*, **994** *The Chain Lift*, **993** *Ember Ledges*, **992** *Bad Footing*, **991** *The
@@ -118,8 +121,19 @@ THE MEADOW again                           Ending
   *Second Lap*, **952** *The Sack Pile*, **951** *The Keeper's Mound* (the Pile Keeper). Levels 22-31 are **Floor 910**
   *The Heat Stairs*, **909** *Ember Rain*, **908** *The Cart Run*, **907** *I Can Hear You*, **906** *The Loop, Upstairs*,
   **905** *The Collapse*, **904** *The Count*, **903** *The Last Updraft*, **902** *The Door* and **901** *The Slag Throne*
-  (the Magma King). A floor's file is `levels/Floor<floor>.json` (Floor 901's was `Level11.json`). Level 32 is
-  `CrackedRoad` (Floors 900-891), Levels 33-38 are `Level13`-`Level18` (Floors 890-831). Levels 39-46 are the old
+  (the Magma King). Levels 32-41 are **Floor 900** *The Cracked Road*, **899** *Split Ends*, **898** *Shard Fall*,
+  **897** *The Whelps*, **896** *Brimstone Vents*, **895** *The Heave*, **894** *The Lobbers*, **893** *Seesaw Road*,
+  **892** *Demon Row*, **891** *The Breaker's Road* (the Road Breaker). Levels 42-51 are **Floor 860** *The Carver's
+  Yard*, **859** *The Hoist*, **858** *The Leaning Spire*, **857** *Seam Falls*, **856** *The Nest*, **855** *Sign
+  Language*, **854** *The Quarry*, **853** *Dust*, **852** *The Gallery*, **851** *The Carver's Spire* (the Carver).
+  Levels 52-60 are **Floor 810** *The Needle's Foot*, **809** *Updraft Round the Spire*, **808** *The Creeping Stair*,
+  **807** *The Choir*, **806** *The Overhang*, **805** *The Breakaway*, **804** *The Turn*, **803** *The Last Heave* and
+  **802** *The Spire Door*. A floor's file is `levels/Floor<floor>.json` (Floor 901's was `Level11.json`). Levels 61-66
+  are Circle IX's first-pass stages `Level13`-`Level18` (Floors 890-831; the old `CrackedRoad` over 900-891 is gone,
+  replaced by Floors 900-891), kept as the long way's stand-ins: Floor 891's way on when the Spared Demon is turned down
+  (`Level13`-`Level15`, Floors 890-861, then Floor 860; `Level14`, *The Old Stair*, still offers its stairwell to 841,
+  then `Level18`) and Floor 851's when the Hollow Spire is (`Level17`-`Level18`, Floors 850-831, then Floor 810;
+  `Level16`, *Demon Row* over 860-851, is played only from the level select). Levels 67-74 are the old
   10-floor stages, files `Level3`-`Level10` (*Floors 990-981: The Spill* to *Floors 920-911: The Lower Stairs*), kept as
   the long way's stand-ins: Floor 991's way on when the Sack Lift is turned down (`Level3`-`Level5`, Floors 990-961, then
   Floor 960) and Floor 951's when the Chimney is (`Level7`-`Level10`, Floors 950-911, then Floor 910; `Level6`, the old
@@ -127,13 +141,12 @@ THE MEADOW again                           Ending
   ideas are introduced.
 - **The path today** (re-pathed 2026-10-19): New Game → Video1 → Level 1, the Meadow → Video2 → **Floor 1000, The
   Landing** → Video3 (Yooba) → **Floors 999-991** → *the Sack Lift* → **Floors 960-951** → *the King's Chimney* →
-  **Floors 910-902** → **Floor 901, the Slag Throne** (his Waystone) → the Shaft (Circle IX wakes up) → the level
-  select, until Circle IX's stages are rebuilt. Inside a Circle the levels run straight on from one to the next (a
+  **Floors 910-902** → **Floor 901, the Slag Throne** (his Waystone) → the Shaft (Circle IX wakes up) → **Floors
+  900-891** → *the Spared Demon* → **Floors 860-851** → *the Hollow Spire* → **Floors 810-802** → the level select,
+  until Floor 801 (the Spire Fiend) is built. Inside a Circle the levels run straight on from one to the next (a
   level's `nextLevelNumber`, or a taken shortcut's `nextLevel`): results, the Shaft's climb, the next level, with no
   video between them. After them in the list, off the path (reachable from the level select only, once unlocked):
-  Circle IX's first stretch, `CrackedRoad` (*Floors 900-891*, cut to 10 floors; its beats are still the first layout's,
-  for the Circle IX task to rebuild) and `Level13`-`Level18` (*Floors 890-831*, first pass, see *Circle IX stage
-  outline*; they run straight on from the Cracked Road, and the Old Stair's shortcut can skip three of them), the long
+  Circle IX's first-pass stages `Level13`-`Level18` (*Floors 890-831*, see *Circle IX's long way*), Circle X's long
   way's stand-ins above, and after those the old arcade levels `ArcadeCrossfire`, `ArcadeSpinCycle`,
   `ArcadeEverything` and `ArcadeFireRain` (titled "Arcade: ...", outside the Circles, their slime enemies swapped for
   imps and cinders), kept to be recast: their enemies and patterns reused inside Circle stages. Their `levelNumber`
@@ -280,32 +293,40 @@ the fire, and the whole stretch of floor the flood will cover glowing red before
 8. **The Shaft after him.** The marker stands on 901 (Floor 902 climbed it there; the floor below never lights the Waystone, only his defeat does), the Magma King's figure on the map fills in (beaten), the
    Waystone at 901 lights, and the band above, **Circle IX, the Cracked Road, wakes up**: its painting brightens out of
    the dark from the bottom up, its seams glowing, and the announcer calls it (*"CIRCLE NINE! THE CRACKED ROAD!"*).
-   Next Warden: the Spire Fiend. Circle IX's stages are still to be rebuilt in the 10-floor layout, so for now the
-   level select follows.
+   Next Warden: the Spire Fiend. Continue goes on to **Floor 900, the Cracked Road** (LevelDesign.md section 6).
 
 Video3 (Yooba, talking) plays after **The Landing** (Floor 1000, and the Shaft's climb to 999): the slime from the meadow turns up at the bottom of Hell,
 pleased to see a familiar face, and coughs up a diamond. From then on Yooba is the shop.
 
-### Circle IX stage outline: the Cracked Road (Levels 32-38, first pass)
+### Circle IX: the Cracked Road (one level per floor)
 
-Black spires with glowing seams over a road of cooling rock. The road is the only way up, and it keeps splitting: the
-**Brimstone Demons** climb out of the cracks to keep him off it, and the spires shed shards from Floor 890. At most 3
-on screen, like Circle X (rising later in the Circle). Built 2026-10-18 as a first pass so Hell's first shortcut has
-floors to skip: each stage has its title, one or two hero lines, a carved sign, generated floors from `crackedRoad`
-with a breather and a Grudge pick. No new enemy after the demon (the Circle's family is still one creature); their
-beats are for the Circle IX task to deepen. Floors 830-801 (up to the Spire Fiend) are still to come.
-In the one-floor layout (LevelDesign.md) Circle IX is recut into floors like Circle X, with a floor boss every 10th
-floor and the Spire Fiend on 801; the Old Stair's shortcut stays where it is (Floor 871, out at 841).
+Black spires with glowing seams over a road of cooling rock, the Rift's magma glowing in its cracks far below. The road
+is the only way up, and it keeps splitting: the **Brimstone Demons** climb out of the cracks to keep him off it, and the
+spires shed shards. Built **one level per floor** like Circle X (J, 2026-10-19): the route, every floor's page and the
+floor bosses are in [LevelDesign.md](LevelDesign.md), section 6. In short: Floors 900-891 (*the Cracked Road*, the
+Brimstone Demon met alone on Floor 900, its whelps, lobbers and the road's new pieces one a floor), ending on **the Road
+Breaker** (891), the biggest demon on the road, who keeps it broken; **the Spared Demon** shortcut (891 to 860); Floors
+860-851 (*the Carver's Yard*, the spire forest where everything is carved), ending on **the Carver** (851), the demon
+who carves every floor number and rule on the road; **the Hollow Spire** shortcut (851 to 810); Floors 810-802 (*the
+Needle Stair*, round the outside of the great spire) up to the crack in its side on Floor 802's landing: the entrance
+of **the Spire Fiend**'s arena on Floor 801 (his design and fight: k_e16304d7a504). At most 4 enemies on screen.
 
-| Level | Floors | Place | New | The beat |
-|---|---|---|---|---|
-| 32 | 900-891 | **The Cracked Road** | `brimstoneDemon` | The first demon climbs out of the road, alone (`levels/CrackedRoad.json`, the first layout's beats). |
-| 33 | 890-881 | **The Rift** | (none) | The road cracks wide open under a carved *KEEP TO THE ROAD*; demons come out in twos. Hero: *"The road's coming apart. Can't blame it."* |
-| 34 | 880-871 | **The Old Stair** | **Shortcut** | A road past a staircase someone carved into the spires long ago, fallen in. At the top it ends at the stairwell's mouth, a slab carved *STAIRS (CLOSED)* (`floors.door`). Hero: *"Stairs. Fallen in. Still going up, though."* The first shortcut (below). |
-| 35 | 870-861 | **Shard Fall** | (none) | The spires shed in earnest under a carved *HARD HATS*. Hero: *"Even the scenery wants me dead."* |
-| 36 | 860-851 | **Demon Row** | (none) | Three demons planted in a row across the road under *ONE AT A TIME*. Hero: *"They're queuing now."* |
-| 37 | 850-841 | **Halfway Up the Road** | (none) | Floor 850, the Circle's milestone (*"FLOOR 850: HALFWAY UP THE ROAD"*). Hero: *"Halfway. Again."* |
-| 38 | 840-831 | **The Stairhead** | (none) | Where the Old Stair comes out: rubble spilling from a crack in a spire, the road and the stair meeting under *MIND THE RUBBLE*. Hero: *"So that's where the stairs come out."* (true whichever way he came). For now the level select follows. |
+The **great spire** is Circle IX's glimpse: always straight up through the haze, the Spire Fiend's, its seams pulsing,
+growing floor by floor. The Spire Fiend is never heard on the route; his spire hums and grinds.
+
+#### Circle IX's long way
+
+The first-pass stages (built 2026-10-18, 10 floors each, generated from `crackedRoad`) stay as the long way's
+stand-ins, as Circle X's do. The first, `CrackedRoad` (900-891), is gone: Floors 900-891 replace it.
+
+| Level | Floors | Place | The beat |
+|---|---|---|---|
+| 61 (`Level13`) | 890-881 | **The Rift** | The road cracks wide open under a carved *KEEP TO THE ROAD*; demons come out in twos. Hero: *"The road's coming apart. Can't blame it."* |
+| 62 (`Level14`) | 880-871 | **The Old Stair** | A road past a staircase someone carved into the spires long ago, fallen in. At the top, the stairwell's mouth, *STAIRS (CLOSED)*: the Old Stair's shortcut (below) to 841. |
+| 63 (`Level15`) | 870-861 | **Shard Fall** | The spires shed in earnest under a carved *HARD HATS*. Then Floor 860. |
+| 64 (`Level16`) | 860-851 | **Demon Row** | Off the path (the level select only): Floors 860-851 are played now. |
+| 65 (`Level17`) | 850-841 | **Halfway Up the Road** | Floor 850, the Circle's milestone (*"FLOOR 850: HALFWAY UP THE ROAD"*). |
+| 66 (`Level18`) | 840-831 | **The Stairhead** | Where the Old Stair comes out, under *MIND THE RUBBLE*. Then Floor 810 (830-811 have no stand-in yet). |
 
 ### Yooba between floors
 
@@ -368,7 +389,9 @@ floors for a cost or a risk. It is the rogue choice that keeps 1,000 floors reac
 |---|---|---|---|---|
 | **The Sack Lift** (`sackLift`, built 2026-10-19, `levels/Floor991.json`) | Floor 991's landing, after the Imp Foreman: the imps' sack lift; the Shaft's crack at 975 | diamonds: *FARE: 20 DIAMONDS* (`costDiamonds`), paid in the village's own diamonds; with fewer the card is stamped *CAN'T AFFORD THE FARE* and he walks | Floors 990-961: out at **Floor 960** | Taking it: *"Paying them with our own diamonds. Lovely."* Announcer: *"HE'S RIDING THE SACK LIFT! THE CROWD IS DISGUSTED!"* (all lines: LevelDesign.md) |
 | **The King's Chimney** (`kingsChimney`, built 2026-10-19, `levels/Floor951.json`) | Floor 951's landing, after the Pile Keeper: the Magma King's heat vent; the Shaft's crack at 940 | a harder floor after it (a risk, on the card: *Risk: the King hears you coming*): Floor 910 reads `shortcutTaken`, its lava rises faster with the push music on, and the King says so: *"Came up my chimney, little spark? Rude."* | Floors 950-911: out at **Floor 910** | Taking it: *"Hold your breath. Forever."* Announcer: *"UP THE CHIMNEY?! HE SKIPPED HALFWAY!"* |
-| **The Collapsed Stairwell** (`oldStair`) | Floor 871, the top of the Old Stair (`levels/Level14.json`, level 34), behind *STAIRS (CLOSED)*; the Shaft's crack at 870 | a Grudge | Floors 870-841 (levels 35-37): out at **Floor 841**, level 38 next | Hero, at the top: *"Stairs. Fallen in. Still going up, though."* Taking it: *"Fine. One less thing to hate."* Announcer, as he climbs in: *"WHAT'S THIS? A SHORTCUT?! THE CROWD HATES IT!"*, then, as the counter lands: *"FLOOR EIGHT FORTY-ONE! NOBODY TAKES THE STAIRS!"* Hero, coming out: *"That went further than stairs should."* Keeping on: *"Nah. Hell would love that."* |
+| **The Collapsed Stairwell** (`oldStair`) | Floor 871, the top of the Old Stair (`levels/Level14.json`, level 62, on Circle IX's long way), behind *STAIRS (CLOSED)*; the Shaft's crack at 870 | a Grudge | Floors 870-841 (levels 63-65): out at **Floor 841**, level 66 next | Hero, at the top: *"Stairs. Fallen in. Still going up, though."* Taking it: *"Fine. One less thing to hate."* Announcer, as he climbs in: *"WHAT'S THIS? A SHORTCUT?! THE CROWD HATES IT!"*, then, as the counter lands: *"FLOOR EIGHT FORTY-ONE! NOBODY TAKES THE STAIRS!"* Hero, coming out: *"That went further than stairs should."* Keeping on: *"Nah. Hell would love that."* |
+| **The Spared Demon** (`sparedDemon`, built 2026-10-19, `levels/Floor891.json`) | Floor 891, after the Road Breaker: a whelp pinned under the broken road; let go, it claws a crack up the spire; the Shaft's crack at 870 | a Grudge | Floors 890-861: out at **Floor 860** | Taking it: *"Go on. Shoo. ...Oh, you're helping."* Announcer: *"HE SPARED A DEMON?! THE CROWD WANTS ITS MONEY BACK!"* (all lines: LevelDesign.md section 6) |
+| **The Hollow Spire** (`hollowSpire`, built 2026-10-19, `levels/Floor851.json`) | Floor 851, after the Carver: the spire he was hollowing out; the Shaft's crack at 830 | a harder floor after it (a risk, on the card: *Risk: the spire comes down behind you*): Floor 810 reads `shortcutTaken`, its shards fall from the start and the Rift rises faster | Floors 850-811: out at **Floor 810** | Taking it: *"Up the inside. Don't touch anything."* Announcer: *"UP THE SPIRE?! HE SKIPPED HALFWAY... AGAIN!"* |
 
 ## Waystones and runs
 
@@ -455,7 +478,15 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | `emberShower` | Ember shower (hazard) | X (from Floor 940, the Crust) | Steam off the lava river raining embers two at a time; announced by the hero (*"Now it's raining fire."*) 1.5 s before the first. | `fireball` |
 | `magmaKing` | The Magma King | X (Warden, Floor 901) | Rules the Ember Wastes from a throne of slag. Heard (voice `magmaKing`) on the Heat Stairs before he is met. Fights seated (boulders `magmaBoulder`, fist slam → `slamShockwave`) until half health, then stands for the only time and fights standing with his imps (ground-pound, fire breath); at a third he enrages and floods the hall (`lavaFlood`); see *The Magma King's fight*. Drops ten diamonds: his share of the stolen pile. | generated (`art/magmaKing.json`): idle, throw, slamSeat, hurt seated; rise, enrage; idleStand, slam, breath, hurtStand standing; die |
 | `magmaBoulder`, `slamShockwave`, `lavaFlood` | Boulder, shockwave, lava flood | X (his arena) | The Magma King's attacks: a lump of molten slag lobbed in an arc that sets you burning, a low shockwave of slag that runs along the floor when he slams (jump it), and the flood (phase 3): a wall of lava too tall to jump that rolls most of the way across the hall (outrun it if you can; rewind if you can't). Each has its warning glow (`mkWarnHand`, `mkWarnFloor`, `mkWarnMouth`, `mkWarnFlood`), 1 s or more ahead. `lavaWave` is the older wave the arcade fight uses. | `Fireball`, scaled and tinted |
-| `brimstoneDemon` | Brimstone Demon | IX | Born from the cracks in the Cracked Road: the rock splits and a demon climbs out to stop you climbing. Slow, heavy, plants itself in the road a few steps in front of you and breathes a short burst of fire (`brimstoneBreath`, sets you burning), so keep your distance. Sometimes drops a diamond: the imps' sacks leak on the road, the cracks swallow what falls, and the demons come out with it stuck in their rock. Not damned, so no loop shards. First met alone at the start of Circle IX (`levels/CrackedRoad.json` today; Level 12 in the 10-floor layout). | `Demon1` (exists) until generated; spec ready (`art/brimstoneDemon.json`) |
+| `brimstoneDemon` | Brimstone Demon | IX | Born from the cracks in the Cracked Road: the rock splits and a demon climbs out to stop you climbing. Slow, heavy, plants itself in the road a few steps in front of you and breathes a short burst of fire (`brimstoneBreath`, sets you burning), so keep your distance. Sometimes drops a diamond: the imps' sacks leak on the road, the cracks swallow what falls, and the demons come out with it stuck in their rock. Not damned, so no loop shards. First met alone on Floor 900, the first floor of Circle IX (`levels/Floor900.json`). | `Demon1` (exists) until generated; spec ready (`art/brimstoneDemon.json`) |
+| `demonWhelp` | Brimstone whelp | IX (from Floor 897, The Whelps) | The cracks' young: a small Brimstone Demon that scuttles out of a crack and charges along the ledge at him. Too small to breathe fire, not too small to bite (burns on touch); two hits. Not damned: no loop shards. | the demon's art (`Demon1`), small and tinted ember-red, until its own sheets are made (rule 5: the same creature) |
+| `demonLobber` | Brimstone lobber | IX (from Floor 894, The Lobbers) | A Brimstone Demon that climbed the spires instead of the road: it squats on a spire ledge and lobs lumps of brimstone (`brimstoneLump`) in an arc at him, the landing spot glowing 1 s first (`lobberGlow`). | the demon's art, tinted ash-grey |
+| `whelpNest` | Whelp nest | IX (from Floor 856, The Nest) | A crack in the rock where whelps are born: it glows and spits a whelp every few seconds until it is shot shut. A target, not a fighter: it never moves or attacks. | a glowing crack (placeholder shape) |
+| `roadBreaker` | The Road Breaker (floor boss) | IX (Floor 891) | The biggest Brimstone Demon on the road, a slab of road for a club: he keeps the road broken so nothing climbs it. Two tiers: slams that run a crack along the road (a row of glows, each bursting 1.1 s later) and a lump of road kicked at the hero's spot (a glow first); at half health he breaks his own tier and the road gives way, then the same with whelps crawling out of his cracks. Voice `roadBreaker`: deep, gravelly, slow, proud of every crack. | the demon's art, scaled up and darkened, until `art/roadBreaker.json` |
+| `carver` | The Carver (floor boss) | IX (Floor 851) | A gaunt demon with a chisel for a hand who carves everything on the road: the floor numbers, the rules (*KEEP TO THE ROAD*), the jokes (*THIS WAY UP*). Fussy, offended by footprints. Two tiers: chisel strikes along the tier and shards knocked loose over the hero (each after a 1.1 s glow); at half health he climbs his scaffold and whelps come out of his chiselled cracks. Voice `carver`: thin, fussy, precise, offended. | the demon's art, thin and pale, until `art/carver.json` |
+| `sparedWhelp` | The spared whelp | IX (Floor 891) | A whelp pinned under the broken road after the Road Breaker falls, squealing. Harmless. Let go, it owes him: the Spared Demon shortcut. | the whelp's art |
+| `roadSlab`, `settleSlab`, `splitSlab`, `risingSlab`, `seesawSlab`, `roadCreep` | The road's pieces | IX | The Cracked Road itself: solid slabs, slabs settling into the Rift, slabs splitting apart, slabs the Rift heaves up, slabs balanced on spire tips, road sliding off the spires (LevelDesign.md section 6). | `Art/Climb/Road*` (Hawkes Gen, 2026-10-19) |
+| `spireShard`, `shard`, `brimstoneVent` | Spire shards, brimstone vents (hazards) | IX | The spires shedding (a glowing seam, then a shard), and the cracks breathing fire on a beat (a glowing crack, then a column). | the slag drip's and the geyser's art, tinted |
 | `fighter` → Drooler | Drooler | V | Cave beast; Death2 is it eating you. | `Fighter*` (exists) |
 | `sentinel` → Lurker | Lurker | V | Crouching cave hunter; Death3. | `Level3Enemy*` (exists) |
 | `chaser`, `swarmer`, `exploder`, `sludge`, `slimeGlob`, `slimeSplat` | (retired) | none | Slime enemies. Not in any level once the levels are rebuilt. Keep the files until nothing references them. | slime |
@@ -509,18 +540,18 @@ Built (2026-10-15; recipe: GameplayCookbook "A stage that climbs through Hell's 
    difficulty, milestones) and the `generateFloors` action that fills floors between story beats, seeded, so
    rewinds and playtests repeat. Circle X is `emberWastes`; its levels are one floor each, Levels 2-31, "Floor 1000:
    The Landing" to "Floor 901: The Slag Throne" (the Magma King's arena: a locked screen whose counter stays on 901),
-   with the old 10-floor stages (Levels 39-46) as the long way's stand-ins. Circle IX is `crackedRoad`; its first
-   stage is `CrackedRoad`, "Floors 900-891: The Cracked Road" (off the path until Circle IX is rebuilt).
+   with the old 10-floor stages (Levels 67-74) as the long way's stand-ins. Circle IX is `crackedRoad`; its levels
+   are one floor each too, Levels 32-60, "Floor 900: The Cracked Road" to "Floor 802: The Spire Door".
 
-   *Stage dressing* (2026-10-18, with the old stages `Level3`-`Level6`, now levels 39-42): a stage's own scenery on top of its Circle's (`world.props`:
+   *Stage dressing* (2026-10-18, with the old stages `Level3`-`Level6`, now levels 67-70): a stage's own scenery on top of its Circle's (`world.props`:
    the Spill's debris, the Loop's same rock), a carved sign where the hero lands (`floors.sign`), floors Hell makes
    him walk twice (`floors.repeat`, the Loop's 957), and stages that lead straight on to the next one through the
-   Shaft (`nextLevelNumber`). With `Level7`-`Level10` (now levels 43-46): a door carved with words at the top of a stage, where the camera
+   Shaft (`nextLevelNumber`). With `Level7`-`Level10` (now levels 71-74): a door carved with words at the top of a stage, where the camera
    stops (`floors.door`, the Magma King's *THE SLAG THRONE*).
 
 Note: the Landing was recut from the first layout's 25-floor stage to Floors 1000-991 (2026-10-18), then to the one
 floor it is now (Floor 1000, `levels/Floor1000.json`), and its cinders moved up to the Spill, where the Story puts them. `CrackedRoad` was cut the same way to Floors
-900-891 (level 32's floors); its beats are still the first layout's until the Circle IX task rebuilds it.
+900-891, then replaced by the one-floor levels Floors 900-891 (2026-10-19).
 
 This milestone (*Into Hell*, approved 2026-10-18) builds:
 
@@ -589,7 +620,7 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    `offerShortcut` (the two cards, the cost, paid once, final through rewinds) and the trigger `shortcutChosen` the
    script branches on; a taken shortcut's `nextLevel` replaces the stage's `nextLevelNumber`, the run goes on from it,
    and `ShortcutProgress` (Data) keeps it for the Shaft's dotted jump (`ShaftStop.ShortcutFrom`/`ShortcutTo`). The
-   first one is the Old Stair's (`Level14.json`, level 34, Floor 871 to 841). Playtest: `shortcut`.
+   first one is the Old Stair's (`Level14.json`, level 62, Floor 871 to 841). Playtest: `shortcut`.
 
 ## On the website
 

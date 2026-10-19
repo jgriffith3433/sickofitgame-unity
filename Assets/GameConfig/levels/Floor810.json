@@ -1,0 +1,543 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor810",
+  "displayName": "Floor 810: The Needle's Foot",
+  "levelNumber": 52,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 53,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 810,
+    "length": 90,
+    "floors": {
+      "start": 810,
+      "end": 809,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "stair",
+          "direction": "UpRight",
+          "length": 6.47,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                -0.6,
+                -1.2
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.1,
+                0.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                2.8,
+                1.3
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                4.5,
+                2.55
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "turn",
+          "direction": "Right",
+          "length": 2.98,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                6.6,
+                2.55
+              ],
+              "id": "turn",
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                7.6,
+                3.25
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                6.8,
+                3.35
+              ],
+              "id": "soul810"
+            }
+          ]
+        },
+        {
+          "name": "stairOn",
+          "direction": "Up",
+          "length": 4.88,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "splitSlab",
+              "at": [
+                8.9,
+                3.85
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                6.8,
+                5.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                8.9,
+                6.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                6.8,
+                7.75
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                4.6,
+                8.35
+              ],
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Left",
+          "length": 6.1,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding810",
+              "at": [
+                2.4,
+                7.75
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the long way: the stair as written",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "sectionReached",
+              "section": "stair"
+            },
+            {
+              "type": "shortcutTaken",
+              "shortcut": "hollowSpire",
+              "taken": false
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "showText",
+                "text": "Big spire. I'm going up it, aren't I.",
+                "duration": 3.77,
+                "style": "Subtitle",
+                "sound": "vo_f810_spire"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "by the Hollow Spire: everything falls",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "sectionReached",
+              "section": "stair"
+            },
+            {
+              "type": "shortcutTaken",
+              "shortcut": "hollowSpire",
+              "taken": true
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_push.ogg",
+            "volume": 0.85
+          },
+          {
+            "type": "setCounter",
+            "name": "lavaMax",
+            "value": 6.6
+          },
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.45
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.8
+              },
+              {
+                "type": "playSound",
+                "sound": "magma_rumble"
+              },
+              {
+                "type": "showText",
+                "text": "THE SPIRE CAME DOWN BEHIND HIM! NOW EVERYTHING'S FALLING!",
+                "duration": 3.8,
+                "style": "Banner",
+                "sound": "vo_f810_falling",
+                "color": "#FF8A3D"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.5
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  0.8,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.6
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -0.6,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.6
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  1.8,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.6
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  0.2,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.6
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -1.2,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.6
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  1.2,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.6
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  0.0,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 1.6
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the hum",
+        "when": {
+          "type": "sectionReached",
+          "section": "turn"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.06,
+                "duration": 1.5
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "It's humming. Spires shouldn't hum.",
+                "duration": 3.63,
+                "style": "Subtitle",
+                "sound": "vo_f810_hum"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 809,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "THE NEEDLE'S FOOT: CLIMBED",
+                "duration": 3.03,
+                "style": "Banner",
+                "sound": "vo_f810_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 810: THE NEEDLE STAIR",
+                "duration": 3.1,
+                "style": "Banner",
+                "sound": "vo_f810_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

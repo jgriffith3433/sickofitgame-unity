@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "extends": "brimstoneDemon",
+  "health": 2,
+  "moveSpeed": 1.5,
+  "tags": [
+    "demonWhelp"
+  ],
+  "body": {
+    "radius": 0.3,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.19,
+    "color": "#FF8A6A",
+    "fxColor": "#FF6A1F"
+  },
+  "loot": {
+    "chance": 0.15,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "chase",
+      "speed": 1.5,
+      "stopDistance": 0.0,
+      "horizontalOnly": true,
+      "face": true
+    }
+  ]
+}

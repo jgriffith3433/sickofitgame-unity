@@ -20,8 +20,14 @@
     "groundEdgeColor": "#FF8A2A",
     "segmentLength": 6.0,
     "platformChance": 0.4,
-    "platformHeight": [1.1, 1.7],
-    "platformWidth": [1.4, 2.4],
+    "platformHeight": [
+      1.1,
+      1.7
+    ],
+    "platformWidth": [
+      1.4,
+      2.4
+    ],
     "platformColor": "#1C1A20",
     "clearStart": 8.0
   },
@@ -30,7 +36,10 @@
       "name": "black spires",
       "shape": "Spire",
       "color": "#0A080CD9",
-      "size": [1.0, 3.8],
+      "size": [
+        1.0,
+        3.8
+      ],
       "sizeVariation": 0.35,
       "across": -2.5,
       "parallax": 0.75,
@@ -43,7 +52,10 @@
       "name": "spire seams",
       "shape": "Glow",
       "color": "#FF7A1A80",
-      "size": [0.18, 2.2],
+      "size": [
+        0.18,
+        2.2
+      ],
       "sizeVariation": 0.4,
       "across": -2.5,
       "parallax": 0.75,
@@ -56,7 +68,10 @@
       "name": "road cracks",
       "shape": "Glow",
       "color": "#FF6A1AB3",
-      "size": [2.2, 0.25],
+      "size": [
+        2.2,
+        0.25
+      ],
       "sizeVariation": 0.4,
       "across": -2.78,
       "parallax": 0.0,
@@ -69,7 +84,10 @@
       "name": "foreground shards",
       "shape": "Spire",
       "color": "#030204",
-      "size": [0.5, 1.4],
+      "size": [
+        0.5,
+        1.4
+      ],
       "sizeVariation": 0.3,
       "across": -3.0,
       "parallax": -0.4,
@@ -83,9 +101,41 @@
     {
       "entity": "brimstoneDemon",
       "weight": 1.0,
-      "fromFloor": 0,
-      "areaCenter": [3.8, -2.05],
-      "areaSize": [1.2, 0.1]
+      "fromFloor": 900,
+      "areaCenter": [
+        3.8,
+        -2.05
+      ],
+      "areaSize": [
+        1.2,
+        0.1
+      ]
+    },
+    {
+      "entity": "demonWhelp",
+      "weight": 0.8,
+      "fromFloor": 897,
+      "areaCenter": [
+        4.0,
+        -2.05
+      ],
+      "areaSize": [
+        1.0,
+        0.1
+      ]
+    },
+    {
+      "entity": "demonLobber",
+      "weight": 0.6,
+      "fromFloor": 894,
+      "areaCenter": [
+        3.6,
+        -0.4
+      ],
+      "areaSize": [
+        1.0,
+        0.6
+      ]
     }
   ],
   "hazards": [
@@ -101,7 +151,10 @@
           "type": "startHazard",
           "id": "spireShards",
           "projectile": "fireball",
-          "pattern": { "type": "rain", "count": 1 },
+          "pattern": {
+            "type": "rain",
+            "count": 1
+          },
           "speed": 2.2,
           "interval": 1.4,
           "duration": 6.0
@@ -139,5 +192,183 @@
       "color": "#FFB46A",
       "duration": 2.5
     }
-  ]
+  ],
+  "sky": {
+    "enabled": true,
+    "top": "#0A060C",
+    "glow": "#3A1010",
+    "sea": "#E0501A",
+    "seaLevel": -6.0,
+    "seaParallax": 0.9,
+    "seaMinOnScreen": 0.06,
+    "seaArt": {
+      "sheet": "Art/Climb/FarSea_loop.png",
+      "spriteNameFilter": "",
+      "fps": 6,
+      "scroll": 0.02,
+      "color": "#8A5A5A"
+    },
+    "seaArtHeight": 2.4,
+    "layers": [
+      {
+        "name": "far spires",
+        "sprite": "Art/Climb/Spires_still.png#still_00",
+        "shape": "Spire",
+        "color": "#3A2E38C0",
+        "size": [
+          2.0,
+          2.4
+        ],
+        "sizeVariation": 0.35,
+        "parallax": [
+          0.92,
+          0.9
+        ],
+        "spacing": [
+          3.0,
+          1.0
+        ],
+        "chance": 0.75,
+        "onSea": true,
+        "order": 0
+      },
+      {
+        "name": "smoke",
+        "shape": "Glow",
+        "color": "#2A1E2440",
+        "size": [
+          6.0,
+          1.4
+        ],
+        "sizeVariation": 0.4,
+        "parallax": [
+          0.85,
+          0.75
+        ],
+        "spacing": [
+          7.0,
+          4.0
+        ],
+        "chance": 0.5,
+        "drift": 0.25,
+        "order": 1
+      },
+      {
+        "name": "far islands",
+        "sprite": "Art/Climb/Island_still.png#still_00",
+        "shape": "Rock",
+        "color": "#4A3E46D0",
+        "size": [
+          1.5,
+          0.9
+        ],
+        "sizeVariation": 0.35,
+        "parallax": [
+          0.88,
+          0.8
+        ],
+        "spacing": [
+          4.0,
+          3.5
+        ],
+        "chance": 0.45,
+        "hanging": false,
+        "order": 2
+      },
+      {
+        "name": "near spires",
+        "sprite": "Art/Climb/Spires_still.png#still_00",
+        "shape": "Spire",
+        "color": "#6A5A66",
+        "size": [
+          3.2,
+          3.8
+        ],
+        "sizeVariation": 0.3,
+        "parallax": [
+          0.8,
+          0.9
+        ],
+        "spacing": [
+          4.6,
+          1.0
+        ],
+        "chance": 0.6,
+        "onSea": true,
+        "order": 3
+      },
+      {
+        "name": "floating islands",
+        "sprite": "Art/Climb/Island_still.png#still_00",
+        "shape": "Rock",
+        "color": "#7A6A72",
+        "size": [
+          2.6,
+          1.5
+        ],
+        "sizeVariation": 0.3,
+        "parallax": [
+          0.7,
+          0.6
+        ],
+        "spacing": [
+          6.0,
+          5.0
+        ],
+        "chance": 0.45,
+        "hanging": false,
+        "order": 4
+      }
+    ],
+    "bands": [
+      {
+        "name": "low haze",
+        "art": {
+          "sheet": "Art/Climb/Haze_band.png",
+          "spriteNameFilter": "",
+          "fps": 1,
+          "scroll": 0.03,
+          "color": "#B0A0A8A0"
+        },
+        "anchor": "Sea",
+        "offset": 0.9,
+        "height": 2.0,
+        "parallax": 0.9,
+        "order": 1
+      },
+      {
+        "name": "high haze",
+        "art": {
+          "sheet": "Art/Climb/Haze_band.png",
+          "spriteNameFilter": "",
+          "fps": 1,
+          "scroll": -0.02,
+          "color": "#A0909860"
+        },
+        "anchor": "Sea",
+        "offset": 4.2,
+        "height": 2.6,
+        "parallax": 0.82,
+        "order": 3
+      },
+      {
+        "name": "ceiling glow",
+        "art": {
+          "sheet": "Art/Climb/Ceiling_band.png",
+          "spriteNameFilter": "",
+          "fps": 1,
+          "scroll": 0,
+          "color": "#806070"
+        },
+        "anchor": "Top",
+        "offset": 0.35,
+        "height": 1.1,
+        "parallax": 0.95,
+        "order": -1
+      }
+    ],
+    "embers": 18,
+    "emberColor": "#C8B0A0B0",
+    "shimmer": 0.35
+  }
 }

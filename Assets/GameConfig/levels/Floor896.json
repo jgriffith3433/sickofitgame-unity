@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor896",
+  "displayName": "Floor 896: Brimstone Vents",
+  "levelNumber": 36,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 37,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 896,
+    "length": 90,
+    "floors": {
+      "start": 896,
+      "end": 895,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "slabs",
+          "direction": "Up",
+          "length": 3.15,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -1.0,
+                -1.15
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                0.8,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -0.8,
+                1.45
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "vents",
+          "direction": "Right",
+          "length": 12.45,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                2.4,
+                1.45
+              ]
+            },
+            {
+              "entity": "brimstoneVent",
+              "at": [
+                3.55,
+                1.45
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                4.7,
+                1.45
+              ]
+            },
+            {
+              "entity": "brimstoneVentB",
+              "at": [
+                5.85,
+                1.45
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                7.0,
+                1.45
+              ]
+            },
+            {
+              "entity": "brimstoneVentC",
+              "at": [
+                8.15,
+                1.45
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                9.3,
+                1.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                11.5,
+                1.45
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                12.4,
+                2.05
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                12.0,
+                2.25
+              ],
+              "id": "soul896"
+            }
+          ]
+        },
+        {
+          "name": "slope",
+          "direction": "UpRight",
+          "length": 6.08,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "settleSlab",
+              "at": [
+                13.2,
+                2.7
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                14.9,
+                3.95
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneVentD",
+              "at": [
+                15.95,
+                3.95
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                16.9,
+                5.2
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                18.0,
+                5.95
+              ],
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.1,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding896",
+              "at": [
+                20.9,
+                5.2
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the first vent",
+        "when": {
+          "type": "sectionReached",
+          "section": "vents"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.8
+              },
+              {
+                "type": "showText",
+                "text": "The road's breathing fire now.",
+                "duration": 3.3,
+                "style": "Subtitle",
+                "sound": "vo_f896_fire"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the vent coughs up a whelp",
+        "when": {
+          "type": "sectionReached",
+          "section": "slope"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "wait",
+                "seconds": 1.6
+              },
+              {
+                "type": "spawn",
+                "entity": "demonWhelp",
+                "anchor": "Camera",
+                "at": [
+                  2.4,
+                  0.8
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 895,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "BRIMSTONE VENTS: AIRED OUT",
+                "duration": 3.03,
+                "style": "Banner",
+                "sound": "vo_f896_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 896: BRIMSTONE VENTS",
+                "duration": 3.03,
+                "style": "Banner",
+                "sound": "vo_f896_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

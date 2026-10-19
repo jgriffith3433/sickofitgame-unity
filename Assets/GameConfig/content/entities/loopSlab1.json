@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "extends": "settleSlab",
+  "tags": [
+    "foothold",
+    "road",
+    "loopStone"
+  ],
+  "abilities": [
+    {
+      "type": "sink",
+      "sinkSpeed": 1.0,
+      "depth": 1.5,
+      "riseSpeed": 0.9,
+      "dip": 0.08,
+      "sound": "lava_bubble",
+      "loopPeriod": 6.0,
+      "loopPhase": 0.0,
+      "loopTell": 1.0,
+      "loopDown": 1.6
+    }
+  ]
+}

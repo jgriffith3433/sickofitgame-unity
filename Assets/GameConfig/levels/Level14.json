@@ -19,7 +19,7 @@
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 35,
+  "nextLevelNumber": 63,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 90,
@@ -305,7 +305,7 @@
                     "costText": "Costs a Grudge: {0}",
                     "cantPayText": "NO GRUDGE TO GIVE",
                     "toFloor": 841,
-                    "nextLevel": 38,
+                    "nextLevel": 66,
                     "color": "#FF9A3D"
                   }
                 ]

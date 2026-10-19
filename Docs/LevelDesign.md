@@ -9,7 +9,9 @@ floor, the Warden on the Circle's top floor, shortcuts skip stretches; revised t
 horizontally ... as immersive as you can"*: every floor's path, set piece, surprise, rewind moment and feel). The
 floor engine is built (see *Building it*); **the whole played route is built** (2026-10-18/19): Floors 1000-991 (levels
 2-11), the Sack Lift, Floors 960-951 (levels 12-21), the King's Chimney, Floors 910-902 (levels 22-30) and Floor 901
-(level 31), each `levels/Floor<floor>.json`. The long way isn't built as floors yet: turning a shortcut down plays the
+(level 31), each `levels/Floor<floor>.json`. **Circle IX's played route is built too** (2026-10-19, section 6): Floors 900-891 (levels
+32-41), the Spared Demon, Floors 860-851 (levels 42-51), the Hollow Spire and Floors 810-802 (levels 52-60), up to
+the Spire Fiend's arena entrance. The long way isn't built as floors yet: turning a shortcut down plays the
 old 10-floor stages over those floors as its stand-in (Story.md, *Level numbers*). Names marked *(working)* are placeholders. Lines are first drafts for the voices.
 
 ## The rules in one breath
@@ -1007,6 +1009,564 @@ Circle's family (here the imps and the village's sparks), with a reason to be on
 | 921 | **The Stoker** | The imp who stokes the King's lava with a shovel the size of a door, keeping the Wastes hot. | Shovels slag in arcs; opens geysers in a row (1 s glow); in the last phase makes the lava rise faster tier by tier. |
 | 911 | **The Herald** | The King's herald imp, who blows the horn to announce every challenger to the throne (the King loves a show). | His horn calls geysers in a fanfare pattern (looping: rewind it), summons two guards, and the last blast is a shockwave down the stairs. His lines announce the hero, badly. |
 
+## 6. Circle IX: the Cracked Road
+
+Built **one level per floor** the same way as Circle X (J, 2026-10-19: *"Build Circle IX the same way Circle X was
+built"*): the climb grammar (section 1), the toolkit (section 2, every piece of it now known), a played route of about
+30 floors in three stretches joined by two shortcuts, a floor boss every 10th played floor. The Spire Fiend's fight on
+Floor 801 is its own task (k_e16304d7a504): the route ends at his arena's entrance, on Floor 802's landing.
+
+### What changes above the Wastes
+
+- **The place.** The Heat Stairs come out above the Wastes' smoke onto an old road of black rock that winds up through a
+  forest of black spires with glowing seams. Nobody remembers who laid it. It is the only way up, and it keeps
+  splitting: pieces of it hang over the drop, float, settle, tip and break.
+- **The Rift** is the hot bath of Circle IX: under every floor the road's cracks open onto a chasm of magma far below
+  (the same `lavaSea` and `scald`: a hot bath, never a pit), rising on the floors where it rises. The world below is
+  the Circle's `sky`: the Rift's web of glowing cracks far down, black spires standing in it, broken slabs of road
+  floating in the haze, ash drifting up.
+- **The family:** the **Brimstone Demons**, born from the cracks (Story.md, *Roster*): the demon who plants itself and
+  breathes fire (900), the whelp that scuttles out of a crack and charges (897), the lobber that throws brimstone from a
+  spire ledge (894), and the nests in the cracks that keep spitting whelps until shot (856). The imps' hauling route
+  still runs up through the road (sack imps on swings, their hoist on 859): known, and the reason diamonds are here.
+  The damned sit on the breather ledges as before (loop shards).
+- **At most 4 enemies on screen** (section 1, *The pace*), and still at most one new idea per floor, a new monster alone.
+- **The great spire.** Far above, through the haze, the tallest spire, its seams pulsing, always straight up: the
+  Spire Fiend's. It grows floor by floor (the thread the King's glow was in Circle X; scenery, not drawn yet). Its
+  shards are what falls on the road. He is never heard on the route (his voice and fight are k_e16304d7a504's): the
+  spire hums and grinds instead.
+- **The music** stays the Wastes' loop and push music until the Cracked Road has its own (Story.md, *Music*).
+
+### The toolkit, new in Circle IX
+
+| Piece | What it does | Why it's in Hell | Telegraph | First floor | Engine |
+|---|---|---|---|---|---|
+| **Road slabs** | The road itself: big flat slabs of black rock with glowing seams, hanging over the Rift. Solid. | The road | none | 900 | yes (`roadSlab`, a `ledge` with its own art) |
+| **Settling slabs** | Broken slabs floating on the Rift's magma: stand on one and it settles under (sinking stones in the road's look) | The road, broken and fallen | It dips and hisses the moment he lands | 900 (known: 1000) | yes (`settleSlab`, ability `sink`) |
+| **Split slabs** | A slab with a glowing seam down its middle: it splits apart under him and falls, faster than an old ledge crumbles (0.8 s). Gone, except by rewind. | The road splitting, the way it always does | The seam blazes the moment he lands | 899 | yes (`splitSlab`, ability `crumble`) |
+| **Spire shards** | A shard of spire breaks off overhead and falls. | The spires shed (the great spire most of all) | The seam above glows and drips grit for 1.2 s | 898 | yes (`spireShard`: a drip that drops a `shard`) |
+| **Brimstone vents** | A crack in the road belches a column of brimstone fire straight up on a beat. | The cracks the demons come out of, breathing | The crack glows and smokes for 1 s | 896 | yes (`brimstoneVent`, ability `geyser`) |
+| **Rising slabs** | A slab the Rift's pressure shoves up a shaft when he stands on it, then lets back down. | The road heaving | It shudders and the crack under it glows before it moves | 895 | yes (`risingSlab`, ability `chainLift` with `startOnStand`, no chains) |
+| **Seesaw slabs** | A long slab balanced on a spire's tip: it rocks, and tips if he stands at its end. | Pieces of road the spires caught | It rocks before it tips | 893 | yes (`seesawSlab`, ability `raft` with no current) |
+| **Road creep** | A stretch of road sliding slowly back down toward the Rift like a belt: run with it, or against it and barely move. | The road slipping off the spires | Its seams crawl the way it slides | 860 | yes (`roadCreep`, ability `conveyor`) |
+| **Whelp nests** | A crack that spits a whelp every few seconds until it is shot shut. | Where the whelps are born | It glows and chitters before each whelp | 856 | yes (`whelpNest`, ability `spawner`) |
+| **The toppling spire** | A spire falls across the Rift and he runs along it as it goes (a collapse chase on its back). | The spires shed whole | A long grind and a big shake, 1.5 s before | 858 (the collapse's set piece, known pieces) | config (split slabs in a `»` section) |
+
+Every Circle X piece is known by now and comes up the road too: geysers and falls where the Rift spills into the
+road, updrafts round the great spire, chain lifts and swings on the imps' hoist, the wave (the Rift surging), the
+loop, the dark.
+
+| Monster | What it does | Why it's here | First floor |
+|---|---|---|---|
+| `brimstoneDemon` | Plants itself a few steps in front of him and breathes a short fan of fire | Born from the cracks to keep him off the road | 900 |
+| `demonWhelp` | A small demon that scuttles out of a crack and charges along the ledge; burns on touch; two hits | The cracks' young: too small to breathe fire, not too small to bite | 897 |
+| `demonLobber` | Squats on a spire ledge and lobs lumps of brimstone in an arc (the landing spot glows 1 s first) | A demon that climbed the spires instead of the road | 894 |
+| `whelpNest` | A crack in the rock that spits whelps until shot shut (a target, not a fighter) | Where the whelps come from | 856 |
+| `impSack` on a swing | Known (997): the imps' hauling route runs on up the road | The diamonds still go up to the gate | 859 |
+
+### The route through Circle IX
+
+```
+FLOOR 900-891    THE CRACKED ROAD          10 floors played          891: the Road Breaker
+      │  SHORTCUT 1: THE SPARED DEMON      (a whelp he lets go splits the spire open, 891 → 860; the Shaft's crack at 870)
+      │  skips 890-861 (the long way: the Rift, the Old Stair (its own shortcut 871 → 841), Shard Fall)
+FLOOR 860-851    THE CARVER'S YARD         10 floors played          851: the Carver
+      │  SHORTCUT 2: THE HOLLOW SPIRE      (up inside a spire the Carver hollowed, 851 → 810; the Shaft's crack at 830)
+      │  skips 850-811 (the long way: Halfway Up the Road at 850, the Stairhead)
+FLOOR 810-802    THE NEEDLE STAIR          9 floors played           801: THE SPIRE FIEND (his arena: k_e16304d7a504)
+```
+
+The same rules as Circle X's route: the Shaft climbs one floor per floor, jumps a dotted line through the crack on a
+shortcut, and the skipped floors stay dark. **The long way** is played today by Circle IX's first-pass 10-floor stages
+as stand-ins (Story.md, *Level numbers*), as Circle X's are: turning the Spared Demon down plays *The Rift* (890-881),
+*The Old Stair* (880-871, whose collapsed stairwell is still Hell's shortcut from 871 to 841) and *Shard Fall*
+(870-861), then Floor 860; turning the Hollow Spire down plays *Halfway Up the Road* (850-841) and *The Stairhead*
+(840-831), then Floor 810 (830-811 have no stand-in yet: the counter jumps there until the generator builds the long
+way).
+
+### The shortcuts of Circle IX
+
+| Shortcut | Where | Cost | Skips | Lines |
+|---|---|---|---|---|
+| **The Spared Demon** (`sparedDemon`) | Floor 891, after the Road Breaker: a whelp pinned under the broken road, squealing. Let it go and it owes him: it claws a crack open up the spire beside the road, straight up | **A Grudge** (letting a demon go takes some spite out of him: *Costs a Grudge: {0}*; with none, *NO GRUDGE TO GIVE*) | Floors 890-861: out at **Floor 860** | Hero, at the whelp: *"You're stuck. ...Ugh. Fine."* Taking it: *"Go on. Shoo. ...Oh, you're helping."* Announcer: *"HE SPARED A DEMON?! THE CROWD WANTS ITS MONEY BACK!"*, then: *"FLOOR EIGHT SIXTY! THE DEMON PAID HIM BACK!"* Keeping on: *"Nah. You'd bite me."* |
+| **The Hollow Spire** (`hollowSpire`) | Floor 851, after the Carver: the spire he was hollowing out, a door cut in its foot, the inside a chimney of chiselled rock | **A harder floor after it** (risk, on the card: *Risk: the spire comes down behind you*): Floor 810 reads `shortcutTaken`: shards fall from the first second and the Rift rises faster, and the announcer says why | Floors 850-811: out at **Floor 810** | Hero, at the door: *"He hollowed it out. Of course he did."* Taking it: *"Up the inside. Don't touch anything."* Announcer: *"UP THE SPIRE?! HE SKIPPED HALFWAY... AGAIN!"*, then: *"FLOOR EIGHT TEN! AND THE SPIRE CAME DOWN BEHIND HIM!"* Keeping on: *"No. I'll take the road. It's the only one I trust."* |
+
+(Costs: the Spared Demon a Grudge, the Hollow Spire a harder floor. The Old Stair, on the long way, a Grudge too.)
+
+### The floors of Circle IX
+
+Each page as in section 4. The landing carves the floor number and a word or two; every floor gives a Grudge pick
+(the every-fifth-floor rule still waits for the long way), except where a shortcut is taken.
+
+---
+
+#### Stretch 1: the Cracked Road (Floors 900-891)
+
+Where the road begins: the Heat Stairs let out onto it, the spires close in, and the demons climb out of its cracks.
+The stretch brings the Circle's new pieces one a floor and ends on the demon who breaks the road.
+
+#### Floor 900: The Cracked Road
+
+- **New:** the Brimstone Demon.
+- **Path:** `↗ 3` road slabs and settling slabs up out of the Rift → `→ 3` the road, a run along it → `■` the crack:
+  the road splits open and the first demon hauls itself out; the camera holds until it falls → `↑ 2` → the landing.
+- **Obstacles:** road slabs and settling slabs: everything else he knows from the Wastes, nothing yet.
+- **Monsters:** one Brimstone Demon, alone, at the crack; nothing before it.
+- **Set piece and beat:** the milestone and the first look at the Cracked Road: a hundred floors done, the spires
+  closing in, the Rift glowing far below. The road splits in front of him with a big shake and the demon climbs out of
+  it, slow and heavy, and plants itself. Landing carved *900* and *KEEP TO THE ROAD*.
+- **Surprise:** when it falls, a diamond drops out of its rock: the imps' sacks leak on the road and the cracks keep
+  what falls.
+- **Rewind:** its breath fan: rewind and stand off out of its reach.
+- **Feel:** a big shake as the road splits; slow motion the first time the fan passes close; the Rift's roar low and
+  far below the whole floor.
+- **Lines:** Announcer: *"FLOOR NINE HUNDRED! THE CRACKED ROAD!"* then *"A HUNDRED FLOORS DOWN! NINE HUNDRED TO GO!"*
+  Hero: *"New Circle. Same Hell."* At the demon: *"That one came out of the road."*
+- **Length:** ~75 s.
+
+#### Floor 899: Split Ends
+
+- **New:** split slabs.
+- **Path:** `↑ 3` split slabs and road slabs up a broken wall of road → `→ 2` a shelf (the breather, a damned soul) →
+  `↗ 3` split slabs and settling slabs → the landing.
+- **Obstacles:** split slabs (they split under him, 0.8 s), road slabs, settling slabs.
+- **Monsters:** one demon at the top of the slope.
+- **Set piece and beat:** the road breaking up under his feet: every split slab goes the moment he leaves it, so the
+  way down is gone as he climbs. Landing carved *899* and *WATCH YOUR STEP*.
+- **Surprise:** the damned soul on the shelf is holding two halves of a split slab together, forever.
+- **Rewind:** a slab he needed split before he got there: rewind and it is whole.
+- **Feel:** a small shake and a crack on every split; slow motion when he leaves a slab in its last instant.
+- **Lines:** Announcer: *"FLOOR EIGHT NINETY-NINE! SPLIT ENDS!"* Hero (first split): *"Even the road's falling
+  apart."*
+- **Length:** ~75 s.
+
+#### Floor 898: Shard Fall
+
+- **New:** spire shards.
+- **Path:** `→ 3` along the road under the spires (the first three shards one by one) → `↑ 3` up a spire's flank on
+  slabs → `← 2` a ledge run back across with shards falling → the landing.
+- **Obstacles:** spire shards falling from the seams overhead; road and settling slabs.
+- **Monsters:** one demon on the ledge run.
+- **Set piece and beat:** the spires shed in earnest. Landing carved *898* and *HARD HATS*.
+- **Surprise:** the last shard lands point-down in the road and stands there: a step up to the landing.
+- **Rewind:** the shards fall in the same spots every time: a rewind shows the gaps.
+- **Feel:** grit trickling before each shard; a medium shake when one lands near him.
+- **Lines:** Announcer: *"FLOOR EIGHT NINETY-EIGHT! SHARD FALL!"* Hero: *"Even the scenery wants me dead."*
+- **Length:** ~80 s.
+
+#### Floor 897: The Whelps
+
+- **New:** the demon whelp.
+- **Path:** `↗ 2` slabs → `→ 3` the road, cracks along it, the first whelp alone out of one → `↑ 3` settling slabs and
+  ledges with a whelp and a demon → `→ 1` the landing.
+- **Obstacles:** road, split and settling slabs; known.
+- **Monsters:** whelps: the first alone, in a quiet stretch; later a whelp with a demon.
+- **Set piece and beat:** the cracks have young. Landing carved *897* and *DON'T FEED THEM*.
+- **Surprise:** the second whelp charges so hard it runs off the end of the road into the Rift.
+- **Rewind:** a whelp he didn't see coming: rewind and shoot it in the crack.
+- **Feel:** chittering from the cracks before each whelp; slow motion as the first one leaps past.
+- **Lines:** Announcer: *"FLOOR EIGHT NINETY-SEVEN! THE WHELPS!"* Hero: *"That one's small. And angry."*
+- **Length:** ~80 s.
+
+#### Floor 896: Brimstone Vents
+
+- **New:** brimstone vents.
+- **Path:** `↑ 2` slabs → `→ 3` the vent road, cracks in it blowing in order → `↗ 2` slabs → the landing.
+- **Obstacles:** brimstone vents along the road, split slabs between them.
+- **Monsters:** a whelp on the vent road, a demon at the top.
+- **Set piece and beat:** the road breathing fire, the vents going off in a row as he runs. The first vent glows for a
+  full second with nothing else around. Landing carved *896* and *SMELLS LIKE EGGS*.
+- **Surprise:** the last vent blows a whelp out with its column; it lands on its back, kicking.
+- **Rewind:** the vents fire in the same order every time.
+- **Feel:** a medium shake for every blow within a screen; slow motion when a column misses him by a hair.
+- **Lines:** Announcer: *"FLOOR EIGHT NINETY-SIX! BRIMSTONE VENTS!"* Hero (first vent): *"The road's breathing fire
+  now."*
+- **Length:** ~80 s.
+
+#### Floor 895: The Heave
+
+- **New:** rising slabs.
+- **Path:** `→ 2` road → `↑ 4` the heave: two rising slabs up a shaft in the spires, ledges between → `↖ 2` → the
+  landing.
+- **Obstacles:** rising slabs, road and split slabs.
+- **Monsters:** whelps on the ledges between the slabs (one, then two).
+- **Set piece and beat:** the road shoving him up a shaft of spires. Landing carved *895* and *HOLD ON*.
+- **Surprise:** beside the second slab a damned soul rides its own slab up and down, forever, waving.
+- **Rewind:** stepped off too soon: rewind and ride it to the top.
+- **Feel:** a medium shake as each slab heaves; the roar drops away as he rises.
+- **Lines:** Announcer: *"FLOOR EIGHT NINETY-FIVE! THE HEAVE!"* Hero (first heave): *"Going up. Didn't ask."*
+- **Length:** ~80 s.
+
+#### Floor 894: The Lobbers
+
+- **New:** the demon lobber.
+- **Path:** `↑ 2` slabs, the first lobber alone on a spire ledge above → `■` the spire ledges: the camera holds until
+  two lobbers are down → `→ 2` → `↑ 1` → the landing.
+- **Obstacles:** road slabs and settling slabs; known.
+- **Monsters:** lobbers: the first alone; then two, one each side, with a whelp.
+- **Set piece and beat:** the demons that climbed the spires instead of the road, throwing it at him. Landing carved
+  *894* and *DUCK*.
+- **Surprise:** when the hold clears, a sack the imps hung on the spire splits and diamonds rain onto the ledge.
+- **Rewind:** a lump he didn't read: rewind; the landing spot glows first.
+- **Feel:** a small shake when a lump hits rock; slow motion on the first lump that passes close.
+- **Lines:** Announcer: *"FLOOR EIGHT NINETY-FOUR! THE LOBBERS!"* Hero: *"Now they're throwing the road at me."*
+- **Length:** ~85 s.
+
+#### Floor 893: Seesaw Road
+
+- **New:** seesaw slabs.
+- **Path:** `→ 3` a row of slabs balanced on spire tips over the Rift → `↑ 3` → the landing.
+- **Obstacles:** seesaw slabs (tip at the ends: stand in the middle), road slabs.
+- **Monsters:** whelps on the seesaws, a lobber at the top.
+- **Set piece and beat:** a road the spires caught when it fell, balanced over the drop. Landing carved *893* and
+  *BALANCE*.
+- **Surprise:** the last seesaw has a damned soul sitting on its far end, balancing it, forever.
+- **Rewind:** tipped off the end: rewind, stand in the middle.
+- **Feel:** creaks and grinding; slow motion when a tipping slab throws him onto the next.
+- **Lines:** Announcer: *"FLOOR EIGHT NINETY-THREE! SEESAW ROAD!"* Hero: *"Stand in the middle. Got it."*
+- **Length:** ~80 s.
+
+#### Floor 892: Demon Row
+
+- **New:** none; set piece: the row, then the road collapsing behind him.
+- **Path:** `↑ 2` → `■` the row: three demons planted across the road, the camera holds until they fall → `» 3` the
+  road gives way behind him (split slabs, the Rift surging after him) → the landing.
+- **Obstacles:** split slabs in a chase, the Rift's surge, road slabs.
+- **Monsters:** three demons in a row and a whelp (four at most).
+- **Set piece and beat:** the demons queuing across the road under a carved *ONE AT A TIME*; when the last one falls,
+  the road under the row goes too.
+- **Surprise:** the road behind them gives way the moment they're down: run.
+- **Rewind:** caught by the surge: rewind; the collapse is the same every time.
+- **Feel:** a big shake as the road goes; the roar at its loudest in the stretch; push music on the chase.
+- **Lines:** Announcer: *"FLOOR EIGHT NINETY-TWO! DEMON ROW!"* Hero: *"They're queuing now."* Chase, announcer:
+  *"RUN!"*
+- **Length:** ~95 s.
+
+#### Floor 891: The Breaker's Road (floor boss)
+
+- **New:** the floor boss, **the Road Breaker** (see *Floor bosses of Circle IX*).
+- **Path:** `■` tier 1, the broken road → `» 2` the road gives way and he runs along what's left, the Rift behind →
+  `↑ 2` → `■` tier 2, the top of the break.
+- **Obstacles:** road and settling slabs, the Rift's surge on the run between tiers.
+- **Monsters:** the Road Breaker and the whelps that crawl out of his cracks (two at most).
+- **Set piece and beat:** the demon who keeps the road broken, so nothing climbs it. Beaten, he falls through his own
+  crack. Under the broken road a whelp is pinned, squealing: **the Spared Demon** (shortcut 1).
+- **Surprise:** losing, he slams so hard the tier under *him* breaks.
+- **Rewind:** his slams crack the road in the same lines each time.
+- **Feel:** a medium shake per slam; a big one when the road gives way; slow motion as he falls.
+- **Lines:** see the boss. Defeat, announcer: *"THE ROAD BREAKER IS BROKEN!"*; hero: *"Road's open."*
+- **Length:** ~130 s.
+
+---
+
+#### Stretch 2: the Carver's Yard (Floors 860-851)
+
+The spire forest at the middle of the Circle, where every spire is carved: floor numbers, rules (*KEEP TO THE ROAD*,
+*ONE AT A TIME*), and things nobody asked for. Somebody carves all of it. The Spared Demon's crack lets out here; the
+long way comes up into 860 too.
+
+#### Floor 860: The Carver's Yard
+
+- **New:** road creep.
+- **Path:** `↑ 2` up out of the crack → `→ 3` the creeping road, sliding back toward the Rift → `↑ 2` → the landing.
+- **Obstacles:** road creep (run against it), road slabs, settling slabs.
+- **Monsters:** a demon on the creeping road, a whelp.
+- **Set piece and beat:** a road that slides off the spires as he runs up it, carved spires either side. Landing
+  carved *860* and *KEEP UP*.
+- **Surprise:** the *860* is freshly carved: the chips are still glowing on the landing.
+- **Rewind:** carried back into the Rift: rewind and jump the slide.
+- **Feel:** the grind of the creeping road under everything.
+- **Lines:** Announcer: *"FLOOR EIGHT SIXTY! THE CARVER'S YARD!"* Hero: *"Who carves all these?"*
+- **Length:** ~80 s.
+
+#### Floor 859: The Hoist
+
+- **New:** none; set piece: the imps' hoist up through the spires.
+- **Path:** `→ 2` → `↑ 4` the hoist: a chain lift up between two spires → `→ 2` chain to chain across a gap → the
+  landing.
+- **Obstacles:** a chain lift with an imp hacking at its chain, swinging chains (known).
+- **Monsters:** sack imps on swings (diamonds), a lobber throwing at the cage, the chain-cutter imp.
+- **Set piece and beat:** the imps' hauling route made it up here too. Landing carved *859* and *SACKS UP*.
+- **Surprise:** the lobber's lump hits the imps' sack instead: diamonds rain past him.
+- **Rewind:** a cut chain dropped the lift: rewind and shoot the cutter first.
+- **Feel:** chain rattles, the lift's jolts; push music on the hoist.
+- **Lines:** Announcer: *"FLOOR EIGHT FIFTY-NINE! THE HOIST!"* Hero: *"The imps got up here too. Of course."*
+- **Length:** ~85 s.
+
+#### Floor 858: The Leaning Spire
+
+- **New:** none; set piece: the toppling spire.
+- **Path:** `↗ 2` → `» 4` a spire topples across the Rift and he runs along its back as it goes (split slabs) → `↑ 2`
+  → the landing.
+- **Obstacles:** split slabs on the falling spire, settling slabs.
+- **Monsters:** two whelps on the spire's back.
+- **Set piece and beat:** the spire he's standing on decides to lie down. Landing carved *858* and *TIMBER*.
+- **Surprise:** it falls the right way: it ends up as the bridge to the landing.
+- **Rewind:** a slab split under him: rewind; the fall is the same every time.
+- **Feel:** a long grind and a big shake before it goes; push music on the run.
+- **Lines:** Announcer: *"FLOOR EIGHT FIFTY-EIGHT! TIMBERRR!"* Hero: *"It's leaning. It's leaning. ...It's gone."*
+- **Length:** ~80 s.
+
+#### Floor 857: Seam Falls
+
+- **New:** none; set piece: magma falls pouring from the spires' seams.
+- **Path:** `→ 3` along a wall of spires pouring magma on a beat → `↑ 3` up behind the falls → the landing.
+- **Obstacles:** lava falls (the seams pouring), vents below, settling slabs.
+- **Monsters:** a lobber on the top.
+- **Set piece and beat:** the spires bleed. Landing carved *857*, behind the last fall.
+- **Surprise:** when the last fall stops, the Carver's chisel marks are behind it: he carved a door there, then gave
+  up.
+- **Rewind:** a fall poured on him: rewind, count the beat.
+- **Feel:** loud, wet roar; slow motion when he slips through a fall.
+- **Lines:** Announcer: *"FLOOR EIGHT FIFTY-SEVEN! SEAM FALLS!"* Hero: *"Wait for it. ...Again."*
+- **Length:** ~85 s.
+
+#### Floor 856: The Nest
+
+- **New:** whelp nests.
+- **Path:** `↑ 2` → `→ 3` a road with nests in its cracks (the first nest alone) → `↑ 2` → the landing.
+- **Obstacles:** road slabs, split slabs.
+- **Monsters:** whelp nests and their whelps; a demon at the top.
+- **Set piece and beat:** where the whelps come from. Shoot the crack shut and it stops. Landing carved *856* and
+  *NO VACANCY*.
+- **Surprise:** the last nest spits out one whelp, looks at him, and seals itself.
+- **Rewind:** swarmed: rewind and shoot the nest first.
+- **Feel:** chittering; a small shake as a nest seals.
+- **Lines:** Announcer: *"FLOOR EIGHT FIFTY-SIX! THE NEST!"* Hero: *"So that's where they come from."*
+- **Length:** ~85 s.
+
+#### Floor 855: Sign Language
+
+- **New:** none; set piece: Hell's loop in the carvings.
+- **Path:** `→ 3` a run of slabs sinking on the loop's beat past a carved *YOU ARE HERE* → `→ 3` the same run again →
+  `↑ 2` → the landing.
+- **Obstacles:** loop stones that settle on the level's clock, a vent on the beat.
+- **Monsters:** one whelp on the second lap, at the same moment as the first.
+- **Set piece and beat:** the Carver's favourite joke: *YOU ARE HERE*, three times, then *(STILL)*. Landing carved *855*.
+- **Surprise:** under the last carving: *THIS WAY UP*, with an arrow pointing down.
+- **Rewind:** the loop is exact.
+- **Feel:** a skipped-record whoosh on the repeat.
+- **Lines:** Announcer: *"FLOOR EIGHT FIFTY-FIVE! SIGN LANGUAGE!"* Hero: *"I've read this one."*
+- **Length:** ~85 s.
+
+#### Floor 854: The Quarry
+
+- **New:** none; set piece: the Carver's quarry.
+- **Path:** `→ 2` cut slabs on creeping road → `↑ 4` rising slabs up the quarry face → `→ 1` the landing.
+- **Obstacles:** road creep carrying cut slabs, rising slabs, split slabs.
+- **Monsters:** demons in the quarry, a lobber.
+- **Set piece and beat:** where the road's slabs are cut from the spires. Landing carved *854* and *CUT HERE*.
+- **Surprise:** one of the cut slabs has a half-finished carving on it: a face. It looks a lot like the hero.
+- **Rewind:** carried off the end: rewind and ride the rise.
+- **Feel:** grinding and chiselling sounds; a medium shake as a slab heaves.
+- **Lines:** Announcer: *"FLOOR EIGHT FIFTY-FOUR! THE QUARRY!"* Hero: *"That's my face. Why is that my face."*
+- **Length:** ~85 s.
+
+#### Floor 853: Dust
+
+- **New:** none; set piece: the dark of the carving dust.
+- **Path:** `↑ 2` → `→ 3` the dust: a stretch where the carving dust swallows the light → `↗ 2` → the landing.
+- **Obstacles:** spire shards and vents (their glows are the light), split slabs.
+- **Monsters:** whelps in the dust.
+- **Set piece and beat:** the dust from all that carving, thick enough to swallow the light. Landing carved *853*.
+- **Surprise:** out of the dust, the great spire's seams pulse, once.
+- **Rewind:** a shard he didn't see: rewind; its glow comes first.
+- **Feel:** muffled roar; the shards' grit loud in the dark.
+- **Lines:** Announcer: *"FLOOR EIGHT FIFTY-THREE! DUST!"* Hero: *"Can't see a thing. Hell's improving."*
+- **Length:** ~80 s.
+
+#### Floor 852: The Gallery
+
+- **New:** none; set piece: the Carver's statues.
+- **Path:** `↑ 2` → `■` the gallery: carved demons along a terrace, the camera holds until the real ones fall → `→ 2`
+  → the landing.
+- **Obstacles:** road slabs, settling slabs.
+- **Monsters:** demons and a lobber hidden among the statues (four at most).
+- **Set piece and beat:** a terrace of carved demons, the Carver's best work. Some of them aren't carved. Landing
+  carved *852* and *DO NOT TOUCH*.
+- **Surprise:** the statue at the end wakes up last.
+- **Rewind:** a statue that breathed: rewind and shoot it first.
+- **Feel:** stone grinding as each one moves.
+- **Lines:** Announcer: *"FLOOR EIGHT FIFTY-TWO! THE GALLERY!"* Hero: *"Nice work. Shame about the subject."*
+- **Length:** ~95 s.
+
+#### Floor 851: The Carver's Spire (floor boss)
+
+- **New:** the floor boss, **the Carver**.
+- **Path:** `■` tier 1, his workshop at a spire's foot → `↑ 2` → `■` tier 2, the scaffold up the spire → the landing
+  and the Hollow Spire's door.
+- **Obstacles:** road and split slabs on the tiers.
+- **Monsters:** the Carver and whelps on tier 2 (two at most).
+- **Set piece and beat:** the demon who carved every number the hero has read since 900, caught carving *851*. Beaten,
+  he drops his chisel; the spire he was hollowing stands open: **the Hollow Spire** (shortcut 2).
+- **Surprise:** before the fight he finishes the *1* of *851*. Properly.
+- **Rewind:** his chisel lines glow first and come the same each time.
+- **Feel:** a medium shake per chisel strike; slow motion as he falls.
+- **Lines:** see the boss. Defeat, announcer: *"THE CARVER IS CHISELLED OUT!"*; hero: *"Signed it, too."*
+- **Length:** ~130 s.
+
+---
+
+#### Stretch 3: the Needle Stair (Floors 810-802)
+
+The road ends at the foot of the great spire and climbs it as a stair cut round its outside: shards, vents and the
+whole toolkit, the spire humming louder floor by floor, up to the crack in its side where the Spire Fiend waits.
+
+#### Floor 810: The Needle's Foot
+
+- **New:** none; the stair begins.
+- **Path:** `↗ 3` the stair round the spire → `→ 1` a turn → `↖ 3` the stair on → the landing.
+- **Obstacles:** road and split slabs as stairs, settling slabs at the foot.
+- **Monsters:** a demon and a whelp on the turns.
+- **Set piece and beat:** the great spire close enough to touch, the stair spiralling up it. If he came up **the Hollow
+  Spire**, shards fall from the first second and the Rift rises faster, and the announcer says why; by the long way the
+  floor is as written. Landing carved *810* and *TO THE SPIRE*.
+- **Surprise:** at the turn the spire hums, and every shard on the road trembles.
+- **Rewind:** a stair slab that split: rewind and take the stair at a run.
+- **Feel:** the hum under everything.
+- **Lines:** Announcer: *"FLOOR EIGHT TEN! THE NEEDLE STAIR!"* Hero: *"Big spire. I'm going up it, aren't I."*
+  Hollow Spire taken, announcer: *"THE SPIRE CAME DOWN BEHIND HIM! NOW EVERYTHING'S FALLING!"*
+- **Length:** ~80 s.
+
+#### Floor 809: Updraft Round the Spire
+
+- **New:** none; set piece: the heat rising round the spire.
+- **Path:** `↑ 2` → `→ 2` column to column round the spire → `↑ 3` one tall updraft → the landing.
+- **Obstacles:** heat updrafts (known), split slabs between them.
+- **Monsters:** a lobber throwing into the updrafts.
+- **Set piece and beat:** the spire's own heat carrying him up its side. Landing carved *809*.
+- **Surprise:** the lobber's lump rides the updraft straight back up into it.
+- **Rewind:** knocked out of a column: rewind and wait for the throw.
+- **Feel:** whoosh in the columns; a planned slow hang at the top.
+- **Lines:** Announcer: *"FLOOR EIGHT OH NINE! UPDRAFT!"* Hero: *"Hot air. Familiar."*
+- **Length:** ~80 s.
+
+#### Floor 808: The Creeping Stair
+
+- **New:** none; set piece: the stair sliding off the spire.
+- **Path:** `↗ 2` → `→ 3` creeping stair against its slide → `↑ 2` → the landing.
+- **Obstacles:** road creep, split slabs, rising lava (the Rift) in the last push.
+- **Monsters:** whelps riding the creep down at him.
+- **Set piece and beat:** the stair itself slipping off the spire. Landing carved *808* and *NOT THAT WAY*.
+- **Surprise:** a whelp rides the creep all the way down into the Rift, waving.
+- **Rewind:** carried back: rewind and jump the slide.
+- **Feel:** grinding; the roar rising with the Rift.
+- **Lines:** Announcer: *"FLOOR EIGHT OH EIGHT! THE CREEPING STAIR!"* Hero: *"Stairs going down. Me going up."*
+- **Length:** ~85 s.
+
+#### Floor 807: The Choir
+
+- **New:** none; set piece: the vents as a choir.
+- **Path:** `→ 4` a terrace of vents blowing in one exact pattern → `↑ 2` → the landing.
+- **Obstacles:** brimstone vents in a loop, split slabs.
+- **Monsters:** none: the vents are the floor.
+- **Set piece and beat:** a row of vents round the spire that sing (blow) in the same order, every time. Landing
+  carved *807* and *ENCORE*.
+- **Surprise:** the last vent is a beat late, every lap.
+- **Rewind:** the pattern is exact: rewind and see the gap.
+- **Feel:** each vent a different note of roar.
+- **Lines:** Announcer: *"FLOOR EIGHT OH SEVEN! THE CHOIR!"* Hero: *"Same song. I know the words."*
+- **Length:** ~75 s.
+
+#### Floor 806: The Overhang
+
+- **New:** none; set piece: under the spire's overhang.
+- **Path:** `↑ 2` → `← 3` under an overhang shedding shards → `↑ 2` → the landing.
+- **Obstacles:** spire shards, settling slabs, split slabs.
+- **Monsters:** a demon at the end of the overhang, a whelp.
+- **Set piece and beat:** a lip of spire sticking out over the stair, shedding. Landing carved *806*.
+- **Surprise:** the overhang's last shard is huge, and it misses.
+- **Rewind:** a shard he misread: rewind.
+- **Feel:** grit hissing; a big shake for the last shard.
+- **Lines:** Announcer: *"FLOOR EIGHT OH SIX! THE OVERHANG!"* Hero: *"Mind your head. Mine, specifically."*
+- **Length:** ~80 s.
+
+#### Floor 805: The Breakaway
+
+- **New:** none; set piece: a chase.
+- **Path:** `» 4` a stretch of stair breaks away and the Rift surges after him → `↑ 3` a rising slab out of it → the
+  landing.
+- **Obstacles:** split slabs in a chase, the surge, a rising slab.
+- **Monsters:** none until the breather; then a whelp.
+- **Set piece and beat:** the floor's one sprint. Landing carved *805*.
+- **Surprise:** the rising slab at the end takes him up just as the surge arrives.
+- **Rewind:** caught: rewind; the break is the same every time.
+- **Feel:** big shake as it breaks; push music; silence on the landing.
+- **Lines:** Announcer: *"FLOOR EIGHT OH FIVE! RUN!"* Hero: *"I hate this spire now. Specifically."*
+- **Length:** ~75 s.
+
+#### Floor 804: The Turn
+
+- **New:** none; set piece: demons holding the turns.
+- **Path:** `↑ 2` → `■` the turn: demons and a lobber hold the stair's turn until they fall → `↗ 3` → the landing.
+- **Obstacles:** road and settling slabs, shards.
+- **Monsters:** two demons, a lobber and a whelp (four at most).
+- **Set piece and beat:** the spire's guard at its best. Landing carved *804*.
+- **Surprise:** the lobber throws, the demon below breathes into the lump, and it bursts over them both.
+- **Rewind:** a fan he jumped into: rewind and read it.
+- **Feel:** slow motion on the closest fan.
+- **Lines:** Announcer: *"FLOOR EIGHT OH FOUR! THEY'RE HOLDING THE TURN!"* Hero: *"Excuse me. Coming through."*
+- **Length:** ~90 s.
+
+#### Floor 803: The Last Heave
+
+- **New:** none; set piece: the last rise.
+- **Path:** `↑ 5` rising slabs up the spire's face with lobbers on its ledges and shards falling → the landing.
+- **Obstacles:** rising slabs, shards.
+- **Monsters:** two lobbers.
+- **Set piece and beat:** the spire's crown fills the top of the sky; the hum is in his teeth. Landing carved *803*.
+- **Surprise:** at the top the spire's seams flare and the hum stops. Somebody up there is listening.
+- **Rewind:** a lump knocked him off a slab: rewind.
+- **Feel:** the hum getting louder; a medium shake as each slab heaves.
+- **Lines:** Announcer: *"FLOOR EIGHT OH THREE!"* Hero: *"It stopped humming. That's worse."*
+- **Length:** ~80 s.
+
+#### Floor 802: The Spire Door
+
+- **New:** none; set piece: the entrance.
+- **Path:** `↗ 2` slabs → `→ 2` a terrace round the spire → `↑ 1` → `■` the crack in the great spire's side.
+- **Obstacles:** a short climb of split slabs, a demon on the terrace, then quiet.
+- **Monsters:** a demon and a whelp, then nothing.
+- **Set piece and beat:** a crack in the great spire's side, tall as a door, carved *THE SPIRE*; shards trickle out of
+  it and the spire grinds. The camera stops; the Grudge pick; the counter ticks to 801. Floor 801, the Spire Fiend's
+  arena, is through it (k_e16304d7a504). Landing carved *802*.
+- **Surprise:** a damned soul sits beside the crack, carving tally marks, forever. There are a lot of them.
+- **Rewind:** a fan on the terrace: rewind and read it.
+- **Feel:** the roar dies to nothing; the grind of the spire; the music drops out.
+- **Lines:** Announcer: *"FLOOR EIGHT OH TWO! THE SPIRE FIEND AWAITS!"* Hero: *"Big door. Bigger spire."*
+- **Length:** ~75 s.
+
+---
+
+### Floor bosses of Circle IX
+
+Climbing arenas as in section 5: two tiers like the Foreman and the Keeper (phase 1 on the bottom tier, at half health
+the tier gives way and the camera moves on, phase 2 on the top tier), every attack after a glow of 1 s or more on its
+spot, at most four enemies counting the boss. Each gives a diamond burst and stands beside the way on.
+
+#### The Road Breaker (Floor 891)
+
+- **Concept:** the biggest Brimstone Demon on the road, a slab of road for a club: he keeps the road broken so nothing
+  climbs it. Slow, proud of every crack.
+- **Attacks:** *Tier 1:* slams the club down and a crack runs along the road (a row of glows, each bursting 1.1 s
+  later where it glowed), and kicks a lump of road at the hero's spot (a glow, the lump 1.1 s later). At half health he
+  slams so hard his own tier breaks, the road gives way and the camera runs on to tier 2. *Tier 2:* the same slams,
+  and whelps crawl out of his cracks (two at most).
+- **Lines:** Breaker: *"Road's closed."* Hero: *"I'll walk on the cracks, then."* At half: *"You broke... my road!"*
+  Defeat: *"Who... fixes... roads..."* Voice `roadBreaker`: deep, gravelly, slow, proud (Story.md).
+- **Art:** the demon's sheets scaled up and darkened until his own are made.
+
+#### The Carver (Floor 851)
+
+- **Concept:** a gaunt demon with a chisel for a hand who carves everything on the road: the floor numbers, the rules,
+  the jokes. Fussy, offended by the hero's footprints.
+- **Attacks:** *Tier 1:* chisel strikes along the tier (a row of glows, each bursting 1.1 s later) and a shard knocked
+  loose over the hero's spot (a glow, the shard 1.1 s later). At half health he climbs his scaffold; tier 2: the same,
+  and whelps from the cracks he chiselled (two at most).
+- **Lines:** Carver: *"Don't. Touch. The carvings."* Hero: *"Wasn't going to."* At half: *"You SMUDGED it."*
+  Defeat: *"My... masterpiece..."* Voice `carver`: thin, fussy, precise, offended (Story.md).
+- **Art:** the demon's sheets, thinner and paler, until his own are made.
+
 ## Building it
 
 The old 10-floor stages (`travelDirection` Right; once Levels 2-11, now only the long way's stand-ins, levels 39-46)
@@ -1080,3 +1640,14 @@ order it can be built and played:
    upright with him in it), the sign standing in the lava on 998 (*WELCOME TO THE VILLAGE*, whole), the throne far
    above (four distances: speck, glow, silhouette, close) and the cooling crust. Until they exist, those draw as plain
    shapes and labeled placeholders.
+8. **Circle IX** (section 6). *Built 2026-10-19* (levels 32-60; the `cracked-road-route` playtest plays Floor 901 to
+   Floor 802 taking both shortcuts). New data pieces, no new C#: `roadSlab`, `settleSlab`, `splitSlab`, `spireShard`
+   (+ `shard`), `brimstoneVent`, `risingSlab`, `seesawSlab`, `roadCreep`, `whelpNest`, the monsters `demonWhelp` and
+   `demonLobber` (+ `brimstoneLump`), the floor bosses `roadBreaker` and `carver` with their glows, and the Circle's
+   `sky` in `content/circles/crackedRoad.json`. The Cracked Road's art (road slabs, the far Rift, spires, floating road)
+   is `Tools/Art/climb/climb.json`'s `road*` pieces; until a piece is baked it draws in the Wastes' art, tinted. Built
+   with today's pieces, so some beats are simpler than the pages: the great spire isn't drawn; the toppling spire (858)
+   is a collapse chase along a row of split slabs; the dust on 853 is a fade like 907's dark; 855's laps are the same
+   layout placed twice (as 995); the shard that stands up on 898 and the vent's whelp on 896 are spawned pieces; the
+   statues on 852 are demons standing still until the hold starts. Floor 802 leads to the level select until Floor 801
+   exists.

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "extends": "lavaGeyser",
+  "tags": [
+    "geyser",
+    "vent"
+  ],
+  "abilities": [
+    {
+      "type": "geyser",
+      "off": 3.0,
+      "tell": 1.0,
+      "blow": 1.1,
+      "offset": 0.0,
+      "height": 3.0,
+      "width": 0.85,
+      "color": "#FFB43AF2",
+      "columnArt": {
+        "sheet": "Art/Climb/Geyser_column.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0,
+        "color": "#FFE0A0"
+      },
+      "tellSound": "lava_bubble",
+      "blowSound": "lava_burst",
+      "shake": 0.12
+    },
+    {
+      "type": "scald",
+      "damage": 1,
+      "launch": 7.0,
+      "interval": 0.8,
+      "effect": ""
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "extends": "debrisRaft",
+  "tags": [
+    "foothold",
+    "road"
+  ],
+  "visual": {
+    "color": "#B4A6B8",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/Ledge_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
+  },
+  "abilities": [
+    {
+      "type": "raft",
+      "current": [
+        0.0,
+        0.0
+      ],
+      "range": 0.0,
+      "bob": 0.05,
+      "bobPeriod": 3.0,
+      "rock": 5.0,
+      "tip": 14.0,
+      "phase": 0.0
+    }
+  ]
+}

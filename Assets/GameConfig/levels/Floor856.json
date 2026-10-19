@@ -1,0 +1,365 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor856",
+  "displayName": "Floor 856: The Nest",
+  "levelNumber": 46,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 47,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 856,
+    "length": 90,
+    "floors": {
+      "start": 856,
+      "end": 855,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "up",
+          "direction": "Up",
+          "length": 1.85,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -1.0,
+                -1.15
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.2,
+                0.15
+              ]
+            }
+          ]
+        },
+        {
+          "name": "nests",
+          "direction": "Right",
+          "length": 13.35,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                3.6,
+                0.15
+              ]
+            },
+            {
+              "entity": "whelpNest",
+              "at": [
+                4.4,
+                0.55
+              ],
+              "id": "firstNest",
+              "onEnter": true
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                5.8,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                8.0,
+                0.15
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                10.2,
+                0.15
+              ]
+            },
+            {
+              "entity": "whelpNest",
+              "at": [
+                11.0,
+                0.55
+              ],
+              "id": "secondNest"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                12.4,
+                0.15
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                12.6,
+                0.95
+              ],
+              "id": "soul856"
+            }
+          ]
+        },
+        {
+          "name": "climb",
+          "direction": "Up",
+          "length": 3.9,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "settleSlab",
+              "at": [
+                14.6,
+                1.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                12.4,
+                2.75
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                14.6,
+                4.05
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                15.8,
+                4.75
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "whelpNest",
+              "at": [
+                11.4,
+                3.15
+              ],
+              "id": "lastNest"
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 6.6,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding856",
+              "at": [
+                19.0,
+                4.05
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the first nest",
+        "when": {
+          "type": "sectionReached",
+          "section": "nests"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "showText",
+                "text": "So that's where they come from.",
+                "duration": 3.37,
+                "style": "Subtitle",
+                "sound": "vo_f856_nest"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the climb: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "climb"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 855,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "THE NEST: EVICTED",
+                "duration": 2.43,
+                "style": "Banner",
+                "sound": "vo_f856_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 856: THE NEST",
+                "duration": 2.57,
+                "style": "Banner",
+                "sound": "vo_f856_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

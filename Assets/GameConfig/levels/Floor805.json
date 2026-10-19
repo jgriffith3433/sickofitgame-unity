@@ -1,0 +1,381 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor805",
+  "displayName": "Floor 805: The Breakaway",
+  "levelNumber": 57,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 58,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 805,
+    "length": 90,
+    "floors": {
+      "start": 805,
+      "end": 804,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "ledge",
+          "direction": "Right",
+          "length": 0.6,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -0.6,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "break",
+          "direction": "Right",
+          "length": 15.15,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "splitSlab",
+              "at": [
+                1.6,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                3.8,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                6.0,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                8.2,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                10.4,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                12.6,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                14.8,
+                -2.45
+              ]
+            },
+            {
+              "entity": "lavaSurge",
+              "at": [
+                -3.0,
+                -1.6
+              ],
+              "id": "breakSurge",
+              "onEnter": true,
+              "facing": 1.0
+            }
+          ],
+          "autoSpeed": 1.15
+        },
+        {
+          "name": "rise",
+          "direction": "Up",
+          "length": 0.6,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "risingSlabTall",
+              "at": [
+                17.0,
+                -2.45
+              ],
+              "id": "escape"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                14.4,
+                1.2
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                14.4,
+                1.85
+              ],
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 6.2,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding805",
+              "at": [
+                21.0,
+                1.75
+              ],
+              "id": "landing"
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                22.4,
+                2.55
+              ],
+              "id": "soul805"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the stair breaks away",
+        "when": {
+          "type": "sectionReached",
+          "section": "break"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.8
+              },
+              {
+                "type": "playSound",
+                "sound": "magma_rumble"
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "out of it",
+        "when": {
+          "type": "sectionReached",
+          "section": "rise"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 804,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "I hate this spire now. Specifically.",
+                "duration": 3.7,
+                "style": "Subtitle",
+                "sound": "vo_f805_hate"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "showText",
+                "text": "THE BREAKAWAY: GOT AWAY",
+                "duration": 2.83,
+                "style": "Banner",
+                "sound": "vo_f805_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 805: THE BREAKAWAY",
+                "duration": 2.9,
+                "style": "Banner",
+                "sound": "vo_f805_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

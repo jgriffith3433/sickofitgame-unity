@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor894",
+  "displayName": "Floor 894: The Lobbers",
+  "levelNumber": 38,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 39,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 894,
+    "length": 90,
+    "floors": {
+      "start": 894,
+      "end": 893,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "slabs",
+          "direction": "Up",
+          "length": 3.15,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -1.0,
+                -1.15
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                1.2,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -0.8,
+                1.45
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                3.4,
+                3.0
+              ],
+              "scale": [
+                0.6,
+                1
+              ]
+            },
+            {
+              "entity": "demonLobber",
+              "at": [
+                3.4,
+                3.7
+              ],
+              "id": "firstLobber",
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "spires",
+          "direction": "Arena",
+          "length": 0.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.4,
+                2.75
+              ],
+              "id": "spireMid",
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -1.0,
+                4.05
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                4.9
+              ],
+              "scale": [
+                0.6,
+                1
+              ]
+            },
+            {
+              "entity": "demonLobber",
+              "at": [
+                -3.6,
+                5.6
+              ],
+              "onEnter": true,
+              "tags": [
+                "hold894"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                4.2,
+                5.2
+              ],
+              "scale": [
+                0.6,
+                1
+              ]
+            },
+            {
+              "entity": "demonLobber",
+              "at": [
+                4.2,
+                5.9
+              ],
+              "onEnter": true,
+              "tags": [
+                "hold894"
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                3.0,
+                3.35
+              ],
+              "onEnter": true,
+              "tags": [
+                "hold894"
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                1.6,
+                3.55
+              ],
+              "id": "soul894"
+            }
+          ]
+        },
+        {
+          "name": "ledge",
+          "direction": "Right",
+          "length": 4.55,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.4,
+                5.35
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                3.6,
+                5.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "up",
+          "direction": "Up",
+          "length": 5.2,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                5.8,
+                6.65
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 7.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding894",
+              "at": [
+                10.6,
+                6.65
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the first lobber",
+        "when": {
+          "type": "sectionReached",
+          "section": "slabs"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 5.5
+              },
+              {
+                "type": "showText",
+                "text": "Now they're throwing the road at me.",
+                "duration": 3.7,
+                "style": "Subtitle",
+                "sound": "vo_f894_road"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the spires: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "spires"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the spires is clear",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "sectionReached",
+              "section": "spires"
+            },
+            {
+              "type": "allDead",
+              "target": {
+                "tag": "hold894"
+              }
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "playSound",
+                "sound": "sack_spill"
+              },
+              {
+                "type": "spawn",
+                "entity": "diamond",
+                "anchor": "Camera",
+                "at": [
+                  0.4,
+                  1.6
+                ],
+                "count": 5,
+                "spacing": [
+                  0.35,
+                  0.0
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "nextSection"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 893,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "THE LOBBERS: DUCKED",
+                "duration": 2.57,
+                "style": "Banner",
+                "sound": "vo_f894_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 894: THE LOBBERS",
+                "duration": 2.77,
+                "style": "Banner",
+                "sound": "vo_f894_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

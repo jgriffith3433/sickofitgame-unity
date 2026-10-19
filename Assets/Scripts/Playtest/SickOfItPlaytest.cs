@@ -153,7 +153,8 @@ namespace SickOfIt.Playtest
         /// out on, and the level it leads to (the Sack Lift on Floor 991 to Floor 960, the King's Chimney on Floor 951 to Floor 910).
         /// The story path and the circle-x-route scenario take both; the levels they skip are the long way's stand-ins, off the path.
         /// </summary>
-        static readonly (int level, string id, int toFloor, int next)[] RouteShortcuts = { (11, "sackLift", 960, 12), (21, "kingsChimney", 910, 22) };
+        static readonly (int level, string id, int toFloor, int next)[] RouteShortcuts =
+            { (11, "sackLift", 960, 12), (21, "kingsChimney", 910, 22), (41, "sparedDemon", 860, 42), (51, "hollowSpire", 810, 52) };
         /// <summary>The Sack Lift's fare (Floor991.json offerShortcut costDiamonds): the route scenarios top the diamonds up to it (a setup shortcut).</summary>
         const int SackLiftFare = 20;
         /// <summary>circle-x-route: Floor 991 loaded directly, then the real flow through Floor 901.</summary>
@@ -183,10 +184,10 @@ namespace SickOfIt.Playtest
         const float ForemanSeconds = 1080f;
         /// <summary>
         /// The long-way scenario: the old 10-floor stages over Floors 990-951 (Docs/Story.md, "Level numbers": the long way's
-        /// stand-ins), level 39 (Level3.json, The Spill) loaded directly, then the real flow through level 41 (The Slag Falls),
-        /// which leads on to Floor 960; then level 42 (Level6.json, The Loop: level select only) loaded directly and played.
+        /// stand-ins), level 67 (Level3.json, The Spill) loaded directly, then the real flow through level 69 (The Slag Falls),
+        /// which leads on to Floor 960; then level 70 (Level6.json, The Loop: level select only) loaded directly and played.
         /// </summary>
-        public const int LongWayFrom = 39, LongWayTo = 41, LongWayLoop = 42;
+        public const int LongWayFrom = 67, LongWayTo = 69, LongWayLoop = 70;
         const float LongWayStagesSeconds = 1200f;
         /// <summary>A floor boss's telegraphs (Floor 991, the Imp Foreman): each attack and the glow that must come 1+ s before it, on its spot.</summary>
         static readonly (string attack, string warning, string what)[] FloorBossTelegraphs =
@@ -226,7 +227,13 @@ namespace SickOfIt.Playtest
         /// 880-871, the collapsed stairwell at its top), the floor it lets him out on, and the stage it leads to, past the
         /// ones it skips (Levels 19-21).
         /// </summary>
-        public const int ShortcutLevel = 34, ShortcutToFloor = 841, ShortcutNextLevel = 38;
+        public const int ShortcutLevel = 62, ShortcutToFloor = 841, ShortcutNextLevel = 66;
+        /// <summary>
+        /// The cracked-road-route scenario (Docs/LevelDesign.md section 6): Floor 901 (the Magma King) loaded directly, then the real
+        /// flow through Circle IX's played route to Floor 802 (the Spire Fiend's arena entrance), taking the Spared Demon and the Hollow Spire.
+        /// </summary>
+        public const int CrackedFrom = 31, CrackedTo = 60;
+        const float CrackedSeconds = 4500f;
         const float ShortcutSeconds = 480f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -341,7 +348,7 @@ namespace SickOfIt.Playtest
                 "with no video between them: Levels 3-11 (Floors 999-991, the Imp Foreman), where the bot takes the Sack Lift (its diamond fare topped up " +
                 "first, a setup shortcut) to Level 12, Levels 12-21 (Floors 960-951, the Pile Keeper), where it takes the King's Chimney to Level 22, Levels " +
                 "22-30 (Floors 910-902, the Heat Stairs up to the Magma King's door) and Level 31 (Floor 901, the Slag Throne: his arena, his Waystone at 901 " +
-                "and Circle IX waking on the Shaft); the old 10-floor stages (Levels 39-46) are never played. Each level with its title, voiced lines, floor " +
+                "and Circle IX waking on the Shaft); the old 10-floor stages (Levels 67-74) are never played. Each level with its title, voiced lines, floor " +
                 "counter, new enemy alone and breather checked and the Shaft's climb (or a shortcut's dotted jump) after it; then the level select, whose " +
                 "cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
             list.Add(new PlaytestScenario("wastes-climb", $"The Heat Stairs, one level per floor (Docs/LevelDesign.md): level {ClimbFrom} (Floor 910) loaded " +
@@ -392,6 +399,14 @@ namespace SickOfIt.Playtest
                 "the card), the jump from 950 to 910 on the counter and the Shaft, Floor 910 played harder for it (the King's \"Came up my chimney\" line), " +
                 "Floors 909-902 one floor each up to the Magma King's door, and Floor 901, his arena, whose defeat lights the Waystone at 901 and wakes " +
                 "Circle IX on the Shaft; the old 10-floor stages are never played. Up to 3 tries per floor; each beat is a check event", RouteSeconds, "full"));
+            list.Add(new PlaytestScenario("cracked-road-route", $"Circle IX's played route, one level per floor (Docs/LevelDesign.md section 6): level {CrackedFrom} " +
+                "(Floor 901, the Magma King) loaded directly (setup shortcut) and fought, then the real flow on: results, Continue, the Shaft, and level 32, " +
+                "Floor 900 on the Cracked Road, next. Then Floors 900-891 one floor each (the Brimstone Demon arriving alone on 900, each floor's own " +
+                "pieces and monsters, at most 4 enemies, 60-120 s, the floor number carved on each landing), Floor 891's Road Breaker (voiced intro, boss bar, " +
+                "his slams and kicked lumps after a 1 s glow, the road giving way at half health, whelps only on tier 2), the Spared Demon on his landing " +
+                "(a Grudge paid, the counter jumping from 890 to 860, the Shaft's dotted jump), Floors 860-852, Floor 851's Carver, the Hollow Spire (its risk " +
+                "on the card, 850 to 810), Floor 810 played harder for it, Floors 809-803 and Floor 802, ending at the crack in the great spire: the entrance " +
+                $"of the Spire Fiend's arena, the counter on 801, then the level select until Floor 801 is built. Up to 3 tries per floor; each beat is a check event", CrackedSeconds, "full"));
             list.Add(new PlaytestScenario("shortcut", $"Hell's first shortcut (Docs/Story.md, \"Shortcuts\"): level {ShortcutLevel} (Floors 880-871: The Old Stair, " +
                 "Circle IX) loaded directly with one Grudge in hand (setup shortcut: given if he has none). The bot plays it through real input to the " +
                 "collapsed stairwell at the top, where the choice comes up: card 1 keeps climbing, card 2 is the stairwell with its cost shown (a Grudge, " +
@@ -519,6 +534,8 @@ namespace SickOfIt.Playtest
                 yield return session.ShortcutRun();
             else if (id == "circle-x-route")
                 yield return session.CircleXRoute();
+            else if (id == "cracked-road-route")
+                yield return session.CrackedRoadRoute();
             else if (id == "menus")
                 yield return session.Menus();
             else if (id == "site")
@@ -1466,7 +1483,9 @@ namespace SickOfIt.Playtest
                     check(prefix + "breather", s.LongestQuiet >= 3f || s.OneFloor && s.FirstHostileAt < 0f,
                         s.FirstHostileAt < 0f ? "nothing attacked on this floor (its lava and stones are the floor)"
                             : $"longest stretch with nothing attacking after the first push: {s.LongestQuiet:0.0} s (want 3+)");
-                check(prefix + "maxEnemies", s.MaxEnemies <= 3, $"at most {s.MaxEnemies} enemies on screen at once (Circle X allows 3)");
+                // Docs/LevelDesign.md, "The pace": 3 on screen in Circle X, 4 in Circles IX-VIII.
+                int allowed = s.Start > 0 && s.Start <= 900 ? 4 : 3;
+                check(prefix + "maxEnemies", s.MaxEnemies <= allowed, $"at most {s.MaxEnemies} enemies on screen at once ({(allowed == 3 ? "Circle X" : "Circle IX")} allows {allowed})");
                 if (s.Opening.Count > 0)
                 {
                     var late = s.Opening.FindAll(t => !s.ShownAt.TryGetValue(t, out float at) || s.FirstHostileAt >= 0f && at > s.FirstHostileAt);
@@ -1976,7 +1995,7 @@ namespace SickOfIt.Playtest
                     else
                     {
                         bool select = Object.FindAnyObjectByType<LevelSelectionManager>() != null;
-                        StageCheck("level" + last + ".next", select, select ? $"level {last} leads to the level select (Circle IX's stages are next to rebuild)"
+                        StageCheck("level" + last + ".next", select, select ? $"level {last} leads to the level select (the next floor isn't built yet)"
                             : $"level {last} led to {SceneName()} instead of the level select");
                         Run.Scene(select ? "Level Select" : SceneName());
                         yield return WaitReal(2f);
@@ -1997,8 +2016,8 @@ namespace SickOfIt.Playtest
             bool longWayReachedEnd;
 
             /// <summary>
-            /// long-way: the old stages over Floors 990-951 in order. Levels 39-41 through the real flow (41 leads on to Floor 960),
-            /// then level 42 (The Loop, level select only) loaded directly, each with the stage checks and its Shaft climb.
+            /// long-way: the old stages over Floors 990-951 in order. Levels 67-69 through the real flow (69 leads on to Floor 960),
+            /// then level 70 (The Loop, level select only) loaded directly, each with the stage checks and its Shaft climb.
             /// </summary>
             public IEnumerator LongWayStages()
             {
@@ -2213,6 +2232,24 @@ namespace SickOfIt.Playtest
                 try
                 {
                     yield return WastesClimb(RouteFrom, RouteTo, RouteSeconds - (Time.realtimeSinceStartup - started), keepChecks: true);
+                }
+                finally
+                {
+                    takeShortcuts = false;
+                }
+            }
+
+            /// <summary>
+            /// cracked-road-route: Floor 901 loaded directly (the Magma King, his Waystone), then the real flow through Circle IX's played
+            /// route to Floor 802, taking the Spared Demon (891 to 860) and the Hollow Spire (851 to 810).
+            /// </summary>
+            public IEnumerator CrackedRoadRoute()
+            {
+                stageChecksFailed = 0;
+                takeShortcuts = true;
+                try
+                {
+                    yield return WastesClimb(CrackedFrom, CrackedTo, CrackedSeconds, keepChecks: true);
                 }
                 finally
                 {
@@ -5123,9 +5160,19 @@ namespace SickOfIt.Playtest
                                                  || Object.FindAnyObjectByType<VideoRuntime>() != null
                                                  || NewWorld(previous) != null, 60f, "the level select after the last story level");
                     if (Run.Done) yield break;
+                    // Circle IX's floors follow the Magma King now (Floor 900); cracked-road-route plays them.
+                    int lastStory = StoryPath[StoryPath.Length - 1].level;
+                    var lastStoryConfig = GameDefinition.Instance.GetLevel(lastStory);
+                    int afterStory = lastStoryConfig != null && lastStoryConfig.nextVideoNumber <= 0 ? lastStoryConfig.nextLevelNumber : 0;
+                    var afterWorld = NewWorld(previous);
                     bool select = Object.FindAnyObjectByType<LevelSelectionManager>() != null;
-                    StoryCheck("end", select, select ? $"level {StoryPath[StoryPath.Length - 1].level} leads to the level select"
-                        : $"level {StoryPath[StoryPath.Length - 1].level} led to {SceneName()} instead of the level select");
+                    bool onward = afterStory > 0 && afterWorld != null && afterWorld.LevelNumber == afterStory;
+                    StoryCheck("end", afterStory > 0 ? onward : select,
+                        onward ? $"level {lastStory} leads on to level {afterStory} ({afterWorld.LevelName}); cracked-road-route plays on from there"
+                        : select ? $"level {lastStory} leads to the level select{(afterStory > 0 ? $" (want level {afterStory})" : "")}"
+                        : $"level {lastStory} led to {SceneName()} instead of {(afterStory > 0 ? "level " + afterStory : "the level select")}");
+                    if (onward)
+                        yield return ToMainMenu();
                 }
                 if (Object.FindAnyObjectByType<LevelSelectionManager>() == null)
                 {

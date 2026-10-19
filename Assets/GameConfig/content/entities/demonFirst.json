@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "extends": "brimstoneDemon",
+  "loot": {
+    "chance": 1.0,
+    "count": 1,
+    "value": 1
+  }
+}
