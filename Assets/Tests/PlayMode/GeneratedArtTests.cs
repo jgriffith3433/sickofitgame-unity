@@ -88,5 +88,26 @@ namespace SickOfIt.Tests.PlayMode
             Assert.That(flipbook, Is.Not.Null, "Die didn't play");
             Assert.That(die, Does.Contain(flipbook.sprite));
         }
+
+        /// <summary>
+        /// A damned soul (Docs/Story.md, Roster): it turns its stone over (Idle) until the hero comes close, then its
+        /// loop hiccups (Hiccup) and it drops a loop shard; one far away keeps turning its stone.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator DamnedSoulIdlesAndHiccupsWhenTheHeroPasses()
+        {
+            level = TestLevel.Create(GameContent.FromDefinition(GameDefinition.Instance), playerAt: new Vector2(-3f, 0f));
+            var far = level.World.Spawn("damnedSoul", new Vector2(3f, 0f), new SpawnOptions());
+            var near = level.World.Spawn("damnedSoul", new Vector2(-2.2f, 0f), new SpawnOptions());
+            Assert.That(far.Animation.HasClips, Is.True, "the damned soul has no animator");
+            yield return new WaitForFixedUpdate();
+            Assert.That(far.Sprite.sprite, Is.Not.Null, "its sheet has no sprites (not sliced or not in the registry)");
+            Assert.That(far.Animation.CurrentState, Is.EqualTo("Idle"));
+
+            yield return level.UntilCondition(() => near.Animation.CurrentState == "Hiccup", 3f);
+            Assert.That(near.Animation.CurrentState, Is.EqualTo("Hiccup"), "the hero close by must make its loop hiccup");
+            Assert.That(level.Alive("rewindOrb").Count, Is.GreaterThan(0), "the hiccup drops a loop shard");
+            Assert.That(far.Animation.CurrentState, Is.EqualTo("Idle"));
+        }
     }
 }

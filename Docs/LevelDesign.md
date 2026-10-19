@@ -1027,7 +1027,7 @@ order it can be built and played:
    calls a milestone itself: Floor 999 opens on *"ONLY 999 TO GO"*), and the Grudge pick before `completeLevel`. Built
    with today's pieces, so some beats are simpler than the pages above: the fleeing imp on 1000 climbs straight up out
    of sight (no chain of its own), the village sign on 998 floats as a raft (it doesn't tip over and sink), and the damned
-   soul is a placeholder shape until its art is made. *Built 2026-10-18 too: Floors 995-991* (levels 7-11; the
+   soul hovers in place (it doesn't climb its three steps). *Built 2026-10-18 too: Floors 995-991* (levels 7-11; the
    `foreman-stretch` playtest plays them in a row). Simplified there: The Loop's laps are the same layout placed twice
    (the stones sink on the level's clock, so both laps move together); the 994 lift that won't stop rides up past the
    landing and comes back down (no jam); the sleeping imp on 993 falls as he comes near, not as he lands; the Foreman
@@ -1044,8 +1044,8 @@ order it can be built and played:
 7. **Art (GPU, priced):** *Made 2026-10-18 (see "The art of the climb"):* the world below the lava (sea, haze, spires,
    islands, ceiling), the lava's surface, falls and geysers, the three stones with their steam and crumble frames, the
    village's rafts (cart, roof, sign, hay), the lift, counterweight, chains and the carved landing. Still to make: the
-   counterweight sacks, the sack-swing imp, the damned soul (a grey, hunched, see-through figure with a looping idle
-   and a hiccup clip) and the Pile Keeper (the Imp Foreman's own sheets were made 2026-10-18, `art/impForeman.json`); for the set pieces, the hay cart's chute ride (908: the cart
+   counterweight sacks, the sack-swing imp and the Pile Keeper (the Imp Foreman's own sheets and the damned soul's
+   were made 2026-10-18, `art/impForeman.json`, `art/damnedSoul.json`); for the set pieces, the hay cart's chute ride (908: the cart
    upright with him in it), the sign standing in the lava on 998 (*WELCOME TO THE VILLAGE*, whole), the throne far
    above (four distances: speck, glow, silhouette, close) and the cooling crust. Until they exist, those draw as plain
    shapes and labeled placeholders.
