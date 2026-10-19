@@ -90,7 +90,7 @@
       "warden": "The Bridge Wraith",
       "art": "Art/Shaft/band_VIII.png",
       "wardenArt": "Art/Shaft/warden_VIII.png",
-      "wakeVoice": ""
+      "wakeVoice": "vo_shaft_wake_viii"
     },
     {
       "circle": "",

@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "entity": "spireFiend",
+  "name": "The Spire Fiend",
+  "description": "the Warden of the Cracked Road, a tall gaunt demon carved out of black basalt, his lower body a thick jagged rock spire rooted in the ground instead of legs, a long thin bony torso and long thin arms ending in long stone claws, a narrow skull-like head with a long chin and no mouth, only a thin glowing slit, a crown of tall sharp rock spires growing out of his head, shoulders and back like a forest of needles, thin molten orange seams glowing in cracks all over his black rock body, two small burning white eyes",
+  "height": 2.6,
+  "pixels": 260,
+  "frameFill": 0.5,
+  "visualScale": 1,
+  "poses": {
+    "stand": "half risen out of his rock spire, his gaunt upper body leaning forward over it, long clawed arms hanging loose, head tilted as if listening, the seams in his body glowing a dull orange",
+    "dormant": {
+      "from": "stand",
+      "action": "folded down completely into his rock spire: arms wrapped around himself, head bowed into the spires on his back, so that he looks like nothing but a tall black rock spire with thin orange glowing seams running up it",
+      "prompt": "Image 1 shows a gaunt rock demon growing out of a rock spire. Make him folded down completely into the spire: arms wrapped tight around his body, head bowed down between the rock spikes on his back, so that the whole figure reads as a single tall jagged black rock spire with thin dim orange glowing cracks running up it, no face or claws visible. Keep the spire's base, the art style, the size and the position the same as image 1. {background}"
+    },
+    "enraged": {
+      "from": "stand",
+      "action": "reared up to his full height out of his spire, long arms spread wide, claws open, the spires on his back bristling longer and sharper, every seam across his body blazing yellow-white with molten light"
+    },
+    "dead": {
+      "from": "stand",
+      "action": "gone: only the broken stump of his rock spire is left, cracked open and cold, with a heap of black rock shards and his spiked crown lying on the ground beside it",
+      "prompt": "Image 1 shows a gaunt rock demon growing out of a rock spire. Remove the demon completely: no body, no arms, no head left. Leave only the bottom of the rock spire as a short broken stump, split open down the middle, with a low heap of black basalt shards on the ground around it, a few faint orange embers in the cracks and thin grey dust rising, and his crown of rock spikes lying on top of the heap. Keep the art style, the size and the position of the stump the same as image 1. {background}"
+    }
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "loop": true,
+      "action": "sways slowly over his spire, head tilting as if listening, his long claws twitching, the seams in his body pulsing slowly like a hum",
+      "seconds": 2
+    },
+    "rise": {
+      "from": "dormant",
+      "to": "stand",
+      "state": "Rise",
+      "action": "the rock spire cracks open along its glowing seams and he unfolds out of it, lifting his head and spreading his long arms, rock dust falling off him",
+      "seconds": 2
+    },
+    "throw": {
+      "from": "stand",
+      "state": "Throw",
+      "event": "throw",
+      "action": "reaches back over his shoulder, snaps off one of the rock spires growing from his back and hurls it forward to the right like a spear, then sways back",
+      "seconds": 1.5
+    },
+    "slam": {
+      "from": "stand",
+      "state": "Slam",
+      "event": "slam",
+      "action": "rears back and drives both long claws down into the ground in front of him, the seams in the ground glowing as cracks run forward to the right, then pulls his claws back out",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck and recoils, a chip of rock flying off his shoulder and a seam flaring, then leans forward again",
+      "seconds": 1
+    },
+    "enrage": {
+      "from": "stand",
+      "to": "enraged",
+      "state": "Enrage",
+      "action": "rears up out of his spire with a silent scream, arms spreading wide, the spires on his back growing longer and sharper as every seam on his body flares from dull orange to blazing yellow-white",
+      "seconds": 1.5
+    },
+    "idleEnraged": {
+      "from": "enraged",
+      "state": "IdleEnraged",
+      "loop": true,
+      "action": "towers over his spire with his arms spread, claws flexing, white-hot light pulsing fast through every seam, shaking with fury",
+      "seconds": 2
+    },
+    "slamEnraged": {
+      "from": "enraged",
+      "state": "SlamEnraged",
+      "event": "slam",
+      "action": "drives both blazing claws down into the ground in front of him so hard that cracks of white light shoot out along the floor to the right, then rears back up",
+      "seconds": 1.5
+    },
+    "die": {
+      "from": "enraged",
+      "to": "dead",
+      "action": "freezes, his seams flicker and go dark, cracks split across his whole body and he crumbles into a heap of black rock shards around the broken stump of his spire",
+      "seconds": 2
+    }
+  },
+  "animator": {
+    "parameters": [
+      {
+        "name": "Enraged",
+        "type": "Bool"
+      },
+      {
+        "name": "Throw",
+        "type": "Trigger"
+      },
+      {
+        "name": "Slam",
+        "type": "Trigger"
+      },
+      {
+        "name": "Hurt",
+        "type": "Trigger"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Rise",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Idle",
+        "to": "Throw",
+        "when": [
+          "Throw"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "Slam",
+        "when": [
+          "Slam"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Throw",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Slam",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Hurt",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Enrage",
+        "to": "IdleEnraged",
+        "exit": true
+      },
+      {
+        "from": "IdleEnraged",
+        "to": "SlamEnraged",
+        "when": [
+          "Slam"
+        ]
+      },
+      {
+        "from": "SlamEnraged",
+        "to": "IdleEnraged",
+        "exit": true
+      }
+    ]
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

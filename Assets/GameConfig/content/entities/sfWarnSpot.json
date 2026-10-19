@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "extends": "sfWarnRow",
+  "visual": {
+    "scale": 0.14,
+    "color": "#FFD08A"
+  },
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 1.2
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "steps": [
+    {
+      "type": "playSound",
+      "sound": "sf_rise"
+    },
+    {
+      "type": "cameraShake",
+      "intensity": 0.25,
+      "duration": 2.0
+    },
+    {
+      "type": "flash",
+      "color": "#FF9A4A66",
+      "duration": 0.4
+    },
+    {
+      "type": "wait",
+      "seconds": 1.0
+    },
+    {
+      "type": "showText",
+      "text": "You don't climb MY spire.",
+      "style": "Subtitle",
+      "duration": 4.6,
+      "color": "#FFB070",
+      "sound": "vo_sf_shed"
+    }
+  ]
+}

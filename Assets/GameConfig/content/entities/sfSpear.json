@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "extends": "fireball",
+  "body": {
+    "radius": 1.2,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.16,
+    "color": "#5A4660",
+    "sortingOrder": 4,
+    "hurtFlash": false,
+    "fxColor": "#FF8A3A"
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "dieOnSolid": true
+    },
+    {
+      "type": "lifetime",
+      "seconds": 4
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "playSound",
+      "sound": "sf_needle"
+    }
+  ]
+}

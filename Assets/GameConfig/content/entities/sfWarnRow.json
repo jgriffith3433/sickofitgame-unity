@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "extends": "fmWarnWhip",
+  "visual": {
+    "scale": 0.11,
+    "color": "#FF9A4A"
+  },
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "sfNeedle",
+      "anchor": "Self",
+      "facePlayer": false
+    },
+    {
+      "type": "playSound",
+      "sound": "sf_needle"
+    }
+  ]
+}
