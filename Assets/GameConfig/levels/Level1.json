@@ -158,13 +158,6 @@
             "duration": 2.5,
             "sound": "vo_meadow_title",
             "color": "#FFD27A"
-          },
-          {
-            "type": "showText",
-            "text": "Nice day. Nothing could possibly go wrong.",
-            "duration": 3.0,
-            "sound": "vo_meadow_intro",
-            "style": "Subtitle"
           }
         ],
         "rules": [
@@ -184,15 +177,6 @@
       },
       {
         "name": "imps",
-        "onEnter": [
-          {
-            "type": "showText",
-            "text": "That's not a cloud. Those are not birds.",
-            "duration": 3.0,
-            "sound": "vo_meadow_imps",
-            "style": "Subtitle"
-          }
-        ],
         "rules": [
           {
             "when": {
