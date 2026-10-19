@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor908",
+  "displayName": "Floor 908: The Cart Run",
+  "levelNumber": 24,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 25,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 908,
+    "length": 90,
+    "floors": {
+      "start": 908,
+      "end": 907,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "chuteHead",
+          "direction": "UpRight",
+          "length": 2.05,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -1.6,
+                -1.15
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.4,
+                0.15
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "cartRide",
+          "direction": "Right",
+          "length": 14.76,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "wreckCart",
+              "at": [
+                2.2,
+                0.75
+              ],
+              "id": "cart"
+            },
+            {
+              "entity": "slagConveyorDown",
+              "at": [
+                2.6,
+                -0.05
+              ],
+              "id": "chute0",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "slagConveyorDown",
+              "at": [
+                4.8,
+                -0.2
+              ],
+              "id": "chute1",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "slagConveyorDown",
+              "at": [
+                7.0,
+                -0.35
+              ],
+              "id": "chute2",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "slagConveyorDown",
+              "at": [
+                10.2,
+                -0.5
+              ],
+              "id": "chute3",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "slagConveyorDown",
+              "at": [
+                12.4,
+                -0.65
+              ],
+              "id": "chute4",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "slagConveyorDown",
+              "at": [
+                15.6,
+                -0.8
+              ],
+              "id": "chute5",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "slagConveyorDown",
+              "at": [
+                17.8,
+                -0.95
+              ],
+              "id": "chute6",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "impGuard",
+              "at": [
+                8.4,
+                3.15
+              ],
+              "id": "chuteGuard1",
+              "onEnter": true
+            },
+            {
+              "entity": "impGuard",
+              "at": [
+                14.4,
+                3.15
+              ],
+              "id": "chuteGuard2",
+              "onEnter": true
+            }
+          ],
+          "autoSpeed": 1.2
+        },
+        {
+          "name": "guardLift",
+          "direction": "Up",
+          "length": 3.51,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "chainLift",
+              "at": [
+                20.2,
+                -0.85
+              ],
+              "id": "guardLift"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                18.2,
+                3.65
+              ],
+              "id": "liftTop",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding908",
+              "at": [
+                22.4,
+                5.05
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the cart",
+        "when": {
+          "type": "sectionReached",
+          "section": "chuteHead"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "showText",
+                "text": "Still burning. Respect.",
+                "duration": 2.55,
+                "style": "Subtitle",
+                "sound": "vo_f908_cart"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the ride",
+        "when": {
+          "type": "sectionReached",
+          "section": "cartRide"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_push.ogg",
+            "volume": 0.85
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "showText",
+                "text": "Going up. Unfortunately.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_f908_up"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "slowMotion",
+                "scale": 0.35,
+                "duration": 0.6
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "into the lift's cage",
+        "when": {
+          "type": "sectionReached",
+          "section": "guardLift"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "cameraShake",
+            "intensity": 0.25,
+            "duration": 0.8
+          },
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_loop.ogg",
+            "volume": 0.85
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 907,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "THE CART RUN: OFF THE RAILS",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_f908_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 908: THE CART RUN",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f908_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

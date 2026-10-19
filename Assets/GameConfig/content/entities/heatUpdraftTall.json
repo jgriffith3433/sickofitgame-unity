@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "extends": "heatUpdraft",
+  "body": {
+    "shape": "Box",
+    "size": [
+      1.4,
+      6.5
+    ],
+    "solid": false
+  },
+  "abilities": [
+    {
+      "type": "updraft",
+      "lift": 5.5,
+      "acceleration": 30.0
+    }
+  ]
+}

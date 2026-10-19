@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "extends": "lavaFall",
+  "abilities": [
+    {
+      "type": "lavaFall",
+      "pour": 2.6,
+      "off": 2.8,
+      "offset": 0.0,
+      "color": "#FF7322E6",
+      "art": {
+        "sheet": "Art/Climb/LavaFall_loop.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "artWidth": 1.4
+    },
+    {
+      "type": "scald",
+      "damage": 1,
+      "launch": 6.0,
+      "interval": 0.8,
+      "effect": ""
+    }
+  ]
+}

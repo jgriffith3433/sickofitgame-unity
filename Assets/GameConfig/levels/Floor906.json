@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor906",
+  "displayName": "Floor 906: The Loop, Upstairs",
+  "levelNumber": 26,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 27,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 906,
+    "length": 90,
+    "floors": {
+      "start": 906,
+      "end": 905,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "stair",
+          "direction": "UpRight",
+          "length": 2.05,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -1.6,
+                -1.15
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.4,
+                0.15
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "loop1",
+          "direction": "Right",
+          "length": 8.36,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "loopStone1",
+              "at": [
+                2.6,
+                0.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "loopStone2",
+              "at": [
+                4.8,
+                0.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "loopStone3",
+              "at": [
+                7.0,
+                0.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "loopStone4",
+              "at": [
+                9.2,
+                0.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                5.9,
+                0.25
+              ],
+              "id": "loopVent1a"
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                10.3,
+                0.25
+              ],
+              "id": "loopVent1b"
+            },
+            {
+              "entity": "loopCarving",
+              "at": [
+                11.4,
+                0.05
+              ],
+              "id": "lapEnd1",
+              "scale": [
+                1.4,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "loop2",
+          "direction": "Right",
+          "length": 11.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "loopStone1",
+              "at": [
+                13.6,
+                -0.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "loopStone2",
+              "at": [
+                15.8,
+                0.25
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "loopStone3",
+              "at": [
+                18.0,
+                -0.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "loopStone4",
+              "at": [
+                20.2,
+                0.25
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                16.9,
+                0.15
+              ],
+              "id": "loopVent2a"
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                21.3,
+                0.15
+              ],
+              "id": "loopVent2b"
+            },
+            {
+              "entity": "loopCarving",
+              "at": [
+                22.4,
+                -0.05
+              ],
+              "id": "lapEnd2",
+              "scale": [
+                1.4,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "out",
+          "direction": "Up",
+          "length": 2.41,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                20.0,
+                1.25
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                22.4,
+                2.55
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding906",
+              "at": [
+                26.6,
+                3.95
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the loop again",
+        "when": {
+          "type": "sectionReached",
+          "section": "loop2"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "loopRepeat"
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.05,
+                "duration": 0.3
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "showText",
+                "text": "Same trick. I'm getting good at this.",
+                "duration": 3.25,
+                "style": "Subtitle",
+                "sound": "vo_f906_trick"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 905,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "THE LOOP: SURVIVED. STILL.",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_f906_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 906: THE LOOP, UPSTAIRS",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f906_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

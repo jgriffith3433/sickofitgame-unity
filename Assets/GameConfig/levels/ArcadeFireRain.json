@@ -4,7 +4,10 @@
   "displayName": "Arcade: Fire Rain",
   "levelNumber": 5,
   "thumbnail": "Videos/Level3_Background2_FirstFrame.png",
-  "backgrounds": ["Videos/Level3_Background1.asset", "Videos/Level3_Background2.asset"],
+  "backgrounds": [
+    "Videos/Level3_Background1.asset",
+    "Videos/Level3_Background2.asset"
+  ],
   "backgroundLayers": [],
   "ambientColor": "#FFFFFF",
   "music": "Videos/Level3_Background1_Audio.mp3",
@@ -20,9 +23,18 @@
   "barrierOnBottom": true,
   "barrierOnTop": true,
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
-  "winZoneCenter": [6.5, 0.0],
-  "winZoneHalfSize": [0.5, 4.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "winZoneCenter": [
+    6.5,
+    0.0
+  ],
+  "winZoneHalfSize": [
+    0.5,
+    4.0
+  ],
   "deathConfigName": "Death2",
   "duration": 150.0,
   "completionDelay": 3.0,
@@ -99,12 +111,26 @@
                 "interval": 0.3,
                 "anchor": "Camera",
                 "points": [
-                  [-5.2, -2.0],
-                  [5.2, -2.0],
-                  [5.2, 1.0],
-                  [-5.2, 1.0]
+                  [
+                    -5.2,
+                    -2.0
+                  ],
+                  [
+                    5.2,
+                    -2.0
+                  ],
+                  [
+                    5.2,
+                    1.0
+                  ],
+                  [
+                    -5.2,
+                    1.0
+                  ]
                 ],
-                "tags": ["wave"],
+                "tags": [
+                  "wave"
+                ],
                 "modifiers": [
                   {
                     "stat": "MaxHealth",
@@ -128,8 +154,13 @@
                 "type": "spawn",
                 "entity": "cinder",
                 "anchor": "Camera",
-                "at": [5.2, -2.0],
-                "tags": ["wave"]
+                "at": [
+                  5.2,
+                  -2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           },
@@ -147,10 +178,18 @@
                 "interval": 1.0,
                 "anchor": "Camera",
                 "points": [
-                  [4.6, -2.0],
-                  [-4.6, 1.2]
+                  [
+                    4.6,
+                    -2.0
+                  ],
+                  [
+                    -4.6,
+                    1.2
+                  ]
                 ],
-                "tags": ["wave"]
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           },

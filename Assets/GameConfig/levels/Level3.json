@@ -11,12 +11,15 @@
   "platforms": [],
   "placedSprites": [],
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
   "deathConfigName": "Death1",
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 13,
+  "nextLevelNumber": 40,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 90,
@@ -40,7 +43,10 @@
           "name": "smoke over the debris",
           "shape": "Glow",
           "color": "#3A2A2A80",
-          "size": [1.8, 2.4],
+          "size": [
+            1.8,
+            2.4
+          ],
           "sizeVariation": 0.3,
           "across": -2.2,
           "parallax": 0.3,
@@ -53,7 +59,10 @@
           "name": "fence posts",
           "shape": "Spire",
           "color": "#3B2416",
-          "size": [0.16, 0.8],
+          "size": [
+            0.16,
+            0.8
+          ],
           "sizeVariation": 0.2,
           "across": -2.5,
           "parallax": 0.15,
@@ -66,7 +75,10 @@
           "name": "the baker's cart, in pieces",
           "shape": "Block",
           "color": "#4A2B19",
-          "size": [1.3, 0.5],
+          "size": [
+            1.3,
+            0.5
+          ],
           "sizeVariation": 0.3,
           "across": -2.5,
           "parallax": 0.1,
@@ -79,7 +91,10 @@
           "name": "smoking hay",
           "shape": "Rock",
           "color": "#B8862E",
-          "size": [1.0, 0.6],
+          "size": [
+            1.0,
+            0.6
+          ],
           "sizeVariation": 0.3,
           "across": -2.5,
           "parallax": 0.05,
@@ -92,7 +107,10 @@
           "name": "embers in the hay",
           "shape": "Glow",
           "color": "#FF8A2AB0",
-          "size": [1.3, 0.45],
+          "size": [
+            1.3,
+            0.45
+          ],
           "sizeVariation": 0.3,
           "across": -2.55,
           "parallax": 0.05,
@@ -195,8 +213,13 @@
                 "type": "spawn",
                 "entity": "cinder",
                 "anchor": "Camera",
-                "at": [4.2, 0.8],
-                "tags": ["beat"]
+                "at": [
+                  4.2,
+                  0.8
+                ],
+                "tags": [
+                  "beat"
+                ]
               }
             ]
           },

@@ -11,12 +11,15 @@
   "platforms": [],
   "placedSprites": [],
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
   "deathConfigName": "Death1",
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 18,
+  "nextLevelNumber": 45,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 90,
@@ -41,7 +44,10 @@
           "name": "lava under the crust",
           "shape": "Glow",
           "color": "#FF7A2AB0",
-          "size": [2.2, 0.32],
+          "size": [
+            2.2,
+            0.32
+          ],
           "sizeVariation": 0.3,
           "across": -2.78,
           "parallax": 0.0,
@@ -54,7 +60,10 @@
           "name": "sinking slabs",
           "shape": "Block",
           "color": "#2A1410",
-          "size": [0.9, 0.12],
+          "size": [
+            0.9,
+            0.12
+          ],
           "sizeVariation": 0.3,
           "across": -2.55,
           "parallax": 0.0,
