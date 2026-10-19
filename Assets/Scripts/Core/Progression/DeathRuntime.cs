@@ -86,6 +86,7 @@ namespace SickOfIt.Core.Progression
             // Hell ends the run here: the death stands once its scene starts.
             levelNumber = PlayerPrefs.GetInt("CurrentLevelNumber", 1);
             runEnded = RunFlow.EndRun(levelNumber, out runStop);
+            AskWhyAfterDeaths();
 
             gameClock = gameObject.AddComponent<GameClock>();
             gameObject.AddComponent<SickOfIt.Core.Rewind.RewindTimeline>();
@@ -97,6 +98,30 @@ namespace SickOfIt.Core.Progression
             StartExperience();
             StartCoroutine(PlaybackStartGate.Hold(gameClock, playbackPlayers, audioSource, BeginDeathPlayback));
             BuildRageQuitButton();
+        }
+
+        /// <summary>Deaths on one level (this session) before the death screen asks "Too hard? Not fun?".</summary>
+        public const int AskAfterDeaths = 3;
+        /// <summary>The longest the death screen waits for an open feedback card before going on (real seconds).</summary>
+        const float AskHoldSeconds = 15f;
+
+        /// <summary>This death screen showed the feedback card (the third death or more on the level, once per level and session).</summary>
+        public bool AskedFeedback { get; private set; }
+        public int DeathsOnLevel { get; private set; }
+        private bool skipHold;
+
+        /// <summary>Analytics: the death screen, and on the third death in a level the thumbs card (Hawkes Analytics' ask).</summary>
+        private void AskWhyAfterDeaths()
+        {
+            AnalyticsManager.Screen("death");
+            DeathsOnLevel = AnalyticsManager.DeathsIn(levelNumber);
+            if (DeathsOnLevel < AskAfterDeaths)
+                return;
+            AskedFeedback = true;
+            int floor = runStop.FromFloor;
+            string where = floor > 0 ? $"level {levelNumber}, floor {floor}" : $"level {levelNumber}";
+            AnalyticsManager.Ask("deaths-level-" + levelNumber, "Too hard? Not fun?", $"death {DeathsOnLevel} on {where}", stars: false, comment: true, placeholder: "What got you? (optional)");
+            Debug.Log($"[Death] Death {DeathsOnLevel} on level {levelNumber}: the feedback card asks \"Too hard? Not fun?\"");
         }
 
         /// <summary>Main menu flag: the next main menu offers "Rage Quit Again".</summary>
@@ -177,6 +202,7 @@ namespace SickOfIt.Core.Progression
                 gameClock.StopRewind();
             PlayerPrefs.SetInt(RageQuitKey, 1);
             PlayerPrefs.Save();
+            AnalyticsManager.Track("rage_quit", new Dictionary<string, object> { { "level", levelNumber }, { "deaths", DeathsOnLevel } });
             SceneTransitionManager.Instance.LoadMainMenu();
         }
 
@@ -347,7 +373,13 @@ namespace SickOfIt.Core.Progression
 
         private void Update()
         {
-            if (deathCompleted) return;
+            if (deathCompleted)
+            {
+                // Waiting on the feedback card: Escape goes on without it.
+                if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+                    skipHold = true;
+                return;
+            }
 
             if (rewindButtonHeld && gameClock != null && !gameClock.IsRewinding &&
                 Time.unscaledTime - rewindPressedAt >= RewindHoldSeconds() && gameClock.Time > 0.05f)
@@ -389,7 +421,11 @@ namespace SickOfIt.Core.Progression
 
         public void SkipDeathAnimation()
         {
-            if (deathCompleted) return;
+            if (deathCompleted)
+            {
+                skipHold = true;
+                return;
+            }
             if (spritePlayer != null)
                 spritePlayer.Release();
             OnDeathAnimationComplete();
@@ -405,6 +441,11 @@ namespace SickOfIt.Core.Progression
         private IEnumerator ReloadLevelAfterDelay()
         {
             yield return new WaitForSeconds(delayBeforeReload);
+            // The feedback card is the player's for a moment (never carried into play: it keeps the keyboard).
+            float until = Time.unscaledTime + AskHoldSeconds;
+            while (AskedFeedback && !skipHold && Time.unscaledTime < until && AnalyticsManager.AskOpen)
+                yield return null;
+            AnalyticsManager.CloseAsk();
             ReloadLevel();
         }
 

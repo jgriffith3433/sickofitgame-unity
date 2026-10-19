@@ -46,7 +46,11 @@ namespace SickOfIt.Core.Progression
 
         private void Start()
         {
-            SickOfIt.Core.AnalyticsManager.Instance.TrackGameStart();
+            // Analytics: the game is playable once the main menu is up.
+            AnalyticsManager.Ready();
+            AnalyticsManager.Screen("menu");
+            AnalyticsManager.SetContext(new System.Collections.Generic.Dictionary<string, object>
+                { { "level", null }, { "level_name", null }, { "floor", null }, { "phase", null }, { "boss", null }, { "video", null } });
             GameProgressManager.Instance.InitializeNewPlayer();
 
             if (explodeRoot != null)
@@ -110,7 +114,12 @@ namespace SickOfIt.Core.Progression
             if (config.showUpgradeShopButton)
                 Add(list, labels.shop, OnUpgradeShopClicked);
             if (config.showSettingsButton)
-                Add(list, labels.settings, () => SettingsPanel.Show(menu, null));
+                Add(list, labels.settings, () =>
+                {
+                    Picked("settings");
+                    SettingsPanel.Show(menu, () => AnalyticsManager.Screen("menu"));
+                    AnalyticsManager.Screen("settings");
+                });
             // Right after a rage quit from a death, the quit button dares you to do it again (even in a browser,
             // where it can only ask you to close the tab). Otherwise quitting is hidden in browsers.
             bool rageQuitAgain = PlayerPrefs.GetInt(DeathRuntime.RageQuitKey, 0) == 1;
@@ -132,6 +141,9 @@ namespace SickOfIt.Core.Progression
                 menu.AddChip(string.Format(menu.Theme.pointsFormat, RogueliteManager.Instance.GetPoints()));
         }
 
+        /// <summary>Analytics: which main menu button was pressed.</summary>
+        private static void Picked(string option) => AnalyticsManager.Choice("main_menu", option);
+
         private void Add(RectTransform list, string text, Action onClick)
         {
             menu.AddButton(list, text, menu.Theme.button, onClick);
@@ -143,6 +155,7 @@ namespace SickOfIt.Core.Progression
             isTransitioning = true;
 
             int level = RunFlow.ContinueLevel();
+            Picked("continue");
             StartCoroutine(TransitionThenExecute(() =>
             {
                 if (sceneLoadingManager != null)
@@ -159,6 +172,7 @@ namespace SickOfIt.Core.Progression
             int level = RunFlow.NewRun();
             if (level <= 0) return;
             isTransitioning = true;
+            Picked("new_run");
 
             if (bundleDownloadManager != null)
                 bundleDownloadManager.StartDownloadForLevel(level);
@@ -179,6 +193,8 @@ namespace SickOfIt.Core.Progression
             if (isTransitioning) return;
             isTransitioning = true;
 
+            Picked("new_game");
+            RunFlow.Abandon();
             RogueliteManager.Instance.ResetAllRogueliteData();
             GameProgressManager.Instance.InitializeNewPlayer();
             PlayerPrefs.SetInt("Level_1_Visited", 1);
@@ -297,6 +313,7 @@ namespace SickOfIt.Core.Progression
         {
             if (isTransitioning) return;
             isTransitioning = true;
+            Picked("level_select");
             SceneLoadingManager.ShowLoadingUI();
             SceneTransitionManager.Instance.LoadLevelSelection();
         }
@@ -305,12 +322,14 @@ namespace SickOfIt.Core.Progression
         {
             if (isTransitioning) return;
             isTransitioning = true;
+            Picked("videos");
             SceneLoadingManager.ShowLoadingUI();
             SceneTransitionManager.Instance.LoadVideoSelection();
         }
 
         private void OnQuitClicked()
         {
+            Picked("quit");
             SceneTransitionManager.Instance.QuitGame();
             if (Application.platform == RuntimePlatform.WebGLPlayer && menu != null && !quitHintShown)
             {
@@ -328,6 +347,7 @@ namespace SickOfIt.Core.Progression
         {
             if (isTransitioning) return;
             isTransitioning = true;
+            Picked("shop");
             SceneLoadingManager.ShowLoadingUI();
             SceneTransitionManager.Instance.LoadUpgradeShop();
         }

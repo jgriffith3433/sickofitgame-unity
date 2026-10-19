@@ -145,7 +145,14 @@ namespace SickOfIt.Gameplay
                 pool.RemoveAt(chosen);
             }
 
-            world.Hud.ShowUpgradePicker(action.title, picks, i => GrantNow(picks[i].id));
+            // Which Grudges were offered and which was taken (the analytics' choice event, PlayAnalytics).
+            string offered = string.Join(",", picks.Select(d => d.id));
+            world.Telemetry.Record("upgradeOffer", offered, picks.Count);
+            world.Hud.ShowUpgradePicker(action.title, picks, i =>
+            {
+                world.Telemetry.Record("upgradePick", picks[i].id, i, offered);
+                GrantNow(picks[i].id);
+            });
         }
     }
 }

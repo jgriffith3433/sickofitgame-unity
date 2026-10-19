@@ -92,6 +92,7 @@ namespace SickOfIt.Gameplay
                 clock?.Pause();
                 Sfx.Play(Sfx.Events.pause);
                 BuildPauseMenu();
+                SickOfIt.Core.AnalyticsManager.Screen("pause");
             }
             else
             {
@@ -109,6 +110,7 @@ namespace SickOfIt.Gameplay
                 Time.timeScale = timeScaleBeforePause <= 0f ? 1f : timeScaleBeforePause;
                 clock?.Resume();
                 Sfx.Play(Sfx.Events.uiBack);
+                SickOfIt.Core.AnalyticsManager.Screen("level");
             }
         }
 
@@ -138,6 +140,7 @@ namespace SickOfIt.Gameplay
             menu.AddButton(list, Texts.settings, theme.button, () =>
             {
                 settingsRoot = SettingsPanel.Show(menu, () => { settingsRoot = null; menu.Back = () => SetPaused(false); });
+                SickOfIt.Core.AnalyticsManager.Screen("settings");
             });
             if (world.Host != null)
                 menu.AddButton(list, Texts.quitToMenu, theme.button, () => Leave(() => world.Host.ReturnToMenu(), "quit"));
@@ -150,6 +153,7 @@ namespace SickOfIt.Gameplay
             Time.timeScale = 1f;
             GameClock.Instance?.Resume();
             world.Telemetry?.Finish(outcome);
+            PlayAnalytics.Left(world, outcome);
             go();
         }
 
@@ -189,6 +193,7 @@ namespace SickOfIt.Gameplay
 
             Time.timeScale = 0f;
             GameClock.Instance?.Pause();
+            PlayAnalytics.ResultsShown(world);
             Sfx.Play(Sfx.Events.levelClear);
             Sfx.Play(Sfx.Events.levelClearVoice);
 

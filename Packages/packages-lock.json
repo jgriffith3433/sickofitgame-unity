@@ -17,6 +17,12 @@
       },
       "hash": "aa5fc638d623f56178d50329d9ad8c541a57fe66"
     },
+    "com.hawkes.analytics": {
+      "version": "file:com.hawkes.analytics",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.hawkes.gen": {
       "version": "file:C:/Projects/hawkesgen/clients/unity/com.hawkes.gen",
       "depth": 0,

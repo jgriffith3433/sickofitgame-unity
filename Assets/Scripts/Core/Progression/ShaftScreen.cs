@@ -292,6 +292,11 @@ namespace SickOfIt.Core.Progression
             ToFloor = to;
             shortcutFrom = mode == Mode.Climb && pendingShortcutTo > 0 ? pendingShortcutFrom : 0;
             shortcutTo = mode == Mode.Climb ? pendingShortcutTo : 0;
+            if (!isPreview)
+            {
+                AnalyticsManager.Screen("shaft");
+                AnalyticsManager.Track("shaft", new Dictionary<string, object> { { "kind", mode.ToString().ToLowerInvariant() }, { "from", from }, { "to", to } });
+            }
             pendingShortcutFrom = pendingShortcutTo = 0;
             wardenFloor = mode == Mode.Climb && !isPreview ? pendingWardenFloor : 0;
             pendingWardenFloor = 0;
@@ -1377,6 +1382,7 @@ namespace SickOfIt.Core.Progression
             shopOpen = true;
             SetShown(false);
             Report("yooba-shop", $"Visit Yooba at FLOOR {Number(ShownFloor)}: his shop opens over the Shaft");
+            AnalyticsManager.Choice("shaft", "visit_yooba");
             UpgradeShopManager.OpenOverShaft(BackFromShop);
         }
 

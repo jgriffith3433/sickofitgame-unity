@@ -187,7 +187,7 @@ namespace SickOfIt.Core.Progression
 
                 spritePlayer.Initialize(framesData, () =>
                 {
-                    AnalyticsManager.Instance?.TrackVideoStart(videoNumber);
+                    TrackVideo("play");
                     spritePlayer.UseGameClock(true);
                     spritePlayer.Play();
                 });
@@ -197,7 +197,7 @@ namespace SickOfIt.Core.Progression
             {
                 Debug.LogWarning("[VideoRuntime] No SpriteFramesData found in config! Video will not play.");
                 // No frames — just proceed after a delay
-                AnalyticsManager.Instance?.TrackVideoStart(videoNumber);
+                TrackVideo("play");
                 Invoke(nameof(OnVideoComplete), 1f);
             }
 
@@ -367,11 +367,24 @@ namespace SickOfIt.Core.Progression
                 skipButton.TapEndEvent.RemoveListener(OnSkipButton);
         }
 
+        /// <summary>Analytics: this story video played, finished or was skipped, and how far in.</summary>
+        private void TrackVideo(string action)
+        {
+            if (action == "play")
+            {
+                AnalyticsManager.Screen("video");
+                AnalyticsManager.SetContext("video", "Video" + videoNumber);
+            }
+            AnalyticsManager.Video("Video" + videoNumber, action, gameClock != null ? gameClock.Time : 0f);
+            if (action != "play")
+                AnalyticsManager.SetContext("video", null);
+        }
+
         public void SkipVideo()
         {
             if (videoCompleted) return;
             videoWasSkipped = true;
-            AnalyticsManager.Instance?.TrackVideoSkip(videoNumber);
+            TrackVideo("skip");
             // Release sprite resources immediately to free memory before scene transition
             if (spritePlayer != null)
                 spritePlayer.Release();
@@ -384,7 +397,7 @@ namespace SickOfIt.Core.Progression
             videoCompleted = true;
 
             if (!videoWasSkipped)
-                AnalyticsManager.Instance?.TrackVideoComplete(videoNumber);
+                TrackVideo("complete");
 
             if (config.returnToMainMenu)
             {
