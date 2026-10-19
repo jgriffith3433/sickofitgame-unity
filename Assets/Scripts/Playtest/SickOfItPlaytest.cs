@@ -2647,8 +2647,6 @@ namespace SickOfIt.Playtest
                 ("vo_portal_grabbed_2", "Hero, take 2: Oh, come on, come ON-", 0f),
                 ("vo_portal_grabbed_3", "Hero, take 3: Wait wait wait- oh, come ON-", 0f),
                 ("vo_meadow_title", "Announcer: Prologue! The Meadow!", 0f),
-                ("vo_meadow_intro", "Hero: Nice day. Nothing could possibly go wrong.", 0f),
-                ("vo_meadow_imps", "Hero: That's not a cloud. Those are not birds.", 0f),
                 ("vo_meadow_laser", "Hero: Oh, he's lasering the village. Cool. Cool cool cool.", 0f),
                 ("vo_meadow_leaving", "Hero: He's leaving. Through a hole in the sky. With our diamonds.", 0f),
                 ("vo_meadow_clear", "Announcer: The Meadow... is TOAST!", 0f),
