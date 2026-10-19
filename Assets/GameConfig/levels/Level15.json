@@ -19,7 +19,7 @@
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 25,
+  "nextLevelNumber": 36,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 90,

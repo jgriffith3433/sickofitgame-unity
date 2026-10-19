@@ -1,0 +1,445 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor909",
+  "displayName": "Floor 909: Ember Rain",
+  "levelNumber": 23,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 24,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 909,
+    "length": 90,
+    "floors": {
+      "start": 909,
+      "end": 908,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "stairs",
+          "direction": "UpLeft",
+          "length": 3.89,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "crumblingStone",
+              "at": [
+                -5.6,
+                -1.15
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -7.6,
+                0.15
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -9.6,
+                1.45
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "shelf",
+          "direction": "Right",
+          "length": 1.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                -7.8,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -6.0,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -4.2,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -2.4,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -0.6,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -4.2,
+                3.85
+              ],
+              "id": "slab",
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                -4.2,
+                2.3
+              ],
+              "id": "slabSoul"
+            },
+            {
+              "entity": "cinder",
+              "at": [
+                -2.6,
+                4.45
+              ],
+              "id": "rainCinder",
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "stairsOn",
+          "direction": "UpRight",
+          "length": 5.84,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "crumblingStone",
+              "at": [
+                1.4,
+                2.95
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                3.4,
+                4.25
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                5.4,
+                5.55
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "cinder",
+              "at": [
+                3.4,
+                6.25
+              ],
+              "id": "stairCinder",
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding909",
+              "at": [
+                9.6,
+                6.95
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the steam rains fire",
+        "when": {
+          "type": "sectionReached",
+          "section": "stairs"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "showText",
+                "text": "Now it's raining fire.",
+                "duration": 2.5,
+                "style": "Subtitle",
+                "sound": "vo_wastes_fire"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.5
+              },
+              {
+                "type": "startHazard",
+                "id": "emberRain",
+                "projectile": "fireball",
+                "pattern": {
+                  "type": "rain",
+                  "count": 2
+                },
+                "speed": 2.4,
+                "interval": 1.5,
+                "duration": 30.0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "under the slab",
+        "when": {
+          "type": "sectionReached",
+          "section": "shelf"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "showText",
+                "text": "Room for two?",
+                "duration": 2.05,
+                "style": "Subtitle",
+                "sound": "vo_f909_room"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the last stairs: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "stairsOn"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_push.ogg",
+            "volume": 0.85
+          },
+          {
+            "type": "startHazard",
+            "id": "emberRain2",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 2.6,
+            "interval": 1.3,
+            "duration": 20.0
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 908,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "EMBER RAIN: DRIED OFF",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_f909_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 909: EMBER RAIN",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f909_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

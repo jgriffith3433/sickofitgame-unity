@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "levelName": "Level10",
-  "displayName": "Floors 920-911: The Heat Stairs",
+  "displayName": "Floors 920-911: The Lower Stairs",
   "levelNumber": 10,
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
@@ -11,12 +11,15 @@
   "platforms": [],
   "placedSprites": [],
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
   "deathConfigName": "Death1",
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 20,
+  "nextLevelNumber": 22,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 90,
@@ -26,8 +29,7 @@
       "unitsPerFloor": 3.0,
       "circle": "emberWastes",
       "signs": true,
-      "sign": "TO THE THRONE",
-      "door": "THE SLAG THRONE"
+      "sign": "TO THE THRONE"
     },
     "world": {
       "camera": "Travel",
@@ -41,7 +43,10 @@
           "name": "slag steps",
           "shape": "Block",
           "color": "#2A130E",
-          "size": [1.0, 0.3],
+          "size": [
+            1.0,
+            0.3
+          ],
           "sizeVariation": 0.25,
           "across": -2.5,
           "parallax": 0.0,
@@ -54,7 +59,10 @@
           "name": "heat haze",
           "shape": "Glow",
           "color": "#FF5A1A40",
-          "size": [3.0, 0.9],
+          "size": [
+            3.0,
+            0.9
+          ],
           "sizeVariation": 0.3,
           "across": -1.2,
           "parallax": 0.5,
@@ -96,7 +104,7 @@
           },
           {
             "type": "showText",
-            "text": "FLOORS 920-911: THE HEAT STAIRS",
+            "text": "FLOORS 920-911: THE LOWER STAIRS",
             "duration": 2.5,
             "sound": "vo_stairs_title",
             "color": "#FFD27A"
@@ -230,10 +238,18 @@
             "type": "spawn",
             "entity": "impGuard",
             "anchor": "Camera",
-            "at": [2.6, -1.4],
+            "at": [
+              2.6,
+              -1.4
+            ],
             "count": 2,
-            "spacing": [1.2, 0.0],
-            "tags": ["guards"]
+            "spacing": [
+              1.2,
+              0.0
+            ],
+            "tags": [
+              "guards"
+            ]
           }
         ],
         "rules": [
@@ -395,29 +411,6 @@
                   {
                     "type": "wait",
                     "seconds": 1.0
-                  },
-                  {
-                    "type": "showText",
-                    "text": "Mm-hm-hm. Knock, little spark.",
-                    "duration": 5.5,
-                    "sound": "vo_mk_knock",
-                    "style": "Subtitle",
-                    "color": "#FF8A3D"
-                  },
-                  {
-                    "type": "wait",
-                    "seconds": 5.9
-                  },
-                  {
-                    "type": "showText",
-                    "text": "THE HEAT STAIRS: CLIMBED",
-                    "duration": 3.5,
-                    "sound": "vo_stairs_clear",
-                    "color": "#FF9A5C"
-                  },
-                  {
-                    "type": "wait",
-                    "seconds": 3.5
                   },
                   {
                     "type": "offerUpgrades",

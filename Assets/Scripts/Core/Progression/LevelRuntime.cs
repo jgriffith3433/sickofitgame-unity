@@ -1179,6 +1179,8 @@ namespace SickOfIt.Core.Progression
 
             // The run goes on from the next level (after a video: the level after this one, like ReturnToLevel).
             int next = config == null || config.returnToMainMenuOnComplete ? 0 : config.nextVideoNumber > 0 ? levelNumber + 1 : NextLevel();
+            // ...and that level knows whether a shortcut brought him there (shortcutTaken).
+            SickOfIt.Data.ShortcutProgress.SetArrival(shortcut != null ? shortcut.id : null, next);
             RunFlow.LevelCleared(levelNumber, next);
         }
 

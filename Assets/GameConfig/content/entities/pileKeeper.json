@@ -1,0 +1,318 @@
+{
+  "schemaVersion": 1,
+  "extends": "impGuard",
+  "team": "Enemy",
+  "health": 36,
+  "moveSpeed": 0,
+  "activationRange": 0,
+  "tags": [
+    "boss",
+    "imp",
+    "pileKeeper"
+  ],
+  "body": {
+    "shape": "Circle",
+    "radius": 0.6,
+    "solid": false,
+    "gravity": 0
+  },
+  "visual": {
+    "scale": 0.85,
+    "color": "#C9907A",
+    "fxColor": "#FFB040",
+    "deathPunch": 0.35,
+    "deathFlash": true,
+    "deathBits": 30,
+    "deathFade": 0.8
+  },
+  "healthBar": {
+    "show": false
+  },
+  "loot": {
+    "chance": 1,
+    "count": 4,
+    "value": 1
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "contactDamage",
+      "damage": 1
+    }
+  ],
+  "states": [
+    {
+      "name": "intro",
+      "transitions": [
+        {
+          "to": "p1Spear",
+          "when": {
+            "type": "signal",
+            "name": "pkFight"
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Spear",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "pkWarnSpear",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            3.4,
+            -0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "line",
+            "count": 5,
+            "spacing": 1
+          },
+          "animTrigger": "IsAttacking"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "sinking",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Sacks",
+          "when": {
+            "type": "after",
+            "seconds": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Sacks",
+      "onEnter": [
+        {
+          "type": "playSound",
+          "sound": "sack_spill"
+        },
+        {
+          "type": "spawn",
+          "entity": "pkWarnSack",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "transitions": [
+        {
+          "to": "sinking",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Sacks2",
+          "when": {
+            "type": "after",
+            "seconds": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Sacks2",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "pkWarnSack",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "transitions": [
+        {
+          "to": "sinking",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Spear",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "sinking",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "pkSink"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Guards",
+          "when": {
+            "type": "signal",
+            "name": "pkTier2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Guards",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "pkPhase2"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 10,
+          "initialDelay": 0.8,
+          "maxAlive": 2,
+          "offset": [
+            -1.8,
+            0.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Sweep",
+          "when": {
+            "type": "after",
+            "seconds": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Sweep",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "pkWarnSpear",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            3.0,
+            -2.2
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "line",
+            "count": 5,
+            "spacing": 1
+          },
+          "animTrigger": "IsAttacking"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Sacks",
+          "when": {
+            "type": "after",
+            "seconds": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Sacks",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        }
+      ],
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "pkWarnSack",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Guards",
+          "when": {
+            "type": "after",
+            "seconds": 2.0
+          }
+        }
+      ]
+    }
+  ]
+}

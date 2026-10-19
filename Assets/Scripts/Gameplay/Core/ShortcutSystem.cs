@@ -36,6 +36,18 @@ namespace SickOfIt.Gameplay
         /// <summary>The Grudge it cost (its title), or "".</summary>
         public string Paid { get; private set; } = "";
 
+        /// <summary>True when this level was reached through shortcut 'id' (read once, when the level starts: <see cref="ShortcutTakenTrigger"/>).</summary>
+        public bool ArrivedBy(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return false;
+            if (!arrivals.TryGetValue(id, out bool arrived))
+                arrivals[id] = arrived = ShortcutProgress.ArrivedBy(id, world.LevelNumber);
+            return arrived;
+        }
+
+        readonly Dictionary<string, bool> arrivals = new Dictionary<string, bool>(StringComparer.Ordinal);
+
         /// <summary>True = taken, false = passed by, null = not chosen yet.</summary>
         public bool? Choice(string id) => !string.IsNullOrEmpty(id) && choices.TryGetValue(id, out bool taken) ? taken : (bool?)null;
 
@@ -44,11 +56,15 @@ namespace SickOfIt.Gameplay
             if (string.IsNullOrEmpty(action.id) || !world.TryGrantOnce("shortcut:" + action.id))
                 return;
             var grudge = action.costGrudges > 0 ? GrudgeToPay() : null;
-            bool canPay = action.costGrudges <= 0 || grudge != null;
-            string cost = action.costGrudges <= 0 ? "Free" : grudge != null
+            int diamonds = RogueliteManager.Instance != null ? RogueliteManager.Instance.GetPoints() : 0;
+            bool canPay = (action.costGrudges <= 0 || grudge != null) && (action.costDiamonds <= 0 || diamonds >= action.costDiamonds);
+            string cost = action.costDiamonds > 0
+                ? string.Format(CultureInfo.InvariantCulture, action.costText, action.costDiamonds)
+                : action.costGrudges <= 0 ? (string.IsNullOrEmpty(action.costText) || action.costText.Contains("{0}") ? "Free" : action.costText) : grudge != null
                 ? string.Format(CultureInfo.InvariantCulture, action.costText, grudge.title)
                 : string.Format(CultureInfo.InvariantCulture, action.costText, "none left");
-            world.Telemetry.Record("shortcut-offer", action.id, world.Stage.Floor, cost + (canPay ? "" : " (can't pay)"));
+            world.Telemetry.Record("shortcut-offer", action.id, world.Stage.Floor, cost + (canPay ? "" : " (can't pay)")
+                + (action.costDiamonds > 0 ? $"; diamonds {diamonds}" : ""));
 
             if (world.Hud == null)
             {
@@ -92,6 +108,8 @@ namespace SickOfIt.Gameplay
                     health?.SetMaxHealth(max, 0);
                 }
             }
+            if (action.costDiamonds > 0 && RogueliteManager.Instance != null && RogueliteManager.Instance.SpendPoints(action.costDiamonds))
+                Paid = action.costDiamonds.ToString(CultureInfo.InvariantCulture) + " diamonds";
             Taken = action;
             TakenFromFloor = world.Stage.Floor;
             world.Telemetry.Record("shortcut", action.id, action.toFloor,

@@ -4,7 +4,9 @@
   "displayName": "Arcade: Everything, Everywhere",
   "levelNumber": 4,
   "thumbnail": null,
-  "backgrounds": ["Videos/Level4_Background1.asset"],
+  "backgrounds": [
+    "Videos/Level4_Background1.asset"
+  ],
   "backgroundLayers": [],
   "ambientColor": "#FFFFFF",
   "music": "Videos/Level1_Background1_Audio.mp3",
@@ -20,9 +22,18 @@
   "barrierOnBottom": true,
   "barrierOnTop": true,
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
-  "winZoneCenter": [6.5, 0.0],
-  "winZoneHalfSize": [0.5, 4.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "winZoneCenter": [
+    6.5,
+    0.0
+  ],
+  "winZoneHalfSize": [
+    0.5,
+    4.0
+  ],
   "deathConfigName": "Death1",
   "duration": 180.0,
   "completionDelay": 2.0,
@@ -84,8 +95,13 @@
                 "type": "spawn",
                 "entity": "sprayer",
                 "anchor": "Camera",
-                "at": [4.4, -1.8],
-                "tags": ["wave"]
+                "at": [
+                  4.4,
+                  -1.8
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           },
@@ -111,12 +127,26 @@
                         "interval": 0.25,
                         "anchor": "Camera",
                         "points": [
-                          [5.2, -2.0],
-                          [5.2, 0.5],
-                          [-5.2, -2.0],
-                          [-5.2, 0.5]
+                          [
+                            5.2,
+                            -2.0
+                          ],
+                          [
+                            5.2,
+                            0.5
+                          ],
+                          [
+                            -5.2,
+                            -2.0
+                          ],
+                          [
+                            -5.2,
+                            0.5
+                          ]
                         ],
-                        "tags": ["wave"]
+                        "tags": [
+                          "wave"
+                        ]
                       }
                     ]
                   },
@@ -127,10 +157,18 @@
                         "type": "spawn",
                         "entity": "cinder",
                         "anchor": "Camera",
-                        "at": [-5.2, -2.0],
+                        "at": [
+                          -5.2,
+                          -2.0
+                        ],
                         "count": 2,
-                        "spacing": [-0.8, 0],
-                        "tags": ["wave"]
+                        "spacing": [
+                          -0.8,
+                          0
+                        ],
+                        "tags": [
+                          "wave"
+                        ]
                       }
                     ]
                   },
@@ -141,8 +179,13 @@
                         "type": "spawn",
                         "entity": "drone",
                         "anchor": "Camera",
-                        "at": [5.2, 2.0],
-                        "tags": ["wave"]
+                        "at": [
+                          5.2,
+                          2.0
+                        ],
+                        "tags": [
+                          "wave"
+                        ]
                       }
                     ]
                   }
@@ -196,8 +239,13 @@
             "type": "spawn",
             "entity": "brute",
             "anchor": "Camera",
-            "at": [5.0, -2.0],
-            "tags": ["wave"]
+            "at": [
+              5.0,
+              -2.0
+            ],
+            "tags": [
+              "wave"
+            ]
           }
         ],
         "rules": [
@@ -217,10 +265,18 @@
                 "interval": 0.6,
                 "anchor": "Camera",
                 "points": [
-                  [-4.6, -2.0],
-                  [4.6, 1.2]
+                  [
+                    -4.6,
+                    -2.0
+                  ],
+                  [
+                    4.6,
+                    1.2
+                  ]
                 ],
-                "tags": ["wave"],
+                "tags": [
+                  "wave"
+                ],
                 "modifiers": [
                   {
                     "stat": "MaxHealth",
@@ -242,8 +298,13 @@
                 "type": "spawn",
                 "entity": "spinner",
                 "anchor": "Camera",
-                "at": [0.0, 1.6],
-                "tags": ["wave"]
+                "at": [
+                  0.0,
+                  1.6
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           },
@@ -285,10 +346,18 @@
             "interval": 2.0,
             "anchor": "Camera",
             "points": [
-              [4.4, -1.8],
-              [-4.4, -1.8]
+              [
+                4.4,
+                -1.8
+              ],
+              [
+                -4.4,
+                -1.8
+              ]
             ],
-            "tags": ["wave"]
+            "tags": [
+              "wave"
+            ]
           },
           {
             "type": "spawnWave",
@@ -297,10 +366,18 @@
             "interval": 4.0,
             "anchor": "Camera",
             "points": [
-              [5.0, -2.0],
-              [-5.0, -2.0]
+              [
+                5.0,
+                -2.0
+              ],
+              [
+                -5.0,
+                -2.0
+              ]
             ],
-            "tags": ["wave"]
+            "tags": [
+              "wave"
+            ]
           },
           {
             "type": "spawnWave",
@@ -309,11 +386,22 @@
             "interval": 2.5,
             "anchor": "Camera",
             "points": [
-              [5.2, 2.0],
-              [-5.2, 2.0],
-              [0.0, 2.4]
+              [
+                5.2,
+                2.0
+              ],
+              [
+                -5.2,
+                2.0
+              ],
+              [
+                0.0,
+                2.4
+              ]
             ],
-            "tags": ["wave"]
+            "tags": [
+              "wave"
+            ]
           }
         ],
         "rules": [

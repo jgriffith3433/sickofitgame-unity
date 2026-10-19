@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "extends": "impGuard",
+  "tags": [
+    "imp",
+    "impGuard",
+    "countGuard"
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "pattern": {
+        "type": "spread",
+        "count": 3,
+        "angle": 28
+      },
+      "speed": 3.0,
+      "aim": "Player",
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 4.2,
+      "initialDelay": 5.4,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile",
+      "damage": 1
+    }
+  ]
+}

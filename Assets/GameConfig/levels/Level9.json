@@ -11,12 +11,15 @@
   "platforms": [],
   "placedSprites": [],
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
   "deathConfigName": "Death1",
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 19,
+  "nextLevelNumber": 46,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 90,
@@ -40,7 +43,10 @@
           "name": "piled sacks",
           "shape": "Rock",
           "color": "#6B4A2A",
-          "size": [1.6, 1.0],
+          "size": [
+            1.6,
+            1.0
+          ],
           "sizeVariation": 0.3,
           "across": -2.5,
           "parallax": 0.15,
@@ -53,7 +59,10 @@
           "name": "dropped sacks",
           "shape": "Rock",
           "color": "#7A5530",
-          "size": [0.5, 0.42],
+          "size": [
+            0.5,
+            0.42
+          ],
           "sizeVariation": 0.2,
           "across": -2.5,
           "parallax": 0.0,
@@ -140,8 +149,13 @@
             "type": "spawn",
             "entity": "impGuard",
             "anchor": "Camera",
-            "at": [3.4, -1.4],
-            "tags": ["beat"]
+            "at": [
+              3.4,
+              -1.4
+            ],
+            "tags": [
+              "beat"
+            ]
           },
           {
             "type": "showText",
@@ -209,10 +223,18 @@
             "type": "spawn",
             "entity": "impGuard",
             "anchor": "Camera",
-            "at": [2.2, -1.4],
+            "at": [
+              2.2,
+              -1.4
+            ],
             "count": 3,
-            "spacing": [0.95, 0.0],
-            "tags": ["line"]
+            "spacing": [
+              0.95,
+              0.0
+            ],
+            "tags": [
+              "line"
+            ]
           }
         ],
         "rules": [
@@ -241,9 +263,15 @@
             "type": "spawn",
             "entity": "diamond",
             "anchor": "Camera",
-            "at": [2.0, -1.0],
+            "at": [
+              2.0,
+              -1.0
+            ],
             "count": 6,
-            "spacing": [0.35, 0.12],
+            "spacing": [
+              0.35,
+              0.12
+            ],
             "facePlayer": false
           },
           {

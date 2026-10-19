@@ -19,7 +19,7 @@
   "duration": 240.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 12,
+  "nextLevelNumber": 39,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 991,
@@ -437,15 +437,63 @@
                 "seconds": 2.6
               },
               {
-                "type": "offerUpgrades",
-                "title": "Pick a grudge"
+                "type": "showText",
+                "text": "Imps only. I'll squeeze.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_sacklift_at"
               },
               {
-                "type": "setCounter",
-                "name": "cleared",
-                "value": 1
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerShortcut",
+                "id": "sackLift",
+                "prompt": "The Sack Lift",
+                "title": "Ride the Sack Lift",
+                "description": "The imps' lift, a cage of chains that hauls the sacks up through the Wastes. IMPS ONLY. Hell won't say how far it goes.",
+                "stayTitle": "Keep climbing",
+                "stayDescription": "The long way, floor by floor. Pick a Grudge at the top.",
+                "costGrudges": 0,
+                "costDiamonds": 20,
+                "costText": "FARE: {0} DIAMONDS",
+                "cantPayText": "CAN'T AFFORD THE FARE",
+                "toFloor": 960,
+                "nextLevel": 12,
+                "color": "#FFC23D"
               }
             ]
+          }
+        ]
+      },
+      {
+        "name": "takes the Sack Lift",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "sackLift",
+          "taken": true
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "sackLift"
+          }
+        ]
+      },
+      {
+        "name": "keeps climbing",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "sackLift",
+          "taken": false
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "longWay"
           }
         ]
       }
@@ -658,6 +706,135 @@
               },
               {
                 "type": "nextSection"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "sackLift",
+        "onEnter": [
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "playerInvincible",
+            "seconds": 20.0
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "Paying them with our own diamonds. Lovely.",
+                "duration": 3.5,
+                "style": "Subtitle",
+                "sound": "vo_sacklift_take"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "walkPlayerTo",
+                "x": 2.4,
+                "anchor": "Camera",
+                "speed": 0.6,
+                "emit": "sackLift:in"
+              },
+              {
+                "type": "showText",
+                "text": "HE'S RIDING THE SACK LIFT! THE CROWD IS DISGUSTED!",
+                "duration": 3.2,
+                "style": "Banner",
+                "sound": "vo_sacklift_shortcut",
+                "color": "#FFC23D"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "playSound",
+                "sound": "chain_cut"
+              },
+              {
+                "type": "fade",
+                "to": "Black",
+                "duration": 0.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.2,
+                "duration": 0.8
+              },
+              {
+                "type": "setFloor",
+                "floor": 960,
+                "skipMilestones": true
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "fade",
+                "to": "Clear",
+                "duration": 0.8
+              },
+              {
+                "type": "showText",
+                "text": "FLOOR 960! NO STAIRS, NO SHAME!",
+                "duration": 3.0,
+                "style": "Banner",
+                "sound": "vo_sacklift_960",
+                "color": "#FFC23D"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "longWay",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "I'll walk. I've got legs and spite.",
+                "duration": 3.15,
+                "style": "Subtitle",
+                "sound": "vo_sacklift_stay"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
               }
             ]
           }

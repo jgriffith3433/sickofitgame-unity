@@ -74,10 +74,10 @@ namespace SickOfIt.Playtest
         public const int ImpLevel = 1;
 
         /// <summary>
-        /// The magma-king scenario: the level that holds his fight (Level 11, the Slag Throne: Docs/Story.md "The Magma
+        /// The magma-king scenario: the level that holds his fight (Floor 901, the Slag Throne: Docs/Story.md "The Magma
         /// King's fight"), the animation states he must be seen in, and his lines (text, audio.json sound, who must voice it).
         /// </summary>
-        public const string MagmaKingLevel = "Level11", MagmaKingId = "magmaKing";
+        public const string MagmaKingLevel = "Floor901", MagmaKingId = "magmaKing";
         const float MagmaKingSeconds = 300f;
         static readonly string[] MagmaKingStates = { "Idle", "Throw", "SlamSeat", "Hurt", "Rise", "Enrage", "IdleStand", "Slam", "Breath", "HurtStand" };
         static readonly (string beat, string text, string sound, string voice)[] MagmaKingLines =
@@ -141,7 +141,19 @@ namespace SickOfIt.Playtest
         /// starts straight after the Shaft that follows the one before). Docs/Story.md, "Level numbers".
         /// </summary>
         static readonly (int video, int level)[] StoryPath =
-            { (1, 1), (2, 2), (3, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11), (0, 12), (0, 13), (0, 14), (0, 15), (0, 16), (0, 17), (0, 18), (0, 19), (0, 20) };
+            { (1, 1), (2, 2), (3, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11), (0, 12), (0, 13), (0, 14), (0, 15), (0, 16), (0, 17),
+              (0, 18), (0, 19), (0, 20), (0, 21), (0, 22), (0, 23), (0, 24), (0, 25), (0, 26), (0, 27), (0, 28), (0, 29), (0, 30), (0, 31) };
+        /// <summary>
+        /// Circle X's played route (Docs/LevelDesign.md, "The route through Circle X"): its shortcuts by level, the floor each lets him
+        /// out on, and the level it leads to (the Sack Lift on Floor 991 to Floor 960, the King's Chimney on Floor 951 to Floor 910).
+        /// The story path and the circle-x-route scenario take both; the levels they skip are the long way's stand-ins, off the path.
+        /// </summary>
+        static readonly (int level, string id, int toFloor, int next)[] RouteShortcuts = { (11, "sackLift", 960, 12), (21, "kingsChimney", 910, 22) };
+        /// <summary>The Sack Lift's fare (Floor991.json offerShortcut costDiamonds): the route scenarios top the diamonds up to it (a setup shortcut).</summary>
+        const int SackLiftFare = 20;
+        /// <summary>circle-x-route: Floor 991 loaded directly, then the real flow through Floor 901.</summary>
+        public const int RouteFrom = 11, RouteTo = 31;
+        const float RouteSeconds = 3600f;
         /// <summary>
         /// The Landing (Level 2, Floor 1000, one level = one floor): the floors its counter must run through (1000, ticking to 999
         /// on its landing), and the milestone beat, which plays as Floor 999 (MilestoneLevel) opens.
@@ -176,18 +188,18 @@ namespace SickOfIt.Playtest
             ("fmDefeat", "defeat"),
             ("fmPile", "the diamond pile"),
         };
-        const float StoryPathSeconds = 2100f;
+        const float StoryPathSeconds = 4200f;
         /// <summary>
         /// The wastes-climb scenario: the stage it loads directly (The Loop) and the last one it plays through the real flow
         /// (The Heat Stairs, ending at the Magma King's door). Docs/Story.md, "Circle X stage outline".
         /// </summary>
-        public const int ClimbFrom = 15, ClimbTo = 20;
-        const float WastesClimbSeconds = 960f;
+        public const int ClimbFrom = 22, ClimbTo = 31;
+        const float WastesClimbSeconds = 1800f;
         /// <summary>The shaft scenario: the level after the plunge whose climb it watches (The Landing).</summary>
         public const int ShaftLevel = 2;
         const float ShaftSeconds = 480f;
         /// <summary>The music scenario: after the shaft scenario's run, the Warden's arena it loads directly (the Magma King).</summary>
-        public const int MusicBossLevel = 20;
+        public const int MusicBossLevel = 31;
         const float MusicBossSeconds = 420f;
         const float YoobaSeconds = 300f;
         /// <summary>The waystone scenario: the stage the bot clears first (Floor 999, for a Grudge), then dies on the next one (Floor 998, The Spill).</summary>
@@ -198,7 +210,7 @@ namespace SickOfIt.Playtest
         /// 880-871, the collapsed stairwell at its top), the floor it lets him out on, and the stage it leads to, past the
         /// ones it skips (Levels 19-21).
         /// </summary>
-        public const int ShortcutLevel = 23, ShortcutToFloor = 841, ShortcutNextLevel = 27;
+        public const int ShortcutLevel = 34, ShortcutToFloor = 841, ShortcutNextLevel = 38;
         const float ShortcutSeconds = 480f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -241,7 +253,7 @@ namespace SickOfIt.Playtest
                             "(from the throne; at half health he stands and calls his imp guard, the only phase with adds; at a third he enrages and floods the hall), " +
                             "every attack (boulder, shockwave, fire breath, lava flood) after its warning glow 1+ s ahead, no more than 3 enemies at once, every line " +
                             "with its voice; his defeat: slow motion, his Die clip (collapsing into slag), his last line, \"THE MAGMA KING HAS FALLEN!\", the floor " +
-                            "counter ticking from 910 to 901 and the Waystone lighting there (\"WAYSTONE LIT: FLOOR 901\"), the Grudge pick; then Continue on the " +
+                            "counter on 901 and the Waystone lighting there (\"WAYSTONE LIT: FLOOR 901\"), the Grudge pick; then Continue on the " +
                             "results, the Shaft's climb to 901 with that Waystone saved and lit and Circle IX's band waking up (voiced), and the level select";
                     seconds += 60f;
                 }
@@ -300,20 +312,19 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
             list.Add(new PlaytestScenario("story-path", "New Game through the story path with the real flow: Video1, Level 1 (the Meadow and its portal " +
                 $"scene), Video2, Level 2 (Floor {LandingFirstFloor}: The Landing, no arcade level in between: its floor counter on {LandingFirstFloor}, " +
-                $"ticking to {LandingLastFloor} on its landing), Video3 (Yooba, watched a few seconds), then the floors one after another with no video " +
-                $"between them: Level 3 (Floor 999, opening on the \"ONLY {LandingMilestone} TO GO\" beat), Level 4 (Floor 998: The Spill), Level 5 (Floor 997: " +
-                "Imp Run), Level 6 (Floor 996: The Slag Falls), then the old 10-floor stages: Level 7 (Floors 990-981: The Spill), Level 8 (980-971: Imp Run), " +
-                "Level 9 (970-961: The Slag Falls), Level 10 (960-951: The Loop), Level 11 (950-941: Halfway Basin, opening on the Floor 950 beat), Level 12 " +
-                "(940-931: The Crust), Level 13 (930-921: The Sack Pile), Level 14 (920-911: The Heat Stairs, ending at the Magma King's door with " +
-                "his voice heard ahead), Level 15 (910-901: The Slag Throne, the Magma King's arena, his Waystone at 901 and Circle IX waking on the Shaft), each with its title, voiced lines, floor counter, new enemy alone and breather checked " +
-                "and the Shaft's climb after it; then the level select, whose cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
-            list.Add(new PlaytestScenario("wastes-climb", $"Level {ClimbFrom} (The Loop) loaded directly (setup shortcut), then the real flow on through " +
-                $"Level {ClimbTo}: results, Continue, the Shaft's climb, and the next stage with no video between, so Levels {ClimbFrom + 1}-{ClimbTo} play in order after Level {ClimbFrom} " +
-                "and the floors run 960 to 901. Each stage gets the level-n stage checks (title, voiced lines, floors, sign, new enemy alone, breather, " +
-                $"enemies at once, length, Grudge). Level {ClimbFrom + 1} must open on the Floor 950 beat (\"FLOOR 950: HALFWAY TO 900\" with its voice, before " +
-                $"the first enemy); Level {ClimbTo - 1} must end at the Magma King's door (\"THE SLAG THRONE\") with his voice heard from ahead before it; " +
-                $"Level {ClimbTo} is his arena (the boss checks of a Warden's arena), and its Shaft climbs to 901 with the Waystone lit and Circle IX waking; " +
-                "then the level select. Up to 3 tries per stage; each beat is a check event", WastesClimbSeconds, "full"));
+                $"ticking to {LandingLastFloor} on its landing), Video3 (Yooba, watched a few seconds), then Circle X's played route one floor per level " +
+                "with no video between them: Levels 3-11 (Floors 999-991, the Imp Foreman), where the bot takes the Sack Lift (its diamond fare topped up " +
+                "first, a setup shortcut) to Level 12, Levels 12-21 (Floors 960-951, the Pile Keeper), where it takes the King's Chimney to Level 22, Levels " +
+                "22-30 (Floors 910-902, the Heat Stairs up to the Magma King's door) and Level 31 (Floor 901, the Slag Throne: his arena, his Waystone at 901 " +
+                "and Circle IX waking on the Shaft); the old 10-floor stages (Levels 39-46) are never played. Each level with its title, voiced lines, floor " +
+                "counter, new enemy alone and breather checked and the Shaft's climb (or a shortcut's dotted jump) after it; then the level select, whose " +
+                "cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
+            list.Add(new PlaytestScenario("wastes-climb", $"The Heat Stairs, one level per floor (Docs/LevelDesign.md): level {ClimbFrom} (Floor 910) loaded " +
+                $"directly (setup shortcut), then the real flow on through level {ClimbTo}: results, Continue, the Shaft climbing one floor, and the next floor " +
+                "with no video between, Floors 910-901. Each floor gets the stage checks (title voiced, hero line, counter, new enemy alone, at most 3 enemies, " +
+                $"length, Grudge) and Level {ClimbTo - 1} (Floor 902, The Door) ends at the Magma King's door with his knock heard from the other side; " +
+                $"Level {ClimbTo} is his arena (the boss checks of a Warden's arena), its Shaft standing on 901 with the Waystone lit and Circle IX waking; " +
+                "then the level select. Up to 3 tries per floor; each beat is a check event", WastesClimbSeconds, "full"));
             list.Add(new PlaytestScenario("landing-stretch", $"The first floors of Hell, one level per floor (Docs/LevelDesign.md): level {StretchFrom} (Floor 1000, " +
                 $"The Landing) loaded directly (setup shortcut), then the real flow on through level {StretchTo} (Floor 996): results, Continue, the Shaft " +
                 "climbing exactly one floor (1000 to 999, ... 996 to 995), Video3 and Yooba's hello after Floor 1000 (skipped like a player), and the next " +
@@ -335,6 +346,16 @@ namespace SickOfIt.Playtest
                 "gantry, a chain lift to tier 2, phase 2 (he swings on the lift's chain dropping embers, each after a 1 s glow on its spot), his wings for show, " +
                 "the defeat in slow motion with a pile of diamonds, the announcer's call; 60-180 s. Up to 3 tries per floor; then Floor 991 leads on to the next level. " +
                 "Each beat is a check event", ForemanSeconds, "full"));
+            list.Add(new PlaytestScenario("circle-x-route", $"Circle X's played route (Docs/LevelDesign.md, \"The route through Circle X\"): level {RouteFrom} " +
+                $"(Floor 991, the Imp Foreman) loaded directly with the diamonds for the Sack Lift's fare (setup shortcut: topped up to {SackLiftFare}), then " +
+                $"the real flow on through level {RouteTo} (Floor 901), the bot taking every shortcut (it presses 2). Checked: on Floor 991's landing the Sack " +
+                "Lift's choice with its fare on the card (\"FARE: 20 DIAMONDS\"), the fare paid, the hero's line and the announcer's reaction, the counter " +
+                "jumping from 990 to 960 with no Grudge pick, the Shaft's marker climbing to 990 and jumping a dotted line up to FLOOR 960, and Floor 960 " +
+                "next; then Floors 960-952 one floor each, Floor 951's Pile Keeper (voiced intro, boss bar, his spear and sack attacks after a 1 s glow, the " +
+                "mound sinking at half health, his guards only on tier 2, the defeat with a pile of diamonds), the King's Chimney on his landing (its risk on " +
+                "the card), the jump from 950 to 910 on the counter and the Shaft, Floor 910 played harder for it (the King's \"Came up my chimney\" line), " +
+                "Floors 909-902 one floor each up to the Magma King's door, and Floor 901, his arena, whose defeat lights the Waystone at 901 and wakes " +
+                "Circle IX on the Shaft; the old 10-floor stages are never played. Up to 3 tries per floor; each beat is a check event", RouteSeconds, "full"));
             list.Add(new PlaytestScenario("shortcut", $"Hell's first shortcut (Docs/Story.md, \"Shortcuts\"): level {ShortcutLevel} (Floors 880-871: The Old Stair, " +
                 "Circle IX) loaded directly with one Grudge in hand (setup shortcut: given if he has none). The bot plays it through real input to the " +
                 "collapsed stairwell at the top, where the choice comes up: card 1 keeps climbing, card 2 is the stairwell with its cost shown (a Grudge, " +
@@ -458,6 +479,8 @@ namespace SickOfIt.Playtest
                 yield return session.WastesClimb(ForemanFrom, ForemanTo, ForemanSeconds);
             else if (id == "shortcut")
                 yield return session.ShortcutRun();
+            else if (id == "circle-x-route")
+                yield return session.CircleXRoute();
             else if (id == "menus")
                 yield return session.Menus();
             else if (id == "site")
@@ -902,7 +925,7 @@ namespace SickOfIt.Playtest
 
                 // ─── One level = one floor (Docs/LevelDesign.md): what the floor's own pieces did ───
                 /// <summary>A floor level: floors.end is the floor above floors.start.</summary>
-                public bool OneFloor => Start > 0 && Start - End == 1;
+                public bool OneFloor => Start > 0 && (Start - End == 1 || Start == End);
                 /// <summary>Floor-kit events ("sink@sinkingStone", "swingGrab@swingChain", "geyser@lavaGeyser") and spawns by entity id.</summary>
                 public readonly Dictionary<string, int> Kit = new Dictionary<string, int>(), Spawned = new Dictionary<string, int>();
                 /// <summary>When each entity id spawned (game seconds): a floor boss's telegraphs are measured glow to attack.</summary>
@@ -1716,6 +1739,7 @@ namespace SickOfIt.Playtest
                 GameplayWorld previous = null;
                 for (int n = first; n <= last; n++)
                 {
+                    tookShortcutTo = 0;
                     if (n > first)
                     {
                         // A video the story puts here (Video3, Yooba, after Floor 1000): watch a moment, skip it, pass his hello.
@@ -1772,11 +1796,17 @@ namespace SickOfIt.Playtest
                         float left = deadline - Time.realtimeSinceStartup;
                         if (left < 5f) { lastOutcome = "time up"; break; }
                         float from = (float)(n - first) / (last - first + 1), to = (float)(n - first + 1) / (last - first + 1);
+                        if (takeShortcuts && n == RouteShortcuts[0].level)
+                            TopUpFare();
                         stage = IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
                         yield return PlayLevel(n, 0f, stage != null ? StageDuring : (Func<float, IEnumerator>)null, from, to, left, waitOutDeath: true);
                         if (Run.Done) yield break;
                         if (stage != null && (lastOutcome != "died" || attempts >= 3))
+                        {
+                            tookShortcutTo = stage.ShortcutTo;
+                            RouteChecks(n, stage);
                             FinishStage(lastOutcome);
+                        }
                         stage = null;
                         if (lastOutcome != "died" || attempts >= 3)
                             break;
@@ -1805,7 +1835,7 @@ namespace SickOfIt.Playtest
                     if (Run.Done) yield break;
                     // One level = one floor: the marker climbs one floor (Docs/Story.md, "The Shaft").
                     ShaftScreen.LevelFloors(n, out int floorStart, out int floorEnd);
-                    if (floorStart - floorEnd == 1)
+                    if (floorStart - floorEnd == 1 && tookShortcutTo <= 0)
                         StageCheck("level" + n + ".climbOneFloor", lastShaft != null && lastShaft.From == floorStart && lastShaft.Shown == floorEnd,
                             lastShaft != null ? $"the Shaft's marker climbed from FLOOR {lastShaft.From} to FLOOR {lastShaft.Shown} (want {floorStart} to {floorEnd}: one floor)"
                                 : "no Shaft climb seen");
@@ -1844,6 +1874,63 @@ namespace SickOfIt.Playtest
             }
 
             int shortcutPassed, shortcutFailed;
+            /// <summary>The floor a shortcut taken on the level just played let him out on (0 = none).</summary>
+            int tookShortcutTo;
+
+            /// <summary>Setup shortcut: the diamonds topped up to the Sack Lift's fare, so the route can take it whatever the bot picked up.</summary>
+            void TopUpFare()
+            {
+                var roguelite = RogueliteManager.Instance;
+                if (roguelite == null || roguelite.GetPoints() >= SackLiftFare)
+                    return;
+                int add = SackLiftFare - roguelite.GetPoints();
+                roguelite.AddPoints(add);
+                Run.Event("shortcut", $"{add} diamonds given, so the Sack Lift's fare ({SackLiftFare}) can be paid");
+            }
+
+            /// <summary>
+            /// Circle X's route (takeShortcuts): a level with a shortcut must have offered it with its cost, been left through it (the
+            /// counter on its toFloor, no Grudge pick, the fare paid), and the floor after the King's Chimney played harder for it.
+            /// </summary>
+            void RouteChecks(int n, StageWatch watched)
+            {
+                if (!takeShortcuts || lastOutcome != "completed")
+                    return;
+                foreach (var (level, id, toFloor, next) in RouteShortcuts)
+                {
+                    if (level != n)
+                        continue;
+                    string prefix = "level" + n + ".shortcut.";
+                    StageCheck(prefix + "offered", watched.ShortcutOffer.Length > 0, watched.ShortcutOffer.Length > 0 ? $"{id} offered: {watched.ShortcutOffer}" : $"no {id} choice came up");
+                    StageCheck(prefix + "taken", watched.ShortcutTo == toFloor, watched.ShortcutTo > 0 ? $"{id} taken: out on FLOOR {watched.ShortcutTo} (want {toFloor})"
+                        : watched.ShortcutDeclined.Length > 0 ? "the bot kept climbing instead" : "never taken");
+                    int last = watched.Floors.Count > 0 ? watched.Floors[watched.Floors.Count - 1] : 0;
+                    StageCheck(prefix + "counterJump", last == toFloor && !watched.Floors.Exists(f => f < watched.End && f > toFloor),
+                        $"the floor counter ran {string.Join(" ", watched.Floors)}: up to {watched.End}, then straight to {toFloor}");
+                    StageCheck(prefix + "noPick", !watched.Picked, watched.Picked ? "a Grudge pick came after the shortcut" : "no Grudge pick after it");
+                    var shortcuts = GameplayWorld.Instance != null ? GameplayWorld.Instance.Shortcuts : null;
+                    if (id == "sackLift")
+                        StageCheck(prefix + "farePaid", shortcuts != null && shortcuts.Paid.IndexOf("diamonds", StringComparison.OrdinalIgnoreCase) >= 0,
+                            $"paid: \"{(shortcuts != null ? shortcuts.Paid : "?")}\" (want {SackLiftFare} diamonds); offered as \"{watched.ShortcutOffer}\"");
+                }
+                if (n == RouteShortcuts[1].next)
+                    StageCheck("level" + n + ".chimneyRisk", watched.Lines.Exists(l => l.text.StartsWith("Came up my chimney", StringComparison.Ordinal)),
+                        "after the King's Chimney the King says so on Floor 910: " + string.Join(" | ", watched.Lines.ConvertAll(l => l.text)));
+            }
+
+            /// <summary>circle-x-route: Floor 991 loaded directly (the fare topped up), then the real flow to Floor 901, taking both shortcuts.</summary>
+            public IEnumerator CircleXRoute()
+            {
+                takeShortcuts = true;
+                try
+                {
+                    yield return WastesClimb(RouteFrom, RouteTo, RouteSeconds);
+                }
+                finally
+                {
+                    takeShortcuts = false;
+                }
+            }
 
             void ShortcutCheck(string beat, bool ok, string detail)
             {
@@ -4228,6 +4315,8 @@ namespace SickOfIt.Playtest
                 var texts = definition.menuTheme.texts;
                 story = new StoryWatch();
                 float deadline = Time.realtimeSinceStartup + StoryPathSeconds - 60f;
+                // Circle X's route takes its shortcuts (the Sack Lift, the King's Chimney): the levels they skip are off the story path.
+                takeShortcuts = true;
 
                 yield return ToMainMenu();
                 if (Run.Done) yield break;
@@ -4344,7 +4433,10 @@ namespace SickOfIt.Playtest
                     // A stage that leads straight on must name the next story level, or Continue goes elsewhere (the
                     // level select) and the wait for it below would stall. Old game data in the build does that: its
                     // Level 4 was the arcade "Everything, Everywhere" with no next level.
-                    if (step + 1 < StoryPath.Length && StoryPath[step + 1].video == 0 && config.nextLevelNumber != StoryPath[step + 1].level)
+                    bool viaShortcut = Array.Exists(RouteShortcuts, r => r.level == n && r.next == (step + 1 < StoryPath.Length ? StoryPath[step + 1].level : -1));
+                    if (n == RouteShortcuts[0].level)
+                        TopUpFare();
+                    if (step + 1 < StoryPath.Length && StoryPath[step + 1].video == 0 && config.nextLevelNumber != StoryPath[step + 1].level && !viaShortcut)
                     {
                         int want = StoryPath[step + 1].level;
                         StoryCheck("level" + n + "Next", false, $"level {n} ({config.levelName}, {config.displayName}) leads to " +
@@ -4675,14 +4767,14 @@ namespace SickOfIt.Playtest
                     if (band != null && band.lastFloor < end && (warden == null || band.lastFloor > warden.lastFloor))
                         warden = band;
                 string distance = warden != null ? (end - warden.lastFloor).ToString("N0", System.Globalization.CultureInfo.InvariantCulture) : "";
-                check("climbCounter" + n, seen.From > seen.To && seen.Shown == end,
+                check("climbCounter" + n, (seen.From > seen.To || start == end) && seen.Shown == end,
                     $"the marker climbed from FLOOR {seen.From} and the counter ticked to FLOOR {seen.Shown} (level {n} ends on {climbed}" +
                     (jumpTo > 0 ? $", the shortcut on to {jumpTo})" : ")"));
                 check("climbFloorsLeft" + n, seen.FloorsLeft.Contains(left), $"\"{seen.FloorsLeft}\" (want {left} floors left)");
                 check("climbWarden" + n, warden != null && seen.NextWarden.IndexOf(warden.warden, StringComparison.OrdinalIgnoreCase) >= 0 && seen.NextWarden.Contains(distance),
                     $"\"{seen.NextWarden}\" (want {(warden != null ? warden.warden : "?")}, {distance} floors up)");
                 // A Warden's floor: the climb lights its Waystone (saved as the run's new start) and the Circle above wakes up.
-                if (end != config.bottomFloor && RunFlow.IsWaystone(end))
+                if (end != config.bottomFloor && start == end && RunFlow.IsWaystone(end))
                 {
                     check("climbWaystone" + n, WaystoneProgress.Highest > 0 && WaystoneProgress.Highest <= end && seen.WaystoneLit.Length > 0,
                         $"highest Waystone saved: FLOOR {WaystoneProgress.Highest} (want {end}); on the map: {(seen.WaystoneLit.Length > 0 ? seen.WaystoneLit : "no waystone-lit beat")}");

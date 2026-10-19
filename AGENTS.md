@@ -99,8 +99,9 @@ Assets/GameConfig/
 - **Shortcuts** (Docs/Story.md, "Shortcuts"): a choice point in a stage (`offerShortcut`: keep climbing or the shortcut,
   its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
   stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the
-  Shaft jumps a dotted line up through a hinted crack (`ShortcutProgress`). First one: the Old Stair (`levels/Level14.json`, level 23), 871 to 841,
-  level 27 (`Level18.json`) next. Cookbook "A shortcut".
+  Shaft jumps a dotted line up through a hinted crack (`ShortcutProgress`). Circle X's: the Sack Lift (Floor 991, a 20-diamond fare, `costDiamonds`) and the King's Chimney (Floor 951,
+  a risk: Floor 910 reads `shortcutTaken`); Circle IX's Old Stair (`levels/Level14.json`, level 34), 871 to 841, level 38
+  (`Level18.json`) next. Cookbook "A shortcut".
 - **Waystones and runs** (Docs/Story.md): a death on a floor stage ends the run: the death screen, then the Shaft drops the
   marker back to the highest Waystone (the Landing, Floor 1,000, then each Circle's top once its Warden is beaten) and the
   run restarts there; Grudges reset, diamonds and Yooba's goods stay. Main menu: Continue (the run) / New Run (the
@@ -208,7 +209,7 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   `floors.door` standing at the top with a voice other than the hero's or the announcer's heard before it (Level 10:
   the Magma King's door), the Grudge; then the Shaft's climb and what comes next; `check`, `banner`, `line` (with the
   time and speaker), `new-enemy`, `breather`, `sign`, `door` events; a Warden's arena (a floor stage on a Static
-  screen, `IsArena`: Level 15, the Slag Throne) skips the breather and takes 60-240 s, and adds the boss checks: the
+  screen, `IsArena`: Floor 901, the Slag Throne, level 31) skips the breather and takes 60-240 s, and adds the boss checks: the
   voiced intro (the throne rises, "FLOOR 901! THE WARDEN OF THE WASTES!", his taunt, the hero's line, the boss bar
   before the fight), the phases in order from the fight's `emit` signals (`mkIntro`, `mkFight`, `mkStand`,
   `mkPhase2`, `mkEnrage`, `mkFlood`, `mkDefeat`, `waystoneLit`) with his health at the stand (≤ half) and the enrage
@@ -235,7 +236,12 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   stones and the collapsing bridge, 991 the Imp Foreman's climbing arena with the floor-boss checks: voiced intro, boss
   bar, the fight's signals in order (`fmIntro`, `fmFight`, `fmClimb`, `fmPhase2`, `fmDefeat`, `fmPile`), every whip
   crack and sack ember 1+ s after its glow, at most 3 enemies, the defeat in slow motion with 20+ diamonds, 60-180 s;
-  `check`, `signal`, `attack`, `boss` events; ~18 min), `shaft` (Video2 loaded directly with
+  `check`, `signal`, `attack`, `boss` events; ~18 min), `circle-x-route` (Circle X's played route: Floor 991, level
+  11, loaded directly with the Sack Lift's 20-diamond fare topped up (setup shortcut), then the real flow to Floor 901,
+  the bot taking every shortcut: the Sack Lift's choice with its fare, paid, the counter jumping 990 to 960, the Shaft's
+  dotted jump, Floors 960-951 (the Pile Keeper on 951), the King's Chimney (950 to 910, Floor 910 harder for it: the
+  King's "Came up my chimney" line), Floors 910-902 and the Magma King on 901, his defeat lighting the Waystone; the old
+  10-floor stages, levels 39-46, never played; `check` events `levelN.shortcut.*`; ~60 min), `shaft` (Video2 loaded directly with
   the Shaft's save reset, skipped: the first plunge past the 10 Circles to FLOOR 1,000, the welcome lines, Continue to Level 2, the
   bot plays it, then the marker's climb to 999 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
   `music` (Hell's soundtrack, Docs/Story.md "Music": the `shaft` run listening to the music, then Level 15 loaded directly and fought

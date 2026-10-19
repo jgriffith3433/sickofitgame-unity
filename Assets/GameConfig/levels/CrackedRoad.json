@@ -11,12 +11,15 @@
   "platforms": [],
   "placedSprites": [],
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
   "deathConfigName": "Death1",
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 22,
+  "nextLevelNumber": 33,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 75,
@@ -36,11 +39,21 @@
       "holdForPushes": true
     },
     "markers": [
-      { "floor": 897, "label": "DEMON" },
-      { "floor": 892, "label": "THE TOP" }
+      {
+        "floor": 897,
+        "label": "DEMON"
+      },
+      {
+        "floor": 892,
+        "label": "THE TOP"
+      }
     ],
     "objective": {
-      "complete": { "type": "counter", "name": "cleared", "atLeast": 1 },
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
       "text": "Climb"
     },
     "phases": [
@@ -58,7 +71,10 @@
         "rules": [
           {
             "name": "the hero takes it in",
-            "when": { "type": "after", "seconds": 2.8 },
+            "when": {
+              "type": "after",
+              "seconds": 2.8
+            },
             "do": [
               {
                 "type": "showText",
@@ -70,16 +86,30 @@
             ]
           },
           {
-            "when": { "type": "after", "seconds": 6.0 },
-            "do": [ { "type": "goToPhase", "phase": "firstDemon" } ]
+            "when": {
+              "type": "after",
+              "seconds": 6.0
+            },
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "firstDemon"
+              }
+            ]
           }
         ]
       },
       {
         "name": "firstDemon",
         "onEnter": [
-          { "type": "lockTravel" },
-          { "type": "cameraShake", "intensity": 0.15, "duration": 1.2 },
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.15,
+            "duration": 1.2
+          },
           {
             "type": "showText",
             "text": "The road's splitting.",
@@ -91,21 +121,32 @@
         "rules": [
           {
             "name": "a demon climbs out, alone",
-            "when": { "type": "after", "seconds": 1.6 },
+            "when": {
+              "type": "after",
+              "seconds": 1.6
+            },
             "maxTimes": 1,
             "do": [
               {
                 "type": "spawn",
                 "entity": "brimstoneDemon",
                 "anchor": "Camera",
-                "at": [3.6, -2.05],
-                "tags": ["beat"]
+                "at": [
+                  3.6,
+                  -2.05
+                ],
+                "tags": [
+                  "beat"
+                ]
               }
             ]
           },
           {
             "name": "the hero reads it",
-            "when": { "type": "after", "seconds": 3.0 },
+            "when": {
+              "type": "after",
+              "seconds": 3.0
+            },
             "maxTimes": 1,
             "do": [
               {
@@ -119,11 +160,21 @@
           },
           {
             "name": "demon down",
-            "when": { "type": "allDead", "target": { "tag": "beat" } },
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "beat"
+              }
+            },
             "maxTimes": 1,
             "do": [
-              { "type": "unlockTravel" },
-              { "type": "goToPhase", "phase": "climbToTop" }
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "climbToTop"
+              }
             ]
           }
         ]
@@ -131,13 +182,25 @@
       {
         "name": "climbToTop",
         "onEnter": [
-          { "type": "generateFloors", "untilFloor": 892, "firstBreather": 4.0 }
+          {
+            "type": "generateFloors",
+            "untilFloor": 892,
+            "firstBreather": 4.0
+          }
         ],
         "rules": [
           {
-            "when": { "type": "signal", "name": "floorsDone" },
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
             "maxTimes": 1,
-            "do": [ { "type": "goToPhase", "phase": "top" } ]
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "top"
+              }
+            ]
           }
         ]
       },
@@ -155,13 +218,18 @@
         "rules": [
           {
             "name": "stage clear",
-            "when": { "type": "floorReached", "floor": 891 },
+            "when": {
+              "type": "floorReached",
+              "floor": 891
+            },
             "maxTimes": 1,
             "do": [
               {
                 "type": "runSequence",
                 "steps": [
-                  { "type": "lockTravel" },
+                  {
+                    "type": "lockTravel"
+                  },
                   {
                     "type": "showText",
                     "text": "THE CRACKED ROAD: CROSSED",
@@ -169,9 +237,19 @@
                     "sound": "vo_road_clear",
                     "color": "#FFB46A"
                   },
-                  { "type": "wait", "seconds": 1.5 },
-                  { "type": "offerUpgrades", "title": "Pick a grudge" },
-                  { "type": "setCounter", "name": "cleared", "value": 1 }
+                  {
+                    "type": "wait",
+                    "seconds": 1.5
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
                 ]
               }
             ]

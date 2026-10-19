@@ -1,0 +1,424 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor953",
+  "displayName": "Floor 953: Second Lap",
+  "levelNumber": 19,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 220.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 20,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 953,
+    "length": 110,
+    "floors": {
+      "start": 953,
+      "end": 952,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "lap1up",
+          "direction": "Up",
+          "length": 1.45,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                -1.2,
+                -1.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                0.15
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                -2.4,
+                -1.95
+              ],
+              "id": "vent1"
+            }
+          ]
+        },
+        {
+          "name": "lap1run",
+          "direction": "Right",
+          "length": 2.4,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                -1.4,
+                0.15
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "lavaFall955a",
+              "at": [
+                0.2,
+                1.75
+              ],
+              "id": "fall1"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                1.8,
+                0.15
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                4.0,
+                1.05
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "imp",
+              "at": [
+                0.4,
+                3.75
+              ],
+              "id": "lapImp1",
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "lap1top",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding953",
+              "at": [
+                8.2,
+                2.45
+              ],
+              "id": "lap1Landing"
+            }
+          ]
+        },
+        {
+          "name": "lap2up",
+          "direction": "Up",
+          "length": 4.9,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "sinkingStone",
+              "at": [
+                8.2,
+                3.75
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                10.6,
+                5.05
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                11.8,
+                2.95
+              ],
+              "id": "vent2"
+            }
+          ]
+        },
+        {
+          "name": "lap2run",
+          "direction": "Right",
+          "length": 9.2,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                12.8,
+                5.05
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "lavaFall955a",
+              "at": [
+                14.4,
+                6.65
+              ],
+              "id": "fall2"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                16.0,
+                5.05
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                18.2,
+                5.95
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "imp",
+              "at": [
+                14.6,
+                8.65
+              ],
+              "id": "lapImp2",
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding953b",
+              "at": [
+                22.4,
+                7.35
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the door leads back to 953",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "lap1Landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.6
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.05,
+                "duration": 0.3
+              },
+              {
+                "type": "emit",
+                "signal": "lapRepeat"
+              },
+              {
+                "type": "showText",
+                "text": "FLOOR 953! ...AGAIN!",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f953_again",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "showText",
+                "text": "I know this one.",
+                "duration": 2.2,
+                "style": "Subtitle",
+                "sound": "vo_f953_know"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 952,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "SECOND LAP: DONE!",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_f953_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 953: SECOND LAP",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f953_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

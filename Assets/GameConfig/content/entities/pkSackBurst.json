@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "extends": "fmLash",
+  "body": {
+    "shape": "Box",
+    "size": [
+      1.1,
+      0.9
+    ],
+    "solid": false
+  }
+}
