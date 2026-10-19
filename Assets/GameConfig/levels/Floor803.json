@@ -1,0 +1,408 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor803",
+  "displayName": "Floor 803: The Last Heave",
+  "levelNumber": 59,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 60,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 803,
+    "length": 90,
+    "floors": {
+      "start": 803,
+      "end": 802,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "road",
+          "direction": "Right",
+          "length": 2.55,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -0.6,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.6,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "face",
+          "direction": "Up",
+          "length": 8.15,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "risingSlab",
+              "at": [
+                3.8,
+                -2.45
+              ],
+              "id": "heaveA"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.6,
+                1.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -1.6,
+                2.6
+              ],
+              "scale": [
+                0.6,
+                1
+              ]
+            },
+            {
+              "entity": "demonLobber",
+              "at": [
+                -1.6,
+                3.3
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "risingSlab",
+              "at": [
+                3.8,
+                1.35
+              ],
+              "id": "heaveB"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                1.6,
+                5.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                5.4,
+                6.0
+              ],
+              "scale": [
+                0.6,
+                1
+              ]
+            },
+            {
+              "entity": "demonLobber",
+              "at": [
+                5.4,
+                6.7
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                3.7,
+                6.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                3.9,
+                7.25
+              ],
+              "id": "soul803"
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 7.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding803",
+              "at": [
+                8.6,
+                6.45
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the last heave",
+        "when": {
+          "type": "sectionReached",
+          "section": "face"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "showText",
+                "text": "Hot in here. And humming.",
+                "duration": 2.97,
+                "style": "Subtitle",
+                "sound": "vo_f803_hum"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -1.0,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  1.0,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  0.0,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "spawn",
+                "entity": "spireShard",
+                "anchor": "Camera",
+                "at": [
+                  -1.6,
+                  2.3
+                ]
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 802,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.06,
+                "duration": 1.5
+              },
+              {
+                "type": "showText",
+                "text": "It stopped humming. That's worse.",
+                "duration": 3.5,
+                "style": "Subtitle",
+                "sound": "vo_f803_stopped"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "THE LAST HEAVE: HEAVED",
+                "duration": 2.77,
+                "style": "Banner",
+                "sound": "vo_f803_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 803: THE LAST HEAVE",
+                "duration": 2.97,
+                "style": "Banner",
+                "sound": "vo_f803_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

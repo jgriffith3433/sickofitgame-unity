@@ -1,0 +1,451 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor892",
+  "displayName": "Floor 892: Demon Row",
+  "levelNumber": 40,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 41,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 892,
+    "length": 90,
+    "floors": {
+      "start": 892,
+      "end": 891,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "climb",
+          "direction": "Up",
+          "length": 0.6,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -0.4,
+                -1.15
+              ]
+            }
+          ]
+        },
+        {
+          "name": "row",
+          "direction": "Arena",
+          "length": 0.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                2.6,
+                0.15
+              ],
+              "id": "row",
+              "scale": [
+                2.4,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                3.0,
+                0.95
+              ],
+              "onEnter": true,
+              "tags": [
+                "hold892"
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                3.9,
+                0.95
+              ],
+              "onEnter": true,
+              "tags": [
+                "hold892"
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                4.8,
+                0.95
+              ],
+              "onEnter": true,
+              "tags": [
+                "hold892"
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                -2.6,
+                1.6
+              ],
+              "onEnter": true,
+              "tags": [
+                "hold892"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "collapse",
+          "direction": "Right",
+          "length": 15.85,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "splitSlab",
+              "at": [
+                6.1,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                8.3,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                10.5,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                12.7,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                14.9,
+                0.15
+              ]
+            },
+            {
+              "entity": "lavaSurge",
+              "at": [
+                -4.0,
+                1.0
+              ],
+              "id": "rowSurge",
+              "onEnter": true,
+              "facing": 1.0
+            }
+          ],
+          "autoSpeed": 1.1
+        },
+        {
+          "name": "up",
+          "direction": "Up",
+          "length": 3.85,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                17.1,
+                1.45
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                15.1,
+                2.75
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                14.8,
+                3.55
+              ],
+              "id": "soul892"
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.9,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding892",
+              "at": [
+                20.8,
+                2.75
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the row",
+        "when": {
+          "type": "sectionReached",
+          "section": "row"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.8
+              },
+              {
+                "type": "showText",
+                "text": "They're queuing now.",
+                "duration": 2.63,
+                "style": "Subtitle",
+                "sound": "vo_f892_queue"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the row is clear",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "sectionReached",
+              "section": "row"
+            },
+            {
+              "type": "allDead",
+              "target": {
+                "tag": "hold892"
+              }
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.8
+              },
+              {
+                "type": "playSound",
+                "sound": "magma_rumble"
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "RUN!",
+                "duration": 2.0,
+                "style": "Banner",
+                "sound": "vo_f892_run",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "nextSection"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "out of the collapse",
+        "when": {
+          "type": "sectionReached",
+          "section": "up"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 891,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "DEMON ROW: DISMISSED",
+                "duration": 2.63,
+                "style": "Banner",
+                "sound": "vo_f892_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 892: DEMON ROW",
+                "duration": 2.63,
+                "style": "Banner",
+                "sound": "vo_f892_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "extends": "slag",
+  "visual": {
+    "scale": 0.2,
+    "color": "#E0602A",
+    "fxColor": "#FFB43A"
+  },
+  "onDeath": [
+    {
+      "type": "playSound",
+      "sound": "lava_burst"
+    }
+  ]
+}

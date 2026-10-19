@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "extends": "slagConveyor",
+  "tags": [
+    "foothold",
+    "road"
+  ],
+  "visual": {
+    "color": "#C8B4C0"
+  },
+  "abilities": [
+    {
+      "type": "conveyor",
+      "speed": -0.9,
+      "seamColor": "#FF8A3A",
+      "art": {
+        "sheet": "Art/Climb/SlagBelt_crust.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0,
+        "color": "#C8B4C0"
+      },
+      "artHeight": 0.5,
+      "artLip": 0.03
+    }
+  ]
+}

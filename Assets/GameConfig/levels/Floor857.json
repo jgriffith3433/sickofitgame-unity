@@ -1,0 +1,376 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor857",
+  "displayName": "Floor 857: Seam Falls",
+  "levelNumber": 45,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 46,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 857,
+    "length": 90,
+    "floors": {
+      "start": 857,
+      "end": 856,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "falls",
+          "direction": "Right",
+          "length": 7.95,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                -0.6,
+                -2.45
+              ]
+            },
+            {
+              "entity": "lavaFall",
+              "at": [
+                0.7,
+                0.4
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                2.0,
+                -2.45
+              ]
+            },
+            {
+              "entity": "lavaFall955b",
+              "at": [
+                3.3,
+                0.4
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                4.5,
+                -2.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "lavaFall955c",
+              "at": [
+                5.8,
+                0.4
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                7.0,
+                -2.45
+              ]
+            },
+            {
+              "entity": "brimstoneVent",
+              "at": [
+                2.0,
+                -5.0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "behind",
+          "direction": "Up",
+          "length": 4.45,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                9.2,
+                -1.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                7.0,
+                0.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                9.2,
+                1.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                7.0,
+                2.75
+              ],
+              "scale": [
+                1.1,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                11.2,
+                3.5
+              ],
+              "scale": [
+                0.6,
+                1
+              ]
+            },
+            {
+              "entity": "demonLobber",
+              "at": [
+                11.2,
+                4.2
+              ],
+              "onEnter": true
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                9.4,
+                2.25
+              ],
+              "id": "soul857"
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.5,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding857",
+              "at": [
+                12.5,
+                2.75
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the falls",
+        "when": {
+          "type": "sectionReached",
+          "section": "falls"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "showText",
+                "text": "Wait for it. ...Again.",
+                "duration": 2.77,
+                "style": "Subtitle",
+                "sound": "vo_f857_wait"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "behind the falls: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "behind"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 856,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "showText",
+                "text": "He started a door here. Then gave up.",
+                "duration": 3.77,
+                "style": "Subtitle",
+                "sound": "vo_f857_door"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "SEAM FALLS: DRY",
+                "duration": 2.3,
+                "style": "Banner",
+                "sound": "vo_f857_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 857: SEAM FALLS",
+                "duration": 2.7,
+                "style": "Banner",
+                "sound": "vo_f857_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

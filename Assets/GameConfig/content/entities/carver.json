@@ -1,0 +1,316 @@
+{
+  "schemaVersion": 1,
+  "extends": "brimstoneDemon",
+  "team": "Enemy",
+  "health": 34,
+  "moveSpeed": 0,
+  "activationRange": 0,
+  "tags": [
+    "boss",
+    "carver"
+  ],
+  "body": {
+    "shape": "Circle",
+    "radius": 0.6,
+    "solid": false,
+    "gravity": 0
+  },
+  "visual": {
+    "scale": 0.42,
+    "color": "#D8D0C8",
+    "fxColor": "#FFB43A",
+    "deathPunch": 0.35,
+    "deathFlash": true,
+    "deathBits": 30,
+    "deathFade": 0.8
+  },
+  "healthBar": {
+    "show": false
+  },
+  "loot": {
+    "chance": 1,
+    "count": 4,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "contactDamage",
+      "damage": 1
+    }
+  ],
+  "states": [
+    {
+      "name": "intro",
+      "transitions": [
+        {
+          "to": "p1Line",
+          "when": {
+            "type": "signal",
+            "name": "cvFight"
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Line",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "cvWarnLine",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            3.4,
+            -0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "line",
+            "count": 5,
+            "spacing": 1
+          },
+          "animTrigger": "IsAttacking"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "breaking",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Spot",
+          "when": {
+            "type": "after",
+            "seconds": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Spot",
+      "onEnter": [
+        {
+          "type": "playSound",
+          "sound": "lava_bubble"
+        },
+        {
+          "type": "spawn",
+          "entity": "cvWarnSpot",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "transitions": [
+        {
+          "to": "breaking",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Spot2",
+          "when": {
+            "type": "after",
+            "seconds": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Spot2",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "cvWarnSpot",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "transitions": [
+        {
+          "to": "breaking",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Line",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "breaking",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "cvBreak"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Whelps",
+          "when": {
+            "type": "signal",
+            "name": "cvTier2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Whelps",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "cvPhase2"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "spawner",
+          "entity": "demonWhelp",
+          "interval": 9,
+          "initialDelay": 0.8,
+          "maxAlive": 2,
+          "offset": [
+            -1.8,
+            0.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Line",
+          "when": {
+            "type": "after",
+            "seconds": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Line",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "cvWarnLine",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            3.0,
+            -2.2
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "line",
+            "count": 5,
+            "spacing": 1
+          },
+          "animTrigger": "IsAttacking"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Spot",
+          "when": {
+            "type": "after",
+            "seconds": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Spot",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        }
+      ],
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "cvWarnSpot",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Whelps",
+          "when": {
+            "type": "after",
+            "seconds": 2.0
+          }
+        }
+      ]
+    }
+  ]
+}
