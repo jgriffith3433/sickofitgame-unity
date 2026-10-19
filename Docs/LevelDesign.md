@@ -1644,8 +1644,11 @@ order it can be built and played:
    Floor 802 taking both shortcuts). New data pieces, no new C#: `roadSlab`, `settleSlab`, `splitSlab`, `spireShard`
    (+ `shard`), `brimstoneVent`, `risingSlab`, `seesawSlab`, `roadCreep`, `whelpNest`, the monsters `demonWhelp` and
    `demonLobber` (+ `brimstoneLump`), the floor bosses `roadBreaker` and `carver` with their glows, and the Circle's
-   `sky` in `content/circles/crackedRoad.json`. The Cracked Road's art (road slabs, the far Rift, spires, floating road)
-   is `Tools/Art/climb/climb.json`'s `road*` pieces; until a piece is baked it draws in the Wastes' art, tinted. Built
+   `sky` in `content/circles/crackedRoad.json`. The Cracked Road's art is baked (2026-10-19) from `Tools/Art/climb/climb.json`'s
+   `roadSlab` (also `risingSlab` and `seesawSlab`), `splitSlab` (crack, fall), `settleSlab` (sink; the loop slabs too),
+   `rift` (the sky's `seaArt`: the Rift's crack web far below), `roadSpires` and `roadIsland` (the sky's spires and
+   floating road): `Assets/Art/Climb/RoadSlab_*`, `SplitSlab_*`, `SettleSlab_*`, `Rift_loop`, `RoadSpires_still`,
+   `RoadIsland_still`. Built
    with today's pieces, so some beats are simpler than the pages: the great spire isn't drawn; the toppling spire (858)
    is a collapse chase along a row of split slabs; the dust on 853 is a fade like 907's dark; 855's laps are the same
    layout placed twice (as 995); the shard that stands up on 898 and the vent's whelp on 896 are spawned pieces; the

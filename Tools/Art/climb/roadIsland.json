@@ -1,0 +1,24 @@
+{
+  "about": "A broken piece of road floating in the haze (crackedRoad sky layers).",
+  "gpu": "image.generate, sickofit preset look, slot far/island, seed 768470000 (asset a_52d2b17ba2b0bea5, job j_1aa2ee5e105f; j_b9a30f117c2c has lane markings, not used).",
+  "out": "Assets/Art/Climb",
+  "name": "RoadIsland",
+  "key": "none",
+  "size": [
+    808,
+    564
+  ],
+  "pivot": [
+    404.0,
+    282.0
+  ],
+  "worldWidth": 2,
+  "widthPixels": 808,
+  "scale": 0.4,
+  "clips": {
+    "still": {
+      "frames": "/tmp/crsrc/_prep/roadIsland/still",
+      "key": "none"
+    }
+  }
+}

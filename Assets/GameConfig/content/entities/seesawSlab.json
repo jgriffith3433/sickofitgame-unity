@@ -6,13 +6,13 @@
     "road"
   ],
   "visual": {
-    "color": "#B4A6B8",
+    "color": "#FFFFFF",
     "animator": {
       "parameters": [],
       "states": [
         {
           "stateName": "Idle",
-          "spriteSheet": "Art/Climb/Ledge_idle.png",
+          "spriteSheet": "Art/Climb/RoadSlab_idle.png",
           "fps": 12,
           "loop": true,
           "events": []

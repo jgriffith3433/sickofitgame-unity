@@ -6,7 +6,61 @@
     "road"
   ],
   "visual": {
-    "color": "#B4A6B8",
-    "placeholderColor": "#2A2028"
+    "color": "#FFFFFF",
+    "placeholderColor": "#2A2028",
+    "animator": {
+      "parameters": [
+        {
+          "name": "Sinking",
+          "type": "Bool",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/SettleSlab_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Sink",
+          "spriteSheet": "Art/Climb/SettleSlab_sink.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Sink",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Sinking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Sink",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Sinking",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        }
+      ],
+      "defaultStateName": "Idle"
+    }
   }
 }

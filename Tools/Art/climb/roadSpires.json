@@ -1,0 +1,24 @@
+{
+  "about": "Black spires with glowing seams standing in the Rift (crackedRoad sky layers, onSea).",
+  "gpu": "image.generate, sickofit preset look, slot far/spires, seed 1967937778 (asset a_f9c2fade38fdef7b, job j_f023ba9543fa).",
+  "out": "Assets/Art/Climb",
+  "name": "RoadSpires",
+  "key": "none",
+  "size": [
+    643,
+    1230
+  ],
+  "pivot": [
+    321.5,
+    1226
+  ],
+  "worldWidth": 2,
+  "widthPixels": 643,
+  "scale": 0.4,
+  "clips": {
+    "still": {
+      "frames": "/tmp/crsrc/_prep/roadSpires/still",
+      "key": "none"
+    }
+  }
+}

@@ -202,19 +202,19 @@
     "seaParallax": 0.9,
     "seaMinOnScreen": 0.06,
     "seaArt": {
-      "sheet": "Art/Climb/FarSea_loop.png",
+      "sheet": "Art/Climb/Rift_loop.png",
       "spriteNameFilter": "",
-      "fps": 6,
+      "fps": 1,
       "scroll": 0.02,
-      "color": "#8A5A5A"
+      "color": "#B08080"
     },
     "seaArtHeight": 2.4,
     "layers": [
       {
         "name": "far spires",
-        "sprite": "Art/Climb/Spires_still.png#still_00",
+        "sprite": "Art/Climb/RoadSpires_still.png#still_00",
         "shape": "Spire",
-        "color": "#3A2E38C0",
+        "color": "#6A5A60C0",
         "size": [
           2.0,
           2.4
@@ -255,9 +255,9 @@
       },
       {
         "name": "far islands",
-        "sprite": "Art/Climb/Island_still.png#still_00",
+        "sprite": "Art/Climb/RoadIsland_still.png#still_00",
         "shape": "Rock",
-        "color": "#4A3E46D0",
+        "color": "#6A5C60D0",
         "size": [
           1.5,
           0.9
@@ -277,9 +277,9 @@
       },
       {
         "name": "near spires",
-        "sprite": "Art/Climb/Spires_still.png#still_00",
+        "sprite": "Art/Climb/RoadSpires_still.png#still_00",
         "shape": "Spire",
-        "color": "#6A5A66",
+        "color": "#B0A0A4",
         "size": [
           3.2,
           3.8
@@ -299,9 +299,9 @@
       },
       {
         "name": "floating islands",
-        "sprite": "Art/Climb/Island_still.png#still_00",
+        "sprite": "Art/Climb/RoadIsland_still.png#still_00",
         "shape": "Rock",
-        "color": "#7A6A72",
+        "color": "#C0B0B4",
         "size": [
           2.6,
           1.5
