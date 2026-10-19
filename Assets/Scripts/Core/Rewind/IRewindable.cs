@@ -33,4 +33,10 @@ namespace SickOfIt.Core.Rewind
         /// <summary>Record the current state as this life's birth.</summary>
         void CaptureBirth();
     }
+
+    /// <summary>How many snapshots a rewindable holds (RewindPerf's "longest history").</summary>
+    public interface IRewindHistory
+    {
+        int HistoryCount { get; }
+    }
 }

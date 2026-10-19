@@ -99,7 +99,7 @@ namespace SickOfIt.Core
             if (audioSource == null || history.Count == 0) return;
 
             float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : 0f;
-            int nearest = history.FindNearestIndex(currentTime, GetSnapshotTime);
+            int nearest = history.FindNearestIndex(currentTime, SnapshotTime);
             if (nearest >= 0)
             {
                 var snapshot = history[nearest];

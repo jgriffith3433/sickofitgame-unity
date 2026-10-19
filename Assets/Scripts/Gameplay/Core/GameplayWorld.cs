@@ -71,6 +71,8 @@ namespace SickOfIt.Gameplay
 
         readonly List<Entity> live = new List<Entity>();
         readonly List<Entity> tickList = new List<Entity>();
+        // Who is in live: every entity's LoadState registers it again on each rewind frame, and searching the list was O(n) each time.
+        readonly HashSet<Entity> liveSet = new HashSet<Entity>();
         readonly Dictionary<Collider2D, Entity> byCollider = new Dictionary<Collider2D, Entity>();
         readonly Dictionary<string, ObjectPool> pools = new Dictionary<string, ObjectPool>(StringComparer.Ordinal);
         readonly Dictionary<GameObject, Entity> entityOf = new Dictionary<GameObject, Entity>();
@@ -324,7 +326,7 @@ namespace SickOfIt.Gameplay
 
         internal void Register(Entity entity)
         {
-            if (entity.IsPlayer || live.Contains(entity))
+            if (entity.IsPlayer || !liveSet.Add(entity))
                 return;
             int index = live.Count;
             while (index > 0 && live[index - 1].Serial > entity.Serial)
@@ -334,7 +336,8 @@ namespace SickOfIt.Gameplay
 
         internal void Unregister(Entity entity)
         {
-            live.Remove(entity);
+            if (liveSet.Remove(entity))
+                live.Remove(entity);
         }
 
         internal void RegisterColliders(Collider2D[] colliders, Entity entity)
