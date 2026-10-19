@@ -43,7 +43,7 @@ namespace SickOfIt.Playtest
     /// story-path (New Game through the story path: Video1, the Meadow, Video2, the Landing with its floor counter
     /// and the 999 beat, Video3 (Yooba), the Spill, then the level select with the story levels in order).
     /// all-levels (every level in game.json, each opened directly with a time limit, a table of cleared / died / stuck;
-    /// at most ~4 min per level, no new level after 50 min, the rest "not reached (time budget)"),
+    /// at most ~4 min per level, no new level after 38 min, all done by 43 (the runner encodes the video after), the rest "not reached (time budget)"),
     /// off-path (the same over the levels after the path: the old 10-floor stages and the arcade levels) and
     /// floors-A-B (the same over one stretch of the path, e.g. floors-1000-991).
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
@@ -376,8 +376,12 @@ namespace SickOfIt.Playtest
         /// The runner cancels any run after 60 minutes ("stuck: ran for over 60 min"), and a full all-levels run takes hours. So
         /// a run starts no new level after PathRunBudget real seconds (from the scenario's start), lets the level in play finish
         /// by PathRunHardEnd, and lists every level it didn't get to as "not reached (time budget)" in the table.
+        /// The runner's 60 minutes also cover what it does after the scenario ends: encoding the recording took 5-8 minutes for a
+        /// 52-minute run (r_0d9606d1c310 ended its table at 51.7 min and was cancelled while uploading), so the scenario ends by
+        /// PathRunHardEnd = 43 min, leaving the runner RunnerAfterMinutes and a few minutes to spare.
         /// </summary>
-        const float PathRunBudget = 50f * 60f, PathRunHardEnd = 55f * 60f;
+        const float PathRunBudget = 38f * 60f, PathRunHardEnd = 43f * 60f;
+        const float RunnerLimitMinutes = 60f, RunnerAfterMinutes = 9f;
         const string NotReached = "not reached (time budget)";
 
         /// <summary>
@@ -641,7 +645,7 @@ namespace SickOfIt.Playtest
                                    "and played by the bot through real input with a time limit (a floor 160 s of game time, a floor boss's or Warden's floor 250 s, " +
                                    "a level off the path its duration + 30 s, at most 250 s), " +
                                    "once more after a death, both tries capped at about 4 minutes of real time (a floor boss's 5); no new level starts after " +
-                                   "50 minutes of run time, and every level not reached is in the table as NOT REACHED (TIME BUDGET), with budget events. Each level ends with a level-result event: CLEARED, DIED (where: phase, floor, the hero's place, " +
+                                   "38 minutes of run time and the run ends by 43 (the runner's 60 minutes include encoding the video afterwards), and every level not reached is in the table as NOT REACHED (TIME BUDGET), with budget events. Each level ends with a level-result event: CLEARED, DIED (where: phase, floor, the hero's place, " +
                                    "path section; by what: the last thing that hurt him) or STUCK (the stuck event's phase, place, path section and the bot's " +
                                    "ClimbTarget); the run ends with a summary event and the per-level table (table events, and the same table in the report's log)";
             var every = AllGameLevels();
@@ -5942,7 +5946,8 @@ namespace SickOfIt.Playtest
                 float budgetEnd = sessionStarted + PathRunBudget, hardEnd = sessionStarted + PathRunHardEnd;
                 Run.Event("budget", $"time budget: no new level after {PathRunBudget / 60f:0} min of run time (now {RunMinutes():0.0} min in), " +
                                     $"the last one ends by {PathRunHardEnd / 60f:0} min; each level capped at {PathLevelCap(1, Speed) / 60f:0} min of real time " +
-                                    "(a floor boss's a little more), both tries and the loads; a stuck or a timeout moves on to the next level");
+                                    "(a floor boss's a little more), both tries and the loads; a stuck or a timeout moves on to the next level; " +
+                                    $"the runner stops at {RunnerLimitMinutes:0} min, encoding the video included (up to ~{RunnerAfterMinutes:0} min after the table)");
                 int reached = 0;
                 for (int i = 0; i < levels.Count && !Run.Done; i++)
                 {
@@ -6049,7 +6054,8 @@ namespace SickOfIt.Playtest
                 Run.Metric("path.played", played);
                 Run.Metric("path.notReached", notReached);
                 Run.Metric("path.budgetMinutes", Mathf.Round(RunMinutes() * 10f) / 10f);
-                Run.Event("budget", $"time budget used: {RunMinutes():0.0} of {PathRunBudget / 60f:0} min; levels covered: {played} of {levels.Count}" +
+                Run.Event("budget", $"time budget used: {RunMinutes():0.0} of {PathRunBudget / 60f:0} min (hard end {PathRunHardEnd / 60f:0}; " +
+                                    $"{RunnerLimitMinutes - RunMinutes():0.0} min left of the runner's {RunnerLimitMinutes:0} for the video); levels covered: {played} of {levels.Count}" +
                                     (played > 0 ? $" ({PathRange(levels.GetRange(0, played))})" : "") +
                                     (notReached > 0 ? $"; not reached: {notReached} ({PathRange(levels.GetRange(played, notReached))})" : "; every level reached"));
 
