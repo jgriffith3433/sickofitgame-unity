@@ -42,7 +42,8 @@ namespace SickOfIt.Playtest
     /// portal-audio (the prologue's portal scene sounds and the Meadow's lines played in order on the main menu).
     /// story-path (New Game through the story path: Video1, the Meadow, Video2, the Landing with its floor counter
     /// and the 999 beat, Video3 (Yooba), the Spill, then the level select with the story levels in order).
-    /// all-levels (every level in game.json, each opened directly with a time limit, a table of cleared / died / stuck),
+    /// all-levels (every level in game.json, each opened directly with a time limit, a table of cleared / died / stuck;
+    /// at most ~4 min per level, no new level after 50 min, the rest "not reached (time budget)"),
     /// off-path (the same over the levels after the path: the old 10-floor stages and the arcade levels) and
     /// floors-A-B (the same over one stretch of the path, e.g. floors-1000-991).
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
@@ -370,6 +371,20 @@ namespace SickOfIt.Playtest
             PathLevels().FindAll(n => n == 1 || PathFloor(n) <= ClimbStartTopFloor && PathFloor(n) >= ClimbStartLastFloor);
         const float PathFloorSeconds = 160f, PathBossSeconds = 250f;
         const int PathTries = 2;
+
+        /// <summary>
+        /// The runner cancels any run after 60 minutes ("stuck: ran for over 60 min"), and a full all-levels run takes hours. So
+        /// a run starts no new level after PathRunBudget real seconds (from the scenario's start), lets the level in play finish
+        /// by PathRunHardEnd, and lists every level it didn't get to as "not reached (time budget)" in the table.
+        /// </summary>
+        const float PathRunBudget = 50f * 60f, PathRunHardEnd = 55f * 60f;
+        const string NotReached = "not reached (time budget)";
+
+        /// <summary>
+        /// The most real seconds one level may take in all-levels, both tries and their loads together: its game-time limit at
+        /// the run's speed plus 45 s, at least 4 minutes (a floor boss's about 5). Past it the level is stuck and the next starts.
+        /// </summary>
+        static float PathLevelCap(int n, float speed) => Mathf.Max(240f, PathLevelSeconds(n) / speed + 45f);
         static readonly Regex FloorLevelName = new Regex(@"^Floor(\d+)$");
 
         /// <summary>The floor a one-floor level ("FloorN" in game.json) is on, or 0.</summary>
@@ -469,13 +484,16 @@ namespace SickOfIt.Playtest
             return Mathf.Min(own, floor > 0 && floor % 10 == 1 ? PathBossSeconds : PathFloorSeconds);
         }
 
-        /// <summary>Real seconds a run of these levels may take: each level's limit, a second try for some, and the loads.</summary>
+        /// <summary>
+        /// Real seconds a run of these levels may take: each level's limit, a second try for some, and the loads; never more than
+        /// the time budget's hard end (the run stops starting levels at PathRunBudget and ends with its table).
+        /// </summary>
         static float PathRunSeconds(List<int> levels)
         {
             float seconds = 60f;
             foreach (int n in levels)
                 seconds += PathLevelSeconds(n) * 1.4f + 30f;
-            return seconds;
+            return Mathf.Min(seconds, PathRunHardEnd);
         }
 
         static string PathRange(List<int> levels) =>
@@ -622,7 +640,8 @@ namespace SickOfIt.Playtest
             const string pathHow = "each level opened directly (a setup shortcut: no videos, no Shaft, and a level the bot can't clear never stops the run) " +
                                    "and played by the bot through real input with a time limit (a floor 160 s of game time, a floor boss's or Warden's floor 250 s, " +
                                    "a level off the path its duration + 30 s, at most 250 s), " +
-                                   "once more after a death. Each level ends with a level-result event: CLEARED, DIED (where: phase, floor, the hero's place, " +
+                                   "once more after a death, both tries capped at about 4 minutes of real time (a floor boss's 5); no new level starts after " +
+                                   "50 minutes of run time, and every level not reached is in the table as NOT REACHED (TIME BUDGET), with budget events. Each level ends with a level-result event: CLEARED, DIED (where: phase, floor, the hero's place, " +
                                    "path section; by what: the last thing that hurt him) or STUCK (the stuck event's phase, place, path section and the bot's " +
                                    "ClimbTarget); the run ends with a summary event and the per-level table (table events, and the same table in the report's log)";
             var every = AllGameLevels();
@@ -5887,11 +5906,16 @@ namespace SickOfIt.Playtest
                     (Where.Length > 0 ? " " + Where : "") + (Before.Length > 0 ? $" [first try: {Before}]" : "");
 
                 public string Row() =>
-                    $"| {Name} | {Title} | {Result.ToUpperInvariant()} | {Seconds:0} s | {Tries} | {(Where.Length > 0 ? Where : "-")}{(Before.Length > 0 ? $" (first try: {Before})" : "")} |";
+                    $"| {Name} | {Title} | {Result.ToUpperInvariant()} | {(Tries > 0 ? $"{Seconds:0} s" : "-")} | {Tries} | {(Where.Length > 0 ? Where : "-")}{(Before.Length > 0 ? $" (first try: {Before})" : "")} |";
             }
 
             /// <summary>Set by OpenLevel: the level asked for is running in a world of its own.</summary>
             bool openedLevel;
+
+            /// <summary>When the scenario started (real time): all-levels' time budget counts from here, boot included.</summary>
+            readonly float sessionStarted = Time.realtimeSinceStartup;
+
+            float RunMinutes() => (Time.realtimeSinceStartup - sessionStarted) / 60f;
 
             /// <summary>
             /// all-levels and floors-A-B: each level opened directly in order (setup shortcut), played with the bot, once more after a
@@ -5910,14 +5934,33 @@ namespace SickOfIt.Playtest
                     yield break;
                 }
                 Run.Event("all-levels", $"{what}: {levels.Count} levels, {PathRange(levels)}; each opened directly (setup shortcut), played once more after a death");
+                float budgetEnd = sessionStarted + PathRunBudget, hardEnd = sessionStarted + PathRunHardEnd;
+                Run.Event("budget", $"time budget: no new level after {PathRunBudget / 60f:0} min of run time (now {RunMinutes():0.0} min in), " +
+                                    $"the last one ends by {PathRunHardEnd / 60f:0} min; each level capped at {PathLevelCap(1, Speed) / 60f:0} min of real time " +
+                                    "(a floor boss's a little more), both tries and the loads; a stuck or a timeout moves on to the next level");
+                int reached = 0;
                 for (int i = 0; i < levels.Count && !Run.Done; i++)
                 {
                     int n = levels[i];
+                    if (Time.realtimeSinceStartup >= budgetEnd)
+                    {
+                        Run.Event("budget", $"time budget reached at {RunMinutes():0.0} min: stopping before level {n}; {levels.Count - i} of {levels.Count} levels not reached");
+                        break;
+                    }
+                    reached = i + 1;
                     var config = GameDefinition.Instance.GetLevel(n);
                     var row = new PathResult { Level = n, Floor = PathFloor(n), Title = config != null ? config.displayName ?? config.levelName ?? "" : "" };
                     float limit = PathLevelSeconds(n);
+                    float cap = PathLevelCap(n, Speed);
+                    float levelEnd = Mathf.Min(Time.realtimeSinceStartup + cap, hardEnd);
                     for (int attempt = 1; attempt <= PathTries && !Run.Done; attempt++)
                     {
+                        // A second try only fits if a real share of the level's cap (or the run's) is left; else the first try's row stands.
+                        if (attempt > 1 && levelEnd - Time.realtimeSinceStartup < 45f)
+                        {
+                            Run.Event("budget", $"level {n}: no second try, its {(levelEnd >= hardEnd ? "run's" : "level's")} time cap is used up ({RunMinutes():0.0} min in)");
+                            break;
+                        }
                         row.Tries = attempt;
                         yield return OpenLevel(n, attempt);
                         if (Run.Done) yield break;
@@ -5932,8 +5975,11 @@ namespace SickOfIt.Playtest
                         // A Warden's arena in a stretch run (checkEvery) gets the arena checks: the fight's signals in order (how far
                         // he got, the last phase included), every attack's lead over its warning glow, the boss bar and the defeat.
                         stage = checkEvery && IsArena(n) && IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
-                        yield return PlayLevel(n, limit, stage != null ? StageDuring : (Func<float, IEnumerator>)null, (float)i / levels.Count, (float)(i + 1) / levels.Count, waitOutDeath: true);
+                        float realBudget = Mathf.Max(5f, levelEnd - Time.realtimeSinceStartup);
+                        yield return PlayLevel(n, limit, stage != null ? StageDuring : (Func<float, IEnumerator>)null, (float)i / levels.Count, (float)(i + 1) / levels.Count,
+                            realBudget, waitOutDeath: true);
                         if (Run.Done) yield break;
+                        bool capped = Time.realtimeSinceStartup - started >= realBudget - 0.5f;
                         row.Seconds = (Time.realtimeSinceStartup - started) * Speed;
                         if (stage != null)
                         {
@@ -5960,8 +6006,18 @@ namespace SickOfIt.Playtest
                             break;
                         }
                         row.Result = "stuck";
-                        row.Where = $"{(lastOutcome == "time up" || lastOutcome == "timeout" ? $"no end after {limit:0} s" : lastOutcome)}, {lastWhere ?? "the hero not seen"}";
+                        bool timedOut = lastOutcome == "time up" || lastOutcome == "timeout";
+                        string why = !timedOut ? lastOutcome
+                            : capped ? $"the level's time cap ran out ({cap / 60f:0.#} min real{(levelEnd >= hardEnd ? ", cut short by the run's budget" : "")})"
+                            : $"no end after {limit:0} s";
+                        row.Where = $"{why}, {lastWhere ?? "the hero not seen"}";
                         break;
+                    }
+                    if (row.Result.Length == 0)
+                    {
+                        // Never a blank row in the table.
+                        row.Result = "stuck";
+                        row.Where = "no result before the level's time cap";
                     }
                     results.Add(row);
                     Run.Event("level-result", row.Line());
@@ -5973,12 +6029,32 @@ namespace SickOfIt.Playtest
                 }
                 if (Run.Done) yield break;
 
+                // The levels the time budget left out: a row each, so the table always lists the whole run.
+                for (int i = reached; i < levels.Count; i++)
+                {
+                    int n = levels[i];
+                    var config = GameDefinition.Instance.GetLevel(n);
+                    results.Add(new PathResult
+                    {
+                        Level = n, Floor = PathFloor(n), Result = NotReached,
+                        Title = config != null ? config.displayName ?? config.levelName ?? "" : ""
+                    });
+                }
+                int played = reached, notReached = levels.Count - reached;
+                Run.Metric("path.played", played);
+                Run.Metric("path.notReached", notReached);
+                Run.Metric("path.budgetMinutes", Mathf.Round(RunMinutes() * 10f) / 10f);
+                Run.Event("budget", $"time budget used: {RunMinutes():0.0} of {PathRunBudget / 60f:0} min; levels covered: {played} of {levels.Count}" +
+                                    (played > 0 ? $" ({PathRange(levels.GetRange(0, played))})" : "") +
+                                    (notReached > 0 ? $"; not reached: {notReached} ({PathRange(levels.GetRange(played, notReached))})" : "; every level reached"));
+
                 // The table: a summary line, one event per row, and the same table (markdown) in the report's log.
                 int cleared = results.FindAll(r => r.Result == "cleared").Count, died = results.FindAll(r => r.Result == "died").Count,
                     stuck = results.FindAll(r => r.Result == "stuck").Count;
-                var first = results.Find(r => r.Result != "cleared");
-                string summary = $"{what}: {cleared} of {results.Count} cleared, {died} died, {stuck} stuck" +
-                                 (first != null ? $"; the first not cleared is {first.Name} {first.Title} ({first.Result})" : "; every level cleared");
+                var first = results.Find(r => r.Result != "cleared" && r.Result != NotReached);
+                string summary = $"{what}: {cleared} of {played} played cleared, {died} died, {stuck} stuck" +
+                                 (notReached > 0 ? $", {notReached} of {levels.Count} not reached (time budget)" : "") +
+                                 (first != null ? $"; the first not cleared is {first.Name} {first.Title} ({first.Result})" : played > 0 ? "; every level played cleared" : "");
                 Run.Event("summary", summary);
                 Run.Log("all-levels " + summary);
                 Run.Log("| Level | Name | Result | Time | Tries | Where / by what |");
@@ -6002,6 +6078,11 @@ namespace SickOfIt.Playtest
                     float most = row.Floor > 0 && row.Floor % 10 == 1 ? 180f : 120f;
                     string pace = row.Result != "cleared" || row.Floor == 0 ? "" :
                         row.Seconds < 60f ? ", pace short (under 1 min)" : row.Seconds > most ? $", pace long (over {most / 60f:0} min)" : ", pace ok";
+                    if (row.Result == NotReached)
+                    {
+                        Run.Event("check", $"all-levels {row.Name} {row.Title}: {NotReached}");
+                        continue;
+                    }
                     Run.Event("check", $"all-levels {row.Name} {row.Title}: {(row.Result == "cleared" ? "ok (cleared)" : "not cleared (" + row.Result + (row.Where.Length > 0 ? ": " + row.Where : "") + ")")}" +
                                        $" in {row.Seconds:0} s, {row.Tries} {(row.Tries == 1 ? "try" : "tries")}{pace}");
                 }
