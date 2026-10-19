@@ -211,6 +211,8 @@ namespace SickOfIt.Core.Progression
             // A shortcut taken on the level: after the climb the marker jumps on up a dotted line to where it let him out.
             pendingShortcutFrom = stop.ShortcutTo > 0 ? (stop.ShortcutFrom > 0 ? stop.ShortcutFrom : end) : 0;
             pendingShortcutTo = stop.ShortcutTo > 0 && stop.ShortcutTo < end ? stop.ShortcutTo : 0;
+            // A Warden's floor (Floor 901: it starts and ends on its Waystone) lights the Waystone and wakes the Circle above.
+            pendingWardenFloor = start == end && RunFlow.IsWaystone(end) ? end : 0;
             Open(Mode.Climb, from, end, next, false);
             return true;
         }
@@ -291,6 +293,8 @@ namespace SickOfIt.Core.Progression
             shortcutFrom = mode == Mode.Climb && pendingShortcutTo > 0 ? pendingShortcutFrom : 0;
             shortcutTo = mode == Mode.Climb ? pendingShortcutTo : 0;
             pendingShortcutFrom = pendingShortcutTo = 0;
+            wardenFloor = mode == Mode.Climb && !isPreview ? pendingWardenFloor : 0;
+            pendingWardenFloor = 0;
             next = onContinue;
             preview = isPreview;
             // The first plunge and the first drop (Hell explains Waystones) are watched to the end.
@@ -824,6 +828,9 @@ namespace SickOfIt.Core.Progression
         // ─── What it reads ────────────────────────────────────────────
 
         /// <summary>A level's floor range from its script (content level scripts: floors.start / floors.end), 0 if none.</summary>
+        static int pendingWardenFloor;
+        int wardenFloor;
+
         public static void LevelFloors(int levelNumber, out int start, out int end)
         {
             start = end = 0;
@@ -1040,7 +1047,11 @@ namespace SickOfIt.Core.Progression
         /// </summary>
         Band WakingBand()
         {
-            if (Kind != Mode.Climb || preview || ToFloor >= FromFloor || ToFloor == config.bottomFloor || !RunFlow.IsWaystone(ToFloor))
+            if (Kind != Mode.Climb || preview || ToFloor == config.bottomFloor || !RunFlow.IsWaystone(ToFloor))
+                return null;
+            // Only the Warden's own floor wakes it: the marker standing on the Waystone (901 to 901) after his fight,
+            // not the climb up to it from the floor below (902 to 901).
+            if (wardenFloor != ToFloor)
                 return null;
             return BandAt(ToFloor - 1);
         }

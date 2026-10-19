@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "extends": "lavaSea",
+  "tags": [
+    "scenery"
+  ],
+  "abilities": [
+    {
+      "type": "lavaSea",
+      "speedCounter": "lavaSpeed",
+      "maxCounter": "lavaMax",
+      "telegraph": 2.0,
+      "followCamera": true,
+      "rumbleSound": "magma_rumble",
+      "surfaceColor": "#FFC860",
+      "surfaceArt": {
+        "sheet": "Art/Climb/LavaSurface_loop.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0.05,
+        "color": "#FFFFFF"
+      },
+      "surfaceHeight": 1.2,
+      "surfaceOffset": -0.55
+    }
+  ]
+}

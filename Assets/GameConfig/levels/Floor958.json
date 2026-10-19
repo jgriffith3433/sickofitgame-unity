@@ -1,0 +1,414 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor958",
+  "displayName": "Floor 958: The Burning Thatch",
+  "levelNumber": 14,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 15,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 958,
+    "length": 90,
+    "floors": {
+      "start": 958,
+      "end": 957,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "slope",
+          "direction": "UpRight",
+          "length": 3.46,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "debrisRaftHay",
+              "at": [
+                -1.4,
+                -1.55
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                0.8,
+                -0.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                3.0,
+                0.25
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                5.2,
+                1.15
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ride",
+          "direction": "Right",
+          "length": 10.17,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "debrisRaftRoof",
+              "at": [
+                7.8,
+                0.55
+              ],
+              "id": "roofRide"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                14.2,
+                1.05
+              ],
+              "id": "rideEnd",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "cinderThatch",
+              "at": [
+                4.2,
+                3.35
+              ],
+              "id": "firstThatch",
+              "onEnter": true,
+              "tags": [
+                "firstThatch"
+              ]
+            }
+          ],
+          "autoSpeed": 0.9
+        },
+        {
+          "name": "bank",
+          "direction": "Up",
+          "length": 5.12,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "sinkingStone",
+              "at": [
+                11.8,
+                2.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                14.2,
+                3.65
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                11.8,
+                4.95
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                14.2,
+                6.25
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "cinderThatch",
+              "at": [
+                15.8,
+                6.43
+              ],
+              "id": "bankThatch",
+              "onEnter": true
+            },
+            {
+              "entity": "cinder",
+              "at": [
+                9.4,
+                6.83
+              ],
+              "id": "bankCinder",
+              "onEnter": true
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                14.6,
+                7.15
+              ],
+              "id": "roofSoul"
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding958",
+              "at": [
+                18.4,
+                7.65
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the roof behind him shakes loose",
+        "when": {
+          "type": "sectionReached",
+          "section": "ride"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.6
+              },
+              {
+                "type": "playSound",
+                "sound": "thatch_burst"
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.05,
+                "duration": 0.2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the first burst",
+        "when": {
+          "type": "allDead",
+          "target": {
+            "id": "firstThatch"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.6
+              },
+              {
+                "type": "slowMotion",
+                "scale": 0.35,
+                "duration": 0.4
+              },
+              {
+                "type": "showText",
+                "text": "That was somebody's roof.",
+                "duration": 2.65,
+                "style": "Subtitle",
+                "sound": "vo_basin_roof"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the bank: push",
+        "when": {
+          "type": "sectionReached",
+          "section": "bank"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_push.ogg",
+            "volume": 0.85
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 957,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "THE THATCH: PUT OUT",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_f958_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 958: THE BURNING THATCH",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f958_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

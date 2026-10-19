@@ -1,0 +1,939 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor951",
+  "displayName": "Floor 951: The Keeper's Mound",
+  "levelNumber": 21,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 260.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 43,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 951,
+    "length": 140,
+    "floors": {
+      "start": 951,
+      "end": 950,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "tier1",
+          "direction": "Arena",
+          "length": 0.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                -0.6,
+                -2.3
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                1.6,
+                -2.2
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.4,
+                -0.6
+              ],
+              "id": "dodge1",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                3.8,
+                -2.2
+              ],
+              "id": "pileLedge",
+              "scale": [
+                1.4,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "climb",
+          "direction": "Up",
+          "length": 2.75,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                -1.2,
+                -1.15
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                0.15
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -1.2,
+                1.45
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "counterweightAL",
+              "at": [
+                1.0,
+                -2.25
+              ],
+              "id": "cwAL",
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "counterweightAR",
+              "at": [
+                3.2,
+                -1.65
+              ],
+              "id": "cwAR",
+              "scale": [
+                0.8,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "tier2",
+          "direction": "Arena",
+          "length": 0.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                1.8,
+                1.45
+              ],
+              "id": "tier2Mid",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                4.2,
+                1.55
+              ],
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.8,
+                3.05
+              ],
+              "id": "dodge2",
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "shoulder",
+          "direction": "Right",
+          "length": 6.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "sinkingStone",
+              "at": [
+                1.0,
+                1.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                3.2,
+                1.45
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                5.4,
+                1.45
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                7.6,
+                1.45
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "lavaSurge",
+              "at": [
+                -7.0,
+                2.75
+              ],
+              "id": "shoulderWave",
+              "onEnter": true,
+              "facing": 1.0
+            }
+          ],
+          "autoSpeed": 1.0
+        },
+        {
+          "name": "top",
+          "direction": "Up",
+          "length": 1.3,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                5.2,
+                2.75
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding951",
+              "at": [
+                9.4,
+                4.15
+              ],
+              "id": "landing"
+            },
+            {
+              "entity": "heatUpdraftTall",
+              "at": [
+                12.8,
+                7.15
+              ],
+              "id": "kingsChimney"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the mound sinks",
+        "when": {
+          "type": "signal",
+          "name": "pkSink"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.8
+              },
+              {
+                "type": "playSound",
+                "sound": "magma_rumble"
+              },
+              {
+                "type": "showText",
+                "text": "My pile! It's going under!",
+                "duration": 2.7,
+                "style": "Subtitle",
+                "sound": "vo_pk_sink",
+                "color": "#FFB040"
+              }
+            ]
+          },
+          {
+            "type": "setCounter",
+            "name": "lavaMax",
+            "value": 1.2
+          },
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.5
+          },
+          {
+            "type": "nextSection"
+          }
+        ]
+      },
+      {
+        "name": "tier 2",
+        "when": {
+          "type": "sectionReached",
+          "section": "tier2"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.0
+          },
+          {
+            "type": "emit",
+            "signal": "pkTier2"
+          }
+        ]
+      },
+      {
+        "name": "his guard comes up the pile",
+        "when": {
+          "type": "signal",
+          "name": "pkPhase2"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "showText",
+            "text": "Up the pile, lads! Nobody touches it!",
+            "duration": 3.25,
+            "style": "Subtitle",
+            "sound": "vo_pk_guards",
+            "color": "#FFB040"
+          }
+        ]
+      },
+      {
+        "name": "the Keeper falls",
+        "when": {
+          "type": "allDead",
+          "target": {
+            "id": "boss"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "defeat"
+          }
+        ]
+      },
+      {
+        "name": "the shoulder: the wave",
+        "when": {
+          "type": "sectionReached",
+          "section": "shoulder"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "playSound",
+            "sound": "magma_rumble"
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.25,
+            "duration": 0.8
+          },
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_push.ogg",
+            "volume": 0.85
+          }
+        ]
+      },
+      {
+        "name": "takes the chimney",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "kingsChimney",
+          "taken": true
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "chimney"
+          }
+        ]
+      },
+      {
+        "name": "keeps climbing",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "kingsChimney",
+          "taken": false
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "longWay"
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 950,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_loop.ogg",
+                "volume": 0.85
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.06,
+                "duration": 1.5
+              },
+              {
+                "type": "showText",
+                "text": "It's warm. It goes up. Good enough.",
+                "duration": 3.15,
+                "style": "Subtitle",
+                "sound": "vo_chimney_at"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "offerShortcut",
+                "id": "kingsChimney",
+                "prompt": "The King's Chimney",
+                "title": "Climb the chimney",
+                "description": "A vent in the wall, roaring with the Magma King's heat. It goes straight up. Hell won't say how far.",
+                "stayTitle": "Keep climbing",
+                "stayDescription": "The long way, floor by floor. Pick a Grudge at the top.",
+                "costGrudges": 0,
+                "costDiamonds": 0,
+                "costText": "Risk: the King hears you coming",
+                "cantPayText": "",
+                "toFloor": 910,
+                "nextLevel": 22,
+                "color": "#FF7A2A"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 951: THE PILE KEEPER",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f951_title",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "goToPhase",
+                "phase": "intro"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "intro",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "lockInput"
+              },
+              {
+                "type": "lockRewind"
+              },
+              {
+                "type": "spawn",
+                "entity": "pileKeeper",
+                "anchor": "Camera",
+                "at": [
+                  3.8,
+                  -0.9
+                ],
+                "id": "boss"
+              },
+              {
+                "type": "emit",
+                "signal": "pkIntro"
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.12,
+                "duration": 0.4
+              },
+              {
+                "type": "playSound",
+                "sound": "sack_spill"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "showText",
+                "text": "Nobody touches the pile.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_pk_intro",
+                "color": "#FFB040"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "showText",
+                "text": "I'm not touching it. I'm taking it.",
+                "duration": 3.15,
+                "style": "Subtitle",
+                "sound": "vo_pk_hero_intro"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "showText",
+                "text": "He's sitting on it. Like a hen.",
+                "duration": 2.95,
+                "style": "Subtitle",
+                "sound": "vo_pk_hen"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "bossBar",
+                "target": {
+                  "id": "boss"
+                },
+                "label": "THE PILE KEEPER"
+              },
+              {
+                "type": "unlockInput"
+              },
+              {
+                "type": "unlockRewind"
+              },
+              {
+                "type": "emit",
+                "signal": "pkFight"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "defeat",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "pkDefeat"
+              },
+              {
+                "type": "hideBossBar"
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "entity": "impGuard"
+                }
+              },
+              {
+                "type": "slowMotion",
+                "scale": 0.35,
+                "duration": 1.2
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.8
+              },
+              {
+                "type": "playSound",
+                "sound": "sack_spill"
+              },
+              {
+                "type": "spawn",
+                "entity": "diamond",
+                "anchor": "Camera",
+                "at": [
+                  0.4,
+                  -0.2
+                ],
+                "count": 10,
+                "spacing": [
+                  0.35,
+                  0.0
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "spawn",
+                "entity": "diamond",
+                "anchor": "Camera",
+                "at": [
+                  0.6,
+                  0.3
+                ],
+                "count": 8,
+                "spacing": [
+                  0.38,
+                  0.0
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "pkPile"
+              },
+              {
+                "type": "showText",
+                "text": "The King's... share...",
+                "duration": 2.5,
+                "style": "Subtitle",
+                "sound": "vo_pk_defeat",
+                "color": "#FFB040"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "THE PILE KEEPER IS BURIED IN HIS OWN PILE!",
+                "duration": 3.4,
+                "style": "Banner",
+                "sound": "vo_pk_buried",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.6
+              },
+              {
+                "type": "showText",
+                "text": "Fitting.",
+                "duration": 2.0,
+                "style": "Subtitle",
+                "sound": "vo_pk_fitting"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "nextSection"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "chimney",
+        "onEnter": [
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "playerInvincible",
+            "seconds": 20.0
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "Hold your breath. Forever.",
+                "duration": 2.7,
+                "style": "Subtitle",
+                "sound": "vo_chimney_take"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "walkPlayerTo",
+                "x": 2.4,
+                "anchor": "Camera",
+                "speed": 0.6,
+                "emit": "chimney:in"
+              },
+              {
+                "type": "showText",
+                "text": "UP THE CHIMNEY?! HE SKIPPED HALFWAY!",
+                "duration": 3.0,
+                "style": "Banner",
+                "sound": "vo_chimney_shortcut",
+                "color": "#FF9A3D"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "fade",
+                "to": "Black",
+                "duration": 0.8
+              },
+              {
+                "type": "playSound",
+                "sound": "magma_rumble"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.2,
+                "duration": 0.8
+              },
+              {
+                "type": "setFloor",
+                "floor": 910,
+                "skipMilestones": true
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "fade",
+                "to": "Clear",
+                "duration": 0.8
+              },
+              {
+                "type": "showText",
+                "text": "FLOOR 910! STRAIGHT TO THE STAIRS!",
+                "duration": 3.0,
+                "style": "Banner",
+                "sound": "vo_chimney_910",
+                "color": "#FF9A3D"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "longWay",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "No. Halfway's coming. I want to see it.",
+                "duration": 3.35,
+                "style": "Subtitle",
+                "sound": "vo_chimney_stay"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "showText",
+                "text": "THE PILE KEEPER: BURIED",
+                "duration": 2.2,
+                "style": "Banner",
+                "sound": "vo_f951_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

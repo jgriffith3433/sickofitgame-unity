@@ -11,12 +11,15 @@
   "platforms": [],
   "placedSprites": [],
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
   "deathConfigName": "Death1",
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 17,
+  "nextLevelNumber": 44,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 90,
@@ -40,7 +43,10 @@
           "name": "fallen thatch",
           "shape": "Rock",
           "color": "#8A5A22",
-          "size": [0.7, 0.35],
+          "size": [
+            0.7,
+            0.35
+          ],
           "sizeVariation": 0.3,
           "across": -2.5,
           "parallax": 0.0,
@@ -53,7 +59,10 @@
           "name": "smouldering straw",
           "shape": "Glow",
           "color": "#FFB45C66",
-          "size": [1.0, 0.2],
+          "size": [
+            1.0,
+            0.2
+          ],
           "sizeVariation": 0.3,
           "across": -2.76,
           "parallax": 0.0,
@@ -156,8 +165,13 @@
             "type": "spawn",
             "entity": "cinderThatch",
             "anchor": "Camera",
-            "at": [3.4, 0.6],
-            "tags": ["beat"]
+            "at": [
+              3.4,
+              0.6
+            ],
+            "tags": [
+              "beat"
+            ]
           },
           {
             "type": "showText",

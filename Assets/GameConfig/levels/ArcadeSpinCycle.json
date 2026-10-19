@@ -4,7 +4,10 @@
   "displayName": "Arcade: Spin Cycle",
   "levelNumber": 3,
   "thumbnail": "Videos/Level3_Background1_FirstFrame.png",
-  "backgrounds": ["Videos/Level3_Background1.asset", "Videos/Level3_Background2.asset"],
+  "backgrounds": [
+    "Videos/Level3_Background1.asset",
+    "Videos/Level3_Background2.asset"
+  ],
   "backgroundLayers": [],
   "ambientColor": "#FFFFFF",
   "music": "Videos/Level3_Background1_Audio.mp3",
@@ -20,9 +23,18 @@
   "barrierOnBottom": true,
   "barrierOnTop": true,
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
-  "winZoneCenter": [6.5, 0.0],
-  "winZoneHalfSize": [0.5, 4.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "winZoneCenter": [
+    6.5,
+    0.0
+  ],
+  "winZoneHalfSize": [
+    0.5,
+    4.0
+  ],
   "deathConfigName": "Death3",
   "duration": 150.0,
   "completionDelay": 2.0,
@@ -75,8 +87,13 @@
             "type": "spawn",
             "entity": "spinner",
             "anchor": "Camera",
-            "at": [3.8, -2.0],
-            "tags": ["wave"]
+            "at": [
+              3.8,
+              -2.0
+            ],
+            "tags": [
+              "wave"
+            ]
           }
         ],
         "rules": [
@@ -93,8 +110,13 @@
                 "type": "spawn",
                 "entity": "drone",
                 "anchor": "Camera",
-                "at": [5.2, 2.0],
-                "tags": ["wave"]
+                "at": [
+                  5.2,
+                  2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           },
@@ -114,11 +136,22 @@
                 "interval": 0.3,
                 "anchor": "Camera",
                 "points": [
-                  [-5.2, -2.0],
-                  [5.2, -2.0],
-                  [5.2, 1.0]
+                  [
+                    -5.2,
+                    -2.0
+                  ],
+                  [
+                    5.2,
+                    -2.0
+                  ],
+                  [
+                    5.2,
+                    1.0
+                  ]
                 ],
-                "tags": ["wave"]
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           },
@@ -133,8 +166,13 @@
                 "type": "spawn",
                 "entity": "spinner",
                 "anchor": "Camera",
-                "at": [-3.8, -2.0],
-                "tags": ["wave"]
+                "at": [
+                  -3.8,
+                  -2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           },
@@ -194,10 +232,18 @@
                 "interval": 0.5,
                 "anchor": "Camera",
                 "points": [
-                  [5.2, -2.0],
-                  [-5.2, -2.0]
+                  [
+                    5.2,
+                    -2.0
+                  ],
+                  [
+                    -5.2,
+                    -2.0
+                  ]
                 ],
-                "tags": ["wave"]
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           },
@@ -212,8 +258,13 @@
                 "type": "spawn",
                 "entity": "drone",
                 "anchor": "Camera",
-                "at": [-5.2, 2.0],
-                "tags": ["wave"]
+                "at": [
+                  -5.2,
+                  2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           },
@@ -263,8 +314,13 @@
             "type": "spawn",
             "entity": "brute",
             "anchor": "Camera",
-            "at": [4.8, -2.0],
-            "tags": ["wave"]
+            "at": [
+              4.8,
+              -2.0
+            ],
+            "tags": [
+              "wave"
+            ]
           },
           {
             "type": "spawnWave",
@@ -273,10 +329,18 @@
             "interval": 1.5,
             "anchor": "Camera",
             "points": [
-              [-3.8, -2.0],
-              [2.0, 1.5]
+              [
+                -3.8,
+                -2.0
+              ],
+              [
+                2.0,
+                1.5
+              ]
             ],
-            "tags": ["wave"]
+            "tags": [
+              "wave"
+            ]
           },
           {
             "type": "spawnWave",
@@ -285,10 +349,18 @@
             "interval": 3.0,
             "anchor": "Camera",
             "points": [
-              [5.2, 2.0],
-              [-5.2, 2.0]
+              [
+                5.2,
+                2.0
+              ],
+              [
+                -5.2,
+                2.0
+              ]
             ],
-            "tags": ["wave"]
+            "tags": [
+              "wave"
+            ]
           }
         ],
         "rules": [

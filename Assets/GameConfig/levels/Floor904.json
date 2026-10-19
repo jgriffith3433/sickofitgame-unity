@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor904",
+  "displayName": "Floor 904: The Count",
+  "levelNumber": 28,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 180.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 29,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 904,
+    "length": 90,
+    "floors": {
+      "start": 904,
+      "end": 903,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "weights",
+          "direction": "Up",
+          "length": 2.35,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "lavaSea",
+              "at": [
+                0.0,
+                -5.6
+              ],
+              "id": "lavaSea"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -2.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "counterweightAL",
+              "at": [
+                -1.3,
+                -2.25
+              ],
+              "id": "cwAL",
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "counterweightAR",
+              "at": [
+                0.9,
+                -1.65
+              ],
+              "id": "cwAR",
+              "scale": [
+                0.8,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -1.2,
+                -0.25
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                1.2,
+                1.05
+              ],
+              "id": "countFloor",
+              "scale": [
+                1.6,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "count",
+          "direction": "Arena",
+          "length": 0.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "impGuardCount1",
+              "at": [
+                3.8,
+                3.05
+              ],
+              "id": "count1",
+              "tags": [
+                "countGuard"
+              ]
+            },
+            {
+              "entity": "impGuardCount2",
+              "at": [
+                5.2,
+                3.45
+              ],
+              "id": "count2",
+              "tags": [
+                "countGuard"
+              ]
+            },
+            {
+              "entity": "impGuardCount4",
+              "at": [
+                6.6,
+                3.05
+              ],
+              "id": "count3",
+              "tags": [
+                "countGuard"
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -1.2,
+                1.15
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                3.6,
+                1.15
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "stair",
+          "direction": "UpRight",
+          "length": 5.66,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                3.0,
+                2.05
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                4.8,
+                3.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                6.6,
+                4.05
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                8.4,
+                5.05
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding904",
+              "at": [
+                12.6,
+                6.45
+              ],
+              "id": "landing"
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Climb"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "the count",
+        "when": {
+          "type": "sectionReached",
+          "section": "count"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "One, two, three. Duck.",
+                "duration": 2.5,
+                "style": "Subtitle",
+                "sound": "vo_f904_duck"
+              },
+              {
+                "type": "wait",
+                "seconds": 5.0
+              },
+              {
+                "type": "showText",
+                "text": "There's always one.",
+                "duration": 2.35,
+                "style": "Subtitle",
+                "sound": "vo_f904_one"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the line is clear",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "sectionReached",
+              "section": "count"
+            },
+            {
+              "type": "allDead",
+              "target": {
+                "tag": "countGuard"
+              }
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "nextSection"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the stair under the slag",
+        "when": {
+          "type": "sectionReached",
+          "section": "stair"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "startHazard",
+            "id": "stairSlag",
+            "projectile": "slagDrip",
+            "pattern": {
+              "type": "rain",
+              "count": 1,
+              "topInset": 0.25
+            },
+            "speed": 0.0,
+            "interval": 1.8,
+            "duration": 14.0
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 903,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "showText",
+                "text": "THE COUNT: ...FOUR!",
+                "duration": 2.4,
+                "style": "Banner",
+                "sound": "vo_f904_clear",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 904: THE COUNT",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f904_title",
+                "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -11,12 +11,15 @@
   "platforms": [],
   "placedSprites": [],
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
   "deathConfigName": "Death1",
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 14,
+  "nextLevelNumber": 41,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 90,
@@ -40,7 +43,10 @@
           "name": "dropped sacks",
           "shape": "Rock",
           "color": "#6B4A2A",
-          "size": [0.5, 0.42],
+          "size": [
+            0.5,
+            0.42
+          ],
           "sizeVariation": 0.2,
           "across": -2.5,
           "parallax": 0.0,
@@ -53,7 +59,10 @@
           "name": "scuffed tracks",
           "shape": "Glow",
           "color": "#FF6A1F55",
-          "size": [1.2, 0.18],
+          "size": [
+            1.2,
+            0.18
+          ],
           "sizeVariation": 0.3,
           "across": -2.76,
           "parallax": 0.0,
@@ -124,8 +133,13 @@
             "type": "spawn",
             "entity": "impSack",
             "anchor": "Camera",
-            "at": [3.2, -1.4],
-            "tags": ["beat"]
+            "at": [
+              3.2,
+              -1.4
+            ],
+            "tags": [
+              "beat"
+            ]
           },
           {
             "type": "showText",

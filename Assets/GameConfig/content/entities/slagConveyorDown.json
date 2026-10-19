@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "extends": "slagConveyor",
+  "abilities": [
+    {
+      "type": "conveyor",
+      "speed": 1.4,
+      "seamColor": "#FF8030"
+    }
+  ]
+}

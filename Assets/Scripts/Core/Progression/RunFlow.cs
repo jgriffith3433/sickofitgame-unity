@@ -47,7 +47,7 @@ namespace SickOfIt.Core.Progression
             }
         }
 
-        /// <summary>The level a run starting at a Waystone plays first: the stage whose floors start there (the Landing) or just above it (900 above 901); 0 if none is built yet.</summary>
+        /// <summary>The level a run starting at a Waystone plays first: the stage whose floors start there (the Landing) or just above it (900 above 901), never the Warden's floor that lit it; 0 if none is built yet.</summary>
         public static int LevelFrom(int waystone)
         {
             var definition = GameDefinition.Instance;
@@ -56,7 +56,8 @@ namespace SickOfIt.Core.Progression
             for (int n = 1; n <= definition.TotalLevels; n++)
             {
                 ShaftScreen.LevelFloors(n, out int start, out int end);
-                if (end > 0 && (start == waystone || start == waystone - 1))
+                // Not the Warden's own floor (Floor 901 starts and ends on its Waystone): the run starts above it.
+                if (end > 0 && end != waystone && (start == waystone || start == waystone - 1))
                     return n;
             }
             return 0;
@@ -70,7 +71,8 @@ namespace SickOfIt.Core.Progression
                 return;
             WaystoneProgress.RunLevel = level;
             WaystoneProgress.DiedOnFloor = 0;
-            if (IsWaystone(start) && WaystoneProgress.Reach(start))
+            // A Warden's floor (start = end = its Waystone) lights it when he is beaten, not when the fight starts.
+            if (IsWaystone(start) && end < start && WaystoneProgress.Reach(start))
                 Debug.Log($"[Runs] Waystone reached: FLOOR {start} (level {level} starts on it)");
         }
 
@@ -80,7 +82,8 @@ namespace SickOfIt.Core.Progression
             if (next > 0)
                 WaystoneProgress.RunLevel = next;
             ShaftScreen.LevelFloors(level, out int start, out int end);
-            if (end > 0 && IsWaystone(end) && WaystoneProgress.Reach(end))
+            // The Warden's floor lights it (Floor 901: start = end); the floor below that only climbs up to it (902 to 901) doesn't.
+            if (end > 0 && IsWaystone(end) && start != end + 1 && WaystoneProgress.Reach(end))
                 Debug.Log($"[Runs] Waystone reached: FLOOR {end} (level {level} cleared)");
         }
 

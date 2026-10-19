@@ -11,8 +11,14 @@
       "spriteFramesData": "Videos/Level1_Background1.asset",
       "staticSprite": null,
       "solidColor": "#00000000",
-      "offset": [0.0, 0.0],
-      "scale": [1.0, 1.0],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
       "layer": "Background1",
       "sortingOrder": 0,
       "parallaxFactor": 0.0,
@@ -26,8 +32,14 @@
       "spriteFramesData": "Videos/Level1_Background2.asset",
       "staticSprite": null,
       "solidColor": "#00000000",
-      "offset": [0.0, 0.0],
-      "scale": [1.0, 1.0],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
       "layer": "Background1",
       "sortingOrder": 0,
       "parallaxFactor": 0.0,
@@ -41,8 +53,14 @@
       "spriteFramesData": "Videos/Level1_Background3.asset",
       "staticSprite": null,
       "solidColor": "#00000000",
-      "offset": [0.0, 0.0],
-      "scale": [1.0, 1.0],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
       "layer": "Background1",
       "sortingOrder": 0,
       "parallaxFactor": 0.0,
@@ -56,8 +74,14 @@
       "spriteFramesData": "Videos/Level1_Background4.asset",
       "staticSprite": null,
       "solidColor": "#00000000",
-      "offset": [0.0, 0.0],
-      "scale": [1.0, 1.0],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
       "layer": "Background1",
       "sortingOrder": 0,
       "parallaxFactor": 0.0,
@@ -81,9 +105,18 @@
   "barrierOnBottom": true,
   "barrierOnTop": true,
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
-  "winZoneCenter": [6.5, 0.0],
-  "winZoneHalfSize": [0.5, 4.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "winZoneCenter": [
+    6.5,
+    0.0
+  ],
+  "winZoneHalfSize": [
+    0.5,
+    4.0
+  ],
   "deathConfigName": "Death1",
   "duration": 140.0,
   "completionDelay": 2.0,
@@ -171,8 +204,13 @@
                 "type": "spawn",
                 "entity": "imp",
                 "anchor": "Camera",
-                "at": [4.4, -2.0],
-                "tags": ["wave"]
+                "at": [
+                  4.4,
+                  -2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ],
             "name": "first imp, alone"
@@ -187,8 +225,13 @@
                 "type": "spawn",
                 "entity": "imp",
                 "anchor": "Camera",
-                "at": [-4.4, -2.0],
-                "tags": ["wave"]
+                "at": [
+                  -4.4,
+                  -2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ],
             "name": "second imp, other side"
@@ -203,15 +246,25 @@
                 "type": "spawn",
                 "entity": "imp",
                 "anchor": "Camera",
-                "at": [4.2, -2.0],
-                "tags": ["wave"]
+                "at": [
+                  4.2,
+                  -2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               },
               {
                 "type": "spawn",
                 "entity": "imp",
                 "anchor": "Camera",
-                "at": [-4.2, 0.6],
-                "tags": ["wave"]
+                "at": [
+                  -4.2,
+                  0.6
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ],
             "name": "two imps"
@@ -265,8 +318,13 @@
                 "type": "spawn",
                 "entity": "cinder",
                 "anchor": "Camera",
-                "at": [4.6, 0.5],
-                "tags": ["wave"]
+                "at": [
+                  4.6,
+                  0.5
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ],
             "name": "first cinder"
@@ -281,15 +339,25 @@
                 "type": "spawn",
                 "entity": "cinder",
                 "anchor": "Camera",
-                "at": [-4.6, 0.8],
-                "tags": ["wave"]
+                "at": [
+                  -4.6,
+                  0.8
+                ],
+                "tags": [
+                  "wave"
+                ]
               },
               {
                 "type": "spawn",
                 "entity": "imp",
                 "anchor": "Camera",
-                "at": [4.4, -2.0],
-                "tags": ["wave"]
+                "at": [
+                  4.4,
+                  -2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ],
             "name": "cinder and imp"
@@ -330,15 +398,25 @@
                 "type": "spawn",
                 "entity": "imp",
                 "anchor": "Camera",
-                "at": [4.4, -2.0],
-                "tags": ["wave"]
+                "at": [
+                  4.4,
+                  -2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               },
               {
                 "type": "spawn",
                 "entity": "imp",
                 "anchor": "Camera",
-                "at": [-4.4, -2.0],
-                "tags": ["wave"]
+                "at": [
+                  -4.4,
+                  -2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ],
             "name": "last imps"
@@ -353,15 +431,25 @@
                 "type": "spawn",
                 "entity": "cinder",
                 "anchor": "Camera",
-                "at": [4.6, 1.0],
-                "tags": ["wave"]
+                "at": [
+                  4.6,
+                  1.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               },
               {
                 "type": "spawn",
                 "entity": "cinder",
                 "anchor": "Camera",
-                "at": [-4.6, 1.0],
-                "tags": ["wave"]
+                "at": [
+                  -4.6,
+                  1.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ],
             "name": "last cinders"
@@ -460,8 +548,14 @@
             "type": "if",
             "condition": {
               "type": "playerInZone",
-              "center": [-50.16, 0.0],
-              "size": [100.0, 200.0],
+              "center": [
+                -50.16,
+                0.0
+              ],
+              "size": [
+                100.0,
+                200.0
+              ],
               "anchor": "Camera"
             },
             "then": [
@@ -483,8 +577,14 @@
             "type": "if",
             "condition": {
               "type": "playerInZone",
-              "center": [-0.16, 0.0],
-              "size": [5.0, 200.0],
+              "center": [
+                -0.16,
+                0.0
+              ],
+              "size": [
+                5.0,
+                200.0
+              ],
               "anchor": "Camera"
             },
             "then": [
@@ -525,7 +625,10 @@
                 "type": "spawn",
                 "entity": "overlordBeamGlow",
                 "anchor": "Camera",
-                "at": [-0.16, -2.52],
+                "at": [
+                  -0.16,
+                  -2.52
+                ],
                 "facePlayer": false
               },
               {
@@ -550,14 +653,20 @@
                 "type": "spawn",
                 "entity": "overlordBeam",
                 "anchor": "Camera",
-                "at": [-0.16, -2.52],
+                "at": [
+                  -0.16,
+                  -2.52
+                ],
                 "facePlayer": false
               },
               {
                 "type": "spawn",
                 "entity": "overlordBeamImpact",
                 "anchor": "Camera",
-                "at": [-0.16, -2.52],
+                "at": [
+                  -0.16,
+                  -2.52
+                ],
                 "facePlayer": false
               },
               {
@@ -585,7 +694,10 @@
                 "entity": "portal",
                 "id": "portal",
                 "anchor": "Camera",
-                "at": [-0.16, -2.52],
+                "at": [
+                  -0.16,
+                  -2.52
+                ],
                 "facePlayer": false
               },
               {
@@ -615,7 +727,10 @@
                 "then": [
                   {
                     "type": "cameraTo",
-                    "at": [-0.56, -0.35],
+                    "at": [
+                      -0.56,
+                      -0.35
+                    ],
                     "anchor": "Camera",
                     "size": 2.45,
                     "duration": 1.6,
@@ -625,7 +740,10 @@
                 "else": [
                   {
                     "type": "cameraTo",
-                    "at": [0.24, -0.35],
+                    "at": [
+                      0.24,
+                      -0.35
+                    ],
                     "anchor": "Camera",
                     "size": 2.45,
                     "duration": 1.6,
@@ -785,7 +903,10 @@
                 "type": "popText",
                 "text": "?",
                 "anchor": "Player",
-                "at": [0.0, 0.75],
+                "at": [
+                  0.0,
+                  0.75
+                ],
                 "size": 1.6,
                 "color": "#FFD27A"
               },
@@ -992,7 +1113,10 @@
                     "entity": "yoobaProp",
                     "id": "yooba",
                     "anchor": "Player",
-                    "at": [3.2, 0.15]
+                    "at": [
+                      3.2,
+                      0.15
+                    ]
                   }
                 ],
                 "else": [
@@ -1001,7 +1125,10 @@
                     "entity": "yoobaProp",
                     "id": "yooba",
                     "anchor": "Player",
-                    "at": [-3.2, 0.15]
+                    "at": [
+                      -3.2,
+                      0.15
+                    ]
                   }
                 ]
               },
@@ -1080,7 +1207,10 @@
                 "type": "spawn",
                 "entity": "portalScorch",
                 "anchor": "Player",
-                "at": [0.0, 0.0],
+                "at": [
+                  0.0,
+                  0.0
+                ],
                 "facePlayer": false
               },
               {

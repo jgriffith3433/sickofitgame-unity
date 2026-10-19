@@ -11,12 +11,15 @@
   "platforms": [],
   "placedSprites": [],
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
   "deathConfigName": "Death1",
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 16,
+  "nextLevelNumber": 43,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 90,
@@ -27,7 +30,9 @@
       "circle": "emberWastes",
       "signs": true,
       "sign": "YOU ARE HERE. AGAIN.",
-      "repeat": [957]
+      "repeat": [
+        957
+      ]
     },
     "world": {
       "camera": "Travel",
@@ -41,7 +46,10 @@
           "name": "the same rock",
           "shape": "Rock",
           "color": "#160907",
-          "size": [1.0, 0.6],
+          "size": [
+            1.0,
+            0.6
+          ],
           "sizeVariation": 0.0,
           "across": -2.5,
           "parallax": 0.0,
@@ -54,7 +62,10 @@
           "name": "the same crack",
           "shape": "Glow",
           "color": "#FF5A1AA6",
-          "size": [1.4, 0.26],
+          "size": [
+            1.4,
+            0.26
+          ],
           "sizeVariation": 0.0,
           "across": -2.78,
           "parallax": 0.0,
@@ -179,7 +190,10 @@
             "type": "spawn",
             "entity": "lavaBurst",
             "anchor": "Camera",
-            "at": [1.4, -2.5],
+            "at": [
+              1.4,
+              -2.5
+            ],
             "facePlayer": false
           },
           {
@@ -193,8 +207,13 @@
                 "type": "spawn",
                 "entity": "imp",
                 "anchor": "Camera",
-                "at": [3.6, -1.4],
-                "tags": ["loopA"]
+                "at": [
+                  3.6,
+                  -1.4
+                ],
+                "tags": [
+                  "loopA"
+                ]
               },
               {
                 "type": "wait",
@@ -212,7 +231,10 @@
                 "type": "popText",
                 "text": "trip",
                 "anchor": "Camera",
-                "at": [3.6, -0.9],
+                "at": [
+                  3.6,
+                  -0.9
+                ],
                 "color": "#FFD27A",
                 "size": 0.8
               }
@@ -277,7 +299,10 @@
             "type": "spawn",
             "entity": "lavaBurst",
             "anchor": "Camera",
-            "at": [1.4, -2.5],
+            "at": [
+              1.4,
+              -2.5
+            ],
             "facePlayer": false
           },
           {
@@ -291,8 +316,13 @@
                 "type": "spawn",
                 "entity": "imp",
                 "anchor": "Camera",
-                "at": [3.6, -1.4],
-                "tags": ["loopB"]
+                "at": [
+                  3.6,
+                  -1.4
+                ],
+                "tags": [
+                  "loopB"
+                ]
               },
               {
                 "type": "wait",
@@ -310,7 +340,10 @@
                 "type": "popText",
                 "text": "trip",
                 "anchor": "Camera",
-                "at": [3.6, -0.9],
+                "at": [
+                  3.6,
+                  -0.9
+                ],
                 "color": "#FFD27A",
                 "size": 0.8
               }

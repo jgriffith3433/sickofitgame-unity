@@ -51,9 +51,34 @@ namespace SickOfIt.Data
             PlayerPrefs.Save();
         }
 
+        const string ArrivalKey = "Shortcuts_Arrival";
+
+        /// <summary>
+        /// How the hero reached the level he plays next: the shortcut that led to it ('id', level 'level'), or none. Set
+        /// each time a level is cleared (a cleared level without a shortcut clears it), so only the level straight after
+        /// a shortcut reads it (Floor 910 after the King's Chimney).
+        /// </summary>
+        public static void SetArrival(string id, int level)
+        {
+            if (string.IsNullOrEmpty(id) || level <= 0)
+                PlayerPrefs.DeleteKey(ArrivalKey);
+            else
+                PlayerPrefs.SetString(ArrivalKey, string.Format(CultureInfo.InvariantCulture, "{0}:{1}", id.Replace(":", ""), level));
+            PlayerPrefs.Save();
+        }
+
+        /// <summary>True when level 'level' was reached through shortcut 'id' (see <see cref="SetArrival"/>).</summary>
+        public static bool ArrivedBy(string id, int level)
+        {
+            var fields = PlayerPrefs.GetString(ArrivalKey, "").Split(':');
+            return fields.Length == 2 && fields[0] == id
+                   && int.TryParse(fields[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int at) && at == level;
+        }
+
         public static void Reset()
         {
             PlayerPrefs.DeleteKey(Key);
+            PlayerPrefs.DeleteKey(ArrivalKey);
         }
     }
 }

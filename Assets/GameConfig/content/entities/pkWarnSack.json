@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "extends": "fmWarnWhip",
+  "visual": {
+    "scale": 0.14,
+    "color": "#FFE08A"
+  },
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "pkSackBurst",
+      "anchor": "Self",
+      "facePlayer": false
+    },
+    {
+      "type": "playSound",
+      "sound": "sack_spill"
+    }
+  ]
+}

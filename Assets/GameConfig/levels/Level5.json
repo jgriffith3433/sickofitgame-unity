@@ -11,12 +11,15 @@
   "platforms": [],
   "placedSprites": [],
   "enemies": [],
-  "playerSpawnPosition": [-4.0, 0.0],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
   "deathConfigName": "Death1",
   "duration": 150.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 15,
+  "nextLevelNumber": 12,
   "returnToMainMenuOnComplete": false,
   "script": {
     "length": 90,
@@ -40,7 +43,10 @@
           "name": "lava falls",
           "shape": "Glow",
           "color": "#FF5A1A80",
-          "size": [0.9, 5.5],
+          "size": [
+            0.9,
+            5.5
+          ],
           "sizeVariation": 0.25,
           "across": -2.6,
           "parallax": 0.6,
@@ -53,7 +59,10 @@
           "name": "cooling slag ledges",
           "shape": "Block",
           "color": "#2A1410",
-          "size": [2.2, 1.1],
+          "size": [
+            2.2,
+            1.1
+          ],
           "sizeVariation": 0.3,
           "across": -2.5,
           "parallax": 0.35,
@@ -66,7 +75,10 @@
           "name": "slag drips on the ground",
           "shape": "Glow",
           "color": "#FFB04A90",
-          "size": [0.6, 0.2],
+          "size": [
+            0.6,
+            0.2
+          ],
           "sizeVariation": 0.3,
           "across": -2.62,
           "parallax": 0.0,
@@ -169,8 +181,13 @@
                 "type": "spawn",
                 "entity": "slagDrip",
                 "anchor": "Camera",
-                "at": [1.8, 2.2],
-                "tags": ["drip"],
+                "at": [
+                  1.8,
+                  2.2
+                ],
+                "tags": [
+                  "drip"
+                ],
                 "facePlayer": false
               }
             ]
@@ -186,16 +203,26 @@
                 "type": "spawn",
                 "entity": "slagDrip",
                 "anchor": "Camera",
-                "at": [-0.8, 2.2],
-                "tags": ["drip"],
+                "at": [
+                  -0.8,
+                  2.2
+                ],
+                "tags": [
+                  "drip"
+                ],
                 "facePlayer": false
               },
               {
                 "type": "spawn",
                 "entity": "slagDrip",
                 "anchor": "Camera",
-                "at": [3.4, 2.2],
-                "tags": ["drip"],
+                "at": [
+                  3.4,
+                  2.2
+                ],
+                "tags": [
+                  "drip"
+                ],
                 "facePlayer": false
               }
             ]
