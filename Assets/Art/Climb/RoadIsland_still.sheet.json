@@ -1,0 +1,17 @@
+{
+ "generatedBy": "Tools/Art/fx_sheets.py",
+ "pixelsPerUnit": 161.6,
+ "pivot": [
+  0.5,
+  0.5
+ ],
+ "sprites": [
+  {
+   "name": "still_00",
+   "x": 0,
+   "y": 0,
+   "w": 323,
+   "h": 226
+  }
+ ]
+}

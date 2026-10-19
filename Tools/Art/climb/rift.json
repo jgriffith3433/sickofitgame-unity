@@ -1,0 +1,24 @@
+{
+  "about": "The Rift far below the Cracked Road: its web of glowing cracks (crackedRoad sky seaArt rows). The take's lower middle (the crack field), made to tile sideways.",
+  "gpu": "image.generate, sickofit preset look, slot far/rift, seed 1062405571 (asset a_aa0f21a5260aa5a9, job j_944cd0399ca2).",
+  "out": "Assets/Art/Climb",
+  "name": "Rift",
+  "key": "none",
+  "size": [
+    915,
+    446
+  ],
+  "pivot": [
+    457.5,
+    223.0
+  ],
+  "worldWidth": 6,
+  "widthPixels": 915,
+  "scale": 0.6,
+  "clips": {
+    "loop": {
+      "frames": "/tmp/crsrc/_prep/rift/loop",
+      "key": "none"
+    }
+  }
+}

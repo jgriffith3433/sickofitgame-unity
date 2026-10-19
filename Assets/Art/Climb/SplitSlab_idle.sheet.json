@@ -1,0 +1,17 @@
+{
+ "generatedBy": "Tools/Art/fx_sheets.py",
+ "pixelsPerUnit": 178.273,
+ "pivot": [
+  0.51123,
+  0.530078
+ ],
+ "sprites": [
+  {
+   "name": "idle_00",
+   "x": 0,
+   "y": 0,
+   "w": 512,
+   "h": 512
+  }
+ ]
+}

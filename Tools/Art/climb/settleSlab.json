@@ -1,0 +1,28 @@
+{
+  "about": "settleSlab (and the loop slabs): a broken road slab floating on the Rift's magma, settling under him. Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, slot road/settle, seed 189703243 (asset a_b06d1310943aba7e, job j_64d6ae9c6592). Sink: video.i2v (Wan 2.2), the slab steaming, from the still, job j_617f82f535aa (asset a_49e11990c64b11fb).",
+  "out": "Assets/Art/Climb",
+  "name": "SettleSlab",
+  "key": "none",
+  "size": [
+    819,
+    370
+  ],
+  "pivot": [
+    411.0,
+    102.2
+  ],
+  "worldWidth": 2.042,
+  "widthPixels": 819,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/crsrc/_prep/settleSlab/idle",
+      "key": "none"
+    },
+    "sink": {
+      "frames": "/tmp/crsrc/_prep/settleSlab/sink",
+      "key": "none"
+    }
+  }
+}

@@ -464,6 +464,133 @@
           "image": "still.png"
         }
       }
+    },
+    "roadSlab": {
+      "name": "RoadSlab",
+      "about": "roadSlab (and risingSlab, seesawSlab): a slab of the Cracked Road, black basalt with glowing seams, hanging over the Rift. Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, slot road/slab, re-take without lane markings, seed 905066437 (asset a_83c4bf5d2c07e0fb, job j_ab6dc429ebba; the take with lane markings, j_90ca15b25183, not used).",
+      "worldWidth": 2.2,
+      "body": 0.5,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "splitSlab": {
+      "name": "SplitSlab",
+      "about": "splitSlab: a road slab with a glowing seam down its middle that splits and falls. Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, slot road/split, seed 1444835726 (asset a_ca05f476b632c082, job j_6947167b5ccb). Crack and fall: video.i2v (Wan 2.2) from the still, job j_4ea495f5c5c3 (asset a_59e007dc05820a9c).",
+      "worldWidth": 2.2,
+      "body": 0.45,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        },
+        "crack": {
+          "video": "split.mp4",
+          "fps": 16,
+          "start": 0,
+          "end": 0.75,
+          "count": 8
+        },
+        "fall": {
+          "video": "split.mp4",
+          "fps": 16,
+          "start": 0.75,
+          "end": 1.2,
+          "count": 8
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "settleSlab": {
+      "name": "SettleSlab",
+      "about": "settleSlab (and the loop slabs): a broken road slab floating on the Rift's magma, settling under him. Fitted so its walkable top is the body's width.",
+      "gpu": "image.generate, sickofit preset look, slot road/settle, seed 189703243 (asset a_b06d1310943aba7e, job j_64d6ae9c6592). Sink: video.i2v (Wan 2.2), the slab steaming, from the still, job j_617f82f535aa (asset a_49e11990c64b11fb).",
+      "worldWidth": 2.2,
+      "body": 0.45,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        },
+        "sink": {
+          "video": "sink.mp4",
+          "fps": 12,
+          "count": 12,
+          "drop_last": true
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "rift": {
+      "name": "Rift",
+      "about": "The Rift far below the Cracked Road: its web of glowing cracks (crackedRoad sky seaArt rows). The take's lower middle (the crack field), made to tile sideways.",
+      "gpu": "image.generate, sickofit preset look, slot far/rift, seed 1062405571 (asset a_aa0f21a5260aa5a9, job j_944cd0399ca2).",
+      "worldWidth": 6,
+      "scale": 0.6,
+      "prep": {
+        "key": "none",
+        "cropY": [
+          0.42,
+          1.0
+        ],
+        "centre": 0.7,
+        "wrap": "x",
+        "wrapShare": 0.15
+      },
+      "clips": {
+        "loop": {
+          "image": "still.png"
+        }
+      }
+    },
+    "roadSpires": {
+      "name": "RoadSpires",
+      "about": "Black spires with glowing seams standing in the Rift (crackedRoad sky layers, onSea).",
+      "gpu": "image.generate, sickofit preset look, slot far/spires, seed 1967937778 (asset a_f9c2fade38fdef7b, job j_f023ba9543fa).",
+      "worldWidth": 2,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta",
+        "pivot": "bottom"
+      },
+      "clips": {
+        "still": {
+          "image": "still.png"
+        }
+      }
+    },
+    "roadIsland": {
+      "name": "RoadIsland",
+      "about": "A broken piece of road floating in the haze (crackedRoad sky layers).",
+      "gpu": "image.generate, sickofit preset look, slot far/island, seed 768470000 (asset a_52d2b17ba2b0bea5, job j_1aa2ee5e105f; j_b9a30f117c2c has lane markings, not used).",
+      "worldWidth": 2,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta"
+      },
+      "clips": {
+        "still": {
+          "image": "still.png"
+        }
+      }
     }
   }
 }
