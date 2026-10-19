@@ -96,7 +96,7 @@ namespace SickOfIt.Gameplay
             SetLayer(solid, "Platform");
             solid.AddComponent<BoxCollider2D>().size = new Vector2(width, 1f);
 
-            // Dropping through platforms ignores the whole Platform layer; this keeps the player on the ground anyway.
+            // A second solid slab under the surface, so nothing ever falls out of the stage under the ground.
             var floor = new GameObject("Bedrock");
             floor.transform.SetParent(ground, false);
             floor.transform.localPosition = new Vector3(0f, -0.55f, 0f);
@@ -197,9 +197,8 @@ namespace SickOfIt.Gameplay
                 go.transform.localScale = new Vector3(width, 0.3f, 1f);
                 if (go.TryGetComponent<SpriteRenderer>(out var sr))
                     sr.color = color;
-                var controller = world.Player != null ? world.Player.GetComponent<SickOfIt.Core.Input.PlayerController>() : null;
-                if (controller != null && go.TryGetComponent<SickOfIt.Core.Input.DropThroughPlatform>(out var drop))
-                    drop.SetPlayerController(controller);
+                if (go.TryGetComponent<Collider2D>(out var platformCollider))
+                    SickOfIt.Core.Input.DropThroughPlatform.MakeOneWay(platformCollider);
             }
             else
             {
@@ -211,7 +210,7 @@ namespace SickOfIt.Gameplay
                 sr.sprite = EntityFactory.WhiteSquare;
                 sr.color = color;
                 SpriteLayers.Apply(sr, SpriteLayer.Player, SpriteLayers.Platform);
-                go.AddComponent<BoxCollider2D>();
+                SickOfIt.Core.Input.DropThroughPlatform.MakeOneWay(go.AddComponent<BoxCollider2D>());
                 SetLayer(go, "Platform");
             }
             go.name = "Platform_" + index;

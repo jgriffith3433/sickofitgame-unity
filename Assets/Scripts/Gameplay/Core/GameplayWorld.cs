@@ -379,7 +379,7 @@ namespace SickOfIt.Gameplay
                 return false;
             var feet = playerController.BodyCollider;
             var body = platform.MainCollider;
-            if (feet == null || body == null || !body.enabled)
+            if (feet == null || body == null || !body.enabled || playerController.IsDroppingThrough(body))
                 return false;
             Bounds p = feet.bounds, b = body.bounds;
             if (p.max.x < b.min.x + 0.05f || p.min.x > b.max.x - 0.05f)

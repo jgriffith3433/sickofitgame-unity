@@ -53,8 +53,6 @@ namespace SickOfIt.Core.Input
         [SerializeField] private float projectileSpriteAngle;
         
         [Header("Platform Interaction")]
-        [Tooltip("Layer to ignore collision with when moving down (e.g., 'Platform' layer)")]
-        [SerializeField] private LayerMask platformLayer;
         [Tooltip("How far down the player must press to drop through platforms (-1 = full down)")]
         [SerializeField] private float dropThroughThreshold = -0.5f;
         [Tooltip("Downward force applied when dropping through platforms (helps fall faster)")]
@@ -342,11 +340,13 @@ namespace SickOfIt.Core.Input
             return spriteName.StartsWith(state + "_", System.StringComparison.Ordinal);
         }
 
-        // Platform collision
-        private int playerLayer;
-        private bool isIgnoringPlatformCollision = false;
-        private bool isDroppingThrough = false;
-        private System.Collections.Generic.List<DropThroughPlatform> registeredPlatforms = new System.Collections.Generic.List<DropThroughPlatform>();
+        // One-way platforms (DropThroughPlatform.IsOneWay): the pieces he is dropping through (his collisions with each
+        // ignored until he is below it), and the ones he is rising up through (to report the landing on top).
+        private struct DropThrough { public Collider2D platform; public float since; }
+        private readonly System.Collections.Generic.List<DropThrough> droppingThrough = new System.Collections.Generic.List<DropThrough>();
+        private readonly System.Collections.Generic.List<DropThrough> risingThrough = new System.Collections.Generic.List<DropThrough>();
+        private readonly System.Collections.Generic.List<Collider2D> ownColliders = new System.Collections.Generic.List<Collider2D>();
+        private Collider2D groundCollider;
         
         // Input tracking
         private bool isUsingMobileInput = false;
@@ -416,7 +416,6 @@ namespace SickOfIt.Core.Input
             ApplyPlayerConfig();
             if (rb == null) rb = GetComponent<Rigidbody2D>();
             if (col == null) col = GetComponent<Collider2D>();
-            playerLayer = gameObject.layer;
             
             if (rb != null)
             {
@@ -483,8 +482,6 @@ namespace SickOfIt.Core.Input
             if (lookAction?.action != null) lookAction.action.Enable();
 
             // Subscribe to mobile control events
-            if (moveAnalog != null)
-                moveAnalog.StickExitEvent.AddListener(OnAnalogReleased);
             if (gameInputManager != null)
                 gameInputManager.OnJumpPressed += OnJumpRequested;
         }
@@ -493,7 +490,10 @@ namespace SickOfIt.Core.Input
         {
             // Freeze all player input/logic during rewind — RewindTimeline controls position
             if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+            {
+                ClearDropThrough();
                 return;
+            }
 
             if (mainCamera == null)
             {
@@ -538,10 +538,9 @@ namespace SickOfIt.Core.Input
             // all prefab instances.
 
             // Unsubscribe from mobile control events
-            if (moveAnalog != null)
-                moveAnalog.StickExitEvent.RemoveListener(OnAnalogReleased);
             if (gameInputManager != null)
                 gameInputManager.OnJumpPressed -= OnJumpRequested;
+            ClearDropThrough();
         }
         
         #endregion
@@ -555,14 +554,7 @@ namespace SickOfIt.Core.Input
             
             bool wasGrounded = isGrounded;
             
-            // If ignoring platform collision, exclude platform layer from ground check
-            LayerMask checkLayer = isIgnoringPlatformCollision ? (groundLayer & ~platformLayer) : groundLayer;
-            isGrounded = Physics2D.OverlapBox(boxCenter, boxSize, 0f, checkLayer);
-
-            // The climb engine's footholds (stones, ledges, rafts, lifts) are gameplay entities on the Default layer,
-            // not the Platform layer the level's ground is on; a solid one under his feet is ground too.
-            if (!isGrounded)
-                isGrounded = StandsOnSolidEntity(boxCenter, boxSize);
+            isGrounded = FindGround(boxCenter, boxSize, out groundCollider);
 
             if (isGrounded && !wasGrounded)
             {
@@ -574,20 +566,37 @@ namespace SickOfIt.Core.Input
         
         private static readonly Collider2D[] footholdHits = new Collider2D[8];
 
-        private bool StandsOnSolidEntity(Vector2 center, Vector2 size)
+        /// <summary>
+        /// What he stands on: the level's ground and walls (groundLayer: Platform, Boundary), or a solid gameplay entity
+        /// on the Default layer (the climb engine's stones, ledges, rafts, lifts). A one-way platform or an entity only
+        /// counts when its top is under his feet, so rising up through one isn't standing on it; a piece he is dropping
+        /// through never counts.
+        /// </summary>
+        private bool FindGround(Vector2 center, Vector2 size, out Collider2D ground)
         {
-            var filter = new ContactFilter2D { useLayerMask = true, layerMask = 1 << 0, useTriggers = false };
+            ground = null;
+            var filter = new ContactFilter2D { useLayerMask = true, layerMask = groundLayer | 1, useTriggers = Physics2D.queriesHitTriggers };
             int n = Physics2D.OverlapBox(center, size, 0f, filter, footholdHits);
             float feetY = col.bounds.min.y;
             for (int i = 0; i < n; i++)
             {
                 var hit = footholdHits[i];
+                if (hit == null || !hit.enabled || hit.attachedRigidbody == rb || IsDroppingThrough(hit))
+                    continue;
+                bool levelGround = (groundLayer.value & (1 << hit.gameObject.layer)) != 0 && hit.gameObject.layer != 0;
+                bool surfaceOnly = !levelGround || DropThroughPlatform.IsOneWay(hit);
+                if (!levelGround && hit.isTrigger)
+                    continue;
                 // Only a surface under his feet is ground: a solid piece whose top is above them (beside him, or around him
                 // as he passes) isn't, so he falls instead of standing on air.
-                if (hit != null && hit.enabled && hit.attachedRigidbody != rb && !hit.isTrigger && hit.bounds.max.y <= feetY + 0.12f)
+                if (surfaceOnly && hit.bounds.max.y > feetY + 0.12f)
+                    continue;
+                // Solid ground wins over a one-way piece (it decides what a hold of down drops through).
+                ground = hit;
+                if (!DropThroughPlatform.IsOneWay(hit))
                     return true;
             }
-            return false;
+            return ground != null;
         }
 
         private void OnDrawGizmosSelected()
@@ -742,117 +751,172 @@ namespace SickOfIt.Core.Input
         #endregion
         
         #region Platform Collision
-        
-        private void HandlePlatformCollision()
+
+        /// <summary>He dropped through a one-way platform (holding down on it) and is now below it.</summary>
+        public static event System.Action<PlayerController, Collider2D> DroppedThrough;
+        /// <summary>He jumped up through a one-way platform from below and landed on top of it.</summary>
+        public static event System.Action<PlayerController, Collider2D> JumpedUpThrough;
+
+        /// <summary>True while he is dropping through this one-way platform (his collisions with it are off).</summary>
+        public bool IsDroppingThrough(Collider2D platform)
         {
-            // Use more lenient threshold for mobile analog sticks
-            float threshold = isUsingMobileInput ? mobileDropThreshold : dropThroughThreshold;
-            bool pressingDown = moveInput.y < threshold;
-            
-            // Only change state when transitioning
-            if (pressingDown && !isDroppingThrough)
-            {
-                StartDroppingThrough();
-            }
-            else if (!pressingDown && isDroppingThrough)
-            {
-                StopDroppingThrough();
-            }
-        }
-        
-        private void StartDroppingThrough()
-        {
-            isDroppingThrough = true;
-            
-            // Disable all platform colliders
-            foreach (var platform in registeredPlatforms)
-            {
-                if (platform != null)
-                {
-                    platform.DisablePlatform();
-                }
-            }
-            
-            int platformLayerIndex = GetLayerIndexFromMask(platformLayer);
-            if (platformLayerIndex >= 0)
-            {
-                Physics2D.IgnoreLayerCollision(playerLayer, platformLayerIndex, true);
-                isIgnoringPlatformCollision = true;
-            }
-            
-            // Apply downward force to help player fall through faster (only if grounded)
-            if (isGrounded && rb != null && dropThroughForce > 0)
-            {
-                rb.AddForce(Vector2.down * dropThroughForce, ForceMode2D.Impulse);
-            }
-        }
-        
-        private void StopDroppingThrough()
-        {
-            isDroppingThrough = false;
-            
-            // Re-enable all platforms
-            foreach (var platform in registeredPlatforms)
-            {
-                if (platform != null)
-                {
-                    platform.EnablePlatform();
-                }
-            }
-            
-            int platformLayerIndex = GetLayerIndexFromMask(platformLayer);
-            if (platformLayerIndex >= 0)
-            {
-                Physics2D.IgnoreLayerCollision(playerLayer, platformLayerIndex, false);
-                isIgnoringPlatformCollision = false;
-            }
-        }
-        
-        private void OnAnalogReleased()
-        {
-            // When analog is released, immediately re-enable platforms
-            if (isDroppingThrough)
-            {
-                StopDroppingThrough();
-            }
-        }
-        
-        private int GetLayerIndexFromMask(LayerMask mask)
-        {
-            int layerNumber = 0;
-            int layer = mask.value;
-            
-            if (layer == 0)
-                return -1;
-            
-            while (layer > 1)
-            {
-                layer = layer >> 1;
-                layerNumber++;
-            }
-            
-            return layer == 1 ? layerNumber : -1;
-        }
-        
-        /// <summary>
-        /// Called by DropThroughPlatform components to register themselves
-        /// </summary>
-        public void RegisterPlatform(DropThroughPlatform platform)
-        {
-            if (!registeredPlatforms.Contains(platform))
-            {
-                registeredPlatforms.Add(platform);
-            }
-        }
-        
-        /// <summary>
-        /// Called by DropThroughPlatform components when destroyed
-        /// </summary>
-        public void UnregisterPlatform(DropThroughPlatform platform)
-        {
-            registeredPlatforms.Remove(platform);
+            for (int i = 0; i < droppingThrough.Count; i++)
+                if (droppingThrough[i].platform == platform)
+                    return true;
+            return false;
         }
 
+        /// <summary>Standing on a one-way platform (a hold of down drops him through it).</summary>
+        public bool OnOneWayPlatform => isGrounded && groundCollider != null && DropThroughPlatform.IsOneWay(groundCollider);
+
+        /// <summary>
+        /// Hold down (S/down arrow, the gamepad's stick, the move touch pulled down) on a one-way platform and he drops
+        /// through it; the ground and walls never let him through. Also watches him rise up through one, so the landing
+        /// on top can be reported.
+        /// </summary>
+        private void HandlePlatformCollision()
+        {
+            UpdateDropThrough();
+            UpdateRiseThrough();
+
+            // Use more lenient threshold for mobile analog sticks
+            float threshold = isUsingMobileInput ? mobileDropThreshold : dropThroughThreshold;
+            // Mostly down, so a run with the stick a little low doesn't drop him.
+            bool pressingDown = moveInput.y < threshold && -moveInput.y >= Mathf.Abs(moveInput.x) * 0.5f;
+            if (pressingDown && OnOneWayPlatform && !held && !Suspended)
+                StartDroppingThrough();
+        }
+
+        private void CollectOwnColliders()
+        {
+            ownColliders.Clear();
+            if (rb != null)
+            {
+                var attached = new Collider2D[8];
+                int n = rb.GetAttachedColliders(attached);
+                for (int i = 0; i < n; i++)
+                    if (attached[i] != null && !attached[i].isTrigger)
+                        ownColliders.Add(attached[i]);
+            }
+            if (ownColliders.Count == 0 && col != null)
+                ownColliders.Add(col);
+        }
+
+        private void IgnorePlatform(Collider2D platform, bool ignore)
+        {
+            if (platform == null)
+                return;
+            if (ownColliders.Count == 0)
+                CollectOwnColliders();
+            foreach (var own in ownColliders)
+                if (own != null)
+                    Physics2D.IgnoreCollision(own, platform, ignore);
+        }
+
+        private void StartDroppingThrough()
+        {
+            // Every one-way piece under his feet (he may stand across two), never the ground.
+            var b = col.bounds;
+            Vector2 center = new Vector2(b.center.x, b.min.y - groundCheckDistance * 0.5f);
+            Vector2 size = new Vector2(b.size.x * 0.9f, groundCheckDistance + 0.1f);
+            var filter = new ContactFilter2D { useLayerMask = true, layerMask = groundLayer | 1, useTriggers = false };
+            int n = Physics2D.OverlapBox(center, size, 0f, filter, footholdHits);
+            bool dropped = false;
+            for (int i = 0; i < n; i++)
+            {
+                var hit = footholdHits[i];
+                if (hit == null || !hit.enabled || hit.attachedRigidbody == rb || !DropThroughPlatform.IsOneWay(hit) || IsDroppingThrough(hit))
+                    continue;
+                if (hit.bounds.max.y > b.min.y + 0.12f)
+                    continue;
+                IgnorePlatform(hit, true);
+                droppingThrough.Add(new DropThrough { platform = hit, since = Time.time });
+                dropped = true;
+            }
+            if (!dropped)
+                return;
+            isGrounded = false;
+            groundCollider = null;
+            // Push him down so he clears the platform quickly.
+            if (rb != null && dropThroughForce > 0)
+                rb.AddForce(Vector2.down * dropThroughForce, ForceMode2D.Impulse);
+        }
+
+        /// <summary>Gives each platform he dropped through back its collision once he is below it (or stopped falling past it).</summary>
+        private void UpdateDropThrough()
+        {
+            if (droppingThrough.Count == 0)
+                return;
+            var b = col.bounds;
+            for (int i = droppingThrough.Count - 1; i >= 0; i--)
+            {
+                var drop = droppingThrough[i];
+                var platform = drop.platform;
+                if (platform == null || !platform.enabled || !platform.gameObject.activeInHierarchy)
+                {
+                    IgnorePlatform(platform, false);
+                    droppingThrough.RemoveAt(i);
+                    continue;
+                }
+                bool below = b.max.y < platform.bounds.min.y - 0.02f;
+                bool stuck = Time.time - drop.since > 1.5f && !col.Distance(platform).isOverlapped;
+                if (!below && !stuck)
+                    continue;
+                IgnorePlatform(platform, false);
+                droppingThrough.RemoveAt(i);
+                if (below)
+                    DroppedThrough?.Invoke(this, platform);
+            }
+        }
+
+        /// <summary>Notes the one-way platforms he is jumping up through, and reports the landing on one of them.</summary>
+        private void UpdateRiseThrough()
+        {
+            for (int i = risingThrough.Count - 1; i >= 0; i--)
+            {
+                var rise = risingThrough[i];
+                if (rise.platform == null || Time.time - rise.since > 2f)
+                    risingThrough.RemoveAt(i);
+                else if (isGrounded && groundCollider == rise.platform)
+                {
+                    risingThrough.RemoveAt(i);
+                    JumpedUpThrough?.Invoke(this, rise.platform);
+                }
+            }
+            if (rb == null || rb.linearVelocity.y < 0.1f || isGrounded)
+                return;
+            var b = col.bounds;
+            var filter = new ContactFilter2D { useLayerMask = true, layerMask = groundLayer | 1, useTriggers = false };
+            int n = Physics2D.OverlapBox(b.center, b.size, 0f, filter, footholdHits);
+            for (int i = 0; i < n; i++)
+            {
+                var hit = footholdHits[i];
+                // Inside it on the way up: his feet well under its top (not a lift lifting him).
+                if (hit == null || hit.attachedRigidbody == rb || !DropThroughPlatform.IsOneWay(hit) || b.min.y > hit.bounds.max.y - 0.15f)
+                    continue;
+                bool known = false;
+                for (int k = 0; k < risingThrough.Count; k++)
+                {
+                    if (risingThrough[k].platform == hit)
+                    {
+                        risingThrough[k] = new DropThrough { platform = hit, since = Time.time };
+                        known = true;
+                    }
+                }
+                if (!known)
+                    risingThrough.Add(new DropThrough { platform = hit, since = Time.time });
+            }
+        }
+
+        /// <summary>Every platform he was dropping through is solid for him again (a rewind puts him back on top of them).</summary>
+        private void ClearDropThrough()
+        {
+            foreach (var drop in droppingThrough)
+                IgnorePlatform(drop.platform, false);
+            droppingThrough.Clear();
+            risingThrough.Clear();
+        }
+        
         /// <summary>Set at runtime by LevelRuntime after resolving references.</summary>
         public void SetProjectilePool(ObjectPool pool) => projectilePool = pool;
         
@@ -1177,8 +1241,7 @@ namespace SickOfIt.Core.Input
                 return;
             }
             
-            LayerMask checkLayer = isIgnoringPlatformCollision ? (groundLayer & ~platformLayer) : groundLayer;
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, shadowRaycastDistance, checkLayer);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, shadowRaycastDistance, groundLayer);
             
             if (hit.collider != null)
             {

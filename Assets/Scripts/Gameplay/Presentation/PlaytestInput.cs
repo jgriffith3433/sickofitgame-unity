@@ -7,7 +7,7 @@ namespace SickOfIt.Gameplay
 {
     /// <summary>
     /// Virtual input devices for the playtest bot: a keyboard, a gamepad and a mouse added to the Input System,
-    /// so the game reads the bot exactly like a player (move A/D, jump Space, hold R to rewind, P to pause,
+    /// so the game reads the bot exactly like a player (move A/D, hold S or the left stick down to drop through a platform, jump Space, hold R to rewind, P to pause,
     /// 1-4 to pick an upgrade, Escape to skip; aim with the gamepad's right stick; click menu buttons with the
     /// mouse). Nothing exists until <see cref="Create"/>; <see cref="Dispose"/> removes the devices.
     /// </summary>
@@ -57,6 +57,19 @@ namespace SickOfIt.Gameplay
         {
             SetKey(Key.A, x < -0.5f);
             SetKey(Key.D, x > 0.5f);
+        }
+
+        /// <summary>Holds S (down: drops through a one-way platform he stands on) while 'down' is true.</summary>
+        public void SetDown(bool down) => SetKey(Key.S, down);
+
+        /// <summary>The gamepad's left stick (move; pulled down it drops through a one-way platform).</summary>
+        public void SetMoveStick(Vector2 stick)
+        {
+            stick = stick.sqrMagnitude > 1f ? stick.normalized : stick;
+            if (!Alive || stick == leftStick)
+                return;
+            leftStick = stick;
+            SendGamepad();
         }
 
         /// <summary>Aims (and fires) with the gamepad's right stick; zero stops firing.</summary>
