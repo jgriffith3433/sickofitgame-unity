@@ -40,7 +40,7 @@
         {
           "name": "foot",
           "direction": "Up",
-          "length": 1.0,
+          "length": 0.6,
           "turn": 2.0,
           "spawns": [
             {
@@ -67,7 +67,7 @@
               "entity": "ledge",
               "at": [
                 -1.2,
-                -1.15
+                -0.95
               ],
               "scale": [
                 1.0,
@@ -150,7 +150,7 @@
               "entity": "heatUpdraft",
               "at": [
                 7.0,
-                1.75
+                2.05
               ],
               "id": "pileDraft"
             },
@@ -194,10 +194,11 @@
             {
               "entity": "impGuardCount1",
               "at": [
-                12.6,
+                3.0,
                 5.55
               ],
               "id": "lineGuard1",
+              "onEnter": true,
               "tags": [
                 "lineGuard"
               ]
@@ -205,10 +206,11 @@
             {
               "entity": "impGuardCount2",
               "at": [
-                14.2,
+                4.2,
                 5.95
               ],
               "id": "lineGuard2",
+              "onEnter": true,
               "tags": [
                 "lineGuard"
               ]
@@ -216,10 +218,11 @@
             {
               "entity": "impGuardCount3",
               "at": [
-                15.8,
+                5.4,
                 5.55
               ],
               "id": "lineGuard3",
+              "onEnter": true,
               "tags": [
                 "lineGuard"
               ]
@@ -227,11 +230,13 @@
             {
               "entity": "ledge",
               "at": [
-                14.0,
-                3.95
+                4.2,
+                4.3
               ],
+              "id": "linePerch",
+              "onEnter": true,
               "scale": [
-                1.2,
+                1.4,
                 1
               ]
             }

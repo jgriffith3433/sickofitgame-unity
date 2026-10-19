@@ -262,6 +262,12 @@ while its section is on (an Up section's camera stays on its start x, ±4.98), a
 + `travelLead` reaches its end, or the camera never moves on. A chain he must wait for hangs off a foothold that holds
 (not a crumbling or sinking one). `python3 Tools/Levels/floor_check.py [FloorN ...]` checks all of this without Unity
 (jumps, the bot's chain swings, lifts at their worst cut, the screen per section, section ends, lava boxes over footholds).
+An updraft throws him **0.7 over its column's top** (lift 5): put the foothold it carries him to at most ~0.45 above the
+top and within ~1.5 of its side, and the column's foot no higher than a step above the foothold he enters from. A
+counterweight he stands on is going down (and its partner up) as he jumps. Keep a timed hazard (a geyser, a fall) off the
+foothold he jumps from on a climb: he can wait beside it for the beat, not on it. An Arena holds the camera on the path
+point where it starts: everything the fight needs (enemies included) goes inside that screen, spawned `onEnter` if it
+would shoot during the climb up to it.
 
 The test floor `content/scenes/climbTest.json` (the `climb` playtest) has one of everything: a climb of sinking and
 crumbling stones, a raft ride across a lava river with a chain to swing from and an updraft under it, a chase on a slag
@@ -608,7 +614,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
 - **Set piece and beat:** more of the village than he wanted to see: the rafts drift in a slow procession, and he rides
   them up a lava river that climbs in steps. Landing carved *959* on a raft of turf with the meadow's grass still on it.
 - **Surprise:** the last raft is the village sign from Floor 998, come back up, half burned: *WELCOME TO...* He rides
-  it across.
+  it across. (As built: `debrisRaftSignBack`, bobbing at the top of the steps until he stands on it, then drifting left
+  with the camera to the far bank.)
 - **Rewind:** a raft tipped him off its edge: rewind, stand in the middle.
 - **Feel:** wood creaks, the well bucket clanks; the roar is close and steady (he is riding on it); slow motion when a
   tipping raft throws him and he lands on the next.
@@ -645,7 +652,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
 - **Monsters:** one imp on a high ledge throwing into the updrafts.
 - **Set piece and beat:** the floor where he flies a little. Across the lava from column to column, then the chimney:
   the heat tosses him up its whole height, ash floating up beside him, and spits him out at the top. (The King's
-  Chimney at 951 is this, a hundred times bigger.) Landing carved *957*.
+  Chimney at 951 is this, a hundred times bigger.) Landing carved *957*. Each column's top stands at least 0.3 over the
+  ledge it carries him to, so its throw lands him there.
 - **Surprise:** the imp throws an ember down into the chimney's updraft, and the draft blows it straight back up into
   the imp.
 - **Rewind:** knocked out of a column by an ember: rewind and wait for the throw.
@@ -680,7 +688,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
 - **Obstacles:** a wall of lava falls, each on its own beat, with ledges behind and between them; geysers below.
 - **Monsters:** cinders that drift out of the falls (they live in the spray), one at a time.
 - **Set piece and beat:** running through the falls themselves, slipping through each one as it thins, then climbing
-  up behind them. Landing carved *955*, half hidden behind a fall that stops just as he arrives.
+  up behind them. Landing carved *955*, half hidden behind a fall that stops just as he arrives. The climb's ledges
+  stand just clear of the last fall, so he can wait on them for its beat.
 - **Surprise:** when the last fall stops it shows the landing, and on it a damned soul holding out its hands under the
   fall, waiting for it to pour, forever.
 - **Rewind:** a fall poured on him: rewind, count the beat, go.
@@ -732,7 +741,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
 
 - **New:** none (the stretch's test: everything at once).
 - **Path:** `≈ 2` a raft to the foot of the pile → `↑ 3` counterweights and updrafts up the side of the pile → `■` the
-  line of three guards at the top: the camera holds until the line is cleared → `↑ 1` the landing.
+  line of three guards at the top: the camera holds until the line is cleared (the line stands on a ledge of sacks on
+  the held screen, left of the pile's top, and steps out as he gets there) → `↑ 1` the landing.
 - **Obstacles:** counterweights, rafts, updrafts, falls; the lava rising through the whole last push.
 - **Monsters:** a line of three guards on the pile at the top, throwing on a count; imps and cinders on the way up.
 - **Set piece and beat:** the imps' camp, where they pile the sacks before hauling them up to the throne: a mountain of

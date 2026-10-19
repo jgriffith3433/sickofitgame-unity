@@ -568,7 +568,8 @@ namespace SickOfIt.Playtest
             {
                 var stretchLevels = path.FindAll(n => n >= stretch.from && n <= stretch.to);
                 list.Add(new PlaytestScenario(StretchId(stretch), $"Floors {PathFloor(stretch.from)}-{PathFloor(stretch.to)} of the path " +
-                    $"(levels {stretch.from}-{stretch.to}), the all-levels run over just this stretch: " + pathHow, PathRunSeconds(stretchLevels), "full", "levels"));
+                    $"(levels {stretch.from}-{stretch.to}), the all-levels run over just this stretch with a check event per level (cleared or how " +
+                    "not, its time and the floor's pace: 1-2 minutes, a floor boss's up to 3) and the foothold and lava-over-foothold events: " + pathHow, PathRunSeconds(stretchLevels), "full", "levels"));
             }
             list.Add(new PlaytestScenario("story-path", "New Game through the story path with the real flow: Video1, Level 1 (the Meadow and its portal " +
                 $"scene), Video2, Level 2 (Floor {LandingFirstFloor}: The Landing, no arcade level in between: its floor counter on {LandingFirstFloor}, " +
@@ -746,7 +747,7 @@ namespace SickOfIt.Playtest
             else if (id.StartsWith(StretchPrefix, StringComparison.Ordinal) && PathStretches().Exists(s => StretchId(s) == id))
             {
                 var stretch = PathStretches().Find(s => StretchId(s) == id);
-                yield return session.AllLevels(PathLevels().FindAll(n => n >= stretch.from && n <= stretch.to), $"floors {PathFloor(stretch.from)}-{PathFloor(stretch.to)}");
+                yield return session.AllLevels(PathLevels().FindAll(n => n >= stretch.from && n <= stretch.to), $"floors {PathFloor(stretch.from)}-{PathFloor(stretch.to)}", checkEvery: true);
             }
             else if (id == "story-path")
                 yield return session.StoryPathRun();
@@ -5226,12 +5227,17 @@ namespace SickOfIt.Playtest
                     if (row.Result == "stuck")
                         Run.Problem(PlaytestSeverity.Warning, $"all-levels: {row.Name} {row.Title} stuck: {row.Where}");
                 }
-                // Criterion: the bot clears the Meadow and the Landing (Floor 1000) when they're in the run.
+                // Criterion: the bot clears the Meadow and the Landing (Floor 1000) when they're in the run; climb-start and the
+                // floors-A-B stretches check every level, and a floor's pace: 1-2 minutes (a floor boss's up to 3), Grudge pick included.
                 foreach (var row in results)
                 {
-                    if (checkEvery || row.Level == 1 || row.Floor == LandingFirstFloor)
-                        Run.Event("check", $"all-levels {row.Name} {row.Title}: {(row.Result == "cleared" ? "ok (cleared)" : "not cleared (" + row.Result + (row.Where.Length > 0 ? ": " + row.Where : "") + ")")}" +
-                                           $" in {row.Seconds:0} s, {row.Tries} {(row.Tries == 1 ? "try" : "tries")}");
+                    if (!checkEvery && row.Level != 1 && row.Floor != LandingFirstFloor)
+                        continue;
+                    float most = row.Floor > 0 && row.Floor % 10 == 1 ? 180f : 120f;
+                    string pace = row.Result != "cleared" || row.Floor == 0 ? "" :
+                        row.Seconds < 60f ? ", pace short (under 1 min)" : row.Seconds > most ? $", pace long (over {most / 60f:0} min)" : ", pace ok";
+                    Run.Event("check", $"all-levels {row.Name} {row.Title}: {(row.Result == "cleared" ? "ok (cleared)" : "not cleared (" + row.Result + (row.Where.Length > 0 ? ": " + row.Where : "") + ")")}" +
+                                       $" in {row.Seconds:0} s, {row.Tries} {(row.Tries == 1 ? "try" : "tries")}{pace}");
                 }
                 Run.Progress(1f);
                 End(cleared == results.Count ? PlaytestOutcome.Won : PlaytestOutcome.Done);

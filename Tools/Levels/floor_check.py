@@ -4,8 +4,10 @@ Static check of a path floor's footholds (no Unity needed): every jump within th
 foothold inside the screen while its section is on, every section able to end (hero + travelLead at its end), no lava
 box over a foothold or a jump. Numbers from player.json (moveSpeed 2, jumpForce 9, gravityScale 1.8 -> apex 2.29) and
 WorldEffects (ortho 2.8, 16:9, TravelEdge walls). Moving pieces are checked where they spawn.
+Updraft columns are carriers (in from a foothold, out onto one up to the column's throw); a counterweight has gone down
+(and its partner up) by 0.35 s of its speed when he jumps off it.
 
-  python3 Tools/Levels/floor_check.py Floor999 Floor998 ...   (no args: every FloorNNN level from 999 to 991)
+  python3 Tools/Levels/floor_check.py Floor999 Floor998 ...   (no args: Floors 999-991 and 960-951)
 """
 import math, sys
 import floorgeo as g
@@ -43,10 +45,40 @@ class Chain:
         self.top = p.at[1] - 0.5
         self.onEnter = p.onEnter
         self.tags = set()
+    carrier = True
     def __repr__(self):
         return f"{self.name}#{self.id}[handle x {self.box[0]:.2f}..{self.box[2]:.2f}, y {self.box[1]:.2f}..{self.box[3]:.2f}]"
     def vmax(self):
         return self.L * self.amp * 2 * math.pi / self.period
+
+class Draft:
+    """A heat updraft's column: inside it he is carried up at 'lift' until his body leaves its top (UpdraftAbility)."""
+    carrier = True
+    def __init__(self, p):
+        a = g.ability(p.e, 'updraft')
+        self.p, self.sec, self.id, self.name, self.e = p, p.sec, p.id, p.name, p.e
+        self.box = p.box
+        self.lift = a.get('lift', 5.0)
+        self.onEnter = p.onEnter
+        self.tags = set()
+        self.at = p.at
+    @property
+    def top(self):
+        return self.box[3]
+    @property
+    def apex(self):
+        """His feet's highest point: out of the top at 'lift', then thrown on."""
+        return self.box[3] + self.lift * self.lift / (2 * G)
+    def has(self, kind):
+        return False
+    def __repr__(self):
+        b = self.box
+        return f"{self.name}{('#' + self.id) if self.id else ''}[column x {b[0]:.2f}..{b[2]:.2f}, y {b[1]:.2f}..{b[3]:.2f}]"
+
+def cw_move(p):
+    """How far a counterweight has gone down by the time he jumps off it (its partner up as far)."""
+    cw = g.ability(p.e, 'counterweight') if hasattr(p, 'e') and not getattr(p, 'carrier', False) else None
+    return (min(cw.get('drop', 2.4), cw.get('speed', 1.2) * 0.35), cw.get('partner', '')) if cw else (0.0, '')
 
 def flight(x0, feet0, b, v0, way):
     """Hero leaves (x0, feet0) jumping with sideways momentum v0 (decaying 3/s) and runs 'way': lands on b?"""
@@ -72,6 +104,32 @@ def reach(a, b, bot):
         if need > SPEED * t:
             return False, f"handle {gap(a.box, b.box):.2f} away"
         return True, f"grab, handle {gap(a.box, b.box):.2f} away"
+    if isinstance(b, Draft):
+        # Into the column: walk off or jump from his foothold and have his body cross it on the way.
+        if isinstance(a, Draft):
+            return False, "column to column"
+        if b.box[3] < a.top + 0.6:
+            return False, f"column top {b.box[3]:.2f} under him"
+        if b.box[1] > a.top + (1.2 if bot else APEX - 0.3):
+            return False, f"column foot {b.box[1] - a.top:.2f} above him"
+        gp = gap(a.box, b.box)
+        if gp > (1.6 if bot else 2.0):
+            return False, f"column {gp:.2f} away"
+        return True, f"into the column, {gp:.2f} away"
+    if isinstance(a, Draft):
+        if isinstance(b, Chain):
+            return False, "column to chain"
+        # PlaytestBot leaves the column once the throw (lift at the top) carries his feet 0.25 over b.
+        if b.top > a.apex - (0.25 if bot else 0.1):
+            return False, f"{b.top - a.apex:+.2f} over the column's throw"
+        if b.top < a.box[1] - 3.0:
+            return False, "far under the column"
+        fall = max(0.0, a.apex - b.top)
+        t = a.lift / G + math.sqrt(2 * fall / G)
+        gp = gap(a.box, b.box)
+        if gp - R * 0.9 > SPEED * t * (0.8 if bot else 1.0):
+            return False, f"gap {gp:.2f} from the column"
+        return True, f"out of the column, gap {gp:.2f}"
     if isinstance(a, Chain):
         way = 1 if (b.box[0] + b.box[2]) / 2 > a.at[0] else -1
         body_feet = a.at[1] - a.hang - R
@@ -79,7 +137,10 @@ def reach(a, b, bot):
         return flight(a.at[0], body_feet, b, a.vmax() * (0.95 if bot else 1.0), way)
     sink = g.ability(a.e, 'sink') if hasattr(a, 'e') else None
     sunk = min(sink.get('depth', 1.5), sink.get('sinkSpeed', 1.0) * 0.35) if sink and not sink.get('loopPeriod') else 0.0
-    rise = b.top - (a.top - sunk)
+    cw, partner = cw_move(a)
+    sunk = max(sunk, cw)
+    raised = cw if partner and getattr(b, 'id', '') == partner else 0.0
+    rise = b.top + raised - (a.top - sunk)
     if rise > (BOT_RISE if bot else APEX - 0.15):
         return False, f"rise {rise:.2f}"
     if rise < -4.5:
@@ -144,6 +205,8 @@ def check(name, verbose=False):
         for p in sec['pieces']:
             if p.has('swingChain') and 'imp' not in p.name.lower() and not p.has('contactDamage'):
                 feet_all.append(Chain(p))
+            elif p.has('updraft'):
+                feet_all.append(Draft(p))
             elif p.foothold and p.box[2] - p.box[0] > 0.4:
                 feet_all.append(p)
                 lift = g.ability(p.e, 'chainLift')
@@ -172,7 +235,8 @@ def check(name, verbose=False):
         i = sec['i']
         x0, x1, y0, y1 = window(sections, i)
         out_now = [p for p in feet_all if p.sec <= i + 1 and not (p.onEnter and p.sec > i)]
-        inside = [p for p in out_now if p.box[2] >= x0 - R * 0.9 and p.box[0] <= x1 + R * 0.9 and p.top <= y1 and p.top >= y0 - 1.0]
+        inside = [p for p in out_now if p.box[2] >= x0 - R * 0.9 and p.box[0] <= x1 + R * 0.9
+                  and (p.box[1] <= y1 and p.top >= y0 if isinstance(p, Draft) else p.top <= y1 and p.top >= y0 - 1.0)]
         nxt = window(sections, i + 1) if i + 1 < len(sections) else None
         for p in feet_all:
             if nxt and p.box[2] >= nxt[0] - R * 0.9 and p.box[0] <= nxt[1] + R * 0.9:
@@ -205,9 +269,9 @@ def check(name, verbose=False):
         def along(p):
             cx = min(max((sec['end'][0]), p.box[0] + R), p.box[2] - R) if ax[0] != 0 else (p.box[0] + p.box[2]) / 2
             return cx * ax[0] + (p.top + R) * ax[1]
-        enders = [p for p in reached.values() if p in inside and not isinstance(p, Chain) and along(p) + sec_lead >= end_along - 0.05]
+        enders = [p for p in reached.values() if p in inside and not getattr(p, 'carrier', False) and along(p) + sec_lead >= end_along - 0.05]
         if not enders and sec['auto'] <= 0 and i < len(sections) - 1:
-            best = max((round(along(p), 2) for p in reached.values() if p in inside and not isinstance(p, Chain)), default=None)
+            best = max((round(along(p), 2) for p in reached.values() if p in inside and not getattr(p, 'carrier', False)), default=None)
             out.append(f"  ! {sec['name']}: can't end: the hero needs {end_along - sec_lead:.2f} along {sec['dir']}, best reachable foothold gives {best}")
     for p in feet_all:
         if id(p) not in reached and getattr(p, 'liftOf', None) is None:
@@ -217,7 +281,7 @@ def check(name, verbose=False):
                 if ok:
                     why.append(f"a player can from {a} ({w})")
                     break
-            best = min(reached.values(), key=lambda a: gap(a.box, p.box) + abs(p.top - a.top) + (0.5 if isinstance(a, Chain) else 0)) if reached else None
+            best = min(reached.values(), key=lambda a: gap(a.box, p.box) + abs(p.top - a.top) + (0.5 if getattr(a, 'carrier', False) else 0)) if reached else None
             near = f"; nearest {best}: {reach(best, p, True)[1]}" if best else ""
             out.append(f"  ! unreachable for the bot: {p}{near}{'; ' + why[0] if why else ''}")
     # Lava over footholds and jumps.
@@ -228,7 +292,7 @@ def check(name, verbose=False):
             hw = a.get('width', 0.9) / 2
             b = (lv.at[0] - hw, lv.at[1], lv.at[0] + hw, lv.at[1] + a.get('height', 3.2))
         for p in feet_all:
-            if isinstance(p, Chain):
+            if getattr(p, 'carrier', False):
                 continue
             stand = (p.box[0], p.top, p.box[2], p.top + 1.0)
             if b[0] < stand[2] - 0.05 and b[2] > stand[0] + 0.05 and b[1] < stand[3] and b[3] > stand[1] + 0.05:
@@ -239,7 +303,7 @@ def check(name, verbose=False):
     sea = next((p for s in sections for p in s['pieces'] if p.name == 'lavaSea'), None)
     if sea and lmax:
         top = sea.top + lmax
-        under = [p for p in feet_all if not isinstance(p, Chain) and p.top < top + 0.05 and p.top > top - 3 and not p.has('sink')]
+        under = [p for p in feet_all if not getattr(p, 'carrier', False) and p.top < top + 0.05 and p.top > top - 3 and not p.has('sink')]
         out.append(f"  i lava rises to y {top:.2f}" + (f"; solid footholds under it: {under}" if under else ""))
     if landing is None:
         out.append("  ! no landing")
@@ -263,7 +327,7 @@ def walk(node):
 if __name__ == '__main__':
     args = [a for a in sys.argv[1:] if not a.startswith('-')]
     verbose = '-v' in sys.argv
-    names = args or [f"Floor{n}" for n in range(999, 990, -1)]
+    names = args or [f"Floor{n}" for n in list(range(999, 990, -1)) + list(range(960, 950, -1))]
     bad = 0
     for n in names:
         lines = check(n, verbose)
