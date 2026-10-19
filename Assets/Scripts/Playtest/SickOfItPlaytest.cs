@@ -48,7 +48,7 @@ namespace SickOfIt.Playtest
     /// floors-A-B (the same over one stretch of the path, e.g. floors-1000-991).
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
     /// </summary>
-    public static class SickOfItPlaytest
+    public static partial class SickOfItPlaytest
     {
         public const string Product = "sickofit";
 
@@ -511,6 +511,7 @@ namespace SickOfIt.Playtest
         static void RegisterNow()
         {
             HawkesPlaytest.Register(Product, Scenarios(), Bot, IsReady, StopActive);
+            WatchStartPoint();
             HawkesPlaytest.Finished -= OnFinished;
             HawkesPlaytest.Finished += OnFinished;
         }
@@ -528,7 +529,7 @@ namespace SickOfIt.Playtest
                 var level = definition.levels[n - 1];
                 string name = level != null && !string.IsNullOrEmpty(level.displayName) ? level.displayName : level?.levelName;
                 float seconds = Mathf.Max(30f, level != null ? level.duration : 60f) + 30f;
-                string what = $"Level {n} ({name}), started directly (setup shortcut)";
+                string what = $"Level {n} ({name}), started directly (setup shortcut) with the save a player arriving there has (the start-at save)";
                 if (n == PortalLevel)
                 {
                     what += ", then its ending, the portal scene, checked beat by beat: after the Grudge pick the Overlord's beam is telegraphed by a charge glow and " +
@@ -652,7 +653,8 @@ namespace SickOfIt.Playtest
             var offPath = OffPathLevels();
             list.Add(new PlaytestScenario(AllLevelsId, $"Every level in game.json, in its order ({PathRange(every)}): the path ({PathRange(path)}: the Meadow, " +
                 "then each floor of the played route, past the shortcuts' skipped floors), then the levels after it " +
-                $"({PathRange(offPath)}: the long way's old 10-floor stages and the arcade levels): " + pathHow, PathRunSeconds(every), "full", "levels"));
+                $"({PathRange(offPath)}: the long way's old 10-floor stages and the arcade levels), also in parts that run side by side ({ChunkPrefix}1-{Chunks().Count}); " +
+                "\"at\" (a floor or level) starts it there: " + pathHow, PathRunSeconds(every), "full", "levels"));
             list.Add(new PlaytestScenario(OffPathId, $"The levels in game.json after the path ({PathRange(offPath)}: Circle IX's long way, Levels13-18, " +
                 "Circle X's old stages, Level3-10, and the arcade levels), the all-levels run over just these with a check event per level " +
                 "(cleared, or died/stuck and where, with its time): " + pathHow, PathRunSeconds(offPath), "full", "levels"));
@@ -668,6 +670,7 @@ namespace SickOfIt.Playtest
                     $"(levels {stretch.from}-{stretch.to}), the all-levels run over just this stretch with a check event per level (cleared or how " +
                     "not, its time and the floor's pace: 1-2 minutes, a floor boss's up to 3) and the foothold and lava-over-foothold events: " + pathHow, PathRunSeconds(stretchLevels), "full", "levels"));
             }
+            AddStartScenarios(list, pathHow);
             list.Add(new PlaytestScenario("story-path", "New Game through the story path with the real flow: Video1, Level 1 (the Meadow and its portal " +
                 $"scene), Video2, Level 2 (Floor {LandingFirstFloor}: The Landing, no arcade level in between: its floor counter on {LandingFirstFloor}, " +
                 $"ticking to {LandingLastFloor} on its landing), Video3 (Yooba, watched a few seconds), then Circle X's played route one floor per level " +
@@ -832,21 +835,27 @@ namespace SickOfIt.Playtest
             if (run.Done)
                 yield break;
             session.CheckContent();
+            // A start point (AGENTS.md "Playtests", "Start points"): the contract's optional "at", for the runs that take one.
+            string at = RequestedAt(id, options);
+            if (at != null)
+                run.Event("at", $"start point asked for: \"{at}\"");
 
-            if (id == "smoke")
+            if (TryStartRun(session, id, at, out var started))
+                yield return started;
+            else if (id == "smoke")
                 yield return session.Smoke();
             else if (id == "full")
                 yield return session.Full();
             else if (id == AllLevelsId)
-                yield return session.AllLevels(AllGameLevels(), "every level in game.json");
+                yield return session.AllLevels(AllGameLevels(), "every level in game.json", at: at);
             else if (id == OffPathId)
-                yield return session.AllLevels(OffPathLevels(), "the levels after the path", checkEvery: true);
+                yield return session.AllLevels(OffPathLevels(), "the levels after the path", checkEvery: true, at: at);
             else if (id == ClimbStartId)
-                yield return session.AllLevels(ClimbStartLevels(), $"Level 1 and Floors {ClimbStartTopFloor}-{ClimbStartLastFloor}", checkEvery: true);
+                yield return session.AllLevels(ClimbStartLevels(), $"Level 1 and Floors {ClimbStartTopFloor}-{ClimbStartLastFloor}", checkEvery: true, at: at);
             else if (id.StartsWith(StretchPrefix, StringComparison.Ordinal) && PathStretches().Exists(s => StretchId(s) == id))
             {
                 var stretch = PathStretches().Find(s => StretchId(s) == id);
-                yield return session.AllLevels(PathLevels().FindAll(n => n >= stretch.from && n <= stretch.to), $"floors {PathFloor(stretch.from)}-{PathFloor(stretch.to)}", checkEvery: true);
+                yield return session.AllLevels(PathLevels().FindAll(n => n >= stretch.from && n <= stretch.to), $"floors {PathFloor(stretch.from)}-{PathFloor(stretch.to)}", checkEvery: true, at: at);
             }
             else if (id == "story-path")
                 yield return session.StoryPathRun();
@@ -861,11 +870,11 @@ namespace SickOfIt.Playtest
             else if (id == "waystone")
                 yield return session.WaystoneRun();
             else if (id == "wastes-climb")
-                yield return session.WastesClimb();
+                yield return session.ClimbFromStart(ClimbFrom, ClimbTo, WastesClimbSeconds, at);
             else if (id == "landing-stretch")
-                yield return session.WastesClimb(StretchFrom, StretchTo, StretchSeconds);
+                yield return session.ClimbFromStart(StretchFrom, StretchTo, StretchSeconds, at);
             else if (id == "foreman-stretch")
-                yield return session.WastesClimb(ForemanFrom, ForemanTo, ForemanSeconds);
+                yield return session.ClimbFromStart(ForemanFrom, ForemanTo, ForemanSeconds, at);
             else if (id == "long-way")
                 yield return session.LongWayStages();
             else if (id == "shortcut")
@@ -895,9 +904,15 @@ namespace SickOfIt.Playtest
             else if (id == "cutscene")
                 yield return session.Cutscene();
             else if (id == "climb")
+            {
+                session.Prepare(ClimbLevel, true);
                 yield return session.ClimbRun();
+            }
             else if (id == "one-way")
+            {
+                session.Prepare(OneWayLevel, true);
                 yield return session.OneWayRun();
+            }
             else if (id == MagmaKing.Scenario)
                 yield return session.WardenRun(MagmaKing, false);
             else if (id == SpireFiend.Scenario)
@@ -907,7 +922,12 @@ namespace SickOfIt.Playtest
             else if (id == "video-" + OverlayVideo + "-tunnel")
                 yield return session.VideoTunnel();
             else if (id.StartsWith("level-", StringComparison.Ordinal) && int.TryParse(id.Substring(6), out int n))
+            {
+                // Its own floor, with the save it expects (the start-at save): level-3 starts on Floor 999 as a player's run would.
+                if (n >= 1 && n <= GameDefinition.Instance.TotalLevels)
+                    session.Prepare(n, true);
                 yield return session.LevelScenario(n);
+            }
             else
             {
                 run.Problem(PlaytestSeverity.Bug, "unknown scenario " + id);
@@ -916,7 +936,7 @@ namespace SickOfIt.Playtest
         }
 
         /// <summary>One run: the virtual devices, the bot, and everything it watches (logs, telemetry, fps).</summary>
-        sealed class Session
+        sealed partial class Session
         {
             public readonly PlaytestRun Run;
             readonly PlaytestOptions options;
@@ -5931,16 +5951,29 @@ namespace SickOfIt.Playtest
             /// death, and reported: cleared, died (where and by what) or stuck (where). A level the bot can't clear goes in the table
             /// and the next one starts; the run ends with the table.
             /// </summary>
-            public IEnumerator AllLevels(List<int> levels, string what, bool checkEvery = false)
+            public IEnumerator AllLevels(List<int> levels, string what, bool checkEvery = false, string at = null)
             {
                 var results = new List<PathResult>();
                 takeShortcuts = false;
                 reckless = false;
+                preparedFirst = 0;
                 if (levels.Count == 0)
                 {
                     Run.Problem(PlaytestSeverity.Bug, "no levels on the path (game.json's levels)");
                     End(PlaytestOutcome.Error);
                     yield break;
+                }
+                if (at != null)
+                {
+                    // Started later in the run (a start point): from that level on.
+                    if (!StartAtIn(levels, at, out levels, out string where))
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"{what}: start point \"{at}\": {where}");
+                        End(PlaytestOutcome.Error);
+                        yield break;
+                    }
+                    Run.Event("start-at", $"{what} from {where}");
+                    what += $" from {where}";
                 }
                 Run.Event("all-levels", $"{what}: {levels.Count} levels, {PathRange(levels)}; each opened directly (setup shortcut), played once more after a death");
                 float budgetEnd = sessionStarted + PathRunBudget, hardEnd = sessionStarted + PathRunHardEnd;
@@ -6031,6 +6064,10 @@ namespace SickOfIt.Playtest
                     }
                     results.Add(row);
                     Run.Event("level-result", row.Line());
+                    // One event per floor by its outcome, so a part's timeline reads cleared / died / stuck at a glance.
+                    Run.Event(row.Result == "cleared" ? "cleared" : row.Result == "died" ? "died" : "stuck",
+                        (row.Floor > 0 ? $"Floor {row.Floor} ({row.Name})" : row.Name) + $" {row.Title}: {row.Result} in {row.Seconds:0} s" +
+                        (row.Where.Length > 0 ? ", " + row.Where : ""));
                     Run.Metric($"level{n}.cleared", row.Result == "cleared" ? 1 : 0);
                     Run.Metric("path.cleared", results.FindAll(r => r.Result == "cleared").Count);
                     Run.Metric("path.died", results.FindAll(r => r.Result == "died").Count);
@@ -6161,6 +6198,8 @@ namespace SickOfIt.Playtest
                     bool waiting = loads > 0 && Time.realtimeSinceStartup - loadAt < 15f && !otherStarted;
                     if (!waiting && loads < 3)
                     {
+                        if (loads == 0)
+                            PrepareOpen(n);
                         loads++;
                         loadedFrom = world;
                         loadAt = Time.realtimeSinceStartup;

@@ -402,6 +402,40 @@ the prologue portal scene's sounds in scene order, every take, then the Meadow's
 - **Start one:** in a browser `?playtest=smoke` (plus `&seed=`, `&speed=`), or `hawkesPlaytest.start("level-2")`; in the
   editor or a test, `HawkesPlaytest.StartScenario("level-2")`. Note: `smoke` and `full` press New Game, which resets
   the save in that browser.
+- **Start points** (`Assets/Scripts/Playtest/PlaytestStart.cs`, playtest only: players never reach them). `at` names a floor
+  (`"905"`, `"Floor 905"`) or a level (`"level 31"`, `"L31"`, a file name like `"Level14"`). It comes from the contract's
+  optional `at` (`hawkesPlaytest.start(id, { at: "905" })`, Studio's playtest `options`, or line 2 of `.hawkes/scenario.txt`:
+  `{"at": "905"}`), or `&at=905` next to `?playtest=`; in the editor `new PlaytestStartOptions { at = "905" }`. The package
+  passes on only seed and speed, so `Plugins/WebGL/SickOfItPlaytestStart.jslib` wraps `start()` to keep it. Without `at` a
+  scenario starts where its own arguments say (its first floor). The floor is loaded straight away with the save a player
+  arriving there on the played route has (`PrepareStart`, all from the data: game.json's levels and their scripts' floors,
+  ui/shaft.json's Waystones, the route's shortcuts): the Shaft plunged with its marker on that floor, exactly the Waystones
+  under it lit (Floor 900: 901; Floor 901 itself: only the Landing's), the run on that level, the route's shortcuts taken and
+  the one he came in by (Floor 910: the King's Chimney, so it reads `shortcutTaken`), Yooba met past the Landing, and a fresh
+  run (no Grudges, full health; diamonds and goods kept). A `start-point` event says what it set. Who takes `at`:
+  `start-at` (that floor, played like `level-<n>`; the Landing without one), `all-levels` and its parts, `off-path`,
+  `climb-start`, `floors-A-B` (from that level on), `wastes-climb`/`landing-stretch`/`foreman-stretch` (from that floor to
+  their end: `wastes-climb` with `at` 902 is the door and the King). `level-<n>`, `climb` and `one-way` warp to their own
+  level with the same save (no `at`: the id is the level). A part or a run starts a fresh run on its first level only; each
+  later level gets its own save but keeps the Grudges picked on the way.
+- **all-levels in parts** (`all-levels-1` ... `all-levels-9`, from game.json by `SickOfItPlaytest.Chunks()`): together they
+  play every level of `all-levels` once, so Studio can run them side by side instead of one long run. Part 1 is Level 1 and
+  Floors 1000-991, then one per stretch of the path (960-951, 910-901 with the Magma King, then the Cracked Road's 900-891,
+  860-851, 810-801), then the levels after the path in even parts of at most ~30 min (today 3). Each warps to its first floor,
+  plays like `all-levels` (time limits, two tries, the table) with the stretch checks, and logs a `cleared`, `died` or
+  `stuck` event per floor next to its `level-result`. New floors land in a part by themselves.
+- **Scenarios and rough play times** (real minutes at speed 1; the runner allows twice the scenario's `seconds`):
+  | Scenario | Minutes | | Scenario | Minutes |
+  |---|---|---|---|---|
+  | `smoke` | 1 | | `start-at` (one floor) | 2-5 |
+  | `level-<n>` (a floor; a floor boss / Warden) | 2-3; 4-6 | | `all-levels-1` ... `-9` (each) | 25-40 |
+  | `climb` / `one-way` | 3 / 2 | | `all-levels` (stops at its 43-min budget) | 43 |
+  | `cutscene`, `video-2`, `video-2-tunnel`, `restart`, `imp-death` | 1-2 | | `climb-start`, `floors-A-B` (each) | 25-35 |
+  | `rewind-perf`, `menus`, `layout`, `portal-audio`, `site` | 2-3 | | `off-path` (budget-capped) | 43 |
+  | `analytics`, `aim-guide`, `magma-king`, `spire-fiend` | 5-7 | | `landing-stretch` / `foreman-stretch` | 15 / 18 |
+  | `yooba`, `yooba-shop`, `waystone`, `shortcut` | 3-6 | | `wastes-climb` (from `at`: ~3 per floor left) | 30 |
+  | `shaft` / `music` | 8 / 15 | | `long-way` | 20 |
+  | `full` | 10 | | `circle-x-route` / `story-path` / `cracked-road-route` | 65 / 70 / 75 |
 - **The bot plays through real input.** `PlaytestBot` (Gameplay/Presentation) decides; `PlaytestInput` adds a virtual
   keyboard, gamepad and mouse to the Input System: A/D move, Space jump, gamepad right stick aims and fires, hold R
   rewinds, P pauses, 1 picks an upgrade, Escape skips videos, and menu buttons are clicked with the mouse. Never give
