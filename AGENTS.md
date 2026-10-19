@@ -139,6 +139,38 @@ Assets/GameConfig/
   EventSystem, owned by `EventSystemGuard` (it switches off the ones in scenes and the Camera prefab); call
   `EventSystemGuard.Ensure()` instead of creating one.
 
+## Analytics (Hawkes Analytics)
+
+Hawkes Gen's player analytics (`hawkesgen/docs/analytics.md`) is the only tracker; never add another (Umami is gone).
+- **The bridge** is Gen's `com.hawkes.analytics`, **embedded** in `Packages/com.hawkes.analytics` because Gen's copy
+  doesn't compile (raw U+2028/U+2029 in `HawkesAnalytics.cs` char literals; fixed here as `'\u2028'`/`'\u2029'`). When
+  Gen ships the fix, delete the folder and go back to `"com.hawkes.analytics": "file:C:/Projects/hawkesgen/clients/unity/com.hawkes.analytics"`.
+  It loads the SDK into the page itself (product `sickofit`), so the website needs no change. Editor and non-WebGL send nothing.
+- **`AnalyticsManager`** (Core, static) is the only caller of the bridge: init, `window.HAWKES_BUILD` (version =
+  `Application.version` + `+v<n>` from `Game/v<n>/`, commit and date from `Resources/HawkesBuildInfo.json`, which
+  `Tools/Editor/AnalyticsBuildInfo.cs` writes for a player build and removes after; gitignored), the feedback card in the
+  game's colors (`Plugins/WebGL/SickOfItAnalytics.jslib`: `ask` with a theme, `AskOpen`, `CloseAsk`, the playtest's
+  debug-log readout) and `Recent`/`Sent` (every call, in the editor too).
+- **The level's events come from the telemetry** (`Gameplay/Presentation/PlayAnalytics.cs` on `GameplayTelemetry.Recorded`):
+  `levelStart` → context (level, level_name, mode story/arcade, floor, circle, grudges, phase, boss) + `level_start` (start
+  floor from `floors.start`: the counter is set just after); `floor` → `progress` per new floor (step = 1001 − floor, of
+  1000); `damage` on the player → the next death's `cause`; `signal` during a boss → custom `boss` phase; `upgradeOffer`/
+  `upgradePick` (UpgradeSystem) → `choice` grudge (offered, taken); `shortcut`/`shortcut-declined` → `choice` shortcut.
+  Direct hooks: `GameClock` rewind start/stop → `feature` rewind (seconds back, `undo_death`); `PlayerHealth.DeathStood`
+  (the undo window ran out) → `death` + `level_end` death; `CommitCompletion` → `level_end` complete; pause Restart/Quit
+  and the scene unloading → restart/quit; the boss bar (`ShowBossBar`/its target dying) → `boss` start/win/lose and a stars
+  card on the results. One-off events are sent once per attempt (rewind replays the same future).
+- **Elsewhere:** `RunFlow` (`run_start` on a session's first floor stage, `run_end` lose on a death that ends the run,
+  quit on New Run/New Game; `progress` + `checkpoint` per Waystone), `VideoRuntime` (`video` play/complete/skip),
+  menus (`screen`: menu, settings, level_select, video_select, shop, shaft, level, pause, results, death, video;
+  `choice` main_menu / level_select / video_select / shaft), the shop (`shop_purchase`), the death screen (`rage_quit`,
+  and from the 3rd death on a level in a session the thumbs card "Too hard? Not fun?"; the screen waits for it up to
+  15 s, Escape goes on; a level start closes any open card, since it keeps the keyboard).
+- **Rules:** no per-frame events, nothing personal, presentation only. A new moment: prefer the telemetry (add a
+  `Record` kind and map it in PlayAnalytics) over a parallel hook. Check with the `analytics` playtest (it turns on the
+  SDK's debug log, dies 3 times on Level 1 with a rewind, checks the card and that level_start/death/rewind/level_end
+  went out with the build and env) or `?hawkes-analytics-debug=1` on any page.
+
 ## Adding a new mechanic (C#)
 
 When a request can't be expressed with the existing types, add one:
@@ -252,7 +284,10 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   `menus` (level select, videos, Yooba's shop, settings open and close, then a Shaft preview with Yooba met: Visit
   Yooba opens his shop over it, Back returns to the Shaft), `layout` (main menu, level select, settings,
   a Shaft preview with Visit Yooba beside Continue, Yooba's shop over it, level 1's HUD, pause and its settings, the death scene: no button overlaps another or a HUD panel, leaves the screen or
-  is under the touch size; meant for device "phone", 390x844), `imp-death` (level 1 until the bot has killed three
+  is under the touch size; meant for device "phone", 390x844), `analytics` (Hawkes Analytics: the SDK's debug log on, Level 1 loaded directly, R held once, then the bot dies three times;
+each death screen checked, the third with the "Too hard? Not fun?" card on the page and the screen held; then level_start,
+death with a cause, feature rewind and level_end checked as sent with the build version and env; `check` and `analytics`
+events; ~5 min; AGENTS.md "Analytics"), `imp-death` (level 1 until the bot has killed three
 imps: each imp's Die clip must be playing where it died, and those three play at 0.3x so a recording shows the frames;
 every other scenario checks imp kills the same way, without the slow motion), `cutscene` (the scene
   `content/scenes/cutsceneTest.json` on Level 1's stage: with input and rewind locked the hero walks to a point by

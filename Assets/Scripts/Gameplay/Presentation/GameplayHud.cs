@@ -542,6 +542,16 @@ namespace SickOfIt.Gameplay
             bossName = label ?? "";
             bossVisible = true;
             Refresh(world.Now);
+            string bossId = null;
+            foreach (var e in world.Live)
+            {
+                if (e != null && e.IsAlive && !e.IsPlayer && GameplayWorld.Matches(e, bossTarget, null))
+                {
+                    bossId = e.DefId;
+                    break;
+                }
+            }
+            PlayAnalytics.BossShown(world, bossName, bossId);
         }
 
         public void HideBossBar()
@@ -553,7 +563,11 @@ namespace SickOfIt.Gameplay
         public void OnEntityDied(Entity entity)
         {
             if (bossVisible && GameplayWorld.Matches(entity, bossTarget, null) && !world.AnyAlive(bossTarget, null))
+            {
                 bossVisible = false;
+                if (!entity.IsPlayer)
+                    PlayAnalytics.BossDefeated(world);
+            }
         }
 
         public void Flash(Color color, float duration)

@@ -20,6 +20,7 @@ namespace SickOfIt.Core.Progression
 
         private void Start()
         {
+            AnalyticsManager.Screen("video_select");
             var gd = GameDefinition.Instance;
             var config = gd != null ? gd.videoSelectionConfig : new SelectionSceneConfig();
             menu = MenuCanvas.Create("VideoSelectUI", gd != null ? gd.menuTheme : null, config.layout, gameObject);
@@ -51,6 +52,7 @@ namespace SickOfIt.Core.Progression
         {
             if (leaving) return;
             leaving = true;
+            AnalyticsManager.Choice("video_select", "Video" + videoNumber);
 
             // When watching from gallery, return to main menu after video completes
             PlayerPrefs.SetInt("ReturnToLevel", -1);

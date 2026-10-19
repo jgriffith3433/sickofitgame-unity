@@ -70,6 +70,7 @@ namespace SickOfIt.Core.Progression
         {
             if (built)
                 return;
+            AnalyticsManager.Screen("shop");
             built = true;
             var gd = GameDefinition.Instance;
             config = gd != null ? gd.upgradeShopConfig : new UpgradeShopConfig();
@@ -209,7 +210,14 @@ namespace SickOfIt.Core.Progression
         {
             if (leaving || def.Effect == ShopEffect.None)
                 return;
-            if (RogueliteManager.Instance.TryPurchase(def))
+            int cost = RogueliteManager.Instance.GetNextCost(def);
+            bool bought = RogueliteManager.Instance.TryPurchase(def);
+            AnalyticsManager.Track("shop_purchase", new System.Collections.Generic.Dictionary<string, object>
+            {
+                { "item", def.id }, { "cost", cost }, { "bought", bought }, { "level", RogueliteManager.Instance.GetUpgradeLevel(def.id) },
+                { "diamonds", RogueliteManager.Instance.GetPoints() }, { "over_shaft", overlay },
+            });
+            if (bought)
             {
                 SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.upgradePick);
                 YoobaSay(YoobaMoment.ShopBuy, true);
@@ -253,6 +261,7 @@ namespace SickOfIt.Core.Progression
             closed = null;
             if (OverShaft == this)
                 OverShaft = null;
+            AnalyticsManager.Screen("shaft");
             if (this != null)
                 Destroy(gameObject);
             then?.Invoke();
