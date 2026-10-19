@@ -257,7 +257,16 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   Shaft's Waystone saved and Circle IX waking (`climbWaystone`, `climbWakes`); `boss`, `signal`, `telegraph`,
   `attack`, `adds` events, plus the magma-king watch's checks), `full` (New Game, then
   every level in order through the real flow: results → Continue → the Shaft (Continue) → video skipped with Escape; up to 3 tries per level;
-  ~10 min), `story-path` (New Game along the story path, each step a `check` event: Video1, Level 1, Video2, Level 2
+  ~10 min), `all-levels` (every level on the path in game.json's order: Level 1 then each `FloorN` level up to the first
+  level that isn't one (the long way's old stages and the arcade levels aren't on it), each opened directly (setup shortcut:
+  no videos or Shaft, and a level the bot can't clear never stops the run), played with a time limit (160 s of game time, a
+  floor ending in 1 250 s) and once more after a death; a `level-result` event per level (CLEARED, DIED with where (phase,
+  floor, place, path section) and by what (the last `damage` source on the hero), or STUCK with the stuck event's place,
+  path section and the bot's ClimbTarget), then a `summary` event, one `table` event per row and the same markdown table in
+  the report's `log`; metrics `path.cleared`/`died`/`stuck`, `level<n>.cleared`; ~2-3 h), `floors-A-B` (the same run over
+  one stretch of the path, each ending on a floor boss or where a shortcut jumps: `floors-1000-991`, `floors-960-951`,
+  `floors-910-901`, `floors-900-891`, `floors-860-851`, `floors-810-802`; the ids come from game.json, so new floors make
+  new ones; the package drops unknown option keys, so a range is an id, not an option), `story-path` (New Game along the story path, each step a `check` event: Video1, Level 1, Video2, Level 2
   "Floor 1000: The Landing" with no other level between, its floor counter 1000 → 999, Video3 (Yooba) watched 8 s,
   Level 3 (Floor 999) opening on the 999 milestone, Levels 4-11 (Floors 998-991, the Imp Foreman), the Sack Lift (its
   fare topped up, a setup shortcut) to Levels 12-21 (Floors 960-951, the Pile Keeper), the King's Chimney to Levels 22-30
