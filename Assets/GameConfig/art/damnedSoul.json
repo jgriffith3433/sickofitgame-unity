@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "entity": "damnedSoul",
+  "name": "Damned soul",
+  "description": "a damned soul of the Ember Wastes, stuck in Hell's loop forever: a thin hunched bald human figure in a long ragged ash-grey shroud, pale ash-grey skin, hollow tired eyes, a soft pale blue-white glow around its outline, bare feet, holding one small dark stone in both hands close to its chest",
+  "height": 0.7,
+  "pixels": 220,
+  "keepTint": true,
+  "poses": {
+    "stand": "standing hunched forward, head bowed over the small stone cradled in both hands, staring at it"
+  },
+  "clips": {
+    "idle": { "from": "stand", "action": "rocks gently, turning the small stone over and over in its hands and mouthing a count, head bowed", "seconds": 2 },
+    "hiccup": { "from": "stand", "action": "jolts once as if hiccuping, flickers and looks up startled for a moment, then hunches back over its stone", "seconds": 1, "loop": false }
+  },
+  "animator": {
+    "parameters": [ { "name": "Hiccup", "type": "Bool" } ],
+    "transitions": [
+      { "from": "Idle", "to": "Hiccup", "when": [ "Hiccup" ] },
+      { "from": "Hiccup", "to": "Idle", "exit": true }
+    ]
+  },
+  "takes": { "pose": 3, "clip": 2 }
+}
