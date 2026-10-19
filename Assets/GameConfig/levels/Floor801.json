@@ -1,0 +1,496 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor801",
+  "displayName": "Floor 801: The Spire's Heart",
+  "levelNumber": 61,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [
+    {
+      "name": "Spire_Road",
+      "spriteFramesData": "Videos/Level2_Background1.asset",
+      "layer": "Background1",
+      "sequenceBy": "Time",
+      "sequenceStart": 0,
+      "sequenceDuration": 0,
+      "sequenceLoop": true
+    }
+  ],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 300.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 0,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 150,
+    "floors": {
+      "start": 801,
+      "end": 801,
+      "unitsPerFloor": 0.0,
+      "circle": "crackedRoad",
+      "signs": false
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Defeat the Spire Fiend"
+    },
+    "phases": [
+      {
+        "name": "intro",
+        "onEnter": [
+          {
+            "type": "spawn",
+            "entity": "lavaSeaHall",
+            "anchor": "Camera",
+            "at": [
+              0.0,
+              -5.6
+            ],
+            "id": "hallLava"
+          },
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "applyStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "showText",
+            "text": "FLOOR 801: THE SPIRE'S HEART",
+            "duration": 2.8,
+            "sound": "vo_f801_title",
+            "color": "#FFC890"
+          }
+        ],
+        "rules": [
+          {
+            "name": "he rises out of his spire",
+            "when": {
+              "type": "after",
+              "seconds": 4.6
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "playSound",
+                    "sound": "sf_hum"
+                  },
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.15,
+                    "duration": 2.4
+                  },
+                  {
+                    "type": "cameraTo",
+                    "anchor": "Camera",
+                    "at": [
+                      2.4,
+                      0.3
+                    ],
+                    "size": 2.1,
+                    "duration": 1.8
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.6
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "spireFiend",
+                    "id": "boss",
+                    "anchor": "Camera",
+                    "at": [
+                      3.9,
+                      -1.2
+                    ]
+                  },
+                  {
+                    "type": "setState",
+                    "target": {
+                      "self": false,
+                      "id": "boss"
+                    },
+                    "state": "emerging"
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "sfIntro"
+                  },
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.3,
+                    "duration": 1.4
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 2.4
+                  },
+                  {
+                    "type": "flash",
+                    "color": "#FF9A4A88",
+                    "duration": 0.4
+                  },
+                  {
+                    "type": "showText",
+                    "text": "FLOOR 801! THE WARDEN OF THE ROAD!",
+                    "duration": 3.6,
+                    "sound": "vo_sf_warden",
+                    "color": "#FFB070"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 4.0
+                  },
+                  {
+                    "type": "showText",
+                    "text": "THE SPIRE FIEND",
+                    "duration": 2.4,
+                    "sound": "vo_sf_name",
+                    "color": "#FF8A4A"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.0
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Hmmmm. There you are. I heard every step. A hundred floors of them.",
+                    "style": "Subtitle",
+                    "duration": 9.6,
+                    "sound": "vo_sf_intro",
+                    "color": "#FFB070"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 10.0
+                  },
+                  {
+                    "type": "cameraReset",
+                    "duration": 1.2
+                  },
+                  {
+                    "type": "showText",
+                    "text": "He's been listening. Course he has.",
+                    "style": "Subtitle",
+                    "duration": 2.6,
+                    "sound": "vo_sf_hero_intro"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 2.8
+                  },
+                  {
+                    "type": "bossBar",
+                    "target": {
+                      "id": "boss"
+                    },
+                    "label": "The Spire Fiend"
+                  },
+                  {
+                    "type": "goToPhase",
+                    "phase": "fight"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "fight",
+        "onEnter": [
+          {
+            "type": "unlockInput"
+          },
+          {
+            "type": "unlockRewind"
+          },
+          {
+            "type": "removeStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "emit",
+            "signal": "sfFight"
+          },
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_push.ogg",
+            "volume": 0.85
+          },
+          {
+            "type": "showText",
+            "text": "Climb, then. Nothing climbs higher than me.",
+            "style": "Subtitle",
+            "duration": 4.8,
+            "sound": "vo_sf_phase1",
+            "color": "#FFB070"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the first needle field",
+            "when": {
+              "type": "signal",
+              "name": "sfField"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 4.2
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Floor's all spikes. ...Let's try that again.",
+                    "style": "Subtitle",
+                    "duration": 4.5,
+                    "sound": "vo_sf_hero_field"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "he falls",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "id": "boss"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "defeat"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "defeat",
+        "onEnter": [
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "applyStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "despawn",
+            "target": {
+              "entity": "sfWhelp"
+            }
+          },
+          {
+            "type": "slowMotion",
+            "scale": 0.3,
+            "duration": 2.0
+          },
+          {
+            "type": "musicVolume",
+            "volume": 0.25
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.4,
+            "duration": 1.5
+          },
+          {
+            "type": "playSound",
+            "sound": "magma_rumble"
+          },
+          {
+            "type": "emit",
+            "signal": "sfDefeat"
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 5.0
+              },
+              {
+                "type": "showText",
+                "text": "THE SPIRE FIEND HAS FALLEN!",
+                "duration": 3.4,
+                "sound": "vo_sf_fallen",
+                "color": "#7CFF8A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.8
+              },
+              {
+                "type": "showText",
+                "text": "He never got off that rock. I almost respect it.",
+                "style": "Subtitle",
+                "duration": 5.4,
+                "sound": "vo_sf_hero_defeat"
+              },
+              {
+                "type": "wait",
+                "seconds": 5.8
+              },
+              {
+                "type": "hideBossBar"
+              },
+              {
+                "type": "walkPlayerTo",
+                "anchor": "Camera",
+                "x": 2.0,
+                "speed": 0.7,
+                "emit": "atStump"
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "up the broken spire",
+            "when": {
+              "type": "signal",
+              "name": "atStump"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.12,
+                    "duration": 0.6
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "sf_crumble"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.8
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "waystoneGlow",
+                    "anchor": "Player",
+                    "at": [
+                      1.1,
+                      -0.3
+                    ],
+                    "facePlayer": false
+                  },
+                  {
+                    "type": "flash",
+                    "color": "#9EFFE6AA",
+                    "duration": 0.6
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "waystone_lit"
+                  },
+                  {
+                    "type": "popText",
+                    "text": "WAYSTONE",
+                    "color": "#9EFFE6",
+                    "anchor": "Player",
+                    "at": [
+                      1.1,
+                      1.0
+                    ],
+                    "size": 1.2
+                  },
+                  {
+                    "type": "showText",
+                    "text": "WAYSTONE LIT: FLOOR 801",
+                    "duration": 3.2,
+                    "sound": "vo_waystone_lit_801",
+                    "color": "#9EFFE6"
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "waystoneLit"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.4
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Good. Fewer stairs next time.",
+                    "style": "Subtitle",
+                    "duration": 2.8,
+                    "sound": "vo_waystone_hero_801"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.0
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      }
+    ]
+  }
+}

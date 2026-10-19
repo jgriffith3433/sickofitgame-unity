@@ -19,7 +19,7 @@
   "duration": 260.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
-  "nextLevelNumber": 61,
+  "nextLevelNumber": 62,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 891,

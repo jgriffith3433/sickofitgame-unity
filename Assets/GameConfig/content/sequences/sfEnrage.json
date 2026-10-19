@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "steps": [
+    {
+      "type": "playSound",
+      "sound": "magma_rumble"
+    },
+    {
+      "type": "flash",
+      "color": "#FFF4D8CC",
+      "duration": 0.6
+    },
+    {
+      "type": "cameraShake",
+      "intensity": 0.4,
+      "duration": 1.2
+    },
+    {
+      "type": "wait",
+      "seconds": 0.8
+    },
+    {
+      "type": "showText",
+      "text": "ENOUGH. Everything here comes DOWN.",
+      "style": "Subtitle",
+      "duration": 7.8,
+      "color": "#FFE0B0",
+      "sound": "vo_sf_enrage"
+    }
+  ]
+}

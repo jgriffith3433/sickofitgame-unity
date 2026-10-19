@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "extends": "demonWhelp",
+  "tags": ["demonWhelp", "sfWhelp"],
+  "loot": {
+    "chance": 0,
+    "count": 0,
+    "value": 0
+  }
+}

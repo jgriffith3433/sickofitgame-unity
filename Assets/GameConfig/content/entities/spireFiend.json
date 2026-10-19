@@ -1,0 +1,665 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 80,
+  "moveSpeed": 0,
+  "activationRange": 0,
+  "tags": [
+    "boss",
+    "spireFiend"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      1.2,
+      2.5
+    ],
+    "solid": true,
+    "gravity": 0
+  },
+  "visual": {
+    "scale": 1,
+    "color": "#3A2E40",
+    "fxColor": "#FF9A3A",
+    "placeholderSize": 2.4,
+    "deathFade": 1.2
+  },
+  "healthBar": {
+    "show": false
+  },
+  "loot": {
+    "chance": 1,
+    "count": 5,
+    "value": 2
+  },
+  "abilities": [
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "healthBelow",
+        "fraction": 0.85
+      },
+      "do": [
+        {
+          "type": "showText",
+          "text": "Hm. You chipped me.",
+          "style": "Subtitle",
+          "duration": 3,
+          "color": "#FFB070",
+          "sound": "vo_sf_hurt1"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "healthBelow",
+        "fraction": 0.15
+      },
+      "do": [
+        {
+          "type": "showText",
+          "text": "Stop. Climbing.",
+          "style": "Subtitle",
+          "duration": 3,
+          "color": "#FFB070",
+          "sound": "vo_sf_hurt2"
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "emerging",
+      "onEnter": [
+        {
+          "type": "playAnimation",
+          "state": "Rise"
+        },
+        {
+          "type": "playSound",
+          "sound": "sf_rise"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "waiting",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "waiting",
+      "transitions": [
+        {
+          "to": "p1Row",
+          "when": {
+            "type": "signal",
+            "name": "sfFight"
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Row",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "sfWarnRow",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            3.4,
+            -1.25
+          ],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 5,
+            "spacing": 1.1
+          },
+          "animTrigger": "Slam"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "shedding",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Spear",
+          "when": {
+            "type": "after",
+            "seconds": 2.8
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Spear",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "sfWarnHand",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            1.05
+          ],
+          "interval": 99,
+          "initialDelay": 0
+        },
+        {
+          "type": "shoot",
+          "projectile": "sfSpear",
+          "speed": 7.0,
+          "aim": "Player",
+          "muzzle": [
+            0.5,
+            1.0
+          ],
+          "interval": 99,
+          "initialDelay": 1.0,
+          "animTrigger": "Throw",
+          "fireOnEvent": "throw"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "shedding",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Spot",
+          "when": {
+            "type": "after",
+            "seconds": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Spot",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "sfWarnSpot",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "transitions": [
+        {
+          "to": "shedding",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Row",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "shedding",
+      "onEnter": [
+        {
+          "type": "runSequence",
+          "sequence": "sfShed"
+        },
+        {
+          "type": "emit",
+          "signal": "sfShed"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Whelps",
+          "when": {
+            "type": "after",
+            "seconds": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Whelps",
+      "onEnter": [
+        {
+          "type": "showText",
+          "text": "Up. Out of the cracks.",
+          "style": "Subtitle",
+          "duration": 3,
+          "color": "#FFB070",
+          "sound": "vo_sf_whelps"
+        },
+        {
+          "type": "emit",
+          "signal": "sfPhase2"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "spawner",
+          "entity": "sfWhelp",
+          "interval": 8,
+          "initialDelay": 0.8,
+          "maxAlive": 2,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Row",
+          "when": {
+            "type": "after",
+            "seconds": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Row",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "sfWarnRow",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            3.4,
+            -1.25
+          ],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 5,
+            "spacing": 1.1
+          },
+          "animTrigger": "Slam"
+        },
+        {
+          "type": "shoot",
+          "projectile": "spireShard",
+          "pattern": {
+            "type": "rain",
+            "count": 2,
+            "angleJitter": 0
+          },
+          "speed": 0,
+          "interval": 0,
+          "fireOnEvent": "slam"
+        },
+        {
+          "type": "spawner",
+          "entity": "sfWhelp",
+          "interval": 8,
+          "initialDelay": 4.0,
+          "maxAlive": 2,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "enraging",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Spear",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Spear",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "sfWarnHand",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            1.05
+          ],
+          "interval": 99,
+          "initialDelay": 0
+        },
+        {
+          "type": "shoot",
+          "projectile": "sfSpear",
+          "speed": 7.0,
+          "aim": "Player",
+          "muzzle": [
+            0.5,
+            1.0
+          ],
+          "interval": 99,
+          "initialDelay": 1.0,
+          "animTrigger": "Throw",
+          "fireOnEvent": "throw"
+        },
+        {
+          "type": "spawner",
+          "entity": "sfWhelp",
+          "interval": 8,
+          "initialDelay": 4.0,
+          "maxAlive": 2,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "enraging",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Spot",
+          "when": {
+            "type": "after",
+            "seconds": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Spot",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "sfWarnSpot",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "abilities": [
+        {
+          "type": "spawner",
+          "entity": "sfWhelp",
+          "interval": 8,
+          "initialDelay": 4.0,
+          "maxAlive": 2,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "enraging",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Row",
+          "when": {
+            "type": "after",
+            "seconds": 2.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "enraging",
+      "onEnter": [
+        {
+          "type": "setAnimParam",
+          "param": "Enraged",
+          "value": 1
+        },
+        {
+          "type": "playAnimation",
+          "state": "Enrage"
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "sfWhelp"
+          }
+        },
+        {
+          "type": "runSequence",
+          "sequence": "sfEnrage"
+        },
+        {
+          "type": "emit",
+          "signal": "sfEnrage"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Field",
+          "when": {
+            "type": "after",
+            "seconds": 5.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Field",
+      "onEnter": [
+        {
+          "type": "playSound",
+          "sound": "magma_rumble"
+        },
+        {
+          "type": "emit",
+          "signal": "sfField"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "sfWarnField",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            4.2,
+            -1.25
+          ],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 9,
+            "spacing": 0.8
+          },
+          "animTrigger": "Slam"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Row",
+          "when": {
+            "type": "after",
+            "seconds": 3.4
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Row",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "sfWarnRow",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            3.6,
+            -1.25
+          ],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 1.0
+          },
+          "animTrigger": "Slam"
+        },
+        {
+          "type": "shoot",
+          "projectile": "spireShard",
+          "pattern": {
+            "type": "rain",
+            "count": 3,
+            "angleJitter": 0
+          },
+          "speed": 0,
+          "interval": 0,
+          "fireOnEvent": "slam"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Spot",
+          "when": {
+            "type": "after",
+            "seconds": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Spot",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "sfWarnSpot",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Row2",
+          "when": {
+            "type": "after",
+            "seconds": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Row2",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "sfWarnRow",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            3.6,
+            -1.25
+          ],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 1.0
+          },
+          "animTrigger": "Slam"
+        },
+        {
+          "type": "shoot",
+          "projectile": "spireShard",
+          "pattern": {
+            "type": "rain",
+            "count": 3,
+            "angleJitter": 0
+          },
+          "speed": 0,
+          "interval": 0,
+          "fireOnEvent": "slam"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Field",
+          "when": {
+            "type": "after",
+            "seconds": 2.6
+          }
+        }
+      ]
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "showText",
+      "text": "Nothing... higher... than... me...",
+      "style": "Subtitle",
+      "duration": 4.5,
+      "color": "#FFB070",
+      "sound": "vo_sf_defeat"
+    },
+    {
+      "type": "playSound",
+      "sound": "sf_crumble"
+    },
+    {
+      "type": "emit",
+      "signal": "sfFallen"
+    }
+  ]
+}

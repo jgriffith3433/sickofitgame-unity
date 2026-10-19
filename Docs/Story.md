@@ -38,6 +38,7 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 | **The Announcer** | Hell's own voice: loves a show, calls out floors, bosses and deaths like an arcade cabinet. | `announcer` | Floor titles, death screens |
 | **The Wardens** | One boss per Circle: the monster that rules it. Each guards its Circle's top floor. | Per Warden | Death videos, bosses |
 | **The Magma King** | Circle X's Warden: a huge king of slag and obsidian with a lava crown, slouched on a throne of slag at Floor 901. He never gets up, unless you make him: the Wastes come to him. Smug where the Overlord is bored; proud, loves an audience and takes Hell's show seriously (a challenger is the best entertainment the Wastes have had in ages). He hears everything that climbs his stairs and enjoys the wait. Making him stand is what enrages him (see *The Magma King's fight*). | `audio.json` voice `magmaKing`: very deep, thick, gurgling bass; slow, smug, amused, lazy, proud; chuckles (*"Mm-hm-hm."*), never shouts. The one line with weight is when he stands. Heard before he's seen, from ahead on the Heat Stairs. | `art/magmaKing.json`: generated sheets in `Assets/Art/Enemies/MagmaKing/` |
+| **The Spire Fiend** | Circle IX's Warden: a gaunt basalt demon rooted in the heart of the great spire at Floor 801, his lower body a spire instead of legs, rock spires bristling from his head, shoulders and back, thin orange seams glowing all over him. He **grows the spires**: every spire on the Cracked Road is one he pushed up through the road (that is why the road keeps splitting), and the great spire is the one he has grown for ages so that nothing in the Circle stands higher than him. Hell's loop is his too: every night the spire sheds back to the same height, every day he grows it again. He can't bear anything above him, and a hero climbing *up* is the worst thing he can think of. Not a showman like the Magma King: he **listens** (the hum on the Needle Stair is him, listening through the rock), counts steps, and whispers. Making him lose his calm is what enrages him (see *The Spire Fiend's fight*). | `audio.json` voice `spireFiend`: a dry, hollow, rasping whisper with stone grinding under it; slow, patient, cold, precise; hums (*"Hmmmm."*) instead of laughing. The one line he raises is the enrage. Never heard on the route, only his spire's hum. | `art/spireFiend.json`: generated sheets in `Assets/Art/Enemies/SpireFiend/` |
 
 ## Prologue: how the hero gets into Hell
 
@@ -308,11 +309,66 @@ Brimstone Demon met alone on Floor 900, its whelps, lobbers and the road's new p
 Breaker** (891), the biggest demon on the road, who keeps it broken; **the Spared Demon** shortcut (891 to 860); Floors
 860-851 (*the Carver's Yard*, the spire forest where everything is carved), ending on **the Carver** (851), the demon
 who carves every floor number and rule on the road; **the Hollow Spire** shortcut (851 to 810); Floors 810-802 (*the
-Needle Stair*, round the outside of the great spire) up to the crack in its side on Floor 802's landing: the entrance
-of **the Spire Fiend**'s arena on Floor 801 (his design and fight: k_e16304d7a504). At most 4 enemies on screen.
+Needle Stair*, round the outside of the great spire) up to the crack in its side on Floor 802's landing, and through it
+**Floor 801, *The Spire's Heart***, **the Spire Fiend**'s arena (*The Spire Fiend's fight*, below). At most 4 enemies
+on screen.
 
 The **great spire** is Circle IX's glimpse: always straight up through the haze, the Spire Fiend's, its seams pulsing,
-growing floor by floor. The Spire Fiend is never heard on the route; his spire hums and grinds.
+growing floor by floor. The Spire Fiend is never heard on the route; his spire hums and grinds. (The hum is him
+listening: on 803 it stops, because he has heard the hero.)
+
+#### The Spire Fiend's fight
+
+The arena is **Floor 801, *The Spire's Heart*** (`levels/Floor801.json`, level 61), through the crack in the great spire's
+side on Floor 802's landing: the hollow inside of the spire, a round hall of black basalt whose seams glow, its floor a
+crust over the Rift (the Rift's magma glows under it), shards hanging from the dark far overhead. It stands still like
+the Slag Throne: a locked screen, the counter on 801 from the start (floors 801 to 801), the hero on the left, and at the
+right a tall black spire standing on its own in the floor, its seams dim. That spire is him. He is about 2.6 units tall
+risen out of it (over two heroes), and he never leaves it: he is rooted, the spire is his legs. The fight lives in the
+`spireFiend` entity (its states) and the `sfShed`/`sfEnrage` sequences; the level runs the intro and the ending.
+
+Every attack is telegraphed a second or more ahead, on the spot it will hit: a glow at his shoulder before he throws a
+spire, a row of glowing cracks running along the floor before the needles burst up out of them, a glowing seam
+overhead before a shard drops, and, for his worst, the whole floor glowing except the strip he leaves himself.
+
+1. **Intro** (input and rewind off, the hero can't be hurt). The title (*"FLOOR 801: THE SPIRE'S HEART"*), then the hum
+   comes back, louder than it ever was on the stair; the camera moves to the lone spire as its seams light up one by
+   one, it cracks open and **he unfolds out of it** (*rise*). The announcer: *"FLOOR 801! THE WARDEN OF THE ROAD!"* and
+   *"THE... SPIRE... FIEND!"*. His greeting, a whisper: *"Hmmmm. There you are. I heard every step. A hundred floors of
+   them."* The camera comes back; the hero: *"He's been listening. Course he has."* The boss bar fills, control comes
+   back: *"Climb, then. Nothing climbs higher than me."*
+2. **Phase 1: rooted** (full health to half). He drives his claws into the floor and a row of cracks glows along it
+   from his spire toward the hero; 1.1 s later each crack bursts into a **needle** of rock (`sfNeedle`: get off the row,
+   or onto the ledges). And he snaps a spire off his own back and hurls it at the hero like a spear (`sfSpear`, the glow
+   at his shoulder first). The first real hit: *"Hm. You chipped me."*
+3. **Half health: the spire sheds** (`sfShed`). He shrieks without a mouth, the whole hall shakes and the spire starts
+   shedding on them both. A whisper, cold: *"You don't climb MY spire."*
+4. **Phase 2: the spire sheds, the cracks open** (half to a third). The same needles and spears, now with shards
+   dropping from the dark over the hero's spot (`spireShard`: the seam glows 1.2 s, then the shard), and his cracks
+   breed: **whelps** crawl out of the floor where his needles went in (*"Up. Out of the cracks."*; `demonWhelp`, at most
+   two, so with him never more than three on screen). They come **only in this phase**, and like every guard they drop
+   nothing.
+5. **A third: the enrage** (`sfEnrage`). He loses the calm he is proud of: he rears up to his full height, the spires on
+   his back grow longer, every seam flares white-hot, the screen flashes and his whelps crumble back into the rock.
+   The one line he raises: *"ENOUGH. Everything here comes DOWN."*
+6. **Phase 3: the needle field** (a third to the end). Faster needle rows, shards from overhead, and his worst: claws in
+   to the wrist, and **the whole floor glows**, all of it but a strip against the far left wall; 1.6 s later the hall
+   is a forest of needles (`sfNeedleField`). From where the hero usually stands the strip is too far to reach in time.
+   That is what Déjà Vu is for: caught, he drags the loop back and is already running for the wall. The first field, the
+   hero: *"Floor's all spikes. ...Let's try that again."* Near the end, the Fiend: *"Stop. Climbing."*
+7. **Defeat.** Slow motion; his seams flicker and go dark one by one and he crumbles into a heap of black shards around
+   the broken stump of his spire. His last words, a whisper: *"Nothing... higher... than... me..."* Announcer: *"THE SPIRE
+   FIEND HAS FALLEN!"* Hero: *"He never got off that rock. I almost respect it."* The hum stops for good. Then the hero
+   climbs the broken stump, and at the top of it, on Floor 801, a **Waystone lights**: *"WAYSTONE LIT! FLOOR EIGHT
+   HUNDRED ONE!"*, the hero: *"Good. Fewer stairs next time."* From now on a run starts at 801. The Grudge pick, the
+   results, then the Shaft.
+8. **The Shaft after him.** The marker stands on 801 (Floor 802 climbed it there), the Spire Fiend's figure fills in
+   (beaten), the Waystone at 801 lights, and the band above, **Circle VIII, the Rune Bridges, wakes up** (*"CIRCLE
+   EIGHT! THE RUNE BRIDGES!"*). Next Warden: the Bridge Wraith. Continue goes to the level select until Circle VIII is
+   built.
+
+**Music:** the Cracked Road has no music of its own yet (*Music*); the hall is silent but for the hum through the
+intro, and the fight plays the Wastes' push music until the Spire Fiend's theme is made.
 
 #### Circle IX's long way
 

@@ -76,51 +76,142 @@ namespace SickOfIt.Playtest
         public const int ImpLevel = 1;
 
         /// <summary>
-        /// The magma-king scenario: the level that holds his fight (Floor 901, the Slag Throne: Docs/Story.md "The Magma
-        /// King's fight"), the animation states he must be seen in, and his lines (text, audio.json sound, who must voice it).
+        /// A Warden's fight (Docs/Story.md, "The Magma King's fight", "The Spire Fiend's fight"): the level that holds it, the
+        /// boss entity, the animation states he must be seen in, his lines (text, audio.json sound, who must voice it), each
+        /// attack and the warning glow(s) that must come at least ArenaTelegraphSeconds before it (several warnings: any of
+        /// them, comma-separated), the signals the fight emits in order, the boss states at half health and at the enrage,
+        /// the adds allowed only in phase 2, and the intro and defeat lines the arena checks want voiced.
         /// </summary>
-        public const string MagmaKingLevel = "Floor901", MagmaKingId = "magmaKing";
-        const float MagmaKingSeconds = 300f;
-        static readonly string[] MagmaKingStates = { "Idle", "Throw", "SlamSeat", "Hurt", "Rise", "Enrage", "IdleStand", "Slam", "Breath", "HurtStand" };
-        static readonly (string beat, string text, string sound, string voice)[] MagmaKingLines =
+        public sealed class WardenFight
         {
-            ("intro", "Mm-hm-hm. An audience, at last. Welcome to the Slag Throne, little spark.", "vo_mk_intro", "magmaKing"),
-            ("hero intro", "He's not getting up, is he.", "vo_mk_hero_intro", "player"),
-            ("phase 1", "Dance for me, little spark. Hell loves a show.", "vo_mk_phase1", "magmaKing"),
-            ("hurt", "Mm. That one tickled.", "vo_mk_hurt1", "magmaKing"),
-            ("stand", "...You made me STAND.", "vo_mk_enrage", "magmaKing"),
-            ("guards", "Guards. Make some noise for our guest.", "vo_mk_guards", "magmaKing"),
-            ("enrage", "Now. Let's give them a real show.", "vo_mk_phase2", "magmaKing"),
-            ("hurt 2", "You're ruining... my show.", "vo_mk_hurt2", "magmaKing"),
-            ("defeat", "The show... must go... on...", "vo_mk_defeat", "magmaKing"),
-            ("fallen", "THE MAGMA KING HAS FALLEN!", "vo_mk_fallen", "announcer"),
-            ("hero defeat", "He got up for me. I'm touched.", "vo_mk_hero_defeat", "player"),
+            public string Level, Id, Name, Scenario;
+            public string[] States;
+            public (string beat, string text, string sound, string voice)[] Lines;
+            public (string attack, string warning, string what)[] Telegraphs;
+            public (string signal, string beat)[] Signals;
+            /// <summary>Signals: the intro, the fight, half health, phase 2, the enrage, a phase-3 attack that may not come before he falls, the defeat.</summary>
+            public string Intro, Fight, Half, Phase2, Enrage, Optional, Defeat;
+            /// <summary>The boss's state machine at half health and at the enrage (their names start with these).</summary>
+            public string HalfState, EnrageState;
+            public string Adds, AddsWhat;
+            public string[] IntroLines;
+            public string LastLine, Fallen;
+            public float Seconds = 300f;
+        }
+
+        /// <summary>The magma-king scenario: Floor 901, the Slag Throne (Docs/Story.md "The Magma King's fight").</summary>
+        public const string MagmaKingLevel = "Floor901", MagmaKingId = "magmaKing";
+        public static readonly WardenFight MagmaKing = new WardenFight
+        {
+            Level = MagmaKingLevel, Id = MagmaKingId, Name = "Magma King", Scenario = "magma-king",
+            States = new[] { "Idle", "Throw", "SlamSeat", "Hurt", "Rise", "Enrage", "IdleStand", "Slam", "Breath", "HurtStand" },
+            Lines = new[]
+            {
+                ("intro", "Mm-hm-hm. An audience, at last. Welcome to the Slag Throne, little spark.", "vo_mk_intro", "magmaKing"),
+                ("hero intro", "He's not getting up, is he.", "vo_mk_hero_intro", "player"),
+                ("phase 1", "Dance for me, little spark. Hell loves a show.", "vo_mk_phase1", "magmaKing"),
+                ("hurt", "Mm. That one tickled.", "vo_mk_hurt1", "magmaKing"),
+                ("stand", "...You made me STAND.", "vo_mk_enrage", "magmaKing"),
+                ("guards", "Guards. Make some noise for our guest.", "vo_mk_guards", "magmaKing"),
+                ("enrage", "Now. Let's give them a real show.", "vo_mk_phase2", "magmaKing"),
+                ("hurt 2", "You're ruining... my show.", "vo_mk_hurt2", "magmaKing"),
+                ("defeat", "The show... must go... on...", "vo_mk_defeat", "magmaKing"),
+                ("fallen", "THE MAGMA KING HAS FALLEN!", "vo_mk_fallen", "announcer"),
+                ("hero defeat", "He got up for me. I'm touched.", "vo_mk_hero_defeat", "player"),
+            },
+            Telegraphs = new[]
+            {
+                ("magmaBoulder", "mkWarnHand", "boulder"),
+                ("slamShockwave", "mkWarnFloor", "shockwave"),
+                ("lavaFlood", "mkWarnFlood", "lava flood"),
+                ("fireball", "mkWarnMouth", "fire breath"),
+            },
+            Signals = new[]
+            {
+                ("mkIntro", "intro: the throne rises"),
+                ("mkFight", "phase 1: from the throne"),
+                ("mkStand", "half health: he stands"),
+                ("mkPhase2", "phase 2: standing, with his guard"),
+                ("mkEnrage", "a third: the enrage"),
+                ("mkFlood", "phase 3: the flood"),
+                ("mkDefeat", "defeat"),
+                ("waystoneLit", "the Waystone lights"),
+            },
+            Intro = "mkIntro", Fight = "mkFight", Half = "mkStand", Phase2 = "mkPhase2", Enrage = "mkEnrage", Optional = "mkFlood", Defeat = "mkDefeat",
+            HalfState = "rising", EnrageState = "enraging",
+            Adds = "impGuard", AddsWhat = "imp guard",
+            IntroLines = new[] { "FLOOR 901! THE WARDEN OF THE WASTES!", "THE MAGMA KING",
+                "Mm-hm-hm. An audience, at last. Welcome to the Slag Throne, little spark.", "He's not getting up, is he." },
+            LastLine = "The show... must go... on...", Fallen = "THE MAGMA KING HAS FALLEN!",
         };
 
-        /// <summary>
-        /// A Warden's arena (a floor stage with a locked Static screen, Level 11): each attack and the warning glow that
-        /// must come at least ArenaTelegraphSeconds before it, and the signals its fight emits in order (intro, the three
-        /// phases, the enrage, the flood, the defeat, the Waystone). Docs/Story.md, "The Magma King's fight".
-        /// </summary>
-        static readonly (string attack, string warning, string what)[] ArenaTelegraphs =
+        /// <summary>The spire-fiend scenario: Floor 801, the Spire's Heart (Docs/Story.md "The Spire Fiend's fight").</summary>
+        public const string SpireFiendLevel = "Floor801", SpireFiendId = "spireFiend";
+        public static readonly WardenFight SpireFiend = new WardenFight
         {
-            ("magmaBoulder", "mkWarnHand", "boulder"),
-            ("slamShockwave", "mkWarnFloor", "shockwave"),
-            ("lavaFlood", "mkWarnFlood", "lava flood"),
-            ("fireball", "mkWarnMouth", "fire breath"),
+            Level = SpireFiendLevel, Id = SpireFiendId, Name = "Spire Fiend", Scenario = "spire-fiend", Seconds = 420f,
+            States = new[] { "Rise", "Idle", "Slam", "Throw", "Hurt", "Enrage", "IdleEnraged", "SlamEnraged" },
+            Lines = new[]
+            {
+                ("intro", "Hmmmm. There you are. I heard every step. A hundred floors of them.", "vo_sf_intro", "spireFiend"),
+                ("hero intro", "He's been listening. Course he has.", "vo_sf_hero_intro", "player"),
+                ("phase 1", "Climb, then. Nothing climbs higher than me.", "vo_sf_phase1", "spireFiend"),
+                ("hurt", "Hm. You chipped me.", "vo_sf_hurt1", "spireFiend"),
+                ("shed", "You don't climb MY spire.", "vo_sf_shed", "spireFiend"),
+                ("whelps", "Up. Out of the cracks.", "vo_sf_whelps", "spireFiend"),
+                ("enrage", "ENOUGH. Everything here comes DOWN.", "vo_sf_enrage", "spireFiend"),
+                ("needle field", "Floor's all spikes. ...Let's try that again.", "vo_sf_hero_field", "player"),
+                ("hurt 2", "Stop. Climbing.", "vo_sf_hurt2", "spireFiend"),
+                ("defeat", "Nothing... higher... than... me...", "vo_sf_defeat", "spireFiend"),
+                ("fallen", "THE SPIRE FIEND HAS FALLEN!", "vo_sf_fallen", "announcer"),
+                ("hero defeat", "He never got off that rock. I almost respect it.", "vo_sf_hero_defeat", "player"),
+            },
+            Telegraphs = new[]
+            {
+                ("sfSpear", "sfWarnHand", "spire spear"),
+                ("sfNeedle", "sfWarnRow,sfWarnSpot,sfWarnField", "needles"),
+                ("shard", "spireShard", "falling shard"),
+            },
+            Signals = new[]
+            {
+                ("sfIntro", "intro: he rises out of his spire"),
+                ("sfFight", "phase 1: rooted"),
+                ("sfShed", "half health: the spire sheds"),
+                ("sfPhase2", "phase 2: shards and whelps"),
+                ("sfEnrage", "a third: the enrage"),
+                ("sfField", "phase 3: the needle field"),
+                ("sfDefeat", "defeat"),
+                ("waystoneLit", "the Waystone lights"),
+            },
+            Intro = "sfIntro", Fight = "sfFight", Half = "sfShed", Phase2 = "sfPhase2", Enrage = "sfEnrage", Optional = "sfField", Defeat = "sfDefeat",
+            HalfState = "shedding", EnrageState = "enraging",
+            Adds = "sfWhelp", AddsWhat = "whelp",
+            IntroLines = new[] { "FLOOR 801! THE WARDEN OF THE ROAD!", "THE SPIRE FIEND",
+                "Hmmmm. There you are. I heard every step. A hundred floors of them.", "He's been listening. Course he has." },
+            LastLine = "Nothing... higher... than... me...", Fallen = "THE SPIRE FIEND HAS FALLEN!",
         };
+
+        public static readonly WardenFight[] Wardens = { MagmaKing, SpireFiend };
+
+        /// <summary>What a Floor 801 arena run checks (level-61 and spire-fiend).</summary>
+        const string SpireFiendArena = "the title banner (\"FLOOR 801: THE SPIRE'S HEART\") with its voice, then the intro (input and rewind " +
+            "locked, the hum, the camera on the lone spire as he rises out of it, the announcer's \"FLOOR 801! THE WARDEN OF THE ROAD!\" and " +
+            "\"THE SPIRE FIEND\", his whispered greeting, the hero's one-liner, the boss bar), the fight's three phases in order from its signals " +
+            "(sfIntro, sfFight; at half health the spire sheds (sfShed) and phase 2 brings shards and whelps (sfPhase2), the only phase with adds; " +
+            "at a third the enrage (sfEnrage), phase 3's needle field (sfField); sfDefeat, waystoneLit), his health at the shedding (half or less) and " +
+            "the enrage (a third or less), every attack after its warning glow 1+ s ahead (spire spear after the glow at his shoulder, needles after " +
+            "their glowing cracks, shards after the glowing seam), no more than 4 enemies at once, every line with its voice; his defeat: slow motion, " +
+            "his last line, \"THE SPIRE FIEND HAS FALLEN!\", the counter on 801 and \"WAYSTONE LIT: FLOOR 801\", the Grudge pick";
+
+        /// <summary>The Warden whose fight is level n (by its file name), or null.</summary>
+        public static WardenFight WardenOf(int n)
+        {
+            var definition = GameDefinition.Instance;
+            var level = definition != null && n > 0 && n <= definition.TotalLevels ? definition.GetLevel(n) : null;
+            return level != null ? Array.Find(Wardens, w => w.Level == level.levelName) : null;
+        }
+
         const float ArenaTelegraphSeconds = 1f;
-        static readonly (string signal, string beat)[] ArenaSignals =
-        {
-            ("mkIntro", "intro: the throne rises"),
-            ("mkFight", "phase 1: from the throne"),
-            ("mkStand", "half health: he stands"),
-            ("mkPhase2", "phase 2: standing, with his guard"),
-            ("mkEnrage", "a third: the enrage"),
-            ("mkFlood", "phase 3: the flood"),
-            ("mkDefeat", "defeat"),
-            ("waystoneLit", "the Waystone lights"),
-        };
 
         /// <summary>The cutscene scenario: the scene it plays (content/scenes) and the level whose stage it plays on.</summary>
         public const string CutsceneScene = "cutsceneTest";
@@ -186,10 +277,10 @@ namespace SickOfIt.Playtest
         const float ForemanSeconds = 1080f;
         /// <summary>
         /// The long-way scenario: the old 10-floor stages over Floors 990-951 (Docs/Story.md, "Level numbers": the long way's
-        /// stand-ins), level 67 (Level3.json, The Spill) loaded directly, then the real flow through level 69 (The Slag Falls),
-        /// which leads on to Floor 960; then level 70 (Level6.json, The Loop: level select only) loaded directly and played.
+        /// stand-ins), level 68 (Level3.json, The Spill) loaded directly, then the real flow through level 70 (The Slag Falls),
+        /// which leads on to Floor 960; then level 71 (Level6.json, The Loop: level select only) loaded directly and played.
         /// </summary>
-        public const int LongWayFrom = 67, LongWayTo = 69, LongWayLoop = 70;
+        public const int LongWayFrom = 68, LongWayTo = 70, LongWayLoop = 71;
         const float LongWayStagesSeconds = 1200f;
         /// <summary>A floor boss's telegraphs (Floor 991, the Imp Foreman): each attack and the glow that must come 1+ s before it, on its spot.</summary>
         static readonly (string attack, string warning, string what)[] FloorBossTelegraphs =
@@ -229,13 +320,14 @@ namespace SickOfIt.Playtest
         /// 880-871, the collapsed stairwell at its top), the floor it lets him out on, and the stage it leads to, past the
         /// ones it skips (Levels 19-21).
         /// </summary>
-        public const int ShortcutLevel = 62, ShortcutToFloor = 841, ShortcutNextLevel = 66;
+        public const int ShortcutLevel = 63, ShortcutToFloor = 841, ShortcutNextLevel = 67;
         /// <summary>
         /// The cracked-road-route scenario (Docs/LevelDesign.md section 6): Floor 901 (the Magma King) loaded directly, then the real
-        /// flow through Circle IX's played route to Floor 802 (the Spire Fiend's arena entrance), taking the Spared Demon and the Hollow Spire.
+        /// flow through Circle IX's played route to Floor 802 (the Spire Fiend's door) and Floor 801 (his arena, his Waystone), taking the
+        /// Spared Demon and the Hollow Spire.
         /// </summary>
-        public const int CrackedFrom = 31, CrackedTo = 60;
-        const float CrackedSeconds = 4500f;
+        public const int CrackedFrom = 31, CrackedTo = 61;
+        const float CrackedSeconds = 4900f;
         const float ShortcutSeconds = 480f;
 
         /// <summary>
@@ -361,6 +453,12 @@ namespace SickOfIt.Playtest
                             "the results); move, jump, fire and R are pressed during it and must do nothing, and he takes no damage";
                     seconds += 30f;
                 }
+                else if (IsArena(n) && WardenOf(n) == SpireFiend)
+                {
+                    what += ": a Warden's arena (a locked screen), checked as it plays: " + SpireFiendArena + "; then Continue on the results, the Shaft's " +
+                            "climb to 801 with that Waystone saved and lit and Circle VIII's band waking up (voiced), and the level select";
+                    seconds += 120f;
+                }
                 else if (IsArena(n))
                 {
                     what += ": a Warden's arena (a locked screen), checked as it plays: the title banner (\"FLOORS N-M: PLACE\") with its voice, then the " +
@@ -407,12 +505,19 @@ namespace SickOfIt.Playtest
                 "lose): each death screen, and on the third one the feedback card (\"Too hard? Not fun?\", thumbs and a comment) over it, held while it's " +
                 "open, then Escape goes on; then what went out: level_start, death (with its cause), feature rewind and level_end, each sent with the build " +
                 "version and the env (beta on the beta site). Each beat is a check event, and every event the game sends is an analytics event", 420, "level"));
+            list.Add(new PlaytestScenario(SpireFiend.Scenario, $"The Spire Fiend's fight, Circle IX's Warden (Docs/Story.md \"The Spire Fiend's fight\"): " +
+                $"\"{SpireFiendLevel}\" (Floor 801, the Spire's Heart) loaded directly (a setup shortcut), the bot fighting through real input, up to 3 tries. " +
+                "His generated animations seen at game size, each a check event: Rise (unfolding out of his spire), Idle, Slam (claws into the floor), " +
+                "Throw (a spire off his back), Hurt, Enrage, IdleEnraged, SlamEnraged and his Die clip where he fell; every line with its subtitle and " +
+                "his own voice (spireFiend). On the last try the arena checks: " + SpireFiendArena + ". A won fight goes on: Continue on the results, " +
+                "the Shaft's climb to 801 with the Waystone saved and lit and Circle VIII, the Rune Bridges, waking up (voiced), then the level select",
+                SpireFiend.Seconds + 120f, "level"));
             list.Add(new PlaytestScenario("magma-king", $"The Magma King's fight in \"{MagmaKingLevel}\" (the Slag Throne, loaded directly, a setup shortcut; " +
                 "the bot plays the fight through real input, up to 3 tries): his generated animations seen at game size, each a check event: Idle, " +
                 "Throw (molten boulder) and SlamSeat (fist on the throne's arm, shockwave) from the throne, Hurt, then at half health Rise " +
                 "(the only time he stands), IdleStand, Slam (ground-pound), Breath and HurtStand standing, Enrage at a third, and his Die clip playing where he fell; " +
                 "his on-screen height; every line with its subtitle and his own voice (intro, phase 1, hurt, stand, guards, enrage, hurt, defeat), the " +
-                "announcer's \"HAS FALLEN\" and the hero's replies", MagmaKingSeconds, "level"));
+                "announcer's \"HAS FALLEN\" and the hero's replies", MagmaKing.Seconds, "level"));
             list.Add(new PlaytestScenario("cutscene", $"The scene \"{CutsceneScene}\" on level {CutsceneLevel}'s stage (setup shortcut): with input and rewind locked " +
                 "the hero walks to a point by himself and stops, turns left and right, R does nothing; the camera zooms in and back; the screen fades " +
                 "to black and back; he is pulled into a point, spinning and shrinking until he disappears. Each beat is checked", 75, "level"));
@@ -455,7 +560,7 @@ namespace SickOfIt.Playtest
                 "with no video between them: Levels 3-11 (Floors 999-991, the Imp Foreman), where the bot takes the Sack Lift (its diamond fare topped up " +
                 "first, a setup shortcut) to Level 12, Levels 12-21 (Floors 960-951, the Pile Keeper), where it takes the King's Chimney to Level 22, Levels " +
                 "22-30 (Floors 910-902, the Heat Stairs up to the Magma King's door) and Level 31 (Floor 901, the Slag Throne: his arena, his Waystone at 901 " +
-                "and Circle IX waking on the Shaft); the old 10-floor stages (Levels 67-74) are never played. Each level with its title, voiced lines, floor " +
+                "and Circle IX waking on the Shaft); the old 10-floor stages (Levels 68-75) are never played. Each level with its title, voiced lines, floor " +
                 "counter, new enemy alone and breather checked and the Shaft's climb (or a shortcut's dotted jump) after it; then the level select, whose " +
                 "cards list the story levels first and in order. Each step is a check event", StoryPathSeconds, "full"));
             list.Add(new PlaytestScenario("wastes-climb", $"The Heat Stairs, one level per floor (Docs/LevelDesign.md): level {ClimbFrom} (Floor 910) loaded " +
@@ -512,8 +617,9 @@ namespace SickOfIt.Playtest
                 "pieces and monsters, at most 4 enemies, 60-120 s, the floor number carved on each landing), Floor 891's Road Breaker (voiced intro, boss bar, " +
                 "his slams and kicked lumps after a 1 s glow, the road giving way at half health, whelps only on tier 2), the Spared Demon on his landing " +
                 "(a Grudge paid, the counter jumping from 890 to 860, the Shaft's dotted jump), Floors 860-852, Floor 851's Carver, the Hollow Spire (its risk " +
-                "on the card, 850 to 810), Floor 810 played harder for it, Floors 809-803 and Floor 802, ending at the crack in the great spire: the entrance " +
-                $"of the Spire Fiend's arena, the counter on 801, then the level select until Floor 801 is built. Up to 3 tries per floor; each beat is a check event", CrackedSeconds, "full"));
+                "on the card, 850 to 810), Floor 810 played harder for it, Floors 809-803 and Floor 802 up to the crack in the great spire, then Floor 801, " +
+                $"the Spire Fiend's arena (the Warden's arena checks; his defeat lights the Waystone at 801 and wakes Circle VIII on the Shaft), then the " +
+                $"level select. Up to 3 tries per floor; each beat is a check event", CrackedSeconds, "full"));
             list.Add(new PlaytestScenario("shortcut", $"Hell's first shortcut (Docs/Story.md, \"Shortcuts\"): level {ShortcutLevel} (Floors 880-871: The Old Stair, " +
                 "Circle IX) loaded directly with one Grudge in hand (setup shortcut: given if he has none). The bot plays it through real input to the " +
                 "collapsed stairwell at the top, where the choice comes up: card 1 keeps climbing, card 2 is the stairwell with its cost shown (a Grudge, " +
@@ -670,8 +776,10 @@ namespace SickOfIt.Playtest
                 yield return session.ClimbRun();
             else if (id == "one-way")
                 yield return session.OneWayRun();
-            else if (id == "magma-king")
-                yield return session.MagmaKingRun();
+            else if (id == MagmaKing.Scenario)
+                yield return session.WardenRun(MagmaKing, false);
+            else if (id == SpireFiend.Scenario)
+                yield return session.WardenRun(SpireFiend, true);
             else if (id == "video-" + OverlayVideo)
                 yield return session.VideoOverlay();
             else if (id == "video-" + OverlayVideo + "-tunnel")
@@ -880,7 +988,7 @@ namespace SickOfIt.Playtest
                         Run.Event("milestone", $"{level}: {e.Subject}");
                         story?.Milestones.Add((log.World.LevelNumber, e.Value));
                         break;
-                    case "death" when e.Subject == MagmaKingId && magma != null:
+                    case "death" when magma != null && e.Subject == magma.W.Id:
                         CheckMagmaKingDeath(log.World.FindBySerial(e.Value));
                         break;
                     case "death" when e.Subject == "imp" && e.Detail == "Damage":
@@ -1014,7 +1122,7 @@ namespace SickOfIt.Playtest
                 stageChecksFailed = 0;
                 stage = portal == null && IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
                 // A Warden's arena also gets the magma-king watch: his animations, size, Die clip and lines.
-                magma = stage != null && stage.Arena ? new MagmaWatch() : null;
+                magma = stage != null && stage.Arena ? new MagmaWatch(stage.Warden) : null;
                 yield return PlayLevel(n, 0f, portal != null ? PortalDuring : stage != null ? StageDuring : (Func<float, IEnumerator>)null,
                     0f, stage != null ? 0.85f : 1f);
                 LastLevelOutcome = lastOutcome;
@@ -1088,6 +1196,8 @@ namespace SickOfIt.Playtest
 
                 // ─── A Warden's arena (IsArena): the boss, his fight's signals and his telegraphs ───
                 public readonly bool Arena;
+                /// <summary>Whose fight the arena is (Wardens, by the level's file).</summary>
+                public readonly WardenFight Warden;
                 /// <summary>When each of the fight's signals was first seen, and the boss's state machine as it went (game seconds).</summary>
                 public readonly Dictionary<string, float> Signals = new Dictionary<string, float>();
                 public readonly List<(string state, float at, float health)> BossStates = new List<(string, float, float)>();
@@ -1140,6 +1250,7 @@ namespace SickOfIt.Playtest
                     Level = level;
                     Check = check;
                     Arena = IsArena(level);
+                    Warden = Arena ? WardenOf(level) ?? MagmaKing : null;
                     var config = GameDefinition.Instance.GetLevel(level);
                     string display = config != null ? config.displayName ?? "" : "";
                     int colon = display.IndexOf(": ", StringComparison.Ordinal);
@@ -1486,7 +1597,7 @@ namespace SickOfIt.Playtest
                     s.BossBarAt = now;
                     Run.Event("boss", $"level {s.Level} at {now:0.0} s: the boss bar shows \"{bar}\"");
                 }
-                if (s.SlowMotionAt < 0f && s.Signals.ContainsKey("mkDefeat") && GameClock.Instance != null && GameClock.Instance.TimeScale < 0.9f)
+                if (s.SlowMotionAt < 0f && s.Signals.ContainsKey(s.Warden.Defeat) && GameClock.Instance != null && GameClock.Instance.TimeScale < 0.9f)
                 {
                     s.SlowMotionAt = now;
                     Run.Event("boss", $"level {s.Level} at {now:0.0} s: slow motion ({GameClock.Instance.TimeScale:0.00}x) as he falls");
@@ -1500,27 +1611,27 @@ namespace SickOfIt.Playtest
                 {
                     if (!s.Signals.ContainsKey(e.Subject))
                         s.Signals[e.Subject] = e.Time;
-                    if (Array.Exists(ArenaSignals, x => x.signal == e.Subject))
+                    if (Array.Exists(s.Warden.Signals, x => x.signal == e.Subject))
                         Run.Event("signal", $"level {s.Level} at {e.Time:0.0} s: {e.Subject}");
                     return;
                 }
                 if (e.Kind != "spawn")
                     return;
-                if (e.Subject == "impGuard")
+                if (e.Subject == s.Warden.Adds)
                 {
                     s.GuardSpawns.Add(e.Time);
-                    Run.Event("adds", $"level {s.Level} at {e.Time:0.0} s: an imp guard comes down");
+                    Run.Event("adds", $"level {s.Level} at {e.Time:0.0} s: a {s.Warden.AddsWhat} comes");
                     return;
                 }
-                foreach (var t in ArenaTelegraphs)
+                foreach (var t in s.Warden.Telegraphs)
                 {
-                    if (e.Subject == t.warning)
+                    if (Array.IndexOf(t.warning.Split(','), e.Subject) >= 0)
                     {
                         // One volley spawns a row of glows at once: the first one is the warning's time.
                         if (!s.WarnedAt.TryGetValue(t.warning, out float last) || e.Time - last > 0.05f || e.Time < last)
                         {
                             s.WarnedAt[t.warning] = e.Time;
-                            Run.Event("telegraph", $"level {s.Level} at {e.Time:0.0} s: {t.what} warning ({t.warning})");
+                            Run.Event("telegraph", $"level {s.Level} at {e.Time:0.0} s: {t.what} warning ({e.Subject})");
                         }
                         return;
                     }
@@ -1860,12 +1971,12 @@ namespace SickOfIt.Playtest
                 bool Voiced(string text) => s.Banners.Exists(b => b.text == text && b.voiced) || s.Lines.Exists(l => l.text == text && l.voiced);
 
                 // The intro: the announcer calls it, he taunts, the hero answers, the boss bar comes up, then the fight.
-                var introLines = new[] { "FLOOR 901! THE WARDEN OF THE WASTES!", "THE MAGMA KING",
-                    "Mm-hm-hm. An audience, at last. Welcome to the Slag Throne, little spark.", "He's not getting up, is he." };
+                var w = s.Warden;
+                var introLines = w.IntroLines;
                 var missing = Array.FindAll(introLines, t => !Voiced(t));
-                float fight = At("mkFight");
-                check(prefix + "intro", At("mkIntro") >= 0f && missing.Length == 0 && s.BossBar.Length > 0 && (fight < 0f || s.BossBarAt <= fight + 0.1f),
-                    $"throne rises {(At("mkIntro") >= 0f ? $"at {At("mkIntro"):0.0} s" : "NEVER")}; " +
+                float fight = At(w.Fight);
+                check(prefix + "intro", At(w.Intro) >= 0f && missing.Length == 0 && s.BossBar.Length > 0 && (fight < 0f || s.BossBarAt <= fight + 0.1f),
+                    $"{w.Name} appears {(At(w.Intro) >= 0f ? $"at {At(w.Intro):0.0} s" : "NEVER")}; " +
                     (missing.Length == 0 ? "the announcer, his taunt and the hero's line all voiced" : $"not voiced: {string.Join(" | ", missing)}") +
                     $"; boss bar {(s.BossBar.Length > 0 ? $"\"{s.BossBar}\" at {s.BossBarAt:0.0} s" : "NEVER shown")}; the fight starts at {(fight >= 0f ? fight.ToString("0.0") + " s" : "never")}");
 
@@ -1873,12 +1984,12 @@ namespace SickOfIt.Playtest
                 var order = new List<string>();
                 float last = -1f;
                 bool inOrder = true;
-                foreach (var (signal, beat) in ArenaSignals)
+                foreach (var (signal, beat) in w.Signals)
                 {
                     float t = At(signal);
                     if (t < 0f)
                     {
-                        if (completed && signal != "mkFlood") inOrder = false;
+                        if (completed && signal != w.Optional) inOrder = false;
                         order.Add($"{beat}: never");
                         continue;
                     }
@@ -1886,25 +1997,25 @@ namespace SickOfIt.Playtest
                     last = t;
                     order.Add($"{beat} at {t:0.0} s");
                 }
-                check(prefix + "phases", completed ? inOrder : At("mkFight") >= 0f, string.Join("; ", order));
+                check(prefix + "phases", completed ? inOrder : At(w.Fight) >= 0f, string.Join("; ", order));
                 float HealthAt(string prefixState)
                 {
                     var hit = s.BossStates.Find(x => x.state.StartsWith(prefixState, StringComparison.Ordinal));
                     return hit.state != null ? hit.health : -1f;
                 }
-                float standAt = HealthAt("rising"), enrageAt = HealthAt("enraging");
-                check(prefix + "enrage", completed ? standAt > 0f && standAt <= 0.5f && enrageAt > 0f && enrageAt <= 0.34f && At("mkEnrage") > At("mkStand") : true,
-                    $"he stands at {(standAt >= 0f ? standAt.ToString("P0") : "never")} health (want half or less), enrages at {(enrageAt >= 0f ? enrageAt.ToString("P0") : "never")} (want a third or less)" +
+                float standAt = HealthAt(w.HalfState), enrageAt = HealthAt(w.EnrageState);
+                check(prefix + "enrage", completed ? standAt > 0f && standAt <= 0.5f && enrageAt > 0f && enrageAt <= 0.34f && At(w.Enrage) > At(w.Half) : true,
+                    $"half health ({w.HalfState}) at {(standAt >= 0f ? standAt.ToString("P0") : "never")} health (want half or less), enrages at {(enrageAt >= 0f ? enrageAt.ToString("P0") : "never")} (want a third or less)" +
                     $"; states: {string.Join(" > ", s.BossStates.ConvertAll(x => x.state))}");
-                float p2 = At("mkPhase2"), p3 = At("mkEnrage");
+                float p2 = At(w.Phase2), p3 = At(w.Enrage);
                 var stray = s.GuardSpawns.FindAll(t => p2 < 0f || t < p2 || p3 >= 0f && t > p3 + 0.05f);
                 check(prefix + "adds", stray.Count == 0 && (!completed || s.GuardSpawns.Count > 0),
-                    $"{s.GuardSpawns.Count} imp guard(s) came down, {stray.Count} outside phase 2 (phase 2 from {(p2 >= 0f ? p2.ToString("0.0") : "?")} s to {(p3 >= 0f ? p3.ToString("0.0") : "?")} s)");
+                    $"{s.GuardSpawns.Count} {w.AddsWhat}(s) came, {stray.Count} outside phase 2 (phase 2 from {(p2 >= 0f ? p2.ToString("0.0") : "?")} s to {(p3 >= 0f ? p3.ToString("0.0") : "?")} s)");
 
                 // Every attack after its warning.
                 var attacks = new List<string>();
                 bool telegraphed = true;
-                foreach (var t in ArenaTelegraphs)
+                foreach (var t in w.Telegraphs)
                 {
                     if (!s.Attacks.TryGetValue(t.attack, out var a))
                     {
@@ -1920,11 +2031,11 @@ namespace SickOfIt.Playtest
                 if (!completed)
                     return;
                 // His defeat: slow motion, his last line, the announcer, the counter at the top floor, the Waystone.
-                float defeat = At("mkDefeat");
-                bool lastLine = Voiced("The show... must go... on...");
-                check(prefix + "defeat", defeat >= 0f && s.SlowMotionAt >= 0f && lastLine && Voiced("THE MAGMA KING HAS FALLEN!"),
+                float defeat = At(w.Defeat);
+                bool lastLine = Voiced(w.LastLine);
+                check(prefix + "defeat", defeat >= 0f && s.SlowMotionAt >= 0f && lastLine && Voiced(w.Fallen),
                     $"defeat at {(defeat >= 0f ? defeat.ToString("0.0") + " s" : "never")}; slow motion {(s.SlowMotionAt >= 0f ? $"at {s.SlowMotionAt:0.0} s" : "NOT seen")}; " +
-                    $"his last line {(lastLine ? "voiced" : "NOT voiced")}; \"THE MAGMA KING HAS FALLEN!\" {(Voiced("THE MAGMA KING HAS FALLEN!") ? "voiced" : "NOT voiced")}");
+                    $"his last line {(lastLine ? "voiced" : "NOT voiced")}; \"{w.Fallen}\" {(Voiced(w.Fallen) ? "voiced" : "NOT voiced")}");
                 string waystone = $"WAYSTONE LIT: FLOOR {s.End}";
                 bool top = s.Floors.Count > 0 && s.Floors[s.Floors.Count - 1] == s.End;
                 check(prefix + "waystone", top && At("waystoneLit") > defeat && Voiced(waystone),
@@ -2132,8 +2243,8 @@ namespace SickOfIt.Playtest
             bool longWayReachedEnd;
 
             /// <summary>
-            /// long-way: the old stages over Floors 990-951 in order. Levels 67-69 through the real flow (69 leads on to Floor 960),
-            /// then level 70 (The Loop, level select only) loaded directly, each with the stage checks and its Shaft climb.
+            /// long-way: the old stages over Floors 990-951 in order. Levels 68-70 through the real flow (70 leads on to Floor 960),
+            /// then level 71 (The Loop, level select only) loaded directly, each with the stage checks and its Shaft climb.
             /// </summary>
             public IEnumerator LongWayStages()
             {
@@ -2357,7 +2468,7 @@ namespace SickOfIt.Playtest
 
             /// <summary>
             /// cracked-road-route: Floor 901 loaded directly (the Magma King, his Waystone), then the real flow through Circle IX's played
-            /// route to Floor 802, taking the Spared Demon (891 to 860) and the Hollow Spire (851 to 810).
+            /// route to Floor 801 (the Spire Fiend, his Waystone), taking the Spared Demon (891 to 860) and the Hollow Spire (851 to 810).
             /// </summary>
             public IEnumerator CrackedRoadRoute()
             {
@@ -2882,11 +2993,13 @@ namespace SickOfIt.Playtest
                 }
             }
 
-            // ─── magma-king ───────────────────────────────────────────────
+            // ─── magma-king, spire-fiend: a Warden seen up close ─────────────────
 
-            /// <summary>What the magma-king scenario has seen of the Warden (across tries).</summary>
+            /// <summary>What the magma-king / spire-fiend scenario (or a Warden's level-n) has seen of the Warden (across tries).</summary>
             sealed class MagmaWatch
             {
+                public readonly WardenFight W;
+                public MagmaWatch(WardenFight w) => W = w;
                 public readonly Dictionary<string, float> States = new Dictionary<string, float>();
                 public readonly Dictionary<string, string> Lines = new Dictionary<string, string>();
                 public readonly HashSet<string> Passed = new HashSet<string>();
@@ -2902,47 +3015,69 @@ namespace SickOfIt.Playtest
                 if (ok)
                 {
                     magma.Passed.Add(beat);
-                    Run.Event("check", $"magma-king {beat}: ok ({detail})");
+                    Run.Event("check", $"{magma.W.Scenario} {beat}: ok ({detail})");
                 }
                 else
                 {
                     magma.Failed++;
-                    Run.Problem(PlaytestSeverity.Bug, $"magma-king {beat}: {detail}");
+                    Run.Problem(PlaytestSeverity.Bug, $"{magma.W.Scenario} {beat}: {detail}");
                 }
             }
 
             /// <summary>
-            /// Plays the level with his fight (the fire rain first, then the boss phase) through real input, up to 3 tries,
-            /// watching him (animation states, size on screen) and the lines; then checks what the fight must show.
+            /// Plays the level with a Warden's fight through real input, up to 3 tries, watching him (animation states, size on
+            /// screen) and the lines; then checks what the fight must show. With arenaChecks (spire-fiend) every try is also
+            /// watched as a Warden's arena (the voiced intro, the phases in order, the telegraphs, the adds, the defeat and the
+            /// Waystone: FinishArena), and a won fight goes on through the results to the Shaft's climb (the Waystone saved and
+            /// lit, the Circle above waking) and what comes next.
             /// </summary>
-            public IEnumerator MagmaKingRun()
+            public IEnumerator WardenRun(WardenFight w, bool arenaChecks)
             {
                 var definition = GameDefinition.Instance;
-                int n = definition.levels.FindIndex(l => l != null && l.levelName == MagmaKingLevel) + 1;
+                int n = definition.levels.FindIndex(l => l != null && l.levelName == w.Level) + 1;
                 if (n <= 0)
                 {
-                    Run.Problem(PlaytestSeverity.Bug, $"magma-king: no level \"{MagmaKingLevel}\" in game.json");
+                    Run.Problem(PlaytestSeverity.Bug, $"{w.Scenario}: no level \"{w.Level}\" in game.json");
                     End(PlaytestOutcome.Error);
                     yield break;
                 }
-                magma = new MagmaWatch();
+                magma = new MagmaWatch(w);
+                stageChecksFailed = 0;
                 for (int attempt = 1; attempt <= 3 && !Run.Done; attempt++)
                 {
-                    Run.Event("shortcut", $"load level {n} ({MagmaKingLevel}) directly, try {attempt}");
+                    Run.Event("shortcut", $"load level {n} ({w.Level}) directly, try {attempt}");
                     var load = LoadLevel(n);
                     if (load != null)
                         yield return load;
-                    yield return PlayLevel(n, 0f, MagmaDuring, (attempt - 1) / 3f, attempt / 3f);
+                    stage = arenaChecks && IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
+                    float share = arenaChecks ? 0.85f : 1f;
+                    yield return PlayLevel(n, 0f, stage != null ? StageDuring : MagmaDuring, share * (attempt - 1) / 3f, share * attempt / 3f);
                     if (Run.Done)
                         yield break;
                     if (lastOutcome == "completed")
                         break;
+                    if (stage != null && attempt < 3)
+                    {
+                        Run.Event("retry", $"level {n}: {lastOutcome} on try {attempt}; the arena is checked on the last try");
+                        stage = null;
+                    }
                 }
                 FinishMagma();
+                var won = lastOutcome;
+                if (stage != null)
+                {
+                    FinishStage(won);
+                    if (won == "completed" && LoadLevel == DefaultLoadLevel)
+                        yield return StageAfter(n, StageCheck);
+                    stage = null;
+                    if (Run.Done)
+                        yield break;
+                }
+                magma = null;
                 Run.Progress(1f);
-                // A failed check is a Bug problem (MagmaCheck); the outcome is how the fight went.
-                End(lastOutcome == "completed" ? PlaytestOutcome.Won
-                    : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
+                // A failed check is a Bug problem (MagmaCheck, StageCheck); the outcome is how the fight went.
+                End(won == "completed" ? PlaytestOutcome.Won
+                    : won == "softlock" ? PlaytestOutcome.Stuck
                     : PlaytestOutcome.Lost);
             }
 
@@ -2957,7 +3092,7 @@ namespace SickOfIt.Playtest
                 Entity king = null;
                 foreach (var e in world.Live)
                 {
-                    if (e != null && e.IsAlive && e.DefId == MagmaKingId)
+                    if (e != null && e.IsAlive && e.DefId == m.W.Id)
                     {
                         king = e;
                         break;
@@ -2969,7 +3104,7 @@ namespace SickOfIt.Playtest
                     {
                         m.Seen = true;
                         m.Art = king.Animation != null && king.Animation.HasClips && king.Sprite != null && king.Sprite.sprite != null;
-                        Run.Event("boss", $"the Magma King appears at {now:0.0} s ({(m.Art ? "generated sheets" : "NO ART: placeholder")})");
+                        Run.Event("boss", $"the {m.W.Name} appears at {now:0.0} s ({(m.Art ? "generated sheets" : "NO ART: placeholder")})");
                     }
                     string state = king.Animation != null ? king.Animation.CurrentState : "";
                     if (state != m.LastState && state.Length > 0)
@@ -2977,13 +3112,13 @@ namespace SickOfIt.Playtest
                         m.LastState = state;
                         if (!m.States.ContainsKey(state))
                             m.States[state] = now;
-                        Run.Event("anim", $"Magma King: {state} at {now:0.0} s");
+                        Run.Event("anim", $"{m.W.Name}: {state} at {now:0.0} s");
                     }
                     if (m.ScreenShare < 0f && king.Sprite != null && king.Sprite.sprite != null && world.Camera != null && world.Camera.orthographic)
                     {
                         m.ScreenShare = king.Sprite.bounds.size.y / (2f * world.Camera.orthographicSize);
-                        Run.Metric("magmaKing.screenShare", m.ScreenShare);
-                        Run.Event("boss", $"the Magma King is {king.Sprite.bounds.size.y:0.00} units tall on screen, {m.ScreenShare:P0} of its height");
+                        Run.Metric(m.W.Id + ".screenShare", m.ScreenShare);
+                        Run.Event("boss", $"the {m.W.Name} is {king.Sprite.bounds.size.y:0.00} units tall on screen, {m.ScreenShare:P0} of its height");
                     }
                 }
                 var hud = world.Hud;
@@ -3002,7 +3137,7 @@ namespace SickOfIt.Playtest
 
             void SawMagmaLine(string text, float now)
             {
-                foreach (var l in MagmaKingLines)
+                foreach (var l in magma.W.Lines)
                 {
                     if (l.text != text || magma.Lines.ContainsKey(l.beat))
                         continue;
@@ -3032,7 +3167,7 @@ namespace SickOfIt.Playtest
                 }
                 string sheet = frames[0] != null && frames[0].texture != null ? frames[0].texture.name : "?";
                 magma.DieDetail = $"Die clip {sheet}, {frames.Length} frames at {fps:0} fps{(magma.DiePlayed ? "" : ", NOT playing where he fell")}";
-                Run.Event("anim", $"Magma King: Die at {magma.Clock:0.0} s ({magma.DieDetail})");
+                Run.Event("anim", $"{magma.W.Name}: Die at {magma.Clock:0.0} s ({magma.DieDetail})");
             }
 
             void FinishMagma()
@@ -3041,15 +3176,15 @@ namespace SickOfIt.Playtest
                 MagmaCheck("appears", m.Seen, m.Seen ? "the boss phase spawned him" : $"he never appeared (last outcome {lastOutcome})");
                 MagmaCheck("art", m.Art, m.Art ? "drawn from his generated sheets" : "no generated sheets: he is a placeholder");
                 MagmaCheck("size", m.ScreenShare >= 0.3f, $"{(m.ScreenShare < 0f ? "never measured" : m.ScreenShare.ToString("P0"))} of the screen's height (want 30%+)");
-                foreach (string state in MagmaKingStates)
+                foreach (string state in m.W.States)
                     MagmaCheck("anim " + state, m.States.ContainsKey(state),
                         m.States.TryGetValue(state, out float at) ? $"first seen at {at:0.0} s" : "never played");
                 MagmaCheck("anim Die", m.DiePlayed, m.DieDetail);
-                foreach (var l in MagmaKingLines)
+                foreach (var l in m.W.Lines)
                     MagmaCheck("line " + l.beat, m.Lines.TryGetValue(l.beat, out string why) && why.Length == 0,
                         !m.Lines.ContainsKey(l.beat) ? $"\"{l.text}\" never shown" : why.Length == 0 ? $"\"{l.text}\" shown, voiced by {l.voice}" : why);
-                Run.Metric("magmaKing.passed", m.Passed.Count);
-                Run.Metric("magmaKing.failed", m.Failed);
+                Run.Metric(m.W.Id + ".passed", m.Passed.Count);
+                Run.Metric(m.W.Id + ".failed", m.Failed);
             }
 
             /// <summary>
