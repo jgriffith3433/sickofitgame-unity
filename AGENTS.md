@@ -100,8 +100,9 @@ Assets/GameConfig/
   its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
   stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the
   Shaft jumps a dotted line up through a hinted crack (`ShortcutProgress`). Circle X's: the Sack Lift (Floor 991, a 20-diamond fare, `costDiamonds`) and the King's Chimney (Floor 951,
-  a risk: Floor 910 reads `shortcutTaken`); Circle IX's Old Stair (`levels/Level14.json`, level 34), 871 to 841, level 38
-  (`Level18.json`) next. Cookbook "A shortcut".
+  a risk: Floor 910 reads `shortcutTaken`); Circle IX's Old Stair (`levels/Level14.json`, level 62, on Circle IX's long way), 871 to 841, level 66
+  (`Level18.json`) next; Circle IX's played route has the Spared Demon (Floor 891, a Grudge, to 860) and the Hollow Spire
+  (Floor 851, a risk: Floor 810 reads `shortcutTaken`). Cookbook "A shortcut".
 - **Waystones and runs** (Docs/Story.md): a death on a floor stage ends the run: the death screen, then the Shaft drops the
   marker back to the highest Waystone (the Landing, Floor 1,000, then each Circle's top once its Warden is beaten) and the
   run restarts there; Grudges reset, diamonds and Yooba's goods stay. Main menu: Continue (the run) / New Run (the
@@ -259,7 +260,7 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   Level 3 (Floor 999) opening on the 999 milestone, Levels 4-11 (Floors 998-991, the Imp Foreman), the Sack Lift (its
   fare topped up, a setup shortcut) to Levels 12-21 (Floors 960-951, the Pile Keeper), the King's Chimney to Levels 22-30
   (Floors 910-902, the Heat Stairs) and Level 31 (Floor 901, the Slag Throne), one after another with no video between,
-  each with the stage checks below (the old 10-floor stages, levels 39-46, never played), then the
+  each with the stage checks below (the old 10-floor stages, levels 67-74, never played), then the
   level select, whose cards must list the story levels first and in order; ~70 min; the Shaft after Video2 and after each floor stage is checked too), `wastes-climb` (the Heat Stairs:
   Level 22, Floor 910, loaded directly, then Levels 23-31 through the real flow with the stage checks on each: Level 30
   (Floor 902, The Door) ends at the Magma King's door with his knock heard from the other side, Level 31 (Floor 901) is
@@ -275,13 +276,13 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   crack and sack ember 1+ s after its glow, at most 3 enemies, the defeat in slow motion with 20+ diamonds, 60-180 s;
   `check`, `signal`, `attack`, `boss` events; ~18 min), `circle-x-route` (Circle X's played route: first the long
   way, Floor 991 (level 11) loaded directly and the Sack Lift declined (the bot presses 1): the choice within ~10 s of the
-  Foreman's defeat or the run stops there (`level11.exit`), the counter on 990, the Grudge pick, the Shaft, level 39
+  Foreman's defeat or the run stops there (`level11.exit`), the counter on 990, the Grudge pick, the Shaft, level 67
   starting on Floor 990 (`level11.longWay.*`; the Shaft's save put back); then Floor 991 loaded directly again with the
   Sack Lift's 20-diamond fare topped up (setup shortcut), then the real flow to Floor 901,
   the bot taking every shortcut: the Sack Lift's choice with its fare, paid, the counter jumping 990 to 960, the Shaft's
   dotted jump, Floors 960-951 (the Pile Keeper on 951), the King's Chimney (950 to 910, Floor 910 harder for it: the
   King's "Came up my chimney" line), Floors 910-902 and the Magma King on 901, his defeat lighting the Waystone; the old
-  10-floor stages, levels 39-46, never played past level 39's start; `check` events `levelN.shortcut.*`; ~65 min), `shaft` (Video2 loaded directly with
+  10-floor stages, levels 67-74, never played past level 67's start; `check` events `levelN.shortcut.*`; ~65 min), `shaft` (Video2 loaded directly with
   the Shaft's save reset, skipped: the first plunge past the 10 Circles to FLOOR 1,000, the welcome lines, Continue to Level 2, the
   bot plays it, then the marker's climb to 999 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
   `music` (Hell's soundtrack, Docs/Story.md "Music": the `shaft` run listening to the music, then Level 31 (Floor 901) loaded directly and fought
@@ -321,10 +322,13 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   the Waystones marked, the first death's voiced line and the hero's answer, not skippable; Grudges gone, diamonds and goods
   kept; Continue restarts the run at Level 2; the main menu shows Continue and New Run, and New Run starts Level 2; `check`
   events `waystone <beat>`; ~6 min; a death in `full`/`story-path`/`wastes-climb` also drops back, and their retries reopen
-  the level directly), `shortcut` (Circle IX's shortcut: Level 34, The Old Stair (`Level14.json`), loaded directly with one Grudge in hand (setup shortcut);
+  the level directly), `cracked-road-route` (Circle IX's played route, Docs/LevelDesign.md section 6: Level 31 (Floor 901, the Magma King) loaded directly, then the real flow
+  through Floors 900-891, the Road Breaker, the Spared Demon (890 to 860), Floors 860-851, the Carver, the Hollow Spire (850 to 810) and Floors 810-802, ending at
+  the Spire Fiend's arena entrance with the counter on 801, then the level select; the stage checks on every floor, 4 enemies allowed in Circle IX; ~75 min),
+  `shortcut` (Circle IX's long-way shortcut: Level 62, The Old Stair (`Level14.json`), loaded directly with one Grudge in hand (setup shortcut);
   the bot plays to the collapsed stairwell at the top and presses 2 on its choice: the choice with its cost on screen,
   the Grudge paid, the hero's line and the announcer's reaction, the counter jumping 871 to 841 with no Grudge pick; the
-  Shaft climbs to 871 and jumps a dotted line to 841 (`climbShortcut14`); Continue starts Level 38 (`Level18.json`, Floors 840-831),
+  Shaft climbs to 871 and jumps a dotted line to 841 (`climbShortcut14`); Continue starts Level 66 (`Level18.json`, Floors 840-831),
   skipping 35-37, played with the stage checks; `check` events `shortcut <beat>`, `shortcut-offer`/`shortcut-taken`; ~6 min),
   `climb` (the floor toolkit on a test floor: `content/scenes/climbTest.json` on Level 2's stage, setup shortcut; the bot
   climbs it through real input: the path's climb, sideways run and chase, climb again, the lava sea and parallax, a
