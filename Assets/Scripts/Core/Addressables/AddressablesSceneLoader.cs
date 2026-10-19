@@ -151,7 +151,18 @@ namespace SickOfIt.Core.Addressables
                 // time.  The loading screen is already visible, so the visual
                 // impact of releasing textures early is hidden.
                 // ---------------------------------------------------------------
-                bool hadPreviousScene = !string.IsNullOrEmpty(currentGameplayScene) && currentGameplayScene != sceneName;
+                // A reload (Restart: "Level" while "Level" is current) must also unload the old copy. Treated as "no
+                // previous scene", it loaded a second "Level" next to the first, GetSceneByName found the old one, and
+                // the old level went on running ("[SceneContent] Already active, skipping").
+                // The same goes for a copy this loader didn't load (opened in the editor, loaded by a test).
+                if (string.IsNullOrEmpty(currentGameplayScene) && SceneManager.GetSceneByName(sceneName).isLoaded)
+                {
+                    currentGameplayScene = sceneName;
+                    if (!loadedScenes.Contains(sceneName))
+                        loadedScenes.Add(sceneName);
+                }
+                bool reload = !string.IsNullOrEmpty(currentGameplayScene) && currentGameplayScene == sceneName;
+                bool hadPreviousScene = !string.IsNullOrEmpty(currentGameplayScene);
                 if (hadPreviousScene)
                 {
                     Scene previousScene = SceneManager.GetSceneByName(currentGameplayScene);
@@ -194,6 +205,18 @@ namespace SickOfIt.Core.Addressables
                     // --- Second cleanup pass ---
                     // Catches assets that only became unused after the first pass freed their
                     // dependants (e.g., materials no longer referencing destroyed textures).
+                    yield return Resources.UnloadUnusedAssets();
+                    System.GC.Collect();
+                }
+
+                // A reload unloads the old copy first, so only one scene by that name is ever loaded. An empty holder
+                // scene stays loaded meanwhile (Unity can't unload the last loaded scene).
+                Scene holder = default;
+                if (reload)
+                {
+                    holder = SceneManager.CreateScene($"Reloading {sceneName} {Time.frameCount}");
+                    SceneManager.SetActiveScene(holder);
+                    yield return StartCoroutine(UnloadSceneAsync(sceneName));
                     yield return Resources.UnloadUnusedAssets();
                     System.GC.Collect();
                 }
@@ -258,7 +281,10 @@ namespace SickOfIt.Core.Addressables
                 // UNLOAD: Now fully unload the previous scene (its resources were
                 // already released above, so this just removes the scene object).
                 // ---------------------------------------------------------------
-                if (hadPreviousScene)
+                if (holder.IsValid() && holder.isLoaded)
+                    yield return SceneManager.UnloadSceneAsync(holder);
+
+                if (hadPreviousScene && !reload)
                 {
                     // Wait for unload to fully complete
                     yield return StartCoroutine(UnloadSceneAsync(currentGameplayScene));

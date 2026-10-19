@@ -291,7 +291,11 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   is under the touch size; meant for device "phone", 390x844), `analytics` (Hawkes Analytics: the SDK's debug log on, Level 1 loaded directly, R held once, then the bot dies three times;
 each death screen checked, the third with the "Too hard? Not fun?" card on the page and the screen held; then level_start,
 death with a cause, feature rewind and level_end checked as sent with the build version and env; `check` and `analytics`
-events; ~5 min; AGENTS.md "Analytics"), `imp-death` (level 1 until the bot has killed three
+events; ~5 min; AGENTS.md "Analytics"), `restart` (the pause menu's Restart Level: Level 2, Floor 1000, loaded directly
+and recorded 1 s in, the bot plays a few seconds, P, Restart Level; 1 s into the restarted level there must be one Level
+scene and a new world, and the clock, the hero's place, his hearts, the floor counter/distance and the first moving pieces
+must match the fresh load; `check` and `snapshot` events; ~1 min. A same-scene reload goes through
+`AddressablesSceneLoader`'s reload path: old copy unloaded first, behind an empty holder scene), `imp-death` (level 1 until the bot has killed three
 imps: each imp's Die clip must be playing where it died, and those three play at 0.3x so a recording shows the frames;
 every other scenario checks imp kills the same way, without the slow motion), `cutscene` (the scene
   `content/scenes/cutsceneTest.json` on Level 1's stage: with input and rewind locked the hero walks to a point by

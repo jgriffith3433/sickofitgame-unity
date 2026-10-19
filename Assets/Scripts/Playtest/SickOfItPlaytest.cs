@@ -286,6 +286,10 @@ namespace SickOfIt.Playtest
             }
             list.Add(new PlaytestScenario("imp-death", $"Level {ImpLevel}'s imps, started directly (setup shortcut): the bot kills them and each imp's Die clip " +
                 "must play where it died; the first deaths run in slow motion so the clip can be seen", 90, "level"));
+            list.Add(new PlaytestScenario("restart", $"Restart from the pause menu: level {LandingLevel} (Floor 1000, loaded directly, a setup shortcut) " +
+                "recorded 1 s in, the bot plays a few seconds, P, Restart Level; the restarted level 1 s in must match the fresh one: one Level scene " +
+                "and a new world, the clock, the hero's place, his hearts, the floor counter and distance, and the first moving pieces (ids, states, " +
+                "places). Each beat is a check event", 90, "level"));
             list.Add(new PlaytestScenario("analytics", $"Hawkes Analytics (AGENTS.md \"Analytics\"): the SDK's debug log on, then Level {AnalyticsLevel} " +
                 "(the Meadow, loaded directly) played until Hell kills the hero three times (the bot holds R once early on for a rewind, then plays to " +
                 "lose): each death screen, and on the third one the feedback card (\"Too hard? Not fun?\", thumbs and a comment) over it, held while it's " +
@@ -498,6 +502,8 @@ namespace SickOfIt.Playtest
                 yield return session.ImpDeath();
             else if (id == "analytics")
                 yield return session.AnalyticsRun();
+            else if (id == "restart")
+                yield return session.RestartRun();
             else if (id == "portal-audio")
                 yield return session.PortalAudio();
             else if (id == "cutscene")
@@ -2273,6 +2279,151 @@ namespace SickOfIt.Playtest
                     : PlaytestOutcome.Won);
             }
 
+            // ─── restart: the pause menu's Restart puts the level back to its start ─────
+
+            /// <summary>Where a level stands one second in: the hero, the clock, his hearts, the floor and its first moving pieces.</summary>
+            sealed class LevelSnapshot
+            {
+                public float Clock;
+                public Vector2 Hero;
+                public int Health;
+                public int Floor;
+                public float Distance;
+                public readonly List<(string id, string state, Vector2 at)> Pieces = new List<(string, string, Vector2)>();
+            }
+
+            const float RestartSnapshotAt = 1f, RestartTolerance = 0.35f;
+            const int RestartPieces = 6;
+
+            int restartPassed, restartFailed;
+
+            void RestartCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    restartPassed++;
+                    Run.Event("check", $"restart {beat}: ok ({detail})");
+                }
+                else
+                {
+                    restartFailed++;
+                    Run.Event("check", $"restart {beat}: FAILED ({detail})");
+                    Run.Problem(PlaytestSeverity.Bug, $"restart {beat}: {detail}");
+                }
+            }
+
+            static int LevelScenesLoaded()
+            {
+                int n = 0;
+                for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+                {
+                    var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                    if (scene.isLoaded && scene.name == "Level")
+                        n++;
+                }
+                return n;
+            }
+
+            /// <summary>Waits until level n's clock reaches RestartSnapshotAt (no bot, no input), then records it.</summary>
+            IEnumerator SnapshotLevelStart(int n, Action<LevelSnapshot> done)
+            {
+                if (bot != null)
+                    Object.Destroy(bot);
+                bot = null;
+                input.ReleaseAll();
+                Time.timeScale = 1f;
+                yield return Run.Until(() => LevelRunning(n) && GameClock.Instance.Time >= RestartSnapshotAt, 60f, $"level {n} to run {RestartSnapshotAt:0} s");
+                if (Run.Done)
+                    yield break;
+                var world = GameplayWorld.Instance;
+                var health = world.Player.GetComponentInChildren<PlayerHealth>();
+                var shot = new LevelSnapshot
+                {
+                    Clock = GameClock.Instance.Time,
+                    Hero = world.Player.transform.position,
+                    Health = health != null ? health.CurrentHealth : -1,
+                    Floor = world.Stage != null ? world.Stage.Floor : 0,
+                    Distance = world.GetCounter(StageProgress.DistanceCounter),
+                };
+                var pieces = new List<Entity>();
+                foreach (var e in world.Live)
+                    if (e != null && !e.IsPlayer)
+                        pieces.Add(e);
+                pieces.Sort((a, b) => a.Serial.CompareTo(b.Serial));
+                for (int i = 0; i < pieces.Count && i < RestartPieces; i++)
+                    shot.Pieces.Add((pieces[i].DefId, pieces[i].StateName, pieces[i].transform.position));
+                Run.Event("snapshot", $"level {n} at {shot.Clock:0.00} s: hero ({shot.Hero.x:0.00}, {shot.Hero.y:0.00}), {shot.Health} hearts, floor {shot.Floor}, " +
+                                      $"distance {shot.Distance:0.0}, {world.Live.Count} entities; first: " +
+                                      string.Join(", ", shot.Pieces.ConvertAll(p => $"{p.id}[{p.state}]@({p.at.x:0.0},{p.at.y:0.0})")));
+                done(shot);
+            }
+
+            /// <summary>
+            /// Level 2 (Floor 1000) loaded directly, recorded 1 s in; the bot plays a few seconds; P, Restart; the restarted
+            /// level, recorded 1 s in, must match the fresh one (one Level scene, a new world, hero, clock, hearts, floor, pieces).
+            /// </summary>
+            public IEnumerator RestartRun()
+            {
+                int n = LandingLevel;
+                Run.Event("shortcut", $"load level {n} directly");
+                var load = LoadLevel(n);
+                if (load != null)
+                    yield return load;
+                LevelSnapshot fresh = null, restarted = null;
+                yield return SnapshotLevelStart(n, s => fresh = s);
+                if (Run.Done) yield break;
+                var firstWorld = GameplayWorld.Instance;
+                Run.Progress(0.2f);
+
+                // Play a few seconds so the hero, the clock and the floor move away from the start.
+                yield return PlayLevel(n, RestartSnapshotAt + 7f, progressFrom: 0.2f, progressTo: 0.5f);
+                if (Run.Done) yield break;
+                if (GameplayWorld.Instance != firstWorld || lastOutcome != "time up")
+                {
+                    RestartCheck("played", false, $"the level didn't keep running for the restart ({lastOutcome})");
+                    End(PlaytestOutcome.Done);
+                    yield break;
+                }
+                var player = firstWorld.Player;
+                Vector2 before = player.transform.position;
+                Run.Event("played", $"at {GameClock.Instance.Time:0.0} s: hero ({before.x:0.00}, {before.y:0.00}), floor {firstWorld.Stage?.Floor}");
+                if (bot != null)
+                    Object.Destroy(bot);
+                bot = null;
+                input.ReleaseAll();
+
+                yield return Tap(Key.P);
+                yield return WaitReal(0.5f);
+                RestartCheck("paused", firstWorld != null && firstWorld.Hud != null && firstWorld.Hud.Paused, "P opened the pause menu");
+                yield return ClickUntil(GameDefinition.Instance.menuTheme.texts.restart,
+                    () => GameplayWorld.Instance != null && GameplayWorld.Instance != firstWorld, 45f);
+                if (Run.Done) yield break;
+                Run.Progress(0.7f);
+
+                yield return SnapshotLevelStart(n, s => restarted = s);
+                if (Run.Done) yield break;
+                var worlds = Object.FindObjectsByType<GameplayWorld>(FindObjectsSortMode.None);
+                RestartCheck("reloaded", firstWorld == null && worlds.Length == 1 && LevelScenesLoaded() == 1,
+                    $"old world {(firstWorld == null ? "gone" : "STILL ALIVE")}, {worlds.Length} world(s), {LevelScenesLoaded()} Level scene(s) loaded");
+                RestartCheck("clock", Mathf.Abs(restarted.Clock - fresh.Clock) < 0.25f,
+                    $"clock {restarted.Clock:0.00} s after the restart, {fresh.Clock:0.00} s on a fresh load");
+                RestartCheck("hero", Vector2.Distance(restarted.Hero, fresh.Hero) < RestartTolerance,
+                    $"hero at ({restarted.Hero.x:0.00}, {restarted.Hero.y:0.00}), fresh ({fresh.Hero.x:0.00}, {fresh.Hero.y:0.00}); before the restart ({before.x:0.00}, {before.y:0.00})");
+                RestartCheck("hearts", restarted.Health == fresh.Health, $"{restarted.Health} hearts, {fresh.Health} on a fresh load");
+                RestartCheck("floor", restarted.Floor == fresh.Floor && Mathf.Abs(restarted.Distance - fresh.Distance) < RestartTolerance,
+                    $"floor {restarted.Floor}, distance {restarted.Distance:0.0}; fresh floor {fresh.Floor}, distance {fresh.Distance:0.0}");
+                bool same = restarted.Pieces.Count == fresh.Pieces.Count;
+                for (int i = 0; same && i < fresh.Pieces.Count; i++)
+                    same = restarted.Pieces[i].id == fresh.Pieces[i].id && restarted.Pieces[i].state == fresh.Pieces[i].state
+                           && Vector2.Distance(restarted.Pieces[i].at, fresh.Pieces[i].at) < RestartTolerance;
+                RestartCheck("pieces", same, $"the first {fresh.Pieces.Count} moving pieces (ids, states, places) {(same ? "match" : "DIFFER from")} a fresh load");
+
+                Run.Metric("restart.passed", restartPassed);
+                Run.Metric("restart.failed", restartFailed);
+                Run.Progress(1f);
+                End(restartFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
+            }
+
             // ─── analytics: the events going out, and the death screen's feedback card ─────
 
             int analyticsPassed, analyticsFailed;
@@ -2647,8 +2798,6 @@ namespace SickOfIt.Playtest
                 ("vo_portal_grabbed_2", "Hero, take 2: Oh, come on, come ON-", 0f),
                 ("vo_portal_grabbed_3", "Hero, take 3: Wait wait wait- oh, come ON-", 0f),
                 ("vo_meadow_title", "Announcer: Prologue! The Meadow!", 0f),
-                ("vo_meadow_intro", "Hero: Nice day. Nothing could possibly go wrong.", 0f),
-                ("vo_meadow_imps", "Hero: That's not a cloud. Those are not birds.", 0f),
                 ("vo_meadow_laser", "Hero: Oh, he's lasering the village. Cool. Cool cool cool.", 0f),
                 ("vo_meadow_leaving", "Hero: He's leaving. Through a hole in the sky. With our diamonds.", 0f),
                 ("vo_meadow_clear", "Announcer: The Meadow... is TOAST!", 0f),
