@@ -220,8 +220,6 @@ namespace SickOfIt.Gameplay
                 moveX = 1f;
             // A floor with a path: climb it foothold by foothold (no random strafes or hops, they'd drop him in the lava).
             bool climbing = Climb(me, ref moveX, out bool climbJump, out bool climbDrop);
-            if (climbing)
-                moveX = LetGoOfWalls(moveX);
             if (!climbing)
             {
                 if (now < strafeUntil)
@@ -369,6 +367,14 @@ namespace SickOfIt.Gameplay
         float takeoffFeet;
         bool fromTakeoff;
         Entity takeoffFrom;
+        // Hung in the air on a foothold's corner: his middle beside its edge, pushed into it, held there by the contact's
+        // friction, not grounded (no jump) and standing on nothing (Floor 907: thrown up by gapVent0 under the crumbling stone's
+        // corner at (13.7, 4.4), 160 s). Let go the other way for a moment so he drops off it, like a player would, then climb again.
+        float wedgedSince = -1f, wedgeCheckedAt, backOffUntil;
+        float backOffWay;
+
+        /// <summary>Times it found him hung on a foothold's corner in the air and let go to drop off it.</summary>
+        public int Unwedged { get; private set; }
 
         /// <summary>
         /// On a floor with a path (world.path), picks the next foothold ahead along the current section (a stone, a raft, a ledge,
@@ -412,6 +418,13 @@ namespace SickOfIt.Gameplay
                 return true;
             }
             swingSpeedBefore = 0f;
+
+            if (now < backOffUntil)
+            {
+                moveX = backOffWay;
+                fromTakeoff = false;
+                return true;
+            }
 
             // In an updraft's column (957's chimney, 952's pile): ride it up and step out over the foothold it throws him to.
             if (!controller.IsGrounded && RideUpdraft(me, feetBounds, forward, ref moveX))
@@ -521,6 +534,7 @@ namespace SickOfIt.Gameplay
                 if (middle < own.min.x + 0.3f || middle > own.max.x - 0.3f)
                 {
                     moveX = Mathf.Sign(own.center.x - middle);
+                    Wedged(grounded, now, ref moveX);
                     return true;
                 }
             }
@@ -578,6 +592,10 @@ namespace SickOfIt.Gameplay
             float edgeGap = bestIsChain ? Mathf.Abs(dx) : Mathf.Max(0f, Mathf.Max(bestBounds.min.x - me.x, me.x - bestBounds.max.x));
             float up = (bestIsChain ? best.Position.y - 0.5f : bestBounds.max.y) - feet;
             moveX = Mathf.Abs(dx) > 0.12f ? Mathf.Sign(dx) : 0f;
+
+            if (!bestIsChain && Wedged(grounded, now, ref moveX))
+                return true;
+
             // A chain swinging out over the gap: wait at the edge for its handle to come back in reach, don't walk off after it.
             if (bestIsChain && grounded && standingOn != null && standingOn.MainCollider != null)
             {
@@ -706,36 +724,33 @@ namespace SickOfIt.Gameplay
             return best;
         }
 
-        // Pressed into the side of something solid in mid-air (a landing's wall), friction holds him there: not grounded, so no
-        // jump, and the give-up timer restarts every tick he's airborne. When he hasn't moved for a moment, let go of the stick
-        // so he drops off it and climbs again from what's below (beta run r_9fddf65ad203: 954 and 902 at the landing's left side).
-        float pinnedSince = -1f, letGoUntil = -1f;
-
-        /// <summary>Times it let go of the stick because he hung pinned against a wall in the air.</summary>
-        public int WallLetGoes { get; private set; }
-
-        float LetGoOfWalls(float moveX)
+        /// <summary>
+        /// Pushing at a foothold in the air ('moveX') but not moving for 0.3 s: hung on its corner (see wedgedSince). Starts
+        /// letting go the other way (moveX turned round, kept for 0.3 s) so he drops off it, and forgets the chase.
+        /// </summary>
+        bool Wedged(bool grounded, float now, ref float moveX)
         {
-            var controller = world.PlayerController;
-            var body = world.Player.Body;
-            float t = Time.time;
-            if (t < letGoUntil)
-                return 0f;
-            bool pinned = controller != null && body != null && moveX != 0f && !controller.IsGrounded && !controller.IsHeld
-                && Mathf.Abs(body.linearVelocity.x) < 0.3f && Mathf.Abs(body.linearVelocity.y) < 0.5f;
-            if (!pinned)
+            Vector2 velocity = world.Player.Body != null ? world.Player.Body.linearVelocity : Vector2.one;
+            // Only a stall seen on every tick counts (not one left over from a climb that took another branch meanwhile).
+            bool sinceLastTick = now - wedgeCheckedAt < 0.25f;
+            wedgeCheckedAt = now;
+            if (grounded || moveX == 0f || velocity.sqrMagnitude >= 0.3f * 0.3f || !sinceLastTick)
             {
-                pinnedSince = -1f;
-                return moveX;
+                wedgedSince = -1f;
+                return false;
             }
-            if (pinnedSince < 0f)
-                pinnedSince = t;
-            if (t - pinnedSince < 0.3f)
-                return moveX;
-            pinnedSince = -1f;
-            letGoUntil = t + 0.5f;
-            WallLetGoes++;
-            return 0f;
+            if (wedgedSince < 0f)
+                wedgedSince = now;
+            if (now - wedgedSince <= 0.3f)
+                return false;
+            wedgedSince = -1f;
+            backOffWay = -moveX;
+            backOffUntil = now + 0.3f;
+            chasing = null;
+            fromTakeoff = false;
+            Unwedged++;
+            moveX = backOffWay;
+            return true;
         }
 
         static bool SafeToWait(Entity standingOn) =>
