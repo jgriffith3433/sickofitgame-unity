@@ -176,6 +176,13 @@ namespace SickOfIt.Playtest
         /// </summary>
         public const int ForemanFrom = 7, ForemanTo = 11;
         const float ForemanSeconds = 1080f;
+        /// <summary>
+        /// The long-way scenario: the old 10-floor stages over Floors 990-951 (Docs/Story.md, "Level numbers": the long way's
+        /// stand-ins), level 39 (Level3.json, The Spill) loaded directly, then the real flow through level 41 (The Slag Falls),
+        /// which leads on to Floor 960; then level 42 (Level6.json, The Loop: level select only) loaded directly and played.
+        /// </summary>
+        public const int LongWayFrom = 39, LongWayTo = 41, LongWayLoop = 42;
+        const float LongWayStagesSeconds = 1200f;
         /// <summary>A floor boss's telegraphs (Floor 991, the Imp Foreman): each attack and the glow that must come 1+ s before it, on its spot.</summary>
         static readonly (string attack, string warning, string what)[] FloorBossTelegraphs =
         {
@@ -354,6 +361,14 @@ namespace SickOfIt.Playtest
                 "gantry, a chain lift to tier 2, phase 2 (he swings on the lift's chain dropping embers, each after a 1 s glow on its spot), his wings for show, " +
                 "the defeat in slow motion with a pile of diamonds, the announcer's call; 60-180 s. Up to 3 tries per floor; then Floor 991 leads on to the next level. " +
                 "Each beat is a check event", ForemanSeconds, "full"));
+            list.Add(new PlaytestScenario("long-way", $"The old 10-floor stages over Floors 990-951, the long way's stand-ins (Docs/Story.md, \"Level numbers\"): " +
+                $"level {LongWayFrom} (Floors 990-981: The Spill) loaded directly (setup shortcut), then the real flow on through level {LongWayTo} " +
+                "(Floors 980-971: Imp Run, Floors 970-961: The Slag Falls): results, Continue, the Shaft climbing the stage's ten floors, and the next stage " +
+                $"with no video between; level {LongWayTo} must lead on to Floor 960. Then level {LongWayLoop} (Floors 960-951: The Loop, played only from " +
+                "the level select) loaded directly (setup shortcut) and played the same way, its Shaft climbing to 951. Each stage gets the stage checks: " +
+                "its title banner (\"FLOORS N-M: PLACE\") with the announcer's voice, the hero's lines with his voice, the floor counter from its first " +
+                "floor to its last, its carved sign, at most one new enemy type and the first one alone, a 3+ s breather, at most 3 enemies at once, " +
+                "The Loop's repeated floor on two signs, the Grudge pick. Up to 3 tries per stage; each beat is a check event", LongWayStagesSeconds, "full"));
             list.Add(new PlaytestScenario("circle-x-route", $"Circle X's played route (Docs/LevelDesign.md, \"The route through Circle X\"): first the long " +
                 $"way: level {RouteFrom} (Floor 991, the Imp Foreman) loaded directly, the bot pressing 1 on the Sack Lift's choice: the choice within " +
                 $"{ForemanExitSeconds:0.#} s of his defeat (else it stops there), kept climbing, the counter on 990, the Grudge pick, the Shaft and the long way's " +
@@ -488,6 +503,8 @@ namespace SickOfIt.Playtest
                 yield return session.WastesClimb(StretchFrom, StretchTo, StretchSeconds);
             else if (id == "foreman-stretch")
                 yield return session.WastesClimb(ForemanFrom, ForemanTo, ForemanSeconds);
+            else if (id == "long-way")
+                yield return session.LongWayStages();
             else if (id == "shortcut")
                 yield return session.ShortcutRun();
             else if (id == "circle-x-route")
@@ -1738,7 +1755,8 @@ namespace SickOfIt.Playtest
             /// the floor-stage checks; a one-floor level's Shaft must climb exactly one floor; the last one leads to the level
             /// select, or to the level it names (the old stages after Floor 996).
             /// </summary>
-            public IEnumerator WastesClimb(int first = ClimbFrom, int last = ClimbTo, float seconds = WastesClimbSeconds, bool keepChecks = false)
+            public IEnumerator WastesClimb(int first = ClimbFrom, int last = ClimbTo, float seconds = WastesClimbSeconds, bool keepChecks = false,
+                bool finish = true)
             {
                 var definition = GameDefinition.Instance;
                 var texts = definition.menuTheme.texts;
@@ -1774,8 +1792,7 @@ namespace SickOfIt.Playtest
                                 float skipUntil = Time.realtimeSinceStartup + 20f;
                                 while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && ShaftScreen.Current == null && Time.realtimeSinceStartup < skipUntil)
                                 {
-                                    yield return Tap(Key.Escape);
-                                    Run.Event("skip", $"video {playing}");
+                                    yield return SkipTap($"video {playing}");
                                     yield return WaitReal(2f);
                                 }
                                 if (Run.Done) yield break;
@@ -1880,9 +1897,41 @@ namespace SickOfIt.Playtest
                         yield return WaitReal(2f);
                     }
                 }
+                longWayReachedEnd = reachedEnd;
+                if (!finish)
+                    yield break;
                 Run.Progress(1f);
                 End(stageChecksFailed > 0 ? PlaytestOutcome.Done
                     : reachedEnd && lastOutcome == "completed" ? PlaytestOutcome.Won
+                    : lastOutcome == "died" ? PlaytestOutcome.Lost
+                    : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
+                    : PlaytestOutcome.Done);
+            }
+
+            /// <summary>Whether the last WastesClimb got through its last level (long-way reads it between its two legs).</summary>
+            bool longWayReachedEnd;
+
+            /// <summary>
+            /// long-way: the old stages over Floors 990-951 in order. Levels 39-41 through the real flow (41 leads on to Floor 960),
+            /// then level 42 (The Loop, level select only) loaded directly, each with the stage checks and its Shaft climb.
+            /// </summary>
+            public IEnumerator LongWayStages()
+            {
+                float started = Time.realtimeSinceStartup;
+                yield return WastesClimb(LongWayFrom, LongWayTo, LongWayStagesSeconds * 0.72f, finish: false);
+                if (Run.Done) yield break;
+                bool firstLeg = longWayReachedEnd && lastOutcome == "completed";
+                if (!firstLeg)
+                    Run.Event("stopped", $"the long way stopped before level {LongWayTo}'s end ({lastOutcome}); playing level {LongWayLoop} anyway");
+                if (GameplayWorld.Instance != null)
+                    GameplayWorld.Instance.Telemetry?.Finish("playtest left");
+                Run.Event("shortcut", $"level {LongWayLoop} (The Loop) is played only from the level select: loading it directly");
+                yield return WastesClimb(LongWayLoop, LongWayLoop, LongWayStagesSeconds - (Time.realtimeSinceStartup - started), keepChecks: true, finish: false);
+                if (Run.Done) yield break;
+                bool loop = longWayReachedEnd && lastOutcome == "completed";
+                Run.Progress(1f);
+                End(stageChecksFailed > 0 ? PlaytestOutcome.Done
+                    : firstLeg && loop ? PlaytestOutcome.Won
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
                     : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
                     : PlaytestOutcome.Done);
@@ -4588,6 +4637,7 @@ namespace SickOfIt.Playtest
                 float videoSeenAt = -1f;
                 while (!Run.Done && !LevelRunning(n))
                 {
+                    yield return ResumeStrayPause(n);
                     var restarted = GameplayWorld.Instance;
                     if (dropped && restarted != null && restarted.LevelNumber != n && LevelRunning(restarted.LevelNumber))
                     {
@@ -4629,8 +4679,7 @@ namespace SickOfIt.Playtest
                         // Watch a moment (for the recording), then skip like an impatient player.
                         if (Time.realtimeSinceStartup - videoSeenAt > 2f)
                         {
-                            yield return Tap(Key.Escape);
-                            Run.Event("skip", inVideo ? "video" : "death animation");
+                            yield return SkipTap(inVideo ? "video" : "death animation");
                             videoSeenAt = Time.realtimeSinceStartup + 3f;
                         }
                     }
@@ -4725,8 +4774,7 @@ namespace SickOfIt.Playtest
                         float skipUntil = Time.realtimeSinceStartup + 20f;
                         while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && ShaftScreen.Current == null && Time.realtimeSinceStartup < skipUntil)
                         {
-                            yield return Tap(Key.Escape);
-                            Run.Event("skip", $"video {playing}");
+                            yield return SkipTap($"video {playing}");
                             yield return WaitReal(2f);
                         }
                         if (Run.Done) yield break;
@@ -6593,7 +6641,13 @@ namespace SickOfIt.Playtest
             {
                 lastOutcome = "not started";
                 Run.Scene("Level " + n);
-                yield return Run.Until(() => LevelRunning(n), 45f, $"level {n} to start");
+                float startBy = Time.realtimeSinceStartup + 45f;
+                while (!Run.Done && !LevelRunning(n) && Time.realtimeSinceStartup < startBy)
+                {
+                    yield return ResumeStrayPause(n);
+                    yield return null;
+                }
+                yield return Run.Until(() => LevelRunning(n), 1f, $"level {n} to start");
                 if (Run.Done)
                     yield break;
 
@@ -6749,6 +6803,35 @@ namespace SickOfIt.Playtest
                     yield break;
                 Run.Scene("Main Menu");
                 yield return WaitReal(1.5f);
+            }
+
+            /// <summary>
+            /// Escape to skip a video or the death animation, only while no level is loaded: the video or death scene
+            /// lingers a moment after the next level loads, and Escape there pauses the level at 0 s, where it waits
+            /// for good (beta: the retry of Floor 1000 stuck on the pause menu).
+            /// </summary>
+            IEnumerator SkipTap(string what)
+            {
+                var world = GameplayWorld.Instance;
+                if (world != null && world.Player != null)
+                    yield break;
+                yield return Tap(Key.Escape);
+                Run.Event("skip", what);
+            }
+
+            /// <summary>
+            /// A level paused before it started (a skip press that landed on it) is resumed with P like a player,
+            /// so waiting for the level never stands on the pause menu.
+            /// </summary>
+            IEnumerator ResumeStrayPause(int n)
+            {
+                var world = GameplayWorld.Instance;
+                var hud = world != null ? world.Hud : null;
+                if (world == null || world.LevelNumber != n || hud == null || !hud.Paused || hud.ResultsOpen || hud.PickerOpen)
+                    yield break;
+                Run.Event("resume", $"level {n} was paused before it started (a skip press landed on it): P to resume");
+                yield return Tap(Key.P);
+                yield return WaitReal(0.5f);
             }
 
             IEnumerator Tap(Key key)
