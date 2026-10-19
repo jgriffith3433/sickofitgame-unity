@@ -29,6 +29,24 @@ namespace SickOfIt.Core
         [SerializeField] private bool isPaused;
         [SerializeField] private bool isRewinding;
 
+        /// <summary>
+        /// The longest real frame the clock follows while rewinding (s): a lag spike mid-rewind doesn't throw time
+        /// (and the juice) a second back at once.
+        /// </summary>
+        public const float MaxRewindFrame = 0.1f;
+
+        /// <summary>
+        /// Right after a rewind stops, the next frames are clamped to this (s), and so is Unity's
+        /// maximumDeltaTime, which caps how many fixed steps the simulation catches up in one frame. The stop
+        /// itself is a heavy frame (every history trimmed and recorded); without the clamp the frame after it
+        /// could run up to 1/3 s of shots, hits and lava unseen, and kill the hero through lag.
+        /// </summary>
+        public const float PostRewindMaxFrame = 1f / 30f;
+        public const int PostRewindFrames = 3;
+
+        private int postRewindFramesLeft;
+        private float savedMaximumDeltaTime = -1f;
+
         // Events
         public event Action<float> OnTimeChanged;       // fires every frame with current time
         public event Action OnRewindStarted;
@@ -66,13 +84,26 @@ namespace SickOfIt.Core
         {
             if (_instance == this)
                 _instance = null;
+            EndPostRewindClamp();
         }
 
         private void Update()
         {
             if (isPaused) return;
 
-            float delta = UnityEngine.Time.deltaTime * timeScale * Direction;
+            float frame = UnityEngine.Time.deltaTime;
+            if (isRewinding)
+            {
+                frame = Mathf.Min(frame, MaxRewindFrame);
+            }
+            else if (postRewindFramesLeft > 0)
+            {
+                frame = Mathf.Min(frame, PostRewindMaxFrame);
+                if (--postRewindFramesLeft == 0)
+                    EndPostRewindClamp();
+            }
+
+            float delta = frame * timeScale * Direction;
             currentTime += delta;
 
             // Don't go below 0
@@ -134,7 +165,25 @@ namespace SickOfIt.Core
             if (!isRewinding) return;
             isRewinding = false;
             timeScale = 1f;
+            BeginPostRewindClamp();
             OnRewindStopped?.Invoke();
+        }
+
+        private void BeginPostRewindClamp()
+        {
+            postRewindFramesLeft = PostRewindFrames;
+            if (savedMaximumDeltaTime < 0f)
+                savedMaximumDeltaTime = UnityEngine.Time.maximumDeltaTime;
+            // Unity wants maximumDeltaTime >= fixedDeltaTime.
+            UnityEngine.Time.maximumDeltaTime = Mathf.Max(PostRewindMaxFrame, UnityEngine.Time.fixedDeltaTime);
+        }
+
+        private void EndPostRewindClamp()
+        {
+            postRewindFramesLeft = 0;
+            if (savedMaximumDeltaTime < 0f) return;
+            UnityEngine.Time.maximumDeltaTime = savedMaximumDeltaTime;
+            savedMaximumDeltaTime = -1f;
         }
 
         /// <summary>

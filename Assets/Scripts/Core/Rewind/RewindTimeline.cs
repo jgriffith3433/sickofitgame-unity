@@ -10,6 +10,11 @@ namespace SickOfIt.Core.Rewind
     /// Object pools register themselves so shots from a discarded future can be reclaimed.
     /// 
     /// Subscribes to GameClock events to drive recording and restoring.
+    ///
+    /// Rewind restores every frame, so this loop must stay cheap with a thousand rewindables (every entity,
+    /// shot and floor piece has a few, and fired shots stay registered for the whole 30 s window): no
+    /// allocations, no list searches, and nothing restored on an object that is switched off. What it costs
+    /// is measured by <see cref="RewindPerf"/>.
     /// </summary>
     public class RewindTimeline : MonoBehaviour
     {
@@ -24,9 +29,19 @@ namespace SickOfIt.Core.Rewind
         public float MaxHistorySeconds => maxHistorySeconds;
 
         private readonly List<IRewindable> rewindables = new List<IRewindable>();
+        // The GameObject of each rewindable (same index), so the restore loop never casts or asks Unity for it.
+        private readonly List<GameObject> objects = new List<GameObject>();
+        private readonly HashSet<IRewindable> registered = new HashSet<IRewindable>();
         private readonly List<ObjectPool> trackedPools = new List<ObjectPool>();
         private float lastRecordTime;
         private bool subscribedToGameClock;
+
+        // RewindPerf: the frame being measured (its kind, the game time it moved, the timeline's work in it).
+        private bool measuring;
+        private bool measuredRewinding;
+        private float measuredStep;
+        private double measuredWork;
+        private float lastTickTime;
 
         // ─── Singleton lifecycle ──────────────────────────────────────
 
@@ -47,13 +62,21 @@ namespace SickOfIt.Core.Rewind
 
         public void Register(IRewindable r)
         {
-            if (!rewindables.Contains(r))
-                rewindables.Add(r);
+            if (r == null || !registered.Add(r))
+                return;
+            rewindables.Add(r);
+            objects.Add(r is Component c ? c.gameObject : null);
         }
 
         public void Unregister(IRewindable r)
         {
-            rewindables.Remove(r);
+            if (r == null || !registered.Remove(r))
+                return;
+            int i = rewindables.IndexOf(r);
+            if (i < 0)
+                return;
+            rewindables.RemoveAt(i);
+            objects.RemoveAt(i);
         }
 
         public void RegisterPool(ObjectPool pool)
@@ -96,7 +119,17 @@ namespace SickOfIt.Core.Rewind
 
         private void OnClockTick(float time)
         {
-            if (GameClock.Instance.IsRewinding)
+            // This tick starts a new frame: the last one is over (Time.unscaledDeltaTime is its length).
+            if (measuring)
+                RewindPerf.AddFrame(Time.unscaledDeltaTime, measuredRewinding, measuredStep, measuredWork);
+            long start = RewindPerf.Now();
+            measuring = true;
+            measuredWork = 0;
+            measuredRewinding = GameClock.Instance.IsRewinding;
+            measuredStep = Mathf.Abs(time - lastTickTime);
+            lastTickTime = time;
+
+            if (measuredRewinding)
             {
                 RestoreAll(time);
             }
@@ -111,16 +144,28 @@ namespace SickOfIt.Core.Rewind
                     lastRecordTime = time;
                 }
             }
+            measuredWork += RewindPerf.MillisecondsSince(start);
         }
 
         private void OnRewindStarted()
         {
+            long start = RewindPerf.Now();
+            int active = 0, longest = 0;
             for (int i = 0; i < rewindables.Count; i++)
+            {
                 rewindables[i].OnRewindStart();
+                if (objects[i] != null && objects[i].activeInHierarchy)
+                    active++;
+                if (rewindables[i] is IRewindHistory h && h.HistoryCount > longest)
+                    longest = h.HistoryCount;
+            }
+            RewindPerf.RewindStarted(GameClock.Instance != null ? GameClock.Instance.Time : 0f, rewindables.Count, active, longest);
+            measuredWork += RewindPerf.MillisecondsSince(start);
         }
 
         private void OnRewindStopped()
         {
+            long start = RewindPerf.Now();
             for (int i = 0; i < rewindables.Count; i++)
                 rewindables[i].OnRewindStop();
 
@@ -137,6 +182,8 @@ namespace SickOfIt.Core.Rewind
                 if (trackedPools[i] != null)
                     trackedPools[i].ReclaimDiscarded(time);
             }
+            measuredWork += RewindPerf.MillisecondsSince(start);
+            RewindPerf.RewindStopped(time);
         }
 
         // ─── Record / Restore ─────────────────────────────────────────
@@ -149,7 +196,7 @@ namespace SickOfIt.Core.Rewind
 
                 // Skip inactive objects UNLESS they're RewindableGameObject
                 // (which needs to record active state even when inactive)
-                if (r is MonoBehaviour mb && !mb.gameObject.activeSelf && !r.IsGameObjectRewindable)
+                if (!r.IsGameObjectRewindable && objects[i] != null && !objects[i].activeSelf)
                     continue;
 
                 r.RecordState(time);
@@ -180,11 +227,18 @@ namespace SickOfIt.Core.Rewind
                     rewindables[i].RestoreState(time);
             }
 
-            // Phase 2: Restore everything else (transform, health, animator, etc.)
+            // Phase 2: Restore everything else (transform, health, animator, etc.) on objects that are on.
+            // Phase 1 has already switched on everything this moment needs. A switched-off object (a spent shot
+            // held for the rewind window, a dead enemy) shows nothing; it gets its state the frame phase 1
+            // turns it back on, and a rewind that ends with it off trims its history as before. Recording skips
+            // them the same way.
             for (int i = 0; i < rewindables.Count; i++)
             {
-                if (!rewindables[i].IsGameObjectRewindable)
-                    rewindables[i].RestoreState(time);
+                if (rewindables[i].IsGameObjectRewindable)
+                    continue;
+                if (objects[i] != null && !objects[i].activeInHierarchy)
+                    continue;
+                rewindables[i].RestoreState(time);
             }
         }
 

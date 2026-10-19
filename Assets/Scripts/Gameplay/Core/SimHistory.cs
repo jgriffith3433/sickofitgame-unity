@@ -14,7 +14,7 @@ namespace SickOfIt.Gameplay
     /// rewind to just after the event can't roll the decision back and repeat it.
     /// Storage is recycled, so recording does not allocate once the buffer is full.
     /// </summary>
-    public sealed class SimHistory : MonoBehaviour, IRewindable
+    public sealed class SimHistory : MonoBehaviour, IRewindable, IRewindHistory
     {
         const int Capacity = 1024;
 
@@ -41,6 +41,7 @@ namespace SickOfIt.Gameplay
         Func<bool> isReady;
 
         public int Count => count;
+        public int HistoryCount => count;
 
         /// <summary>Records <paramref name="state"/>. <paramref name="ready"/> (optional) says whether it has been set up yet; nothing is recorded before.</summary>
         public void Bind(ISimState state, Func<bool> ready = null)

@@ -17,6 +17,7 @@ using SickOfIt.Gameplay;
 using SickOfIt.VideoFrameExtractor.Runtime;
 using Object = UnityEngine.Object;
 using PlaytestBot = SickOfIt.Gameplay.PlaytestBot;
+using RewindPerf = SickOfIt.Core.Rewind.RewindPerf;
 
 namespace SickOfIt.Playtest
 {
@@ -71,6 +72,16 @@ namespace SickOfIt.Playtest
 
         /// <summary>The analytics scenario's level: the Meadow, where a death just plays the level again (no run to end).</summary>
         public const int AnalyticsLevel = 1;
+
+        /// <summary>
+        /// The rewind-perf scenario: a busy Circle X floor (the Magma King's arena: boulders, shockwaves, fireballs and his
+        /// imp guards), played forward, then rewound for a few seconds, <see cref="RewindPerfRewinds"/> times, with
+        /// RewindPerf's frame times compared.
+        /// </summary>
+        public const string RewindPerfId = "rewind-perf", RewindPerfLevel = MagmaKingLevel;
+        public const int RewindPerfRewinds = 3;
+        /// <summary>Real seconds R is held per rewind (the juice is topped up first, a setup shortcut) and game seconds played before each.</summary>
+        public const float RewindPerfHold = 3f, RewindPerfPlay = 12f;
 
         /// <summary>The level the imp-death scenario plays: Level 1's "imps" phase brings four, one at a time first.</summary>
         public const int ImpLevel = 1;
@@ -519,6 +530,12 @@ namespace SickOfIt.Playtest
                 "recorded 1 s in, the bot plays a few seconds, P, Restart Level; the restarted level 1 s in must match the fresh one: one Level scene " +
                 "and a new world, the clock, the hero's place, his hearts, the floor counter and distance, and the first moving pieces (ids, states, " +
                 "places). Each beat is a check event", 90, "level"));
+            list.Add(new PlaytestScenario(RewindPerfId, $"Rewind's frame rate on a busy floor: \"{RewindPerfLevel}\" (Circle X's top, the Magma King's arena, " +
+                $"loaded directly, a setup shortcut; a death loads it again) played by the bot for {RewindPerfPlay:0} s, then R held for {RewindPerfHold:0} s " +
+                $"(the juice topped up first, a setup shortcut; the bot's own rewinds off), {RewindPerfRewinds} times. The average and worst frame time while " +
+                "playing and while rewinding, the timeline's own work, how many rewindables and how long their history, and the game time the clock takes on " +
+                "the frames right after a rewind (clamped, so lag can't kill the hero). Checks: rewinding averages no worse than 1.5x normal play (or +5 ms), " +
+                "no rewind frame over 100 ms, the post-rewind step clamped. rewind-perf and check events, rewindPerf.* metrics", 240, "level"));
             list.Add(new PlaytestScenario(AimGuideScenario, $"The aim guide (player.json aimGuide): level {AimGuideLevel} (the Meadow, loaded directly, a setup " +
                 "shortcut) played by the bot through real input; every volley logs the guide's line directions on the frame it fired and the shots' flight " +
                 "directions read back from the projectiles, and they must match (aim events for the first volleys of each part and any mismatch, a check per part). Then the gamepad stick held: one " +
@@ -805,6 +822,8 @@ namespace SickOfIt.Playtest
                 yield return session.AimGuideRun();
             else if (id == "restart")
                 yield return session.RestartRun();
+            else if (id == RewindPerfId)
+                yield return session.RewindPerfRun();
             else if (id == "portal-audio")
                 yield return session.PortalAudio();
             else if (id == "cutscene")
@@ -2859,6 +2878,148 @@ namespace SickOfIt.Playtest
                 End(restartFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
             }
 
+            // ─── rewind-perf: frame times while rewinding a busy floor vs playing it ─────
+
+            int rewindPerfPassed, rewindPerfFailed;
+
+            void RewindPerfCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    rewindPerfPassed++;
+                    Run.Event("check", $"rewind-perf {beat}: ok ({detail})");
+                }
+                else
+                {
+                    rewindPerfFailed++;
+                    Run.Event("check", $"rewind-perf {beat}: FAILED ({detail})");
+                    Run.Problem(PlaytestSeverity.Bug, $"rewind-perf {beat}: {detail}");
+                }
+            }
+
+            void OnRewindPerf(string line) => Run.Event("rewind-perf", line);
+
+            public IEnumerator RewindPerfRun()
+            {
+                var definition = GameDefinition.Instance;
+                int n = definition.levels.FindIndex(l => l != null && l.levelName == RewindPerfLevel) + 1;
+                if (n <= 0)
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"rewind-perf: no level \"{RewindPerfLevel}\" in game.json");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+
+                RewindPerf.Reported += OnRewindPerf;
+                int rewinds = 0, peakLive = 0;
+                bool measuring = false;
+                try
+                {
+                    for (int attempt = 1; attempt <= 3 && rewinds < RewindPerfRewinds && !Run.Done; attempt++)
+                    {
+                        Run.Event("shortcut", $"load level {n} ({RewindPerfLevel}) directly, try {attempt}");
+                        var load = LoadLevel(n);
+                        if (load != null)
+                            yield return load;
+                        float playedSince = -1f;
+                        bool holding = false;
+                        yield return PlayLevel(n, 0f, now =>
+                        {
+                            var world = GameplayWorld.Instance;
+                            if (bot != null)
+                                bot.useRewind = false;
+                            if (world != null && world.Live.Count > peakLive)
+                                peakLive = world.Live.Count;
+                            if (holding)
+                                return null;
+                            // Measure from 3 s in: the level's own loading frames aren't play.
+                            if (!measuring && now >= 3f)
+                            {
+                                measuring = true;
+                                RewindPerf.Reset();
+                                Run.Event("rewind-perf", $"measuring from {now:0.0} s");
+                            }
+                            if (playedSince < 0f)
+                                playedSince = Time.realtimeSinceStartup;
+                            if (!measuring || Time.realtimeSinceStartup - playedSince < RewindPerfPlay / Speed)
+                                return null;
+                            return RewindPerfHoldOnce(world, rewound => { holding = false; playedSince = Time.realtimeSinceStartup; if (rewound) rewinds++; }, () => holding = true);
+                        }, (attempt - 1) / 3f, attempt / 3f, 200f, until: () => rewinds >= RewindPerfRewinds && !holding);
+                        if (Run.Done)
+                            yield break;
+                        if (rewinds < RewindPerfRewinds)
+                            Run.Event("rewind-perf", $"try {attempt} ended ({lastOutcome}) after {rewinds} rewind(s)");
+                    }
+                }
+                finally
+                {
+                    RewindPerf.Reported -= OnRewindPerf;
+                }
+
+                var forward = RewindPerf.Forward;
+                var rewinding = RewindPerf.Rewinding;
+                var after = RewindPerf.AfterRewind;
+                Run.Metric("rewindPerf.rewinds", RewindPerf.Rewinds);
+                Run.Metric("rewindPerf.forward.avgMs", forward.AverageMs);
+                Run.Metric("rewindPerf.forward.worstMs", forward.WorstMs);
+                Run.Metric("rewindPerf.forward.workMs", forward.AverageWorkMs);
+                Run.Metric("rewindPerf.rewind.avgMs", rewinding.AverageMs);
+                Run.Metric("rewindPerf.rewind.worstMs", rewinding.WorstMs);
+                Run.Metric("rewindPerf.rewind.workMs", rewinding.AverageWorkMs);
+                Run.Metric("rewindPerf.rewind.worstWorkMs", rewinding.WorstWorkMs);
+                Run.Metric("rewindPerf.after.worstMs", after.WorstMs);
+                Run.Metric("rewindPerf.after.worstStep", RewindPerf.WorstStepAfterRewind);
+                Run.Metric("rewindPerf.rewindables", RewindPerf.Rewindables);
+                Run.Metric("rewindPerf.activeRewindables", RewindPerf.ActiveRewindables);
+                Run.Metric("rewindPerf.longestHistory", RewindPerf.LongestHistory);
+                Run.Metric("rewindPerf.peakEntities", peakLive);
+                Run.Event("rewind-perf", $"playing: {forward}");
+                Run.Event("rewind-perf", $"rewinding: {rewinding}");
+                Run.Event("rewind-perf", $"just after a rewind: {after}, longest clock step {RewindPerf.WorstStepAfterRewind * 1000f:0.0} ms");
+                Run.Event("rewind-perf", $"{RewindPerf.Rewindables} rewindables ({RewindPerf.ActiveRewindables} on) at the last rewind, longest history " +
+                                         $"{RewindPerf.LongestHistory} snapshots, up to {peakLive} live entities");
+
+                RewindPerfCheck("rewinds", rewinds >= RewindPerfRewinds, $"{rewinds} of {RewindPerfRewinds} rewinds held on level {n}");
+                if (rewinding.Frames > 0 && forward.Frames > 0)
+                {
+                    double allowed = Math.Max(forward.AverageMs * 1.5, forward.AverageMs + 5.0);
+                    RewindPerfCheck("smooth", rewinding.AverageMs <= allowed,
+                        $"rewinding averages {rewinding.AverageMs:0.0} ms a frame, playing {forward.AverageMs:0.0} ms (allowed {allowed:0.0})");
+                    RewindPerfCheck("no spikes", rewinding.WorstMs <= 100.0,
+                        $"worst rewind frame {rewinding.WorstMs:0.0} ms (worst playing frame {forward.WorstMs:0.0} ms)");
+                }
+                if (after.Frames > 0)
+                    RewindPerfCheck("clamped after", RewindPerf.WorstStepAfterRewind <= GameClock.PostRewindMaxFrame * 1.05f + 0.0005f,
+                        $"the clock moved at most {RewindPerf.WorstStepAfterRewind * 1000f:0.0} ms of game time on a frame right after a rewind " +
+                        $"(clamp {GameClock.PostRewindMaxFrame * 1000f:0.0} ms), the frames themselves up to {after.WorstMs:0.0} ms");
+
+                Run.Metric("rewindPerf.passed", rewindPerfPassed);
+                Run.Metric("rewindPerf.failed", rewindPerfFailed);
+                Run.Progress(1f);
+                End(rewindPerfFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
+            }
+
+            /// <summary>Tops up the juice (a setup shortcut: it isn't rewound state) and holds R for RewindPerfHold real seconds.</summary>
+            IEnumerator RewindPerfHoldOnce(GameplayWorld world, Action<bool> done, Action started)
+            {
+                started();
+                var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
+                if (budget != null)
+                {
+                    float need = RewindPerfHold * 3.5f;
+                    if (budget.Max < need)
+                        budget.RaiseMax(need - budget.Max, false);
+                    budget.Add(budget.Max);
+                    Run.Event("shortcut", $"rewind juice topped up to {budget.Juice:0.0} s");
+                }
+                float before = GameClock.Instance != null ? GameClock.Instance.Time : 0f;
+                yield return HoldRewind(RewindPerfHold);
+                float back = before - (GameClock.Instance != null ? GameClock.Instance.Time : 0f);
+                Run.Event("rewind", $"held R {RewindPerfHold:0.0} s: {back:0.0} s of game time back, {(world != null ? world.Live.Count : 0)} live entities" +
+                                    (back < 0.5f ? " (no rewind: locked by the scene or refused; tried again later)" : ""));
+                done(back >= 0.5f);
+            }
+
             // ─── aim-guide: the laser line from the muzzle matches the shots ─────
 
             int aimPassed, aimFailed;
@@ -2962,10 +3123,10 @@ namespace SickOfIt.Playtest
                     var controller = GameplayWorld.Instance.PlayerController;
                     BeginAimPhase(phase, 1 + Mathf.Max(0, controller.ExtraShots));
                     Run.Event("aim", $"{phase}: {controller.ExtraShots} extra shot(s), {controller.ShotSpreadDegrees:0.#}° apart");
-                    yield return PlayLevel(n, 90f, until: () => aimPhaseVolleys >= AimGuideVolleys);
+                    yield return PlayLevel(n, 90f, until: () => aimPhaseVolleys >= SickOfItPlaytest.AimGuideVolleys);
                     if (Run.Done)
                         yield break;
-                    if (aimPhaseVolleys >= AimGuideVolleys || attempt == 3)
+                    if (aimPhaseVolleys >= SickOfItPlaytest.AimGuideVolleys || attempt == 3)
                     {
                         EndAimPhase(beat);
                         yield break;

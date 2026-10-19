@@ -176,6 +176,12 @@ namespace SickOfIt.Core.Rewind
 
         protected override float GetSnapshotTime(GOSnapshot snapshot) => snapshot.time;
 
+        // On/off only changes in a few snapshots, so a rewind restores the same one for many frames in a row
+        // (every spent shot held for the rewind window does). Applying it again only re-ran the pool bookkeeping.
+        protected override bool SkipsRepeatedRestore => true;
+
+        protected override bool StillApplied(GOSnapshot snapshot) => gameObject.activeSelf == snapshot.activeSelf;
+
         /// <summary>
         /// If rewinding past our earliest recording, this object didn't exist yet → deactivate.
         /// Playing forward past that time turns it back on via CatchUp.
