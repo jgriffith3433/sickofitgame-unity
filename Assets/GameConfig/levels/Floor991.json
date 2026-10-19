@@ -403,71 +403,6 @@
         ]
       },
       {
-        "name": "the landing",
-        "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "runSequence",
-            "steps": [
-              {
-                "type": "setFloor",
-                "floor": 990,
-                "skipMilestones": true
-              },
-              {
-                "type": "setCounter",
-                "name": "lavaSpeed",
-                "value": 0.0
-              },
-              {
-                "type": "showText",
-                "text": "THE SACK LIFT: IMPS ONLY",
-                "duration": 2.4,
-                "style": "Banner",
-                "color": "#FFD27A"
-              },
-              {
-                "type": "wait",
-                "seconds": 2.6
-              },
-              {
-                "type": "showText",
-                "text": "Imps only. I'll squeeze.",
-                "duration": 2.6,
-                "style": "Subtitle",
-                "sound": "vo_sacklift_at"
-              },
-              {
-                "type": "wait",
-                "seconds": 2.6
-              },
-              {
-                "type": "offerShortcut",
-                "id": "sackLift",
-                "prompt": "The Sack Lift",
-                "title": "Ride the Sack Lift",
-                "description": "The imps' lift, a cage of chains that hauls the sacks up through the Wastes. IMPS ONLY. Hell won't say how far it goes.",
-                "stayTitle": "Keep climbing",
-                "stayDescription": "The long way, floor by floor. Pick a Grudge at the top.",
-                "costGrudges": 0,
-                "costDiamonds": 20,
-                "costText": "FARE: {0} DIAMONDS",
-                "cantPayText": "CAN'T AFFORD THE FARE",
-                "toFloor": 960,
-                "nextLevel": 12,
-                "color": "#FFC23D"
-              }
-            ]
-          }
-        ]
-      },
-      {
         "name": "takes the Sack Lift",
         "when": {
           "type": "shortcutChosen",
@@ -622,6 +557,17 @@
                 "type": "hideBossBar"
               },
               {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "gantrySurge"
+                }
+              },
+              {
                 "type": "slowMotion",
                 "scale": 0.35,
                 "duration": 1.2
@@ -702,10 +648,77 @@
               },
               {
                 "type": "wait",
-                "seconds": 3.0
+                "seconds": 2.0
               },
               {
-                "type": "nextSection"
+                "type": "setFloor",
+                "floor": 990,
+                "skipMilestones": true
+              },
+              {
+                "type": "showText",
+                "text": "THE SACK LIFT: IMPS ONLY",
+                "duration": 2.4,
+                "style": "Banner",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "showText",
+                "text": "Imps only. I'll squeeze.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_sacklift_at"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "offerShortcut",
+                "id": "sackLift",
+                "prompt": "The Sack Lift",
+                "title": "Ride the Sack Lift",
+                "description": "The imps' lift, a cage of chains that hauls the sacks up through the Wastes. IMPS ONLY. Hell won't say how far it goes.",
+                "stayTitle": "Keep climbing",
+                "stayDescription": "The long way, floor by floor. Pick a Grudge at the top.",
+                "costGrudges": 0,
+                "costDiamonds": 20,
+                "costText": "FARE: {0} DIAMONDS",
+                "cantPayText": "CAN'T AFFORD THE FARE",
+                "toFloor": 960,
+                "nextLevel": 12,
+                "color": "#FFC23D"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "not",
+                  "trigger": {
+                    "type": "anyOf",
+                    "triggers": [
+                      {
+                        "type": "shortcutChosen",
+                        "shortcut": "sackLift",
+                        "taken": true
+                      },
+                      {
+                        "type": "shortcutChosen",
+                        "shortcut": "sackLift",
+                        "taken": false
+                      }
+                    ]
+                  }
+                },
+                "then": [
+                  {
+                    "type": "goToPhase",
+                    "phase": "longWay"
+                  }
+                ]
               }
             ]
           }

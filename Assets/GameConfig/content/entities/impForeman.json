@@ -244,6 +244,13 @@
           "signal": "fmClimb"
         },
         {
+          "type": "applyStatus",
+          "target": {
+            "self": true
+          },
+          "effect": "sceneUntouchable"
+        },
+        {
           "type": "kill",
           "target": {
             "entity": "impHauler"
@@ -276,6 +283,13 @@
         {
           "type": "emit",
           "signal": "fmPhase2"
+        },
+        {
+          "type": "removeStatus",
+          "target": {
+            "self": true
+          },
+          "effect": "sceneUntouchable"
         },
         {
           "type": "showText",

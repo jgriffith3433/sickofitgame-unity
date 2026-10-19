@@ -268,12 +268,15 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   stones and the collapsing bridge, 991 the Imp Foreman's climbing arena with the floor-boss checks: voiced intro, boss
   bar, the fight's signals in order (`fmIntro`, `fmFight`, `fmClimb`, `fmPhase2`, `fmDefeat`, `fmPile`), every whip
   crack and sack ember 1+ s after its glow, at most 3 enemies, the defeat in slow motion with 20+ diamonds, 60-180 s;
-  `check`, `signal`, `attack`, `boss` events; ~18 min), `circle-x-route` (Circle X's played route: Floor 991, level
-  11, loaded directly with the Sack Lift's 20-diamond fare topped up (setup shortcut), then the real flow to Floor 901,
+  `check`, `signal`, `attack`, `boss` events; ~18 min), `circle-x-route` (Circle X's played route: first the long
+  way, Floor 991 (level 11) loaded directly and the Sack Lift declined (the bot presses 1): the choice within ~10 s of the
+  Foreman's defeat or the run stops there (`level11.exit`), the counter on 990, the Grudge pick, the Shaft, level 39
+  starting on Floor 990 (`level11.longWay.*`; the Shaft's save put back); then Floor 991 loaded directly again with the
+  Sack Lift's 20-diamond fare topped up (setup shortcut), then the real flow to Floor 901,
   the bot taking every shortcut: the Sack Lift's choice with its fare, paid, the counter jumping 990 to 960, the Shaft's
   dotted jump, Floors 960-951 (the Pile Keeper on 951), the King's Chimney (950 to 910, Floor 910 harder for it: the
   King's "Came up my chimney" line), Floors 910-902 and the Magma King on 901, his defeat lighting the Waystone; the old
-  10-floor stages, levels 39-46, never played; `check` events `levelN.shortcut.*`; ~60 min), `shaft` (Video2 loaded directly with
+  10-floor stages, levels 39-46, never played past level 39's start; `check` events `levelN.shortcut.*`; ~65 min), `shaft` (Video2 loaded directly with
   the Shaft's save reset, skipped: the first plunge past the 10 Circles to FLOOR 1,000, the welcome lines, Continue to Level 2, the
   bot plays it, then the marker's climb to 999 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
   `music` (Hell's soundtrack, Docs/Story.md "Music": the `shaft` run listening to the music, then Level 15 loaded directly and fought
