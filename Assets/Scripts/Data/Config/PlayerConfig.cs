@@ -48,6 +48,8 @@ namespace SickOfIt.Data.Config
         public float projectileSpriteAngle = 0f;
         [Tooltip("Where shots leave the weapon, relative to the player's center in world units (facing right); x is mirrored when aiming left.")]
         public Vector2 projectileSpawnOffset = new Vector2(0.5f, 0f);
+        [Tooltip("The aim guide: a faint laser line from the muzzle along each shot his next volley fires.")]
+        public AimGuideConfig aimGuide = new AimGuideConfig();
 
         [Header("Physics")]
         public float colliderRadius = 0.3f;
@@ -133,6 +135,29 @@ namespace SickOfIt.Data.Config
 
         [Header("Upgrades")]
         public List<UpgradeDefinition> availableUpgrades = new List<UpgradeDefinition>();
+    }
+
+    /// <summary>
+    /// The aim guide (AimGuide): one thin, see-through line per shot of the next volley, drawn from the muzzle in the
+    /// direction the shot will fly. Presentation only.
+    /// </summary>
+    [Serializable]
+    public class AimGuideConfig
+    {
+        [Tooltip("Draw the guide at all.")]
+        public bool enabled = true;
+        [Tooltip("Line colour (its alpha is ignored: see alpha).")]
+        public Color color = new Color(1f, 0.85f, 0.45f, 1f);
+        [Tooltip("Opacity at the muzzle of the main shot's line (it fades out to nothing at its tip).")]
+        public float alpha = 0.4f;
+        [Tooltip("Opacity at the muzzle of the extra shots' lines (spread upgrades), fainter than the main one.")]
+        public float extraShotAlpha = 0.22f;
+        [Tooltip("Length as a fraction of the screen's short side.")]
+        public float length = 0.16f;
+        [Tooltip("Thickness as a fraction of the screen's short side.")]
+        public float width = 0.004f;
+        [Tooltip("Draw order in the Player band; below 0 keeps it under platforms, hazards, enemies, pickups and bullets.")]
+        public int sortingOrder = -1;
     }
 
     /// <summary>

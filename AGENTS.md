@@ -116,6 +116,13 @@ Assets/GameConfig/
   in theme.json `hud` colors: `marker` ring and fangs, `healthFill` dot on the hotspot, `worldBarOutline` rim; 32x32,
   `Cursor.SetCursor`, a CSS cursor in WebGL). The pause, death and results screens, the Grudge picker, HUD buttons and
   every menu outside a level keep the system arrow (`GameplayHud.UpdateCursor`).
+- **Aim guide** (`Gameplay/Presentation/AimGuide.cs`, player.json `aimGuide`: color, alpha, extraShotAlpha, length and
+  width as fractions of the screen's short side, sortingOrder): a short, faint laser line from the muzzle along each shot
+  of the next volley (one per shot with the spread Grudge). Its directions come from `PlayerController.TryGetAimGuide`,
+  which aims through `AimVolley`, the same function `FireProjectile` fires with: change how shots aim there, never in the
+  guide. While firing it follows the aim; with the mouse it shows where a click goes. Drawn under everything in the Player
+  band; hidden when he can't fire (input locked, a script walking or pulling him, rewind, pause, picker, results, death).
+  Checked by the `aim-guide` playtest.
 - **Feel**: hit pops/sparks/dust (`Core/Fx`), red flash + shake + hit-stop on damage, player blink during invincibility,
   pause (Esc/P/Start), settings (Sound on/off, volumes, shake, hints in `GameSettings`; Sound/Music/Effects are the
   Hawkes standard `hawkes.sound` JSON `{ on, music, sfx }` in PlayerPrefs), "undo your death" countdown
@@ -358,6 +365,11 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   holding the gamepad's left stick down (its next foothold right under them), and holds down on the carved landing,
   which stays solid; `PlayerController.JumpedUpThrough`/`DroppedThrough`; `check` and `one-way` events; ~2 min; the
   move touch pulled down takes the same path but the bot has no touchscreen),
+  `aim-guide` (the aim guide: Level 1 loaded directly, every volley's guide lines on the frame it fired against the shots'
+  flight directions read back from the projectiles (`aim` events), the stick held (one short line under the gameplay), held
+  through a rewind and the pause (hidden), the mouse hovering and clicking; then the same with 2 levels of `spreadShot`
+  (setup shortcut, 3 lines); then dead and in the `cutsceneTest` scene with the stick held (hidden); `check` events
+  `aim-guide <beat>`; ~5 min),
   `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game
