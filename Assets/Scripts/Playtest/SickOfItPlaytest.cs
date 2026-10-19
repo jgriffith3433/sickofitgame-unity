@@ -483,7 +483,10 @@ namespace SickOfIt.Playtest
                                          (PathFloor(levels[levels.Count - 1]) > 0 ? $" (to Floor {PathFloor(levels[levels.Count - 1])})" : "");
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        public static void Register()
+        public static void Register() => GameDefinition.WhenReady(RegisterNow);
+
+        // The scenario list comes from the levels, so it waits for a player build's GameDefinition bundle.
+        static void RegisterNow()
         {
             HawkesPlaytest.Register(Product, Scenarios(), Bot, IsReady, StopActive);
             HawkesPlaytest.Finished -= OnFinished;

@@ -286,6 +286,18 @@ namespace SickOfIt.Tools.Editor
             }
         }
 
+        private void Step_SplitPlayerData()
+        {
+            Log("Step 1b: Moving GameDefinition and its art and sound out of the player data into Addressables...");
+            PlayerDataSplit.Begin(Log);
+        }
+
+        private void Step_CheckFileSizes()
+        {
+            Log($"Step 6b: Checking v{newVersion}'s file sizes (GitHub refuses files over 100 MB)...");
+            BuildOutputGuard.Check(Path.Combine(GameFolder, $"v{newVersion}"), Log);
+        }
+
         private void Step_BuildAddressables()
         {
             Log("Step 2: Building Addressables (DXT for desktop, ASTC for phones)...");
@@ -353,10 +365,10 @@ namespace SickOfIt.Tools.Editor
             Log($"Step 6: Building WebGL to {buildPath}...");
 
             // Get all enabled scenes from build settings
-            string[] scenes = EditorBuildSettings.scenes
+            string[] scenes = PlayerDataSplit.PlayerScenes(EditorBuildSettings.scenes
                 .Where(s => s.enabled)
                 .Select(s => s.path)
-                .ToArray();
+                .ToArray());
 
             if (scenes.Length == 0)
             {
@@ -741,19 +753,32 @@ namespace SickOfIt.Tools.Editor
                 Step_DeleteServerData();
                 Log("");
 
-                Step_BuildAddressables();
-                Log("");
+                try
+                {
+                    Step_SplitPlayerData();
+                    Log("");
 
-                Step_CreateVersionFolder();
-                Log("");
+                    Step_BuildAddressables();
+                    Log("");
 
-                Step_DeleteOldVersionFolder();
-                Log("");
+                    Step_CreateVersionFolder();
+                    Log("");
 
-                Step_CopyAddressables();
-                Log("");
+                    Step_DeleteOldVersionFolder();
+                    Log("");
 
-                Step_BuildWebGL();
+                    Step_CopyAddressables();
+                    Log("");
+
+                    Step_BuildWebGL();
+                    Log("");
+                }
+                finally
+                {
+                    PlayerDataSplit.End(Log);
+                }
+
+                Step_CheckFileSizes();
                 Log("");
 
                 Step_FindReplaceVersion();

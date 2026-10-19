@@ -25,6 +25,12 @@ namespace SickOfIt.Gameplay
         {
             if (Application.isEditor)
                 return; // the editor always plays the local config
+            // A player build loads GameDefinition from its bundle first (GameDefinitionBoot).
+            GameDefinition.WhenReady(StartFetch);
+        }
+
+        static void StartFetch()
+        {
             var definition = GameDefinition.Instance;
             if (definition == null || string.IsNullOrEmpty(definition.remoteContentUrl))
                 return;

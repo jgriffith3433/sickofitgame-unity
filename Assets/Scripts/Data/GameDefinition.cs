@@ -348,22 +348,59 @@ namespace SickOfIt.Data
         // =========================================================================
 
         private static GameDefinition _instance;
+        private static System.Action whenReady;
+
+        /// <summary>Its Addressables address in a player build, where it isn't in Resources (see GameDefinitionBoot).</summary>
+        public const string Address = "GameDefinition";
 
         /// <summary>
-        /// Runtime accessor. Loads from Resources/GameDefinition.
+        /// True while a player build loads the definition from its Addressables bundle (the Boot scene). Until
+        /// <see cref="Provide"/>, <see cref="Instance"/> is null without an error.
+        /// </summary>
+        public static bool Loading { get; set; }
+
+        /// <summary>
+        /// Runtime accessor. The editor and tests load it from Resources/GameDefinition; a player build gets it from
+        /// its Addressables bundle at boot (<see cref="Provide"/>), so its art and sound stay out of the player data.
         /// </summary>
         public static GameDefinition Instance
         {
             get
             {
-                if (_instance == null)
+                if (_instance == null && !Loading)
                 {
                     _instance = Resources.Load<GameDefinition>("GameDefinition");
+#if UNITY_EDITOR
+                    // During a deploy's player build it sits outside Resources for a while (PlayerDataSplit).
+                    if (_instance == null && !Application.isPlaying)
+                        _instance = UnityEditor.AssetDatabase.LoadAssetAtPath<GameDefinition>("Assets/GameDefinitionBuild/GameDefinition.asset");
+#endif
                     if (_instance == null)
                         Debug.LogError("[GameDefinition] GameDefinition.asset not found in Resources!");
                 }
                 return _instance;
             }
+        }
+
+        /// <summary>The boot loader hands over the definition it loaded; everything waiting in <see cref="WhenReady"/> runs.</summary>
+        public static void Provide(GameDefinition definition)
+        {
+            _instance = definition;
+            Loading = false;
+            var waiting = whenReady;
+            whenReady = null;
+            waiting?.Invoke();
+        }
+
+        /// <summary>Runs <paramref name="action"/> now if the definition is there, or as soon as the boot has loaded it.</summary>
+        public static void WhenReady(System.Action action)
+        {
+            if (action == null)
+                return;
+            if (Loading)
+                whenReady += action;
+            else
+                action();
         }
     }
 }
