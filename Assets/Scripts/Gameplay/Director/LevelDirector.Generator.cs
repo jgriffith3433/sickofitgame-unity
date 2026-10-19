@@ -99,13 +99,18 @@ namespace SickOfIt.Gameplay
             {
                 case GenMode.Breather:
                     if (reached)
+                    {
                         genMode = GenMode.Finishing;
+                        genPushEndsAt = now + Mathf.Max(1f, difficulty.pushTimeout);
+                    }
                     else if (now >= genNextAt)
                         StartPush(now, action, circle, floor, difficulty);
                     break;
 
                 case GenMode.Push:
-                    if (reached)
+                    // At the stretch's last floor, or past the push's timeout (an enemy stranded where it can't be
+                    // reached keeps 'alive' at maxAlive), nothing more comes: the push can end and the camera move on.
+                    if (reached || now >= genPushEndsAt)
                         genToSpawn = 0;
                     if (genToSpawn > 0 && now >= genNextAt && alive < Mathf.Max(1, difficulty.maxAlive))
                     {
@@ -131,7 +136,9 @@ namespace SickOfIt.Gameplay
                     break;
 
                 case GenMode.Finishing:
-                    if (alive == 0)
+                    // Waits for the last push to be fought, at most pushTimeout: a stranded enemy never holds the
+                    // camera (and floorsDone) for good.
+                    if (alive == 0 || now >= genPushEndsAt)
                     {
                         genMode = GenMode.Off;
                         world.Telemetry.Record("generatorDone", circle.id, floor);
@@ -146,6 +153,8 @@ namespace SickOfIt.Gameplay
         {
             genMode = reached ? GenMode.Finishing : GenMode.Breather;
             genNextAt = now + Mathf.Max(0f, difficulty.breather);
+            if (reached)
+                genPushEndsAt = now + Mathf.Max(1f, difficulty.pushTimeout);
         }
 
         void StartPush(float now, GenerateFloorsAction action, CircleDef circle, int floor, DifficultyDef difficulty)

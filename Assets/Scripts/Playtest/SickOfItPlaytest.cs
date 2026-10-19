@@ -42,8 +42,9 @@ namespace SickOfIt.Playtest
     /// portal-audio (the prologue's portal scene sounds and the Meadow's lines played in order on the main menu).
     /// story-path (New Game through the story path: Video1, the Meadow, Video2, the Landing with its floor counter
     /// and the 999 beat, Video3 (Yooba), the Spill, then the level select with the story levels in order).
-    /// all-levels (every level on the path, each opened directly with a time limit, a table of cleared / died / stuck) and
-    /// floors-A-B (the same over one stretch, e.g. floors-1000-991).
+    /// all-levels (every level in game.json, each opened directly with a time limit, a table of cleared / died / stuck),
+    /// off-path (the same over the levels after the path: the old 10-floor stages and the arcade levels) and
+    /// floors-A-B (the same over one stretch of the path, e.g. floors-1000-991).
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
     /// </summary>
     public static class SickOfItPlaytest
@@ -399,6 +400,30 @@ namespace SickOfIt.Playtest
             return list;
         }
 
+        /// <summary>Every level in game.json's order, 1 to the last: the path, then the long way's old stages and the arcade levels.</summary>
+        public static List<int> AllGameLevels()
+        {
+            var list = new List<int>();
+            int levels = GameDefinition.Instance != null ? GameDefinition.Instance.TotalLevels : 0;
+            for (int n = 1; n <= levels; n++)
+                list.Add(n);
+            return list;
+        }
+
+        /// <summary>
+        /// off-path: the all-levels run over the levels after the path (the long way's old 10-floor stages, Circle IX's and
+        /// Circle X's, and the arcade levels), each with a check event.
+        /// </summary>
+        public const string OffPathId = "off-path";
+
+        /// <summary>The levels in game.json after the path's last floor.</summary>
+        public static List<int> OffPathLevels()
+        {
+            var path = PathLevels();
+            int last = path.Count > 0 ? path[path.Count - 1] : 0;
+            return AllGameLevels().FindAll(n => n > last);
+        }
+
         /// <summary>
         /// The path's floors in stretches, each ending on a floor boss or Warden (a floor ending in 1) or where a shortcut
         /// jumps: 1000-991, 960-951, 910-901, 900-891, ... The floors-A-B scenarios play one each.
@@ -429,12 +454,18 @@ namespace SickOfIt.Playtest
 
         static string StretchId((int from, int to) stretch) => StretchPrefix + PathFloor(stretch.from) + "-" + PathFloor(stretch.to);
 
-        /// <summary>The time limit all-levels gives level n, in game seconds: the level's own (duration + 10), at most PathFloorSeconds (a boss's floor PathBossSeconds).</summary>
+        /// <summary>
+        /// The time limit all-levels gives level n, in game seconds: the level's own (duration + 10), at most PathFloorSeconds (a
+        /// boss's floor PathBossSeconds). A level off the path (an old 10-floor stage, an arcade level) gets its duration + 30, at
+        /// most PathBossSeconds: Everything, Everywhere runs 180 s and Fire Rain ends on a boss.
+        /// </summary>
         static float PathLevelSeconds(int n)
         {
             var level = GameDefinition.Instance != null ? GameDefinition.Instance.GetLevel(n) : null;
             float own = Mathf.Max(30f, level != null ? level.duration : 60f) + 10f;
             int floor = PathFloor(n);
+            if (n > 1 && floor <= 0)
+                return Mathf.Min(own + 20f, PathBossSeconds);
             return Mathf.Min(own, floor > 0 && floor % 10 == 1 ? PathBossSeconds : PathFloorSeconds);
         }
 
@@ -586,12 +617,19 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
             var path = PathLevels();
             const string pathHow = "each level opened directly (a setup shortcut: no videos, no Shaft, and a level the bot can't clear never stops the run) " +
-                                   "and played by the bot through real input with a time limit (a floor 160 s of game time, a floor boss's or Warden's floor 250 s), " +
+                                   "and played by the bot through real input with a time limit (a floor 160 s of game time, a floor boss's or Warden's floor 250 s, " +
+                                   "a level off the path its duration + 30 s, at most 250 s), " +
                                    "once more after a death. Each level ends with a level-result event: CLEARED, DIED (where: phase, floor, the hero's place, " +
                                    "path section; by what: the last thing that hurt him) or STUCK (the stuck event's phase, place, path section and the bot's " +
                                    "ClimbTarget); the run ends with a summary event and the per-level table (table events, and the same table in the report's log)";
-            list.Add(new PlaytestScenario(AllLevelsId, $"Every level on the path in game.json's order ({PathRange(path)}: the Meadow, then each floor of " +
-                "the played route, past the shortcuts' skipped floors): " + pathHow, PathRunSeconds(path), "full", "levels"));
+            var every = AllGameLevels();
+            var offPath = OffPathLevels();
+            list.Add(new PlaytestScenario(AllLevelsId, $"Every level in game.json, in its order ({PathRange(every)}): the path ({PathRange(path)}: the Meadow, " +
+                "then each floor of the played route, past the shortcuts' skipped floors), then the levels after it " +
+                $"({PathRange(offPath)}: the long way's old 10-floor stages and the arcade levels): " + pathHow, PathRunSeconds(every), "full", "levels"));
+            list.Add(new PlaytestScenario(OffPathId, $"The levels in game.json after the path ({PathRange(offPath)}: Circle IX's long way, Levels13-18, " +
+                "Circle X's old stages, Level3-10, and the arcade levels), the all-levels run over just these with a check event per level " +
+                "(cleared, or died/stuck and where, with its time): " + pathHow, PathRunSeconds(offPath), "full", "levels"));
             var climbStart = ClimbStartLevels();
             list.Add(new PlaytestScenario(ClimbStartId, $"The start of the climb ({PathRange(climbStart)}): Level 1 (the Meadow), then Floors " +
                 $"{ClimbStartTopFloor}-{ClimbStartLastFloor} one level per floor, the all-levels run over just these with a check event per level " +
@@ -774,7 +812,9 @@ namespace SickOfIt.Playtest
             else if (id == "full")
                 yield return session.Full();
             else if (id == AllLevelsId)
-                yield return session.AllLevels(PathLevels(), "the whole path");
+                yield return session.AllLevels(AllGameLevels(), "every level in game.json");
+            else if (id == OffPathId)
+                yield return session.AllLevels(OffPathLevels(), "the levels after the path", checkEvery: true);
             else if (id == ClimbStartId)
                 yield return session.AllLevels(ClimbStartLevels(), $"Level 1 and Floors {ClimbStartTopFloor}-{ClimbStartLastFloor}", checkEvery: true);
             else if (id.StartsWith(StretchPrefix, StringComparison.Ordinal) && PathStretches().Exists(s => StretchId(s) == id))
