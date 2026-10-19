@@ -731,6 +731,7 @@ namespace SickOfIt.Core.Input
                 fireDirection = GetMouseDirectionFromPlayer();
                 mouseAimPoint = GetMouseWorldPoint();
             }
+            TrackAimDevice(isFiring && !mouseAimPoint.HasValue);
         }
         
         private Vector2 GetMouseDirectionFromPlayer()
@@ -1142,22 +1143,115 @@ namespace SickOfIt.Core.Input
             // Use GameClock time for fire timing
             lastFireTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
 
+            Vector2 muzzle = AimVolley(direction, mouseAimPoint, volley);
+            VolleysFired++;
+            lastVolley.Clear();
+            for (int i = 0; i < volley.Count; i++)
+                SpawnShot(muzzle, volley[i], i == 0);
+        }
+
+        private readonly System.Collections.Generic.List<Vector2> volley = new System.Collections.Generic.List<Vector2>();
+        private readonly System.Collections.Generic.List<Vector2> lastVolley = new System.Collections.Generic.List<Vector2>();
+
+        /// <summary>Volleys fired since he spawned (the aim guide notices a new one).</summary>
+        public int VolleysFired { get; private set; }
+
+        /// <summary>The flight direction of each shot of the last volley, read back from the projectiles (the playtest compares the aim guide with it).</summary>
+        public System.Collections.Generic.IReadOnlyList<Vector2> LastVolley => lastVolley;
+
+        /// <summary>
+        /// The one place a volley is aimed: where it leaves the gun and each shot's direction (in firing order),
+        /// for an aim 'direction' and, with the mouse, the world point under it. Firing and the aim guide both use it,
+        /// so the guide always shows the real shots.
+        /// </summary>
+        private Vector2 AimVolley(Vector2 direction, Vector2? aimPoint, System.Collections.Generic.List<Vector2> directions)
+        {
             // Aim from the muzzle so the shot passes through the cursor, not parallel to it.
             Vector2 muzzle = GetMuzzlePosition(direction);
-            if (mouseAimPoint.HasValue && (mouseAimPoint.Value - (Vector2)transform.position).sqrMagnitude > 0.25f)
+            if (aimPoint.HasValue && (aimPoint.Value - (Vector2)transform.position).sqrMagnitude > 0.25f)
             {
-                Vector2 toCursor = mouseAimPoint.Value - muzzle;
+                Vector2 toCursor = aimPoint.Value - muzzle;
                 if (toCursor.sqrMagnitude > 0.0001f && Vector2.Dot(toCursor, direction) > 0f)
                     direction = toCursor.normalized;
             }
 
             // Extra shots fan out evenly around the aim.
+            directions.Clear();
             int shots = 1 + Mathf.Max(0, ExtraShots);
             for (int i = 0; i < shots; i++)
             {
                 float angle = (i - (shots - 1) * 0.5f) * ShotSpreadDegrees;
-                SpawnShot(muzzle, Quaternion.Euler(0f, 0f, angle) * direction, i == 0);
+                directions.Add(Quaternion.Euler(0f, 0f, angle) * direction);
             }
+            return muzzle;
+        }
+
+        /// <summary>
+        /// Where his next volley would go right now, for the aim guide: the muzzle and one direction per shot (in
+        /// firing order), from the same aim and the same AimVolley that fires. While firing that is the aim being
+        /// fired; with the mouse it is where a click would fire. False when there is no aim or he can't fire
+        /// (shooting off, input locked by a scene, walked or pulled by a script, a rewind). Reads input only.
+        /// </summary>
+        public bool TryGetAimGuide(System.Collections.Generic.List<Vector2> directions, out Vector2 muzzle)
+        {
+            muzzle = transform.position;
+            directions.Clear();
+            if (!enableShooting || projectilePool == null || InputLocked || Suspended || ScriptedMove.HasValue)
+                return false;
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return false;
+            Vector2 direction;
+            Vector2? aimPoint;
+            if (isFiring && fireDirection.magnitude >= inputDeadzone)
+            {
+                direction = fireDirection;
+                aimPoint = mouseAimPoint;
+            }
+            else if (aimingWithMouse && InputOverride == null && !TouchAim && mainCamera != null && Mouse.current != null && MouseOnScreen()
+                     && (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject()))
+            {
+                // Not firing: where a click would fire (ReadFireInput's mouse path).
+                direction = GetMouseDirectionFromPlayer();
+                aimPoint = GetMouseWorldPoint();
+                if (direction.magnitude < inputDeadzone)
+                    return false;
+            }
+            else
+            {
+                return false;
+            }
+            muzzle = AimVolley(direction, aimPoint, directions);
+            return true;
+        }
+
+        // The mouse moved or fired after the last stick aim: the guide follows the cursor between clicks.
+        private bool aimingWithMouse;
+
+        private void TrackAimDevice(bool aimedWithStick)
+        {
+            if (aimedWithStick)
+            {
+                aimingWithMouse = false;
+                return;
+            }
+            var mouse = Mouse.current;
+            if (mouse == null)
+                return;
+            Vector2 position = mouse.position.ReadValue();
+            if ((position - lastMousePosition).sqrMagnitude > 1f || mouse.leftButton.isPressed)
+                aimingWithMouse = true;
+            lastMousePosition = position;
+        }
+
+        private Vector2 lastMousePosition = new Vector2(float.NaN, float.NaN);
+
+        // The on-screen fire stick is up (a phone): touches aren't a hovering mouse.
+        private bool TouchAim => fireAnalog != null && fireAnalog.gameObject.activeInHierarchy;
+
+        private static bool MouseOnScreen()
+        {
+            Vector2 p = Mouse.current.position.ReadValue();
+            return p.x >= 0f && p.y >= 0f && p.x <= Screen.width && p.y <= Screen.height;
         }
 
         private void SpawnShot(Vector2 muzzle, Vector2 direction, bool firstOfVolley)
@@ -1182,6 +1276,7 @@ namespace SickOfIt.Core.Input
             {
                 projectileRb.linearVelocity = direction * projectileSpeed;
             }
+            lastVolley.Add(projectileRb != null && projectileRb.linearVelocity.sqrMagnitude > 0f ? projectileRb.linearVelocity.normalized : direction);
 
             projectilePool.CaptureLaunchState(projectile);
 

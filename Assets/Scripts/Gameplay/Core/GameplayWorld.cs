@@ -68,6 +68,8 @@ namespace SickOfIt.Gameplay
         public ScriptedPlayer Scripted { get; private set; }
         /// <summary>The player's controller, or null in tests without one.</summary>
         public PlayerController PlayerController => playerController;
+        /// <summary>The aim guide's lines (null when player.json turns it off).</summary>
+        public AimGuide AimGuide { get; private set; }
 
         readonly List<Entity> live = new List<Entity>();
         readonly List<Entity> tickList = new List<Entity>();
@@ -204,6 +206,7 @@ namespace SickOfIt.Gameplay
                 root.AddComponent<PlayerBlink>().Init(health, PlayerRenderers);
             if (health != null)
                 health.onDamaged.AddListener(OnPlayerDamaged);
+            AimGuide = AimGuide.Create(this, playerController, health);
         }
 
         void OnPlayerDamaged()
