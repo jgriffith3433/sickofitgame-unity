@@ -262,7 +262,11 @@ sinking stone, which drops while he walks), keep a same-height gap to about 2.2,
 while its section is on (an Up section's camera stays on its start x, ±4.98), and give every section a foothold where hero
 + `travelLead` reaches its end, or the camera never moves on. A chain he must wait for hangs off a foothold that holds
 (not a crumbling or sinking one). `python3 Tools/Levels/floor_check.py [FloorN ...]` checks all of this without Unity
-(jumps, the bot's chain swings, lifts at their worst cut, the screen per section, section ends, lava boxes over footholds).
+(jumps, the bot's chain swings, lifts at their worst cut, the screen per section, section ends, lava boxes over footholds,
+stones that sink out of view). **An Up section's camera never comes back down**: it chases his jump's apex + `lead`, and
+his body is only 0.6 tall, so at the floor's 1.2 a sinking stone he stands on goes under the screen's bottom before it
+has sunk its 1.5 and PitCatch burns him there and throws him 15 up, past the next footholds (Floor 1000, beta). Give a
+climb with sinking stones `"lead": 0.4` (its end still needs a foothold where hero + 0.4 reaches it).
 An updraft throws him **0.7 over its column's top** (lift 5): put the foothold it carries him to at most ~0.45 above the
 top and within ~1.5 of its side, and the column's foot no higher than a step above the foothold he enters from. A
 counterweight he stands on is going down (and its partner up) as he jumps. Keep a timed hazard (a geyser, a fall) off the
@@ -360,6 +364,8 @@ who runs the hauling.
   slowly) → `↑ 3` the bank's ledges → `→ 1` the landing.
 - **Obstacles:** sinking stones up the slope and along the drift's edges, then solid ledges; nothing else. The river
   starts under the bank ledge, never under a stone of the slope: lava only takes a stone that sinks into it.
+  Its two climbs (the slope, the bank) keep the camera close (`lead` 0.4, not the floor's 1.2): a sinking stone and a
+  missed hop stay on screen, so the hot bath is one he sees, never a burn from under the screen that throws him past the slope.
 - **Monsters:** none to fight. At the landing an imp with a sack sees him, drops its ember in surprise (it hisses into
   the lava) and flees up a chain. It is the first imp he meets and it tells him where the diamonds went.
 - **Set piece and beat:** he lands where Video2 dropped him, on a rock in the lava river. The first stone he stands on
