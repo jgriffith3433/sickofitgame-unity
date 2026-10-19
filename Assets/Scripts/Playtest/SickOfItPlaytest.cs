@@ -8400,7 +8400,8 @@ namespace SickOfIt.Playtest
                 return $"phase \"{world.Director?.PhaseName}\"" + (floor > 0 ? $", FLOOR {floor}" : "") + $": the hero at ({at.x:0.0}, {at.y:0.0})" +
                        (section != null ? $", path section \"{section.name}\"" : "") +
                        (aim != null ? $", heading for {aim.name} at ({aim.Position.x:0.0}, {aim.Position.y:0.0})" : "") +
-                       (bot != null && bot.GaveUpOn > 0 ? $", gave up on {bot.GaveUpOn} foothold(s) out of reach" : "");
+                       (bot != null && bot.GaveUpOn > 0 ? $", gave up on {bot.GaveUpOn} foothold(s) out of reach" : "") +
+                       (bot != null && bot.Unwedged > 0 ? $", dropped off {bot.Unwedged} corner(s) he hung on" : "");
             }
 
             /// <summary>What last hurt the hero in the level being played (a "damage" telemetry source), what killed him and where, and where he was when it didn't end.</summary>

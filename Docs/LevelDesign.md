@@ -276,7 +276,10 @@ right edge, x 4.8: before, its untextured box hung over the slope's top-right an
 Two stones less than the hero's width (0.6) apart sink to the same height and catch him across the gap, his middle over
 nothing: player.json `groundCheckWidth` is 0.3 (it was 0.1) so standing on a corner or across a gap still counts as ground
 and he can jump off it (Floor 1000: wedged between stone2 and a sunk stone3, no jump for 190 s), and the bot steps on to
-the stone it rests on when it isn't grounded.
+the stone it rests on when it isn't grounded. Thrown up by a geyser to just over a stone's top beside it (Floor 907: gapVent0 under the ledge's
+left end throws him 1.4, to the corner of the crumbling stone at (14.5, 4.15)), his circle catches on the corner in the air, pushed into it and held
+by friction, not grounded: the bot lets go the other way after 0.3 s without moving (`PlaytestBot.Wedged`), drops off and
+climbs again (the floor sat there 160 s). A player holding into it hangs the same way until he lets go.
 An updraft throws him **0.7 over its column's top** (lift 5): put the foothold it carries him to at most ~0.45 above the
 top and within ~1.5 of its side, and the column's foot no higher than a step above the foothold he enters from. A
 counterweight he stands on is going down (and its partner up) as he jumps. Keep a timed hazard (a geyser, a fall) off the
