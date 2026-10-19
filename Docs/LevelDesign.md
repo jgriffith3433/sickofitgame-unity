@@ -534,9 +534,10 @@ who runs the hauling.
   locked screen), where he swings on the lift's chain, dropping embers from his sack (a glow on the spot, the ember 1.1 s
   later) and whipping the tier below; at a quarter his wings flap for nothing (*"Hnnngh... fly... FLY..."*, hero:
   *"Those are for show, aren't they."*). Beaten: slow motion, his sack bursts into a pile of diamonds on tier 2, his
-  *"My... sack..."*, the announcer's call, the hero's *"Thank you."*, then a short climb to the landing. The Sack Lift
-  on his landing (shortcut 1) isn't built yet: the landing is carved *IMPS ONLY* and Floor 991 leads on to the old
-  stage at Floor 990.
+  *"My... sack..."*, the announcer's call, the hero's *"Thank you."*, then a short climb to the landing: from tier 2 up
+  the dodge ledge on its left, a ledge above the tier, a step to the right, and the landing (every foothold on screen
+  and within one jump; 2026-10-19, after the first one sat behind the screen's right edge and the climb stalled). The
+  landing is carved *IMPS ONLY*, and standing on it brings up the Sack Lift's choice (shortcut 1).
 - **Feel:** a medium shake on each whip crack; a big shake when the lava takes a tier; slow motion as the sack bursts
   (diamonds hanging in the air); the roar swallows each tier.
 - **Lines:** Announcer: *"FLOOR NINE NINETY-ONE! THE IMP FOREMAN!"* Hero: *"That's the biggest sack yet. Ours too,

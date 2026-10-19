@@ -6319,6 +6319,16 @@ namespace SickOfIt.Playtest
                         yield return null;
                 }
 
+                // A floor that runs out of time: where the hero was, so the report shows which climb he couldn't make.
+                if ((outcome == "timeout" || outcome == "time up") && world != null && world.Player != null)
+                {
+                    var section = world.Effects != null && world.Effects.HasPath ? world.Effects.CurrentSection : null;
+                    var aim = bot != null ? bot.ClimbTarget : null;
+                    Run.Event("stuck", $"level {n} {outcome} in phase \"{world.Director?.PhaseName}\": the hero at ({world.Player.Position.x:0.0}, {world.Player.Position.y:0.0})" +
+                                       (section != null ? $", path section \"{section.name}\"" : "") +
+                                       (aim != null ? $", heading for {aim.name} at ({aim.Position.x:0.0}, {aim.Position.y:0.0})" : ""));
+                }
+
                 if (bot != null)
                 {
                     botRewinds += bot.RewindsStarted;
