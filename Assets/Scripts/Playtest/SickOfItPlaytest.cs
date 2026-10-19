@@ -1213,6 +1213,11 @@ namespace SickOfIt.Playtest
                 string prefix = "level" + s.levelNumber;
                 Run.Event("level-end", $"level {s.levelNumber}: {s.outcome} after {s.duration:0.0} s, {s.kills}/{s.spawned} kills, " +
                                        $"hp {s.playerHealthEnd}/{s.playerMaxHealth}, phase {s.lastPhase}");
+                // A level left before it was played (all-levels: the Waystone's restart opens Level 2 after every death, and
+                // the bot loads its next level over it at once) is not a try: it overwrote level2.seconds with 0 and added a
+                // level2.attempt per death elsewhere (beta run r_b7a410dd5b39: 15 attempts, 0 s).
+                if (s.outcome == "playtest left" && s.duration < 1f)
+                    return;
                 Run.Add("kills", s.kills);
                 Run.Add("spawned", s.spawned);
                 Run.Add("playerHits", s.playerHits);
@@ -8308,7 +8313,7 @@ namespace SickOfIt.Playtest
                             dying = true;
                             deaths++;
                             Run.Metric("deaths", deaths);
-                            lastDeath = $"at {now:0} s, {HeroWhere(world)}, killed by {(lastHitBy.Length > 0 ? lastHitBy : "?")}";
+                            lastDeath = $"at {now:0} s, {HeroWhere(world)}, killed by {(lastHitBy == "pit" ? "pit (fell out of the bottom of the view)" : lastHitBy.Length > 0 ? lastHitBy : "?")}";
                             Run.Event("death", $"level {n} at {now:0.0} s");
                         }
                         if (!waitOutDeath) { outcome = "died"; break; }

@@ -360,7 +360,7 @@ namespace SickOfIt.Gameplay
             var v = player.Body.linearVelocity;
             v.y = Mathf.Max(v.y, 15f);
             player.Body.linearVelocity = v;
-            if (player.Damage(1, null))
+            if (player.DamageAs(1, "pit"))
                 world.Telemetry.Record("pit", "lava", 1);
         }
 

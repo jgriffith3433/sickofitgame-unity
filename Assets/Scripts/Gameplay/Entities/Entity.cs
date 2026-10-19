@@ -679,6 +679,17 @@ namespace SickOfIt.Gameplay
             return true;
         }
 
+        /// <summary>
+        /// Hurts this entity with damage that has no entity behind it (the pit under a path floor), named in the "damage"
+        /// telemetry by its label so reports and analytics can say what hurt him instead of "(other)".
+        /// </summary>
+        public bool DamageAs(int amount, string label, bool ignoreInvincibility = false)
+        {
+            damageLabel = label;
+            try { return Damage(amount, null, ignoreInvincibility); }
+            finally { damageLabel = null; }
+        }
+
         public void Heal(int amount)
         {
             if (!IsAlive || amount <= 0)
