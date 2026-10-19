@@ -29,7 +29,8 @@ namespace SickOfIt.Tools.Editor.GameConfig
     [InitializeOnLoad]
     public static class GameConfigSync
     {
-        public const string DefinitionPath = "Assets/Resources/GameDefinition.asset";
+        /// <summary>Assets/Resources/GameDefinition.asset; during a deploy's player build, the split's copy (PlayerDataSplit).</summary>
+        public static string DefinitionPath => PlayerDataSplit.Active ? PlayerDataSplit.BuildPath : PlayerDataSplit.ResourcesPath;
         const string StatePath = "Library/GameConfigSyncState.json";
 
         static bool busy;

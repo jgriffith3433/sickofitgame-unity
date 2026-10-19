@@ -178,7 +178,7 @@ Generate Project:
 ## Key Classes
 
 ### Config Layer (`SickOfIt.Data`)
-- **GameDefinition** — Root SO, singleton via `Resources.Load`. Has lists of levels, videos, deaths, enemy templates, player config. Also holds UI/camera prefab refs for scene generation.
+- **GameDefinition** — Root SO, singleton via `Resources.Load` (in a deployed player: its Addressables bundle, loaded by the Boot scene's `GameDefinitionBoot`; AGENTS.md "The player data stays small"). Has lists of levels, videos, deaths, enemy templates, player config. Also holds UI/camera prefab refs for scene generation.
 - **LevelConfig** — Level name, enemies, platforms, barriers, music, duration, death config name, timeline events
 - **VideoConfig** — Video name/number, spriteFramesData, audio, afterLevel, nextLevel, returnToMainMenu
 - **DeathConfig** — Death name, spriteFramesData, audio, delayBeforeReload
@@ -218,7 +218,7 @@ Generate Project:
 ## Singleton Patterns
 | Class | Lifetime | Access |
 |-------|----------|--------|
-| GameDefinition | Persistent (Resources) | `GameDefinition.Instance` |
+| GameDefinition | Persistent (Resources; a deployed player: Addressables, loaded at boot) | `GameDefinition.Instance` |
 | SceneTransitionManager | DontDestroyOnLoad | `SceneTransitionManager.Instance` |
 | GameProgressManager | DontDestroyOnLoad | `GameProgressManager.Instance` |
 | RogueliteManager | DontDestroyOnLoad | `RogueliteManager.Instance` |

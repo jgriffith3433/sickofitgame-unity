@@ -163,6 +163,7 @@ namespace SickOfIt.Tools.Editor
                 throw new Exception($"WebGL build failed: {report.summary.result}");
 
             RaiseUnityCacheLimit(buildPath);
+            BuildOutputGuard.Check(buildPath, message => Debug.Log("[ClawBuild] " + message));
         }
 
         /// <summary>
