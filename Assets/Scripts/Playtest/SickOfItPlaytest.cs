@@ -3123,10 +3123,10 @@ namespace SickOfIt.Playtest
                     var controller = GameplayWorld.Instance.PlayerController;
                     BeginAimPhase(phase, 1 + Mathf.Max(0, controller.ExtraShots));
                     Run.Event("aim", $"{phase}: {controller.ExtraShots} extra shot(s), {controller.ShotSpreadDegrees:0.#}° apart");
-                    yield return PlayLevel(n, 90f, until: () => aimPhaseVolleys >= AimGuideVolleys);
+                    yield return PlayLevel(n, 90f, until: () => aimPhaseVolleys >= SickOfItPlaytest.AimGuideVolleys);
                     if (Run.Done)
                         yield break;
-                    if (aimPhaseVolleys >= AimGuideVolleys || attempt == 3)
+                    if (aimPhaseVolleys >= SickOfItPlaytest.AimGuideVolleys || attempt == 3)
                     {
                         EndAimPhase(beat);
                         yield break;

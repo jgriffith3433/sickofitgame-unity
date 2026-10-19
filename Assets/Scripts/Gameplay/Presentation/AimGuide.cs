@@ -80,7 +80,9 @@ namespace SickOfIt.Gameplay
         void Draw()
         {
             drawn.Clear();
-            bool show = ShouldShow() && controller.TryGetAimGuide(aim, out var muzzle) && aim.Count > 0;
+            // Stored in a bool, the && chain no longer proves muzzle is set (CS0165): give it a value first.
+            Vector2 muzzle = default;
+            bool show = ShouldShow() && controller.TryGetAimGuide(aim, out muzzle) && aim.Count > 0;
             Visible = show;
             if (!show)
             {
