@@ -269,7 +269,8 @@ has sunk its 1.5 and PitCatch burns him there and throws him 15 up, past the nex
 climb with sinking stones `"lead": 0.4` (its end still needs a foothold where hero + 0.4 reaches it). Don't hang a
 one-way ledge straight over a stone with less than the jump's 2.29 between the stone's top and the ledge's top: a jump
 from the stone rises into the ledge and falls back short of its top (Floor 1000's rest ledge over stone2; the bot now
-keeps steering for the foothold it jumped for, but a player under it gets the same dead hop). A lava river's box starts
+keeps steering for the foothold it jumped for, judged from the take-off (`PlaytestBot.Climb`: no new foothold over the
+jump's top, the stone it left out until it lands), but a player under it gets the same dead hop). A lava river's box starts
 past the foothold he jumps onto it from, never under the climb before it (Floor 1000's river now starts at the bank's
 right edge, x 4.8: before, its untextured box hung over the slope's top-right and under the bank).
 An updraft throws him **0.7 over its column's top** (lift 5): put the foothold it carries him to at most ~0.45 above the

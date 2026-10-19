@@ -360,6 +360,13 @@ namespace SickOfIt.Gameplay
         const float GiveUpSeconds = 5f, SkipSeconds = 5f;
         Entity chasing, skipped;
         float chaseSince, chaseClosest, skipUntil;
+        // Where his feet were when the bot last jumped for a foothold: in the air it keeps judging footholds from there, like a
+        // player who picked the stone before jumping. Judged from his rising feet, the stone he jumped for dropped out of reach
+        // half way up and one 2.6 over the take-off "came into reach" (Floor 1000: stone2 to stone3 turned into a jump at the ledge).
+        // The stone he jumped off is left out meanwhile: rising back as it stops sinking, it would read "higher" from there.
+        float takeoffFeet;
+        bool fromTakeoff;
+        Entity takeoffFrom;
 
         /// <summary>
         /// On a floor with a path (world.path), picks the next foothold ahead along the current section (a stone, a raft, a ledge,
@@ -390,6 +397,7 @@ namespace SickOfIt.Gameplay
                 // Hanging on a chain: let go just past the bottom of a swing toward the way on, at its fastest (the swing
                 // slows from there), the way a player times it. Letting go as soon as it moves forward threw him short.
                 moveX = 0f;
+                fromTakeoff = false;
                 Vector2 v = world.Player.Body != null ? world.Player.Body.linearVelocity : Vector2.zero;
                 float way = Mathf.Abs(forward.x) > 0.1f ? Mathf.Sign(forward.x) : NextFootholdSide(me);
                 float speed = v.x * way;
@@ -405,7 +413,21 @@ namespace SickOfIt.Gameplay
 
             // In an updraft's column (957's chimney, 952's pile): ride it up and step out over the foothold it throws him to.
             if (!controller.IsGrounded && RideUpdraft(me, feetBounds, forward, ref moveX))
+            {
+                fromTakeoff = false;
                 return true;
+            }
+
+            // In the air from its own jump (not thrown by a burn, not off a chain or a column): footholds are judged from the
+            // take-off, until he lands, falls under it (a miss) or rises past a jump's reach (thrown). The press takes a tick or
+            // two to lift him, so he still reads grounded just after it.
+            float fromY = feet;
+            if (now - lastClimbJump > 1.2f || (controller.IsGrounded && now - lastClimbJump > 0.25f)
+                || feet < takeoffFeet - 0.5f || feet > takeoffFeet + 2.4f)
+                fromTakeoff = false;
+            bool airFromTakeoff = fromTakeoff && !controller.IsGrounded;
+            if (airFromTakeoff)
+                fromY = takeoffFeet;
 
             // In the air, the top of this jump: a new foothold above it is out of reach until he lands (the one he jumped for stays
             // the target). Without this, a one-way ledge hanging right over his stone (Floor 1000's, over stone2) came "in reach"
@@ -437,6 +459,8 @@ namespace SickOfIt.Gameplay
                     continue;
                 if (e == skipped && now < skipUntil)
                     continue;
+                if (e == takeoffFrom && airFromTakeoff)
+                    continue;
                 var col = e.MainCollider;
                 if (col == null || !col.enabled)
                     continue;
@@ -453,7 +477,7 @@ namespace SickOfIt.Gameplay
                     continue;
                 var b = col.bounds;
                 float topY = chain ? e.Position.y - 0.5f : b.max.y;
-                float rise = topY - feet;
+                float rise = topY - fromY;
                 if (rise > (chain ? 2.6f : 1.9f) || rise < -3.5f)
                     continue;
                 if (airborne && !chain && e != chasing && topY > jumpTop + 0.05f)
@@ -463,7 +487,7 @@ namespace SickOfIt.Gameplay
                     continue;
                 // Ahead along the path: higher on a climb, further on a run.
                 Vector2 point = new Vector2(Mathf.Clamp(me.x, b.min.x, b.max.x), topY);
-                float gain = Vector2.Dot(point - new Vector2(me.x, feet), forward);
+                float gain = Vector2.Dot(point - new Vector2(me.x, fromY), forward);
                 if (Mathf.Abs(forward.x) > 0.1f)
                     gain = Mathf.Max(gain, (b.center.x - me.x) * Mathf.Sign(forward.x) - 0.3f);
                 if (gain < 0.35f)
@@ -557,6 +581,9 @@ namespace SickOfIt.Gameplay
                 {
                     jump = true;
                     lastClimbJump = now;
+                    takeoffFeet = feet;
+                    takeoffFrom = standingOn;
+                    fromTakeoff = true;
                 }
                 return true;
             }
@@ -585,6 +612,9 @@ namespace SickOfIt.Gameplay
                 {
                     jump = true;
                     lastClimbJump = now;
+                    takeoffFeet = feet;
+                    takeoffFrom = standingOn;
+                    fromTakeoff = true;
                 }
             }
             return true;
