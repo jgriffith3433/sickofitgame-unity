@@ -3239,6 +3239,7 @@ namespace SickOfIt.Playtest
                 public Vector2 SectionCamera;
                 public bool SawSideways;
                 public readonly Dictionary<int, float> StoneSunk = new Dictionary<int, float>();
+                public int AirborneOnFoothold;
                 public readonly Dictionary<int, float> CrumbleHome = new Dictionary<int, float>();
                 public readonly Dictionary<int, float> RaftStart = new Dictionary<int, float>();
                 public float RideStartX = float.NaN;
@@ -3483,6 +3484,16 @@ namespace SickOfIt.Playtest
                         ClimbArt(e, artBeat);
                     if ((StripShown(e, "ChainArt")) && e.FindAbility<SickOfIt.Gameplay.Content.SwingChainAbility>() != null)
                         ClimbCheck("art chain", true, $"{Who(e)} swings on painted chain links");
+                    // Jump needs the ground check to see a foothold: resting on a stone or ledge must read as grounded.
+                    if (controller != null && e.Tags.Contains("foothold") && world.PlayerStandsOn(e)
+                        && world.Player.Body != null && Mathf.Abs(world.Player.Body.linearVelocity.y) < 0.05f)
+                    {
+                        climb.AirborneOnFoothold = controller.IsGrounded ? 0 : climb.AirborneOnFoothold + 1;
+                        if (controller.IsGrounded)
+                            ClimbCheck("jump grounded", true, $"standing on {Who(e)} counts as grounded, so Space can jump");
+                        else if (climb.AirborneOnFoothold >= 10)
+                            ClimbCheck("jump grounded", false, $"standing still on {Who(e)} but the ground check says airborne, so Space does nothing");
+                    }
                     var sink = e.FindAbility<SickOfIt.Gameplay.Content.SinkAbility>();
                     if (sink != null && world.PlayerStandsOn(e) && sink.Sunk >= 0.3f && !e.transform.Find("Shape"))
                         ArtFrames("art stone steams", e.Animation.CurrentState == "Sink",

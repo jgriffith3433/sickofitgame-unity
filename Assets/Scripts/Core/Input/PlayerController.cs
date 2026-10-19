@@ -558,7 +558,12 @@ namespace SickOfIt.Core.Input
             // If ignoring platform collision, exclude platform layer from ground check
             LayerMask checkLayer = isIgnoringPlatformCollision ? (groundLayer & ~platformLayer) : groundLayer;
             isGrounded = Physics2D.OverlapBox(boxCenter, boxSize, 0f, checkLayer);
-            
+
+            // The climb engine's footholds (stones, ledges, rafts, lifts) are gameplay entities on the Default layer,
+            // not the Platform layer the level's ground is on; a solid one under his feet is ground too.
+            if (!isGrounded)
+                isGrounded = StandsOnSolidEntity(boxCenter, boxSize);
+
             if (isGrounded && !wasGrounded)
             {
                 airJumpsRemaining = maxAirJumps;
@@ -567,6 +572,21 @@ namespace SickOfIt.Core.Input
             }
         }
         
+        private static readonly Collider2D[] footholdHits = new Collider2D[8];
+
+        private bool StandsOnSolidEntity(Vector2 center, Vector2 size)
+        {
+            var filter = new ContactFilter2D { useLayerMask = true, layerMask = 1 << 0, useTriggers = false };
+            int n = Physics2D.OverlapBox(center, size, 0f, filter, footholdHits);
+            for (int i = 0; i < n; i++)
+            {
+                var hit = footholdHits[i];
+                if (hit != null && hit.attachedRigidbody != rb && !hit.isTrigger)
+                    return true;
+            }
+            return false;
+        }
+
         private void OnDrawGizmosSelected()
         {
             if (col != null)
