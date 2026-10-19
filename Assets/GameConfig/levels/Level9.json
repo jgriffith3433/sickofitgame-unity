@@ -184,6 +184,22 @@
                 "phase": "climb"
               }
             ]
+          },
+          {
+            "name": "stragglers leave (no soft-lock)",
+            "when": {
+              "type": "after",
+              "seconds": 40.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "despawn",
+                "target": {
+                  "tag": "beat"
+                }
+              }
+            ]
           }
         ]
       },
@@ -251,6 +267,22 @@
               {
                 "type": "goToPhase",
                 "phase": "spill"
+              }
+            ]
+          },
+          {
+            "name": "stragglers leave (no soft-lock)",
+            "when": {
+              "type": "after",
+              "seconds": 40.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "despawn",
+                "target": {
+                  "tag": "line"
+                }
               }
             ]
           }

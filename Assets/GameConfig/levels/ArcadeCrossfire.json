@@ -350,6 +350,22 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "stragglers leave (no soft-lock)",
+            "when": {
+              "type": "after",
+              "seconds": 60.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "despawn",
+                "target": {
+                  "tag": "wave"
+                }
+              }
+            ]
           }
         ]
       }

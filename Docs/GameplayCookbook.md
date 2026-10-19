@@ -375,7 +375,7 @@ signs in the world). Between hand-written story beats the **floor generator** fi
                "do": [ { "type": "unlockTravel" }, { "type": "goToPhase", "phase": "climb2" } ] } ] }
 ```
 
-   The generator stops at `untilFloor`, waits for its last push, then emits `floorsDone`. While one of its pushes is
+   The generator stops at `untilFloor`, waits for its last push (at most the difficulty's `pushTimeout`, so an enemy stranded out of reach never holds the stage), then emits `floorsDone`. A beat that waits on `allDead` gets a safety rule beside it, `after` 40 s (60 on an arcade final) → `despawn` the same tag, so stragglers can't soft-lock it. While one of its pushes is
    alive the camera holds (`world.holdForPushes`), so the player fights instead of running past. Give a second
    stretch `"seed": 1` so it differs. End the stage with `{ "type": "floorReached", "floor": 951 }`.
 4. Floors outside travel: `setFloor`, `climbFloors` (a shortcut, an elevator); triggers `floorReached`,

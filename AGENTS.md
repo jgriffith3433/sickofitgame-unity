@@ -272,13 +272,14 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   Shaft's Waystone saved and Circle IX waking (`climbWaystone`, `climbWakes`); `boss`, `signal`, `telegraph`,
   `attack`, `adds` events, plus the magma-king watch's checks), `full` (New Game, then
   every level in order through the real flow: results → Continue → the Shaft (Continue) → video skipped with Escape; up to 3 tries per level;
-  ~10 min), `all-levels` (every level on the path in game.json's order: Level 1 then each `FloorN` level up to the first
-  level that isn't one (the long way's old stages and the arcade levels aren't on it), each opened directly (setup shortcut:
+  ~10 min), `all-levels` (every level in game.json, in its order: the path (Level 1 then each `FloorN` level up to the first
+  level that isn't one), then the long way's old stages and the arcade levels after it, each opened directly (setup shortcut:
   no videos or Shaft, and a level the bot can't clear never stops the run), played with a time limit (160 s of game time, a
-  floor ending in 1 250 s) and once more after a death; a `level-result` event per level (CLEARED, DIED with where (phase,
+  floor ending in 1 250 s, a level off the path its duration + 30 s, at most 250) and once more after a death; a `level-result` event per level (CLEARED, DIED with where (phase,
   floor, place, path section) and by what (the last `damage` source on the hero), or STUCK with the stuck event's place,
   path section and the bot's ClimbTarget), then a `summary` event, one `table` event per row and the same markdown table in
-  the report's `log`; metrics `path.cleared`/`died`/`stuck`, `level<n>.cleared`; ~2-3 h), `floors-A-B` (the same run over
+  the report's `log`; metrics `path.cleared`/`died`/`stuck`, `level<n>.cleared`; ~3-4 h), `off-path` (the same run over just the levels after
+  the path: Level13-18, Level3-10 and the Arcade levels, a `check` event per level; ~1 h), `floors-A-B` (the same run over
   one stretch of the path, each ending on a floor boss or where a shortcut jumps: `floors-1000-991`, `floors-960-951`,
   `floors-910-901`, `floors-900-891`, `floors-860-851`, `floors-810-802`; the ids come from game.json, so new floors make
   new ones; the package drops unknown option keys, so a range is an id, not an option; a `check` event per level: cleared or
