@@ -37,7 +37,7 @@
       "stopAt": 0.0,
       "followCameraY": true,
       "art": {
-        "sheet": "Art/Climb/LavaSurge_wall.png",
+        "sheet": "Art/Climb/LavaSurge_loop.png",
         "spriteNameFilter": "",
         "fps": 12,
         "scroll": 0,

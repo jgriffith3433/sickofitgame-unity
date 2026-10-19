@@ -406,17 +406,24 @@
     "surge": {
       "name": "LavaSurge",
       "about": "lavaSurge: the wall of lava that chases him sideways (surge art strip, vertical, its crest on the right; turned to face the run).",
-      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/surge, take seed 1343009082 (asset a_1917b2a42019e50c, job j_ef1869239705), picked by hawkesgen_entity_judge (j_7c67134204cd).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/surge, take seed 1343009082 (asset a_1917b2a42019e50c, job j_ef1869239705), picked by hawkesgen_entity_judge (j_7c67134204cd). Loop: video.i2v (Wan 2.2), the crest rolling in place, start = end = the still, job j_ae4a61fbffd5 (asset a_b73a273feffee10b), the only take (looked at: the plate stays flat).",
       "worldWidth": 3,
       "scale": 0.5,
       "prep": {
         "key": "magenta",
         "wrap": "y",
-        "wrapShare": 0.15
+        "wrapShare": 0.15,
+        "resize": [
+          768,
+          1344
+        ]
       },
       "clips": {
-        "wall": {
-          "image": "still.png"
+        "loop": {
+          "video": "loop.mp4",
+          "fps": 12,
+          "count": 16,
+          "drop_last": true
         }
       }
     },
