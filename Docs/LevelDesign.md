@@ -267,6 +267,9 @@ stones that sink out of view). **An Up section's camera never comes back down**:
 his body is only 0.6 tall, so at the floor's 1.2 a sinking stone he stands on goes under the screen's bottom before it
 has sunk its 1.5 and PitCatch burns him there and throws him 15 up, past the next footholds (Floor 1000, beta). Give a
 climb with sinking stones `"lead": 0.4` (its end still needs a foothold where hero + 0.4 reaches it).
+The bot (`PlaytestBot.Climb`) picks the next foothold before it jumps and judges it from the take-off until it lands, the
+way the checker does (on beta v182 it re-picked from its rising feet, dropped stone3 half way up and jumped at Floor 1000's
+ledge, 2.6 over stone2, until the run timed out): a ledge hung straight over a lower stone is fine.
 An updraft throws him **0.7 over its column's top** (lift 5): put the foothold it carries him to at most ~0.45 above the
 top and within ~1.5 of its side, and the column's foot no higher than a step above the foothold he enters from. A
 counterweight he stands on is going down (and its partner up) as he jumps. Keep a timed hazard (a geyser, a fall) off the
