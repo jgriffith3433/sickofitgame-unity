@@ -503,6 +503,20 @@ namespace SickOfIt.Gameplay
             }
 
             bool grounded = controller.IsGrounded;
+            // Resting on what he stands on but not grounded: his middle is past its edge (on a corner, or across the gap between
+            // two stones), where the feet's ground check finds nothing and a jump does nothing. Step on to it, like a player.
+            // Floor 1000 on beta: wedged between stone2 and a sunk stone3 for 190 s, the bot waiting to land.
+            if (!grounded && standingOn != null && standingOn.MainCollider != null && world.Player.Body != null
+                && Mathf.Abs(world.Player.Body.linearVelocity.y) < 0.5f && now - lastClimbJump > 0.35f)
+            {
+                var own = standingOn.MainCollider.bounds;
+                float middle = feetBounds.center.x;
+                if (middle < own.min.x + 0.3f || middle > own.max.x - 0.3f)
+                {
+                    moveX = Mathf.Sign(own.center.x - middle);
+                    return true;
+                }
+            }
             if (best == null)
             {
                 // Nothing in reach: ride what carries him (a raft), else an updraft ahead, else keep going the path's way.
@@ -524,8 +538,13 @@ namespace SickOfIt.Gameplay
                     moveX = 0f;
                     if (now - lastClimbJump > 0.35f)
                     {
+                        // On the spot: judged from the take-off, a foothold that only comes in reach from his rising feet isn't
+                        // steered for (on Floor 1000 a late steer for the ledge off a sunk stone3 drops him back to stone2).
                         jump = true;
                         lastClimbJump = now;
+                        takeoffFeet = feet;
+                        takeoffFrom = standingOn;
+                        fromTakeoff = true;
                     }
                     return true;
                 }

@@ -273,6 +273,10 @@ keeps steering for the foothold it jumped for, judged from the take-off (`Playte
 jump's top, the stone it left out until it lands), but a player under it gets the same dead hop). A lava river's box starts
 past the foothold he jumps onto it from, never under the climb before it (Floor 1000's river now starts at the bank's
 right edge, x 4.8: before, its untextured box hung over the slope's top-right and under the bank).
+Two stones less than the hero's width (0.6) apart sink to the same height and catch him across the gap, his middle over
+nothing: player.json `groundCheckWidth` is 0.3 (it was 0.1) so standing on a corner or across a gap still counts as ground
+and he can jump off it (Floor 1000: wedged between stone2 and a sunk stone3, no jump for 190 s), and the bot steps on to
+the stone it rests on when it isn't grounded.
 An updraft throws him **0.7 over its column's top** (lift 5): put the foothold it carries him to at most ~0.45 above the
 top and within ~1.5 of its side, and the column's foot no higher than a step above the foothold he enters from. A
 counterweight he stands on is going down (and its partner up) as he jumps. Keep a timed hazard (a geyser, a fall) off the
