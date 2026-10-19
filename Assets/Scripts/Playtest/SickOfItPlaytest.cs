@@ -540,7 +540,8 @@ namespace SickOfIt.Playtest
                 "hanging from a swinging chain and jumping off, the lava wave chasing him sideways, a rewind (hold R) bringing a sunk stone back up, " +
                 "and the carved landing with the floor number, which ends the level", ClimbSeconds, "level"));
             list.Add(new PlaytestScenario("one-way", $"One-way platforms on a test floor: the scene \"{OneWayScene}\" on level {OneWayLevel}'s stage (setup shortcut), " +
-                "played by the bot through real input. A climb where each ledge and stone hangs right over the last: the hero jumps up through each " +
+                "played by the bot through real input. First the drop's dead zone: a quick tap of S on a platform and a run across platforms with " +
+                "the stick a little low must not drop him (a drop needs a deliberate hold, player.json dropThroughHoldSeconds). A climb where each ledge and stone hangs right over the last: the hero jumps up through each " +
                 "from below and lands on top. Then a run where the way on is down: he holds S on the shelf and drops through it onto the ledge under " +
                 "it, then holds the gamepad's left stick down on a sinking stone and drops through that; on the carved landing (solid ground) he holds " +
                 "down and stays on it. Each beat is a check event, every pass a one-way event", OneWaySeconds, "level"));
