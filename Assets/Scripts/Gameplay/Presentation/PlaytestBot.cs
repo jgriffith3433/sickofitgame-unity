@@ -407,6 +407,19 @@ namespace SickOfIt.Gameplay
             if (!controller.IsGrounded && RideUpdraft(me, feetBounds, forward, ref moveX))
                 return true;
 
+            // In the air, the top of this jump: a new foothold above it is out of reach until he lands (the one he jumped for stays
+            // the target). Without this, a one-way ledge hanging right over his stone (Floor 1000's, over stone2) came "in reach"
+            // on the way up, the bot steered under it instead of on to the stone it jumped for, fell back short of its top, and
+            // did it again for the whole level (beta run r_de7787efe892; the give-up timer never ran: it restarts while airborne).
+            bool airborne = !controller.IsGrounded;
+            float jumpTop = feet;
+            if (airborne && world.Player.Body != null)
+            {
+                float g = Mathf.Max(0.1f, Mathf.Abs(Physics2D.gravity.y) * world.Player.Body.gravityScale);
+                float vy = Mathf.Max(0f, world.Player.Body.linearVelocity.y);
+                jumpTop = feet + vy * vy / (2f * g);
+            }
+
             Entity standingOn = null;
             Entity best = null;
             float bestScore = float.MaxValue;
@@ -443,6 +456,8 @@ namespace SickOfIt.Gameplay
                 float rise = topY - feet;
                 if (rise > (chain ? 2.6f : 1.9f) || rise < -3.5f)
                     continue;
+                if (airborne && !chain && e != chasing && topY > jumpTop + 0.05f)
+                    continue;
                 float edge = Mathf.Max(0f, Mathf.Max(b.min.x - me.x, me.x - b.max.x));
                 if (edge > 3.2f)
                     continue;
@@ -471,6 +486,19 @@ namespace SickOfIt.Gameplay
                 if (!riding && grounded && ApproachUpdraft(me, feet, forward, ref moveX, out bool hop))
                 {
                     if (hop && now - lastClimbJump > 0.35f)
+                    {
+                        jump = true;
+                        lastClimbJump = now;
+                    }
+                    return true;
+                }
+                // Climbing, on a sinking stone gone too deep for the next one: hop on the spot, like a player. It rises while he's in
+                // the air (riseSpeed) more than it sinks while he stands, until the next stone is in reach again.
+                var sunkStone = standingOn != null ? standingOn.FindAbility<SickOfIt.Gameplay.Content.SinkAbility>() : null;
+                if (grounded && Mathf.Abs(forward.x) <= 0.1f && sunkStone != null && sunkStone.riseSpeed > 0f && sunkStone.Sunk > sunkStone.dip + 0.1f)
+                {
+                    moveX = 0f;
+                    if (now - lastClimbJump > 0.35f)
                     {
                         jump = true;
                         lastClimbJump = now;

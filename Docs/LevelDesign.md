@@ -266,7 +266,12 @@ while its section is on (an Up section's camera stays on its start x, ±4.98), a
 stones that sink out of view). **An Up section's camera never comes back down**: it chases his jump's apex + `lead`, and
 his body is only 0.6 tall, so at the floor's 1.2 a sinking stone he stands on goes under the screen's bottom before it
 has sunk its 1.5 and PitCatch burns him there and throws him 15 up, past the next footholds (Floor 1000, beta). Give a
-climb with sinking stones `"lead": 0.4` (its end still needs a foothold where hero + 0.4 reaches it).
+climb with sinking stones `"lead": 0.4` (its end still needs a foothold where hero + 0.4 reaches it). Don't hang a
+one-way ledge straight over a stone with less than the jump's 2.29 between the stone's top and the ledge's top: a jump
+from the stone rises into the ledge and falls back short of its top (Floor 1000's rest ledge over stone2; the bot now
+keeps steering for the foothold it jumped for, but a player under it gets the same dead hop). A lava river's box starts
+past the foothold he jumps onto it from, never under the climb before it (Floor 1000's river now starts at the bank's
+right edge, x 4.8: before, its untextured box hung over the slope's top-right and under the bank).
 An updraft throws him **0.7 over its column's top** (lift 5): put the foothold it carries him to at most ~0.45 above the
 top and within ~1.5 of its side, and the column's foot no higher than a step above the foothold he enters from. A
 counterweight he stands on is going down (and its partner up) as he jumps. Keep a timed hazard (a geyser, a fall) off the
