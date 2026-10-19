@@ -83,6 +83,8 @@ namespace SickOfIt.Gameplay.Content
         public Vector2 offset;
         [Doc("Blocks the player and other solid bodies. False = passes through and only detects overlaps (projectiles, hazards, auras).")]
         public bool solid = true;
+        [Doc("A one-way foothold (stones, ledges, rafts, lifts): solid from above only, so the hero jumps up through it from below and lands on top, and holding down while standing on it drops him through. Ground, walls and the landing stay false.")]
+        public bool oneWay;
         [Doc("Gravity multiplier for Dynamic bodies.")] public float gravity = 1f;
         [Doc("Never rotates.")] public bool freezeRotation = true;
         [Doc("Turns to face its velocity (arrows, fireballs).")] public bool rotateToVelocity;

@@ -199,7 +199,6 @@ namespace SickOfIt.Tools.Editor.Generation
             // ─── Set LayerMasks ───────────────────────────────────────────
             // Ground uses Platform layer, boundaries use Boundary layer
             pcSo.FindProperty("groundLayer").intValue = LayerMask.GetMask("Platform", "Boundary");
-            pcSo.FindProperty("platformLayer").intValue = LayerMask.GetMask("Platform");
 
             // ─── Wire InputActionReferences ───────────────────────────────
             var inputAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>("Assets/InputSystem_Actions.inputactions");
@@ -453,7 +452,6 @@ namespace SickOfIt.Tools.Editor.Generation
                 pcSo.FindProperty("landSound").objectReferenceValue = config.landSound;
 
             pcSo.FindProperty("groundLayer").intValue = LayerMask.GetMask("Platform", "Boundary");
-            pcSo.FindProperty("platformLayer").intValue = LayerMask.GetMask("Platform");
 
             var inputAsset = AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/InputSystem_Actions.inputactions");
             if (inputAsset != null)

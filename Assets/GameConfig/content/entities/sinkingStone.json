@@ -12,7 +12,8 @@
       2.0,
       0.45
     ],
-    "solid": true
+    "solid": true,
+    "oneWay": true
   },
   "visual": {
     "scale": 1.0,

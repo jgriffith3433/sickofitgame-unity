@@ -152,6 +152,8 @@ namespace SickOfIt.Gameplay
                 collider = c;
             }
             collider.isTrigger = !def.body.solid;
+            if (def.body.solid && def.body.oneWay)
+                SickOfIt.Core.Input.DropThroughPlatform.MakeOneWay(collider);
 
             var sprite = go.AddComponent<SpriteRenderer>();
             SpriteLayers.Apply(sprite, def.visual.layer, def.visual.SortingOrder);

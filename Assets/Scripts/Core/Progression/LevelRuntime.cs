@@ -935,14 +935,9 @@ namespace SickOfIt.Core.Progression
                 if (platRenderer != null)
                     platRenderer.color = PlatformColor();
 
-                // Wire DropThroughPlatform to PlayerController
-                var dropThrough = plat.GetComponent<SickOfIt.Core.Input.DropThroughPlatform>();
-                if (dropThrough != null)
-                {
-                    var playerController = characterObject?.GetComponent<SickOfIt.Core.Input.PlayerController>();
-                    if (playerController != null)
-                        dropThrough.SetPlayerController(playerController);
-                }
+                // One-way (jump up through, hold down to drop through) unless the level says otherwise.
+                if (plat.TryGetComponent<Collider2D>(out var platCollider))
+                    SickOfIt.Core.Input.DropThroughPlatform.MakeOneWay(platCollider, platConfig.allowDropThrough);
             }
             else
             {
@@ -960,6 +955,7 @@ namespace SickOfIt.Core.Progression
                 float height = 0.3f;
                 col.size = new Vector2(width, height);
                 go.transform.localScale = new Vector3(width, height, 1f);
+                SickOfIt.Core.Input.DropThroughPlatform.MakeOneWay(col, platConfig.allowDropThrough);
 
                 int platLayer = LayerMask.NameToLayer("Platform");
                 if (platLayer >= 0)
