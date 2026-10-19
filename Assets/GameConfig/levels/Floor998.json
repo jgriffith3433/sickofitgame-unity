@@ -66,14 +66,15 @@
             {
               "entity": "wreckSign",
               "at": [
-                -0.3,
+                -1.1,
                 -1.2
               ],
               "id": "sign",
               "scale": [
                 1.1,
                 1
-              ]
+              ],
+              "facing": 1.0
             },
             {
               "entity": "wreckCart",
@@ -263,7 +264,8 @@
               "scale": [
                 0.9,
                 1
-              ]
+              ],
+              "facing": 1.0
             },
             {
               "entity": "ledge",

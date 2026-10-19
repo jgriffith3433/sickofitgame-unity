@@ -191,7 +191,8 @@
               1.1,
               1
             ],
-            "id": "raft2"
+            "id": "raft2",
+            "facing": 1.0
           },
           {
             "entity": "swingChain",

@@ -472,7 +472,8 @@
             "entity": "debrisRaftSign",
             "at": [3.0, -1.6],
             "anchor": "Section",
-            "scale": [1.2, 1]
+            "scale": [1.2, 1],
+            "facing": 1
           },
           {
             "entity": "debrisRaftHay",
