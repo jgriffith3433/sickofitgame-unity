@@ -1079,6 +1079,7 @@ Floor 801 is its own task (k_e16304d7a504): the route ends at his arena's entran
 | **Seesaw slabs** | A long slab balanced on a spire's tip: it rocks, and tips if he stands at its end. | Pieces of road the spires caught | It rocks before it tips | 893 | yes (`seesawSlab`, ability `raft` with no current) |
 | **Road creep** | A stretch of road sliding slowly back down toward the Rift like a belt: run with it, or against it and barely move. | The road slipping off the spires | Its seams crawl the way it slides | 860 | yes (`roadCreep`, ability `conveyor`) |
 | **Whelp nests** | A crack that spits a whelp every few seconds until it is shot shut. | Where the whelps are born | It glows and chitters before each whelp | 856 | yes (`whelpNest`, ability `spawner`) |
+| **Drifting slabs** | A slab of road broken off and drifting on the Rift's current: it waits at the break until he steps on, then carries him across, slow, to the next piece of road. A ride, not a new idea (959's rafts in the road's look). | The road keeps splitting; the pieces float off | It bobs at the break, waiting | 900 (known: 959) | yes (`driftSlab`/`driftSlabLeft`: `raft` with `holdUntilBoarded`, 0.5/s for 10) |
 | **The toppling spire** | A spire falls across the Rift and he runs along it as it goes (a collapse chase on its back). | The spires shed whole | A long grind and a big shake, 1.5 s before | 858 (the collapse's set piece, known pieces) | config (split slabs in a `»` section) |
 
 Every Circle X piece is known by now and comes up the road too: geysers and falls where the Rift spills into the
@@ -1126,6 +1127,19 @@ way).
 
 Each page as in section 4. The landing carves the floor number and a word or two; every floor gives a Grudge pick
 (the every-fifth-floor rule still waits for the long way), except where a shortcut is taken.
+
+**The drift and the pace** (playability pass, 2026-10-19, after beta's playtest: Floors 900 and 899 played in 48 s and
+17 s, the landings' numbers sat under the screen's bottom edge, and the bot fell off the road three times on 898). Every
+floor below except the floor bosses now ends the same way before its landing: `≈` **the drift**, the road broken off
+under him: one to three drifting slabs (`driftSlab`, 20 s each, with a slab of road or, on 899, a split slab to hop
+between them) across the Rift to the far bank, a breather on the Wastes' loop music, then `↑ 1` three slabs up (the
+last a copy of the step he took to the landing before) and the landing. Two drifts on most floors, one where the floor
+already holds the camera for a fight or a chase (900, 898, 894, 892, 859, 858, 855, 852, 805, 804), three on 899 (Split
+Ends: the road breaking up as he crosses). Every floor's climbs end where its next run or landing stands (the camera's
+path no higher than a foothold + 1.0, a landing + 0.4 under its top), so the carved number is on screen when he lands
+and a slip off a slab is a step, not a fall past the screen's edge (`floor_check.py` flags a carved number under the
+screen). Floor 898 drops four shards (two on the flank, two on the ledge run) and spaces the rest 2.6 s apart.
+Floor 808's Rift tops out under the drift and stops as it starts.
 
 ---
 

@@ -311,6 +311,16 @@ def check(name, verbose=False):
         top = sea.top + lmax
         under = [p for p in feet_all if not getattr(p, 'carrier', False) and p.top < top + 0.05 and p.top > top - 3 and not p.has('sink')]
         out.append(f"  i lava rises to y {top:.2f}" + (f"; solid footholds under it: {under}" if under else ""))
+    # The floor number carved into the landing's face must be on screen when he lands (the landing section's camera).
+    if landing is not None:
+        carved = g.ability(landing.e, 'carved')
+        land_sec = sections[landing.sec]
+        if carved and land_sec['dir'] in ('Right', 'Left'):
+            text_y = landing.at[1] + carved.get('above', 0)
+            low = land_sec['start'][1] - HALF_H + carved.get('size', 0.6) * 0.6
+            if text_y < low:
+                out.append(f"  ! landing: its carved number (y {text_y:.2f}) is below the screen's bottom (camera y "
+                           f"{land_sec['start'][1]:.2f}): shorten the climb before it")
     if landing is None:
         out.append("  ! no landing")
     elif id(landing) not in reached:

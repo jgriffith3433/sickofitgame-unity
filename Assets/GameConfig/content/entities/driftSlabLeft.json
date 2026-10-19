@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "extends": "seesawSlab",
+  "abilities": [
+    {
+      "type": "raft",
+      "current": [
+        -0.5,
+        0.0
+      ],
+      "range": 10.0,
+      "bob": 0.06,
+      "bobPeriod": 3.2,
+      "rock": 2.0,
+      "tip": 6.0,
+      "phase": 0.3,
+      "holdUntilBoarded": true
+    }
+  ]
+}

@@ -200,7 +200,7 @@
         {
           "name": "up",
           "direction": "Up",
-          "length": 3.9,
+          "length": 3.45,
           "turn": 2.0,
           "spawns": [
             {
@@ -225,6 +225,79 @@
           ]
         },
         {
+          "name": "drift",
+          "direction": "Right",
+          "length": 15.9,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "driftSlab",
+              "at": [
+                4.05,
+                8.0
+              ],
+              "id": "drift1",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                16.75,
+                7.95
+              ],
+              "id": "farBank",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "driftClimb",
+          "direction": "Up",
+          "length": 2.55,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                17.75,
+                9.25
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                15.75,
+                10.55
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                17.75,
+                11.85
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
           "name": "landing",
           "direction": "Right",
           "length": 6.7,
@@ -233,8 +306,8 @@
             {
               "entity": "floorLanding898",
               "at": [
-                6.6,
-                7.95
+                22.55,
+                11.85
               ],
               "id": "landing"
             }
@@ -352,7 +425,7 @@
               },
               {
                 "type": "wait",
-                "seconds": 2.2
+                "seconds": 2.6
               },
               {
                 "type": "spawn",
@@ -365,33 +438,7 @@
               },
               {
                 "type": "wait",
-                "seconds": 2.2
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  0.2,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 2.2
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  -1.0,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 2.2
+                "seconds": 2.6
               }
             ]
           }
@@ -424,20 +471,7 @@
               },
               {
                 "type": "wait",
-                "seconds": 1.8
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  0.6,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 1.8
+                "seconds": 2.6
               },
               {
                 "type": "spawn",
@@ -450,7 +484,7 @@
               },
               {
                 "type": "wait",
-                "seconds": 1.8
+                "seconds": 2.6
               },
               {
                 "type": "spawn",
@@ -463,20 +497,7 @@
               },
               {
                 "type": "wait",
-                "seconds": 1.8
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  -1.8,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 1.8
+                "seconds": 2.6
               }
             ]
           }
@@ -499,6 +520,21 @@
                 "volume": 0.85
               }
             ]
+          }
+        ]
+      },
+      {
+        "name": "the drift: breather",
+        "when": {
+          "type": "sectionReached",
+          "section": "drift"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_loop.ogg",
+            "volume": 0.85
           }
         ]
       },

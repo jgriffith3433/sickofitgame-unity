@@ -195,7 +195,7 @@
         {
           "name": "climb",
           "direction": "Up",
-          "length": 3.85,
+          "length": 2.1,
           "turn": 2.0,
           "spawns": [
             {
@@ -219,6 +219,79 @@
           ]
         },
         {
+          "name": "drift",
+          "direction": "Right",
+          "length": 16.2,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "driftSlab",
+              "at": [
+                14.75,
+                1.5
+              ],
+              "id": "drift1",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                27.45,
+                1.45
+              ],
+              "id": "farBank",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "driftClimb",
+          "direction": "Up",
+          "length": 3.9,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                28.45,
+                2.75
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                26.45,
+                4.05
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                28.45,
+                5.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            }
+          ]
+        },
+        {
           "name": "landing",
           "direction": "Right",
           "length": 5.9,
@@ -227,8 +300,8 @@
             {
               "entity": "floorLanding852",
               "at": [
-                16.2,
-                2.75
+                32.15,
+                6.65
               ],
               "id": "landing"
             }
@@ -345,6 +418,21 @@
                 "type": "nextSection"
               }
             ]
+          }
+        ]
+      },
+      {
+        "name": "the drift: breather",
+        "when": {
+          "type": "sectionReached",
+          "section": "drift"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_loop.ogg",
+            "volume": 0.85
           }
         ]
       },
