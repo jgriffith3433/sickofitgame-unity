@@ -36,6 +36,11 @@ namespace SickOfIt.Core
         private readonly Dictionary<GameObject, Rewind.RewindableGameObject> cachedPresence = new Dictionary<GameObject, Rewind.RewindableGameObject>();
         private readonly Dictionary<GameObject, float> heldSince = new Dictionary<GameObject, float>();
 
+        // Which list each instance is in. A rewind tells the pool about every held shot every frame
+        // (SyncRewindPresence); searching the lists for each was O(n^2) per frame with hundreds held.
+        private enum Place { None, Available, Active, Cooling }
+        private readonly Dictionary<GameObject, Place> placeOf = new Dictionary<GameObject, Place>();
+
         private bool warnWhenGrowing = true;
 
         public int ActiveCount => active.Count;
@@ -86,6 +91,7 @@ namespace SickOfIt.Core
                 if (obj.activeSelf)
                 {
                     cooling.RemoveAt(i);
+                    placeOf[obj] = Place.None;
                     continue;
                 }
 
@@ -103,6 +109,7 @@ namespace SickOfIt.Core
                     continue;
 
                 cooling.RemoveAt(i);
+                placeOf[obj] = Place.None;
                 Retire(obj);
             }
         }
@@ -145,6 +152,7 @@ namespace SickOfIt.Core
             {
                 var obj = CreateInstance();
                 available.Add(obj);
+                placeOf[obj] = Place.Available;
             }
         }
 
@@ -238,6 +246,7 @@ namespace SickOfIt.Core
             obj.SetActive(true);
             CaptureRewind(obj);
             active.Add(obj);
+            placeOf[obj] = Place.Active;
             return obj;
         }
 
@@ -275,12 +284,15 @@ namespace SickOfIt.Core
         {
             if (obj == null) return;
             if (GameClock.Instance != null && GameClock.Instance.IsRewinding) return;
-            if (cooling.Contains(obj) || available.Contains(obj)) return;
+            placeOf.TryGetValue(obj, out var place);
+            if (place == Place.Cooling || place == Place.Available) return;
 
-            active.Remove(obj);
+            if (place == Place.Active)
+                active.Remove(obj);
             obj.SetActive(false);
             heldSince[obj] = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
             cooling.Add(obj);
+            placeOf[obj] = Place.Cooling;
         }
 
         /// <summary>
@@ -291,19 +303,22 @@ namespace SickOfIt.Core
         {
             if (obj == null) return;
 
+            placeOf.TryGetValue(obj, out var place);
             if (isActive)
             {
-                available.Remove(obj);
-                cooling.Remove(obj);
-                if (!active.Contains(obj))
-                    active.Add(obj);
+                if (place == Place.Active) return;
+                if (place == Place.Available) available.Remove(obj);
+                if (place == Place.Cooling) cooling.Remove(obj);
+                active.Add(obj);
+                placeOf[obj] = Place.Active;
                 return;
             }
 
-            active.Remove(obj);
-            available.Remove(obj);
-            if (!cooling.Contains(obj))
-                cooling.Add(obj);
+            if (place == Place.Cooling) return;
+            if (place == Place.Active) active.Remove(obj);
+            if (place == Place.Available) available.Remove(obj);
+            cooling.Add(obj);
+            placeOf[obj] = Place.Cooling;
         }
 
         /// <summary>
@@ -335,20 +350,23 @@ namespace SickOfIt.Core
                     continue;
 
                 source.RemoveAt(i);
+                placeOf[obj] = Place.None;
                 Retire(obj);
             }
         }
 
         private void Retire(GameObject obj)
         {
-            active.Remove(obj);
-            cooling.Remove(obj);
+            placeOf.TryGetValue(obj, out var place);
+            if (place == Place.Active) active.Remove(obj);
+            if (place == Place.Cooling) cooling.Remove(obj);
             heldSince.Remove(obj);
             ResetRewindLife(obj);
             obj.SetActive(false);
             obj.transform.SetParent(poolContainer);
-            if (!available.Contains(obj))
+            if (place != Place.Available)
                 available.Add(obj);
+            placeOf[obj] = Place.Available;
         }
 
         private void ResetRewindLife(GameObject obj)

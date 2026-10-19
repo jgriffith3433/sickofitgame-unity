@@ -198,6 +198,43 @@ namespace SickOfIt.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator RewindWithManyHeldShotsRestoresAndReplaysThem()
+        {
+            // Short-lived shots fired fast: most are spent and held (switched off) for the rewind window, the case
+            // RewindTimeline skips in its restore loop and ObjectPool syncs without list searches.
+            var files = new Dictionary<string, string>(Basics)
+            {
+                ["entities/shortBullet.json"] = "{ 'schemaVersion': 1, 'health': 0, 'body': { 'radius': 0.05, 'solid': false }, 'healthBar': { 'show': false }, " +
+                                                "'abilities': [ { 'type': 'projectile', 'damage': 1 }, { 'type': 'lifetime', 'seconds': 0.5 } ] }",
+                ["entities/rapidTurret.json"] = "{ 'schemaVersion': 1, 'health': 3, 'abilities': [ { 'type': 'shoot', 'projectile': 'shortBullet', 'speed': 2, 'interval': 0.1, 'initialDelay': 0.1 } ] }",
+            };
+            level = TestLevel.Create(TestLevel.BuildContent(files), playerAt: new Vector2(-30f, 0f));
+            for (int i = 0; i < 3; i++)
+                level.World.Spawn("rapidTurret", new Vector2(2f + i, 1f + i), new SpawnOptions());
+            yield return level.Until(3f);
+            var first = level.Alive("shortBullet").Select(e => e.Serial).ToList();
+            Assert.That(first.Count, Is.GreaterThan(5), "shots in flight");
+            int rewindsBefore = SickOfIt.Core.Rewind.RewindPerf.Rewinds;
+
+            yield return level.RewindTo(1.2f);
+            float now = level.Clock.Time;
+            var rewound = level.Alive("shortBullet");
+            Assert.That(rewound.Count, Is.GreaterThan(0), "spent shots from that moment are back");
+            foreach (var shot in rewound)
+            {
+                Assert.That(shot.gameObject.activeSelf, Is.True);
+                Assert.That(shot.SpawnTime, Is.LessThanOrEqualTo(now + 0.05f), $"shot {shot.Serial} is from the past, not the discarded future");
+                Assert.That(shot.SpawnTime, Is.GreaterThan(now - 0.65f), $"shot {shot.Serial} was still alive then");
+            }
+            Assert.That(SickOfIt.Core.Rewind.RewindPerf.Rewinds, Is.EqualTo(rewindsBefore + 1), "RewindPerf saw the rewind");
+            Assert.That(SickOfIt.Core.Rewind.RewindPerf.Current.Frames, Is.GreaterThan(0));
+
+            yield return level.Until(3f);
+            var second = level.Alive("shortBullet").Select(e => e.Serial).ToList();
+            Assert.That(second, Is.EquivalentTo(first), "replaying fires the same shots");
+        }
+
+        [UnityTest]
         public IEnumerator RewindRestoresHealthAndBringsTheDeadBack()
         {
             level = TestLevel.Create(TestLevel.BuildContent(Basics));

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace SickOfIt.Core.Rewind
@@ -11,12 +12,22 @@ namespace SickOfIt.Core.Rewind
     /// Registration uses Awake/OnDestroy (NOT OnEnable/OnDisable) so that
     /// dead enemies (SetActive(false)) stay registered and can be restored.
     /// </summary>
-    public abstract class BaseRewindable<TSnapshot> : MonoBehaviour, IRewindable
+    public abstract class BaseRewindable<TSnapshot> : MonoBehaviour, IRewindable, IRewindHistory
         where TSnapshot : struct
     {
         [SerializeField] private int bufferCapacity = 600; // 30s at 20Hz
 
         protected CircularBuffer<TSnapshot> history;
+
+        // GetSnapshotTime as a delegate, made once: passing the method group to the buffer's searches
+        // allocated a new delegate per rewindable per frame while rewinding.
+        private Func<TSnapshot, float> snapshotTime;
+        protected Func<TSnapshot, float> SnapshotTime => snapshotTime ?? (snapshotTime = GetSnapshotTime);
+
+        // The snapshot RestoreState applied last (index from the oldest), for SkipsRepeatedRestore.
+        private int appliedIndex = -1;
+
+        public int HistoryCount => history != null ? history.Count : 0;
 
         // First moment this object existed. Survives a rewind that trims every snapshot.
         private bool hasBirth;
@@ -89,6 +100,7 @@ namespace SickOfIt.Core.Rewind
             }
 
             history.Add(snapshot);
+            appliedIndex = -1;
         }
 
         public virtual void CatchUp(float time)
@@ -110,7 +122,10 @@ namespace SickOfIt.Core.Rewind
             // History was trimmed away because we branched before this object existed.
             // Put it back in the birth state, then let recording take over.
             if (history.Count == 0)
+            {
+                appliedIndex = -1;
                 ApplySnapshot(birthSnapshot);
+            }
         }
 
         public void RestoreState(float time)
@@ -121,31 +136,45 @@ namespace SickOfIt.Core.Rewind
             float earliestTime = GetSnapshotTime(history.Oldest);
             if (time < earliestTime)
             {
+                appliedIndex = -1;
                 ApplyPreExistenceDefault();
                 return;
             }
 
             // Try interpolation
-            if (history.FindBracket(time, GetSnapshotTime, out int lo, out int hi, out float t))
+            if (history.FindBracket(time, SnapshotTime, out int lo, out int hi, out float t))
             {
                 if (lo == hi || t < 0.001f)
-                    ApplySnapshot(history[lo]);
+                    ApplyAt(lo);
                 else
+                {
+                    appliedIndex = -1;
                     ApplySnapshot(LerpSnapshots(history[lo], history[hi], t));
+                }
             }
             else
             {
                 // Fallback: snap to nearest
-                int nearest = history.FindNearestIndex(time, GetSnapshotTime);
+                int nearest = history.FindNearestIndex(time, SnapshotTime);
                 if (nearest >= 0)
-                    ApplySnapshot(history[nearest]);
+                    ApplyAt(nearest);
             }
+        }
+
+        private void ApplyAt(int index)
+        {
+            var snapshot = history[index];
+            if (SkipsRepeatedRestore && index == appliedIndex && StillApplied(snapshot))
+                return;
+            appliedIndex = index;
+            ApplySnapshot(snapshot);
         }
 
         public void BeginNewLife()
         {
             hasBirth = false;
             birthPresented = false;
+            appliedIndex = -1;
             history?.Clear();
             OnLifeReset();
         }
@@ -162,6 +191,7 @@ namespace SickOfIt.Core.Rewind
         public virtual void OnRewindStart()
         {
             birthPresented = false;
+            appliedIndex = -1;
         }
         public virtual void OnRewindStop()
         {
@@ -177,6 +207,7 @@ namespace SickOfIt.Core.Rewind
                     break;
             }
             history.TrimToCount(keepCount);
+            appliedIndex = -1;
         }
 
         // ─── Subclass contract ────────────────────────────────────────
@@ -198,6 +229,16 @@ namespace SickOfIt.Core.Rewind
         {
             return a;
         }
+
+        /// <summary>
+        /// Restoring the same recorded snapshot as last frame (a rewind sits between two of them for a while)
+        /// does nothing when this is true and <see cref="StillApplied"/> agrees. Only for state nothing else
+        /// changes during a rewind; the snapshot is applied again after any record, trim or new rewind.
+        /// </summary>
+        protected virtual bool SkipsRepeatedRestore => false;
+
+        /// <summary>Cheap check that the last applied snapshot still shows (see <see cref="SkipsRepeatedRestore"/>).</summary>
+        protected virtual bool StillApplied(TSnapshot snapshot) => true;
 
         /// <summary>
         /// Called when restoring to a time before this object's first recording.
