@@ -69,6 +69,14 @@ Assets/GameConfig/
 - **Rewind is automatic**: entity and director state is saved through `SimHistory`; random numbers come from seeded
   per-entity streams, so a rewind replays the same future. New C# abilities/triggers must save every runtime field in
   `SaveState`/`LoadState` (`SaveStateCoversEveryRuntimeField` checks this).
+- **Rewind must stay as smooth as play.** `RewindTimeline` restores every rewindable every frame (a thousand on a busy floor:
+  spent shots stay registered for the 30 s window), so that loop never allocates (`BaseRewindable.SnapshotTime` is the
+  cached delegate; never pass `GetSnapshotTime` as a method group), never searches a list (`ObjectPool` keeps each
+  instance's place in `placeOf`; `GameplayWorld.Register` a `HashSet`) and skips the restore of switched-off objects
+  (phase 1 turns on what the moment needs first). `RewindPerf` measures it (frame times playing / rewinding / just after,
+  the timeline's own work, rewindables, longest history; one `[RewindPerf]` log line per rewind); the `rewind-perf`
+  playtest compares them. Right after a rewind stops, `GameClock` clamps the next 3 frames (and Unity's
+  `maximumDeltaTime`) to 1/30 s, so the heavy stop frame can't run unseen fixed steps that kill the hero.
 - Content can reference only assets that some config uses (the importer builds `GameDefinition.assetRegistry`).
 - **Arcade loop**: rewind is limited by juice (`game.json` `rewindBudget`, `RewindBudget`), refilled by `rewindOrb` drops;
   the HUD progress bar shows level progress and juice; levels end with `offerUpgrades` (see the cookbook). Rewards are
@@ -314,7 +322,12 @@ events; ~5 min; AGENTS.md "Analytics"), `restart` (the pause menu's Restart Leve
 and recorded 1 s in, the bot plays a few seconds, P, Restart Level; 1 s into the restarted level there must be one Level
 scene and a new world, and the clock, the hero's place, his hearts, the floor counter/distance and the first moving pieces
 must match the fresh load; `check` and `snapshot` events; ~1 min. A same-scene reload goes through
-`AddressablesSceneLoader`'s reload path: old copy unloaded first, behind an empty holder scene), `imp-death` (level 1 until the bot has killed three
+`AddressablesSceneLoader`'s reload path: old copy unloaded first, behind an empty holder scene), `rewind-perf` (rewind's frame rate: Floor 901, the
+Magma King's arena, loaded directly, played 12 s by the bot then R held 3 s with the juice topped up (setup shortcuts; the
+bot's own rewinds off), 3 times, a death loads it again; average/worst frame time playing vs rewinding, the timeline's work,
+rewindables and history, and the clock's step on the frames after a rewind; checks: rewinding ≤ 1.5x play (or +5 ms), no
+rewind frame over 100 ms, the post-rewind step clamped; `rewind-perf` and `check` events, `rewindPerf.*` metrics; ~2 min),
+`imp-death` (level 1 until the bot has killed three
 imps: each imp's Die clip must be playing where it died, and those three play at 0.3x so a recording shows the frames;
 every other scenario checks imp kills the same way, without the slow motion), `cutscene` (the scene
   `content/scenes/cutsceneTest.json` on Level 1's stage: with input and rewind locked the hero walks to a point by
