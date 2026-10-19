@@ -339,6 +339,31 @@ namespace SickOfIt.Gameplay
             return PathPoint(pathDistance);
         }
 
+        const float PitDepth = 4f;
+
+        /// <summary>
+        /// Below the screen of a path floor is the lava: a hero who has dropped out of the bottom of the view is burned and
+        /// thrown back up, like the lava sea does where it is. Stateless (the hit invincibility spaces the burns), so a rewind
+        /// needs nothing saved.
+        /// </summary>
+        void PitCatch()
+        {
+            var player = world.Player;
+            if (player == null || !player.IsAlive || player.Body == null || world.Camera == null || !world.Camera.orthographic)
+                return;
+            var feet = world.PlayerController != null ? world.PlayerController.BodyCollider : null;
+            if (feet == null || world.PlayerController.IsHeld)
+                return;
+            float bottom = world.CameraCenter.y - world.Camera.orthographicSize;
+            if (feet.bounds.max.y > bottom)
+                return;
+            var v = player.Body.linearVelocity;
+            v.y = Mathf.Max(v.y, 15f);
+            player.Body.linearVelocity = v;
+            if (player.Damage(1, null))
+                world.Telemetry.Record("pit", "lava", 1);
+        }
+
         void BuildMovingBarriers()
         {
             if (world.Camera == null || !world.Camera.orthographic)
@@ -352,7 +377,11 @@ namespace SickOfIt.Gameplay
                 // rises with the camera, so falling off the bottom of the screen just lands you on its edge.
                 Barrier(cameraTransform, "TravelEdge_Left", new Vector2(-w - 0.5f, 0f), new Vector2(1f, h * 4f), layer);
                 Barrier(cameraTransform, "TravelEdge_Right", new Vector2(w + 0.5f, 0f), new Vector2(1f, h * 4f), layer);
-                if (worldDef.travelDirection == TravelDirection.Up || worldDef.HasPath)
+                // A path floor has no floor under the screen: what drops off the bottom falls into the lava (PitCatch burns
+                // him and throws him back up), so its safety net sits well below the screen, never a hidden ledge on it.
+                if (worldDef.HasPath)
+                    Barrier(cameraTransform, "TravelEdge_Bottom", new Vector2(0f, -h - PitDepth - 0.5f), new Vector2(w * 4f, 1f), layer);
+                else if (worldDef.travelDirection == TravelDirection.Up)
                     Barrier(cameraTransform, "TravelEdge_Bottom", new Vector2(0f, -h - 0.5f), new Vector2(w * 4f, 1f), layer);
             }
             else if (Mode == CameraMode.Scroll)
@@ -400,6 +429,7 @@ namespace SickOfIt.Gameplay
                 {
                     cameraBase = PathStep(dt);
                     movesCamera = true;
+                    PitCatch();
                     return;
                 }
                 cameraBase = TravelStep(dt);

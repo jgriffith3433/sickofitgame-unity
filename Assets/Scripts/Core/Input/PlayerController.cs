@@ -578,10 +578,13 @@ namespace SickOfIt.Core.Input
         {
             var filter = new ContactFilter2D { useLayerMask = true, layerMask = 1 << 0, useTriggers = false };
             int n = Physics2D.OverlapBox(center, size, 0f, filter, footholdHits);
+            float feetY = col.bounds.min.y;
             for (int i = 0; i < n; i++)
             {
                 var hit = footholdHits[i];
-                if (hit != null && hit.attachedRigidbody != rb && !hit.isTrigger)
+                // Only a surface under his feet is ground: a solid piece whose top is above them (beside him, or around him
+                // as he passes) isn't, so he falls instead of standing on air.
+                if (hit != null && hit.enabled && hit.attachedRigidbody != rb && !hit.isTrigger && hit.bounds.max.y <= feetY + 0.12f)
                     return true;
             }
             return false;
