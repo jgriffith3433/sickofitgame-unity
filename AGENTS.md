@@ -232,6 +232,14 @@ instead of generated again. Batch mode fails with "another Unity instance is run
   A good build log has `Game config verified for the build ... fingerprint <hash>`; no such line, no current data.
   To check an agent worktree the same way: `-executeMethod SickOfIt.Tools.Editor.GameConfig.GameConfigCommands.ImportForBuild`.
 
+- **The player data stays small (GitHub refuses files over 100 MB).** `GameDefinition` lives in Resources, so
+  everything it references (sprite sheets, clips, Shaft paintings, music) used to ride in `SickOfIt.data` (v183: 159.9
+  MB, go-live rejected). The deploy's Step 1b (`PlayerDataSplit`) moves it out of Resources for the player build, makes
+  it addressable (`GameDefinition`) with its dependencies in remote `PlayerData_<folder>` groups (each under 40 MB) and
+  puts a generated Boot scene first, where `GameDefinitionBoot` loads it (progress bar) and opens the main menu; after
+  the build everything is put back, so the editor and tests still read Resources. Startup code that needs the definition
+  before the main menu uses `GameDefinition.WhenReady`. Step 6b (`BuildOutputGuard`) lists the largest files of
+  Game/v<n> and fails the deploy on any over 95 MB. Content needs nothing new: new art reaches the bundles by itself.
 - **Tests:** `-runTests -testPlatform EditMode` and `-runTests -testPlatform PlayMode` (add `-testResults <file>`).
 - **Playtest every level with a bot** (real Level scene, ~1 min per level; omit `-nographics`):
   `-runTests -testPlatform PlayMode -testCategory Playtest -testResults Logs/Playtest/results.xml`, then read
