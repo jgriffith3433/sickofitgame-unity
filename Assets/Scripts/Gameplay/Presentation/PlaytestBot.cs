@@ -275,6 +275,12 @@ namespace SickOfIt.Gameplay
         public Entity ClimbTarget { get; private set; }
         float lastClimbJump = -99f;
 
+        /// <summary>Footholds it gave up on: it got no closer to one for GiveUpSeconds (behind the screen's edge, under a lip), so it tried another.</summary>
+        public int GaveUpOn { get; private set; }
+        const float GiveUpSeconds = 5f, SkipSeconds = 5f;
+        Entity chasing, skipped;
+        float chaseSince, chaseClosest, skipUntil;
+
         /// <summary>
         /// On a floor with a path (world.path), picks the next foothold ahead along the current section (a stone, a raft, a ledge,
         /// a chain's handle) within a jump, walks to it and jumps at the right moment (up through a one-way piece above him, too);
@@ -327,6 +333,8 @@ namespace SickOfIt.Gameplay
                 if (chain && world.Player.IsHostileTo(e))
                     continue;
                 if (!chain && !e.Tags.Contains("foothold"))
+                    continue;
+                if (e == skipped && now < skipUntil)
                     continue;
                 var col = e.MainCollider;
                 if (col == null || !col.enabled)
@@ -382,6 +390,35 @@ namespace SickOfIt.Gameplay
             float edgeGap = bestIsChain ? Mathf.Abs(dx) : Mathf.Max(0f, Mathf.Max(bestBounds.min.x - me.x, me.x - bestBounds.max.x));
             float up = (bestIsChain ? best.Position.y - 0.5f : bestBounds.max.y) - feet;
             moveX = Mathf.Abs(dx) > 0.12f ? Mathf.Sign(dx) : 0f;
+
+            // Getting no closer to it for a while, standing on solid footing (not riding a raft that brings it near):
+            // it's out of reach (behind the screen's edge, under a lip). Leave it a few seconds, hop, and try the next one.
+            float distance = new Vector2(dx, up).magnitude;
+            bool carried = standingOn != null && standingOn.FindAbility<SickOfIt.Gameplay.Content.RaftAbility>() != null;
+            if (best != chasing)
+            {
+                chasing = best;
+                chaseSince = now;
+                chaseClosest = distance;
+            }
+            else if (distance < chaseClosest - 0.25f || !grounded || carried)
+            {
+                chaseClosest = Mathf.Min(chaseClosest, distance);
+                chaseSince = now;
+            }
+            else if (now - chaseSince > GiveUpSeconds)
+            {
+                skipped = best;
+                skipUntil = now + SkipSeconds;
+                chasing = null;
+                GaveUpOn++;
+                if (now - lastClimbJump > 0.35f)
+                {
+                    jump = true;
+                    lastClimbJump = now;
+                }
+                return true;
+            }
 
             // The next foothold is right under the one-way piece he stands on: drop through it.
             if (!bestIsChain && grounded && up < -0.4f && controller.OnOneWayPlatform
@@ -514,12 +551,14 @@ namespace SickOfIt.Gameplay
             int health = world.Player.Health;
             bool hit = lastHealth >= 0 && health < lastHealth;
             lastHealth = health;
-            if (!hit || !useRewind || now < 2f)
+            // A fatal hit is undone with whatever juice is left (a player would hold R on "undo your death"), any other with a full second.
+            bool fatal = health <= 0;
+            if (!hit || !useRewind || (now < 2f && !fatal))
                 return;
             var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
-            if (budget == null || budget.Juice < 1.2f)
+            if (budget == null || budget.Juice < (fatal ? 0.4f : 1.2f))
                 return;
-            RewindNow(1.2f);
+            RewindNow(fatal ? Mathf.Clamp(budget.Juice - 0.1f, 0.3f, 2f) : 1.2f);
         }
     }
 }
