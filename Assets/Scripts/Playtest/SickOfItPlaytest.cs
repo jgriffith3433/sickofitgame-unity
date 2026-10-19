@@ -964,6 +964,10 @@ namespace SickOfIt.Playtest
                 public bool FloorBoss => OneFloor && Start % 10 == 1;
                 /// <summary>The lava sea's surface (lowest and highest seen) and when the wave first chased him.</summary>
                 public float LavaLow = float.MaxValue, LavaHigh = float.MinValue;
+                /// <summary>The footholds he stood on, in order (instance id, else entity id), and the ones a still lava (not risen,
+                /// the foothold not sinking) covered: their top inside the lava's box, under its drawn surface and its scald.</summary>
+                public readonly List<string> StoodOn = new List<string>();
+                public readonly Dictionary<string, string> UnderLava = new Dictionary<string, string>();
 
                 public int KitCount(string what, string entityPrefix = "")
                 {
@@ -1218,6 +1222,7 @@ namespace SickOfIt.Playtest
                         s.LavaLow = Mathf.Min(s.LavaLow, top);
                         s.LavaHigh = Mathf.Max(s.LavaHigh, top);
                     }
+                    FootholdsDuring(s, world, now);
                 }
 
                 var track = world.Effects != null ? world.Effects.Track : null;
@@ -1246,6 +1251,59 @@ namespace SickOfIt.Playtest
                     }
                 }
                 return null;
+            }
+
+            /// <summary>
+            /// A floor level, every frame: which foothold he stands on (a "foothold" event each time it changes, so the timeline
+            /// shows the way he climbed), and any foothold a lava that hasn't risen covers (a river laid over a stone hides the
+            /// stone under its surface and burns him on it: Floor 1000's stone5, beta). A sinking or falling piece going under is
+            /// the floor working, not a layout bug.
+            /// </summary>
+            void FootholdsDuring(StageWatch s, GameplayWorld world, float now)
+            {
+                Entity on = null;
+                foreach (var e in world.Live)
+                {
+                    if (e == null || !e.IsAlive || e.IsPlayer || !e.Tags.Contains("foothold") || e.MainCollider == null || !e.MainCollider.enabled)
+                        continue;
+                    if (on == null && world.Player != null && world.Player.IsAlive && world.PlayerStandsOn(e))
+                        on = e;
+                    string name = e.InstanceId.Length > 0 ? e.InstanceId : e.DefId;
+                    if (s.UnderLava.ContainsKey(name))
+                        continue;
+                    var sink = e.FindAbility<SickOfIt.Gameplay.Content.SinkAbility>();
+                    var crumble = e.FindAbility<SickOfIt.Gameplay.Content.CrumbleAbility>();
+                    if (sink != null && sink.Sunk > 0.05f || crumble != null && crumble.Falling)
+                        continue;
+                    var b = e.MainCollider.bounds;
+                    foreach (var lava in world.Live)
+                    {
+                        if (lava == null || !lava.IsAlive || !lava.Tags.Contains("lava") || lava.MainCollider == null)
+                            continue;
+                        var sea = lava.FindAbility<SickOfIt.Gameplay.Content.LavaSeaAbility>();
+                        if (sea != null && sea.Risen > 0.01f)
+                            continue;
+                        var l = lava.MainCollider.bounds;
+                        float overlap = Mathf.Min(b.max.x, l.max.x) - Mathf.Max(b.min.x, l.min.x);
+                        if (overlap > 0.1f && b.max.y < l.max.y + 0.05f && b.max.y > l.min.y)
+                        {
+                            string lavaName = lava.InstanceId.Length > 0 ? lava.InstanceId : lava.DefId;
+                            s.UnderLava[name] = $"{name} (top {b.max.y:0.00}, x {b.min.x:0.0}-{b.max.x:0.0}) under {lavaName} (top {l.max.y:0.00}, x {l.min.x:0.0}-{l.max.x:0.0})";
+                            Run.Event("lava-over-foothold", $"level {s.Level} at {now:0.0} s: {s.UnderLava[name]}");
+                            break;
+                        }
+                    }
+                }
+                if (on == null)
+                    return;
+                string stood = on.InstanceId.Length > 0 ? on.InstanceId : on.DefId;
+                if (s.StoodOn.Count == 0 || s.StoodOn[s.StoodOn.Count - 1] != stood)
+                {
+                    s.StoodOn.Add(stood);
+                    var p = world.Player.Position;
+                    Run.Event("foothold", $"level {s.Level} at {now:0.0} s: on {stood} at ({p.x:0.0}, {p.y:0.0})" +
+                                          (world.Effects != null && world.Effects.HasPath ? $", path section \"{world.Effects.CurrentSection?.name}\"" : ""));
+                }
             }
 
             /// <summary>
@@ -1470,6 +1528,21 @@ namespace SickOfIt.Playtest
                         int sinks = s.KitCount("sink", "sinkingStone");
                         s.Check(prefix, sinks >= 3 || !completed && sinks >= 1,
                             $"sinking stones took his weight {sinks} time(s) (want 3+: the floor teaches them); floor kit: {kit}");
+                        // The jump off the slope's last stone onto the bank: the drift's lava river once lay over stone5, so he
+                        // stood in the lava, drawn under it and burned, and never made the bank (beta's stuck event).
+                        s.Check(prefix + ".lavaClear", s.UnderLava.Count == 0,
+                            s.UnderLava.Count == 0 ? "no foothold under the lava (its sea and the drift's river lie below every stone, ledge and raft)"
+                                : $"lava over {s.UnderLava.Count} foothold(s): {string.Join(" | ", s.UnderLava.Values)}");
+                        int last = s.StoodOn.IndexOf("stone5");
+                        int bank = last >= 0 ? s.StoodOn.IndexOf("bank", last) : -1;
+                        s.Check(prefix + ".bankJump", bank > last && last >= 0,
+                            last < 0 ? $"never stood on stone5 (the slope's last stone); footholds: {string.Join(" > ", s.StoodOn)}"
+                                : bank < 0 ? $"stood on stone5 but never made the bank ledge; footholds: {string.Join(" > ", s.StoodOn)}"
+                                : "jumped from stone5 onto the bank ledge");
+                        bool landed = s.StoodOn.Contains("landing");
+                        s.Check(prefix + ".cleared", completed && landed,
+                            $"{(landed ? "reached the landing" : "never reached the landing")}, level {(completed ? "complete" : "not complete")} with no stuck event; " +
+                            $"footholds: {string.Join(" > ", s.StoodOn)}");
                         break;
                     }
                     case 999:

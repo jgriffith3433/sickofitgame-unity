@@ -335,7 +335,8 @@ who runs the hauling.
 - **New:** sinking stones.
 - **Path:** `↗ 3` a slope of floating crust → `≈ 2` a big floe drifting down the lava river (the current carries him,
   slowly) → `↑ 3` the bank's ledges → `→ 1` the landing.
-- **Obstacles:** sinking stones up the slope and along the drift's edges, then solid ledges; nothing else.
+- **Obstacles:** sinking stones up the slope and along the drift's edges, then solid ledges; nothing else. The river
+  starts under the bank ledge, never under a stone of the slope: lava only takes a stone that sinks into it.
 - **Monsters:** none to fight. At the landing an imp with a sack sees him, drops its ember in surprise (it hisses into
   the lava) and flees up a chain. It is the first imp he meets and it tells him where the diamonds went.
 - **Set piece and beat:** he lands where Video2 dropped him, on a rock in the lava river. The first stone he stands on
