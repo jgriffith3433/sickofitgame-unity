@@ -41,6 +41,8 @@ namespace SickOfIt.Playtest
     /// portal-audio (the prologue's portal scene sounds and the Meadow's lines played in order on the main menu).
     /// story-path (New Game through the story path: Video1, the Meadow, Video2, the Landing with its floor counter
     /// and the 999 beat, Video3 (Yooba), the Spill, then the level select with the story levels in order).
+    /// all-levels (every level on the path, each opened directly with a time limit, a table of cleared / died / stuck) and
+    /// floors-A-B (the same over one stretch, e.g. floors-1000-991).
     /// Every scenario starts by pressing the page's "Tap to play" sound prompt (<see cref="PageSound"/>).
     /// </summary>
     public static class SickOfItPlaytest
@@ -328,6 +330,97 @@ namespace SickOfIt.Playtest
         const float CrackedSeconds = 4900f;
         const float ShortcutSeconds = 480f;
 
+        /// <summary>
+        /// The all-levels scenario (and its floors-A-B stretches): every level on the path in game.json's order, each opened
+        /// directly (a setup shortcut, so videos are skipped and a level the bot can't clear never stops the run), played with
+        /// a time limit in game seconds (a floor, a floor boss's or Warden's floor), once more after a death, and reported
+        /// per level: cleared, died (where, by what) or stuck (phase, place, path section, the bot's ClimbTarget).
+        /// </summary>
+        public const string AllLevelsId = "all-levels", StretchPrefix = "floors-";
+        const float PathFloorSeconds = 160f, PathBossSeconds = 250f;
+        const int PathTries = 2;
+        static readonly Regex FloorLevelName = new Regex(@"^Floor(\d+)$");
+
+        /// <summary>The floor a one-floor level ("FloorN" in game.json) is on, or 0.</summary>
+        public static int PathFloor(int n)
+        {
+            var definition = GameDefinition.Instance;
+            var level = definition != null && n > 0 && n <= definition.TotalLevels ? definition.GetLevel(n) : null;
+            var match = level != null && level.levelName != null ? FloorLevelName.Match(level.levelName) : null;
+            return match != null && match.Success ? int.Parse(match.Groups[1].Value) : 0;
+        }
+
+        /// <summary>
+        /// The path: game.json's levels from the start, Level 1 (the Meadow) then each floor ("FloorN", one level = one floor),
+        /// up to the first level that isn't a floor (the long way's old 10-floor stages and the arcade levels after them).
+        /// The shortcuts' skipped floors are not in the list, so the path takes them.
+        /// </summary>
+        public static List<int> PathLevels()
+        {
+            var list = new List<int>();
+            var definition = GameDefinition.Instance;
+            int levels = definition != null ? definition.TotalLevels : 0;
+            for (int n = 1; n <= levels; n++)
+            {
+                if (n > 1 && PathFloor(n) <= 0)
+                    break;
+                list.Add(n);
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// The path's floors in stretches, each ending on a floor boss or Warden (a floor ending in 1) or where a shortcut
+        /// jumps: 1000-991, 960-951, 910-901, 900-891, ... The floors-A-B scenarios play one each.
+        /// </summary>
+        public static List<(int from, int to)> PathStretches()
+        {
+            var list = new List<(int, int)>();
+            int start = -1, lastFloor = 0, lastLevel = 0;
+            foreach (int n in PathLevels())
+            {
+                int floor = PathFloor(n);
+                if (floor <= 0)
+                    continue;
+                if (start > 0 && (floor != lastFloor - 1 || lastFloor % 10 == 1))
+                {
+                    list.Add((start, lastLevel));
+                    start = -1;
+                }
+                if (start < 0)
+                    start = n;
+                lastFloor = floor;
+                lastLevel = n;
+            }
+            if (start > 0)
+                list.Add((start, lastLevel));
+            return list;
+        }
+
+        static string StretchId((int from, int to) stretch) => StretchPrefix + PathFloor(stretch.from) + "-" + PathFloor(stretch.to);
+
+        /// <summary>The time limit all-levels gives level n, in game seconds: the level's own (duration + 10), at most PathFloorSeconds (a boss's floor PathBossSeconds).</summary>
+        static float PathLevelSeconds(int n)
+        {
+            var level = GameDefinition.Instance != null ? GameDefinition.Instance.GetLevel(n) : null;
+            float own = Mathf.Max(30f, level != null ? level.duration : 60f) + 10f;
+            int floor = PathFloor(n);
+            return Mathf.Min(own, floor > 0 && floor % 10 == 1 ? PathBossSeconds : PathFloorSeconds);
+        }
+
+        /// <summary>Real seconds a run of these levels may take: each level's limit, a second try for some, and the loads.</summary>
+        static float PathRunSeconds(List<int> levels)
+        {
+            float seconds = 60f;
+            foreach (int n in levels)
+                seconds += PathLevelSeconds(n) * 1.4f + 30f;
+            return seconds;
+        }
+
+        static string PathRange(List<int> levels) =>
+            levels.Count == 0 ? "none" : $"levels {levels[0]}-{levels[levels.Count - 1]}" +
+                                         (PathFloor(levels[levels.Count - 1]) > 0 ? $" (to Floor {PathFloor(levels[levels.Count - 1])})" : "");
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void Register()
         {
@@ -447,6 +540,20 @@ namespace SickOfIt.Playtest
                 "from the burning door through the fire tunnel to the lava river (10.6-17.5 s): no COMING SOON caption in the tunnel (screen pixels in the box " +
                 "it used to cover), the frame on screen matches the clock, the soundtrack matches the clock, and the video is as long as its soundtrack", 60, "video"));
             list.Add(new PlaytestScenario("full", "New Game, then every level in order through the real flow, as far as the bot gets", 600, "full"));
+            var path = PathLevels();
+            const string pathHow = "each level opened directly (a setup shortcut: no videos, no Shaft, and a level the bot can't clear never stops the run) " +
+                                   "and played by the bot through real input with a time limit (a floor 160 s of game time, a floor boss's or Warden's floor 250 s), " +
+                                   "once more after a death. Each level ends with a level-result event: CLEARED, DIED (where: phase, floor, the hero's place, " +
+                                   "path section; by what: the last thing that hurt him) or STUCK (the stuck event's phase, place, path section and the bot's " +
+                                   "ClimbTarget); the run ends with a summary event and the per-level table (table events, and the same table in the report's log)";
+            list.Add(new PlaytestScenario(AllLevelsId, $"Every level on the path in game.json's order ({PathRange(path)}: the Meadow, then each floor of " +
+                "the played route, past the shortcuts' skipped floors): " + pathHow, PathRunSeconds(path), "full", "levels"));
+            foreach (var stretch in PathStretches())
+            {
+                var stretchLevels = path.FindAll(n => n >= stretch.from && n <= stretch.to);
+                list.Add(new PlaytestScenario(StretchId(stretch), $"Floors {PathFloor(stretch.from)}-{PathFloor(stretch.to)} of the path " +
+                    $"(levels {stretch.from}-{stretch.to}), the all-levels run over just this stretch: " + pathHow, PathRunSeconds(stretchLevels), "full", "levels"));
+            }
             list.Add(new PlaytestScenario("story-path", "New Game through the story path with the real flow: Video1, Level 1 (the Meadow and its portal " +
                 $"scene), Video2, Level 2 (Floor {LandingFirstFloor}: The Landing, no arcade level in between: its floor counter on {LandingFirstFloor}, " +
                 $"ticking to {LandingLastFloor} on its landing), Video3 (Yooba, watched a few seconds), then Circle X's played route one floor per level " +
@@ -616,6 +723,13 @@ namespace SickOfIt.Playtest
                 yield return session.Smoke();
             else if (id == "full")
                 yield return session.Full();
+            else if (id == AllLevelsId)
+                yield return session.AllLevels(PathLevels(), "the whole path");
+            else if (id.StartsWith(StretchPrefix, StringComparison.Ordinal) && PathStretches().Exists(s => StretchId(s) == id))
+            {
+                var stretch = PathStretches().Find(s => StretchId(s) == id);
+                yield return session.AllLevels(PathLevels().FindAll(n => n >= stretch.from && n <= stretch.to), $"floors {PathFloor(stretch.from)}-{PathFloor(stretch.to)}");
+            }
             else if (id == "story-path")
                 yield return session.StoryPathRun();
             else if (id == "shaft")
@@ -793,6 +907,8 @@ namespace SickOfIt.Playtest
             {
                 if (Run.Done)
                     return;
+                if (e.Kind == "damage" && e.Subject == "player" && !string.IsNullOrEmpty(e.Detail))
+                    lastHitBy = e.Detail;
                 string level = "level " + log.World.LevelNumber;
                 if (stage != null && stage.OneFloor && stage.Level == log.World.LevelNumber)
                 {
@@ -4979,6 +5095,204 @@ namespace SickOfIt.Playtest
                     Run.Problem(PlaytestSeverity.Bug, $"cursor {beat}: want {detail}");
             }
 
+            // ─── all-levels: every level on the path, one after another, each reported ─────
+
+            /// <summary>One row of the all-levels table.</summary>
+            sealed class PathResult
+            {
+                public int Level, Floor, Tries;
+                public string Title = "", Result = "", Where = "", Before = "";
+                public float Seconds;
+
+                public string Name => "Level " + Level;
+
+                public string Line() =>
+                    $"{Name} {Title}: {Result.ToUpperInvariant()} in {Seconds:0} s ({Tries} {(Tries == 1 ? "try" : "tries")})" +
+                    (Where.Length > 0 ? " " + Where : "") + (Before.Length > 0 ? $" [first try: {Before}]" : "");
+
+                public string Row() =>
+                    $"| {Name} | {Title} | {Result.ToUpperInvariant()} | {Seconds:0} s | {Tries} | {(Where.Length > 0 ? Where : "-")}{(Before.Length > 0 ? $" (first try: {Before})" : "")} |";
+            }
+
+            /// <summary>Set by OpenLevel: the level asked for is running in a world of its own.</summary>
+            bool openedLevel;
+
+            /// <summary>
+            /// all-levels and floors-A-B: each level opened directly in order (setup shortcut), played with the bot, once more after a
+            /// death, and reported: cleared, died (where and by what) or stuck (where). A level the bot can't clear goes in the table
+            /// and the next one starts; the run ends with the table.
+            /// </summary>
+            public IEnumerator AllLevels(List<int> levels, string what)
+            {
+                var results = new List<PathResult>();
+                takeShortcuts = false;
+                reckless = false;
+                if (levels.Count == 0)
+                {
+                    Run.Problem(PlaytestSeverity.Bug, "no levels on the path (game.json's levels)");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+                Run.Event("all-levels", $"{what}: {levels.Count} levels, {PathRange(levels)}; each opened directly (setup shortcut), played once more after a death");
+                for (int i = 0; i < levels.Count && !Run.Done; i++)
+                {
+                    int n = levels[i];
+                    var config = GameDefinition.Instance.GetLevel(n);
+                    var row = new PathResult { Level = n, Floor = PathFloor(n), Title = config != null ? config.displayName ?? config.levelName ?? "" : "" };
+                    float limit = PathLevelSeconds(n);
+                    for (int attempt = 1; attempt <= PathTries && !Run.Done; attempt++)
+                    {
+                        row.Tries = attempt;
+                        yield return OpenLevel(n, attempt);
+                        if (Run.Done) yield break;
+                        if (!openedLevel)
+                        {
+                            row.Result = "stuck";
+                            row.Where = $"never started (the game stayed in {SceneName()})";
+                            Run.Problem(PlaytestSeverity.Bug, $"all-levels: level {n} never started when loaded directly (in {SceneName()})");
+                            break;
+                        }
+                        float started = Time.realtimeSinceStartup;
+                        yield return PlayLevel(n, limit, null, (float)i / levels.Count, (float)(i + 1) / levels.Count, waitOutDeath: true);
+                        if (Run.Done) yield break;
+                        row.Seconds = (Time.realtimeSinceStartup - started) * Speed;
+                        if (lastOutcome == "completed")
+                        {
+                            row.Result = "cleared";
+                            row.Where = "";
+                            break;
+                        }
+                        if (lastOutcome == "died")
+                        {
+                            row.Result = "died";
+                            row.Where = lastDeath ?? "(where not seen)";
+                            if (attempt < PathTries)
+                            {
+                                row.Before = "died " + row.Where;
+                                Run.Event("retry", $"level {n}, try {attempt + 1}: died {row.Where}");
+                                continue;
+                            }
+                            break;
+                        }
+                        row.Result = "stuck";
+                        row.Where = $"{(lastOutcome == "time up" || lastOutcome == "timeout" ? $"no end after {limit:0} s" : lastOutcome)}, {lastWhere ?? "the hero not seen"}";
+                        break;
+                    }
+                    results.Add(row);
+                    Run.Event("level-result", row.Line());
+                    Run.Metric($"level{n}.cleared", row.Result == "cleared" ? 1 : 0);
+                    Run.Metric("path.cleared", results.FindAll(r => r.Result == "cleared").Count);
+                    Run.Metric("path.died", results.FindAll(r => r.Result == "died").Count);
+                    Run.Metric("path.stuck", results.FindAll(r => r.Result == "stuck").Count);
+                    Run.Metric("path.played", results.Count);
+                }
+                if (Run.Done) yield break;
+
+                // The table: a summary line, one event per row, and the same table (markdown) in the report's log.
+                int cleared = results.FindAll(r => r.Result == "cleared").Count, died = results.FindAll(r => r.Result == "died").Count,
+                    stuck = results.FindAll(r => r.Result == "stuck").Count;
+                var first = results.Find(r => r.Result != "cleared");
+                string summary = $"{what}: {cleared} of {results.Count} cleared, {died} died, {stuck} stuck" +
+                                 (first != null ? $"; the first not cleared is {first.Name} {first.Title} ({first.Result})" : "; every level cleared");
+                Run.Event("summary", summary);
+                Run.Log("all-levels " + summary);
+                Run.Log("| Level | Name | Result | Time | Tries | Where / by what |");
+                Run.Log("|---|---|---|---|---|---|");
+                foreach (var row in results)
+                {
+                    Run.Event("table", row.Row());
+                    Run.Log(row.Row());
+                }
+                foreach (var row in results)
+                {
+                    if (row.Result == "stuck")
+                        Run.Problem(PlaytestSeverity.Warning, $"all-levels: {row.Name} {row.Title} stuck: {row.Where}");
+                }
+                // Criterion: the bot clears the Meadow and the Landing (Floor 1000) when they're in the run.
+                foreach (var row in results)
+                {
+                    if (row.Level == 1 || row.Floor == LandingFirstFloor)
+                        Run.Event("check", $"all-levels {row.Name} {row.Title}: {(row.Result == "cleared" ? "ok (cleared)" : "not cleared (" + row.Result + ")")}");
+                }
+                Run.Progress(1f);
+                End(cleared == results.Count ? PlaytestOutcome.Won : PlaytestOutcome.Done);
+            }
+
+            /// <summary>
+            /// Opens level n directly (setup shortcut) from wherever the game is: the last level (its results, or standing where
+            /// it timed out), the death scene (skipped like a player, Escape) and the Shaft after it (Continue), a video or a menu.
+            /// Sets openedLevel once level n runs in a new world; gives up after 90 s (the row says so and the run goes on).
+            /// </summary>
+            IEnumerator OpenLevel(int n, int attempt)
+            {
+                openedLevel = false;
+                // Just after a death the level is gone before the death scene is up: let the game get there first.
+                float settle = Time.realtimeSinceStartup + 8f;
+                while (!Run.Done && GameplayWorld.Instance == null && ShaftScreen.Current == null && Time.realtimeSinceStartup < settle
+                       && Object.FindAnyObjectByType<DeathRuntime>() == null && Object.FindAnyObjectByType<VideoRuntime>() == null
+                       && Object.FindAnyObjectByType<MainMenuManager>() == null && Object.FindAnyObjectByType<LevelSelectionManager>() == null)
+                    yield return null;
+                var before = GameplayWorld.Instance;
+                float end = Time.realtimeSinceStartup + 90f, loadAt = -99f, skipAt = -1f;
+                GameplayWorld loadedFrom = null;
+                int loads = 0;
+                while (!Run.Done)
+                {
+                    var world = GameplayWorld.Instance;
+                    if (world != null && world != before && LevelRunning(n))
+                    {
+                        openedLevel = true;
+                        yield break;
+                    }
+                    if (Time.realtimeSinceStartup > end)
+                        yield break;
+                    yield return ResumeStrayPause(n);
+                    if (ShaftScreen.Current != null)
+                    {
+                        // The Shaft after a death (the drop to the Waystone): Continue like a player, then open the level.
+                        if (!ShaftScreen.Current.Continued)
+                            yield return PassShaft();
+                        else
+                            yield return null;
+                        continue;
+                    }
+                    bool inVideo = Object.FindAnyObjectByType<VideoRuntime>() != null;
+                    bool inDeath = Object.FindAnyObjectByType<DeathRuntime>() != null;
+                    if (inVideo || inDeath)
+                    {
+                        Run.Scene(inVideo ? "Video" : "Death");
+                        if (skipAt < 0f)
+                            skipAt = Time.realtimeSinceStartup + 2f;
+                        if (Time.realtimeSinceStartup >= skipAt)
+                        {
+                            yield return SkipTap(inVideo ? "video" : "death animation");
+                            skipAt = Time.realtimeSinceStartup + 3f;
+                        }
+                        yield return null;
+                        continue;
+                    }
+                    skipAt = -1f;
+                    // A load in flight: wait for it, unless some other level has started since (the run restarted at a Waystone).
+                    bool otherStarted = world != null && world != loadedFrom && world.LevelNumber != n && LevelRunning(world.LevelNumber);
+                    bool waiting = loads > 0 && Time.realtimeSinceStartup - loadAt < 15f && !otherStarted;
+                    if (!waiting && loads < 3)
+                    {
+                        loads++;
+                        loadedFrom = world;
+                        loadAt = Time.realtimeSinceStartup;
+                        Run.Event("shortcut", $"load level {n} directly" + (attempt > 1 ? $" (try {attempt})" : "") + (loads > 1 ? $" (load {loads})" : ""));
+                        if (world != null)
+                            world.Telemetry?.Finish("playtest left");
+                        input.ReleaseAll();
+                        Time.timeScale = 1f;
+                        var load = LoadLevel(n);
+                        if (load != null)
+                            yield return load;
+                    }
+                    yield return null;
+                }
+            }
+
             public IEnumerator Full()
             {
                 var definition = GameDefinition.Instance;
@@ -7063,6 +7377,9 @@ namespace SickOfIt.Playtest
                 Func<bool> until = null)
             {
                 lastOutcome = "not started";
+                lastHitBy = "";
+                lastDeath = null;
+                lastWhere = null;
                 Run.Scene("Level " + n);
                 float startBy = Time.realtimeSinceStartup + 45f;
                 while (!Run.Done && !LevelRunning(n) && Time.realtimeSinceStartup < startBy)
@@ -7118,6 +7435,7 @@ namespace SickOfIt.Playtest
                             dying = true;
                             deaths++;
                             Run.Metric("deaths", deaths);
+                            lastDeath = $"at {now:0} s, {HeroWhere(world)}, killed by {(lastHitBy.Length > 0 ? lastHitBy : "?")}";
                             Run.Event("death", $"level {n} at {now:0.0} s");
                         }
                         if (!waitOutDeath) { outcome = "died"; break; }
@@ -7165,14 +7483,12 @@ namespace SickOfIt.Playtest
                         yield return null;
                 }
 
-                // A floor that runs out of time: where the hero was, so the report shows which climb he couldn't make.
-                if ((outcome == "timeout" || outcome == "time up") && world != null && world.Player != null)
+                // A level that didn't end: where the hero was, so the report shows which climb he couldn't make.
+                if (outcome != "completed" && outcome != "died" && world != null && world.Player != null)
                 {
-                    var section = world.Effects != null && world.Effects.HasPath ? world.Effects.CurrentSection : null;
-                    var aim = bot != null ? bot.ClimbTarget : null;
-                    Run.Event("stuck", $"level {n} {outcome} in phase \"{world.Director?.PhaseName}\": the hero at ({world.Player.Position.x:0.0}, {world.Player.Position.y:0.0})" +
-                                       (section != null ? $", path section \"{section.name}\"" : "") +
-                                       (aim != null ? $", heading for {aim.name} at ({aim.Position.x:0.0}, {aim.Position.y:0.0})" : ""));
+                    lastWhere = HeroWhere(world);
+                    if (outcome == "timeout" || outcome == "time up")
+                        Run.Event("stuck", $"level {n} {outcome} in {lastWhere}");
                 }
 
                 if (bot != null)
@@ -7190,6 +7506,25 @@ namespace SickOfIt.Playtest
                     world.Telemetry.Finish(outcome);
                 lastOutcome = outcome;
             }
+
+            /// <summary>
+            /// Where the hero is, for a stuck or death line: the phase, the floor, his place, the path section and the foothold
+            /// the bot was heading for (its ClimbTarget), and how often it gave up on one it couldn't reach.
+            /// </summary>
+            string HeroWhere(GameplayWorld world)
+            {
+                var section = world.Effects != null && world.Effects.HasPath ? world.Effects.CurrentSection : null;
+                var aim = bot != null ? bot.ClimbTarget : null;
+                int floor = world.Stage != null && world.Stage.HasFloors ? world.Stage.Floor : 0;
+                var at = world.Player != null ? world.Player.Position : Vector2.zero;
+                return $"phase \"{world.Director?.PhaseName}\"" + (floor > 0 ? $", FLOOR {floor}" : "") + $": the hero at ({at.x:0.0}, {at.y:0.0})" +
+                       (section != null ? $", path section \"{section.name}\"" : "") +
+                       (aim != null ? $", heading for {aim.name} at ({aim.Position.x:0.0}, {aim.Position.y:0.0})" : "") +
+                       (bot != null && bot.GaveUpOn > 0 ? $", gave up on {bot.GaveUpOn} foothold(s) out of reach" : "");
+            }
+
+            /// <summary>What last hurt the hero in the level being played (a "damage" telemetry source), what killed him and where, and where he was when it didn't end.</summary>
+            string lastHitBy = "", lastDeath, lastWhere;
 
             /// <summary>PlayLevel's bot plays to lose (the waystone scenario's death through real input).</summary>
             bool reckless;
