@@ -58,7 +58,12 @@ namespace SickOfIt.Data.Config
 
         [Header("Movement - Platform")]
         public float dropThroughForce = 5f;
-        public float dropThroughThreshold = -0.5f;
+        [Tooltip("How far down the keyboard/gamepad must press to drop through a one-way platform (-1 = full down)")]
+        public float dropThroughThreshold = -0.75f;
+        [Tooltip("Drop-through only counts within this many degrees of straight down, so a run with the stick a little low never drops")]
+        public float dropThroughMaxAngle = 30f;
+        [Tooltip("Seconds of continuous down on a one-way platform before he drops; letting go starts it over")]
+        public float dropThroughHoldSeconds = 0.18f;
 
         [Header("Movement - Rotation")]
         [Tooltip("If true, use 2D sprite flip (localScale.x) instead of Y-axis rotation")]
@@ -83,8 +88,8 @@ namespace SickOfIt.Data.Config
         [Header("Input")]
         [Tooltip("Minimum stick deflection to register movement")]
         public float inputDeadzone = 0.1f;
-        [Tooltip("Y-axis threshold for mobile drop-through")]
-        public float mobileDropThreshold = -0.4f;
+        [Tooltip("How far down the move touch must be pulled to drop through a one-way platform")]
+        public float mobileDropThreshold = -0.75f;
         [Tooltip("Downward velocity threshold for falling detection")]
         public float jumpDetectVelocityThreshold = 0.3f;
 

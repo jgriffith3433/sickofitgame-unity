@@ -158,6 +158,8 @@ namespace SickOfIt.Tools.Editor.Generation
             // Drop-through settings from config
             pcSo.FindProperty("dropThroughForce").floatValue = config.dropThroughForce;
             pcSo.FindProperty("dropThroughThreshold").floatValue = config.dropThroughThreshold;
+            pcSo.FindProperty("dropThroughMaxAngle").floatValue = config.dropThroughMaxAngle;
+            pcSo.FindProperty("dropThroughHoldSeconds").floatValue = config.dropThroughHoldSeconds;
 
             // Shadow settings from config
             pcSo.FindProperty("shadowMaxHeight").floatValue = config.shadowMaxHeight;
@@ -424,6 +426,8 @@ namespace SickOfIt.Tools.Editor.Generation
             pcSo.FindProperty("firingRotationSpeed").floatValue = config.firingRotationSpeed;
             pcSo.FindProperty("dropThroughForce").floatValue = config.dropThroughForce;
             pcSo.FindProperty("dropThroughThreshold").floatValue = config.dropThroughThreshold;
+            pcSo.FindProperty("dropThroughMaxAngle").floatValue = config.dropThroughMaxAngle;
+            pcSo.FindProperty("dropThroughHoldSeconds").floatValue = config.dropThroughHoldSeconds;
             pcSo.FindProperty("shadowMaxHeight").floatValue = config.shadowMaxHeight;
             pcSo.FindProperty("shadowMinScale").floatValue = config.shadowMinScale;
             pcSo.FindProperty("shadowRaycastDistance").floatValue = config.shadowRaycastDistance;
