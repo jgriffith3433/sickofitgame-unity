@@ -599,6 +599,9 @@ namespace SickOfIt.Gameplay.Content
         /// <summary>How far the imps' cuts have dropped it (the playtest reads it).</summary>
         public float Cut => cut;
 
+        /// <summary>How far up its ride it is now, 0 at the bottom (the playtest bot reads it: it steps on a lift waiting below).</summary>
+        public float Raised => travel.sqrMagnitude > 0f ? Vector2.Dot(Owner.Position - home, travel.normalized) : 0f;
+
         void TickCut(float dt)
         {
             if (string.IsNullOrEmpty(cutterTag) || startedAt < 0f || cut >= maxCut || !CutterNear())

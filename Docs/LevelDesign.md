@@ -280,6 +280,10 @@ the stone it rests on when it isn't grounded. Thrown up by a geyser to just over
 left end throws him 1.4, to the corner of the crumbling stone at (14.5, 4.15)), his circle catches on the corner in the air, pushed into it and held
 by friction, not grounded: the bot lets go the other way after 0.3 s without moving (`PlaytestBot.Wedged`), drops off and
 climbs again (the floor sat there 160 s). A player holding into it hangs the same way until he lets go.
+A lift or a counterweight level with the ledge he's on is a fine first step of a climb (956, 904, 993): the bot, which
+otherwise only jumps for what is higher, steps on to a lift waiting at its bottom or the low side of a counterweight
+when nothing higher is in reach. It goes for the carved landing whenever it is within a short jump (before, a ledge under
+the landing won and the bot pushed into the landing's side all level: 954, 902); pinned against the landing's solid side in the air, `Wedged` lets go (above).
 An updraft throws him **0.7 over its column's top** (lift 5): put the foothold it carries him to at most ~0.45 above the
 top and within ~1.5 of its side, and the column's foot no higher than a step above the foothold he enters from. A
 counterweight he stands on is going down (and its partner up) as he jumps. Keep a timed hazard (a geyser, a fall) off the
