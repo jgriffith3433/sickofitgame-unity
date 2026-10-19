@@ -173,6 +173,7 @@
                 6.2
               ],
               "id": "floe",
+              "onEnter": true,
               "scale": [
                 1.6,
                 1
