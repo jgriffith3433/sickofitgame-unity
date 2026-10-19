@@ -205,9 +205,12 @@ namespace SickOfIt.Gameplay
             if (target != null)
             {
                 float dx = target.Position.x - me.x;
-                if (targetDistance < preferredDistanceMin)
+                // After a boss's first flood he stays back, near the strip it doesn't reach, like a player who has seen it.
+                bool floodKnown = target.Serial == floodBoss && world == floodWorld;
+                float near = floodKnown ? 6f : preferredDistanceMin, far = floodKnown ? 7.5f : preferredDistanceMax;
+                if (targetDistance < near)
                     moveX = -Mathf.Sign(dx);
-                else if (targetDistance > preferredDistanceMax)
+                else if (targetDistance > far)
                     moveX = Mathf.Sign(dx);
             }
             // A travel stage only ends by going somewhere: with nothing to shoot, keep walking.
@@ -229,7 +232,7 @@ namespace SickOfIt.Gameplay
             }
 
             // Dodge: find the shot that will pass closest within the next second and step out of its way.
-            bool jumpToDodge = false;
+            bool jumpToDodge = false, waveComing = false, waveJump = false;
             float closestMiss = float.MaxValue;
             foreach (var e in world.Live)
             {
@@ -240,6 +243,23 @@ namespace SickOfIt.Gameplay
                 float speed2 = v.sqrMagnitude;
                 if (speed2 < 0.01f)
                     continue;
+                // A low wave along the floor (the Magma King's slam): a jump clears it only when timed, so stand still
+                // while it comes and jump about 0.2 s before it reaches him, like a player reading it.
+                if (Mathf.Abs(v.y) < Mathf.Abs(v.x) * 0.3f && e.MainCollider != null)
+                {
+                    var wave = e.MainCollider.bounds;
+                    if (wave.size.y < 1.2f && wave.size.x > wave.size.y * 1.3f && wave.max.y < me.y + 0.8f && wave.max.y > me.y - 0.5f)
+                    {
+                        float edgeGap = Mathf.Abs(rel.x) - wave.extents.x - 0.3f;
+                        if (Mathf.Sign(v.x) != Mathf.Sign(rel.x) && edgeGap > -0.2f && edgeGap < Mathf.Abs(v.x) * 1.2f)
+                        {
+                            waveComing = true;
+                            if (edgeGap < Mathf.Abs(v.x) * 0.22f)
+                                waveJump = true;
+                        }
+                        continue;
+                    }
+                }
                 float t = Mathf.Clamp(-Vector2.Dot(rel, v) / speed2, 0f, 1f);
                 float miss = (rel + v * t).magnitude;
                 if (miss > dodgeRadius * 0.45f || miss >= closestMiss)
@@ -251,6 +271,8 @@ namespace SickOfIt.Gameplay
                 else
                     jumpToDodge = true;
             }
+            if (waveComing && !climbing)
+                moveX = 0f;
 
             var view = world.View;
             if (me.x < view.xMin + 0.8f) moveX = 1f;
@@ -308,6 +330,12 @@ namespace SickOfIt.Gameplay
             if (climbing)
             {
                 if (climbJump && releaseJumpFrame < 0 && !input.IsHeld(Key.Space))
+                    Press(Key.Space, ref releaseJumpFrame);
+            }
+            else if (waveComing)
+            {
+                // Only the timed jump: an early hop would land him in it.
+                if (waveJump && wall == 0f && releaseJumpFrame < 0 && !input.IsHeld(Key.Space))
                     Press(Key.Space, ref releaseJumpFrame);
             }
             else if (now >= nextJumpCheck)
@@ -720,6 +748,10 @@ namespace SickOfIt.Gameplay
             return side;
         }
 
+        // The boss whose flood he has seen (its Serial; -1 = none): he keeps his distance from it from then on.
+        int floodBoss = -1;
+        GameplayWorld floodWorld;
+
         /// <summary>
         /// A wall rolling at the bot: hostile shots moving sideways toward it, stacked over a column taller than a jump
         /// clears, within a few units. Returns the way to run (-1 left, 1 right), or 0 when there is none.
@@ -727,6 +759,22 @@ namespace SickOfIt.Gameplay
         float WallComing(Vector2 me)
         {
             float bestDistance = 6f, flee = 0f;
+            // Its warning glow on the floor (tag floodWarning): a player runs as it lights, away from the boss sending it.
+            foreach (var w in world.Live)
+            {
+                if (w == null || !w.IsAlive || !w.Tags.Contains("floodWarning"))
+                    continue;
+                Entity boss = null;
+                foreach (var b in world.Live)
+                    if (b != null && b.IsAlive && b.Tags.Contains("boss") && (boss == null || Mathf.Abs(b.Position.x - me.x) < Mathf.Abs(boss.Position.x - me.x)))
+                        boss = b;
+                if (boss != null)
+                {
+                    floodBoss = boss.Serial;
+                    floodWorld = world;
+                    return boss.Position.x > me.x ? -1f : 1f;
+                }
+            }
             foreach (var e in world.Live)
             {
                 if (!e.IsAlive || e.MaxHealth > 0 || !world.Player.IsHostileTo(e) || e.Body == null)

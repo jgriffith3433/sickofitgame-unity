@@ -2,12 +2,12 @@
 """
 Static check of a path floor's footholds (no Unity needed): every jump within the hero's reach (and the bot's), every
 foothold inside the screen while its section is on, every section able to end (hero + travelLead at its end), no lava
-box over a foothold or a jump. Numbers from player.json (moveSpeed 2, jumpForce 9, gravityScale 1.8 -> apex 2.29) and
+box over a foothold or a jump, every enemy of an Arena inside its held screen. Numbers from player.json (moveSpeed 2, jumpForce 9, gravityScale 1.8 -> apex 2.29) and
 WorldEffects (ortho 2.8, 16:9, TravelEdge walls). Moving pieces are checked where they spawn.
 Updraft columns are carriers (in from a foothold, out onto one up to the column's throw); a counterweight has gone down
 (and its partner up) by 0.35 s of its speed when he jumps off it.
 
-  python3 Tools/Levels/floor_check.py Floor999 Floor998 ...   (no args: Floors 999-991 and 960-951)
+  python3 Tools/Levels/floor_check.py Floor999 Floor998 ...   (no args: Floors 999-991, 960-951 and 910-902)
 """
 import math, sys
 import floorgeo as g
@@ -262,6 +262,12 @@ def check(name, verbose=False):
                         changed = True
                         break
         if sec['dir'] == 'Arena':
+            # The camera holds on the arena's start: whoever the fight needs stands inside that screen.
+            cx = sec['start'][0]
+            for p in sec['pieces']:
+                if p.e.get('team', 'Enemy') == 'Enemy' and (p.e.get('health') or 0) > 0 and not p.foothold \
+                        and not (cx - HALF_W + 0.3 <= p.at[0] <= cx + HALF_W - 0.3):
+                    out.append(f"  ! {sec['name']}: {p.name}#{p.id} at x {p.at[0]:.2f} is off the arena's held screen (x {cx - HALF_W:.2f}..{cx + HALF_W:.2f})")
             continue
         ax = g.AXIS[sec['dir']]
         sec_lead = sec['lead'] if sec['lead'] >= 0 else lead
@@ -327,7 +333,7 @@ def walk(node):
 if __name__ == '__main__':
     args = [a for a in sys.argv[1:] if not a.startswith('-')]
     verbose = '-v' in sys.argv
-    names = args or [f"Floor{n}" for n in list(range(999, 990, -1)) + list(range(960, 950, -1))]
+    names = args or [f"Floor{n}" for n in list(range(999, 990, -1)) + list(range(960, 950, -1)) + list(range(910, 901, -1))]
     bad = 0
     for n in names:
         lines = check(n, verbose)

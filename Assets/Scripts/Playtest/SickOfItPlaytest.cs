@@ -5243,9 +5243,18 @@ namespace SickOfIt.Playtest
                             break;
                         }
                         float started = Time.realtimeSinceStartup;
-                        yield return PlayLevel(n, limit, null, (float)i / levels.Count, (float)(i + 1) / levels.Count, waitOutDeath: true);
+                        // A Warden's arena in a stretch run (checkEvery) gets the arena checks: the fight's signals in order (how far
+                        // he got, the last phase included), every attack's lead over its warning glow, the boss bar and the defeat.
+                        stage = checkEvery && IsArena(n) && IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
+                        yield return PlayLevel(n, limit, stage != null ? StageDuring : (Func<float, IEnumerator>)null, (float)i / levels.Count, (float)(i + 1) / levels.Count, waitOutDeath: true);
                         if (Run.Done) yield break;
                         row.Seconds = (Time.realtimeSinceStartup - started) * Speed;
+                        if (stage != null)
+                        {
+                            if (lastOutcome == "completed" || lastOutcome != "died" || attempt == PathTries)
+                                FinishStage(lastOutcome);
+                            stage = null;
+                        }
                         if (lastOutcome == "completed")
                         {
                             row.Result = "cleared";
