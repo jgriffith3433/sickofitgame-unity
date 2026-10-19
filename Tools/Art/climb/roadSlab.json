@@ -1,0 +1,24 @@
+{
+  "about": "roadSlab (and risingSlab, seesawSlab): a slab of the Cracked Road, black basalt with glowing seams, hanging over the Rift. Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, slot road/slab, re-take without lane markings, seed 905066437 (asset a_83c4bf5d2c07e0fb, job j_ab6dc429ebba; the take with lane markings, j_90ca15b25183, not used).",
+  "out": "Assets/Art/Climb",
+  "name": "RoadSlab",
+  "key": "none",
+  "size": [
+    874,
+    420
+  ],
+  "pivot": [
+    434.5,
+    96.9
+  ],
+  "worldWidth": 2.459,
+  "widthPixels": 874,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/crsrc/_prep/roadSlab/idle",
+      "key": "none"
+    }
+  }
+}

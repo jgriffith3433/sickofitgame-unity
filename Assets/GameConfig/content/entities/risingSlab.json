@@ -14,8 +14,22 @@
     "solid": true
   },
   "visual": {
-    "color": "#B4A6B8",
-    "placeholderColor": "#26202A"
+    "color": "#FFFFFF",
+    "placeholderColor": "#26202A",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/RoadSlab_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
   },
   "abilities": [
     {

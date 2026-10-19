@@ -1,0 +1,32 @@
+{
+  "about": "splitSlab: a road slab with a glowing seam down its middle that splits and falls. Fitted so its walkable top is the body's width.",
+  "gpu": "image.generate, sickofit preset look, slot road/split, seed 1444835726 (asset a_ca05f476b632c082, job j_6947167b5ccb). Crack and fall: video.i2v (Wan 2.2) from the still, job j_4ea495f5c5c3 (asset a_59e007dc05820a9c).",
+  "out": "Assets/Art/Climb",
+  "name": "SplitSlab",
+  "key": "none",
+  "size": [
+    1024,
+    1024
+  ],
+  "pivot": [
+    523.5,
+    481.2
+  ],
+  "worldWidth": 2.872,
+  "widthPixels": 1024,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "/tmp/crsrc/_prep/splitSlab/idle",
+      "key": "none"
+    },
+    "crack": {
+      "frames": "/tmp/crsrc/_prep/splitSlab/crack",
+      "key": "none"
+    },
+    "fall": {
+      "frames": "/tmp/crsrc/_prep/splitSlab/fall",
+      "key": "none"
+    }
+  }
+}
