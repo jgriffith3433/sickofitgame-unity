@@ -150,7 +150,11 @@ namespace SickOfIt.Playtest
         const int SackLiftFare = 20;
         /// <summary>circle-x-route: Floor 991 loaded directly, then the real flow through Floor 901.</summary>
         public const int RouteFrom = 11, RouteTo = 31;
-        const float RouteSeconds = 3600f;
+        const float RouteSeconds = 3900f;
+        /// <summary>circle-x-route's first leg: Floor 991 the long way (the Sack Lift declined) up to the start of Floor 990's stage.</summary>
+        const float LongWaySeconds = 420f;
+        /// <summary>Floor 991: the Sack Lift's choice (or the floor's end) comes within this many game seconds of the Foreman's defeat (~9 s as built).</summary>
+        const float ForemanExitSeconds = 10.5f;
         /// <summary>
         /// The Landing (Level 2, Floor 1000, one level = one floor): the floors its counter must run through (1000, ticking to 999
         /// on its landing), and the milestone beat, which plays as Floor 999 (MilestoneLevel) opens.
@@ -338,9 +342,12 @@ namespace SickOfIt.Playtest
                 "gantry, a chain lift to tier 2, phase 2 (he swings on the lift's chain dropping embers, each after a 1 s glow on its spot), his wings for show, " +
                 "the defeat in slow motion with a pile of diamonds, the announcer's call; 60-180 s. Up to 3 tries per floor; then Floor 991 leads on to the next level. " +
                 "Each beat is a check event", ForemanSeconds, "full"));
-            list.Add(new PlaytestScenario("circle-x-route", $"Circle X's played route (Docs/LevelDesign.md, \"The route through Circle X\"): level {RouteFrom} " +
-                $"(Floor 991, the Imp Foreman) loaded directly with the diamonds for the Sack Lift's fare (setup shortcut: topped up to {SackLiftFare}), then " +
-                $"the real flow on through level {RouteTo} (Floor 901), the bot taking every shortcut (it presses 2). Checked: on Floor 991's landing the Sack " +
+            list.Add(new PlaytestScenario("circle-x-route", $"Circle X's played route (Docs/LevelDesign.md, \"The route through Circle X\"): first the long " +
+                $"way: level {RouteFrom} (Floor 991, the Imp Foreman) loaded directly, the bot pressing 1 on the Sack Lift's choice: the choice within " +
+                $"{ForemanExitSeconds:0.#} s of his defeat (else it stops there), kept climbing, the counter on 990, the Grudge pick, the Shaft and the long way's " +
+                "stage starting on FLOOR 990 (the Shaft's save put back after). Then level " + RouteFrom + " loaded directly again with the diamonds for the " +
+                $"Sack Lift's fare (setup shortcut: topped up to {SackLiftFare}), then " +
+                $"the real flow on through level {RouteTo} (Floor 901), the bot taking every shortcut (it presses 2). Checked: after Floor 991's defeat the Sack " +
                 "Lift's choice with its fare on the card (\"FARE: 20 DIAMONDS\"), the fare paid, the hero's line and the announcer's reaction, the counter " +
                 "jumping from 990 to 960 with no Grudge pick, the Shaft's marker climbing to 990 and jumping a dotted line up to FLOOR 960, and Floor 960 " +
                 "next; then Floors 960-952 one floor each, Floor 951's Pile Keeper (voiced intro, boss bar, his spear and sack attacks after a 1 s glow, the " +
@@ -1715,12 +1722,13 @@ namespace SickOfIt.Playtest
             /// the floor-stage checks; a one-floor level's Shaft must climb exactly one floor; the last one leads to the level
             /// select, or to the level it names (the old stages after Floor 996).
             /// </summary>
-            public IEnumerator WastesClimb(int first = ClimbFrom, int last = ClimbTo, float seconds = WastesClimbSeconds)
+            public IEnumerator WastesClimb(int first = ClimbFrom, int last = ClimbTo, float seconds = WastesClimbSeconds, bool keepChecks = false)
             {
                 var definition = GameDefinition.Instance;
                 var texts = definition.menuTheme.texts;
                 float deadline = Time.realtimeSinceStartup + seconds - 30f;
-                stageChecksFailed = 0;
+                if (!keepChecks)
+                    stageChecksFailed = 0;
                 Run.Event("shortcut", $"load level {first} directly");
                 var load = LoadLevel(first);
                 if (load != null)
@@ -1789,7 +1797,8 @@ namespace SickOfIt.Playtest
                         if (takeShortcuts && n == RouteShortcuts[0].level)
                             TopUpFare();
                         stage = IsFloorStage(n) ? new StageWatch(n, StageCheck) : null;
-                        yield return PlayLevel(n, 0f, stage != null ? StageDuring : (Func<float, IEnumerator>)null, from, to, left, waitOutDeath: true);
+                        yield return PlayLevel(n, 0f, stage != null ? StageDuring : (Func<float, IEnumerator>)null, from, to, left, waitOutDeath: true,
+                            until: n == RouteShortcuts[0].level ? ForemanExitWatch(n) : null);
                         if (Run.Done) yield break;
                         if (stage != null && (lastOutcome != "died" || attempts >= 3))
                         {
@@ -1879,6 +1888,138 @@ namespace SickOfIt.Playtest
             }
 
             /// <summary>
+            /// Floor 991 (level n): from the Foreman's defeat the Sack Lift's choice must be up (or made, or the floor on its way
+            /// out) within ForemanExitSeconds of game time. If not, a bug, and PlayLevel stops ("checked") instead of idling to its
+            /// timeout (beta v159 stood on the pile for 230 s). A rewind back into the fight starts the watch over.
+            /// </summary>
+            Func<bool> ForemanExitWatch(int n)
+            {
+                float defeatAt = -1f;
+                bool reported = false;
+                return () =>
+                {
+                    var world = GameplayWorld.Instance;
+                    if (reported || world == null || world.Director == null || world.LevelNumber != n || GameClock.Instance == null)
+                        return false;
+                    float now = GameClock.Instance.Time;
+                    string phase = world.Director.PhaseName;
+                    if (defeatAt < 0f)
+                    {
+                        if (phase == "defeat")
+                            defeatAt = now;
+                        return false;
+                    }
+                    bool choiceUp = world.Hud != null && world.Hud.ShortcutOpen;
+                    bool chosen = world.Shortcuts != null && world.Shortcuts.Choice(RouteShortcuts[0].id).HasValue;
+                    bool leaving = phase == "sackLift" || phase == "longWay" || world.Director.Completed;
+                    if (choiceUp || chosen || leaving)
+                    {
+                        reported = true;
+                        StageCheck("level" + n + ".exit", true, (choiceUp ? "the Sack Lift's choice is up" : chosen ? "the Sack Lift chosen" : $"the floor is ending (phase \"{phase}\")") +
+                                                                $" {now - defeatAt:0.0} s after the Foreman's defeat (want within {ForemanExitSeconds:0.#} s)");
+                        return false;
+                    }
+                    if (phase != "defeat")
+                    {
+                        defeatAt = -1f;
+                        return false;
+                    }
+                    if (now - defeatAt <= ForemanExitSeconds)
+                        return false;
+                    reported = true;
+                    var hero = world.Player != null ? world.Player.Position : Vector2.zero;
+                    StageCheck("level" + n + ".exit", false, $"{now - defeatAt:0.0} s after the Foreman's defeat no Sack Lift choice came up and the floor didn't end " +
+                                                             $"(phase \"{phase}\", FLOOR {(world.Stage != null ? world.Stage.Floor : 0)}, the hero at ({hero.x:0.0}, {hero.y:0.0})): stopped here");
+                    return true;
+                };
+            }
+
+            /// <summary>
+            /// circle-x-route, the long way first: Floor 991 loaded directly with the fare in hand and the bot pressing 1 on the Sack
+            /// Lift's choice. Checked: the choice came up with its fare, declined, the counter on 990, the Grudge pick, then the Shaft's
+            /// climb to 990 and the long way's first stage (Floor 991's nextLevelNumber) starting on FLOOR 990. The Shaft's marker
+            /// and the run's level are put back after (setup shortcut), so the paid run climbs from 991 as a player's would.
+            /// </summary>
+            IEnumerator SackLiftDeclined(float seconds)
+            {
+                var definition = GameDefinition.Instance;
+                var texts = definition.menuTheme.texts;
+                int n = RouteShortcuts[0].level;
+                string prefix = "level" + n + ".longWay.";
+                int shaftFloor = ShaftProgress.Floor, runLevel = WaystoneProgress.RunLevel;
+                float deadline = Time.realtimeSinceStartup + seconds;
+                takeShortcuts = false;
+                Run.Event("shortcut", $"load level {n} directly: the long way first (the bot keeps climbing past the Sack Lift)");
+                var load = LoadLevel(n);
+                if (load != null)
+                    yield return load;
+                StageWatch watched = null;
+                int attempts = 0;
+                while (true)
+                {
+                    attempts++;
+                    TopUpFare();
+                    stage = new StageWatch(n, StageCheck);
+                    yield return PlayLevel(n, 0f, StageDuring, 0f, 0.08f, Mathf.Max(30f, deadline - Time.realtimeSinceStartup), waitOutDeath: true,
+                        until: ForemanExitWatch(n));
+                    if (Run.Done) yield break;
+                    if (lastOutcome != "died" || attempts >= 3)
+                    {
+                        watched = stage;
+                        if (stage != null)
+                            FinishStage(lastOutcome);
+                        stage = null;
+                        break;
+                    }
+                    stage = null;
+                    Run.Event("retry", $"level {n} (the long way), attempt {attempts + 1}");
+                    yield return ReachLevel(n);
+                    if (Run.Done) yield break;
+                }
+
+                bool completed = lastOutcome == "completed";
+                int lastFloor = watched != null && watched.Floors.Count > 0 ? watched.Floors[watched.Floors.Count - 1] : 0;
+                StageCheck(prefix + "offered", watched != null && watched.ShortcutOffer.Length > 0,
+                    watched != null && watched.ShortcutOffer.Length > 0 ? $"the Sack Lift offered: {watched.ShortcutOffer}" : $"no Sack Lift choice came up (level {n}: {lastOutcome})");
+                StageCheck(prefix + "declined", watched != null && watched.ShortcutDeclined == RouteShortcuts[0].id && watched.ShortcutTo == 0,
+                    watched == null ? "not played" : watched.ShortcutTo > 0 ? $"taken to FLOOR {watched.ShortcutTo} (the bot pressed 1: want kept climbing)"
+                        : watched.ShortcutDeclined.Length > 0 ? "kept climbing" : "never chosen");
+                StageCheck(prefix + "counter", watched != null && lastFloor == watched.End && !watched.Floors.Exists(f => f < watched.End),
+                    watched != null ? $"the floor counter ran {string.Join(" ", watched.Floors)} (want it to end on {watched.End})" : "not played");
+                StageCheck(prefix + "pick", watched != null && watched.Picked, watched != null && watched.Picked ? "a Grudge pick at the top" : "no Grudge pick after keeping on");
+                if (completed && LoadLevel == DefaultLoadLevel)
+                {
+                    var previous = GameplayWorld.Instance;
+                    yield return Run.Until(() => GameplayWorld.Instance == null || GameplayWorld.Instance.Hud == null || GameplayWorld.Instance.Hud.ResultsOpen,
+                        30f, $"the level {n} results screen");
+                    if (Run.Done) yield break;
+                    if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
+                        yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
+                    if (Run.Done) yield break;
+                    yield return WatchClimb(n, StageCheck);
+                    if (Run.Done) yield break;
+                    int after = definition.GetLevel(n).nextLevelNumber;
+                    yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null || Object.FindAnyObjectByType<LevelSelectionManager>() != null
+                                                 || NewWorld(previous) != null && GameplayWorld.Instance.Player != null
+                                                 && GameClock.Instance != null && GameClock.Instance.Time > 0f, 60f, $"level {after} to start (the long way)");
+                    if (Run.Done) yield break;
+                    var next = NewWorld(previous);
+                    int floor = next != null && next.Stage != null ? next.Stage.Floor : 0;
+                    StageCheck(prefix + "next", next != null && next.LevelNumber == after && floor == lastFloor,
+                        next != null ? $"level {next.LevelNumber} ({next.LevelName}) starts on FLOOR {floor} after the Shaft (want level {after} on FLOOR {lastFloor})"
+                            : $"{SceneName()} came after the Shaft (want level {after})");
+                    Run.Scene(next != null ? "Level " + next.LevelNumber : SceneName());
+                    yield return WaitReal(3f);
+                    if (Run.Done) yield break;
+                    if (next != null && next.Telemetry != null)
+                        next.Telemetry.Finish("playtest left");
+                }
+                ShaftProgress.Floor = shaftFloor;
+                WaystoneProgress.RunLevel = runLevel;
+                Run.Event("shortcut", $"the Shaft's marker put back on FLOOR {shaftFloor} and the run on level {runLevel}: now the Sack Lift, paid");
+            }
+
+            /// <summary>
             /// Circle X's route (takeShortcuts): a level with a shortcut must have offered it with its cost, been left through it (the
             /// counter on its toFloor, no Grudge pick, the fare paid), and the floor after the King's Chimney played harder for it.
             /// </summary>
@@ -1908,13 +2049,20 @@ namespace SickOfIt.Playtest
                         "after the King's Chimney the King says so on Floor 910: " + string.Join(" | ", watched.Lines.ConvertAll(l => l.text)));
             }
 
-            /// <summary>circle-x-route: Floor 991 loaded directly (the fare topped up), then the real flow to Floor 901, taking both shortcuts.</summary>
+            /// <summary>
+            /// circle-x-route: Floor 991 played the long way first (the Sack Lift declined, on to Floor 990), then loaded directly
+            /// again (the fare topped up) and the real flow to Floor 901, taking both shortcuts.
+            /// </summary>
             public IEnumerator CircleXRoute()
             {
+                float started = Time.realtimeSinceStartup;
+                stageChecksFailed = 0;
+                yield return SackLiftDeclined(LongWaySeconds);
+                if (Run.Done) yield break;
                 takeShortcuts = true;
                 try
                 {
-                    yield return WastesClimb(RouteFrom, RouteTo, RouteSeconds);
+                    yield return WastesClimb(RouteFrom, RouteTo, RouteSeconds - (Time.realtimeSinceStartup - started), keepChecks: true);
                 }
                 finally
                 {
@@ -4227,7 +4375,8 @@ namespace SickOfIt.Playtest
                         float from = (float)step / (StoryPath.Length + 1), to = (float)(step + 1) / (StoryPath.Length + 1);
                         // The floors and stages of Hell, the Landing on, get the stage checks (title, lines, floors, new enemy, breather).
                         stage = n >= LandingLevel && IsFloorStage(n) ? new StageWatch(n, StoryCheck) : null;
-                        yield return PlayLevel(n, 0f, stage != null ? StageDuring : (Func<float, IEnumerator>)null, from, to, left, waitOutDeath: true);
+                        yield return PlayLevel(n, 0f, stage != null ? StageDuring : (Func<float, IEnumerator>)null, from, to, left, waitOutDeath: true,
+                            until: n == RouteShortcuts[0].level ? ForemanExitWatch(n) : null);
                         if (Run.Done) yield break;
                         if (stage != null && (lastOutcome == "completed" || lastOutcome != "died" || attempts >= 3))
                             FinishStage(lastOutcome);

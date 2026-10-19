@@ -523,7 +523,7 @@ who runs the hauling.
 - **Monsters:** the Foreman and the sack imps he whips along (at most two).
 - **Set piece and beat:** the top of the hauling route, where the imps load the sacks into their lift. The Foreman
   sits on the biggest sack of all. Beat him and his sack bursts: a shower of diamonds. His lift stands open on the
-  landing: **the Sack Lift** (shortcut 1). Landing carved *991*.
+  landing: **the Sack Lift** (shortcut 1). Landing carved *991*. (As built, the lift is offered where he falls: see below.)
 - **Surprise:** on tier 3, losing, he spreads his wings and tries to fly. They're for show: he flaps, rises a hand's
   height, and drops back onto his sack.
 - **Rewind:** his swing is a loop (the sack-swing, boss-sized): a rewind shows its passes.
@@ -534,10 +534,15 @@ who runs the hauling.
   locked screen), where he swings on the lift's chain, dropping embers from his sack (a glow on the spot, the ember 1.1 s
   later) and whipping the tier below; at a quarter his wings flap for nothing (*"Hnnngh... fly... FLY..."*, hero:
   *"Those are for show, aren't they."*). Beaten: slow motion, his sack bursts into a pile of diamonds on tier 2, his
-  *"My... sack..."*, the announcer's call, the hero's *"Thank you."*, then a short climb to the landing: from tier 2 up
-  the dodge ledge on its left, a ledge above the tier, a step to the right, and the landing (every foothold on screen
-  and within one jump; 2026-10-19, after the first one sat behind the screen's right edge and the climb stalled). The
-  landing is carved *IMPS ONLY*, and standing on it brings up the Sack Lift's choice (shortcut 1).
+  *"My... sack..."*, the announcer's call, the hero's *"Thank you."*, then the counter ticks to 990, *"THE SACK LIFT:
+  IMPS ONLY"*, the hero's *"Imps only. I'll squeeze."*, and the Sack Lift's choice (shortcut 1) comes up right there,
+  about 9 s after he falls, wherever the fight ended. **The floor ends from the defeat, not from a climb** (J,
+  2026-10-19): on beta v159 the bot killed him during his climb, the defeat's `nextSection` released a section that
+  wasn't an Arena, tier 2's camera hold never let go and the run stood on the pile until the level timed out. So the
+  defeat no longer moves the camera; it stops the lava, removes the gantry's wave and offers the lift. If the choice
+  can't come up (another picker open), 2 s later the floor takes the long way by itself. And he can't be hurt while
+  he climbs (`sceneUntouchable` from `fmClimb` to `fmPhase2`), so the fight always reaches tier 2. The path's `top` and
+  carved `landing` sections stay in the file but the camera never reaches them now.
 - **Feel:** a medium shake on each whip crack; a big shake when the lava takes a tier; slow motion as the sack bursts
   (diamonds hanging in the air); the roar swallows each tier.
 - **Lines:** Announcer: *"FLOOR NINE NINETY-ONE! THE IMP FOREMAN!"* Hero: *"That's the biggest sack yet. Ours too,
