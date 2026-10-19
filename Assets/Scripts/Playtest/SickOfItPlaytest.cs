@@ -3834,7 +3834,8 @@ namespace SickOfIt.Playtest
             static readonly string[] ClimbArtBeats =
             {
                 "art far sea", "art parallax", "art lava surface", "art ledge", "art sinkingStone", "art stone steams", "art crumblingStone",
-                "art stone crumbles", "art raft", "art chain", "art chainLift", "art floorLanding",
+                "art stone crumbles", "art raft", "art chain", "art chainLift", "art floorLanding", "art lavaSurge", "art heatUpdraft",
+                "art slagConveyor",
             };
 
             /// <summary>The pieces whose painted art the climb checks (entity id → beat).</summary>
@@ -3844,6 +3845,32 @@ namespace SickOfIt.Playtest
                 { "debrisRaft", "art raft" }, { "debrisRaftSign", "art raft" }, { "debrisRaftRoof", "art raft" }, { "debrisRaftHay", "art raft" },
                 { "chainLift", "art chainLift" }, { "floorLanding", "art floorLanding" },
             };
+
+            /// <summary>The pieces painted as strips laid over their body (entity id → the strip and its beat): the box must be hidden under it.</summary>
+            static readonly Dictionary<string, (string strip, string beat)> ClimbStripPieces = new Dictionary<string, (string, string)>
+            {
+                { "lavaSurge", ("SurgeArt", "art lavaSurge") }, { "heatUpdraft", ("UpdraftArt", "art heatUpdraft") },
+                { "heatUpdraftTall", ("UpdraftArt", "art heatUpdraft") }, { "slagConveyor", ("BeltArt", "art slagConveyor") },
+                { "slagConveyorDown", ("BeltArt", "art slagConveyor") },
+            };
+
+            /// <summary>The art check of a strip-painted piece on screen: its strip drawn and the box hidden, or a problem (once).</summary>
+            void ClimbStripArt(SickOfIt.Gameplay.Entity e, string strip, string beat)
+            {
+                if (climb.Passed.Contains(beat) || climb.ArtMissing.Contains(e.DefId))
+                    return;
+                var shape = e.transform.Find("Shape");
+                bool boxShown = shape != null && shape.TryGetComponent<SpriteRenderer>(out var box) && box.enabled;
+                if (StripShown(e, strip) && !boxShown)
+                {
+                    ClimbCheck(beat, true, $"{Who(e)} is painted art (strip {strip}, {e.MainCollider.bounds.size.x:0.0}x{e.MainCollider.bounds.size.y:0.0} units)");
+                }
+                else
+                {
+                    climb.ArtMissing.Add(e.DefId);
+                    Run.Problem(PlaytestSeverity.Bug, $"climb {beat}: {Who(e)} is still its stand-in box (no painted {strip})");
+                }
+            }
 
             /// <summary>The art check of a piece on screen: painted (its sprite) or still the stand-in box (a problem, once).</summary>
             void ClimbArt(SickOfIt.Gameplay.Entity e, string beat)
@@ -4047,6 +4074,14 @@ namespace SickOfIt.Playtest
                         && Mathf.Abs(e.Position.x - cam.x) < world.Camera.orthographicSize * world.Camera.aspect
                         && Mathf.Abs(e.Position.y - cam.y) < world.Camera.orthographicSize)
                         ClimbArt(e, artBeat);
+                    if (ClimbStripPieces.TryGetValue(e.DefId, out var stripArt) && e.MainCollider != null)
+                    {
+                        // On screen by its body (the wave's centre can sit past the screen's edge while its crest is in view).
+                        var eb = e.MainCollider.bounds;
+                        float hw = world.Camera.orthographicSize * world.Camera.aspect, hh = world.Camera.orthographicSize;
+                        if (eb.max.x > cam.x - hw && eb.min.x < cam.x + hw && eb.max.y > cam.y - hh && eb.min.y < cam.y + hh)
+                            ClimbStripArt(e, stripArt.strip, stripArt.beat);
+                    }
                     if ((StripShown(e, "ChainArt")) && e.FindAbility<SickOfIt.Gameplay.Content.SwingChainAbility>() != null)
                         ClimbCheck("art chain", true, $"{Who(e)} swings on painted chain links");
                     // Jump needs the ground check to see a foothold: resting on a stone or ledge must read as grounded.

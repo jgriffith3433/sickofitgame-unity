@@ -1,0 +1,24 @@
+{
+  "about": "slagConveyor: the crust of slag plates sliding on the lava (conveyor art strip, horizontal, fitted to the body's length; the drawn seams crawl over it).",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot slag/belt, take seed 1648455489 (asset a_d622e48e6190226c, job j_c3e369adca90), picked by hawkesgen_entity_judge (j_1843b1bb15d2).",
+  "out": "Assets/Art/Climb",
+  "name": "SlagBelt",
+  "key": "none",
+  "size": [
+    1414,
+    202
+  ],
+  "pivot": [
+    707.0,
+    101.0
+  ],
+  "worldWidth": 2,
+  "widthPixels": 1414,
+  "scale": 0.5,
+  "clips": {
+    "crust": {
+      "frames": "/tmp/climbart2/src/_prep/belt/crust",
+      "key": "none"
+    }
+  }
+}

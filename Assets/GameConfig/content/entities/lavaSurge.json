@@ -35,7 +35,16 @@
       "behind": 1.0,
       "telegraph": 1.5,
       "stopAt": 0.0,
-      "followCameraY": true
+      "followCameraY": true,
+      "art": {
+        "sheet": "Art/Climb/LavaSurge_loop.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "artWidth": 1.15,
+      "artAhead": 0.3
     },
     {
       "type": "scald",

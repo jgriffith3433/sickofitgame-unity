@@ -10,6 +10,7 @@ more than fx_sheets' colour key:
   wrap     make it tile sideways (x) or up (y): the last strip is crossfaded into the first.
   centre   keep only the middle share of the width (a lava fall painted with stray streams at its sides).
   cropX    keep only this span of the width, as shares [from, to] (a landing's lower side steps).
+  cropY    keep only this span of the height, as shares [from, to] (an updraft's flame base at the bottom).
   trim     crop to the art (plus a margin).
   top      for a platform: find its walkable top (the first row solid across the middle) and set the pivot so the
            collider's top lands on it (the entity's body height 'body' in units).
@@ -135,6 +136,9 @@ def prep(piece, spec, src, out_dir):
             if p.get("cropX"):
                 w = rgb.shape[1]
                 rgb = rgb[:, int(w * p["cropX"][0]):int(w * p["cropX"][1])]
+            if p.get("cropY"):
+                h = rgb.shape[0]
+                rgb = rgb[int(h * p["cropY"][0]):int(h * p["cropY"][1])]
             if p.get("centre"):
                 w = rgb.shape[1]
                 k = int(w * (1 - p["centre"]) / 2)

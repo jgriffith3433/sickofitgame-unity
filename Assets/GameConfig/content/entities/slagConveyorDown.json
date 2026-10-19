@@ -5,7 +5,16 @@
     {
       "type": "conveyor",
       "speed": 1.4,
-      "seamColor": "#FF8030"
+      "seamColor": "#FF8030",
+      "art": {
+        "sheet": "Art/Climb/SlagBelt_crust.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "artHeight": 0.5,
+      "artLip": 0.03
     }
   ]
 }
