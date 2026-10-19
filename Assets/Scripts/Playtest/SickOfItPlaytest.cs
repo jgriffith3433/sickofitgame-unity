@@ -1338,11 +1338,68 @@ namespace SickOfIt.Playtest
                 /// <summary>The footholds he stood on, in order (instance id, else entity id), and the ones a still lava (not risen,
                 /// the foothold not sinking) covered: their top inside the lava's box, under its drawn surface and its scald.</summary>
                 public readonly List<string> StoodOn = new List<string>();
+                /// <summary>"foothold" events sent (capped at MaxFootholdEvents: a loop between two stones sent one every second).</summary>
+                public int FootholdEvents;
+                public const int MaxFootholdEvents = 60;
                 public readonly Dictionary<string, string> UnderLava = new Dictionary<string, string>();
                 /// <summary>Every burn on the floor (a lava's scald, or PitCatch after he dropped out of the bottom of the view): what,
                 /// when, where, and the foothold he last stood on. A burn's throw carries him past footholds.</summary>
                 public readonly List<string> Burns = new List<string>();
                 public int PitBurns;
+
+                /// <summary>
+                /// StoodOn for a message, short: a stretch that repeats (stone2 > stone3 > stone2 > stone3 ...) as "(stone2 > stone3) x40",
+                /// and past 40 entries the first and last 20 with how many were left out between.
+                /// </summary>
+                public string Footholds()
+                {
+                    var parts = new List<string>();
+                    int i = 0;
+                    while (i < StoodOn.Count)
+                    {
+                        int bestLength = 0, bestTimes = 1;
+                        for (int length = 1; length <= 4 && i + length * 2 <= StoodOn.Count; length++)
+                        {
+                            int times = 1;
+                            while (i + length * (times + 1) <= StoodOn.Count && SameRun(i, i + length * times, length))
+                                times++;
+                            if (times >= 2 && times * length > bestTimes * Math.Max(1, bestLength))
+                            {
+                                bestLength = length;
+                                bestTimes = times;
+                            }
+                        }
+                        if (bestLength == 0)
+                        {
+                            parts.Add(StoodOn[i]);
+                            i++;
+                            continue;
+                        }
+                        string unit = string.Join(" > ", StoodOn.GetRange(i, bestLength));
+                        parts.Add((bestLength > 1 ? $"({unit})" : unit) + $" x{bestTimes}");
+                        i += bestLength * bestTimes;
+                    }
+                    if (parts.Count > 40)
+                    {
+                        var ends = parts.GetRange(0, 20);
+                        ends.Add($"... {parts.Count - 40} more ...");
+                        ends.AddRange(parts.GetRange(parts.Count - 20, 20));
+                        parts = ends;
+                    }
+                    return string.Join(" > ", parts);
+                }
+
+                /// <summary>Burns for a message: the first 10, then how many more.</summary>
+                public string BurnList() =>
+                    Burns.Count <= 10 ? string.Join(" | ", Burns) : string.Join(" | ", Burns.GetRange(0, 10)) + $" | ... {Burns.Count - 10} more";
+
+                bool SameRun(int a, int b, int length)
+                {
+                    for (int k = 0; k < length; k++)
+                        if (StoodOn[a + k] != StoodOn[b + k])
+                            return false;
+                    return true;
+                }
 
                 public int KitCount(string what, string entityPrefix = "")
                 {
@@ -1676,6 +1733,12 @@ namespace SickOfIt.Playtest
                 if (s.StoodOn.Count == 0 || s.StoodOn[s.StoodOn.Count - 1] != stood)
                 {
                     s.StoodOn.Add(stood);
+                    if (++s.FootholdEvents > StageWatch.MaxFootholdEvents)
+                    {
+                        if (s.FootholdEvents == StageWatch.MaxFootholdEvents + 1)
+                            Run.Event("foothold", $"level {s.Level} at {now:0.0} s: {StageWatch.MaxFootholdEvents} footholds logged, the rest only in the stage's checks");
+                        return;
+                    }
                     var p = world.Player.Position;
                     Run.Event("foothold", $"level {s.Level} at {now:0.0} s: on {stood} at ({p.x:0.0}, {p.y:0.0})" +
                                           (world.Effects != null && world.Effects.HasPath ? $", path section \"{world.Effects.CurrentSection?.name}\"" : ""));
@@ -1914,18 +1977,18 @@ namespace SickOfIt.Playtest
                         int last = s.StoodOn.IndexOf("stone5");
                         int bank = last >= 0 ? s.StoodOn.IndexOf("bank", last) : -1;
                         s.Check(prefix + ".bankJump", bank > last && last >= 0,
-                            last < 0 ? $"never stood on stone5 (the slope's last stone); footholds: {string.Join(" > ", s.StoodOn)}"
-                                : bank < 0 ? $"stood on stone5 but never made the bank ledge; footholds: {string.Join(" > ", s.StoodOn)}"
+                            last < 0 ? $"never stood on stone5 (the slope's last stone); footholds: {s.Footholds()}"
+                                : bank < 0 ? $"stood on stone5 but never made the bank ledge; footholds: {s.Footholds()}"
                                 : "jumped from stone5 onto the bank ledge");
                         // The climbs' camera keeps the stone he stands on in view as it sinks (lead 0.4): beta's run was burned out of
                         // the bottom of the view on the slope and thrown past stones 2-5, so it never stood on stone5.
                         s.Check(prefix + ".inView", s.PitBurns == 0,
                             s.PitBurns == 0 ? "never dropped out of the bottom of the view (every stone stayed on screen as it sank)"
-                                : $"dropped out of the view {s.PitBurns} time(s): {string.Join(" | ", s.Burns)}");
+                                : $"dropped out of the view {s.PitBurns} time(s): {s.BurnList()}");
                         bool landed = s.StoodOn.Contains("landing");
                         s.Check(prefix + ".cleared", completed && landed,
                             $"{(landed ? "reached the landing" : "never reached the landing")}, level {(completed ? "complete" : "not complete")} with no stuck event; " +
-                            $"footholds: {string.Join(" > ", s.StoodOn)}; burns: {(s.Burns.Count == 0 ? "none" : string.Join(" | ", s.Burns))}");
+                            $"footholds: {s.Footholds()}; burns: {(s.Burns.Count == 0 ? "none" : s.BurnList())}");
                         break;
                     }
                     case 999:
