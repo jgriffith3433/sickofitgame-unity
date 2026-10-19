@@ -286,7 +286,7 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   floor ending in 1 250 s, a level off the path its duration + 30 s, at most 250) and once more after a death; a `level-result` event per level (CLEARED, DIED with where (phase,
   floor, place, path section) and by what (the last `damage` source on the hero), or STUCK with the stuck event's place,
   path section and the bot's ClimbTarget), then a `summary` event, one `table` event per row and the same markdown table in
-  the report's `log`; metrics `path.cleared`/`died`/`stuck`, `level<n>.cleared`; ~3-4 h), `off-path` (the same run over just the levels after
+  the report's `log`; metrics `path.cleared`/`died`/`stuck`, `level<n>.cleared`; a **time budget** (the runner cancels any run at 60 min): no new level after 50 min of run time, the last one done by 55, each level (both tries and loads) capped at ~4 min of real time (a floor boss's ~5) and recorded as STUCK with where when the cap runs out, every level not reached a NOT REACHED (TIME BUDGET) row; `budget` events (the budget, the stop, the minutes used and levels covered), metrics `path.played`/`notReached`/`budgetMinutes`; the run always ends with the table; ~55 min), `off-path` (the same run over just the levels after
   the path: Level13-18, Level3-10 and the Arcade levels, a `check` event per level; ~1 h), `floors-A-B` (the same run over
   one stretch of the path, each ending on a floor boss or where a shortcut jumps: `floors-1000-991`, `floors-960-951`,
   `floors-910-901`, `floors-900-891`, `floors-860-851`, `floors-810-802`; the ids come from game.json, so new floors make
