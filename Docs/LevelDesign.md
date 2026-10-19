@@ -284,6 +284,10 @@ A lift or a counterweight level with the ledge he's on is a fine first step of a
 otherwise only jumps for what is higher, steps on to a lift waiting at its bottom or the low side of a counterweight
 when nothing higher is in reach. It goes for the carved landing whenever it is within a short jump (before, a ledge under
 the landing won and the bot pushed into the landing's side all level: 954, 902); pinned against the landing's solid side in the air, `Wedged` lets go (above).
+On the landing it stands still while the floor's ending plays: the last section mostly runs sideways, and the landing rule's
+banner and wait leave him free to move, so walking on took him off the landing's far end into the pit (993, 998, 860). With
+nothing in reach on a run it waits up to 4 s at the edge of what it stands on, while the camera eases into the section's
+end (seconds after he gets there) and the next section's footholds start to count (997: off the far ledge before the wall).
 An updraft throws him **0.7 over its column's top** (lift 5): put the foothold it carries him to at most ~0.45 above the
 top and within ~1.5 of its side, and the column's foot no higher than a step above the foothold he enters from. A
 counterweight he stands on is going down (and its partner up) as he jumps. Keep a timed hazard (a geyser, a fall) off the

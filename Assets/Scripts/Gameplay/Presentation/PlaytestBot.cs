@@ -357,7 +357,10 @@ namespace SickOfIt.Gameplay
 
         /// <summary>Footholds it gave up on: it got no closer to one for GiveUpSeconds (behind the screen's edge, under a lip), so it tried another.</summary>
         public int GaveUpOn { get; private set; }
-        const float GiveUpSeconds = 5f, SkipSeconds = 5f;
+        const float GiveUpSeconds = 5f, SkipSeconds = 5f, EdgeWaitSeconds = 4f;
+        // The foothold whose edge it is waiting at with nothing in reach on a run, and since when.
+        Entity edgeWaitOn;
+        float edgeWaitSince;
         Entity chasing, skipped;
         float chaseSince, chaseClosest, skipUntil;
         // Where his feet were when the bot last jumped for a foothold: in the air it keeps judging footholds from there, like a
@@ -523,6 +526,14 @@ namespace SickOfIt.Gameplay
             }
 
             bool grounded = controller.IsGrounded;
+            // On the carved landing the floor is won: stand still while its ending plays (banner, wait, Grudge pick). The path's
+            // last section mostly runs sideways, and with nothing ahead the bot kept walking that way, off the landing's far end
+            // into the pit before the ending finished (beta run r_de52d3fb1036: 993, 998 and 860 died past their landings).
+            if (grounded && standingOn != null && standingOn.Tags.Contains("landing"))
+            {
+                moveX = 0f;
+                return true;
+            }
             // Resting on what he stands on but not grounded: his middle is past its edge (on a corner, or across the gap between
             // two stones), where the feet's ground check finds nothing and a jump does nothing. Step on to it, like a player.
             // Floor 1000 on beta: wedged between stone2 and a sunk stone3 for 190 s, the bot waiting to land.
@@ -583,6 +594,22 @@ namespace SickOfIt.Gameplay
                     return true;
                 }
                 moveX = riding ? 0f : Mathf.Abs(forward.x) > 0.1f ? Mathf.Sign(forward.x) : 0f;
+                // Nothing in reach on a run: wait at the edge of what he stands on, like a player, while the camera eases to the
+                // section's end and the next section's footholds count (it only gets there seconds later). Walking on took him
+                // off the edge into the pit (Floor 997: off the far ledge at x 21.6 before the wall section began, both tries).
+                // After EdgeWaitSeconds he goes on as before, in case something only comes while he moves.
+                if (moveX != 0f && grounded && standingOn != null && standingOn.MainCollider != null)
+                {
+                    var own = standingOn.MainCollider.bounds;
+                    bool atEdge = moveX > 0f ? own.max.x - me.x < 0.45f : me.x - own.min.x < 0.45f;
+                    if (!atEdge || standingOn != edgeWaitOn)
+                    {
+                        edgeWaitOn = atEdge ? standingOn : null;
+                        edgeWaitSince = now;
+                    }
+                    if (atEdge && now - edgeWaitSince < EdgeWaitSeconds)
+                        moveX = 0f;
+                }
                 return true;
             }
             ClimbTarget = best;
