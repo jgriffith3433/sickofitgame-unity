@@ -173,7 +173,7 @@
               "entity": "ledge",
               "at": [
                 4.0,
-                7.9
+                7.0
               ],
               "id": "hollowMid",
               "scale": [
@@ -225,9 +225,10 @@
               "entity": "chainLift993",
               "at": [
                 6.6,
-                7.65
+                7.0
               ],
-              "id": "lift"
+              "id": "lift",
+              "onEnter": true
             },
             {
               "entity": "ledge",
@@ -342,6 +343,15 @@
               },
               {
                 "type": "nextSection"
+              },
+              {
+                "type": "playSound",
+                "sound": "chain_cut"
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.08,
+                "duration": 0.4
               }
             ]
           }

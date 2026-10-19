@@ -223,7 +223,7 @@
             {
               "entity": "ledge",
               "at": [
-                13.0,
+                12.8,
                 11.2
               ],
               "scale": [
@@ -287,7 +287,7 @@
               "entity": "floorLanding999",
               "at": [
                 25.4,
-                12.6
+                12.3
               ],
               "id": "landing"
             }

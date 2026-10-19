@@ -337,6 +337,17 @@ namespace SickOfIt.Playtest
         /// per level: cleared, died (where, by what) or stuck (phase, place, path section, the bot's ClimbTarget).
         /// </summary>
         public const string AllLevelsId = "all-levels", StretchPrefix = "floors-";
+
+        /// <summary>
+        /// climb-start: the all-levels run over the start of the climb, Level 1 (the Meadow) and the Landing stretch (Floors 1000-991),
+        /// each level with a check event (cleared, or how it wasn't, and how long it took).
+        /// </summary>
+        public const string ClimbStartId = "climb-start";
+        const int ClimbStartTopFloor = 1000, ClimbStartLastFloor = 991;
+
+        /// <summary>The climb-start levels: Level 1 and the path's floors from ClimbStartTopFloor down to ClimbStartLastFloor.</summary>
+        public static List<int> ClimbStartLevels() =>
+            PathLevels().FindAll(n => n == 1 || PathFloor(n) <= ClimbStartTopFloor && PathFloor(n) >= ClimbStartLastFloor);
         const float PathFloorSeconds = 160f, PathBossSeconds = 250f;
         const int PathTries = 2;
         static readonly Regex FloorLevelName = new Regex(@"^Floor(\d+)$");
@@ -548,6 +559,11 @@ namespace SickOfIt.Playtest
                                    "ClimbTarget); the run ends with a summary event and the per-level table (table events, and the same table in the report's log)";
             list.Add(new PlaytestScenario(AllLevelsId, $"Every level on the path in game.json's order ({PathRange(path)}: the Meadow, then each floor of " +
                 "the played route, past the shortcuts' skipped floors): " + pathHow, PathRunSeconds(path), "full", "levels"));
+            var climbStart = ClimbStartLevels();
+            list.Add(new PlaytestScenario(ClimbStartId, $"The start of the climb ({PathRange(climbStart)}): Level 1 (the Meadow), then Floors " +
+                $"{ClimbStartTopFloor}-{ClimbStartLastFloor} one level per floor, the all-levels run over just these with a check event per level " +
+                "(cleared, or died/stuck and where, with its time; a floor should take 1-2 minutes), and the foothold and lava-over-foothold events " +
+                "of every floor: " + pathHow, PathRunSeconds(climbStart), "full", "levels"));
             foreach (var stretch in PathStretches())
             {
                 var stretchLevels = path.FindAll(n => n >= stretch.from && n <= stretch.to);
@@ -725,6 +741,8 @@ namespace SickOfIt.Playtest
                 yield return session.Full();
             else if (id == AllLevelsId)
                 yield return session.AllLevels(PathLevels(), "the whole path");
+            else if (id == ClimbStartId)
+                yield return session.AllLevels(ClimbStartLevels(), $"Level 1 and Floors {ClimbStartTopFloor}-{ClimbStartLastFloor}", checkEvery: true);
             else if (id.StartsWith(StretchPrefix, StringComparison.Ordinal) && PathStretches().Exists(s => StretchId(s) == id))
             {
                 var stretch = PathStretches().Find(s => StretchId(s) == id);
@@ -5122,7 +5140,7 @@ namespace SickOfIt.Playtest
             /// death, and reported: cleared, died (where and by what) or stuck (where). A level the bot can't clear goes in the table
             /// and the next one starts; the run ends with the table.
             /// </summary>
-            public IEnumerator AllLevels(List<int> levels, string what)
+            public IEnumerator AllLevels(List<int> levels, string what, bool checkEvery = false)
             {
                 var results = new List<PathResult>();
                 takeShortcuts = false;
@@ -5211,8 +5229,9 @@ namespace SickOfIt.Playtest
                 // Criterion: the bot clears the Meadow and the Landing (Floor 1000) when they're in the run.
                 foreach (var row in results)
                 {
-                    if (row.Level == 1 || row.Floor == LandingFirstFloor)
-                        Run.Event("check", $"all-levels {row.Name} {row.Title}: {(row.Result == "cleared" ? "ok (cleared)" : "not cleared (" + row.Result + ")")}");
+                    if (checkEvery || row.Level == 1 || row.Floor == LandingFirstFloor)
+                        Run.Event("check", $"all-levels {row.Name} {row.Title}: {(row.Result == "cleared" ? "ok (cleared)" : "not cleared (" + row.Result + (row.Where.Length > 0 ? ": " + row.Where : "") + ")")}" +
+                                           $" in {row.Seconds:0} s, {row.Tries} {(row.Tries == 1 ? "try" : "tries")}");
                 }
                 Run.Progress(1f);
                 End(cleared == results.Count ? PlaytestOutcome.Won : PlaytestOutcome.Done);

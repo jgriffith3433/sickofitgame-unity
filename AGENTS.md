@@ -266,7 +266,9 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   the report's `log`; metrics `path.cleared`/`died`/`stuck`, `level<n>.cleared`; ~2-3 h), `floors-A-B` (the same run over
   one stretch of the path, each ending on a floor boss or where a shortcut jumps: `floors-1000-991`, `floors-960-951`,
   `floors-910-901`, `floors-900-891`, `floors-860-851`, `floors-810-802`; the ids come from game.json, so new floors make
-  new ones; the package drops unknown option keys, so a range is an id, not an option), `story-path` (New Game along the story path, each step a `check` event: Video1, Level 1, Video2, Level 2
+  new ones; the package drops unknown option keys, so a range is an id, not an option), `climb-start` (the same run over
+  Level 1 and Floors 1000-991, with a `check` event per level: cleared or how not, its time and tries; ~30 min),
+  `story-path` (New Game along the story path, each step a `check` event: Video1, Level 1, Video2, Level 2
   "Floor 1000: The Landing" with no other level between, its floor counter 1000 → 999, Video3 (Yooba) watched 8 s,
   Level 3 (Floor 999) opening on the 999 milestone, Levels 4-11 (Floors 998-991, the Imp Foreman), the Sack Lift (its
   fare topped up, a setup shortcut) to Levels 12-21 (Floors 960-951, the Pile Keeper), the King's Chimney to Levels 22-30

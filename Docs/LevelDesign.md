@@ -255,6 +255,14 @@ needs it. A good floor mixes them: climb a lava fall, cross a river on a raft, r
   `chunks` (each a section with its pieces, anchored to the section's start), picked by weight and `fromFloor`, seeded
   by the level seed and the floor, so the same floor is always the same floor.
 
+**The reach rules** (the hero: moveSpeed 2, jumpForce 9, gravity 1.8, so a jump peaks 2.29 up and carries ~2 sideways at
+the same height): keep each rise to the next foothold at most **1.9** (the bot's limit; 1.3 is the usual step, less off a
+sinking stone, which drops while he walks), keep a same-height gap to about 2.2, keep every foothold inside the screen
+while its section is on (an Up section's camera stays on its start x, ±4.98), and give every section a foothold where hero
++ `travelLead` reaches its end, or the camera never moves on. A chain he must wait for hangs off a foothold that holds
+(not a crumbling or sinking one). `python3 Tools/Levels/floor_check.py [FloorN ...]` checks all of this without Unity
+(jumps, the bot's chain swings, lifts at their worst cut, the screen per section, section ends, lava boxes over footholds).
+
 The test floor `content/scenes/climbTest.json` (the `climb` playtest) has one of everything: a climb of sinking and
 crumbling stones, a raft ride across a lava river with a chain to swing from and an updraft under it, a chase on a slag
 flow ahead of the lava wave, a climb on a chain lift with the lava rising behind, and the landing.
@@ -494,7 +502,8 @@ who runs the hauling.
 - **Monsters:** imps perched on ledges above, the Overlord's raiders guarding the way up, throwing slow embers down at
   him. The first alone on a high ledge; then two, one each side, in the hollows; never three while the lava rises.
 - **Set piece and beat:** the first imps that fight back. A ledge of their sleeping hollows and a heap of embers they
-  throw from. Landing carved *993* with *GO BACK* scratched under it.
+  throw from. Landing carved *993* with *GO BACK* scratched under it. The imps' lift drops into the shaft with a clank
+  once the hollows are clear (it isn't there during the fight, so it can't carry him off the held screen).
 - **Surprise:** a third imp is asleep in the last hollow. It wakes as he lands beside it, startles, and falls off its
   own ledge into the lava.
 - **Rewind:** an ember he didn't see: rewind and read the throw.
@@ -515,7 +524,8 @@ who runs the hauling.
   lava behind, so the way down is gone the moment he uses it. Then the bridge: every stone cracks as he lands on it and
   drops a beat later, the span falling into the river behind him all the way across. The floor before the boss: the
   hardest so far. Landing carved *992* with a crack through it.
-- **Surprise:** the bridge's last span is already gone. An imp's chain hangs over the gap: swing it.
+- **Surprise:** the bridge's last span is already gone. An imp's chain hangs over the gap: swing it. The bridge's end, a
+  heavy basalt ledge, is the one stone on it that holds, so he can wait there for the swing to come back.
 - **Rewind:** a stone he needed fell before he got there: rewind and the span is whole again.
 - **Feel:** a small shake on every crumble, a big one as the middle of the bridge goes; slow motion when he leaves the
   last stone as it falls; the roar rises under the bridge as the span drops into it.
