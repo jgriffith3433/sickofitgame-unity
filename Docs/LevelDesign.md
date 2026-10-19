@@ -267,7 +267,9 @@ top and within ~1.5 of its side, and the column's foot no higher than a step abo
 counterweight he stands on is going down (and its partner up) as he jumps. Keep a timed hazard (a geyser, a fall) off the
 foothold he jumps from on a climb: he can wait beside it for the beat, not on it. An Arena holds the camera on the path
 point where it starts: everything the fight needs (enemies included) goes inside that screen, spawned `onEnter` if it
-would shoot during the climb up to it.
+would shoot during the climb up to it (`floor_check.py` flags an arena enemy off that screen). A wave along the floor that
+he must jump is at most **0.8 tall and 1.4 wide**: a jump keeps his feet 0.8 up for only ~0.8 s, so a bigger one at
+speed 3.6-4.4 can't be cleared. A warning glow covers all the floor its attack reaches.
 
 The test floor `content/scenes/climbTest.json` (the `climb` playtest) has one of everything: a climb of sinking and
 crumbling stones, a raft ride across a lava river with a chain to swing from and an updraft under it, a chase on a slag
@@ -788,7 +790,8 @@ its own set piece, and the voice builds to the door. The King's Chimney lets out
 
 - **New:** stairs that sink (a staircase of sinking stones, one step at a time).
 - **Path:** `↗ 4` the sinking stair up out of the lava → `→ 1` a landing on the turn → `↑ 1` an updraft at the turn →
-  `↖ 3` the stair on → the landing.
+  `↖ 3` the stair on → the landing. (As built: the turn's updraft stands with its top 0.3 under the ledge over it, so
+  its throw lands him there; the rising lava stops at 5.9, under that ledge.)
 - **Obstacles:** the sinking stair up out of the lava, updrafts at the turns.
 - **Monsters:** one imp guard at the top.
 - **Set piece and beat:** the foot of the Heat Stairs, carved *TO THE THRONE*. If he came up **the King's Chimney**
@@ -807,6 +810,8 @@ its own set piece, and the voice builds to the door. The King's Chimney lets out
 
 - **New:** the ember shower.
 - **Path:** `↖ 3` stairs and crumbling ledges → `→ 2` a shelf under an overhang → `↗ 3` the stairs on → the landing.
+  (As built: the stair is three steps, all on screen, straight up onto the shelf; the soul's slab is 1.85 over the
+  shelf, so he can stand on it as well as under it.)
 - **Obstacles:** stairs and crumbling ledges, steam raining embers two at a time.
 - **Monsters:** cinders in the steam, one at a time.
 - **Set piece and beat:** the lava sea's steam boils up the stairwell and rains fire. Landing carved *909*.
@@ -901,7 +906,7 @@ its own set piece, and the voice builds to the door. The King's Chimney lets out
   count → `→ ↗ 3` along and up the stair under falling slag → the landing.
 - **Obstacles:** counterweights and ledges, falling slag.
 - **Monsters:** a line of three imp guards across the stair, throwing their fans on a count (one, two, three): read the
-  count, move between throws.
+  count, move between throws. (As built: the line hangs over the right half of the held screen, x 2-4.2.)
 - **Set piece and beat:** the King's guard at its best, holding the stairs. Landing carved *904*.
 - **Surprise:** the third guard counts wrong. It throws on *four*, a beat late (it still winds up first), and the
   other two look at it.
@@ -916,7 +921,9 @@ its own set piece, and the voice builds to the door. The King's Chimney lets out
 
 - **New:** cooling crusts (climbing the inside of a lava fall).
 - **Path:** `↑ 4` up the inside of a lava fall on cooling crusts → `→ 2` across between falls on an updraft → `↑ 2`
-  the last updraft → the landing.
+  the last updraft → the landing. (As built, until the crusts exist: solid steps either side of the fall, clear of it,
+  so he waits on a step for the off beat and crosses; the first updraft's throw reaches the ledge beyond it; the ember
+  shower at the top rumbles 1.5 s before its first pair.)
 - **Obstacles:** a lava fall that stops on a beat and crusts over (climb its face while it's off), updrafts between
   falls (ride up while the fall beside him is off), ember shower at the top.
 - **Monsters:** cinders in the falls.
@@ -963,7 +970,8 @@ its own set piece, and the voice builds to the door. The King's Chimney lets out
   finally close enough to touch.
 - **Surprise:** he stands. The King who never gets up gets up, at half health, the only time he ever does
   (*"...You made me STAND."*).
-- **Rewind:** the flood: outrun it or drag it back.
+- **Rewind:** the flood: outrun it or drag it back. (As built: the shockwave is 1.4 by 0.8, low enough to jump on a
+  read; the flood's glow covers all the floor it reaches, up to the safe strip at the far wall.)
 - **Feel:** as built for his arena (the throne rising, the big hit, his theme and its enrage variant, slow motion at
   his fall); the flood is the Wastes' last and loudest roar.
 - **Length:** 2-4 minutes.

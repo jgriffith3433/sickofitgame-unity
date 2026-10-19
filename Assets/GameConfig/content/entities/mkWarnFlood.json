@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "extends": "overlordBeamGlow",
+  "tags": ["floodWarning"],
   "visual": {
     "color": "#FF3A1A",
     "placeholderColor": "#FF3A1A",

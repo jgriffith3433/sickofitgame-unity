@@ -64,9 +64,9 @@
               ]
             },
             {
-              "entity": "crumblingStone",
+              "entity": "ledge",
               "at": [
-                -1.6,
+                -1.8,
                 -1.15
               ],
               "scale": [
@@ -77,7 +77,7 @@
             {
               "entity": "ledge",
               "at": [
-                0.6,
+                0.8,
                 0.15
               ],
               "scale": [
@@ -86,9 +86,9 @@
               ]
             },
             {
-              "entity": "crumblingStone",
+              "entity": "ledge",
               "at": [
-                -1.6,
+                -1.8,
                 1.45
               ],
               "scale": [
@@ -99,7 +99,7 @@
             {
               "entity": "ledge",
               "at": [
-                0.6,
+                0.8,
                 2.75
               ],
               "scale": [
@@ -110,7 +110,7 @@
             {
               "entity": "crumblingStone",
               "at": [
-                -1.6,
+                -1.8,
                 4.05
               ],
               "scale": [
@@ -138,7 +138,7 @@
               "entity": "heatUpdraft",
               "at": [
                 0.8,
-                3.65
+                3.95
               ],
               "id": "draftA"
             },
@@ -289,6 +289,16 @@
             "volume": 0.85
           },
           {
+            "type": "cameraShake",
+            "intensity": 0.05,
+            "duration": 1.4
+          },
+          {
+            "type": "playSound",
+            "sound": "lava_bubble",
+            "volume": 1.0
+          },
+          {
             "type": "startHazard",
             "id": "topShower",
             "projectile": "fireball",
@@ -298,7 +308,8 @@
             },
             "speed": 2.4,
             "interval": 1.6,
-            "duration": 10.0
+            "duration": 10.0,
+            "initialDelay": 1.5
           }
         ]
       },
