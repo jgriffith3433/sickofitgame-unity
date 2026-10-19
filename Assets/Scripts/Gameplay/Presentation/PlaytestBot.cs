@@ -28,6 +28,23 @@ namespace SickOfIt.Gameplay
         public bool takeShortcuts;
         /// <summary>Holds down wherever it stands (the one-way scenario, on solid ground: it must not drop through).</summary>
         public bool holdDown;
+        /// <summary>
+        /// The one-way scenario's dead-zone probes. brushDown &gt; 0: the next time he stands on a one-way platform it stops and
+        /// taps S for that many seconds (shorter than player.json dropThroughHoldSeconds: he must stay on top). lowRun: while
+        /// it runs across a one-way platform it steers with the gamepad's left stick a little low instead of A/D.
+        /// </summary>
+        public float brushDown;
+        public bool lowRun;
+        /// <summary>The last brush of down: when it started and ended (Time.time) and what it stood on; -1 = none yet.</summary>
+        public float BrushStartedAt { get; private set; } = -1f;
+        public float BrushEndedAt { get; private set; } = -1f;
+        public Collider2D BrushedOn { get; private set; }
+        /// <summary>Seconds it has run across one-way platforms with the stick low (lowRun).</summary>
+        public float LowRunSeconds { get; private set; }
+        /// <summary>The stick it runs with while lowRun: mostly sideways, a little low (deeper than the old -0.5 drop line).</summary>
+        public static readonly Vector2 LowRunStick = new Vector2(0.8f, -0.6f);
+        public bool LowRunning { get; private set; }
+        float brushUntil = -1f;
 
         /// <summary>Drops through a one-way platform it started (holding S, or the gamepad's left stick down, every other one).</summary>
         public int DropsStarted { get; private set; }
@@ -270,12 +287,45 @@ namespace SickOfIt.Gameplay
                 moveX = atEdge ? 0f : wall;
             }
             bool down = (climbing && climbDrop) || holdDown;
-            if (down)
+            var controller = world.PlayerController;
+            bool onOneWay = controller != null && controller.OnOneWayPlatform;
+            // A brush of down on a one-way platform (a short tap of S): it must not drop him.
+            if (brushDown > 0f && brushUntil < 0f && onOneWay && !down)
+            {
+                brushUntil = Time.time + brushDown;
+                BrushStartedAt = Time.time;
+                BrushedOn = controller.GroundCollider;
+            }
+            bool brushing = brushUntil >= 0f;
+            if (brushing)
+            {
+                // No hold of its own until the tap is over and S has been let go for a frame.
+                down = false;
+                if (Time.time >= brushUntil)
+                {
+                    BrushEndedAt = Time.time;
+                    brushDown = 0f;
+                    brushUntil = -1f;
+                    brushing = false;
+                }
+            }
+            if (down || brushing)
                 moveX = 0f;
-            Move = new Vector2(moveX, down ? -1f : 0f);
-            input.SetMoveX(moveX);
+            Move = new Vector2(moveX, down || brushing ? -1f : 0f);
             input.SetAim(FireDirection);
-            HoldDown(down);
+            if (brushing)
+                input.SetDown(true);
+            else
+                HoldDown(down);
+            LowRunning = lowRun && !down && !brushing && moveX != 0f && onOneWay;
+            if (LowRunning)
+            {
+                input.SetMoveX(0f);
+                input.SetMoveStick(new Vector2(LowRunStick.x * Mathf.Sign(moveX), LowRunStick.y));
+                LowRunSeconds += Time.deltaTime;
+            }
+            else
+                input.SetMoveX(moveX);
 
             if (climbing)
             {

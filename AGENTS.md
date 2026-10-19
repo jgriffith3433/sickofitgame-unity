@@ -350,7 +350,10 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   stone sinking and rising back, a crumbling stone falling, a raft drifting and carrying him, a chain swing, the lava
   wave chasing him, a hold of R bringing a sunk stone back up, the carved landing ending the level; `check`,
   `section`, `floorkit` events; ~3 min; Docs/LevelDesign.md "A floor's path"), `one-way` (one-way platforms:
-  `content/scenes/oneWayTest.json` on Level 2's stage, setup shortcut; the bot jumps up through ledges and a stone hung
+  `content/scenes/oneWayTest.json` on Level 2's stage, setup shortcut; first the drop's dead zone (player.json
+  `dropThroughThreshold`/`mobileDropThreshold` -0.75, `dropThroughMaxAngle`, `dropThroughHoldSeconds`): a 0.07 s tap of S on
+  a platform and a run across platforms with the stick at (0.8, -0.6) must not drop him (`brush stays on`, `low run stays on`),
+  and every drop logs how long down was held; then the bot jumps up through ledges and a stone hung
   straight over each other and lands on top, then drops down through the shelf holding S and through a sinking stone
   holding the gamepad's left stick down (its next foothold right under them), and holds down on the carved landing,
   which stays solid; `PlayerController.JumpedUpThrough`/`DroppedThrough`; `check` and `one-way` events; ~2 min; the

@@ -54,7 +54,11 @@ namespace SickOfIt.Core.Input
         
         [Header("Platform Interaction")]
         [Tooltip("How far down the player must press to drop through platforms (-1 = full down)")]
-        [SerializeField] private float dropThroughThreshold = -0.5f;
+        [SerializeField] private float dropThroughThreshold = -0.75f;
+        [Tooltip("Down only counts within this many degrees of straight down")]
+        [SerializeField] private float dropThroughMaxAngle = 30f;
+        [Tooltip("Seconds of continuous down on a one-way platform before he drops")]
+        [SerializeField] private float dropThroughHoldSeconds = 0.18f;
         [Tooltip("Downward force applied when dropping through platforms (helps fall faster)")]
         [SerializeField] private float dropThroughForce = 5f;
         
@@ -194,6 +198,8 @@ namespace SickOfIt.Core.Input
 
         /// <summary>His body's collider (standing checks for floor platforms).</summary>
         public Collider2D BodyCollider => col;
+        /// <summary>What he stands on (null in the air).</summary>
+        public Collider2D GroundCollider => isGrounded ? groundCollider : null;
 
         /// <summary>Hanging from something (a swinging chain): gravity is off and the holder moves him; Jump lets go.</summary>
         public bool IsHeld => held;
@@ -351,7 +357,9 @@ namespace SickOfIt.Core.Input
         // Input tracking
         private bool isUsingMobileInput = false;
         [SerializeField] private float inputDeadzone = 0.1f;
-        [SerializeField] private float mobileDropThreshold = -0.4f;
+        [SerializeField] private float mobileDropThreshold = -0.75f;
+        // Seconds down has been held on the one-way platform under him (a dead zone: a brush of down never drops him).
+        private float dropHold;
         
         // Shadow
         private Vector3 shadowInitialScale;
@@ -393,6 +401,9 @@ namespace SickOfIt.Core.Input
             // Drop-through
             dropThroughForce = cfg.dropThroughForce;
             dropThroughThreshold = cfg.dropThroughThreshold;
+            dropThroughMaxAngle = cfg.dropThroughMaxAngle;
+            dropThroughHoldSeconds = cfg.dropThroughHoldSeconds;
+            mobileDropThreshold = cfg.mobileDropThreshold;
 
             // Shadow
             shadowMaxHeight = cfg.shadowMaxHeight;
@@ -779,13 +790,28 @@ namespace SickOfIt.Core.Input
             UpdateDropThrough();
             UpdateRiseThrough();
 
-            // Use more lenient threshold for mobile analog sticks
             float threshold = isUsingMobileInput ? mobileDropThreshold : dropThroughThreshold;
-            // Mostly down, so a run with the stick a little low doesn't drop him.
-            bool pressingDown = moveInput.y < threshold && -moveInput.y >= Mathf.Abs(moveInput.x) * 0.5f;
+            // Deep and close to straight down, so a run with the stick a little low doesn't drop him...
+            bool pressingDown = moveInput.y < threshold
+                && Vector2.Angle(moveInput, Vector2.down) <= dropThroughMaxAngle;
+            // ...and held for a moment, so a brush of down doesn't either. Letting go (or leaving the platform) starts over.
             if (pressingDown && OnOneWayPlatform && !held && !Suspended)
-                StartDroppingThrough();
+                dropHold += Time.deltaTime;
+            else
+                dropHold = 0f;
+            if (dropHold >= dropThroughHoldSeconds && dropHold > 0f)
+            {
+                float heldFor = dropHold;
+                dropHold = 0f;
+                if (StartDroppingThrough())
+                    LastDropHeldSeconds = heldFor;
+            }
         }
+
+        /// <summary>How long down was held before his last drop through a one-way platform (seconds).</summary>
+        public float LastDropHeldSeconds { get; private set; }
+        /// <summary>Seconds of continuous down a drop through a one-way platform needs (player.json dropThroughHoldSeconds).</summary>
+        public float DropHoldSeconds => dropThroughHoldSeconds;
 
         private void CollectOwnColliders()
         {
@@ -813,7 +839,7 @@ namespace SickOfIt.Core.Input
                     Physics2D.IgnoreCollision(own, platform, ignore);
         }
 
-        private void StartDroppingThrough()
+        private bool StartDroppingThrough()
         {
             // Every one-way piece under his feet (he may stand across two), never the ground.
             var b = col.bounds;
@@ -834,12 +860,13 @@ namespace SickOfIt.Core.Input
                 dropped = true;
             }
             if (!dropped)
-                return;
+                return false;
             isGrounded = false;
             groundCollider = null;
             // Push him down so he clears the platform quickly.
             if (rb != null && dropThroughForce > 0)
                 rb.AddForce(Vector2.down * dropThroughForce, ForceMode2D.Impulse);
+            return true;
         }
 
         /// <summary>Gives each platform he dropped through back its collision once he is below it (or stopped falling past it).</summary>
@@ -911,6 +938,7 @@ namespace SickOfIt.Core.Input
         /// <summary>Every platform he was dropping through is solid for him again (a rewind puts him back on top of them).</summary>
         private void ClearDropThrough()
         {
+            dropHold = 0f;
             foreach (var drop in droppingThrough)
                 IgnorePlatform(drop.platform, false);
             droppingThrough.Clear();

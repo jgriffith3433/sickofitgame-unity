@@ -540,7 +540,8 @@ namespace SickOfIt.Playtest
                 "hanging from a swinging chain and jumping off, the lava wave chasing him sideways, a rewind (hold R) bringing a sunk stone back up, " +
                 "and the carved landing with the floor number, which ends the level", ClimbSeconds, "level"));
             list.Add(new PlaytestScenario("one-way", $"One-way platforms on a test floor: the scene \"{OneWayScene}\" on level {OneWayLevel}'s stage (setup shortcut), " +
-                "played by the bot through real input. A climb where each ledge and stone hangs right over the last: the hero jumps up through each " +
+                "played by the bot through real input. First the drop's dead zone: a quick tap of S on a platform and a run across platforms with " +
+                "the stick a little low must not drop him (a drop needs a deliberate hold, player.json dropThroughHoldSeconds). A climb where each ledge and stone hangs right over the last: the hero jumps up through each " +
                 "from below and lands on top. Then a run where the way on is down: he holds S on the shelf and drops through it onto the ledge under " +
                 "it, then holds the gamepad's left stick down on a sinking stone and drops through that; on the carved landing (solid ground) he holds " +
                 "down and stays on it. Each beat is a check event, every pass a one-way event", OneWaySeconds, "level"));
@@ -4242,14 +4243,26 @@ namespace SickOfIt.Playtest
                 public int JumpsThrough, Drops;
                 public float HoldOnGroundSince = -1f;
                 public bool DroppedThroughGround;
+                // The dead zone: a brush of S (BrushSeconds) and a run with the stick a little low must not drop him.
+                public bool Armed;
+                public int BrushTries;
+                public float LastDropAt = -1f;
+                public bool WasLowRunning;
+                public Collider2D LowRunPiece;
             }
+
+            /// <summary>The one-way scenario's brush of down: well under player.json dropThroughHoldSeconds.</summary>
+            const float BrushSeconds = 0.07f;
+            /// <summary>Seconds of running across one-way platforms with the stick low before "low run stays on" passes.</summary>
+            const float LowRunNeeded = 0.4f;
 
             OneWayWatch oneWay;
 
             /// <summary>What the one-way scenario must see (acceptance: up through, down through on keyboard and gamepad, the ground holds).</summary>
             static readonly string[] OneWayBeats =
             {
-                "jump up through", "drop through keyboard", "drop through gamepad", "drop through a stone", "bot drops for its path", "ground holds", "level ends",
+                "brush stays on", "low run stays on", "jump up through", "drop through keyboard", "drop through gamepad", "drop through a stone",
+                "bot drops for its path", "ground holds", "level ends",
             };
 
             public IEnumerator OneWayRun()
@@ -4263,8 +4276,8 @@ namespace SickOfIt.Playtest
                 }
                 oneWay = new OneWayWatch();
                 Run.Event("shortcut", $"load level {OneWayLevel}'s stage with the test floor {OneWayScene} directly");
-                Run.Event("one-way", "touch: the move touch pulled down feeds the same hold-down as S and the stick (player.json mobileDropThreshold); " +
-                                     "the bot has no touchscreen, so try that one on a phone");
+                Run.Event("one-way", "touch: the move touch pulled down feeds the same hold-down as S and the stick (player.json mobileDropThreshold, " +
+                                     "the same dead zone and hold); the bot has no touchscreen, so try that one on a phone");
                 SickOfIt.Core.Input.PlayerController.JumpedUpThrough += OnJumpedUpThrough;
                 SickOfIt.Core.Input.PlayerController.DroppedThrough += OnDroppedThrough;
                 LevelRuntime.PendingScene = OneWayScene;
@@ -4338,10 +4351,14 @@ namespace SickOfIt.Playtest
                 if (oneWay == null)
                     return;
                 oneWay.Drops++;
+                oneWay.LastDropAt = Time.time;
+                float heldFor = controller.LastDropHeldSeconds, need = controller.DropHoldSeconds;
                 string device = bot != null && bot.DropsStarted > 0 ? bot.LastDropDevice : "?";
                 bool landing = piece != null && piece.TryGetComponent<SickOfIt.Gameplay.Entity>(out var e) && e.Tags.Contains("landing");
                 bool stone = piece != null && piece.TryGetComponent<SickOfIt.Gameplay.Entity>(out var s) && s.FindAbility<SickOfIt.Gameplay.Content.SinkAbility>() != null;
-                Run.Event("one-way", $"held down ({(device == "keyboard" ? "S" : device == "gamepad" ? "gamepad left stick" : device)}) on {PieceName(piece)} and dropped through it");
+                Run.Event("one-way", $"held down ({(device == "keyboard" ? "S" : device == "gamepad" ? "gamepad left stick" : device)}) on {PieceName(piece)} " +
+                                     $"for {heldFor:0.00} s (a drop needs {need:0.00} s) and dropped through it");
+                bool heldLongEnough = heldFor >= need - 0.001f;
                 if (landing)
                 {
                     oneWay.DroppedThroughGround = true;
@@ -4349,9 +4366,9 @@ namespace SickOfIt.Playtest
                     return;
                 }
                 if (device == "keyboard")
-                    OneWayCheck("drop through keyboard", true, $"holding S on {PieceName(piece)} dropped him through it");
+                    OneWayCheck("drop through keyboard", heldLongEnough, $"holding S on {PieceName(piece)} for {heldFor:0.00} s (a drop needs {need:0.00} s) dropped him through it");
                 if (device == "gamepad")
-                    OneWayCheck("drop through gamepad", true, $"holding the gamepad's left stick down on {PieceName(piece)} dropped him through it");
+                    OneWayCheck("drop through gamepad", heldLongEnough, $"holding the gamepad's left stick down on {PieceName(piece)} for {heldFor:0.00} s (a drop needs {need:0.00} s) dropped him through it");
                 if (stone)
                     OneWayCheck("drop through a stone", true, $"he dropped through the climb stone {PieceName(piece)}");
                 var target = bot != null ? bot.LastDropTarget : null;
@@ -4365,6 +4382,9 @@ namespace SickOfIt.Playtest
                 var world = GameplayWorld.Instance;
                 if (world == null || oneWay == null || bot == null)
                     return null;
+                var hero = world.PlayerController;
+                if (hero != null)
+                    OneWayDeadZone(hero);
                 var landing = world.FindById("landing");
                 bool onLanding = landing != null && world.PlayerStandsOn(landing);
                 if (oneWay.HoldOnGroundSince < 0f)
@@ -4386,6 +4406,57 @@ namespace SickOfIt.Playtest
                     bot.holdDown = false;
                 }
                 return null;
+            }
+
+            /// <summary>
+            /// The drop-through dead zone, through real input: the bot taps S for a moment on the first one-way platform it
+            /// stands on (he must stay on top), and runs across one-way platforms with the gamepad's stick a little low (he
+            /// must not drop either). A drop starts only after player.json dropThroughHoldSeconds of deliberate down.
+            /// </summary>
+            void OneWayDeadZone(SickOfIt.Core.Input.PlayerController controller)
+            {
+                if (!oneWay.Armed)
+                {
+                    oneWay.Armed = true;
+                    oneWay.BrushTries = 1;
+                    bot.brushDown = BrushSeconds;
+                    bot.lowRun = true;
+                    Run.Event("one-way", $"dead zone: the bot will tap S for {BrushSeconds:0.00} s on a platform (a drop needs {controller.DropHoldSeconds:0.00} s held) " +
+                                         $"and run across platforms with the stick at ({PlaytestBot.LowRunStick.x:0.0}, {PlaytestBot.LowRunStick.y:0.0})");
+                }
+
+                // The brush: judged a moment after S is let go.
+                if (!oneWay.Passed.Contains("brush stays on") && bot.BrushEndedAt >= 0f && bot.BrushEndedAt >= bot.BrushStartedAt
+                    && Time.time >= bot.BrushEndedAt + 0.1f && bot.brushDown <= 0f)
+                {
+                    bool dropped = oneWay.LastDropAt >= bot.BrushStartedAt || (bot.BrushedOn != null && controller.IsDroppingThrough(bot.BrushedOn));
+                    bool stillOn = bot.BrushedOn != null && controller.GroundCollider == bot.BrushedOn;
+                    float tapped = bot.BrushEndedAt - bot.BrushStartedAt;
+                    if (dropped)
+                        OneWayCheck("brush stays on", false, $"a {tapped:0.00} s tap of S on {PieceName(bot.BrushedOn)} dropped him through it (a drop needs {controller.DropHoldSeconds:0.00} s held)");
+                    else if (stillOn)
+                        OneWayCheck("brush stays on", true, $"tapped S for {tapped:0.00} s on {PieceName(bot.BrushedOn)} and he still stands on it (a drop needs {controller.DropHoldSeconds:0.00} s held)");
+                    else if (oneWay.BrushTries < 4)
+                    {
+                        oneWay.BrushTries++;
+                        bot.brushDown = BrushSeconds;
+                        Run.Event("one-way", $"dead zone: he left {PieceName(bot.BrushedOn)} during the tap without dropping; tapping again on the next platform");
+                    }
+                    else
+                        OneWayCheck("brush stays on", false, $"after {oneWay.BrushTries} taps he never stayed on a platform long enough to judge one");
+                }
+
+                // The low run: a drop while running with the stick low is a failure.
+                if (oneWay.WasLowRunning && oneWay.LowRunPiece != null && controller.IsDroppingThrough(oneWay.LowRunPiece))
+                    OneWayCheck("low run stays on", false, $"running across {PieceName(oneWay.LowRunPiece)} with the stick a little low dropped him through it");
+                oneWay.WasLowRunning = bot.LowRunning;
+                oneWay.LowRunPiece = bot.LowRunning ? controller.GroundCollider : null;
+                if (bot.lowRun && bot.LowRunSeconds >= LowRunNeeded && !oneWay.Passed.Contains("low run stays on"))
+                {
+                    OneWayCheck("low run stays on", true, $"{bot.LowRunSeconds:0.00} s running across platforms with the stick at " +
+                                                          $"({PlaytestBot.LowRunStick.x:0.0}, {PlaytestBot.LowRunStick.y:0.0}) and he never dropped");
+                    bot.lowRun = false;
+                }
             }
 
             // ─── climb: the floor toolkit on a test floor ───────────────
