@@ -19,10 +19,12 @@ inside Hell (a stretch of floors) is a travel stage: see "A stage that climbs th
 `levels/Level3.json` (the old 10-floor Spill) as the reference; a floor with a path (one level = one floor, the
 layout every new floor uses) is "A floor with a path", with `levels/Floor1000.json` (The Landing) as the reference.
 
-1. Copy an existing `levels/LevelN.json` to `levels/Level11.json` (the next story level). Change `levelName`, `displayName`, `levelNumber`,
-   `music`, `backgrounds`, `deathConfigName`.
-2. Add `"Level11"` to the `"levels"` list in `game.json` right after the last story level (`Level10`), before
-   `CrackedRoad` and the `Arcade*` levels (the position is the level number). A level goes on to a video with
+1. Copy an existing floor to `levels/Floor<floor>.json` (a new floor of Hell: one level = one floor, e.g. `Floor900.json`).
+   Change `levelName`, `displayName`, `levelNumber`, `music`, `backgrounds`, `deathConfigName`.
+2. Add `"Floor<floor>"` to the `"levels"` list in `game.json` in climb order (today the story floors are positions
+   2-31, `Floor1000` to `Floor901`), before `CrackedRoad`, the old 10-floor stages (`Level*`) and the `Arcade*` levels
+   (the position is the level number: Docs/Story.md, *Level numbers*). Inserting shifts every later level's number,
+   so fix the `nextLevelNumber`/shortcut `nextLevel` values and the playtest's level constants that point past it. A level goes on to a video with
    `nextVideoNumber`, or straight to another level with `nextLevelNumber` (results, the Shaft, then that level: how
    the stages inside a Circle follow each other); with both 0 it ends at the level select. Set the previous stage's
    `nextLevelNumber` to the new one, and add the level to the `story-path` playtest's `StoryPath`
@@ -128,7 +130,7 @@ A boss is an entity with a state machine; health thresholds switch its attacks. 
 In the level: a `boss` phase whose `onEnter` runs an intro sequence (lock input, text, camera shake, then spawn the
 boss with `"id": "boss"` and show a `bossBar`), and `"objective": { "complete": { "type": "allDead", "target": { "id": "boss" } } }`.
 
-**A Warden's arena** (`levels/Level11.json`, the Magma King; Story.md "The Magma King's fight") goes further:
+**A Warden's arena** (`levels/Floor901.json`, the Magma King, level 31; Story.md "The Magma King's fight") goes further:
 - A floor stage on a **Static** camera: `floors` with `unitsPerFloor` 0 (the counter only moves by `climbFloors` /
   `setFloor`), no `floors.sign`/`door` (those need a travel track). The playtest treats it as an arena (`IsArena`).
 - **The intro** is a scene: `lockInput`, `lockRewind`, `sceneUntouchable` on the player, spawn the boss and
@@ -378,7 +380,7 @@ signs in the world). Between hand-written story beats the **floor generator** fi
    stretch `"seed": 1` so it differs. End the stage with `{ "type": "floorReached", "floor": 951 }`.
 4. Floors outside travel: `setFloor`, `climbFloors` (a shortcut, an elevator); triggers `floorReached`,
    `distanceReached`; counters `floor` and `distance`.
-5. **Dress the stage** (Levels 3-10 do all of these):
+5. **Dress the stage** (the old stages `Level3`-`Level10` do all of these):
    - `world.props`: scenery for this stage only, drawn with the Circle's (same fields as a Circle's `props`): the
      Spill's fence posts, cart and smoking hay. A prop with `sizeVariation` 0, `chance` 1 and `spacing` =
      `unitsPerFloor` stands identical on every floor (the Loop's "same rock").

@@ -934,7 +934,7 @@ its own set piece, and the voice builds to the door. The King's Chimney lets out
 - **Surprise:** he stands. The King who never gets up gets up, at half health, the only time he ever does
   (*"...You made me STAND."*).
 - **Rewind:** the flood: outrun it or drag it back.
-- **Feel:** as built for Level 11 (the throne rising, the big hit, his theme and its enrage variant, slow motion at
+- **Feel:** as built for his arena (the throne rising, the big hit, his theme and its enrage variant, slow motion at
   his fall); the flood is the Wastes' last and loudest roar.
 - **Length:** 2-4 minutes.
 
@@ -1001,7 +1001,8 @@ Circle's family (here the imps and the village's sparks), with a reason to be on
 
 ## Building it
 
-Today's Levels 2-11 (the 10-floor stages, `travelDirection` Right) are replaced by the floors above. The work, in the
+The old 10-floor stages (`travelDirection` Right; once Levels 2-11, now only the long way's stand-ins, levels 39-46)
+are replaced by the floors above (the played route: done 2026-10-19). The work, in the
 order it can be built and played:
 
 1. **Engine (C#, new rewind-safe types):** sinking stones, crumbling stones, rafts (bob, drift, tip), chain lifts and
@@ -1061,7 +1062,7 @@ order it can be built and played:
 6. **Data that follows the renumbering:** Yooba's floor reactions (`ui/yooba.json`: the Spill moves from 985 to 998, the
    Loop from 957 to 995, Halfway's 950 stays on the long way), the Shaft's climb (one floor per level), the playtest
    scenarios that name levels by number (`wastes-climb`, `story-path`, `shortcut`, `waystone`), Circle IX's stages
-   (Levels 12-18, recut into floors the same way; the Old Stair's shortcut stays at Floor 871 to 841).
+   (levels 32-38, `CrackedRoad` and `Level13`-`Level18`, recut into floors the same way; the Old Stair's shortcut stays at Floor 871 to 841).
 7. **Art (GPU, priced):** *Made 2026-10-18 (see "The art of the climb"):* the world below the lava (sea, haze, spires,
    islands, ceiling), the lava's surface, falls and geysers, the three stones with their steam and crumble frames, the
    village's rafts (cart, roof, sign, hay), the lift, counterweight, chains and the carved landing. Still to make: the

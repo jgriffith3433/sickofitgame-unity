@@ -194,8 +194,8 @@ namespace SickOfIt.Playtest
         };
         const float StoryPathSeconds = 4200f;
         /// <summary>
-        /// The wastes-climb scenario: the stage it loads directly (The Loop) and the last one it plays through the real flow
-        /// (The Heat Stairs, ending at the Magma King's door). Docs/Story.md, "Circle X stage outline".
+        /// The wastes-climb scenario: the floor it loads directly (Floor 910, the foot of the Heat Stairs) and the last one it plays through the real flow
+        /// (Floor 901, the Magma King's arena). Docs/Story.md, "Level numbers".
         /// </summary>
         public const int ClimbFrom = 22, ClimbTo = 31;
         const float WastesClimbSeconds = 1800f;
