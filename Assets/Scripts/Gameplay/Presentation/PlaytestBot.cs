@@ -274,6 +274,8 @@ namespace SickOfIt.Gameplay
         /// <summary>The foothold the bot is heading for on a floor with a path (null = none in reach).</summary>
         public Entity ClimbTarget { get; private set; }
         float lastClimbJump = -99f;
+        // The swing's speed toward the way on last tick, while he hangs on a chain (it peaks at the bottom of the arc).
+        float swingSpeedBefore;
 
         /// <summary>Footholds it gave up on: it got no closer to one for GiveUpSeconds (behind the screen's edge, under a lip), so it tried another.</summary>
         public int GaveUpOn { get; private set; }
@@ -307,17 +309,21 @@ namespace SickOfIt.Gameplay
 
             if (controller.IsHeld)
             {
-                // Hanging on a chain: let go when the swing throws him toward the way on.
+                // Hanging on a chain: let go just past the bottom of a swing toward the way on, at its fastest (the swing
+                // slows from there), the way a player times it. Letting go as soon as it moves forward threw him short.
                 moveX = 0f;
                 Vector2 v = world.Player.Body != null ? world.Player.Body.linearVelocity : Vector2.zero;
                 float way = Mathf.Abs(forward.x) > 0.1f ? Mathf.Sign(forward.x) : NextFootholdSide(me);
-                if (v.x * way > 1.2f && now - lastClimbJump > 0.3f)
+                float speed = v.x * way;
+                if (speed > 1.2f && speed < swingSpeedBefore - 0.01f && now - lastClimbJump > 0.3f)
                 {
                     jump = true;
                     lastClimbJump = now;
                 }
+                swingSpeedBefore = speed;
                 return true;
             }
+            swingSpeedBefore = 0f;
 
             Entity standingOn = null;
             Entity best = null;
@@ -390,6 +396,13 @@ namespace SickOfIt.Gameplay
             float edgeGap = bestIsChain ? Mathf.Abs(dx) : Mathf.Max(0f, Mathf.Max(bestBounds.min.x - me.x, me.x - bestBounds.max.x));
             float up = (bestIsChain ? best.Position.y - 0.5f : bestBounds.max.y) - feet;
             moveX = Mathf.Abs(dx) > 0.12f ? Mathf.Sign(dx) : 0f;
+            // A chain swinging out over the gap: wait at the edge for its handle to come back in reach, don't walk off after it.
+            if (bestIsChain && grounded && standingOn != null && standingOn.MainCollider != null)
+            {
+                var own = standingOn.MainCollider.bounds;
+                if (dx > 0f ? own.max.x - me.x < 0.3f : me.x - own.min.x < 0.3f)
+                    moveX = 0f;
+            }
 
             // Getting no closer to it for a while, standing on solid footing (not riding a raft that brings it near):
             // it's out of reach (behind the screen's edge, under a lip). Leave it a few seconds, hop, and try the next one.
@@ -435,7 +448,7 @@ namespace SickOfIt.Gameplay
                 bool higher = up > 0.3f && edgeGap < (bestIsChain ? 1.0f : 1.3f);
                 // Same height or lower across a gap: jump from the edge of what he stands on.
                 bool atEdge = false;
-                if (!higher && standingOn != null && standingOn.MainCollider != null && edgeGap > 0.05f)
+                if (!higher && !bestIsChain && standingOn != null && standingOn.MainCollider != null && edgeGap > 0.05f)
                 {
                     var own = standingOn.MainCollider.bounds;
                     atEdge = dx > 0f ? own.max.x - me.x < 0.4f : me.x - own.min.x < 0.4f;

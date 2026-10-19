@@ -205,11 +205,12 @@
               ]
             },
             {
-              "entity": "crumblingStone",
+              "entity": "ledge",
               "at": [
                 16.2,
-                5.0
+                4.97
               ],
+              "id": "bridgeEnd",
               "scale": [
                 0.8,
                 1
