@@ -4453,6 +4453,7 @@ namespace SickOfIt.Playtest
                 var hud = GameplayWorld.Instance != null ? GameplayWorld.Instance.Hud : null;
                 if (hud == null || hud.PickerOpen || hud.ResultsOpen)
                     yield break;
+                CursorCheck("playing", AimCursor.Showing || AimCursor.PointerOverUi, "the aim crosshair while the level plays");
                 yield return Tap(Key.P);
                 yield return WaitReal(1f);
                 hud = GameplayWorld.Instance != null ? GameplayWorld.Instance.Hud : null;
@@ -4464,7 +4465,8 @@ namespace SickOfIt.Playtest
                     yield break;
                 }
                 Run.Event("pause", "P");
-                string done = GameDefinition.Instance.menuTheme.texts.done;
+                CursorCheck("paused", !AimCursor.Showing, "the arrow on the pause menu");
+                string done =GameDefinition.Instance.menuTheme.texts.done;
                 yield return ClickUntil(GameDefinition.Instance.menuTheme.texts.settings, () => FindButton(done) != null, 10f);
                 if (Run.Done) yield break;
                 Run.Event("menu-open", "Settings (from pause)");
@@ -4478,7 +4480,20 @@ namespace SickOfIt.Playtest
                 if (hud != null && hud.Paused)
                     Run.Problem(PlaytestSeverity.Bug, "pressing P again didn't resume the level");
                 else
+                {
                     Run.Event("resume", "P");
+                    // The mouse is left where the bot clicked Done; over a HUD button the arrow is right.
+                    bool overUi = AimCursor.PointerOverUi;
+                    CursorCheck("resumed", AimCursor.Showing || overUi, overUi ? "the arrow over a HUD button" : "the aim crosshair back after the pause");
+                }
+            }
+
+            void CursorCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                    Run.Event("check", $"cursor {beat}: ok ({detail})");
+                else
+                    Run.Problem(PlaytestSeverity.Bug, $"cursor {beat}: want {detail}");
             }
 
             public IEnumerator Full()

@@ -632,6 +632,14 @@ namespace SickOfIt.Gameplay
             UpdateRewind();
             UpdateScreens();
             UpdatePickerKeys();
+            UpdateCursor();
+        }
+
+        /// <summary>The aim crosshair while playing; the arrow on the pause, death and results screens, the Grudge
+        /// picker and over HUD buttons (the pause and rewind buttons), where you click rather than shoot.</summary>
+        void UpdateCursor()
+        {
+            AimCursor.Show(!Paused && !Blocked && !AimCursor.PointerOverUi, style);
         }
 
         // ─── Progress bar: how far through the level, and how far back you can rewind ───
@@ -957,6 +965,8 @@ namespace SickOfIt.Gameplay
                 Time.timeScale = 1f;
             if (Paused || resultsRoot != null)
                 GameClock.Instance?.Resume();
+            // Menus and videos keep the system arrow.
+            AimCursor.Reset(style);
         }
 
         void Refresh(float now)

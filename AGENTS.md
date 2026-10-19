@@ -111,6 +111,10 @@ Assets/GameConfig/
   `player.json` `availableUpgrades` with an `effect` (MaxHealth, ExtraJump, MoveSpeed, FireRate, Damage, RewindJuice,
   Magnet); `RogueliteManager` stores levels, `UpgradeSystem.ApplyShop` applies them each level. Between-level picks are
   `content/upgrades`.
+- **Aim cursor**: in a level the mouse cursor is a crosshair (`Gameplay/Presentation/AimCursor.cs`, drawn at runtime
+  in theme.json `hud` colors: `marker` ring and fangs, `healthFill` dot on the hotspot, `worldBarOutline` rim; 32x32,
+  `Cursor.SetCursor`, a CSS cursor in WebGL). The pause, death and results screens, the Grudge picker, HUD buttons and
+  every menu outside a level keep the system arrow (`GameplayHud.UpdateCursor`).
 - **Feel**: hit pops/sparks/dust (`Core/Fx`), red flash + shake + hit-stop on damage, player blink during invincibility,
   pause (Esc/P/Start), settings (Sound on/off, volumes, shake, hints in `GameSettings`; Sound/Music/Effects are the
   Hawkes standard `hawkes.sound` JSON `{ on, music, sfx }` in PlayerPrefs), "undo your death" countdown
@@ -227,7 +231,7 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
 `Assets/Scripts/Playtest/SickOfItPlaytest.cs` registers the scenarios at startup; nothing runs until one starts.
 
 - **Scenarios:** `smoke` (main menu, New Game, skip the video, level 1 for ~30 s with one rewind and a P pause/resume,
-  quit to menu), `level-<n>` per level in game.json (loads the level directly, a setup shortcut; `level-1` also checks its
+  the aim crosshair checked before, during and after the pause (`check` events `cursor <beat>`), quit to menu), `level-<n>` per level in game.json (loads the level directly, a setup shortcut; `level-1` also checks its
   ending, the portal scene, beat by beat: Grudge pick first, beam telegraphed and hitting on the background's fire hole (world point from the background layer), portal open on it (a `check` with its world x; screen captures before and after: the background's fire found, then the portal drawn over it),
   move/jump/fire/R pressed and ignored, the walk, every line's subtitle and voice, the turn, the pull-in, the slime,
   the scorch, the fade, no damage; then Continue on the results and Video2 must start; `check`, `line`, `signal` events;
