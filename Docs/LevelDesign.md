@@ -277,6 +277,11 @@ Two stones less than the hero's width (0.6) apart sink to the same height and ca
 nothing: player.json `groundCheckWidth` is 0.3 (it was 0.1) so standing on a corner or across a gap still counts as ground
 and he can jump off it (Floor 1000: wedged between stone2 and a sunk stone3, no jump for 190 s), and the bot steps on to
 the stone it rests on when it isn't grounded.
+A lift or a counterweight level with the ledge he's on is a fine first step of a climb (956, 904, 993): the bot, which
+otherwise only jumps for what is higher, steps on to a lift waiting at its bottom or the low side of a counterweight
+when nothing higher is in reach. It goes for the carved landing whenever it is within a short jump (before, a ledge under
+the landing won and the bot pushed into the landing's side all level: 954, 902), and lets go of the stick when he hangs
+pinned against a wall in the air (a solid landing's side holds him by friction; he isn't grounded, so no jump).
 An updraft throws him **0.7 over its column's top** (lift 5): put the foothold it carries him to at most ~0.45 above the
 top and within ~1.5 of its side, and the column's foot no higher than a step above the foothold he enters from. A
 counterweight he stands on is going down (and its partner up) as he jumps. Keep a timed hazard (a geyser, a fall) off the

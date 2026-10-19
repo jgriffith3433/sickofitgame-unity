@@ -220,6 +220,8 @@ namespace SickOfIt.Gameplay
                 moveX = 1f;
             // A floor with a path: climb it foothold by foothold (no random strafes or hops, they'd drop him in the lava).
             bool climbing = Climb(me, ref moveX, out bool climbJump, out bool climbDrop);
+            if (climbing)
+                moveX = LetGoOfWalls(moveX);
             if (!climbing)
             {
                 if (now < strafeUntil)
@@ -493,6 +495,11 @@ namespace SickOfIt.Gameplay
                 if (gain < 0.35f)
                     continue;
                 float score = gain + edge * 0.8f - (chain ? 0.6f : 0f);
+                // The carved landing within a short jump ends the floor: go for it. Scored by its far-off middle (it is 6 wide),
+                // it lost to the ledge tucked under it, and the bot pushed into the landing's side chasing that one for the whole
+                // level (beta run r_9fddf65ad203: Floors 954 and 902, stuck on the landing section heading for a ledge below it).
+                if (e.Tags.Contains("landing") && edge < 1.2f)
+                    score -= 100f;
                 if (score < bestScore)
                 {
                     bestScore = score;
@@ -515,6 +522,19 @@ namespace SickOfIt.Gameplay
                 {
                     moveX = Mathf.Sign(own.center.x - middle);
                     return true;
+                }
+            }
+            // On a climb with nothing higher in reach, a chain lift or the low side of a counterweight level with him is the way
+            // up. It isn't "higher", so the loop above left it out and he stood beside it at full health for the whole level
+            // (beta run r_9fddf65ad203: 956's lift and 904's weights next to the start ledge, 993's lift off the hollows).
+            bool rideStep = false;
+            if (best == null && Mathf.Abs(forward.x) <= 0.1f)
+            {
+                best = RideAhead(me, fromY, standingOn, now);
+                if (best != null)
+                {
+                    bestBounds = best.MainCollider.bounds;
+                    rideStep = true;
                 }
             }
             if (best == null)
@@ -620,6 +640,9 @@ namespace SickOfIt.Gameplay
             if (grounded && now - lastClimbJump > 0.35f)
             {
                 bool higher = up > 0.3f && edgeGap < (bestIsChain ? 1.0f : 1.3f);
+                // A lift or weight a lip above the ledge he's on: hop on to it (walking, its one-way side doesn't lift him).
+                if (rideStep && up > 0.02f && edgeGap < 0.8f)
+                    higher = true;
                 // Same height or lower across a gap: jump from the edge of what he stands on.
                 bool atEdge = false;
                 if (!higher && !bestIsChain && standingOn != null && standingOn.MainCollider != null && edgeGap > 0.05f)
@@ -637,6 +660,82 @@ namespace SickOfIt.Gameplay
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// A chain lift that goes up, or the low side of a counterweight (its partner hangs higher), with its top about level with
+        /// 'fromY' (his feet, or the take-off's in the air) and within 3.2 of him sideways: the nearest one, or null.
+        /// </summary>
+        Entity RideAhead(Vector2 me, float fromY, Entity standingOn, float now)
+        {
+            Entity best = null;
+            float bestEdge = float.MaxValue;
+            foreach (var e in world.Live)
+            {
+                if (e == null || !e.IsAlive || e.IsPlayer || e == standingOn || !e.Tags.Contains("foothold"))
+                    continue;
+                if (e == skipped && now < skipUntil)
+                    continue;
+                var col = e.MainCollider;
+                if (col == null || !col.enabled)
+                    continue;
+                var b = col.bounds;
+                var lift = e.FindAbility<SickOfIt.Gameplay.Content.ChainLiftAbility>();
+                var weight = lift == null ? e.FindAbility<SickOfIt.Gameplay.Content.CounterweightAbility>() : null;
+                if (lift != null)
+                {
+                    if (lift.travel.y < 0.5f || lift.Raised > 0.3f)
+                        continue;
+                }
+                else if (weight != null)
+                {
+                    var partner = world.FindById(weight.partner);
+                    if (partner == null || partner.MainCollider == null || partner.MainCollider.bounds.max.y < b.max.y + 0.2f)
+                        continue;
+                }
+                else
+                    continue;
+                if (Mathf.Abs(b.max.y - fromY) > 0.6f)
+                    continue;
+                float edge = Mathf.Max(0f, Mathf.Max(b.min.x - me.x, me.x - b.max.x));
+                if (edge > 3.2f || edge >= bestEdge)
+                    continue;
+                bestEdge = edge;
+                best = e;
+            }
+            return best;
+        }
+
+        // Pressed into the side of something solid in mid-air (a landing's wall), friction holds him there: not grounded, so no
+        // jump, and the give-up timer restarts every tick he's airborne. When he hasn't moved for a moment, let go of the stick
+        // so he drops off it and climbs again from what's below (beta run r_9fddf65ad203: 954 and 902 at the landing's left side).
+        float pinnedSince = -1f, letGoUntil = -1f;
+
+        /// <summary>Times it let go of the stick because he hung pinned against a wall in the air.</summary>
+        public int WallLetGoes { get; private set; }
+
+        float LetGoOfWalls(float moveX)
+        {
+            var controller = world.PlayerController;
+            var body = world.Player.Body;
+            float t = Time.time;
+            if (t < letGoUntil)
+                return 0f;
+            bool pinned = controller != null && body != null && moveX != 0f && !controller.IsGrounded && !controller.IsHeld
+                && Mathf.Abs(body.linearVelocity.x) < 0.3f && Mathf.Abs(body.linearVelocity.y) < 0.5f;
+            if (!pinned)
+            {
+                pinnedSince = -1f;
+                return moveX;
+            }
+            if (pinnedSince < 0f)
+                pinnedSince = t;
+            if (t - pinnedSince < 0.3f)
+                return moveX;
+            pinnedSince = -1f;
+            letGoUntil = t + 0.5f;
+            WallLetGoes++;
+            return 0f;
         }
 
         static bool SafeToWait(Entity standingOn) =>
