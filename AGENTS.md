@@ -252,13 +252,14 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   every level in order through the real flow: results → Continue → the Shaft (Continue) → video skipped with Escape; up to 3 tries per level;
   ~10 min), `story-path` (New Game along the story path, each step a `check` event: Video1, Level 1, Video2, Level 2
   "Floor 1000: The Landing" with no other level between, its floor counter 1000 → 999, Video3 (Yooba) watched 8 s,
-  Level 3 (Floor 999) opening on the 999 milestone, Levels 4-11 (Floors 998-991, the Imp Foreman), then Levels 12-20 (the old stages: The
-  Spill, Imp Run, The Slag Falls, The Loop, Halfway Basin, The Crust, The Sack Pile, The Heat Stairs, The Slag Throne)
-  one after another with no video between, each with the stage checks below, then the
-  level select, whose cards must list the story levels first and in order; ~35 min; the Shaft after Video2 and after each floor stage is checked too), `wastes-climb` (Level 15
-  loaded directly, then Levels 16-20 through the real flow with the stage checks on each: Level 16 opens on the Floor 950
-  beat, Level 19 ends at the Magma King's door with his voice heard ahead, Level 20 is his arena with the boss checks,
-  then the level select; ~18 min), `landing-stretch` (the first floors, one level per floor: Level 2, Floor 1000,
+  Level 3 (Floor 999) opening on the 999 milestone, Levels 4-11 (Floors 998-991, the Imp Foreman), the Sack Lift (its
+  fare topped up, a setup shortcut) to Levels 12-21 (Floors 960-951, the Pile Keeper), the King's Chimney to Levels 22-30
+  (Floors 910-902, the Heat Stairs) and Level 31 (Floor 901, the Slag Throne), one after another with no video between,
+  each with the stage checks below (the old 10-floor stages, levels 39-46, never played), then the
+  level select, whose cards must list the story levels first and in order; ~70 min; the Shaft after Video2 and after each floor stage is checked too), `wastes-climb` (the Heat Stairs:
+  Level 22, Floor 910, loaded directly, then Levels 23-31 through the real flow with the stage checks on each: Level 30
+  (Floor 902, The Door) ends at the Magma King's door with his knock heard from the other side, Level 31 (Floor 901) is
+  his arena with the boss checks, then the level select; ~30 min), `landing-stretch` (the first floors, one level per floor: Level 2, Floor 1000,
   loaded directly, then Levels 3-6 through the real flow, Video3 and Yooba's hello skipped after Floor 1000; each floor
   with the stage checks and its own idea, the Shaft climbing exactly one floor after each (`climbOneFloor`), then Floor
   996 leading on to Level 7; ~15 min; Docs/LevelDesign.md), `foreman-stretch` (Floors 995-991: Level 7, The Loop,
@@ -279,7 +280,7 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   10-floor stages, levels 39-46, never played past level 39's start; `check` events `levelN.shortcut.*`; ~65 min), `shaft` (Video2 loaded directly with
   the Shaft's save reset, skipped: the first plunge past the 10 Circles to FLOOR 1,000, the welcome lines, Continue to Level 2, the
   bot plays it, then the marker's climb to 999 with floors left and the next Warden, Continue on; layout audited on both; ~8 min),
-  `music` (Hell's soundtrack, Docs/Story.md "Music": the `shaft` run listening to the music, then Level 15 loaded directly and fought
+  `music` (Hell's soundtrack, Docs/Story.md "Music": the `shaft` run listening to the music, then Level 31 (Floor 901) loaded directly and fought
   until the enrage: the plunge's riser and slam, the Ember Wastes loop on Level 2 and the push music taking over in a generated push (Floor 1000 has
   no push: that check needs a generated stage),
   the climb's sting, the Magma King's theme when the fight starts and the enrage variant after `mkEnrage`; `music` events (every
@@ -312,11 +313,11 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   the Waystones marked, the first death's voiced line and the hero's answer, not skippable; Grudges gone, diamonds and goods
   kept; Continue restarts the run at Level 2; the main menu shows Continue and New Run, and New Run starts Level 2; `check`
   events `waystone <beat>`; ~6 min; a death in `full`/`story-path`/`wastes-climb` also drops back, and their retries reopen
-  the level directly), `shortcut` (Hell's first shortcut: Level 23, The Old Stair, loaded directly with one Grudge in hand (setup shortcut);
+  the level directly), `shortcut` (Circle IX's shortcut: Level 34, The Old Stair (`Level14.json`), loaded directly with one Grudge in hand (setup shortcut);
   the bot plays to the collapsed stairwell at the top and presses 2 on its choice: the choice with its cost on screen,
   the Grudge paid, the hero's line and the announcer's reaction, the counter jumping 871 to 841 with no Grudge pick; the
-  Shaft climbs to 871 and jumps a dotted line to 841 (`climbShortcut14`); Continue starts Level 27 (Floors 840-831),
-  skipping 24-26, played with the stage checks; `check` events `shortcut <beat>`, `shortcut-offer`/`shortcut-taken`; ~6 min),
+  Shaft climbs to 871 and jumps a dotted line to 841 (`climbShortcut14`); Continue starts Level 38 (`Level18.json`, Floors 840-831),
+  skipping 35-37, played with the stage checks; `check` events `shortcut <beat>`, `shortcut-offer`/`shortcut-taken`; ~6 min),
   `climb` (the floor toolkit on a test floor: `content/scenes/climbTest.json` on Level 2's stage, setup shortcut; the bot
   climbs it through real input: the path's climb, sideways run and chase, climb again, the lava sea and parallax, a
   stone sinking and rising back, a crumbling stone falling, a raft drifting and carrying him, a chain swing, the lava
