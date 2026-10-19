@@ -75,6 +75,14 @@ namespace SickOfIt.Playtest
         /// <summary>The level the imp-death scenario plays: Level 1's "imps" phase brings four, one at a time first.</summary>
         public const int ImpLevel = 1;
 
+        /// <summary>The aim-guide scenario: the level it plays (imps to shoot at once), and the spread Grudge it gives for the multi-shot half.</summary>
+        public const string AimGuideScenario = "aim-guide";
+        public const int AimGuideLevel = 1;
+        public const string AimGuideSpread = "spreadShot";
+        public const int AimGuideSpreadLevels = 2;
+        const int AimGuideVolleys = 12;
+        const float AimGuideToleranceDegrees = 0.5f;
+
         /// <summary>
         /// A Warden's fight (Docs/Story.md, "The Magma King's fight", "The Spire Fiend's fight"): the level that holds it, the
         /// boss entity, the animation states he must be seen in, his lines (text, audio.json sound, who must voice it), each
@@ -511,6 +519,13 @@ namespace SickOfIt.Playtest
                 "recorded 1 s in, the bot plays a few seconds, P, Restart Level; the restarted level 1 s in must match the fresh one: one Level scene " +
                 "and a new world, the clock, the hero's place, his hearts, the floor counter and distance, and the first moving pieces (ids, states, " +
                 "places). Each beat is a check event", 90, "level"));
+            list.Add(new PlaytestScenario(AimGuideScenario, $"The aim guide (player.json aimGuide): level {AimGuideLevel} (the Meadow, loaded directly, a setup " +
+                "shortcut) played by the bot through real input; every volley logs the guide's line directions on the frame it fired and the shots' flight " +
+                "directions read back from the projectiles, and they must match (aim events for the first volleys of each part and any mismatch, a check per part). Then the gamepad stick held: one " +
+                "line along it, short and thin, drawn under every bullet, hazard and enemy; held through a rewind (hold R) and the pause: hidden for both; " +
+                $"the mouse: hovering shows where a click goes, clicking fires along it. Then with {AimGuideSpreadLevels} levels of the spread Grudge " +
+                $"\"{AimGuideSpread}\" (setup shortcut) the level again: one fainter line per shot, each matching its shot. Then the bot plays to lose with " +
+                $"the stick held once he is dead (hidden), and the scene \"{CutsceneScene}\" with the stick held while it has the hero (hidden)", 420, "level"));
             list.Add(new PlaytestScenario("analytics", $"Hawkes Analytics (AGENTS.md \"Analytics\"): the SDK's debug log on, then Level {AnalyticsLevel} " +
                 "(the Meadow, loaded directly) played until Hell kills the hero three times (the bot holds R once early on for a rewind, then plays to " +
                 "lose): each death screen, and on the third one the feedback card (\"Too hard? Not fun?\", thumbs and a comment) over it, held while it's " +
@@ -786,6 +801,8 @@ namespace SickOfIt.Playtest
                 yield return session.ImpDeath();
             else if (id == "analytics")
                 yield return session.AnalyticsRun();
+            else if (id == AimGuideScenario)
+                yield return session.AimGuideRun();
             else if (id == "restart")
                 yield return session.RestartRun();
             else if (id == "portal-audio")
@@ -2840,6 +2857,382 @@ namespace SickOfIt.Playtest
                 Run.Metric("restart.failed", restartFailed);
                 Run.Progress(1f);
                 End(restartFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
+            }
+
+            // ─── aim-guide: the laser line from the muzzle matches the shots ─────
+
+            int aimPassed, aimFailed;
+            string aimPhase = "";
+            int aimPhaseVolleys, aimPhaseBad, aimPhaseLogged;
+            int aimExpectShots;
+            float aimWorstDelta;
+
+            void AimCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    aimPassed++;
+                    Run.Event("check", $"aim-guide {beat}: ok ({detail})");
+                }
+                else
+                {
+                    aimFailed++;
+                    Run.Event("check", $"aim-guide {beat}: FAILED ({detail})");
+                    Run.Problem(PlaytestSeverity.Bug, $"aim-guide {beat}: {detail}");
+                }
+            }
+
+            static float Degrees(Vector2 d) => Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg;
+
+            static string Angles(IReadOnlyList<Vector2> list)
+            {
+                var parts = new List<string>();
+                for (int i = 0; i < list.Count; i++)
+                    parts.Add($"{Degrees(list[i]):0.0}°");
+                return "[" + string.Join(", ", parts) + "]";
+            }
+
+            /// <summary>A volley left the gun: the guide's lines on that frame against the shots' flight directions.</summary>
+            void OnAimVolley(AimGuide guide, IReadOnlyList<Vector2> lines, IReadOnlyList<Vector2> before, IReadOnlyList<Vector2> shots)
+            {
+                if (string.IsNullOrEmpty(aimPhase))
+                    return;
+                aimPhaseVolleys++;
+                float worst = 0f;
+                bool ok = lines.Count == shots.Count && shots.Count == aimExpectShots;
+                for (int i = 0; ok && i < shots.Count; i++)
+                    worst = Mathf.Max(worst, Vector2.Angle(lines[i], shots[i]));
+                ok &= worst <= AimGuideToleranceDegrees;
+                if (ok)
+                    aimWorstDelta = Mathf.Max(aimWorstDelta, worst);
+                else
+                    aimPhaseBad++;
+                float drift = 0f;
+                for (int i = 0; i < shots.Count && i < before.Count; i++)
+                    drift = Mathf.Max(drift, Vector2.Angle(before[i], shots[i]));
+                if (!ok || aimPhaseLogged < 6)
+                {
+                    aimPhaseLogged++;
+                    Run.Event("aim", $"{aimPhase} volley {aimPhaseVolleys}: guide {lines.Count} line(s) {Angles(lines)}, " +
+                                     $"shots {shots.Count} {Angles(shots)}, want {aimExpectShots}; Δ {worst:0.00}° " +
+                                     $"({(ok ? "match" : "MISMATCH")}; the frame before {(before.Count > 0 ? $"Δ {drift:0.0}°" : "no line")})");
+                }
+            }
+
+            void BeginAimPhase(string phase, int shots)
+            {
+                aimPhase = phase;
+                aimExpectShots = shots;
+                aimPhaseVolleys = aimPhaseBad = aimPhaseLogged = 0;
+                aimWorstDelta = 0f;
+            }
+
+            void EndAimPhase(string beat)
+            {
+                AimCheck(beat, aimPhaseVolleys >= 3 && aimPhaseBad == 0,
+                    $"{aimPhase}: {aimPhaseVolleys} volley(s) of {aimExpectShots} shot(s), {aimPhaseBad} not matching their guide lines, " +
+                    $"worst match Δ {aimWorstDelta:0.00}° (tolerance {AimGuideToleranceDegrees}°)");
+                aimPhase = "";
+            }
+
+            void StopBot()
+            {
+                if (bot != null)
+                    Object.Destroy(bot);
+                bot = null;
+                input.ReleaseAll();
+                Time.timeScale = 1f;
+            }
+
+            /// <summary>Level n loaded directly, the bot playing until enough volleys were compared (up to 3 tries).</summary>
+            IEnumerator AimGuideVolleys(int n, string phase, string beat)
+            {
+                for (int attempt = 1; attempt <= 3 && !Run.Done; attempt++)
+                {
+                    Run.Event("shortcut", $"load level {n} directly ({phase}, try {attempt})");
+                    StopBot();
+                    var old = GameplayWorld.Instance;
+                    var load = LoadLevel(n);
+                    if (load != null)
+                        yield return load;
+                    // The same level may be running already: wait for the new world.
+                    yield return Run.Until(() => GameplayWorld.Instance != old && LevelRunning(n), 60f, $"level {n} to start");
+                    if (Run.Done)
+                        yield break;
+                    var controller = GameplayWorld.Instance.PlayerController;
+                    BeginAimPhase(phase, 1 + Mathf.Max(0, controller.ExtraShots));
+                    Run.Event("aim", $"{phase}: {controller.ExtraShots} extra shot(s), {controller.ShotSpreadDegrees:0.#}° apart");
+                    yield return PlayLevel(n, 90f, until: () => aimPhaseVolleys >= AimGuideVolleys);
+                    if (Run.Done)
+                        yield break;
+                    if (aimPhaseVolleys >= AimGuideVolleys || attempt == 3)
+                    {
+                        EndAimPhase(beat);
+                        yield break;
+                    }
+                    Run.Event("aim", $"{phase}: only {aimPhaseVolleys} volley(s) before the level stopped ({lastOutcome}); again");
+                }
+            }
+
+            /// <summary>The stick held: the guide shows along it, short, thin and under the gameplay; one line per shot.</summary>
+            IEnumerator AimGuideStick(string phase, int shots)
+            {
+                var world = GameplayWorld.Instance;
+                var guide = world != null ? world.AimGuide : null;
+                if (guide == null)
+                {
+                    AimCheck(phase + " stick", false, "the level has no aim guide (player.json aimGuide.enabled off?)");
+                    yield break;
+                }
+                StopBot();
+                Vector2 stick = new Vector2(0.8f, 0.6f);
+                aimPhase = phase + " stick";
+                aimExpectShots = shots;
+                aimPhaseVolleys = aimPhaseBad = aimPhaseLogged = 0;
+                aimWorstDelta = 0f;
+                input.SetAim(stick);
+                yield return WaitReal(0.6f);
+                if (Run.Done) yield break;
+                var dirs = guide.Directions;
+                int centre = dirs.Count % 2 == 1 ? dirs.Count / 2 : -1;
+                float along = centre >= 0 ? Vector2.Angle(dirs[centre], stick) : float.NaN;
+                AimCheck(phase + " stick shows", guide.Visible && dirs.Count == shots && (centre < 0 || along <= AimGuideToleranceDegrees),
+                    $"stick at {Degrees(stick):0.0}°: {(guide.Visible ? "shown" : "HIDDEN")}, {dirs.Count} line(s) {Angles(dirs)} (want {shots})" +
+                    (centre >= 0 ? $", the middle one Δ {along:0.00}° from the stick" : ""));
+                yield return WaitReal(1.2f);
+                if (Run.Done) yield break;
+                EndAimPhase(phase + " stick shots");
+                aimPhase = "";
+
+                // Short and thin: a fraction of the screen.
+                var cam = world.Camera != null ? world.Camera : Camera.main;
+                float shortSide = cam != null && cam.orthographic ? Mathf.Min(2f * cam.orthographicSize, 2f * cam.orthographicSize * cam.aspect) : 10f;
+                float fraction = guide.Length / shortSide;
+                AimCheck(phase + " short", fraction > 0.03f && fraction <= 0.3f,
+                    $"each line {guide.Length:0.00} units, {fraction:P0} of the screen's short side");
+
+                // Under every bullet, hazard, enemy and pickup in the gameplay band.
+                int lowest = Math.Min(SpriteLayers.Projectile, SpriteLayers.Character);
+                string lowestWhat = "bullets and characters";
+                foreach (var e in world.Live)
+                {
+                    if (e == null || !e.IsAlive || e.IsPlayer)
+                        continue;
+                    foreach (var r in e.GetComponentsInChildren<SpriteRenderer>())
+                    {
+                        if (r.sortingLayerName == guide.SortingLayerName && r.sortingOrder < lowest)
+                        {
+                            lowest = r.sortingOrder;
+                            lowestWhat = e.DefId;
+                        }
+                    }
+                }
+                AimCheck(phase + " under", guide.SortingLayerName == SpriteLayer.Player.ToString() && guide.SortingOrder < lowest,
+                    $"lines on {guide.SortingLayerName} order {guide.SortingOrder}; the lowest bullet, hazard or enemy there is order {lowest} ({lowestWhat})");
+
+                if (shots > 1 && dirs.Count == shots)
+                {
+                    var cfg = GameDefinition.Instance.player.aimGuide;
+                    AimCheck(phase + " faint", cfg.extraShotAlpha <= cfg.alpha && cfg.alpha <= 0.6f,
+                        $"main line alpha {cfg.alpha:0.00}, each extra shot's {cfg.extraShotAlpha:0.00}");
+                }
+            }
+
+            /// <summary>The stick held through a rewind and the pause: hidden for both, back after.</summary>
+            IEnumerator AimGuideHidden()
+            {
+                var world = GameplayWorld.Instance;
+                var guide = world.AimGuide;
+                var clock = GameClock.Instance;
+                input.SetAim(new Vector2(0.8f, 0.6f));
+                yield return WaitReal(0.4f);
+                Run.Event("rewind", "hold R for 1.5 s with the stick held");
+                input.SetKey(Key.R, true);
+                int rewindFrames = 0, shownWhileRewinding = 0;
+                float end = Time.realtimeSinceStartup + 1.5f;
+                while (!Run.Done && Time.realtimeSinceStartup < end)
+                {
+                    yield return new WaitForEndOfFrame();
+                    if (clock != null && clock.IsRewinding)
+                    {
+                        rewindFrames++;
+                        if (guide.Visible)
+                            shownWhileRewinding++;
+                    }
+                }
+                input.SetKey(Key.R, false);
+                AimCheck("rewind hidden", rewindFrames > 0 && shownWhileRewinding == 0,
+                    rewindFrames == 0 ? "R held 1.5 s but no rewind ran (out of juice?)" : $"{rewindFrames} rewinding frames, the guide shown on {shownWhileRewinding}");
+                yield return WaitReal(0.6f);
+                if (Run.Done) yield break;
+                AimCheck("after rewind", guide.Visible, $"stick still held after the rewind: guide {(guide.Visible ? "back" : "STILL HIDDEN")}");
+
+                yield return Tap(Key.P);
+                yield return WaitReal(0.4f);
+                bool paused = world.Hud != null && world.Hud.Paused;
+                AimCheck("pause hidden", paused && !guide.Visible, $"pause {(paused ? "open" : "NOT OPEN")}, guide {(guide.Visible ? "SHOWN" : "hidden")}");
+                yield return Tap(Key.P);
+                yield return WaitReal(0.4f);
+                input.SetAim(Vector2.zero);
+                yield return WaitReal(0.2f);
+            }
+
+            /// <summary>The mouse: hovering shows the line toward the cursor, a click fires along it.</summary>
+            IEnumerator AimGuideMouse(string phase, int shots)
+            {
+                var world = GameplayWorld.Instance;
+                var guide = world.AimGuide;
+                var cam = world.Camera != null ? world.Camera : Camera.main;
+                if (cam == null)
+                    yield break;
+                input.SetAim(Vector2.zero);
+                Vector2 hero = cam.WorldToScreenPoint(world.Player.transform.position);
+                Vector2 at = hero + new Vector2(-Screen.height * 0.18f, Screen.height * 0.14f);
+                at.x = Mathf.Clamp(at.x, 20f, Screen.width - 20f);
+                at.y = Mathf.Clamp(at.y, 20f, Screen.height - 20f);
+                input.MoveMouse(at - new Vector2(4f, 0f));
+                yield return null;
+                input.MoveMouse(at);
+                yield return WaitReal(0.4f);
+                if (Run.Done) yield break;
+                var dirs = guide.Directions;
+                float depth = Mathf.Abs(world.Player.transform.position.z - cam.transform.position.z);
+                Vector2 cursor = cam.ScreenToWorldPoint(new Vector3(at.x, at.y, depth));
+                int centre = dirs.Count % 2 == 1 ? dirs.Count / 2 : -1;
+                float toCursor = centre >= 0 ? Vector2.Angle(dirs[centre], cursor - guide.Muzzle) : float.NaN;
+                AimCheck(phase + " mouse hover", guide.Visible && dirs.Count == shots && (centre < 0 || toCursor <= 1f),
+                    $"cursor at ({cursor.x:0.00}, {cursor.y:0.00}), not clicking: guide {(guide.Visible ? "shown" : "HIDDEN")}, {dirs.Count} line(s) {Angles(dirs)}" +
+                    (centre >= 0 ? $", the middle one Δ {toCursor:0.00}° from the muzzle-to-cursor line" : ""));
+                aimPhase = phase + " mouse";
+                aimExpectShots = shots;
+                aimPhaseVolleys = aimPhaseBad = aimPhaseLogged = 0;
+                aimWorstDelta = 0f;
+                input.SetMouseButton(true);
+                yield return WaitReal(1f);
+                input.SetMouseButton(false);
+                EndAimPhase(phase + " mouse shots");
+                yield return WaitReal(0.2f);
+            }
+
+            /// <summary>
+            /// The aim guide (player.json aimGuide): its lines must be where the shots go, with and without a spread
+            /// Grudge, and hidden when he can't fire (a rewind, the pause, death, a scene that has him).
+            /// </summary>
+            public IEnumerator AimGuideRun()
+            {
+                int n = AimGuideLevel;
+                int ownedSpread = UpgradeProgress.LevelOf(AimGuideSpread);
+                AimGuide.VolleyFired += OnAimVolley;
+                try
+                {
+                    // Setup shortcut: no spread Grudge for the first half.
+                    while (UpgradeProgress.Remove(AimGuideSpread)) { }
+                    Run.Event("shortcut", $"spread Grudge \"{AimGuideSpread}\" removed for the single-shot half (owned {ownedSpread})");
+                    yield return AimGuideVolleys(n, "single", "single shot");
+                    if (Run.Done) yield break;
+                    int shots = 1 + Mathf.Max(0, GameplayWorld.Instance.PlayerController.ExtraShots);
+                    yield return AimGuideStick("single", shots);
+                    if (Run.Done) yield break;
+                    yield return AimGuideHidden();
+                    if (Run.Done) yield break;
+                    yield return AimGuideMouse("single", shots);
+                    if (Run.Done) yield break;
+                    Run.Progress(0.4f);
+
+                    for (int i = 0; i < AimGuideSpreadLevels; i++)
+                        UpgradeProgress.Add(AimGuideSpread);
+                    Run.Event("shortcut", $"spread Grudge \"{AimGuideSpread}\" given {AimGuideSpreadLevels} levels");
+                    yield return AimGuideVolleys(n, "spread", "spread shots");
+                    if (Run.Done) yield break;
+                    shots = 1 + Mathf.Max(0, GameplayWorld.Instance.PlayerController.ExtraShots);
+                    AimCheck("spread upgrade", shots == 1 + AimGuideSpreadLevels, $"{shots} shots per volley with {AimGuideSpreadLevels} levels of {AimGuideSpread}");
+                    yield return AimGuideStick("spread", shots);
+                    if (Run.Done) yield break;
+                    yield return AimGuideMouse("spread", shots);
+                    if (Run.Done) yield break;
+                    Run.Progress(0.65f);
+
+                    // Death: the bot plays to lose; once he is dead the stick is held and the guide must stay hidden.
+                    // A coroutine runs before LateUpdate, so Visible is last frame's: a stretch's first frame isn't counted.
+                    int deadFrames = 0, shownDead = 0;
+                    bool wasDead = false;
+                    var health = GameplayWorld.Instance.Player.GetComponentInChildren<PlayerHealth>();
+                    reckless = true;
+                    try
+                    {
+                        yield return PlayLevel(n, 150f, now =>
+                        {
+                            bool dead = health != null && !health.IsAlive;
+                            bool counted = dead && wasDead;
+                            wasDead = dead;
+                            if (!dead)
+                                return null;
+                            if (bot != null && bot.enabled)
+                                bot.enabled = false;
+                            input.SetAim(new Vector2(0.8f, 0.6f));
+                            var g = GameplayWorld.Instance != null ? GameplayWorld.Instance.AimGuide : null;
+                            if (!counted)
+                                return null;
+                            deadFrames++;
+                            if (g != null && g.Visible)
+                                shownDead++;
+                            return null;
+                        }, waitOutDeath: true, until: () => deadFrames >= 90);
+                    }
+                    finally { reckless = false; }
+                    if (Run.Done) yield break;
+                    AimCheck("death hidden", deadFrames > 0 && shownDead == 0,
+                        deadFrames == 0 ? $"the hero never died ({lastOutcome})" : $"{deadFrames} frames dead with the stick held, the guide shown on {shownDead}");
+                    StopBot();
+                    Run.Progress(0.8f);
+
+                    // A scene that has the hero (input locked, walked, pulled): the stick held, the guide hidden.
+                    int lockedFrames = 0, shownLocked = 0;
+                    bool wasLocked = false;
+                    LevelRuntime.PendingScene = CutsceneScene;
+                    Run.Event("shortcut", $"load level {CutsceneLevel}'s stage with the scene {CutsceneScene} directly");
+                    var oldWorld = GameplayWorld.Instance;
+                    var load = LoadLevel(CutsceneLevel);
+                    if (load != null)
+                        yield return load;
+                    yield return Run.Until(() => GameplayWorld.Instance != oldWorld && LevelRunning(CutsceneLevel), 60f, $"level {CutsceneLevel} with the scene to start");
+                    if (Run.Done) yield break;
+                    yield return PlayLevel(CutsceneLevel, 40f, now =>
+                    {
+                        if (bot != null && bot.enabled)
+                            bot.enabled = false;
+                        input.SetAim(new Vector2(0.8f, 0.6f));
+                        var world = GameplayWorld.Instance;
+                        var c = world != null ? world.PlayerController : null;
+                        bool locked = c != null && (c.InputLocked || c.ScriptedMove.HasValue || c.Suspended);
+                        bool count = locked && wasLocked;
+                        wasLocked = locked;
+                        if (count)
+                        {
+                            lockedFrames++;
+                            if (world.AimGuide != null && world.AimGuide.Visible)
+                                shownLocked++;
+                        }
+                        return null;
+                    }, until: () => lockedFrames >= 180);
+                    LevelRuntime.PendingScene = null;
+                    if (Run.Done) yield break;
+                    AimCheck("scene hidden", lockedFrames > 0 && shownLocked == 0,
+                        lockedFrames == 0 ? $"the scene never took the hero ({lastOutcome})" : $"{lockedFrames} frames the scene had the hero with the stick held, the guide shown on {shownLocked}");
+                }
+                finally
+                {
+                    AimGuide.VolleyFired -= OnAimVolley;
+                    aimPhase = "";
+                    LevelRuntime.PendingScene = null;
+                    while (UpgradeProgress.Remove(AimGuideSpread)) { }
+                    for (int i = 0; i < ownedSpread; i++)
+                        UpgradeProgress.Add(AimGuideSpread);
+                }
+                Run.Metric("aimGuide.passed", aimPassed);
+                Run.Metric("aimGuide.failed", aimFailed);
+                Run.Progress(1f);
+                End(aimFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
             }
 
             // ─── analytics: the events going out, and the death screen's feedback card ─────
