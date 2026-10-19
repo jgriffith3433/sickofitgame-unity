@@ -7,9 +7,10 @@ doesn't explain, add it to Story.md first.
 Status: **design for review** (2026-10-18, J's decision m_daf635ad1287: one level = one floor, a floor boss every 10th
 floor, the Warden on the Circle's top floor, shortcuts skip stretches; revised the same day for J's *"some scrolling
 horizontally ... as immersive as you can"*: every floor's path, set piece, surprise, rewind moment and feel). The
-floor engine is built (see *Building it*); **Floors 1000-991 are built** (levels 2-11, `levels/Floor1000.json` to
-`Floor991.json`, 2026-10-18; 995-991 the same day, ending on the Imp Foreman); after them the old 10-floor stages (flat
-walks to the right) still run from Floor 990 and are replaced floor by floor from this page (see *Building it*). Names marked *(working)* are placeholders. Lines are first drafts for the voices.
+floor engine is built (see *Building it*); **the whole played route is built** (2026-10-18/19): Floors 1000-991 (levels
+2-11), the Sack Lift, Floors 960-951 (levels 12-21), the King's Chimney, Floors 910-902 (levels 22-30) and Floor 901
+(level 31), each `levels/Floor<floor>.json`. The long way isn't built as floors yet: turning a shortcut down plays the
+old 10-floor stages over those floors as its stand-in (Story.md, *Level numbers*). Names marked *(working)* are placeholders. Lines are first drafts for the voices.
 
 ## The rules in one breath
 
@@ -1035,6 +1036,20 @@ order it can be built and played:
    Spill*) until the Sack Lift and the long way exist, and Grudges still come on every floor (the rule in *Rewards*, a
    pick every fifth floor, waits until the whole stretch is floors).
 4. **The Sack Lift, Floors 960-951, the King's Chimney, Floors 910-901** (Level 11's arena renumbered to Floor 901).
+   *Built 2026-10-19* (levels 11-31; the `circle-x-route` playtest plays Floor 991 to Floor 901 taking both shortcuts).
+   Engine: `offerShortcut` `costDiamonds` (the Sack Lift's fare, `FARE: 20 DIAMONDS`, stamped *CAN'T AFFORD THE FARE*
+   without it) and a risk line for a shortcut with no cost (the Chimney), the `shortcutTaken` trigger (Floor 910 reads
+   it: faster lava, the King's line), and a Warden's floor (901: floors 901 to 901) that lights its Waystone and wakes
+   the Circle above when cleared, never the floor below it (902). The Pile Keeper fights two tiers like the Foreman
+   (tier 1: spear lines and sacks on the hero's spot, each after a 1.1 s glow; at half the mound sinks, tier 2: two
+   guards and the same attacks; beaten, his pile bursts and a lava wave chases him round the mound's shoulder to the
+   landing and the Chimney); he is drawn as a huge, pale imp guard (the guard's art, scaled up) until his own sheets
+   are made. Built with today's pieces, so some beats are simpler than the pages above: the counterweights are pans
+   that sink under him and lift their partner (no sacks to shoot off yet: 960, 954, 952, 951, 904); 953's two laps are
+   the same layout placed twice with a carved landing between them (*953*, then *953 (AGAIN)*); the cart on 908 stands
+   at the chute's head and he rides the slag flow itself; the dark on 907 is a fade as the smoke closes; the crusts on
+   903 are crumbling stones and ledges up the face of a fall that pours on its beat; the King's glow in the backdrop
+   isn't drawn. Grudges still come on every floor (the every-fifth-floor rule waits for the long way).
 5. **The long way:** a generated floor per skipped floor (one level template the generator fills from the floor
    number), with the long-way floor bosses.
 6. **Data that follows the renumbering:** Yooba's floor reactions (`ui/yooba.json`: the Spill moves from 985 to 998, the

@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; Circle X's played route built to Floor 901, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, Level 11, 2026-10-18; Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -104,40 +104,41 @@ THE MEADOW again                           Ending
   plays about **30 floors per Circle** (three stretches of ten, each ending on its floor boss or the Warden, joined by
   two shortcuts); turning a shortcut down plays the floors it skips (the long way). On the Shaft the skipped floors are
   the dotted jump.
-- **Today's build** is half way between the layouts (2026-10-18): the first stretch is built one level per floor
-  from LevelDesign.md (Floors 1000-991, replacing the old 10-floor Level 2; Floors 995-991 added the same day, ending on
-  the first floor boss, the Imp Foreman); after them come the old 10-floor stages (a stage of 10 floors walked to the
-  right), described below as they are, replaced floor by floor in turn: the Sack Lift and Floors 960-951 next, then the
-  rest of Circle X, Circle IX's stages after them.
+- **Today's build** (2026-10-19): Circle X's whole played route is built one level per floor from LevelDesign.md:
+  Floors 1000-991 (ending on the first floor boss, the Imp Foreman), **the Sack Lift** (991 to 960), Floors 960-951
+  (ending on the Pile Keeper), **the King's Chimney** (951 to 910), Floors 910-902 (the Heat Stairs, up to the Magma
+  King's door) and **Floor 901**, his arena. The long way (the floors the two shortcuts skip) isn't built as floors yet:
+  until it is, turning a shortcut down plays the old 10-floor stages over those floors as its stand-in, off the story
+  path. Circle IX's stages come after them, still in the 10-floor layout.
 - **Level numbers:** Level *n* is position *n* in game.json's `levels` list. Level 1 is the Meadow (Floor 0). Levels
-  2-11 are the floors: **Floor 1000** *The Landing*, **Floor 999** *Only 999 To Go*, **Floor 998** *The Spill*, **Floor
-  997** *Imp Run*, **Floor 996** *The Slag Falls*, **Floor 995** *The Loop*, **Floor 994** *The Chain Lift*, **Floor
-  993** *Ember Ledges*, **Floor 992** *Bad Footing*, **Floor 991** *The Foreman's Pile* (the Imp Foreman, the first
-  floor boss); a floor's file is `levels/Floor<floor>.json` (so building the next floor never renames the ones after
-  it). Levels 12-20 are the old stages, files `Level3`-`Level11` (Floors 990-901: 990-981
-  The Spill, 980-971 Imp Run, 970-961 The Slag Falls, 960-951 The Loop, 950-941 Halfway Basin, 940-931 The Crust,
-  930-921 The Sack Pile, 920-911 The Heat Stairs, 910-901 the Magma King); Level 21 is `CrackedRoad` (Floors 900-891),
-  Levels 22-27 are `Level13`-`Level18` (Floors 890-831). The old stages keep their file names until they are replaced; the
-  floors 990-961 they cover are "the long way" in LevelDesign.md, and their places' names (the Spill, Imp Run, the Slag
-  Falls) now belong to Floors 998-996, where those ideas are introduced.
-- **The path today** (re-pathed 2026-10-18): New Game → Video1 → Level 1, the Meadow → Video2 → **Floor 1000, The
-  Landing** → Video3 (Yooba) → **Floor 999** → **Floor 998, The Spill** → **Floor 997, Imp Run** → **Floor 996, The Slag
-  Falls** → **Floor 995, The Loop** → **Floor 994, The Chain Lift** → **Floor 993, Ember Ledges** → **Floor 992, Bad
-  Footing** → **Floor 991, the Imp Foreman** → the old stages (the long way's stand-in until the Sack Lift is built): *Floors 990-981: The Spill* → *Floors 980-971: Imp Run* → *Floors 970-961: The Slag Falls* →
-  *Floors 960-951: The Loop* → *Floors 950-941: Halfway Basin* → *Floors 940-931: The Crust* → *Floors 930-921: The Sack
-  Pile* → *Floors 920-911: The Heat Stairs* (ending at the Magma King's door) → *Floors 910-901: The Slag Throne* (his
-  arena; built 2026-10-18) → the Shaft (Circle IX wakes up) → the level select, until Circle IX's stages are rebuilt.
-  Inside a Circle the levels run straight on from one to the next (a level's `nextLevelNumber`): results, the Shaft's
-  climb, the next level, with no video between them. After them in the list, off the path
-  (reachable from the level select only, once unlocked): Circle IX's first stretch, `CrackedRoad` (*Floors 900-891*,
-  cut to 10 floors; its beats are still the first layout's, for the Circle IX task to rebuild)
-  and `Level13`-`Level18` (*Floors 890-831*, first pass, see *Circle IX stage outline*; they run straight on from the Cracked
-  Road, and the Old Stair's shortcut can skip three of them), and after those the old
-  arcade levels `ArcadeCrossfire`, `ArcadeSpinCycle`, `ArcadeEverything` and `ArcadeFireRain` (titled "Arcade:
-  ...", outside the Circles, their slime enemies swapped for imps and cinders), kept to be recast: their
-  enemies and patterns reused inside Circle stages, Fire Rain's Magma King fight as the reference for the Floor 901 arena. Their
-  `levelNumber` still names their source footage (`Level2_Background1` is Crossfire's). Video4 (the blue bridge and
-  the forest) is off the early path: it is watched from the video select and belongs to Circles VIII-VII.
+  2-11 are **Floor 1000** *The Landing*, **999** *Only 999 To Go*, **998** *The Spill*, **997** *Imp Run*, **996** *The
+  Slag Falls*, **995** *The Loop*, **994** *The Chain Lift*, **993** *Ember Ledges*, **992** *Bad Footing*, **991** *The
+  Foreman's Pile* (the Imp Foreman). Levels 12-21 are **Floor 960** *The Depot*, **959** *The Rest of the Village*, **958**
+  *The Burning Thatch*, **957** *Hot Air*, **956** *The Drip*, **955** *The Falls*, **954** *The Guard Post*, **953**
+  *Second Lap*, **952** *The Sack Pile*, **951** *The Keeper's Mound* (the Pile Keeper). Levels 22-31 are **Floor 910**
+  *The Heat Stairs*, **909** *Ember Rain*, **908** *The Cart Run*, **907** *I Can Hear You*, **906** *The Loop, Upstairs*,
+  **905** *The Collapse*, **904** *The Count*, **903** *The Last Updraft*, **902** *The Door* and **901** *The Slag Throne*
+  (the Magma King). A floor's file is `levels/Floor<floor>.json` (Floor 901's was `Level11.json`). Level 32 is
+  `CrackedRoad` (Floors 900-891), Levels 33-38 are `Level13`-`Level18` (Floors 890-831). Levels 39-46 are the old
+  10-floor stages, files `Level3`-`Level10` (*Floors 990-981: The Spill* to *Floors 920-911: The Lower Stairs*), kept as
+  the long way's stand-ins: Floor 991's way on when the Sack Lift is turned down (`Level3`-`Level5`, Floors 990-961, then
+  Floor 960) and Floor 951's when the Chimney is (`Level7`-`Level10`, Floors 950-911, then Floor 910; `Level6`, the old
+  Loop over 960-951, is played only from the level select). Their places' names now belong to the floors where those
+  ideas are introduced.
+- **The path today** (re-pathed 2026-10-19): New Game → Video1 → Level 1, the Meadow → Video2 → **Floor 1000, The
+  Landing** → Video3 (Yooba) → **Floors 999-991** → *the Sack Lift* → **Floors 960-951** → *the King's Chimney* →
+  **Floors 910-902** → **Floor 901, the Slag Throne** (his Waystone) → the Shaft (Circle IX wakes up) → the level
+  select, until Circle IX's stages are rebuilt. Inside a Circle the levels run straight on from one to the next (a
+  level's `nextLevelNumber`, or a taken shortcut's `nextLevel`): results, the Shaft's climb, the next level, with no
+  video between them. After them in the list, off the path (reachable from the level select only, once unlocked):
+  Circle IX's first stretch, `CrackedRoad` (*Floors 900-891*, cut to 10 floors; its beats are still the first layout's,
+  for the Circle IX task to rebuild) and `Level13`-`Level18` (*Floors 890-831*, first pass, see *Circle IX stage
+  outline*; they run straight on from the Cracked Road, and the Old Stair's shortcut can skip three of them), the long
+  way's stand-ins above, and after those the old arcade levels `ArcadeCrossfire`, `ArcadeSpinCycle`,
+  `ArcadeEverything` and `ArcadeFireRain` (titled "Arcade: ...", outside the Circles, their slime enemies swapped for
+  imps and cinders), kept to be recast: their enemies and patterns reused inside Circle stages. Their `levelNumber`
+  still names their source footage (`Level2_Background1` is Crossfire's). Video4 (the blue bridge and the forest) is
+  off the early path: it is watched from the video select and belongs to Circles VIII-VII.
 - **A floor's counter:** a floor level's `floors` are `start` = its floor and `end` = the floor above (Floor 998:
   998 to 997). The HUD reads its floor through the climb and ticks to the next as he steps onto the landing (without
   replaying a milestone: the next floor's own title calls it), and the Shaft climbs the marker one floor, to `end`.
@@ -246,12 +247,11 @@ full sack: Hawkes Gen, priced, waiting for a GPU budget).
 
 #### The Magma King's fight
 
-In the one-floor layout the arena is **Floor 901, *The Slag Throne***, through the door at the top of the Heat
-Stairs (Floor 902), and the fight below stays as it is; the hall is no longer counted as nine floors (LevelDesign.md,
-Floor 901). Today's build: the Floor 901 arena is **Level 11, *Floors 910-901: The Slag Throne*** (built 2026-10-18; `ArcadeFireRain` keeps the
-older two-phase fight as an off-path reference). Through the door at the top of the Heat Stairs is one hall, nine
-floors high: the hero comes in on its floor at **Floor 910**, and the throne sits at the far end on top of a mound of
-cooling slag that reaches **Floor 901**, the top of the Wastes. It is the one stage that stands still: a locked screen,
+The arena is **Floor 901, *The Slag Throne*** (`levels/Floor901.json`, level 31; renumbered 2026-10-19 from the old
+"Floors 910-901" hall, Level 11), through the door at the top of the Heat Stairs (Floor 902), and the fight below
+stays as it is; the hall is one floor, its counter on 901 from the start (floors 901 to 901), standing over the lava
+sea (the near sea glows under its floor, the lava river behind it). `ArcadeFireRain` keeps the older two-phase fight as
+an off-path reference. The throne sits at the far end on top of a mound of cooling slag, the top of the Wastes. It is the one stage that stands still: a locked screen,
 the throne at the right, the hero on the floor in front of it. The fight lives in the `magmaKing` entity (its states)
 and the `bossStand`/`bossEnrage` sequences; the level runs the intro and the ending. He is big: seated on the throne
 he stands about 2.4 units tall (over two heroes), and standing more.
@@ -286,11 +286,11 @@ the fire, and the whole stretch of floor the flood will cover glowing red before
    ...Can do it again, though."* Near the end, the King: *"You're ruining... my show."*
 7. **Defeat.** Slow motion; he cracks apart and collapses into slag at the foot of his throne, and the throne splits
    down the middle. His last words: *"The show... must go... on..."* Announcer: *"THE MAGMA KING HAS FALLEN!"* Hero:
-   *"He got up for me. I'm touched."* Then the hero walks up the broken throne's slag and the counter ticks the hall's
-   floors away, 910 to **901**, and at the top a **Waystone lights** (a standing stone glowing awake): *"WAYSTONE LIT!
+   *"He got up for me. I'm touched."* Then the hero walks up the broken throne's slag, and at the top of it, on Floor
+   901, a **Waystone lights** (a standing stone glowing awake): *"WAYSTONE LIT!
    FLOOR NINE HUNDRED ONE!"*, the hero: *"Great. Now Hell starts me here."* From now on a run starts at 901 (see
    *Waystones and runs*). The Grudge pick, the results, then the Shaft.
-8. **The Shaft after him.** The marker climbs 911 to 901, the Magma King's figure on the map fills in (beaten), the
+8. **The Shaft after him.** The marker stands on 901 (Floor 902 climbed it there; the floor below never lights the Waystone, only his defeat does), the Magma King's figure on the map fills in (beaten), the
    Waystone at 901 lights, and the band above, **Circle IX, the Cracked Road, wakes up**: its painting brightens out of
    the dark from the bottom up, its seams glowing, and the announcer calls it (*"CIRCLE NINE! THE CRACKED ROAD!"*).
    Next Warden: the Spire Fiend. Circle IX's stages are still to be rebuilt in the 10-floor layout, so for now the
@@ -379,8 +379,8 @@ floors for a cost or a risk. It is the rogue choice that keeps 1,000 floors reac
 
 | Shortcut | Where | Cost | Skips | Lines |
 |---|---|---|---|---|
-| **The Sack Lift** (`sackLift`, designed) | Floor 991's landing, after the Imp Foreman: the imps' sack lift; the Shaft's crack at 975 | diamonds (the imps' fare, paid in the village's own diamonds) | Floors 990-961: out at **Floor 960** | Taking it: *"Paying them with our own diamonds. Lovely."* Announcer: *"HE'S RIDING THE SACK LIFT! THE CROWD IS DISGUSTED!"* (all lines: LevelDesign.md) |
-| **The King's Chimney** (`kingsChimney`, designed) | Floor 951's landing, after the Pile Keeper: the Magma King's heat vent; the Shaft's crack at 940 | a harder floor after it (the King heard him come up: Floor 910's lava rises faster) | Floors 950-911: out at **Floor 910** | Taking it: *"Hold your breath. Forever."* Announcer: *"UP THE CHIMNEY?! HE SKIPPED HALFWAY!"* |
+| **The Sack Lift** (`sackLift`, built 2026-10-19, `levels/Floor991.json`) | Floor 991's landing, after the Imp Foreman: the imps' sack lift; the Shaft's crack at 975 | diamonds: *FARE: 20 DIAMONDS* (`costDiamonds`), paid in the village's own diamonds; with fewer the card is stamped *CAN'T AFFORD THE FARE* and he walks | Floors 990-961: out at **Floor 960** | Taking it: *"Paying them with our own diamonds. Lovely."* Announcer: *"HE'S RIDING THE SACK LIFT! THE CROWD IS DISGUSTED!"* (all lines: LevelDesign.md) |
+| **The King's Chimney** (`kingsChimney`, built 2026-10-19, `levels/Floor951.json`) | Floor 951's landing, after the Pile Keeper: the Magma King's heat vent; the Shaft's crack at 940 | a harder floor after it (a risk, on the card: *Risk: the King hears you coming*): Floor 910 reads `shortcutTaken`, its lava rises faster with the push music on, and the King says so: *"Came up my chimney, little spark? Rude."* | Floors 950-911: out at **Floor 910** | Taking it: *"Hold your breath. Forever."* Announcer: *"UP THE CHIMNEY?! HE SKIPPED HALFWAY!"* |
 | **The Collapsed Stairwell** (`oldStair`) | Floor 871, the top of the Old Stair (`levels/Level14.json`, level 23), behind *STAIRS (CLOSED)*; the Shaft's crack at 870 | a Grudge | Floors 870-841 (levels 24-26): out at **Floor 841**, level 27 next | Hero, at the top: *"Stairs. Fallen in. Still going up, though."* Taking it: *"Fine. One less thing to hate."* Announcer, as he climbs in: *"WHAT'S THIS? A SHORTCUT?! THE CROWD HATES IT!"*, then, as the counter lands: *"FLOOR EIGHT FORTY-ONE! NOBODY TAKES THE STAIRS!"* Hero, coming out: *"That went further than stairs should."* Keeping on: *"Nah. Hell would love that."* |
 
 ## Waystones and runs
