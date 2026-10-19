@@ -5946,7 +5946,8 @@ namespace SickOfIt.Playtest
             /// <summary>
             /// Opens level n directly (setup shortcut) from wherever the game is: the last level (its results, or standing where
             /// it timed out), the death scene (skipped like a player, Escape) and the Shaft after it (Continue), a video or a menu.
-            /// Sets openedLevel once level n runs in a new world; gives up after 90 s (the row says so and the run goes on).
+            /// Sets openedLevel once level n runs in a new world; gives up 45 s after its last load (the row says so and the run goes
+            /// on), inside the package's 60 s without an event that would end the whole run.
             /// </summary>
             IEnumerator OpenLevel(int n, int attempt)
             {
@@ -5969,7 +5970,7 @@ namespace SickOfIt.Playtest
                         openedLevel = true;
                         yield break;
                     }
-                    if (Time.realtimeSinceStartup > end)
+                    if (Time.realtimeSinceStartup > end || (loads >= 3 && Time.realtimeSinceStartup - loadAt > 45f))
                         yield break;
                     yield return ResumeStrayPause(n);
                     if (ShaftScreen.Current != null)
@@ -8141,7 +8142,7 @@ namespace SickOfIt.Playtest
                     limit = Mathf.Min(limit, playSeconds);
                 float started = Time.realtimeSinceStartup;
                 float realLimit = Mathf.Min(limit / Speed + 60f, realBudget);
-                float lastClock = -1f, clockMovedAt = started, nextScan = 0f, shownProgress = -1f;
+                float lastClock = -1f, clockMovedAt = started, nextScan = 0f, shownProgress = -1f, heartbeatClock = -1f, heartbeatAt = started;
                 string outcome = "timeout";
                 bool dying = false;
                 while (!Run.Done)
@@ -8195,9 +8196,16 @@ namespace SickOfIt.Playtest
                         Run.Note($"level {n} {world.Director?.PhaseName} t={now:0}");
                     }
                     float progress = Mathf.Lerp(progressFrom, progressTo, Mathf.Clamp01(now / limit));
-                    if (progress - shownProgress >= 0.01f)
+                    // The package ends the whole run as stuck after 60 s with no Progress, Event or Add. A run of many levels
+                    // (all-levels: 79) moves the bar less than 0.01 per level, so a quiet floor went silent for a minute and beta's
+                    // all-levels run died on Level 5. While the game clock moves, the bot is playing: report it every 5 s. A clock
+                    // that stands still is this loop's own softlock check (15 s); a held one (pause, picker) still gets the 60 s.
+                    if (progress - shownProgress >= 0.01f
+                        || (Time.realtimeSinceStartup - heartbeatAt >= 5f && Mathf.Abs(now - heartbeatClock) > 0.0001f))
                     {
                         shownProgress = progress;
+                        heartbeatClock = now;
+                        heartbeatAt = Time.realtimeSinceStartup;
                         Run.Progress(progress);
                     }
 
