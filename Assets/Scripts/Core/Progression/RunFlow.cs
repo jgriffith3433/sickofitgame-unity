@@ -70,8 +70,55 @@ namespace SickOfIt.Core.Progression
                 return;
             WaystoneProgress.RunLevel = level;
             WaystoneProgress.DiedOnFloor = 0;
+            if (!runOpen)
+            {
+                runOpen = true;
+                runStartedAt = Time.realtimeSinceStartup;
+                runFromFloor = start;
+                AnalyticsManager.RunStart(new Dictionary<string, object>
+                {
+                    { "run", WaystoneProgress.RunsEnded + 1 }, { "mode", "story" }, { "level", level }, { "floor", start },
+                    { "waystone", CurrentWaystone },
+                });
+            }
             if (IsWaystone(start) && WaystoneProgress.Reach(start))
+            {
                 Debug.Log($"[Runs] Waystone reached: FLOOR {start} (level {level} starts on it)");
+                WaystoneReached(start, level);
+            }
+        }
+
+        // ─── Analytics (AGENTS.md "Analytics"): a run starts on its first floor stage this session, ends on a death ───
+        static bool runOpen;
+        static float runStartedAt;
+        static int runFromFloor;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetSession() => runOpen = false;
+
+        static void CloseRun(string result, int level, int floor)
+        {
+            if (!runOpen && result != "lose")
+                return;
+            var props = new Dictionary<string, object> { { "run", WaystoneProgress.RunsEnded + (result == "lose" ? 0 : 1) }, { "mode", "story" }, { "level", level } };
+            if (floor > 0) props["floor"] = floor;
+            if (runOpen)
+            {
+                props["duration"] = Mathf.Round(Time.realtimeSinceStartup - runStartedAt);
+                if (floor > 0 && runFromFloor > 0) props["floors_climbed"] = Mathf.Max(0, runFromFloor - floor);
+            }
+            runOpen = false;
+            AnalyticsManager.RunEnd(result, props);
+        }
+
+        /// <summary>New Game over a run: it is dropped (analytics run_end quit).</summary>
+        public static void Abandon() => CloseRun("quit", WaystoneProgress.RunLevel, 0);
+
+        static void WaystoneReached(int floor, int level)
+        {
+            var props = new Dictionary<string, object> { { "floor", floor }, { "level", level }, { "waystone", true } };
+            AnalyticsManager.Progress(1001 - floor, 1000, "Waystone " + floor, props);
+            AnalyticsManager.Track("checkpoint", new Dictionary<string, object> { { "step", 1001 - floor }, { "label", "Waystone " + floor }, { "floor", floor } });
         }
 
         /// <summary>A level was cleared: the run goes on from 'next' (0 = nothing on the path); a stage that ends on a Waystone (its Warden beaten) reaches it.</summary>
@@ -81,7 +128,10 @@ namespace SickOfIt.Core.Progression
                 WaystoneProgress.RunLevel = next;
             ShaftScreen.LevelFloors(level, out int start, out int end);
             if (end > 0 && IsWaystone(end) && WaystoneProgress.Reach(end))
+            {
                 Debug.Log($"[Runs] Waystone reached: FLOOR {end} (level {level} cleared)");
+                WaystoneReached(end, level);
+            }
         }
 
         /// <summary>The floor the hero is on as he dies (the drop starts there). Presentation memory only.</summary>
@@ -116,6 +166,7 @@ namespace SickOfIt.Core.Progression
 
             RogueliteManager.Instance?.EndRun();
             WaystoneProgress.RunsEnded++;
+            CloseRun("lose", level, from);
             WaystoneProgress.RunLevel = restart;
             Debug.Log($"[Runs] Run {WaystoneProgress.RunsEnded} ended on level {level} at FLOOR {from}: Grudges reset, back to the Waystone on FLOOR {waystone}, restarting on level {restart}");
             stop = new ShaftStop { Kind = ShaftStopKind.AfterDeath, Level = level, NextLevel = restart, FromFloor = from, Waystone = waystone };
@@ -133,6 +184,7 @@ namespace SickOfIt.Core.Progression
             int level = LevelFrom(WaystoneProgress.Highest);
             if (level <= 0)
                 return 0;
+            CloseRun("quit", WaystoneProgress.RunLevel, 0);
             RogueliteManager.Instance?.EndRun();
             WaystoneProgress.RunLevel = level;
             Debug.Log($"[Runs] New Run from the Waystone on FLOOR {WaystoneProgress.Highest}: level {level}");

@@ -20,6 +20,7 @@ namespace SickOfIt.Core.Progression
 
         private void Start()
         {
+            AnalyticsManager.Screen("level_select");
             var gd = GameDefinition.Instance;
             if (gd == null)
             {
@@ -79,6 +80,7 @@ namespace SickOfIt.Core.Progression
         {
             if (leaving) return;
             leaving = true;
+            AnalyticsManager.Choice("level_select", levelNumber.ToString());
 
             // For Level 1, check if it's the first time visiting
             if (levelNumber == 1 && !HasVisitedLevel(1))

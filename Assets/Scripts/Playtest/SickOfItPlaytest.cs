@@ -67,6 +67,9 @@ namespace SickOfIt.Playtest
 
         static Session active;
 
+        /// <summary>The analytics scenario's level: the Meadow, where a death just plays the level again (no run to end).</summary>
+        public const int AnalyticsLevel = 1;
+
         /// <summary>The level the imp-death scenario plays: Level 1's "imps" phase brings four, one at a time first.</summary>
         public const int ImpLevel = 1;
 
@@ -267,6 +270,11 @@ namespace SickOfIt.Playtest
             }
             list.Add(new PlaytestScenario("imp-death", $"Level {ImpLevel}'s imps, started directly (setup shortcut): the bot kills them and each imp's Die clip " +
                 "must play where it died; the first deaths run in slow motion so the clip can be seen", 90, "level"));
+            list.Add(new PlaytestScenario("analytics", $"Hawkes Analytics (AGENTS.md \"Analytics\"): the SDK's debug log on, then Level {AnalyticsLevel} " +
+                "(the Meadow, loaded directly) played until Hell kills the hero three times (the bot holds R once early on for a rewind, then plays to " +
+                "lose): each death screen, and on the third one the feedback card (\"Too hard? Not fun?\", thumbs and a comment) over it, held while it's " +
+                "open, then Escape goes on; then what went out: level_start, death (with its cause), feature rewind and level_end, each sent with the build " +
+                "version and the env (beta on the beta site). Each beat is a check event, and every event the game sends is an analytics event", 420, "level"));
             list.Add(new PlaytestScenario("magma-king", $"The Magma King's fight in \"{MagmaKingLevel}\" (the Slag Throne, loaded directly, a setup shortcut; " +
                 "the bot plays the fight through real input, up to 3 tries): his generated animations seen at game size, each a check event: Idle, " +
                 "Throw (molten boulder) and SlamSeat (fist on the throne's arm, shockwave) from the throne, Hurt, then at half health Rise " +
@@ -458,6 +466,8 @@ namespace SickOfIt.Playtest
                 yield return session.Layout();
             else if (id == "imp-death")
                 yield return session.ImpDeath();
+            else if (id == "analytics")
+                yield return session.AnalyticsRun();
             else if (id == "portal-audio")
                 yield return session.PortalAudio();
             else if (id == "cutscene")
@@ -2026,6 +2036,177 @@ namespace SickOfIt.Playtest
                     : lastOutcome == "died" ? PlaytestOutcome.Lost
                     : lastOutcome == "softlock" ? PlaytestOutcome.Stuck
                     : PlaytestOutcome.Won);
+            }
+
+            // ─── analytics: the events going out, and the death screen's feedback card ─────
+
+            int analyticsPassed, analyticsFailed;
+
+            void AnalyticsCheck(string beat, bool ok, string detail)
+            {
+                if (ok)
+                {
+                    analyticsPassed++;
+                    Run.Event("check", $"analytics {beat}: ok ({detail})");
+                }
+                else
+                {
+                    analyticsFailed++;
+                    Run.Event("check", $"analytics {beat}: FAILED ({detail})");
+                    Run.Problem(PlaytestSeverity.Bug, $"analytics {beat}: {detail}");
+                }
+            }
+
+            void OnAnalytics(string name, string props) => Run.Event("analytics", name + " " + props);
+
+            static int CountSent(string name, string contains = null)
+            {
+                int n = 0;
+                foreach (var line in AnalyticsManager.Recent)
+                    if (line.StartsWith(name + " ", StringComparison.Ordinal) && (contains == null || line.IndexOf(contains, StringComparison.Ordinal) >= 0))
+                        n++;
+                return n;
+            }
+
+            IEnumerator HoldRewind(float seconds)
+            {
+                Run.Event("rewind", $"hold R for {seconds:0.0} s");
+                input.SetKey(Key.R, true);
+                float end = Time.realtimeSinceStartup + seconds;
+                while (!Run.Done && Time.realtimeSinceStartup < end)
+                    yield return null;
+                input.SetKey(Key.R, false);
+                yield return null;
+            }
+
+            public IEnumerator AnalyticsRun()
+            {
+                AnalyticsManager.Sent += OnAnalytics;
+                try
+                {
+                    AnalyticsManager.EnableDebug();
+                    Run.Event("analytics", AnalyticsManager.Live ? "the SDK's debug log is on (as ?hawkes-analytics-debug=1)" : "not WebGL: nothing is sent, the game's own record of the calls is checked");
+                    yield return ToMainMenu();
+                    if (Run.Done) yield break;
+                    AnalyticsCheck("ready", CountSent("game_ready") > 0 && AnalyticsManager.CurrentScreen == "menu", $"game_ready sent, screen \"{AnalyticsManager.CurrentScreen}\"");
+
+                    int n = AnalyticsLevel;
+                    Run.Event("shortcut", $"load level {n} directly");
+                    var load = LoadLevel(n);
+                    if (load != null)
+                        yield return load;
+                    for (int death = 1; death <= DeathRuntime.AskAfterDeaths && !Run.Done; death++)
+                    {
+                        bool rewound = death > 1;
+                        reckless = true;
+                        try
+                        {
+                            // The first life holds R once (a rewind), then the bot plays to lose.
+                            yield return PlayLevel(n, 0f, now =>
+                            {
+                                if (rewound || now < 3f)
+                                    return null;
+                                rewound = true;
+                                return HoldRewind(1.2f);
+                            }, (death - 1) / 3f * 0.8f, death / 3f * 0.8f, 200f, waitOutDeath: true);
+                        }
+                        finally
+                        {
+                            reckless = false;
+                        }
+                        if (Run.Done) yield break;
+                        if (lastOutcome != "died")
+                        {
+                            AnalyticsCheck("death" + death, false, $"the bot couldn't die on level {n} ({lastOutcome})");
+                            End(PlaytestOutcome.Done);
+                            yield break;
+                        }
+                        yield return Run.Until(() => DeathRuntime.Current != null, 30f, "the death screen");
+                        if (Run.Done) yield break;
+                        Run.Scene("Death");
+                        var screen = DeathRuntime.Current;
+                        yield return WaitReal(2.5f);
+                        if (Run.Done) yield break;
+                        bool third = death >= DeathRuntime.AskAfterDeaths;
+                        AnalyticsCheck("death" + death, screen != null && screen.DeathsOnLevel == death && CountSent("death") >= death,
+                            $"death screen {death}: {(screen != null ? screen.DeathsOnLevel : -1)} deaths counted on level {n}, {CountSent("death")} death events");
+                        AnalyticsCheck(third ? "feedbackPrompt" : "noPromptYet" + death, screen != null && screen.AskedFeedback == third && CountSent("ask") == (third ? 1 : 0)
+                                && (!third || !AnalyticsManager.Live || AnalyticsManager.AskOpen),
+                            third ? $"the card \"Too hard? Not fun?\" is {(AnalyticsManager.Live ? (AnalyticsManager.AskOpen ? "on the page" : "NOT on the page") : "asked for (not WebGL: no page)")}"
+                                : $"no card before the third death ({CountSent("ask")} asked)");
+                        if (third)
+                        {
+                            // Long enough to see it in the recording; the death screen holds while it's open.
+                            yield return WaitReal(6f);
+                            if (Run.Done) yield break;
+                            bool held = DeathRuntime.Current == screen && screen != null;
+                            AnalyticsCheck("promptHolds", held, held ? "the death screen waits while the card is open" : "the death screen left with the card up");
+                        }
+                        yield return Tap(Key.Escape);
+                        Run.Event("skip", "death animation");
+                        if (third)
+                        {
+                            yield return WaitReal(2f);
+                            yield return Tap(Key.Escape);
+                            Run.Event("skip", "the feedback card (Escape goes on without an answer)");
+                        }
+                        yield return Run.Until(() => LevelRunning(n), 45f, $"level {n} again after the death screen");
+                        if (Run.Done) yield break;
+                    }
+
+                    // What went out.
+                    AnalyticsCheck("levelStart", CountSent("level_start") >= DeathRuntime.AskAfterDeaths + 1, $"{CountSent("level_start")} level_start");
+                    AnalyticsCheck("deathCause", CountSent("death", "\"cause\":\"unknown\"") < CountSent("death"), $"{CountSent("death")} death events, {CountSent("death", "\"cause\":\"unknown\"")} without a cause");
+                    AnalyticsCheck("rewind", CountSent("feature", "\"name\":\"rewind\"") >= 1, $"{CountSent("feature", "\"name\":\"rewind\"")} rewind features");
+                    AnalyticsCheck("levelEnd", CountSent("level_end", "\"result\":\"death\"") >= DeathRuntime.AskAfterDeaths, $"{CountSent("level_end", "\"result\":\"death\"")} level_end (death)");
+                    if (AnalyticsManager.Live)
+                    {
+                        AnalyticsManager.Flush();
+                        yield return WaitReal(1.5f);
+                        string json = AnalyticsManager.DebugInfo();
+                        Run.Event("analytics", "debug log: " + (json.Length > 600 ? json.Substring(0, 600) + "..." : json));
+                        try
+                        {
+                            var info = Newtonsoft.Json.Linq.JObject.Parse(string.IsNullOrEmpty(json) ? "{}" : json);
+                            bool sdk = info.Value<bool?>("sdk") == true;
+                            var config = info["config"] as Newtonsoft.Json.Linq.JObject;
+                            string version = config?["build"]?["version"]?.ToString() ?? "";
+                            string commit = config?["build"]?["commit"]?.ToString() ?? "";
+                            string env = config?["env"]?.ToString() ?? "";
+                            string product = config?["product"]?.ToString() ?? "";
+                            AnalyticsCheck("sdk", sdk && product == AnalyticsManager.Product, $"window.hawkesAnalytics {(sdk ? "loaded" : "missing")}, product \"{product}\"");
+                            AnalyticsCheck("build", version.Length > 0, $"build {version}{(commit.Length > 0 ? " (" + commit + ")" : "")}, env {env}");
+                            Run.Metric("analytics.env." + (env.Length > 0 ? env : "none"), 1);
+                            var events = info["events"] as Newtonsoft.Json.Linq.JArray;
+                            foreach (var name in new[] { "level_start", "death", "feature", "level_end", "feedback" })
+                            {
+                                int seen = 0, sent = 0;
+                                if (events != null)
+                                    foreach (var e in events)
+                                        if (e["name"]?.ToString() == name && (name != "feature" || e["props"]?["name"]?.ToString() == "rewind"))
+                                        {
+                                            seen++;
+                                            if (e.Value<bool?>("sent") == true) sent++;
+                                        }
+                                if (name == "feedback")
+                                    Run.Event("analytics", $"{seen} feedback answers (the bot doesn't answer the card)");
+                                else
+                                    AnalyticsCheck("sent." + name, sent > 0, $"{seen} {(name == "feature" ? "rewind" : name)} in the debug log, {sent} sent");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            AnalyticsCheck("debugLog", false, "the SDK's debug log couldn't be read: " + e.Message);
+                        }
+                    }
+                    Run.Metric("analytics.checksFailed", analyticsFailed);
+                    Run.Progress(1f);
+                    End(analyticsFailed == 0 ? PlaytestOutcome.Done : PlaytestOutcome.Lost);
+                }
+                finally
+                {
+                    AnalyticsManager.Sent -= OnAnalytics;
+                }
             }
 
             // ─── magma-king ───────────────────────────────────────────────

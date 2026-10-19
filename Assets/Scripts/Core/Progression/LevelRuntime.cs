@@ -185,6 +185,7 @@ namespace SickOfIt.Core.Progression
                 playerHealth.SetDeathSceneName(config.deathConfigName);
                 playerHealth.InitializeForLevel(levelNumber);
                 playerHealth.onDeath.AddListener(OnPlayerDied);
+                playerHealth.DeathStood += OnDeathStood;
             }
 
             gameplayWorld = GameplayWorld.Create(new WorldSetup
@@ -204,7 +205,6 @@ namespace SickOfIt.Core.Progression
                 RewindBudget = gameDefinition.rewindBudget,
             });
 
-            AnalyticsManager.Instance?.TrackLevelStart(levelNumber);
             // A floor stage is where the run is now; the Landing is the first Waystone (Docs/Story.md, "Waystones and runs").
             if (string.IsNullOrEmpty(SceneId))
                 RunFlow.LevelStarted(levelNumber);
@@ -221,6 +221,10 @@ namespace SickOfIt.Core.Progression
         private void OnDisable()
         {
             GameContent.Changed -= OnContentChanged;
+            if (playerHealth != null)
+                playerHealth.DeathStood -= OnDeathStood;
+            // Leaving with the level still open (a script's exit, a reload): analytics counts it as left.
+            PlayAnalytics.Unloaded(gameplayWorld);
         }
 
         /// <summary>The config was reimported while playing (editor): restart the level with the new content.</summary>
@@ -235,9 +239,16 @@ namespace SickOfIt.Core.Progression
             SceneTransitionManager.Instance.LoadLevel(levelNumber);
         }
 
+        /// <summary>The death stood (not undone): analytics' death and level_end, with what killed him.</summary>
+        private void OnDeathStood()
+        {
+            PlayAnalytics.Died(gameplayWorld);
+            // The level's log ends here, not at the fatal hit: a death undone with a rewind goes on being recorded.
+            gameplayWorld?.Telemetry?.Finish("died");
+        }
+
         private void OnPlayerDied()
         {
-            gameplayWorld?.Telemetry?.Finish("died");
             // Yooba hears about it on the next Shaft (presentation only).
             YoobaProgress.HeroDied = true;
             // Where the Shaft's drop back to the Waystone starts, if the death stands.
@@ -1153,7 +1164,7 @@ namespace SickOfIt.Core.Progression
             gameplayWorld?.Telemetry?.Finish("completed");
 
             GameProgressManager.Instance.SetLevelCompleted(levelNumber);
-            AnalyticsManager.Instance?.TrackLevelComplete(levelNumber);
+            PlayAnalytics.Completed(gameplayWorld);
 
             if (playerHealth != null)
                 RogueliteManager.Instance.SaveLevelEndHealth(levelNumber, playerHealth.CurrentHealth, playerHealth.MaxHealth);

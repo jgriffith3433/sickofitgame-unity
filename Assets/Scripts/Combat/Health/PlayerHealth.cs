@@ -30,6 +30,8 @@ namespace SickOfIt.Combat.Health
         public UnityEvent<int> onHealthChanged;
         public UnityEvent onDamaged;
         public UnityEvent onDeath;
+        /// <summary>The death stood: the undo window ran out without a rewind and the death scene comes next (analytics).</summary>
+        public event System.Action DeathStood;
 
         // Cached ref — set by generator or discovered in Awake
         private int maxHealth;
@@ -219,7 +221,8 @@ namespace SickOfIt.Combat.Health
                 yield break;
             }
 
-            SickOfIt.Core.AnalyticsManager.Instance?.TrackPlayerDeath("combat");
+            try { DeathStood?.Invoke(); }
+            catch (System.Exception e) { Debug.LogException(e); }
             PlayDeathScene();
         }
 
