@@ -248,7 +248,7 @@ namespace SickOfIt.Tools.Editor.Audio
         /// <summary>Labels on the Hawkes Gen job, so the library can be searched by sound.</summary>
         static Dictionary<string, object> Labels(SoundDef sound) => new Dictionary<string, object> { ["sound"] = sound.id, ["kind"] = sound.kind.ToString() };
 
-        /// <summary>Short effects decompress on load (no hitch on first play); longer voice lines stay compressed.</summary>
+        /// <summary>Short effects decompress on load; longer voice lines stay compressed. All preload, so no first-play hitch.</summary>
         static void ConfigureImport(string assetPath, SoundDef sound)
         {
             if (!(AssetImporter.GetAtPath(assetPath) is AudioImporter importer))
@@ -259,6 +259,7 @@ namespace SickOfIt.Tools.Editor.Audio
                 : AudioClipLoadType.DecompressOnLoad;
             settings.compressionFormat = AudioCompressionFormat.Vorbis;
             settings.quality = 0.7f;
+            settings.preloadAudioData = true; // decode at scene load, not on first play (a WebGL hitch and late sound)
             importer.defaultSampleSettings = settings;
             importer.forceToMono = sound.kind == SoundKind.Voice;
             importer.loadInBackground = false;
