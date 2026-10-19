@@ -187,7 +187,7 @@
   "jumpForce": 9.0,
   "gravityScale": 1.8,
   "groundCheckDistance": 0.2,
-  "groundCheckWidth": 0.1,
+  "groundCheckWidth": 0.3,
   "enableShooting": true,
   "fireRate": 0.3,
   "projectileSpeed": 10.0,
