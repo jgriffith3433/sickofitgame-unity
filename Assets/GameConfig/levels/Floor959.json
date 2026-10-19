@@ -198,12 +198,16 @@
           "turn": 2.0,
           "spawns": [
             {
-              "entity": "debrisRaftSign",
+              "entity": "debrisRaftSignBack",
               "at": [
                 6.2,
                 3.45
               ],
-              "id": "signRaft"
+              "id": "signRaft",
+              "scale": [
+                1.2,
+                1
+              ]
             },
             {
               "entity": "ledge",

@@ -325,6 +325,10 @@ namespace SickOfIt.Gameplay
             }
             swingSpeedBefore = 0f;
 
+            // In an updraft's column (957's chimney, 952's pile): ride it up and step out over the foothold it throws him to.
+            if (!controller.IsGrounded && RideUpdraft(me, feetBounds, forward, ref moveX))
+                return true;
+
             Entity standingOn = null;
             Entity best = null;
             float bestScore = float.MaxValue;
@@ -384,8 +388,17 @@ namespace SickOfIt.Gameplay
             bool grounded = controller.IsGrounded;
             if (best == null)
             {
-                // Nothing in reach: ride what carries him (a raft), else keep going the path's way.
+                // Nothing in reach: ride what carries him (a raft), else an updraft ahead, else keep going the path's way.
                 bool riding = standingOn != null && standingOn.FindAbility<SickOfIt.Gameplay.Content.RaftAbility>() != null;
+                if (!riding && grounded && ApproachUpdraft(me, feet, forward, ref moveX, out bool hop))
+                {
+                    if (hop && now - lastClimbJump > 0.35f)
+                    {
+                        jump = true;
+                        lastClimbJump = now;
+                    }
+                    return true;
+                }
                 moveX = riding ? 0f : Mathf.Abs(forward.x) > 0.1f ? Mathf.Sign(forward.x) : 0f;
                 return true;
             }
@@ -402,6 +415,15 @@ namespace SickOfIt.Gameplay
                 var own = standingOn.MainCollider.bounds;
                 if (dx > 0f ? own.max.x - me.x < 0.3f : me.x - own.min.x < 0.3f)
                     moveX = 0f;
+            }
+
+            // A geyser telling or blowing, or a lava fall pouring or about to, across the way to it: wait for the beat on solid
+            // footing, like a player counting it (never on a stone that sinks or crumbles, and never standing in it).
+            if (grounded && !bestIsChain && standingOn != null && SafeToWait(standingOn)
+                && HazardAcross(me.x, targetX, feet, Mathf.Max(feet, bestBounds.max.y) + (up > 0.3f || edgeGap > 0.05f ? 2.3f : 1f)))
+            {
+                moveX = 0f;
+                return true;
             }
 
             // Getting no closer to it for a while, standing on solid footing (not riding a raft that brings it near):
@@ -459,6 +481,171 @@ namespace SickOfIt.Gameplay
                     lastClimbJump = now;
                 }
             }
+            return true;
+        }
+
+        static bool SafeToWait(Entity standingOn) =>
+            standingOn.FindAbility<SickOfIt.Gameplay.Content.SinkAbility>() == null
+            && standingOn.FindAbility<SickOfIt.Gameplay.Content.CrumbleAbility>() == null
+            && standingOn.FindAbility<SickOfIt.Gameplay.Content.CounterweightAbility>() == null;
+
+        /// <summary>
+        /// A timed hazard that is live or about to be (a geyser telling or blowing, a lava fall pouring or due within a second)
+        /// across the corridor from his x to 'toX' between 'low' and 'high', but not where he stands now (standing in it, go).
+        /// </summary>
+        bool HazardAcross(float fromX, float toX, float low, float high)
+        {
+            float x0 = Mathf.Min(fromX, toX) - 0.35f, x1 = Mathf.Max(fromX, toX) + 0.35f;
+            float now = world.Now;
+            foreach (var e in world.Live)
+            {
+                if (e == null || !e.IsAlive)
+                    continue;
+                float h0, h1, hy0, hy1;
+                var geyser = e.FindAbility<SickOfIt.Gameplay.Content.GeyserAbility>();
+                var fall = geyser == null ? e.FindAbility<SickOfIt.Gameplay.Content.LavaFallAbility>() : null;
+                if (geyser != null)
+                {
+                    if (geyser.Phase < 1)
+                        continue;
+                    h0 = e.Position.x - geyser.width * 0.5f;
+                    h1 = e.Position.x + geyser.width * 0.5f;
+                    hy0 = e.Position.y;
+                    hy1 = e.Position.y + geyser.height;
+                }
+                else if (fall != null)
+                {
+                    if (fall.UntilPour(now) > 1.1f)
+                        continue;
+                    // Its collider is off between pours: measure the body from the definition.
+                    Vector2 scale = new Vector2(Mathf.Abs(e.transform.lossyScale.x), Mathf.Abs(e.transform.lossyScale.y));
+                    Vector2 size = Vector2.Scale(e.Def.body.size, scale);
+                    Vector2 c = e.Position + Vector2.Scale(e.Def.body.offset, scale);
+                    h0 = c.x - size.x * 0.5f;
+                    h1 = c.x + size.x * 0.5f;
+                    hy0 = c.y - size.y * 0.5f;
+                    hy1 = c.y + size.y * 0.5f;
+                }
+                else
+                    continue;
+                if (h1 < x0 || h0 > x1 || hy1 < low || hy0 > high)
+                    continue;
+                if (fromX + 0.3f > h0 && fromX - 0.3f < h1)
+                    continue;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>How far along the path's way a foothold or column top is from a point (higher on a climb, further on a run).</summary>
+        static float Gain(Bounds b, float top, Vector2 me, float fromY, Vector2 forward)
+        {
+            Vector2 point = new Vector2(Mathf.Clamp(me.x, b.min.x, b.max.x), top);
+            float gain = Vector2.Dot(point - new Vector2(me.x, fromY), forward);
+            if (Mathf.Abs(forward.x) > 0.1f)
+                gain = Mathf.Max(gain, (b.center.x - me.x) * Mathf.Sign(forward.x) - 0.3f);
+            return gain;
+        }
+
+        static float GapX(Bounds a, Bounds b) => Mathf.Max(0f, Mathf.Max(b.min.x - a.max.x, a.min.x - b.max.x));
+
+        /// <summary>
+        /// Carried up an updraft's column: picks the foothold furthest along the way that the column's throw (its lift out of the
+        /// top) carries his feet 0.25 over, holds in the column on that side until his rise clears it, then steps out onto it.
+        /// Like a player: stepping out early drops him back into the lava. False when he isn't in a column or nothing is ahead.
+        /// </summary>
+        bool RideUpdraft(Vector2 me, Bounds body, Vector2 forward, ref float moveX)
+        {
+            Bounds column = default;
+            float lift = 0f;
+            bool inside = false;
+            foreach (var e in world.Live)
+            {
+                if (e == null || !e.IsAlive)
+                    continue;
+                var draft = e.FindAbility<SickOfIt.Gameplay.Content.UpdraftAbility>();
+                var col = draft != null ? e.MainCollider : null;
+                if (col == null || !col.bounds.Intersects(body))
+                    continue;
+                column = col.bounds;
+                lift = draft.lift;
+                inside = true;
+                break;
+            }
+            if (!inside || world.Player.Body == null)
+                return false;
+            float g = Mathf.Max(0.1f, Mathf.Abs(Physics2D.gravity.y) * world.Player.Body.gravityScale);
+            float vy = Mathf.Max(0f, world.Player.Body.linearVelocity.y);
+            float feet = body.min.y;
+            float throwTop = column.max.y + lift * lift / (2f * g);
+
+            Entity target = null;
+            Bounds tb = default;
+            float bestGain = 0.35f;
+            foreach (var e in world.Live)
+            {
+                if (e == null || !e.IsAlive || e.IsPlayer || !e.Tags.Contains("foothold"))
+                    continue;
+                var col = e.MainCollider;
+                if (col == null || !col.enabled)
+                    continue;
+                var crumble = e.FindAbility<SickOfIt.Gameplay.Content.CrumbleAbility>();
+                if (crumble != null && crumble.Falling)
+                    continue;
+                var b = col.bounds;
+                if (b.max.y > throwTop - 0.25f || b.max.y < column.min.y - 3f || GapX(column, b) > 1.5f)
+                    continue;
+                // Measured from the column's foot, so a foothold he has already risen past still counts.
+                float gain = Gain(b, b.max.y, me, column.min.y, forward);
+                if (gain > bestGain)
+                {
+                    bestGain = gain;
+                    target = e;
+                    tb = b;
+                }
+            }
+            if (target == null)
+                return false;
+            ClimbTarget = target;
+            float targetX = Mathf.Clamp(me.x, tb.min.x + 0.35f, tb.max.x - 0.35f);
+            // Where his rise carries his feet from here, the column left behind (it only adds to that).
+            float reach = feet + vy * vy / (2f * g);
+            float goX = reach >= tb.max.y + 0.25f ? targetX : Mathf.Clamp(targetX, column.min.x + 0.1f, column.max.x - 0.1f);
+            float dx = goX - me.x;
+            moveX = Mathf.Abs(dx) > 0.12f ? Mathf.Sign(dx) : 0f;
+            return true;
+        }
+
+        /// <summary>
+        /// No foothold within a jump: an updraft column ahead whose top is above him and whose foot he can get into (walking off
+        /// his foothold into it, or a hop when its foot is above his). Heads into it; RideUpdraft takes over inside.
+        /// </summary>
+        bool ApproachUpdraft(Vector2 me, float feet, Vector2 forward, ref float moveX, out bool hop)
+        {
+            hop = false;
+            Bounds best = default;
+            float bestEdge = float.MaxValue;
+            foreach (var e in world.Live)
+            {
+                if (e == null || !e.IsAlive || e.FindAbility<SickOfIt.Gameplay.Content.UpdraftAbility>() == null)
+                    continue;
+                var col = e.MainCollider;
+                if (col == null)
+                    continue;
+                var b = col.bounds;
+                if (b.max.y < feet + 0.6f || b.min.y > feet + 1.2f)
+                    continue;
+                float edge = Mathf.Max(0f, Mathf.Max(b.min.x - me.x, me.x - b.max.x));
+                if (edge > 3.2f || edge >= bestEdge || Gain(b, b.max.y, me, feet, forward) < 0.35f)
+                    continue;
+                bestEdge = edge;
+                best = b;
+            }
+            if (bestEdge == float.MaxValue)
+                return false;
+            float dx = best.center.x - me.x;
+            moveX = Mathf.Abs(dx) > 0.12f ? Mathf.Sign(dx) : 0f;
+            hop = best.min.y > feet + 0.1f && bestEdge < 0.8f;
             return true;
         }
 

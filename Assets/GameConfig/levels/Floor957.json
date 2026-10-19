@@ -97,7 +97,7 @@
               "entity": "heatUpdraft",
               "at": [
                 -1.2,
-                -0.25
+                0.8
               ],
               "id": "draft1"
             },
@@ -117,7 +117,7 @@
               "entity": "heatUpdraft",
               "at": [
                 3.6,
-                1.35
+                1.9
               ],
               "id": "draft2"
             },

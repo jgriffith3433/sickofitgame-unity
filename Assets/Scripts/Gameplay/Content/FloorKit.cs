@@ -315,12 +315,15 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Rocking, in degrees.")] public float rock = 3f;
         [Doc("Extra tilt toward the edge he stands on, in degrees (at the very edge).")] public float tip = 8f;
         [Doc("Where in its bob it starts (0-1), so rafts side by side don't move together.")] public float phase;
+        [Doc("It bobs where it spawned until the hero first stands on it, then drifts (a ride that waits for him: 959's sign).")]
+        public bool holdUntilBoarded;
 
         Vector2 home;
         float travelled;
         float heading = 1f;
         float tilt;
         bool carried;
+        bool boarded;
 
         public override void OnSpawn()
         {
@@ -329,12 +332,18 @@ namespace SickOfIt.Gameplay.Content
             heading = 1f;
             tilt = 0f;
             carried = false;
+            boarded = false;
         }
 
         public override void Tick(float now, float dt)
         {
-            float speed = current.magnitude;
-            Vector2 axis = speed > 0.0001f ? current / speed : Vector2.right;
+            bool on = Owner.World.PlayerStandsOn(Owner);
+            if (on)
+                boarded = true;
+            bool drifting = !holdUntilBoarded || boarded;
+            float drift = current.magnitude;
+            Vector2 axis = drift > 0.0001f ? current / drift : Vector2.right;
+            float speed = drifting ? drift : 0f;
             travelled += speed * heading * dt;
             if (range > 0f)
             {
@@ -345,7 +354,6 @@ namespace SickOfIt.Gameplay.Content
             float wave = Mathf.Sin((age / Mathf.Max(0.2f, bobPeriod) + phase) * Mathf.PI * 2f);
             Vector2 want = home + axis * travelled + Vector2.up * (wave * bob);
 
-            bool on = Owner.World.PlayerStandsOn(Owner);
             float lean = 0f;
             if (on && Owner.MainCollider != null)
             {
@@ -378,6 +386,7 @@ namespace SickOfIt.Gameplay.Content
             writer.Float(heading);
             writer.Float(tilt);
             writer.Bool(carried);
+            writer.Bool(boarded);
         }
 
         public override void LoadState(StateReader reader)
@@ -387,6 +396,7 @@ namespace SickOfIt.Gameplay.Content
             heading = reader.Float();
             tilt = reader.Float();
             carried = reader.Bool();
+            boarded = reader.Bool();
         }
     }
 
@@ -1047,6 +1057,14 @@ namespace SickOfIt.Gameplay.Content
         public Color color = new Color(1f, 0.45f, 0.1f, 0.9f);
         [Doc("Painted curtain laid down the fall (instead of the box); it thins and fades on the same beat.")] public ArtLoopDef art = new ArtLoopDef();
         [Doc("Width of the painted curtain at full pour, as a share of the body's width (the art has a margin at its sides).")] public float artWidth = 1.6f;
+
+        /// <summary>Seconds until it next pours (0 while it pours): the playtest bot reads it to time a pass, like a player counting the beat.</summary>
+        public float UntilPour(float now)
+        {
+            float cycle = Mathf.Max(0.5f, pour) + Mathf.Max(0.5f, off);
+            float t = Mathf.Repeat(now - Owner.SpawnTime + offset, cycle);
+            return t < pour ? 0f : cycle - t;
+        }
 
         public override void Tick(float now, float dt)
         {
