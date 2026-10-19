@@ -3805,6 +3805,7 @@ namespace SickOfIt.Playtest
                 public bool SawSideways;
                 public readonly Dictionary<int, float> StoneSunk = new Dictionary<int, float>();
                 public int AirborneOnFoothold;
+                public int PhantomGround;
                 public readonly Dictionary<int, float> CrumbleHome = new Dictionary<int, float>();
                 public readonly Dictionary<int, float> RaftStart = new Dictionary<int, float>();
                 public float RideStartX = float.NaN;
@@ -4066,6 +4067,26 @@ namespace SickOfIt.Playtest
                 }
 
                 var controller = world.PlayerController;
+                if (controller != null && world.Player != null && world.Player.IsAlive && world.Player.Body != null && !controller.IsHeld)
+                {
+                    // He falls when nothing solid is under him: standing still "grounded" over no piece is a hidden collider.
+                    bool onPiece = false;
+                    foreach (var e in world.Live)
+                        if (e != null && e.IsAlive && e.MainCollider != null && !e.MainCollider.isTrigger && world.PlayerStandsOn(e))
+                            onPiece = true;
+                    float vy = world.Player.Body.linearVelocity.y;
+                    if (!onPiece && controller.IsGrounded && Mathf.Abs(vy) < 0.05f)
+                        climb.PhantomGround++;
+                    else
+                        climb.PhantomGround = 0;
+                    if (climb.PhantomGround >= 10)
+                    {
+                        ClimbCheck("falls off edges", false, "standing still grounded with no stone, ledge or raft under him: a hidden collider is holding him up");
+                        climb.PhantomGround = 0;
+                    }
+                    else if (!onPiece && !controller.IsGrounded && vy < -2f)
+                        ClimbCheck("falls off edges", true, "with nothing solid under him he fell (the ground check said airborne)");
+                }
                 foreach (var e in world.Live)
                 {
                     if (e == null || !e.IsAlive)
