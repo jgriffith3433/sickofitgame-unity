@@ -406,7 +406,7 @@ the prologue portal scene's sounds in scene order, every take, then the Meadow's
   keyboard, gamepad and mouse to the Input System: A/D move, Space jump, gamepad right stick aims and fires, hold R
   rewinds, P pauses, 1 picks an upgrade, Escape skips videos, and menu buttons are clicked with the mouse. Never give
   it a shortcut that edits sim state. If a new control is added, bind it in the input asset and have the bot press it.
-- **Report:** metrics (kills, `damageTaken.<source>`, deaths, rewinds, `botRewinds`, diamonds, `level<n>.seconds`,
+- **Report:** metrics (kills, `damageTaken.<source>` (`pit`: dropped out of the bottom of a path floor's view, `PitCatch`), deaths, rewinds, `botRewinds`, diamonds, `level<n>.seconds`,
   floor, fps); events (phases, level-start/level-end, death, rewind, pause, clicks); problems (placeholder art,
   missing sounds from `[Sfx]` warnings, softlocks when the game clock stalls 15 s, GameConfig issues in the loaded
   content, level-script errors, any logged error or exception).
