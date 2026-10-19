@@ -13,7 +13,15 @@
     {
       "type": "updraft",
       "lift": 5.5,
-      "acceleration": 30.0
+      "acceleration": 30.0,
+      "art": {
+        "sheet": "Art/Climb/Updraft_column.png",
+        "spriteNameFilter": "",
+        "fps": 12,
+        "scroll": 0.35,
+        "color": "#FFE0C080"
+      },
+      "artWidth": 1.4
     }
   ]
 }

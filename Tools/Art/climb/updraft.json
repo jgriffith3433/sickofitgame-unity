@@ -1,0 +1,24 @@
+{
+  "about": "heatUpdraft: the shimmering column of hot air (updraft art strip, vertical, scrolling up). Light on black, keyed by brightness.",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot heat/updraft, take seed 1231201773 (asset a_b2cb39fb634d46cb, job j_de685b26f334), picked by hawkesgen_entity_judge (j_36515e030d27).",
+  "out": "Assets/Art/Climb",
+  "name": "Updraft",
+  "key": "none",
+  "size": [
+    332,
+    924
+  ],
+  "pivot": [
+    166.0,
+    462.0
+  ],
+  "worldWidth": 1.2,
+  "widthPixels": 332,
+  "scale": 0.5,
+  "clips": {
+    "column": {
+      "frames": "/tmp/climbart2/src/_prep/updraft/column",
+      "key": "none"
+    }
+  }
+}

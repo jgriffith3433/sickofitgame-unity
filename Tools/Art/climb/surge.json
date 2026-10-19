@@ -1,0 +1,24 @@
+{
+  "about": "lavaSurge: the wall of lava that chases him sideways (surge art strip, vertical, its crest on the right; turned to face the run).",
+  "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/surge, take seed 1343009082 (asset a_1917b2a42019e50c, job j_ef1869239705), picked by hawkesgen_entity_judge (j_7c67134204cd).",
+  "out": "Assets/Art/Climb",
+  "name": "LavaSurge",
+  "key": "none",
+  "size": [
+    564,
+    1143
+  ],
+  "pivot": [
+    282.0,
+    571.5
+  ],
+  "worldWidth": 3,
+  "widthPixels": 564,
+  "scale": 0.5,
+  "clips": {
+    "wall": {
+      "frames": "/tmp/climbart2/src/_prep/surge/wall",
+      "key": "none"
+    }
+  }
+}

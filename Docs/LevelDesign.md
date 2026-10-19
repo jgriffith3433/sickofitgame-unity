@@ -265,7 +265,10 @@ through the portal ends up floating on the lava.
 | **The world below** (the Circle's `sky`) | The lava sea far below, seen from high up, its currents churning; smoke and heat haze over it; black spires standing in it; floating islands of rock; the black ceiling of the Wastes glowing red at the top of the screen. All of it repeats sideways and up, so a floor can climb for two minutes without a seam. | The sea churns and drifts (a loop); smoke drifts both ways; everything moves slower than the platforms, the farther the slower |
 | **The lava** (`lavaSea`, `lavaRiver`) | Its surface seen side-on: a bright wavy crest with bubbles and black crust bits, deepening to dark red under it | The crest rolls along; it flares while a rise is telegraphed |
 | **Lava falls** (`lavaFall`) | A curtain of molten streams | Pours down; thins and fades on its beat, gurgles back |
-| **Geysers** | A low basalt mound with a glowing crack; the column blasting out of it | The crack glows and spits for 1 s (the tell), then the column. *Art made; the column itself is still to build.* |
+| **Geysers** (`lavaGeyser`) | A low basalt mound with a glowing crack; the column blasting out of it | The crack glows and spits for 1 s (the tell), then the column (`geyser` `columnArt`) |
+| **The lava wave** (`lavaSurge`) | A towering wall of lava seen side-on, its bright rolling crest on the front, churning orange to dark red behind it | Laid down the wave's body whatever its size (`surge` `art`), turned to face its run; `artAhead` lines the crest up with the edge that burns |
+| **Heat updrafts** (`heatUpdraft`, `heatUpdraftTall`) | A faint column of gold heat ripples with embers and ash, fading at its sides (light on black, keyed by brightness, tinted half see-through) | Laid up the column and scrolling upward (`updraft` `art`), the drawn ash still rising over it |
+| **Slag flows** (`slagConveyor`, `slagConveyorDown`) | A crust of cracked charcoal slag plates with glowing seams and lava dripping off its underside, its top flat | Fitted to the body's length (`conveyor` `art`), its top on the body's top; the drawn seams crawl over it the way it moves |
 | **Stones**, three sizes | Small: brittle old slag full of fine cracks (`crumblingStone`). Medium: a floe of cooled slag, its underside glowing where it sits in the lava (`sinkingStone`). Large: a heavy basalt ledge with a hanging point (`ledge`, breathers) | Medium steams and its cracks blaze while it sinks; small cracks, breaks into chunks and falls |
 | **The village's wreckage** (`debrisRaft` and its kin) | The hay cart on its side (`debrisRaft`), a slab of thatched roof (`debrisRaftRoof`), the WELCOME TO sign, half burned (`debrisRaftSign`), a hay bale burning at one end (`debrisRaftHay`) | Bob, drift and tip, each on its own rhythm |
 | **The imps' ironwork** | A chain lift: an iron grate floor on four chains meeting at a ring (`chainLift`); a counterweight: planks bound in iron with a pan under them (`counterweightLeft`/`Right`); heavy black chain links; the ring and hook at a swing chain's end (`swingChain`) | Chains are laid link by link from the pulley to the piece |
@@ -1011,7 +1014,7 @@ order it can be built and played:
    generated footholds) and the climbing arena (tiers, a camera step per phase). *Built 2026-10-18:* the path camera
    (`world.path`, Arena sections for the climbing arena's tiers), the lava sea and the world below it, every piece in
    the toolkit table marked *yes*, generated sections from the Circle's chunks, and the bot climbing a path (the `climb`
-   playtest). Still to build: the geyser column, the sack on the counterweight, the imp riding a swing, a screen-space
+   playtest), and the geyser column (`lavaGeyser`, ability `geyser`, its painted column). Still to build: the sack on the counterweight, the imp riding a swing, a screen-space
    heat distortion shader (today the shimmer is drawn bands). `offerShortcut` with a diamond cost
    (`costDiamonds`), and a trigger that a floor can read when a shortcut was taken to reach it (`shortcutTaken`, from
    `ShortcutProgress`). Grudge picks on every 5th floor and after bosses. **The damned soul** (`damnedSoul`, a new
@@ -1065,7 +1068,8 @@ order it can be built and played:
    (levels 32-38, `CrackedRoad` and `Level13`-`Level18`, recut into floors the same way; the Old Stair's shortcut stays at Floor 871 to 841).
 7. **Art (GPU, priced):** *Made 2026-10-18 (see "The art of the climb"):* the world below the lava (sea, haze, spires,
    islands, ceiling), the lava's surface, falls and geysers, the three stones with their steam and crumble frames, the
-   village's rafts (cart, roof, sign, hay), the lift, counterweight, chains and the carved landing. Still to make: the
+   village's rafts (cart, roof, sign, hay), the lift, counterweight, chains and the carved landing; *2026-10-19:* the
+   lava wave, the heat updrafts and the slag flows (the last pieces that were boxes). Still to make: the
    counterweight sacks, the sack-swing imp and the Pile Keeper (the Imp Foreman's own sheets and the damned soul's
    were made 2026-10-18, `art/impForeman.json`, `art/damnedSoul.json`); for the set pieces, the hay cart's chute ride (908: the cart
    upright with him in it), the sign standing in the lava on 998 (*WELCOME TO THE VILLAGE*, whole), the throne far

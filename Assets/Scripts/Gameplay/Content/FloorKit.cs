@@ -397,6 +397,9 @@ namespace SickOfIt.Gameplay.Content
     {
         [Doc("Units per second it carries him (negative = to the left).")] public float speed = 1f;
         [Doc("Colour of the crawling seams.")] public Color seamColor = new Color(1f, 0.5f, 0.15f, 1f);
+        [Doc("Painted crust laid along the body (instead of the box); the seams crawl over it.")] public ArtLoopDef art = new ArtLoopDef();
+        [Doc("Height of the painted crust (units).")] public float artHeight = 0.75f;
+        [Doc("How far the painted top stands above the body's top (units; its glowing rim).")] public float artLip = 0.04f;
 
         public override void Tick(float now, float dt)
         {
@@ -408,6 +411,16 @@ namespace SickOfIt.Gameplay.Content
             if (c == null)
                 return;
             var b = c.bounds;
+            if (art.IsSet)
+            {
+                // Painted: tiles fitted to the body's length, so the crust ends where the foothold does.
+                float y = b.max.y + artLip - artHeight * 0.5f;
+                bool drawn = FloorArt.Strip(Owner.transform, "BeltArt", art, FloorArt.Frames(art, Owner.World),
+                    new Vector2(b.min.x, y), new Vector2(b.max.x, y), artHeight, now, Owner.Def.visual.layer, SpriteLayers.Platform, true);
+                var box = FloorKit.Look(Owner);
+                if (drawn && box != null && box != Owner.Sprite)
+                    box.enabled = false;
+            }
             for (int i = 0; i < 3; i++)
             {
                 var seam = FloorKit.Child(Owner, "Seam" + i, Owner.Def.visual.layer, SpriteLayers.Platform + 1);
@@ -716,6 +729,8 @@ namespace SickOfIt.Gameplay.Content
     {
         [Doc("Upward speed it carries him to (units per second).")] public float lift = 5f;
         [Doc("How fast he gets to that speed.")] public float acceleration = 30f;
+        [Doc("Painted shimmer laid up the column (instead of the box); art.scroll runs it upward.")] public ArtLoopDef art = new ArtLoopDef();
+        [Doc("Width of the painted shimmer as a share of the body's width (it fades out at its sides).")] public float artWidth = 1.5f;
 
         bool inside;
 
@@ -742,6 +757,16 @@ namespace SickOfIt.Gameplay.Content
             if (column == null)
                 return;
             var b = column.bounds;
+            if (art.IsSet)
+            {
+                // Laid from the foot up, so a positive scroll rises with the air.
+                bool drawn = FloorArt.Strip(Owner.transform, "UpdraftArt", art, FloorArt.Frames(art, Owner.World),
+                    new Vector2(b.center.x, b.min.y), new Vector2(b.center.x, b.max.y), b.size.x * artWidth, now,
+                    Owner.Def.visual.layer, Owner.Def.visual.SortingOrder, true);
+                var box = FloorKit.Look(Owner);
+                if (drawn && box != null && box != Owner.Sprite)
+                    box.enabled = false;
+            }
             for (int i = 0; i < 4; i++)
             {
                 var ash = FloorKit.Child(Owner, "Ash" + i, SpriteLayer.Player, SpriteLayers.Platform + 2);
@@ -926,6 +951,11 @@ namespace SickOfIt.Gameplay.Content
         [Doc("x (from the path's origin) where it stops and sinks. 0 = it never stops.")] public float stopAt;
         [Doc("Stay level with the camera (a wall of lava filling the screen's height).")] public bool followCameraY = true;
         [Doc("Stop and sink once the floor's path turns away from its run (the chase is over when the climb starts).")] public bool stopWhenPathTurns = true;
+        [Doc("Painted wall laid down the body (instead of the box): vertical art with its crest painted on the right, turned to face the run.")]
+        public ArtLoopDef art = new ArtLoopDef();
+        [Doc("Width of the painted wall as a share of the body's width (the crest's spray reaches past the burning edge).")] public float artWidth = 1.15f;
+        [Doc("How far the painted wall's centre sits ahead of the body's, toward its run (units): lines its crest up with the edge that burns.")]
+        public float artAhead;
 
         float x;
         float sinking;
@@ -970,6 +1000,23 @@ namespace SickOfIt.Gameplay.Content
                 sinking = Mathf.Min(20f, sinking + 2.5f * dt);
             float y = followCameraY ? world.CameraCenter.y : Owner.Position.y;
             FloorKit.Moved(Owner, new Vector2(x, y - sinking), dt);
+            DrawArt(now, dir);
+        }
+
+        void DrawArt(float now, float dir)
+        {
+            var c = Owner.MainCollider;
+            if (!art.IsSet || c == null)
+                return;
+            var b = c.bounds;
+            float cx = b.center.x + dir * artAhead;
+            // Vertical art goes from 'from' (its top) to 'to': laid bottom to top it turns half round, so the crest faces left.
+            Vector2 top = new Vector2(cx, b.max.y), bottom = new Vector2(cx, b.min.y);
+            bool drawn = FloorArt.Strip(Owner.transform, "SurgeArt", art, FloorArt.Frames(art, Owner.World),
+                dir > 0f ? top : bottom, dir > 0f ? bottom : top, b.size.x * artWidth, now, Owner.Def.visual.layer, Owner.Def.visual.SortingOrder, true);
+            var box = FloorKit.Look(Owner);
+            if (drawn && box != null && box != Owner.Sprite)
+                box.enabled = false;
         }
 
         public float X => x;

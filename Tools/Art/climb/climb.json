@@ -402,6 +402,61 @@
           "count": 12
         }
       }
+    },
+    "surge": {
+      "name": "LavaSurge",
+      "about": "lavaSurge: the wall of lava that chases him sideways (surge art strip, vertical, its crest on the right; turned to face the run).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot lava/surge, take seed 1343009082 (asset a_1917b2a42019e50c, job j_ef1869239705), picked by hawkesgen_entity_judge (j_7c67134204cd).",
+      "worldWidth": 3,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "wrap": "y",
+        "wrapShare": 0.15
+      },
+      "clips": {
+        "wall": {
+          "image": "still.png"
+        }
+      }
+    },
+    "updraft": {
+      "name": "Updraft",
+      "about": "heatUpdraft: the shimmering column of hot air (updraft art strip, vertical, scrolling up). Light on black, keyed by brightness.",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot heat/updraft, take seed 1231201773 (asset a_b2cb39fb634d46cb, job j_de685b26f334), picked by hawkesgen_entity_judge (j_36515e030d27).",
+      "worldWidth": 1.2,
+      "scale": 0.5,
+      "prep": {
+        "key": "black",
+        "cropY": [
+          0.0,
+          0.86
+        ],
+        "wrap": "y",
+        "wrapShare": 0.2
+      },
+      "clips": {
+        "column": {
+          "image": "still.png"
+        }
+      }
+    },
+    "belt": {
+      "name": "SlagBelt",
+      "about": "slagConveyor: the crust of slag plates sliding on the lava (conveyor art strip, horizontal, fitted to the body's length; the drawn seams crawl over it).",
+      "gpu": "image.generate, sickofit preset look, entity sickofit/the-ember-wastes-climb-kit slot slag/belt, take seed 1648455489 (asset a_d622e48e6190226c, job j_c3e369adca90), picked by hawkesgen_entity_judge (j_1843b1bb15d2).",
+      "worldWidth": 2,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "wrap": "x",
+        "wrapShare": 0.08
+      },
+      "clips": {
+        "crust": {
+          "image": "still.png"
+        }
+      }
     }
   }
 }
