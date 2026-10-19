@@ -279,6 +279,7 @@ def check(name, verbose=False):
         if not enders and sec['auto'] <= 0 and i < len(sections) - 1:
             best = max((round(along(p), 2) for p in reached.values() if p in inside and not getattr(p, 'carrier', False)), default=None)
             out.append(f"  ! {sec['name']}: can't end: the hero needs {end_along - sec_lead:.2f} along {sec['dir']}, best reachable foothold gives {best}")
+    out.extend(pit_margins(sections, reached, lead))
     for p in feet_all:
         if id(p) not in reached and getattr(p, 'liftOf', None) is None:
             why = []
@@ -329,6 +330,49 @@ def check(name, verbose=False):
         for p in feet_all:
             via = getattr(p, 'via', None)
             out.append(f"    {p} <- {via[0] if via else '-'} {via[1] if via else ''}")
+    return out
+
+def camera_after_jump(from_top, rise, lead, cap, sharp=4.0, dt=1 / 60):
+    """An Up section's camera y after a jump: it chases the hero's centre + lead (WorldEffects.PathStep, followSharpness 4),
+    never comes back down and stops at the section's end."""
+    cam = min(from_top + R + lead, cap)
+    y, vy = 0.0, V
+    while True:
+        vy -= G * dt
+        y += vy * dt
+        want = min(from_top + y + R + lead, cap)
+        cam = max(cam, cam + (want - cam) * (1 - math.exp(-sharp * dt)))
+        if vy < 0 and y <= rise:
+            return cam
+
+def pit_margins(sections, reached, lead):
+    """
+    PitCatch burns him once his whole body (2R tall) is under the screen's bottom, and an Up section's camera never comes
+    back down from his jump's apex + lead. A stone he lands on that sinks its full depth out of view burns him for standing
+    on it (!); a hop missed from a ledge that falls back out of view burns him too (~). Floor 1000's slope at lead 1.2:
+    every sunk stone was under the screen, and each burn threw him past the footholds (beta's start > stone1 > bank).
+    """
+    out = []
+    for b in reached.values():
+        via = getattr(b, 'via', None)
+        if not via or via[1] == 'rides it' or getattr(b, 'carrier', False) or getattr(via[0], 'carrier', False):
+            continue
+        a = via[0]
+        sec = sections[b.sec]
+        if sec['dir'] != 'Up':
+            continue
+        sec_lead = sec['lead'] if sec['lead'] >= 0 else lead
+        rise = b.top - a.top
+        if rise <= 0.05:
+            continue
+        bottom = camera_after_jump(a.top, rise, sec_lead, sec['end'][1]) - HALF_H
+        sink = g.ability(b.e, 'sink')
+        sunk = b.top - (sink.get('depth', 1.5) if sink else 0) + 2 * R - bottom
+        if sunk < 0.05:
+            out.append(f"  ! {sec['name']}: {b} sunk is {-sunk:.2f} under the screen after the jump from {a} (lead {sec_lead}): "
+                       "standing on it burns him; lower the section's lead or the rise")
+        if not g.ability(a.e, 'sink') and a.top + 2 * R - bottom < 0.05:
+            out.append(f"  ~ {sec['name']}: a hop missed from {a} to {b} falls out of view ({a.top + 2 * R - bottom:.2f}, lead {sec_lead})")
     return out
 
 def walk(node):

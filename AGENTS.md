@@ -254,7 +254,7 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   a floor (one level = one floor, Levels 2-6: Floors 1000-996) is checked like a stage, with a "FLOOR N: PLACE" banner, the
   counter ticking to the next floor on its landing and the floor's own new idea (1000 sinking stones, no foothold under a
   still lava (`lava-over-foothold` events), the jump from stone5 onto the bank and the landing reached (`foothold` events, the
-  way he climbed), 999 the rising lava
+  way he climbed), never burned out of the bottom of the view (`burn` events, `level2.idea.inView`), 999 the rising lava
   and its wave, 998 the village's wreckage and cinders, 997 sack imps on the hauling chains and an empty chain ridden,
   996 lava falls and geysers; `FinishFloorIdea`); a floor stage, Level 7 on, is checked as it plays: its "FLOORS N-M: PLACE" banner and hero lines with their voices,
   the floor counter start → end, its carved `floors.sign`, at most one new enemy type and the first one alone, a 3+ s

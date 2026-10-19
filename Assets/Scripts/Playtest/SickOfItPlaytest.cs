@@ -1008,6 +1008,23 @@ namespace SickOfIt.Playtest
                 string level = "level " + log.World.LevelNumber;
                 if (stage != null && stage.OneFloor && stage.Level == log.World.LevelNumber)
                 {
+                    bool scald = e.Kind == "damage" && e.Subject == "player" && e.Detail != null && e.Detail.StartsWith("lava", StringComparison.Ordinal);
+                    if (scald || e.Kind == "pit")
+                    {
+                        // Floor 1000 on beta: the camera had climbed past a sinking stone, PitCatch burned him under it and its
+                        // throw carried him past the slope's footholds (start > stone1 > bank). Log each burn with where it was.
+                        var w = log.World;
+                        Vector2 p = w.Player != null ? w.Player.Position : Vector2.zero;
+                        string last = stage.StoodOn.Count > 0 ? stage.StoodOn[stage.StoodOn.Count - 1] : "nothing";
+                        string what = scald ? $"scalded by {e.Detail}" : "fell out of the bottom of the view (PitCatch)";
+                        string burn = $"{what} at {e.Time:0.0} s at ({p.x:0.0}, {p.y:0.0})" +
+                                      (w.Effects != null && w.Effects.HasPath ? $", path section \"{w.Effects.CurrentSection?.name}\"" : "") +
+                                      $", last foothold {last}";
+                        stage.Burns.Add(burn);
+                        if (!scald)
+                            stage.PitBurns++;
+                        Run.Event("burn", $"{level}: {burn}");
+                    }
                     if (e.Kind == "floorkit")
                     {
                         string key = e.Subject.Split(':')[0] + "@" + e.Detail;
@@ -1319,6 +1336,10 @@ namespace SickOfIt.Playtest
                 /// the foothold not sinking) covered: their top inside the lava's box, under its drawn surface and its scald.</summary>
                 public readonly List<string> StoodOn = new List<string>();
                 public readonly Dictionary<string, string> UnderLava = new Dictionary<string, string>();
+                /// <summary>Every burn on the floor (a lava's scald, or PitCatch after he dropped out of the bottom of the view): what,
+                /// when, where, and the foothold he last stood on. A burn's throw carries him past footholds.</summary>
+                public readonly List<string> Burns = new List<string>();
+                public int PitBurns;
 
                 public int KitCount(string what, string entityPrefix = "")
                 {
@@ -1893,10 +1914,15 @@ namespace SickOfIt.Playtest
                             last < 0 ? $"never stood on stone5 (the slope's last stone); footholds: {string.Join(" > ", s.StoodOn)}"
                                 : bank < 0 ? $"stood on stone5 but never made the bank ledge; footholds: {string.Join(" > ", s.StoodOn)}"
                                 : "jumped from stone5 onto the bank ledge");
+                        // The climbs' camera keeps the stone he stands on in view as it sinks (lead 0.4): beta's run was burned out of
+                        // the bottom of the view on the slope and thrown past stones 2-5, so it never stood on stone5.
+                        s.Check(prefix + ".inView", s.PitBurns == 0,
+                            s.PitBurns == 0 ? "never dropped out of the bottom of the view (every stone stayed on screen as it sank)"
+                                : $"dropped out of the view {s.PitBurns} time(s): {string.Join(" | ", s.Burns)}");
                         bool landed = s.StoodOn.Contains("landing");
                         s.Check(prefix + ".cleared", completed && landed,
                             $"{(landed ? "reached the landing" : "never reached the landing")}, level {(completed ? "complete" : "not complete")} with no stuck event; " +
-                            $"footholds: {string.Join(" > ", s.StoodOn)}");
+                            $"footholds: {string.Join(" > ", s.StoodOn)}; burns: {(s.Burns.Count == 0 ? "none" : string.Join(" | ", s.Burns))}");
                         break;
                     }
                     case 999:
