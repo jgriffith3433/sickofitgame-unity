@@ -131,7 +131,7 @@
               "entity": "heatUpdraft",
               "at": [
                 8.8,
-                3.35
+                4.6
               ],
               "id": "turnDraft"
             },
@@ -283,7 +283,7 @@
           {
             "type": "setCounter",
             "name": "lavaMax",
-            "value": 9.05
+            "value": 8.5
           },
           {
             "type": "setCounter",
@@ -318,7 +318,7 @@
           {
             "type": "setCounter",
             "name": "lavaMax",
-            "value": 9.05
+            "value": 8.5
           },
           {
             "type": "setCounter",

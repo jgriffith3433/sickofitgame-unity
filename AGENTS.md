@@ -275,7 +275,8 @@ Every build, WebGL included, exposes the bot to the Hawkes Studio daily playtest
   one stretch of the path, each ending on a floor boss or where a shortcut jumps: `floors-1000-991`, `floors-960-951`,
   `floors-910-901`, `floors-900-891`, `floors-860-851`, `floors-810-802`; the ids come from game.json, so new floors make
   new ones; the package drops unknown option keys, so a range is an id, not an option; a `check` event per level: cleared or
-  how not, its time and tries, and its pace, 1-2 min or up to 3 on a floor boss), `climb-start` (the same run over
+  how not, its time and tries, and its pace, 1-2 min or up to 3 on a floor boss; a Warden's arena in the stretch, Floor 901, also
+  gets the arena checks: the fight's signals in order, every attack's lead over its glow, the boss bar, the defeat), `climb-start` (the same run over
   Level 1 and Floors 1000-991, with a `check` event per level: cleared or how not, its time and tries; ~30 min),
   `story-path` (New Game along the story path, each step a `check` event: Video1, Level 1, Video2, Level 2
   "Floor 1000: The Landing" with no other level between, its floor counter 1000 → 999, Video3 (Yooba) watched 8 s,
