@@ -24,7 +24,9 @@ namespace SickOfIt.Combat.Health
         [Header("Invincibility")]
         [SerializeField] private bool hasInvincibilityFrames = true;
         [SerializeField] private float invincibilityDuration = 0.5f;
+        private const float DeathUndoGraceDuration = 1.25f;
         private float invincibilityTimer;
+        private float deathUndoGraceTimer;
 
         [Header("Events")]
         public UnityEvent<int> onHealthChanged;
@@ -40,8 +42,8 @@ namespace SickOfIt.Combat.Health
         public int CurrentHealth => currentHealth;
         public int MaxHealth => maxHealth;
         public bool IsAlive => currentHealth > 0;
-        public bool IsInvincible => invincibilityTimer > 0;
-        public float InvincibilityTimer => invincibilityTimer;
+        public bool IsInvincible => invincibilityTimer > 0 || deathUndoGraceTimer > 0;
+        public float InvincibilityTimer => Mathf.Max(invincibilityTimer, deathUndoGraceTimer);
 
         /// <summary>
         /// Set current health directly (used by rewind system).
@@ -78,8 +80,15 @@ namespace SickOfIt.Combat.Health
 
         private void Update()
         {
+            var clock = GameClock.Instance;
+            float dt = clock != null ? clock.DeltaTime : Time.deltaTime;
             if (invincibilityTimer > 0)
-                invincibilityTimer -= (GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime);
+                invincibilityTimer -= dt;
+            if (clock == null || !clock.IsRewinding)
+            {
+                if (deathUndoGraceTimer > 0f)
+                    deathUndoGraceTimer -= dt;
+            }
         }
 
         /// <summary>
@@ -106,6 +115,7 @@ namespace SickOfIt.Combat.Health
                 RogueliteManager.Instance.GetStartingHealthForLevel(currentLevelNumber),
                 0, maxHealth);
             invincibilityTimer = 0f;
+            deathUndoGraceTimer = 0f;
             onHealthChanged?.Invoke(currentHealth);
         }
 
@@ -120,7 +130,7 @@ namespace SickOfIt.Combat.Health
         /// </summary>
         public void TakeDamage(int damage, bool ignoreInvincibility)
         {
-            if (!IsAlive || (IsInvincible && !ignoreInvincibility))
+            if (!IsAlive || deathUndoGraceTimer > 0f || (IsInvincible && !ignoreInvincibility))
                 return;
             if (ignoreInvincibility)
             {
@@ -230,6 +240,8 @@ namespace SickOfIt.Combat.Health
         {
             deathPending = false;
             DeathTimeLeft = -1f;
+            deathUndoGraceTimer = DeathUndoGraceDuration;
+            invincibilityTimer = Mathf.Max(invincibilityTimer, DeathUndoGraceDuration);
             if (controller != null)
                 controller.enabled = true;
         }
