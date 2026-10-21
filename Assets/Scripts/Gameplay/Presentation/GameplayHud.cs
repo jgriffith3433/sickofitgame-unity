@@ -29,6 +29,7 @@ namespace SickOfIt.Gameplay
         TextMeshProUGUI subtitle;
         MenuMotionDriver subtitleMotion;
         TextMeshProUGUI objective;
+        RectTransform objectiveBackdrop;
         RectTransform bossRoot;
         MenuBar bossBar;
         TextMeshProUGUI bossLabel;
@@ -104,7 +105,21 @@ namespace SickOfIt.Gameplay
             var place = Landscape.objective;
             objective = menu.AddText(menu.Root, "Objective", "", theme.caption, place.anchor, place.offset,
                 place.size, out _, 0f, null, theme.entrance);
-            Lay(objective.transform.parent, l => l.objective, MenuElementKind.Text);
+            var objectiveSlot = (RectTransform)objective.transform.parent;
+            objectiveBackdrop = MenuGraphics.NewRect("Backdrop", objectiveSlot);
+            objectiveBackdrop.SetAsFirstSibling();
+            MenuGraphics.Surface(objectiveBackdrop, new MenuSurfaceStyle
+            {
+                shape = MenuShape.Pill,
+                fill = new Color(0.12f, 0.07f, 0.13f, 0.78f),
+                borderColor = new Color(0.12f, 0.07f, 0.13f, 0.92f),
+                borderWidth = 3f,
+                shadowColor = new Color(0f, 0f, 0f, 0.4f),
+                shadowOffset = new Vector2(0f, -3f),
+            });
+            objectiveBackdrop.gameObject.SetActive(false);
+            objective.margin = new Vector4(18f, 0f, 18f, 0f);
+            Lay(objectiveSlot, l => l.objective, MenuElementKind.Text);
             // Left-aligned under the health bar in landscape; centred in its own row on a portrait screen.
             objective.alignment = MenuScreen.Portrait ? TextAlignmentOptions.Midline : TextAlignmentOptions.MidlineLeft;
 
@@ -323,11 +338,22 @@ namespace SickOfIt.Gameplay
             rewindRoot = (RectTransform)rewindButton.transform.parent;
 
             var keySlot = MenuGraphics.NewRect("Key", rewindRoot);
-            keySlot.anchorMin = keySlot.anchorMax = new Vector2(0.5f, 0f);
-            keySlot.pivot = new Vector2(0.5f, 1f);
-            keySlot.sizeDelta = new Vector2(240f, 40f);
-            keySlot.anchoredPosition = new Vector2(0f, -10f);
+            keySlot.anchorMin = keySlot.anchorMax = new Vector2(1f, 0f);
+            keySlot.pivot = new Vector2(1f, 1f);
+            keySlot.sizeDelta = new Vector2(248f, 40f);
+            keySlot.anchoredPosition = new Vector2(16f, -10f);
+            MenuGraphics.Surface(keySlot, new MenuSurfaceStyle
+            {
+                shape = MenuShape.Pill,
+                fill = new Color(0.12f, 0.07f, 0.13f, 0.78f),
+                borderColor = new Color(0.12f, 0.07f, 0.13f, 0.92f),
+                borderWidth = 3f,
+                shadowColor = new Color(0f, 0f, 0f, 0.4f),
+                shadowOffset = new Vector2(0f, -3f),
+            });
             rewindKey = MenuGraphics.Text(keySlot, "Text", RewindKeyText, theme.caption, menu.Font, 22f);
+            rewindKey.rectTransform.offsetMin = new Vector2(14f, 2f);
+            rewindKey.rectTransform.offsetMax = new Vector2(-14f, -2f);
 
             // Taught once per level: the first time you get hurt with juice to spend.
             string hint = Application.isMobilePlatform ? Texts.rewindHintTouch : Texts.rewindHint;
@@ -999,6 +1025,25 @@ namespace SickOfIt.Gameplay
                     subtitleMotion.Restart();
             }
             MenuGraphics.SetText(objective, objectiveText);
+            if (objectiveBackdrop != null)
+            {
+                bool hasObjective = !string.IsNullOrEmpty(objectiveText);
+                if (objectiveBackdrop.gameObject.activeSelf != hasObjective)
+                    objectiveBackdrop.gameObject.SetActive(hasObjective);
+                if (hasObjective)
+                {
+                    bool portrait = MenuScreen.Portrait;
+                    objective.alignment = portrait ? TextAlignmentOptions.Midline : TextAlignmentOptions.MidlineLeft;
+                    var slot = (RectTransform)objective.transform.parent;
+                    float maxWidth = slot.rect.width > 0f ? slot.rect.width : 740f;
+                    Vector2 pref = objective.GetPreferredValues(objectiveText, maxWidth - 36f, 48f);
+                    float width = Mathf.Clamp(pref.x + 36f, 140f, maxWidth);
+                    objectiveBackdrop.anchorMin = objectiveBackdrop.anchorMax = objectiveBackdrop.pivot =
+                        new Vector2(portrait ? 0.5f : 0f, 0.5f);
+                    objectiveBackdrop.anchoredPosition = Vector2.zero;
+                    objectiveBackdrop.sizeDelta = new Vector2(width, 44f);
+                }
+            }
 
             Entity boss = null;
             if (bossVisible)

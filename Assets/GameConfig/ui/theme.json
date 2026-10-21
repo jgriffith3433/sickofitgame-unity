@@ -143,9 +143,9 @@
     "gradientTop": "#00000000",
     "gradientBottom": "#00000000",
     "outlineColor": "#1E1220",
-    "outlineWidth": 0.15,
-    "shadowColor": "#00000000",
-    "shadowOffset": [4.0, -4.0],
+    "outlineWidth": 0.22,
+    "shadowColor": "#1E1220D9",
+    "shadowOffset": [3.0, -3.0],
     "bold": true,
     "italic": false,
     "uppercase": true,
@@ -427,7 +427,7 @@
         "use": true,
         "hide": false,
         "anchor": [1.0, 1.0],
-        "offset": [-112.0, -214.0],
+        "offset": [-140.0, -214.0],
         "size": [124.0, 124.0]
       },
       "floor": {
@@ -455,8 +455,8 @@
         "use": true,
         "hide": false,
         "anchor": [0.0, 1.0],
-        "offset": [436.0, -150.0],
-        "size": [800.0, 44.0]
+        "offset": [416.0, -150.0],
+        "size": [740.0, 48.0]
       },
       "banner": {
         "use": true,
@@ -549,7 +549,7 @@
         "hide": false,
         "anchor": [0.5, 1.0],
         "offset": [0.0, -300.0],
-        "size": [1000.0, 48.0]
+        "size": [920.0, 48.0]
       },
       "banner": {
         "use": true,

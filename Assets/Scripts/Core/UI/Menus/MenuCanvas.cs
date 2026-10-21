@@ -238,10 +238,11 @@ namespace SickOfIt.Core.UI.Menus
             if (label == null || !label.show || string.IsNullOrEmpty(label.text))
                 return null;
             var slot = MenuGraphics.NewRect(name, Root);
-            // Sized to the words; on a narrow screen the slot shrinks to fit and the words shrink with it.
+            // Sized to the words with horizontal breathing room; on a narrow screen the slot shrinks to fit and the words shrink with it.
             var text = MenuGraphics.Text(slot, "Text", label.text, style, font, label.fontSize, autoSize: true);
-            Vector2 size = text.GetPreferredValues(label.text, Theme.referenceResolution.x * 0.9f, 0f);
-            size += new Vector2(40f, 20f);
+            text.margin = new Vector4(24f, 6f, 24f, 6f);
+            Vector2 size = text.GetPreferredValues(label.text, Theme.referenceResolution.x * 0.86f, 0f);
+            size += new Vector2(64f, 24f);
             MenuGraphics.Place(slot, label.anchor, label.offset, size);
             AddMotion(slot.gameObject, label.motion, entrance, label.rotation);
             MenuResponsive.Track(slot, MenuResponsive.From(label.anchor, label.offset, size), label.portrait, MenuElementKind.Text, Responsive);

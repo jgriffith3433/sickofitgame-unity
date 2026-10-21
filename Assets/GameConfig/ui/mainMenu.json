@@ -35,10 +35,10 @@
     "title": {
       "show": true,
       "text": "Sick Of It",
-      "anchor": [0.71, 0.86],
-      "offset": [0.0, 0.0],
+      "anchor": [0.68, 0.86],
+      "offset": [-20.0, 0.0],
       "rotation": -4.0,
-      "fontSize": 0.0,
+      "fontSize": 150.0,
       "motion": {
         "type": "Wobble",
         "amount": 1.5,
