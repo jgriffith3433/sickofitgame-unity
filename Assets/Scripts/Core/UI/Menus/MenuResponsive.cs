@@ -424,7 +424,9 @@ namespace SickOfIt.Core.UI.Menus
                 if (shadow.Source != null && shadow.Shadow != null
                     && (shadow.Shadow.text != shadow.Source.text
                         || shadow.Shadow.fontStyle != shadow.Source.fontStyle
-                        || shadow.Shadow.textWrappingMode != shadow.Source.textWrappingMode))
+                        || shadow.Shadow.textWrappingMode != shadow.Source.textWrappingMode
+                        || shadow.Shadow.margin != shadow.Source.margin
+                        || Mathf.Abs(shadow.Shadow.fontSize - shadow.Source.fontSize) > 0.5f))
                 {
                     result.Problems.Add($"text shadow \"{shadow.name}\" is out of sync with \"{shadow.Source.name}\"");
                 }
@@ -451,7 +453,9 @@ namespace SickOfIt.Core.UI.Menus
                 {
                     var a = result.Boxes[i];
                     var b = result.Boxes[j];
-                    if (a.Kind == MenuElementKind.Text || b.Kind == MenuElementKind.Text)
+                    bool yoobaOverlap = (a.Transform.name == "Yooba" && b.Transform.name != "Shaft")
+                                        || (b.Transform.name == "Yooba" && a.Transform.name != "Shaft");
+                    if (!yoobaOverlap && (a.Kind == MenuElementKind.Text || b.Kind == MenuElementKind.Text))
                         continue;
                     if (a.Transform.IsChildOf(b.Transform) || b.Transform.IsChildOf(a.Transform))
                         continue;

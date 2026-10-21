@@ -241,6 +241,9 @@ namespace SickOfIt.Core.UI.Menus
             // Sized to the words with horizontal breathing room; on a narrow screen the slot shrinks to fit and the words shrink with it.
             var text = MenuGraphics.Text(slot, "Text", label.text, style, font, label.fontSize, autoSize: true);
             text.margin = new Vector4(24f, 6f, 24f, 6f);
+            if (!label.text.Contains("\n"))
+                text.textWrappingMode = TextWrappingModes.NoWrap;
+            MenuGraphics.SetText(text, label.text);
             Vector2 size = text.GetPreferredValues(label.text, Theme.referenceResolution.x * 0.86f, 0f);
             size += new Vector2(64f, 24f);
             MenuGraphics.Place(slot, label.anchor, label.offset, size);

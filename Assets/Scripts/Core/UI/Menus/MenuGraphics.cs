@@ -285,7 +285,10 @@ namespace SickOfIt.Core.UI.Menus
             Style(text, style, font, sizeOverride, autoSize);
             text.text = value;
             if (shadowLink != null)
+            {
                 shadowLink.Source = text;
+                shadowLink.Sync();
+            }
             return text;
         }
 
