@@ -270,7 +270,11 @@ climb with sinking stones `"lead": 0.4` (its end still needs a foothold where he
 one-way ledge straight over a stone with less than the jump's 2.29 between the stone's top and the ledge's top: a jump
 from the stone rises into the ledge and falls back short of its top (Floor 1000's rest ledge over stone2; the bot now
 keeps steering for the foothold it jumped for, judged from the take-off (`PlaytestBot.Climb`: no new foothold over the
-jump's top, the stone it left out until it lands), but a player under it gets the same dead hop). A lava river's box starts
+jump's top, the stone it left out until it lands), but a player under it gets the same dead hop), and never hang the solid
+landing (`floorLanding`, 6 wide, not one-way) over a lower foothold of the climb where its underside blocks the jump to the
+next step (`Floor 998`: `floorLanding998` at y 7.3..7.9 hung over `wreckSign` at y 5.7 and blocked the jump to `spireFoot` at
+y 7.05 while the camera's look-ahead had already switched to the sideways landing section; `floor_check.py` flags it, and the
+bot climbs a remaining step above it when the camera rounds into a sideways section early). A lava river's box starts
 past the foothold he jumps onto it from, never under the climb before it (Floor 1000's river now starts at the bank's
 right edge, x 4.8: before, its untextured box hung over the slope's top-right and under the bank).
 Two stones less than the hero's width (0.6) apart sink to the same height and catch him across the gap, his middle over

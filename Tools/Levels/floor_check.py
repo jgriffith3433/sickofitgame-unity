@@ -351,18 +351,30 @@ def pit_margins(sections, reached, lead):
     back down from his jump's apex + lead. A stone he lands on that sinks its full depth out of view burns him for standing
     on it (!); a hop missed from a ledge that falls back out of view burns him too (~). Floor 1000's slope at lead 1.2:
     every sunk stone was under the screen, and each burn threw him past the footholds (beta's start > stone1 > bank).
+    Also flags a solid (non-one-way) foothold hanging over 'a' low enough to block the jump from 'a' to 'b' (Floor 998:
+    floorLanding998 over wreckSign blocked the jump to spireFoot).
     """
     out = []
+    solids = [p for s in sections for p in s['pieces'] if p.foothold and not p.oneWay]
     for b in reached.values():
         via = getattr(b, 'via', None)
         if not via or via[1] == 'rides it' or getattr(b, 'carrier', False) or getattr(via[0], 'carrier', False):
             continue
         a = via[0]
+        rise = b.top - a.top
+        if rise > 0.05:
+            w = a.box[2] - a.box[0]
+            for s in solids:
+                if s is a or s is b or s.box[1] <= a.top:
+                    continue
+                ox = min(a.box[2], s.box[2]) - max(a.box[0], s.box[0])
+                if ox > w * 0.5 and s.box[1] < b.top + 2 * R - 0.05:
+                    out.append(f"  ! {sections[a.sec]['name']}: solid {s} (bottom {s.box[1]:.2f}) hangs over {a} "
+                               f"and blocks the jump to {b} (needs head at {b.top + 2 * R:.2f})")
         sec = sections[b.sec]
         if sec['dir'] != 'Up':
             continue
         sec_lead = sec['lead'] if sec['lead'] >= 0 else lead
-        rise = b.top - a.top
         if rise <= 0.05:
             continue
         bottom = camera_after_jump(a.top, rise, sec_lead, sec['end'][1]) - HALF_H

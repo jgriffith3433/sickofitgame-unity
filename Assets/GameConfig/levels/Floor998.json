@@ -66,12 +66,12 @@
             {
               "entity": "wreckSign",
               "at": [
-                -1.1,
+                -0.6,
                 -1.2
               ],
               "id": "sign",
               "scale": [
-                1.1,
+                1.2,
                 1
               ],
               "facing": 1.0
@@ -192,6 +192,7 @@
           "direction": "Up",
           "length": 8.0,
           "turn": 2.0,
+          "lead": 0.4,
           "spawns": [
             {
               "entity": "wreckCart",
@@ -249,8 +250,8 @@
             {
               "entity": "cinder",
               "at": [
-                21.0,
-                5.5
+                20.0,
+                6.4
               ],
               "id": "cinderB",
               "onEnter": true
@@ -258,7 +259,7 @@
             {
               "entity": "wreckSign",
               "at": [
-                26.4,
+                21.8,
                 5.5
               ],
               "scale": [
@@ -380,7 +381,7 @@
               {
                 "type": "setCounter",
                 "name": "lavaMax",
-                "value": 8.4
+                "value": 7.0
               },
               {
                 "type": "setCounter",

@@ -990,9 +990,9 @@ namespace SickOfIt.Gameplay.Content
             float trailing = dir > 0f ? view.xMin : view.xMax;
             float halfWidth = Owner.MainCollider != null ? Owner.MainCollider.bounds.extents.x : 0.5f;
             float stop = world.Effects.PathOrigin.x + stopAt;
-            bool stopped = stopAt != 0f && (dir > 0f ? x >= stop : x <= stop);
+            bool stopped = sinking > 0f || (stopAt != 0f && (dir > 0f ? x >= stop : x <= stop));
             var section = world.Effects.CurrentSection;
-            if (stopWhenPathTurns && started && section != null && section.Axis.x * dir < 0.1f)
+            if (stopWhenPathTurns && started && section != null && (section.Axis.x * dir < 0.1f || HasLanding(section)))
                 stopped = true;
             if (age >= Mathf.Max(0f, telegraph) && !stopped)
             {
@@ -1014,6 +1014,19 @@ namespace SickOfIt.Gameplay.Content
             float y = followCameraY ? world.CameraCenter.y : Owner.Position.y;
             FloorKit.Moved(Owner, new Vector2(x, y - sinking), dt);
             DrawArt(now, dir);
+        }
+
+        static bool HasLanding(PathSectionDef section)
+        {
+            if (section.spawns == null)
+                return false;
+            for (int i = 0; i < section.spawns.Count; i++)
+            {
+                var s = section.spawns[i];
+                if (s != null && (s.id == "landing" || (s.entity != null && s.entity.StartsWith("floorLanding", StringComparison.Ordinal))))
+                    return true;
+            }
+            return false;
         }
 
         void DrawArt(float now, float dir)
