@@ -82,6 +82,8 @@ namespace SickOfIt.Core.Progression
                 menu.transform.SetParent(transform, false);
             }
             var list = menu.AddList(config.layout.list, menu.Theme.card.size);
+            var cardStyle = menu.Theme.card.Clone();
+            cardStyle.tilt = 0f;
 
             foreach (var upgrade in RogueliteManager.ShopCatalog)
             {
@@ -94,7 +96,7 @@ namespace SickOfIt.Core.Progression
                     Title = def.title,
                     Description = def.description,
                     Status = "",
-                }, () => Buy(def));
+                }, () => Buy(def), cardStyle);
                 cards.Add((def, view));
             }
 
