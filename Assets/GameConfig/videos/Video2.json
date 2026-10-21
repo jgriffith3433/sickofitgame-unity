@@ -16,10 +16,10 @@
     "overlays": [
       {
         "name": "heroFall",
-        "spriteSheet": "Art/Sprites/Player/Fall.png",
+        "spriteSheet": "Art/Sprites/Player/Grabbed.png",
         "spriteNameFilter": "",
         "sprite": null,
-        "fps": 12.0,
+        "fps": 16.0,
         "loop": true,
         "sortLayer": "Player",
         "sortOrder": 0,

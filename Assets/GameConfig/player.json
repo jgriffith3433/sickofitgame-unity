@@ -87,6 +87,39 @@
         "loop": true,
         "events": [],
         "speed": 1.0
+      },
+      {
+        "stateName": "Curious",
+        "spriteSheet": "Art/Sprites/Player/Curious.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 16,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Shout",
+        "spriteSheet": "Art/Sprites/Player/Shout.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 16,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Grabbed",
+        "spriteSheet": "Art/Sprites/Player/Grabbed.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 16,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
       }
     ],
     "transitions": [
