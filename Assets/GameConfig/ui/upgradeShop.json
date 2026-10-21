@@ -52,9 +52,9 @@
       "portrait": {
         "use": true,
         "hide": false,
-        "anchor": [0.5, 0.9],
+        "anchor": [0.6, 0.9],
         "offset": [0.0, 0.0],
-        "size": [0.0, 0.0]
+        "size": [800.0, 110.0]
       }
     },
     "subtitle": {
