@@ -416,6 +416,19 @@ namespace SickOfIt.Core.UI.Menus
                     continue;
                 Add(result, seen, element.transform, $"{element.Kind.ToString().ToLowerInvariant()} \"{element.name}\"", element.Kind, false);
             }
+            foreach (var shadow in Object.FindObjectsByType<MenuTextShadow>(FindObjectsSortMode.None))
+            {
+                if (shadow == null || !shadow.isActiveAndEnabled || !Visible(shadow.transform))
+                    continue;
+                shadow.Sync();
+                if (shadow.Source != null && shadow.Shadow != null
+                    && (shadow.Shadow.text != shadow.Source.text
+                        || shadow.Shadow.fontStyle != shadow.Source.fontStyle
+                        || shadow.Shadow.textWrappingMode != shadow.Source.textWrappingMode))
+                {
+                    result.Problems.Add($"text shadow \"{shadow.name}\" is out of sync with \"{shadow.Source.name}\"");
+                }
+            }
 
             var screen = new Rect(0f, 0f, UnityEngine.Screen.width, UnityEngine.Screen.height);
             var safe = UnityEngine.Screen.safeArea;

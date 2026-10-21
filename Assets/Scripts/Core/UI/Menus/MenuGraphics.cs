@@ -265,6 +265,7 @@ namespace SickOfIt.Core.UI.Menus
         /// <summary>Creates a styled text filling its parent, with an optional drop shadow copy behind it.</summary>
         public static TextMeshProUGUI Text(Transform parent, string name, string value, MenuTextStyle style, TMP_FontAsset font, float sizeOverride = 0f, bool autoSize = true)
         {
+            MenuTextShadow shadowLink = null;
             if (style.shadowColor.a > 0f)
             {
                 var shadow = NewText(parent, name + "Shadow");
@@ -276,12 +277,15 @@ namespace SickOfIt.Core.UI.Menus
                 var rect = shadow.rectTransform;
                 rect.offsetMin += style.shadowOffset;
                 rect.offsetMax += style.shadowOffset;
-                shadow.gameObject.AddComponent<MenuTextShadow>();
+                shadowLink = shadow.gameObject.AddComponent<MenuTextShadow>();
+                shadowLink.Shadow = shadow;
                 shadow.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
             }
             var text = NewText(parent, name);
             Style(text, style, font, sizeOverride, autoSize);
             text.text = value;
+            if (shadowLink != null)
+                shadowLink.Source = text;
             return text;
         }
 
@@ -303,8 +307,17 @@ namespace SickOfIt.Core.UI.Menus
                 return;
             text.text = value;
             var shadow = text.transform.parent != null ? text.transform.parent.Find(text.name + "Shadow") : null;
-            if (shadow != null && shadow.TryGetComponent<TextMeshProUGUI>(out var copy))
+            if (shadow == null)
+                return;
+            if (shadow.TryGetComponent<MenuTextShadow>(out var link))
+            {
+                link.Source = text;
+                link.Sync();
+            }
+            else if (shadow.TryGetComponent<TextMeshProUGUI>(out var copy))
+            {
                 copy.text = value;
+            }
         }
 
         // ─── Layout helpers ───────────────────────────────────────────
@@ -380,8 +393,49 @@ namespace SickOfIt.Core.UI.Menus
         }
     }
 
-    /// <summary>Marks a text as another text's drop shadow (kept in sync by MenuGraphics.SetText).</summary>
-    public sealed class MenuTextShadow : MonoBehaviour { }
+    /// <summary>Marks a text as another text's drop shadow and keeps its words and layout settings in sync.</summary>
+    public sealed class MenuTextShadow : MonoBehaviour
+    {
+        public TextMeshProUGUI Source;
+        public TextMeshProUGUI Shadow;
+
+        void OnEnable() => Sync();
+        void LateUpdate() => Sync();
+
+        public void Sync()
+        {
+            if (Source == null)
+                return;
+            if (Shadow == null && !TryGetComponent(out Shadow))
+                return;
+            if (Shadow.text != Source.text)
+                Shadow.text = Source.text;
+            if (Shadow.font != Source.font)
+                Shadow.font = Source.font;
+            if (Shadow.fontStyle != Source.fontStyle)
+                Shadow.fontStyle = Source.fontStyle;
+            if (Shadow.enableAutoSizing != Source.enableAutoSizing)
+                Shadow.enableAutoSizing = Source.enableAutoSizing;
+            if (Shadow.fontSizeMin != Source.fontSizeMin)
+                Shadow.fontSizeMin = Source.fontSizeMin;
+            if (Shadow.fontSizeMax != Source.fontSizeMax)
+                Shadow.fontSizeMax = Source.fontSizeMax;
+            if (!Source.enableAutoSizing && Shadow.fontSize != Source.fontSize)
+                Shadow.fontSize = Source.fontSize;
+            if (Shadow.characterSpacing != Source.characterSpacing)
+                Shadow.characterSpacing = Source.characterSpacing;
+            if (Shadow.lineSpacing != Source.lineSpacing)
+                Shadow.lineSpacing = Source.lineSpacing;
+            if (Shadow.alignment != Source.alignment)
+                Shadow.alignment = Source.alignment;
+            if (Shadow.textWrappingMode != Source.textWrappingMode)
+                Shadow.textWrappingMode = Source.textWrappingMode;
+            if (Shadow.overflowMode != Source.overflowMode)
+                Shadow.overflowMode = Source.overflowMode;
+            if (Shadow.margin != Source.margin)
+                Shadow.margin = Source.margin;
+        }
+    }
 
     /// <summary>Gives a text an outline once it's enabled (TextMesh Pro can't outline a text that was never enabled).</summary>
     [RequireComponent(typeof(TextMeshProUGUI))]
