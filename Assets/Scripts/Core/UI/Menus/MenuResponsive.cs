@@ -325,15 +325,15 @@ namespace SickOfIt.Core.UI.Menus
             var fitter = Content.GetComponent<ContentSizeFitter>();
             if (dir == MenuListDirection.Grid)
             {
-                Content.anchorMin = new Vector2(0f, 0.5f);
-                Content.anchorMax = new Vector2(1f, 0.5f);
-                Content.pivot = new Vector2(0.5f, 0.5f);
+                Content.anchorMin = new Vector2(0f, 1f);
+                Content.anchorMax = new Vector2(1f, 1f);
+                Content.pivot = new Vector2(0.5f, 1f);
                 Content.sizeDelta = new Vector2(0f, Content.sizeDelta.y);
                 var grid = Content.GetComponent<GridLayoutGroup>();
                 grid.cellSize = item;
                 grid.spacing = spacing;
                 grid.padding = padding;
-                grid.childAlignment = TextAnchor.MiddleCenter;
+                grid.childAlignment = TextAnchor.UpperCenter;
                 grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
                 float width = areaSize.x > 0f ? areaSize.x : Landscape.size.x;
                 int fit = Mathf.Max(1, Mathf.FloorToInt((width - Pad * 2f + spacing.x) / (item.x + spacing.x)));
@@ -401,7 +401,9 @@ namespace SickOfIt.Core.UI.Menus
                     var any = button.GetComponentInChildren<TextMeshProUGUI>();
                     label = any != null ? Tags.Replace(any.text ?? "", "").Trim() : "";
                 }
-                Add(result, seen, slot, $"button \"{(label.Length > 0 ? label : slot.name)}\"", MenuElementKind.Button, true);
+                string name = $"button \"{(label.Length > 0 ? label : slot.name)}\"";
+                Add(result, seen, slot, name, MenuElementKind.Button, true);
+                CheckListItem(result, slot, name);
             }
             foreach (var button in Object.FindObjectsByType<MobileControllerFramework.Button>(FindObjectsSortMode.None))
             {
@@ -490,6 +492,22 @@ namespace SickOfIt.Core.UI.Menus
                     touch = false; // partly scrolled out: its size on screen isn't its real size
             }
             result.Boxes.Add(new Box { Name = name, Kind = kind, Screen = screen, Transform = rect, Touch = touch });
+        }
+
+        static void CheckListItem(Result result, Transform target, string name)
+        {
+            if (!(target is RectTransform rect) || rect.parent == null || !rect.parent.TryGetComponent<MenuListMarker>(out var marker) || marker.Layout == null)
+                return;
+            var scroll = marker.Layout.Scroll;
+            if (scroll == null || scroll.viewport == null || !scroll.vertical || scroll.content.anchoredPosition.y > 1f)
+                return;
+            if (!ScreenRect(rect, out var screen) || !ScreenRect(scroll.viewport, out var clip, true))
+                return;
+            if (screen.yMax > clip.yMax + 2f)
+                result.Problems.Add($"{name} is clipped at the top of its list ({Describe(screen)}, viewport {Describe(clip)})");
+            // When the content fits (or barely exceeds) the viewport at rest, no item should be clipped at the bottom either.
+            if (scroll.content.rect.height <= scroll.viewport.rect.height + 2f && screen.yMin < clip.yMin - 2f)
+                result.Problems.Add($"{name} is clipped at the bottom of its list ({Describe(screen)}, viewport {Describe(clip)})");
         }
 
         /// <summary>The element's rest rectangle in screen pixels, ignoring its own animated scale and tilt.</summary>

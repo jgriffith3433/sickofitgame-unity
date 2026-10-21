@@ -49,11 +49,12 @@ namespace SickOfIt.Core.UI.Menus
     /// </summary>
     public static class MenuCard
     {
-        public static MenuCardView Add(MenuCanvas menu, RectTransform list, MenuCardData data, Action onClick)
+        public static MenuCardView Add(MenuCanvas menu, RectTransform list, MenuCardData data, Action onClick, MenuButtonStyle styleOverride = null)
         {
             var theme = menu.Theme;
+            var cardStyle = styleOverride ?? theme.card;
             bool locked = !string.IsNullOrEmpty(data.LockedStamp);
-            var card = menu.AddButton(list, null, theme.card, onClick);
+            var card = menu.AddButton(list, null, cardStyle, onClick);
             var content = card.Content;
             bool picture = data.Picture != null || data.PictureArea;
 
