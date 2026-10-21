@@ -457,6 +457,7 @@ namespace SickOfIt.Core.Progression
             nextWarden.color = theme.accent;
             subtitle = Line("Subtitle", "", theme.subtitle, 40f, config.subtitle, config.subtitlePortrait, out _);
             subtitle.fontStyle &= ~FontStyles.UpperCase;
+            subtitle.textWrappingMode = TextWrappingModes.Normal;
             subtitle.transform.parent.gameObject.SetActive(false);
             skipHint = Line("SkipHint", texts.shaftSkipHint, theme.caption, 26f,
                 MenuPlacement.At(config.continueButton.anchor.x, config.continueButton.anchor.y, config.continueButton.offset.x, config.continueButton.offset.y, 600f, 50f),
