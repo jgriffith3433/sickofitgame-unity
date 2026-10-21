@@ -461,9 +461,9 @@ namespace SickOfIt.Gameplay
             }
 
             Entity standingOn = null;
-            Entity best = null;
-            float bestScore = float.MaxValue;
-            Bounds bestBounds = default;
+            Entity best = null, bestUp = null;
+            float bestScore = float.MaxValue, bestUpScore = float.MaxValue;
+            Bounds bestBounds = default, bestUpBounds = default;
             bool bestIsChain = false;
             foreach (var e in world.Live)
             {
@@ -508,8 +508,22 @@ namespace SickOfIt.Gameplay
                 float gain = Vector2.Dot(point - new Vector2(me.x, fromY), forward);
                 if (Mathf.Abs(forward.x) > 0.1f)
                     gain = Mathf.Max(gain, (b.center.x - me.x) * Mathf.Sign(forward.x) - 0.3f);
+                if (airborne && e == chasing && rise > 0.35f)
+                    gain = Mathf.Max(gain, rise);
                 if (gain < 0.35f)
+                {
+                    if (!chain && rise > 0.5f)
+                    {
+                        float upScore = rise + edge * 0.8f;
+                        if (upScore < bestUpScore)
+                        {
+                            bestUpScore = upScore;
+                            bestUp = e;
+                            bestUpBounds = b;
+                        }
+                    }
                     continue;
+                }
                 float score = gain + edge * 0.8f - (chain ? 0.6f : 0f);
                 // The carved landing within a short jump ends the floor: go for it. Scored by its far-off middle (it is 6 wide),
                 // it lost to the ledge tucked under it, and the bot pushed into the landing's side chasing that one for the whole
@@ -523,6 +537,14 @@ namespace SickOfIt.Gameplay
                     bestBounds = b;
                     bestIsChain = chain;
                 }
+            }
+            // If the camera rounded the corner into a sideways section while he is still a step below its footholds, climb that step first.
+            if (best == null && bestUp != null && Mathf.Abs(forward.x) > 0.1f
+                && (standingOn == null || standingOn.FindAbility<SickOfIt.Gameplay.Content.RaftAbility>() == null))
+            {
+                best = bestUp;
+                bestBounds = bestUpBounds;
+                bestIsChain = false;
             }
 
             bool grounded = controller.IsGrounded;

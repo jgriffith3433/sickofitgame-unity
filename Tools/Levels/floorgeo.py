@@ -12,7 +12,7 @@ def load_json(path):
     return json.loads(text)
 
 def entity(name):
-    """The entity with its 'extends' chain merged (child fields win; abilities of the child replace by type)."""
+    """The entity with its 'extends' chain merged (objects merge recursively, lists replace, matching GameContent.cs)."""
     if name in _cache:
         return _cache[name]
     path = os.path.join(ENT, name + '.json')
@@ -24,12 +24,7 @@ def entity(name):
     if base:
         merged = json.loads(json.dumps(base))
         for k, v in d.items():
-            if k == 'abilities':
-                byType = {a.get('type'): a for a in merged.get('abilities', [])}
-                for a in v:
-                    byType[a.get('type')] = a
-                merged['abilities'] = list(byType.values())
-            elif k == 'body' and v:
+            if k == 'body' and v:
                 merged['body'] = {**merged.get('body', {}), **v}
             elif v is not None:
                 merged[k] = v
