@@ -176,8 +176,12 @@ namespace SickOfIt.Core.UI.Menus
             if (Touch && MenuScreen.TouchLayout(style))
                 size = Vector2.Max(size, Vector2.one * style.minTouchSize);
 
-            float margin = portrait ? Mathf.Max(0f, style.portraitMargin) : 0f;
-            Vector2 room = parentSize - Vector2.one * (2f * margin);
+            float marginX = portrait
+                ? Mathf.Max(Kind == MenuElementKind.Text ? 32f : 0f, style.portraitMargin)
+                : (Kind == MenuElementKind.Text ? 36f : 0f);
+            float marginY = portrait ? Mathf.Max(0f, style.portraitMargin) : 0f;
+            Vector2 margin = new Vector2(marginX, marginY);
+            Vector2 room = parentSize - margin * 2f;
             rect.anchorMin = rect.anchorMax = place.anchor;
             rect.pivot = PivotAtAnchor ? place.anchor : new Vector2(0.5f, 0.5f);
             if (ControlsSize)
@@ -197,8 +201,9 @@ namespace SickOfIt.Core.UI.Menus
                 for (int axis = 0; axis < 2; axis++)
                 {
                     float extent = parentSize[axis];
+                    float edgeMargin = margin[axis];
                     float start = place.anchor[axis] * extent + position[axis] - rect.pivot[axis] * actual[axis];
-                    float low = margin, high = extent - margin - actual[axis];
+                    float low = edgeMargin, high = extent - edgeMargin - actual[axis];
                     start = high < low ? (extent - actual[axis]) * 0.5f : Mathf.Clamp(start, low, high);
                     position[axis] = start - place.anchor[axis] * extent + rect.pivot[axis] * actual[axis];
                 }

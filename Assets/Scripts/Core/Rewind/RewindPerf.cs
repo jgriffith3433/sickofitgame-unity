@@ -50,6 +50,8 @@ namespace SickOfIt.Core.Rewind
         public static readonly Stats AfterRewind = new Stats();
         /// <summary>The rewind going on (or the last one): reset when one starts.</summary>
         public static readonly Stats Current = new Stats();
+        /// <summary>The first <see cref="AfterFrames"/> frames after the last rewind stopped.</summary>
+        public static readonly Stats CurrentAfter = new Stats();
 
         public const int AfterFrames = 3;
 
@@ -74,7 +76,9 @@ namespace SickOfIt.Core.Rewind
             Rewinding.Reset();
             AfterRewind.Reset();
             Current.Reset();
+            CurrentAfter.Reset();
             Rewinds = 0;
+            afterLeft = 0;
             WorstStepAfterRewind = 0f;
         }
 
@@ -97,8 +101,15 @@ namespace SickOfIt.Core.Rewind
             {
                 afterLeft--;
                 AfterRewind.Add(frameMs, workMs);
+                CurrentAfter.Add(frameMs, workMs);
                 if (clockStep > WorstStepAfterRewind)
                     WorstStepAfterRewind = clockStep;
+                if (afterLeft == 0)
+                {
+                    string line = $"[RewindPerf] after rewind {Rewinds}: {CurrentAfter}, longest clock step {WorstStepAfterRewind * 1000f:0.0} ms";
+                    UnityEngine.Debug.Log(line);
+                    Reported?.Invoke(line);
+                }
                 return;
             }
             Forward.Add(frameMs, workMs);
@@ -108,6 +119,7 @@ namespace SickOfIt.Core.Rewind
         {
             Rewinds++;
             Current.Reset();
+            CurrentAfter.Reset();
             rewindStartedAt = clockTime;
             Rewindables = rewindables;
             ActiveRewindables = active;

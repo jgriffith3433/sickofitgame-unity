@@ -309,11 +309,11 @@ namespace SickOfIt.Data.Config
         {
             diamonds = MenuPlacement.At(1f, 1f, -140f, -48f),
             pause = MenuPlacement.At(1f, 1f, -80f, -78f, 88f, 88f),
-            rewind = MenuPlacement.At(1f, 1f, -112f, -214f, 124f, 124f),
+            rewind = MenuPlacement.At(1f, 1f, -140f, -214f, 124f, 124f),
             floor = MenuPlacement.At(0.5f, 1f, 0f, -40f),
             bossBar = MenuPlacement.At(0.5f, 1f, 0f, -112f, 780f, 54f),
             bossBarWithFloor = MenuPlacement.At(0.5f, 1f, 0f, -184f, 780f, 54f),
-            objective = MenuPlacement.At(0f, 1f, 436f, -150f, 800f, 44f),
+            objective = MenuPlacement.At(0f, 1f, 416f, -150f, 740f, 48f),
             banner = MenuPlacement.At(0.5f, 0.52f, 0f, 0f, 1100f, 150f),
             subtitle = MenuPlacement.At(0.5f, 0.2f, 0f, 0f, 1600f, 90f),
             rewinding = MenuPlacement.At(0.5f, 0.8f, 0f, 0f, 1200f, 130f),
@@ -334,7 +334,7 @@ namespace SickOfIt.Data.Config
             floor = MenuPlacement.At(0.5f, 1f, 0f, -176f),
             bossBar = MenuPlacement.At(0.5f, 1f, 0f, -430f, 960f, 54f),
             bossBarWithFloor = MenuPlacement.At(0.5f, 1f, 0f, -430f, 960f, 54f),
-            objective = MenuPlacement.At(0.5f, 1f, 0f, -300f, 1000f, 48f),
+            objective = MenuPlacement.At(0.5f, 1f, 0f, -300f, 920f, 48f),
             banner = MenuPlacement.At(0.5f, 0.52f, 0f, 0f, 1000f, 150f),
             subtitle = MenuPlacement.At(0.5f, 0.3f, 0f, 0f, 1000f, 150f),
             rewinding = MenuPlacement.At(0.5f, 1f, 0f, -620f, 1000f, 130f),
@@ -535,7 +535,13 @@ namespace SickOfIt.Data.Config
         public MenuTextStyle subtitle = new MenuTextStyle { fontSize = 44f };
         public MenuTextStyle heading = new MenuTextStyle { fontSize = 40f };
         public MenuTextStyle body = new MenuTextStyle { fontSize = 28f, bold = false, outlineWidth = 0f };
-        public MenuTextStyle caption = new MenuTextStyle { fontSize = 26f };
+        public MenuTextStyle caption = new MenuTextStyle
+        {
+            fontSize = 26f,
+            outlineWidth = 0.22f,
+            shadowColor = new Color(0.118f, 0.071f, 0.125f, 0.85f),
+            shadowOffset = new Vector2(3f, -3f),
+        };
 
         public MenuButtonStyle button = new MenuButtonStyle();
         public MenuButtonStyle backButton = new MenuButtonStyle { size = new Vector2(240f, 90f) };
