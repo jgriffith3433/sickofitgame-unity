@@ -39,10 +39,10 @@
     "title": {
       "show": true,
       "text": "Yooba's Goods",
-      "anchor": [0.5, 0.885],
+      "anchor": [0.475, 0.9],
       "offset": [0.0, 0.0],
-      "rotation": -3.0,
-      "fontSize": 140.0,
+      "rotation": -2.0,
+      "fontSize": 122.0,
       "motion": {
         "type": "Wobble",
         "amount": 1.5,
@@ -106,15 +106,15 @@
       {
         "text": "No\ntabs!",
         "style": "caption",
-        "fontSize": 28.0,
+        "fontSize": 20.0,
         "textColor": "#1E1220",
         "shape": "Burst",
         "sprite": null,
         "fill": "#FF5B3A",
         "borderColor": "#1E1220",
-        "borderWidth": 6.0,
-        "size": [0.0, 0.0],
-        "anchor": [0.84, 0.84],
+        "borderWidth": 5.0,
+        "size": [108.0, 108.0],
+        "anchor": [0.85, 0.832],
         "offset": [0.0, 0.0],
         "rotation": 10.0,
         "motion": {
