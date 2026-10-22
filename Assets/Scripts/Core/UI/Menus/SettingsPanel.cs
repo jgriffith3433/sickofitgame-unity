@@ -154,6 +154,7 @@ namespace SickOfIt.Core.UI.Menus
 
         public static Overlay Create(MenuCanvas menu, string name, float dim)
         {
+            menu.ResetEntranceCascade();
             var image = MenuGraphics.NewImage(menu.transform, name, new Color(0.07f, 0.04f, 0.09f, dim));
             image.raycastTarget = true; // blocks clicks to whatever is underneath
             image.gameObject.AddComponent<MenuLayer>();

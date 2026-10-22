@@ -182,6 +182,9 @@ namespace SickOfIt.Core.UI.Menus
             scaler.referenceResolution = portrait && tall.x > 0f && tall.y > 0f ? tall : landscape;
         }
 
+        /// <summary>Starts the entrance cascade over, so a popup opened later doesn't wait behind everything the canvas ever built.</summary>
+        public void ResetEntranceCascade() => entranceIndex = 0;
+
         float NextDelay(MenuEntrance entrance) => entrance == null ? 0f : entrance.delay + entranceIndex++ * entrance.stagger;
 
         public MenuTextStyle StyleNamed(string name)
