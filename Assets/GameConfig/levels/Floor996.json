@@ -151,7 +151,7 @@
             {
               "entity": "lavaGeyserB",
               "at": [
-                12.6,
+                13.2,
                 1.85
               ],
               "id": "vent2"
@@ -213,7 +213,7 @@
             {
               "entity": "lavaGeyserC",
               "at": [
-                24.6,
+                25.1,
                 1.85
               ],
               "id": "vent6"
