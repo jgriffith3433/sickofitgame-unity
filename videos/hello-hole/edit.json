@@ -159,6 +159,16 @@
    "seconds": 2.48,
    "dialogue": true,
    "label": "ANNOUNCER: FLOOR ONE THOUSAND!"
+  },
+  {
+   "asset": "a_bd4d069c1c0af8fa",
+   "start": 21.5,
+   "seconds": 10.7,
+   "volume": 0.5,
+   "fadeIn": 1.5,
+   "fadeOut": 1.2,
+   "duck": true,
+   "label": "Hell drone"
   }
  ],
  "captions": [

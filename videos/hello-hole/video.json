@@ -21,8 +21,8 @@
   }
  },
  "tableRead": "j_ebac1a5e8865 (asset a_e2311f2c297e630f)",
- "cut": "a_1ab1d4fb7500774b",
- "poster": "a_fad6269c06c5d9f9",
+ "cut": "a_713a62150b34140d",
+ "poster": "a_60b24a72e7797fd9",
  "critic": {
   "score": 6.2,
   "scores": {
@@ -35,5 +35,5 @@
    "sound": 5.6
   }
  },
- "pendingMusic": "j_88741bd39187"
+ "music": "a_bd4d069c1c0af8fa (j_88741bd39187)"
 }
