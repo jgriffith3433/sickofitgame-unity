@@ -1,0 +1,39 @@
+{
+ "slug": "hello-hole",
+ "stage": "animatic",
+ "cast": {
+  "Hero": {
+   "voice": "DzkD7I4tf5i3KSaB4cz5",
+   "ref": "a_ecf93ff3d94a333b"
+  },
+  "Hell": {
+   "voice": "A5KBJzxznyU8QeeRqyiY"
+  },
+  "Yooba": {
+   "voice": "EdDvd8GSdCyZwUcsPawi",
+   "ref": "a_4147dc6342c792a4 (pixel redraw of a_c6cc0b4db334567c)"
+  },
+  "Announcer": {
+   "voice": "1xynpTfy7I462pPrU2kL"
+  },
+  "Overlord": {
+   "ref": "stills a_99269240456c1b4a/a_7d459b21c9135def"
+  }
+ },
+ "tableRead": "j_ebac1a5e8865 (asset a_e2311f2c297e630f)",
+ "cut": "a_1ab1d4fb7500774b",
+ "poster": "a_fad6269c06c5d9f9",
+ "critic": {
+  "score": 6.2,
+  "scores": {
+   "story": 6.5,
+   "pacing": 5.5,
+   "voices": 6.2,
+   "lipsync": 4.8,
+   "movement": 5.8,
+   "consistency": 6.4,
+   "sound": 5.6
+  }
+ },
+ "pendingMusic": "j_88741bd39187"
+}

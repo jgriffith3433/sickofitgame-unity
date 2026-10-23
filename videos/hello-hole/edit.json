@@ -1,0 +1,206 @@
+{
+ "width": 1080,
+ "height": 1920,
+ "fps": 24,
+ "burn": true,
+ "clips": [
+  {
+   "asset": "a_9e37307d0db50999",
+   "in": 0,
+   "out": 4,
+   "beat": "overlord",
+   "label": "WS Overlord turns away"
+  },
+  {
+   "asset": "a_fd50200fe0e2d3e9",
+   "in": 0,
+   "out": 4,
+   "beat": "hole",
+   "label": "MS hero looks into hole"
+  },
+  {
+   "asset": "a_ab519b3e4e0699b0",
+   "in": 0,
+   "out": 4.3,
+   "beat": "where",
+   "label": "CU hero: So that's where... Hello?"
+  },
+  {
+   "asset": "a_79607b3cc6f35350",
+   "in": 0,
+   "out": 5,
+   "beat": "echo",
+   "label": "WS hole echoes"
+  },
+  {
+   "asset": "a_5aec1d7c0de378c3",
+   "in": 0,
+   "out": 2.8,
+   "beat": "nope",
+   "label": "CU hero: Nope."
+  },
+  {
+   "asset": "a_ac160c6c75f8bf8b",
+   "in": 0,
+   "out": 2.5,
+   "beat": "suck",
+   "label": "WS hero sucked in"
+  },
+  {
+   "asset": "a_d707a18edcac4a19",
+   "in": 0,
+   "out": 2.5,
+   "beat": "yooba",
+   "label": "WS Yooba slurped in"
+  },
+  {
+   "asset": "a_153392510e089ec7",
+   "in": 0,
+   "out": 3,
+   "beat": "seal",
+   "label": "WS hole seals, diamond"
+  },
+  {
+   "asset": "a_ba1a114d8643a368",
+   "in": 0,
+   "out": 2.6,
+   "beat": "floor",
+   "label": "WS Floor 1000"
+  },
+  {
+   "asset": "a_ba1a114d8643a368",
+   "in": 2.5,
+   "out": 4,
+   "beat": "endcard",
+   "label": "end card"
+  }
+ ],
+ "audio": [
+  {
+   "asset": "a_d27fd45473b449ba",
+   "start": 4.6,
+   "seconds": 1.04,
+   "dialogue": true,
+   "label": "HERO: That's a hole."
+  },
+  {
+   "asset": "a_15c36bf35336aa2c",
+   "start": 7.2,
+   "seconds": 1.5,
+   "dialogue": false,
+   "label": "clink"
+  },
+  {
+   "asset": "a_feb9ee8bc422fb3c",
+   "start": 8.3,
+   "seconds": 2.8,
+   "dialogue": true,
+   "label": "HERO: So that's where..."
+  },
+  {
+   "asset": "a_b0a222aa1a35c61e",
+   "start": 11.4,
+   "seconds": 0.8,
+   "dialogue": true,
+   "label": "HERO: Hello?"
+  },
+  {
+   "asset": "a_e082d7e4133610d6",
+   "start": 12.4,
+   "seconds": 2.0,
+   "dialogue": true,
+   "label": "HELL: Hello?"
+  },
+  {
+   "asset": "a_6b57415c4f08cfb3",
+   "start": 14.5,
+   "seconds": 2.0,
+   "dialogue": true,
+   "label": "HELL: Hello?"
+  },
+  {
+   "asset": "a_c413bae4b86f310c",
+   "start": 16.6,
+   "seconds": 1.4,
+   "dialogue": true,
+   "label": "HELL: HELLO."
+  },
+  {
+   "asset": "a_79374fa234d063a8",
+   "start": 18.5,
+   "seconds": 1.2,
+   "dialogue": true,
+   "label": "HERO: Nope."
+  },
+  {
+   "asset": "a_c1b55709cd40bedf",
+   "start": 20.0,
+   "seconds": 3,
+   "dialogue": false,
+   "label": "inhale"
+  },
+  {
+   "asset": "a_7ae678f7d3fcd83c",
+   "start": 22.8,
+   "seconds": 2.64,
+   "dialogue": true,
+   "label": "YOOBA: Mmf. Wait for meee\u2014"
+  },
+  {
+   "asset": "a_591686d5a805de0c",
+   "start": 24.3,
+   "seconds": 1.5,
+   "dialogue": false,
+   "label": "slurp"
+  },
+  {
+   "asset": "a_4958a99a4ad9bbe5",
+   "start": 28.3,
+   "seconds": 2.48,
+   "dialogue": true,
+   "label": "ANNOUNCER: FLOOR ONE THOUSAND!"
+  }
+ ],
+ "captions": [
+  {
+   "text": "That's a hole.",
+   "start": 4.6,
+   "end": 5.7
+  },
+  {
+   "text": "So that's where they keep coming from.",
+   "start": 8.3,
+   "end": 11.1
+  },
+  {
+   "text": "Hello?",
+   "start": 11.4,
+   "end": 12.2
+  },
+  {
+   "text": "Hello? ... Hello? ... HELLO.",
+   "start": 12.4,
+   "end": 18
+  },
+  {
+   "text": "Nope.",
+   "start": 18.5,
+   "end": 19.7
+  },
+  {
+   "text": "Mmf. Wait for meee\u2014",
+   "start": 22.8,
+   "end": 25.4
+  },
+  {
+   "text": "FLOOR ONE THOUSAND!",
+   "start": 28.3,
+   "end": 30.7
+  },
+  {
+   "text": "SICK OF IT\nMade with Hawkes Gen \u00b7 hawkesgen.com",
+   "start": 30.7,
+   "end": 32.2
+  }
+ ]
+}

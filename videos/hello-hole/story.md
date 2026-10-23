@@ -1,0 +1,4 @@
+Logline: A deadpan hero peers into the hole the Overlord burned in his village, calls down it as a joke, gets a Hell that answers back louder each time, says "Nope", and is sucked in anyway, with Yooba the slime slurped in after him: that is how a nobody ended up on Floor 1,000.
+Hero: wants to be left alone; unimpressed by everything, even Hell. Yooba: wants to keep up with his friend (and keep his diamonds hidden); chatty, wet, late. Hell: answers any call, each echo deeper.
+Turn: the third echo, HELLO, comes back huge; the hero's flat "Nope." is the joke, and the hole ignores his opinion. Payoff: the slurp, one diamond left on the grass, the announcer's FLOOR ONE THOUSAND.
+Why it matters: it is the game's prologue (Docs/Story.md, Prologue): the hero never chose to go. For someone who has never seen the game it reads as a complete gag.
