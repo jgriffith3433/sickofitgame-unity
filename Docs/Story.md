@@ -299,6 +299,14 @@ the fire, and the whole stretch of floor the flood will cover glowing red before
 Video3 (Yooba, talking) plays after **The Landing** (Floor 1000, and the Shaft's climb to 999): the slime from the meadow turns up at the bottom of Hell,
 pleased to see a familiar face, and coughs up a diamond. From then on Yooba is the shop.
 
+**Video3's redo (J, 2026-10-24: the old footage "doesn't fit").** The talking slime is the old game's footage, not the
+Landing. The new Video3 is ~25-30 s, six shots, no talking head: (1) the Landing's lava shore, the hero face down in the
+ash where Video2's tunnel spat him; (2) he sits up, deadpan, looks at the lava sea; announcer, far off: *"WELCOME TO THE
+BOTTOM."*; (3) something wet slaps down behind him, a green blob with two eyestalks: Yooba, from the village; (4) Yooba
+gurgles hello, the hero looks at him a long beat; (5) Yooba coughs up a diamond, holds it out, delighted; (6) the hero
+takes it, looks up the dark Shaft: *"...Great."* The Shaft's hello (Floor 999) then picks up from there. Hero in the
+Meadow's clothes, Landing in the game's lava palette, Yooba as his portrait (`ui/yooba.json`); no office jokes.
+
 ### Circle IX: the Cracked Road (one level per floor)
 
 Black spires with glowing seams over a road of cooling rock, the Rift's magma glowing in its cracks far below. The road

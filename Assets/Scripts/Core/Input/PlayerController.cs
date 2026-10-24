@@ -124,6 +124,7 @@ namespace SickOfIt.Core.Input
         private static readonly int FireHash = Animator.StringToHash("Fire");
         private static readonly int FiringHash = Animator.StringToHash("Firing");
         private static readonly int FireStateHash = Animator.StringToHash("Fire");
+        private static readonly int WalkStateHash = Animator.StringToHash("Walk");
         // Which optional fire parameters the generated controller has (null until the animator is inspected).
         private bool? animatorHasFiring;
         private bool animatorHasFireTrigger;
@@ -560,12 +561,17 @@ namespace SickOfIt.Core.Input
         
         private void CheckGrounded()
         {
-            Vector2 boxSize = new Vector2(groundCheckWidth, groundCheckDistance);
+            // Lenient on uneven ground: the box spans most of his feet (a slope, a step or a ledge edge under only one side
+            // still counts), and a jump pressed just before landing or just after walking off still works.
+            float width = Mathf.Max(groundCheckWidth, col.bounds.size.x * 0.9f);
+            Vector2 boxSize = new Vector2(width, groundCheckDistance);
             Vector2 boxCenter = (Vector2)transform.position + col.offset + Vector2.down * (col.bounds.extents.y + groundCheckDistance * 0.5f);
-            
+
             bool wasGrounded = isGrounded;
-            
+
             isGrounded = FindGround(boxCenter, boxSize, out groundCollider);
+            if (isGrounded)
+                lastGroundedTime = Time.time;
 
             if (isGrounded && !wasGrounded)
             {
@@ -852,7 +858,7 @@ namespace SickOfIt.Core.Input
             for (int i = 0; i < n; i++)
             {
                 var hit = footholdHits[i];
-                if (hit == null || !hit.enabled || hit.attachedRigidbody == rb || !DropThroughPlatform.IsOneWay(hit) || IsDroppingThrough(hit))
+                if (hit == null || !hit.enabled || hit.attachedRigidbody == rb || !DropThroughPlatform.IsOneWay(hit) || IsDroppingThrough(hit) || hit.TryGetComponent<NoDropThrough>(out _))
                     continue;
                 if (hit.bounds.max.y > b.min.y + 0.12f)
                     continue;
@@ -1067,13 +1073,19 @@ namespace SickOfIt.Core.Input
         
         private void HandleJump()
         {
-            if (!jumpRequested) return;
-            jumpRequested = false;
+            if (jumpRequested)
+            {
+                jumpRequested = false;
+                lastJumpPressTime = Time.time;
+            }
+            // A press stays good for a moment (landing a hair late) ...
+            if (Time.time - lastJumpPressTime > JumpBufferSeconds) return;
 
             if (held)
             {
                 // Jumping off a chain: let go with its swing plus a jump.
                 ReleaseHold();
+                lastJumpPressTime = float.NegativeInfinity;
                 jumpedOffHold = true;
                 swingMomentum = heldVelocity.x;
                 isGrounded = false;
@@ -1081,17 +1093,28 @@ namespace SickOfIt.Core.Input
                 return;
             }
 
-            if (isGrounded)
+            bool fresh = lastJumpPressTime == Time.time;
+            // ... and just after leaving a surface he can still jump off it (not while already rising).
+            bool coyote = Time.time - lastGroundedTime <= CoyoteSeconds && (rb == null || rb.linearVelocity.y <= 0.1f);
+            if (isGrounded || coyote)
             {
+                lastJumpPressTime = float.NegativeInfinity;
+                lastGroundedTime = float.NegativeInfinity;
                 Jump();
                 airJumpsRemaining = maxAirJumps;
             }
-            else if (airJumpsRemaining > 0)
+            else if (fresh && airJumpsRemaining > 0)
             {
+                lastJumpPressTime = float.NegativeInfinity;
                 Jump();
                 airJumpsRemaining--;
             }
         }
+
+        private const float CoyoteSeconds = 0.12f;
+        private const float JumpBufferSeconds = 0.12f;
+        private float lastGroundedTime = float.NegativeInfinity;
+        private float lastJumpPressTime = float.NegativeInfinity;
         
         private void Jump()
         {
@@ -1301,6 +1324,9 @@ namespace SickOfIt.Core.Input
                 SickOfIt.Core.Fx.Fx.Flash(muzzle, new Color(1f, 0.85f, 0.45f, 0.35f), 0.26f, 0.06f);
 
             // Restart the fire clip on every shot so the muzzle flash lines up with the projectile.
+            // Walking on the ground, keep the walk clip going (no standing fire pose while his legs move).
+            if (animator != null && IsWalkingOnGround() && animator.HasState(0, WalkStateHash))
+                return;
             if (animator != null && animator.HasState(0, FireStateHash))
                 animator.Play(FireStateHash, 0, 0f);
             else if (animator != null && AnimatorHasFireTrigger())
@@ -1327,6 +1353,8 @@ namespace SickOfIt.Core.Input
             return animatorHasFiring == true;
         }
 
+        private bool IsWalkingOnGround() => isGrounded && Mathf.Abs(moveInput.x) > 0.1f;
+
         private bool AnimatorHasFireTrigger()
         {
             AnimatorHasFiring();
@@ -1341,6 +1369,10 @@ namespace SickOfIt.Core.Input
             if (AnimatorHasFiring())
                 animator.SetBool(FiringHash, isFiring && enableShooting);
             animator.SetFloat(VelocityXHash, Mathf.Abs(moveInput.x));
+            // Fire was entered standing; once he walks, move on to the walk clip (Walk -> Idle handles stopping).
+            if (isFiring && IsWalkingOnGround() && animator.HasState(0, WalkStateHash)
+                && animator.GetCurrentAnimatorStateInfo(0).shortNameHash == FireStateHash)
+                animator.Play(WalkStateHash, 0, 0f);
             
             if (rb != null)
             {

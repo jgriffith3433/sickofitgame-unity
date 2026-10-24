@@ -322,6 +322,15 @@ def check(name, verbose=False):
             if text_y < low:
                 out.append(f"  ! landing: its carved number (y {text_y:.2f}) is below the screen's bottom (camera y "
                            f"{land_sec['start'][1]:.2f}): shorten the climb before it")
+    if landing is not None and not landing.oneWay:
+        # A foothold under the solid landing, close enough that its underside stops a jump from it: he ends up below the end.
+        for f in feet_all:
+            if f is landing or isinstance(f, (Chain, Draft)) or getattr(f, 'liftOf', None) is not None:
+                continue
+            ox = min(f.box[2], landing.box[2]) - max(f.box[0], landing.box[0])
+            if ox > 0.2 and f.top < landing.box[1] and landing.box[1] - f.top < 2 * R + 2.4:
+                out.append(f"  ! landing: {f} sits under the landing's underside (y {landing.box[1]:.2f}, {landing.box[1] - f.top:.2f} over it): "
+                           "he ends up below the end; move it clear of the landing's x range")
     if landing is None:
         out.append("  ! no landing")
     elif id(landing) not in reached:

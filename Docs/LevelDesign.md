@@ -243,7 +243,7 @@ needs it. A good floor mixes them: climb a lava fall, cross a river on a raft, r
 - **Footholds are one-way.** Every stone, ledge, raft, lift and counterweight (`body.oneWay`) can be jumped up through
   from below (he lands on top) and dropped through by holding down for a moment (S, the stick or the move touch pulled well down, close to straight
   down, for player.json `dropThroughHoldSeconds`: a brush of down or a run with the stick a little low never drops him); the
-  landing, the slag flows, the ground and the walls stay solid. So a foothold straight over another is a way up, and
+  slag flows, the ground and the walls stay solid. The landing is one-way too (jump up through it from below, land on top) but can't be dropped through (`NoDropThrough`), so a ledge under it is never a dead end. So a foothold straight over another is a way up, and
   one straight under the piece he stands on is a way down (the bot drops for it). The `one-way` playtest shows both.
 - **Lava is a hot bath, not a pit.** Touching lava burns (one hit) and throws him up out of it (`scald`), so a lost step
   costs health and time, never the whole floor.
@@ -271,7 +271,7 @@ one-way ledge straight over a stone with less than the jump's 2.29 between the s
 from the stone rises into the ledge and falls back short of its top (Floor 1000's rest ledge over stone2; the bot now
 keeps steering for the foothold it jumped for, judged from the take-off (`PlaytestBot.Climb`: no new foothold over the
 jump's top, the stone it left out until it lands), but a player under it gets the same dead hop), and never hang the solid
-landing (`floorLanding`, 6 wide, not one-way) over a lower foothold of the climb where its underside blocks the jump to the
+landing (`floorLanding`, 6 wide; solid before, now one-way so this is no longer a trap) over a lower foothold of the climb where its underside blocks the jump to the
 next step (`Floor 998`: `floorLanding998` at y 7.3..7.9 hung over `wreckSign` at y 5.7 and blocked the jump to `spireFoot` at
 y 7.05 while the camera's look-ahead had already switched to the sideways landing section; `floor_check.py` flags it, and the
 bot climbs a remaining step above it when the camera rounds into a sideways section early). A lava river's box starts
