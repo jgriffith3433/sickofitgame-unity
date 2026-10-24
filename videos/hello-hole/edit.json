@@ -1,7 +1,7 @@
 {
  "width": 1080,
  "height": 1920,
- "fps": 24,
+ "fps": 48,
  "burn": true,
  "fit": "crop",
  "clips": [
@@ -148,12 +148,18 @@
    "sound": false
   },
   {
-   "asset": "a_487f0ac9a737ba59",
+   "asset": "a_171389058e978daa",
    "in": 0,
    "out": 2.0,
    "beat": "suck",
-   "label": "WS the hole inhales, hero dragged off his feet, arms out",
-   "sound": false
+   "label": "WS the hole inhales, hero dragged off his feet, arms out (FILM x2, push toward the hole)",
+   "sound": false,
+   "zoom": {
+    "from": 1,
+    "to": 1.25,
+    "x": 0.5,
+    "y": 0.8
+   }
   },
   {
    "asset": "a_470b63a8616e4e27",

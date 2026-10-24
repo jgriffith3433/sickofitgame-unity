@@ -21,13 +21,13 @@
   }
  },
  "tableRead": "j_ebac1a5e8865 (asset a_e2311f2c297e630f)",
- "cut": "a_196697687c80ed4f",
- "poster": "a_98061348b5dc3419",
+ "cut": "a_189e28309c51a505",
+ "poster": "a_2d4b8166bc24093b",
  "critic": {
   "note": "video.review failed (Gemini 429) on v3; judged frames by hand"
  },
  "music": "a_bd4d069c1c0af8fa (j_88741bd39187)",
- "version": 5,
+ "version": 6,
  "v3Stills": {
   "wideBoth": "a_f63e2a7d7b48c0b2",
   "echoA": "a_4f8431ec5887707e",

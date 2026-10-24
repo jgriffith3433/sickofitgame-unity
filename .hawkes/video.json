@@ -1,7 +1,7 @@
 {
- "asset": "a_196697687c80ed4f",
- "poster": "a_98061348b5dc3419",
- "seconds": 31.46,
+ "asset": "a_189e28309c51a505",
+ "poster": "a_2d4b8166bc24093b",
+ "seconds": 31.44,
  "stage": "final",
  "story": "Logline: A deadpan hero peers into the hole the Overlord burned in his village, calls down it as a joke, gets a Hell that answers back louder each time, says \"Nope\", and is sucked in anyway, with Yooba the slime slurped in after him: that is how a nobody ended up on Floor 1,000.\nHero: wants to be left alone; unimpressed by everything, even Hell. Yooba: wants to keep up with his friend (and keep his diamonds hidden); chatty, wet, late. Hell: answers any call, each echo deeper.\nTurn: the third echo, HELLO, comes back huge; the hero's flat \"Nope.\" is the joke, and the hole ignores his opinion. Payoff: the slurp, one diamond left on the grass, the announcer's FLOOR ONE THOUSAND.\nWhy it matters: it is the game's prologue (Docs/Story.md, Prologue): the hero never chose to go. For someone who has never seen the game it reads as a complete gag.\n",
  "beats": [
@@ -201,7 +201,7 @@
  "edit": {
   "width": 1080,
   "height": 1920,
-  "fps": 24,
+  "fps": 48,
   "burn": true,
   "fit": "crop",
   "clips": [
@@ -348,12 +348,18 @@
     "sound": false
    },
    {
-    "asset": "a_487f0ac9a737ba59",
+    "asset": "a_171389058e978daa",
     "in": 0,
     "out": 2.0,
     "beat": "suck",
-    "label": "WS the hole inhales, hero dragged off his feet, arms out",
-    "sound": false
+    "label": "WS the hole inhales, hero dragged off his feet, arms out (FILM x2, push toward the hole)",
+    "sound": false,
+    "zoom": {
+     "from": 1,
+     "to": 1.25,
+     "x": 0.5,
+     "y": 0.8
+    }
    },
    {
     "asset": "a_470b63a8616e4e27",
@@ -592,5 +598,5 @@
   ]
  },
  "caption": "He just wanted to say hello. Hell said it back, louder. Sick Of It. #SickOfIt #pixelart #indiegame #comedy #hawkesgen hawkesgen.com",
- "summary": "v5, answering Studio's review of v4. Cause of the audio slip: the upscaled clips still carried the sound baked into the lipsync/i2v renders (the hero's Nope, Yooba's mumble, stray voices) and video.compose mixed it under the placed tracks. Every clip is now sound:false, so only the placed table-read stems, SFX and drone play. Per note: (1) 0:16 Hell's HELLO over Nope: placed Hell echo 3 stays at 12.84 (fire column) and Nope at 16.24; the baked clip audio that overlapped is gone. (2) 0:21 hero voice over Yooba: removed with the baked audio; only Yooba's stem plays at 21.38. (3) 0:27 Yooba line in Hell: removed; only the announcer plays. (4) 0:29 announcer cut: it runs 27.09-29.49, ends before the end card at 29.96, no clip audio competes. (5) 0:17 suction stepped: FILM x2 interpolation of the suck clip queued (j_0c50ca69e0fc); it will be swapped in when done. Critic not run (Gemini quota earlier); loudness-per-0.5s checked against the placed times."
+ "summary": "v6, answering Studio's review of v4. Cause of the audio slip: the upscaled clips still carried the sound baked into the lipsync/i2v renders (the hero's Nope, Yooba's mumble, stray voices) and video.compose mixed it under the placed tracks. Every clip is now sound:false, so only the placed table-read stems, SFX and drone play. Per note: (1) 0:16 Hell's HELLO over Nope: placed Hell echo 3 stays at 12.84 (fire column) and Nope at 16.24; the baked clip audio that overlapped is gone. (2) 0:21 hero voice over Yooba: removed with the baked audio; only Yooba's stem plays at 21.38. (3) 0:27 Yooba line in Hell: removed; only the announcer plays. (4) 0:29 announcer cut: it runs 27.09-29.49, ends before the end card at 29.96, no clip audio competes. (5) 0:17 suction stepped: the suck clip is now FILM-interpolated x2 (a_171389058e978daa) and the cut renders at 48 fps so the in-between frames show, plus a push-in toward the hole for the downward pull. The hero still stands then spreads his arms (the source render); a real vacuum drag would need a re-render of that clip. Critic not run (Gemini quota earlier); loudness-per-0.5s checked against the placed times."
 }
