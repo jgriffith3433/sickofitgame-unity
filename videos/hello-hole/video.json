@@ -1,6 +1,6 @@
 {
  "slug": "hello-hole",
- "stage": "animatic",
+ "stage": "final",
  "cast": {
   "Hero": {
    "voice": "DzkD7I4tf5i3KSaB4cz5",
@@ -21,13 +21,13 @@
   }
  },
  "tableRead": "j_ebac1a5e8865 (asset a_e2311f2c297e630f)",
- "cut": "a_a172d9aa62beed08",
- "poster": "a_14297989f795aec8",
+ "cut": "a_a1986393ab101a28",
+ "poster": "a_505d7a2a1e90bbca",
  "critic": {
   "note": "video.review failed (Gemini 429) on v3; judged frames by hand"
  },
  "music": "a_bd4d069c1c0af8fa (j_88741bd39187)",
- "version": 3,
+ "version": 4,
  "v3Stills": {
   "wideBoth": "a_f63e2a7d7b48c0b2",
   "echoA": "a_4f8431ec5887707e",
@@ -41,5 +41,29 @@
   "cuSmirk": "a_cba7b2a7c166b68c",
   "cuFlinch": "a_917c083cc4aa8c68",
   "card": "a_0d2c1a028d7e85c1"
+ },
+ "upscaleMap": {
+  "a_9795d13796aa9174": "a_dcc3e45672bedf31",
+  "a_882bfa7425f826e6": "a_e721259378d7a219",
+  "a_fe34085e2781dc92": "a_371bb4192082d9a6",
+  "a_66363cf706ff893f": "a_1f2140ab8581b191",
+  "a_cddb8e47d38eec22": "a_7f3abe75607244d3",
+  "a_be245dd8cd630504": "a_8b81eed0f6425ecf",
+  "a_d08fba4ba7ef1418": "a_84de35f9d2861033",
+  "a_301a7b9e74ea5ce5": "a_8012a52789f717f1",
+  "a_37817342b34a4fc9": "a_909954fdde0ea47a",
+  "a_3e6e2715aa0b2f5c": "a_4de3ea7ac27157bc",
+  "a_e88d39ffaa90a88c": "a_1a23002c5c8b2532",
+  "a_ba95f34b25471e23": "a_25121c1b84206e6a",
+  "a_2e05125641050f26": "a_9982eeb3bff60db6",
+  "a_4832c7defe1cef50": "a_487f0ac9a737ba59",
+  "a_9b00959aaf0d824b": "a_470b63a8616e4e27",
+  "a_52a56264c4048288": "a_b6d027038d3f8745",
+  "a_9e7fabfb671f3f8e": "a_e03ff77ae2f79930",
+  "a_1d8dab1f7a14e568": "a_d4c9707f602fef60",
+  "a_eb725b0a353e172b": "a_aeb09f6b7c54539d",
+  "a_a9cea53b651bd3c6": "a_31d2ed01eb95c5b2",
+  "a_949085fff03bdacf": "a_cbad0f09c8159d95",
+  "a_afb54f86203d8a19": "a_8f5d1167eca21a92"
  }
 }

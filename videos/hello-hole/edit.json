@@ -6,7 +6,7 @@
  "fit": "crop",
  "clips": [
   {
-   "asset": "a_9795d13796aa9174",
+   "asset": "a_dcc3e45672bedf31",
    "in": 0,
    "out": 1.5,
    "beat": "open",
@@ -19,28 +19,28 @@
    }
   },
   {
-   "asset": "a_882bfa7425f826e6",
+   "asset": "a_e721259378d7a219",
    "in": 0,
    "out": 1.0,
    "beat": "ring",
    "label": "WS ring burns into the empty meadow"
   },
   {
-   "asset": "a_fe34085e2781dc92",
+   "asset": "a_371bb4192082d9a6",
    "in": 0,
    "out": 1.04,
    "beat": "hole",
    "label": "MCU hero blank stare: That's a hole."
   },
   {
-   "asset": "a_66363cf706ff893f",
+   "asset": "a_1f2140ab8581b191",
    "in": 0,
    "out": 1.5,
    "beat": "horn",
    "label": "insert horn rolls past boot into hole"
   },
   {
-   "asset": "a_cddb8e47d38eec22",
+   "asset": "a_7f3abe75607244d3",
    "in": 0,
    "out": 2.7,
    "beat": "where",
@@ -53,14 +53,14 @@
    }
   },
   {
-   "asset": "a_be245dd8cd630504",
+   "asset": "a_8b81eed0f6425ecf",
    "in": 0,
    "out": 0.7,
    "beat": "hello",
    "label": "CU hero leans: Hello?"
   },
   {
-   "asset": "a_d08fba4ba7ef1418",
+   "asset": "a_84de35f9d2861033",
    "in": 0,
    "out": 1.5,
    "beat": "echo1",
@@ -73,14 +73,14 @@
    }
   },
   {
-   "asset": "a_301a7b9e74ea5ce5",
+   "asset": "a_8012a52789f717f1",
    "in": 0,
    "out": 0.7,
    "beat": "react1",
    "label": "CU hero eyes widen"
   },
   {
-   "asset": "a_37817342b34a4fc9",
+   "asset": "a_909954fdde0ea47a",
    "in": 0,
    "out": 1.5,
    "beat": "echo2",
@@ -93,14 +93,14 @@
    }
   },
   {
-   "asset": "a_301a7b9e74ea5ce5",
+   "asset": "a_8012a52789f717f1",
    "in": 1.5,
    "out": 2.2,
    "beat": "react2",
    "label": "CU hero flat again"
   },
   {
-   "asset": "a_3e6e2715aa0b2f5c",
+   "asset": "a_4de3ea7ac27157bc",
    "in": 0,
    "out": 1.5,
    "beat": "echo3",
@@ -113,70 +113,70 @@
    }
   },
   {
-   "asset": "a_e88d39ffaa90a88c",
+   "asset": "a_1a23002c5c8b2532",
    "in": 0,
    "out": 1.0,
    "beat": "flinch",
    "label": "MCU hero flinch, eyes wide"
   },
   {
-   "asset": "a_ba95f34b25471e23",
+   "asset": "a_25121c1b84206e6a",
    "in": 0,
    "out": 0.9,
    "beat": "eyes",
    "label": "ECU eyes, then look to camera"
   },
   {
-   "asset": "a_2e05125641050f26",
+   "asset": "a_9982eeb3bff60db6",
    "in": 0,
    "out": 1.04,
    "beat": "nope",
    "label": "CU hero: Nope."
   },
   {
-   "asset": "a_4832c7defe1cef50",
+   "asset": "a_487f0ac9a737ba59",
    "in": 0,
    "out": 2.0,
    "beat": "suck",
    "label": "WS the hole inhales, hero dragged off his feet, arms out"
   },
   {
-   "asset": "a_9b00959aaf0d824b",
+   "asset": "a_470b63a8616e4e27",
    "in": 0,
    "out": 0.5,
    "beat": "annoyed",
    "label": "CU annoyed"
   },
   {
-   "asset": "a_52a56264c4048288",
+   "asset": "a_b6d027038d3f8745",
    "in": 0,
    "out": 1.6,
    "beat": "yoobaIn",
    "label": "WS empty meadow, Yooba bounces in from the left"
   },
   {
-   "asset": "a_9e7fabfb671f3f8e",
+   "asset": "a_e03ff77ae2f79930",
    "in": 0,
    "out": 2.375,
    "beat": "yooba",
    "label": "MS Yooba, cheeks full: Mmf. Wait for meee"
   },
   {
-   "asset": "a_1d8dab1f7a14e568",
+   "asset": "a_d4c9707f602fef60",
    "in": 0,
    "out": 1.2,
    "beat": "slurp",
    "label": "WS Yooba slurped in"
   },
   {
-   "asset": "a_eb725b0a353e172b",
+   "asset": "a_aeb09f6b7c54539d",
    "in": 0,
    "out": 1.4,
    "beat": "seal",
    "label": "WS flash, the circle seals, diamond rolls out"
   },
   {
-   "asset": "a_eb725b0a353e172b",
+   "asset": "a_aeb09f6b7c54539d",
    "in": 1.4,
    "out": 2.04,
    "beat": "diamond",
@@ -189,21 +189,21 @@
    }
   },
   {
-   "asset": "a_a9cea53b651bd3c6",
+   "asset": "a_31d2ed01eb95c5b2",
    "in": 0,
    "out": 1.9,
    "beat": "fall",
    "label": "WS hero falls into Floor 1000"
   },
   {
-   "asset": "a_949085fff03bdacf",
+   "asset": "a_cbad0f09c8159d95",
    "in": 0,
    "out": 1.0,
    "beat": "lava",
    "label": "CU hero deadpan, lava glow"
   },
   {
-   "asset": "a_afb54f86203d8a19",
+   "asset": "a_8f5d1167eca21a92",
    "in": 0,
    "out": 1.5,
    "beat": "endcard",

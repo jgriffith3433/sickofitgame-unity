@@ -4,191 +4,191 @@
   "t": 0,
   "seconds": 1.5,
   "label": "WS hero and Overlord: he walks away, lasers rake the grass",
-  "asset": "a_9795d13796aa9174",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_dcc3e45672bedf31",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "ring",
   "t": 1.5,
   "seconds": 1.0,
   "label": "WS ring burns into the empty meadow",
-  "asset": "a_882bfa7425f826e6",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_e721259378d7a219",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "hole",
   "t": 2.5,
   "seconds": 1.04,
   "label": "MCU hero blank stare: That's a hole.",
-  "asset": "a_fe34085e2781dc92",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_371bb4192082d9a6",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "horn",
   "t": 3.54,
   "seconds": 1.5,
   "label": "insert horn rolls past boot into hole",
-  "asset": "a_66363cf706ff893f",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_1f2140ab8581b191",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "where",
   "t": 5.04,
   "seconds": 2.7,
   "label": "MCU hero dry half-smile: So that's where they keep coming from.",
-  "asset": "a_cddb8e47d38eec22",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_7f3abe75607244d3",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "hello",
   "t": 7.74,
   "seconds": 0.7,
   "label": "CU hero leans: Hello?",
-  "asset": "a_be245dd8cd630504",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_8b81eed0f6425ecf",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "echo1",
   "t": 8.44,
   "seconds": 1.5,
   "label": "OTS hero at rim, echo 1, small calm glow",
-  "asset": "a_d08fba4ba7ef1418",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_84de35f9d2861033",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "react1",
   "t": 9.94,
   "seconds": 0.7,
   "label": "CU hero eyes widen",
-  "asset": "a_301a7b9e74ea5ce5",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_8012a52789f717f1",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "echo2",
   "t": 10.64,
   "seconds": 1.5,
   "label": "WS echo 2, rim flares, Yooba peeks from the hut",
-  "asset": "a_37817342b34a4fc9",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_909954fdde0ea47a",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "react2",
   "t": 12.14,
   "seconds": 0.7,
   "label": "CU hero flat again",
-  "asset": "a_301a7b9e74ea5ce5",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_8012a52789f717f1",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "echo3",
   "t": 12.84,
   "seconds": 1.5,
   "label": "WS echo 3, fire column, hero blown back",
-  "asset": "a_3e6e2715aa0b2f5c",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_4de3ea7ac27157bc",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "flinch",
   "t": 14.34,
   "seconds": 1.0,
   "label": "MCU hero flinch, eyes wide",
-  "asset": "a_e88d39ffaa90a88c",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_1a23002c5c8b2532",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "eyes",
   "t": 15.34,
   "seconds": 0.9,
   "label": "ECU eyes, then look to camera",
-  "asset": "a_ba95f34b25471e23",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_25121c1b84206e6a",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "nope",
   "t": 16.24,
   "seconds": 1.04,
   "label": "CU hero: Nope.",
-  "asset": "a_2e05125641050f26",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_9982eeb3bff60db6",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "suck",
   "t": 17.28,
   "seconds": 2.0,
   "label": "WS the hole inhales, hero dragged off his feet, arms out",
-  "asset": "a_4832c7defe1cef50",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_487f0ac9a737ba59",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "annoyed",
   "t": 19.28,
   "seconds": 0.5,
   "label": "CU annoyed",
-  "asset": "a_9b00959aaf0d824b",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_470b63a8616e4e27",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "yoobaIn",
   "t": 19.78,
   "seconds": 1.6,
   "label": "WS empty meadow, Yooba bounces in from the left",
-  "asset": "a_52a56264c4048288",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_b6d027038d3f8745",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "yooba",
   "t": 21.38,
   "seconds": 2.38,
   "label": "MS Yooba, cheeks full: Mmf. Wait for meee",
-  "asset": "a_9e7fabfb671f3f8e",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_e03ff77ae2f79930",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "slurp",
   "t": 23.76,
   "seconds": 1.2,
   "label": "WS Yooba slurped in",
-  "asset": "a_1d8dab1f7a14e568",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_d4c9707f602fef60",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "seal",
   "t": 24.96,
   "seconds": 1.4,
   "label": "WS flash, the circle seals, diamond rolls out",
-  "asset": "a_eb725b0a353e172b",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_aeb09f6b7c54539d",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "diamond",
   "t": 26.36,
   "seconds": 0.64,
   "label": "ECU punch-in on the diamond stopping",
-  "asset": "a_eb725b0a353e172b",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_aeb09f6b7c54539d",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "fall",
   "t": 27.0,
   "seconds": 1.9,
   "label": "WS hero falls into Floor 1000",
-  "asset": "a_a9cea53b651bd3c6",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_31d2ed01eb95c5b2",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "lava",
   "t": 28.9,
   "seconds": 1.0,
   "label": "CU hero deadpan, lava glow",
-  "asset": "a_949085fff03bdacf",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_cbad0f09c8159d95",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  },
  {
   "key": "endcard",
   "t": 29.9,
   "seconds": 1.5,
   "label": "end card",
-  "asset": "a_afb54f86203d8a19",
-  "method": "video.i2v / video.lipsync (v3)"
+  "asset": "a_8f5d1167eca21a92",
+  "method": "video.i2v / video.lipsync (v3), video.upscale x4 (final)"
  }
 ]
