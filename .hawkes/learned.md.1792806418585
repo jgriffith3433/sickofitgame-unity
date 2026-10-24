@@ -1,0 +1,2 @@
+- lesson: Gen run calls with several jobs can idle past the MCP timeout — a parallel batch of 12 video jobs timed out three calls at 1800 s though the jobs finished; fetch them with hawkesgen_job and save_to.
+- lesson: End cards — compose can't take local files from the agent, so make the card as an image.edit title still plus i2v, and put the second line in a captions entry with an explicit newline so it doesn't split "Hawkes / Gen".

@@ -1,0 +1,1 @@
+- lesson: video.compose fps — a FILM-interpolated clip only shows its extra frames if the cut's fps is raised too (48); at 24 they are dropped.

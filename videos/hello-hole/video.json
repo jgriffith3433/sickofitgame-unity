@@ -1,0 +1,87 @@
+{
+ "slug": "hello-hole",
+ "stage": "final",
+ "cast": {
+  "Hero": {
+   "voice": "DzkD7I4tf5i3KSaB4cz5",
+   "ref": "a_ecf93ff3d94a333b"
+  },
+  "Hell": {
+   "voice": "A5KBJzxznyU8QeeRqyiY"
+  },
+  "Yooba": {
+   "voice": "EdDvd8GSdCyZwUcsPawi",
+   "ref": "a_4147dc6342c792a4 (pixel redraw of a_c6cc0b4db334567c)"
+  },
+  "Announcer": {
+   "voice": "1xynpTfy7I462pPrU2kL"
+  },
+  "Overlord": {
+   "ref": "stills a_99269240456c1b4a/a_7d459b21c9135def"
+  }
+ },
+ "tableRead": "j_ebac1a5e8865 (asset a_e2311f2c297e630f)",
+ "cut": "a_f0973d6e9d209ba4",
+ "poster": "a_015536d1adbd67d4",
+ "critic": {
+  "note": "video.review failed (Gemini 429) on v3; judged frames by hand"
+ },
+ "music": "a_bd4d069c1c0af8fa (j_88741bd39187)",
+ "version": 7,
+ "v3Stills": {
+  "wideBoth": "a_f63e2a7d7b48c0b2",
+  "echoA": "a_4f8431ec5887707e",
+  "echoB": "a_d84178c79c52aff8",
+  "echoC": "a_2231af7433c6ebbd",
+  "yooba": "a_211345ca6f4836e2",
+  "suckA": "a_e98b8c61d87bca2f",
+  "suckB": "a_1fa410778a1a63ce",
+  "sealed": "a_cf432d6ecd305da2",
+  "cuBlank": "a_a01cfd5b4e771cdb",
+  "cuSmirk": "a_cba7b2a7c166b68c",
+  "cuFlinch": "a_917c083cc4aa8c68",
+  "card": "a_0d2c1a028d7e85c1"
+ },
+ "upscaleMap": {
+  "a_9795d13796aa9174": "a_dcc3e45672bedf31",
+  "a_882bfa7425f826e6": "a_e721259378d7a219",
+  "a_fe34085e2781dc92": "a_371bb4192082d9a6",
+  "a_66363cf706ff893f": "a_1f2140ab8581b191",
+  "a_cddb8e47d38eec22": "a_7f3abe75607244d3",
+  "a_be245dd8cd630504": "a_8b81eed0f6425ecf",
+  "a_d08fba4ba7ef1418": "a_84de35f9d2861033",
+  "a_301a7b9e74ea5ce5": "a_8012a52789f717f1",
+  "a_37817342b34a4fc9": "a_909954fdde0ea47a",
+  "a_3e6e2715aa0b2f5c": "a_4de3ea7ac27157bc",
+  "a_e88d39ffaa90a88c": "a_1a23002c5c8b2532",
+  "a_ba95f34b25471e23": "a_25121c1b84206e6a",
+  "a_2e05125641050f26": "a_9982eeb3bff60db6",
+  "a_4832c7defe1cef50": "a_487f0ac9a737ba59",
+  "a_9b00959aaf0d824b": "a_470b63a8616e4e27",
+  "a_52a56264c4048288": "a_b6d027038d3f8745",
+  "a_9e7fabfb671f3f8e": "a_e03ff77ae2f79930",
+  "a_1d8dab1f7a14e568": "a_d4c9707f602fef60",
+  "a_eb725b0a353e172b": "a_aeb09f6b7c54539d",
+  "a_a9cea53b651bd3c6": "a_31d2ed01eb95c5b2",
+  "a_949085fff03bdacf": "a_cbad0f09c8159d95",
+  "a_afb54f86203d8a19": "a_8f5d1167eca21a92"
+ },
+ "interpolateSuck": "j_0c50ca69e0fc",
+ "cleanVoices": {
+  "nope": "a_92ff1119f299fe4f",
+  "hello": "a_e2c8b8ec6284c0a0",
+  "yooba": "a_b8fea8b12f82f2bc",
+  "announcer": "a_8b59e538267b535b"
+ },
+ "suckStills": [
+  "j_6c1030fbf685",
+  "j_0c5abfee0d72"
+ ],
+ "suckShot": {
+  "keyframes": "j_35aa26d2b722",
+  "take": "a_52e7bab3349b4a74",
+  "upscaled": "a_bb274e4f606a4f46",
+  "cropped": "a_97e4f6a03cecb827",
+  "final": "a_1e265022d65c16e8"
+ }
+}

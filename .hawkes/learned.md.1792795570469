@@ -1,0 +1,1 @@
+- lesson: video.i2v end-card stills cost ~$0.5 on a cold GPU; Gemini critic often 429s: check frames with ffmpeg tile sheets
