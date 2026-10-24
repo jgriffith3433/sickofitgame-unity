@@ -857,7 +857,7 @@ namespace SickOfIt.Core.Input
             for (int i = 0; i < n; i++)
             {
                 var hit = footholdHits[i];
-                if (hit == null || !hit.enabled || hit.attachedRigidbody == rb || !DropThroughPlatform.IsOneWay(hit) || IsDroppingThrough(hit))
+                if (hit == null || !hit.enabled || hit.attachedRigidbody == rb || !DropThroughPlatform.IsOneWay(hit) || IsDroppingThrough(hit) || hit.TryGetComponent<NoDropThrough>(out _))
                     continue;
                 if (hit.bounds.max.y > b.min.y + 0.12f)
                     continue;
