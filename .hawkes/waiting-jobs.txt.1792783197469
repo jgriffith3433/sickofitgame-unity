@@ -1,0 +1,22 @@
+j_b440a74a5751 v2 overlord walking away (2.5 s): judge, clip 0
+j_ebdee4095169 v2 ring burning into empty meadow (2.5 s): clip 1
+j_28ae205a5306 v2 horn rolls past boot into hole insert (2.5 s): clip 2
+j_691a2e69d911 v2 lipsync hero "That's a hole." CU: clip 3, place at 4.6 s on dialogue stem a_d27fd45473b449ba
+j_725992563f3e v2 lipsync hero "So that's where they keep coming from" CU
+j_8965065e354e v2 lipsync hero "Hello?" leaning CU
+j_899605b78042 v2 echo 1 wide, hole pulses
+j_585c8fdcd43f v2 echo 2 OTS push-in
+j_262b01e758f1 v2 echo 3 big fire column
+j_d2157333f86c v2 hero reaction CU (eyes widen then flat), cut in two ranges between echoes
+j_28a1d0886f2d v2 ECU eyes before Nope
+j_1d6b403fcffc v2 lipsync hero "Nope." CU to camera
+j_f081d37304cc v2 suck-in WS first-last
+j_7cd4bb32aa06 v2 annoyed CU 1 s after suck-in
+j_c208f138ce8e v2 Yooba bounces in from left to the hole
+j_f3728fa0b0f8 v2 lipsync Yooba "Mmf. Wait for meee" (stem a_7ae678f7d3fcd83c)
+j_d990456e3313 v2 Yooba slurped in
+j_c536134b21fc v2 ring seals, flash, diamond rolls out (3 s)
+j_e5a7b9f14670 v2 diamond ECU rolls and stops
+j_d1252c01913e v2 hero falls into Floor 1000 cavern
+j_620e81fcbbe0 v2 hero CU deadpan reacting to lava
+Then: judge frames, re-compose from videos/hello-hole/edit.json (rebuild per v2 plan; endcard still a_0efa11e8b532f440 dark), re-run critic, write .hawkes/video.json (stage animatic, v2)

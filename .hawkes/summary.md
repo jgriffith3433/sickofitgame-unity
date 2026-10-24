@@ -4,3 +4,5 @@ Hello? v7 (interim, cut a_ede7d962a9cc8fe8, 31.44 s). Answers to Studio's review
 - Suction drag: NOT yet done. Source clip shows him standing then arms out. Two stills jobs are queued (j_6c1030fbf685, j_0c5abfee0d72) for a keyframed drag into the hole; waiting-jobs.txt and pending-gpu.txt list it. Spent so far this pass about $0.16 of audio; GPU stills pending. Critic not run (quota earlier).
 
 Update: stills for the suck-in picked (mid a_90350f5647b7f572: airborne, arms out, annoyed; end a_9dd68d21e84f2076: headfirst over the hole). The keyframed drag (j_b3ebbfd9a7c3, 2 takes) is queued; stills cost about $1.09. Next: pick, upscale, interpolate, re-cut.
+
+Retry: j_b3ebbfd9a7c3 failed validation (video.keyframes passes aspect "9:16 (Portrait)" to a ComfyUI node that wants "9:16 (Portrait Widescreen)"; the tool's own enum rejects the right value: a Gen bug). Requeued square as j_35aa26d2b722 (cropped to 9:16 in the cut). The failed run cost $0.0002.

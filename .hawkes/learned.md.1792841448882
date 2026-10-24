@@ -1,0 +1,1 @@
+- lesson: Save Gen prompts — video.i2v/lipsync prompts of an animatic weren't stored in the repo, so a final can't re-render the same shots; keep them in videos/<slug>/prompts.json.
