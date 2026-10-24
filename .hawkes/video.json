@@ -1,7 +1,7 @@
 {
- "asset": "a_ede7d962a9cc8fe8",
- "poster": "a_a06324b5de309e7e",
- "seconds": 31.44,
+ "asset": "a_f0973d6e9d209ba4",
+ "poster": "a_015536d1adbd67d4",
+ "seconds": 31.42,
  "stage": "final",
  "story": "Logline: A deadpan hero peers into the hole the Overlord burned in his village, calls down it as a joke, gets a Hell that answers back louder each time, says \"Nope\", and is sucked in anyway, with Yooba the slime slurped in after him: that is how a nobody ended up on Floor 1,000.\nHero: wants to be left alone; unimpressed by everything, even Hell. Yooba: wants to keep up with his friend (and keep his diamonds hidden); chatty, wet, late. Hell: answers any call, each echo deeper.\nTurn: the third echo, HELLO, comes back huge; the hero's flat \"Nope.\" is the joke, and the hole ignores his opinion. Payoff: the slurp, one diamond left on the grass, the announcer's FLOOR ONE THOUSAND.\nWhy it matters: it is the game's prologue (Docs/Story.md, Prologue): the hero never chose to go. For someone who has never seen the game it reads as a complete gag.\n",
  "beats": [
@@ -348,18 +348,12 @@
     "sound": false
    },
    {
-    "asset": "a_171389058e978daa",
+    "asset": "a_1e265022d65c16e8",
     "in": 0,
     "out": 2.0,
     "beat": "suck",
     "label": "WS the hole inhales, hero dragged off his feet, arms out (FILM x2, push toward the hole)",
-    "sound": false,
-    "zoom": {
-     "from": 1,
-     "to": 1.25,
-     "x": 0.5,
-     "y": 0.8
-    }
+    "sound": false
    },
    {
     "asset": "a_470b63a8616e4e27",
@@ -603,5 +597,5 @@
   ]
  },
  "caption": "He just wanted to say hello. Hell said it back, louder. Sick Of It. #SickOfIt #pixelart #indiegame #comedy #hawkesgen hawkesgen.com",
- "summary": "v7 (audio fix, interim): the table-read stems bled into each other (Nope's tail inside Yooba's stem, Yooba's tail inside the announcer's, and the announcer was cut at 2.4 s of 2.7). Nope, Hello?, Yooba and the announcer are now clean single-line takes, placed with room; Hell's echoes trimmed before their stems' bleed; silence 14.4-16.3 s, then Nope. Suck-in still the v6 render; a new vacuum drag is queued (stills first)."
+ "summary": "v7, answers all 5 notes of Studio's v5 review. 1) Yooba under the announcer: Yooba's table-read stem is gone; every voice is a clean single-line take and the announcer plays whole at 27.3-29.2 s. 2) Duplicate Nope over Yooba: the Nope tail came from Yooba's stem; fresh takes, only Yooba speaks 21.5-23.8 s. 3) Announcer repeating/cut off at the end card: it was truncated at 2.4 s of a 2.7 s stem that carried Yooba's tail; the new take is 1.9 s and ends before the card (29.9 s). 4) Echo over Nope: echoes trimmed with fade-outs, the track is silent 14.4-16.3 s, then Nope, drone only after. 5) Suction: new keyframed shot (lunge, lifted off his feet arms out, then dropped headfirst into the hole), closer than the old wide, upscaled and interpolated to 48 fps."
 }

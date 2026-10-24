@@ -148,18 +148,12 @@
    "sound": false
   },
   {
-   "asset": "a_171389058e978daa",
+   "asset": "a_1e265022d65c16e8",
    "in": 0,
    "out": 2.0,
    "beat": "suck",
    "label": "WS the hole inhales, hero dragged off his feet, arms out (FILM x2, push toward the hole)",
-   "sound": false,
-   "zoom": {
-    "from": 1,
-    "to": 1.25,
-    "x": 0.5,
-    "y": 0.8
-   }
+   "sound": false
   },
   {
    "asset": "a_470b63a8616e4e27",

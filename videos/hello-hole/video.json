@@ -21,8 +21,8 @@
   }
  },
  "tableRead": "j_ebac1a5e8865 (asset a_e2311f2c297e630f)",
- "cut": "a_ede7d962a9cc8fe8",
- "poster": "a_a06324b5de309e7e",
+ "cut": "a_f0973d6e9d209ba4",
+ "poster": "a_015536d1adbd67d4",
  "critic": {
   "note": "video.review failed (Gemini 429) on v3; judged frames by hand"
  },
@@ -76,5 +76,12 @@
  "suckStills": [
   "j_6c1030fbf685",
   "j_0c5abfee0d72"
- ]
+ ],
+ "suckShot": {
+  "keyframes": "j_35aa26d2b722",
+  "take": "a_52e7bab3349b4a74",
+  "upscaled": "a_bb274e4f606a4f46",
+  "cropped": "a_97e4f6a03cecb827",
+  "final": "a_1e265022d65c16e8"
+ }
 }

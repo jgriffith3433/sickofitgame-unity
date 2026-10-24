@@ -1,8 +1,8 @@
-Hello? v7 (interim, cut a_ede7d962a9cc8fe8, 31.44 s). Answers to Studio's review of v5:
-- Yooba's voice under the announcer / duplicate Nope under Yooba / announcer repeating and cut off: cause found. The table-read stems carry the neighbouring lines' tails (Nope in Yooba's stem, Yooba in the announcer's) and the announcer was truncated at 2.4 s of 2.7. Nope, Hello?, Yooba and the announcer are now fresh single-line takes (each one speech burst), the announcer plays whole (27.3-29.2 s, end card 29.9 s), Yooba's stem is gone from 27 s.
-- Hell's echo over Nope: echoes trimmed before their bleed; the track is silent 14.4-16.3 s, then Nope lands, drone only after it (17.3 s). Checked by level meter on the rendered cut.
-- Suction drag: NOT yet done. Source clip shows him standing then arms out. Two stills jobs are queued (j_6c1030fbf685, j_0c5abfee0d72) for a keyframed drag into the hole; waiting-jobs.txt and pending-gpu.txt list it. Spent so far this pass about $0.16 of audio; GPU stills pending. Critic not run (quota earlier).
-
-Update: stills for the suck-in picked (mid a_90350f5647b7f572: airborne, arms out, annoyed; end a_9dd68d21e84f2076: headfirst over the hole). The keyframed drag (j_b3ebbfd9a7c3, 2 takes) is queued; stills cost about $1.09. Next: pick, upscale, interpolate, re-cut.
-
-Retry: j_b3ebbfd9a7c3 failed validation (video.keyframes passes aspect "9:16 (Portrait)" to a ComfyUI node that wants "9:16 (Portrait Widescreen)"; the tool's own enum rejects the right value: a Gen bug). Requeued square as j_35aa26d2b722 (cropped to 9:16 in the cut). The failed run cost $0.0002.
+Hello? v7 (cut a_f0973d6e9d209ba4, 31.42 s, 1080x1920, 48 fps), answering Studio's 5 notes on v5:
+1. Yooba's voice under the announcer: the table-read stems bled into each other (Yooba's tail sat in the announcer's stem). Nope, Hello?, Yooba and the announcer are now clean single-line takes; Yooba's stem no longer plays after 23.8 s.
+2. Duplicate Nope over Yooba: that was Nope's tail in Yooba's stem; fixed the same way, only Yooba speaks 21.5-23.8 s.
+3. Announcer cut off/repeating at the end card: it was truncated at 2.4 s of a 2.7 s stem. The new take (1.9 s) plays whole 27.3-29.2 s, the card starts at 29.9 s.
+4. Echo over Nope: echoes trimmed with fade-outs; the rendered track is silent 14.4-16.3 s, Nope lands in the silence, drone only after (17.3 s). Checked by level meter, not by ear.
+5. Suction: new shot, keyframed (lunge at the rim, lifted off his feet arms out and annoyed, then dropped headfirst into the hole), closer than the old wide, upscaled and FILM x2. It ends in a ~1 s hold with him inverted at the rim; trim it if it reads slow.
+Cost this pass: voices $0.16, stills $1.09, keyframes $0.37, upscale $0.13, a failed 4K interpolate $0.52 (out of memory; redone on the cropped 2 s clip for $0.01). About $2.3 this pass, roughly $3.4 of the $6.03 in total.
+Not done: the critic was not run (earlier quota failure); not listened to by ear. The suck shot is the square keyframes output cropped to 9:16 (Gen's video.keyframes rejects portrait: a Gen bug), so its pixel scale is bigger than the neighbouring wides.
