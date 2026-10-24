@@ -6,39 +6,51 @@
  "fit": "crop",
  "clips": [
   {
-   "asset": "a_1b44a663c25fc9c4",
+   "asset": "a_9795d13796aa9174",
    "in": 0,
-   "out": 2.5,
-   "beat": "overlord",
-   "label": "WS Overlord walks away"
+   "out": 1.5,
+   "beat": "open",
+   "label": "WS hero and Overlord: he walks away, lasers rake the grass",
+   "zoom": {
+    "from": 1,
+    "to": 1.12,
+    "x": 0.5,
+    "y": 0.4
+   }
   },
   {
    "asset": "a_882bfa7425f826e6",
    "in": 0,
-   "out": 1.5,
+   "out": 1.0,
    "beat": "ring",
-   "label": "WS ring burns into empty meadow"
+   "label": "WS ring burns into the empty meadow"
   },
   {
-   "asset": "a_d9df371b23f74251",
+   "asset": "a_fe34085e2781dc92",
    "in": 0,
    "out": 1.04,
    "beat": "hole",
-   "label": "CU hero: That's a hole."
+   "label": "MCU hero blank stare: That's a hole."
   },
   {
    "asset": "a_66363cf706ff893f",
    "in": 0,
-   "out": 2.0,
+   "out": 1.5,
    "beat": "horn",
    "label": "insert horn rolls past boot into hole"
   },
   {
-   "asset": "a_ba610923eb3122ea",
+   "asset": "a_cddb8e47d38eec22",
    "in": 0,
    "out": 2.7,
    "beat": "where",
-   "label": "CU hero: So that's where they keep coming from."
+   "label": "MCU hero dry half-smile: So that's where they keep coming from.",
+   "zoom": {
+    "from": 1,
+    "to": 1.22,
+    "x": 0.5,
+    "y": 0.25
+   }
   },
   {
    "asset": "a_be245dd8cd630504",
@@ -48,11 +60,17 @@
    "label": "CU hero leans: Hello?"
   },
   {
-   "asset": "a_013b18db8aa67246",
+   "asset": "a_d08fba4ba7ef1418",
    "in": 0,
    "out": 1.5,
    "beat": "echo1",
-   "label": "WS echo 1"
+   "label": "OTS hero at rim, echo 1, small calm glow",
+   "zoom": {
+    "from": 1,
+    "to": 1.08,
+    "x": 0.7,
+    "y": 0.7
+   }
   },
   {
    "asset": "a_301a7b9e74ea5ce5",
@@ -62,11 +80,17 @@
    "label": "CU hero eyes widen"
   },
   {
-   "asset": "a_a61b801607a3932a",
+   "asset": "a_37817342b34a4fc9",
    "in": 0,
    "out": 1.5,
    "beat": "echo2",
-   "label": "OTS echo 2 push-in"
+   "label": "WS echo 2, rim flares, Yooba peeks from the hut",
+   "zoom": {
+    "from": 1,
+    "to": 1.2,
+    "x": 0.5,
+    "y": 0.75
+   }
   },
   {
    "asset": "a_301a7b9e74ea5ce5",
@@ -76,18 +100,31 @@
    "label": "CU hero flat again"
   },
   {
-   "asset": "a_7540e33de3aba97e",
+   "asset": "a_3e6e2715aa0b2f5c",
    "in": 0,
-   "out": 1.6,
+   "out": 1.5,
    "beat": "echo3",
-   "label": "WS echo 3 fire column"
+   "label": "WS echo 3, fire column, hero blown back",
+   "zoom": {
+    "from": 1,
+    "to": 1.3,
+    "x": 0.4,
+    "y": 0.75
+   }
+  },
+  {
+   "asset": "a_e88d39ffaa90a88c",
+   "in": 0,
+   "out": 1.0,
+   "beat": "flinch",
+   "label": "MCU hero flinch, eyes wide"
   },
   {
    "asset": "a_ba95f34b25471e23",
    "in": 0,
-   "out": 1.2,
+   "out": 0.9,
    "beat": "eyes",
-   "label": "ECU eyes"
+   "label": "ECU eyes, then look to camera"
   },
   {
    "asset": "a_2e05125641050f26",
@@ -97,11 +134,11 @@
    "label": "CU hero: Nope."
   },
   {
-   "asset": "a_aef0653cc0fa115c",
+   "asset": "a_4832c7defe1cef50",
    "in": 0,
    "out": 2.0,
    "beat": "suck",
-   "label": "WS hero sucked in"
+   "label": "WS the hole inhales, hero dragged off his feet, arms out"
   },
   {
    "asset": "a_9b00959aaf0d824b",
@@ -111,39 +148,45 @@
    "label": "CU annoyed"
   },
   {
-   "asset": "a_6822c0d9baef0657",
+   "asset": "a_52a56264c4048288",
    "in": 0,
    "out": 1.6,
-   "beat": "yooba_in",
-   "label": "WS Yooba bounces in"
+   "beat": "yoobaIn",
+   "label": "WS empty meadow, Yooba bounces in from the left"
   },
   {
-   "asset": "a_89db2078bd4f2c34",
+   "asset": "a_9e7fabfb671f3f8e",
    "in": 0,
    "out": 2.375,
    "beat": "yooba",
-   "label": "MS Yooba: Mmf. Wait for meee"
+   "label": "MS Yooba, cheeks full: Mmf. Wait for meee"
   },
   {
-   "asset": "a_80bbe7ee27e2e851",
+   "asset": "a_1d8dab1f7a14e568",
    "in": 0,
-   "out": 1.0,
+   "out": 1.2,
    "beat": "slurp",
-   "label": "WS Yooba slurped"
+   "label": "WS Yooba slurped in"
   },
   {
-   "asset": "a_03edeb53416e7c77",
+   "asset": "a_eb725b0a353e172b",
    "in": 0,
-   "out": 2.2,
+   "out": 1.4,
    "beat": "seal",
-   "label": "WS circle seals, diamond rolls"
+   "label": "WS flash, the circle seals, diamond rolls out"
   },
   {
-   "asset": "a_5e3a9717ddf3f04d",
-   "in": 0,
-   "out": 1.3,
+   "asset": "a_eb725b0a353e172b",
+   "in": 1.4,
+   "out": 2.04,
    "beat": "diamond",
-   "label": "ECU diamond stops"
+   "label": "ECU punch-in on the diamond stopping",
+   "zoom": {
+    "from": 1,
+    "to": 2.4,
+    "x": 0.83,
+    "y": 0.4
+   }
   },
   {
    "asset": "a_a9cea53b651bd3c6",
@@ -155,12 +198,12 @@
   {
    "asset": "a_949085fff03bdacf",
    "in": 0,
-   "out": 1.3,
+   "out": 1.0,
    "beat": "lava",
-   "label": "CU hero reacts to lava"
+   "label": "CU hero deadpan, lava glow"
   },
   {
-   "asset": "a_ee806a90e11d7125",
+   "asset": "a_afb54f86203d8a19",
    "in": 0,
    "out": 1.5,
    "beat": "endcard",
@@ -170,92 +213,99 @@
  "audio": [
   {
    "asset": "a_d27fd45473b449ba",
-   "start": 4.0,
+   "start": 2.5,
    "seconds": 1.04,
    "dialogue": true,
    "label": "HERO: That's a hole."
   },
   {
    "asset": "a_15c36bf35336aa2c",
-   "start": 6.34,
+   "start": 4.54,
    "seconds": 1.5,
    "dialogue": false,
    "label": "clink"
   },
   {
    "asset": "a_feb9ee8bc422fb3c",
-   "start": 7.04,
+   "start": 5.04,
    "seconds": 2.7,
    "dialogue": true,
    "label": "HERO: So that's where they keep coming from."
   },
   {
    "asset": "a_b0a222aa1a35c61e",
-   "start": 9.74,
+   "start": 7.74,
    "seconds": 0.7,
    "dialogue": true,
    "label": "HERO: Hello?"
   },
   {
    "asset": "a_e082d7e4133610d6",
-   "start": 10.44,
+   "start": 8.44,
    "seconds": 1.9,
    "dialogue": true,
    "label": "HELL: Hello?"
   },
   {
    "asset": "a_6b57415c4f08cfb3",
-   "start": 12.64,
+   "start": 10.64,
    "seconds": 1.9,
    "dialogue": true,
    "label": "HELL: Hello?"
   },
   {
    "asset": "a_c413bae4b86f310c",
-   "start": 14.84,
+   "start": 12.84,
    "seconds": 1.4,
    "dialogue": true,
    "label": "HELL: HELLO."
   },
   {
    "asset": "a_79374fa234d063a8",
-   "start": 17.64,
+   "start": 16.24,
    "seconds": 1.04,
    "dialogue": true,
    "label": "HERO: Nope."
   },
   {
    "asset": "a_c1b55709cd40bedf",
-   "start": 18.48,
+   "start": 17.08,
    "seconds": 2.4,
    "dialogue": false,
    "label": "inhale"
   },
   {
    "asset": "a_7ae678f7d3fcd83c",
-   "start": 22.78,
+   "start": 21.38,
    "seconds": 2.3,
    "dialogue": true,
    "label": "YOOBA: Mmf. Wait for meee—"
   },
   {
    "asset": "a_591686d5a805de0c",
-   "start": 25.36,
+   "start": 23.95,
    "seconds": 1.5,
    "dialogue": false,
    "label": "slurp"
   },
   {
+   "asset": "a_15c36bf35336aa2c",
+   "start": 26.65,
+   "seconds": 1.5,
+   "dialogue": false,
+   "label": "diamond clink"
+  },
+  {
    "asset": "a_4958a99a4ad9bbe5",
-   "start": 29.76,
+   "start": 27.09,
    "seconds": 2.4,
    "dialogue": true,
    "label": "ANNOUNCER: FLOOR ONE THOUSAND!"
   },
   {
    "asset": "a_bd4d069c1c0af8fa",
-   "start": 18.68,
-   "seconds": 15.67,
+   "start": 17.28,
+   "seconds": 14.11,
    "dialogue": false,
    "label": "Hell drone",
    "volume": 0.5,
@@ -267,53 +317,53 @@
  "captions": [
   {
    "text": "That's a hole.",
-   "start": 4.0,
-   "end": 5.04
+   "start": 2.5,
+   "end": 3.54
   },
   {
    "text": "So that's where they keep coming from.",
-   "start": 7.04,
-   "end": 9.74
+   "start": 5.04,
+   "end": 7.74
   },
   {
    "text": "Hello?",
-   "start": 9.74,
-   "end": 10.44
+   "start": 7.74,
+   "end": 8.44
   },
   {
-   "text": "Hello?",
-   "start": 10.44,
-   "end": 11.84
+   "text": "HELL:\nHello?",
+   "start": 8.44,
+   "end": 9.84
   },
   {
-   "text": "Hello?",
-   "start": 12.64,
-   "end": 14.04
+   "text": "HELL:\nHello?",
+   "start": 10.64,
+   "end": 12.04
   },
   {
-   "text": "HELLO.",
-   "start": 14.84,
-   "end": 16.34
+   "text": "HELL:\nHELLO.",
+   "start": 12.84,
+   "end": 14.34
   },
   {
    "text": "Nope.",
-   "start": 17.64,
-   "end": 18.68
+   "start": 16.24,
+   "end": 17.28
   },
   {
    "text": "Mmf. Wait for meee—",
-   "start": 22.78,
-   "end": 25.08
+   "start": 21.38,
+   "end": 23.68
   },
   {
    "text": "FLOOR ONE THOUSAND!",
-   "start": 29.66,
-   "end": 31.55
+   "start": 26.99,
+   "end": 28.89
   },
   {
-   "text": "SICK OF IT\nMade with Hawkes Gen · hawkesgen.com",
-   "start": 32.85,
-   "end": 34.35
+   "text": "Made with Hawkes Gen\nhawkesgen.com",
+   "start": 29.89,
+   "end": 31.39
   }
  ]
 }

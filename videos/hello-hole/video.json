@@ -21,20 +21,25 @@
   }
  },
  "tableRead": "j_ebac1a5e8865 (asset a_e2311f2c297e630f)",
- "cut": "a_dcd4459c54299d84",
- "poster": "a_7cf2c79059b3b6f7",
+ "cut": "a_a172d9aa62beed08",
+ "poster": "a_14297989f795aec8",
  "critic": {
-  "score": 6.2,
-  "scores": {
-   "story": 6.5,
-   "pacing": 5.5,
-   "voices": 6.2,
-   "lipsync": 4.8,
-   "movement": 5.8,
-   "consistency": 6.4,
-   "sound": 5.6
-  }
+  "note": "video.review failed (Gemini 429) on v3; judged frames by hand"
  },
  "music": "a_bd4d069c1c0af8fa (j_88741bd39187)",
- "version": 2
+ "version": 3,
+ "v3Stills": {
+  "wideBoth": "a_f63e2a7d7b48c0b2",
+  "echoA": "a_4f8431ec5887707e",
+  "echoB": "a_d84178c79c52aff8",
+  "echoC": "a_2231af7433c6ebbd",
+  "yooba": "a_211345ca6f4836e2",
+  "suckA": "a_e98b8c61d87bca2f",
+  "suckB": "a_1fa410778a1a63ce",
+  "sealed": "a_cf432d6ecd305da2",
+  "cuBlank": "a_a01cfd5b4e771cdb",
+  "cuSmirk": "a_cba7b2a7c166b68c",
+  "cuFlinch": "a_917c083cc4aa8c68",
+  "card": "a_0d2c1a028d7e85c1"
+ }
 }
