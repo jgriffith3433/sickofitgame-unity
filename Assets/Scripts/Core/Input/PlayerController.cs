@@ -124,6 +124,7 @@ namespace SickOfIt.Core.Input
         private static readonly int FireHash = Animator.StringToHash("Fire");
         private static readonly int FiringHash = Animator.StringToHash("Firing");
         private static readonly int FireStateHash = Animator.StringToHash("Fire");
+        private static readonly int WalkStateHash = Animator.StringToHash("Walk");
         // Which optional fire parameters the generated controller has (null until the animator is inspected).
         private bool? animatorHasFiring;
         private bool animatorHasFireTrigger;
@@ -1323,6 +1324,9 @@ namespace SickOfIt.Core.Input
                 SickOfIt.Core.Fx.Fx.Flash(muzzle, new Color(1f, 0.85f, 0.45f, 0.35f), 0.26f, 0.06f);
 
             // Restart the fire clip on every shot so the muzzle flash lines up with the projectile.
+            // Walking on the ground, keep the walk clip going (no standing fire pose while his legs move).
+            if (animator != null && IsWalkingOnGround() && animator.HasState(0, WalkStateHash))
+                return;
             if (animator != null && animator.HasState(0, FireStateHash))
                 animator.Play(FireStateHash, 0, 0f);
             else if (animator != null && AnimatorHasFireTrigger())
@@ -1349,6 +1353,8 @@ namespace SickOfIt.Core.Input
             return animatorHasFiring == true;
         }
 
+        private bool IsWalkingOnGround() => isGrounded && Mathf.Abs(moveInput.x) > 0.1f;
+
         private bool AnimatorHasFireTrigger()
         {
             AnimatorHasFiring();
@@ -1363,6 +1369,10 @@ namespace SickOfIt.Core.Input
             if (AnimatorHasFiring())
                 animator.SetBool(FiringHash, isFiring && enableShooting);
             animator.SetFloat(VelocityXHash, Mathf.Abs(moveInput.x));
+            // Fire was entered standing; once he walks, move on to the walk clip (Walk -> Idle handles stopping).
+            if (isFiring && IsWalkingOnGround() && animator.HasState(0, WalkStateHash)
+                && animator.GetCurrentAnimatorStateInfo(0).shortNameHash == FireStateHash)
+                animator.Play(WalkStateHash, 0, 0f);
             
             if (rb != null)
             {
