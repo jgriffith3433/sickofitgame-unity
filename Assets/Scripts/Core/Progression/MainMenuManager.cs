@@ -220,24 +220,6 @@ namespace SickOfIt.Core.Progression
         /// </summary>
         private IEnumerator TransitionThenExecute(Action onComplete)
         {
-            if (idleObjects != null)
-            {
-                foreach (var obj in idleObjects)
-                    if (obj != null) obj.SetActive(false);
-            }
-
-            if (transitionObjects != null)
-            {
-                foreach (var obj in transitionObjects)
-                    if (obj != null) obj.SetActive(true);
-            }
-
-            if (objectsToHideOnStart != null)
-            {
-                foreach (var obj in objectsToHideOnStart)
-                    if (obj != null) obj.SetActive(false);
-            }
-
             if (menu != null)
                 menu.PlayExit(0.35f);
 
@@ -258,6 +240,29 @@ namespace SickOfIt.Core.Progression
                 player.UseGameClock(false);
                 player.Initialize(explodeFrames, () => player.Play());
                 player.SetLoop(false);
+            }
+
+            // The hero and the house stay on screen until the explosion can play: its frames can take seconds to
+            // load on WebGL, and hiding them first left an empty meadow (and no hero) while the level loaded.
+            if (player != null)
+                yield return WaitForExplodeReady(player);
+
+            if (idleObjects != null)
+            {
+                foreach (var obj in idleObjects)
+                    if (obj != null) obj.SetActive(false);
+            }
+
+            if (transitionObjects != null)
+            {
+                foreach (var obj in transitionObjects)
+                    if (obj != null) obj.SetActive(true);
+            }
+
+            if (objectsToHideOnStart != null)
+            {
+                foreach (var obj in objectsToHideOnStart)
+                    if (obj != null) obj.SetActive(false);
             }
 
             var source = explodeRoot != null ? explodeRoot.GetComponent<AudioSource>() : null;
@@ -282,7 +287,7 @@ namespace SickOfIt.Core.Progression
             onComplete?.Invoke();
         }
 
-        private IEnumerator PlayExplodeUntilDone(SpriteFramePlayer player)
+        private IEnumerator WaitForExplodeReady(SpriteFramePlayer player)
         {
             float waited = 0f;
             while (player != null && !player.IsReady && waited < 8f)
@@ -290,6 +295,11 @@ namespace SickOfIt.Core.Progression
                 waited += Time.deltaTime;
                 yield return null;
             }
+        }
+
+        private IEnumerator PlayExplodeUntilDone(SpriteFramePlayer player)
+        {
+            yield return WaitForExplodeReady(player);
 
             float duration = player != null ? player.Duration : 0f;
             if (explodeAudio != null)
