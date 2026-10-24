@@ -560,12 +560,17 @@ namespace SickOfIt.Core.Input
         
         private void CheckGrounded()
         {
-            Vector2 boxSize = new Vector2(groundCheckWidth, groundCheckDistance);
+            // Lenient on uneven ground: the box spans most of his feet (a slope, a step or a ledge edge under only one side
+            // still counts), and a jump pressed just before landing or just after walking off still works.
+            float width = Mathf.Max(groundCheckWidth, col.bounds.size.x * 0.9f);
+            Vector2 boxSize = new Vector2(width, groundCheckDistance);
             Vector2 boxCenter = (Vector2)transform.position + col.offset + Vector2.down * (col.bounds.extents.y + groundCheckDistance * 0.5f);
-            
+
             bool wasGrounded = isGrounded;
-            
+
             isGrounded = FindGround(boxCenter, boxSize, out groundCollider);
+            if (isGrounded)
+                lastGroundedTime = Time.time;
 
             if (isGrounded && !wasGrounded)
             {
@@ -1067,13 +1072,19 @@ namespace SickOfIt.Core.Input
         
         private void HandleJump()
         {
-            if (!jumpRequested) return;
-            jumpRequested = false;
+            if (jumpRequested)
+            {
+                jumpRequested = false;
+                lastJumpPressTime = Time.time;
+            }
+            // A press stays good for a moment (landing a hair late) ...
+            if (Time.time - lastJumpPressTime > JumpBufferSeconds) return;
 
             if (held)
             {
                 // Jumping off a chain: let go with its swing plus a jump.
                 ReleaseHold();
+                lastJumpPressTime = float.NegativeInfinity;
                 jumpedOffHold = true;
                 swingMomentum = heldVelocity.x;
                 isGrounded = false;
@@ -1081,17 +1092,28 @@ namespace SickOfIt.Core.Input
                 return;
             }
 
-            if (isGrounded)
+            bool fresh = lastJumpPressTime == Time.time;
+            // ... and just after leaving a surface he can still jump off it (not while already rising).
+            bool coyote = Time.time - lastGroundedTime <= CoyoteSeconds && (rb == null || rb.linearVelocity.y <= 0.1f);
+            if (isGrounded || coyote)
             {
+                lastJumpPressTime = float.NegativeInfinity;
+                lastGroundedTime = float.NegativeInfinity;
                 Jump();
                 airJumpsRemaining = maxAirJumps;
             }
-            else if (airJumpsRemaining > 0)
+            else if (fresh && airJumpsRemaining > 0)
             {
+                lastJumpPressTime = float.NegativeInfinity;
                 Jump();
                 airJumpsRemaining--;
             }
         }
+
+        private const float CoyoteSeconds = 0.12f;
+        private const float JumpBufferSeconds = 0.12f;
+        private float lastGroundedTime = float.NegativeInfinity;
+        private float lastJumpPressTime = float.NegativeInfinity;
         
         private void Jump()
         {
