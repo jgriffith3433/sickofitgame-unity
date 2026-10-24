@@ -1,6 +1,6 @@
 {
- "asset": "a_189e28309c51a505",
- "poster": "a_2d4b8166bc24093b",
+ "asset": "a_ede7d962a9cc8fe8",
+ "poster": "a_a06324b5de309e7e",
  "seconds": 31.44,
  "stage": "final",
  "story": "Logline: A deadpan hero peers into the hole the Overlord burned in his village, calls down it as a joke, gets a Hell that answers back louder each time, says \"Nope\", and is sucked in anyway, with Yooba the slime slurped in after him: that is how a nobody ended up on Floor 1,000.\nHero: wants to be left alone; unimpressed by everything, even Hell. Yooba: wants to keep up with his friend (and keep his diamonds hidden); chatty, wet, late. Hell: answers any call, each echo deeper.\nTurn: the third echo, HELLO, comes back huge; the hero's flat \"Nope.\" is the joke, and the hole ignores his opinion. Payoff: the slurp, one diamond left on the grass, the announcer's FLOOR ONE THOUSAND.\nWhy it matters: it is the game's prologue (Docs/Story.md, Prologue): the hero never chose to go. For someone who has never seen the game it reads as a complete gag.\n",
@@ -463,37 +463,41 @@
     "label": "HERO: So that's where they keep coming from."
    },
    {
-    "asset": "a_b0a222aa1a35c61e",
-    "start": 7.74,
-    "seconds": 0.7,
+    "asset": "a_e2c8b8ec6284c0a0",
+    "start": 7.55,
+    "seconds": 0.95,
     "dialogue": true,
-    "label": "HERO: Hello?"
+    "label": "HERO: Hello?",
+    "fadeOut": 0.1
    },
    {
     "asset": "a_e082d7e4133610d6",
     "start": 8.44,
-    "seconds": 1.9,
+    "seconds": 1.45,
     "dialogue": true,
-    "label": "HELL: Hello?"
+    "label": "HELL: Hello?",
+    "fadeOut": 0.25
    },
    {
     "asset": "a_6b57415c4f08cfb3",
     "start": 10.64,
-    "seconds": 1.9,
+    "seconds": 1.45,
     "dialogue": true,
-    "label": "HELL: Hello?"
+    "label": "HELL: Hello?",
+    "fadeOut": 0.25
    },
    {
     "asset": "a_c413bae4b86f310c",
     "start": 12.84,
-    "seconds": 1.4,
+    "seconds": 1.3,
     "dialogue": true,
-    "label": "HELL: HELLO."
+    "label": "HELL: HELLO.",
+    "fadeOut": 0.2
    },
    {
-    "asset": "a_79374fa234d063a8",
-    "start": 16.24,
-    "seconds": 1.04,
+    "asset": "a_92ff1119f299fe4f",
+    "start": 16.3,
+    "seconds": 0.76,
     "dialogue": true,
     "label": "HERO: Nope."
    },
@@ -505,11 +509,12 @@
     "label": "inhale"
    },
    {
-    "asset": "a_7ae678f7d3fcd83c",
-    "start": 21.38,
-    "seconds": 2.3,
+    "asset": "a_b8fea8b12f82f2bc",
+    "start": 21.48,
+    "seconds": 2.27,
     "dialogue": true,
-    "label": "YOOBA: Mmf. Wait for meee—"
+    "label": "YOOBA: Mmf. Wait for meee—",
+    "fadeOut": 0.05
    },
    {
     "asset": "a_591686d5a805de0c",
@@ -521,14 +526,14 @@
    {
     "asset": "a_15c36bf35336aa2c",
     "start": 26.65,
-    "seconds": 1.5,
+    "seconds": 0.8,
     "dialogue": false,
     "label": "diamond clink"
    },
    {
-    "asset": "a_4958a99a4ad9bbe5",
-    "start": 27.09,
-    "seconds": 2.4,
+    "asset": "a_8b59e538267b535b",
+    "start": 27.3,
+    "seconds": 1.88,
     "dialogue": true,
     "label": "ANNOUNCER: FLOOR ONE THOUSAND!"
    },
@@ -557,7 +562,7 @@
    },
    {
     "text": "Hello?",
-    "start": 7.74,
+    "start": 7.75,
     "end": 8.44
    },
    {
@@ -577,18 +582,18 @@
    },
    {
     "text": "Nope.",
-    "start": 16.24,
-    "end": 17.28
+    "start": 16.3,
+    "end": 17.06
    },
    {
     "text": "Mmf. Wait for meee—",
-    "start": 21.38,
-    "end": 23.68
+    "start": 21.48,
+    "end": 23.75
    },
    {
     "text": "FLOOR ONE THOUSAND!",
-    "start": 26.99,
-    "end": 28.89
+    "start": 27.3,
+    "end": 29.18
    },
    {
     "text": "Made with Hawkes Gen\nhawkesgen.com",
@@ -598,5 +603,5 @@
   ]
  },
  "caption": "He just wanted to say hello. Hell said it back, louder. Sick Of It. #SickOfIt #pixelart #indiegame #comedy #hawkesgen hawkesgen.com",
- "summary": "v6, answering Studio's review of v4. Cause of the audio slip: the upscaled clips still carried the sound baked into the lipsync/i2v renders (the hero's Nope, Yooba's mumble, stray voices) and video.compose mixed it under the placed tracks. Every clip is now sound:false, so only the placed table-read stems, SFX and drone play. Per note: (1) 0:16 Hell's HELLO over Nope: placed Hell echo 3 stays at 12.84 (fire column) and Nope at 16.24; the baked clip audio that overlapped is gone. (2) 0:21 hero voice over Yooba: removed with the baked audio; only Yooba's stem plays at 21.38. (3) 0:27 Yooba line in Hell: removed; only the announcer plays. (4) 0:29 announcer cut: it runs 27.09-29.49, ends before the end card at 29.96, no clip audio competes. (5) 0:17 suction stepped: the suck clip is now FILM-interpolated x2 (a_171389058e978daa) and the cut renders at 48 fps so the in-between frames show, plus a push-in toward the hole for the downward pull. The hero still stands then spreads his arms (the source render); a real vacuum drag would need a re-render of that clip. Critic not run (Gemini quota earlier); loudness-per-0.5s checked against the placed times."
+ "summary": "v7 (audio fix, interim): the table-read stems bled into each other (Nope's tail inside Yooba's stem, Yooba's tail inside the announcer's, and the announcer was cut at 2.4 s of 2.7). Nope, Hello?, Yooba and the announcer are now clean single-line takes, placed with room; Hell's echoes trimmed before their stems' bleed; silence 14.4-16.3 s, then Nope. Suck-in still the v6 render; a new vacuum drag is queued (stills first)."
 }

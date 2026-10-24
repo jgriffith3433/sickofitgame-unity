@@ -21,13 +21,13 @@
   }
  },
  "tableRead": "j_ebac1a5e8865 (asset a_e2311f2c297e630f)",
- "cut": "a_189e28309c51a505",
- "poster": "a_2d4b8166bc24093b",
+ "cut": "a_ede7d962a9cc8fe8",
+ "poster": "a_a06324b5de309e7e",
  "critic": {
   "note": "video.review failed (Gemini 429) on v3; judged frames by hand"
  },
  "music": "a_bd4d069c1c0af8fa (j_88741bd39187)",
- "version": 6,
+ "version": 7,
  "v3Stills": {
   "wideBoth": "a_f63e2a7d7b48c0b2",
   "echoA": "a_4f8431ec5887707e",
@@ -66,5 +66,15 @@
   "a_949085fff03bdacf": "a_cbad0f09c8159d95",
   "a_afb54f86203d8a19": "a_8f5d1167eca21a92"
  },
- "interpolateSuck": "j_0c50ca69e0fc"
+ "interpolateSuck": "j_0c50ca69e0fc",
+ "cleanVoices": {
+  "nope": "a_92ff1119f299fe4f",
+  "hello": "a_e2c8b8ec6284c0a0",
+  "yooba": "a_b8fea8b12f82f2bc",
+  "announcer": "a_8b59e538267b535b"
+ },
+ "suckStills": [
+  "j_6c1030fbf685",
+  "j_0c5abfee0d72"
+ ]
 }

@@ -263,37 +263,41 @@
    "label": "HERO: So that's where they keep coming from."
   },
   {
-   "asset": "a_b0a222aa1a35c61e",
-   "start": 7.74,
-   "seconds": 0.7,
+   "asset": "a_e2c8b8ec6284c0a0",
+   "start": 7.55,
+   "seconds": 0.95,
    "dialogue": true,
-   "label": "HERO: Hello?"
+   "label": "HERO: Hello?",
+   "fadeOut": 0.1
   },
   {
    "asset": "a_e082d7e4133610d6",
    "start": 8.44,
-   "seconds": 1.9,
+   "seconds": 1.45,
    "dialogue": true,
-   "label": "HELL: Hello?"
+   "label": "HELL: Hello?",
+   "fadeOut": 0.25
   },
   {
    "asset": "a_6b57415c4f08cfb3",
    "start": 10.64,
-   "seconds": 1.9,
+   "seconds": 1.45,
    "dialogue": true,
-   "label": "HELL: Hello?"
+   "label": "HELL: Hello?",
+   "fadeOut": 0.25
   },
   {
    "asset": "a_c413bae4b86f310c",
    "start": 12.84,
-   "seconds": 1.4,
+   "seconds": 1.3,
    "dialogue": true,
-   "label": "HELL: HELLO."
+   "label": "HELL: HELLO.",
+   "fadeOut": 0.2
   },
   {
-   "asset": "a_79374fa234d063a8",
-   "start": 16.24,
-   "seconds": 1.04,
+   "asset": "a_92ff1119f299fe4f",
+   "start": 16.3,
+   "seconds": 0.76,
    "dialogue": true,
    "label": "HERO: Nope."
   },
@@ -305,11 +309,12 @@
    "label": "inhale"
   },
   {
-   "asset": "a_7ae678f7d3fcd83c",
-   "start": 21.38,
-   "seconds": 2.3,
+   "asset": "a_b8fea8b12f82f2bc",
+   "start": 21.48,
+   "seconds": 2.27,
    "dialogue": true,
-   "label": "YOOBA: Mmf. Wait for meee—"
+   "label": "YOOBA: Mmf. Wait for meee—",
+   "fadeOut": 0.05
   },
   {
    "asset": "a_591686d5a805de0c",
@@ -321,14 +326,14 @@
   {
    "asset": "a_15c36bf35336aa2c",
    "start": 26.65,
-   "seconds": 1.5,
+   "seconds": 0.8,
    "dialogue": false,
    "label": "diamond clink"
   },
   {
-   "asset": "a_4958a99a4ad9bbe5",
-   "start": 27.09,
-   "seconds": 2.4,
+   "asset": "a_8b59e538267b535b",
+   "start": 27.3,
+   "seconds": 1.88,
    "dialogue": true,
    "label": "ANNOUNCER: FLOOR ONE THOUSAND!"
   },
@@ -357,7 +362,7 @@
   },
   {
    "text": "Hello?",
-   "start": 7.74,
+   "start": 7.75,
    "end": 8.44
   },
   {
@@ -377,18 +382,18 @@
   },
   {
    "text": "Nope.",
-   "start": 16.24,
-   "end": 17.28
+   "start": 16.3,
+   "end": 17.06
   },
   {
    "text": "Mmf. Wait for meee—",
-   "start": 21.38,
-   "end": 23.68
+   "start": 21.48,
+   "end": 23.75
   },
   {
    "text": "FLOOR ONE THOUSAND!",
-   "start": 26.99,
-   "end": 28.89
+   "start": 27.3,
+   "end": 29.18
   },
   {
    "text": "Made with Hawkes Gen\nhawkesgen.com",
