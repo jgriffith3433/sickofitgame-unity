@@ -154,6 +154,9 @@ namespace SickOfIt.Gameplay
             collider.isTrigger = !def.body.solid;
             if (def.body.solid && def.body.oneWay)
                 SickOfIt.Core.Input.DropThroughPlatform.MakeOneWay(collider);
+            // The carved landing is jumped up through from below like any foothold but never dropped through: the floor's ending plays on it.
+            if (def.body.solid && def.body.oneWay && def.tags != null && def.tags.Contains("landing"))
+                go.AddComponent<SickOfIt.Core.Input.NoDropThrough>();
 
             var sprite = go.AddComponent<SpriteRenderer>();
             SpriteLayers.Apply(sprite, def.visual.layer, def.visual.SortingOrder);
