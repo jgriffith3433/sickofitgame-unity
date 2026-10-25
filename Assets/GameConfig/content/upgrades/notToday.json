@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "title": "Not Today",
+  "description": "Something hit him. Not today, though. Half a second more before the next one counts.",
+  "maxLevel": 2,
+  "weight": 1,
+  "invincibilitySecondsPerLevel": 0.5,
+  "color": "#FFB347"
+}

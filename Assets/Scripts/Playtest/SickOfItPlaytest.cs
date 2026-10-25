@@ -236,6 +236,7 @@ namespace SickOfIt.Playtest
 
         /// <summary>The cutscene scenario: the scene it plays (content/scenes) and the level whose stage it plays on.</summary>
         public const string CutsceneScene = "cutsceneTest";
+        public const string GrudgeScene = "grudgeTest";
         public const int CutsceneLevel = 1;
 
         /// <summary>The climb scenario: the test floor it plays (content/scenes, a floor with a path) and the level whose stage it plays on.</summary>
@@ -644,6 +645,11 @@ namespace SickOfIt.Playtest
                 "(the only time he stands), IdleStand, Slam (ground-pound), Breath and HurtStand standing, Enrage at a third, and his Die clip playing where he fell; " +
                 "his on-screen height; every line with its subtitle and his own voice (intro, phase 1, hurt, stand, guards, enrage, hurt, defeat), the " +
                 "announcer's \"HAS FALLEN\" and the hero's replies", MagmaKing.Seconds, "level"));
+            list.Add(new PlaytestScenario("shop-gate", "Yooba's gated goods and the Not Today Grudge: an old save (setup shortcut: one Tummy-Dipped Shots bought the old way, " +
+                "no unlock flags saved) keeps its purchase; the shop hides the gated good (Double-Dipped Shots) until Tummy-Dipped Shots is level 2, bought with real " +
+                "clicks, then shows it; the shop's prices are reported (diamonds to max everything, with and without the gated good). Then the scene " +
+                $"\"{GrudgeScene}\" on level {CutsceneLevel}'s stage offers a Grudge pick that must list Not Today (picked with 1: the hero's hit is followed by " +
+                "a longer invincibility). Each beat is a check event, `shop.*` metrics carry the prices and `level<n>.diamonds` the diamonds each level paid", 150, "menus"));
             list.Add(new PlaytestScenario("cutscene", $"The scene \"{CutsceneScene}\" on level {CutsceneLevel}'s stage (setup shortcut): with input and rewind locked " +
                 "the hero walks to a point by himself and stops, turns left and right, R does nothing; the camera zooms in and back; the screen fades " +
                 "to black and back; he is pulled into a point, spinning and shrinking until he disappears. Each beat is checked", 75, "level"));
@@ -937,6 +943,8 @@ namespace SickOfIt.Playtest
                 yield return session.PortalAudio();
             else if (id == "cutscene")
                 yield return session.Cutscene();
+            else if (id == "shop-gate")
+                yield return session.ShopGate();
             else if (id == "climb")
             {
                 session.Prepare(ClimbLevel, true);
@@ -982,6 +990,8 @@ namespace SickOfIt.Playtest
             readonly PlaytestInput input;
             readonly FpsSampler fps;
             readonly int diamondsAtStart;
+            int diamondsAtLevelStart;
+            string lastGrudgeOffer;
             PlaytestBot bot;
             string lastOutcome;
             int deaths;
@@ -1034,6 +1044,8 @@ namespace SickOfIt.Playtest
                 Run.Metric("deaths", deaths);
                 if (RogueliteManager.Instance != null)
                     Run.Metric("diamonds", RogueliteManager.Instance.GetPoints() - diamondsAtStart);
+                Run.Metric("shop.totalPrice", RogueliteManager.TotalPrice(true));
+                Run.Metric("shop.basePrice", RogueliteManager.TotalPrice(false));
                 ReportRewindPerf();
             }
 
@@ -1127,6 +1139,10 @@ namespace SickOfIt.Playtest
                     return;
                 if (e.Kind == "damage" && e.Subject == "player" && !string.IsNullOrEmpty(e.Detail))
                     lastHitBy = e.Detail;
+                if (e.Kind == "levelStart" && RogueliteManager.Instance != null)
+                    diamondsAtLevelStart = RogueliteManager.Instance.GetPoints();
+                if (e.Kind == "upgradeOffer")
+                    lastGrudgeOffer = e.Subject ?? "";
                 string level = "level " + log.World.LevelNumber;
                 if (stage != null && stage.OneFloor && stage.Level == log.World.LevelNumber)
                 {
@@ -1325,8 +1341,11 @@ namespace SickOfIt.Playtest
                 if (Run.Done)
                     return;
                 string prefix = "level" + s.levelNumber;
+                // The economy (Docs/Story.md "Yooba's prices"): diamonds this level paid, and what the whole shop costs.
+                int levelDiamonds = RogueliteManager.Instance != null ? Mathf.Max(0, RogueliteManager.Instance.GetPoints() - diamondsAtLevelStart) : 0;
                 Run.Event("level-end", $"level {s.levelNumber}: {s.outcome} after {s.duration:0.0} s, {s.kills}/{s.spawned} kills, " +
-                                       $"hp {s.playerHealthEnd}/{s.playerMaxHealth}, phase {s.lastPhase}");
+                                       $"hp {s.playerHealthEnd}/{s.playerMaxHealth}, phase {s.lastPhase}, diamonds {levelDiamonds} " +
+                                       $"(shop: {RogueliteManager.TotalPrice(true)} to max everything)");
                 // A level left before it was played (all-levels: the Waystone's restart opens Level 2 after every death, and
                 // the bot loads its next level over it at once) is not a try: it overwrote level2.seconds with 0 and added a
                 // level2.attempt per death elsewhere (beta run r_b7a410dd5b39: 15 attempts, 0 s).
@@ -1338,6 +1357,8 @@ namespace SickOfIt.Playtest
                 Run.Add("rewinds", s.rewinds);
                 Run.Add("rewoundSeconds", s.rewoundSeconds);
                 Run.Metric(prefix + ".seconds", s.duration);
+                Run.Metric(prefix + ".diamonds", levelDiamonds);
+                Run.Metric("shop.totalPrice", RogueliteManager.TotalPrice(true));
                 Run.Metric(prefix + ".kills", s.kills);
                 Run.Metric(prefix + ".hp", s.playerHealthEnd);
                 Run.Add(prefix + ".attempts");
@@ -8252,6 +8273,87 @@ namespace SickOfIt.Playtest
                 yield return WaitReal(4f);
                 Run.Progress(1f);
                 End(yoobaFailed > 0 ? PlaytestOutcome.Done : PlaytestOutcome.Won);
+            }
+
+            /// <summary>
+            /// Yooba's gate and the Not Today Grudge (Docs/Story.md, "Yooba's prices"; AGENTS.md): an old save (setup
+            /// shortcut: raw PlayerPrefs as a build before the gate wrote them, no unlock flags) keeps its goods; the gated
+            /// Double-Dipped Shots is missing from the counter until Tummy-Dipped Shots is level 2 (bought with real
+            /// clicks), then shown; the prices are reported. Then the scene grudgeTest offers a Grudge pick that must list Not Today.
+            /// </summary>
+            public IEnumerator ShopGate()
+            {
+                var roguelite = RogueliteManager.Instance;
+                var definition = GameDefinition.Instance;
+                const string gated = "doubleDip", needs = "spicyFireballs";
+                int failed = 0;
+                void Gate(string beat, bool ok, string detail)
+                {
+                    if (ok) { Run.Event("check", $"shop-gate {beat}: ok ({detail})"); return; }
+                    failed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"shop-gate {beat}: {detail}");
+                }
+
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+
+                Run.Event("shortcut", $"an old save: {needs} bought once the way a build before the gate stored it, no unlock flags, 500 diamonds");
+                UnlockFlags.Reset();
+                PlayerPrefs.SetInt("Rogue_Shop_" + needs, 1);
+                PlayerPrefs.DeleteKey("Rogue_Shop_" + gated);
+                roguelite.SetPoints(500);
+                yield return ClickUntil(definition.mainMenuConfig.labels.shop, () => Object.FindAnyObjectByType<UpgradeShopManager>() != null, 20f);
+                if (Run.Done) yield break;
+                Run.Scene("Shop (gate)");
+                var shop = Object.FindAnyObjectByType<UpgradeShopManager>();
+                yield return WaitReal(2f);
+                if (Run.Done || shop == null) yield break;
+
+                int basePrice = RogueliteManager.TotalPrice(false), allPrice = RogueliteManager.TotalPrice(true);
+                Run.Event("economy", $"Yooba's whole counter: {basePrice} diamonds for every level of every good, {allPrice} with the gated ones (was 655)");
+                Run.Metric("shop.basePrice", basePrice);
+                Run.Metric("shop.totalPrice", allPrice);
+                Gate("oldSaveKept", roguelite.GetUpgradeLevel(needs) == 1 && shop.ShownIds().Contains(needs),
+                    $"{needs} still level {roguelite.GetUpgradeLevel(needs)} and on the counter");
+                Gate("hiddenUntilUnlocked", !shop.ShownIds().Contains(gated) && shop.CardButton(gated) == null,
+                    $"on the counter: {string.Join(", ", shop.ShownIds())}");
+                yield return Audit("Shop (gated good hidden)", 0, 2, 1f, progress: false);
+                if (Run.Done) yield break;
+
+                int cost = 0;
+                foreach (var upgrade in RogueliteManager.ShopCatalog)
+                    if (upgrade != null && upgrade.id == needs) cost = roguelite.GetNextCost(upgrade);
+                yield return ClickButton(shop.CardButton(needs), $"{needs} level 2 (♦ {cost})");
+                yield return WaitReal(1.5f);
+                if (Run.Done) yield break;
+                Gate("unlocked", roguelite.GetUpgradeLevel(needs) == 2 && shop.ShownIds().Contains(gated) && shop.CardButton(gated) != null,
+                    $"{needs} level {roguelite.GetUpgradeLevel(needs)}; on the counter: {string.Join(", ", shop.ShownIds())}");
+                yield return Audit("Shop (gated good shown)", 1, 2, 1f, progress: false);
+                if (Run.Done) yield break;
+                yield return ClickUntil(definition.upgradeShopConfig.layout.backText, () => Object.FindAnyObjectByType<MainMenuManager>() != null, 20f);
+                if (Run.Done) yield break;
+                Run.Progress(0.5f);
+
+                // The Grudge pick: the scene offers three Grudges, Not Today one of them.
+                var content = SickOfIt.Gameplay.GameContent.Current;
+                Gate("grudgeInPool", content != null && content.Upgrades.TryGetValue("notToday", out var def) && def.weight > 0f && def.requires.Count == 0,
+                    "Not Today is in content/upgrades, weighted into every pick, ungated");
+                lastGrudgeOffer = null;
+                UpgradeProgress.Reset();
+                LevelRuntime.PendingScene = GrudgeScene;
+                Run.Event("shortcut", $"load level {CutsceneLevel}'s stage with the scene {GrudgeScene} directly");
+                var load = LoadLevel(CutsceneLevel);
+                if (load != null)
+                    yield return load;
+                yield return PlayLevel(CutsceneLevel, 40f, until: () => lastGrudgeOffer != null && GameplayWorld.Instance != null
+                    && GameplayWorld.Instance.Hud != null && !GameplayWorld.Instance.Hud.PickerOpen);
+                LevelRuntime.PendingScene = null;
+                if (Run.Done) yield break;
+                Gate("notTodayInPicker", lastGrudgeOffer != null && Array.IndexOf(lastGrudgeOffer.Split(','), "notToday") >= 0, $"the Grudge pick offered: {lastGrudgeOffer ?? "nothing"}");
+                UpgradeProgress.Reset();
+                roguelite.SetPoints(0);
+                Run.Progress(1f);
+                End(failed == 0 ? PlaytestOutcome.Won : PlaytestOutcome.Done);
             }
 
             bool ShopLineSince(int from, string moment)

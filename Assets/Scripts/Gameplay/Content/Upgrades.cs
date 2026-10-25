@@ -20,6 +20,8 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Extra shots per volley, per level (fanned out).")] public int extraShotsPerLevel;
         [Doc("Seconds added to the rewind juice maximum (and filled), per level.")] public float rewindSecondsPerLevel;
         [Doc("Maximum health added per level (permanent, applied when picked).")] public int maxHealthPerLevel;
+        [Doc("Seconds added to the invincibility after a hit, per level (Not Today).")] public float invincibilitySecondsPerLevel;
+        [Doc("Not offered in the Grudge picker until every condition holds: flag:<id>, weapon:<id>, shop:<id>[:level], grudge:<id>[:level], level:<n>. Empty = always offered.")] public List<string> requires = new List<string>();
         [Doc("Card color.")] public UnityEngine.Color color = new UnityEngine.Color(0.25f, 0.6f, 1f, 1f);
     }
 

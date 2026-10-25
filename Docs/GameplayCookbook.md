@@ -323,6 +323,16 @@ comedic text beats (`showText` banners and subtitles, boss intros, upgrade descr
   hero: **Visit Yooba** beside Continue (`ui/shaft.json` `yoobaButton`/`continueBesideYooba` and their portrait
   placements, text `shaftVisitYooba`) builds the same shop over the Shaft (`UpgradeShopManager.OpenOverShaft`, no
   scene load); its Back closes it and the Shaft's Continue goes on to the next level.
+- **Gating a good or a Grudge** (`requires`, shop goods in `player.json` and `content/upgrades/*.json`): a list of
+  conditions, all of which must hold before it is shown (shop) or offered (Grudge picker); until then it is simply
+  absent. Forms: `flag:<id>` (an `UnlockFlags` id: `UnlockFlags.Set("...")` from C#), `weapon:<id>` (the flag
+  `weapon:<id>`: the weapon system sets it when a weapon is unlocked), `shop:<id>[:level]` (a good owned at that level),
+  `grudge:<id>[:level]` (held this run), `level:<n>` (level n cleared). A good already owned is never hidden, so a
+  save from before the gate keeps its purchases (nothing is migrated: no flags is an empty set). The content validator
+  rejects a malformed condition. Flags are cleared on New Game, kept through runs. Example:
+  `"requires": ["shop:spicyFireballs:2"]` (Double-Dipped Shots).
+- **Prices** (Docs/Story.md, "Yooba's prices"): `RogueliteManager.TotalPrice` sums the catalog; the playtest reports it
+  as `shop.totalPrice` / `shop.basePrice`, with `level<n>.diamonds` per level. Test it with `ShopGateTests`.
 - Between-level picks (content/upgrades) are separate: bigger, run-long boosts offered at the end of each level.
 
 ## Status effects (poison, slow, stun, shield)

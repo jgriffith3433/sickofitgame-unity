@@ -85,6 +85,8 @@ namespace SickOfIt.Core.Progression
             var cardStyle = menu.Theme.card.Clone();
             cardStyle.tilt = 0f;
 
+            // Every good gets a card; those whose requires aren't met yet are switched off (RefreshUI), so a good
+            // bought here that unlocks another (shop:<id>) shows up at once.
             foreach (var upgrade in RogueliteManager.ShopCatalog)
             {
                 if (upgrade == null)
@@ -156,13 +158,23 @@ namespace SickOfIt.Core.Progression
             MenuGraphics.SetText(yoobaSubtitle, text ?? "");
         }
 
-        /// <summary>The card of an upgrade (for the playtest's virtual mouse), or null.</summary>
+        /// <summary>The card of an upgrade that is for sale (for the playtest's virtual mouse), or null.</summary>
         public MenuButton CardButton(string id)
         {
             foreach (var (def, view) in cards)
-                if (def != null && def.id == id)
+                if (def != null && def.id == id && view.Button.transform.parent.gameObject.activeSelf)
                     return view.Button;
             return null;
+        }
+
+        /// <summary>The ids of the goods on show, in order (the playtest reads it).</summary>
+        public List<string> ShownIds()
+        {
+            var ids = new List<string>();
+            foreach (var (def, view) in cards)
+                if (def != null && view.Button.transform.parent.gameObject.activeSelf)
+                    ids.Add(def.id);
+            return ids;
         }
 
         /// <summary>Refresh all UI elements to reflect current state.</summary>
@@ -176,6 +188,10 @@ namespace SickOfIt.Core.Progression
 
             foreach (var (def, view) in cards)
             {
+                bool forSale = def.IsForSale(roguelite.GetUpgradeLevel(def.id));
+                view.Button.transform.parent.gameObject.SetActive(forSale);
+                if (!forSale)
+                    continue;
                 if (def.Effect == ShopEffect.None)
                 {
                     view.SetCaption("");
