@@ -10,7 +10,7 @@
     604,
     340
   ],
-  "notes": "Hero clips for Docs/ArtPipeline.md. Cells match the existing hero sheets (604x340, Unity spriteScale 0.25) so he never changes size; every pose starts from the Idle reference. Written 2026-10-25 without GPU; wired into player.json animationConfig by the run.",
+  "notes": "Hero clips for Docs/ArtPipeline.md. Cells match the existing hero sheets (604x340, Unity spriteScale 0.25) so he never changes size; every pose starts from the Idle reference. Written 2026-10-25 without GPU; wired into player.json animationConfig by the run. Climb clips (Climb, ClimbIdle, ClimbDown) were generated 2026-10-25 from an image.edit pose of the Idle frame (Hawkes Gen, 1280x720 on black), baked with Tools/Art/player_clip_sheet.py into Assets/Art/Sprites/Player/.",
   "poses": {
     "stand": "standing relaxed, launcher on his shoulder, bored expression",
     "punchWind": "leaning back with his right fist cocked behind him, launcher slung on his back, scowling",
@@ -28,7 +28,8 @@
     "ledgePull": "hauling himself up over a ledge, one knee on top",
     "grazeSpin": "twisting out of the way with a smug smirk and a raised eyebrow, a tiny spark trailing his sleeve",
     "victoryPose": "arms crossed, one eyebrow raised, the smallest nod of satisfaction",
-    "deathFlat": "flat on his back, eyes wide open, arms out, smoking"
+    "deathFlat": "flat on his back, eyes wide open, arms out, smoking",
+    "climbHang": "side view, one fist raised gripping, the other fist low, one knee lifted high, launcher slung across his back, leaning in; no ladder drawn (the game draws it)"
   },
   "clips": {
     "punch1": {
@@ -180,6 +181,27 @@
       "to": "deathFlat",
       "state": "DeathShrug",
       "loop": false
+    },
+    "climbUp": {
+      "from": "climbHang",
+      "action": "climbs hand over hand, alternating arms and knees, going up",
+      "seconds": 2,
+      "state": "Climb",
+      "loop": true
+    },
+    "climbIdle": {
+      "from": "climbHang",
+      "action": "hangs still on the rungs, breathing, one bored glance",
+      "seconds": 2,
+      "state": "ClimbIdle",
+      "loop": true
+    },
+    "climbDown": {
+      "from": "climbHang",
+      "action": "climbs down hand under hand, going down",
+      "seconds": 2,
+      "state": "ClimbDown",
+      "loop": true
     }
   },
   "takes": {

@@ -170,37 +170,16 @@
               ]
             },
             {
-              "entity": "sinkingStone",
+              "entity": "ladderHaul",
               "at": [
-                11.8,
-                6.5
+                9.9,
+                8.05
               ],
               "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                9.6,
-                7.8
+                1.0,
+                5.2
               ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "sinkingStone",
-              "at": [
-                11.8,
-                9.1
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
+              "id": "ladder999"
             },
             {
               "entity": "ledge",
@@ -345,7 +324,7 @@
               {
                 "type": "setCounter",
                 "name": "lavaSpeed",
-                "value": 0.6
+                "value": 0.8
               },
               {
                 "type": "playMusic",
@@ -370,6 +349,17 @@
                 "duration": 2.6,
                 "style": "Subtitle",
                 "sound": "vo_f999_following"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "showText",
+                "text": "A ladder. Hell finally built something that goes up on purpose.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "color": "#D2DAE4"
               }
             ]
           }

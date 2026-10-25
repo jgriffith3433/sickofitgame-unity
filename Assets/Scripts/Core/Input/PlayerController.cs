@@ -290,12 +290,13 @@ namespace SickOfIt.Core.Input
                 PlayAnimatorState(isGrounded ? "Idle" : "Fall");
         }
 
-        // Plays "Climb" while he moves on the ladder and "ClimbIdle" while he hangs still.
+        // Plays "Climb" going up the ladder, "ClimbDown" going down and "ClimbIdle" while he hangs still.
         private void UpdateClimbPose()
         {
             if (!IsClimbing)
                 return;
-            string pose = rb != null && Mathf.Abs(rb.linearVelocity.y) > 0.1f ? "Climb" : "ClimbIdle";
+            float vy = rb != null ? rb.linearVelocity.y : 0f;
+            string pose = vy > 0.1f ? "Climb" : vy < -0.1f ? "ClimbDown" : "ClimbIdle";
             if (pose == climbPose)
                 return;
             climbPose = pose;

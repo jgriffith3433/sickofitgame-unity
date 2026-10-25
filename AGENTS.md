@@ -125,7 +125,7 @@ Assets/GameConfig/
 - **Ladders** (Docs/Story.md "Ladders", cookbook "Ladders"): entity ability `ladder` (`content/entities/ladder.json`, a tall zone; `scale` stretches it). Up
   grabs, down from its top grabs, up/down climb, Jump lets go, climbing off the top steps out; guns at `fireRate` (0.55) while held. The hold is the ladder's
   (`holding` saved), applied through `GameplayWorld.HoldPlayerClimbing` -> `PlayerController.HoldClimbing` (`IsClimbing`, `ClimbPose`): the controller's own flags are
-  not rewound, which is why the holder re-holds him every tick. Player states `Climb`/`ClimbIdle` in `player.json` (placeholder sheets). Playtest `ladder`
+  not rewound, which is why the holder re-holds him every tick. Player states `Climb`/`ClimbDown`/`ClimbIdle` in `player.json` (generated sheets). Played on Floors 999 and 998 (`ladderHaul`; playtest `ladder-floors`, the bot climbs via `PlaytestBot.LadderStep`). Playtest `ladder`
   (scene `ladderTest`).
 - **Weapons** (Docs/Story.md "Weapons", cookbook "Weapons"): `content/weapons/*.json` (`rocketLauncher` = the old gun, the
   default, same numbers as player.json; `fists` = a melee combo with a visible swing, no ammo). `PlayerController` asks its
