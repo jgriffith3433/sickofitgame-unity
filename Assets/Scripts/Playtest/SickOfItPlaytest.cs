@@ -384,6 +384,8 @@ namespace SickOfIt.Playtest
         /// LongFloorLength seconds. It runs 240-360 s, so all-levels gives it PathLongFloorSeconds and its pace row 6 minutes.</summary>
         const float LongFloorLength = 200f, PathLongFloorSeconds = 420f, LongFloorMin = 240f, LongFloorMax = 360f;
         const int LongFloorEnemies = 16, LongFloorMinPieces = 4;
+        /// <summary>The bar for Circle IX's long floors (their generator estimate opens at 4.5-7 and ends at 12-20, Circle X's at 1.4-5.4 and 12.7-13.8): the average density over a floor and the last piece's.</summary>
+        const float CircleXAverageDensity = 5.5f, CircleXLastDensity = 8.5f;
 
         static bool IsLongFloor(int n)
         {
@@ -490,6 +492,31 @@ namespace SickOfIt.Playtest
         }
 
         public const int RuneBridgesPerPart = 5;
+
+        public const string CrackedHeatId = "cracked-heat";
+        public const int CrackedHeatPerPart = 5;
+
+        /// <summary>
+        /// Circle IX's heat pass (Docs/LevelDesign.md "A long bullet-hell floor", point 10): the floors whose script says circle "crackedRoad" and is
+        /// a long floor (Floors 900-892, 860-852 and 810-802; the floor bosses are not), in game.json's order, in parts of five floors (about 5 minutes each).
+        /// </summary>
+        public static List<int> CrackedHeatLevels(int part = 0)
+        {
+            var list = new List<int>();
+            var definition = GameDefinition.Instance;
+            var content = SickOfIt.Gameplay.GameContent.Current;
+            int levels = definition != null ? definition.TotalLevels : 0;
+            for (int n = 1; n <= levels; n++)
+            {
+                var config = definition.GetLevel(n);
+                if (config != null && content != null && config.levelName != null && content.LevelScripts.TryGetValue(config.levelName, out var script)
+                    && script != null && script.floors != null && script.floors.circle == "crackedRoad" && script.length >= LongFloorLength)
+                    list.Add(n);
+            }
+            if (part > 0)
+                list = list.GetRange(Mathf.Min(list.Count, (part - 1) * CrackedHeatPerPart), Mathf.Max(0, Mathf.Min(CrackedHeatPerPart, list.Count - (part - 1) * CrackedHeatPerPart)));
+            return list;
+        }
 
         /// <summary>Every level in game.json's order, 1 to the last: the path, then the long way's old stages and the arcade levels.</summary>
         public static List<int> AllGameLevels()
@@ -800,6 +827,15 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(OffPathId, $"The levels in game.json after the path ({PathRange(offPath)}: Circle IX's long way, Levels13-18, " +
                 "Circle X's old stages, Level3-10, and the arcade levels), the all-levels run over just these with a check event per level " +
                 "(cleared, or died/stuck and where, with its time): " + pathHow, PathRunSeconds(offPath), "full", "levels"));
+            for (int part = 1; part * CrackedHeatPerPart - CrackedHeatPerPart < CrackedHeatLevels().Count; part++)
+            {
+                var heatLevels = CrackedHeatLevels(part);
+                list.Add(new PlaytestScenario(part == 1 ? CrackedHeatId : CrackedHeatId + "-" + part, "Circle IX's heat pass (Floors 900-892, 860-852 and 810-802, long bullet-hell floors, part " + part + ": " +
+                    PathRange(heatLevels) + "): each floor opened directly (a setup shortcut) and played by the bot through real input, once more after a death. A check event per floor " +
+                    "(cleared or how not, its time: a long floor runs 4-6 minutes), a `setpiece` event per set piece and a `density` event per piece (enemies and shots alive), the ladder " +
+                    "climbs (`ladder` events), and the `long.hotter` check: the floor's average density against Circle X's long floors (a `heat` event with both): " + pathHow,
+                    PathRunSeconds(heatLevels), "full", "levels"));
+            }
             for (int part = 1; part * RuneBridgesPerPart - RuneBridgesPerPart < RuneBridgeLevels().Count; part++)
             {
             var runeLevels = RuneBridgeLevels(part);
@@ -1010,6 +1046,8 @@ namespace SickOfIt.Playtest
                 yield return session.AllLevels(AllGameLevels(), "every level in game.json", at: at);
             else if (id == OffPathId)
                 yield return session.AllLevels(OffPathLevels(), "the levels after the path", checkEvery: true, at: at);
+            else if (id == CrackedHeatId || id.StartsWith(CrackedHeatId + "-", StringComparison.Ordinal))
+                yield return session.AllLevels(CrackedHeatLevels(id == CrackedHeatId ? 1 : int.Parse(id.Substring(CrackedHeatId.Length + 1))), "Circle IX, the heat pass", checkEvery: true, at: at, ladders: true);
             else if (id == RuneBridgesId || id.StartsWith(RuneBridgesId + "-", StringComparison.Ordinal))
                 yield return session.AllLevels(RuneBridgeLevels(id == RuneBridgesId ? 1 : int.Parse(id.Substring(RuneBridgesId.Length + 1))), "Circle VIII, the Rune Bridges", checkEvery: true, at: at);
             else if (id == LadderFloorsId)
@@ -2366,6 +2404,19 @@ namespace SickOfIt.Playtest
                     s.Check(prefix + ".density", !completed || rising && drops <= 1,
                         $"density {s.Density(0):0.0} on the first piece, {s.Density(last):0.0} on the last ({(rising ? "rising" : "NOT rising: want 1.3x")}, {drops} sharp drop(s), at most 1); " +
                         $"the most alive at once was {s.MostHostile}");
+                    // Circle IX is hotter than Circle X (Docs/LevelDesign.md point 10): Circle X's long floors measure a little under this floor (the bot's average over a floor)
+                    // (their estimate in long_floors.py: 1.4-5.4 on the first piece, 12.7-13.8 on the last); Circle IX's must average more and end hotter.
+                    if (s.Start > 800 && s.Start <= 900)
+                    {
+                        float sum = 0f;
+                        for (int i = 0; i <= last; i++)
+                            sum += s.Density(i);
+                        float average = sum / (last + 1);
+                        Run.Event("heat", $"level {s.Level} (Floor {s.Start}): {average:0.0} alive on average over {last + 1} set pieces, {s.Density(last):0.0} on the last; Circle X's long floors average {CircleXAverageDensity:0.0} and end near {CircleXLastDensity:0.0}");
+                        Run.Metric("level" + s.Level + ".heat", average);
+                        s.Check(prefix + ".hotter", !completed || average >= CircleXAverageDensity && s.Density(last) >= CircleXLastDensity,
+                            $"hotter than Circle X: {average:0.0} alive on average (want {CircleXAverageDensity:0.0}+) and {s.Density(last):0.0} on the last piece (want {CircleXLastDensity:0.0}+)");
+                    }
                 }
             }
 

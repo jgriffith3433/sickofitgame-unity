@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 180.0,
+  "duration": 400.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 34,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 899,
-    "length": 90,
+    "length": 285,
     "floors": {
       "start": 899,
       "end": 898,
@@ -215,97 +215,20 @@
           ]
         },
         {
-          "name": "drift",
-          "direction": "Right",
-          "length": 44.08,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "driftSlab",
-              "at": [
-                13.15,
-                10.4
-              ],
-              "id": "drift1",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "splitSlab",
-              "at": [
-                25.55,
-                10.35
-              ],
-              "id": "islet1",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "driftSlab",
-              "at": [
-                27.8,
-                10.4
-              ],
-              "id": "drift2",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "splitSlab",
-              "at": [
-                40.2,
-                10.35
-              ],
-              "id": "islet2",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "driftSlab",
-              "at": [
-                42.45,
-                10.4
-              ],
-              "id": "drift3",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                55.15,
-                10.35
-              ],
-              "id": "farBank",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "driftClimb",
+          "name": "riser",
           "direction": "Up",
-          "length": 2.57,
+          "length": 5.6,
           "turn": 2.0,
+          "lead": 0.4,
+          "autoSpeed": 0.36,
           "spawns": [
             {
               "entity": "roadSlab",
               "at": [
-                56.15,
-                11.65
+                0.0,
+                -0.101
               ],
+              "anchor": "Section",
               "scale": [
                 0.9,
                 1
@@ -314,9 +237,10 @@
             {
               "entity": "roadSlab",
               "at": [
-                54.15,
-                12.95
+                2.4,
+                1.024
               ],
+              "anchor": "Section",
               "scale": [
                 0.9,
                 1
@@ -325,29 +249,670 @@
             {
               "entity": "roadSlab",
               "at": [
-                56.15,
-                14.25
+                0.0,
+                2.149
               ],
+              "anchor": "Section",
               "scale": [
-                1.1,
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                2.4,
+                3.275
+              ],
+              "anchor": "Section",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                0.0,
+                4.4
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
                 1
               ]
             }
           ]
         },
         {
-          "name": "landing",
+          "name": "SplitEnds1",
           "direction": "Right",
-          "length": 5.18,
+          "length": 28.0,
           "turn": 2.0,
+          "autoSpeed": 0.55,
           "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                8.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                11.0,
+                -0.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc0"
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                16.0,
+                -0.7
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                20.0,
+                -0.5
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc0"
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                24.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                28.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TheSeamsGo2",
+          "direction": "Right",
+          "length": 28.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "splitSlab",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                8.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                11.0,
+                -0.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc1"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                16.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                20.0,
+                -0.5
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc1"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                24.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                28.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "DonTStandStill3",
+          "direction": "Up",
+          "length": 8.0,
+          "turn": 2.0,
+          "lead": 0.4,
+          "autoSpeed": 0.36,
+          "spawns": [
+            {
+              "entity": "ladder",
+              "at": [
+                0.3,
+                3.05
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.0,
+                8.0
+              ],
+              "id": "ladder899"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                0.0,
+                6.8
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "imp",
+              "at": [
+                -3.0,
+                3.5
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc2"
+              ]
+            },
+            {
+              "entity": "impGuard",
+              "at": [
+                3.0,
+                5.3
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc2"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "RoadInPieces4",
+          "direction": "Right",
+          "length": 28.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "splitSlab",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                8.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                7.0,
+                -0.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                9.0,
+                -0.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                11.0,
+                -0.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                13.0,
+                -0.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                16.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                20.0,
+                -0.5
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                24.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                24.0,
+                -0.5
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                28.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TheLastOfTheRoad5",
+          "direction": "Right",
+          "length": 30.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                8.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                7.0,
+                0.05
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                9.0,
+                0.05
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                11.0,
+                -0.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "demonWhelp",
+              "at": [
+                13.0,
+                -0.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                16.0,
+                -0.7
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "leadImp",
+              "at": [
+                16.0,
+                2.3
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                20.0,
+                -0.5
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "splitSlab",
+              "at": [
+                24.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                24.0,
+                0.1
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
             {
               "entity": "floorLanding899",
               "at": [
-                60.75,
-                14.25
+                29.4,
+                -0.4
               ],
-              "id": "landing"
+              "id": "landing",
+              "anchor": "Section"
             }
           ]
         }
@@ -368,6 +933,14 @@
       },
       {
         "name": "lavaMax",
+        "value": 0.0
+      },
+      {
+        "name": "heat",
+        "value": 0.0
+      },
+      {
+        "name": "finale",
         "value": 0.0
       }
     ],
@@ -419,27 +992,22 @@
         ]
       },
       {
-        "name": "the drift: breather",
-        "when": {
-          "type": "sectionReached",
-          "section": "drift"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "playMusic",
-            "clip": "Audio/Music/wastes_loop.ogg",
-            "volume": 0.85
-          }
-        ]
-      },
-      {
         "name": "the landing",
         "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finale",
+              "atLeast": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
@@ -485,6 +1053,266 @@
             ]
           }
         ]
+      },
+      {
+        "name": "to SplitEnds1",
+        "when": {
+          "type": "sectionReached",
+          "section": "SplitEnds1"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "SplitEnds1"
+          }
+        ]
+      },
+      {
+        "name": "to TheSeamsGo2",
+        "when": {
+          "type": "sectionReached",
+          "section": "TheSeamsGo2"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc0"
+            }
+          },
+          {
+            "type": "goToPhase",
+            "phase": "TheSeamsGo2"
+          }
+        ]
+      },
+      {
+        "name": "to DonTStandStill3",
+        "when": {
+          "type": "sectionReached",
+          "section": "DonTStandStill3"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc1"
+            }
+          },
+          {
+            "type": "goToPhase",
+            "phase": "DonTStandStill3"
+          }
+        ]
+      },
+      {
+        "name": "to RoadInPieces4",
+        "when": {
+          "type": "sectionReached",
+          "section": "RoadInPieces4"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc2"
+            }
+          },
+          {
+            "type": "goToPhase",
+            "phase": "RoadInPieces4"
+          }
+        ]
+      },
+      {
+        "name": "to TheLastOfTheRoad5",
+        "when": {
+          "type": "sectionReached",
+          "section": "TheLastOfTheRoad5"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc3"
+            }
+          },
+          {
+            "type": "goToPhase",
+            "phase": "TheLastOfTheRoad5"
+          }
+        ]
+      },
+      {
+        "name": "the opening's rift stops",
+        "when": {
+          "type": "sectionReached",
+          "section": "riser"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.0
+          }
+        ]
+      },
+      {
+        "name": "the floor has had its minutes",
+        "when": {
+          "type": "atTime",
+          "seconds": 255.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "finale",
+            "value": 1.0
+          }
+        ]
+      },
+      {
+        "name": "heat: the floor gets hotter",
+        "when": {
+          "type": "every",
+          "seconds": 20.0,
+          "startAfter": 40.0,
+          "maxTimes": 12
+        },
+        "do": [
+          {
+            "type": "addCounter",
+            "name": "heat",
+            "amount": 1.0
+          }
+        ]
+      },
+      {
+        "name": "heat 2: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 2.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 4: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 4.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 6: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 6.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 8: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 8.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 10: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 10.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
       }
     ],
     "phases": [
@@ -501,6 +1329,486 @@
                 "style": "Banner",
                 "sound": "vo_f899_title",
                 "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SplitEnds1",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:SplitEnds1"
+          },
+          {
+            "type": "showText",
+            "text": "SPLIT ENDS!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "SPLIT ENDS!: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 6.36,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "SPLIT ENDS!: sparks from the Rift",
+            "when": {
+              "type": "every",
+              "seconds": 8.45,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 5,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "TheSeamsGo2",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:TheSeamsGo2"
+          },
+          {
+            "type": "showText",
+            "text": "THE SEAMS GO!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_push.ogg",
+            "volume": 0.85
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.39,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "THE SEAMS GO!: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 6.0,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "THE SEAMS GO!: sparks from the Rift",
+            "when": {
+              "type": "every",
+              "seconds": 7.96,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 5,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "DonTStandStill3",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:DonTStandStill3"
+          },
+          {
+            "type": "showText",
+            "text": "DON'T STAND STILL!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.29,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "DON'T STAND STILL!: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 5.65,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "DON'T STAND STILL!: sparks from the Rift",
+            "when": {
+              "type": "every",
+              "seconds": 7.46,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 5,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "RoadInPieces4",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:RoadInPieces4"
+          },
+          {
+            "type": "showText",
+            "text": "ROAD IN PIECES!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.19,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 4,
+              "angle": 40
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.2,
+            "interval": 3.06,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "ROAD IN PIECES!: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 5.29,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "ROAD IN PIECES!: sparks from the Rift",
+            "when": {
+              "type": "every",
+              "seconds": 6.97,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 5,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "TheLastOfTheRoad5",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:TheLastOfTheRoad5"
+          },
+          {
+            "type": "showText",
+            "text": "THE LAST OF THE ROAD!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_loop.ogg",
+            "volume": 0.85
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.09,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 4,
+              "angle": 40
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.2,
+            "interval": 2.89,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "THE LAST OF THE ROAD!: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 4.93,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "THE LAST OF THE ROAD!: sparks from the Rift",
+            "when": {
+              "type": "every",
+              "seconds": 6.47,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 6,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           }

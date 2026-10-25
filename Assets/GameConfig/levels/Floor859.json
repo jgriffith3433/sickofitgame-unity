@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 180.0,
+  "duration": 400.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 44,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 859,
-    "length": 90,
+    "length": 285,
     "floors": {
       "start": 859,
       "end": 858,
@@ -221,49 +221,20 @@
           ]
         },
         {
-          "name": "drift",
-          "direction": "Right",
-          "length": 16.2,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "driftSlab",
-              "at": [
-                19.45,
-                5.1
-              ],
-              "id": "drift1",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                32.15,
-                5.05
-              ],
-              "id": "farBank",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "driftClimb",
+          "name": "riser",
           "direction": "Up",
-          "length": 2.58,
+          "length": 5.6,
           "turn": 2.0,
+          "lead": 0.4,
+          "autoSpeed": 0.36,
           "spawns": [
             {
               "entity": "roadSlab",
               "at": [
-                33.15,
-                6.35
+                0.0,
+                -0.096
               ],
+              "anchor": "Section",
               "scale": [
                 0.9,
                 1
@@ -272,9 +243,10 @@
             {
               "entity": "roadSlab",
               "at": [
-                31.15,
-                7.65
+                2.4,
+                1.028
               ],
+              "anchor": "Section",
               "scale": [
                 0.9,
                 1
@@ -283,29 +255,646 @@
             {
               "entity": "roadSlab",
               "at": [
-                33.15,
-                8.95
+                0.0,
+                2.152
               ],
+              "anchor": "Section",
               "scale": [
                 0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                2.4,
+                3.276
+              ],
+              "anchor": "Section",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                0.0,
+                4.4
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
                 1
               ]
             }
           ]
         },
         {
-          "name": "landing",
+          "name": "TheHoist1",
           "direction": "Right",
-          "length": 6.6,
+          "length": 28.0,
           "turn": 2.0,
+          "autoSpeed": 0.55,
           "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                8.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                14.0,
+                1.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc0"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                16.0,
+                -0.7
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                22.0,
+                1.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc0"
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                24.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                28.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "UpTheChains2",
+          "direction": "Right",
+          "length": 28.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "settleSlab",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                8.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                14.0,
+                1.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc1"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                16.0,
+                -0.7
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                22.0,
+                1.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc1"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                24.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                28.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "SacksOnSwings3",
+          "direction": "Up",
+          "length": 8.0,
+          "turn": 2.0,
+          "lead": 0.4,
+          "autoSpeed": 0.36,
+          "spawns": [
+            {
+              "entity": "ladder",
+              "at": [
+                0.3,
+                3.05
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.0,
+                8.0
+              ],
+              "id": "ladder859"
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                0.0,
+                6.8
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impSwing",
+              "at": [
+                -3.0,
+                3.5
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc2"
+              ]
+            },
+            {
+              "entity": "impSwing",
+              "at": [
+                3.0,
+                5.3
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc2"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "HoistAndHaul4",
+          "direction": "Right",
+          "length": 28.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                8.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impGuard",
+              "at": [
+                8.0,
+                2.5
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                14.0,
+                1.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                16.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "blinkImp",
+              "at": [
+                16.0,
+                1.8
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                22.0,
+                1.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                24.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                24.0,
+                0.1
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                28.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TheLastHoist5",
+          "direction": "Right",
+          "length": 30.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "roadSlab",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                6.0,
+                1.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                8.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impGuard",
+              "at": [
+                8.0,
+                2.5
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                14.0,
+                1.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                16.0,
+                -0.7
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "leadImp",
+              "at": [
+                16.0,
+                2.3
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "roadSlab",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impSwingB",
+              "at": [
+                22.0,
+                1.55
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
+            {
+              "entity": "settleSlab",
+              "at": [
+                24.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "brimstoneDemon",
+              "at": [
+                24.0,
+                0.1
+              ],
+              "anchor": "Section",
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
+            },
             {
               "entity": "floorLanding859",
               "at": [
-                37.55,
-                8.95
+                29.4,
+                -0.4
               ],
-              "id": "landing"
+              "id": "landing",
+              "anchor": "Section"
             }
           ]
         }
@@ -326,6 +915,14 @@
       },
       {
         "name": "lavaMax",
+        "value": 0.0
+      },
+      {
+        "name": "heat",
+        "value": 0.0
+      },
+      {
+        "name": "finale",
         "value": 0.0
       }
     ],
@@ -397,27 +994,22 @@
         ]
       },
       {
-        "name": "the drift: breather",
-        "when": {
-          "type": "sectionReached",
-          "section": "drift"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "playMusic",
-            "clip": "Audio/Music/wastes_loop.ogg",
-            "volume": 0.85
-          }
-        ]
-      },
-      {
         "name": "the landing",
         "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finale",
+              "atLeast": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
@@ -458,6 +1050,266 @@
             ]
           }
         ]
+      },
+      {
+        "name": "to TheHoist1",
+        "when": {
+          "type": "sectionReached",
+          "section": "TheHoist1"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "TheHoist1"
+          }
+        ]
+      },
+      {
+        "name": "to UpTheChains2",
+        "when": {
+          "type": "sectionReached",
+          "section": "UpTheChains2"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc0"
+            }
+          },
+          {
+            "type": "goToPhase",
+            "phase": "UpTheChains2"
+          }
+        ]
+      },
+      {
+        "name": "to SacksOnSwings3",
+        "when": {
+          "type": "sectionReached",
+          "section": "SacksOnSwings3"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc1"
+            }
+          },
+          {
+            "type": "goToPhase",
+            "phase": "SacksOnSwings3"
+          }
+        ]
+      },
+      {
+        "name": "to HoistAndHaul4",
+        "when": {
+          "type": "sectionReached",
+          "section": "HoistAndHaul4"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc2"
+            }
+          },
+          {
+            "type": "goToPhase",
+            "phase": "HoistAndHaul4"
+          }
+        ]
+      },
+      {
+        "name": "to TheLastHoist5",
+        "when": {
+          "type": "sectionReached",
+          "section": "TheLastHoist5"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc3"
+            }
+          },
+          {
+            "type": "goToPhase",
+            "phase": "TheLastHoist5"
+          }
+        ]
+      },
+      {
+        "name": "the opening's rift stops",
+        "when": {
+          "type": "sectionReached",
+          "section": "riser"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.0
+          }
+        ]
+      },
+      {
+        "name": "the floor has had its minutes",
+        "when": {
+          "type": "atTime",
+          "seconds": 255.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "finale",
+            "value": 1.0
+          }
+        ]
+      },
+      {
+        "name": "heat: the floor gets hotter",
+        "when": {
+          "type": "every",
+          "seconds": 20.0,
+          "startAfter": 40.0,
+          "maxTimes": 12
+        },
+        "do": [
+          {
+            "type": "addCounter",
+            "name": "heat",
+            "amount": 1.0
+          }
+        ]
+      },
+      {
+        "name": "heat 2: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 2.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 4: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 4.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 6: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 6.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 8: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 8.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 10: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 10.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
       }
     ],
     "phases": [
@@ -474,6 +1326,522 @@
                 "style": "Banner",
                 "sound": "vo_f859_title",
                 "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "TheHoist1",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:TheHoist1"
+          },
+          {
+            "type": "showText",
+            "text": "THE HOIST!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.44,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "THE HOIST!: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 6.18,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "UpTheChains2",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:UpTheChains2"
+          },
+          {
+            "type": "showText",
+            "text": "UP THE CHAINS!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_push.ogg",
+            "volume": 0.85
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.34,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 4,
+              "angle": 40
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.2,
+            "interval": 3.31,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "UP THE CHAINS!: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 5.83,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SacksOnSwings3",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:SacksOnSwings3"
+          },
+          {
+            "type": "showText",
+            "text": "SACKS ON SWINGS!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.24,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 4,
+              "angle": 40
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.2,
+            "interval": 3.14,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "SACKS ON SWINGS!: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 5.47,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "HoistAndHaul4",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:HoistAndHaul4"
+          },
+          {
+            "type": "showText",
+            "text": "HOIST AND HAUL!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.15,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 4,
+              "angle": 40
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.2,
+            "interval": 2.98,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "HOIST AND HAUL!: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 5.11,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "HOIST AND HAUL!: a mixed wave",
+            "when": {
+              "type": "every",
+              "seconds": 11.8,
+              "startAfter": 4.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.6,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              },
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.6,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
+                ]
+              },
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 3,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "TheLastHoist5",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:TheLastHoist5"
+          },
+          {
+            "type": "showText",
+            "text": "THE LAST HOIST!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_loop.ogg",
+            "volume": 0.85
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 3
+            },
+            "speed": 3.2,
+            "interval": 1.05,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 4,
+              "angle": 40
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.2,
+            "interval": 2.81,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "THE LAST HOIST!: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 4.75,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 4,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "THE LAST HOIST!: a mixed wave",
+            "when": {
+              "type": "every",
+              "seconds": 11.2,
+              "startAfter": 4.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.6,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              },
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.6,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
+                ]
+              },
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 4,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           }

@@ -93,8 +93,23 @@ def flight(x0, feet0, b, v0, way):
     ok = hi >= b.box[0] - R * 0.9 and lo <= b.box[2] + R * 0.9
     return ok, f"swing release at x {x0:.2f} (v {v0:.1f}) reaches x {xs:.2f}, rise {rise:+.2f}"
 
+LADDERS = []     # the current floor's ladder pieces (check() fills it)
+
+def ladder_between(a, b):
+    """A ladder from a's top to b's top: he stands at its foot, holds up, and steps out at its top (Ladders, Docs/Story.md)."""
+    if isinstance(a, (Chain, Draft)) or isinstance(b, (Chain, Draft)):
+        return None
+    for ld in LADDERS:
+        lb = ld.box
+        if abs(lb[1] - a.top) <= 0.5 and gap(a.box, lb) <= 0.6 and b.top >= lb[3] - 0.3 and b.top <= lb[3] + 0.8 and gap(b.box, lb) <= 0.6:
+            return ld
+    return None
+
 def reach(a, b, bot):
     """Can the hero standing on a jump onto b? Returns (ok, why)."""
+    ld = ladder_between(a, b)
+    if ld is not None:
+        return True, f"up the ladder {ld.id or ld.name}"
     if isinstance(b, Chain):
         rise = b.box[1] - (a.top + R)          # handle above his centre when he leaves
         if rise > (2.6 if bot else APEX + b.grab):
@@ -227,6 +242,7 @@ def check(name, verbose=False):
                     feet_all.append(far)
             elif p.lava and p.name not in ('lavaSea',) and not p.has('surge'):
                 lavas.append(p)
+    LADDERS[:] = [p for sec in sections for p in sec['pieces'] if 'ladder' in p.tags]
     start = next((p for p in feet_all if p.id == 'start'), feet_all[0] if feet_all else None)
     landing = next((p for p in feet_all if 'landing' in p.tags), None)
     # Reachable set, section by section: what's out during section i is every spawn of sections <= i+1.

@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "extends": "roadSlab",
+  "tags": [
+    "road",
+    "perch"
+  ]
+}

@@ -1721,6 +1721,20 @@ A floor of 240-360 seconds with many enemies and shots, for a player who has lea
    `pc<i>` and despawned when the next piece starts (the enemy count is the whole world's). The boss floors (991, 951) and
    Floors 1000, 999 and 910-902 are not long floors. `python3 Tools/Levels/long_floors.py` writes the files from its tables
    (the openings are read from git: `BASE`); `python3 Tools/Levels/floor_check.py Floor997 ...` checks every jump.
+10. **Circle IX's floors 900-892, 860-852 and 810-802 (2026-10-25)** are the same recipe, hotter again: the opening is the old
+   stage up to its `drift` (the drift and the old landing go), then a `riser` of road slabs, five pieces and the landing, gated on
+   `finale` (255 s). Pieces take strength `s = 2.8 + 0.03 * floor index + 0.55 * piece` and 2, 3, 3, 4, 4 sources of the floor's own order
+   (C cinders, S sparks, B brutes, R rain, A aimed fans of four, M a *mixed wave* (cinders, a brute and sparks together), H spire
+   shards); the road carries the Circle's roster as `onEnter` spawns tagged `pc<i>` (D brimstone demon, W whelp, L lobber on a
+   `roadPerch`, N whelp nest, V brimstone vent, T trick imp (ricochet, blink, lead), G imp guard, X swing imp, E beam lens from
+   the 4th piece), 2 on the first piece up to 5-6 on the last. The estimate (`cracked_floors.py` prints it) opens at 4.5-7 alive and
+   ends at 12-20, against Circle X's 1.4-5.4 and 12.7-13.8. Slabs are road, settling or splitting by the floor's cycle (a slab that
+   settles or splits is never followed by a rise). The first climb piece of a floor is a **ladder** (`ladder`, scaled to the
+   climb, a slab at its top); the bot takes it (`PlaytestBot.LadderStep`) and `floor_check.py` knows ladders now. The boss floors
+   (891, 851, 801) are not touched. `python3 Tools/Levels/cracked_floors.py` writes the files (the openings are read from git:
+   `BASE`), `python3 Tools/Levels/floor_check.py Floor900 ...` checks them (the openings' own findings stay: Floors 893 and 857's
+   narrow last slab, 852 and 804's arena foot, settling slabs sunk under a tight camera). The playtest `cracked-heat` plays them
+   and its `long.hotter` check compares their density with Circle X's.
 
 ## Building it
 

@@ -613,3 +613,5 @@ comes first, GPU work is priced (`hawkesgen_estimate`) and needs J's OK, and the
 Circle X's long floors (997-992, 960-952) are written by `Tools/Levels/long_floors.py` from its tables (an opening read from git, a riser,
 five set pieces, a gated landing); edit the tables and run it rather than hand-editing the piece sections, then
 `python3 Tools/Levels/floor_check.py Floor997 ...` (Docs/LevelDesign.md "A long bullet-hell floor", point 9).
+Circle IX's heat pass (Floors 900-892, 860-852, 810-802: long floors, hotter than Circle X's, the road's roster, mixed waves, a ladder climb) is
+`Tools/Levels/cracked_floors.py` (same recipe, Docs/LevelDesign.md point 10); playtest `cracked-heat` (parts `cracked-heat-2`...).
