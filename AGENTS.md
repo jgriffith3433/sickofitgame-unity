@@ -171,6 +171,11 @@ Assets/GameConfig/
   `player.json` `availableUpgrades` with an `effect` (MaxHealth, ExtraJump, MoveSpeed, FireRate, Damage, RewindJuice,
   Magnet); `RogueliteManager` stores levels, `UpgradeSystem.ApplyShop` applies them each level. Between-level picks are
   `content/upgrades`.
+- **UI polish** (Docs/Story.md "The HUD and menus"): `Core/UI/Menus/MenuPolish.cs`: `PanelAnim` (every `Overlay` fades/rises open and fades closed: close with
+  `Overlay.Close`/`PanelAnim.CloseAndDestroy`, never `Destroy`), `NumberTicker` (counts a text to its value, unscaled time), `HudFloaters` ("+N" pickups) and
+  `ScreenTransition` (a persistent black cover with a floor label, `Cover`/`Reveal`; any new `MenuCanvas` or loaded scene opens it; `Sweep` on each floor change). The boss
+  bar's intro (name drops in, bar fills) and the weapon chip's switch animation live in `GameplayHud`/`GameplayHud.Weapon`. All presentation, unscaled time. Playtest `ui-polish`
+  (run it on a 1920x1080 and a 1080x1920 device; the `weapons` scenario also checks the switch animation).
 - **Aim cursor**: in a level the mouse cursor is a crosshair (`Gameplay/Presentation/AimCursor.cs`, drawn at runtime
   in theme.json `hud` colors: `marker` ring and fangs, `healthFill` dot on the hotspot, `worldBarOutline` rim; 32x32,
   `Cursor.SetCursor`, a CSS cursor in WebGL). The pause, death and results screens, the Grudge picker, HUD buttons and
@@ -464,6 +469,12 @@ the prologue portal scene's sounds in scene order, every take, then the Meadow's
   pages) and the engine post, linked from the blog and Development; on every page no link or button overlaps another
   or leaves the screen and nothing scrolls sideways (run it on device "phone"); `check` and `site-layout` events;
   `Plugins/WebGL/HawkesSite.jslib`).
+- **Daily budgets and the balance report** (`SickOfItPlaytest.Balance.cs`): every `all-levels` run (and its parts, `floors-A-B`, `climb-start`) ends with a
+  per-floor balance report: `balance` events, `balance.level<n>.*` metrics (clearSeconds, deaths, diamonds, rewinds, rewoundSeconds, grazes, hits,
+  frameAvgMs, frameWorstMs), a markdown table in the report's log and a `frame-time level <n>` check per floor (average <= `FramePlayAverageMs`, <= 2% of frames over
+  100 ms; a Warning problem when over). Grazes count `graze` telemetry events, so the graze system only has to record that kind. `rewind-perf` also checks the
+  absolute budgets (playing <= 40 ms, rewinding <= 50 ms a frame; `frameTime.*` metrics). Scenario `daily` (~20 min) = rewind-perf, then Level 1 and Floors
+  1000-998 with the report. A new system needs its own scenario in a `SickOfItPlaytest.<Name>.cs` partial, registered in `SickOfItPlaytest.cs` (list + dispatch).
 - **Start one:** in a browser `?playtest=smoke` (plus `&seed=`, `&speed=`), or `hawkesPlaytest.start("level-2")`; in the
   editor or a test, `HawkesPlaytest.StartScenario("level-2")`. Note: `smoke` and `full` press New Game, which resets
   the save in that browser.

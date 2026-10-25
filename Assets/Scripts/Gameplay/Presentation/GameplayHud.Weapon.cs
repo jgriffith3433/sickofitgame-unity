@@ -19,6 +19,13 @@ namespace SickOfIt.Gameplay
         string shownWeapon = "", shownWeaponId = "";
         int shownAmmo = -2, shownHeld = -1;
         bool shownWeaponInteractable;
+        float weaponSwapAt = -99f;
+        Vector2 weaponLabelBase;
+
+        const float WeaponSwapSeconds = 0.4f;
+        /// <summary>How many times the chip played its switch animation, and how long ago the last one began (the playtest reads both).</summary>
+        public int WeaponSwaps { get; private set; }
+        public float WeaponSwapAge => Time.unscaledTime - weaponSwapAt;
 
         static string WeaponKeyText => Application.isMobilePlatform ? "Tap: switch" : "Q: switch";
 
@@ -113,6 +120,13 @@ namespace SickOfIt.Gameplay
             }
             // Rebuilt only when what it shows changes (this runs every frame).
             int ammo = weapons.CurrentUsesAmmo ? weapons.CurrentAmmo : -1;
+            if (weapons.CurrentId != shownWeaponId && shownWeaponId != "")
+            {
+                weaponLabelBase = weaponButton.Label.rectTransform.anchoredPosition;
+                weaponSwapAt = Time.unscaledTime;
+                WeaponSwaps++;
+            }
+            AnimateWeaponSwap();
             if (weapons.CurrentId == shownWeaponId && ammo == shownAmmo && weapons.HeldCount == shownHeld)
                 return;
             shownWeaponId = weapons.CurrentId;
@@ -127,6 +141,28 @@ namespace SickOfIt.Gameplay
             weaponButton.SetText(text);
             weaponButton.Label.enableVertexGradient = false;
             weaponButton.Label.color = Color.Lerp(def.color, Color.white, 0.35f);
+        }
+
+        /// <summary>The new weapon's name rises into the chip from below with a punch of size and a flash; presentation only.</summary>
+        void AnimateWeaponSwap()
+        {
+            var label = weaponButton.Label;
+            float t = (Time.unscaledTime - weaponSwapAt) / WeaponSwapSeconds;
+            if (t >= 1f)
+            {
+                if (label.rectTransform.localScale.x != 1f)
+                {
+                    label.rectTransform.localScale = Vector3.one;
+                    label.rectTransform.anchoredPosition = weaponLabelBase;
+                    label.alpha = 1f;
+                }
+                return;
+            }
+            float smooth = 1f - (1f - t) * (1f - t) * (1f - t);
+            float punch = 1f + 0.35f * Mathf.Sin(Mathf.Clamp01(t * 1.4f) * Mathf.PI) ;
+            label.rectTransform.localScale = new Vector3(punch, punch, 1f);
+            label.rectTransform.anchoredPosition = weaponLabelBase + new Vector2(0f, -26f * (1f - smooth));
+            label.alpha = Mathf.Clamp01(t * 4f);
         }
     }
 }

@@ -49,6 +49,8 @@ namespace SickOfIt.Core.UI.Menus
             theme = theme ?? new MenuTheme();
             layout = layout ?? new MenuLayoutConfig();
             EnsureEventSystem();
+            // A floor transition left the screen covered: every new menu or HUD opens it.
+            ScreenTransition.Reveal();
 
             var go = new GameObject(name, typeof(RectTransform));
             if (owner != null && owner.scene.IsValid() && go.scene != owner.scene)

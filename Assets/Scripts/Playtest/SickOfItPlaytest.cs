@@ -82,6 +82,10 @@ namespace SickOfIt.Playtest
         /// </summary>
         public const string RewindPerfId = "rewind-perf", RewindPerfLevel = MagmaKingLevel;
         public const int RewindPerfRewinds = 3;
+        /// <summary>The daily budget run: rewind-perf, then a sample of the climb with the balance report (Level 1, Floors 1000-998).</summary>
+        public const string DailyId = "daily";
+        public const float DailySeconds = 1500f;
+        public static List<int> DailyLevels() => ClimbStartLevels().GetRange(0, Math.Min(4, ClimbStartLevels().Count));
         /// <summary>Real seconds R is held per rewind (the juice is topped up first, a setup shortcut) and game seconds played before each.</summary>
         public const float RewindPerfHold = 3f, RewindPerfPlay = 12f;
 
@@ -685,6 +689,11 @@ namespace SickOfIt.Playtest
                 "recorded 1 s in, the bot plays a few seconds, P, Restart Level; the restarted level 1 s in must match the fresh one: one Level scene " +
                 "and a new world, the clock, the hero's place, his hearts, the floor counter and distance, and the first moving pieces (ids, states, " +
                 "places). Each beat is a check event", 90, "level"));
+            list.Add(new PlaytestScenario(DailyId, "The daily budget run: first rewind-perf on the Magma King's arena (three rewinds; rewinding no worse than 1.5x play, no frame over 100 ms, " +
+                $"playing averages under {FramePlayAverageMs:0} ms and rewinding under {FrameRewindAverageMs:0} ms a frame), then a sample of the climb (Level 1 and Floors 1000-998) played by the bot " +
+                "with the per-floor balance report: `balance` events and balance.level<n>.* metrics for clear time, deaths, diamonds, rewind use, grazes, hits taken and frame time, the same table " +
+                $"in the report's log, and a `frame-time` check per floor (average under {FramePlayAverageMs:0} ms, under {FrameSpikeShare * 100:0}% of frames over {FrameSpikeMs:0} ms). " +
+                "Every all-levels run (and its parts) ends with the same balance report", DailySeconds, "level"));
             list.Add(new PlaytestScenario(RewindPerfId, $"Rewind's frame rate on a busy floor: \"{RewindPerfLevel}\" (Circle X's top, the Magma King's arena, " +
                 $"loaded directly, a setup shortcut; a death loads it again) played by the bot for {RewindPerfPlay:0} s, then R held for {RewindPerfHold:0} s " +
                 $"(the juice topped up first, a setup shortcut; the bot's own rewinds off), {RewindPerfRewinds} times. The average and worst frame time while " +
@@ -717,6 +726,10 @@ namespace SickOfIt.Playtest
                 "called ??? with no name, note or weakness (no spoilers); the four tabs are clicked in turn, every page of each is paged through and laid out inside the panel and the screen " +
                 "(MenuLayoutAudit, no overlaps; run it on a 1920x1080 and a 1080x1920 device); closed and resumed, the main menu's Codex button shows the same tallies (they persist). " +
                 "Each beat is a check event; codex events log what each page shows", CodexSeconds, "level"));
+            list.Add(new PlaytestScenario(UiPolishId, "HUD and menu polish (Docs/Story.md \"The HUD and menus\"): the main menu's Codex popup opens and closes with a fade (real clicks); Level 1's HUD gets a diamond pickup " +
+                "(a +7 floats up from the counter and the counter ticks up to its total), the pause menu opens and closes animated and its layout is audited; Level 31's boss bar is introduced (the name lands, the bar " +
+                "fills from empty, inside the screen and safe area, no overlaps); Floor 1000 sweeps the screen when its floor counter ticks over; Level 1 is played to its results, whose numbers count up, and " +
+                "Continue closes the screen on a black transition that the next scene opens. Run it on a 1920x1080 and a 1080x1920 device. Each beat is a check event; ui-polish and boss-intro events log the timeline", UiPolishSeconds, "level"));
             list.Add(new PlaytestScenario(AmbienceId, "A Circle's air (Docs/GameplayCookbook.md \"Weather and life\"): each Circle with an ambience (the Ember Wastes, the Cracked Road, the Rune Bridges) gets its first " +
                 "travelling floor loaded directly (setup shortcut) and played by the bot through real input. The parallax layers move at their own factors (every layer's travel measured against the camera's, " +
                 "`parallax` events); each Circle has its own weather (ash, sparks, cinders, runes, grit: kinds and bits drawn) and its own background life (flyers, walkers, a far-off chase: appearances), " +
@@ -1103,10 +1116,18 @@ namespace SickOfIt.Playtest
                 yield return session.AmbienceRun();
             else if (id == CodexId)
                 yield return session.CodexRun();
+            else if (id == UiPolishId)
+                yield return session.UiPolishRun();
             else if (id == "restart")
                 yield return session.RestartRun();
             else if (id == RewindPerfId)
                 yield return session.RewindPerfRun();
+            else if (id == DailyId)
+            {
+                yield return session.RewindPerfRun(finish: false);
+                if (!Run.Done)
+                    yield return session.AllLevels(DailyLevels(), $"the daily sample ({PathRange(DailyLevels())})", checkEvery: true);
+            }
             else if (id == "portal-audio")
                 yield return session.PortalAudio();
             else if (id == "sound-audit")
@@ -1322,6 +1343,7 @@ namespace SickOfIt.Playtest
                 if (e.Kind == "upgradeOffer")
                     lastGrudgeOffer = e.Subject ?? "";
                 string level = "level " + log.World.LevelNumber;
+                BalanceOnTelemetry(e, log.World.LevelNumber);
                 if (e.Kind == "floorkit" && e.Subject != null && e.Subject.StartsWith("ladder", StringComparison.Ordinal))
                 {
                     ladderKit.TryGetValue(log.World.LevelNumber, out var had);
@@ -1540,6 +1562,7 @@ namespace SickOfIt.Playtest
                 // level2.attempt per death elsewhere (beta run r_b7a410dd5b39: 15 attempts, 0 s).
                 if (s.outcome == "playtest left" && s.duration < 1f)
                     return;
+                BalanceOnLevelEnd(s, levelDiamonds);
                 Run.Add("kills", s.kills);
                 Run.Add("spawned", s.spawned);
                 Run.Add("playerHits", s.playerHits);
@@ -3478,7 +3501,7 @@ namespace SickOfIt.Playtest
 
             void OnRewindPerf(string line) => Run.Event("rewind-perf", line);
 
-            public IEnumerator RewindPerfRun()
+            public IEnumerator RewindPerfRun(bool finish = true)
             {
                 var definition = GameDefinition.Instance;
                 int n = definition.levels.FindIndex(l => l != null && l.levelName == RewindPerfLevel) + 1;
@@ -3542,6 +3565,13 @@ namespace SickOfIt.Playtest
                         $"rewinding averages {rewinding.AverageMs:0.0} ms a frame, playing {forward.AverageMs:0.0} ms (allowed {allowed:0.0})");
                     RewindPerfCheck("no spikes", rewinding.WorstMs <= 100.0,
                         $"worst rewind frame {rewinding.WorstMs:0.0} ms (worst playing frame {forward.WorstMs:0.0} ms)");
+                    // The daily budgets in absolute terms: a busy floor must play and rewind at a playable rate whatever the ratio.
+                    RewindPerfCheck("frame budget playing", forward.AverageMs <= FramePlayAverageMs,
+                        $"playing averages {forward.AverageMs:0.0} ms a frame (budget {FramePlayAverageMs:0} ms)");
+                    RewindPerfCheck("frame budget rewinding", rewinding.AverageMs <= FrameRewindAverageMs,
+                        $"rewinding averages {rewinding.AverageMs:0.0} ms a frame (budget {FrameRewindAverageMs:0} ms)");
+                    Run.Metric("frameTime.playingAvgMs", (float)forward.AverageMs);
+                    Run.Metric("frameTime.rewindingAvgMs", (float)rewinding.AverageMs);
                 }
                 if (after.Frames > 0)
                     RewindPerfCheck("clamped after", RewindPerf.WorstStepAfterRewind <= GameClock.PostRewindMaxFrame * 1.05f + 0.0005f,
@@ -3550,6 +3580,8 @@ namespace SickOfIt.Playtest
 
                 Run.Metric("rewindPerf.passed", rewindPerfPassed);
                 Run.Metric("rewindPerf.failed", rewindPerfFailed);
+                if (!finish)
+                    yield break;
                 Run.Progress(1f);
                 End(rewindPerfFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
             }
@@ -6822,6 +6854,7 @@ namespace SickOfIt.Playtest
                         Run.Metric($"ladder{row.Floor}.grabs", grabs);
                     }
                 }
+                BalanceReport(what, levels);
                 Run.Progress(1f);
                 End(cleared == results.Count ? PlaytestOutcome.Won : PlaytestOutcome.Done);
             }
@@ -9101,6 +9134,7 @@ namespace SickOfIt.Playtest
                 }
                 Time.timeScale = Speed;
                 Run.Event("level-start", $"level {n}: {config.levelName}");
+                BalanceBegin(n);
 
                 var health = world.Player.GetComponentInChildren<PlayerHealth>();
                 float limit = Mathf.Max(30f, config.duration) + 10f;
@@ -9116,6 +9150,7 @@ namespace SickOfIt.Playtest
                     if (world == null) { outcome = dying ? "died" : "scene changed"; break; }
                     var clock = GameClock.Instance;
                     float now = clock != null ? clock.Time : 0f;
+                    BalanceFrame(now);
                     if (world.Director != null && world.Director.Completed) { outcome = "completed"; break; }
                     if (slowMotionUntil > 0f && Time.realtimeSinceStartup >= slowMotionUntil)
                         EndSlowMotion();
