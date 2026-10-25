@@ -83,6 +83,10 @@ namespace SickOfIt.Playtest
 
                 // Setup shortcut: a new game's flags, so the Hook starts unfound.
                 UnlockFlags.Reset();
+                // The wall-jump re-arms itself from a saved Floor 996 clear (player.json unlockWhen level:6): a save left by the moves
+                // scenarios made the hero cling to the kit's ledge corners. A new game's save has none of those clears.
+                for (int n = 4; n <= 6; n++)
+                    PlayerPrefs.DeleteKey($"Level_{n}_Completed");
                 Run.Event("shortcut", $"flags reset (the Hook unfound); level {FloorKitLevel}'s stage with the scene {FloorKitScene} loaded directly");
                 LevelRuntime.PendingScene = FloorKitScene;
                 var old = GameplayWorld.Instance;
