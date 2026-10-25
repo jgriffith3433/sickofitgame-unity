@@ -9681,7 +9681,13 @@ namespace SickOfIt.Playtest
                 {
                     MenuButton button = null;
                     if (attempt == 0)
-                        yield return Run.Until(() => (button = FindButton(text)) != null && button.IsInteractable(), timeout, $"the \"{text}\" button");
+                        yield return Run.Until(() =>
+                        {
+                            // The main menu is in pages: turn to the one holding this button.
+                            if (FindButton(text) == null)
+                                Object.FindAnyObjectByType<MainMenuManager>()?.ShowPageHolding(text);
+                            return (button = FindButton(text)) != null && button.IsInteractable();
+                        }, timeout, $"the \"{text}\" button");
                     else
                     {
                         // The first click may still be working (New Game plays the house explosion before the video
