@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Rift bomber",
+  "hint": "Blinks in, drops a bomb. Step off.",
+  "note": "Pops up and leaves a present. Not a good one.",
+  "hintVoice": "vo_hero_hint_riftBomber",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "imp",
+  "health": 3,
+  "tags": [
+    "imp",
+    "riftBomber"
+  ],
+  "visual": {
+    "color": "#FF7ABF",
+    "fxColor": "#FF5AA0"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "teleport",
+      "to": "NearPlayer",
+      "distance": 2.8,
+      "interval": 4.6,
+      "initialDelay": 1.6,
+      "telegraph": 0.8,
+      "marker": "riftMark",
+      "flashColor": "#FF5AA0",
+      "sound": "banner_whoosh"
+    },
+    {
+      "type": "spawner",
+      "entity": "riftBomb",
+      "interval": 2.4,
+      "initialDelay": 2.6,
+      "maxAlive": 2,
+      "offset": [
+        0.0,
+        -0.1
+      ]
+    }
+  ],
+  "sounds": { "hurtSound": "riftBomber_hurt", "deathSound": "riftBomber_die", "attackSound": "riftBomber_attack" }
+}

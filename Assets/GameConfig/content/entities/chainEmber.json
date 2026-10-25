@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "extends": "projectileEnemy",
+  "visual": {
+    "scale": 0.11,
+    "color": "#B0A090",
+    "fxColor": "#B0A090"
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "dieOnSolid": true
+    },
+    {
+      "type": "lifetime",
+      "seconds": 3.0
+    }
+  ]
+}

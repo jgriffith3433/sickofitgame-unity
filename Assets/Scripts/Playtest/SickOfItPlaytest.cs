@@ -836,6 +836,7 @@ namespace SickOfIt.Playtest
                 "(checked against the intercept maths); the Overlord's lens shows a thin warning line, then sweeps a beam that hurts the hero where it crosses him. " +
                 "Each beat is a check event", MechanicsSeconds, "level"));
             list.Add(new PlaytestScenario(BestiaryId, $"The Ember Wastes' ten new enemies (Docs/Story.md \"The Wastes' bestiary\"): checked as data (each has a name, a hint, a hint voice and a place in the Circle's enemy table; no two share an attack), then the arena \"{BestiaryScene}\" on level {BestiaryLevel}'s stage (setup shortcut) played by the bot through real input, one creature per station: the Halo imp's ring of embers, the Whirl imp's spiral, the Seam imp blinking behind the hero after a mark, the Slag tortoise's front shield blocking shots, the Magma geode splitting in two, the Mine beetle laying mines, the Lens imp's red line then sweep, the Pyre caller calling cinders, the Slag hound crouching then lunging, the Deadeye imp's fast led bolt. One check event per creature; bestiary events log what each did", BestiarySeconds, "level"));
+            list.Add(new PlaytestScenario(RoadBestiaryId, "The Cracked Road's ten new enemies (Docs/Story.md \"The Cracked Road's bestiary\"): checked as data (name, hint, hint voice, sounds, a place in crackedRoad's enemy table, no two sharing an attack), then the arena \""+"roadBestiary"+"\" on level 1's stage (setup shortcut) played by the bot through real input, one creature per station: the Plate demon's shield, the Rift bomber's blink and bomb, the Bounce lobber's bouncing lump, the Chained pair sharing a blow, the Risen demon and the Bastion brute getting up once, the Loop wraith passing shots until the bot holds R, the Veil demon's shield and blink, the Slab sniper's fast bolt, the Fuse whelp. One check event per creature", RoadBestiarySeconds, "level"));
             list.Add(new PlaytestScenario("video-" + OverlayVideo, $"Video {OverlayVideo}, started directly (setup shortcut) and watched instead of skipped: " +
                 $"the overlay \"{OverlayName}\" (the hero) appears as the camera goes through the burning door, spins 3+ turns and shrinks into the tunnel's " +
                 "centre and is gone before the lava river (~14.5 s); holding R mid-spin plays it backward; then Escape skips the video. Each beat is checked", 75, "video"));
@@ -1204,6 +1205,11 @@ namespace SickOfIt.Playtest
             {
                 session.Prepare(BestiaryLevel, true);
                 yield return session.BestiaryRun();
+            }
+            else if (id == RoadBestiaryId)
+            {
+                session.Prepare(BestiaryLevel, true);
+                yield return session.RoadBestiaryRun();
             }
             else if (id == MagmaKing.Scenario)
                 yield return session.WardenRun(MagmaKing, false);

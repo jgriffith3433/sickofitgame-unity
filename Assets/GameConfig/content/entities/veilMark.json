@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "extends": "blinkMark",
+  "visual": {
+    "scale": 0.2,
+    "color": "#B08AFF"
+  }
+}

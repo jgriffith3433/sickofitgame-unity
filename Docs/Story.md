@@ -1630,6 +1630,16 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | `pyreCaller` | Pyre caller | X (from Floor 910) | A hunched imp elder that burns incense of the Wastes' own cinders: it holds up a fist of fire and a living cinder crawls out of it every five seconds (`spawner`, at most two alive). It never throws. Shoot it first or be drowned in sparks. | `art/pyreCaller.json`, a bigger imp with a cloak of soot |
 | `slagHound` | Slag hound | X (from Floor 930) | The Magma King's hunting dog: a lean hound of black slag with a glowing back, that circles the hero slowly until it crouches (0.7 s, the telegraph) and then lunges in a straight line (`charge`). It does not turn in the lunge. Sidestep it or jump it. | `art/slagHound.json`, a ground creature |
 | `deadeyeImp`, `deadeyeBolt` | Deadeye imp | X (from Floor 950, Halfway Basin) | An imp that sits far off and takes its time. One thin white-hot bolt every four and a half seconds, **aimed where the hero will be** (`Aim.Predictive`) and fast. The Lead imp throws lazily at a run; this one is a sniper and punishes a straight line. Zigzag, or stand still and let it miss. | `art/deadeyeImp.json`, a squinting imp with a shard of glass over one eye |
+| `plateDemon`, `plateShard` | Plate demon | IX (from Floor 886) | A Brimstone Demon that tore a slab of the Road's iron plating up and carries it in front of it, pacing back and forth behind it. Shots from the front are spent on the plate (`frontShield`); from behind it is bare. It spits two quick shards in a narrow fan over the top. The Bulwark imp carries a slab; this one is a wall that shoots. Sometimes drops a diamond. | `art/plateDemon.json`; the demon's art, tinted slate, until generated |
+| `riftBomber`, `riftMark`, `riftBomb` | Rift bomber | IX (from Floor 880) | An imp that learned the Rift's trick from the cracks: it blinks to a violet-pink mark beside the hero (`teleport`, 0.8 s warning) and sets down smouldering bombs (`spawner`, at most two). A bomb arms when he comes within a step and goes off 0.9 s later (`explodeNear`); it can be shot from a distance. The bomber is the teleport mechanic with a payload. | `art/riftBomber.json` |
+| `bounceLobber`, `bounceLump` | Bounce lobber | IX (from Floor 874) | A Brimstone lobber that stopped aiming for the spot and started throwing for the floor: its lump of magma bounces four times along the road (`projectile` `bounces`), keeping most of its speed, before it gives up. It squats high, so the lump comes down and then runs at him in hops. | `art/bounceLobber.json` |
+| `chainWhelp`, `chainBrute`, `chainEmber` | Chained pair | IX (from Floor 868) | A whelp and a brute shackled to either end of one chain, spawned together. They share one life: a hit on either is dealt to both (`chainLink`), and when one dies the other dies with it. The brute is the plate-armoured end (`frontShield`) and spits slow embers; the whelp runs at him. Shoot the exposed end. The chain is drawn between them. | `art/chainWhelp.json`, `art/chainBrute.json` |
+| `risenDemon` | Risen demon | IX (from Floor 862) | A Brimstone Demon that has died on the Road before and found that the Road keeps. Killed, it lies still and untouchable for 2.2 s (`revive`, the `downed` effect), then gets up with 60% of its health, once. Breathes a short fan of fire like the rest. | `art/risenDemon.json` |
+| `fuseWhelp` | Fuse whelp | IX (from Floor 855) | A whelp with a stick of Road-rock strapped on and a fuse lit. It runs at the hero as fast as the Road allows and goes off when it gets close (`explodeNear`, 0.55 s). Shoot it early; it never shoots. | `art/fuseWhelp.json` |
+| `veilDemon`, `veilMark`, `veilEmber` | Veil demon | IX (from Floor 845) | A slim demon behind a shimmering veil and a small shield (`frontShield`), pacing. Every five seconds it blinks to the hero's side after a violet mark (`teleport`); the shield faces the way it walks, so the blink is what lets him get behind it. Spits embers forward. | `art/veilDemon.json` |
+| `slabSniper`, `slabBolt` | Slab sniper | IX (from Floor 835) | An imp crouched behind a narrow upright slab on a high ledge, one eye in the slit. A thin white bolt every 4.2 s aimed where the hero will be (`Aim.Predictive`, fast). The slab (`frontShield`, a narrow arc of 50) swallows shots that come level; a shot from steeply below gets past, so he has to come under it. | `art/slabSniper.json` |
+| `loopWraith`, `wraithEmber` | Loop wraith | IX (from Floor 825) | A shroud of Hell's loop with the loop showing through. Shots go through it (`rewindSnag`: the shot is spent, a chime says so). Only a rewind catches it: when the hero lets go of R it is snagged in the loop for 4 s (a bar over its head counts down, it glows) and takes damage like anything else. The only enemy that asks for the hero's one power. Pays well (three diamonds). | `art/loopWraith.json` |
+| `bastionBrute` | Bastion brute | IX (from Floor 815) | The biggest wall on the Road: black plates riveted over cracked rock, a wide shield (`frontShield`, arc 120) and a short fan of fire. When it falls it gets back up once (`revive`, 50%, 2.4 s down). Patience, and a way round the shield, twice. Pays two diamonds. | `art/bastionBrute.json` |
 | `ricochetImp`, `ricochetEmber` | Ricochet imp | X (from Floor 918) | An imp that throws Hell's habit: an ember that doesn't stop. Nothing in Hell is allowed to just end, so its ember bounces off the floor three times before it gives up (*Hell's tricks*). Throws slow, from above, so the bounce can be read. | the imp's art, tinted warm; the ember is the shared `Fireball` sheet |
 | `blinkImp`, `blinkMark` | Blink imp | none yet (test bench) | An imp that slips through the seams of Hell's loop, the way the damned hiccup, but on purpose. It shows a violet mark next to the hero, stands still for 0.7 s, then is there. Not damned: no loop shards. | the imp's art, tinted violet |
 | `bulwarkImp` | Bulwark imp | none yet (test bench) | An imp that carries a slab of slag in front of it (a bar of light on its facing side): shots from the front are spent on the slab. It paces; when it turns away, its back is bare. The first enemy that makes the hero move to shoot. | the imp's art, big and tinted steel |
@@ -1679,6 +1689,16 @@ under ten words of hint, never a joke about work. Recipe: GameplayCookbook "The 
 | `pyreCaller` | Pyre caller: Calls cinders. Shoot it first. |
 | `slagHound` | Slag hound: Crouches, then lunges. Sidestep. |
 | `deadeyeImp` | Deadeye imp: Leads its shot. Zigzag. |
+| `plateDemon` | Plate demon: Plate in front. Get behind it. |
+| `riftBomber` | Rift bomber: Blinks in, drops a bomb. Step off. |
+| `bounceLobber` | Bounce lobber: Its lump bounces. Wait it out. |
+| `chainWhelp` (and `chainBrute`) | Chained pair: Linked. Hurt one, hurt both. |
+| `risenDemon` | Risen demon: Gets up once. Shoot it twice. |
+| `loopWraith` | Loop wraith: Shots pass through. Rewind snags it. |
+| `veilDemon` | Veil demon: Shielded, and it blinks. Hit its back. |
+| `slabSniper` | Slab sniper: Slab in front. Shoot from below. |
+| `fuseWhelp` | Fuse whelp: Runs, then blows. Shoot it early. |
+| `bastionBrute` | Bastion brute: Wide shield, gets back up. Patience. |
 
 Not named yet: the retired slime-era arcade enemies (`chaser`, `swarmer`, `exploder`) and the arcade variants still
 to be recast (`gunner`, `drone`, `sprayer`, `spinner`, `brute`, `fighter`, `sentinel`); they get a line when they get a
@@ -1797,6 +1817,33 @@ one at a time, so the long way's generated floors and the Heat Stairs bring them
 The test arena is `content/scenes/wastesBestiary.json` (playtest `wastes-bestiary`): ten stations, one creature each, the
 announcer naming the idea. Nothing in the bestiary is a slime and nothing in it is a joke about work. Art: specs in
 `Assets/GameConfig/art/`; until the sheets are generated they wear the imp's or the demon's art, tinted (rule 5).
+
+### The Cracked Road's bestiary (built 2026-10-25)
+
+Circle IX's Road grew ten more kinds of monster, and where the Wastes' ten each had one trick, these **combine two**: a shield that
+shoots, a bomber that blinks, a lump that bounces, two bodies on one chain, a demon that gets up, a ghost that only a rewind can touch.
+Hell is repetition, and the Road is where Hell starts repeating *itself*. They join `crackedRoad`'s enemy table at staggered floors from
+886 down to 815, one new kind at a time (the table is used by generated floors and the long way; the authored floors 900-892, 860-852 and
+810-802 keep their own scripts).
+
+| Idea | In the story | Kinds |
+|---|---|---|
+| Shielded shooters | The Road is paved in iron, and some of it walks. | Plate demon, Veil demon (+ blink), Slab sniper (+ predictive shot) |
+| Teleporting bomber | The Rift's trick, with a payload. | Rift bomber |
+| Bouncing lobber | The Road gives everything back, a few times. | Bounce lobber |
+| Chain-linked pair | Two shackled to one life. | Chained pair (whelp + brute) |
+| Revive once | The Road keeps what it kills, once. | Risen demon, Bastion brute (+ shield) |
+| Dies only to a rewind trick | Hell's loop with the loop showing: the hero's own power is the key. | Loop wraith |
+| Charge + bomb | A whelp with a fuse. | Fuse whelp |
+
+Three new JSON abilities carry the new ideas (`Gameplay/Content/RosterMechanics.cs`, all saved for rewind): `revive`, `chainLink`
+and `rewindSnag` (the snag window opens off `GameClock.RewindsEnded`, a counter that is not itself rewound, compared with the value
+each wraith saved). The test arena is `content/scenes/roadBestiary.json` (playtest `road-bestiary`): ten stations, one creature each;
+the Loop wraith's station gives the hero 10 s of rewind juice and the bot holds R once shots have passed through it. Each kind has a
+hint, a hero voice line (`vo_hero_hint_<id>`), hurt/death (and attack) sounds, loot and a table row. Nothing in it is a slime and nothing is
+a joke about work. Art: specs in `Assets/GameConfig/art/` (`plateDemon`, `riftBomber`, `bounceLobber`, `chainWhelp`, `chainBrute`, `risenDemon`,
+`loopWraith`, `veilDemon`, `slabSniper`, `fuseWhelp`, `bastionBrute`); until the sheets are generated they wear the Brimstone demon's or the imp's
+art, tinted (rule 5). Pricing for the art (`hawkesgen_estimate`: 99 poses + 132 clips): about $9.63 of GPU, $14.60 with the idle tail.
 
 ## Weapons (the hero's hands)
 

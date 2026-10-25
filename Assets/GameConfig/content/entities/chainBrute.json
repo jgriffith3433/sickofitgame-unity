@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Chained pair",
+  "hint": "Linked. Hurt one, hurt both.",
+  "note": "Two for one. Same wound. Efficient.",
+  "hintVoice": "vo_hero_hint_chainWhelp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "brimstoneDemon",
+  "health": 3,
+  "moveSpeed": 0.5,
+  "tags": [
+    "chainBrute"
+  ],
+  "visual": {
+    "scale": 0.27,
+    "color": "#908888",
+    "fxColor": "#FF6A1F"
+  },
+  "drops": [],
+  "loot": {
+    "chance": 0.0,
+    "count": 0,
+    "value": 0
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 0.45,
+      "distance": 2.0,
+      "pause": 1.0
+    },
+    {
+      "type": "frontShield",
+      "arc": 120,
+      "blockSound": "chain_cut",
+      "color": "#B8B0A8"
+    },
+    {
+      "type": "shoot",
+      "projectile": "chainEmber",
+      "speed": 3.0,
+      "aim": "Player",
+      "muzzle": [
+        0.3,
+        0.1
+      ],
+      "interval": 3.4,
+      "initialDelay": 2.2,
+      "range": 8.0,
+      "damage": 1
+    },
+    {
+      "type": "chainLink",
+      "partner": "chainWhelp",
+      "color": "#B8B0A8",
+      "linkSound": "chain_cut"
+    }
+  ],
+  "sounds": { "hurtSound": "chainBrute_hurt", "deathSound": "chainBrute_die", "attackSound": "chainBrute_attack" }
+}

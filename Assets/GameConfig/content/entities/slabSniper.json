@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Slab sniper",
+  "hint": "Slab in front. Shoot from below.",
+  "note": "Stone plate, steady aim. Rude.",
+  "hintVoice": "vo_hero_hint_slabSniper",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "imp",
+  "health": 3,
+  "tags": [
+    "imp",
+    "slabSniper"
+  ],
+  "visual": {
+    "color": "#B0B8C0",
+    "fxColor": "#D8E4EC"
+  },
+  "drops": [],
+  "loot": {
+    "chance": 0.5,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "frontShield",
+      "arc": 50,
+      "blockSound": "chain_cut",
+      "color": "#D8E4EC"
+    },
+    {
+      "type": "shoot",
+      "projectile": "slabBolt",
+      "speed": 8.5,
+      "aim": "Predictive",
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 4.2,
+      "initialDelay": 2.4,
+      "range": 11.0,
+      "damage": 1
+    }
+  ],
+  "sounds": { "hurtSound": "slabSniper_hurt", "deathSound": "slabSniper_die", "attackSound": "slabSniper_attack" }
+}

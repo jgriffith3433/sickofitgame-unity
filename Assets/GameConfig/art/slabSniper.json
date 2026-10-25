@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "slabSniper",
+  "name": "Slab sniper",
+  "description": "a small grey stone-skinned imp of the Cracked Road crouched behind a narrow upright stone slab with a slit, a long thin barrel of dark rock resting over the slab, one bright eye at the slit",
+  "height": 0.7,
+  "poses": {
+    "stand": "crouched behind the narrow stone slab, barrel resting over the top, bright eye in the slit, facing right",
+    "struck": "struck: the slab chipping, the imp ducking",
+    "dead": "slab toppled and cracked, the imp sprawled behind it"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes and shifts in place, glow pulsing slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "performs its signature attack toward the right, glow flaring",
+      "seconds": 2.0
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks back, then settles",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

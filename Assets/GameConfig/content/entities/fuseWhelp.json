@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Fuse whelp",
+  "hint": "Runs, then blows. Shoot it far.",
+  "note": "Runs at me to go off. Bold.",
+  "hintVoice": "vo_hero_hint_fuseWhelp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "demonWhelp",
+  "health": 2,
+  "moveSpeed": 1.9,
+  "tags": [
+    "demonWhelp",
+    "fuseWhelp"
+  ],
+  "visual": {
+    "scale": 0.19,
+    "color": "#FFD04A",
+    "fxColor": "#FFB43A"
+  },
+  "loot": {
+    "chance": 0.3,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "chase",
+      "speed": 1.9,
+      "stopDistance": 0.0,
+      "horizontalOnly": true,
+      "face": true
+    },
+    {
+      "type": "explodeNear",
+      "triggerRadius": 1.1,
+      "fuse": 0.55,
+      "blastRadius": 1.4,
+      "damage": 1,
+      "stopWhenArmed": true,
+      "flash": true
+    }
+  ],
+  "sounds": { "hurtSound": "fuseWhelp_hurt", "deathSound": "fuseWhelp_die" }
+}

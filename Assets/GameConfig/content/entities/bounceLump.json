@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "extends": "projectileEnemy",
+  "visual": {
+    "scale": 0.16,
+    "color": "#E0602A",
+    "fxColor": "#FFB43A"
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "dieOnSolid": true,
+      "bounces": 4,
+      "bounceKeep": 0.92,
+      "bounceSound": "shaft_tick"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 7
+    }
+  ]
+}

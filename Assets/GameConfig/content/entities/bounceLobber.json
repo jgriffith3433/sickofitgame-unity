@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Bounce lobber",
+  "hint": "Its lump bounces. Wait it out.",
+  "note": "Throws it down. It comes back up. Hell's rules.",
+  "hintVoice": "vo_hero_hint_bounceLobber",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "brimstoneDemon",
+  "health": 3,
+  "moveSpeed": 0,
+  "tags": [
+    "bounceLobber"
+  ],
+  "visual": {
+    "scale": 0.28,
+    "color": "#C8A070",
+    "fxColor": "#FFB43A"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "bounceLump",
+      "speed": 3.6,
+      "aim": "Player",
+      "muzzle": [
+        0.2,
+        0.3
+      ],
+      "interval": 3.2,
+      "initialDelay": 1.6,
+      "range": 10.0,
+      "damage": 1
+    }
+  ],
+  "sounds": { "hurtSound": "bounceLobber_hurt", "deathSound": "bounceLobber_die", "attackSound": "bounceLobber_attack" }
+}

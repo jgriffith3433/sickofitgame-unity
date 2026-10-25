@@ -1,0 +1,1204 @@
+{
+  "schemaVersion": 1,
+  "seed": 9022,
+  "length": 700,
+  "objective": {
+    "text": "The Cracked Road's bestiary, one at a time"
+  },
+  "phases": [
+    {
+      "name": "plateDemon",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "station"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "riftBomb"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "chainBrute"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "A PLATE IN FRONT. GET BEHIND IT.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "plateDemon",
+          "anchor": "Camera",
+          "at": [
+            4.0,
+            -2.05
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "road:plateDemon"
+        }
+      ],
+      "rules": [
+        {
+          "name": "plateDemon beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "riftBomber"
+            }
+          ]
+        },
+        {
+          "name": "plateDemon took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "riftBomber"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "riftBomber",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "station"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "riftBomb"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "chainBrute"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "BLINK, BOMB, BLINK. STEP OFF THE BOMB.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "riftBomber",
+          "anchor": "Camera",
+          "at": [
+            3.8,
+            -0.8
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "road:riftBomber"
+        }
+      ],
+      "rules": [
+        {
+          "name": "riftBomber beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "bounceLobber"
+            }
+          ]
+        },
+        {
+          "name": "riftBomber took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "bounceLobber"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bounceLobber",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "station"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "riftBomb"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "chainBrute"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "THE LUMP COMES BACK. WAIT FOR IT.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "bounceLobber",
+          "anchor": "Camera",
+          "at": [
+            3.6,
+            -0.4
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "road:bounceLobber"
+        }
+      ],
+      "rules": [
+        {
+          "name": "bounceLobber beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "chainWhelp"
+            }
+          ]
+        },
+        {
+          "name": "bounceLobber took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "chainWhelp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "chainWhelp",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "station"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "riftBomb"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "chainBrute"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "TWO ON ONE CHAIN. HURT ONE, HURT BOTH.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "chainWhelp",
+          "anchor": "Camera",
+          "at": [
+            3.0,
+            -2.05
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "road:chainWhelp"
+        }
+      ],
+      "rules": [
+        {
+          "name": "chainWhelp beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "risenDemon"
+            }
+          ]
+        },
+        {
+          "name": "chainWhelp took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "risenDemon"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "risenDemon",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "station"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "riftBomb"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "chainBrute"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "IT GETS UP ONCE. SO DOES THE CROWD.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "risenDemon",
+          "anchor": "Camera",
+          "at": [
+            3.8,
+            -2.05
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "road:risenDemon"
+        }
+      ],
+      "rules": [
+        {
+          "name": "risenDemon beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "fuseWhelp"
+            }
+          ]
+        },
+        {
+          "name": "risenDemon took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "fuseWhelp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fuseWhelp",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "station"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "riftBomb"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "chainBrute"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "LIT FUSE. KEEP YOUR DISTANCE.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "fuseWhelp",
+          "anchor": "Camera",
+          "at": [
+            4.4,
+            -2.05
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "road:fuseWhelp"
+        }
+      ],
+      "rules": [
+        {
+          "name": "fuseWhelp beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "veilDemon"
+            }
+          ]
+        },
+        {
+          "name": "fuseWhelp took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "veilDemon"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "veilDemon",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "station"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "riftBomb"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "chainBrute"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "SHIELD IN FRONT. IT BLINKS TO YOUR SIDE.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "veilDemon",
+          "anchor": "Camera",
+          "at": [
+            3.8,
+            -2.05
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "road:veilDemon"
+        }
+      ],
+      "rules": [
+        {
+          "name": "veilDemon beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "slabSniper"
+            }
+          ]
+        },
+        {
+          "name": "veilDemon took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "slabSniper"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "slabSniper",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "station"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "riftBomb"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "chainBrute"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "A SLAB IN FRONT. GO UNDER IT.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "slabSniper",
+          "anchor": "Camera",
+          "at": [
+            4.0,
+            0.9
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "road:slabSniper"
+        }
+      ],
+      "rules": [
+        {
+          "name": "slabSniper beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "loopWraith"
+            }
+          ]
+        },
+        {
+          "name": "slabSniper took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "loopWraith"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "loopWraith",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "station"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "riftBomb"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "chainBrute"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "addRewind",
+          "seconds": 10.0
+        },
+        {
+          "type": "showText",
+          "text": "SHOTS PASS THROUGH. HOLD R, THEN SHOOT.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "loopWraith",
+          "anchor": "Camera",
+          "at": [
+            3.8,
+            -0.6
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "road:loopWraith"
+        }
+      ],
+      "rules": [
+        {
+          "name": "loopWraith beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "bastionBrute"
+            }
+          ]
+        },
+        {
+          "name": "loopWraith took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "bastionBrute"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bastionBrute",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "station"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "riftBomb"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "chainBrute"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "A WALL THAT STANDS TWICE.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "bastionBrute",
+          "anchor": "Camera",
+          "at": [
+            3.8,
+            -2.05
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "road:bastionBrute"
+        }
+      ],
+      "rules": [
+        {
+          "name": "bastionBrute beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "emit",
+              "signal": "road:done"
+            }
+          ]
+        },
+        {
+          "name": "bastionBrute took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "riftBomb"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "chainBrute"
+              }
+            },
+            {
+              "type": "emit",
+              "signal": "road:done"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

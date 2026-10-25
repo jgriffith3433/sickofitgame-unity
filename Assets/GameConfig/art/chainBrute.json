@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "chainBrute",
+  "name": "Chain brute",
+  "description": "a big plated grey demon of the Cracked Road in rough iron plates, a thick chain bolted to its left wrist trailing off to the left, wall-like shield arm held forward, orange cracks glowing between the plates",
+  "height": 1.0,
+  "poses": {
+    "stand": "standing square, shield arm forward, chain taut to the left, facing right",
+    "struck": "struck: plates ringing, chain rattling",
+    "dead": "collapsed forward, chain slack on the ground"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes and shifts in place, glow pulsing slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "performs its signature attack toward the right, glow flaring",
+      "seconds": 2.0
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks back, then settles",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}
