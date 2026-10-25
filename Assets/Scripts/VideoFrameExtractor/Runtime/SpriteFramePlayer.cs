@@ -73,6 +73,10 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
         private readonly Dictionary<int, AsyncOperationHandle<IList<Texture2D>>> chunkHandles = new();
         private readonly HashSet<int> loadedChunks = new();
         private readonly HashSet<int> loadingChunks = new();
+        private readonly Dictionary<int, float> loadStartedAt = new();
+        private float nextRetryCheck;
+        private const float RetryCheckSeconds = 1f;
+        private const float StalledLoadSeconds = 4f;
         private int lastChunkIdx = -1;
         private int displayedChunkIdx = -1;
         private readonly List<int> evictCandidates = new();
@@ -274,6 +278,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             chunkHandles.Clear();
             loadedChunks.Clear();
             loadingChunks.Clear();
+            loadStartedAt.Clear();
             initialized = false;
             isReady = false;
 
@@ -309,6 +314,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
         private void Update()
         {
+            RetryStalledChunks();
             if (!initialized || !isReady) return;
 
             bool rewinding = useGameClock && GameClock.Instance != null && GameClock.Instance.IsRewinding;
@@ -429,6 +435,7 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             if (loadingChunks.Contains(chunkIndex)) return;
 
             loadingChunks.Add(chunkIndex);
+            loadStartedAt[chunkIndex] = Time.unscaledTime;
             var chunk = data.chunks[chunkIndex];
 
             AddressablesOperationManager.Instance.LoadLabelWithHandle<Texture2D>(
@@ -441,6 +448,41 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             );
 
             chunkHandles[chunkIndex] = immediateHandle;
+        }
+
+        /// <summary>
+        /// A chunk load that fails, times out or never reports back used to be forgotten: the player stayed on whatever it
+        /// had drawn (or nothing, a black backdrop) because chunks are only requested when the playhead crosses into one.
+        /// Every second, ask again for the chunks the picture needs right now.
+        /// </summary>
+        private void RetryStalledChunks()
+        {
+            if (!initialized || released || data == null || data.chunks == null || data.chunks.Count == 0)
+                return;
+            float now = Time.unscaledTime;
+            if (now < nextRetryCheck)
+                return;
+            nextRetryCheck = now + RetryCheckSeconds;
+
+            int first, last;
+            if (!isReady)
+            {
+                first = firstPreloadChunk;
+                last = firstPreloadChunk + targetPreload - 1;
+            }
+            else
+            {
+                first = last = data.GetChunkIndexForFrame(currentFrameIndex);
+            }
+            for (int i = Mathf.Max(0, first); i <= last && i < data.chunks.Count; i++)
+            {
+                if (loadedChunks.Contains(i))
+                    continue;
+                if (loadingChunks.Contains(i) && loadStartedAt.TryGetValue(i, out float started) && now - started < StalledLoadSeconds)
+                    continue;
+                UnloadChunk(i);
+                LoadChunk(i, isInitial: !isReady);
+            }
         }
 
         private void OnChunkLoaded(
