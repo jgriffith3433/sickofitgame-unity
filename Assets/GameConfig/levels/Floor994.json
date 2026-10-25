@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 180.0,
+  "duration": 400.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 9,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 994,
-    "length": 90,
+    "length": 285,
     "floors": {
       "start": 994,
       "end": 993,
@@ -205,12 +205,15 @@
               "onEnter": true
             },
             {
-              "entity": "floorLanding994",
+              "entity": "ledge",
               "at": [
                 23.2,
                 11.0
               ],
-              "id": "landing"
+              "scale": [
+                2.0,
+                1
+              ]
             }
           ]
         },
@@ -220,6 +223,451 @@
           "length": 4.0,
           "turn": 2.0,
           "spawns": []
+        },
+        {
+          "name": "riser",
+          "direction": "Up",
+          "length": 5.6,
+          "turn": 2.0,
+          "lead": 0.4,
+          "autoSpeed": 0.36,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                2.4,
+                0.388
+              ],
+              "anchor": "Section",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.0,
+                1.725
+              ],
+              "anchor": "Section",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                2.4,
+                3.062
+              ],
+              "anchor": "Section",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.0,
+                4.4
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "theLongHaul",
+          "direction": "Right",
+          "length": 28.8,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                3.6,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                7.2,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                10.8,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "swingChain",
+              "at": [
+                14.4,
+                1.05
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                18.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                21.6,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                25.2,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                28.8,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "liftAndAnother",
+          "direction": "Up",
+          "length": 6.0,
+          "turn": 2.0,
+          "lead": 0.4,
+          "autoSpeed": 0.36,
+          "spawns": [
+            {
+              "entity": "chainLift994a",
+              "at": [
+                2.8,
+                -1.2
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.0,
+                4.8
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impCutter",
+              "at": [
+                -2.2,
+                3.6
+              ],
+              "anchor": "Section",
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "cutChains",
+          "direction": "Right",
+          "length": 28.8,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                3.6,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                7.2,
+                -0.95
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                10.8,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "swingChain",
+              "at": [
+                14.4,
+                1.3
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                18.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                21.6,
+                -0.95
+              ],
+              "anchor": "Section",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                25.2,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                28.8,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "highShaft",
+          "direction": "Up",
+          "length": 6.0,
+          "turn": 2.0,
+          "lead": 0.4,
+          "autoSpeed": 0.36,
+          "spawns": [
+            {
+              "entity": "chainLift994a",
+              "at": [
+                2.8,
+                -1.2
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.0,
+                4.8
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "impCutter",
+              "at": [
+                -2.2,
+                3.6
+              ],
+              "anchor": "Section",
+              "onEnter": true
+            },
+            {
+              "entity": "impCutter",
+              "at": [
+                3.8,
+                3.6
+              ],
+              "anchor": "Section",
+              "onEnter": true
+            }
+          ]
+        },
+        {
+          "name": "keepsGoing",
+          "direction": "Right",
+          "length": 30.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                8.0,
+                -0.95
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "sinkingStone",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                16.0,
+                -0.95
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "swingChain",
+              "at": [
+                16.0,
+                1.3
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                24.0,
+                -0.95
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "floorLanding994",
+              "at": [
+                29.4,
+                -0.4
+              ],
+              "anchor": "Section",
+              "id": "landing"
+            }
+          ]
         }
       ]
     },
@@ -238,6 +686,14 @@
       },
       {
         "name": "lavaMax",
+        "value": 0.0
+      },
+      {
+        "name": "heat",
+        "value": 0.0
+      },
+      {
+        "name": "finale",
         "value": 0.0
       }
     ],
@@ -267,10 +723,20 @@
       {
         "name": "the landing",
         "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finale",
+              "atLeast": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
@@ -389,6 +855,242 @@
             ]
           }
         ]
+      },
+      {
+        "name": "to theLongHaul",
+        "when": {
+          "type": "sectionReached",
+          "section": "theLongHaul"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "theLongHaul"
+          }
+        ]
+      },
+      {
+        "name": "to liftAndAnother",
+        "when": {
+          "type": "sectionReached",
+          "section": "liftAndAnother"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "liftAndAnother"
+          }
+        ]
+      },
+      {
+        "name": "to cutChains",
+        "when": {
+          "type": "sectionReached",
+          "section": "cutChains"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "cutChains"
+          }
+        ]
+      },
+      {
+        "name": "to highShaft",
+        "when": {
+          "type": "sectionReached",
+          "section": "highShaft"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "highShaft"
+          }
+        ]
+      },
+      {
+        "name": "to keepsGoing",
+        "when": {
+          "type": "sectionReached",
+          "section": "keepsGoing"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "keepsGoing"
+          }
+        ]
+      },
+      {
+        "name": "the opening's lava stops",
+        "when": {
+          "type": "sectionReached",
+          "section": "riser"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.0
+          }
+        ]
+      },
+      {
+        "name": "the floor has had its minutes",
+        "when": {
+          "type": "atTime",
+          "seconds": 255.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "finale",
+            "value": 1.0
+          }
+        ]
+      },
+      {
+        "name": "heat: the floor gets hotter",
+        "when": {
+          "type": "every",
+          "seconds": 20.0,
+          "startAfter": 40.0,
+          "maxTimes": 12
+        },
+        "do": [
+          {
+            "type": "addCounter",
+            "name": "heat",
+            "amount": 1.0
+          }
+        ]
+      },
+      {
+        "name": "heat 3: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 3.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 5: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 5.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 7: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 7.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 9: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 9.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 11: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 11.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
       }
     ],
     "phases": [
@@ -416,6 +1118,457 @@
                 "style": "Banner",
                 "sound": "vo_f994_title",
                 "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "theLongHaul",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:theLongHaul"
+          },
+          {
+            "type": "showText",
+            "text": "THE LONG HAUL!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "theLongHaul: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 8.11,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "liftAndAnother",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:liftAndAnother"
+          },
+          {
+            "type": "showText",
+            "text": "LIFT, AND ANOTHER!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.2,
+            "interval": 1.67,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "liftAndAnother: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 7.51,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "cutChains",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:cutChains"
+          },
+          {
+            "type": "showText",
+            "text": "CUT CHAINS!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.2,
+            "interval": 1.5,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "cutChains: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 6.9,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "cutChains: a brute for the fists",
+            "when": {
+              "type": "every",
+              "seconds": 16.2,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "highShaft",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:highShaft"
+          },
+          {
+            "type": "showText",
+            "text": "THE HIGH SHAFT!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.33,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "highShaft: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 6.3,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "highShaft: a brute for the fists",
+            "when": {
+              "type": "every",
+              "seconds": 14.82,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "highShaft: sparks from the lava",
+            "when": {
+              "type": "every",
+              "seconds": 8.14,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 4,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "keepsGoing",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:keepsGoing"
+          },
+          {
+            "type": "showText",
+            "text": "THE LIFT THAT KEEPS GOING!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.15,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 4,
+              "angle": 40
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.2,
+            "interval": 2.38,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "keepsGoing: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 5.69,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "keepsGoing: a brute for the fists",
+            "when": {
+              "type": "every",
+              "seconds": 13.44,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "keepsGoing: sparks from the lava",
+            "when": {
+              "type": "every",
+              "seconds": 7.27,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 5,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           }

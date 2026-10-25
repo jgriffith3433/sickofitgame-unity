@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 220.0,
+  "duration": 400.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 20,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 953,
-    "length": 110,
+    "length": 285,
     "floors": {
       "start": 953,
       "end": 952,
@@ -266,17 +266,670 @@
           ]
         },
         {
-          "name": "landing",
-          "direction": "Right",
-          "length": 5.0,
+          "name": "riser",
+          "direction": "Up",
+          "length": 6.0,
           "turn": 2.0,
+          "lead": 0.4,
+          "autoSpeed": 0.36,
           "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                2.4,
+                0.9
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.0,
+                2.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                2.4,
+                3.5
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.0,
+                4.8
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "againAgain",
+          "direction": "Right",
+          "length": 28.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                8.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                8.5,
+                -0.95
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                16.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                16.5,
+                -0.95
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "lavaFall955a",
+              "at": [
+                18.0,
+                0.4
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                24.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                24.5,
+                -0.95
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                28.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "lavaFall955a",
+              "at": [
+                30.0,
+                0.4
+              ],
+              "anchor": "Section"
+            }
+          ]
+        },
+        {
+          "name": "sameVent",
+          "direction": "Right",
+          "length": 28.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                8.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                8.5,
+                -0.35
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                16.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                16.5,
+                -0.35
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "lavaFall955a",
+              "at": [
+                18.0,
+                1.0
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                24.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                24.5,
+                -0.35
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                28.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "lavaFall955a",
+              "at": [
+                30.0,
+                0.4
+              ],
+              "anchor": "Section"
+            }
+          ]
+        },
+        {
+          "name": "lapSeven",
+          "direction": "Up",
+          "length": 8.0,
+          "turn": 2.0,
+          "lead": 0.4,
+          "autoSpeed": 0.36,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                -2.4,
+                0.133
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.0,
+                1.467
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                -0.5,
+                1.717
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -2.4,
+                2.8
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.0,
+                4.133
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                -0.5,
+                4.383
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -2.4,
+                5.467
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                0.0,
+                6.8
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "geysersKnowYou",
+          "direction": "Right",
+          "length": 28.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                8.0,
+                -0.7
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                8.5,
+                -0.45
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                12.0,
+                -0.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                16.0,
+                -0.7
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                16.5,
+                -0.45
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "lavaFall955a",
+              "at": [
+                18.0,
+                0.9
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                24.0,
+                -0.7
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                24.5,
+                -0.45
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                28.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "lavaFall955a",
+              "at": [
+                30.0,
+                0.4
+              ],
+              "anchor": "Section"
+            }
+          ]
+        },
+        {
+          "name": "noMoreLaps",
+          "direction": "Right",
+          "length": 30.0,
+          "turn": 2.0,
+          "autoSpeed": 0.55,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                4.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                8.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                8.5,
+                -0.35
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                12.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                16.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "loopGeyser",
+              "at": [
+                16.5,
+                -0.35
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "lavaFall955a",
+              "at": [
+                18.0,
+                1.0
+              ],
+              "anchor": "Section"
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                24.0,
+                -0.6
+              ],
+              "anchor": "Section",
+              "scale": [
+                1.2,
+                1
+              ]
+            },
             {
               "entity": "floorLanding953b",
               "at": [
-                22.4,
-                7.35
+                29.4,
+                -0.4
               ],
+              "anchor": "Section",
               "id": "landing"
             }
           ]
@@ -298,6 +951,14 @@
       },
       {
         "name": "lavaMax",
+        "value": 0.0
+      },
+      {
+        "name": "heat",
+        "value": 0.0
+      },
+      {
+        "name": "finale",
         "value": 0.0
       }
     ],
@@ -354,10 +1015,20 @@
       {
         "name": "the landing",
         "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finale",
+              "atLeast": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
@@ -398,6 +1069,242 @@
             ]
           }
         ]
+      },
+      {
+        "name": "to againAgain",
+        "when": {
+          "type": "sectionReached",
+          "section": "againAgain"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "againAgain"
+          }
+        ]
+      },
+      {
+        "name": "to sameVent",
+        "when": {
+          "type": "sectionReached",
+          "section": "sameVent"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "sameVent"
+          }
+        ]
+      },
+      {
+        "name": "to lapSeven",
+        "when": {
+          "type": "sectionReached",
+          "section": "lapSeven"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "lapSeven"
+          }
+        ]
+      },
+      {
+        "name": "to geysersKnowYou",
+        "when": {
+          "type": "sectionReached",
+          "section": "geysersKnowYou"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "geysersKnowYou"
+          }
+        ]
+      },
+      {
+        "name": "to noMoreLaps",
+        "when": {
+          "type": "sectionReached",
+          "section": "noMoreLaps"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "noMoreLaps"
+          }
+        ]
+      },
+      {
+        "name": "the opening's lava stops",
+        "when": {
+          "type": "sectionReached",
+          "section": "riser"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.0
+          }
+        ]
+      },
+      {
+        "name": "the floor has had its minutes",
+        "when": {
+          "type": "atTime",
+          "seconds": 255.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "finale",
+            "value": 1.0
+          }
+        ]
+      },
+      {
+        "name": "heat: the floor gets hotter",
+        "when": {
+          "type": "every",
+          "seconds": 20.0,
+          "startAfter": 40.0,
+          "maxTimes": 12
+        },
+        "do": [
+          {
+            "type": "addCounter",
+            "name": "heat",
+            "amount": 1.0
+          }
+        ]
+      },
+      {
+        "name": "heat 3: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 3.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 5: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 5.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 7: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 7.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 9: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 9.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 11: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 11.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
       }
     ],
     "phases": [
@@ -414,6 +1321,624 @@
                 "style": "Banner",
                 "sound": "vo_f953_title",
                 "color": "#FFD27A"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "againAgain",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:againAgain"
+          },
+          {
+            "type": "showText",
+            "text": "AGAIN, AGAIN!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.2,
+            "interval": 1.67,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "againAgain: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 7.48,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "againAgain: sparks from the lava",
+            "when": {
+              "type": "every",
+              "seconds": 9.83,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 4,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "sameVent",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:sameVent"
+          },
+          {
+            "type": "showText",
+            "text": "SAME VENT, NEW LAP!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.2,
+            "interval": 1.52,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "sameVent: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 6.96,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "sameVent: sparks from the lava",
+            "when": {
+              "type": "every",
+              "seconds": 9.09,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 4,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "sameVent: a brute for the fists",
+            "when": {
+              "type": "every",
+              "seconds": 16.34,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "lapSeven",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:lapSeven"
+          },
+          {
+            "type": "showText",
+            "text": "LAP... SEVEN?",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.2,
+            "interval": 1.37,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 3,
+              "angle": 34
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.0,
+            "interval": 2.7,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "lapSeven: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 6.44,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "lapSeven: sparks from the lava",
+            "when": {
+              "type": "every",
+              "seconds": 8.34,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 4,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "lapSeven: a brute for the fists",
+            "when": {
+              "type": "every",
+              "seconds": 15.15,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "geysersKnowYou",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:geysersKnowYou"
+          },
+          {
+            "type": "showText",
+            "text": "THE GEYSERS KNOW YOU!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.22,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 4,
+              "angle": 40
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.2,
+            "interval": 2.48,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "geysersKnowYou: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 5.92,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "geysersKnowYou: sparks from the lava",
+            "when": {
+              "type": "every",
+              "seconds": 7.6,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 5,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "geysersKnowYou: a brute for the fists",
+            "when": {
+              "type": "every",
+              "seconds": 13.96,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "noMoreLaps",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:noMoreLaps"
+          },
+          {
+            "type": "showText",
+            "text": "NO MORE LAPS. REALLY.",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.07,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 4,
+              "angle": 40
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.2,
+            "interval": 2.26,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "noMoreLaps: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 5.4,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "noMoreLaps: sparks from the lava",
+            "when": {
+              "type": "every",
+              "seconds": 6.85,
+              "startAfter": 3.5,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 5,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "noMoreLaps: a brute for the fists",
+            "when": {
+              "type": "every",
+              "seconds": 12.77,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
+                ]
               }
             ]
           }
