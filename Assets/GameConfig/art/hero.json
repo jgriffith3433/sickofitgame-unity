@@ -20,6 +20,7 @@
     "launcherHeld": "holding the rocket launcher on his shoulder, ready to fire",
     "launcherGone": "armoured hands empty and open at his sides, helm tilted down to stare flatly at them",
     "dashLean": "leaning hard forward mid-sprint in his armour, one leg stretched back, maroon cloth streaming behind",
+    "runFire": "mid-stride running, launcher on his shoulder aimed forward and firing, muzzle glowing, cloth streaming behind",
     "wallCling": "pressed against a wall on his right, one gauntlet and boot on it, helm turned back over his shoulder",
     "wallKick": "kicking off the wall, armoured body arched out and up, arms spread",
     "grappleAim": "arm thrown forward and up, gauntlet holding a hook on a rope, other hand bracing",
@@ -93,6 +94,15 @@
       "to": "dashLean",
       "state": "Dash",
       "loop": false,
+      "wired": "standIn",
+      "standIn": "Walk.png"
+    },
+    "runFire": {
+      "from": "runFire",
+      "action": "runs in his armour with the launcher on his shoulder, firing it forward as he goes",
+      "seconds": 1,
+      "state": "RunFire",
+      "loop": true,
       "wired": "standIn",
       "standIn": "Walk.png"
     },

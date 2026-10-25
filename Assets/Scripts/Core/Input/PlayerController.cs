@@ -1433,6 +1433,9 @@ namespace SickOfIt.Core.Input
         public bool IsWallKicking => MoveNow < kickUntil;
         /// <summary>The move pose playing now ("Dash", "WallSlide", "WallJump") or null; a playtest reads it.</summary>
         public string MovePose => movePose;
+        private bool runFirePlaying;
+        /// <summary>Firing while walking on the ground: the RunFire clip is playing; a playtest reads it.</summary>
+        public bool IsRunFiring => runFirePlaying && movePose == null && !IsClimbing;
         /// <summary>The dash's distance in world units (player.json moves.dash).</summary>
         public float DashDistance => moves.dash.distance;
         public float DashDuration => moves.dash.duration;
@@ -1594,7 +1597,7 @@ namespace SickOfIt.Core.Input
             return true;
         }
 
-        // The Dash, WallSlide and WallJump clips (player.json states; placeholders for now) play over the Animator while the move lasts.
+        // The Dash, WallSlide and WallJump clips (player.json states; stand-in sheets until the Hawkes Gen clips are made) play over the Animator while the move lasts.
         private void UpdateMovePose()
         {
             if (animator == null || IsClimbing || heroClip != null)
@@ -1984,16 +1987,30 @@ namespace SickOfIt.Core.Input
                 return;
             }
             if (movePose != null)
+            {
+                runFirePlaying = false;
                 return;
+            }
             
             animator.SetBool(OnGroundHash, isGrounded);
             if (AnimatorHasFiring())
                 animator.SetBool(FiringHash, isFiring && enableShooting);
             animator.SetFloat(VelocityXHash, Mathf.Abs(moveInput.x));
             // Fire was entered standing; once he walks, move on to the walk clip (Walk -> Idle handles stopping).
-            if (isFiring && IsWalkingOnGround() && animator.HasState(0, WalkStateHash)
-                && animator.GetCurrentAnimatorStateInfo(0).shortNameHash == FireStateHash)
-                animator.Play(WalkStateHash, 0, 0f);
+            bool runFire = isFiring && enableShooting && IsWalkingOnGround();
+            if (runFire && !runFirePlaying)
+            {
+                runFirePlaying = PlayAnimatorState("RunFire");
+                if (!runFirePlaying && animator.HasState(0, WalkStateHash)
+                    && animator.GetCurrentAnimatorStateInfo(0).shortNameHash == FireStateHash)
+                    animator.Play(WalkStateHash, 0, 0f);
+            }
+            else if (!runFire && runFirePlaying)
+            {
+                // He stopped or stopped firing: back to the clip the animator's own parameters pick.
+                runFirePlaying = false;
+                PlayAnimatorState(isFiring && enableShooting ? "Fire" : IsWalkingOnGround() ? "Walk" : "Idle");
+            }
             
             if (rb != null)
             {
