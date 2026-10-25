@@ -30,6 +30,14 @@ namespace SickOfIt.Core.Progression
         private Coroutine yoobaTalk;
         private bool built;
         private MenuButton backButton;
+        private YoobaShelf shelf;
+        /// <summary>His opening lines (welcome and reactions) have all been said or cut off by a buy.</summary>
+        public bool OpeningFinished { get; private set; }
+        /// <summary>The ledger chip's text ("LOST THINGS 1/3"), or "" while he hasn't asked.</summary>
+        public string QuestChipText => questChip != null && questChip.transform.parent.gameObject.activeSelf ? questChip.text : "";
+        private TextMeshProUGUI questChip;
+        private float quietSince;
+        private YoobaConfig yoobaConfig;
 
         /// <summary>Back (for the playtest's virtual mouse).</summary>
         public MenuButton BackButton => backButton;
@@ -44,6 +52,11 @@ namespace SickOfIt.Core.Progression
 
         /// <summary>Yooba behind the counter, or null (off in ui/yooba.json).</summary>
         public YoobaPortrait Yooba => yooba;
+        /// <summary>The wares on the shelf now (the playtest reads it).</summary>
+        public List<string> ShelfWares() => shelf != null ? shelf.StockedIds() : new List<string>();
+        public int ShelfSlots => shelf != null ? shelf.SlotCount : 0;
+        /// <summary>The lost things found so far (flags set by the pickups on the floors).</summary>
+        public int LostFound() => LostThingsFound();
         public string YoobaSubtitle => yoobaSubtitle != null && yoobaSubtitle.transform.parent.gameObject.activeSelf ? yoobaSubtitle.text : "";
 
         /// <summary>
@@ -114,6 +127,154 @@ namespace SickOfIt.Core.Progression
             }
             AddYooba(gd);
             RefreshUI();
+            AddShelfAndQuest(gd);
+            if (yooba != null)
+                openingTalk = StartCoroutine(OpeningLines());
+            else
+                OpeningFinished = true;
+            quietSince = Time.unscaledTime;
+        }
+
+        // ─── The shop room: shelf, quest, reactions, idle muttering ───
+
+        private void AddShelfAndQuest(GameDefinition gd)
+        {
+            yoobaConfig = gd != null ? gd.yooba : null;
+            if (yoobaConfig == null || !yoobaConfig.enabled)
+                return;
+            shelf = YoobaShelf.Build(menu, yoobaConfig);
+            shelf.Refresh();
+            if (yoobaConfig.quest != null && yoobaConfig.quest.enabled && yoobaConfig.quest.things.Count > 0)
+                questChip = menu.AddChip("", menu.Theme.muted);
+            RefreshQuestChip();
+        }
+
+        private int LostThingsFound()
+        {
+            var quest = yoobaConfig != null ? yoobaConfig.quest : null;
+            if (quest == null)
+                return 0;
+            int found = 0;
+            foreach (var thing in quest.things)
+                if (UnlockFlags.Has(thing.flag))
+                    found++;
+            return found;
+        }
+
+        private bool QuestComplete() =>
+            yoobaConfig != null && yoobaConfig.quest != null && yoobaConfig.quest.enabled && yoobaConfig.quest.things.Count > 0
+            && LostThingsFound() == yoobaConfig.quest.things.Count;
+
+        private void RefreshQuestChip()
+        {
+            if (questChip == null)
+                return;
+            var quest = yoobaConfig.quest;
+            bool asked = UnlockFlags.Has(quest.askedFlag) || LostThingsFound() > 0;
+            questChip.transform.parent.gameObject.SetActive(asked);
+            bool paid = UnlockFlags.Has(quest.paidFlag);
+            MenuGraphics.SetText(questChip, paid ? quest.doneText : string.Format(quest.chipFormat, LostThingsFound(), quest.things.Count));
+        }
+
+        /// <summary>
+        /// What Yooba says on opening the shop, in order: the welcome, then whatever he has to react to: a lost thing found, the
+        /// quest paid out, a ware that just appeared, the quest asked, the deaths he has counted. Each reaction once.
+        /// </summary>
+        private System.Collections.IEnumerator OpeningLines()
+        {
+            var queue = new List<YoobaLine>();
+            var quest = yoobaConfig.quest;
+            bool questOn = quest != null && quest.enabled && quest.things.Count > 0;
+            if (questOn)
+            {
+                foreach (var line in YoobaPortrait.Candidates(YoobaMoment.QuestFound))
+                    if (!YoobaProgress.HasSaid(line.sound))
+                        queue.Add(line);
+                if (QuestComplete() && !UnlockFlags.Has(quest.paidFlag))
+                {
+                    UnlockFlags.Set(quest.paidFlag);
+                    RogueliteManager.Instance.AddPoints(quest.rewardDiamonds);
+                    var done = YoobaPortrait.PickShop(YoobaMoment.QuestDone);
+                    if (done != null)
+                        queue.Add(done);
+                    YoobaPortrait.Announce("quest", $"paid {quest.rewardDiamonds} diamonds for {quest.title}");
+                    RefreshUI();
+                }
+                else if (!UnlockFlags.Has(quest.askedFlag))
+                {
+                    var ask = YoobaPortrait.PickNew(YoobaMoment.QuestOffer);
+                    if (ask != null)
+                    {
+                        UnlockFlags.Set(quest.askedFlag);
+                        queue.Add(ask);
+                    }
+                }
+                else if (!UnlockFlags.Has(quest.paidFlag) && LostThingsFound() < quest.things.Count)
+                {
+                    var nudge = YoobaPortrait.PickNew(YoobaMoment.QuestRemind);
+                    if (nudge != null)
+                        queue.Add(nudge);
+                }
+                RefreshQuestChip();
+            }
+            // Wares new on the shelf since his last word about them (one line each, the first two).
+            int stocked = 0;
+            foreach (var ware in shelf != null ? shelf.Refresh() : new List<YoobaWare>())
+            {
+                YoobaProgress.MarkWareShown(ware.id);
+                var line = YoobaPortrait.PickShop(YoobaMoment.ShopStocked, ware.id);
+                if (line != null && line.item == ware.id && stocked++ < 2)
+                    queue.Add(line);
+            }
+            // The deaths he has counted: the line for the highest count reached (the lower ones are old news).
+            var counted = YoobaPortrait.Candidates(YoobaMoment.ShopDeaths);
+            if (counted.Count > 0 && !YoobaProgress.HasSaid(counted[counted.Count - 1].sound))
+            {
+                for (int i = 0; i < counted.Count - 1; i++)
+                    YoobaProgress.MarkSaid(counted[i].sound);
+                queue.Add(counted[counted.Count - 1]);
+            }
+
+            // Let the welcome finish first.
+            yield return null;
+            while (yooba != null && yooba.Speaking)
+                yield return null;
+            foreach (var line in queue)
+            {
+                if (yooba == null || leaving)
+                    break;
+                YoobaPortrait.Said(line);
+                yield return yooba.Say(line, ShowYoobaSubtitle);
+                ShowYoobaSubtitle(null);
+                quietSince = Time.unscaledTime;
+            }
+            quietSince = Time.unscaledTime;
+            OpeningFinished = true;
+            openingTalk = null;
+        }
+
+        private Coroutine openingTalk;
+
+        private void Update()
+        {
+            // Quiet behind the counter: after a while he mutters to himself (a running gag, gossip).
+            if (yooba == null || yoobaConfig == null || yoobaConfig.idleLineSeconds <= 0f || leaving)
+                return;
+            if (yooba.Speaking || yoobaTalk != null || openingTalk != null)
+            {
+                quietSince = Time.unscaledTime;
+                return;
+            }
+            if (Time.unscaledTime - quietSince < yoobaConfig.idleLineSeconds)
+                return;
+            quietSince = Time.unscaledTime;
+            var line = YoobaPortrait.PickIdle();
+            if (line == null)
+                return;
+            YoobaPortrait.Said(line);
+            if (yoobaTalk != null)
+                StopCoroutine(yoobaTalk);
+            yoobaTalk = StartCoroutine(YoobaLineRoutine(line));
         }
 
         private void AddYooba(GameDefinition gd)
@@ -122,6 +283,7 @@ namespace SickOfIt.Core.Progression
             if (settings == null || !settings.enabled)
                 return;
             yooba = YoobaPortrait.Create(menu, menu.Root, settings, settings.shopPortrait, settings.shopPortraitPortrait);
+            yoobaConfig = settings;
             var place = settings.shopSubtitle;
             yoobaSubtitle = menu.AddText(menu.Root, "YoobaSubtitle", "", menu.Theme.subtitle, place.anchor, place.offset, place.size, out _, 38f);
             yoobaSubtitle.enableAutoSizing = true;
@@ -131,15 +293,26 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>Yooba says a shop line (unless he is still talking, or 'interrupt').</summary>
-        private void YoobaSay(YoobaMoment moment, bool interrupt)
+        private void YoobaSay(YoobaMoment moment, bool interrupt, string item = null)
         {
             if (yooba == null || (!interrupt && yooba.Speaking))
                 return;
-            var line = YoobaPortrait.PickShop(moment);
+            var line = YoobaPortrait.PickShop(moment, item);
             if (line == null)
                 return;
+            if (interrupt && openingTalk != null)
+            {
+                // A buy cuts his reactions short; the welcome that started them is not cut.
+                StopCoroutine(openingTalk);
+                openingTalk = null;
+                OpeningFinished = true;
+                yooba.Silence();
+            }
             if (yoobaTalk != null)
+            {
                 StopCoroutine(yoobaTalk);
+                yooba.Silence();
+            }
             yoobaTalk = StartCoroutine(YoobaLineRoutine(line));
         }
 
@@ -239,7 +412,7 @@ namespace SickOfIt.Core.Progression
             {
                 SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.upgradePick);
                 bool weaponGood = def.Effect == ShopEffect.KeepWeapons || def.Effect == ShopEffect.MeleeDamage || def.Effect == ShopEffect.MeleeReach;
-                YoobaSay(weaponGood ? YoobaMoment.ShopBuyWeapon : YoobaMoment.ShopBuy, true);
+                YoobaSay(weaponGood ? YoobaMoment.ShopBuyWeapon : YoobaMoment.ShopBuy, true, weaponGood ? null : def.id);
             }
             else
             {

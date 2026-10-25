@@ -105,6 +105,10 @@ Assets/GameConfig/
 - **Yooba** (`ui/yooba.json`, `YoobaPortrait`): the village slime's talking portrait (idle/talk/laugh/cough sheets, a shape
   placeholder until painted) and lines on the Shaft (his hello after Video3, one reaction per climb) and in the shop. Lines
   are audio.json voices `yooba` (hero replies `player`); which line plays is `moment` + `floor` (Docs/Story.md, "Yooba between floors").
+- **Yooba's living shop** (Docs/Story.md "Yooba between floors", "The shop is alive"): `ui/yooba.json` `shelves` (wares with `requires`, e.g. `level:11`), `quest`
+  (the Lost Things: pickups `lostRollingPin`/`lostMitt`/`lostBell` on Floors 997/995/992 use the `setFlag` action, the shop pays once), `idleBehaviorSeconds`/`idleLineSeconds`,
+  and line fields `item` (ShopBuy/ShopStocked for one good or ware), `minDeaths`, `requires`; moments ShopDeaths, ShopStocked, ShopIdle, Quest*. `YoobaShelf`,
+  `UpgradeShopManager.OpeningLines`, `YoobaPortrait.IdleBehaviors`. Playtest `yooba-alive`.
 - **Hell's tricks** (Docs/Story.md, "Hell's tricks"): five JSON mechanics in `Gameplay/Content/Mechanics.cs` and `projectile`: `bounces`,
   `teleport`, `frontShield` (Entity.Damage asks it; the hero's shots arrive through `IDirectionalDamageable` with the shot's place),
   `laserSweep` (a segment tested against the hero's collider, no physics) and `Aim.Predictive`. Test enemies `ricochetImp`, `blinkImp`,
