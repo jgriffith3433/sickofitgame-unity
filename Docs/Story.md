@@ -539,6 +539,49 @@ Circle is `content/circles/runeBridges.json`.
 - **The Shaft wakes Circle VIII** as before (*"CIRCLE EIGHT! THE RUNE BRIDGES!"*): the band now belongs to the Circle, so
   its floors-left and next Warden read from it, and Continue after Floor 801 goes on to Floor 800.
 
+**Built: the lower half (2026-10-25, Floors 751-701, `levels/Floor751.json` to `Floor701.json`, written by `Tools/Levels/rune_lower.py`).** Floors 791-752
+(the Keystone, the Watcher's Favour, the Circle's middle) are still to build; the lower half stands on its own and is played from the level select, and
+the Lamplighter's floor stays 751 as above. Continue after Floor 702 goes to the Bridge Wraith, and after Floor 701 to the level select until Circle VII is built.
+- **The Lamplighter (Floor 751, the mid-boss).** The Wraith's chief carrier, on one held bridge (a Travel camera on an Arena section, like the Pile Keeper's
+  mound). Three phases and a last stand: *one bridge* (a glow, a second later a column of rune where the hero stands, then a fan of flame from the pole),
+  *two bridges* at two thirds (`llTier2`: Watchers, imps and lead imps come up to four of a kind), *blind* at a third (`llBlindSignal`: his flame is nearly
+  out, up to six minions) and a last stand at an eighth (`llLast`). Every attack is a glow first. *Weakness:* the flame on his pole, so the hero's hint is
+  *"The Lamplighter. His whole job is the flame on his pole. So I shoot the flame."* Beaten, he walks off the bridge (*"Oh. ...Is this the edge?"*,
+  the announcer: *"THE LAMPLIGHTER HAS WALKED OFF THE BRIDGE!"*) and the counter ticks to 750. His voice, `lamplighter`: thin, creaky, fussy.
+  The Unwritten Span shortcut (751 to 710) is not built; this stretch has none.
+- **Floors 750-702 are short crossings** (forty-nine floors, about 110 s each: a foot, three set pieces, a far end; the Circle's first nine were long for
+  the lesson, the lower half is long in number): the same Rune Spans, one idea at a time, a Watcher's gaze, a carved landing that says what it is
+  (*BRIDGE. HALFWAY.*, *MIND THE GAP*, *NO GAP (SORRY)*, *DO NOT WAKE IT*, *UP* below the Overlord's handprint on 708, *SORRY. SORRY.* on 702).
+  Floor 750, *Halfway Across*, is the Circle's milestone. Three new creatures, each met alone first, built from existing mechanics:
+  the **Afterimage** (745: a pale copy of the hero that follows slowly, and is shot from range), the **Rune Hound** (735: a stone hound that wakes only when he
+  comes near, then crouches and lunges) and the **Sleepwalker** (725: drifts one way and is harmless until a shot wakes it, then it sprays bolts, so the hero
+  waits). The runes' comedy is the Circle's. The title of every floor is voiced by the announcer and the hero says one line from a shared set of sixteen
+  (*"Hell loves a repeat"* is a joke the floors make themselves). The Circle's table (`runeBridges`) adds the three creatures from their floors.
+- **The Overlord's thread** is on 708-706: a huge handprint on a parapet and *UP*, rubbed out and written again (*"He was trying too."*).
+
+#### The Bridge Wraith's fight (Floor 701, `bridgeWraith`, level `Floor701`)
+
+The Great Span, a Static screen with a ring of four bridges lit on the beat above the floor, the Wraith floating at the middle with her lantern.
+Voice `bridgeWraith` (hushed, courteous, anxious, an echo tail). She apologises before every terrible thing; every attack is a glow 1+ s first.
+1. **Intro.** *"FLOOR 701: THE GREAT SPAN"*, the hum, the camera on her as she rises, *"FLOOR 701! THE WARDEN OF THE RUNE BRIDGES!"*, *"THE BRIDGE WRAITH"*, her whisper
+   (*"Oh. Oh, hello. Someone needs to cross. ...Sorry. It has been so long."*), the hero (*"She's already sorry. That's worse."*), the boss bar.
+2. **Phase 1, The Lantern** (to 75%, then her carriers come: `brWave`, imps, ricochet imps and blink imps). She lights something (a fan of rune bolts from
+   the lantern after a glow, or a rune column under the hero after a glow) and the lantern is open; then it shutters and shots are blocked for a moment. Shoot it
+   open. The hero's hint: *"The Bridge Wraith. The lantern opens when she lights something. So I shoot it then."*
+3. **Phase 2, Snuffed** (half health, `brSnuff`, `brPhase2`). She shuts the lantern and the Great Span goes dark: the ring is gone and three spans light only while the
+   hero stands on them. Her little lights come (`lanternfly`, the only add in this phase), with Bulwark, lead imps, Afterimages and Watchers up to six of a kind;
+   predictive bursts and wider fans.
+4. **Phase 3, Unwritten** (a third, `brEnrage`, `brUnwrite`). *"Unwritten. Unwritten. Please, do not rush me."* The ring comes back on a quick beat and walls of runes
+   fall across the floor after their glow. The hero: *"The bridge is unwriting itself. Behind me. Of course it is."* A last stand at 15% (`brLast`): up to eight of
+   six kinds at once, with the Rune Hound, and all her attacks in turn.
+5. **Defeat.** Slow motion; she puts the lantern down and the runes read, for the first time, *THANK YOU*. Her last line: *"Oh. ...Thank you for crossing."* Announcer:
+   *"THE BRIDGE WRAITH HAS FALLEN!"* Hero: *"She said thank you. Hell, first time."* Then the Waystone lights on Floor 701 (*"WAYSTONE LIT: FLOOR SEVEN HUNDRED ONE!"*,
+   the hero: *"Good. Fewer bridges next time."*). A run starts at 701 from now on.
+6. **The Shaft after her.** The marker stands on 701, the Wraith's figure fills in, the Waystone at 701 lights and **Circle VII, the Gloomwood, wakes up**
+   (*"CIRCLE SEVEN! THE GLOOMWOOD!"*, `vo_shaft_wake_vii`). Next Warden: the Hollow King.
+*Art:* the Wraith, the Lamplighter and the three creatures are placeholders (specs `Assets/GameConfig/art/*.json`; the GPU run is priced, not approved).
+*Playtest:* `bridge-descent` (a sample of the lower half and then the Wraith with the Shaft), `bridge-wraith`, `level-N` and `rune-bridges-3` onward.
+
 ### Circle VII: the Gloomwood (Floors 700-601)
 
 **Theme and look.** A dead forest at no time of day: black trees with their bark peeling in sheets, grey fog at knee

@@ -1,0 +1,703 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor701",
+  "displayName": "Floor 701: The Great Span",
+  "levelNumber": 149,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.0,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 700.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 0,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 150,
+    "floors": {
+      "start": 701,
+      "end": 701,
+      "unitsPerFloor": 0.0,
+      "circle": "runeBridges",
+      "signs": false
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Defeat the Bridge Wraith"
+    },
+    "phases": [
+      {
+        "name": "intro",
+        "onEnter": [
+          {
+            "type": "spawn",
+            "entity": "runeSpanUnison",
+            "anchor": "Camera",
+            "at": [
+              -2.6,
+              -0.7
+            ],
+            "id": "span0",
+            "scale": [
+              1.0,
+              1
+            ]
+          },
+          {
+            "type": "spawn",
+            "entity": "runeSpanLate",
+            "anchor": "Camera",
+            "at": [
+              0.4,
+              -0.2
+            ],
+            "id": "span1",
+            "scale": [
+              1.0,
+              1
+            ]
+          },
+          {
+            "type": "spawn",
+            "entity": "runeSpanUnison",
+            "anchor": "Camera",
+            "at": [
+              3.4,
+              -0.7
+            ],
+            "id": "span2",
+            "scale": [
+              1.0,
+              1
+            ]
+          },
+          {
+            "type": "spawn",
+            "entity": "runeSpanLate",
+            "anchor": "Camera",
+            "at": [
+              6.2,
+              -0.2
+            ],
+            "id": "span3",
+            "scale": [
+              1.0,
+              1
+            ]
+          },
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "applyStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "showText",
+            "text": "FLOOR 701: THE GREAT SPAN",
+            "duration": 2.8,
+            "sound": "vo_f701_title",
+            "color": "#8FE3FF"
+          }
+        ],
+        "rules": [
+          {
+            "name": "he rises out of his spire",
+            "when": {
+              "type": "after",
+              "seconds": 4.6
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "playSound",
+                    "sound": "rune_hum"
+                  },
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.15,
+                    "duration": 2.4
+                  },
+                  {
+                    "type": "cameraTo",
+                    "anchor": "Camera",
+                    "at": [
+                      2.4,
+                      0.5
+                    ],
+                    "size": 2.1,
+                    "duration": 1.8
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 1.6
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "bridgeWraith",
+                    "id": "boss",
+                    "anchor": "Camera",
+                    "at": [
+                      3.9,
+                      0.2
+                    ]
+                  },
+                  {
+                    "type": "setState",
+                    "target": {
+                      "self": false,
+                      "id": "boss"
+                    },
+                    "state": "emerging"
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "brIntro"
+                  },
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.3,
+                    "duration": 1.4
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 2.4
+                  },
+                  {
+                    "type": "flash",
+                    "color": "#8FE3FF88",
+                    "duration": 0.4
+                  },
+                  {
+                    "type": "showText",
+                    "text": "FLOOR 801! THE WARDEN OF THE ROAD!",
+                    "duration": 3.6,
+                    "sound": "vo_br_warden",
+                    "color": "#CFE4FF"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 4.0
+                  },
+                  {
+                    "type": "showText",
+                    "text": "THE BRIDGE WRAITH",
+                    "duration": 2.4,
+                    "sound": "vo_br_name",
+                    "color": "#CFE4FF"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.0
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Oh. Oh, hello. Someone needs to cross. ...Sorry. It has been so long.",
+                    "style": "Subtitle",
+                    "duration": 9.6,
+                    "sound": "vo_br_intro",
+                    "color": "#CFE4FF"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 10.0
+                  },
+                  {
+                    "type": "cameraReset",
+                    "duration": 1.2
+                  },
+                  {
+                    "type": "showText",
+                    "text": "She's already sorry. That's worse.",
+                    "style": "Subtitle",
+                    "duration": 2.6,
+                    "sound": "vo_br_hero_intro",
+                    "color": "#CFE4FF"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 2.8
+                  },
+                  {
+                    "type": "bossBar",
+                    "target": {
+                      "id": "boss"
+                    },
+                    "label": "The Bridge Wraith"
+                  },
+                  {
+                    "type": "goToPhase",
+                    "phase": "fight"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "fight",
+        "onEnter": [
+          {
+            "type": "unlockInput"
+          },
+          {
+            "type": "unlockRewind"
+          },
+          {
+            "type": "removeStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "emit",
+            "signal": "brFight"
+          },
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_push.ogg",
+            "volume": 0.85
+          },
+          {
+            "type": "showText",
+            "text": "Mind the gap. ...There is not one. Sorry.",
+            "style": "Subtitle",
+            "duration": 4.8,
+            "sound": "vo_br_phase1",
+            "color": "#CFE4FF"
+          }
+        ],
+        "rules": [
+          {
+            "name": "the first unwriting",
+            "when": {
+              "type": "signal",
+              "name": "brUnwrite"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 4.2
+                  },
+                  {
+                    "type": "showText",
+                    "text": "The bridge is unwriting itself. Behind me. Of course it is.",
+                    "style": "Subtitle",
+                    "duration": 4.5,
+                    "sound": "vo_br_hero_field"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "he falls",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "id": "boss"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "defeat"
+              }
+            ]
+          },
+          {
+            "name": "the hero sizes him up",
+            "when": {
+              "type": "after",
+              "seconds": 9.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "showText",
+                "text": "The Bridge Wraith. The lantern opens when she lights something. So I shoot it then.",
+                "duration": 4.4,
+                "style": "Subtitle",
+                "sound": "vo_hero_hint_bridgeWraith"
+              }
+            ]
+          },
+          {
+            "name": "boss rework: wave",
+            "when": {
+              "type": "signal",
+              "name": "brWave"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.15,
+                "duration": 0.7
+              }
+            ]
+          },
+          {
+            "name": "boss rework: last stand",
+            "when": {
+              "type": "signal",
+              "name": "brLast"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.3,
+                "duration": 0.7
+              }
+            ]
+          },
+          {
+            "name": "snuffed: the Span goes dark",
+            "when": {
+              "type": "signal",
+              "name": "brSnuff"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "despawn",
+                "target": {
+                  "entity": "runeSpanUnison"
+                }
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "entity": "runeSpanLate"
+                }
+              },
+              {
+                "type": "spawn",
+                "entity": "runeSpanHold",
+                "anchor": "Camera",
+                "at": [
+                  -2.2,
+                  -0.6
+                ],
+                "scale": [
+                  1.0,
+                  1
+                ]
+              },
+              {
+                "type": "spawn",
+                "entity": "runeSpanHold",
+                "anchor": "Camera",
+                "at": [
+                  1.2,
+                  -0.2
+                ],
+                "scale": [
+                  1.0,
+                  1
+                ]
+              },
+              {
+                "type": "spawn",
+                "entity": "runeSpanHold",
+                "anchor": "Camera",
+                "at": [
+                  4.4,
+                  -0.6
+                ],
+                "scale": [
+                  1.0,
+                  1
+                ]
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.15,
+                "duration": 0.7
+              }
+            ]
+          },
+          {
+            "name": "unwritten: the bridges go on the beat",
+            "when": {
+              "type": "signal",
+              "name": "brEnrage"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "despawn",
+                "target": {
+                  "entity": "runeSpanHold"
+                }
+              },
+              {
+                "type": "spawn",
+                "entity": "runeSpanQuick",
+                "anchor": "Camera",
+                "at": [
+                  -2.6,
+                  -0.7
+                ],
+                "scale": [
+                  1.0,
+                  1
+                ]
+              },
+              {
+                "type": "spawn",
+                "entity": "runeSpanQuick",
+                "anchor": "Camera",
+                "at": [
+                  0.6,
+                  -0.2
+                ],
+                "scale": [
+                  1.0,
+                  1
+                ]
+              },
+              {
+                "type": "spawn",
+                "entity": "runeSpanQuick",
+                "anchor": "Camera",
+                "at": [
+                  3.8,
+                  -0.7
+                ],
+                "scale": [
+                  1.0,
+                  1
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "defeat",
+        "onEnter": [
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "applyStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "despawn",
+            "target": {
+              "entity": "lanternfly"
+            }
+          },
+          {
+            "type": "slowMotion",
+            "scale": 0.3,
+            "duration": 2.0
+          },
+          {
+            "type": "musicVolume",
+            "volume": 0.25
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.4,
+            "duration": 1.5
+          },
+          {
+            "type": "playSound",
+            "sound": "bridgeWraith_die"
+          },
+          {
+            "type": "emit",
+            "signal": "brDefeat"
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 5.0
+              },
+              {
+                "type": "popText",
+                "text": "THANK YOU",
+                "color": "#BFEFFF",
+                "anchor": "Camera",
+                "at": [
+                  3.9,
+                  1.2
+                ],
+                "size": 1.4
+              },
+              {
+                "type": "showText",
+                "text": "THE BRIDGE WRAITH HAS FALLEN!",
+                "duration": 3.4,
+                "sound": "vo_br_fallen",
+                "color": "#7CFF8A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.8
+              },
+              {
+                "type": "showText",
+                "text": "She said thank you. Hell, first time.",
+                "style": "Subtitle",
+                "duration": 5.4,
+                "sound": "vo_br_hero_defeat"
+              },
+              {
+                "type": "wait",
+                "seconds": 5.8
+              },
+              {
+                "type": "hideBossBar"
+              },
+              {
+                "type": "walkPlayerTo",
+                "anchor": "Camera",
+                "x": 2.0,
+                "speed": 0.7,
+                "emit": "atStump"
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "up the broken spire",
+            "when": {
+              "type": "signal",
+              "name": "atStump"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.12,
+                    "duration": 0.6
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "br_chime"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.8
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "waystoneGlow",
+                    "anchor": "Player",
+                    "at": [
+                      1.1,
+                      -0.3
+                    ],
+                    "facePlayer": false
+                  },
+                  {
+                    "type": "flash",
+                    "color": "#9EFFE6AA",
+                    "duration": 0.6
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "waystone_lit"
+                  },
+                  {
+                    "type": "popText",
+                    "text": "WAYSTONE",
+                    "color": "#9EFFE6",
+                    "anchor": "Player",
+                    "at": [
+                      1.1,
+                      1.0
+                    ],
+                    "size": 1.2
+                  },
+                  {
+                    "type": "showText",
+                    "text": "WAYSTONE LIT: FLOOR 701",
+                    "duration": 3.2,
+                    "sound": "vo_waystone_lit_701",
+                    "color": "#9EFFE6"
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "waystoneLit"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.4
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Good. Fewer bridges next time.",
+                    "style": "Subtitle",
+                    "duration": 2.8,
+                    "sound": "vo_waystone_hero_701"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.0
+                  },
+                  {
+                    "type": "offerUpgrades",
+                    "title": "Pick a grudge"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "counters": []
+  }
+}

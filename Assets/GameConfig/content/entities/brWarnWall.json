@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "extends": "fmWarnWhip",
+  "visual": {
+    "color": "#8FE3FF",
+    "scale": 0.14
+  },
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "brWallHit",
+      "anchor": "Self",
+      "facePlayer": false
+    },
+    {
+      "type": "playSound",
+      "sound": "rune_hum"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "extends": "runeBolt",
+  "visual": {
+    "color": "#E8F6FF",
+    "scale": 0.13
+  }
+}

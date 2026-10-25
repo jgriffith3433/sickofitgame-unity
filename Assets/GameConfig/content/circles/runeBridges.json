@@ -258,6 +258,45 @@
         1.0,
         2.2
       ]
+    },
+    {
+      "entity": "afterimage",
+      "weight": 0.5,
+      "fromFloor": 745,
+      "areaCenter": [
+        4.0,
+        1.0
+      ],
+      "areaSize": [
+        1.0,
+        2.2
+      ]
+    },
+    {
+      "entity": "runeHound",
+      "weight": 0.4,
+      "fromFloor": 735,
+      "areaCenter": [
+        4.0,
+        0.0
+      ],
+      "areaSize": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "entity": "sleepwalker",
+      "weight": 0.3,
+      "fromFloor": 725,
+      "areaCenter": [
+        4.0,
+        0.0
+      ],
+      "areaSize": [
+        1.0,
+        1.0
+      ]
     }
   ],
   "hazards": [

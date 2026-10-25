@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "entity": "lamplighter",
+  "name": "The Lamplighter",
+  "description": "the Wraith's chief carrier, a hunched thin old grey hooded wraith with no legs floating over the bridge, holding a very long wooden pole with a small yellow flame burning in a little cage at its tip, a shabby cloak, two small dim eyes under the hood, tired and dutiful",
+  "height": 2.2,
+  "pixels": 240,
+  "frameFill": 0.5,
+  "visualScale": 1,
+  "poses": {
+    "stand": "hovering hunched with the long pole held upright in both hands, the flame bright at its tip",
+    "dormant": {
+      "from": "stand",
+      "action": "folded small and still against the pole, head bowed, flame low"
+    },
+    "blind": {
+      "from": "stand",
+      "action": "the flame at the pole's tip nearly out, a thin wisp of smoke, the wraith peering around blindly with one hand held out"
+    },
+    "dead": {
+      "from": "stand",
+      "action": "gone: only the pole lying on the bridge with its cage empty and a thin curl of smoke"
+    }
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "loop": true,
+      "action": "sways slowly, the flame at the pole's tip flickering",
+      "seconds": 2
+    },
+    "rise": {
+      "from": "dormant",
+      "to": "stand",
+      "state": "Rise",
+      "action": "straightens up with the pole, the flame flaring bright",
+      "seconds": 1.5
+    },
+    "light": {
+      "from": "stand",
+      "state": "Light",
+      "event": "light",
+      "action": "swings the pole down and touches the flame to the ground in front of him, a cyan rune flaring where it touches, then lifts it again",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "jerks back and clutches the pole, the flame guttering",
+      "seconds": 1
+    },
+    "blindClip": {
+      "from": "stand",
+      "to": "blind",
+      "state": "Blind",
+      "action": "the flame at the pole's tip sputters and shrinks to a wisp, he turns his head from side to side in alarm",
+      "seconds": 1.5
+    },
+    "die": {
+      "from": "blind",
+      "to": "dead",
+      "action": "shuffles forward blindly, steps off the edge of the bridge, and is gone, the pole clattering down behind him",
+      "seconds": 2
+    }
+  },
+  "animator": {
+    "parameters": [
+      {
+        "name": "Light",
+        "type": "Trigger"
+      },
+      {
+        "name": "Hurt",
+        "type": "Trigger"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Rise",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Idle",
+        "to": "Light",
+        "when": [
+          "Light"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Light",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Hurt",
+        "to": "Idle",
+        "exit": true
+      }
+    ]
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

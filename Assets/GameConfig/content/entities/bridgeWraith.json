@@ -1,0 +1,1903 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Bridge Wraith",
+  "hint": "The lantern opens when she lights something. Shoot it then.",
+  "note": "She keeps every bridge. Apologises for the ones that kill me.",
+  "team": "Enemy",
+  "health": 150,
+  "moveSpeed": 0,
+  "activationRange": 0,
+  "tags": [
+    "boss",
+    "bridgeWraith"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      1.2,
+      2.2
+    ],
+    "solid": true,
+    "gravity": 0
+  },
+  "visual": {
+    "scale": 1,
+    "color": "#9FB4D8",
+    "fxColor": "#8FE3FF",
+    "placeholderSize": 2.2,
+    "deathFade": 1.4
+  },
+  "healthBar": {
+    "show": false
+  },
+  "loot": {
+    "chance": 1,
+    "count": 5,
+    "value": 2
+  },
+  "abilities": [
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "hover",
+      "speed": 0.0,
+      "aroundSpawn": true,
+      "bobHeight": 0.14,
+      "bobSpeed": 1.3
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "healthBelow",
+        "fraction": 0.85
+      },
+      "do": [
+        {
+          "type": "showText",
+          "text": "Oh! That was the lantern. Sorry. Sorry.",
+          "style": "Subtitle",
+          "duration": 3.0,
+          "color": "#CFE4FF",
+          "sound": "vo_br_hurt1"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "healthBelow",
+        "fraction": 0.15
+      },
+      "do": [
+        {
+          "type": "showText",
+          "text": "Please. I will write it wrong.",
+          "style": "Subtitle",
+          "duration": 3.0,
+          "color": "#CFE4FF",
+          "sound": "vo_br_hurt2"
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "emerging",
+      "onEnter": [
+        {
+          "type": "playSound",
+          "sound": "br_chime"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "waiting",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "waiting",
+      "transitions": [
+        {
+          "to": "p1Fan",
+          "when": {
+            "type": "signal",
+            "name": "brFight"
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Fan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnLamp",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "brLampBolt",
+          "speed": 3.4,
+          "aim": "Player",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 40
+          },
+          "animTrigger": "Lantern"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "brWave",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.75
+          }
+        },
+        {
+          "to": "snuffed",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Rest",
+          "when": {
+            "type": "after",
+            "seconds": 2.8
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Rest",
+      "abilities": [
+        {
+          "type": "frontShield",
+          "arc": 200,
+          "blockSound": "chain_cut",
+          "color": "#BFEFFF"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "brWave",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.75
+          }
+        },
+        {
+          "to": "snuffed",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Rune",
+          "when": {
+            "type": "after",
+            "seconds": 1.4
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Rune",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "brWarnRune",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "transitions": [
+        {
+          "to": "brWave",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.75
+          }
+        },
+        {
+          "to": "snuffed",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Rest2",
+          "when": {
+            "type": "after",
+            "seconds": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Rest2",
+      "abilities": [
+        {
+          "type": "frontShield",
+          "arc": 200,
+          "blockSound": "chain_cut",
+          "color": "#BFEFFF"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "brWave",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.75
+          }
+        },
+        {
+          "to": "snuffed",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "p1Fan",
+          "when": {
+            "type": "after",
+            "seconds": 1.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "brWave",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "brWave"
+        },
+        {
+          "type": "playSound",
+          "sound": "br_chime"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "snuffed",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "waveFan",
+          "when": {
+            "type": "after",
+            "seconds": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "name": "waveFan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnLamp",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "brLampBolt",
+          "speed": 3.4,
+          "aim": "Player",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 44
+          },
+          "animTrigger": "Lantern"
+        },
+        {
+          "type": "spawner",
+          "entity": "imp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 3,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 3,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 3,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "snuffed",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "waveRest",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "waveRest",
+      "abilities": [
+        {
+          "type": "frontShield",
+          "arc": 200,
+          "blockSound": "chain_cut",
+          "color": "#BFEFFF"
+        },
+        {
+          "type": "spawner",
+          "entity": "imp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 3,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 3,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 3,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "snuffed",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "waveLead",
+          "when": {
+            "type": "after",
+            "seconds": 1.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "waveLead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnLamp",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "brMarkBolt",
+          "speed": 5.6,
+          "aim": "Predictive",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 2,
+          "burstInterval": 0.3
+        },
+        {
+          "type": "spawner",
+          "entity": "imp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 3,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 3,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 3,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "snuffed",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "waveRest2",
+          "when": {
+            "type": "after",
+            "seconds": 3.4
+          }
+        }
+      ]
+    },
+    {
+      "name": "waveRest2",
+      "abilities": [
+        {
+          "type": "frontShield",
+          "arc": 200,
+          "blockSound": "chain_cut",
+          "color": "#BFEFFF"
+        },
+        {
+          "type": "spawner",
+          "entity": "imp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 3,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 3,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 3,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "snuffed",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "waveFan",
+          "when": {
+            "type": "after",
+            "seconds": 1.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "snuffed",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "brSnuff"
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "imp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "ricochetImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "blinkImp"
+          }
+        },
+        {
+          "type": "showText",
+          "text": "I will put it out. It is the only way to do it right.",
+          "style": "Subtitle",
+          "duration": 3.4,
+          "color": "#CFE4FF",
+          "sound": "vo_br_snuff"
+        },
+        {
+          "type": "cameraShake",
+          "intensity": 0.2,
+          "duration": 1.2
+        }
+      ],
+      "transitions": [
+        {
+          "to": "snuffedLights",
+          "when": {
+            "type": "after",
+            "seconds": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "snuffedLights",
+      "onEnter": [
+        {
+          "type": "showText",
+          "text": "Come along. Come along, little lights.",
+          "style": "Subtitle",
+          "duration": 3.0,
+          "color": "#CFE4FF",
+          "sound": "vo_br_flies"
+        },
+        {
+          "type": "emit",
+          "signal": "brPhase2"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p2Fan",
+          "when": {
+            "type": "after",
+            "seconds": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Fan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnLamp",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "brLampBolt",
+          "speed": 3.4,
+          "aim": "Player",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 60
+          },
+          "animTrigger": "Lantern"
+        },
+        {
+          "type": "spawner",
+          "entity": "lanternfly",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "watcher",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.4,
+            0.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "unwriting",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Rest",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Rest",
+      "abilities": [
+        {
+          "type": "frontShield",
+          "arc": 200,
+          "blockSound": "chain_cut",
+          "color": "#BFEFFF"
+        },
+        {
+          "type": "spawner",
+          "entity": "lanternfly",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "watcher",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.4,
+            0.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "unwriting",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Rune",
+          "when": {
+            "type": "after",
+            "seconds": 1.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Rune",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "brWarnRune",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "abilities": [
+        {
+          "type": "spawner",
+          "entity": "lanternfly",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "watcher",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.4,
+            0.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "unwriting",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Lead",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Lead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnLamp",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "brMarkBolt",
+          "speed": 5.6,
+          "aim": "Predictive",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 3,
+          "burstInterval": 0.3
+        },
+        {
+          "type": "spawner",
+          "entity": "lanternfly",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "watcher",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.4,
+            0.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "unwriting",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Rest2",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Rest2",
+      "abilities": [
+        {
+          "type": "frontShield",
+          "arc": 200,
+          "blockSound": "chain_cut",
+          "color": "#BFEFFF"
+        },
+        {
+          "type": "spawner",
+          "entity": "lanternfly",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "watcher",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.4,
+            0.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "unwriting",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Fan",
+          "when": {
+            "type": "after",
+            "seconds": 1.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "unwriting",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "brEnrage"
+        },
+        {
+          "type": "showText",
+          "text": "Unwritten. Unwritten. Please, do not rush me. I will lose my place.",
+          "style": "Subtitle",
+          "duration": 4.0,
+          "color": "#CFE4FF",
+          "sound": "vo_br_enrage"
+        },
+        {
+          "type": "cameraShake",
+          "intensity": 0.3,
+          "duration": 1.6
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "lanternfly"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "bulwarkImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "leadImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "afterimage"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "watcher"
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Wall",
+          "when": {
+            "type": "after",
+            "seconds": 5.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Wall",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "brUnwrite"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnWall",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            4.2,
+            -2.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0,
+          "pattern": {
+            "type": "line",
+            "count": 9,
+            "spacing": 0.8
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "brLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
+        {
+          "to": "p3Fan",
+          "when": {
+            "type": "after",
+            "seconds": 3.4
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Fan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnLamp",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "brLampBolt",
+          "speed": 3.4,
+          "aim": "Player",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 70
+          },
+          "animTrigger": "Lantern"
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "brLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
+        {
+          "to": "p3Rune",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Rune",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "brWarnRune",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "abilities": [
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "brLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
+        {
+          "to": "p3Lead",
+          "when": {
+            "type": "after",
+            "seconds": 2.8
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Lead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnLamp",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "brMarkBolt",
+          "speed": 5.6,
+          "aim": "Predictive",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 3,
+          "burstInterval": 0.3
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "brLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
+        {
+          "to": "p3Wall",
+          "when": {
+            "type": "after",
+            "seconds": 3.4
+          }
+        }
+      ]
+    },
+    {
+      "name": "brLast",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "brLast"
+        },
+        {
+          "type": "playSound",
+          "sound": "br_chime"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "lastFan",
+          "when": {
+            "type": "after",
+            "seconds": 0.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "lastFan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnLamp",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "brLampBolt",
+          "speed": 3.4,
+          "aim": "Player",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 70
+          },
+          "animTrigger": "Lantern"
+        },
+        {
+          "type": "spawner",
+          "entity": "runeHound",
+          "interval": 2.8,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 2.8,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 2.8,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 2.8,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 2.8,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.4,
+            0.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 2.8,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.2,
+            -3.2
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "lastLead",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "lastLead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnLamp",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "brMarkBolt",
+          "speed": 5.6,
+          "aim": "Predictive",
+          "muzzle": [
+            0.3,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 3,
+          "burstInterval": 0.3
+        },
+        {
+          "type": "spawner",
+          "entity": "runeHound",
+          "interval": 2.8,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 2.8,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 2.8,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 2.8,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 2.8,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.4,
+            0.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 2.8,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.2,
+            -3.2
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "lastWall",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "lastWall",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "brWarnWall",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            4.2,
+            -2.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0,
+          "pattern": {
+            "type": "line",
+            "count": 9,
+            "spacing": 0.8
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "runeHound",
+          "interval": 2.8,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            1.7,
+            -2.3
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 2.8,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.6,
+            -3.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 2.8,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.2,
+            -1.8
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "afterimage",
+          "interval": 2.8,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            2.4,
+            -0.5
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 2.8,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.4,
+            0.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 2.8,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.2,
+            -3.2
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "lastFan",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "showText",
+      "text": "Oh. ...Thank you for crossing.",
+      "style": "Subtitle",
+      "duration": 4.5,
+      "color": "#CFE4FF",
+      "sound": "vo_br_defeat"
+    },
+    {
+      "type": "playSound",
+      "sound": "bridgeWraith_die"
+    },
+    {
+      "type": "emit",
+      "signal": "brFallen"
+    }
+  ],
+  "sounds": {
+    "hurtSound": "bridgeWraith_hurt",
+    "deathSound": "bridgeWraith_die",
+    "attackSound": "br_chime"
+  },
+  "hintVoice": "vo_hero_hint_bridgeWraith"
+}

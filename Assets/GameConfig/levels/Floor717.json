@@ -1,0 +1,712 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor717",
+  "displayName": "Floor 717: Everyone Is Asleep",
+  "levelNumber": 133,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 240.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 134,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 717,
+    "length": 110,
+    "floors": {
+      "start": 717,
+      "end": 716,
+      "unitsPerFloor": 0.0,
+      "circle": "runeBridges",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "foot",
+          "direction": "Right",
+          "length": 6.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -1.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                1.0,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                4.8,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "sleepwalker",
+              "at": [
+                8.0,
+                0.9
+              ],
+              "id": "opening0",
+              "onEnter": true
+            }
+          ],
+          "autoSpeed": 0.6
+        },
+        {
+          "name": "first",
+          "direction": "Right",
+          "length": 17.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                8.6,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                12.4,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                16.2,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                20.0,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                23.8,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.55
+        },
+        {
+          "name": "second",
+          "direction": "Right",
+          "length": 17.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "runeSpan",
+              "at": [
+                27.6,
+                -1.6
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                31.4,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                35.2,
+                -0.7
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                39.0,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.55
+        },
+        {
+          "name": "third",
+          "direction": "Right",
+          "length": 17.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "runeSpanLate",
+              "at": [
+                42.8,
+                -1.5
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                46.6,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanLate",
+              "at": [
+                50.4,
+                -0.8
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                54.2,
+                -0.4
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                58.0,
+                -0.8
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.55
+        },
+        {
+          "name": "far",
+          "direction": "Right",
+          "length": 6.2,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "floorLanding717",
+              "at": [
+                63.6,
+                -1.2
+              ],
+              "id": "landing"
+            }
+          ],
+          "autoSpeed": 0.6
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Cross"
+    },
+    "counters": [
+      {
+        "name": "finale",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "hero: first line",
+        "when": {
+          "type": "atTime",
+          "seconds": 12.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "Every light behind me, out. Thanks.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "sound": "vo_lb_hero_01"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "to first",
+        "when": {
+          "type": "sectionReached",
+          "section": "first"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "first"
+          }
+        ]
+      },
+      {
+        "name": "to second",
+        "when": {
+          "type": "sectionReached",
+          "section": "second"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "second"
+          }
+        ]
+      },
+      {
+        "name": "to third",
+        "when": {
+          "type": "sectionReached",
+          "section": "third"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "third"
+          }
+        ]
+      },
+      {
+        "name": "the bridge has had its minutes",
+        "when": {
+          "type": "atTime",
+          "seconds": 88.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "finale",
+            "value": 1.0
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finale",
+              "atLeast": 1.0
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 716,
+                "skipMilestones": true
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "FLOOR 716: WALKING WAKE",
+                "duration": 3.2,
+                "style": "Banner",
+                "sound": "vo_f716_title",
+                "color": "#8FE3FF"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 717: EVERYONE IS ASLEEP",
+                "duration": 3.5,
+                "style": "Banner",
+                "sound": "vo_f717_title",
+                "color": "#8FE3FF"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "first",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:first"
+          },
+          {
+            "type": "showText",
+            "text": "ACROSS!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#8FE3FF"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.0,
+            "interval": 2.03,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.0107
+          }
+        ],
+        "rules": [
+          {
+            "name": "first: blinkImp",
+            "when": {
+              "type": "every",
+              "seconds": 10.2,
+              "startAfter": 3.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "blinkImp",
+                "count": 2,
+                "interval": 0.9,
+                "anchor": "Camera",
+                "areaCenter": [
+                  4.0,
+                  1.2
+                ],
+                "areaSize": [
+                  1.2,
+                  2.2
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "second",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:second"
+          },
+          {
+            "type": "showText",
+            "text": "AND THEN!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#8FE3FF"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.0,
+            "interval": 1.78,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.0107
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "spread",
+              "count": 3,
+              "angle": 34
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.0,
+            "interval": 3.05,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "second: blinkImp",
+            "when": {
+              "type": "every",
+              "seconds": 10.2,
+              "startAfter": 4.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "blinkImp",
+                "count": 1,
+                "interval": 0.9,
+                "anchor": "Camera",
+                "areaCenter": [
+                  4.0,
+                  1.2
+                ],
+                "areaSize": [
+                  1.2,
+                  2.2
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "third",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:third"
+          },
+          {
+            "type": "showText",
+            "text": "AND AGAIN!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#8FE3FF"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.0,
+            "interval": 1.53,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.0107
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "spread",
+              "count": 3,
+              "angle": 34
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.0,
+            "interval": 3.05,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "third: blinkImp",
+            "when": {
+              "type": "every",
+              "seconds": 10.2,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "blinkImp",
+                "count": 2,
+                "interval": 0.9,
+                "anchor": "Camera",
+                "areaCenter": [
+                  4.0,
+                  1.2
+                ],
+                "areaSize": [
+                  1.2,
+                  2.2
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "third: sleepwalker",
+            "when": {
+              "type": "every",
+              "seconds": 9.9,
+              "startAfter": 6.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "sleepwalker",
+                "count": 1,
+                "interval": 0.9,
+                "anchor": "Camera",
+                "areaCenter": [
+                  4.0,
+                  1.2
+                ],
+                "areaSize": [
+                  1.2,
+                  2.2
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

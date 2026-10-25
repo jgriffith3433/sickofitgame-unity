@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "extends": "chaser",
+  "displayName": "Sleepwalker",
+  "hint": "Harmless asleep. A shot wakes it. Wait for it to pass.",
+  "note": "Do not wake it. I repeat: do not wake it. ...Who is going to wake it.",
+  "hintVoice": "vo_hero_hint_sleepwalker",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "health": 4,
+  "moveSpeed": 0.0,
+  "activationRange": 14.0,
+  "tags": [
+    "sleepwalker"
+  ],
+  "body": {
+    "shape": "Circle",
+    "radius": 0.5,
+    "solid": false,
+    "gravity": 0.0
+  },
+  "visual": {
+    "scale": 0.18,
+    "color": "#B9C9E8",
+    "fxColor": "#8FE3FF",
+    "placeholderColor": "#B9C9E8"
+  },
+  "loot": {
+    "chance": 0.4,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 0.7,
+      "distance": 4.0,
+      "pause": 0.0
+    },
+    {
+      "type": "lifetime",
+      "seconds": 40
+    }
+  ],
+  "states": [
+    {
+      "name": "asleep",
+      "transitions": [
+        {
+          "to": "woken",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.99
+          }
+        }
+      ]
+    },
+    {
+      "name": "woken",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "runeBolt",
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 80
+          },
+          "speed": 2.8,
+          "aim": "Player",
+          "interval": 1.6,
+          "initialDelay": 0.4,
+          "damage": 1
+        }
+      ]
+    }
+  ],
+  "onDeath": []
+}

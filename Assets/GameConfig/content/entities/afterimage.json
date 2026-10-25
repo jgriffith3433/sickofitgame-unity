@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "extends": "chaser",
+  "displayName": "Afterimage",
+  "hint": "A pale copy of you, slow. Shoot it from range.",
+  "note": "That is me. Three seconds ago. Looks bored. Accurate.",
+  "hintVoice": "vo_hero_hint_afterimage",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "health": 2,
+  "moveSpeed": 1.5,
+  "activationRange": 12.0,
+  "tags": [
+    "afterimage"
+  ],
+  "body": {
+    "shape": "Circle",
+    "radius": 0.45,
+    "solid": false,
+    "gravity": 0.0
+  },
+  "visual": {
+    "scale": 0.15,
+    "color": "#D8E8FF",
+    "fxColor": "#BFEFFF",
+    "placeholderColor": "#D8E8FF"
+  },
+  "loot": {
+    "chance": 0.3,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1,
+      "dieOnHit": true
+    },
+    {
+      "type": "chase",
+      "speed": 1.5,
+      "stopDistance": 0.0,
+      "face": true
+    },
+    {
+      "type": "lifetime",
+      "seconds": 22
+    }
+  ],
+  "onDeath": []
+}
