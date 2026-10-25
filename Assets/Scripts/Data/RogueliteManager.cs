@@ -464,7 +464,9 @@ namespace SickOfIt.Data
                 PlayerPrefs.DeleteKey(string.Format(KEY_LEVEL_MAX_HEALTH, i));
             }
             UpgradeProgress.Reset();
-            WeaponProgress.Reset();
+            // Keep Weapons (Yooba's good) lets the weapons he holds, and the one equipped, ride through the run's end.
+            if (GetShopTotal(ShopEffect.KeepWeapons) <= 0f)
+                WeaponProgress.Reset();
 
             // Max health is one number for both: a Grudge (thickSkin) raised it too. Back to the base plus Yooba's goods.
             int fromShop = 0;

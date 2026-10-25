@@ -238,7 +238,8 @@ namespace SickOfIt.Core.Progression
             if (bought)
             {
                 SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.upgradePick);
-                YoobaSay(YoobaMoment.ShopBuy, true);
+                bool weaponGood = def.Effect == ShopEffect.KeepWeapons || def.Effect == ShopEffect.MeleeDamage || def.Effect == ShopEffect.MeleeReach;
+                YoobaSay(weaponGood ? YoobaMoment.ShopBuyWeapon : YoobaMoment.ShopBuy, true);
             }
             else
             {
