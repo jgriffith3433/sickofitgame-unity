@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "title": "Held Grudge",
   "icon": "G",
+  "iconArt": "Art/Icons/Icon_heldGrudge.png#heldGrudge_00",
   "description": "A bubble of pure spite at the start of every floor. It pops on the first hit.",
   "maxLevel": 3,
   "weight": 1,

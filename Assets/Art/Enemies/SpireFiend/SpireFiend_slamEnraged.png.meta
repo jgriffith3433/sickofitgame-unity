@@ -1,0 +1,567 @@
+fileFormatVersion: 2
+guid: 0aaf73587e3dfbc40bcb824ebd6b1a09
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: slamEnraged_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 558
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 334513fbf6cf7d400800000000000000
+      internalID: 349025053023753267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_01
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 558
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e99df6a6f5511a6f0800000000000000
+      internalID: -675234969577072226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_02
+      rect:
+        serializedVersion: 2
+        x: 514
+        y: 558
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d894a8b3aa82e4330800000000000000
+      internalID: 3696937055726225805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_03
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 558
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6323405d9e9b06d50800000000000000
+      internalID: 6728582257243861558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_04
+      rect:
+        serializedVersion: 2
+        x: 1028
+        y: 558
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0763ba039cde72a00800000000000000
+      internalID: 731814912831731312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_05
+      rect:
+        serializedVersion: 2
+        x: 1285
+        y: 558
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 339be8a608e2772f0800000000000000
+      internalID: -975259665223993037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_06
+      rect:
+        serializedVersion: 2
+        x: 1542
+        y: 558
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75a7e96c9b3e49d90800000000000000
+      internalID: -7091793126160958889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_07
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 279
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dd44cb3908cc81e0800000000000000
+      internalID: -2194158976453292587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_08
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 279
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b57d674831d74c180800000000000000
+      internalID: -9096007824601327781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_09
+      rect:
+        serializedVersion: 2
+        x: 514
+        y: 279
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c3b880f53c6e2690800000000000000
+      internalID: -7625038140167113788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_10
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 279
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68f6f83f4c66f6440800000000000000
+      internalID: 4931273113079869318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_11
+      rect:
+        serializedVersion: 2
+        x: 1028
+        y: 279
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb4671159c8c22f30800000000000000
+      internalID: 4549419340572091583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_12
+      rect:
+        serializedVersion: 2
+        x: 1285
+        y: 279
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05e4d2f67c82d72b0800000000000000
+      internalID: -5585263125840703920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_13
+      rect:
+        serializedVersion: 2
+        x: 1542
+        y: 279
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebba7ac9041961410800000000000000
+      internalID: 1447504036938361790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12a983056783d70d0800000000000000
+      internalID: -3423518060928525791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_15
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 0
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e83b97afeb23f180800000000000000
+      internalID: -9082867715167012635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_16
+      rect:
+        serializedVersion: 2
+        x: 514
+        y: 0
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4e597b527bf07cb0800000000000000
+      internalID: -4868114728607982006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_17
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 0
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2114dd499ea7b8690800000000000000
+      internalID: -7598844802614083310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slamEnraged_18
+      rect:
+        serializedVersion: 2
+        x: 1028
+        y: 0
+        width: 257
+        height: 279
+      alignment: 9
+      pivot: {x: 0.31614786, y: 0.5060932}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a5a9163d0fa34b40800000000000000
+      internalID: 5423370847561295268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      slamEnraged_00: 349025053023753267
+      slamEnraged_01: -675234969577072226
+      slamEnraged_02: 3696937055726225805
+      slamEnraged_03: 6728582257243861558
+      slamEnraged_04: 731814912831731312
+      slamEnraged_05: -975259665223993037
+      slamEnraged_06: -7091793126160958889
+      slamEnraged_07: -2194158976453292587
+      slamEnraged_08: -9096007824601327781
+      slamEnraged_09: -7625038140167113788
+      slamEnraged_10: 4931273113079869318
+      slamEnraged_11: 4549419340572091583
+      slamEnraged_12: -5585263125840703920
+      slamEnraged_13: 1447504036938361790
+      slamEnraged_14: -3423518060928525791
+      slamEnraged_15: -9082867715167012635
+      slamEnraged_16: -4868114728607982006
+      slamEnraged_17: -7598844802614083310
+      slamEnraged_18: 5423370847561295268
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

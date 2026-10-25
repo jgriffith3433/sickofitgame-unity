@@ -2,39 +2,78 @@
   "schemaVersion": 1,
   "entity": "rook",
   "name": "Rook",
-  "description": "a tall lean soul in a patched mountaineer's coat and a scarf that burns without burning down, one glove, a coil of rope that goes nowhere, a medal on a ribbon around his neck that says 2, always mid-stretch",
+  "description": "the hero's rival climber, a tall lean damned soul with pale ash-grey skin and a long narrow face, a patched brown mountaineer's coat, a red scarf that burns at its tips without burning down, one glove, a coil of rope over one shoulder, a tarnished medal on a ribbon round his neck stamped with the number 2, always mid-stretch, smug",
   "height": 1.9,
+  "pixels": 300,
+  "keepTint": false,
   "poses": {
-    "stand": "standing in profile facing right, relaxed",
-    "talk": "in profile facing right, mid-sentence, one hand raised",
-    "walk": "mid-stride in profile facing right",
-    "react": "in profile facing right, startled, leaning back, both hands up"
+    "stand": "standing in profile facing right, relaxed, weight on one leg",
+    "walk": "mid-stride walking to the right"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes slowly, shifts weight",
-      "seconds": 3
-    },
-    "talk": {
-      "from": "talk",
-      "action": "speaks with small gestures",
-      "seconds": 2.5
+      "action": "stands, breathes slowly, shifts weight and looks around",
+      "seconds": 2
     },
     "walk": {
       "from": "walk",
-      "action": "walks away unhurried",
-      "seconds": 2.5
+      "state": "Walk",
+      "loop": true,
+      "action": "walks forward unhurried, staying in the same spot in the frame",
+      "seconds": 1.25
     },
-    "react": {
-      "from": "react",
-      "action": "flinches back, then settles and nods",
-      "seconds": 1.5,
-      "loop": false
+    "hiccup": {
+      "from": "stand",
+      "state": "Hiccup",
+      "loop": false,
+      "action": "flinches back, startled, then settles and nods",
+      "seconds": 1.5
     }
   },
+  "animator": {
+    "parameters": [
+      {
+        "name": "Hiccup",
+        "type": "Trigger"
+      },
+      {
+        "name": "Walking",
+        "type": "Bool"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Idle",
+        "to": "Hiccup",
+        "when": [
+          "Hiccup"
+        ]
+      },
+      {
+        "from": "Hiccup",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Idle",
+        "to": "Walk",
+        "when": [
+          "Walking"
+        ]
+      },
+      {
+        "from": "Walk",
+        "to": "Idle",
+        "when": [
+          "!Walking"
+        ]
+      }
+    ]
+  },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

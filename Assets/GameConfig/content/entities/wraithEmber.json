@@ -4,7 +4,21 @@
   "visual": {
     "scale": 0.1,
     "color": "#9AD8E8",
-    "fxColor": "#9AD8E8"
+    "fxColor": "#9AD8E8",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Effects/Ember/Ember_burn.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
   },
   "abilities": [
     {

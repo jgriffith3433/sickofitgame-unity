@@ -7,10 +7,24 @@
   },
   "visual": {
     "scale": 0.16,
-    "color": "#5A4660",
     "sortingOrder": 4,
     "hurtFlash": false,
-    "fxColor": "#FF8A3A"
+    "fxColor": "#FF8A3A",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/SfSpear/SfSpear_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "abilities": [
     {

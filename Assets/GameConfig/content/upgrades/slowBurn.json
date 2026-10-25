@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "title": "Slow Burn",
   "icon": "F",
+  "iconArt": "Art/Icons/Icon_slowBurn.png#slowBurn_00",
   "description": "You've been angry longer than they've been shooting. Enemy shots fly 8% slower.",
   "maxLevel": 3,
   "weight": 1,

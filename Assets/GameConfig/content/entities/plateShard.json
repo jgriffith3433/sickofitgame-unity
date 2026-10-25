@@ -3,8 +3,22 @@
   "extends": "projectileEnemy",
   "visual": {
     "scale": 0.1,
-    "color": "#D8D0F0",
-    "fxColor": "#D8D0F0"
+    "fxColor": "#D8D0F0",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/PlateShard/PlateShard_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "abilities": [
     {
@@ -14,7 +28,7 @@
     },
     {
       "type": "lifetime",
-      "seconds": 3.0
+      "seconds": 3
     }
   ]
 }

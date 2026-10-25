@@ -2,9 +2,7 @@
   "schemaVersion": 1,
   "team": "Player",
   "health": 0,
-  "tags": [
-    "heroShot"
-  ],
+  "tags": ["heroShot"],
   "body": {
     "radius": 0.6,
     "solid": false
@@ -14,18 +12,21 @@
     "sortingOrder": 5,
     "hurtFlash": false,
     "fxColor": "#7FE8FF",
-    "color": "#7FE8FF",
     "animator": {
+      "parameters": [],
       "states": [
         {
-          "stateName": "Burn",
-          "spriteSheet": "Images/Fireball.png",
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/RicochetShot/RicochetShot_idle.png",
           "fps": 12,
-          "loop": true
+          "loop": true,
+          "events": []
         }
       ],
-      "defaultStateName": "Burn"
-    }
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": false
@@ -36,7 +37,7 @@
       "damage": 2,
       "dieOnSolid": true,
       "bounces": 3,
-      "bounceKeep": 1.0,
+      "bounceKeep": 1,
       "onlyHitLiving": true,
       "bounceSound": "ricochet_bounce"
     },

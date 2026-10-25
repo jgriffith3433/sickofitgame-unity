@@ -3,7 +3,21 @@
   "extends": "projectileEnemy",
   "visual": {
     "color": "#FF7AC8",
-    "fxColor": "#FF7AC8"
+    "fxColor": "#FF7AC8",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Effects/Ember/Ember_burn.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
   },
   "abilities": [
     {

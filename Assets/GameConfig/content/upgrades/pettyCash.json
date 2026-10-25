@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "title": "Petty Cash",
   "icon": "P",
+  "iconArt": "Art/Icons/Icon_pettyCash.png#pettyCash_00",
   "description": "You keep the change. 25% of diamonds are worth one more.",
   "maxLevel": 3,
   "weight": 1,

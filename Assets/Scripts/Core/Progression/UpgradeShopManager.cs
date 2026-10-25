@@ -109,7 +109,8 @@ namespace SickOfIt.Core.Progression
                 var view = MenuCard.Add(menu, list, new MenuCardData
                 {
                     Caption = "",
-                    Badge = string.IsNullOrEmpty(def.icon) ? null : def.icon,
+                    Badge = def.iconArt != null || string.IsNullOrEmpty(def.icon) ? null : def.icon,
+                    Icon = def.iconArt,
                     Title = def.title,
                     Description = def.description,
                     Status = "",

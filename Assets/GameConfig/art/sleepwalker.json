@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "sleepwalker",
+  "name": "Sleepwalker",
+  "description": "a tall thin wraith of the Rune Bridges asleep on its feet: a long pale grey hooded robe with faded cyan runes, arms held out stiffly in front of it, eyes closed in the hood, a little cyan sleep bubble at its face, floating with no feet",
+  "height": 1.0,
+  "poses": {
+    "stand": "drifting upright, arms held out stiffly in front, eyes closed, asleep",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "floats asleep, swaying, the sleep bubble growing and shrinking",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "drifts forward to the right asleep, arms out stiffly, robe swaying, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

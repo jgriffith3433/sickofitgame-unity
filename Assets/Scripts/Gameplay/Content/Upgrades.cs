@@ -14,7 +14,8 @@ namespace SickOfIt.Gameplay.Content
 
         [Required] public string title = "";
         [Doc("Shown on the upgrade card. Be funny.")] public string description = "";
-        [Doc("A short tag shown on the card until real icon art exists.")] public string icon = "";
+        [Doc("A short tag shown on the card when it has no icon art.")] public string icon = "";
+        [Doc("The card's icon (Assets/Art/Icons, Tools/Art/fx/icons.json), drawn in its corner; replaces the tag.")] public UnityEngine.Sprite iconArt;
         public int maxLevel = 3;
         [Doc("How often it is offered relative to others (0 = only when listed explicitly).")] public float weight = 1f;
         [Doc("Player stat changes per level: AttackSpeed (fire rate), Damage, MoveSpeed, DamageTaken.")] public List<StatModifierDef> modifiersPerLevel = new List<StatModifierDef>();

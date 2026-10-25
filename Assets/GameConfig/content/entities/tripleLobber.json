@@ -11,28 +11,111 @@
   ],
   "extends": "bounceLobber",
   "health": 5,
-  "tags": [
-    "bounceLobber",
-    "elite",
-    "tripleLobber"
-  ],
+  "tags": ["bounceLobber", "elite", "tripleLobber"],
   "visual": {
     "scale": 0.35,
-    "color": "#E8C898",
-    "fxColor": "#FFD27A"
+    "fxColor": "#FFD27A",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsAttacking",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/TripleLobber/TripleLobber_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/TripleLobber/TripleLobber_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 5,
+              "functionName": "FireProjectile"
+            }
+          ]
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/TripleLobber/TripleLobber_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/TripleLobber/TripleLobber_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": true,
-    "color": [
-      1.0,
-      0.82,
-      0.3,
-      1.0
-    ],
+    "color": [1, 0.82, 0.3, 1],
     "width": 0.6
   },
   "loot": {
-    "chance": 1.0,
+    "chance": 1,
     "count": 2,
     "value": 1
   },
@@ -55,13 +138,10 @@
       "projectile": "bounceLump",
       "speed": 3.6,
       "aim": "Player",
-      "muzzle": [
-        0.2,
-        0.3
-      ],
-      "interval": 4.0,
+      "muzzle": [0.2, 0.3],
+      "interval": 4,
       "initialDelay": 1.6,
-      "range": 10.0,
+      "range": 10,
       "damage": 1,
       "pattern": {
         "type": "spread",

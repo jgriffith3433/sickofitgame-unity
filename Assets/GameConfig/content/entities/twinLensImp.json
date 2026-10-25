@@ -11,29 +11,106 @@
   ],
   "extends": "lensImp",
   "health": 5,
-  "tags": [
-    "elite",
-    "imp",
-    "lensImp",
-    "twinLensImp"
-  ],
+  "tags": ["elite", "imp", "lensImp", "twinLensImp"],
   "visual": {
     "scale": 0.36,
-    "color": "#FF3A3A",
-    "fxColor": "#FF4A4A"
+    "fxColor": "#FF4A4A",
+    "animator": {
+      "parameters": [
+        {
+          "name": "Attack",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/TwinLensImp/TwinLensImp_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/TwinLensImp/TwinLensImp_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/TwinLensImp/TwinLensImp_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/TwinLensImp/TwinLensImp_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Attack",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": true,
-    "color": [
-      1.0,
-      0.82,
-      0.3,
-      1.0
-    ],
+    "color": [1, 0.82, 0.3, 1],
     "width": 0.6
   },
   "loot": {
-    "chance": 1.0,
+    "chance": 1,
     "count": 2,
     "value": 1
   },
@@ -54,7 +131,7 @@
     {
       "type": "laserSweep",
       "damage": 1,
-      "interval": 7.0,
+      "interval": 7,
       "initialDelay": 1.6,
       "warning": 1.2,
       "sweepTime": 1.6,
@@ -69,7 +146,7 @@
     {
       "type": "laserSweep",
       "damage": 1,
-      "interval": 7.0,
+      "interval": 7,
       "initialDelay": 4.8,
       "warning": 1.2,
       "sweepTime": 1.6,

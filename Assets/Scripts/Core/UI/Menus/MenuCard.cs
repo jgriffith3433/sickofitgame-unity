@@ -13,6 +13,8 @@ namespace SickOfIt.Core.UI.Menus
         /// <summary>Keep the picture area even without a picture (so a grid of cards lines up).</summary>
         public bool PictureArea;
         public string Badge;
+        /// <summary>An icon drawn in a round frame in the card's top corner (a Grudge's or a good's art).</summary>
+        public Sprite Icon;
         public string Caption;
         public string Title;
         public string Description;
@@ -110,6 +112,21 @@ namespace SickOfIt.Core.UI.Menus
                 number.enableVertexGradient = false;
                 number.color = theme.card.surface.borderColor.a > 0f ? theme.card.surface.borderColor : Color.black;
                 number.outlineWidth = 0f;
+            }
+
+            if (data.Icon != null)
+            {
+                var frame = MenuGraphics.NewRect("Icon", card.transform);
+                frame.anchorMin = frame.anchorMax = new Vector2(1f, 1f);
+                frame.anchoredPosition = new Vector2(-62f, -62f);
+                frame.sizeDelta = new Vector2(104f, 104f);
+                var icon = MenuGraphics.NewImage(frame, "Art", locked ? theme.lockedTint : Color.white);
+                icon.sprite = data.Icon;
+                icon.preserveAspect = true;
+                icon.raycastTarget = false;
+                icon.rectTransform.anchorMin = Vector2.zero;
+                icon.rectTransform.anchorMax = Vector2.one;
+                icon.rectTransform.offsetMin = icon.rectTransform.offsetMax = Vector2.zero;
             }
 
             if (locked)

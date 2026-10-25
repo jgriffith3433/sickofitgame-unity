@@ -2,38 +2,44 @@
   "schemaVersion": 1,
   "entity": "veilMatron",
   "name": "Veil Matron",
-  "description": "a tall veiled demon matron in layers of violet smoke-cloth, hot coals glowing through the weave, faceless",
-  "height": 1.0,
+  "description": "a tall regal demon of the Cracked Road, dark violet basalt skin with blazing violet seams, a long shimmering translucent violet veil like a bridal train, a round iron shield on one arm, heat shimmering around her",
+  "height": 1.2,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "standing tall and regal, shield forward, the long veil shimmering behind",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "breathes and shifts its weight in place, its glow pulsing slowly",
       "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "glides forward regally, the long veil trailing, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "lifts the veil and spits two violet embers forward to the right",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

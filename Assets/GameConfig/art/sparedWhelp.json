@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "entity": "sparedWhelp",
+  "name": "The spared whelp",
+  "description": "a brimstone whelp, a young demon of the Cracked Road the size of a dog, on four stubby clawed legs: cracked black basalt hide with thin orange glowing seams, two stubby charred horns, a big jaw glowing like a furnace, a short rock tail, small and scared, with big glowing pleading eyes",
+  "height": 0.35,
+  "poses": {
+    "stand": "crouched small on its four stubby legs, looking up with big pleading eyes",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "trembles and squeaks, looking up with big eyes, tail tucked",
+      "seconds": 2
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "flinches and whimpers, then looks up again",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

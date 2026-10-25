@@ -1,0 +1,143 @@
+{
+ "generatedBy": "Tools/Art/art.mjs",
+ "pixelsPerUnit": 100,
+ "pivot": [
+  0.316147859922179,
+  0.506093189964158
+ ],
+ "sprites": [
+  {
+   "name": "slamEnraged_00",
+   "x": 0,
+   "y": 558,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_01",
+   "x": 257,
+   "y": 558,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_02",
+   "x": 514,
+   "y": 558,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_03",
+   "x": 771,
+   "y": 558,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_04",
+   "x": 1028,
+   "y": 558,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_05",
+   "x": 1285,
+   "y": 558,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_06",
+   "x": 1542,
+   "y": 558,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_07",
+   "x": 0,
+   "y": 279,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_08",
+   "x": 257,
+   "y": 279,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_09",
+   "x": 514,
+   "y": 279,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_10",
+   "x": 771,
+   "y": 279,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_11",
+   "x": 1028,
+   "y": 279,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_12",
+   "x": 1285,
+   "y": 279,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_13",
+   "x": 1542,
+   "y": 279,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_14",
+   "x": 0,
+   "y": 0,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_15",
+   "x": 257,
+   "y": 0,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_16",
+   "x": 514,
+   "y": 0,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_17",
+   "x": 771,
+   "y": 0,
+   "w": 257,
+   "h": 279
+  },
+  {
+   "name": "slamEnraged_18",
+   "x": 1028,
+   "y": 0,
+   "w": 257,
+   "h": 279
+  }
+ ]
+}

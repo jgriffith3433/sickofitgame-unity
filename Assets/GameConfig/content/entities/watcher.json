@@ -4,34 +4,110 @@
   "hint": "Shoot as its lid opens.",
   "note": "An eye that follows me around. Seen worse.",
   "hintVoice": "vo_hero_hint_watcher",
-  "onSpawn": [{ "type": "hintOnce" }],
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
   "extends": "chaser",
   "health": 6,
-  "moveSpeed": 0.0,
-  "activationRange": 14.0,
-  "tags": [
-    "watcher"
-  ],
+  "moveSpeed": 0,
+  "activationRange": 14,
+  "tags": ["watcher"],
   "body": {
     "radius": 2.6
   },
   "visual": {
     "scale": 0.2,
-    "color": "#CFF4FF",
     "fxColor": "#7FD8FF",
     "animator": {
-      "parameters": [],
-      "states": [
+      "parameters": [
         {
-          "stateName": "Gaze",
-          "spriteSheet": "Images/Fireball.png",
-          "fps": 8,
-          "loop": true
+          "name": "Attack",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
         }
       ],
-      "transitions": [],
-      "defaultStateName": "Gaze"
-    }
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/Watcher/Watcher_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/Watcher/Watcher_attack.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/Watcher/Watcher_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/Watcher/Watcher_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Attack",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "loot": {
     "chance": 0.5,
@@ -48,7 +124,7 @@
     },
     {
       "type": "hover",
-      "speed": 0.0,
+      "speed": 0,
       "aroundSpawn": true,
       "bobHeight": 0.12,
       "bobSpeed": 1.6
@@ -106,5 +182,9 @@
     }
   ],
   "onDeath": [],
-  "sounds": { "hurtSound": "watcher_hurt", "deathSound": "watcher_die", "attackSound": "watcher_attack" }
+  "sounds": {
+    "hurtSound": "watcher_hurt",
+    "deathSound": "watcher_die",
+    "attackSound": "watcher_attack"
+  }
 }

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "entity": "runeHound",
+  "name": "Rune hound",
+  "description": "a stone hound statue come to life: a lean dog carved from pale grey carved stone with glowing cyan runes, from the Rune Bridges of Hell running along its flanks, a heavy stone collar with one big glowing cyan rune on it, blank stone eyes that glow cyan, four legs on the ground",
+  "height": 0.6,
+  "poses": {
+    "stand": "standing on all four legs side-on, head low, the rune on its collar glowing",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "stands still as a statue, then its head turns slowly, runes glowing",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "trots forward on all four stone legs, runes flickering along its flanks, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "attack": {
+      "from": "stand",
+      "action": "crouches low, then lunges forward to the right with its stone jaws open, then pulls up",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

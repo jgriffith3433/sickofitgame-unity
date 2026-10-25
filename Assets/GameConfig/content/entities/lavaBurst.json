@@ -8,20 +8,23 @@
     "solid": false
   },
   "visual": {
-    "scale": 0.6,
+    "scale": 0.249,
     "color": "#FF7A2A",
     "layer": "Background2",
     "sortingOrder": 2,
     "hurtFlash": false,
     "animator": {
+      "parameters": [],
       "states": [
         {
           "stateName": "Charge",
-          "spriteSheet": "Art/Effects/Beam/Beam_charge.png",
+          "spriteSheet": "Art/Effects/Warn/Warn_orb.png",
           "fps": 12,
-          "loop": false
+          "loop": false,
+          "events": []
         }
       ],
+      "transitions": [],
       "defaultStateName": "Charge"
     }
   },

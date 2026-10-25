@@ -1,0 +1,275 @@
+{
+ "about": "Card icons: the Grudges (content/upgrades iconArt) and Yooba's goods (player.json availableUpgrades iconArt), shown in the card's corner instead of a letter.",
+ "out": "Assets/Art/Icons",
+ "name": "Icon",
+ "key": "magenta",
+ "size": [
+  512,
+  512
+ ],
+ "pivot": [
+  256,
+  256
+ ],
+ "crop": [
+  0,
+  0,
+  512,
+  512
+ ],
+ "worldWidth": 1,
+ "widthPixels": 512,
+ "scale": 0.25,
+ "clips": {
+  "badBlood": {
+   "image": "badBlood.png"
+  },
+  "eyeForAnEye": {
+   "image": "eyeForAnEye.png"
+  },
+  "heldGrudge": {
+   "image": "heldGrudge.png"
+  },
+  "holdingOn": {
+   "image": "holdingOn.png"
+  },
+  "keepingScore": {
+   "image": "keepingScore.png"
+  },
+  "pettyCash": {
+   "image": "pettyCash.png"
+  },
+  "rubbingItIn": {
+   "image": "rubbingItIn.png"
+  },
+  "sideEye": {
+   "image": "sideEye.png"
+  },
+  "slowBurn": {
+   "image": "slowBurn.png"
+  },
+  "sourGrapes": {
+   "image": "sourGrapes.png"
+  },
+  "crustyBits": {
+   "image": "crustyBits.png"
+  },
+  "thickerCrusts": {
+   "image": "thickerCrusts.png"
+  },
+  "snotBubble": {
+   "image": "snotBubble.png"
+  },
+  "spareBubble": {
+   "image": "spareBubble.png"
+  },
+  "greasedElbows": {
+   "image": "greasedElbows.png"
+  },
+  "luckyLick": {
+   "image": "luckyLick.png"
+  },
+  "fourLeafSlime": {
+   "image": "fourLeafSlime.png"
+  },
+  "meanerLick": {
+   "image": "meanerLick.png"
+  },
+  "yoobaBurp": {
+   "image": "yoobaBurp.png"
+  },
+  "hungrierBurp": {
+   "image": "hungrierBurp.png"
+  },
+  "gravyNet": {
+   "image": "gravyNet.png"
+  },
+  "fatDiamonds": {
+   "image": "fatDiamonds.png"
+  },
+  "stickyAir": {
+   "image": "stickyAir.png"
+  },
+  "loopCrumbs": {
+   "image": "loopCrumbs.png"
+  },
+  "thriftyLoop": {
+   "image": "thriftyLoop.png"
+  },
+  "belchBomb": {
+   "image": "belchBomb.png"
+  },
+  "louderBelch": {
+   "image": "louderBelch.png"
+  },
+  "afterglowGoo": {
+   "image": "afterglowGoo.png"
+  },
+  "slipperyShots": {
+   "image": "slipperyShots.png"
+  },
+  "floorPudding": {
+   "image": "floorPudding.png"
+  },
+  "spareGasp": {
+   "image": "spareGasp.png"
+  }
+ },
+ "gen": {
+  "badBlood.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a dark red drop of blood with a small glowing heart inside it. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "eyeForAnEye.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a glaring eye with a bomb fuse burning beside it. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "heldGrudge.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a shimmering red bubble of spite with an angry little face in it. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "holdingOn.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a gauntlet gripping a single cracked red heart. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "keepingScore.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a tally of scratch marks carved in stone with a small hourglass. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "pettyCash.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a little pile of blue diamonds with a coin on top. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "rubbingItIn.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a gauntleted fist with a starburst of sparks. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "sideEye.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a narrowed sideways-glancing eye with a shot glancing off. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "slowBurn.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a slow orange flame curling on a fuse beside a snail-paced ember. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "sourGrapes.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a bunch of shrivelled dark grapes with a bright critical spark. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "crustyBits.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a cracked dried plate of green slime like a shield. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "thickerCrusts.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, two stacked dried plates of green slime. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "snotBubble.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a glistening green slime bubble. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "spareBubble.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, two glistening green slime bubbles. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "greasedElbows.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, an armoured elbow dripping green slime with a shot sliding off. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "luckyLick.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a long green slime tongue licking a gun barrel, a lucky sparkle. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "fourLeafSlime.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a four-leaf clover made of green slime. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "meanerLick.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a long green slime tongue with a mean grin and sharp sparkle. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "yoobaBurp.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a puff of green burp with a small heart floating in it. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "hungrierBurp.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a bigger puff of green burp with two small hearts. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "gravyNet.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a net woven from green slime holding blue diamonds. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "fatDiamonds.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a fat round blue diamond with a green slime glaze. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "stickyAir.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, an ember caught in strands of sticky green slime. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "loopCrumbs.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, glowing crumbs of a looping clock spiral. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "thriftyLoop.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a rewind arrow loop folded twice with a coin. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "belchBomb.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a round green belch bomb with a fuse. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "louderBelch.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a big round green belch bomb blasting rings outward. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "afterglowGoo.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a glowing armoured silhouette with a green goo afterglow. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "slipperyShots.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a greased bullet streaking with green slime droplets. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "floorPudding.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a wobbly green pudding on a little plate with a heart. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "spareGasp.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a small glass jar holding a single breath like a white wisp and a heart. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  }
+ }
+}

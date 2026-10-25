@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "twinBoltDeadeye",
   "name": "Twin-Bolt Deadeye",
-  "description": "a white-skinned imp with two long thin crossbow-like bolt-spitters, one over each shoulder, a single huge eye",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, bigger than other imps, a round glass monocle over each eye, a white-hot bolt of fire held between the claws of each hand like darts",
   "height": 0.85,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "hovering very still on slow wings, both white-hot darts held up by its cheeks, aiming to the right",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "hovers still, adjusting both glass monocles and squinting",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "flicks one white-hot dart forward to the right, then the other right after it, then lowers both arms",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

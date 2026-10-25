@@ -7,25 +7,220 @@
   "health": 170,
   "moveSpeed": 0,
   "activationRange": 0,
-  "tags": [
-    "boss",
-    "spireFiend"
-  ],
+  "tags": ["boss", "spireFiend"],
   "body": {
     "shape": "Box",
-    "size": [
-      1.2,
-      2.5
-    ],
+    "size": [1.2, 2.5],
     "solid": true,
     "gravity": 0
   },
   "visual": {
     "scale": 1,
-    "color": "#3A2E40",
     "fxColor": "#FF9A3A",
     "placeholderSize": 2.4,
-    "deathFade": 1.2
+    "deathFade": 1.2,
+    "animator": {
+      "parameters": [
+        {
+          "name": "Enraged",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "Throw",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Slam",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/SpireFiend/SpireFiend_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/SpireFiend/SpireFiend_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/SpireFiend/SpireFiend_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Rise",
+          "spriteSheet": "Art/Enemies/SpireFiend/SpireFiend_rise.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Throw",
+          "spriteSheet": "Art/Enemies/SpireFiend/SpireFiend_throw.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 10,
+              "functionName": "throw"
+            }
+          ]
+        },
+        {
+          "stateName": "Slam",
+          "spriteSheet": "Art/Enemies/SpireFiend/SpireFiend_slam.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 9,
+              "functionName": "slam"
+            }
+          ]
+        },
+        {
+          "stateName": "Enrage",
+          "spriteSheet": "Art/Enemies/SpireFiend/SpireFiend_enrage.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "IdleEnraged",
+          "spriteSheet": "Art/Enemies/SpireFiend/SpireFiend_idleEnraged.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "SlamEnraged",
+          "spriteSheet": "Art/Enemies/SpireFiend/SpireFiend_slamEnraged.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 8,
+              "functionName": "slam"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Rise",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Throw",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Throw",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Slam",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Slam",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Throw",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Slam",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Enrage",
+          "toState": "IdleEnraged",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "IdleEnraged",
+          "toState": "SlamEnraged",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Slam",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "SlamEnraged",
+          "toState": "IdleEnraged",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": false
@@ -121,10 +316,7 @@
           "projectile": "sfWarnRow",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            3.4,
-            -1.25
-          ],
+          "muzzle": [3.4, -1.25],
           "interval": 99,
           "initialDelay": 0,
           "pattern": {
@@ -167,24 +359,18 @@
           "projectile": "sfWarnHand",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.3,
-            1.05
-          ],
+          "muzzle": [0.3, 1.05],
           "interval": 99,
           "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "sfSpear",
-          "speed": 7.0,
+          "speed": 7,
           "aim": "Player",
-          "muzzle": [
-            0.5,
-            1.0
-          ],
+          "muzzle": [0.5, 1],
           "interval": 99,
-          "initialDelay": 1.0,
+          "initialDelay": 1,
           "animTrigger": "Throw",
           "fireOnEvent": "throw"
         }
@@ -220,10 +406,7 @@
           "type": "spawn",
           "entity": "sfWarnSpot",
           "anchor": "Player",
-          "at": [
-            0.0,
-            -0.3
-          ],
+          "at": [0, -0.3],
           "facePlayer": false
         }
       ],
@@ -268,7 +451,7 @@
           "to": "p2Whelps",
           "when": {
             "type": "after",
-            "seconds": 6.0
+            "seconds": 6
           }
         }
       ]
@@ -307,10 +490,7 @@
           "projectile": "sfWarnRow",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            3.4,
-            -1.25
-          ],
+          "muzzle": [3.4, -1.25],
           "interval": 99,
           "initialDelay": 0,
           "pattern": {
@@ -338,10 +518,7 @@
           "interval": 3.2,
           "initialDelay": 0.5,
           "maxAlive": 6,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -349,10 +526,7 @@
           "interval": 3.2,
           "initialDelay": 1.05,
           "maxAlive": 6,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -360,10 +534,7 @@
           "interval": 3.2,
           "initialDelay": 1.6,
           "maxAlive": 6,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
@@ -371,10 +542,7 @@
           "interval": 3.2,
           "initialDelay": 2.15,
           "maxAlive": 6,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         },
         {
           "type": "spawner",
@@ -382,10 +550,7 @@
           "interval": 3.2,
           "initialDelay": 2.7,
           "maxAlive": 6,
-          "offset": [
-            4.4,
-            1.4
-          ]
+          "offset": [4.4, 1.4]
         }
       ],
       "transitions": [
@@ -400,7 +565,7 @@
           "to": "p2Spear",
           "when": {
             "type": "after",
-            "seconds": 3.0
+            "seconds": 3
           }
         }
       ]
@@ -413,24 +578,18 @@
           "projectile": "sfWarnHand",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.3,
-            1.05
-          ],
+          "muzzle": [0.3, 1.05],
           "interval": 99,
           "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "sfSpear",
-          "speed": 7.0,
+          "speed": 7,
           "aim": "Player",
-          "muzzle": [
-            0.5,
-            1.0
-          ],
+          "muzzle": [0.5, 1],
           "interval": 99,
-          "initialDelay": 1.0,
+          "initialDelay": 1,
           "animTrigger": "Throw",
           "fireOnEvent": "throw"
         },
@@ -440,10 +599,7 @@
           "interval": 3.2,
           "initialDelay": 0.5,
           "maxAlive": 6,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -451,10 +607,7 @@
           "interval": 3.2,
           "initialDelay": 1.05,
           "maxAlive": 6,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -462,10 +615,7 @@
           "interval": 3.2,
           "initialDelay": 1.6,
           "maxAlive": 6,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
@@ -473,10 +623,7 @@
           "interval": 3.2,
           "initialDelay": 2.15,
           "maxAlive": 6,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         },
         {
           "type": "spawner",
@@ -484,10 +631,7 @@
           "interval": 3.2,
           "initialDelay": 2.7,
           "maxAlive": 6,
-          "offset": [
-            4.4,
-            1.4
-          ]
+          "offset": [4.4, 1.4]
         }
       ],
       "transitions": [
@@ -514,10 +658,7 @@
           "type": "spawn",
           "entity": "sfWarnSpot",
           "anchor": "Player",
-          "at": [
-            0.0,
-            -0.3
-          ],
+          "at": [0, -0.3],
           "facePlayer": false
         }
       ],
@@ -533,7 +674,7 @@
           "to": "sfP2Fan",
           "when": {
             "type": "after",
-            "seconds": 2.0
+            "seconds": 2
           }
         }
       ],
@@ -544,10 +685,7 @@
           "interval": 3.2,
           "initialDelay": 0.5,
           "maxAlive": 6,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -555,10 +693,7 @@
           "interval": 3.2,
           "initialDelay": 1.05,
           "maxAlive": 6,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -566,10 +701,7 @@
           "interval": 3.2,
           "initialDelay": 1.6,
           "maxAlive": 6,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
@@ -577,10 +709,7 @@
           "interval": 3.2,
           "initialDelay": 2.15,
           "maxAlive": 6,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         },
         {
           "type": "spawner",
@@ -588,10 +717,7 @@
           "interval": 3.2,
           "initialDelay": 2.7,
           "maxAlive": 6,
-          "offset": [
-            4.4,
-            1.4
-          ]
+          "offset": [4.4, 1.4]
         }
       ]
     },
@@ -651,7 +777,7 @@
           "to": "p3Field",
           "when": {
             "type": "after",
-            "seconds": 5.0
+            "seconds": 5
           }
         }
       ]
@@ -674,10 +800,7 @@
           "projectile": "sfWarnField",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            4.2,
-            -1.25
-          ],
+          "muzzle": [4.2, -1.25],
           "interval": 99,
           "initialDelay": 0,
           "pattern": {
@@ -690,46 +813,34 @@
         {
           "type": "spawner",
           "entity": "veilDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.5,
           "maxAlive": 5,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
           "entity": "plateDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.05,
           "maxAlive": 5,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
           "entity": "bounceLobber",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.6,
           "maxAlive": 5,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
           "entity": "fuseWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.15,
           "maxAlive": 5,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         }
       ],
       "transitions": [
@@ -757,16 +868,13 @@
           "projectile": "sfWarnRow",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            3.6,
-            -1.25
-          ],
+          "muzzle": [3.6, -1.25],
           "interval": 99,
           "initialDelay": 0,
           "pattern": {
             "type": "line",
             "count": 6,
-            "spacing": 1.0
+            "spacing": 1
           },
           "animTrigger": "Slam"
         },
@@ -785,46 +893,34 @@
         {
           "type": "spawner",
           "entity": "veilDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.5,
           "maxAlive": 5,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
           "entity": "plateDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.05,
           "maxAlive": 5,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
           "entity": "bounceLobber",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.6,
           "maxAlive": 5,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
           "entity": "fuseWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.15,
           "maxAlive": 5,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         }
       ],
       "transitions": [
@@ -851,10 +947,7 @@
           "type": "spawn",
           "entity": "sfWarnSpot",
           "anchor": "Player",
-          "at": [
-            0.0,
-            -0.3
-          ],
+          "at": [0, -0.3],
           "facePlayer": false
         }
       ],
@@ -878,46 +971,34 @@
         {
           "type": "spawner",
           "entity": "veilDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.5,
           "maxAlive": 5,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
           "entity": "plateDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.05,
           "maxAlive": 5,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
           "entity": "bounceLobber",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.6,
           "maxAlive": 5,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
           "entity": "fuseWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.15,
           "maxAlive": 5,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         }
       ]
     },
@@ -929,16 +1010,13 @@
           "projectile": "sfWarnRow",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            3.6,
-            -1.25
-          ],
+          "muzzle": [3.6, -1.25],
           "interval": 99,
           "initialDelay": 0,
           "pattern": {
             "type": "line",
             "count": 6,
-            "spacing": 1.0
+            "spacing": 1
           },
           "animTrigger": "Slam"
         },
@@ -957,46 +1035,34 @@
         {
           "type": "spawner",
           "entity": "veilDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.5,
           "maxAlive": 5,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
           "entity": "plateDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.05,
           "maxAlive": 5,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
           "entity": "bounceLobber",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.6,
           "maxAlive": 5,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
           "entity": "fuseWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.15,
           "maxAlive": 5,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         }
       ],
       "transitions": [
@@ -1051,24 +1117,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "ricochetEmber",
-          "speed": 4.0,
+          "speed": 4,
           "aim": "Player",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -1083,10 +1143,7 @@
           "interval": 3.2,
           "initialDelay": 0.5,
           "maxAlive": 3,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -1094,10 +1151,7 @@
           "interval": 3.2,
           "initialDelay": 1.05,
           "maxAlive": 3,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -1105,10 +1159,7 @@
           "interval": 3.2,
           "initialDelay": 1.6,
           "maxAlive": 3,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         }
       ],
       "transitions": [
@@ -1134,24 +1185,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "deadeyeBolt",
-          "speed": 6.0,
+          "speed": 6,
           "aim": "Predictive",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
           "initialDelay": 1.2,
           "burst": 3,
@@ -1163,10 +1208,7 @@
           "interval": 3.2,
           "initialDelay": 0.5,
           "maxAlive": 3,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -1174,10 +1216,7 @@
           "interval": 3.2,
           "initialDelay": 1.05,
           "maxAlive": 3,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -1185,10 +1224,7 @@
           "interval": 3.2,
           "initialDelay": 1.6,
           "maxAlive": 3,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         }
       ],
       "transitions": [
@@ -1216,24 +1252,18 @@
           "projectile": "sfWarnHand",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.3,
-            1.05
-          ],
+          "muzzle": [0.3, 1.05],
           "interval": 99,
           "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "sfSpear",
-          "speed": 7.0,
+          "speed": 7,
           "aim": "Player",
-          "muzzle": [
-            0.5,
-            1.0
-          ],
+          "muzzle": [0.5, 1],
           "interval": 99,
-          "initialDelay": 1.0,
+          "initialDelay": 1,
           "animTrigger": "Throw",
           "fireOnEvent": "throw"
         },
@@ -1243,10 +1273,7 @@
           "interval": 3.2,
           "initialDelay": 0.5,
           "maxAlive": 3,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -1254,10 +1281,7 @@
           "interval": 3.2,
           "initialDelay": 1.05,
           "maxAlive": 3,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -1265,10 +1289,7 @@
           "interval": 3.2,
           "initialDelay": 1.6,
           "maxAlive": 3,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         }
       ],
       "transitions": [
@@ -1294,24 +1315,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "ricochetEmber",
-          "speed": 4.0,
+          "speed": 4,
           "aim": "Player",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -1326,10 +1341,7 @@
           "interval": 3.2,
           "initialDelay": 0.5,
           "maxAlive": 6,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -1337,10 +1349,7 @@
           "interval": 3.2,
           "initialDelay": 1.05,
           "maxAlive": 6,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -1348,10 +1357,7 @@
           "interval": 3.2,
           "initialDelay": 1.6,
           "maxAlive": 6,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
@@ -1359,10 +1365,7 @@
           "interval": 3.2,
           "initialDelay": 2.15,
           "maxAlive": 6,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         },
         {
           "type": "spawner",
@@ -1370,10 +1373,7 @@
           "interval": 3.2,
           "initialDelay": 2.7,
           "maxAlive": 6,
-          "offset": [
-            4.4,
-            1.4
-          ]
+          "offset": [4.4, 1.4]
         }
       ],
       "transitions": [
@@ -1399,24 +1399,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "deadeyeBolt",
-          "speed": 6.0,
+          "speed": 6,
           "aim": "Predictive",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
           "initialDelay": 1.2,
           "burst": 4,
@@ -1428,10 +1422,7 @@
           "interval": 3.2,
           "initialDelay": 0.5,
           "maxAlive": 6,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -1439,10 +1430,7 @@
           "interval": 3.2,
           "initialDelay": 1.05,
           "maxAlive": 6,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -1450,10 +1438,7 @@
           "interval": 3.2,
           "initialDelay": 1.6,
           "maxAlive": 6,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
@@ -1461,10 +1446,7 @@
           "interval": 3.2,
           "initialDelay": 2.15,
           "maxAlive": 6,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         },
         {
           "type": "spawner",
@@ -1472,10 +1454,7 @@
           "interval": 3.2,
           "initialDelay": 2.7,
           "maxAlive": 6,
-          "offset": [
-            4.4,
-            1.4
-          ]
+          "offset": [4.4, 1.4]
         }
       ],
       "transitions": [
@@ -1501,24 +1480,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "ricochetEmber",
-          "speed": 4.0,
+          "speed": 4,
           "aim": "Player",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -1530,46 +1503,34 @@
         {
           "type": "spawner",
           "entity": "veilDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.5,
           "maxAlive": 5,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
           "entity": "plateDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.05,
           "maxAlive": 5,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
           "entity": "bounceLobber",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.6,
           "maxAlive": 5,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
           "entity": "fuseWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.15,
           "maxAlive": 5,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         }
       ],
       "transitions": [
@@ -1617,24 +1578,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "ricochetEmber",
-          "speed": 4.0,
+          "speed": 4,
           "aim": "Player",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -1649,10 +1604,7 @@
           "interval": 2.8,
           "initialDelay": 0.4,
           "maxAlive": 8,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -1660,10 +1612,7 @@
           "interval": 2.8,
           "initialDelay": 0.95,
           "maxAlive": 8,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -1671,10 +1620,7 @@
           "interval": 2.8,
           "initialDelay": 1.5,
           "maxAlive": 8,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
@@ -1682,10 +1628,7 @@
           "interval": 2.8,
           "initialDelay": 2.05,
           "maxAlive": 8,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         },
         {
           "type": "spawner",
@@ -1693,10 +1636,7 @@
           "interval": 2.8,
           "initialDelay": 2.6,
           "maxAlive": 8,
-          "offset": [
-            4.4,
-            1.4
-          ]
+          "offset": [4.4, 1.4]
         },
         {
           "type": "spawner",
@@ -1704,10 +1644,7 @@
           "interval": 2.8,
           "initialDelay": 3.15,
           "maxAlive": 8,
-          "offset": [
-            6.2,
-            -1.8
-          ]
+          "offset": [6.2, -1.8]
         }
       ],
       "transitions": [
@@ -1715,7 +1652,7 @@
           "to": "sfLastLead",
           "when": {
             "type": "after",
-            "seconds": 3.0
+            "seconds": 3
           }
         }
       ]
@@ -1726,24 +1663,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "deadeyeBolt",
-          "speed": 6.0,
+          "speed": 6,
           "aim": "Predictive",
-          "muzzle": [
-            0.4,
-            0.8
-          ],
+          "muzzle": [0.4, 0.8],
           "interval": 99,
           "initialDelay": 1.2,
           "burst": 5,
@@ -1755,10 +1686,7 @@
           "interval": 2.8,
           "initialDelay": 0.4,
           "maxAlive": 8,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -1766,10 +1694,7 @@
           "interval": 2.8,
           "initialDelay": 0.95,
           "maxAlive": 8,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -1777,10 +1702,7 @@
           "interval": 2.8,
           "initialDelay": 1.5,
           "maxAlive": 8,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
@@ -1788,10 +1710,7 @@
           "interval": 2.8,
           "initialDelay": 2.05,
           "maxAlive": 8,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         },
         {
           "type": "spawner",
@@ -1799,10 +1718,7 @@
           "interval": 2.8,
           "initialDelay": 2.6,
           "maxAlive": 8,
-          "offset": [
-            4.4,
-            1.4
-          ]
+          "offset": [4.4, 1.4]
         },
         {
           "type": "spawner",
@@ -1810,10 +1726,7 @@
           "interval": 2.8,
           "initialDelay": 3.15,
           "maxAlive": 8,
-          "offset": [
-            6.2,
-            -1.8
-          ]
+          "offset": [6.2, -1.8]
         }
       ],
       "transitions": [
@@ -1821,7 +1734,7 @@
           "to": "sfLastHeavy",
           "when": {
             "type": "after",
-            "seconds": 3.0
+            "seconds": 3
           }
         }
       ]
@@ -1834,10 +1747,7 @@
           "projectile": "sfWarnField",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            4.2,
-            -1.25
-          ],
+          "muzzle": [4.2, -1.25],
           "interval": 99,
           "initialDelay": 0,
           "pattern": {
@@ -1853,10 +1763,7 @@
           "interval": 2.8,
           "initialDelay": 0.4,
           "maxAlive": 8,
-          "offset": [
-            1.7,
-            -0.9
-          ]
+          "offset": [1.7, -0.9]
         },
         {
           "type": "spawner",
@@ -1864,10 +1771,7 @@
           "interval": 2.8,
           "initialDelay": 0.95,
           "maxAlive": 8,
-          "offset": [
-            3.6,
-            -1.6
-          ]
+          "offset": [3.6, -1.6]
         },
         {
           "type": "spawner",
@@ -1875,10 +1779,7 @@
           "interval": 2.8,
           "initialDelay": 1.5,
           "maxAlive": 8,
-          "offset": [
-            5.2,
-            -0.4
-          ]
+          "offset": [5.2, -0.4]
         },
         {
           "type": "spawner",
@@ -1886,10 +1787,7 @@
           "interval": 2.8,
           "initialDelay": 2.05,
           "maxAlive": 8,
-          "offset": [
-            2.4,
-            0.9
-          ]
+          "offset": [2.4, 0.9]
         },
         {
           "type": "spawner",
@@ -1897,10 +1795,7 @@
           "interval": 2.8,
           "initialDelay": 2.6,
           "maxAlive": 8,
-          "offset": [
-            4.4,
-            1.4
-          ]
+          "offset": [4.4, 1.4]
         },
         {
           "type": "spawner",
@@ -1908,10 +1803,7 @@
           "interval": 2.8,
           "initialDelay": 3.15,
           "maxAlive": 8,
-          "offset": [
-            6.2,
-            -1.8
-          ]
+          "offset": [6.2, -1.8]
         }
       ],
       "transitions": [

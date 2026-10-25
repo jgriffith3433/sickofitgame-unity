@@ -1,0 +1,36 @@
+{
+ "about": "An ember shot made to be tinted (haloEmber, seamEmber, veilEmber, wraithEmber, whirlEmber, ricochetEmber, tortoiseEmber, chainEmber: each creature's own colour of fire). White-hot, so the tint is the colour; the orange fireball stays for plain embers.",
+ "out": "Assets/Art/Effects/Ember",
+ "name": "Ember",
+ "key": "black",
+ "tintable": true,
+ "size": [
+  1024,
+  1024
+ ],
+ "pivot": [
+  512,
+  512
+ ],
+ "crop": [
+  0,
+  0,
+  1024,
+  1024
+ ],
+ "worldWidth": 4.0,
+ "widthPixels": 1024,
+ "scale": 0.25,
+ "clips": {
+  "burn": {
+   "image": "ember.png",
+   "make": "charge",
+   "frames": 12
+  }
+ },
+ "gen": {
+  "ember.png": {
+   "prompt": "Paint a single round ember of white-hot fire: a bright white glowing core wrapped in flickering pale flame, a few tiny sparks and a short wispy flame tail curling to the left. Pure light and fire, nothing solid. Plain flat pure black background (#000000), no floor, no scenery, centered with plenty of empty black space around it. Dark fantasy video game effect art, painterly, glowing."
+  }
+ }
+}

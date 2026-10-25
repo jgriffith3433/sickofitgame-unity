@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "entity": "ricochetShot",
+  "name": "Ricochet bullet",
+  "description": "a small glowing pale blue crystal bullet with a bright white core and a short blue light trail",
+  "height": 0.18,
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, centered in the frame with plenty of empty space around it, the whole object visible. One object alone, nothing else, no hands, no person. {style} {background}",
+    "pose": "Image 1 is this object. Show the exact same object {action}. Keep everything about it the same as image 1: shape, colors, size and position in the frame and art style. {background}"
+  },
+  "poses": {
+    "stand": "in mid-air, pointing right"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "glows and flickers, its blue trail shimmering",
+      "seconds": 2
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

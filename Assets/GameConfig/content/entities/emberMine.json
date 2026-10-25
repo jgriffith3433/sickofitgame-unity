@@ -2,11 +2,9 @@
   "schemaVersion": 1,
   "team": "Enemy",
   "health": 1,
-  "tags": [
-    "emberMine"
-  ],
+  "tags": ["emberMine"],
   "body": {
-    "radius": 2.0,
+    "radius": 2,
     "solid": false
   },
   "healthBar": {
@@ -14,20 +12,23 @@
   },
   "visual": {
     "scale": 0.12,
-    "color": "#7A2A14",
     "fxColor": "#FF6A1F",
     "sortingOrder": 3,
     "animator": {
+      "parameters": [],
       "states": [
         {
           "stateName": "Idle",
-          "spriteSheet": "Images/Fireball.png",
-          "fps": 6,
-          "loop": true
+          "spriteSheet": "Art/Enemies/EmberMine/EmberMine_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
         }
       ],
+      "transitions": [],
       "defaultStateName": "Idle"
-    }
+    },
+    "facesLeft": false
   },
   "abilities": [
     {

@@ -277,8 +277,10 @@ namespace SickOfIt.Data.Config
         public string id;
         public string title;
         public string description;
-        [Tooltip("A one or two letter tag drawn on the card's badge until real icon art exists (e.g. B). Empty = no badge.")]
+        [Tooltip("A one or two letter tag drawn on the card's badge when it has no icon art (e.g. B). Empty = no badge.")]
         public string icon = "";
+        [Tooltip("The card's icon (Assets/Art/Icons, Tools/Art/fx/icons.json), drawn in its corner instead of the tag.")]
+        public Sprite iconArt;
         [Tooltip("Diamonds for each level, in order (the last price repeats).")]
         public int[] costsPerLevel;
         public int maxLevel;

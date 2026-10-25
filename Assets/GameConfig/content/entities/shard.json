@@ -3,7 +3,21 @@
   "extends": "slag",
   "visual": {
     "scale": 0.15,
-    "color": "#5A4A66",
-    "fxColor": "#FF8A3A"
+    "fxColor": "#FF8A3A",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/Shard/Shard_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   }
 }

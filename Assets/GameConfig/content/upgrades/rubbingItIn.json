@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "title": "Rubbing It In",
   "icon": "R",
+  "iconArt": "Art/Icons/Icon_rubbingItIn.png#rubbingItIn_00",
   "description": "Meaner when it lands. Crits hit 50% harder.",
   "maxLevel": 3,
   "weight": 1,

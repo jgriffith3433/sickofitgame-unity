@@ -2,11 +2,9 @@
   "schemaVersion": 1,
   "team": "Enemy",
   "health": 1,
-  "tags": [
-    "riftBomb"
-  ],
+  "tags": ["riftBomb"],
   "body": {
-    "radius": 2.0,
+    "radius": 2,
     "solid": false
   },
   "healthBar": {
@@ -14,20 +12,23 @@
   },
   "visual": {
     "scale": 0.13,
-    "color": "#B0307A",
     "fxColor": "#FF5AA0",
     "sortingOrder": 3,
     "animator": {
+      "parameters": [],
       "states": [
         {
           "stateName": "Idle",
-          "spriteSheet": "Images/Fireball.png",
-          "fps": 6,
-          "loop": true
+          "spriteSheet": "Art/Enemies/RiftBomb/RiftBomb_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
         }
       ],
+      "transitions": [],
       "defaultStateName": "Idle"
-    }
+    },
+    "facesLeft": false
   },
   "abilities": [
     {
@@ -44,5 +45,8 @@
       "seconds": 9
     }
   ],
-  "sounds": { "hurtSound": "riftBomb_hurt", "deathSound": "riftBomb_die" }
+  "sounds": {
+    "hurtSound": "riftBomb_hurt",
+    "deathSound": "riftBomb_die"
+  }
 }

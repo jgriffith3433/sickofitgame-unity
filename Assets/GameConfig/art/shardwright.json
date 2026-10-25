@@ -2,38 +2,40 @@
   "schemaVersion": 1,
   "entity": "shardwright",
   "name": "The Shardwright",
-  "description": "a gaunt carver demon with a chisel and hammer, arms like black glass, shards of rock orbiting it, a cloak of chips",
-  "height": 1.5,
+  "description": "the Carver's apprentice, a thin wiry demon of the Cracked Road: dark slate-grey basalt skin with thin orange seams, a leather apron full of chisels, one hand a long stone chisel, goggles of cracked glass pushed up on his horns, nervous and precise",
+  "height": 1.4,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "hovering upright, the chisel hand raised, apron of chisels, goggles on his horns",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "hovers, nervously polishing his chisel hand",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "flicks his chisel hand forward and fires a burst of sharp glowing stone shards forward to the right",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
-  }
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "pixels": 300
 }

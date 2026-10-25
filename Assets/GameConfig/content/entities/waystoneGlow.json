@@ -2,11 +2,25 @@
   "schemaVersion": 1,
   "extends": "overlordBeamGlow",
   "visual": {
-    "scale": 1.1,
+    "scale": 0.457,
     "color": "#9EFFE6",
     "placeholderColor": "#9EFFE699",
     "layer": "Background2",
-    "sortingOrder": 3
+    "sortingOrder": 3,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Charge",
+          "spriteSheet": "Art/Effects/Warn/Warn_glow.png",
+          "fps": 16,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Charge"
+    }
   },
   "abilities": []
 }

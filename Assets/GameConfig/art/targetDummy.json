@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "entity": "targetDummy",
+  "name": "Target dummy",
+  "description": "a battered straw training dummy on a wooden post, a sack head with a painted scowl, a dented iron pot for a helmet",
+  "height": 0.9,
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, centered in the frame with plenty of empty space around it, the whole object visible. One object alone, nothing else, no hands, no person. {style} {background}",
+    "pose": "Image 1 is this object. Show the exact same object {action}. Keep everything about it the same as image 1: shape, colors, size and position in the frame and art style. {background}"
+  },
+  "poses": {
+    "stand": "standing upright on its post"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "stands still, straw rustling a little",
+      "seconds": 2
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is whacked, wobbles back and forth on its post, straw flying, then settles",
+      "seconds": 1
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

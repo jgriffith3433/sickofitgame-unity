@@ -4,9 +4,7 @@
   "health": 60,
   "moveSpeed": 0,
   "activationRange": 0,
-  "tags": [
-    "dummy"
-  ],
+  "tags": ["dummy"],
   "body": {
     "shape": "Circle",
     "radius": 0.5,
@@ -14,12 +12,61 @@
     "gravity": 0
   },
   "visual": {
-    "scale": 1.0,
+    "scale": 1,
     "placeholderColor": "#8899AA",
     "placeholderSize": 0.9,
     "placeholderLabel": true,
     "hurtFlash": true,
-    "fxColor": "#8899AA"
+    "fxColor": "#8899AA",
+    "animator": {
+      "parameters": [
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/TargetDummy/TargetDummy_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/TargetDummy/TargetDummy_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": true

@@ -98,10 +98,11 @@ def anchor(offset, drift, after):
     return {"type": "screenAnchor", "offset": offset, "drift": drift, "driftAfter": after}
 
 
-def visual(art_tint="#3B2F46"):
-    return {"scale": 0.5, "color": art_tint, "placeholderColor": "#2A2030", "placeholderSize": 1.6, "placeholderLabel": False,
+def visual():
+    # His own sheet (art/overlordFar.json, Tools/Art/art.mjs): one for every glimpse.
+    return {"scale": 0.5, "placeholderColor": "#2A2030", "placeholderSize": 1.6, "placeholderLabel": False,
             "layer": "Background2", "sortingOrder": 3, "hurtFlash": False, "deathPop": False,
-            "animator": {"parameters": [], "states": [{"stateName": "Idle", "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_idle.png", "fps": 12, "loop": True, "events": []}],
+            "animator": {"parameters": [], "states": [{"stateName": "Idle", "spriteSheet": "Art/Enemies/OverlordFar/OverlordFar_idle.png", "fps": 12, "loop": True, "events": []}],
                          "transitions": [], "defaultStateName": "Idle"},
             "facesLeft": False}
 

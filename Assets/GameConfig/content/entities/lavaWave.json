@@ -8,10 +8,24 @@
   },
   "visual": {
     "scale": 0.24,
-    "color": "#FF8A2A",
     "sortingOrder": 4,
     "hurtFlash": false,
-    "fxColor": "#FF6A1F"
+    "fxColor": "#FF6A1F",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/LavaWave/LavaWave_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "onSpawn": [
     {

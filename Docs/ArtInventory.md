@@ -9,11 +9,11 @@ How art is made: Docs/ArtPipeline.md (creatures `node Tools/Art/art.mjs <id>`, t
 
 | | ok | placeholder / stand-in |
 |---|---|---|
-| Entities in use | 367 | 61 |
+| Entities in use | 405 | 23 |
 | Hero clips (art/hero.json) | 6 | 84 |
 | Weapon grips | 0 | 8 |
 | Circle backdrops | 3 | 0 |
-| Card icons (Grudges, Yooba's goods) | 22 | 31 |
+| Card icons (Grudges, Yooba's goods) | 53 | 0 |
 
 ## Before this pass
 
@@ -239,21 +239,12 @@ On beta at 4bf1506c (2026-10-25), before the full art pass: **179 entities in us
 ## Still to do
 
 - entity `afterimage`: STAND-IN, wears chaser's art tinted #D8E8FF
-- entity `bounceLump`: STAND-IN, wears projectileEnemy's art tinted #E0602A
 - entity `bridgeWraith`: PLACEHOLDER, drawn as a labeled circle
 - entity `brimstoneLump`: STAND-IN, wears slag's art tinted #E0602A
-- entity `chainEmber`: STAND-IN, wears projectileEnemy's art tinted #B0A090
 - entity `drone`: STAND-IN, wears shooter's art tinted #9FFFE0
 - entity `gunner`: STAND-IN, wears shooter's art tinted #FFD27A
-- entity `haloEmber`: STAND-IN, wears projectileEnemy's art tinted #FFD27A
 - entity `haloImp`: STAND-IN, wears imp's art tinted #FFD27A
-- entity `haloShot`: STAND-IN, its own animator plays Images tinted #FFD27A
-- entity `lavaBurst`: STAND-IN, its own animator plays Beam tinted #FF7A2A
-- entity `lavaFlood`: STAND-IN, wears fireball's art tinted #FF5A1A
-- entity `lavaWave`: STAND-IN, wears fireball's art tinted #FF8A2A
-- entity `magmaBoulder`: STAND-IN, wears fireball's art tinted #D2551E
-- entity `mkWarnFlood`: STAND-IN, wears overlordBeamGlow's art tinted #FF3A1A
-- entity `mkWarnFloor`: STAND-IN, wears overlordBeamGlow's art tinted #FFB060
+- entity `lavaFlood`: STAND-IN, wears lavaWave's art tinted #FF5A1A
 - entity `overlordFar806`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
 - entity `overlordFar857`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
 - entity `overlordFar896`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
@@ -261,44 +252,15 @@ On beta at 4bf1506c (2026-10-25), before the full art pass: **179 entities in us
 - entity `overlordFar953`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
 - entity `overlordFar958`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
 - entity `overlordFar994`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
-- entity `plateShard`: STAND-IN, wears projectileEnemy's art tinted #D8D0F0
 - entity `quickfireImp`: STAND-IN, wears imp's art tinted #FF9A5A
-- entity `ricochetEmber`: STAND-IN, wears projectileEnemy's art tinted #FFC15A
 - entity `ricochetImp`: STAND-IN, wears imp's art tinted #FFC890
-- entity `ricochetShot`: STAND-IN, its own animator plays Images tinted #7FE8FF
-- entity `rook`: STAND-IN, wears damnedSoul's art tinted #F2A93B
-- entity `runeHound`: STAND-IN, wears slagHound's art tinted #A9BFDA
-- entity `seamEmber`: STAND-IN, wears projectileEnemy's art tinted #6FE0C8
-- entity `seamImp`: STAND-IN, wears imp's art tinted #6FE0C8
 - entity `sfNeedle`: STAND-IN, its own animator plays Climb tinted #D8C8D0
-- entity `sfSpear`: STAND-IN, wears fireball's art tinted #5A4660
-- entity `shard`: STAND-IN, wears slag's art tinted #5A4A66
-- entity `shardBig`: STAND-IN, wears slag's art tinted #5A4A66
-- entity `shardwright`: STAND-IN, wears brimstoneDemon's art tinted #5A5870
-- entity `slabSniper`: STAND-IN, wears imp's art tinted #B0B8C0
-- entity `slagTortoise`: STAND-IN, wears brimstoneDemon's art tinted #8A7468
-- entity `slamShockwave`: STAND-IN, wears fireball's art tinted #FFB050
-- entity `sleepwalker`: STAND-IN, wears chaser's art tinted #B9C9E8
-- entity `sparedWhelp`: STAND-IN, its own animator plays Images tinted #FF9A7A
+- entity `shardBig`: STAND-IN, wears shard's art tinted #5A4A66
+- entity `slamShockwave`: STAND-IN, wears lavaWave's art tinted #FFB050
 - entity `spinner`: STAND-IN, wears sentinel's art tinted #7FD8FF
-- entity `spireFiend`: PLACEHOLDER, drawn as a labeled circle
 - entity `sprayer`: STAND-IN, wears shooter's art tinted #D69CFF
-- entity `targetDummy`: PLACEHOLDER, drawn as a labeled circle
-- entity `tortoiseEmber`: STAND-IN, wears projectileEnemy's art tinted #C8A27A
-- entity `tripleLobber`: STAND-IN, wears bounceLobber's art tinted #E8C898
-- entity `twiceRisen`: STAND-IN, wears risenDemon's art tinted #9A7A8A
-- entity `twinLensImp`: STAND-IN, wears lensImp's art tinted #FF3A3A
-- entity `veilDemon`: STAND-IN, wears brimstoneDemon's art tinted #7A6A98
-- entity `veilEmber`: STAND-IN, wears projectileEnemy's art tinted #B08AFF
-- entity `veilMatron`: STAND-IN, wears brimstoneDemon's art tinted #A890E0
-- entity `watcher`: STAND-IN, its own animator plays Images tinted #CFF4FF
 - entity `watcherPatrol`: STAND-IN, its own animator plays Images tinted #CFF4FF
-- entity `waystoneGlow`: STAND-IN, wears overlordBeamGlow's art tinted #9EFFE6
 - entity `whelpNest`: PLACEHOLDER, drawn as a coloured box
-- entity `whirlEmber`: STAND-IN, wears projectileEnemy's art tinted #FF7AC8
-- entity `whirlImp`: STAND-IN, wears imp's art tinted #FF7AC8
-- entity `wick`: STAND-IN, wears damnedSoul's art tinted #BFE6C8
-- entity `wraithEmber`: STAND-IN, wears projectileEnemy's art tinted #9AD8E8
 - hero `Land` (land): MISSING, plays -
 - hero `AirFire` (airFire): MISSING, plays -
 - hero `RunFire` (runFire): STAND-IN, plays Walk.png
@@ -391,37 +353,6 @@ On beta at 4bf1506c (2026-10-25), before the full art pass: **179 entities in us
 - weapon `shotgun`: 9 states; without a sheet of their own: ShotgunIdle, ShotgunRun, ShotgunJump, ShotgunFall, ShotgunLand, ShotgunRunAttack, ShotgunAirAttack, EquipShotgun, ShotgunAttack
 - weapon `slagLadle`: 9 states; without a sheet of their own: LadleIdle, LadleRun, LadleJump, LadleFall, LadleLand, LadleRunAttack, LadleAirAttack, EquipLadle, LadleAttack
 - weapon `spitfire`: 9 states; without a sheet of their own: SpitfireIdle, SpitfireRun, SpitfireJump, SpitfireFall, SpitfireLand, SpitfireRunAttack, SpitfireAirAttack, EquipSpitfire, SpitfireAttack
-- grudge badBlood: card icon is a letter "B"
-- grudge eyeForAnEye: card icon is a letter "E"
-- grudge heldGrudge: card icon is a letter "G"
-- grudge holdingOn: card icon is a letter "H"
-- grudge keepingScore: card icon is a letter "K"
-- grudge pettyCash: card icon is a letter "P"
-- grudge rubbingItIn: card icon is a letter "R"
-- grudge sideEye: card icon is a letter "I"
-- grudge slowBurn: card icon is a letter "F"
-- grudge sourGrapes: card icon is a letter "S"
-- good crustyBits: card icon is a letter "P"
-- good thickerCrusts: card icon is a letter "P2"
-- good snotBubble: card icon is a letter "B"
-- good spareBubble: card icon is a letter "B2"
-- good greasedElbows: card icon is a letter "S"
-- good luckyLick: card icon is a letter "C"
-- good fourLeafSlime: card icon is a letter "C2"
-- good meanerLick: card icon is a letter "M"
-- good yoobaBurp: card icon is a letter "H"
-- good hungrierBurp: card icon is a letter "H2"
-- good gravyNet: card icon is a letter "N"
-- good fatDiamonds: card icon is a letter "F"
-- good stickyAir: card icon is a letter "G"
-- good loopCrumbs: card icon is a letter "K"
-- good thriftyLoop: card icon is a letter "L"
-- good belchBomb: card icon is a letter "X"
-- good louderBelch: card icon is a letter "X2"
-- good afterglowGoo: card icon is a letter "A"
-- good slipperyShots: card icon is a letter "Z"
-- good floorPudding: card icon is a letter "D"
-- good spareGasp: card icon is a letter "Y"
 
 ## The hero
 
@@ -545,22 +476,22 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 
 | Card | Status | Icon |
 |---|---|---|
-| grudge badBlood | PLACEHOLDER | letter "B" |
+| grudge badBlood | ok | Art/Icons/Icon_badBlood.png#badBlood_00 |
 | grudge bigDamage | ok (no badge) | no badge |
-| grudge eyeForAnEye | PLACEHOLDER | letter "E" |
+| grudge eyeForAnEye | ok | Art/Icons/Icon_eyeForAnEye.png#eyeForAnEye_00 |
 | grudge heldBreath | ok (no badge) | no badge |
-| grudge heldGrudge | PLACEHOLDER | letter "G" |
-| grudge holdingOn | PLACEHOLDER | letter "H" |
-| grudge keepingScore | PLACEHOLDER | letter "K" |
+| grudge heldGrudge | ok | Art/Icons/Icon_heldGrudge.png#heldGrudge_00 |
+| grudge holdingOn | ok | Art/Icons/Icon_holdingOn.png#holdingOn_00 |
+| grudge keepingScore | ok | Art/Icons/Icon_keepingScore.png#keepingScore_00 |
 | grudge notToday | ok (no badge) | no badge |
-| grudge pettyCash | PLACEHOLDER | letter "P" |
+| grudge pettyCash | ok | Art/Icons/Icon_pettyCash.png#pettyCash_00 |
 | grudge rapidFire | ok (no badge) | no badge |
-| grudge rubbingItIn | PLACEHOLDER | letter "R" |
-| grudge sideEye | PLACEHOLDER | letter "I" |
-| grudge slowBurn | PLACEHOLDER | letter "F" |
+| grudge rubbingItIn | ok | Art/Icons/Icon_rubbingItIn.png#rubbingItIn_00 |
+| grudge sideEye | ok | Art/Icons/Icon_sideEye.png#sideEye_00 |
+| grudge slowBurn | ok | Art/Icons/Icon_slowBurn.png#slowBurn_00 |
 | grudge sneakers | ok (no badge) | no badge |
 | grudge snoozeButton | ok (no badge) | no badge |
-| grudge sourGrapes | PLACEHOLDER | letter "S" |
+| grudge sourGrapes | ok | Art/Icons/Icon_sourGrapes.png#sourGrapes_00 |
 | grudge spreadShot | ok (no badge) | no badge |
 | grudge thickSkin | ok (no badge) | no badge |
 | good moreHealth | ok (no badge) | no badge |
@@ -576,27 +507,27 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | good fistGoo | ok (no badge) | no badge |
 | good fistReach | ok (no badge) | no badge |
 | good keepWeapons | ok (no badge) | no badge |
-| good crustyBits | PLACEHOLDER | letter "P" |
-| good thickerCrusts | PLACEHOLDER | letter "P2" |
-| good snotBubble | PLACEHOLDER | letter "B" |
-| good spareBubble | PLACEHOLDER | letter "B2" |
-| good greasedElbows | PLACEHOLDER | letter "S" |
-| good luckyLick | PLACEHOLDER | letter "C" |
-| good fourLeafSlime | PLACEHOLDER | letter "C2" |
-| good meanerLick | PLACEHOLDER | letter "M" |
-| good yoobaBurp | PLACEHOLDER | letter "H" |
-| good hungrierBurp | PLACEHOLDER | letter "H2" |
-| good gravyNet | PLACEHOLDER | letter "N" |
-| good fatDiamonds | PLACEHOLDER | letter "F" |
-| good stickyAir | PLACEHOLDER | letter "G" |
-| good loopCrumbs | PLACEHOLDER | letter "K" |
-| good thriftyLoop | PLACEHOLDER | letter "L" |
-| good belchBomb | PLACEHOLDER | letter "X" |
-| good louderBelch | PLACEHOLDER | letter "X2" |
-| good afterglowGoo | PLACEHOLDER | letter "A" |
-| good slipperyShots | PLACEHOLDER | letter "Z" |
-| good floorPudding | PLACEHOLDER | letter "D" |
-| good spareGasp | PLACEHOLDER | letter "Y" |
+| good crustyBits | ok | Art/Icons/Icon_crustyBits.png#crustyBits_00 |
+| good thickerCrusts | ok | Art/Icons/Icon_thickerCrusts.png#thickerCrusts_00 |
+| good snotBubble | ok | Art/Icons/Icon_snotBubble.png#snotBubble_00 |
+| good spareBubble | ok | Art/Icons/Icon_spareBubble.png#spareBubble_00 |
+| good greasedElbows | ok | Art/Icons/Icon_greasedElbows.png#greasedElbows_00 |
+| good luckyLick | ok | Art/Icons/Icon_luckyLick.png#luckyLick_00 |
+| good fourLeafSlime | ok | Art/Icons/Icon_fourLeafSlime.png#fourLeafSlime_00 |
+| good meanerLick | ok | Art/Icons/Icon_meanerLick.png#meanerLick_00 |
+| good yoobaBurp | ok | Art/Icons/Icon_yoobaBurp.png#yoobaBurp_00 |
+| good hungrierBurp | ok | Art/Icons/Icon_hungrierBurp.png#hungrierBurp_00 |
+| good gravyNet | ok | Art/Icons/Icon_gravyNet.png#gravyNet_00 |
+| good fatDiamonds | ok | Art/Icons/Icon_fatDiamonds.png#fatDiamonds_00 |
+| good stickyAir | ok | Art/Icons/Icon_stickyAir.png#stickyAir_00 |
+| good loopCrumbs | ok | Art/Icons/Icon_loopCrumbs.png#loopCrumbs_00 |
+| good thriftyLoop | ok | Art/Icons/Icon_thriftyLoop.png#thriftyLoop_00 |
+| good belchBomb | ok | Art/Icons/Icon_belchBomb.png#belchBomb_00 |
+| good louderBelch | ok | Art/Icons/Icon_louderBelch.png#louderBelch_00 |
+| good afterglowGoo | ok | Art/Icons/Icon_afterglowGoo.png#afterglowGoo_00 |
+| good slipperyShots | ok | Art/Icons/Icon_slipperyShots.png#slipperyShots_00 |
+| good floorPudding | ok | Art/Icons/Icon_floorPudding.png#floorPudding_00 |
+| good spareGasp | ok | Art/Icons/Icon_spareGasp.png#spareGasp_00 |
 | good slimedLining | ok (no badge) | no badge |
 
 ## Entities in use
@@ -612,7 +543,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | blinkMark | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #C58BFF |  |
 | boomerangHaloPickup | Neutral | ok | generated: Art/Enemies/BoomerangHaloPickup | boomerangHaloPickup |
 | bounceLobber | Enemy | ok | generated: Art/Enemies/BounceLobber | bounceLobber |
-| bounceLump | Enemy | STAND-IN | wears projectileEnemy's art tinted #E0602A | bounceLump |
+| bounceLump | Enemy | ok | generated: Art/Enemies/BounceLump | bounceLump |
 | brLampBolt | Enemy | ok | runeBolt's effect sheet (made to be tinted), in #BFEFFF |  |
 | brMarkBolt | Enemy | ok | runeBolt's effect sheet (made to be tinted), in #E8F6FF |  |
 | brRuneColumn | Enemy | ok | generated: Art/Effects/RuneColumn |  |
@@ -637,7 +568,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | carver | Enemy | ok | generated: Art/Enemies/Carver | carver |
 | ceilingSlab | Neutral | ok | generated: Art/Climb |  |
 | chainBrute | Enemy | ok | generated: Art/Enemies/ChainBrute | chainBrute |
-| chainEmber | Enemy | STAND-IN | wears projectileEnemy's art tinted #B0A090 |  |
+| chainEmber | Enemy | ok | generated: Art/Effects/Ember |  |
 | chainLift | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | chainLift991 | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | chainLift993 | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
@@ -816,9 +747,9 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | grappleRing | Neutral | ok | invisible body; the grappleAnchor ability paints the anchor (art/props, AnchorRing) |  |
 | gravityPad | Neutral | ok | generated: Art/Effects/Gravity |  |
 | gunner | Enemy | STAND-IN | wears shooter's art tinted #FFD27A | gunner |
-| haloEmber | Enemy | STAND-IN | wears projectileEnemy's art tinted #FFD27A |  |
+| haloEmber | Enemy | ok | generated: Art/Effects/Ember |  |
 | haloImp | Enemy | STAND-IN | wears imp's art tinted #FFD27A | haloImp |
-| haloShot | Player | STAND-IN | its own animator plays Images tinted #FFD27A | haloShot |
+| haloShot | Player | ok | generated: Art/Enemies/HaloShot | haloShot |
 | hawkerSoul | Neutral | ok | generated: Art/Enemies/HawkerSoul | hawkerSoul |
 | heatUpdraft | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | heatUpdraftTall | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
@@ -853,13 +784,13 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | lanternfly | Enemy | ok | generated: Art/Enemies/Lanternfly | lanternfly |
 | launcherThief | Neutral | ok | generated: Art/Enemies/LauncherThief | launcherThief |
 | launcherToss | Neutral | ok | generated: Art/Enemies/LauncherToss | launcherToss |
-| lavaBurst | Neutral | STAND-IN | its own animator plays Beam tinted #FF7A2A |  |
+| lavaBurst | Neutral | ok | generated: Art/Effects/Warn |  |
 | lavaFall | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaFall955a | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaFall955b | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaFall955c | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaFallScenery | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
-| lavaFlood | Enemy | STAND-IN | wears fireball's art tinted #FF5A1A |  |
+| lavaFlood | Enemy | STAND-IN | wears lavaWave's art tinted #FF5A1A |  |
 | lavaGeyser | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaGeyserB | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaGeyserC | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
@@ -867,7 +798,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | lavaSea | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaSeaHall | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaSurge | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
-| lavaWave | Enemy | STAND-IN | wears fireball's art tinted #FF8A2A | lavaWave |
+| lavaWave | Enemy | ok | generated: Art/Enemies/LavaWave | lavaWave |
 | leadImp | Enemy | ok | generated: Art/Enemies/LeadImp | leadImp |
 | ledge | Neutral | ok | generated: Art/Climb |  |
 | lensImp | Enemy | ok | generated: Art/Enemies/LensImp | lensImp |
@@ -892,14 +823,14 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | lostBell | Neutral | ok | generated: Art/Enemies/LostBell | lostBell |
 | lostMitt | Neutral | ok | generated: Art/Enemies/LostMitt | lostMitt |
 | lostRollingPin | Neutral | ok | generated: Art/Enemies/LostRollingPin | lostRollingPin |
-| magmaBoulder | Enemy | STAND-IN | wears fireball's art tinted #D2551E | magmaBoulder |
+| magmaBoulder | Enemy | ok | generated: Art/Enemies/MagmaBoulder | magmaBoulder |
 | magmaGeode | Enemy | ok | generated: Art/Enemies/MagmaGeode | magmaGeode |
 | magmaKing | Enemy | ok | generated: Art/Enemies/MagmaKing | magmaKing |
 | mfHit | Enemy | ok | the same creature as fmLash (its art, untinted) |  |
 | mfWarn | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FF9A6A |  |
 | mineBeetle | Enemy | ok | generated: Art/Enemies/MineBeetle | mineBeetle |
-| mkWarnFlood | Neutral | STAND-IN | wears overlordBeamGlow's art tinted #FF3A1A |  |
-| mkWarnFloor | Neutral | STAND-IN | wears overlordBeamGlow's art tinted #FFB060 |  |
+| mkWarnFlood | Neutral | ok | generated: Art/Effects/Warn |  |
+| mkWarnFloor | Neutral | ok | generated: Art/Effects/Warn |  |
 | mkWarnHand | Neutral | ok | generated: Art/Effects/Warn |  |
 | mkWarnMouth | Neutral | ok | generated: Art/Effects/Warn |  |
 | motherFissure | Enemy | ok | generated: Art/Enemies/MotherFissure | motherFissure |
@@ -924,7 +855,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | pkWarnSack | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FFE08A |  |
 | pkWarnSpear | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FFB060 |  |
 | plateDemon | Enemy | ok | generated: Art/Enemies/PlateDemon | plateDemon |
-| plateShard | Enemy | STAND-IN | wears projectileEnemy's art tinted #D8D0F0 | plateShard |
+| plateShard | Enemy | ok | generated: Art/Enemies/PlateShard | plateShard |
 | pointer | Neutral | ok | generated: Art/Enemies/Pointer | pointer |
 | portal | Neutral | ok | generated: Art/Effects/Portal |  |
 | portalScorch | Neutral | ok | generated: Art/Effects/Portal |  |
@@ -937,10 +868,10 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | rbWarnLine | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FFB060 |  |
 | rbWarnSpot | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FFE08A |  |
 | rewindOrb | Neutral | ok | generated: Art/Effects/RewindOrb |  |
-| ricochetEmber | Enemy | STAND-IN | wears projectileEnemy's art tinted #FFC15A |  |
+| ricochetEmber | Enemy | ok | generated: Art/Effects/Ember |  |
 | ricochetImp | Enemy | STAND-IN | wears imp's art tinted #FFC890 | ricochetImp |
 | ricochetPistolPickup | Neutral | ok | generated: Art/Enemies/RicochetPistolPickup | ricochetPistolPickup |
-| ricochetShot | Player | STAND-IN | its own animator plays Images tinted #7FE8FF | ricochetShot |
+| ricochetShot | Player | ok | generated: Art/Enemies/RicochetShot | ricochetShot |
 | riftBomb | Enemy | ok | generated: Art/Enemies/RiftBomb | riftBomb |
 | riftBomber | Enemy | ok | generated: Art/Enemies/RiftBomber | riftBomber |
 | riftMark | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FF5AA0 |  |
@@ -953,9 +884,9 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | roadPerch | Neutral | ok | the same creature as roadSlab (its art, untinted) |  |
 | roadSlab | Neutral | ok | generated: Art/Climb |  |
 | rocketLauncherPickup | Neutral | ok | generated: Art/Enemies/RocketLauncherPickup | rocketLauncherPickup |
-| rook | Neutral | STAND-IN | wears damnedSoul's art tinted #F2A93B | rook |
+| rook | Neutral | ok | generated: Art/Enemies/Rook | rook |
 | runeBolt | Enemy | ok | generated: Art/Effects/Rune |  |
-| runeHound | Enemy | STAND-IN | wears slagHound's art tinted #A9BFDA | runeHound |
+| runeHound | Enemy | ok | generated: Art/Enemies/RuneHound | runeHound |
 | runePillar | Neutral | ok | generated: Art/Climb |  |
 | runeSpan | Neutral | ok | generated: Art/Climb |  |
 | runeSpanGaze | Neutral | ok | the same creature as ledge (its art, untinted) |  |
@@ -963,39 +894,39 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | runeSpanLate | Neutral | ok | the same creature as ledge (its art, untinted) |  |
 | runeSpanQuick | Neutral | ok | the same creature as ledge (its art, untinted) |  |
 | runeSpanUnison | Neutral | ok | the same creature as ledge (its art, untinted) |  |
-| seamEmber | Enemy | STAND-IN | wears projectileEnemy's art tinted #6FE0C8 |  |
-| seamImp | Enemy | STAND-IN | wears imp's art tinted #6FE0C8 | seamImp |
+| seamEmber | Enemy | ok | generated: Art/Effects/Ember |  |
+| seamImp | Enemy | ok | generated: Art/Enemies/SeamImp | seamImp |
 | seamMark | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #6FE0C8 |  |
 | seesawSlab | Neutral | ok | generated: Art/Climb |  |
 | seesawSlabB | Neutral | ok | the same creature as seesawSlab (its art, untinted) |  |
 | settleSlab | Neutral | ok | generated: Art/Climb |  |
 | sfNeedle | Enemy | STAND-IN | its own animator plays Climb tinted #D8C8D0 | sfNeedle |
-| sfSpear | Enemy | STAND-IN | wears fireball's art tinted #5A4660 | sfSpear |
+| sfSpear | Enemy | ok | generated: Art/Enemies/SfSpear | sfSpear |
 | sfWarnField | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FFF0C0 |  |
 | sfWarnHand | Neutral | ok | mkWarnHand's effect sheet (made to be tinted), in #FFB070 |  |
 | sfWarnRow | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FF9A4A |  |
 | sfWarnSpot | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FFD08A |  |
 | sfWhelp | Enemy | ok | the same creature as demonWhelp (its art, untinted) |  |
-| shard | Enemy | STAND-IN | wears slag's art tinted #5A4A66 | shard |
-| shardBig | Enemy | STAND-IN | wears slag's art tinted #5A4A66 |  |
-| shardwright | Enemy | STAND-IN | wears brimstoneDemon's art tinted #5A5870 | shardwright |
+| shard | Enemy | ok | generated: Art/Enemies/Shard | shard |
+| shardBig | Enemy | STAND-IN | wears shard's art tinted #5A4A66 |  |
+| shardwright | Enemy | ok | generated: Art/Enemies/Shardwright | shardwright |
 | shooter | Enemy | ok | painted: Images |  |
 | shotgunPickup | Neutral | ok | generated: Art/Enemies/ShotgunPickup | shotgunPickup |
 | sinkingStone | Neutral | ok | generated: Art/Climb |  |
 | slabBolt | Enemy | ok | generated: Art/Effects/Bolt |  |
-| slabSniper | Enemy | STAND-IN | wears imp's art tinted #B0B8C0 | slabSniper |
+| slabSniper | Enemy | ok | generated: Art/Enemies/SlabSniper | slabSniper |
 | slag | Enemy | ok | generated: Art/Enemies/Slag | slag |
 | slagConveyor | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | slagConveyorDown | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | slagDrip | Neutral | ok | generated: Art/Effects/Warn |  |
 | slagHound | Enemy | ok | generated: Art/Enemies/SlagHound | slagHound |
 | slagLadlePickup | Neutral | ok | generated: Art/Enemies/SlagLadlePickup | slagLadlePickup |
-| slagTortoise | Enemy | STAND-IN | wears brimstoneDemon's art tinted #8A7468 | slagTortoise |
-| slamShockwave | Enemy | STAND-IN | wears fireball's art tinted #FFB050 |  |
-| sleepwalker | Enemy | STAND-IN | wears chaser's art tinted #B9C9E8 | sleepwalker |
-| sparedWhelp | Neutral | STAND-IN | its own animator plays Images tinted #FF9A7A | sparedWhelp |
+| slagTortoise | Enemy | ok | generated: Art/Enemies/SlagTortoise | slagTortoise |
+| slamShockwave | Enemy | STAND-IN | wears lavaWave's art tinted #FFB050 |  |
+| sleepwalker | Enemy | ok | generated: Art/Enemies/Sleepwalker | sleepwalker |
+| sparedWhelp | Neutral | ok | generated: Art/Enemies/SparedWhelp | sparedWhelp |
 | spinner | Enemy | STAND-IN | wears sentinel's art tinted #7FD8FF | spinner |
-| spireFiend | Enemy | PLACEHOLDER | drawn as a labeled circle | spireFiend |
+| spireFiend | Enemy | ok | generated: Art/Enemies/SpireFiend | spireFiend |
 | spireShard | Neutral | ok | slagDrip's effect sheet (made to be tinted), in #FFB070 |  |
 | spireShardBig | Neutral | ok | slagDrip's effect sheet (made to be tinted), in #FFB070 |  |
 | spitfirePickup | Neutral | ok | generated: Art/Enemies/SpitfirePickup | spitfirePickup |
@@ -1005,27 +936,27 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | swWarn | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #E0D8F0 |  |
 | swingChain | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | swingChainB | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
-| targetDummy | Enemy | PLACEHOLDER | drawn as a labeled circle | targetDummy |
-| tortoiseEmber | Enemy | STAND-IN | wears projectileEnemy's art tinted #C8A27A |  |
-| tripleLobber | Enemy | STAND-IN | wears bounceLobber's art tinted #E8C898 | tripleLobber |
-| twiceRisen | Enemy | STAND-IN | wears risenDemon's art tinted #9A7A8A | twiceRisen |
-| twinBoltDeadeye | Enemy | ok | the same creature as deadeyeImp (its art, untinted) | twinBoltDeadeye |
-| twinLensImp | Enemy | STAND-IN | wears lensImp's art tinted #FF3A3A | twinLensImp |
-| veilDemon | Enemy | STAND-IN | wears brimstoneDemon's art tinted #7A6A98 | veilDemon |
-| veilEmber | Enemy | STAND-IN | wears projectileEnemy's art tinted #B08AFF |  |
+| targetDummy | Enemy | ok | generated: Art/Enemies/TargetDummy | targetDummy |
+| tortoiseEmber | Enemy | ok | generated: Art/Effects/Ember |  |
+| tripleLobber | Enemy | ok | generated: Art/Enemies/TripleLobber | tripleLobber |
+| twiceRisen | Enemy | ok | generated: Art/Enemies/TwiceRisen | twiceRisen |
+| twinBoltDeadeye | Enemy | ok | generated: Art/Enemies/TwinBoltDeadeye | twinBoltDeadeye |
+| twinLensImp | Enemy | ok | generated: Art/Enemies/TwinLensImp | twinLensImp |
+| veilDemon | Enemy | ok | generated: Art/Enemies/VeilDemon | veilDemon |
+| veilEmber | Enemy | ok | generated: Art/Effects/Ember |  |
 | veilMark | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #B08AFF |  |
-| veilMatron | Enemy | STAND-IN | wears brimstoneDemon's art tinted #A890E0 | veilMatron |
+| veilMatron | Enemy | ok | generated: Art/Enemies/VeilMatron | veilMatron |
 | wallSlab | Neutral | ok | generated: Art/Effects/KitWall |  |
-| watcher | Enemy | STAND-IN | its own animator plays Images tinted #CFF4FF | watcher |
+| watcher | Enemy | ok | generated: Art/Enemies/Watcher | watcher |
 | watcherPatrol | Enemy | STAND-IN | its own animator plays Images tinted #CFF4FF |  |
-| waystoneGlow | Neutral | STAND-IN | wears overlordBeamGlow's art tinted #9EFFE6 |  |
+| waystoneGlow | Neutral | ok | generated: Art/Effects/Warn |  |
 | whelpDiamond | Enemy | ok | the same creature as demonWhelp (its art, untinted) |  |
 | whelpNest | Enemy | PLACEHOLDER | drawn as a coloured box | whelpNest |
-| whirlEmber | Enemy | STAND-IN | wears projectileEnemy's art tinted #FF7AC8 |  |
-| whirlImp | Enemy | STAND-IN | wears imp's art tinted #FF7AC8 | whirlImp |
-| wick | Neutral | STAND-IN | wears damnedSoul's art tinted #BFE6C8 | wick |
+| whirlEmber | Enemy | ok | generated: Art/Effects/Ember |  |
+| whirlImp | Enemy | ok | generated: Art/Enemies/WhirlImp | whirlImp |
+| wick | Neutral | ok | generated: Art/Enemies/Wick | wick |
 | windGust | Neutral | ok | generated: Art/Effects/Wind |  |
-| wraithEmber | Enemy | STAND-IN | wears projectileEnemy's art tinted #9AD8E8 |  |
+| wraithEmber | Enemy | ok | generated: Art/Effects/Ember |  |
 | wreckCart | Neutral | ok | the same creature as debrisRaft (its art, untinted) |  |
 | wreckHay | Neutral | ok | the same creature as debrisRaftHay (its art, untinted) |  |
 | wreckRoof | Neutral | ok | the same creature as debrisRaftRoof (its art, untinted) |  |

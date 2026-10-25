@@ -1,11 +1,27 @@
 {
   "schemaVersion": 1,
   "extends": "overlordBeamGlow",
-  "tags": ["floodWarning"],
+  "tags": [
+    "floodWarning"
+  ],
   "visual": {
     "color": "#FF3A1A",
     "placeholderColor": "#FF3A1A",
-    "scale": 0.75
+    "scale": 0.311,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Charge",
+          "spriteSheet": "Art/Effects/Warn/Warn_glow.png",
+          "fps": 16,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Charge"
+    }
   },
   "abilities": [
     {

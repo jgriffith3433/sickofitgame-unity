@@ -3,8 +3,22 @@
   "extends": "projectileEnemy",
   "visual": {
     "scale": 0.16,
-    "color": "#E0602A",
-    "fxColor": "#FFB43A"
+    "fxColor": "#FFB43A",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/BounceLump/BounceLump_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "abilities": [
     {

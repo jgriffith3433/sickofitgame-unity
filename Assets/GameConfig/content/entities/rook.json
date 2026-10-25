@@ -1,16 +1,98 @@
 {
   "schemaVersion": 1,
   "extends": "damnedSoul",
-  "tags": [
-    "damned",
-    "companion",
-    "rook"
-  ],
+  "tags": ["damned", "companion", "rook"],
   "visual": {
     "scale": 1.15,
-    "color": "#F2A93B",
     "placeholderColor": "#F2A93B",
     "placeholderSize": 0.8049999999999999,
-    "placeholderLabel": true
+    "placeholderLabel": true,
+    "animator": {
+      "parameters": [
+        {
+          "name": "Hiccup",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Walking",
+          "type": "Bool",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/Rook/Rook_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Walk",
+          "spriteSheet": "Art/Enemies/Rook/Rook_walk.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hiccup",
+          "spriteSheet": "Art/Enemies/Rook/Rook_hiccup.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Hiccup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hiccup",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hiccup",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Walk",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Walking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Walk",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Walking",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   }
 }

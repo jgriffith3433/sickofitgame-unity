@@ -11,22 +11,126 @@
     }
   ],
   "health": 4,
-  "moveSpeed": 0.0,
-  "activationRange": 14.0,
-  "tags": [
-    "sleepwalker"
-  ],
+  "moveSpeed": 0,
+  "activationRange": 14,
+  "tags": ["sleepwalker"],
   "body": {
     "shape": "Circle",
     "radius": 0.5,
     "solid": false,
-    "gravity": 0.0
+    "gravity": 0
   },
   "visual": {
     "scale": 0.18,
-    "color": "#B9C9E8",
     "fxColor": "#8FE3FF",
-    "placeholderColor": "#B9C9E8"
+    "placeholderColor": "#B9C9E8",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsMoving",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/Sleepwalker/Sleepwalker_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Move",
+          "spriteSheet": "Art/Enemies/Sleepwalker/Sleepwalker_move.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/Sleepwalker/Sleepwalker_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/Sleepwalker/Sleepwalker_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Move",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "loot": {
     "chance": 0.4,
@@ -41,8 +145,9 @@
     {
       "type": "patrol",
       "speed": 0.7,
-      "distance": 4.0,
-      "pause": 0.0
+      "distance": 4,
+      "pause": 0,
+      "animBool": "IsMoving"
     },
     {
       "type": "lifetime",

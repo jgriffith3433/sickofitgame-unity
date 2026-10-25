@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "entity": "watcher",
+  "name": "Watcher",
+  "description": "a floating eye of the Rune Bridges: a big round pale grey stone eyeball with a single glowing cyan iris and pupil, a heavy carved stone eyelid, a ring of small floating rune stones orbiting it, a faint cyan glow",
+  "height": 0.55,
+  "poses": {
+    "stand": "floating in the air, the stone lid open, the cyan eye staring to the right",
+    "struck": "the stone lid slammed shut, cracked",
+    "dead": "cracking apart into stone pieces and fading cyan dust",
+    "shut": "the same eye with its heavy carved stone eyelid closed over it, only a thin cyan line of light showing"
+  },
+  "clips": {
+    "idle": {
+      "from": "shut",
+      "action": "floats with its heavy stone eyelid shut, bobbing, the rune stones orbiting slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "stares wide open, the cyan iris flaring bright again and again as bolts of cyan light shoot out of the pupil to the right",
+      "seconds": 2,
+      "loop": true
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

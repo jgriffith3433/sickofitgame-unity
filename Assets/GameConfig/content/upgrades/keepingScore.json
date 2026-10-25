@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "title": "Keeping Score",
   "icon": "K",
+  "iconArt": "Art/Icons/Icon_keepingScore.png#keepingScore_00",
   "description": "You remember every clean kill. Each pays 0.5 seconds more Déjà Vu.",
   "maxLevel": 3,
   "weight": 1,

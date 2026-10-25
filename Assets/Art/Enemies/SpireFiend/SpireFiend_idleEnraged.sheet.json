@@ -1,0 +1,178 @@
+{
+ "generatedBy": "Tools/Art/art.mjs",
+ "pixelsPerUnit": 100,
+ "pivot": [
+  0.345615671641791,
+  0.5081583969465652
+ ],
+ "sprites": [
+  {
+   "name": "idleEnraged_00",
+   "x": 0,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_01",
+   "x": 134,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_02",
+   "x": 268,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_03",
+   "x": 402,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_04",
+   "x": 536,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_05",
+   "x": 670,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_06",
+   "x": 804,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_07",
+   "x": 938,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_08",
+   "x": 1072,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_09",
+   "x": 1206,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_10",
+   "x": 1340,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_11",
+   "x": 1474,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_12",
+   "x": 1608,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_13",
+   "x": 1742,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_14",
+   "x": 1876,
+   "y": 262,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_15",
+   "x": 0,
+   "y": 0,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_16",
+   "x": 134,
+   "y": 0,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_17",
+   "x": 268,
+   "y": 0,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_18",
+   "x": 402,
+   "y": 0,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_19",
+   "x": 536,
+   "y": 0,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_20",
+   "x": 670,
+   "y": 0,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_21",
+   "x": 804,
+   "y": 0,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_22",
+   "x": 938,
+   "y": 0,
+   "w": 134,
+   "h": 262
+  },
+  {
+   "name": "idleEnraged_23",
+   "x": 1072,
+   "y": 0,
+   "w": 134,
+   "h": 262
+  }
+ ]
+}

@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "title": "Sour Grapes",
   "icon": "S",
+  "iconArt": "Art/Icons/Icon_sourGrapes.png#sourGrapes_00",
   "description": "You didn't want to win that anyway. 10% of volleys crit.",
   "maxLevel": 3,
   "weight": 1,

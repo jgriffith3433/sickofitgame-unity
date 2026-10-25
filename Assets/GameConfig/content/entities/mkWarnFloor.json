@@ -4,7 +4,21 @@
   "visual": {
     "color": "#FFB060",
     "placeholderColor": "#FFB060",
-    "scale": 0.6
+    "scale": 0.249,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Charge",
+          "spriteSheet": "Art/Effects/Warn/Warn_glow.png",
+          "fps": 16,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Charge"
+    }
   },
   "abilities": [
     {

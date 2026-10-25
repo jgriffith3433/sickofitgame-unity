@@ -3,32 +3,72 @@
   "team": "Neutral",
   "health": 0,
   "shootable": false,
-  "tags": [
-    "sparedWhelp"
-  ],
+  "tags": ["sparedWhelp"],
   "body": {
     "radius": 0.3,
     "solid": false,
-    "gravity": 0.0
+    "gravity": 0
   },
   "visual": {
     "scale": 0.19,
-    "color": "#FF9A7A",
     "hurtFlash": false,
     "deathPop": false,
     "animator": {
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
       "states": [
         {
           "stateName": "Idle",
-          "spriteSheet": "Images/Demon1.png",
-          "fps": 8,
-          "loop": true
+          "spriteSheet": "Art/Enemies/SparedWhelp/SparedWhelp_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/SparedWhelp/SparedWhelp_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/SparedWhelp/SparedWhelp_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
         }
       ],
-      "transitions": [],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
       "defaultStateName": "Idle"
-    }
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": false
@@ -37,14 +77,11 @@
     {
       "type": "hover",
       "speed": 0.4,
-      "offset": [
-        0,
-        0
-      ],
+      "offset": [0, 0],
       "aroundSpawn": true,
       "keepSide": false,
       "bobHeight": 0.06,
-      "bobSpeed": 9.0
+      "bobSpeed": 9
     }
   ]
 }

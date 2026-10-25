@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "title": "Holding On",
   "icon": "H",
+  "iconArt": "Art/Icons/Icon_holdingOn.png#holdingOn_00",
   "description": "A hit that would end you leaves you on one heart instead. Once a floor.",
   "maxLevel": 2,
   "weight": 1,

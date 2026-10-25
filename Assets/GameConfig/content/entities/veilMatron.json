@@ -11,28 +11,175 @@
   ],
   "extends": "veilDemon",
   "health": 8,
-  "tags": [
-    "elite",
-    "veilDemon",
-    "veilMatron"
-  ],
+  "tags": ["elite", "veilDemon", "veilMatron"],
   "visual": {
     "scale": 0.325,
-    "color": "#A890E0",
-    "fxColor": "#C8A8FF"
+    "fxColor": "#C8A8FF",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsMoving",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "IsAttacking",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/VeilMatron/VeilMatron_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Move",
+          "spriteSheet": "Art/Enemies/VeilMatron/VeilMatron_move.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/VeilMatron/VeilMatron_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 11,
+              "functionName": "FireProjectile"
+            }
+          ]
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/VeilMatron/VeilMatron_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/VeilMatron/VeilMatron_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Move",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": true,
-    "color": [
-      1.0,
-      0.82,
-      0.3,
-      1.0
-    ],
+    "color": [1, 0.82, 0.3, 1],
     "width": 0.6
   },
   "loot": {
-    "chance": 1.0,
+    "chance": 1,
     "count": 2,
     "value": 1
   },
@@ -51,14 +198,15 @@
       "type": "patrol",
       "speed": 0.5,
       "distance": 2.4,
-      "pause": 1.0
+      "pause": 1,
+      "animBool": "IsMoving"
     },
     {
       "type": "frontShield",
       "arc": 120,
       "blockSound": "chain_cut",
       "color": "#B08AFF",
-      "leak": 0.0
+      "leak": 0
     },
     {
       "type": "teleport",
@@ -76,18 +224,17 @@
       "projectile": "veilEmber",
       "speed": 3.2,
       "aim": "Facing",
-      "muzzle": [
-        0.3,
-        0.1
-      ],
+      "muzzle": [0.3, 0.1],
       "interval": 2.8,
-      "initialDelay": 2.0,
-      "range": 8.0,
-      "damage": 1
+      "initialDelay": 2,
+      "range": 8,
+      "damage": 1,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
     },
     {
       "type": "aura",
-      "radius": 1.0,
+      "radius": 1,
       "damagePerTick": 1,
       "interval": 1.5
     }

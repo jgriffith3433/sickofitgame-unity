@@ -9,10 +9,24 @@
   },
   "visual": {
     "scale": 0.2,
-    "color": "#D2551E",
     "sortingOrder": 4,
     "hurtFlash": false,
-    "fxColor": "#FF6A1F"
+    "fxColor": "#FF6A1F",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/MagmaBoulder/MagmaBoulder_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "abilities": [
     {

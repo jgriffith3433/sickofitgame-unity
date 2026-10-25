@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "title": "Side Eye",
   "icon": "I",
+  "iconArt": "Art/Icons/Icon_sideEye.png#sideEye_00",
   "description": "You saw it coming. 10% of hits slip off.",
   "maxLevel": 3,
   "weight": 1,

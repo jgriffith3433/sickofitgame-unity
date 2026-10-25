@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "title": "Bad Blood",
   "icon": "B",
+  "iconArt": "Art/Icons/Icon_badBlood.png#badBlood_00",
   "description": "Every kill leaves a taste. 8% of the time it's a heart.",
   "maxLevel": 3,
   "weight": 1,

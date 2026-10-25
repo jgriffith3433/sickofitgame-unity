@@ -11,13 +11,102 @@
   ],
   "extends": "imp",
   "health": 4,
-  "tags": [
-    "imp",
-    "seamImp"
-  ],
+  "tags": ["imp", "seamImp"],
   "visual": {
-    "color": "#6FE0C8",
-    "fxColor": "#6FE0C8"
+    "fxColor": "#6FE0C8",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsAttacking",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/SeamImp/SeamImp_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/SeamImp/SeamImp_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 13,
+              "functionName": "FireProjectile"
+            }
+          ]
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/SeamImp/SeamImp_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/SeamImp/SeamImp_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "drops": [],
   "abilities": [
@@ -33,8 +122,8 @@
       "to": "NearPlayer",
       "distance": 2.4,
       "behind": true,
-      "interval": 4.0,
-      "initialDelay": 1.0,
+      "interval": 4,
+      "initialDelay": 1,
       "telegraph": 0.7,
       "marker": "seamMark",
       "flashColor": "#6FE0C8",
@@ -45,12 +134,9 @@
       "projectile": "seamEmber",
       "speed": 4.2,
       "aim": "Player",
-      "muzzle": [
-        0.09,
-        0.09375
-      ],
-      "interval": 4.0,
-      "initialDelay": 2.0,
+      "muzzle": [0.09, 0.09375],
+      "interval": 4,
+      "initialDelay": 2,
       "burst": 2,
       "burstInterval": 0.18,
       "damage": 1,
