@@ -16,8 +16,8 @@
 - **PickupConfig** — Defines Diamond prefab (sprite, physics, pool, bob animation, lifetime), **spriteSheet**, **animationConfig**, **SFX** (`collectSound`, `spawnSound`)
 - **PlayerConfig** — movement, combat, rotation, drop-through, shadow, input, invincibility, rewind, **`animationConfig`**, **SFX** (`hurtSounds[]`, `deathSounds[]`, `jumpSound`, `fireSound`, `landSound`, `pitchVariation`)
 - **EnemyTypeConfig** — all base stats, physics, combat, invincibility, health bar, behavior, `firePointOffset`, **`animationConfig`** (auto-populated by generator if null)
-- **LevelConfig** — **`backgroundLayers` list** (BackgroundLayerConfig: animated SpriteFramesData, static Sprite, or solid Color with parallax/sorting/scale), **level audio** (`ambientSound`, `ambientVolume`, `levelCompleteSound`)
-- **BackgroundLayerConfig** — New strongly-typed config for level backgrounds (replaces legacy `backgrounds` list). Supports animated frames, static sprites, solid colors, parallax, tiling.
+- **LevelConfig** — **`backgroundLayers` list** (BackgroundLayerConfig: animated SpriteFramesData, static Sprite, or solid Color with parallax/sorting/scale; a stage in a Circle without its own layers uses the Circle's), **level audio** (`ambientSound`, `ambientVolume`, `levelCompleteSound`)
+- **BackgroundLayerConfig** — New strongly-typed config for level backgrounds (replaces legacy `backgrounds` list). Supports animated frames, static sprites, solid colors, parallax (`ParallaxController`), tiling.
 - **AnimationConfig system** — 6 serializable types for full declarative animation setup
 - **No bypass fields** — Config is the ONLY source of truth. Generators always generate.
 
@@ -72,7 +72,8 @@
 - **BackgroundLayerConfig** — Supports animated (SpriteFramesData), static sprite, or solid color
 - **LevelRuntime.SetupBackgrounds()** — Reads `config.backgroundLayers` at startup, creates all background GOs
 - **Camera-relative positioning** — Backgrounds auto-position relative to camera, scale to viewport
-- **Parallax-ready** — `parallaxFactor` field on each layer (parallax movement not yet implemented)
+- **Parallax** — `parallaxFactor` (1 = glued to the screen, the default; 0 = fixed in the world; between = far, drifting the other way) is applied by `ParallaxController` (`Gameplay/Presentation`), which `LevelRuntime.SetupBackgrounds` hands every layer's pivot to; `tileHorizontally` / `tileVertically` wrap static sprites around the camera, and a layer that follows less than 1 on a moving camera is held to the screen by its own edge
+- **Circle air** — `CircleDef.ambience` (`CircleAmbience`): depth layers at their own parallax, weather (ash, sparks, cinders, runes, grit) and far-off life (flyers, walkers, chases), pooled and capped; `AGENTS.md` and `Docs/GameplayCookbook.md` "Weather and life"
 
 ### Analytics
 - **AnalyticsManager** — Now fully scalable using generic `trackEvent(string)` JS interop
@@ -105,7 +106,6 @@
 - **Then run `SickOfIt → Generate Project`**
 
 ### Known Deferrals
-- **Parallax movement** — `parallaxFactor` field exists on BackgroundLayerConfig but no ParallaxController component yet
 - **Enemy AI state** (nextStateChangeTime, lastAttackTime) not rewind-aware — low gameplay impact
 - **GlobalTapJump** FindObjectsByType — lives on manual MobileController prefab
 - **MainMenuManager** FindObjectOfType — menu scenes are manual
