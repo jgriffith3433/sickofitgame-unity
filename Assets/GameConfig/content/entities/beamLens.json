@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 0,
+  "shootable": false,
+  "activationRange": 0,
+  "tags": ["beamLens"],
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "visual": {
+    "scale": 0.3,
+    "color": "#FF6A4A",
+    "fxColor": "#FF6A4A",
+    "sortingOrder": 5,
+    "hurtFlash": false,
+    "animator": {
+      "states": [
+        {
+          "stateName": "Glow",
+          "spriteSheet": "Images/Fireball.png",
+          "fps": 12,
+          "loop": true
+        }
+      ],
+      "defaultStateName": "Glow"
+    }
+  },
+  "abilities": [
+    {
+      "type": "laserSweep",
+      "damage": 1,
+      "interval": 5,
+      "initialDelay": 1.5,
+      "warning": 1.2,
+      "sweepTime": 1.6,
+      "sweepDegrees": 80,
+      "aimAtPlayer": true,
+      "length": 14,
+      "width": 0.5,
+      "warningSound": "overlord_beam_charge",
+      "beamSound": "overlord_beam_strike"
+    }
+  ]
+}

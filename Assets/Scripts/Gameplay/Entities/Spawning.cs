@@ -53,7 +53,7 @@ namespace SickOfIt.Gameplay
         static readonly List<Shot> Shots = new List<Shot>();
         static readonly SinglePattern Single = new SinglePattern();
 
-        public static Vector2 AimDirection(GameplayWorld world, Entity owner, Aim aim, Vector2 direction, Vector2 origin, IRandomSource random)
+        public static Vector2 AimDirection(GameplayWorld world, Entity owner, Aim aim, Vector2 direction, Vector2 origin, IRandomSource random, float speed = 0f)
         {
             switch (aim)
             {
@@ -63,6 +63,12 @@ namespace SickOfIt.Gameplay
                     if (world.Player != null && to.sqrMagnitude > 0.0001f)
                         return to.normalized;
                     return new Vector2(owner != null ? owner.Facing : 1f, 0f);
+                }
+                case Aim.Predictive:
+                {
+                    if (world.Player == null)
+                        return new Vector2(owner != null ? owner.Facing : 1f, 0f);
+                    return LeadDirection(world.PlayerAimPoint, world.PlayerVelocity, origin, speed);
                 }
                 case Aim.Facing: return new Vector2(owner != null ? owner.Facing : 1f, 0f);
                 case Aim.Direction: return direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
@@ -78,13 +84,54 @@ namespace SickOfIt.Gameplay
             }
         }
 
+        /// <summary>
+        /// The direction that meets a target moving at a constant velocity: solves |target + velocity * t - origin| = speed * t
+        /// for the smallest positive t. Without a solution (the target outruns the shot, or the shot has no speed) it aims
+        /// straight at the target.
+        /// </summary>
+        public static Vector2 LeadDirection(Vector2 target, Vector2 velocity, Vector2 origin, float speed)
+        {
+            Vector2 to = target - origin;
+            Vector2 straight = to.sqrMagnitude > 0.0001f ? to.normalized : Vector2.right;
+            if (speed <= 0.0001f)
+                return straight;
+            float a = velocity.sqrMagnitude - speed * speed;
+            float b = 2f * Vector2.Dot(to, velocity);
+            float c = to.sqrMagnitude;
+            float t;
+            if (Mathf.Abs(a) < 0.0001f)
+            {
+                if (Mathf.Abs(b) < 0.0001f)
+                    return straight;
+                t = -c / b;
+            }
+            else
+            {
+                float disc = b * b - 4f * a * c;
+                if (disc < 0f)
+                    return straight;
+                float root = Mathf.Sqrt(disc);
+                float t1 = (-b - root) / (2f * a);
+                float t2 = (-b + root) / (2f * a);
+                t = t1 > 0f && t2 > 0f ? Mathf.Min(t1, t2) : Mathf.Max(t1, t2);
+            }
+            if (t <= 0f || t > MaxLeadSeconds)
+                return straight;
+            Vector2 meet = to + velocity * t;
+            return meet.sqrMagnitude > 0.0001f ? meet.normalized : straight;
+        }
+
+        /// <summary>A shot never leads further ahead than this many seconds of flight.</summary>
+        public const float MaxLeadSeconds = 2f;
+
         public static void Fire(GameplayWorld world, Entity owner, string projectile, Pattern pattern, Aim aim, Vector2 direction,
             Vector2 origin, float speed, int damage, int volleyIndex, IRandomSource random)
         {
+            float speedMultiplier = owner != null ? owner.Stat(Stat.ProjectileSpeed, 1f) : 1f;
             var input = new EmitInput
             {
                 Origin = origin,
-                Aim = AimDirection(world, owner, aim, direction, origin, random),
+                Aim = AimDirection(world, owner, aim, direction, origin, random, speed * speedMultiplier),
                 VolleyIndex = volleyIndex,
                 View = world.View,
                 Random = random,
@@ -93,7 +140,6 @@ namespace SickOfIt.Gameplay
             Shots.Clear();
             (pattern ?? Single).Emit(input, Shots);
 
-            float speedMultiplier = owner != null ? owner.Stat(Stat.ProjectileSpeed, 1f) : 1f;
             float damageMultiplier = owner != null ? owner.Stat(Stat.Damage, 1f) : 1f;
             // Copy: spawning can run actions that fire other volleys.
             var shots = Shots.ToArray();

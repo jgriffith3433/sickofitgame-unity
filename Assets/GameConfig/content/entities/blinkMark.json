@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "extends": "fmWarnWhip",
+  "visual": {
+    "scale": 0.2,
+    "color": "#C58BFF"
+  },
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 0.7
+    }
+  ],
+  "onDeath": []
+}

@@ -248,6 +248,11 @@ namespace SickOfIt.Playtest
         public const int OneWayLevel = 2;
         const float OneWaySeconds = 90f;
 
+        /// <summary>The mechanics scenario: Hell's tricks on a test bench (content/scenes) played on this level's stage.</summary>
+        public const string MechanicsScene = "mechanicsTest";
+        public const int MechanicsLevel = 1;
+        const float MechanicsSeconds = 150f;
+
         /// <summary>The level whose level-N scenario also watches the portal scene at its end (Level1.json, phases portalBeam to portalClose) and Video2 after it.</summary>
         public const int PortalLevel = 1;
 
@@ -634,6 +639,12 @@ namespace SickOfIt.Playtest
                 "from below and lands on top. Then a run where the way on is down: he holds S on the shelf and drops through it onto the ledge under " +
                 "it, then holds the gamepad's left stick down on a sinking stone and drops through that; on the carved landing (solid ground) he holds " +
                 "down and stays on it. Each beat is a check event, every pass a one-way event", OneWaySeconds, "level"));
+            list.Add(new PlaytestScenario("mechanics", $"Hell's tricks on a test bench: the scene \"{MechanicsScene}\" on level {MechanicsLevel}'s stage (setup shortcut), " +
+                "played by the bot through real input, five stations one after another. A ricochet imp's ember bounces off the ground (bounce events with the bounces left); " +
+                "a blink imp shows its spot (a mark and a flash) for 0.5+ s and then appears there (teleport events); a bulwark imp with a front shield blocks shots " +
+                "from the front (shieldBlock events, no damage) and takes them from behind until it dies; a lead imp's shots go where the moving hero will be " +
+                "(checked against the intercept maths); the Overlord's lens shows a thin warning line, then sweeps a beam that hurts the hero where it crosses him. " +
+                "Each beat is a check event", MechanicsSeconds, "level"));
             list.Add(new PlaytestScenario("video-" + OverlayVideo, $"Video {OverlayVideo}, started directly (setup shortcut) and watched instead of skipped: " +
                 $"the overlay \"{OverlayName}\" (the hero) appears as the camera goes through the burning door, spins 3+ turns and shrinks into the tunnel's " +
                 "centre and is gone before the lava river (~14.5 s); holding R mid-spin plays it backward; then Escape skips the video. Each beat is checked", 75, "video"));
@@ -912,6 +923,11 @@ namespace SickOfIt.Playtest
             {
                 session.Prepare(OneWayLevel, true);
                 yield return session.OneWayRun();
+            }
+            else if (id == "mechanics")
+            {
+                session.Prepare(MechanicsLevel, true);
+                yield return session.MechanicsRun();
             }
             else if (id == MagmaKing.Scenario)
                 yield return session.WardenRun(MagmaKing, false);
@@ -1205,6 +1221,14 @@ namespace SickOfIt.Playtest
                     case "signal" when scene != null:
                         Run.Event("signal", $"{level}: {e.Subject}");
                         scene.Signals.Enqueue(e.Subject);
+                        break;
+                    case "bounce" when mech != null:
+                    case "shieldBlock" when mech != null:
+                    case "laser" when mech != null:
+                    case "teleport" when mech != null:
+                    case "damage" when mech != null:
+                    case "signal" when mech != null:
+                        MechanicsTelemetry(log, e);
                         break;
                     case "signal" when portal != null && e.Subject.StartsWith("portal:", StringComparison.Ordinal):
                         Run.Event("signal", $"{level}: {e.Subject}");
@@ -5204,6 +5228,245 @@ namespace SickOfIt.Playtest
                                                           $"({PlaytestBot.LowRunStick.x:0.0}, {PlaytestBot.LowRunStick.y:0.0}) and he never dropped");
                     bot.lowRun = false;
                 }
+            }
+
+            // ─── mechanics: Hell's tricks on a test bench ───────────────
+
+            /// <summary>What the mechanics scenario has seen so far.</summary>
+            sealed class MechWatch
+            {
+                public readonly HashSet<string> Passed = new HashSet<string>();
+                public int Failed;
+                public bool Done;
+                public int Bounces;
+                public int Blocked;
+                public int HurtFromBehind;
+                public int LaserHits;
+                public int BeamCrossings;
+                public bool CrossingThisSweep;
+                public float TelegraphAt = -1f;
+                public float WarningAt = -1f;
+                public int Blinks;
+                public int LeadShots;
+                public int LeadMoving;
+                public int LeadGood;
+                public readonly HashSet<int> LeadSeen = new HashSet<int>();
+            }
+
+            MechWatch mech;
+
+            /// <summary>What the mechanics scenario must see, in the order a good run shows them.</summary>
+            static readonly string[] MechBeats =
+            {
+                "bounce", "teleport telegraph", "teleport blink", "teleport moved", "shield blocks the front", "shield hurt from behind",
+                "predictive aim", "laser warning", "laser sweep", "laser hits the hero", "stations done",
+            };
+
+            public IEnumerator MechanicsRun()
+            {
+                var content = SickOfIt.Gameplay.GameContent.Current;
+                if (content == null || !content.Scenes.ContainsKey(MechanicsScene))
+                {
+                    Run.Problem(PlaytestSeverity.Bug, $"mechanics: there is no scene \"{MechanicsScene}\" in content/scenes");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+                mech = new MechWatch();
+                Run.Event("shortcut", $"load level {MechanicsLevel}'s stage with the test bench {MechanicsScene} directly");
+                LevelRuntime.PendingScene = MechanicsScene;
+                var load = LoadLevel(MechanicsLevel);
+                if (load != null)
+                    yield return load;
+                yield return PlayLevel(MechanicsLevel, MechanicsSeconds, MechanicsDuring, waitOutDeath: true, until: () => mech.Done);
+                LevelRuntime.PendingScene = null;
+                if (Run.Done)
+                {
+                    mech = null;
+                    yield break;
+                }
+
+                // The lead imp's shots are judged as a group: the hero has to be moving for a lead to show.
+                if (mech.LeadMoving == 0)
+                    Run.Problem(PlaytestSeverity.Polish, $"mechanics predictive aim: the hero never moved while the lead imp fired ({mech.LeadShots} shots), so a lead could not show");
+                else
+                    MechCheck("predictive aim", mech.LeadGood > 0, mech.LeadGood > 0
+                        ? $"{mech.LeadGood} of {mech.LeadMoving} shots at the moving hero went to where he would be"
+                        : $"none of {mech.LeadMoving} shots at the moving hero went to where he would be");
+                if (mech.LaserHits == 0 && mech.BeamCrossings > 0)
+                    MechCheck("laser hits the hero", false, $"the beam crossed the hero {mech.BeamCrossings} times and never hurt him");
+                else if (mech.LaserHits == 0)
+                    Run.Problem(PlaytestSeverity.Polish, "mechanics laser: the beam never crossed the hero (he was out of its way), so its hitbox was not tried");
+                MechCheck("stations done", mech.Done, mech.Done ? "all five stations ran" : $"the bench did not finish ({lastOutcome})");
+
+                int passed = 0;
+                foreach (var beat in MechBeats)
+                {
+                    if (mech.Passed.Contains(beat))
+                        passed++;
+                    else
+                        Run.Problem(PlaytestSeverity.Bug, $"mechanics: never saw \"{beat}\" (level {lastOutcome})");
+                }
+                Run.Metric("mechanics.bounces", mech.Bounces);
+                Run.Metric("mechanics.shieldBlocks", mech.Blocked);
+                Run.Metric("mechanics.hitsFromBehind", mech.HurtFromBehind);
+                Run.Metric("mechanics.blinks", mech.Blinks);
+                Run.Metric("mechanics.laserHits", mech.LaserHits);
+                Run.Metric("mechanics.passed", passed);
+                Run.Metric("mechanics.failed", mech.Failed);
+                Run.Progress(1f);
+                bool ok = passed == MechBeats.Length && mech.Failed == 0;
+                mech = null;
+                End(ok ? PlaytestOutcome.Won : lastOutcome == "softlock" ? PlaytestOutcome.Stuck : PlaytestOutcome.Done);
+            }
+
+            void MechCheck(string beat, bool ok, string detail)
+            {
+                if (mech == null || mech.Passed.Contains(beat))
+                    return;
+                if (ok)
+                {
+                    mech.Passed.Add(beat);
+                    Run.Event("check", $"mechanics {beat}: ok ({detail})");
+                }
+                else
+                {
+                    mech.Failed++;
+                    Run.Problem(PlaytestSeverity.Bug, $"mechanics {beat}: {detail}");
+                }
+            }
+
+            static readonly Regex MechBlink = new Regex(@"blink (-?[\d.]+),(-?[\d.]+) -> (-?[\d.]+),(-?[\d.]+)");
+
+            /// <summary>The mechanics' own telemetry: bounces, blocks, blinks, laser phases, and the damage they let through.</summary>
+            void MechanicsTelemetry(GameplayTelemetry log, GameplayTelemetry.Event e)
+            {
+                string level = "level " + log.World.LevelNumber;
+                switch (e.Kind)
+                {
+                    case "bounce":
+                        mech.Bounces++;
+                        Run.Event("bounce", $"{level} at {e.Time:0.0} s: {e.Subject} bounced off a surface (normal {e.Detail}), {e.Value} bounces left");
+                        MechCheck("bounce", true, $"{e.Subject} bounced off a surface with {e.Value} bounces left");
+                        break;
+                    case "shieldBlock":
+                        mech.Blocked++;
+                        Run.Event("shield", $"{level} at {e.Time:0.0} s: {e.Subject}'s front shield blocked {e.Value} damage ({e.Detail})");
+                        MechCheck("shield blocks the front", true, $"a hit on {e.Subject}'s front did no damage ({e.Detail})");
+                        break;
+                    case "damage" when e.Subject == "bulwarkImp":
+                        mech.HurtFromBehind++;
+                        Run.Event("shield", $"{level} at {e.Time:0.0} s: {e.Subject} took {e.Value} damage (a hit its shield does not cover)");
+                        MechCheck("shield hurt from behind", mech.Blocked > 0, mech.Blocked > 0
+                            ? $"after {mech.Blocked} blocked hits, a hit from behind did {e.Value} damage"
+                            : "it took damage before its shield ever blocked a hit");
+                        break;
+                    case "damage" when e.Subject == "player" && e.Detail == "beamLens":
+                        mech.LaserHits++;
+                        Run.Event("laser", $"{level} at {e.Time:0.0} s: the beam hurt the hero ({e.Value})");
+                        MechCheck("laser hits the hero", true, "the sweeping beam crossed the hero and hurt him");
+                        break;
+                    case "teleport":
+                        if (e.Detail.StartsWith("telegraph", StringComparison.Ordinal))
+                        {
+                            mech.TelegraphAt = e.Time;
+                            Run.Event("teleport", $"{level} at {e.Time:0.0} s: {e.Subject} shows its spot ({e.Detail})");
+                            MechCheck("teleport telegraph", true, $"{e.Subject} marked its spot before blinking");
+                        }
+                        else
+                        {
+                            mech.Blinks++;
+                            float gap = e.Time - mech.TelegraphAt;
+                            Run.Event("teleport", $"{level} at {e.Time:0.0} s: {e.Subject} blinked ({e.Detail}), {gap:0.00} s after the telegraph");
+                            MechCheck("teleport blink", mech.TelegraphAt >= 0f && gap >= 0.5f, $"{gap:0.00} s between the telegraph and the blink (needs 0.5+)");
+                            var m = MechBlink.Match(e.Detail ?? "");
+                            if (m.Success)
+                            {
+                                var c = System.Globalization.CultureInfo.InvariantCulture;
+                                var from = new Vector2(float.Parse(m.Groups[1].Value, c), float.Parse(m.Groups[2].Value, c));
+                                var to = new Vector2(float.Parse(m.Groups[3].Value, c), float.Parse(m.Groups[4].Value, c));
+                                MechCheck("teleport moved", Vector2.Distance(from, to) >= 1.5f, $"it jumped {Vector2.Distance(from, to):0.0} units");
+                            }
+                        }
+                        break;
+                    case "laser":
+                        if (e.Detail.StartsWith("warning", StringComparison.Ordinal))
+                        {
+                            mech.WarningAt = e.Time;
+                            mech.CrossingThisSweep = false;
+                            Run.Event("laser", $"{level} at {e.Time:0.0} s: the lens shows its warning line ({e.Detail})");
+                            MechCheck("laser warning", true, "a thin warning line came first");
+                        }
+                        else if (e.Detail.StartsWith("sweep", StringComparison.Ordinal))
+                        {
+                            float lead = e.Time - mech.WarningAt;
+                            Run.Event("laser", $"{level} at {e.Time:0.0} s: the beam sweeps ({e.Detail}), {lead:0.00} s after its warning");
+                            MechCheck("laser sweep", mech.WarningAt >= 0f && lead >= 0.8f, $"the beam fired {lead:0.00} s after the warning (needs 0.8+)");
+                        }
+                        else
+                            Run.Event("laser", $"{level} at {e.Time:0.0} s: the sweep ends");
+                        break;
+                    case "signal" when e.Subject.StartsWith("mech:", StringComparison.Ordinal):
+                        Run.Event("station", $"{level} at {e.Time:0.0} s: {e.Subject.Substring(5)}");
+                        if (e.Subject == "mech:done")
+                            mech.Done = true;
+                        break;
+                }
+            }
+
+            /// <summary>Every frame of the bench: the lead imp's shots against the intercept maths, and the beam against the hero.</summary>
+            IEnumerator MechanicsDuring(float now)
+            {
+                var world = GameplayWorld.Instance;
+                if (world == null || mech == null || world.Player == null)
+                    return null;
+                Vector2 heroVelocity = world.PlayerVelocity;
+                foreach (var e in world.Live)
+                {
+                    if (!e.IsAlive)
+                        continue;
+                    if (e.DefId == "beamLens")
+                    {
+                        var laser = e.FindAbility<SickOfIt.Gameplay.Content.LaserSweepAbility>();
+                        if (laser != null && laser.IsSweeping && !mech.CrossingThisSweep && laser.Crosses(world.Player))
+                        {
+                            mech.CrossingThisSweep = true;
+                            mech.BeamCrossings++;
+                            Run.Event("laser", $"the beam is on the hero at {now:0.0} s (hitbox crosses his collider)");
+                        }
+                    }
+                    else if (e.DefId == "projectileEnemy" && mech.LeadSeen.Add(e.Serial) && e.Body != null)
+                    {
+                        SickOfIt.Gameplay.Entity shooter = null;
+                        foreach (var other in world.Live)
+                        {
+                            if (other.IsAlive && other.DefId == "leadImp" && Vector2.Distance(other.Position, e.Position) < 1.5f)
+                            {
+                                shooter = other;
+                                break;
+                            }
+                        }
+                        Vector2 v = e.Body.linearVelocity;
+                        if (shooter == null || v.sqrMagnitude < 0.01f)
+                            continue;
+                        Vector2 target = world.PlayerAimPoint;
+                        Vector2 actual = v.normalized;
+                        Vector2 straight = (target - e.Position).normalized;
+                        Vector2 ideal = Emission.LeadDirection(target, heroVelocity, e.Position, v.magnitude);
+                        float leadAngle = Vector2.Angle(actual, straight);
+                        float offIdeal = Vector2.Angle(actual, ideal);
+                        mech.LeadShots++;
+                        bool moving = heroVelocity.magnitude > 0.5f;
+                        if (moving)
+                        {
+                            mech.LeadMoving++;
+                            if (leadAngle >= 1.5f && offIdeal <= 8f)
+                                mech.LeadGood++;
+                        }
+                        Run.Event("predictive", $"the lead imp fired at {now:0.0} s: hero speed {heroVelocity.magnitude:0.0}, " +
+                                                $"the shot leads {leadAngle:0.0} degrees off a straight aim and is {offIdeal:0.0} degrees off the intercept");
+                    }
+                }
+                return null;
             }
 
             // ─── climb: the floor toolkit on a test floor ───────────────

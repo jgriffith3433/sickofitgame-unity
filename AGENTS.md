@@ -104,6 +104,10 @@ Assets/GameConfig/
 - **Yooba** (`ui/yooba.json`, `YoobaPortrait`): the village slime's talking portrait (idle/talk/laugh/cough sheets, a shape
   placeholder until painted) and lines on the Shaft (his hello after Video3, one reaction per climb) and in the shop. Lines
   are audio.json voices `yooba` (hero replies `player`); which line plays is `moment` + `floor` (Docs/Story.md, "Yooba between floors").
+- **Hell's tricks** (Docs/Story.md, "Hell's tricks"): five JSON mechanics in `Gameplay/Content/Mechanics.cs` and `projectile`: `bounces`,
+  `teleport`, `frontShield` (Entity.Damage asks it; the hero's shots arrive through `IDirectionalDamageable` with the shot's place),
+  `laserSweep` (a segment tested against the hero's collider, no physics) and `Aim.Predictive`. Test enemies `ricochetImp`, `blinkImp`,
+  `bulwarkImp`, `beamLens`, `leadImp` on the `mechanicsTest` bench (cookbook "Bouncing shots, a blink, ...").
 - **Shortcuts** (Docs/Story.md, "Shortcuts"): a choice point in a stage (`offerShortcut`: keep climbing or the shortcut,
   its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
   stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the
@@ -387,6 +391,11 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   holding the gamepad's left stick down (its next foothold right under them), and holds down on the carved landing,
   which stays solid; `PlayerController.JumpedUpThrough`/`DroppedThrough`; `check` and `one-way` events; ~2 min; the
   move touch pulled down takes the same path but the bot has no touchscreen),
+  `mechanics` (Hell's tricks on the test bench `content/scenes/mechanicsTest.json`, Level 1's stage, setup shortcut: the bot fights five stations
+  in turn; a ricochet imp's ember bounces (`bounce` events), a blink imp marks its spot 0.5+ s before it appears there (`teleport`), a bulwark
+  imp's front shield blocks shots from the front (`shieldBlock`, no damage) and takes them from behind, a lead imp's shots are checked against the
+  intercept maths (`predictive`), the Overlord's lens shows a warning line and then sweeps a beam that hurts the hero where it crosses him
+  (`laser`); `check`, `station` events; ~3 min; Docs/GameplayCookbook.md "Bouncing shots, a blink, ..."),
   `aim-guide` (the aim guide: Level 1 loaded directly, every volley's guide lines on the frame it fired against the shots'
   flight directions read back from the projectiles (`aim` events), the stick held (one short line under the gameplay), held
   through a rewind and the pause (hidden), the mouse hovering and clicking; then the same with 2 levels of `spreadShot`

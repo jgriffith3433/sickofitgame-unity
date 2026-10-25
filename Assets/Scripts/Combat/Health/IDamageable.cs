@@ -12,4 +12,13 @@ namespace SickOfIt.Combat.Health
         bool IsAlive { get; }
         void TakeDamage(int damage);
     }
+
+    /// <summary>
+    /// Something that cares which side a hit comes from (a front shield). DamageDealer uses it when the target has it,
+    /// passing where the shot is.
+    /// </summary>
+    public interface IDirectionalDamageable : IDamageable
+    {
+        void TakeDamageFrom(int damage, UnityEngine.Vector2 point);
+    }
 }

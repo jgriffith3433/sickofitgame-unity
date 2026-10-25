@@ -1,3 +1,3 @@
-- lesson: audio.dialogue stems bleed — each stem carries the neighbouring lines tails (Nope inside Yooba, Yooba inside the announcer); for a locked cut make each line with audio.voice and check it with ffmpeg silencedetect (one speech burst).
-- lesson: video.keyframes has no portrait — the tool enum allows only 16:9, 9:16 (Portrait) or 1:1, and the workflow rejects "9:16 (Portrait)"; use 1:1 and crop to 9:16 in video.compose.
-- lesson: video.interpolate on a 4x upscaled 5 s clip ran ComfyUI out of memory ($0.52 lost); compose the 2 s you need at 1080x1920 first, then interpolate.
+- convention: Hell's tricks — new geometry abilities live in Gameplay/Content/Mechanics.cs; their drawing is a MechanicView child that reads saved state in LateUpdate, so rewind redraws it for free.
+- lesson: no compiler on the agent server — Unity/dotnet are absent, so C# changes ship uncompiled; keep them plain and name locals away from contextual keywords like `from`.
+- convention: player shots reach entities via DamageDealer -> IDirectionalDamageable.TakeDamageFrom (no source entity), so anything direction-aware (shields) must use that, not Damage(source).

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "extends": "imp",
+  "health": 4,
+  "moveSpeed": 1.0,
+  "tags": ["imp", "bulwarkImp"],
+  "visual": {
+    "scale": 0.33,
+    "color": "#9FB4C4",
+    "fxColor": "#8FB8D8"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 1.0,
+      "distance": 2.4,
+      "pause": 0.9
+    },
+    {
+      "type": "frontShield",
+      "arc": 90,
+      "blockSound": "chain_cut",
+      "color": "#8FD0FF"
+    }
+  ]
+}

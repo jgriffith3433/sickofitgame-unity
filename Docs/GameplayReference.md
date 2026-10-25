@@ -212,7 +212,7 @@ A state of the entity's state machine.
 
 A piece of entity behavior: movement, attacks, reactions. Combine several on one entity.
 
-[`animParam`](#animparam) · [`aura`](#aura) · [`charge`](#charge) · [`chase`](#chase) · [`collect`](#collect) · [`contactDamage`](#contactdamage) · [`explodeNear`](#explodenear) · [`faceTarget`](#facetarget) · [`hover`](#hover) · [`lifetime`](#lifetime) · [`melee`](#melee) · [`move`](#move) · [`onAnimationEvent`](#onanimationevent) · [`patrol`](#patrol) · [`projectile`](#projectile) · [`react`](#react) · [`shoot`](#shoot) · [`spawner`](#spawner) · [`spin`](#spin) · [`wander`](#wander)
+[`animParam`](#animparam) · [`aura`](#aura) · [`charge`](#charge) · [`chase`](#chase) · [`collect`](#collect) · [`contactDamage`](#contactdamage) · [`explodeNear`](#explodenear) · [`faceTarget`](#facetarget) · [`frontShield`](#frontshield) · [`hover`](#hover) · [`laserSweep`](#lasersweep) · [`lifetime`](#lifetime) · [`melee`](#melee) · [`move`](#move) · [`onAnimationEvent`](#onanimationevent) · [`patrol`](#patrol) · [`projectile`](#projectile) · [`react`](#react) · [`shoot`](#shoot) · [`spawner`](#spawner) · [`spin`](#spin) · [`teleport`](#teleport) · [`wander`](#wander)
 
 ### animParam
 
@@ -310,6 +310,19 @@ Turns to face the player.
 
 No fields.
 
+### frontShield
+
+A shield on the side it faces: damage that comes from the front is blocked (the shot is spent, a spark and the 'blockSound' say so); damage from behind counts. Which way is front is the entity's facing, so make it face with 'faceTarget', 'patrol' or 'move'. 'arc' is how wide the shield is.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `arc` | number | `90.0` | Half the shield's width in degrees, around the way the entity faces. 90 = the whole front half; 45 = a narrow shield that a shot from above or below gets past. |
+| `leak` | number | `0.0` | Share of the damage that gets through a block, 0 to 1. 0 = a clean block. |
+| `blockSound` | string | `""` | Sound id (audio.json) played on a block; empty = none. (sound id) |
+| `show` | true/false | `true` | Draw the shield as a bar in front of the body. |
+| `color` | color | `[0.55,0.85,1.0,0.85]` |  |
+| `height` | number | `0.0` | Height of the drawn bar in world units; 0 = twice the body's radius. |
+
 ### hover
 
 Flies toward a point 'offset' from the player (or from where it spawned), bobbing up and down. Good for flying enemies and bosses.
@@ -322,6 +335,31 @@ Flies toward a point 'offset' from the player (or from where it spawned), bobbin
 | `keepSide` | true/false | `true` | Mirror offset.x to stay on the side of the player it is already on. |
 | `bobHeight` | number | `0.15` |  |
 | `bobSpeed` | number | `2.0` |  |
+
+### laserSweep
+
+A laser that sweeps. Every 'interval' seconds it shows a thin warning line where the beam will start, for 'warning' seconds, then fires a beam that turns 'sweepDegrees' over 'sweepTime' seconds. The beam is a real hitbox from the muzzle to its end (ground stops it) and hurts the player on contact. By default the sweep is centred on where the player stood when the warning began, so moving is the answer.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `damage` | integer | `1` |  |
+| `muzzle` | [x, y] | `[0.0,0.0]` | Where the beam starts, relative to the entity in world units; x is mirrored when facing left. |
+| `interval` | number | `6.0` |  |
+| `initialDelay` | number | `2.0` | Seconds before the first laser, from spawning or from entering the state that has this ability. |
+| `warning` | number | `1.2` | Seconds the thin warning line is shown before the beam fires. |
+| `sweepTime` | number | `1.6` | Seconds the beam takes to sweep. |
+| `sweepDegrees` | number | `90.0` | Degrees the beam turns. Negative = the other way round (counter-clockwise is positive). |
+| `aimAtPlayer` | true/false | `true` | The warning line (and the beam's first position) aim at the player and the sweep is centred on that. False: the sweep starts at 'startAngle'. |
+| `startAngle` | number | `0.0` | Degrees, 0 = right, 90 = up. Used when 'aimAtPlayer' is off. |
+| `length` | number | `14.0` |  |
+| `width` | number | `0.5` | Beam width in world units. |
+| `hitInterval` | number | `0.5` | Seconds between two hits on the player in one sweep. |
+| `range` | number | `0.0` | Only start a laser when the player is closer than this (0 = any distance). |
+| `holdPosition` | true/false | `true` | Stand still while the laser warns and sweeps. |
+| `warningColor` | color | `[1.0,0.35,0.25,0.55]` |  |
+| `beamColor` | color | `[1.0,0.25,0.15,0.95]` |  |
+| `warningSound` | string | `""` | Sound id (audio.json) played when the warning starts; empty = none. (sound id) |
+| `beamSound` | string | `""` | Sound id (audio.json) played when the beam fires; empty = none. (sound id) |
 
 ### lifetime
 
@@ -387,7 +425,10 @@ Makes it a projectile: hurts the first hostile thing it touches, then disappears
 |---|---|---|---|
 | `damage` | integer | `1` |  |
 | `pierce` | integer | `0` | Extra targets it can pass through. |
-| `dieOnSolid` | true/false | `false` | Disappear when hitting ground, walls, or platforms. |
+| `dieOnSolid` | true/false | `false` | Disappear when hitting ground, walls, or platforms (after its last bounce, if it has any). |
+| `bounces` | integer | `0` | Bounces off ground, walls and platforms this many times, mirroring its velocity about the surface, before 'dieOnSolid' applies. 0 = none. Needs a body that moves by velocity (not Dynamic). |
+| `bounceKeep` | number | `1.0` | Speed kept after each bounce (1 = all of it). |
+| `bounceSound` | string | `""` | Sound id (audio.json) played at each bounce; empty = none. (sound id) |
 | `effect` | string | `""` | (status effect id) |
 | `knockback` | number | `0.0` |  |
 | `hitSound` | asset (AudioClip) | — |  |
@@ -443,6 +484,25 @@ Rotates continuously (cosmetic).
 | Field | Type | Default | Notes |
 |---|---|---|---|
 | `degreesPerSecond` | number | `180.0` |  |
+
+### teleport
+
+Blinks to another spot. Every 'interval' seconds it picks the spot, shows it for 'telegraph' seconds (the body flashes and the optional 'marker' entity appears there), then vanishes from where it was and appears at the spot. 'to' says where: beside the player, a fixed point, or anywhere in view.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `to` | [TeleportTarget](#teleporttarget) | `"NearPlayer"` | Where the blink goes. |
+| `distance` | number | `3.0` | NearPlayer: how far to the side of the player it lands. Random: ignored. |
+| `behind` | true/false | `false` | NearPlayer: land behind the player (the side he is not facing) instead of a random side. |
+| `point` | [x, y] | `[0.0,0.0]` | Point: the world position to blink to. |
+| `interval` | number | `4.0` |  |
+| `initialDelay` | number | `2.0` | Seconds before the first blink, from spawning or from entering the state that has this ability. |
+| `telegraph` | number | `0.8` | Seconds the spot is shown before the blink. The entity stands still meanwhile. |
+| `range` | number | `0.0` | Only blink when the player is closer than this (0 = any distance). |
+| `marker` | string | `""` | Entity id spawned on the spot during the telegraph (a glowing mark with a 'lifetime'); empty = none. (entity id) |
+| `flashColor` | color | `[0.8,0.5,1.0,1.0]` | Colour the body flashes during the telegraph. |
+| `sound` | string | `""` | Sound id (audio.json) played where it vanishes and where it appears; empty = none. (sound id) |
+| `edgeMargin` | number | `1.0` | Keep this far inside the edge of the view when it lands. |
 
 ### wander
 
@@ -1576,6 +1636,7 @@ Which way shots go before the pattern spreads them.
 - `Left`
 - `Right`
 - `Random` — A random direction each volley (deterministic).
+- `Predictive` — Where the player will be when the shot gets there: leads his current velocity (needs the shot's speed; falls back to Player when no lead hits).
 
 ### Anchor
 
@@ -1708,6 +1769,14 @@ Which side something is on. Entities hurt entities of other teams; Neutral hurts
 - `Enemy`
 - `Player`
 - `Neutral`
+
+### TeleportTarget
+
+Where a teleport lands.
+
+- `NearPlayer` — Beside the player, 'distance' away (behind him with 'behind').
+- `Point` — The 'point' field.
+- `Random` — Anywhere in view that is clear of ground.
 
 ### TextStyle
 

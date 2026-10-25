@@ -1,2 +1,3 @@
-1. Open the Screening tab for Hello? v7.
-2. Listen 14-17 s (silence, then Nope), 17-19 s (the drag into the hole), 21-24 s (only Yooba), 27-30 s (the announcer, whole).
+1. Open the beta game URL with `?playtest=mechanics` (or run the `mechanics` playtest from Studio).
+2. Watch the bot fight five stations on the Meadow: a ricochet imp's ember bounces off the ground, a violet mark appears before the blink imp appears there, shots bounce off the bulwark imp's front shield bar until it turns away.
+3. Then the lead imp shoots ahead of the moving hero, and the red lens shows a thin warning line before its beam sweeps across the hero.
