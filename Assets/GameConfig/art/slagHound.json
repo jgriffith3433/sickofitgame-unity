@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "slagHound",
+  "name": "Slag hound",
+  "description": "a lean hunting hound of black slag with lava cracks glowing along its spine and ribs, ember eyes, the Magma King's dog",
+  "height": 0.55,
+  "poses": {
+    "stand": "a lean hound of black slag standing in profile facing right, hunting-dog build, orange lava cracks glowing along its spine and ribs, ember eyes, low and ready",
+    "struck": "just hit and recoiling, head thrown back in a snarl, lava cracks flaring white",
+    "dead": "collapsed in a heap of cooling black slag with a last glow fading"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "stalks in place with a low prowl, head swaying, spine cracks pulsing",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "crouches low on its haunches then lunges forward to the right with jaws open, cracks blazing, then lands",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, yelps and staggers, then regains its footing",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "cracks blaze white, it bursts apart into a shower of slag and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

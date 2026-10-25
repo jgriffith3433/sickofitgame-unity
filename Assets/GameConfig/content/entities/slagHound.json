@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Slag hound",
+  "hint": "Crouches, then lunges. Sidestep.",
+  "note": "Straight line, no brakes. I can work with that.",
+  "hintVoice": "vo_hero_hint_slagHound",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "brimstoneDemon",
+  "health": 3,
+  "moveSpeed": 0.7,
+  "tags": [
+    "slagHound"
+  ],
+  "body": {
+    "radius": 0.4,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.22,
+    "color": "#3A2A28",
+    "fxColor": "#FF6A1F"
+  },
+  "loot": {
+    "chance": 0.3,
+    "count": 1,
+    "value": 1
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "chase",
+      "speed": 0.7,
+      "stopDistance": 2.0,
+      "horizontalOnly": true,
+      "face": true
+    },
+    {
+      "type": "charge",
+      "interval": 3.2,
+      "initialDelay": 1.2,
+      "windup": 0.7,
+      "duration": 0.55,
+      "speed": 7.0,
+      "range": 6.5
+    }
+  ],
+  "sounds": {
+    "hurtSound": "slagHound_hurt",
+    "deathSound": "slagHound_die"
+  }
+}

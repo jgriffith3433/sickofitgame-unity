@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "extends": "projectileEnemy",
+  "visual": {
+    "color": "#C8A27A",
+    "fxColor": "#C8A27A"
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1
+    },
+    {
+      "type": "lifetime",
+      "seconds": 4.5
+    }
+  ]
+}

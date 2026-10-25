@@ -1620,7 +1620,17 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | `sparedWhelp` | The spared whelp | IX (Floor 891) | A whelp pinned under the broken road after the Road Breaker falls, squealing. Harmless. Let go, it owes him: the Spared Demon shortcut. | the whelp's art |
 | `roadSlab`, `settleSlab`, `splitSlab`, `risingSlab`, `seesawSlab`, `roadCreep` | The road's pieces | IX | The Cracked Road itself: solid slabs, slabs settling into the Rift, slabs splitting apart, slabs the Rift heaves up, slabs balanced on spire tips, road sliding off the spires (LevelDesign.md section 6). | `Art/Climb/Road*` (Hawkes Gen, 2026-10-19) |
 | `spireShard`, `shard`, `brimstoneVent` | Spire shards, brimstone vents (hazards) | IX | The spires shedding (a glowing seam, then a shard), and the cracks breathing fire on a beat (a glowing crack, then a column). | the slag drip's and the geyser's art, tinted |
-| `ricochetImp`, `ricochetEmber` | Ricochet imp | none yet (test bench) | An imp that throws Hell's habit: an ember that doesn't stop. Nothing in Hell is allowed to just end, so its ember bounces off the floor three times before it gives up (*Hell's tricks*). Throws slow, from above, so the bounce can be read. | the imp's art, tinted warm; the ember is the shared `Fireball` sheet |
+| `haloImp`, `haloEmber` | Halo imp | X (from Floor 925, the Lower Stairs on the long way) | An imp that has worked out that one ember is easy to dodge and ten are a fence. It hangs in the air and breathes out a ring of slow embers all at once (`radial`), then goes quiet for four seconds. The hero's way through is the gap between two embers, not around them. | the imp's art, a gold halo of embers round its head (`art/haloImp.json`) |
+| `whirlImp`, `whirlEmber` | Whirl imp | X (from Floor 920) | An imp that spins in place as it spits, the way the damned in the Wastes turn their one stone: two arms of embers that wind outwards in a spiral (`radial` with `rotationPerVolley`). Nothing aims at the hero; he has to read the spin and stay between the arms. | the imp's art, pink-hot and mid-twirl (`art/whirlImp.json`) |
+| `seamImp`, `seamEmber`, `seamMark` | Seam imp | X (from Floor 935) | An imp that slips through the seam in Hell's loop, like the Blink imp, but it comes out **behind** the hero (`teleport`, `behind`): a teal mark first, 0.7 s, then it is there and spits two quick embers into his back. The Blink imp lands beside him; this one wants him to turn around. Not damned: no loop shards. | the imp's art, teal (`art/seamImp.json`) |
+| `slagTortoise`, `tortoiseEmber` | Slag tortoise | X (from Floor 915) | The Magma King's tollkeepers: a slow beast with a cooled shell of slag on its front half, that plods back and forth along the stairs spitting slow embers ahead of it. Shots from the front (`frontShield`) are spent on the shell; its back is bare. The Bulwark imp carries a slab; this one *is* the slab, and it can only be got round by running past it. | `art/slagTortoise.json`, a ground creature |
+| `magmaGeode`, `geodeBit` | Magma geode | X (from Floor 945) | A lump of cooled slag with a lava core that drifts at the hero and, when it is shot open, splits into two **small geode bits** that dart at him on their own (`onDeath` spawns). Unlike the Thatch cinder's sparks, the bits can be shot, one hit each. Shoot it early and far away. | `art/magmaGeode.json` |
+| `mineBeetle`, `emberMine` | Mine beetle | X (from Floor 940) | A beetle the size of a dog that crawls along the floor leaving smouldering eggs behind it (`spawner`): `emberMine`, which sits still, arms when the hero comes close and goes off after 0.7 s (`explodeNear`). The mines fade by themselves after fifteen seconds, and a mine can be shot from a distance. Rewards the player who keeps off the floor and shoots the mines first. | `art/mineBeetle.json`, a ground creature |
+| `lensImp` | Lens imp | X (from Floor 905, the Heat Stairs) | An imp that picked up a splinter of the lens the Overlord lasered the meadow with and holds it out like a lantern. A thin red line shows 1.2 s ahead where the beam will start, then the beam sweeps (`laserSweep`) across the stairs. The hero's answer is a jump or a duck below the line's end, never a long stand. | `art/lensImp.json`, the imp holding a shard of red glass |
+| `pyreCaller` | Pyre caller | X (from Floor 910) | A hunched imp elder that burns incense of the Wastes' own cinders: it holds up a fist of fire and a living cinder crawls out of it every five seconds (`spawner`, at most two alive). It never throws. Shoot it first or be drowned in sparks. | `art/pyreCaller.json`, a bigger imp with a cloak of soot |
+| `slagHound` | Slag hound | X (from Floor 930) | The Magma King's hunting dog: a lean hound of black slag with a glowing back, that circles the hero slowly until it crouches (0.7 s, the telegraph) and then lunges in a straight line (`charge`). It does not turn in the lunge. Sidestep it or jump it. | `art/slagHound.json`, a ground creature |
+| `deadeyeImp`, `deadeyeBolt` | Deadeye imp | X (from Floor 950, Halfway Basin) | An imp that sits far off and takes its time. One thin white-hot bolt every four and a half seconds, **aimed where the hero will be** (`Aim.Predictive`) and fast. The Lead imp throws lazily at a run; this one is a sniper and punishes a straight line. Zigzag, or stand still and let it miss. | `art/deadeyeImp.json`, a squinting imp with a shard of glass over one eye |
+| `ricochetImp`, `ricochetEmber` | Ricochet imp | X (from Floor 918) | An imp that throws Hell's habit: an ember that doesn't stop. Nothing in Hell is allowed to just end, so its ember bounces off the floor three times before it gives up (*Hell's tricks*). Throws slow, from above, so the bounce can be read. | the imp's art, tinted warm; the ember is the shared `Fireball` sheet |
 | `blinkImp`, `blinkMark` | Blink imp | none yet (test bench) | An imp that slips through the seams of Hell's loop, the way the damned hiccup, but on purpose. It shows a violet mark next to the hero, stands still for 0.7 s, then is there. Not damned: no loop shards. | the imp's art, tinted violet |
 | `bulwarkImp` | Bulwark imp | none yet (test bench) | An imp that carries a slab of slag in front of it (a bar of light on its facing side): shots from the front are spent on the slab. It paces; when it turns away, its back is bare. The first enemy that makes the hero move to shoot. | the imp's art, big and tinted steel |
 | `leadImp` | Lead imp | none yet (test bench) | An imp that has watched the hero run and throws where he is going, not where he is. Standing still beats it; running in a line is the worst thing to do. | the imp's art, tinted ice-blue |
@@ -1659,6 +1669,16 @@ under ten words of hint, never a joke about work. Recipe: GameplayCookbook "The 
 | `bulwarkImp` | Bulwark imp: Slag shield in front. Shoot it from behind. |
 | `leadImp` | Lead imp: Throws where you're going. Stand still. |
 | `watcher` | Watcher: Shoot as its lid opens. |
+| `haloImp` | Halo imp: Ring of embers. Find the gap. |
+| `whirlImp` | Whirl imp: Spiral embers. Weave with the spin. |
+| `seamImp` | Seam imp: Blinks behind you. Watch the mark. |
+| `slagTortoise` | Slag tortoise: Armored front. Shoot its back. |
+| `magmaGeode` | Magma geode: Splits in two. Shoot the bits. |
+| `mineBeetle` | Mine beetle: Leaves mines. Shoot them early. |
+| `lensImp` | Lens imp: Red line, then a sweep. Move. |
+| `pyreCaller` | Pyre caller: Calls cinders. Shoot it first. |
+| `slagHound` | Slag hound: Crouches, then lunges. Sidestep. |
+| `deadeyeImp` | Deadeye imp: Leads its shot. Zigzag. |
 
 Not named yet: the retired slime-era arcade enemies (`chaser`, `swarmer`, `exploder`) and the arcade variants still
 to be recast (`gunner`, `drone`, `sprayer`, `spinner`, `brute`, `fighter`, `sentinel`); they get a line when they get a
@@ -1744,6 +1764,16 @@ floor gets one without a reason written here first.
 
 Tone: the announcer calls them out in the bench's banners (*"HELL'S EMBERS DON'T STOP. THEY BOUNCE."*), the hero says
 nothing, and no joke is about work.
+
+### The Wastes' bestiary (built 2026-10-25)
+
+The tricks have a reason now: the Magma King's Wastes grew ten more kinds of monster for the climb, each built on one trick or
+one old habit of Hell, each with its reason in the *Roster* (the Halo, Whirl, Seam, Slag tortoise, Magma geode, Mine beetle, Lens,
+Pyre caller, Slag hound and Deadeye). They join Circle X's enemy table (`emberWastes`) at staggered floors from 950 down to 905,
+one at a time, so the long way's generated floors and the Heat Stairs bring them in alone. The Ricochet imp joins them from 920.
+The test arena is `content/scenes/wastesBestiary.json` (playtest `wastes-bestiary`): ten stations, one creature each, the
+announcer naming the idea. Nothing in the bestiary is a slime and nothing in it is a joke about work. Art: specs in
+`Assets/GameConfig/art/`; until the sheets are generated they wear the imp's or the demon's art, tinted (rule 5).
 
 ## Weapons (the hero's hands)
 

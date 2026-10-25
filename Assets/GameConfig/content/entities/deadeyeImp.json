@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Deadeye imp",
+  "hint": "Leads its shot. Zigzag.",
+  "note": "Patient. Hates that in an imp.",
+  "hintVoice": "vo_hero_hint_deadeyeImp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "imp",
+  "health": 2,
+  "tags": [
+    "imp",
+    "deadeyeImp"
+  ],
+  "visual": {
+    "color": "#E8F4FF",
+    "fxColor": "#BFE8FF"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "deadeyeBolt",
+      "speed": 9.0,
+      "aim": "Predictive",
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 4.5,
+      "initialDelay": 2.2,
+      "range": 11.0,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile",
+      "damage": 1
+    }
+  ],
+  "sounds": {
+    "hurtSound": "deadeyeImp_hurt",
+    "deathSound": "deadeyeImp_die",
+    "attackSound": "deadeyeImp_attack"
+  }
+}

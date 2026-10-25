@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "slagTortoise",
+  "name": "Slag tortoise",
+  "description": "a large tortoise-like beast of the Ember Wastes made of black cooled slag: a thick plated shell over its whole front half laced with glowing orange cracks, stumpy legs, a small reptilian head, bare and soft at the back",
+  "height": 0.8,
+  "poses": {
+    "stand": "standing on four stumpy legs, a heavy cooled-slag shell like a black plate covering its whole front half, glowing orange cracks in the shell, a small reptilian head peeking over the top, facing right",
+    "struck": "just hit and flinching: head snapped back, glowing cracks flaring white across the shell, ash falling off",
+    "dead": "collapsed flat, the shell split in two with a bright lava core spilling out and cooling to black"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "plods in place, its legs treading, orange cracks in the shell pulsing slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "rears its head and spits a slow glob of ember forward to the right, shell glowing brighter",
+      "seconds": 2.0
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks back, shell cracks flaring, then settles",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "cracks flare white, the shell splits apart in a burst of embers and the creature slumps and goes dark",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

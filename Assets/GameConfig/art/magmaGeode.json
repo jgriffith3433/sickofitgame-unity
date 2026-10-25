@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "magmaGeode",
+  "name": "Magma geode",
+  "description": "a lump of black cooled slag with a lava core, split by glowing orange cracks, like a cracked geode, floating and slowly rotating",
+  "height": 0.5,
+  "poses": {
+    "stand": "a rough round lump of dark cooled slag the size of a head, hovering, split by glowing orange cracks with a white-hot lava core showing through, small floating pieces of slag orbiting it",
+    "struck": "just hit and cracking: the lump split by wide bright cracks, the core blazing, pieces flying off",
+    "dead": "burst into two small glowing shards of slag flying apart"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "drifts in place, rotating slowly, the cracks pulsing orange",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "swells with light and pulses",
+      "seconds": 1.0
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, wobbles, a crack spreading",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "cracks across, swells white-hot and bursts open into two small glowing shards",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

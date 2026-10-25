@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "whirlImp",
+  "name": "Whirl imp",
+  "description": "a small wiry hell imp of the Ember Wastes, one of the Magma King's: leathery skin, short curled horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, pink-hot skin, always half-turned as if spinning",
+  "height": 0.75,
+  "poses": {
+    "stand": "hovering mid-air on spread bat wings, mid-twirl, arms stretched out to the sides, two thin trails of pink-hot embers curling off its fingertips",
+    "struck": "just hit and caught mid-shriek: eyes bulging, mouth stretched open, wings snapped up, body tilted back with cracks of orange light glowing through its skin",
+    "dead": "bursting apart in a small round pop of black soot and bright orange embers, only its horns tumbling out of the puff"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers and slowly twirls on the spot, flapping, pink-hot embers curling off its fingertips",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "spins fast and two spirals of pink embers wind out from its hands, then slows to a hover",
+      "seconds": 2.0
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a yelp, wings crumpling, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "shrieks, swells with orange light shining through the cracks in its skin, and pops like a firecracker into a puff of black soot and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

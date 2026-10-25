@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Pyre caller",
+  "hint": "Calls cinders. Shoot it first.",
+  "note": "Doesn't fight. Sends sparks to do it.",
+  "hintVoice": "vo_hero_hint_pyreCaller",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "imp",
+  "health": 4,
+  "tags": [
+    "imp",
+    "pyreCaller"
+  ],
+  "visual": {
+    "scale": 0.36,
+    "color": "#8A5A4A",
+    "fxColor": "#FF8A3D"
+  },
+  "loot": {
+    "chance": 0.5,
+    "count": 1,
+    "value": 1
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "spawner",
+      "entity": "cinder",
+      "interval": 5.0,
+      "initialDelay": 1.5,
+      "maxAlive": 2,
+      "offset": [
+        0.25,
+        0.05
+      ]
+    }
+  ],
+  "sounds": {
+    "hurtSound": "pyreCaller_hurt",
+    "deathSound": "pyreCaller_die"
+  }
+}
