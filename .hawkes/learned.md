@@ -1,3 +1,0 @@
-- convention: Hell's tricks — new geometry abilities live in Gameplay/Content/Mechanics.cs; their drawing is a MechanicView child that reads saved state in LateUpdate, so rewind redraws it for free.
-- lesson: no compiler on the agent server — Unity/dotnet are absent, so C# changes ship uncompiled; keep them plain and name locals away from contextual keywords like `from`.
-- convention: player shots reach entities via DamageDealer -> IDirectionalDamageable.TakeDamageFrom (no source entity), so anything direction-aware (shields) must use that, not Damage(source).
