@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Rocket Launcher",
+  "description": "The hero's gun from the start. Rockets along the aim, no ammo. Its numbers are player.json's (fireRate, projectile*).",
+  "color": "#FF8C33",
+  "kind": "Projectile",
+  "cooldown": 0.3,
+  "switchDelay": 0.15,
+  "aimGuide": { "show": true, "length": 1.0 },
+  "ammo": { "capacity": 0 },
+  "projectile": { "speed": 10.0, "lifetime": 5.0, "faceAim": true, "spriteAngle": 225.0, "damageScale": 1.0, "multiShot": true },
+  "sounds": { "use": "player_shoot", "equip": "ui_click" }
+}

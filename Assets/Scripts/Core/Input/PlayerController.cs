@@ -169,6 +169,12 @@ namespace SickOfIt.Core.Input
         /// <summary>Degrees between the shots of a volley.</summary>
         public float ShotSpreadDegrees { get; set; } = 10f;
         /// <summary>
+        /// The hero's weapons (content/weapons), set by the gameplay world. While null he fires the gun from player.json.
+        /// </summary>
+        public IPlayerArmory Armory { get; set; }
+        /// <summary>The equipped weapon's aim guide length as a multiple of player.json aimGuide.length (1 for the launcher).</summary>
+        public float GuideLengthScale { get; private set; } = 1f;
+        /// <summary>
         /// Level scripts walking the player (walkPlayerTo): horizontal input from -1 to 1 that replaces the devices'
         /// while set, even when InputLocked, so the Walk clip and the sprite flip play as if he walked himself.
         /// </summary>
@@ -518,6 +524,7 @@ namespace SickOfIt.Core.Input
             CheckGrounded();
             HandlePlatformCollision();
             HandleJump();
+            HandleWeaponSwitch();
             HandleFiring();
             UpdateRotationTarget();
             UpdateAnimator();
@@ -1146,13 +1153,74 @@ namespace SickOfIt.Core.Input
             // Rewinding to the start leaves lastFireTime ahead of the clock, which
             // would block firing until time catches up to the pre-rewind shot.
             float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
-            float interval = fireRate / Mathf.Max(0.1f, FireRateMultiplier);
+            WeaponStats weapon = default;
+            bool armed = Armory != null && Armory.TryGetCurrent(out weapon);
+            if (armed && !Armory.CanUse(currentTime))
+            {
+                if (Armory.Empty)
+                    Armory.Dry(currentTime);
+                return;
+            }
+            if (armed && weapon.melee)
+            {
+                SwingWeapon(currentTime);
+                return;
+            }
+
+            float interval = (armed ? weapon.cooldown : fireRate) / Mathf.Max(0.1f, FireRateMultiplier);
             if (currentTime < lastFireTime)
                 lastFireTime = currentTime - interval;
             if (currentTime - lastFireTime < interval) return;
             if (projectilePool == null) return;
 
             FireProjectile(fireDirection);
+            if (armed)
+                Armory.Fired(currentTime);
+        }
+
+        /// <summary>A melee weapon: swing toward the aim. The armory times the hit; the hero plays his fire pose.</summary>
+        private void SwingWeapon(float currentTime)
+        {
+            Vector2 origin = AimVolley(fireDirection, mouseAimPoint, volley);
+            Vector2 direction = volley.Count > 0 ? volley[0] : fireDirection.normalized;
+            if (!Armory.Swing(currentTime, origin, direction, FireRateMultiplier, DamageMultiplier))
+                return;
+            lastFireTime = currentTime;
+            VolleysFired++;
+            lastVolley.Clear();
+            lastVolley.Add(direction.normalized);
+            PlayFireAnimation();
+        }
+
+        /// <summary>Switch weapon: Q or the mouse wheel on the keyboard, the gamepad's top button and left shoulder; the HUD's weapon button on touch.</summary>
+        private void HandleWeaponSwitch()
+        {
+            if (Armory == null || InputLocked || Suspended || ScriptedMove.HasValue)
+                return;
+            if (GameClock.Instance != null && GameClock.Instance.IsPaused)
+                return;
+            int step = 0;
+            var keyboard = Keyboard.current;
+            if (keyboard != null && keyboard.qKey.wasPressedThisFrame)
+                step = 1;
+            var pad = Gamepad.current;
+            if (pad != null)
+            {
+                if (pad.buttonNorth.wasPressedThisFrame || pad.rightShoulder.wasPressedThisFrame)
+                    step = 1;
+                else if (pad.leftShoulder.wasPressedThisFrame)
+                    step = -1;
+            }
+            var mouse = Mouse.current;
+            if (step == 0 && mouse != null && InputOverride == null && MouseOnScreen()
+                && (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject()))
+            {
+                float scroll = mouse.scroll.ReadValue().y;
+                if (scroll > 0.5f) step = -1;
+                else if (scroll < -0.5f) step = 1;
+            }
+            if (step != 0)
+                Armory.Cycle(step, GameClock.Instance != null ? GameClock.Instance.Time : Time.time);
         }
 
         private void FireProjectile(Vector2 direction)
@@ -1166,12 +1234,33 @@ namespace SickOfIt.Core.Input
             // Use GameClock time for fire timing
             lastFireTime = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
 
+            // The shot's numbers come from the equipped weapon (the launcher's are player.json's).
+            shotSpeed = projectileSpeed;
+            shotLifetime = projectileLifetime;
+            shotFaceAim = projectileFaceAim;
+            shotSpriteAngle = projectileSpriteAngle;
+            shotDamageScale = 1f;
+            shotSound = null;
+            if (Armory != null && Armory.TryGetCurrent(out var weapon) && !weapon.melee)
+            {
+                shotSpeed = weapon.projectileSpeed;
+                shotLifetime = weapon.projectileLifetime;
+                shotFaceAim = weapon.projectileFaceAim;
+                shotSpriteAngle = weapon.projectileSpriteAngle;
+                shotDamageScale = weapon.damageScale;
+                shotSound = weapon.useSound;
+            }
+
             Vector2 muzzle = AimVolley(direction, mouseAimPoint, volley);
             VolleysFired++;
             lastVolley.Clear();
             for (int i = 0; i < volley.Count; i++)
                 SpawnShot(muzzle, volley[i], i == 0);
         }
+
+        private float shotSpeed, shotLifetime, shotSpriteAngle, shotDamageScale = 1f;
+        private bool shotFaceAim;
+        private string shotSound;
 
         private readonly System.Collections.Generic.List<Vector2> volley = new System.Collections.Generic.List<Vector2>();
         private readonly System.Collections.Generic.List<Vector2> lastVolley = new System.Collections.Generic.List<Vector2>();
@@ -1200,7 +1289,9 @@ namespace SickOfIt.Core.Input
 
             // Extra shots fan out evenly around the aim.
             directions.Clear();
-            int shots = 1 + Mathf.Max(0, ExtraShots);
+            int shots = 1;
+            if (Armory == null || !Armory.TryGetCurrent(out var weapon) || weapon.multiShot)
+                shots += Mathf.Max(0, ExtraShots);
             for (int i = 0; i < shots; i++)
             {
                 float angle = (i - (shots - 1) * 0.5f) * ShotSpreadDegrees;
@@ -1219,8 +1310,16 @@ namespace SickOfIt.Core.Input
         {
             muzzle = transform.position;
             directions.Clear();
+            GuideLengthScale = 1f;
             if (!enableShooting || projectilePool == null || InputLocked || Suspended || ScriptedMove.HasValue)
                 return false;
+            // The guide follows the weapon: the launcher's line, fists' short reach line, nothing for a weapon without one.
+            if (Armory != null && Armory.TryGetCurrent(out var equipped))
+            {
+                if (!equipped.aimGuide)
+                    return false;
+                GuideLengthScale = equipped.aimGuideLength > 0f ? equipped.aimGuideLength : 1f;
+            }
             if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
                 return false;
             Vector2 direction;
@@ -1280,8 +1379,8 @@ namespace SickOfIt.Core.Input
         private void SpawnShot(Vector2 muzzle, Vector2 direction, bool firstOfVolley)
         {
             Vector3 spawnPosition = new Vector3(muzzle.x, muzzle.y, transform.position.z);
-            Quaternion rotation = projectileFaceAim
-                ? Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - projectileSpriteAngle)
+            Quaternion rotation = shotFaceAim
+                ? Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - shotSpriteAngle)
                 : Quaternion.identity;
 
             GameObject projectile = projectilePool.Get(spawnPosition, rotation);
@@ -1297,7 +1396,7 @@ namespace SickOfIt.Core.Input
             if (projectileRb == null) projectileRb = projectile.GetComponent<Rigidbody2D>();
             if (projectileRb != null)
             {
-                projectileRb.linearVelocity = direction * projectileSpeed;
+                projectileRb.linearVelocity = direction * shotSpeed;
             }
             lastVolley.Add(projectileRb != null && projectileRb.linearVelocity.sqrMagnitude > 0f ? projectileRb.linearVelocity.normalized : direction);
 
@@ -1308,23 +1407,30 @@ namespace SickOfIt.Core.Input
                 damage = projectile.GetComponent<IProjectileDamage>();
                 shotDamage[projectile] = damage;
             }
-            damage?.SetDamageMultiplier(DamageMultiplier);
+            damage?.SetDamageMultiplier(DamageMultiplier * shotDamageScale);
 
             // Use pool-cached ProjectileLifetime when available
             var lifetime = projectilePool.GetCachedLifetime(projectile);
             if (lifetime == null) lifetime = projectile.GetComponent<ProjectileLifetime>();
             if (lifetime != null)
-                lifetime.SetLifetime(projectileLifetime);
+                lifetime.SetLifetime(shotLifetime);
 
             if (!firstOfVolley)
                 return;
 
             // Firing happens constantly, so its feedback stays quiet: a faint, small flash and a soft sound.
-            if (Cue(fireSound, SickOfIt.Core.Audio.Sfx.Events.playerShoot))
+            if (Cue(fireSound, string.IsNullOrEmpty(shotSound) ? SickOfIt.Core.Audio.Sfx.Events.playerShoot : shotSound))
                 SickOfIt.Core.Fx.Fx.Flash(muzzle, new Color(1f, 0.85f, 0.45f, 0.35f), 0.26f, 0.06f);
 
-            // Restart the fire clip on every shot so the muzzle flash lines up with the projectile.
-            // Walking on the ground, keep the walk clip going (no standing fire pose while his legs move).
+            PlayFireAnimation();
+        }
+
+        /// <summary>
+        /// Restarts the fire clip on every shot or swing so the muzzle flash lines up with it.
+        /// Walking on the ground, keep the walk clip going (no standing fire pose while his legs move).
+        /// </summary>
+        private void PlayFireAnimation()
+        {
             if (animator != null && IsWalkingOnGround() && animator.HasState(0, WalkStateHash))
                 return;
             if (animator != null && animator.HasState(0, FireStateHash))

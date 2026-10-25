@@ -101,6 +101,7 @@ namespace SickOfIt.Gameplay
             BuildHealth();
             BuildDiamonds();
             BuildRewind();
+            BuildWeapon();
 
             var place = Landscape.objective;
             objective = menu.AddText(menu.Root, "Objective", "", theme.caption, place.anchor, place.offset,
@@ -167,6 +168,7 @@ namespace SickOfIt.Gameplay
                 subtitle = Or(layout.subtitle, fallback.subtitle),
                 rewinding = Or(layout.rewinding, fallback.rewinding),
                 rewindHint = Or(layout.rewindHint, fallback.rewindHint),
+                weapon = Or(layout.weapon, fallback.weapon),
                 progressBar = Or(layout.progressBar, fallback.progressBar),
             };
         }
@@ -656,6 +658,7 @@ namespace SickOfIt.Gameplay
             UpdateHealthAndDiamonds();
             UpdateProgressBar();
             UpdateRewind();
+            UpdateWeapon();
             UpdateScreens();
             UpdatePickerKeys();
             UpdateCursor();

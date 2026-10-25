@@ -36,6 +36,7 @@ Assets/GameConfig/
   content/sequences/        reusable action lists (boss intros, cutscene beats)
   content/effects/          status effects (burning, slow, stun, shield)
   content/upgrades/         player upgrades offered between levels (saved; reset on New Game)
+  content/weapons/          the hero's weapons: the rocket launcher (default), fists (melee combo); giveWeapon / takeWeapon
   content/circles/          Circles of Hell: backdrop, track, props, enemy table, hazards, difficulty, milestones
                             (travel stages and the floor generator use them; see the cookbook)
   content/scenes/           scenes: a level script played on a level's stage instead of its own (the playtest's
@@ -108,6 +109,14 @@ Assets/GameConfig/
   `teleport`, `frontShield` (Entity.Damage asks it; the hero's shots arrive through `IDirectionalDamageable` with the shot's place),
   `laserSweep` (a segment tested against the hero's collider, no physics) and `Aim.Predictive`. Test enemies `ricochetImp`, `blinkImp`,
   `bulwarkImp`, `beamLens`, `leadImp` on the `mechanicsTest` bench (cookbook "Bouncing shots, a blink, ...").
+- **Weapons** (Docs/Story.md "Weapons", cookbook "Weapons"): `content/weapons/*.json` (`rocketLauncher` = the old gun, the
+  default, same numbers as player.json; `fists` = a melee combo with a visible swing, no ammo). `PlayerController` asks its
+  `IPlayerArmory` (`Gameplay/Core/PlayerWeapons.cs`) for the equipped weapon's `WeaponStats`, whether it can be used (cooldown,
+  ammo, mid-swing) and starts swings; a melee hit lands `windup` later in the world tick (`PlayerWeapons.Tick`, hit box in front
+  of him). Held weapons, the equipped one, ammo and the swing's timers are in `GameplayWorld.SaveState` (rewind); what he holds is kept
+  between floors in `WeaponProgress` and cleared with the Grudges. Actions `giveWeapon` / `takeWeapon`. Switch: Q / wheel / gamepad /
+  the HUD weapon button (`GameplayHud.Weapon.cs`, `hud.*.weapon` placement). The aim guide follows the weapon (`GuideLengthScale`).
+  Playtest `weapons` (scene `weaponsTest`).
 - **Shortcuts** (Docs/Story.md, "Shortcuts"): a choice point in a stage (`offerShortcut`: keep climbing or the shortcut,
   its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
   stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the
@@ -396,6 +405,7 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   imp's front shield blocks shots from the front (`shieldBlock`, no damage) and takes them from behind, a lead imp's shots are checked against the
   intercept maths (`predictive`), the Overlord's lens shows a warning line and then sweeps a beam that hurts the hero where it crosses him
   (`laser`); `check`, `station` events; ~3 min; Docs/GameplayCookbook.md "Bouncing shots, a blink, ..."),
+  `weapons` (the weapons: `content/scenes/weaponsTest.json` on Level 1's stage, setup shortcut, real input: the launcher is the default (HUD name, fire rate and aim as player.json says, its aim guide), `giveWeapon` puts fists in his hands, Q equips them (HUD says FISTS, the aim guide shortens), he punches an imp that appears in front of him (a visible crescent and fist, the combo hits, the imp dies), Q back and hold R back to before the switch (the rewind restores the fists), the HUD weapon button clicked with the mouse (a tap's path) switches, `takeWeapon` takes the fists away; `check`, `weapon` events; ~2 min),
   `aim-guide` (the aim guide: Level 1 loaded directly, every volley's guide lines on the frame it fired against the shots'
   flight directions read back from the projectiles (`aim` events), the stick held (one short line under the gameplay), held
   through a rewind and the pause (hidden), the mouse hovering and clicking; then the same with 2 levels of `spreadShot`

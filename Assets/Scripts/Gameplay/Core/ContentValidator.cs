@@ -25,12 +25,41 @@ namespace SickOfIt.Gameplay
                 ValidateObject(content, pair.Value, content.SourceOf(pair.Value), "", null, null, issues, inSequence: false);
             foreach (var pair in content.Upgrades.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateObject(content, pair.Value, content.SourceOf(pair.Value), "", null, null, issues, inSequence: false);
+            foreach (var pair in content.Weapons.OrderBy(p => p.Key, StringComparer.Ordinal))
+                ValidateWeapon(content, pair.Value, issues);
             foreach (var pair in content.Circles.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateCircle(content, pair.Value, issues);
             foreach (var pair in content.LevelScripts.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateScript(content, pair.Value, issues, "script");
             foreach (var pair in content.Scenes.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateScript(content, pair.Value, issues, "");
+        }
+
+        static void ValidateWeapon(GameContent content, WeaponDef weapon, JsonIssueList issues)
+        {
+            string file = content.SourceOf(weapon);
+            ValidateObject(content, weapon, file, "", null, null, issues, inSequence: false);
+            if (weapon.kind == WeaponKind.Melee)
+            {
+                if (weapon.melee.steps.Count == 0)
+                    issues.Error(file, "melee.steps", "A melee weapon needs at least one combo step.");
+                for (int i = 0; i < weapon.melee.steps.Count; i++)
+                {
+                    var step = weapon.melee.steps[i];
+                    if (step.reach <= 0f)
+                        issues.Error(file, $"melee.steps[{i}].reach", "A swing must reach somewhere (reach above 0).");
+                    if (step.windup < 0.02f)
+                        issues.Warning(file, $"melee.steps[{i}].windup", "Under 0.02 s the swing is not seen before it lands; it is raised to 0.02.");
+                }
+            }
+            else if (weapon.cooldown <= 0f)
+            {
+                issues.Error(file, "cooldown", "A projectile weapon needs a cooldown above 0.");
+            }
+            if (weapon.ammo.capacity < 0 || (weapon.ammo.capacity > 0 && weapon.ammo.perShot < 1))
+                issues.Error(file, "ammo", "Ammo capacity can't be negative, and a weapon with ammo spends at least 1 per shot.");
+            if (weapon.id == "rocketLauncher" && weapon.kind != WeaponKind.Projectile)
+                issues.Error(file, "kind", "The rocket launcher is the hero's gun from the start: it must be a Projectile weapon.");
         }
 
         static void ValidateCircle(GameContent content, CircleDef circle, JsonIssueList issues)
@@ -155,6 +184,7 @@ namespace SickOfIt.Gameplay
                 (typeof(SequenceRefAttribute), content.Sequences.Keys, "sequence \"{0}\" in content/sequences"),
                 (typeof(EffectRefAttribute), content.Effects.Keys, "status effect \"{0}\" in content/effects"),
                 (typeof(UpgradeRefAttribute), content.Upgrades.Keys, "upgrade \"{0}\" in content/upgrades"),
+                (typeof(WeaponRefAttribute), content.Weapons.Keys, "weapon \"{0}\" in content/weapons"),
                 (typeof(CircleRefAttribute), content.Circles.Keys, "circle \"{0}\" in content/circles"),
                 (typeof(SoundRefAttribute), ValidSoundIds, "sound \"{0}\" in audio.json"),
                 (typeof(PhaseRefAttribute), phases, "phase \"{0}\" in this script"),

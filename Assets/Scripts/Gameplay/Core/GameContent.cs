@@ -25,6 +25,7 @@ namespace SickOfIt.Gameplay
         public const string UpgradesFolder = "upgrades/";
         public const string CirclesFolder = "circles/";
         public const string ScenesFolder = "scenes/";
+        public const string WeaponsFolder = "weapons/";
         const string ExtendsKey = "extends";
         const string VersionKey = "schemaVersion";
 
@@ -32,6 +33,8 @@ namespace SickOfIt.Gameplay
         public readonly Dictionary<string, SequenceDef> Sequences = new Dictionary<string, SequenceDef>(StringComparer.Ordinal);
         public readonly Dictionary<string, StatusEffectDef> Effects = new Dictionary<string, StatusEffectDef>(StringComparer.Ordinal);
         public readonly Dictionary<string, UpgradeDef> Upgrades = new Dictionary<string, UpgradeDef>(StringComparer.Ordinal);
+        /// <summary>The hero's weapons (content/weapons/{id}.json).</summary>
+        public readonly Dictionary<string, WeaponDef> Weapons = new Dictionary<string, WeaponDef>(StringComparer.Ordinal);
         public readonly Dictionary<string, CircleDef> Circles = new Dictionary<string, CircleDef>(StringComparer.Ordinal);
         /// <summary>Scenes (content/scenes/{id}.json): level scripts played on a level's stage instead of its own script.</summary>
         public readonly Dictionary<string, LevelScript> Scenes = new Dictionary<string, LevelScript>(StringComparer.Ordinal);
@@ -192,6 +195,13 @@ namespace SickOfIt.Gameplay
                     content.Upgrades[id] = def;
                     content.SourceFiles[def] = file.DisplayPath;
                 }
+                else if (file.Path.StartsWith(WeaponsFolder, StringComparison.Ordinal))
+                {
+                    var def = new WeaponDef { id = id };
+                    serializer.PopulateFields(obj, def, skip, content.Issues, file.DisplayPath);
+                    content.Weapons[id] = def;
+                    content.SourceFiles[def] = file.DisplayPath;
+                }
                 else if (file.Path.StartsWith(CirclesFolder, StringComparison.Ordinal))
                 {
                     var def = new CircleDef { id = id };
@@ -208,7 +218,7 @@ namespace SickOfIt.Gameplay
                 }
                 else
                 {
-                    content.Issues.Error(file.DisplayPath, "", $"Content files go in {EntitiesFolder}, {SequencesFolder}, {EffectsFolder}, {UpgradesFolder}, {CirclesFolder}, or {ScenesFolder}.");
+                    content.Issues.Error(file.DisplayPath, "", $"Content files go in {EntitiesFolder}, {SequencesFolder}, {EffectsFolder}, {UpgradesFolder}, {WeaponsFolder}, {CirclesFolder}, or {ScenesFolder}.");
                 }
             }
 

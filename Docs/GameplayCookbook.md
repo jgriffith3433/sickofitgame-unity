@@ -389,6 +389,45 @@ that aim as usual.
 The telemetry says what happened: `bounce`, `shieldBlock`, `laser` (warning/sweep/end), `teleport` (telegraph/blink).
 Try them on the bench: `?playtest=mechanics` (the bot fights the five stations in turn; each beat is a `check` event).
 
+## Weapons ("give him fists", "a gun with ammo", "the Floor 998 pickup")
+
+The hero's weapons are `content/weapons/{id}.json` (fields in the generated reference, "Weapon"). He always holds the
+`rocketLauncher` (his gun from player.json: same fire rate, rocket speed and sprite, no ammo) and may hold more. The
+equipped one decides how Fire works: `kind: "Projectile"` fires the hero's rocket with the weapon's own `cooldown`,
+`projectile.speed/lifetime/damageScale` (and `multiShot`: whether the spread Grudge applies); `kind: "Melee"` swings a
+hit box in front of him instead, through a **combo** of `melee.steps` (`damage`, `reach`, `windup` before the hit lands,
+`recovery` before the next swing, `knockback`, `arc`/`size` of the drawn swing). A swing that comes within
+`comboWindow` seconds of the last one is the next step; later it starts over. Attack-speed upgrades shorten every time.
+
+```json
+{ "schemaVersion": 1, "displayName": "Fists", "color": "#FFD27A", "kind": "Melee",
+  "aimGuide": { "show": true, "length": 0.6 }, "ammo": { "capacity": 0 },
+  "melee": { "comboWindow": 0.45, "height": 1.2, "steps": [
+    { "name": "jab", "damage": 1, "reach": 1.2, "windup": 0.07, "recovery": 0.13, "knockback": 2 },
+    { "name": "hook", "damage": 2, "reach": 1.4, "windup": 0.12, "recovery": 0.3, "knockback": 5, "arc": 150, "size": 1.5 } ] },
+  "sounds": { "use": "punch_swing", "hit": "punch_hit", "equip": "ui_click" } }
+```
+
+- **Ammo:** `ammo.capacity` above 0 gives the weapon rounds (`start`, `perShot`, `regenPerSecond`); empty, Fire clicks
+  (`sounds.empty`). `giveWeapon` with `ammo` adds rounds. Rewinding gives spent ammo back.
+- **Aim guide:** `aimGuide.show` / `length` (a multiple of player.json's line). The guide follows the weapon: a short line
+  for a melee weapon's reach, none if `show` is false.
+- **Sounds:** audio.json ids in `sounds` (`use`, `hit`, `empty`, `equip`), made like any effect.
+- **Visible swing:** a melee swing draws a crescent and a fist in the weapon's `color` (no art needed, `MeleeSwingFx`).
+- **Level actions:** `{ "type": "giveWeapon", "weapon": "fists", "equip": true }` (adds it to what he holds, `ammo` for ammo
+  weapons) and `{ "type": "takeWeapon", "weapon": "fists" }` (the launcher can't be taken). Both pop the weapon's name over
+  his head (`announce: false` to stop that). What he holds is kept between floors (`WeaponProgress`) and cleared with the
+  Grudges when a run ends; a rewind to before a give/take undoes it.
+- **Switching:** Q, the mouse wheel, the gamepad's top button / shoulders, and the **weapon button on the HUD** (a tap on
+  touch; `hud.landscape/portrait.weapon` in theme.json). It shows the name, ammo and the key.
+- **Rewind:** the held weapons, the equipped one, ammo and the swing's timers are part of the world's saved state
+  (`PlayerWeapons.SaveState/LoadState`). A new field there must be saved there.
+- **A new gun** is a new file; it shares the hero's rocket prefab (only the numbers differ). A different projectile
+  prefab or hero art for a swing is new C# / art work.
+
+Try it on the bench: `?playtest=weapons` (the scene `weaponsTest`: launcher, `giveWeapon`, Q, a punched imp, a rewind,
+the HUD button, `takeWeapon`; each beat is a `check` event).
+
 ## A different kind of level space
 
 `"world"` in the script: `"camera": "Follow"` with `boundsCenter`/`boundsSize` for a wider arena, `"Scroll"` with
