@@ -491,7 +491,9 @@ namespace SickOfIt.Playtest
                 Run.Event("wall-jump", $"climbed {rose:0.00} units with {kicks} kick(s) and {clingCount - clingsFrom} cling(s)");
                 MoveCheck("he catches the wall", clingCount > clingsFrom, $"{clingCount - clingsFrom} cling(s)");
                 MoveCheck("he kicks off it", kicks >= 2, $"{kicks} kick(s)");
-                MoveCheck("he climbs the shaft", rose >= 4.5f && hero.IsAlive, $"rose {rose:0.00} units (a jump alone reaches about 2.3)");
+                // Each kick adds about 1.75 over the jump's 2.3: 3+ kicks reach 4.5, the 2 the shaft sometimes allows reach ~4.
+                float needRise = kicks >= 3 ? 4.5f : 3.5f;
+                MoveCheck("he climbs the shaft", rose >= needRise && hero.IsAlive, $"rose {rose:0.00} units with {kicks} kick(s), needs {needRise:0.0} (a jump alone reaches about 2.3)");
                 MoveCheck("he slides slowly down the wall", moveMinClingVy >= -1.7f, $"fastest slide {moveMinClingVy:0.00} (limit about -1.3)");
                 MoveCheck("the WallSlide and WallJump poses play", moveSawKickPose && (moveSawSlidePose || !clungWhileFalling), $"WallJump seen {moveSawKickPose}, WallSlide seen {moveSawSlidePose}");
                 Run.Progress(0.85f);
