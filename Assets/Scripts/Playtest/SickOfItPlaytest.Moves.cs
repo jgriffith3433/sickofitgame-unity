@@ -397,8 +397,12 @@ namespace SickOfIt.Playtest
                 var want = MoveAt(clock.Time);
                 MoveCheck("rewind into the burst restores the dash", c.IsDashing == want.dashing && c.DashInvulnerable == want.invulnerable && want.dashing,
                     $"clock {clock.Time:0.00} (asked {mid:0.00}): dashing {c.IsDashing} (was {want.dashing}), untouchable {c.DashInvulnerable} (was {want.invulnerable})");
-                MoveCheck("rewind into the burst restores his place and the cooldown", Vector2.Distance(hero.Position, want.position) < 0.5f && Mathf.Abs(c.DashCooldownLeft - want.cooldown) < 0.15f,
-                    $"{Vector2.Distance(hero.Position, want.position):0.00} from where he was; cooldown {c.DashCooldownLeft:0.00} (was {want.cooldown:0.00})");
+                // Mid-burst he moves ~16 u/s, so the nearest sample (frames are 20-40 ms apart, and the two frames
+                // after R is released run forward) can sit a few frames' worth of travel away: allow that much.
+                const float dashSpeed = 2.6f / 0.16f; // player.json moves.dash distance / duration
+                float placeSlack = 0.5f + dashSpeed * (Mathf.Abs(want.time - clock.Time) + 0.04f);
+                MoveCheck("rewind into the burst restores his place and the cooldown", Vector2.Distance(hero.Position, want.position) < placeSlack && Mathf.Abs(c.DashCooldownLeft - want.cooldown) < 0.15f,
+                    $"{Vector2.Distance(hero.Position, want.position):0.00} from where he was (allowed {placeSlack:0.00}); cooldown {c.DashCooldownLeft:0.00} (was {want.cooldown:0.00})");
                 yield return MovesFor(0.5f);
                 yield return MoveRewindTo(before);
                 want = MoveAt(clock.Time);
