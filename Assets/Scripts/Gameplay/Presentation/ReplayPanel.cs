@@ -83,7 +83,7 @@ namespace SickOfIt.Gameplay
                 }
                 default:
                 {
-                    title = ReplayModes.Cycle > 0 ? string.Format(ci, labels.ngPlusLabel, ReplayModes.Cycle + 1) : labels.newGamePlus;
+                    title = labels.newGamePlus;
                     canPlay = ReplayModes.NewGamePlusOpen;
                     blurb = canPlay ? string.Format(ci, labels.ngPlusBlurb, ReplayModes.NextCycle + 1) : labels.ngPlusLocked;
                     body = ReplayModes.Cycle > 0 ? string.Format(ci, labels.ngPlusLabel, ReplayModes.Cycle + 1).ToUpperInvariant() : "";

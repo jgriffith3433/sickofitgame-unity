@@ -113,7 +113,7 @@ namespace SickOfIt.Core.Progression
             {
                 var replayLabels = replay.labels ?? new ReplayLabels();
                 if (ReplayModes.NewGamePlusOpen)
-                    Add(list, ReplayModes.Cycle > 0 ? string.Format(System.Globalization.CultureInfo.InvariantCulture, replayLabels.ngPlusLabel, ReplayModes.Cycle + 1) : replayLabels.newGamePlus,
+                    Add(list, replayLabels.newGamePlus,
                         () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.NewGamePlus, "new_game_plus"));
                 Add(list, replayLabels.endless, () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.Endless, "endless"));
                 Add(list, replayLabels.daily, () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.Daily, "daily"));

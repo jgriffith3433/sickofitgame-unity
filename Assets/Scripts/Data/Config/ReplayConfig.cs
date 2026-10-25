@@ -36,7 +36,7 @@ namespace SickOfIt.Data.Config
     {
         public string endless = "Endless Floor";
         public string daily = "Daily Challenge";
-        [Tooltip("{0} = the cycle he starts next (2 after the first climb).")]
+        [Tooltip("Not used with a number: the cycle is on the card.")]
         public string newGamePlus = "New Game+";
         [Tooltip("{0} = floors climbed.")]
         public string endlessBest = "Best: {0} floors climbed";
@@ -57,8 +57,8 @@ namespace SickOfIt.Data.Config
         [Tooltip("{0} = the cycle he starts next.")]
         public string ngPlusBlurb = "Hell takes the climb back and gives it again, harder. You keep your weapons, Yooba's goods, the diamonds and the Codex. Cycle {0}.";
         public string ngPlusLocked = "Beat the Magma King first.";
-        [Tooltip("{0} = the cycle he is on.")]
-        public string ngPlusLabel = "New Game+ {0}";
+        [Tooltip("{0} = the cycle he is on now (the first climb is cycle 1).")]
+        public string ngPlusLabel = "You are on cycle {0}.";
     }
 
     /// <summary>Endless Floor, the Daily Challenge and New Game Plus (game.json "replay"; Docs/Story.md, "Again").</summary>

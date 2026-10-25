@@ -24,7 +24,7 @@
   "placedSprites": [],
   "enemies": [],
   "playerSpawnPosition": [
-    -4.0,
+    0.0,
     0.0
   ],
   "deathConfigName": "Death1",
