@@ -91,6 +91,27 @@ namespace SickOfIt.Gameplay
             return bot;
         }
 
+        void OnEnable()
+        {
+            GameplayTelemetry.Recorded += OnTelemetry;
+        }
+
+        void OnDisable()
+        {
+            GameplayTelemetry.Recorded -= OnTelemetry;
+        }
+
+        // A fall out of the bottom of the view ("pit"): remembered with where, so a dark rune span that keeps dropping him
+        // is not answered with the same rewind and the same walk a third time (see HandleRewind and the span lookahead).
+        void OnTelemetry(GameplayTelemetry log, GameplayTelemetry.Event e)
+        {
+            if (e.Kind == "pit" && world != null && world.Player != null && log.World == world)
+            {
+                pitFell = true;
+                pitX = world.Player.Position.x;
+            }
+        }
+
         void OnDestroy()
         {
             if (input == null)
@@ -671,7 +692,7 @@ namespace SickOfIt.Gameplay
                     continue;
                 // A rune span (Circle VIII) is jumped for only while its rune will stay lit long enough to land and leave.
                 var runeSpan = e.FindAbility<SickOfIt.Gameplay.Content.RuneSpanAbility>();
-                if (runeSpan != null && !runeSpan.SolidFor(world.Now, 2.2f))
+                if (runeSpan != null && !runeSpan.SolidFor(world.Now, pitStreak >= 2 && Mathf.Abs(me.x - pitStreakX) < 12f ? 4.5f : 2.2f))
                     continue;
                 var b = col.bounds;
                 float topY = chain ? e.Position.y - 0.5f : b.max.y;
@@ -1223,6 +1244,9 @@ namespace SickOfIt.Gameplay
 
         public bool useRewind = true;
         int lastHealth = -1;
+        bool pitFell;
+        float pitX, pitStreakX = -1000f;
+        int pitStreak;
         float rewindTarget = -1f;
         float holdStartedAt = -1f;
 
@@ -1269,6 +1293,16 @@ namespace SickOfIt.Gameplay
             int health = world.Player.Health;
             bool hit = lastHealth >= 0 && health < lastHealth;
             lastHealth = health;
+            if (hit && pitFell)
+            {
+                // The same fall twice in a row at the same x (a rune span gone dark under him): no third rewind into it; he waits
+                // for a span that stays lit longer (the lookahead in the foothold search) and the level's stall check ends a loop.
+                pitStreak = Mathf.Abs(pitX - pitStreakX) < 4f ? pitStreak + 1 : 1;
+                pitStreakX = pitX;
+                pitFell = false;
+                if (pitStreak > 2)
+                    return;
+            }
             // A fatal hit is undone with whatever juice is left (a player would hold R on "undo your death"), any other with a full second.
             bool fatal = health <= 0;
             if (!hit || !useRewind || (now < 2f && !fatal))

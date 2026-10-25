@@ -129,8 +129,8 @@ FLOORS = [
          next_say='[shouting] Floor seven ninety-nine! [pause] Two in a row!', next_title='FLOOR 799: TWO IN A ROW',
          pieces=[
              piece('lit', 'ONE LIT SPAN!', 'runeSpanHold', 'line', pillar=2),
-             piece('hum', 'THE HUM!', 'runeSpan', 'line', pillar=3),
-             piece('beat', 'THE BEAT!', 'runeSpan', 'zig', pillar=4, rain=(2.6, 0.008)),
+             piece('hum', 'THE HUM!', 'runeSpanHold', 'line', pillar=3),
+             piece('beat', 'THE BEAT!', 'runeSpanHold', 'zig', pillar=4, rain=(2.6, 0.008)),
              piece('across', 'ACROSS!', 'runeSpan', 'zig', pillar=5, rain=(1.9, 0.01), aimed=3.6),
              piece('longBridge', 'THE LONG BRIDGE!', 'runeSpanUnison', 'wave', pillar=6, rain=(1.4, 0.012), aimed=2.8, mix='runeSpanLate'),
          ]),
