@@ -1762,6 +1762,32 @@ named here, with a note.
 
 Characters: the hero (always), the Overlord (the meadow's laser, always), the Announcer (always) and Yooba (once met).
 
+### Achievements (what Hell lets him keep, built 2026-10-25)
+
+Hell keeps score, and the Announcer reads the score out whether the hero wants it or not. **Achievements** are the
+things Hell has noticed him do: 76 of them, in a fifth Codex tab (**Achievements**), each with a Hell-flavoured name,
+what it asks for (one deadpan line, never a joke about work), a **title** and a count. Unlocking one drops a small
+card from the top of the screen ("ACHIEVEMENT UNLOCKED", its name, "New title: ...") over anything he is doing, then lifts away; they queue if
+several come at once. The titles are his to wear: tapping an unlocked row in the Codex puts its title on the hero (the
+Codex's Characters page then reads *The Hero, Bullet Hugger*); tapping again takes it off. He wears one at a time.
+
+The list covers: demons killed (1 to 2,000, in total and on a single floor), different kinds killed, a run of named
+enemies (the imps by the hundred, the hounds, tortoises, beetles, bombers, deadeyes ...), every Warden and floor boss
+(the Imp Foreman, Pile Keeper, Magma King, Road Breaker, Carver, Spire Fiend), floors cleared without a hit (and a boss
+the same way), rewinds (the first, fifty, five minutes' worth, and **undoing a death**), deaths (the first, 25, 100, and
+being killed by an imp), grazes and an S rank, floors climbed, the secret rooms and gauntlets behind the doors in the
+wall, shortcuts taken and declined, Yooba's shop (the first buy, 100 and 1,000 diamonds spent, ten different goods,
+diamonds collected), Grudges, weapons found (and the shotgun, the chain-whip, the fists by name), and the moves
+(the dash, the wall-jump, the Hook). A few are **secret**: they show as ??? with one hint until he has them.
+
+Rules: nothing is paid out (no diamonds, no juice: they are a record and a title, not a reward); rewind never counts
+a kill, hit or graze twice and never takes an unlock back; a scene or test bench counts nothing; the endless and daily
+floors do not count as a floor cleared. The record is kept with the save like the Codex (a death or a new run keeps it);
+**only New Game empties it**, titles included. In the data: `ui/codex.json` `achievements` (id, name, description, title,
+`stat`, `target`, `secret`, `hint`); the counters are fed by `AchievementTracker` (from the level's telemetry), the shop and the
+diamond purse, and saved by `Data/Achievements.cs`. A new achievement is a row in the file naming one of those counters
+(`kill:<enemy display name>`, `weapon:<id>`, `weaponHeld:<id>` or a counter listed in `AchievementTracker.KnownStats`).
+
 ## Style: grazes, the meter and the floor's rank (built 2026-10-25)
 
 Hell is a show and the show keeps score. A shot that goes past the hero close enough to ruffle his coat without touching him is a **graze**, and Hell's

@@ -127,6 +127,11 @@ Assets/GameConfig/
   `hintOnce` action (in a base enemy's `onSpawn`) show the name and weakness as a subtitle, with the hero's `vo_hero_hint_<id>` voice once its
   clip exists, the first time that type spawns in a save. Remembered in `EnemyHints` (PlayerPrefs `Enemies_Seen`, cleared only by New Game;
   not rewound), silent during scenes (`GameplayWorld.SceneId`), locked input/rewind and rewinding. Playtest `enemy-hints`.
+- **Achievements** (Docs/Story.md "Achievements"): 76 rows in `ui/codex.json` `achievements` (`AchievementDef`: id, name, description, title, `stat`, `target`, `secret`, `hint`),
+  the Codex's fifth tab (`CodexTab.Achievements`; tap an unlocked row to wear its title, the worn title shows on the hero's Characters page). `Data/Achievements.cs` is the save (PlayerPrefs `Achv_*`:
+  counters, unlock order, unique keys, worn title; cleared only by New Game in `RogueliteManager.ResetAllRogueliteData`); `Gameplay/Presentation/AchievementTracker.cs` turns `GameplayTelemetry.Recorded` into counters
+  (every count is keyed so a rewind's replay never pays twice; scenes count nothing; `KnownStats` lists the counters), `RogueliteManager` feeds the shop and diamond ones, `AchievementToast.cs` is the unlock card (its own
+  overlay canvas, unscaled time, a queue). Add an achievement as a row; a new counter needs a line in the tracker and in `KnownStats`. Playtest `achievements` (~4 min, `SickOfItPlaytest.Achievements.cs`); tests `AchievementTests`.
 - **The Codex** (Docs/Story.md "The Codex", cookbook "The Codex"): `ui/codex.json` + `CodexPanel` (`Gameplay/Presentation`): Enemies / Bosses / Weapons /
   Characters, from the main menu and the pause menu. Entity field `note` is the hero's line; the weakness is the `hint`. Met and killed
   tallies are `CodexProgress` (by `displayName`, once per creature, cleared by New Game) and the known set is shared with `EnemyHints`.

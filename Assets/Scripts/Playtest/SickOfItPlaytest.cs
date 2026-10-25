@@ -853,6 +853,10 @@ namespace SickOfIt.Playtest
                 "called ??? with no name, note or weakness (no spoilers); the four tabs are clicked in turn, every page of each is paged through and laid out inside the panel and the screen " +
                 "(MenuLayoutAudit, no overlaps; run it on a 1920x1080 and a 1080x1920 device); closed and resumed, the main menu's Codex button shows the same tallies (they persist). " +
                 "Each beat is a check event; codex events log what each page shows", CodexSeconds, "level"));
+            list.Add(new PlaytestScenario(AchievementsId, "Achievements (Docs/Story.md \"Achievements\"): the list in ui/codex.json has 40+ sound entries; New Game empties it; level 1 is played by the bot until its first unlock, " +
+                "whose toast must be on screen with the achievement's name; the pause menu's Codex shows the Achievements tab (real clicks): the unlocked one first with its title, the locked ones with their progress, " +
+                "every page inside the panel (MenuLayoutAudit; run it on a 1920x1080 and a 1080x1920 device); a click on the unlocked row wears its title; the save persists across a reload and the main menu, and New Game resets it. " +
+                "Each beat is a check event", AchievementsSeconds, "level"));
             list.Add(new PlaytestScenario(UiPolishId, "HUD and menu polish (Docs/Story.md \"The HUD and menus\"): the main menu's Codex popup opens and closes with a fade (real clicks); Level 1's HUD gets a diamond pickup " +
                 "(a +7 floats up from the counter and the counter ticks up to its total), the pause menu opens and closes animated and its layout is audited; Level 31's boss bar is introduced (the name lands, the bar " +
                 "fills from empty, inside the screen and safe area, no overlaps); Floor 1000 sweeps the screen when its floor counter ticks over; Level 1 is played to its results, whose numbers count up, and " +
@@ -1324,6 +1328,8 @@ namespace SickOfIt.Playtest
                 yield return session.BossFightsRun();
             else if (id == CodexId)
                 yield return session.CodexRun();
+            else if (id == AchievementsId)
+                yield return session.AchievementsRun();
             else if (id == UiPolishId)
                 yield return session.UiPolishRun();
             else if (id == "restart")
