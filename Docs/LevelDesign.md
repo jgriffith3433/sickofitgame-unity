@@ -2172,3 +2172,24 @@ music and the epilogue only: the enemies' animated sheets (`Tools/Art/art.mjs`, 
 floor bosses a Circle, two Wardens and the Overlord's three phases) are a larger batch, priced per enemy when each Circle's
 task starts, as for Circles VIII to IV. Voice lines (the Gatekeeper, the Chain King, the Overlord's few words, Yooba's
 Shaft lines, the epilogue's two) are Hawkes Gen voice at cents each and need no GPU. Nothing made yet.
+
+## 9. Side floors: secret floors and gauntlets *(built 2026-10-25)*
+
+Docs/Story.md, "Secret floors and gauntlets". Eight rooms off the Heat Stairs (Floors 910-903), each behind a door in the
+wall. They are data written by **`Tools/Levels/side_floors.py`** from its `ROOMS` table (never hand-edit `Secret*.json`,
+`Gauntlet*.json` or the `SIDE DOOR` rules in the hosts); `python3 Tools/Levels/side_floors.py --check` checks them with no Unity.
+
+- **A room** is a locked Static screen like a Warden's arena (no `world`), `floors` start = end = the floor its host ends on,
+  `nextLevelNumber` = the host's, ~90 s (a gauntlet ~2 min). Phases: `enter` (title "FLOOR N AND A HALF: ...", the hero's first line), the
+  room's own phases, `outro` (`side:reward:<kind>`, the announcer, the hero's last word, `cleared`). At most 3-4 enemies at once.
+- **A gauntlet** is `wave1` ... `waveN` and `refill1` ... `refillN-1`: a wave's enemies carry the tag `wave`, `allDead` moves on, stragglers
+  leave after 55 s (no soft-lock); every refill is `addRewind` 10 s (the cap) and a line, then 3.4 s of quiet before the next wave.
+- **A door** is three rules appended to the host's `rules`: `playerInZone` on the last foothold before the landing (it fires before the
+  landing's own rule), `shortcutChosen taken` (lock input and rewind, the hero's line, the announcer, fade, `setFloor` to the host's last
+  floor, `cleared`), `shortcutChosen not taken` (a line). The offer's `nextLevel` is the room's position in game.json, `toFloor` the host's `floors.end`.
+- **Signals** every room emits, for the playtest: `side:enter`, `side:guard` (when the fight starts), `side:wave:N`, `side:refill:N`, `side:reward:<kind>`, `side:cleared`.
+- **Add one:** write the room function and a `ROOMS` row (host floor, door text, cost, what it pays), add the host's door zone to `HOST_DOORS`
+  (its last foothold + 1.15 up; `floor_check.py` tells you the footholds), run the script, add the row to `SideRooms` in
+  `SickOfItPlaytest.SideFloors.cs` and a line to the Story table. A new reward needs its content first (`content/weapons`, `content/upgrades` with `weight: 0`,
+  a pickup entity). The script puts the level's name at the end of game.json's `levels`, where its position becomes its `levelNumber`.
+- **Playtest:** `secret-floors` (all eight, ~35 min) and `gauntlets` (the last two). The all-levels runs skip them (`IsSideFloor`).

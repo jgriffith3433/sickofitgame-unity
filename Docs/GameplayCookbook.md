@@ -781,6 +781,30 @@ Docs/Story.md, "Shortcuts". A choice point inside a stage that skips floors for 
    (`PlaytestBot.takeShortcuts`, presses 2). The level-n stage checks follow the branch played: a taken shortcut's
    counter ends on `toFloor` with no Grudge pick, and lines in phases never entered aren't expected.
 
+## A secret floor ("a closet behind Floor 906's wall that pays a lore scrap")
+
+Docs/Story.md, "Secret floors and gauntlets"; Docs/LevelDesign.md section 9. A side floor is a short room reached through a
+door in the wall on a floor of the route, and it gives the climb back where it left it. **Use the generator**, not hand edits:
+`Tools/Levels/side_floors.py` writes the room, the door on its host floor and the game.json entry from one table.
+
+1. **Story first**: a row in Story.md's "Secret floors and gauntlets" table (the door, its host, its cost, the room, what it pays).
+2. **The reward's content**, if it is new: a weapon (`content/weapons`, its `pickup` entity with a `collect` whose `do` is `unlockWeapon` and `setCounter secretFound 1`),
+   a hidden Grudge (`content/upgrades`, **`weight: 0`** so no pick offers it; the room's script `grantUpgrade`s it), a lore flag (`setFlag` with a `lore.<name>` id, shown with a
+   `popText`), diamonds (`addDiamonds`), a refill (`heal` + `addRewind`). Reuse sound ids that already have clips.
+3. **The room**: a function in the generator returning the room's phases. Start with `enter(title, firstLine, firstPhase)`; fight with `wave(entity, count, points, tag)` and
+   `when_dead(tag, nextPhase, name)` (with `stragglers(tag, seconds)` so nothing soft-locks); end with `outro(kind, closingLine)`, which emits `side:reward:<kind>` and `side:cleared` and sets `cleared`.
+   A **gauntlet** is `gauntlet(waves, ...)` + `with_reward(...)`: a list of waves (each a list of `(entity, count, points)`), and between two waves a banner, `addRewind 10` and 3.4 s of quiet.
+   Keep to 3-4 enemies at once, hovering ones at y 0.8-2.0 from the camera (the bot aims at them), no `world`.
+4. **The row** in `ROOMS`: `file` (`Secret7`), `number` (its position in game.json's `levels`; the script appends it at the end), `host` (the floor whose landing it sits before),
+   `door` (the card's text and `cost`: `("diamonds", n)`, `("grudge",)` or `("risk", "Risk: ...")`) and the hero's lines. Add the host's foothold to `HOST_DOORS` (the last ledge before the landing + 1.15 up;
+   one door per host).
+5. Run `python3 Tools/Levels/side_floors.py` (it is idempotent and checks entities, phases, wave points, that the room leads where its host does and sits on the floor its host ends on), then `--check`.
+6. **The playtest**: a row in `SideRooms` (`SickOfItPlaytest.SideFloors.cs`) with what the save must hold afterwards. The bot opens a door only when `PlaytestBot.takeSideDoors` is set (a choice whose
+   title begins `A door in the wall`), so the route scenarios (`circle-x-route`, `story-path`...) keep climbing past it.
+
+The door's choice is an ordinary `offerShortcut` (once per play, final through rewinds, the cost paid once). A side floor never lights a Waystone (it sits on the floor its host ends on, not a Waystone's) and a death
+in it ends the run like any floor.
+
 ## The Shaft (Hell's map between levels)
 
 `ShaftScreen` (Core/Progression) answers `ShaftHook`: after the video in `ui/shaft.json` `plungeAfterVideo` (Video2)

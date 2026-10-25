@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -1438,6 +1438,42 @@ floors for a cost or a risk. It is the rogue choice that keeps 1,000 floors reac
 | **The Collapsed Stairwell** (`oldStair`) | Floor 871, the top of the Old Stair (`levels/Level14.json`, level 62, on Circle IX's long way), behind *STAIRS (CLOSED)*; the Shaft's crack at 870 | a Grudge | Floors 870-841 (levels 63-65): out at **Floor 841**, level 66 next | Hero, at the top: *"Stairs. Fallen in. Still going up, though."* Taking it: *"Fine. One less thing to hate."* Announcer, as he climbs in: *"WHAT'S THIS? A SHORTCUT?! THE CROWD HATES IT!"*, then, as the counter lands: *"FLOOR EIGHT FORTY-ONE! NOBODY TAKES THE STAIRS!"* Hero, coming out: *"That went further than stairs should."* Keeping on: *"Nah. Hell would love that."* |
 | **The Spared Demon** (`sparedDemon`, built 2026-10-19, `levels/Floor891.json`) | Floor 891, after the Road Breaker: a whelp pinned under the broken road; let go, it claws a crack up the spire; the Shaft's crack at 870 | a Grudge | Floors 890-861: out at **Floor 860** | Taking it: *"Go on. Shoo. ...Oh, you're helping."* Announcer: *"HE SPARED A DEMON?! THE CROWD WANTS ITS MONEY BACK!"* (all lines: LevelDesign.md section 6) |
 | **The Hollow Spire** (`hollowSpire`, built 2026-10-19, `levels/Floor851.json`) | Floor 851, after the Carver: the spire he was hollowing out; the Shaft's crack at 830 | a harder floor after it (a risk, on the card: *Risk: the spire comes down behind you*): Floor 810 reads `shortcutTaken`, its shards fall from the start and the Rift rises faster | Floors 850-811: out at **Floor 810** | Taking it: *"Up the inside. Don't touch anything."* Announcer: *"UP THE SPIRE?! HE SKIPPED HALFWAY... AGAIN!"* |
+
+## Secret floors and gauntlets
+
+*(built 2026-10-25; generator `Tools/Levels/side_floors.py`, floors in LevelDesign.md section 9, recipe in the cookbook "A secret floor")*
+
+Hell is repetition, so it has a floor between every two floors that nobody numbered: a closet, a rack, a room where the
+steam is too thick. The hero finds them the way he finds a shortcut, by being the one who looks at a wall too long.
+A **secret floor** is a short stage (one room, about a minute and a half) on **"Floor N and a half"**; a **gauntlet** is a
+room that sends him waves, one after the other.
+
+- **The door in the wall.** On the last foothold before a floor's landing, a seam in the stone offers a choice with the same
+  two cards as a shortcut (`offerShortcut`; the title always begins *A door in the wall*): *leave it* (the floor ends as usual,
+  with its Grudge pick) or *go in*, with its **cost on the card**: diamonds, a Grudge, or a risk the card names. Taken, the
+  floor ends there with no Grudge pick (the door cost something), the side floor plays, and the climb goes on **exactly
+  where it was**: the side floor leads to the floor after its host, and nothing on the route is skipped. The Shaft draws it
+  as a small dotted hop through a crack, like a shortcut.
+- **Waystone rules, unchanged.** A side floor sits on the floor its host ends on, never on a Waystone's, so it lights nothing. A death
+  in it ends the run like any floor of Hell: the death screen, the drop to the highest Waystone, Grudges reset, diamonds and goods
+  kept. What it pays (a weapon, a lore flag) is kept the way those are kept everywhere else; a Grudge it pays (Held Breath) is a
+  Grudge like the rest and goes with the run. Held Breath is never the Grudge a shortcut or a door takes.
+- **No sound of its own yet.** The lines are subtitles in the announcer's and the hero's voices; the voice clips are still to be made
+  (`audio.json`, cents each; nothing else depends on them).
+
+| Door | On | Cost | The room | Pays |
+|---|---|---|---|---|
+| **The Tally Closet** (`tallyCloset`, `Secret1`) | Floor 906, the Loop upstairs | 5 diamonds | Two imp keepers, then a wall of fives, every group crossed out, a big hand; the last mark: *AGAIN.* | **Lore**: flag `lore.tally`. The Overlord counts the floors too, and is as stuck as the hero. *"He counts them too. Great. Now I can't even hate him properly."* |
+| **The Armory Nobody Locked** (`armoryDoor`, `Secret2`) | Floor 910, the foot of the Heat Stairs | a Grudge | Two imp guards, then a rack with one thing on it. | **A weapon**: the **Slag Ladle**, unlocked for good (slow, heavy, 10 scoops that come back). *"I'm armed with a soup utensil. It's fine."* |
+| **The Held Breath** (`heldBreath`, `Secret3`) | Floor 909, a vent as wide as a door | 15 diamonds | Steam: fire rain and cinders for twenty seconds, nothing to do but not get hit. | **A hidden upgrade**: the Grudge **Held Breath** (+2 max health, 2 s more rewind), weight 0, so no Grudge pick ever offers it. |
+| **The Applause Room** (`applauseRoom`, `Secret4`) | Floor 907, the King's ear | free; *Risk: Hell is watching.* | A crowd of damned souls, the announcer overjoyed that he is standing, one imp as "the act". | **A funny set piece** that tips: 20 diamonds. *"It's an imp."* |
+| **The Rest Stop** (`restStop`, `Secret5`) | Floor 905, a bench in a crack | 10 diamonds | A bench, a soul who hands over a loop shard, the crowd not knowing what to do about a man sitting. | **A refill**: full health and full rewind. *"Ten seconds of nothing. Hell hates this."* |
+| **The Guest Book** (`guestBook`, `Secret6`) | Floor 903, under the throne's glow | a Grudge | Three cinders "see him out", then the Magma King's book: CAME. SAW. LEFT. in one hand, hundreds of times; his last line is wet: LITTLE SPARK. | **Lore**: flag `lore.guestbook`. The King wrote the hero's name before he got there. |
+| **The Cage Match** (`cageMatch`, `Gauntlet1`) | Floor 908, the lift's cage | *Risk: four waves, no way out.* | Sand on the floor. Four waves (3 imps; 2 guards; 3 cinders and an imp; 2 guards and 2 imps), **a full rewind refill between every two**. | A purse: 12 diamonds and the flag `gauntlet.cage`. |
+| **The Encore** (`encore`, `Gauntlet2`) | Floor 904, a curtain painted on the wall | 10 diamonds | The same show five times, each a little bigger (2 imps; 3; 2 and a guard; 3 cinders and an imp; 3 guards and an imp), **a rewind refill between every two**. | The flag `gauntlet.encore`. |
+
+Tone: the announcer loves a secret ("A SECRET DOOR?! HELL HAS BEEN KEEPING SECRETS!"), the hero has no patience for one. No office
+or work jokes. A secret floor is never required: the long way and the shortcuts reach the Magma King without any of them.
 
 ## Waystones and runs
 

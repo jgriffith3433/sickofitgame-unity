@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Side floors: Hell's secret floors and gauntlets (Docs/Story.md "Secret floors and gauntlets", Docs/LevelDesign.md section 7,
+Side floors: Hell's secret floors and gauntlets (Docs/Story.md "Secret floors and gauntlets", Docs/LevelDesign.md section 9,
 cookbook "A secret floor").
 
 A side floor is a short level a hero reaches through a *door in the wall* on a floor of the played route: an `offerShortcut`
