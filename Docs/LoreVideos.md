@@ -274,13 +274,27 @@ one in the picture who is actually in it, is not buying.
 
 Canon check: Yooba a seller and a villager; no Overlord; no office joke; the hero's "...Great." is his catchphrase.
 
-**Status.** Rough animatic (`"stage": "animatic"`) made **without GPU** from the game's own art (Yooba's talk and laugh sheets,
-the hero's Shout sheet) with the table read's real voices: Yooba's mouth is his sheet, the announcer's is a drawn mouth, the hero's
-helm has no mouth so his eye slits flare. The Lightning scene version (prompts in `videos/hell-ad-break/prompts.json`) and the
-final are priced below and wait for J's go.
+**Status** (2026-10-25). J approved the animatic and ~$1.55 of GPU. The **final is rendered** (`"stage": "final"`, 29.7 s, 960x544, 24 fps): three
+`video.scene` PERFORM scenes at full steps and 0.5 MP (A the announcer and the hero's wide, B Yooba's spot, C the hero, the host,
+Yooba, the hero), the table read's stems as voice samples, a red horned showman for the announcer (`a_9fe39c547c00c53e`) and a studio set on the
+Landing's lava shore (`a_9bd1f32a05980a09`), cut by `videos/hell-ad-break/build_final.sh` (scene C's Yooba cut keyed over the set plate, a slow push
+on the wide, 0.6 s held before "...Great.", one loudness pass); `edit.json` and `prompts.json` hold the assets and prompts. Critic (`video.review`):
+6.2 twice (fail; story 6.4, pacing 6.3, voices 6.5, lip sync 5.4, movement 5.0, consistency 6.2, sound 6.1). What is left is in the scenes
+themselves: the hero stands frozen in A's wide, Yooba's lips drift on "lightly swallowed" in B. Re-takes cost ~$0.8-0.9 each.
+**Not yet in the game**: the sheets and Addressables are baked in the Unity editor (see *Putting a film into the game*), so the game still plays the old Video3.
 
-**Price** (`hawkesgen_estimate`, project `sickofit`, 2026-10-25): three Lightning `video.scene` animatic scenes and three
-full-quality final scenes, one batch: 1.53 GPU h incl. loads, **$2.84 GPU + $0.48 API = $3.32** ($5.80 with the idle tail).
+**Cost, what it really was.** The estimate said 770 GPU s per 8-11 s scene at 0.5 MP; the jobs took 1,500-1,700 s (**$0.78-0.88 each, $2.51 for the three**,
+one restart of ComfyUI on A). Price a final `video.scene` at ~$0.85 per scene, not $0.45.
+
+### Putting a film into the game
+
+1. `python3 Tools/Video/prepare_lore_video.py . <cut.mp4> Video3 "<display name>" --fps 12 --root <videoRoot>` (ffmpeg only): writes
+   `Assets/Videos/Video3.mp4`, `Video3_Audio.mp3`, `Video3_FirstFrame.png`, a copy at the baker's source (`<videoRoot>\Video3\Output\Video3.mp4`)
+   and sets `videos/Video3.json` `displayName` and `timeline.duration`. 12 fps for dialogue; 30 s is 363 frames = 13 sheets of 4x7 cells of 512x284 (the baker lays them out).
+2. On the machine with Unity (editor closed): `Unity.exe -batchmode -nographics -projectPath <project> -logFile - -executeMethod SickOfIt.Tools.Editor.Generation.GenerateProjectWindow.RegenerateClipSheets -clip Video3 -fps 12`.
+   It sets the asset's `playbackFPS` first (a bake reads it), then packs the sheets in place (GUIDs stay on their Addressables entries, extra old sheets are deleted).
+3. Commit the sheets, `Video3.asset` and the Addressables group changes (Git LFS), run the `video3`, `yooba` and `story-path` playtests, then the deploy's Addressables build.
+Agents' servers have no Unity and no `git lfs`: an agent makes the cut and the config; the bake is a build-server step.
 
 ---
 

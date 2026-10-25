@@ -37,11 +37,12 @@ namespace SickOfIt.Playtest
     /// cutscene (the scene content/scenes/cutsceneTest.json on level 1's stage, a setup shortcut: the hero walks there
     /// by himself and stops, turns, can't rewind, the camera zooms in and back, the screen fades to black and back, and
     /// he is pulled into a point, spinning and shrinking until he is gone; each beat is checked).
+    /// video3 (Video3 Hell's Ad Break loaded directly after Floor 1000 plays with its clock running, Escape skips it into Yooba's hello, and the Videos card replays it to its end).
     /// video-2 (Video2 loaded directly and watched, not skipped: the hero's fall overlay appears at the burning door,
     /// spins and shrinks into the tunnel and is gone by ~14.5 s; R held mid-spin plays it backward; Escape skips).
     /// portal-audio (the prologue's portal scene sounds and the Meadow's lines played in order on the main menu).
     /// story-path (New Game through the story path: Video1, the Meadow, Video2, the Landing with its floor counter
-    /// and the 999 beat, Video3 (Yooba), the Spill, then the level select with the story levels in order).
+    /// and the 999 beat, Video3 (Hell's Ad Break), the Spill, then the level select with the story levels in order).
     /// all-levels (every level in game.json, each opened directly with a time limit, a table of cleared / died / stuck;
     /// at most ~4 min per level, no new level after 38 min, all done by 43 (the runner encodes the video after), the rest "not reached (time budget)"),
     /// off-path (the same over the levels after the path: the old 10-floor stages and the arcade levels) and
@@ -1065,7 +1066,7 @@ namespace SickOfIt.Playtest
             AddStartScenarios(list, pathHow);
             list.Add(new PlaytestScenario("story-path", "New Game through the story path with the real flow: Video1, Level 1 (the Meadow and its portal " +
                 $"scene), Video2, Level 2 (Floor {LandingFirstFloor}: The Landing, no arcade level in between: its floor counter on {LandingFirstFloor}, " +
-                $"ticking to {LandingLastFloor} on its landing), Video3 (Yooba, watched a few seconds), then Circle X's played route one floor per level " +
+                $"ticking to {LandingLastFloor} on its landing), Video3 (Hell's Ad Break, watched 13 s so Yooba's spot plays, then skipped), then Circle X's played route one floor per level " +
                 "with no video between them: Levels 3-11 (Floors 999-991, the Imp Foreman), where the bot takes the Sack Lift (its diamond fare topped up " +
                 "first, a setup shortcut) to Level 12, Levels 12-21 (Floors 960-951, the Pile Keeper), where it takes the King's Chimney to Level 22, Levels " +
                 "22-30 (Floors 910-902, the Heat Stairs up to the Magma King's door) and Level 31 (Floor 901, the Slag Throne: his arena, his Waystone at 901 " +
@@ -1080,7 +1081,7 @@ namespace SickOfIt.Playtest
                 "then the level select. Up to 3 tries per floor; each beat is a check event", WastesClimbSeconds, "full"));
             list.Add(new PlaytestScenario("landing-stretch", $"The first floors of Hell, one level per floor (Docs/LevelDesign.md): level {StretchFrom} (Floor 1000, " +
                 $"The Landing) loaded directly (setup shortcut), then the real flow on through level {StretchTo} (Floor 996): results, Continue, the Shaft " +
-                "climbing exactly one floor (1000 to 999, ... 996 to 995), Video3 and Yooba's hello after Floor 1000 (skipped like a player), and the next " +
+                "climbing exactly one floor (1000 to 999, ... 996 to 995), Video3 (Hell's Ad Break) and Yooba's hello after Floor 1000 (skipped like a player), and the next " +
                 "floor. Each floor gets the stage checks (title \"FLOOR N: PLACE\" voiced, hero line, counter ticking to the next floor on the landing, new " +
                 "enemy alone, breather, at most 3 enemies, 60-120 s, every line voiced, the Grudge pick) and its own idea: 1000 sinking stones taking his " +
                 "weight; 999 the lava rising behind him with the \"ONLY 999 TO GO\" beat and its wave chasing him sideways; 998 the village's wreckage " +
@@ -1152,6 +1153,9 @@ namespace SickOfIt.Playtest
                 "hero's one-line reply, then Continue starts Level 3. Then three Shaft previews over the menu (setup shortcuts) where he reacts to the floor: " +
                 "950, a death on the way, the Magma King's door. Then the shop with his portrait: welcome, a card clicked with 0 diamonds (can't afford), " +
                 "the same card with enough (buy), Back (goodbye). Each beat is a check event", YoobaSeconds, "menus"));
+            list.Add(new PlaytestScenario(Video3Id, "Video3, \"Hell's Ad Break\" (Docs/LoreVideos.md), the film after Floor 1000: its config (after level 2, next level 3), the film loaded directly " +
+                "(setup shortcut: the Shaft's marker at Floor 999, Yooba's save reset, the video unlocked) must play with its clock running for 10 s, Escape must skip it into " +
+                "Yooba's hello on the Shaft, and the main menu's Videos card must list it and replay it to its end and back to the main menu. Each beat is a check event", Video3Seconds, "menus"));
             list.Add(new PlaytestScenario("yooba-shop", "Yooba's shop from the Shaft: the Shaft after Video3 (setup shortcut: Yooba's save reset, the marker " +
                 "at Floor 999, his hello skipped), Visit Yooba beside Continue opens his shop over the Shaft with his animated portrait and voiced welcome, " +
                 "slime-made goods; a card clicked with 0 diamonds (can't afford), then with its price (bought: diamonds spent, level saved); Back (goodbye) " +
@@ -1268,6 +1272,8 @@ namespace SickOfIt.Playtest
                 yield return session.YoobaRun();
             else if (id == "yooba-shop")
                 yield return session.YoobaShopRun();
+            else if (id == Video3Id)
+                yield return session.Video3Run();
             else if (id == "waystone")
                 yield return session.WaystoneRun();
             else if (id == "wastes-climb")
@@ -3088,7 +3094,7 @@ namespace SickOfIt.Playtest
                     tookShortcutTo = 0;
                     if (n > first)
                     {
-                        // A video the story puts here (Video3, Yooba, after Floor 1000): watch a moment, skip it, pass his hello.
+                        // A video the story puts here (Video3, Hell's Ad Break, after Floor 1000): watch a moment, skip it, pass Yooba's hello.
                         var before = definition.GetLevel(n - 1);
                         if (before != null && before.nextVideoNumber > 0)
                         {
@@ -3101,7 +3107,7 @@ namespace SickOfIt.Playtest
                             if (inVideo)
                             {
                                 Run.Scene("Video " + playing);
-                                yield return WaitReal(4f);
+                                yield return WaitReal(playing == 3 ? 13f : 4f); // Video3's Yooba spot starts at 11.5 s
                                 if (Run.Done) yield break;
                                 float skipUntil = Time.realtimeSinceStartup + 20f;
                                 while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && ShaftScreen.Current == null && Time.realtimeSinceStartup < skipUntil)
@@ -7472,8 +7478,8 @@ namespace SickOfIt.Playtest
                     if (inVideo)
                     {
                         Run.Scene("Video " + playing);
-                        // Watch a moment for the recording (Video3 longer: Yooba turns up), then skip like a player.
-                        yield return WaitReal(video == 3 ? 8f : 2.5f);
+                        // Watch a moment for the recording (Video3 longer: Yooba's sponsor spot starts at 11.5 s), then skip like a player.
+                        yield return WaitReal(video == 3 ? 13f : 2.5f);
                         if (Run.Done) yield break;
                         float skipUntil = Time.realtimeSinceStartup + 20f;
                         while (!Run.Done && Object.FindAnyObjectByType<VideoRuntime>() != null && ShaftScreen.Current == null && Time.realtimeSinceStartup < skipUntil)

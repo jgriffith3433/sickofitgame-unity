@@ -518,6 +518,7 @@ the prologue portal scene's sounds in scene order, every take, then the Meadow's
   pages) and the engine post, linked from the blog and Development; on every page no link or button overlaps another
   or leaves the screen and nothing scrolls sideways (run it on device "phone"); `check` and `site-layout` events;
   `Plugins/WebGL/HawkesSite.jslib`).
+- **Video3, Hell's Ad Break** (Docs/LoreVideos.md "Putting a film into the game"): playtest `video3` (`SickOfItPlaytest.Video3.cs`, ~4 min): config (after level 2, next level 3), the film plays with its clock running, Escape skips it into Yooba's hello, the Videos card replays it to its end and back to the main menu. `Tools/Video/prepare_lore_video.py` makes the mp4, mp3 and first frame and sets the config; the sheets are baked by `GenerateProjectWindow.RegenerateClipSheets -clip Video3 -fps 12` (Unity batch).
 - **Daily budgets and the balance report** (`SickOfItPlaytest.Balance.cs`): every `all-levels` run (and its parts, `floors-A-B`, `climb-start`) ends with a
   per-floor balance report: `balance` events, `balance.level<n>.*` metrics (clearSeconds, deaths, diamonds, rewinds, rewoundSeconds, grazes, hits,
   frameAvgMs, frameWorstMs), a markdown table in the report's log and a `frame-time level <n>` check per floor (average <= `FramePlayAverageMs`, <= 2% of frames over

@@ -1,5 +1,5 @@
 {
- "note": "Lightning animatic (enable_lightning_lora true, megapixels 0.3, 16:9). Final: same prompts, full steps, megapixels 0.5. NOT RUN: no GPU budget.",
+ "note": "FINAL run 2026-10-25 (J approved the animatic and ~$1.55 of GPU): full steps (enable_lightning_lora false), megapixels 0.5, 16:9, 24 fps, 1 take per scene, PERFORM mode. References: announcer a_9fe39c547c00c53e (image.generate), set a_9bd1f32a05980a09 (image.generate), hero and Yooba cropped from the game's own sheets (Shout.png cell 0, yooba_talk.png cell 0) on flat grey. Voice samples are the table read's stems (j_35570e5fb28c). Prompts below are the ones sent (picture numbers per scene); the Lightning animatic was never run (the ffmpeg animatic stood in).",
  "style": "Hand-painted comic-fantasy, bold ink outlines, saturated lava palette, 90s cable shopping-channel frame with scanlines. Each character exactly on-model in every shot.",
  "scenes": [
   {
@@ -35,5 +35,29 @@
    },
    "prompt": "CUT 1 (0 to 2.8 s): MCU low angle on the hero (<Picture 1>), helm eye slits flaring, flat, in the voice of <Audio 1>: 'You're selling me the hole I'm stuck in.' CUT 2 (2.8 to 5.8 s): the host shouts 'ACT NOW, and climb the WHOLE thing!' a flash frame. CUT 3 (5.8 to 8 s): Yooba (<Picture 2>) laughs in the voice of <Audio 2>: 'Hee hee! He said yes!' CUT 4 (8 to 9.2 s): CU the hero, a long beat, a sigh: '...Great.' last sound; hold."
   }
- ]
+ ],
+ "final": {
+  "A": {
+   "job": "j_57262b9eb2bf",
+   "asset": "a_28f4c349b85110db",
+   "gpuSeconds": 1711,
+   "usd": 0.8845,
+   "inputs": "image announcer, image2 hero, set, audio stem 1"
+  },
+  "B": {
+   "job": "j_7077c1fc9db6",
+   "asset": "a_0706f3f9e4c25c84",
+   "gpuSeconds": 1633,
+   "usd": 0.8442,
+   "inputs": "image and image2 Yooba, set, audio stem 3"
+  },
+  "C": {
+   "job": "j_6aff6f5c236d",
+   "asset": "a_f3642b1500251181",
+   "gpuSeconds": 1507,
+   "usd": 0.7788,
+   "inputs": "image hero, image2 Yooba, set, image3 announcer, audio stem 4 (hero), audio2 stem 6 (Yooba), audio3 stem 5 (announcer)"
+  }
+ },
+ "finalCostUsd": 2.51
 }

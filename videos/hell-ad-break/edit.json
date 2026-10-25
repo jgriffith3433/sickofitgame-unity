@@ -1,23 +1,89 @@
 {
- "width": 1280,
- "height": 704,
+ "width": 960,
+ "height": 544,
  "fps": 24,
+ "note": "Built by build_final.sh from the three final scenes (assets below); the scene's own voices and sound are the dialogue, one loudness pass (loudnorm -16 LUFS) over the film; no music, no end card (it is the game's own cutscene).",
  "clips": [
   {
-   "file": "videos/hell-ad-break/out/animatic.mp4",
+   "asset": "a_28f4c349b85110db",
    "in": 0,
-   "out": 30.2,
-   "beat": "s1-s7",
-   "label": "animatic (game art + ffmpeg)"
+   "out": 5.458,
+   "beat": "s1",
+   "label": "MS announcer: Are you sick of it? GOOD! ... ONE THOUSAND FLOORS!"
+  },
+  {
+   "asset": "a_28f4c349b85110db",
+   "in": 5.458,
+   "out": 11.54,
+   "beat": "s2",
+   "label": "WS stage, hero small beside the host: Fire! Fiends! Falling rocks!",
+   "zoom": {
+    "from": 1,
+    "to": 1.07,
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  {
+   "asset": "a_0706f3f9e4c25c84",
+   "in": 0,
+   "out": 8.0,
+   "beat": "s3",
+   "label": "MCU Yooba: And diamonds! Fresh, shiny, lightly swallowed!"
+  },
+  {
+   "asset": "a_f3642b1500251181",
+   "in": 0,
+   "out": 3.417,
+   "beat": "s4",
+   "label": "MCU low hero: You're selling me the hole I'm stuck in."
+  },
+  {
+   "asset": "a_f3642b1500251181",
+   "in": 3.417,
+   "out": 5.375,
+   "beat": "s5",
+   "label": "MS announcer lunges: ACT NOW, and climb the WHOLE thing!"
+  },
+  {
+   "file": "videos/hell-ad-break/out/yooba_keyed.mp4",
+   "in": 0,
+   "out": 2.042,
+   "beat": "s6",
+   "label": "CU Yooba: Hee hee! He said yes!"
+  },
+  {
+   "asset": "a_f3642b1500251181",
+   "in": 7.417,
+   "out": 9.417,
+   "beat": "s7",
+   "label": "CU hero: a held beat (0.6 s of held frame and silence added), ...Great.",
+   "hold": {
+    "before": 0.6
+   }
   }
  ],
  "audio": [
   {
-   "asset": "a_ad2035a94bc4a896",
+   "asset": "a_28f4c349b85110db",
    "start": 0,
-   "seconds": 28.68,
+   "seconds": 11.54,
    "dialogue": true,
-   "label": "table read"
+   "label": "scene A voices and sound"
+  },
+  {
+   "asset": "a_0706f3f9e4c25c84",
+   "start": 11.54,
+   "seconds": 8.0,
+   "dialogue": true,
+   "label": "scene B voice and sound"
+  },
+  {
+   "asset": "a_f3642b1500251181",
+   "start": 19.54,
+   "seconds": 9.42,
+   "dialogue": true,
+   "label": "scene C voices and sound (0.6 s silence inserted at 7.417 s of the scene)"
   }
  ],
  "captions": []

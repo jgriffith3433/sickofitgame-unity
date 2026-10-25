@@ -96,6 +96,30 @@ namespace SickOfIt.Tools.Editor.Generation
             return failed;
         }
 
+        /// <summary>
+        /// Rebuilds one clip's sheets from its source mp4 at a chosen playback rate (batch mode, no dialogs): sets the asset's
+        /// <c>playbackFPS</c> first, since a bake reads it, then bakes. A new film (Video3 at 12 fps) is made this way.
+        /// </summary>
+        public static bool RegenerateClip(GameDefinition gd, string clipId, float fps)
+        {
+            foreach (var entry in SourceMediaCatalog.Collect(gd))
+            {
+                if (entry.Label != clipId || !IsSequence(entry.Group))
+                    continue;
+                var data = FindData(gd, clipId, out _);
+                if (data != null && fps > 0f && !Mathf.Approximately(data.playbackFPS, fps))
+                {
+                    data.playbackFPS = fps;
+                    EditorUtility.SetDirty(data);
+                    AssetDatabase.SaveAssets();
+                }
+                return Regenerate(gd, clipId, entry.Path, interactive: false);
+            }
+
+            Debug.LogError("[VideoSpriteSheetBaker] No clip named " + clipId + " in the source media catalog.");
+            return false;
+        }
+
         public static bool Regenerate(GameDefinition gd, string clipId, string mp4Path, bool interactive = true)
         {
             if (gd == null)
