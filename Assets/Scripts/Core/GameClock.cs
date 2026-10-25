@@ -23,6 +23,10 @@ namespace SickOfIt.Core
         private static GameClock _instance;
         public static GameClock Instance => _instance;
 
+        /// <summary>How many rewinds have ended since the game started. Not rewound itself: enemies that react to the hero's
+        /// rewind (RewindSnagAbility) compare it with the value saved in their own state.</summary>
+        public static int RewindsEnded { get; private set; }
+
         [Header("State (Read-Only)")]
         [SerializeField] private float currentTime;
         [SerializeField] private float timeScale = 1f;
@@ -165,6 +169,7 @@ namespace SickOfIt.Core
             if (!isRewinding) return;
             isRewinding = false;
             timeScale = 1f;
+            RewindsEnded++;
             BeginPostRewindClamp();
             OnRewindStopped?.Invoke();
         }

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Veil demon",
+  "hint": "Shielded, and it blinks. Hit its back.",
+  "note": "Hides in front, shows up behind. Pick one.",
+  "hintVoice": "vo_hero_hint_veilDemon",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "brimstoneDemon",
+  "health": 4,
+  "moveSpeed": 0.55,
+  "tags": [
+    "veilDemon"
+  ],
+  "visual": {
+    "scale": 0.26,
+    "color": "#7A6A98",
+    "fxColor": "#B08AFF"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 0.5,
+      "distance": 2.4,
+      "pause": 1.0
+    },
+    {
+      "type": "frontShield",
+      "arc": 90,
+      "blockSound": "chain_cut",
+      "color": "#B08AFF"
+    },
+    {
+      "type": "teleport",
+      "to": "NearPlayer",
+      "distance": 3.2,
+      "interval": 5.2,
+      "initialDelay": 2.8,
+      "telegraph": 0.8,
+      "marker": "veilMark",
+      "flashColor": "#B08AFF",
+      "sound": "banner_whoosh"
+    },
+    {
+      "type": "shoot",
+      "projectile": "veilEmber",
+      "speed": 3.2,
+      "aim": "Facing",
+      "muzzle": [
+        0.3,
+        0.1
+      ],
+      "interval": 2.8,
+      "initialDelay": 2.0,
+      "range": 8.0,
+      "damage": 1
+    }
+  ],
+  "sounds": { "hurtSound": "veilDemon_hurt", "deathSound": "veilDemon_die", "attackSound": "veilDemon_attack" }
+}

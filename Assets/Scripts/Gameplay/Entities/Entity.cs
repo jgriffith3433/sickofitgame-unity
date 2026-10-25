@@ -743,6 +743,10 @@ namespace SickOfIt.Gameplay
             if (HasStatus(s => s.invulnerable))
                 return false;
 
+            // A rewind-snag enemy lets every shot through until the hero has rewound (RosterMechanics.cs).
+            if (!IsPlayer && FindAbility<RewindSnagAbility>() is RewindSnagAbility snag && snag.TryDeflect())
+                return false;
+
             if (!IsPlayer && (source != null || hasHitFrom))
             {
                 var shield = FindAbility<FrontShieldAbility>();
@@ -792,9 +796,23 @@ namespace SickOfIt.Gameplay
             World.NotifyDamaged(this, final, source, damageLabel);
             dirty = true;
 
-            if (health <= 0)
+            // Gets up once (revive) / shares the blow with its chain partner (chainLink): RosterMechanics.cs.
+            bool lethal = health <= 0;
+            if (lethal && FindAbility<ReviveAbility>() is ReviveAbility rise && rise.TryRevive())
+                lethal = false;
+            FindAbility<ChainLinkAbility>()?.Share(final, lethal);
+            if (lethal)
                 Die(DeathCause.Damage);
             return true;
+        }
+
+        /// <summary>Sets an enemy's health (a revive rising with part of it), within 1 and its maximum.</summary>
+        public void SetHealth(int value)
+        {
+            if (IsPlayer || !alive)
+                return;
+            health = Mathf.Clamp(value, 1, Mathf.Max(1, maxHealth));
+            dirty = true;
         }
 
         /// <summary>

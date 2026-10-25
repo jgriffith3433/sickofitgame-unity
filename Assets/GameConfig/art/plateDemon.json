@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "plateDemon",
+  "name": "Plate demon",
+  "description": "a hulking basalt demon of the Cracked Road holding a huge slab of dark iron plate in front of its body like a wall, glowing orange cracks in its skin behind the plate, small horned head peeking over the top",
+  "height": 0.9,
+  "poses": {
+    "stand": "standing behind the big iron plate held out in front, glowing cracks in the grey skin, facing right",
+    "struck": "struck: the plate rings and sparks, the demon flinching behind it",
+    "dead": "collapsed in a heap, the dropped plate split and glowing"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes and shifts in place, glow pulsing slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "performs its signature attack toward the right, glow flaring",
+      "seconds": 2.0
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks back, then settles",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

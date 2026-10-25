@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Bastion brute",
+  "hint": "Wide shield, gets back up. Patience.",
+  "note": "A wall that stands twice. Cheap.",
+  "hintVoice": "vo_hero_hint_bastionBrute",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "brimstoneDemon",
+  "health": 6,
+  "moveSpeed": 0.4,
+  "tags": [
+    "bastionBrute"
+  ],
+  "visual": {
+    "scale": 0.32,
+    "color": "#5E5668",
+    "fxColor": "#FF7A2A"
+  },
+  "drops": [],
+  "loot": {
+    "chance": 0.8,
+    "count": 1,
+    "value": 2
+  },
+  "body": {
+    "radius": 0.55,
+    "solid": false
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 0.4,
+      "distance": 2.2,
+      "pause": 1.6
+    },
+    {
+      "type": "frontShield",
+      "arc": 120,
+      "blockSound": "chain_cut",
+      "color": "#9A90B0"
+    },
+    {
+      "type": "shoot",
+      "projectile": "brimstoneBreath",
+      "pattern": {
+        "type": "spread",
+        "count": 3,
+        "angle": 28
+      },
+      "speed": 3.6,
+      "aim": "Facing",
+      "muzzle": [
+        0.3,
+        0.1
+      ],
+      "interval": 3.2,
+      "initialDelay": 2.0,
+      "range": 4.2,
+      "damage": 1
+    },
+    {
+      "type": "revive",
+      "times": 1,
+      "healthPercent": 50,
+      "downSeconds": 2.4,
+      "effect": "downed",
+      "riseSound": "risenDemon_rise"
+    }
+  ],
+  "sounds": { "hurtSound": "bastionBrute_hurt", "deathSound": "bastionBrute_die", "attackSound": "bastionBrute_attack" }
+}

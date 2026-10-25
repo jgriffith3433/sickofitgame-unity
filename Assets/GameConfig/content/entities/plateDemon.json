@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Plate demon",
+  "hint": "Plate in front. Get behind it.",
+  "note": "Carries a wall. Needs a wall. Fine.",
+  "hintVoice": "vo_hero_hint_plateDemon",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "brimstoneDemon",
+  "health": 5,
+  "moveSpeed": 0.55,
+  "tags": [
+    "plateDemon"
+  ],
+  "visual": {
+    "scale": 0.26,
+    "color": "#8E8CA0",
+    "fxColor": "#C8C0E0"
+  },
+  "loot": {
+    "chance": 0.45,
+    "count": 1,
+    "value": 1
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 0.5,
+      "distance": 2.6,
+      "pause": 1.4
+    },
+    {
+      "type": "frontShield",
+      "arc": 100,
+      "blockSound": "chain_cut",
+      "color": "#C8C0E0"
+    },
+    {
+      "type": "shoot",
+      "projectile": "plateShard",
+      "pattern": {
+        "type": "spread",
+        "count": 2,
+        "angle": 16
+      },
+      "speed": 3.4,
+      "aim": "Player",
+      "muzzle": [
+        0.3,
+        0.1
+      ],
+      "interval": 3.0,
+      "initialDelay": 1.8,
+      "range": 8.5,
+      "damage": 1
+    }
+  ],
+  "sounds": { "hurtSound": "plateDemon_hurt", "deathSound": "plateDemon_die", "attackSound": "plateDemon_attack" }
+}

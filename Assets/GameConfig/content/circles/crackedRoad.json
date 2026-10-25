@@ -234,6 +234,76 @@
         1.0,
         0.6
       ]
+    },
+    {
+      "entity": "plateDemon",
+      "weight": 0.8,
+      "fromFloor": 886,
+      "areaCenter": [3.8, -2.05],
+      "areaSize": [1.2, 0.1]
+    },
+    {
+      "entity": "riftBomber",
+      "weight": 0.6,
+      "fromFloor": 880,
+      "areaCenter": [3.7, -0.8],
+      "areaSize": [1.0, 1.0]
+    },
+    {
+      "entity": "bounceLobber",
+      "weight": 0.6,
+      "fromFloor": 874,
+      "areaCenter": [3.6, -0.4],
+      "areaSize": [1.0, 0.6]
+    },
+    {
+      "entity": "chainWhelp",
+      "weight": 0.6,
+      "fromFloor": 868,
+      "areaCenter": [3.9, -2.05],
+      "areaSize": [1.0, 0.1]
+    },
+    {
+      "entity": "risenDemon",
+      "weight": 0.7,
+      "fromFloor": 862,
+      "areaCenter": [3.8, -2.05],
+      "areaSize": [1.2, 0.1]
+    },
+    {
+      "entity": "fuseWhelp",
+      "weight": 0.7,
+      "fromFloor": 855,
+      "areaCenter": [4.0, -2.05],
+      "areaSize": [1.0, 0.1]
+    },
+    {
+      "entity": "veilDemon",
+      "weight": 0.6,
+      "fromFloor": 845,
+      "areaCenter": [3.8, -2.05],
+      "areaSize": [1.2, 0.1]
+    },
+    {
+      "entity": "slabSniper",
+      "weight": 0.5,
+      "fromFloor": 835,
+      "areaCenter": [4.0, 0.9],
+      "areaSize": [0.8, 1.0]
+    },
+    {
+      "entity": "loopWraith",
+      "weight": 0.5,
+      "fromFloor": 825,
+      "areaCenter": [3.8, -0.6],
+      "areaSize": [1.0, 1.2]
+    },
+    {
+      "entity": "bastionBrute",
+      "weight": 0.5,
+      "fromFloor": 815,
+      "areaCenter": [3.8, -2.05],
+      "areaSize": [1.2, 0.1]
     }
   ],
   "hazards": [

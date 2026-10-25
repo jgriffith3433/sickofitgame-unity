@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Loop wraith",
+  "hint": "Shots pass through. Rewind snags it.",
+  "note": "Hell's loop, wearing a sheet. Pull the thread.",
+  "hintVoice": "vo_hero_hint_loopWraith",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "imp",
+  "health": 4,
+  "tags": [
+    "imp",
+    "loopWraith"
+  ],
+  "visual": {
+    "color": "#9AD8E8C8",
+    "fxColor": "#9AD8E8"
+  },
+  "drops": [],
+  "loot": {
+    "chance": 1.0,
+    "count": 1,
+    "value": 3
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "wraithEmber",
+      "speed": 3.0,
+      "aim": "Player",
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 2.8,
+      "initialDelay": 1.4,
+      "damage": 1
+    },
+    {
+      "type": "rewindSnag",
+      "window": 4.0,
+      "deflectSound": "loopWraith_pass"
+    }
+  ],
+  "sounds": { "hurtSound": "loopWraith_hurt", "deathSound": "loopWraith_die", "attackSound": "loopWraith_attack" }
+}

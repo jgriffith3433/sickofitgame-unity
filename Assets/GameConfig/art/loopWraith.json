@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "loopWraith",
+  "name": "Loop wraith",
+  "description": "a pale translucent ghost of the Cracked Road in a tattered hooded shroud, hollow glowing cyan eyes, the lower body unravelling into thin looping threads of light",
+  "height": 0.8,
+  "poses": {
+    "stand": "floating, shroud rippling, threads of light looping beneath it, facing right",
+    "struck": "struck: threads snagging and knotting in a bright flash, eyes wide",
+    "dead": "unravelled completely into a spiral of fading threads"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes and shifts in place, glow pulsing slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "performs its signature attack toward the right, glow flaring",
+      "seconds": 2.0
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks back, then settles",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

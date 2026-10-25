@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Chained pair",
+  "hint": "Linked. Hurt one, hurt both.",
+  "note": "Two for one. Same wound. Efficient.",
+  "hintVoice": "vo_hero_hint_chainWhelp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    },
+    {
+      "type": "spawn",
+      "entity": "chainBrute",
+      "anchor": "Self",
+      "at": [
+        1.9,
+        0.0
+      ],
+      "facePlayer": false
+    }
+  ],
+  "extends": "demonWhelp",
+  "health": 3,
+  "moveSpeed": 1.3,
+  "tags": [
+    "demonWhelp",
+    "chainWhelp"
+  ],
+  "visual": {
+    "scale": 0.19,
+    "color": "#C0B8B0",
+    "fxColor": "#FF6A1F"
+  },
+  "loot": {
+    "chance": 0.6,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "chase",
+      "speed": 1.3,
+      "stopDistance": 0.0,
+      "horizontalOnly": true,
+      "face": true
+    },
+    {
+      "type": "chainLink",
+      "partner": "chainBrute",
+      "color": "#B8B0A8",
+      "linkSound": "chain_cut"
+    }
+  ],
+  "sounds": { "hurtSound": "chainWhelp_hurt", "deathSound": "chainWhelp_die" }
+}

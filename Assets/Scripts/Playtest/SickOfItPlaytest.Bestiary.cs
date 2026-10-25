@@ -255,9 +255,9 @@ namespace SickOfIt.Playtest
                             BestiaryCheck("lensImp warning then sweep", bestiary.LaserWarnAt >= 0f && lead >= 0.8f, $"the beam came {lead:0.00} s after the red line");
                         }
                         break;
-                    case "signal" when e.Subject.StartsWith("bestiary:", System.StringComparison.Ordinal):
+                    case "signal" when e.Subject.StartsWith("best:", System.StringComparison.Ordinal):
                         Run.Event("bestiary", $"{at}: station {e.Subject.Substring(5)}");
-                        if (e.Subject == "bestiary:done")
+                        if (e.Subject == "best:done")
                             bestiary.Done = true;
                         break;
                 }
