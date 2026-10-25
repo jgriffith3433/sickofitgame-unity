@@ -1861,7 +1861,7 @@ namespace SickOfIt.Playtest
 
             // ─── Scenarios ───────────────────────────────────────────────
 
-            public IEnumerator LevelScenario(int n)
+            public IEnumerator LevelScenario(int n, bool alreadyOpen = false)
             {
                 var definition = GameDefinition.Instance;
                 if (n < 1 || n > definition.TotalLevels)
@@ -1871,10 +1871,13 @@ namespace SickOfIt.Playtest
                     yield break;
                 }
                 LastLevelOutcome = null;
-                Run.Event("shortcut", $"load level {n} directly");
-                var load = LoadLevel(n);
-                if (load != null)
-                    yield return load;
+                if (!alreadyOpen)
+                {
+                    Run.Event("shortcut", $"load level {n} directly");
+                    var load = LoadLevel(n);
+                    if (load != null)
+                        yield return load;
+                }
                 // Level 1 ends in the portal scene: watch it beat by beat, then follow the game on into Video2.
                 portal = n == PortalLevel ? new PortalWatch() : null;
                 if (portal != null)
@@ -7200,8 +7203,17 @@ namespace SickOfIt.Playtest
                 {
                     // Then one level played like level-N (a Warden's arena and the Shaft after it), which ends the run.
                     Run.Event("all-levels", $"{what}: the floors are done, now level {thenLevel} as a scenario of its own");
-                    Prepare(thenLevel, true);
-                    yield return LevelScenario(thenLevel);
+                    // Opened like every floor above (OpenLevel passes the Shaft, a death or a video the last floor left the game in, and
+                    // retries a load the scene loader rejected while it was busy); a bare LoadLevel from there never started it (level 149).
+                    yield return OpenLevel(thenLevel, 1);
+                    if (Run.Done) yield break;
+                    if (!openedLevel)
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"{what}: level {thenLevel} never started when loaded directly (in {SceneName()})");
+                        End(PlaytestOutcome.Stuck);
+                        yield break;
+                    }
+                    yield return LevelScenario(thenLevel, alreadyOpen: true);
                     yield break;
                 }
                 End(cleared == results.Count ? PlaytestOutcome.Won : PlaytestOutcome.Done);

@@ -30,11 +30,14 @@ namespace SickOfIt.Core
 
         protected override AudioSnapshot CaptureSnapshot(float time)
         {
+            // A source whose clip was let go (VideoRuntime/DeathRuntime.ReleaseAudio) has no playhead: reading
+            // AudioSource.time on it logs "not a clip" every step, which floods the log on WebGL.
+            bool hasClip = audioSource != null && audioSource.clip != null;
             return new AudioSnapshot
             {
                 time = time,
-                playbackTime = audioSource != null ? audioSource.time : 0f,
-                isPlaying = audioSource != null && audioSource.isPlaying,
+                playbackTime = hasClip ? audioSource.time : 0f,
+                isPlaying = hasClip && audioSource.isPlaying,
                 volume = audioSource != null ? audioSource.volume : 1f
             };
         }
@@ -96,7 +99,7 @@ namespace SickOfIt.Core
             base.OnRewindStop();
 
             // Restore audio playback position to where it was at the current GameClock time
-            if (audioSource == null || history.Count == 0) return;
+            if (audioSource == null || audioSource.clip == null || history.Count == 0) return;
 
             float currentTime = GameClock.Instance != null ? GameClock.Instance.Time : 0f;
             int nearest = history.FindNearestIndex(currentTime, SnapshotTime);
