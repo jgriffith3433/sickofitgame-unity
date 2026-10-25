@@ -26,7 +26,7 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 300.0,
+  "duration": 600.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 80,
@@ -294,6 +294,53 @@
               {
                 "type": "goToPhase",
                 "phase": "defeat"
+              }
+            ]
+          },
+          {
+            "name": "the hero sizes him up",
+            "when": {
+              "type": "after",
+              "seconds": 9.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "showText",
+                "text": "The Spire Fiend. He counts my steps. So I stay calm.",
+                "duration": 3.8,
+                "style": "Subtitle",
+                "sound": "vo_hero_hint_spireFiend"
+              }
+            ]
+          },
+          {
+            "name": "boss rework: wave",
+            "when": {
+              "type": "signal",
+              "name": "sfWave"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.15,
+                "duration": 0.7
+              }
+            ]
+          },
+          {
+            "name": "boss rework: last stand",
+            "when": {
+              "type": "signal",
+              "name": "sfLast"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.3,
+                "duration": 0.7
               }
             ]
           }

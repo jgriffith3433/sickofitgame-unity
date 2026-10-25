@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -1952,6 +1952,35 @@ plays instead; no clips are cast for either).
 
 **The hero's climb on the ladder** is three clips (generated, `art/hero.json`): `ClimbIdle` (hanging on the rungs, bored), `Climb`
 (going up, hand over hand) and `ClimbDown` (the same, going down).
+
+## The bosses' second look (six fights, 2-4 minutes, a crowd)
+
+The first fights were a boss and a pattern. Hell, though, loves a crowd, and the hero has by now been through nine Circles' worth of
+imps, so every Warden and floor boss brings the crowd with him. Built 2026-10-25 for the Imp Foreman (991), the Pile Keeper (951), the Magma
+King (901), the Road Breaker (891), the Carver (851) and the Spire Fiend (801); data in their entity files, written by
+`Tools/Levels/boss_rework.py` (edit its tables and run it, never the states by hand).
+
+- **More phases.** A floor boss has four: alone on the first tier (the glowing whip, spear or road line, the rain of embers or the spot under
+  the hero), the **surge** below 70% (`xxSurge`, the first wave), the climb at half health (the tier changes, the wave goes with it), tier 2
+  (`xxPhase2`, a second wave and the hero's chain/ledge fight) and the **rage** at a quarter (`xxPhase3`, the biggest wave). A Warden
+  has five: the first fight, the **wave** below 75% (`mkWave`, `sfWave`), the half-health stand/shed with his guard, the enrage and the **last
+  stand** below 15% (`mkLast`, `sfLast`).
+- **Denser, telegraphed.** Every attack is a glow first, 1+ s ahead. Lines get wider (5 to 7), and each fight gains two attacks that use
+  Hell's tricks: a **fan of bouncing embers** (`ricochetEmber`, `bounces`) and a **burst of bolts thrown where the hero is going**
+  (`Aim.Predictive`), each behind a `mkWarnHand` glow.
+- **Minions from mixed types, tied to phases, 4 to 8 alive.** Each boss's spawners share one cap (a spawner counts everything its owner spawned):
+  4 in the surge/wave, 6 in the second wave, 8 in the rage/last stand. The Wastes bosses mix the roster of the Ember Wastes (Foreman: sack imps,
+  halo, deadeye, ricochet, whirl, lead and blink imps, slag hounds; Keeper and King: guards, bulwark, lens, slab, lead imps); the Cracked Road's
+  mix the road's (Breaker, Carver, Spire Fiend: whelps, fuse whelps, bounce lobbers, plate, veil and risen demons, slab snipers). A phase's
+  wave is cleared when the next begins (the climb, the enrage), so each phase is its own crowd. No rift bombers (their bombs count as enemies).
+- **Longer.** Health about doubled and more (Foreman 40 to 105, Pile Keeper 36 to 100, Road Breaker and Carver 34 to 100, Magma King and Spire
+  Fiend 80 to 170): the fight, from its fight signal to its defeat signal, should take the bot 2-4 minutes. Tune health, not timers, if it doesn't.
+- **The hero sizes each one up.** A voiced one-liner a few seconds into the fight, in his deadpan, saying the weakness the Codex also lists
+  (`vo_hero_hint_<boss>`): the Foreman's *whip glows before it cracks*, the Keeper's *guards first*, the Breaker's *the road glows before it
+  bursts*, the Carver's *shards fall after the glow*, the King's *dodge the breath, don't wake him early*, the Fiend's *he counts my steps, stay calm*.
+  (A boss's `hintOnce` stays silent in his locked intro, so the level says it once the fight starts.)
+
+Playtest: `boss-fights` (all six, ~50 min), and every stage run that reaches one (`floors-*`, `all-levels-*`) gets the same `bossFight.*` checks.
 
 ## Rules for levels
 

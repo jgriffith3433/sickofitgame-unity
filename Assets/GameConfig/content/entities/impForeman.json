@@ -1,13 +1,17 @@
 {
   "schemaVersion": 1,
   "displayName": "Imp Foreman",
-  "hint": "Mind the whip. Climb past him.",
+  "hint": "The whip glows before it cracks. Climb past it.",
   "note": "Fattest imp in the Wastes, on my village's diamonds.",
   "team": "Enemy",
-  "health": 40,
+  "health": 105,
   "moveSpeed": 0,
   "activationRange": 0,
-  "tags": ["boss", "imp", "impForeman"],
+  "tags": [
+    "boss",
+    "imp",
+    "impForeman"
+  ],
   "body": {
     "shape": "Circle",
     "radius": 0.66,
@@ -160,7 +164,7 @@
       "name": "intro",
       "transitions": [
         {
-          "to": "p1Whip",
+          "to": "p1Line",
           "when": {
             "type": "signal",
             "name": "fmFight"
@@ -169,78 +173,650 @@
       ]
     },
     {
-      "name": "p1Whip",
+      "name": "p1Line",
       "abilities": [
         {
           "type": "shoot",
           "projectile": "fmWarnWhip",
-          "speed": 0,
+          "speed": 0.0,
           "aim": "Down",
-          "muzzle": [3.4, -0.9],
+          "muzzle": [
+            3.4,
+            -0.9
+          ],
           "interval": 99,
           "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
           "pattern": {
             "type": "line",
             "count": 5,
-            "spacing": 1
-          },
-          "animTrigger": "IsAttacking"
+            "spacing": 1.0
+          }
         }
       ],
       "transitions": [
         {
-          "to": "climbing",
+          "to": "climb",
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
           }
         },
         {
-          "to": "p1Whistle",
+          "to": "surgeEnter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.7
+          }
+        },
+        {
+          "to": "p1Spot",
           "when": {
             "type": "after",
-            "seconds": 3
+            "seconds": 3.0
           }
         }
       ]
     },
     {
-      "name": "p1Whistle",
+      "name": "p1Spot",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "fmSackDrip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -0.6
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "rain",
+            "count": 3,
+            "angleJitter": 0.0
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeEnter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.7
+          }
+        },
+        {
+          "to": "p1Spot2",
+          "when": {
+            "type": "after",
+            "seconds": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Spot2",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "fmSackDrip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -0.6
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "rain",
+            "count": 3,
+            "angleJitter": 0.0
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeEnter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.7
+          }
+        },
+        {
+          "to": "p1Line2",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "p1Line2",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "fmWarnWhip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            3.4,
+            -0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 0.9
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeEnter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.7
+          }
+        },
+        {
+          "to": "p1Line",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeEnter",
       "onEnter": [
+        {
+          "type": "emit",
+          "signal": "fmSurge"
+        },
         {
           "type": "playSound",
           "sound": "whip_crack"
         }
       ],
-      "abilities": [
-        {
-          "type": "spawner",
-          "entity": "impHauler",
-          "interval": 9,
-          "initialDelay": 0.5,
-          "maxAlive": 2,
-          "offset": [2.6, 2.4]
-        }
-      ],
       "transitions": [
         {
-          "to": "climbing",
+          "to": "climb",
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
           }
         },
         {
-          "to": "p1Whip",
+          "to": "surgeFan",
           "when": {
             "type": "after",
-            "seconds": 2.6
+            "seconds": 0.4
           }
         }
       ]
     },
     {
-      "name": "climbing",
+      "name": "surgeFan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 40
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impHauler",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 4,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 4,
+          "offset": [
+            3.8,
+            2.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 4,
+          "offset": [
+            5.2,
+            1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 4,
+          "offset": [
+            1.4,
+            3.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeLine",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeLine",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "fmWarnWhip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            3.4,
+            -0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
+          "pattern": {
+            "type": "line",
+            "count": 7,
+            "spacing": 0.85
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impHauler",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 4,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 4,
+          "offset": [
+            3.8,
+            2.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 4,
+          "offset": [
+            5.2,
+            1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 4,
+          "offset": [
+            1.4,
+            3.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeSpot",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeSpot",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "fmSackDrip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -0.6
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "rain",
+            "count": 5,
+            "angleJitter": 0.0
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impHauler",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 4,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 4,
+          "offset": [
+            3.8,
+            2.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 4,
+          "offset": [
+            5.2,
+            1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 4,
+          "offset": [
+            1.4,
+            3.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeLead",
+          "when": {
+            "type": "after",
+            "seconds": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeLead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 3,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "impHauler",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 4,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 4,
+          "offset": [
+            3.8,
+            2.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 4,
+          "offset": [
+            5.2,
+            1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 4,
+          "offset": [
+            1.4,
+            3.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeSpot2",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeSpot2",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "fmSackDrip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -0.6
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "rain",
+            "count": 5,
+            "angleJitter": 0.0
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impHauler",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 4,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 4,
+          "offset": [
+            3.8,
+            2.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 4,
+          "offset": [
+            5.2,
+            1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 4,
+          "offset": [
+            1.4,
+            3.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeFan",
+          "when": {
+            "type": "after",
+            "seconds": 2.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "climb",
       "onEnter": [
         {
           "type": "emit",
@@ -258,13 +834,58 @@
           "target": {
             "entity": "impHauler"
           }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "haloImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "deadeyeImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "slagHound"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "ricochetImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "whirlImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "leadImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "blinkImp"
+          }
         }
       ],
       "abilities": [
         {
           "type": "hover",
           "speed": 3,
-          "offset": [8.2, 8.4],
+          "offset": [
+            8.2,
+            8.4
+          ],
           "aroundSpawn": true,
           "keepSide": false,
           "bobHeight": 0
@@ -272,7 +893,7 @@
       ],
       "transitions": [
         {
-          "to": "p2Swing",
+          "to": "p2Enter",
           "when": {
             "type": "signal",
             "name": "fmTier2"
@@ -281,7 +902,7 @@
       ]
     },
     {
-      "name": "p2Swing",
+      "name": "p2Enter",
       "onEnter": [
         {
           "type": "emit",
@@ -323,30 +944,31 @@
             "color": "#FFFFFF"
           },
           "chainWidth": 0.26,
-          "pivotOffset": [8.2, 8.4]
-        },
-        {
-          "type": "shoot",
-          "projectile": "fmSackDrip",
-          "speed": 0,
-          "aim": "Down",
-          "muzzle": [0, -0.6],
-          "interval": 1.4,
-          "initialDelay": 1.2
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
         }
       ],
       "transitions": [
         {
-          "to": "p2Lash",
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Line",
           "when": {
             "type": "after",
-            "seconds": 5
+            "seconds": 0.8
           }
         }
       ]
     },
     {
-      "name": "p2Lash",
+      "name": "p2Line",
       "abilities": [
         {
           "type": "swingChain",
@@ -367,36 +989,104 @@
             "color": "#FFFFFF"
           },
           "chainWidth": 0.26,
-          "pivotOffset": [8.2, 8.4]
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
         },
         {
           "type": "shoot",
           "projectile": "fmWarnWhip",
-          "speed": 0,
+          "speed": 0.0,
           "aim": "Down",
-          "muzzle": [0, -2.75],
+          "muzzle": [
+            0.0,
+            -2.75
+          ],
           "interval": 99,
           "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
           "pattern": {
             "type": "line",
-            "count": 4,
-            "spacing": 1
-          },
-          "animTrigger": "IsAttacking"
+            "count": 5,
+            "spacing": 1.0
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
         }
       ],
       "transitions": [
         {
-          "to": "p2Drip",
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Fan",
           "when": {
             "type": "after",
-            "seconds": 2.4
+            "seconds": 3.0
           }
         }
       ]
     },
     {
-      "name": "p2Drip",
+      "name": "p2Fan",
       "abilities": [
         {
           "type": "swingChain",
@@ -417,28 +1107,1422 @@
             "color": "#FFFFFF"
           },
           "chainWidth": 0.26,
-          "pivotOffset": [8.2, 8.4]
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
         },
         {
           "type": "shoot",
-          "projectile": "fmSackDrip",
-          "speed": 0,
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
           "aim": "Down",
-          "muzzle": [0, -0.6],
-          "interval": 1.2,
-          "initialDelay": 0.4
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 44
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
         }
       ],
       "transitions": [
         {
-          "to": "p2Lash",
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Spot",
           "when": {
             "type": "after",
-            "seconds": 4.6
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Spot",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "fmSackDrip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -0.6
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "rain",
+            "count": 3,
+            "angleJitter": 0.0
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Lead",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Lead",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 4,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Line2",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Line2",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "fmWarnWhip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -2.75
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 0.9
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Spot2",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Spot2",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "fmSackDrip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -0.6
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "rain",
+            "count": 3,
+            "angleJitter": 0.0
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Line",
+          "when": {
+            "type": "after",
+            "seconds": 2.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Enter",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "fmPhase3"
+        },
+        {
+          "type": "playSound",
+          "sound": "magma_rumble"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Line",
+          "when": {
+            "type": "after",
+            "seconds": 0.8
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Line",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "fmWarnWhip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -2.75
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
+          "pattern": {
+            "type": "line",
+            "count": 7,
+            "spacing": 0.85
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Fan",
+          "when": {
+            "type": "after",
+            "seconds": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Fan",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 64
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Spot",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Spot",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "fmSackDrip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -0.6
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "rain",
+            "count": 5,
+            "angleJitter": 0.0
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Lead",
+          "when": {
+            "type": "after",
+            "seconds": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Lead",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 5,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Spot2",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Spot2",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "fmSackDrip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -0.6
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "pattern": {
+            "type": "rain",
+            "count": 5,
+            "angleJitter": 0.0
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Line2",
+          "when": {
+            "type": "after",
+            "seconds": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Line2",
+      "abilities": [
+        {
+          "type": "swingChain",
+          "length": 2.4,
+          "amplitude": 48,
+          "period": 4.2,
+          "phase": 0,
+          "grabRadius": -10,
+          "hang": 0,
+          "regrab": 99,
+          "chainColor": "#52423C",
+          "grabSound": "",
+          "chainArt": {
+            "sheet": "Art/Climb/Chain_links.png",
+            "spriteNameFilter": "",
+            "fps": 1,
+            "scroll": 0,
+            "color": "#FFFFFF"
+          },
+          "chainWidth": 0.26,
+          "pivotOffset": [
+            8.2,
+            8.4
+          ]
+        },
+        {
+          "type": "shoot",
+          "projectile": "fmWarnWhip",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.0,
+            -2.75
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 0.9
+          }
+        },
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 30
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Line",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
           }
         }
       ]
     }
   ],
-  "sounds": { "hurtSound": "impForeman_hurt", "deathSound": "impForeman_die", "attackSound": "impForeman_attack" }
+  "sounds": {
+    "hurtSound": "impForeman_hurt",
+    "deathSound": "impForeman_die",
+    "attackSound": "impForeman_attack"
+  },
+  "hintVoice": "vo_hero_hint_impForeman"
 }

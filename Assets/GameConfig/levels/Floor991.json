@@ -16,7 +16,7 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 240.0,
+  "duration": 520.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 68,
@@ -431,6 +431,36 @@
             "phase": "longWay"
           }
         ]
+      },
+      {
+        "name": "boss rework: surge",
+        "when": {
+          "type": "signal",
+          "name": "fmSurge"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "cameraShake",
+            "intensity": 0.18,
+            "duration": 0.7
+          }
+        ]
+      },
+      {
+        "name": "boss rework: rage",
+        "when": {
+          "type": "signal",
+          "name": "fmPhase3"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "cameraShake",
+            "intensity": 0.3,
+            "duration": 0.7
+          }
+        ]
       }
     ],
     "phases": [
@@ -538,6 +568,17 @@
               {
                 "type": "emit",
                 "signal": "fmFight"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "showText",
+                "text": "The Foreman. The whip glows before it cracks. So I climb past it.",
+                "duration": 3.8,
+                "style": "Subtitle",
+                "sound": "vo_hero_hint_impForeman"
               }
             ]
           }

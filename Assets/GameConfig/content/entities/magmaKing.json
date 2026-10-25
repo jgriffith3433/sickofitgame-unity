@@ -4,13 +4,18 @@
   "hint": "Dodge the breath. Don't wake him early.",
   "note": "Sits on a throne of slag. Thinks I'm the entertainment.",
   "team": "Enemy",
-  "health": 80,
+  "health": 170,
   "moveSpeed": 0,
   "activationRange": 0,
-  "tags": ["boss"],
+  "tags": [
+    "boss"
+  ],
   "body": {
     "shape": "Box",
-    "size": [1.7, 2.3],
+    "size": [
+      1.7,
+      2.3
+    ],
     "solid": true,
     "gravity": 0
   },
@@ -359,7 +364,10 @@
           "projectile": "mkWarnHand",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [0.7, 0.6],
+          "muzzle": [
+            0.7,
+            0.6
+          ],
           "interval": 99,
           "initialDelay": 0
         },
@@ -368,7 +376,10 @@
           "projectile": "magmaBoulder",
           "speed": 6.5,
           "aim": "Player",
-          "muzzle": [0.7, 0.6],
+          "muzzle": [
+            0.7,
+            0.6
+          ],
           "interval": 99,
           "initialDelay": 1.0,
           "animTrigger": "Throw",
@@ -381,6 +392,13 @@
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
+          }
+        },
+        {
+          "to": "mkWave",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.75
           }
         },
         {
@@ -400,7 +418,10 @@
           "projectile": "mkWarnFloor",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [3.3, -1.15],
+          "muzzle": [
+            3.3,
+            -1.15
+          ],
           "interval": 99,
           "initialDelay": 0,
           "pattern": {
@@ -414,7 +435,10 @@
           "projectile": "slamShockwave",
           "speed": 3.6,
           "aim": "Facing",
-          "muzzle": [1.0, -0.85],
+          "muzzle": [
+            1.0,
+            -0.85
+          ],
           "interval": 99,
           "initialDelay": 1.0,
           "animTrigger": "Slam",
@@ -427,6 +451,13 @@
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
+          }
+        },
+        {
+          "to": "mkWave",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.75
           }
         },
         {
@@ -446,7 +477,10 @@
           "projectile": "mkWarnHand",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [0.7, 0.6],
+          "muzzle": [
+            0.7,
+            0.6
+          ],
           "interval": 99,
           "initialDelay": 0
         },
@@ -455,7 +489,10 @@
           "projectile": "magmaBoulder",
           "speed": 6.5,
           "aim": "Player",
-          "muzzle": [0.7, 0.6],
+          "muzzle": [
+            0.7,
+            0.6
+          ],
           "interval": 99,
           "initialDelay": 1.0,
           "animTrigger": "Throw",
@@ -468,6 +505,13 @@
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
+          }
+        },
+        {
+          "to": "mkWave",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.75
           }
         },
         {
@@ -485,7 +529,10 @@
         {
           "type": "hover",
           "speed": 0.75,
-          "offset": [0, 1.2],
+          "offset": [
+            0,
+            1.2
+          ],
           "aroundSpawn": true,
           "keepSide": false,
           "bobHeight": 0
@@ -574,7 +621,10 @@
           "projectile": "mkWarnFloor",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [3.3, -1.15],
+          "muzzle": [
+            3.3,
+            -1.15
+          ],
           "interval": 99,
           "initialDelay": 0,
           "pattern": {
@@ -588,7 +638,10 @@
           "projectile": "slamShockwave",
           "speed": 4.0,
           "aim": "Facing",
-          "muzzle": [1.0, -0.85],
+          "muzzle": [
+            1.0,
+            -0.85
+          ],
           "interval": 99,
           "initialDelay": 1.0,
           "animTrigger": "Slam",
@@ -609,18 +662,57 @@
         {
           "type": "spawner",
           "entity": "impGuard",
-          "interval": 8,
-          "initialDelay": 1.0,
-          "maxAlive": 2,
-          "offset": [1.9, 1.1]
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.9,
+            1.1
+          ]
         },
         {
           "type": "spawner",
-          "entity": "impGuard",
-          "interval": 8,
-          "initialDelay": 5.0,
-          "maxAlive": 2,
-          "offset": [4.2, -0.2]
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            5.6,
+            1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            -0.6
+          ]
         }
       ],
       "transitions": [
@@ -648,7 +740,10 @@
           "projectile": "mkWarnMouth",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [0.8, 0.9],
+          "muzzle": [
+            0.8,
+            0.9
+          ],
           "interval": 99,
           "initialDelay": 0
         },
@@ -662,7 +757,10 @@
           },
           "speed": 4.2,
           "aim": "Player",
-          "muzzle": [0.8, 0.9],
+          "muzzle": [
+            0.8,
+            0.9
+          ],
           "interval": 99,
           "initialDelay": 1.0,
           "burst": 2,
@@ -673,10 +771,57 @@
         {
           "type": "spawner",
           "entity": "impGuard",
-          "interval": 8,
-          "initialDelay": 3.0,
-          "maxAlive": 2,
-          "offset": [1.9, 1.1]
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            5.6,
+            1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            -0.6
+          ]
         }
       ],
       "transitions": [
@@ -688,7 +833,7 @@
           }
         },
         {
-          "to": "p2Slam",
+          "to": "mkP2Fan",
           "when": {
             "type": "after",
             "seconds": 3.0
@@ -704,12 +849,6 @@
           "state": "Enrage"
         },
         {
-          "type": "kill",
-          "target": {
-            "entity": "impGuard"
-          }
-        },
-        {
           "type": "runSequence",
           "sequence": "bossEnrage"
         },
@@ -721,6 +860,36 @@
           "type": "playMusic",
           "clip": "Audio/Music/magma_king_enrage.ogg",
           "volume": 0.9
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "impGuard"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "bulwarkImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "lensImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "leadImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "ricochetImp"
+          }
         }
       ],
       "transitions": [
@@ -751,7 +920,10 @@
           "projectile": "mkWarnFlood",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [4.2, -1.15],
+          "muzzle": [
+            4.2,
+            -1.15
+          ],
           "interval": 99,
           "initialDelay": 0,
           "pattern": {
@@ -770,14 +942,68 @@
           },
           "speed": 4.5,
           "aim": "Facing",
-          "muzzle": [1.2, 0.45],
+          "muzzle": [
+            1.2,
+            0.45
+          ],
           "interval": 99,
           "initialDelay": 1.2,
           "animTrigger": "Slam",
           "fireOnEvent": "slam"
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            5.6,
+            1.0
+          ]
         }
       ],
       "transitions": [
+        {
+          "to": "mkLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
         {
           "to": "p3Breath",
           "when": {
@@ -795,7 +1021,10 @@
           "projectile": "mkWarnMouth",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [0.8, 0.9],
+          "muzzle": [
+            0.8,
+            0.9
+          ],
           "interval": 99,
           "initialDelay": 0
         },
@@ -809,16 +1038,70 @@
           },
           "speed": 4.2,
           "aim": "Player",
-          "muzzle": [0.8, 0.9],
+          "muzzle": [
+            0.8,
+            0.9
+          ],
           "interval": 99,
           "initialDelay": 1.0,
           "burst": 2,
           "burstInterval": 0.25,
           "animTrigger": "Breath",
           "fireOnEvent": "breath"
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            5.6,
+            1.0
+          ]
         }
       ],
       "transitions": [
+        {
+          "to": "mkLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
         {
           "to": "p3Slam",
           "when": {
@@ -836,7 +1119,10 @@
           "projectile": "mkWarnFloor",
           "speed": 0,
           "aim": "Down",
-          "muzzle": [3.3, -1.15],
+          "muzzle": [
+            3.3,
+            -1.15
+          ],
           "interval": 99,
           "initialDelay": 0,
           "pattern": {
@@ -850,7 +1136,10 @@
           "projectile": "slamShockwave",
           "speed": 4.4,
           "aim": "Facing",
-          "muzzle": [1.0, -0.85],
+          "muzzle": [
+            1.0,
+            -0.85
+          ],
           "interval": 99,
           "initialDelay": 1.0,
           "animTrigger": "Slam",
@@ -867,14 +1156,996 @@
           "speed": 0,
           "interval": 0,
           "fireOnEvent": "slam"
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            5.6,
+            1.0
+          ]
         }
       ],
       "transitions": [
         {
-          "to": "p3Flood",
+          "to": "mkLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
+        {
+          "to": "mkP3Fan",
           "when": {
             "type": "after",
             "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkWave",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "mkWave"
+        },
+        {
+          "type": "playSound",
+          "sound": "magma_rumble"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "rising",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "mkWaveFan",
+          "when": {
+            "type": "after",
+            "seconds": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkWaveFan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 44
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 3,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 3,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 3,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "rising",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "mkWaveLead",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkWaveLead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 3,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 3,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 3,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 3,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "rising",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "mkWaveHeavy",
+          "when": {
+            "type": "after",
+            "seconds": 3.4
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkWaveHeavy",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnFloor",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            3.3,
+            -1.15
+          ],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 1.25
+          }
+        },
+        {
+          "type": "shoot",
+          "projectile": "slamShockwave",
+          "speed": 3.6,
+          "aim": "Facing",
+          "muzzle": [
+            1.0,
+            -0.85
+          ],
+          "interval": 99,
+          "initialDelay": 1.0,
+          "animTrigger": "Slam",
+          "fireOnEvent": "slam"
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 3,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 3,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 3,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "rising",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "mkWaveFan",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkP2Fan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 50
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            5.6,
+            1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            -0.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "enraging",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "mkP2Lead",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkP2Lead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 4,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            5.6,
+            1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            -0.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "enraging",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Slam",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkP3Fan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 64
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            5.6,
+            1.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "mkLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
+        {
+          "to": "p3Flood",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkLast",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "mkLast"
+        },
+        {
+          "type": "playSound",
+          "sound": "magma_rumble"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "mkLastFan",
+          "when": {
+            "type": "after",
+            "seconds": 0.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkLastFan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 70
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 2.8,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 2.8,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 2.8,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 2.8,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            5.6,
+            1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 2.8,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            2.4,
+            -0.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 2.8,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            2.2
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "mkLastLead",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkLastLead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.8,
+            0.9
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 5,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 2.8,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 2.8,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 2.8,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 2.8,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            5.6,
+            1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 2.8,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            2.4,
+            -0.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 2.8,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            2.2
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "mkLastHeavy",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "mkLastHeavy",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnFlood",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            4.2,
+            -1.15
+          ],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 7,
+            "spacing": 1.0
+          }
+        },
+        {
+          "type": "shoot",
+          "projectile": "lavaFlood",
+          "pattern": {
+            "type": "line",
+            "count": 8,
+            "spacing": 0.4
+          },
+          "speed": 4.5,
+          "aim": "Facing",
+          "muzzle": [
+            1.2,
+            0.45
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "animTrigger": "Slam",
+          "fireOnEvent": "slam"
+        },
+        {
+          "type": "spawner",
+          "entity": "haloImp",
+          "interval": 2.8,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            1.9,
+            1.1
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "whirlImp",
+          "interval": 2.8,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            4.2,
+            -0.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 2.8,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            3.0,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 2.8,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            5.6,
+            1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slagHound",
+          "interval": 2.8,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            2.4,
+            -0.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 2.8,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            2.2
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "mkLastFan",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
           }
         }
       ]
@@ -894,5 +2165,10 @@
       "signal": "mkFallen"
     }
   ],
-  "sounds": { "hurtSound": "magmaKing_hurt", "deathSound": "magmaKing_die", "attackSound": "magmaKing_attack" }
+  "sounds": {
+    "hurtSound": "magmaKing_hurt",
+    "deathSound": "magmaKing_die",
+    "attackSound": "magmaKing_attack"
+  },
+  "hintVoice": "vo_hero_hint_magmaKing"
 }

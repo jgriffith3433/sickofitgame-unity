@@ -28,7 +28,7 @@
     0.0
   ],
   "deathConfigName": "Death2",
-  "duration": 300.0,
+  "duration": 600.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 32,
@@ -295,6 +295,53 @@
               {
                 "type": "goToPhase",
                 "phase": "defeat"
+              }
+            ]
+          },
+          {
+            "name": "the hero sizes him up",
+            "when": {
+              "type": "after",
+              "seconds": 7.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "showText",
+                "text": "The Magma King. Dodge the breath. And don't wake him early.",
+                "duration": 3.8,
+                "style": "Subtitle",
+                "sound": "vo_hero_hint_magmaKing"
+              }
+            ]
+          },
+          {
+            "name": "boss rework: wave",
+            "when": {
+              "type": "signal",
+              "name": "mkWave"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.15,
+                "duration": 0.7
+              }
+            ]
+          },
+          {
+            "name": "boss rework: last stand",
+            "when": {
+              "type": "signal",
+              "name": "mkLast"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.3,
+                "duration": 0.7
               }
             ]
           }

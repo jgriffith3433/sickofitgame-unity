@@ -16,7 +16,7 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 260.0,
+  "duration": 520.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 66,
@@ -559,6 +559,36 @@
             ]
           }
         ]
+      },
+      {
+        "name": "boss rework: surge",
+        "when": {
+          "type": "signal",
+          "name": "cvSurge"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "cameraShake",
+            "intensity": 0.18,
+            "duration": 0.7
+          }
+        ]
+      },
+      {
+        "name": "boss rework: rage",
+        "when": {
+          "type": "signal",
+          "name": "cvPhase3"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "cameraShake",
+            "intensity": 0.3,
+            "duration": 0.7
+          }
+        ]
       }
     ],
     "phases": [
@@ -677,6 +707,17 @@
               {
                 "type": "emit",
                 "signal": "cvFight"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "showText",
+                "text": "The Carver. The shards fall after the glow. So I stay out of it.",
+                "duration": 3.8,
+                "style": "Subtitle",
+                "sound": "vo_hero_hint_carver"
               }
             ]
           }
