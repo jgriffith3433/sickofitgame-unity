@@ -193,6 +193,18 @@ This is **not** the `VideoSpriteSheetBaker` path ([VideoPlayback.md](VideoPlayba
 opaque story videos and backgrounds into chunked Addressables played by `SpriteFramePlayer`. Entity art needs alpha,
 a shared pivot and a small sheet per clip, which is what this pipeline makes.
 
+## Hero clips (`art/hero.json`, `kind: "hero"`)
+
+The hero is the **armoured knight** with the glowing orange launcher (the source videos, `Idle.mp4` in SickOfItGamePlayer), never a man in a
+jacket. His spec lists every clip he could have; each clip's `wired` says what `player.json` does today: `own` (its state plays its own
+sheet), `standIn` (the state exists but plays another sheet, named in `standIn`) or `false` (no state yet). `node Tools/Art/art.mjs hero --check`
+(no GPU) fails when that is untrue, when a prompt says jacket/coat/hair, or when the bake isn't 604x340 at 100 PPU.
+
+Making one: `node Tools/Art/art.mjs hero --hero-ref idle --only dash` uses Idle's first frame (1280x720 on black) as the standing reference, makes
+poses and a Wan clip at 1280x720 (GPU, priced and approved first), then `player_clip_sheet.py` bakes it to **604x340 cells, centre pivot,
+100 pixels per unit** (exactly Idle's, so his on-screen size never changes) into `Assets/Art/Sprites/Player/<State>.png` and `player.json` gets the
+state (or the stand-in's sheet is replaced). A new state needs nothing else: `PlayerSceneClip` falls back to the state's sheet. Then set the clip's `wired` to `own`.
+
 ## Effects (portals, beams, bursts): `Tools/Art/fx_sheets.py`
 
 Effects aren't figures, so art.mjs's framing (feet on a ground line, a cutout model) doesn't fit them. Make the

@@ -11,6 +11,15 @@
 //   node Tools/Art/art.mjs --list              every spec and its state
 //   flags: --no-unity (don't run the Unity batch import), --takes N, --seed N
 //
+// Hero clips ("kind": "hero" in the spec, Assets/GameConfig/art/hero.json): the hero is not an entity, so there is no
+// animator to write. Poses start from Idle's first frame (--hero-ref idle, or "referenceIdle": true), clips are made at
+// 1280x720, then baked by Tools/Art/player_clip_sheet.py to 604x340 cells, centre pivot, 100 pixels per unit (the size of
+// his Idle sheet, so he never changes size) into Assets/Art/Sprites/Player/, and the state is added to player.json
+// (PlayerSceneClip falls back to a state's sheet, so a new state needs nothing else):
+//   node Tools/Art/art.mjs hero --check                 no GPU: hero.json "wired" against player.json, the knight look, the bake size
+//   node Tools/Art/art.mjs hero --hero-ref idle --only dash,wallSlide   make just those clips (GPU, priced, needs J's OK)
+//   node Tools/Art/art.mjs hero --build                 bake the clips there are and wire them
+//
 // Picks can also be made in Hawkes Gen's library (Studio's Library tab, Window > Hawkes Gen > Library): each run first
 // writes those into the work folder and ends by bringing new takes into the library (hawkes.library.json; SOI_LIBRARY=off
 // skips it).
@@ -41,6 +50,10 @@ const DOD = process.env.DOD_ROOT || 'C:\\Projects\\doseofdestructionwebsite';
 const SPECS = path.join(REPO, 'Assets', 'GameConfig', 'art');
 const ENTITIES = path.join(REPO, 'Assets', 'GameConfig', 'content', 'entities');
 const SHEETS = path.join(REPO, 'Assets', 'Art', 'Enemies');
+const PLAYER_SHEET_PY = path.join(REPO, 'Tools', 'Art', 'player_clip_sheet.py');
+const PLAYER_JSON = path.join(REPO, 'Assets', 'GameConfig', 'player.json');
+const HERO_SHEETS = path.join(REPO, 'Assets', 'Art', 'Sprites', 'Player');
+const HERO_BAKE = { cell: [604, 340], ppu: 100, video: [1280, 720] };
 const SHEETS_PY = path.join(REPO, 'Tools', 'Art', 'sheets.py');
 const UNITY = process.env.UNITY_EXE || 'C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.7f1\\Editor\\Unity.exe';
 // SOI_ART_PYTHON: any Python with Pillow + numpy (the Linux server has no DoD .venv; rembg is only needed for takes
@@ -115,6 +128,12 @@ function loadSpec(id) {
   const spec = { ...d, ...raw, takes: { ...d.takes, ...raw.takes }, prompts: { ...d.prompts, ...raw.prompts } };
   spec.id = id;
   spec.raw = raw;
+  spec.hero = raw.kind === 'hero';
+  if (spec.hero) {
+    spec.entity = 'player';
+    spec.background = raw.background ?? 'Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting.';
+    spec.bake = { cell: raw.bake?.cell ?? HERO_BAKE.cell, ppu: raw.bake?.ppu ?? HERO_BAKE.ppu };
+  }
   spec.entity ??= id;
   spec.name ??= pascal(id);
   spec.prefix ??= pascal(spec.entity);
@@ -133,9 +152,10 @@ function loadSpec(id) {
   const problems = [];
   if (!spec.description) problems.push('"description" is required');
   if (!(spec.height > 0)) problems.push('"height" (world units the standing figure is tall) is required');
-  if (!spec.clips.idle) problems.push('"clips" needs at least "idle"');
+  if (!spec.clips.idle && !spec.hero) problems.push('"clips" needs at least "idle"');
   for (const [name, c] of Object.entries(spec.clips)) {
-    if (!STATE[name] && !spec.raw.animator?.transitions) problems.push(`clip "${name}": use one of ${Object.keys(STATE).join(', ')}, or wire it in the spec's "animator" graph`);
+    if (spec.hero && !c.state) problems.push(`clip "${name}": a hero clip needs "state" (its player.json stateName)`);
+    if (!spec.hero && !STATE[name] && !spec.raw.animator?.transitions) problems.push(`clip "${name}": use one of ${Object.keys(STATE).join(', ')}, or wire it in the spec's "animator" graph`);
     if (c.video) continue;
     for (const k of ['from', 'to']) if (c[k] && !spec.poses[c[k]]) problems.push(`clip "${name}": no pose "${c[k]}" in "poses"`);
     if (!c.action) problems.push(`clip "${name}": "action" is required (what happens in it)`);
@@ -163,6 +183,7 @@ function workRoot() {
  * and a reference image must be a real file (not a Git LFS pointer). Fails with what's missing.
  */
 async function preflight(spec) {
+  if (spec.hero) return; // Pillow and numpy only; the DoD keying isn't used (black plate, player_clip_sheet.py)
   const probe = [
     'import json, sys, os',
     'missing = []',
@@ -321,6 +342,7 @@ async function takes(tool, { label, n, seeds, key, inputs, params, labels, file 
 
 /** Makes takes of a still with Qwen (image.edit) and keeps the best-scoring one as the pose. */
 async function makePose(spec, P, pose, key, opts) {
+  if (spec.hero && pose === 'stand') return makeHeroStand(spec, P, key);
   await hawkes(opts);
   let input;
   let prompt;
@@ -349,6 +371,11 @@ async function makePose(spec, P, pose, key, opts) {
     label: pose, n, seeds, key: `${spec.id}:${pose}:${key}`, inputs: { images: [input] }, params,
     labels: { entity: spec.entity, pose }, file: (seed) => path.join(P.poseTakes, `${pose}-${seed}.png`),
   });
+  if (spec.hero) {
+    // Black plate: no green to key, so no cutout score; the first take stands in until someone picks (--pick).
+    for (const m of made) writeJson(P.recipe(m.file), { key, pose, seed: m.seed, prompt, tool: 'image.edit', settings: params, job: m.job, asset: m.asset, made: new Date().toISOString() });
+    return choosePose(P, pose, made[0].file);
+  }
   const scored = [];
   for (const m of made) {
     const cut = await py('cutout', m.file, m.file.replace(/\.png$/, '.cut.png'));
@@ -359,6 +386,17 @@ async function makePose(spec, P, pose, key, opts) {
   const best = scored.reduce((a, b) => (b.score > a.score ? b : a));
   if (best.score < 0.5) log(`  warning: the best ${pose} take scores ${best.score}; check ${best.file} or --redo ${pose}`);
   choosePose(P, pose, best.file);
+}
+
+/** The hero's stand is Idle's first frame, not a generated pose: it is what he looks like on screen. */
+async function makeHeroStand(spec, P, key) {
+  fs.mkdirSync(path.dirname(P.pose('stand')), { recursive: true });
+  const ref = spec.reference ? resolveAsset(spec.reference) : null;
+  if (spec.referenceIdle) await run(PYTHON, [PLAYER_SHEET_PY, '--idle-reference', ref, P.pose('stand')], { quiet: true });
+  else if (ref && fs.existsSync(ref)) fs.copyFileSync(ref, P.pose('stand'));
+  else throw new Error(`hero reference ${spec.reference} not found`);
+  writeJson(P.recipe(P.pose('stand')), { key, pose: 'stand', source: spec.reference, referenceIdle: Boolean(spec.referenceIdle), made: new Date().toISOString() });
+  log(`  stand: Idle's first frame (${spec.reference}) at ${HERO_BAKE.video.join('x')}`);
 }
 
 function choosePose(P, pose, take) {
@@ -396,13 +434,14 @@ async function makeClip(spec, P, name, key, opts) {
   const prompt = clipPrompt(spec, name, clip);
   const frames = Math.max(5, Math.round(((clip.seconds ?? 2) * WAN_FPS) / 4) * 4 + 1);
   const negative = [spec.negative, clip.negative].filter(Boolean).join(', ');
-  const params = { prompt, negative, width: spec.frameSize, height: spec.frameSize, frames, fps: WAN_FPS, ...(await clipSettings(name, clip.settings)) };
+  const [vw, vh] = spec.hero ? HERO_BAKE.video : [spec.frameSize, spec.frameSize];
+  const params = { prompt, negative, width: vw, height: vh, frames, fps: WAN_FPS, ...(await clipSettings(name, clip.settings)) };
   const n = opts.takes ?? spec.takes.clip;
   const seeds = Array.from({ length: n }, (_, i) => seedFor(opts, i, key, opts.redo.has(name)));
   fs.mkdirSync(P.clipTakes, { recursive: true });
   const made = await takes('video.i2v', {
     label: `${name} (${frames} frames)`, n, seeds, key: `${spec.id}:${name}:${key}`,
-    inputs: { start: P.framed(from), end: P.framed(to) }, params,
+    inputs: spec.hero ? { start: P.pose(from), end: P.pose(to) } : { start: P.framed(from), end: P.framed(to) }, params,
     labels: { entity: spec.entity, clip: name }, file: (seed) => path.join(P.clipTakes, `${name}-${seed}.mp4`),
   });
   for (const m of made) {
@@ -611,6 +650,71 @@ async function unityImport() {
   log('  Unity kept the project busy: focus the editor (it imports by itself) or run GameConfigCommands.Import later (AGENTS.md).');
 }
 
+// ------------------------------------------------------------------ hero clips
+
+const HERO_BANNED = /\b(jacket|coat|messy|hair|man in his thirties|unshaven|t-shirt)\b/i;
+
+/** player.json's states, by name. */
+const playerStates = () => new Map((readJson(PLAYER_JSON, {}).animationConfig?.states ?? []).map((s) => [s.stateName, s]));
+
+/** No GPU: hero.json against reality. Every clip's "wired" must say what player.json does, the look must be the knight. */
+function checkHero(spec) {
+  const problems = [];
+  const states = playerStates();
+  const sheetOf = (s) => s.spriteSheet.split('/').pop();
+  for (const [name, c] of Object.entries(spec.clips)) {
+    const st = states.get(c.state);
+    const own = `${c.state}.png`;
+    if (![false, 'own', 'standIn'].includes(c.wired)) problems.push(`clip "${name}": "wired" must be "own", "standIn" or false`);
+    else if (c.wired === false && st) problems.push(`clip "${name}": marked unwired but player.json has a ${c.state} state (${sheetOf(st)})`);
+    else if (c.wired && !st) problems.push(`clip "${name}": marked wired but player.json has no ${c.state} state`);
+    else if (c.wired === 'own' && sheetOf(st) !== own) problems.push(`clip "${name}": marked "own" but ${c.state} plays ${sheetOf(st)}, not ${own}`);
+    else if (c.wired === 'standIn' && (sheetOf(st) === own || sheetOf(st) !== c.standIn)) problems.push(`clip "${name}": marked "standIn" ${c.standIn} but ${c.state} plays ${sheetOf(st)}`);
+    if (c.wired === 'own' && !fs.existsSync(path.join(HERO_SHEETS, own))) problems.push(`clip "${name}": ${own} is missing from Assets/Art/Sprites/Player`);
+  }
+  if (!/knight/i.test(spec.description) || !/launcher/i.test(spec.description)) problems.push('description must say the hero is an armoured knight with the launcher');
+  const texts = [['description', spec.description], ...Object.entries(spec.poses).map(([k, v]) => [`pose ${k}`, v]), ...Object.entries(spec.clips).map(([k, c]) => [`clip ${k}`, c.action])];
+  for (const [where, text] of texts) if (HERO_BANNED.test(text)) problems.push(`${where}: "${text.match(HERO_BANNED)[0]}" is not the knight (armour, helm, gauntlets)`);
+  if (spec.bake.cell.join('x') !== HERO_BAKE.cell.join('x') || spec.bake.ppu !== HERO_BAKE.ppu) problems.push(`bake must be ${HERO_BAKE.cell.join('x')} at ${HERO_BAKE.ppu} PPU (Idle's size)`);
+  const py = fs.readFileSync(PLAYER_SHEET_PY, 'utf8');
+  if (!new RegExp(`CELL_W, CELL_H = ${HERO_BAKE.cell[0]}, ${HERO_BAKE.cell[1]}`).test(py) || !new RegExp(`PPU = ${HERO_BAKE.ppu}\\b`).test(py)) problems.push('player_clip_sheet.py defaults are not 604x340 at 100 PPU');
+  return problems;
+}
+
+/** Bakes every clip that has a video to Assets/Art/Sprites/Player/<State>.png, then adds or points its player.json state. */
+async function buildHero(spec, P, opts) {
+  const baked = [];
+  for (const [name, c] of Object.entries(spec.clips)) {
+    const video = c.video ? resolveAsset(c.video) : P.clip(name);
+    if (!fs.existsSync(video)) { log(`  ${name}: no clip yet, skipped`); continue; }
+    const fps = c.fps ?? WAN_FPS;
+    const args = [PLAYER_SHEET_PY, video, c.state, HERO_SHEETS, '--fps', String(fps), '--cell', spec.bake.cell.join('x'), '--ppu', String(spec.bake.ppu)];
+    if (c.start) args.push('--start', String(c.start));
+    if (c.end) args.push('--end', String(c.end));
+    log((await run(PYTHON, args)).trim());
+    baked.push({ state: c.state, fps: c.playFps ?? 12, loop: c.loop ?? false, sheet: `Art/Sprites/Player/${c.state}.png`, wired: c.wired });
+  }
+  if (!baked.length) return log('no hero clip to bake yet');
+  wirePlayerStates(baked);
+  log('hero.json: set "wired" to "own" on the clips just baked (node Tools/Art/art.mjs hero --check says what disagrees)');
+  if (!opts.noUnity) await unityImport();
+}
+
+/** Edits player.json as text so its other numbers and layout stay as they are: a state's sheet is replaced, a new one appended. */
+function wirePlayerStates(baked) {
+  let text = fs.readFileSync(PLAYER_JSON, 'utf8');
+  for (const b of baked) {
+    const re = new RegExp(`("stateName": "${b.state}",\\s*"spriteSheet": )"[^"]*"`);
+    if (re.test(text)) { text = text.replace(re, `$1"${b.sheet}"`); log(`  player.json: ${b.state} now plays ${b.sheet}`); continue; }
+    const block = `,\n      {\n        "stateName": "${b.state}",\n        "spriteSheet": "${b.sheet}",\n        "spriteNameFilter": "",\n        "firstFrame": 0,\n        "frameCount": 0,\n        "fps": ${b.fps},\n        "loop": ${b.loop},\n        "events": [],\n        "speed": 1.0\n      }`;
+    const at = text.indexOf('\n    ],\n    "transitions"');
+    if (at < 0) throw new Error('player.json: cannot find the end of animationConfig.states');
+    text = text.slice(0, at) + block + text.slice(at);
+    log(`  player.json: added state ${b.state} (${b.sheet}); PlayerSceneClip falls back to it`);
+  }
+  fs.writeFileSync(PLAYER_JSON, text);
+}
+
 // ------------------------------------------------------------------ status + main
 
 function status(spec) {
@@ -639,6 +743,9 @@ function parseArgs(argv) {
     else if (a === '--pick') o.pick.push(argv[++i]);
     else if (a === '--takes') o.takes = Number(argv[++i]);
     else if (a === '--seed') o.seed = Number(argv[++i]);
+    else if (a === '--hero-ref') o.heroRef = argv[++i];
+    else if (a === '--only') o.only = new Set(argv[++i].split(','));
+    else if (a === '--check') o.check = true;
     else if (a.startsWith('--')) throw new Error(`Unknown flag ${a}`);
     else o.ids.push(a);
   }
@@ -679,6 +786,13 @@ async function librarySync(direction, spec) {
 
 async function make(id, opts) {
   const spec = loadSpec(id);
+  if (opts.heroRef === 'idle') spec.referenceIdle = true;
+  if (spec.referenceIdle) spec.reference = 'Art/Sprites/Player/Idle.png';
+  if (opts.only && spec.hero) {
+    // Only these clips (and the poses they use): a hero batch is priced clip by clip.
+    for (const n of Object.keys(spec.clips)) if (!opts.only.has(n)) delete spec.clips[n];
+    if (!Object.keys(spec.clips).length) throw new Error(`--only ${[...opts.only].join(',')}: no such clip in ${id}`);
+  }
   const P = paths(spec);
   await preflight(spec);
   fs.mkdirSync(P.work, { recursive: true });
@@ -707,7 +821,7 @@ async function make(id, opts) {
         await makePose(spec, P, pose, k[`pose:${pose}`], opts);
       }
     }
-    await frameAll(spec, P);
+    if (!spec.hero) await frameAll(spec, P);
     k = keys(spec, P);
     for (const [name, c] of Object.entries(spec.clips)) {
       if (c.video) continue;
@@ -718,11 +832,12 @@ async function make(id, opts) {
         await makeClip(spec, P, name, k[`clip:${name}`], opts);
       }
     }
-  } else if (fs.existsSync(P.pose('stand'))) {
+  } else if (fs.existsSync(P.pose('stand')) && !spec.hero) {
     await frameAll(spec, P);
   }
 
   await librarySync('import', spec);
+  if (spec.hero) return buildHero(spec, P, opts);
   const { built, visualScale } = await build(spec, P);
   const notes = apply(spec, built, visualScale);
   if (!opts.noUnity) await unityImport();
@@ -746,7 +861,13 @@ async function main() {
   }
   if (!opts.ids.length) throw new Error('Usage: node Tools/Art/art.mjs <id> [--start] [--redo x,y] [--pick pose=seed] [--build] [--status] [--no-unity]   (or --list)');
   for (const id of opts.ids) {
-    if (opts.status) {
+    if (opts.check) {
+      const spec = loadSpec(id);
+      if (!spec.hero) throw new Error('--check is for hero specs ("kind": "hero")');
+      const problems = checkHero(spec);
+      if (problems.length) throw new Error(`${id} check failed:\n  ${problems.join('\n  ')}`);
+      log(`${id}: ok (${Object.keys(spec.clips).length} clips; wired against player.json, knight look, ${spec.bake.cell.join('x')} @ ${spec.bake.ppu} PPU)`);
+    } else if (opts.status) {
       const { P, rows } = status(loadSpec(id));
       log(`${id}  (${P.work})`);
       for (const [a, b] of rows) log(`  ${a.padEnd(14)} ${b}`);
