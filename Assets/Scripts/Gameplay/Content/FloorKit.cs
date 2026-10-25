@@ -498,8 +498,11 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Seconds after letting go before he can grab it again.")] public float regrab = 0.35f;
         [Doc("Units per second he slides to the middle of the rungs when he grabs on.")] public float centerSpeed = 8f;
         [Doc("Spacing of the drawn rungs (units).")] public float rungSpacing = 0.45f;
-        public Color railColor = new Color(0.45f, 0.3f, 0.2f, 1f);
-        public Color rungColor = new Color(0.6f, 0.42f, 0.28f, 1f);
+        public Color railColor = new Color(0.30f, 0.20f, 0.15f, 1f);
+        public Color rungColor = new Color(0.52f, 0.36f, 0.24f, 1f);
+        [Doc("The dark edge behind the rails and under each rung.")] public Color outlineColor = new Color(0.08f, 0.05f, 0.04f, 1f);
+        [Doc("The lit edge down the rails and along the top of each rung.")] public Color highlightColor = new Color(0.78f, 0.5f, 0.3f, 1f);
+        [Doc("The iron bolt at the end of each rung.")] public Color boltColor = new Color(0.8f, 0.62f, 0.4f, 1f);
         [SoundRef, Doc("Played when he grabs on.")] public string grabSound = "";
 
         const int MaxRungs = 48;
@@ -597,25 +600,50 @@ namespace SickOfIt.Gameplay.Content
         }
 
         // Two rails and rungs between them over the zone (cosmetic; the zone's box is invisible to the hero's feet).
+        // Charred timber: a dark outline behind each rail, a lit edge down its face, rungs with a lit top and a shadow under,
+        // a bolt at each rung end and a capped post top, so it reads as built rather than as flat bars.
         void Draw(Bounds b)
         {
+            float railW = 0.16f;
+            float railX = b.extents.x - railW * 0.5f;
             var rails = new[] { -1f, 1f };
             for (int i = 0; i < rails.Length; i++)
             {
+                float cx = b.center.x + rails[i] * railX;
+                var outline = FloorKit.Child(Owner, "RailOutline" + i, Owner.Def.visual.layer, SpriteLayers.Platform - 1);
+                outline.color = outlineColor;
+                FloorKit.PlaceWorld(Owner, outline, new Vector2(cx, b.center.y), new Vector2(railW + 0.07f, b.size.y + 0.07f));
                 var rail = FloorKit.Child(Owner, "Rail" + i, Owner.Def.visual.layer, SpriteLayers.Platform);
                 rail.color = railColor;
-                FloorKit.PlaceWorld(Owner, rail, new Vector2(b.center.x + rails[i] * (b.extents.x - 0.06f), b.center.y), new Vector2(0.1f, b.size.y));
+                FloorKit.PlaceWorld(Owner, rail, new Vector2(cx, b.center.y), new Vector2(railW, b.size.y));
+                var lit = FloorKit.Child(Owner, "RailLit" + i, Owner.Def.visual.layer, SpriteLayers.Platform + 1);
+                lit.color = highlightColor;
+                FloorKit.PlaceWorld(Owner, lit, new Vector2(cx - railW * 0.22f, b.center.y), new Vector2(railW * 0.22f, b.size.y - 0.04f));
+                var cap = FloorKit.Child(Owner, "RailCap" + i, Owner.Def.visual.layer, SpriteLayers.Platform + 1);
+                cap.color = rungColor;
+                FloorKit.PlaceWorld(Owner, cap, new Vector2(cx, b.max.y - 0.04f), new Vector2(railW + 0.07f, 0.1f));
             }
             int count = Mathf.Min(MaxRungs, Mathf.Max(1, Mathf.FloorToInt(b.size.y / Mathf.Max(0.15f, rungSpacing))));
+            float rungW = Mathf.Max(0.1f, b.size.x - railW * 2f + 0.04f);
             for (int i = 0; i < MaxRungs; i++)
             {
-                var rung = FloorKit.Child(Owner, "Rung" + i, Owner.Def.visual.layer, SpriteLayers.Platform);
-                rung.enabled = i < count;
-                if (i >= count)
+                var rung = FloorKit.Child(Owner, "Rung" + i, Owner.Def.visual.layer, SpriteLayers.Platform + 1);
+                var shade = FloorKit.Child(Owner, "RungShade" + i, Owner.Def.visual.layer, SpriteLayers.Platform);
+                var top = FloorKit.Child(Owner, "RungTop" + i, Owner.Def.visual.layer, SpriteLayers.Platform + 2);
+                var bolt = FloorKit.Child(Owner, "RungBolt" + i, Owner.Def.visual.layer, SpriteLayers.Platform + 2);
+                bool on = i < count;
+                rung.enabled = shade.enabled = top.enabled = bolt.enabled = on;
+                if (!on)
                     continue;
-                rung.color = rungColor;
                 float y = b.min.y + (i + 0.5f) * (b.size.y / count);
-                FloorKit.PlaceWorld(Owner, rung, new Vector2(b.center.x, y), new Vector2(Mathf.Max(0.1f, b.size.x - 0.12f), 0.07f));
+                rung.color = rungColor;
+                FloorKit.PlaceWorld(Owner, rung, new Vector2(b.center.x, y), new Vector2(rungW, 0.1f));
+                shade.color = outlineColor;
+                FloorKit.PlaceWorld(Owner, shade, new Vector2(b.center.x, y - 0.075f), new Vector2(rungW, 0.06f));
+                top.color = highlightColor;
+                FloorKit.PlaceWorld(Owner, top, new Vector2(b.center.x, y + 0.036f), new Vector2(rungW, 0.03f));
+                bolt.color = boltColor;
+                FloorKit.PlaceWorld(Owner, bolt, new Vector2(b.center.x - railX, y), new Vector2(0.05f, 0.05f));
             }
         }
 
