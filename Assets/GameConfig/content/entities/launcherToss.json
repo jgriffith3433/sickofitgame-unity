@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "tags": [
+    "prop"
+  ],
+  "body": {
+    "radius": 0.3,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#FF8C33",
+    "placeholderSize": 0.55,
+    "placeholderLabel": true,
+    "sortingOrder": 7,
+    "hurtFlash": false,
+    "fxColor": "#FF8C33"
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "move",
+      "speed": 4.2,
+      "direction": [
+        1.0,
+        0.7
+      ],
+      "homing": 0.0,
+      "acceleration": 0.5
+    },
+    {
+      "type": "spin",
+      "degreesPerSecond": 540
+    },
+    {
+      "type": "lifetime",
+      "seconds": 2.2
+    }
+  ]
+}

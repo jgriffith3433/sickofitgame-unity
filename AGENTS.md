@@ -117,6 +117,12 @@ Assets/GameConfig/
   between floors in `WeaponProgress` and cleared with the Grudges. Actions `giveWeapon` / `takeWeapon`. Switch: Q / wheel / gamepad /
   the HUD weapon button (`GameplayHud.Weapon.cs`, `hud.*.weapon` placement). The aim guide follows the weapon (`GuideLengthScale`).
   Playtest `weapons` (scene `weaponsTest`).
+  **Found weapons, Floors 998-951** (Docs/Story.md "Weapons"): Floor 998 takes the launcher (`takeWeapon`, `takeAllWeapons`) and gives fists
+  for Floors 998-994; weapons with a `pickup` (`spitfire`, `ricochetPistol`, `chainWhip`, `shotgun`, `boomerangHalo`, and the launcher's
+  return on 994) are found on 993, 992, 991 (the Foreman), 954 and 951 (the Pile Keeper) and **unlocked for good**
+  (`unlockWeapon`, `WeaponUnlocks`: kept when a run ends, cleared by New Game; a scene's `suspended` weapons come back with the run). Shots of their
+  own are player-team entities (`projectile.entity`: `ricochetShot`, `haloShot` with `returnToHero`); the shotgun fans `projectile.pellets`.
+  Playtest `weapon-drops` (~20 min; scenario `weaponArena`, `targetDummy`).
 - **Bystanders** (Docs/Story.md "Bystanders", cookbook "Bystanders"): scene actions that direct any entity by instance id (`walkEntityTo`,
   `faceEntity`, `playEntityAnimation`; `"player"` and `"self"` work as ids; the walk is `Entity.ScriptWalkTo`, saved on the entity) and the `witness`
   trigger (`ShotPassed` / `AllyHurt` / `HeroHurt` near the watcher; `GameplayWorld.TryWitness`, with the last 2 s of hurts in the world's saved state).

@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -1505,19 +1505,44 @@ nothing, and no joke is about work.
 
 ## Weapons (the hero's hands)
 
-The hero starts with one thing: the **rocket launcher**, the gun he has fired since the Meadow. It is always in his hands and
-cannot be lost or taken. Everything else Hell hands him is **picked up on a floor and lost with the run**, like a Grudge
-(2026-10-25). A weapon is a JSON file in `content/weapons`; a floor gives or takes one with `giveWeapon` / `takeWeapon`.
+The hero starts with one thing: the **rocket launcher**, the gun he has fired since the Meadow. On Floor 998 Hell takes it
+(see *The Spill's theft*), and from Floor 994 on Hell hands him things instead. A weapon is a JSON file in
+`content/weapons`; a floor gives or takes one with `giveWeapon` / `takeWeapon`, and a **pickup** unlocks one for good.
 
-| Weapon | In the story | How it plays |
-|---|---|---|
-| **Rocket launcher** | His own gun. No ammo; it never runs dry because he never stops being annoyed. | Fires along the aim at 0.3 s; the spread Grudge fans it out. |
-| **Fists** | What a man has when Hell has taken everything else. Two jabs and a hook, and each lands like he has been meaning to do it for a long time. No jokes about work: the joke is how personal it is. | Melee, no ammo, 1.2 reach: jab, cross, then a hook for double damage. He has to be right there. |
+**What stays and what goes (J, 2026-10-25: "a pickup unlocks the weapon permanently").** A weapon found on a floor is
+*his*: it is saved, he has it again after Hell kills him and in every later run, and only a New Game gives it back.
+That is the one thing the roguelite loop does not take from him, and the story says why: Hell is repetition, and a
+weapon he has fired is a weapon Hell has now seen him fire. What a *scene* gives (the fists on Floor 998) is for the run, like a
+Grudge, and goes when the run ends. A scene can also take unlocked weapons away again for a while (Floors 998-994 take
+everything but the fists, every run); they come back with the launcher.
 
-Rules: the announcer says nothing about a weapon being found (the hero's name for it appears over his head, in capitals,
-as a pop); a floor that gives a weapon says why in its own script. **Floor 998 (The Spill)** is the first floor that is
-expected to give one (planned: the village's wreckage has something in it he can use); until its script does, only the test
-bench `weaponsTest` gives the fists. Switching: Q, the mouse wheel or the gamepad's top button; a button on the HUD on touch.
+| Weapon | In the story | How it plays | Found |
+|---|---|---|---|
+| **Rocket launcher** | His own gun. No ammo; it never runs dry because he never stops being annoyed. | Fires along the aim at 0.3 s; the spread Grudge fans it out. | His; taken on 998, back on 994 |
+| **Fists** | What a man has when Hell has taken everything else. Two jabs and a hook, and each lands like he has been meaning to do it for a long time. No jokes about work: the joke is how personal it is. | Melee, no ammo, 1.2 reach: jab, cross, then a hook for double damage. He has to be right there. | Given on 998, for the run |
+| **Spitfire** | A newt the imps use to light their lamps. Squeeze it and it spits embers. He holds a lizard; the lizard is the weapon. | A stream: a shot every 0.085 s (3.5x the launcher), 48 rounds that come back on their own (7 a second). One damage a shot; it empties in four seconds. | A bearer imp on 993 |
+| **Ricochet Pistol** | Built by someone who was never happy with a straight line. | Slow (0.45 s), 2 damage, no ammo, and each bullet bounces off ground, walls and ledges three times: it hits what is round the corner. | A bearer imp on 992 |
+| **Chain-Whip** | The Foreman's own whip, off the Foreman. | Melee with 2.8-3.5 reach (fists: 1.2-1.4): lash, snap, then a crack for double damage. Thin and long: it hits what is in a line, not what is above him. | The Imp Foreman, 991 |
+| **Shotgun** | A slag-barrel blunderbuss off a guard post. One trigger, five opinions. | Five pellets in a 9 degree fan, range about 5, 0.8 s between shots, 8 shells that come back at one every 2 s. Point blank it is five hits. | A bearer imp on 954 |
+| **Boomerang Halo** | A halo off something that fell a long way, one of the things the Pile Keeper keeps in his pile. He throws it; it comes back. Unlike everything else he has thrown. | Flies out, hangs, returns faster to him and is caught; goes through everything and hits it both ways. 0.75 s between throws. | The Pile Keeper, 951 |
+
+Rules: the announcer says nothing about a weapon being *found*: a banner (*NEW WEAPON: SPITFIRE*) and the hero's own line
+carry it, once, the first time. (He does shout when Hell *takes* the launcher: that is a show.) The hero's lines are deadpan
+and about the thing in his hand, never about work. A finder is a **bearer**: an ordinary enemy of its floor that carries the
+weapon and drops its pickup when it dies, or a boss that drops it as it falls; nothing is found lying about, so a weapon
+is always something he took off someone. Picking one up again later only refills its ammo. A floor that gives or takes a
+weapon says why in its own script. Switching: Q, the mouse wheel or the gamepad's top button; a button on the HUD on touch.
+
+### The Spill's theft (Floor 998 to 994)
+
+On Floor 998, as the river carries him past the hay cart, an imp (the **thief**, a launcher-sized sack on his back)
+bursts out of the hay, snatches the rocket launcher out of his hands and runs off down the river with it. The announcer
+makes a show of it (*"HELL HAS TAKEN YOUR GUN! USE YOUR HANDS!"*). The hero: *"Oh, sure. Take the rocket launcher. Take it."*
+and, fists up: *"Fine. Personal, then."* He fights with fists for **five floors**, 998 to 994, and Hell tunes them for it: the
+sparks of the burning village keep coming up after him (cinders, one punch each) and, bigger, **brutes** (a cinder that
+takes a hook and a jab), more of them every time he climbs; the chain imps and lava stay where they were, because
+those floors were never about a gun. At the top of Floor 994 the thief is back on the landing, drops the launcher at
+his feet and leaves in a hurry. *"There you are. You smell like imp."* From there the weapons come off Hell's own.
 
 ## Bystanders (the damned notice)
 

@@ -478,10 +478,28 @@ hit box in front of him instead, through a **combo** of `melee.steps` (`damage`,
   touch; `hud.landscape/portrait.weapon` in theme.json). It shows the name, ammo and the key.
 - **Rewind:** the held weapons, the equipped one, ammo and the swing's timers are part of the world's saved state
   (`PlayerWeapons.SaveState/LoadState`). A new field there must be saved there.
-- **A new gun** is a new file; it shares the hero's rocket prefab (only the numbers differ). A different projectile
-  prefab or hero art for a swing is new C# / art work.
+- **A new gun** is a new file; by default it shares the hero's rocket prefab (only the numbers differ).
+- **Blasts and shots of their own (2026-10-25):** `projectile.pellets` / `pelletSpread` fan several rockets from one pull (the
+  shotgun; the aim guide shows them all). `projectile.entity` fires a **player-team entity** instead of the rocket, spawned by
+  the world so rewind saves it: `ricochetShot` (a `projectile` ability with `bounces`) and `haloShot` (`returnToHero`, a
+  boomerang: out for `turnAfter` seconds, back faster, caught at the hero; with `pierce` it hits both ways). Give such a shot
+  `onlyHitLiving: true` so it passes through enemy bullets instead of cancelling them. The validator wants the shot on team Player.
+- **Weapons found on floors:** the weapon names its `pickup` entity (a `collect` ability whose `do` is
+  `{ "type": "unlockWeapon", "weapon": "spitfire" }`), plus `banner` (default `NEW WEAPON: <NAME>`), `heroText` and `heroLine`
+  for the first find. `unlockWeapon` saves it for good (`WeaponUnlocks`, kept when a run ends, cleared by New Game); every level
+  starts with everything unlocked in his hands, and a rewind past the pickup can't lose it. Later finds refill the ammo. Give a
+  floor's enemy the pickup by **bearer**: an `imp` variant with `drops: [{ "entity": "spitfirePickup", "chance": 1 }]`
+  (`impSpitfireBearer`), or spawn the pickup in a boss's defeat sequence at `anchor: Player` so it is collected at once.
+  `magnetRadius` 4.5 on the pickups pulls one dropped out of reach.
+- **Taking weapons:** `takeWeapon` (the launcher too) and `takeAllWeapons` with `except` leave him only that one. They are
+  *suspended* for the run (the launcher and unlocked weapons come back with `giveWeapon`, an `unlockWeapon` pickup or the next
+  run); he is never left empty-handed. Floors 997-994 start with `giveWeapon fists` + `takeAllWeapons except fists`, so each is a fists
+  floor however it was opened; Floor 994's landing drops the launcher back.
+- **A melee floor** needs enemies that come to him: `cinder` (a chaser, one health) and `cinderBrute`, spawned with `spawnWave`
+  on a section reached. The playtest bot closes in on a target when the equipped weapon is melee.
 
-Try it on the bench: `?playtest=weapons` (the scene `weaponsTest`: launcher, `giveWeapon`, Q, a punched imp, a rewind,
+The `weapon-drops` playtest plays all of it (998's theft, the fists floors, each drop floor, a death, then a bench where each weapon
+shows what it does: `content/scenes/weaponArena.json`, `targetDummy`). Try it on the bench: `?playtest=weapons` (the scene `weaponsTest`: launcher, `giveWeapon`, Q, a punched imp, a rewind,
 the HUD button, `takeWeapon`; each beat is a `check` event).
 
 ## A different kind of level space

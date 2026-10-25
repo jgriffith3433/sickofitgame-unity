@@ -501,12 +501,79 @@
             ]
           }
         ]
+      },
+      {
+        "name": "the second lap brings a second brute",
+        "when": {
+          "type": "sectionReached",
+          "section": "lap2"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawnWave",
+            "entity": "cinderBrute",
+            "count": 1,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "brute"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "two cinders on the wall",
+        "when": {
+          "type": "sectionReached",
+          "section": "wall"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawnWave",
+            "entity": "cinder",
+            "count": 2,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "wave"
+            ]
+          }
+        ]
       }
     ],
     "phases": [
       {
         "name": "ledge",
         "onEnter": [
+          {
+            "type": "giveWeapon",
+            "weapon": "fists",
+            "equip": false,
+            "announce": false
+          },
+          {
+            "type": "takeAllWeapons",
+            "except": "fists",
+            "announce": false
+          },
           {
             "type": "runSequence",
             "steps": [

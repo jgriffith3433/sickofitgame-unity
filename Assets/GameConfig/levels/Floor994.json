@@ -278,6 +278,10 @@
             "type": "runSequence",
             "steps": [
               {
+                "type": "wait",
+                "seconds": 4.4
+              },
+              {
                 "type": "setFloor",
                 "floor": 993,
                 "skipMilestones": true
@@ -311,12 +315,97 @@
             ]
           }
         ]
+      },
+      {
+        "name": "cinders in the lift shaft",
+        "when": {
+          "type": "sectionReached",
+          "section": "lift2"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawnWave",
+            "entity": "cinder",
+            "count": 2,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "wave"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the thief throws it back",
+        "when": {
+          "type": "sectionReached",
+          "section": "landing"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.4
+              },
+              {
+                "type": "spawn",
+                "entity": "launcherThief",
+                "anchor": "Camera",
+                "at": [
+                  5.5,
+                  2.0
+                ],
+                "facePlayer": false,
+                "tags": [
+                  "thief"
+                ]
+              },
+              {
+                "type": "playSound",
+                "sound": "thief_snatch"
+              },
+              {
+                "type": "spawn",
+                "entity": "rocketLauncherPickup",
+                "anchor": "Player",
+                "at": [
+                  1.5,
+                  1.0
+                ],
+                "facePlayer": false
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [
       {
         "name": "ledge",
         "onEnter": [
+          {
+            "type": "giveWeapon",
+            "weapon": "fists",
+            "equip": false,
+            "announce": false
+          },
+          {
+            "type": "takeAllWeapons",
+            "except": "fists",
+            "announce": false
+          },
           {
             "type": "runSequence",
             "steps": [

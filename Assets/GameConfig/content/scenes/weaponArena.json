@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "seed": 5151,
+  "length": 240,
+  "objective": {
+    "text": "Weapons: what each one does"
+  },
+  "phases": [
+    {
+      "name": "bench",
+      "onEnter": [
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 9
+        }
+      ],
+      "rules": [
+        {
+          "name": "a dummy at 1.2",
+          "when": {
+            "type": "signal",
+            "name": "wa:d12"
+          },
+          "do": [
+            {
+              "type": "spawn",
+              "entity": "targetDummy",
+              "anchor": "Player",
+              "at": [
+                1.2,
+                0.2
+              ],
+              "facePlayer": false,
+              "tags": [
+                "dummy"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "a dummy at 2.6",
+          "when": {
+            "type": "signal",
+            "name": "wa:d26"
+          },
+          "do": [
+            {
+              "type": "spawn",
+              "entity": "targetDummy",
+              "anchor": "Player",
+              "at": [
+                2.6,
+                0.2
+              ],
+              "facePlayer": false,
+              "tags": [
+                "dummy"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "a dummy far off",
+          "when": {
+            "type": "signal",
+            "name": "wa:far"
+          },
+          "do": [
+            {
+              "type": "spawn",
+              "entity": "targetDummy",
+              "anchor": "Player",
+              "at": [
+                7.5,
+                0.2
+              ],
+              "facePlayer": false,
+              "tags": [
+                "dummy"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "clear the dummies",
+          "when": {
+            "type": "signal",
+            "name": "wa:clear"
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "dummy"
+              }
+            },
+            {
+              "type": "heal",
+              "target": {
+                "player": true
+              },
+              "amount": 9
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

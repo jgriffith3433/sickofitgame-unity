@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Ricochet Pistol",
+  "description": "Built by someone who was never happy with a straight line. Slow, two damage, and each bullet bounces off ground, walls and ledges three times, so it hits what is round the corner.",
+  "color": "#7FE8FF",
+  "kind": "Projectile",
+  "cooldown": 0.45,
+  "switchDelay": 0.2,
+  "aimGuide": {
+    "show": true,
+    "length": 0.9
+  },
+  "ammo": {
+    "capacity": 0
+  },
+  "projectile": {
+    "speed": 9.0,
+    "lifetime": 2.4,
+    "faceAim": true,
+    "spriteAngle": 225.0,
+    "damageScale": 1.0,
+    "multiShot": true,
+    "entity": "ricochetShot"
+  },
+  "sounds": {
+    "use": "ricochet_shot",
+    "hit": "",
+    "equip": "ui_click"
+  },
+  "pickup": "ricochetPistolPickup",
+  "heroText": "Bounces. Of course it bounces. Everything down here does.",
+  "heroLine": "vo_wpn_ricochet"
+}

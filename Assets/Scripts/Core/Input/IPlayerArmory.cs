@@ -25,6 +25,12 @@ namespace SickOfIt.Core.Input
         public bool aimGuide;
         /// <summary>Length of the aim guide as a multiple of player.json aimGuide.length.</summary>
         public float aimGuideLength;
+        /// <summary>A shot entity fired instead of the hero's rocket (empty = the rocket).</summary>
+        public string shotEntity;
+        /// <summary>Shots per pull of the trigger (1 = one; a blast fans them out).</summary>
+        public int pellets;
+        /// <summary>Degrees between neighbouring pellets.</summary>
+        public float pelletSpread;
     }
 
     /// <summary>
@@ -44,6 +50,8 @@ namespace SickOfIt.Core.Input
         void Dry(float now);
         /// <summary>A projectile volley left the gun at 'now': spend the ammo.</summary>
         void Fired(float now);
+        /// <summary>A volley of the equipped weapon's shot entity leaves 'muzzle' along each direction at 'speed'; 'damageMultiplier' scales each hit. The ammo is spent by Fired, as for any volley.</summary>
+        void SpawnShots(Vector2 muzzle, System.Collections.Generic.IReadOnlyList<Vector2> directions, float speed, float damageMultiplier, float now);
         /// <summary>
         /// Starts a melee swing from 'origin' along 'direction'. False when it can't start. 'attackSpeed' divides the
         /// swing's times and 'damage' multiplies its damage.

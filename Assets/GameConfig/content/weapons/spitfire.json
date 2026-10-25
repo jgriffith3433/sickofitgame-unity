@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Spitfire",
+  "description": "A newt the imps used to light their lamps: squeeze it and it spits embers, fast. 48 rounds that come back by themselves, a shot every 0.085 s, and nothing like the launcher's punch.",
+  "color": "#FF5A36",
+  "kind": "Projectile",
+  "cooldown": 0.085,
+  "switchDelay": 0.12,
+  "aimGuide": {
+    "show": true,
+    "length": 0.8
+  },
+  "ammo": {
+    "capacity": 48,
+    "start": 48,
+    "perShot": 1,
+    "regenPerSecond": 7.0
+  },
+  "projectile": {
+    "speed": 14.0,
+    "lifetime": 1.1,
+    "faceAim": true,
+    "spriteAngle": 225.0,
+    "damageScale": 1.0,
+    "multiShot": false
+  },
+  "sounds": {
+    "use": "spitfire_shot",
+    "hit": "",
+    "equip": "ui_click"
+  },
+  "pickup": "spitfirePickup",
+  "heroText": "I'm holding a lizard. The lizard is the weapon.",
+  "heroLine": "vo_wpn_spitfire"
+}

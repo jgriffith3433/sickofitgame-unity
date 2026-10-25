@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "team": "Player",
+  "health": 0,
+  "tags": [
+    "heroShot"
+  ],
+  "body": {
+    "radius": 0.6,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.085,
+    "sortingOrder": 5,
+    "hurtFlash": false,
+    "fxColor": "#7FE8FF",
+    "color": "#7FE8FF",
+    "animator": {
+      "states": [
+        {
+          "stateName": "Burn",
+          "spriteSheet": "Images/Fireball.png",
+          "fps": 12,
+          "loop": true
+        }
+      ],
+      "defaultStateName": "Burn"
+    }
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 2,
+      "dieOnSolid": true,
+      "bounces": 3,
+      "bounceKeep": 1.0,
+      "onlyHitLiving": true,
+      "bounceSound": "ricochet_bounce"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 2.4
+    }
+  ]
+}
