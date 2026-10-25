@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using SickOfIt.Core;
 using SickOfIt.Core.Flow;
+using SickOfIt.Core.Input;
 using SickOfIt.Data;
 
 namespace SickOfIt.Combat.Health
@@ -183,6 +184,7 @@ namespace SickOfIt.Combat.Health
             if (controller != null)
             {
                 controller.PlayDeathSound();
+                controller.PlayHeroClip(HeroDeathClips.Next());
                 controller.enabled = false;
             }
 
@@ -249,7 +251,10 @@ namespace SickOfIt.Combat.Health
             deathUndoGraceTimer = DeathUndoGraceDuration;
             invincibilityTimer = Mathf.Max(invincibilityTimer, DeathUndoGraceDuration);
             if (controller != null)
+            {
                 controller.enabled = true;
+                controller.EndHeroClip();
+            }
         }
 
         private void PlayDeathScene()

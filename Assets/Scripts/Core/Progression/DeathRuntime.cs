@@ -321,11 +321,28 @@ namespace SickOfIt.Core.Progression
             }
         }
 
+        /// <summary>The hero on the death scene plays the same death he just died in the level (player.json DeathBurn/Squash/Spin/Shrug).</summary>
+        private void PlayHeroDeath()
+        {
+            var go = new GameObject("DeathHero");
+            go.transform.SetParent(transform);
+            go.transform.position = new Vector3(0f, -1.3f, 0f);
+            go.transform.localScale = Vector3.one * 0.5f;
+            var sr = go.AddComponent<SpriteRenderer>();
+            SpriteLayers.Apply(sr, SpriteLayer.Player);
+            var heroAnimator = go.AddComponent<Animator>();
+            var clip = go.AddComponent<SickOfIt.Core.Input.PlayerSceneClip>();
+            string state = SickOfIt.Core.Input.HeroDeathClips.Current;
+            bool played = clip.Play(heroAnimator, state);
+            Debug.Log($"[Death] the hero's {state} clip {(played ? "plays" : "has no sheet")}");
+        }
+
         private void BeginDeathPlayback()
         {
             if (experienceRunner != null)
                 experienceRunner.SetPlaybackHeld(false);
             PlayGloat();
+            PlayHeroDeath();
 
             if (audioSource == null || audioSource.clip == null)
                 return;
