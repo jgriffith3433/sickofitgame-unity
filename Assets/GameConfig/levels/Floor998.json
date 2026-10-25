@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 180.0,
+  "duration": 400.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 5,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 998,
-    "length": 80,
+    "length": 280,
     "floors": {
       "start": 998,
       "end": 997,
@@ -175,7 +175,353 @@
             {
               "entity": "ledge",
               "at": [
-                23.4,
+                23.7,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.6
+        },
+        {
+          "name": "hayfield",
+          "direction": "Right",
+          "length": 28.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "wreckCart",
+              "at": [
+                26.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckHay",
+              "at": [
+                29.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckRoof",
+              "at": [
+                32.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                35.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                38.7,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                41.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckHay",
+              "at": [
+                44.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckRoof",
+              "at": [
+                47.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                50.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.55
+        },
+        {
+          "name": "emberfall",
+          "direction": "Right",
+          "length": 30.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "wreckRoof",
+              "at": [
+                53.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                56.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                59.7,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                62.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckHay",
+              "at": [
+                65.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckRoof",
+              "at": [
+                68.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                71.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                74.7,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                77.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckHay",
+              "at": [
+                80.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.55
+        },
+        {
+          "name": "signpost",
+          "direction": "Right",
+          "length": 28.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "wreckCart",
+              "at": [
+                83.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                86.7,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                89.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckHay",
+              "at": [
+                92.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckRoof",
+              "at": [
+                95.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                98.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                101.7,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                104.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "wreckHay",
+              "at": [
+                107.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                109.4,
                 -1.2
               ],
               "id": "jam",
@@ -197,7 +543,7 @@
             {
               "entity": "wreckCart",
               "at": [
-                26.4,
+                112.4,
                 0.3
               ],
               "scale": [
@@ -208,7 +554,7 @@
             {
               "entity": "ledge",
               "at": [
-                24.0,
+                110.0,
                 1.6
               ],
               "scale": [
@@ -219,7 +565,7 @@
             {
               "entity": "wreckRoof",
               "at": [
-                26.4,
+                112.4,
                 2.9
               ],
               "scale": [
@@ -230,7 +576,7 @@
             {
               "entity": "ledge",
               "at": [
-                24.0,
+                110.0,
                 4.2
               ],
               "scale": [
@@ -239,27 +585,9 @@
               ]
             },
             {
-              "entity": "cinder",
-              "at": [
-                28.0,
-                4.5
-              ],
-              "id": "cinderA",
-              "onEnter": true
-            },
-            {
-              "entity": "cinder",
-              "at": [
-                20.0,
-                6.4
-              ],
-              "id": "cinderB",
-              "onEnter": true
-            },
-            {
               "entity": "wreckSign",
               "at": [
-                21.8,
+                107.8,
                 5.5
               ],
               "scale": [
@@ -271,7 +599,7 @@
             {
               "entity": "ledge",
               "at": [
-                24.0,
+                110.0,
                 6.8
               ],
               "id": "spireFoot",
@@ -280,23 +608,91 @@
                 1
               ]
             }
-          ]
+          ],
+          "autoSpeed": 0.36
         },
         {
           "name": "spire",
           "direction": "Right",
-          "length": 5.0,
+          "length": 30.0,
           "turn": 2.0,
           "spawns": [
             {
+              "entity": "ledge",
+              "at": [
+                114.0,
+                6.8
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                118.0,
+                7.4
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                122.0,
+                6.8
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                126.0,
+                7.4
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                130.0,
+                6.8
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                134.0,
+                7.4
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
               "entity": "floorLanding998",
               "at": [
-                28.4,
+                139.4,
                 7.6
               ],
               "id": "landing"
             }
-          ]
+          ],
+          "autoSpeed": 0.55
         }
       ]
     },
@@ -315,6 +711,14 @@
       },
       {
         "name": "lavaMax",
+        "value": 0.0
+      },
+      {
+        "name": "heat",
+        "value": 0.0
+      },
+      {
+        "name": "finale",
         "value": 0.0
       }
     ],
@@ -386,7 +790,7 @@
               {
                 "type": "setCounter",
                 "name": "lavaSpeed",
-                "value": 0.35
+                "value": 0.3
               }
             ]
           }
@@ -395,10 +799,20 @@
       {
         "name": "the landing",
         "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finale",
+              "atLeast": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
@@ -439,6 +853,227 @@
             ]
           }
         ]
+      },
+      {
+        "name": "to hay",
+        "when": {
+          "type": "sectionReached",
+          "section": "hayfield"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "hay"
+          }
+        ]
+      },
+      {
+        "name": "to emberRain",
+        "when": {
+          "type": "sectionReached",
+          "section": "emberfall"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "emberRain"
+          }
+        ]
+      },
+      {
+        "name": "to sparks",
+        "when": {
+          "type": "sectionReached",
+          "section": "signpost"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "sparks"
+          }
+        ]
+      },
+      {
+        "name": "to jam",
+        "when": {
+          "type": "sectionReached",
+          "section": "jam"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "jam"
+          }
+        ]
+      },
+      {
+        "name": "to spire",
+        "when": {
+          "type": "sectionReached",
+          "section": "spire"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "spire"
+          }
+        ]
+      },
+      {
+        "name": "the spire has had its minutes",
+        "when": {
+          "type": "atTime",
+          "seconds": 250.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "finale",
+            "value": 1.0
+          }
+        ]
+      },
+      {
+        "name": "heat: the floor gets hotter",
+        "when": {
+          "type": "every",
+          "seconds": 20.0,
+          "startAfter": 40.0,
+          "maxTimes": 12
+        },
+        "do": [
+          {
+            "type": "addCounter",
+            "name": "heat",
+            "amount": 1.0
+          }
+        ]
+      },
+      {
+        "name": "heat 3: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 3.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 5: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 5.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 7: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 7.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 9: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 9.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "heat 11: the cinders hurry",
+        "when": {
+          "type": "counter",
+          "name": "heat",
+          "atLeast": 11.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "modifier",
+            "target": {
+              "entity": "cinder"
+            },
+            "modifiers": [
+              {
+                "stat": "MoveSpeed",
+                "multiply": 1.1
+              }
+            ],
+            "includeFuture": true
+          }
+        ]
       }
     ],
     "phases": [
@@ -466,6 +1101,418 @@
                 "duration": 2.6,
                 "style": "Subtitle",
                 "sound": "vo_spill_cart"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "hay",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:hay"
+          },
+          {
+            "type": "showText",
+            "text": "THE HAY WAKES!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          }
+        ],
+        "rules": [
+          {
+            "name": "hay: cinders trickle",
+            "when": {
+              "type": "every",
+              "seconds": 7.0,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "emberRain",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:emberRain"
+          },
+          {
+            "type": "showText",
+            "text": "EMBER RAIN!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.2,
+            "interval": 1.2,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.012
+          }
+        ],
+        "rules": [
+          {
+            "name": "rain: cinders between the drops",
+            "when": {
+              "type": "every",
+              "seconds": 9.0,
+              "startAfter": 3.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "sparks",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:sparks"
+          },
+          {
+            "type": "showText",
+            "text": "SPARKS FROM THE SIGN!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.2,
+            "interval": 1.6,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 3,
+              "angle": 34
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.0,
+            "interval": 2.6,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "sparks: the swarm rises",
+            "when": {
+              "type": "every",
+              "seconds": 6.0,
+              "startAfter": 3.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 5,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "sparks: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 8.0,
+              "startAfter": 4.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "jam",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:jam"
+          },
+          {
+            "type": "showText",
+            "text": "THE JAM!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.6,
+            "initialDelay": 2.0,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "jam: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 6.0,
+              "startAfter": 3.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 2,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  3.0
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "jam: sparks",
+            "when": {
+              "type": "every",
+              "seconds": 10.0,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 4,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "spire",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:spire"
+          },
+          {
+            "type": "showText",
+            "text": "THE SPIRE!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#FFD27A"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "rain",
+              "count": 2
+            },
+            "speed": 3.2,
+            "interval": 1.2,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.02
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "fireball",
+            "pattern": {
+              "type": "spread",
+              "count": 4,
+              "angle": 40
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.2,
+            "interval": 2.2,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "spire: cinders",
+            "when": {
+              "type": "every",
+              "seconds": 5.0,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinder",
+                "count": 3,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "spire: sparks",
+            "when": {
+              "type": "every",
+              "seconds": 8.0,
+              "startAfter": 4.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderSpark",
+                "count": 5,
+                "interval": 0.25,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  -2.5
+                ],
+                "areaSize": [
+                  14.0,
+                  0.0
+                ],
+                "tags": [
+                  "wave"
+                ]
               }
             ]
           }

@@ -1,3 +1,0 @@
-- lesson: audio.dialogue stems bleed — each stem carries the neighbouring lines tails (Nope inside Yooba, Yooba inside the announcer); for a locked cut make each line with audio.voice and check it with ffmpeg silencedetect (one speech burst).
-- lesson: video.keyframes has no portrait — the tool enum allows only 16:9, 9:16 (Portrait) or 1:1, and the workflow rejects "9:16 (Portrait)"; use 1:1 and crop to 9:16 in video.compose.
-- lesson: video.interpolate on a 4x upscaled 5 s clip ran ComfyUI out of memory ($0.52 lost); compose the 2 s you need at 1080x1920 first, then interpolate.

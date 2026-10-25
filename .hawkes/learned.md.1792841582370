@@ -1,1 +1,0 @@
-- lesson: video.compose mixes each clip's own sound — upscaled lipsync/i2v clips carry baked voices; set sound:false on every clip when voices are placed as separate tracks.
