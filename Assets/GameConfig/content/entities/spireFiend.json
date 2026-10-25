@@ -4,7 +4,7 @@
   "hint": "Stay calm. He counts your steps.",
   "note": "Grew the spire so nothing stands above him. I'm going up it.",
   "team": "Enemy",
-  "health": 80,
+  "health": 170,
   "moveSpeed": 0,
   "activationRange": 0,
   "tags": [
@@ -144,6 +144,13 @@
           }
         },
         {
+          "to": "sfWave",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.75
+          }
+        },
+        {
           "to": "p1Spear",
           "when": {
             "type": "after",
@@ -191,6 +198,13 @@
           }
         },
         {
+          "to": "sfWave",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.75
+          }
+        },
+        {
           "to": "p1Spot",
           "when": {
             "type": "after",
@@ -219,6 +233,13 @@
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
+          }
+        },
+        {
+          "to": "sfWave",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.75
           }
         },
         {
@@ -268,19 +289,6 @@
           "signal": "sfPhase2"
         }
       ],
-      "abilities": [
-        {
-          "type": "spawner",
-          "entity": "sfWhelp",
-          "interval": 8,
-          "initialDelay": 0.8,
-          "maxAlive": 2,
-          "offset": [
-            1.7,
-            -0.9
-          ]
-        }
-      ],
       "transitions": [
         {
           "to": "p2Row",
@@ -327,12 +335,56 @@
         {
           "type": "spawner",
           "entity": "sfWhelp",
-          "interval": 8,
-          "initialDelay": 4.0,
-          "maxAlive": 2,
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
           "offset": [
             1.7,
             -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.4,
+            1.4
           ]
         }
       ],
@@ -385,12 +437,56 @@
         {
           "type": "spawner",
           "entity": "sfWhelp",
-          "interval": 8,
-          "initialDelay": 4.0,
-          "maxAlive": 2,
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
           "offset": [
             1.7,
             -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.4,
+            1.4
           ]
         }
       ],
@@ -425,19 +521,6 @@
           "facePlayer": false
         }
       ],
-      "abilities": [
-        {
-          "type": "spawner",
-          "entity": "sfWhelp",
-          "interval": 8,
-          "initialDelay": 4.0,
-          "maxAlive": 2,
-          "offset": [
-            1.7,
-            -0.9
-          ]
-        }
-      ],
       "transitions": [
         {
           "to": "enraging",
@@ -447,11 +530,68 @@
           }
         },
         {
-          "to": "p2Row",
+          "to": "sfP2Fan",
           "when": {
             "type": "after",
             "seconds": 2.0
           }
+        }
+      ],
+      "abilities": [
+        {
+          "type": "spawner",
+          "entity": "sfWhelp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.4,
+            1.4
+          ]
         }
       ]
     },
@@ -468,18 +608,42 @@
           "state": "Enrage"
         },
         {
-          "type": "kill",
-          "target": {
-            "entity": "sfWhelp"
-          }
-        },
-        {
           "type": "runSequence",
           "sequence": "sfEnrage"
         },
         {
           "type": "emit",
           "signal": "sfEnrage"
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "sfWhelp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "fuseWhelp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "bounceLobber"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "veilDemon"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "slabSniper"
+          }
         }
       ],
       "transitions": [
@@ -522,9 +686,60 @@
             "spacing": 0.8
           },
           "animTrigger": "Slam"
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "plateDemon",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            2.4,
+            0.9
+          ]
         }
       ],
       "transitions": [
+        {
+          "to": "sfLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
         {
           "to": "p3Row",
           "when": {
@@ -566,9 +781,60 @@
           "speed": 0,
           "interval": 0,
           "fireOnEvent": "slam"
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "plateDemon",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            2.4,
+            0.9
+          ]
         }
       ],
       "transitions": [
+        {
+          "to": "sfLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
         {
           "to": "p3Spot",
           "when": {
@@ -594,11 +860,64 @@
       ],
       "transitions": [
         {
+          "to": "sfLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
+        {
           "to": "p3Row2",
           "when": {
             "type": "after",
             "seconds": 1.6
           }
+        }
+      ],
+      "abilities": [
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "plateDemon",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            2.4,
+            0.9
+          ]
         }
       ]
     },
@@ -634,14 +953,973 @@
           "speed": 0,
           "interval": 0,
           "fireOnEvent": "slam"
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "plateDemon",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            2.4,
+            0.9
+          ]
         }
       ],
       "transitions": [
         {
-          "to": "p3Field",
+          "to": "sfLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
+        {
+          "to": "sfP3Fan",
           "when": {
             "type": "after",
             "seconds": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfWave",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "sfWave"
+        },
+        {
+          "type": "playSound",
+          "sound": "magma_rumble"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "shedding",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "sfWaveFan",
+          "when": {
+            "type": "after",
+            "seconds": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfWaveFan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 44
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 3,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 3,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "demonWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 3,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "shedding",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "sfWaveLead",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfWaveLead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 3,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 3,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 3,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "demonWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 3,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "shedding",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "sfWaveHeavy",
+          "when": {
+            "type": "after",
+            "seconds": 3.4
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfWaveHeavy",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "sfWarnHand",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            0.3,
+            1.05
+          ],
+          "interval": 99,
+          "initialDelay": 0
+        },
+        {
+          "type": "shoot",
+          "projectile": "sfSpear",
+          "speed": 7.0,
+          "aim": "Player",
+          "muzzle": [
+            0.5,
+            1.0
+          ],
+          "interval": 99,
+          "initialDelay": 1.0,
+          "animTrigger": "Throw",
+          "fireOnEvent": "throw"
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 3,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 3,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "demonWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 3,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "shedding",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "sfWaveFan",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfP2Fan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 50
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "sfWhelp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.4,
+            1.4
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "enraging",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "sfP2Lead",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfP2Lead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 4,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "sfWhelp",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            2.4,
+            0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.4,
+            1.4
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "enraging",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.334
+          }
+        },
+        {
+          "to": "p2Row",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfP3Fan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 64
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 3.0,
+          "initialDelay": 0.5,
+          "maxAlive": 5,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "plateDemon",
+          "interval": 3.0,
+          "initialDelay": 1.05,
+          "maxAlive": 5,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bounceLobber",
+          "interval": 3.0,
+          "initialDelay": 1.6,
+          "maxAlive": 5,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 3.0,
+          "initialDelay": 2.15,
+          "maxAlive": 5,
+          "offset": [
+            2.4,
+            0.9
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "sfLast",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.15
+          }
+        },
+        {
+          "to": "p3Field",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfLast",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "sfLast"
+        },
+        {
+          "type": "playSound",
+          "sound": "magma_rumble"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "sfLastFan",
+          "when": {
+            "type": "after",
+            "seconds": 0.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfLastFan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 70
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "risenDemon",
+          "interval": 2.8,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 2.8,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 2.8,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 2.8,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            2.4,
+            0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "demonWhelp",
+          "interval": 2.8,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.4,
+            1.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "plateDemon",
+          "interval": 2.8,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.2,
+            -1.8
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "sfLastLead",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfLastLead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.4,
+            0.8
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 5,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "risenDemon",
+          "interval": 2.8,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 2.8,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 2.8,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 2.8,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            2.4,
+            0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "demonWhelp",
+          "interval": 2.8,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.4,
+            1.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "plateDemon",
+          "interval": 2.8,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.2,
+            -1.8
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "sfLastHeavy",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "sfLastHeavy",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "sfWarnField",
+          "speed": 0,
+          "aim": "Down",
+          "muzzle": [
+            4.2,
+            -1.25
+          ],
+          "interval": 99,
+          "initialDelay": 0,
+          "pattern": {
+            "type": "line",
+            "count": 9,
+            "spacing": 0.8
+          },
+          "animTrigger": "Slam"
+        },
+        {
+          "type": "spawner",
+          "entity": "risenDemon",
+          "interval": 2.8,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            1.7,
+            -0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "veilDemon",
+          "interval": 2.8,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.6,
+            -1.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 2.8,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.2,
+            -0.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "fuseWhelp",
+          "interval": 2.8,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            2.4,
+            0.9
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "demonWhelp",
+          "interval": 2.8,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.4,
+            1.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "plateDemon",
+          "interval": 2.8,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.2,
+            -1.8
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "sfLastFan",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
           }
         }
       ]
@@ -665,5 +1943,10 @@
       "signal": "sfFallen"
     }
   ],
-  "sounds": { "hurtSound": "spireFiend_hurt", "deathSound": "spireFiend_die", "attackSound": "spireFiend_attack" }
+  "sounds": {
+    "hurtSound": "spireFiend_hurt",
+    "deathSound": "spireFiend_die",
+    "attackSound": "spireFiend_attack"
+  },
+  "hintVoice": "vo_hero_hint_spireFiend"
 }

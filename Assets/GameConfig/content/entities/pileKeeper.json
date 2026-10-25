@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "displayName": "Pile Keeper",
-  "hint": "Shoot the guards first. He keeps a pile.",
+  "hint": "Guards first, then the Keeper. He keeps a pile.",
   "note": "Keeps a pile of everything that fell. Won't share.",
-  "hintVoice": "",
+  "hintVoice": "vo_hero_hint_pileKeeper",
   "onSpawn": [],
   "extends": "impGuard",
   "team": "Enemy",
-  "health": 36,
+  "health": 100,
   "moveSpeed": 0,
   "activationRange": 0,
   "tags": [
@@ -53,7 +53,7 @@
       "name": "intro",
       "transitions": [
         {
-          "to": "p1Spear",
+          "to": "p1Line",
           "when": {
             "type": "signal",
             "name": "pkFight"
@@ -62,12 +62,12 @@
       ]
     },
     {
-      "name": "p1Spear",
+      "name": "p1Line",
       "abilities": [
         {
           "type": "shoot",
           "projectile": "pkWarnSpear",
-          "speed": 0,
+          "speed": 0.0,
           "aim": "Down",
           "muzzle": [
             3.4,
@@ -75,38 +75,41 @@
           ],
           "interval": 99,
           "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
           "pattern": {
             "type": "line",
             "count": 5,
-            "spacing": 1
-          },
-          "animTrigger": "IsAttacking"
+            "spacing": 1.0
+          }
         }
       ],
       "transitions": [
         {
-          "to": "sinking",
+          "to": "climb",
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
           }
         },
         {
-          "to": "p1Sacks",
+          "to": "surgeEnter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.7
+          }
+        },
+        {
+          "to": "p1Spot",
           "when": {
             "type": "after",
-            "seconds": 3
+            "seconds": 3.0
           }
         }
       ]
     },
     {
-      "name": "p1Sacks",
+      "name": "p1Spot",
       "onEnter": [
-        {
-          "type": "playSound",
-          "sound": "sack_spill"
-        },
         {
           "type": "spawn",
           "entity": "pkWarnSack",
@@ -120,14 +123,21 @@
       ],
       "transitions": [
         {
-          "to": "sinking",
+          "to": "climb",
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
           }
         },
         {
-          "to": "p1Sacks2",
+          "to": "surgeEnter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.7
+          }
+        },
+        {
+          "to": "p1Spot2",
           "when": {
             "type": "after",
             "seconds": 1.6
@@ -136,7 +146,7 @@
       ]
     },
     {
-      "name": "p1Sacks2",
+      "name": "p1Spot2",
       "onEnter": [
         {
           "type": "spawn",
@@ -151,14 +161,21 @@
       ],
       "transitions": [
         {
-          "to": "sinking",
+          "to": "climb",
           "when": {
             "type": "healthBelow",
             "fraction": 0.5
           }
         },
         {
-          "to": "p1Spear",
+          "to": "surgeEnter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.7
+          }
+        },
+        {
+          "to": "p1Line2",
           "when": {
             "type": "after",
             "seconds": 2.2
@@ -167,11 +184,556 @@
       ]
     },
     {
-      "name": "sinking",
+      "name": "p1Line2",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "pkWarnSpear",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            3.4,
+            -0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 0.9
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeEnter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.7
+          }
+        },
+        {
+          "to": "p1Line",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeEnter",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "pkSurge"
+        },
+        {
+          "type": "playSound",
+          "sound": "lava_burst"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeFan",
+          "when": {
+            "type": "after",
+            "seconds": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeFan",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 40
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 4,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 4,
+          "offset": [
+            3.8,
+            2.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 4,
+          "offset": [
+            5.2,
+            1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 4,
+          "offset": [
+            1.4,
+            3.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeLine",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeLine",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "pkWarnSpear",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            3.4,
+            -0.9
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
+          "pattern": {
+            "type": "line",
+            "count": 7,
+            "spacing": 0.85
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 4,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 4,
+          "offset": [
+            3.8,
+            2.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 4,
+          "offset": [
+            5.2,
+            1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 4,
+          "offset": [
+            1.4,
+            3.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeSpot",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeSpot",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "pkWarnSack",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "abilities": [
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 4,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 4,
+          "offset": [
+            3.8,
+            2.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 4,
+          "offset": [
+            5.2,
+            1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 4,
+          "offset": [
+            1.4,
+            3.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeLead",
+          "when": {
+            "type": "after",
+            "seconds": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeLead",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 3,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 4,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 4,
+          "offset": [
+            3.8,
+            2.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 4,
+          "offset": [
+            5.2,
+            1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 4,
+          "offset": [
+            1.4,
+            3.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeSpot2",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "surgeSpot2",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "pkWarnSack",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "abilities": [
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 4,
+          "offset": [
+            2.6,
+            2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 4,
+          "offset": [
+            3.8,
+            2.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 4,
+          "offset": [
+            5.2,
+            1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "deadeyeImp",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 4,
+          "offset": [
+            1.4,
+            3.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "climb",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.5
+          }
+        },
+        {
+          "to": "surgeFan",
+          "when": {
+            "type": "after",
+            "seconds": 2.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "climb",
       "onEnter": [
         {
           "type": "emit",
           "signal": "pkSink"
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "impGuard"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "bulwarkImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "lensImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "deadeyeImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "slabSniper"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "leadImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "ricochetImp"
+          }
+        },
+        {
+          "type": "kill",
+          "target": {
+            "entity": "blinkImp"
+          }
         }
       ],
       "abilities": [
@@ -189,7 +751,7 @@
       ],
       "transitions": [
         {
-          "to": "p2Guards",
+          "to": "p2Enter",
           "when": {
             "type": "signal",
             "name": "pkTier2"
@@ -198,7 +760,7 @@
       ]
     },
     {
-      "name": "p2Guards",
+      "name": "p2Enter",
       "onEnter": [
         {
           "type": "emit",
@@ -216,31 +778,27 @@
           "aroundSpawn": true,
           "keepSide": false,
           "bobHeight": 0.0
-        },
-        {
-          "type": "spawner",
-          "entity": "impGuard",
-          "interval": 10,
-          "initialDelay": 0.8,
-          "maxAlive": 2,
-          "offset": [
-            -1.8,
-            0.6
-          ]
         }
       ],
       "transitions": [
         {
-          "to": "p2Sweep",
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Line",
           "when": {
             "type": "after",
-            "seconds": 4
+            "seconds": 0.8
           }
         }
       ]
     },
     {
-      "name": "p2Sweep",
+      "name": "p2Line",
       "abilities": [
         {
           "type": "hover",
@@ -256,7 +814,7 @@
         {
           "type": "shoot",
           "projectile": "pkWarnSpear",
-          "speed": 0,
+          "speed": 0.0,
           "aim": "Down",
           "muzzle": [
             3.0,
@@ -264,26 +822,630 @@
           ],
           "interval": 99,
           "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
           "pattern": {
             "type": "line",
             "count": 5,
-            "spacing": 1
-          },
-          "animTrigger": "IsAttacking"
+            "spacing": 1.0
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
         }
       ],
       "transitions": [
         {
-          "to": "p2Sacks",
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Fan",
           "when": {
             "type": "after",
-            "seconds": 3
+            "seconds": 3.0
           }
         }
       ]
     },
     {
-      "name": "p2Sacks",
+      "name": "p2Fan",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 44
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Spot",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Spot",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "pkWarnSack",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Lead",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Lead",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 4,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Line2",
+          "when": {
+            "type": "after",
+            "seconds": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Line2",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "pkWarnSpear",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            3.0,
+            -2.2
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 0.9
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Spot2",
+          "when": {
+            "type": "after",
+            "seconds": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p2Spot2",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "pkWarnSack",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.2,
+          "initialDelay": 0.5,
+          "maxAlive": 6,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.2,
+          "initialDelay": 1.05,
+          "maxAlive": 6,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "lensImp",
+          "interval": 3.2,
+          "initialDelay": 1.6,
+          "maxAlive": 6,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.2,
+          "initialDelay": 2.15,
+          "maxAlive": 6,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.2,
+          "initialDelay": 2.7,
+          "maxAlive": 6,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Enter",
+          "when": {
+            "type": "healthBelow",
+            "fraction": 0.25
+          }
+        },
+        {
+          "to": "p2Line",
+          "when": {
+            "type": "after",
+            "seconds": 2.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Enter",
+      "onEnter": [
+        {
+          "type": "emit",
+          "signal": "pkPhase3"
+        },
+        {
+          "type": "playSound",
+          "sound": "magma_rumble"
+        }
+      ],
       "abilities": [
         {
           "type": "hover",
@@ -297,6 +1459,247 @@
           "bobHeight": 0.0
         }
       ],
+      "transitions": [
+        {
+          "to": "p3Line",
+          "when": {
+            "type": "after",
+            "seconds": 0.8
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Line",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "pkWarnSpear",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            3.0,
+            -2.2
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
+          "pattern": {
+            "type": "line",
+            "count": 7,
+            "spacing": 0.85
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Fan",
+          "when": {
+            "type": "after",
+            "seconds": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Fan",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 5,
+            "angle": 64
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Spot",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Spot",
       "onEnter": [
         {
           "type": "spawn",
@@ -309,16 +1712,457 @@
           "facePlayer": false
         }
       ],
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
       "transitions": [
         {
-          "to": "p2Guards",
+          "to": "p3Lead",
           "when": {
             "type": "after",
-            "seconds": 2.0
+            "seconds": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Lead",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "deadeyeBolt",
+          "speed": 6.0,
+          "aim": "Predictive",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "burst": 5,
+          "burstInterval": 0.28
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Spot2",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Spot2",
+      "onEnter": [
+        {
+          "type": "spawn",
+          "entity": "pkWarnSack",
+          "anchor": "Player",
+          "at": [
+            0.0,
+            -0.3
+          ],
+          "facePlayer": false
+        }
+      ],
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Line2",
+          "when": {
+            "type": "after",
+            "seconds": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "p3Line2",
+      "abilities": [
+        {
+          "type": "hover",
+          "speed": 3.0,
+          "offset": [
+            -0.6,
+            5.8
+          ],
+          "aroundSpawn": true,
+          "keepSide": false,
+          "bobHeight": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "pkWarnSpear",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            3.0,
+            -2.2
+          ],
+          "interval": 99,
+          "initialDelay": 0.2,
+          "animTrigger": "IsAttacking",
+          "pattern": {
+            "type": "line",
+            "count": 6,
+            "spacing": 0.9
+          }
+        },
+        {
+          "type": "shoot",
+          "projectile": "mkWarnHand",
+          "speed": 0.0,
+          "aim": "Down",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 0.0
+        },
+        {
+          "type": "shoot",
+          "projectile": "ricochetEmber",
+          "speed": 4.0,
+          "aim": "Player",
+          "muzzle": [
+            0.2,
+            0.3
+          ],
+          "interval": 99,
+          "initialDelay": 1.2,
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 30
+          }
+        },
+        {
+          "type": "spawner",
+          "entity": "impGuard",
+          "interval": 3.0,
+          "initialDelay": 0.4,
+          "maxAlive": 8,
+          "offset": [
+            2.0,
+            -1.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "bulwarkImp",
+          "interval": 3.0,
+          "initialDelay": 0.95,
+          "maxAlive": 8,
+          "offset": [
+            3.8,
+            -2.4
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "slabSniper",
+          "interval": 3.0,
+          "initialDelay": 1.5,
+          "maxAlive": 8,
+          "offset": [
+            5.4,
+            -1.0
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "leadImp",
+          "interval": 3.0,
+          "initialDelay": 2.05,
+          "maxAlive": 8,
+          "offset": [
+            1.2,
+            -3.2
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "ricochetImp",
+          "interval": 3.0,
+          "initialDelay": 2.6,
+          "maxAlive": 8,
+          "offset": [
+            4.6,
+            -3.6
+          ]
+        },
+        {
+          "type": "spawner",
+          "entity": "blinkImp",
+          "interval": 3.0,
+          "initialDelay": 3.15,
+          "maxAlive": 8,
+          "offset": [
+            6.4,
+            -2.0
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "to": "p3Line",
+          "when": {
+            "type": "after",
+            "seconds": 3.2
           }
         }
       ]
     }
   ],
-  "sounds": { "hurtSound": "pileKeeper_hurt", "deathSound": "pileKeeper_die", "attackSound": "pileKeeper_attack" }
+  "sounds": {
+    "hurtSound": "pileKeeper_hurt",
+    "deathSound": "pileKeeper_die",
+    "attackSound": "pileKeeper_attack"
+  }
 }

@@ -323,12 +323,46 @@ namespace SickOfIt.Playtest
         static readonly (string signal, string beat)[] FloorBossSignals =
         {
             ("fmIntro", "intro: the Foreman on his sack"),
-            ("fmFight", "phase 1: tier 1, the whip and the haulers"),
+            ("fmFight", "phase 1: tier 1, the whip and the rain of embers, alone"),
+            ("fmSurge", "phase 1b: below 70%, the first wave of minions"),
             ("fmClimb", "half health: the lava takes tier 1, he climbs"),
-            ("fmPhase2", "phase 2: tier 2, swinging on the lift's chain"),
+            ("fmPhase2", "phase 2: tier 2, swinging on the lift's chain, a second wave"),
+            ("fmPhase3", "phase 3: a quarter left, the rage and the biggest wave"),
             ("fmDefeat", "defeat"),
             ("fmPile", "the diamond pile"),
         };
+        /// <summary>
+        /// The six bosses' rework (Docs/Story.md "The bosses' second look"): at least 3 phases, 4-8 minions of mixed types alive at the peak, a fight of
+        /// 2-4 minutes (from its fight signal to its defeat signal), the hero's weakness hint spoken. Level = the level file, Phases = the signals that
+        /// open a combat phase, in order. The boss + 8 minions is the most that may be on screen.
+        /// </summary>
+        public sealed class BossFightDef
+        {
+            public string Level, Name, Hint, Fight, Defeat;
+            public string[] Phases;
+        }
+
+        public static readonly BossFightDef[] BossFights =
+        {
+            new BossFightDef { Level = "Floor991", Name = "Imp Foreman", Hint = "vo_hero_hint_impForeman", Fight = "fmFight", Defeat = "fmDefeat", Phases = new[] { "fmFight", "fmSurge", "fmPhase2", "fmPhase3" } },
+            new BossFightDef { Level = "Floor951", Name = "Pile Keeper", Hint = "vo_hero_hint_pileKeeper", Fight = "pkFight", Defeat = "pkDefeat", Phases = new[] { "pkFight", "pkSurge", "pkPhase2", "pkPhase3" } },
+            new BossFightDef { Level = "Floor901", Name = "Magma King", Hint = "vo_hero_hint_magmaKing", Fight = "mkFight", Defeat = "mkDefeat", Phases = new[] { "mkFight", "mkWave", "mkPhase2", "mkEnrage", "mkLast" } },
+            new BossFightDef { Level = "Floor891", Name = "Road Breaker", Hint = "vo_hero_hint_roadBreaker", Fight = "rbFight", Defeat = "rbDefeat", Phases = new[] { "rbFight", "rbSurge", "rbPhase2", "rbPhase3" } },
+            new BossFightDef { Level = "Floor851", Name = "Carver", Hint = "vo_hero_hint_carver", Fight = "cvFight", Defeat = "cvDefeat", Phases = new[] { "cvFight", "cvSurge", "cvPhase2", "cvPhase3" } },
+            new BossFightDef { Level = "Floor801", Name = "Spire Fiend", Hint = "vo_hero_hint_spireFiend", Fight = "sfFight", Defeat = "sfDefeat", Phases = new[] { "sfFight", "sfWave", "sfPhase2", "sfEnrage", "sfLast" } },
+        };
+
+        /// <summary>The boss and up to 8 minions; the fight alone 120-240 s; the whole level (intro, fight, defeat) up to BossLevelMax.</summary>
+        const int BossFightEnemies = 9;
+        const float BossFightMin = 120f, BossFightMax = 240f, BossLevelMax = 330f;
+
+        static BossFightDef BossFightOf(int n)
+        {
+            var definition = GameDefinition.Instance;
+            var level = definition != null && n > 0 && n <= definition.TotalLevels ? definition.GetLevel(n) : null;
+            return level != null ? Array.Find(BossFights, b => b.Level == level.levelName) : null;
+        }
+
         const float StoryPathSeconds = 4200f;
         /// <summary>
         /// The wastes-climb scenario: the floor it loads directly (Floor 910, the foot of the Heat Stairs) and the last one it plays through the real flow
@@ -731,6 +765,10 @@ namespace SickOfIt.Playtest
                 "(a +7 floats up from the counter and the counter ticks up to its total), the pause menu opens and closes animated and its layout is audited; Level 31's boss bar is introduced (the name lands, the bar " +
                 "fills from empty, inside the screen and safe area, no overlaps); Floor 1000 sweeps the screen when its floor counter ticks over; Level 1 is played to its results, whose numbers count up, and " +
                 "Continue closes the screen on a black transition that the next scene opens. Run it on a 1920x1080 and a 1080x1920 device. Each beat is a check event; ui-polish and boss-intro events log the timeline", UiPolishSeconds, "level"));
+            list.Add(new PlaytestScenario(BossFightsId, "The six bosses' rework (Docs/Story.md \"The bosses' second look\"): the Imp Foreman (Floor 991), the Pile Keeper (951), the Magma King (901), the Road Breaker (891), " +
+                "the Carver (851) and the Spire Fiend (801), each loaded directly (setup shortcut) and fought by the bot through real input (one more try after a death). Each gets the stage and arena checks and " +
+                "`bossFight.*` checks: 3+ phases opened (the fight's phase signals, in order), 4-8 minions of mixed types alive at the peak (and each phase's peak, `boss-phase` events), the fight 120-240 s from its " +
+                "fight to its defeat signal, and the hero's voiced weakness hint line; the boss's telegraphs 1+ s after their glow. `boss-fight` events log the timeline, metrics boss.<level>.phases / peakMinions / fightSeconds. ~50 min", BossFightsSeconds, "level"));
             list.Add(new PlaytestScenario(AmbienceId, "A Circle's air (Docs/GameplayCookbook.md \"Weather and life\"): each Circle with an ambience (the Ember Wastes, the Cracked Road, the Rune Bridges) gets its first " +
                 "travelling floor loaded directly (setup shortcut) and played by the bot through real input. The parallax layers move at their own factors (every layer's travel measured against the camera's, " +
                 "`parallax` events); each Circle has its own weather (ash, sparks, cinders, runes, grit: kinds and bits drawn) and its own background life (flyers, walkers, a far-off chase: appearances), " +
@@ -1158,6 +1196,8 @@ namespace SickOfIt.Playtest
                 yield return session.EnemyHintsRun();
             else if (id == AmbienceId)
                 yield return session.AmbienceRun();
+            else if (id == BossFightsId)
+                yield return session.BossFightsRun();
             else if (id == CodexId)
                 yield return session.CodexRun();
             else if (id == UiPolishId)
@@ -1729,6 +1769,9 @@ namespace SickOfIt.Playtest
                 public readonly List<(string text, bool voiced)> Banners = new List<(string, bool)>(), Lines = new List<(string, bool)>();
                 public string LastBanner = "", LastLine = "";
                 public int NewSerial = -1, OthersAtNewSpawn = -1, MaxEnemies, MostSameSign;
+                /// <summary>A boss fight: the most minions (hostile enemies but the boss) alive at once, and every change of that count with its game time.</summary>
+                public int PeakMinions, LastMinions = -1;
+                public readonly List<(float at, int count)> MinionSamples = new List<(float, int)>();
                 public bool NewAlone = true, SignSeen, DoorSeen, Picked;
                 /// <summary>Hell's shortcuts (Docs/Story.md, "Shortcuts"): the cost the choice showed, and where a taken one let him out (0 = not taken).</summary>
                 public string ShortcutOffer = "", ShortcutDeclined = "";
@@ -2043,7 +2086,7 @@ namespace SickOfIt.Playtest
                 }
 
                 // Enemies (hostile, with health) and anything hostile at all (shots, slag) for the breathers.
-                int enemies = 0, hostile = 0;
+                int enemies = 0, hostile = 0, minions = 0;
                 Entity fresh = null;
                 foreach (var e in world.Live)
                 {
@@ -2053,11 +2096,19 @@ namespace SickOfIt.Playtest
                     if (e.MaxHealth <= 0)
                         continue;
                     enemies++;
+                    if (!e.Tags.Contains("boss"))
+                        minions++;
                     // Its variants count too (a sack imp on a swing is tagged impSack).
                     if (s.NewSerial < 0 && s.NewTypes.Exists(t => t == e.DefId || e.Tags.Contains(t)))
                         fresh = e;
                 }
                 s.MaxEnemies = Mathf.Max(s.MaxEnemies, enemies);
+                if ((s.FloorBoss || s.Arena) && minions != s.LastMinions)
+                {
+                    s.LastMinions = minions;
+                    s.MinionSamples.Add((now, minions));
+                    s.PeakMinions = Mathf.Max(s.PeakMinions, minions);
+                }
                 if (s.Long)
                 {
                     s.MostHostile = Mathf.Max(s.MostHostile, hostile);
@@ -2349,8 +2400,8 @@ namespace SickOfIt.Playtest
                 if (s.Sign.Length > 0)
                     check(prefix + "sign", s.SignSeen, s.SignSeen ? $"the stage's sign \"{s.Sign}\" stood at the start" : $"no \"{s.Sign}\" sign seen");
 
-                if (s.NewTypes.Count == 0)
-                    check(prefix + "newEnemy", true, "no new enemy type on this stage");
+                if (s.NewTypes.Count == 0 || s.FloorBoss || s.Arena)
+                    check(prefix + "newEnemy", true, s.NewTypes.Count == 0 ? "no new enemy type on this stage" : "a boss fight brings minions of mixed types (judged by boss.* checks)");
                 else
                     check(prefix + "newEnemy", s.NewTypes.Count == 1 && s.NewSerial >= 0 && s.OthersAtNewSpawn == 0 && s.NewAlone,
                         s.NewTypes.Count > 1 ? $"{s.NewTypes.Count} new enemy types: {string.Join(", ", s.NewTypes)} (at most one per stage)"
@@ -2364,8 +2415,8 @@ namespace SickOfIt.Playtest
                         s.FirstHostileAt < 0f ? "nothing attacked on this floor (its lava and stones are the floor)"
                             : $"longest stretch with nothing attacking after the first push: {s.LongestQuiet:0.0} s (want 3+)");
                 // Docs/LevelDesign.md, "The pace": 3 on screen in Circle X, 4 in Circles IX-VIII.
-                int allowed = s.Long ? LongFloorEnemies : s.Start > 0 && s.Start <= 900 ? 4 : 3;
-                check(prefix + "maxEnemies", s.MaxEnemies <= allowed, $"at most {s.MaxEnemies} enemies on screen at once ({(s.Long ? "a long bullet-hell floor" : allowed == 3 ? "Circle X" : "Circle IX")} allows {allowed})");
+                int allowed = s.Long ? LongFloorEnemies : s.FloorBoss || s.Arena ? BossFightEnemies : s.Start > 0 && s.Start <= 900 ? 4 : 3;
+                check(prefix + "maxEnemies", s.MaxEnemies <= allowed, $"at most {s.MaxEnemies} enemies on screen at once ({(s.Long ? "a long bullet-hell floor" : s.FloorBoss || s.Arena ? "a boss fight: the boss and up to 8 minions" : allowed == 3 ? "Circle X" : "Circle IX")} allows {allowed})");
                 if (s.Opening.Count > 0)
                 {
                     var late = s.Opening.FindAll(t => !s.ShownAt.TryGetValue(t, out float at) || s.FirstHostileAt >= 0f && at > s.FirstHostileAt);
@@ -2396,9 +2447,9 @@ namespace SickOfIt.Playtest
                 if (completed)
                 {
                     if (s.Arena)
-                        check(prefix + "length", s.Clock >= 60f && s.Clock <= 240f, $"the arena cleared in {s.Clock:0} s of game time (a boss fight: target 60-240)");
+                        check(prefix + "length", s.Clock >= BossFightMin && s.Clock <= BossLevelMax, $"the arena cleared in {s.Clock:0} s of game time (a boss fight: the fight itself 120-240 s, the level with its intro and defeat {BossFightMin:0}-{BossLevelMax:0})");
                     else if (s.FloorBoss)
-                        check(prefix + "length", s.Clock >= 60f && s.Clock <= 180f, $"the floor boss cleared in {s.Clock:0} s of game time (target 60-180)");
+                        check(prefix + "length", s.Clock >= BossFightMin && s.Clock <= BossLevelMax, $"the floor boss cleared in {s.Clock:0} s of game time (the fight itself 120-240 s, the level with its intro and defeat {BossFightMin:0}-{BossLevelMax:0})");
                     else if (s.Long)
                         check(prefix + "length", s.Clock >= LongFloorMin && s.Clock <= LongFloorMax, $"a long bullet-hell floor cleared in {s.Clock:0} s of game time (target {LongFloorMin:0}-{LongFloorMax:0})");
                     else
@@ -2426,6 +2477,8 @@ namespace SickOfIt.Playtest
                 }
                 if (s.Arena)
                     FinishArena(s, completed);
+                if (s.FloorBoss || s.Arena)
+                    FinishBossFight(s, completed);
                 if (s.Long)
                     FinishLongFloor(s, completed);
                 if (s.OneFloor)
@@ -2660,7 +2713,8 @@ namespace SickOfIt.Playtest
                 }
                 s.Check(prefix + "telegraphs", telegraphed, string.Join("; ", attacks) + " (want every one 1.0+ s after its glow on the spot)");
                 int haulers = s.SpawnCount("impHauler");
-                s.Check(prefix + "adds", s.MaxEnemies <= 3 && (haulers >= 1 || !completed), $"{haulers} sack imp(s) whistled onto the swings, at most {s.MaxEnemies} enemies at once counting him");
+                s.Check(prefix + "adds", s.MaxEnemies <= BossFightEnemies && (s.PeakMinions >= 4 || !completed),
+                    $"{haulers} sack imp(s) whistled onto the swings; up to {s.PeakMinions} minions of mixed types alive at once, at most {s.MaxEnemies} enemies counting him (allowed {BossFightEnemies})");
                 if (!completed)
                     return;
                 float defeat = At("fmDefeat");
@@ -2672,6 +2726,57 @@ namespace SickOfIt.Playtest
                 s.Check(prefix + "defeat", defeat >= 0f && s.SlowMotionAt >= 0f && pile >= 20 && Voiced(down) && Voiced("My... sack..."),
                     $"defeat at {(defeat >= 0f ? defeat.ToString("0.0") + " s" : "never")}; slow motion {(s.SlowMotionAt >= 0f ? $"at {s.SlowMotionAt:0.0} s" : "NOT seen")}; " +
                     $"{pile} diamonds in the pile (want 20+); his last line {(Voiced("My... sack...") ? "voiced" : "NOT voiced")}; the announcer's call {(Voiced(down) ? "voiced" : "NOT voiced")}");
+            }
+
+            /// <summary>
+            /// The boss rework's criteria (BossFights): 3+ phases from the fight's signals, 4-8 minions of mixed types alive at the peak (and
+            /// the peak of each phase), the fight from its first to its defeat signal 120-240 s, and the hero's voiced weakness hint.
+            /// </summary>
+            void FinishBossFight(StageWatch s, bool completed)
+            {
+                var def = BossFightOf(s.Level);
+                if (def == null)
+                    return;
+                string prefix = $"level{s.Level}.bossFight.";
+                float At(string signal) => s.Signals.TryGetValue(signal, out float t) ? t : -1f;
+                var seen = new List<(string signal, float at)>();
+                foreach (var signal in def.Phases)
+                    if (At(signal) >= 0f)
+                        seen.Add((signal, At(signal)));
+                bool ordered = true;
+                for (int i = 1; i < seen.Count; i++)
+                    ordered &= seen[i].at >= seen[i - 1].at;
+                s.Check(prefix + "phases", ordered && (seen.Count >= 3 || !completed),
+                    $"{def.Name}: {seen.Count} phases opened (want 3+): {string.Join(", ", seen.ConvertAll(x => $"{x.signal} at {x.at:0.0} s"))}");
+                // The peak of minions alive in each phase: the count carried over from before the phase, then every change inside it.
+                var parts = new List<string>();
+                for (int i = 0; i < seen.Count; i++)
+                {
+                    float from = seen[i].at, to = i + 1 < seen.Count ? seen[i + 1].at : float.MaxValue;
+                    int carried = 0, peak = 0;
+                    foreach (var sample in s.MinionSamples)
+                    {
+                        if (sample.at <= from)
+                            carried = sample.count;
+                        else if (sample.at < to)
+                            peak = Mathf.Max(peak, sample.count);
+                    }
+                    parts.Add($"{seen[i].signal}: {Mathf.Max(peak, carried)}");
+                    Run.Event("boss-phase", $"level {s.Level} ({def.Name}) {seen[i].signal} at {from:0.0} s: up to {Mathf.Max(peak, carried)} minions alive");
+                }
+                s.Check(prefix + "minions", s.PeakMinions <= 8 && (s.PeakMinions >= 4 || !completed),
+                    $"{s.PeakMinions} minions alive at the peak (want 4-8); per phase: {string.Join(", ", parts)}");
+                float fight = At(def.Fight), defeat = At(def.Defeat);
+                float length = fight >= 0f && defeat >= fight ? defeat - fight : -1f;
+                s.Check(prefix + "length", !completed || length >= BossFightMin && length <= BossFightMax,
+                    length >= 0f ? $"the fight lasted {length:0} s from {def.Fight} to {def.Defeat} (want {BossFightMin:0}-{BossFightMax:0})"
+                        : $"the fight has no end yet ({def.Fight} {(fight >= 0f ? "seen" : "never seen")}, {def.Defeat} {(defeat >= 0f ? "seen" : "never seen")})");
+                bool hinted = s.Lines.Exists(l => l.voiced && s.Sounds.TryGetValue(l.text, out string sound) && sound == def.Hint);
+                s.Check(prefix + "hint", hinted || !completed, hinted ? $"the hero said the weakness hint ({def.Hint})" : $"the hero never said {def.Hint} on a shown, voiced subtitle");
+                Run.Metric($"boss.{def.Level}.phases", seen.Count);
+                Run.Metric($"boss.{def.Level}.peakMinions", s.PeakMinions);
+                Run.Metric($"boss.{def.Level}.fightSeconds", Mathf.Round(length));
+                Run.Event("boss-fight", $"level {s.Level} ({def.Name}): {seen.Count} phases, up to {s.PeakMinions} minions, fight {(length >= 0f ? length.ToString("0") + " s" : "not over")}, hint {(hinted ? "said" : "NOT said")}");
             }
 
             /// <summary>
