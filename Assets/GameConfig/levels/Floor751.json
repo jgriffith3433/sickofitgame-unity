@@ -1,0 +1,456 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor751",
+  "displayName": "Floor 751: The Lamplighter",
+  "levelNumber": 99,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 600.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 100,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 751,
+    "length": 150,
+    "floors": {
+      "start": 751,
+      "end": 750,
+      "unitsPerFloor": 0.0,
+      "circle": "runeBridges",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "bridge",
+          "direction": "Arena",
+          "length": 0.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -1.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                3.2,
+                -1.45
+              ],
+              "id": "pier",
+              "scale": [
+                3.4,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanQuick",
+              "at": [
+                -0.4,
+                -0.1
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanLate",
+              "at": [
+                2.6,
+                -0.1
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Defeat the Lamplighter"
+    },
+    "rules": [],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 751: THE LAMPLIGHTER",
+                "duration": 3.0,
+                "style": "Banner",
+                "sound": "vo_f751_title",
+                "color": "#8FE3FF"
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "the lamplighter comes",
+            "when": {
+              "type": "after",
+              "seconds": 4.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "intro"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "intro",
+        "onEnter": [
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "applyStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          }
+        ],
+        "rules": [
+          {
+            "name": "he lights the bridge",
+            "when": {
+              "type": "after",
+              "seconds": 0.4
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "playSound",
+                    "sound": "br_chime"
+                  },
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.12,
+                    "duration": 1.6
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "lamplighter",
+                    "id": "boss",
+                    "anchor": "Camera",
+                    "at": [
+                      3.6,
+                      0.3
+                    ]
+                  },
+                  {
+                    "type": "setState",
+                    "target": {
+                      "self": false,
+                      "id": "boss"
+                    },
+                    "state": "emerging"
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "llIntro"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 2.0
+                  },
+                  {
+                    "type": "showText",
+                    "text": "THE LAMPLIGHTER",
+                    "duration": 2.4,
+                    "sound": "vo_ll_name",
+                    "color": "#BFEFFF"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 2.8
+                  },
+                  {
+                    "type": "showText",
+                    "text": "One for the left. One for the right. ...Oh. You are on the bridge.",
+                    "style": "Subtitle",
+                    "duration": 5.0,
+                    "sound": "vo_ll_intro",
+                    "color": "#BFEFFF"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 5.4
+                  },
+                  {
+                    "type": "showText",
+                    "text": "He's lighting the bridge. Under my feet.",
+                    "style": "Subtitle",
+                    "duration": 3.0,
+                    "sound": "vo_ll_hero_intro"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.2
+                  },
+                  {
+                    "type": "bossBar",
+                    "target": {
+                      "id": "boss"
+                    },
+                    "label": "The Lamplighter"
+                  },
+                  {
+                    "type": "goToPhase",
+                    "phase": "fight"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "fight",
+        "onEnter": [
+          {
+            "type": "unlockInput"
+          },
+          {
+            "type": "unlockRewind"
+          },
+          {
+            "type": "removeStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "emit",
+            "signal": "llFight"
+          },
+          {
+            "type": "playMusic",
+            "clip": "Audio/Music/wastes_push.ogg",
+            "volume": 0.85
+          }
+        ],
+        "rules": [
+          {
+            "name": "he falls",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "id": "boss"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "defeat"
+              }
+            ]
+          },
+          {
+            "name": "the hero sizes him up",
+            "when": {
+              "type": "after",
+              "seconds": 8.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "showText",
+                "text": "The Lamplighter. His whole job is the flame on his pole. So I shoot the flame.",
+                "duration": 4.0,
+                "style": "Subtitle",
+                "sound": "vo_hero_hint_lamplighter"
+              }
+            ]
+          },
+          {
+            "name": "boss rework: second bridge",
+            "when": {
+              "type": "signal",
+              "name": "llTier2"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.15,
+                "duration": 0.7
+              }
+            ]
+          },
+          {
+            "name": "boss rework: blind",
+            "when": {
+              "type": "signal",
+              "name": "llBlindSignal"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.3,
+                "duration": 0.7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "defeat",
+        "onEnter": [
+          {
+            "type": "lockInput"
+          },
+          {
+            "type": "lockRewind"
+          },
+          {
+            "type": "applyStatus",
+            "target": {
+              "player": true
+            },
+            "effect": "sceneUntouchable"
+          },
+          {
+            "type": "slowMotion",
+            "scale": 0.3,
+            "duration": 2.0
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.3,
+            "duration": 1.2
+          },
+          {
+            "type": "emit",
+            "signal": "llDefeat"
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 4.5
+              },
+              {
+                "type": "showText",
+                "text": "THE LAMPLIGHTER HAS WALKED OFF THE BRIDGE!",
+                "duration": 3.4,
+                "style": "Banner",
+                "sound": "vo_ll_fallen",
+                "color": "#7CFF8A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.6
+              },
+              {
+                "type": "showText",
+                "text": "Well. That is one way off a bridge.",
+                "style": "Subtitle",
+                "duration": 3.4,
+                "sound": "vo_ll_hero_defeat"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.6
+              },
+              {
+                "type": "hideBossBar"
+              },
+              {
+                "type": "unlockInput"
+              },
+              {
+                "type": "unlockRewind"
+              },
+              {
+                "type": "removeStatus",
+                "target": {
+                  "player": true
+                },
+                "effect": "sceneUntouchable"
+              },
+              {
+                "type": "setFloor",
+                "floor": 750,
+                "skipMilestones": true
+              },
+              {
+                "type": "showText",
+                "text": "FLOOR 750: HALFWAY ACROSS",
+                "duration": 3.2,
+                "style": "Banner",
+                "sound": "vo_f750_title",
+                "color": "#8FE3FF"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "counters": []
+  }
+}

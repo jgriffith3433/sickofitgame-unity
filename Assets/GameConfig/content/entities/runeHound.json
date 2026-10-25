@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "extends": "slagHound",
+  "displayName": "Rune hound",
+  "hint": "Asleep until you come near. Crouches, then lunges. Sidestep.",
+  "note": "A statue with opinions. Wakes up when I get close. Rude.",
+  "hintVoice": "vo_hero_hint_runeHound",
+  "tags": [
+    "runeHound"
+  ],
+  "activationRange": 6.5,
+  "health": 4,
+  "visual": {
+    "scale": 0.22,
+    "color": "#A9BFDA",
+    "fxColor": "#8FE3FF",
+    "placeholderColor": "#6F8CB0"
+  }
+}

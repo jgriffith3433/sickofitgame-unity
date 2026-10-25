@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "extends": "floorLanding",
+  "abilities": [
+    {
+      "type": "carved",
+      "text": "714",
+      "words": "HUM (HALF)",
+      "color": "#BFEFFF",
+      "size": 0.6,
+      "above": -1.1,
+      "onFace": true
+    }
+  ]
+}

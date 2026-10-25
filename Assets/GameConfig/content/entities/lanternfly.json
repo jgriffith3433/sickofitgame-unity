@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "extends": "chaser",
+  "displayName": "Lanternfly",
+  "hint": "Small, bright and fragile. One shot.",
+  "note": "A bug with a lantern. Of course there is.",
+  "health": 1,
+  "moveSpeed": 1.15,
+  "activationRange": 14.0,
+  "tags": [
+    "lanternfly"
+  ],
+  "body": {
+    "shape": "Circle",
+    "radius": 0.3,
+    "solid": false,
+    "gravity": 0.0
+  },
+  "visual": {
+    "scale": 0.1,
+    "color": "#7FD8FF",
+    "fxColor": "#7FD8FF",
+    "placeholderColor": "#7FD8FF"
+  },
+  "loot": {
+    "chance": 0.0,
+    "count": 0,
+    "value": 0
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1,
+      "dieOnHit": true
+    },
+    {
+      "type": "chase",
+      "speed": 1.15,
+      "stopDistance": 0.0,
+      "face": true
+    },
+    {
+      "type": "lifetime",
+      "seconds": 16
+    }
+  ],
+  "onDeath": []
+}
