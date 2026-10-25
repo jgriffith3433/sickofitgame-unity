@@ -85,6 +85,8 @@ namespace SickOfIt.Gameplay
         public PlayerWeapons Weapons { get; private set; }
         /// <summary>The hero's dash and wall-jump (unlocks, lines, rewind state).</summary>
         public HeroMoves Moves { get; private set; }
+        /// <summary>The grapple hook (aim, attach to an anchor, swing or pull; rewind state). Null without a player.</summary>
+        public HeroGrapple Grapple { get; private set; }
         /// <summary>The visible melee swing (fists).</summary>
         public MeleeSwingFx SwingFx { get; private set; }
         /// <summary>The hit-freeze, hit flash and squash, the hero's recoil and the glows (game.json "feel"; presentation only).</summary>
@@ -225,6 +227,7 @@ namespace SickOfIt.Gameplay
             {
                 Moves = new HeroMoves(this, playerController);
                 Moves.Arm(RogueliteManager.Instance);
+                Grapple = new HeroGrapple(this, playerController);
             }
             Hud.BuildProgressBar();
 
@@ -306,6 +309,8 @@ namespace SickOfIt.Gameplay
 
             carryThisTick = Vector2.zero;
             heldThisTick = false;
+            flipThisTick = false;
+            windThisTick = Vector2.zero;
             tickList.Clear();
             tickList.AddRange(live);
             foreach (var e in tickList)
@@ -313,10 +318,15 @@ namespace SickOfIt.Gameplay
                 if (e != null && e.IsAlive && e.isActiveAndEnabled)
                     e.Tick(now, dt);
             }
+            Grapple?.Tick(now, dt);
             if (playerController != null)
             {
                 // What he stands on carries him; nothing held him this tick, so he lets go.
                 playerController.CarrierVelocity = carryThisTick;
+                // The floor pieces' say: gravity up or down, and the wind on him.
+                gravityFlipped = flipThisTick;
+                playerController.SetGravitySign(flipThisTick ? -1 : 1);
+                playerController.WindVelocity = windThisTick;
                 if (!heldThisTick && playerController.IsHeld)
                     playerController.ReleaseHold();
             }
@@ -479,6 +489,19 @@ namespace SickOfIt.Gameplay
 
         /// <summary>This tick, what he stands on moves him at 'velocity' (sideways; up and down come from the collision).</summary>
         public void CarryPlayer(Vector2 velocity) => carryThisTick = velocity;
+
+        Vector2 windThisTick;
+        bool flipThisTick;
+        bool gravityFlipped;
+
+        /// <summary>Gravity is flipped on him (up) right now; saved, so a rewind puts back the ceiling he walked on.</summary>
+        public bool GravityFlipped => gravityFlipped;
+
+        /// <summary>This tick, a gravity-flip zone pulls him up instead of down.</summary>
+        public void FlipPlayerGravity() => flipThisTick = true;
+
+        /// <summary>This tick, wind pushes him sideways at 'drift' (units per second; zones add up).</summary>
+        public void WindPlayer(Vector2 drift) => windThisTick += drift;
 
         /// <summary>This tick, something holds him at 'position' moving at 'velocity' (a chain). Jump lets go.</summary>
         public void HoldPlayer(Vector2 position, Vector2 velocity)
@@ -934,6 +957,8 @@ namespace SickOfIt.Gameplay
             Style?.SaveState(w);
             Perks?.SaveState(w);
             Moves?.SaveState(w);
+            Grapple?.SaveState(w);
+            w.Bool(gravityFlipped);
         }
 
         public void LoadState(StateReader r)
@@ -969,6 +994,11 @@ namespace SickOfIt.Gameplay
             Style?.LoadState(r);
             Perks?.LoadState(r);
             Moves?.LoadState(r);
+            Grapple?.LoadState(r);
+            gravityFlipped = r.Bool();
+            flipThisTick = gravityFlipped;
+            if (playerController != null)
+                playerController.SetGravitySign(gravityFlipped ? -1 : 1);
         }
 
         /// <summary>Saves the world's state at this moment (after a discrete event such as a swing or a weapon change), so a rewind to just after can't undo it.</summary>

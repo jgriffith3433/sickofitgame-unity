@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "foothold",
+    "mover"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      2.0,
+      0.45
+    ],
+    "solid": true,
+    "oneWay": true
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#4B3A33",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 0,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "mover",
+      "waypoints": [
+        [
+          3.0,
+          0.0
+        ]
+      ],
+      "speed": 1.6,
+      "pause": 1.2,
+      "mode": "PingPong"
+    }
+  ]
+}

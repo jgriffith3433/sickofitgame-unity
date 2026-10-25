@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "wind"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      2.0,
+      2.0
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#BFE3FF1A",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 950,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "wind",
+      "push": [
+        2.2,
+        0.0
+      ],
+      "shotPush": 9.0,
+      "gustPeriod": 3.6,
+      "gustDuty": 0.55,
+      "gustRamp": 0.3
+    }
+  ]
+}

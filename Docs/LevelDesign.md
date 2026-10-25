@@ -222,6 +222,29 @@ platform or hazard type (saved in `SaveState`/`LoadState`, seeded) for the floor
 | **Cooling crusts** | When a lava fall stops, its face cools into crusts of slag he can climb, up the inside of the fall; when it pours again they melt. Climb on the off beat. | The falls' own skin, the way the river crusts over | The crusts darken and crack 1 s before the fall pours again | 903 | no (crust footholds on a `lavaFall`, solid while it is off) |
 | **The King's glow** | The throne far above in the backdrop, growing floor by floor (*Glimpses, glints and the damned*). Scenery, not an obstacle. | Every floor of the Wastes is under his throne | none needed | 1000 (a speck) | no (a backdrop layer sized and lit by the floor number) |
 
+### The air and the paths (grapple, movers, wind, collapsing floors, gravity flips) *(built 2026-10-25)*
+
+The toolkit's second batch, for floors that want more than ledges (Docs/Story.md "The Hook and the air kit"). Each is an entity ability: pooled, rewind-safe, JSON-driven (cookbook "The Hook and the air kit").
+
+| Piece | What it does | Telegraph | Engine |
+|---|---|---|---|
+| **Grapple anchors** | `grappleAnchor` on an entity tagged `anchor` (`grappleRing`: swing, `grappleHook`: pull). The hook (E) takes the anchor nearest his aim in a 50 degree cone and 7.5 units. | The ring glows when the hook would take it; the rope is drawn | yes (`HeroGrapple`, `GrappleAnchorAbility`) |
+| **Moving platforms** | `mover`: a one-way slab that travels `waypoints` (offsets from its spawn) at `speed`, waits `pause` at each, PingPong or Loop, carries the rider. | It never starts without a pause at the ends: board while it waits | yes (`MoverAbility`) |
+| **Wind** | `wind`: a zone (the body) that pushes his sideways speed by `push.x`, lifts or presses him by `push.y`, and bends shots at `shotPush`. `gustPeriod` makes it gust. | Streaks run with it, bright while it blows | yes (`WindAbility`) |
+| **Collapsing floors** | `crumble` with a `group`: stones set each other going, nearest first, `chainDelay` seconds per unit; `rebuildAfter` brings them back. | Each stone shakes and dusts for `delay` (at least 1) s before it falls | yes (`CrumbleAbility`) |
+| **Gravity-flip zones** | `gravityFlip`: while he is inside, and `linger` seconds after, gravity pulls up. | Arrows drift up the zone | yes (`GravityFlipAbility`; `PlayerController.GravitySign`) |
+
+**The reach rules for the new pieces** (the hero: moveSpeed 2, jump peak 2.29, ~1 s in the air):
+
+- **Swing.** Hook a ring 3.4-4 above the start ledge's top and 3 to the side. The swing carries him over a gap of up to ~6 if he lets go on the rise (Jump, past the bottom); a plain jump carries 2. A rope must not cut a foothold (the swing passes through nothing solid and a landing detaches him). The rope's bottom must stay on screen (ortho 2.8): anchor y at most 2.4 above the screen centre.
+- **Pull.** The anchor sits at a ledge's near top corner within 3.8 of where he throws; he arrives 0.9 from it and hops up 8: the shelf can be 2.2 higher than his ledge and wide enough (4) for the hop's drift.
+- **Wind.** A gust of `push.x` 2.2 adds that to his walk; a jump timed to the rising gust carries ~4.1: a gap of up to 3.4 (leave margin). Give the gust zone a plain ledge on both sides (the far one outside the zone), and put the gust's off beat to use: a wide zone with a long off phase is a wait, not a puzzle.
+- **Mover.** 0.5 or less between a ledge and the platform's resting point, the platform at the same height. Its pause is at least 1 s at each end.
+- **Collapse.** A wave is slower than he walks: `chainDelay` at least 0.5 per unit (he covers 2 units a second), `delay` at least 1.3 so the first stone is still under him as the second cracks. Stones no more than 0.3 apart.
+- **Gravity flip.** Always a solid ceiling (not one-way) over the zone, 3 to 4 above the floor, and 1 more past the zone's end for the `linger`; the floor beyond the ceiling is a ledge he lands on. Nothing for him to fall up out of the view.
+
+The demo floor `content/scenes/kitFloor.json` uses all five in that order (playtest `floor-kit`).
+
 Monsters the floors draw from (Circle X's one family: the Overlord's imps, and the sparks of the burning village):
 
 | Monster | What it does | Why it's here | First floor |

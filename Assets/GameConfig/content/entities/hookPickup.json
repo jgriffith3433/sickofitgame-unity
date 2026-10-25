@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "tags": [
+    "pickup",
+    "hook"
+  ],
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#8FD3E8",
+    "placeholderSize": 0.6,
+    "placeholderLabel": true,
+    "sortingOrder": 6,
+    "hurtFlash": false,
+    "fxColor": "#8FD3E8"
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "collect",
+      "magnetRadius": 1.8,
+      "magnetSpeed": 6,
+      "pickupRadius": 0.35,
+      "bobHeight": 0.1,
+      "do": [
+        {
+          "type": "setFlag",
+          "flag": "hook.found"
+        },
+        {
+          "type": "popText",
+          "text": "FOUND: A HAULER'S HOOK (E)",
+          "color": "#8FD3E8",
+          "size": 0.9
+        }
+      ],
+      "soundId": "pickup_lost_thing"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 600
+    }
+  ]
+}

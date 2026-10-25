@@ -264,7 +264,7 @@ namespace SickOfIt.Core.Input
             if (!held)
             {
                 held = true;
-                gravityBeforeHold = rb.gravityScale;
+                gravityBeforeHold = Mathf.Abs(rb.gravityScale) * gravitySign;
                 rb.gravityScale = 0f;
                 airJumpsRemaining = maxAirJumps;
             }
@@ -280,7 +280,7 @@ namespace SickOfIt.Core.Input
                 return;
             held = false;
             if (rb != null)
-                rb.gravityScale = gravityBeforeHold;
+                rb.gravityScale = Mathf.Abs(gravityBeforeHold) * gravitySign;
             if (climbing)
                 EndClimbPose();
             climbing = false;
@@ -323,7 +323,7 @@ namespace SickOfIt.Core.Input
         public void SetGravityMultiplier(float multiplier)
         {
             if (rb != null)
-                rb.gravityScale = gravityScale * multiplier;
+                rb.gravityScale = gravityScale * multiplier * gravitySign;
         }
 
         /// <summary>Turns the player to face right (direction &gt; 0) or left (&lt; 0) now. Moving or firing turns him again.</summary>
@@ -496,6 +496,7 @@ namespace SickOfIt.Core.Input
             moves = cfg.moves ?? new HeroMovesConfig();
             airDashesLeft = Mathf.Max(0, moves.dash.airDashes);
             ResolveDashKeys();
+            ResolveGrappleKeys();
         }
 
         private void Awake()
@@ -519,6 +520,7 @@ namespace SickOfIt.Core.Input
                 {
                     Vector3 scale = graphicsTransform.localScale;
                     scale.x = -Mathf.Abs(scale.x);
+                    scale.y = Mathf.Abs(scale.y) * gravitySign;
                     graphicsTransform.localScale = scale;
                 }
             }
@@ -590,6 +592,7 @@ namespace SickOfIt.Core.Input
             ReadJumpInput();
             ReadFireInput();
             ReadDashInput();
+            ReadGrappleInput();
             ApplyInputOverrides();
             CheckGrounded();
             HandlePlatformCollision();
@@ -645,7 +648,7 @@ namespace SickOfIt.Core.Input
             // still counts), and a jump pressed just before landing or just after walking off still works.
             float width = Mathf.Max(groundCheckWidth, col.bounds.size.x * 0.9f);
             Vector2 boxSize = new Vector2(width, groundCheckDistance);
-            Vector2 boxCenter = (Vector2)transform.position + col.offset + Vector2.down * (col.bounds.extents.y + groundCheckDistance * 0.5f);
+            Vector2 boxCenter = (Vector2)transform.position + col.offset + (gravitySign < 0 ? Vector2.up : Vector2.down) * (col.bounds.extents.y + groundCheckDistance * 0.5f);
 
             bool wasGrounded = isGrounded;
 
@@ -676,6 +679,7 @@ namespace SickOfIt.Core.Input
             var filter = new ContactFilter2D { useLayerMask = true, layerMask = groundLayer | 1, useTriggers = Physics2D.queriesHitTriggers };
             int n = Physics2D.OverlapBox(center, size, 0f, filter, footholdHits);
             float feetY = col.bounds.min.y;
+            float headY = col.bounds.max.y;
             for (int i = 0; i < n; i++)
             {
                 var hit = footholdHits[i];
@@ -687,7 +691,7 @@ namespace SickOfIt.Core.Input
                     continue;
                 // Only a surface under his feet is ground: a solid piece whose top is above them (beside him, or around him
                 // as he passes) isn't, so he falls instead of standing on air.
-                if (surfaceOnly && hit.bounds.max.y > feetY + 0.12f)
+                if (surfaceOnly && (gravitySign < 0 ? hit.bounds.min.y < headY - 0.12f : hit.bounds.max.y > feetY + 0.12f))
                     continue;
                 // Solid ground wins over a one-way piece (it decides what a hold of down drops through).
                 ground = hit;
@@ -1075,7 +1079,7 @@ namespace SickOfIt.Core.Input
                 rb.linearVelocity = velocity;
                 return;
             }
-            velocity.x = horizontalInput * moveSpeed * MoveSpeedMultiplier + CarrierVelocity.x + swingMomentum;
+            velocity.x = horizontalInput * moveSpeed * MoveSpeedMultiplier + CarrierVelocity.x + swingMomentum + WindVelocity.x;
             if (now < kickUntil)
                 velocity.x = kickDir * moves.wallJump.kickSpeed;
             if (wallSide != 0)
@@ -1158,11 +1162,11 @@ namespace SickOfIt.Core.Input
                 // 3D mode: Y-axis rotation
                 if (graphicsTransform != null)
                 {
-                    graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+                    graphicsTransform.rotation = Quaternion.Euler(0f, currentYRotation, gravitySign < 0 ? 180f : 0f);
                 }
                 else
                 {
-                    transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+                    transform.rotation = Quaternion.Euler(0f, currentYRotation, gravitySign < 0 ? 180f : 0f);
                 }
             }
         }
@@ -1195,7 +1199,7 @@ namespace SickOfIt.Core.Input
 
             bool fresh = lastJumpPressTime == Time.time;
             // ... and just after leaving a surface he can still jump off it (not while already rising).
-            bool coyote = Time.time - lastGroundedTime <= CoyoteSeconds && (rb == null || rb.linearVelocity.y <= 0.1f);
+            bool coyote = Time.time - lastGroundedTime <= CoyoteSeconds && (rb == null || rb.linearVelocity.y * gravitySign <= 0.1f);
             if (isGrounded || coyote)
             {
                 lastJumpPressTime = float.NegativeInfinity;
@@ -1221,7 +1225,7 @@ namespace SickOfIt.Core.Input
             if (rb == null) return;
             
             Vector2 velocity = rb.linearVelocity;
-            velocity.y = jumpForce;
+            velocity.y = jumpForce * gravitySign;
             rb.linearVelocity = velocity;
             
             if (Cue(jumpSound, SickOfIt.Core.Audio.Sfx.Events.playerJump))
@@ -1235,6 +1239,119 @@ namespace SickOfIt.Core.Input
         
         #endregion
         
+        #region Grapple, wind and gravity (floor kit)
+
+        // The hook is thrown here (a key, the gamepad) and flown by HeroGrapple, the world's side. Wind and the gravity flip are set by
+        // floor pieces every simulation tick; none of it is rewound here (the pieces re-derive it from their saved state).
+        private Key[] grappleKeys;
+        private bool grappleRequested;
+        private int gravitySign = 1;
+
+        /// <summary>Gravity pulls down (+1) or, in a gravity-flip zone, up (-1).</summary>
+        public int GravitySign => gravitySign;
+
+        /// <summary>The wind pushing him now (set by wind zones every tick; the sideways part moves him whatever his own speed).</summary>
+        public Vector2 WindVelocity { get; set; }
+
+        /// <summary>A jump's upward speed (the hook's release adds a share of it).</summary>
+        public float JumpSpeed => jumpForce;
+
+        /// <summary>The hook is his: the story or a pickup unlocked it (player.json moves.grapple).</summary>
+        public bool GrappleUnlocked
+        {
+            get
+            {
+                var g = moves.grapple;
+                if (g == null || !g.enabled)
+                    return false;
+                string flag = string.IsNullOrEmpty(g.unlockFlag) ? "move:grapple" : g.unlockFlag;
+                return UnlockFlags.Has(flag) || (g.unlockWhen != null && g.unlockWhen.Count > 0 && Requirements.Met(g.unlockWhen));
+            }
+        }
+
+        /// <summary>Asks for the hook on the next frame (a HUD button, a test).</summary>
+        public void RequestGrapple() => grappleRequested = true;
+
+        /// <summary>True once per press of the hook key (the world consumes it).</summary>
+        public bool ConsumeGrappleRequest()
+        {
+            bool asked = grappleRequested;
+            grappleRequested = false;
+            return asked && !InputLocked && !Suspended && !ScriptedMove.HasValue;
+        }
+
+        /// <summary>
+        /// Where the hook is aimed: the right stick, else the mouse (once it has been used), else the move stick leaning up (sideways = up and
+        /// that way), else up and the way he faces. Not normalised to a level: the hook takes the nearest anchor inside its cone.
+        /// </summary>
+        public Vector2 GrappleAim()
+        {
+            var pad = Gamepad.current;
+            if (pad != null)
+            {
+                Vector2 stick = pad.rightStick.ReadValue();
+                if (stick.magnitude > 0.4f)
+                    return stick.normalized;
+            }
+            if (aimingWithMouse && mainCamera != null && Mouse.current != null && MouseOnScreen())
+            {
+                Vector2 toMouse = GetMouseDirectionFromPlayer();
+                if (toMouse.magnitude >= inputDeadzone)
+                    return toMouse.normalized;
+            }
+            if (moveInput.magnitude > 0.4f)
+                return new Vector2(moveInput.x, Mathf.Max(moveInput.y, 0.9f)).normalized;
+            return new Vector2(FacingRight ? 1f : -1f, 1.1f).normalized;
+        }
+
+        /// <summary>Carries a speed sideways after the rope lets go (it fades in the air like a chain's swing).</summary>
+        public void KeepMomentum(float x) => swingMomentum = x;
+
+        /// <summary>The floor pieces set gravity for this tick: flipped zones pull him up (+1 / -1).</summary>
+        public void SetGravitySign(int sign)
+        {
+            sign = sign < 0 ? -1 : 1;
+            if (sign == gravitySign)
+                return;
+            gravitySign = sign;
+            if (rb != null && !held)
+                rb.gravityScale = Mathf.Abs(rb.gravityScale) * sign;
+            gravityBeforeHold = Mathf.Abs(gravityBeforeHold) * sign;
+            // Standing on the old floor means nothing now: the next ground check looks the new way.
+            isGrounded = false;
+            lastGroundedTime = float.NegativeInfinity;
+        }
+
+        private void ResolveGrappleKeys()
+        {
+            var list = new System.Collections.Generic.List<Key>();
+            if (moves.grapple != null && moves.grapple.keys != null)
+            {
+                foreach (string name in moves.grapple.keys)
+                    if (System.Enum.TryParse(name, out Key key))
+                        list.Add(key);
+            }
+            grappleKeys = list.ToArray();
+        }
+
+        private void ReadGrappleInput()
+        {
+            var keyboard = Keyboard.current;
+            if (keyboard != null && grappleKeys != null)
+            {
+                foreach (var key in grappleKeys)
+                {
+                    if (keyboard[key].wasPressedThisFrame)
+                        grappleRequested = true;
+                }
+            }
+            var pad = Gamepad.current;
+            if (pad != null && (pad.leftShoulder.wasPressedThisFrame || pad.buttonNorth.wasPressedThisFrame))
+                grappleRequested = true;
+        }
+
+        #endregion
+
         #region Hero Moves (dash, wall-jump)
 
         // player.json "moves". Locked until the story or Yooba's shop unlocks each one (SetMovesUnlocked).
@@ -1466,7 +1583,7 @@ namespace SickOfIt.Core.Input
             wallSide = 0;
             swingMomentum = 0f;
             airDashesLeft = Mathf.Max(0, moves.dash.airDashes);
-            rb.linearVelocity = new Vector2(kickDir * kick.kickSpeed, kick.kickUp);
+            rb.linearVelocity = new Vector2(kickDir * kick.kickSpeed, kick.kickUp * gravitySign);
             Face(kickDir);
             if (Cue(null, SickOfIt.Core.Audio.Sfx.Events.playerWallJump))
                 SickOfIt.Core.Fx.Fx.Dust(new Vector2(col.bounds.center.x + onSide * col.bounds.extents.x, col.bounds.center.y), 0.8f);

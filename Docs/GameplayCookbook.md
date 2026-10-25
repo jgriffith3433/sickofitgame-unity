@@ -707,6 +707,26 @@ Telemetry `move` events: `dash`, `wallCling`, `wallJump`, `unlocked`, `line`.
 **Check it:** playtests `dash`, `wall-jump` and `hero-moves` (both; ~4 min), on `content/scenes/moveTest.json` (Level 2's stage): locked, then unlocked the way a player does (Yooba's good, bought; Floor 996 cleared), a bolt dashed through unharmed,
 cooldown, a shaft climbed by wall-kicks, and rewind into a burst, to before it, and back to a cling.
 
+## The Hook and the air kit ("grapple across a gap", "wind", "a moving platform", "collapsing floor", "gravity flip")
+
+All JSON; no C#. Story: Docs/Story.md "The Hook and the air kit". Level rules: Docs/LevelDesign.md "The air and the paths". The bench is `content/scenes/kitFloor.json`.
+
+- **The Hook** is player.json `moves.grapple` (`GrappleConfig`: `keys` E and F, `range` 7.5, `aimCone` 50, `maxRope`, `gravity`, `swingPump`, `reelSpeed`, `pullSpeed`, ...). Locked until `unlockFlag` (`move:grapple`) or every `unlockWhen`
+  condition holds (`flag:hook.found` today). Give it with the `hookPickup` entity (its `collect` writes the flag with `setFlag`), or put `"flag:..."`/`"level:N"` in `unlockWhen`.
+  `PlayerController.GrappleUnlocked`, `RequestGrapple()` (a HUD chip would call it), `GrappleAim()`; the world's side is `HeroGrapple` (`GameplayWorld.Grapple`: `Attached`, `Pulling`, `AnchorSerial`, `RopeLength`, `Velocity`).
+- **An anchor** is an entity with the tag `anchor` and the `grappleAnchor` ability: `"mode": "Swing"` (a rope of the length he hooked it at) or `"Pull"` (reels him in, hops him up), optional `reach` and `ropeMax`. Spawn it like any piece:
+  `{ "entity": "grappleRing", "at": [0, 2.1], "id": "swingRing" }`. Controls: E throws, A / D pump, up / down reel, **Jump** lets go with the swing's speed and a hop, E again lets go. A swing anchor on a `mover` swings with it.
+- **A moving platform** is an entity with `mover`: `{ "type": "mover", "waypoints": [[3, 0]], "speed": 1.6, "pause": 1.2, "mode": "PingPong" }` (waypoints are offsets from where it spawned; `Loop` goes round; `holdUntilBoarded` waits for him). Make it one-way solid like `moverSlab`.
+  `waypoints` with several points make a path; for a vertical lift use `[[0, 3]]`.
+- **Wind** is an entity with `wind` (a non-solid body is the zone: stretch it with the spawn's `scale`): `"push": [2.2, 0]` (x: sideways speed added to the hero, on the ground too; y: lifts or presses him), `"shotPush"` (bends every shot in the zone along the
+  wind, his and Hell's, in units per second squared), `"gustPeriod"` / `"gustDuty"` / `"gustRamp"` / `"phase"` for gusts (a steady wind has no period). `windGust` and `windSteady` are examples.
+- **A collapsing floor** is a row of `crumble` stones with the same `group`: the first stood on cracks, the rest follow nearest first, `chainDelay` seconds per unit; `rebuildAfter` > 0 brings them back. (`collapseSlab`.)
+- **A gravity-flip zone** is an entity with `gravityFlip` (`gravityPad`; `linger` seconds after he leaves). Put a solid, not one-way, ceiling over it (`ceilingSlab`). The hero's `GravitySign` is -1 inside; jump goes down, he walks the ceiling.
+- **Rewind** needs nothing: every runtime field of every piece is saved (`SaveStateCoversEveryRuntimeField`), the rope and which way gravity pulls are saved with the world, wind and gusts follow the game clock.
+
+**Check it:** playtest `floor-kit` (~6 min, Level 2's stage with the scene `kitFloor`): swing across a 6-wide gap (with a rewind mid-swing), a pull up to a shelf, a gust ridden over a gap with a hostile bolt and his own shot bent by the wind, a mover (with a rewind mid-ride), a collapsing floor
+(rewound to whole, then crossed, then rebuilt), the ceiling (rewound on it and to before the zone), and the landing. Each beat is a `check` event; `grapple` and `floorkit` events log every hook and piece.
+
 ## Ladders ("a ladder up the wall", "climb, shoot, jump off")
 
 A ladder is an entity with the `ladder` ability (`content/entities/ladder.json`); its body is the climbable zone. Spawn it

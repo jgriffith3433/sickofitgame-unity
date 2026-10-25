@@ -149,6 +149,48 @@ namespace SickOfIt.Data.Config
     {
         public DashConfig dash = new DashConfig();
         public WallJumpConfig wallJump = new WallJumpConfig();
+        public GrappleConfig grapple = new GrappleConfig();
+    }
+
+    /// <summary>The grapple hook: aim, hook the nearest anchor in the cone, swing on the rope or be pulled to it (HeroGrapple).</summary>
+    [Serializable]
+    public class GrappleConfig
+    {
+        public bool enabled = true;
+        [Tooltip("UnlockFlags id the move is unlocked by (the Hook pickup writes it with setFlag).")]
+        public string unlockFlag = "move:grapple";
+        [Tooltip("Story unlock: every condition holds (flag:, level:, ...) and the move is his. Empty = only the flag unlocks it.")]
+        public System.Collections.Generic.List<string> unlockWhen = new System.Collections.Generic.List<string>();
+        [Tooltip("Keyboard keys that throw the hook (Input System key names). The gamepad's left shoulder and Y do too.")]
+        public string[] keys = { "E", "F" };
+        [Tooltip("How far the hook reaches (world units, from his chest).")]
+        public float range = 7.5f;
+        [Tooltip("How far off his aim an anchor may be and still be hooked (degrees, each side).")]
+        public float aimCone = 50f;
+        [Tooltip("Longest rope (world units).")]
+        public float maxRope = 9f;
+        [Tooltip("Shortest rope (world units).")]
+        public float minRope = 1.4f;
+        [Tooltip("Gravity on the rope (world units per second squared).")]
+        public float gravity = 17.5f;
+        [Tooltip("Sideways push of A / D while swinging (units per second squared).")]
+        public float swingPump = 7f;
+        [Tooltip("Speed lost to the air while swinging (share per second).")]
+        public float damping = 0.06f;
+        [Tooltip("Units per second the rope is reeled in (up) or let out (down).")]
+        public float reelSpeed = 3.2f;
+        [Tooltip("Top speed on the rope (world units per second).")]
+        public float maxSpeed = 13f;
+        [Tooltip("Speed of a pull anchor's reel (world units per second).")]
+        public float pullSpeed = 15f;
+        [Tooltip("A pull ends this close to its anchor (world units); he hops up on the ledge it sits on.")]
+        public float pullStop = 0.9f;
+        [Tooltip("Upward speed of that hop.")]
+        public float pullHop = 8f;
+        [Tooltip("Seconds after letting go before the hook can be thrown again.")]
+        public float cooldown = 0.35f;
+        [Tooltip("Share of a jump's force added when Jump lets go of the rope.")]
+        public float releaseJump = 0.6f;
     }
 
     /// <summary>The dash: a short flat burst, untouchable while it lasts, then a cooldown.</summary>

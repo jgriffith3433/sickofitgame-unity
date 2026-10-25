@@ -216,13 +216,17 @@ namespace SickOfIt.Gameplay.Content
 
     [Serializable, JsonType("crumble")]
     [Doc("A crumbling stone: old slag that cracks the moment he lands (shaking and dusting for 'delay' seconds, the telegraph), then falls " +
-         "into the lava. It doesn't come back, except by rewind.")]
+         "into the lava. It doesn't come back, except by rewind, unless 'rebuildAfter' says so. Stones with the same 'group' are one collapsing floor: " +
+         "the first to crack sets the rest going, nearest first, 'chainDelay' seconds per unit of distance apart, so a floor gives way in a wave he can outrun.")]
     public sealed class CrumbleAbility : Ability
     {
         [Doc("Seconds it shakes before it falls (at least 1, so it's fair).")] public float delay = 1f;
         [Doc("How hard it shakes (units).")] public float shake = 0.05f;
         [Doc("Fall acceleration (units per second squared).")] public float gravity = 16f;
         [Doc("How far it falls before it is gone.")] public float fallDistance = 14f;
+        [Doc("Collapsing floor: stones with the same non-empty group crack one after another once any of them cracks.")] public string group = "";
+        [Doc("Seconds between neighbours cracking, per unit of distance from the first stone to crack (the wave's slowness).")] public float chainDelay = 0.25f;
+        [Doc("Seconds after it starts to fall that it is whole again where it stood (0 = never; the floor stays gone).")] public float rebuildAfter;
         [SoundRef, Doc("Played when it cracks.")] public string crackSound = "";
         [SoundRef, Doc("Played when it falls.")] public string fallSound = "";
 
@@ -231,6 +235,7 @@ namespace SickOfIt.Gameplay.Content
         float fallSpeed;
         float fallen;
         bool falling;
+        float fellAt = -1f;
 
         public override void OnSpawn()
         {
@@ -239,6 +244,18 @@ namespace SickOfIt.Gameplay.Content
             fallSpeed = 0f;
             fallen = 0f;
             falling = false;
+            fellAt = -1f;
+        }
+
+        // Set going by a neighbour: it cracks at 'at' (a time in the future), unless it is already going sooner.
+        void Infect(float at)
+        {
+            if (crackedAt >= 0f && crackedAt <= at)
+                return;
+            if (falling)
+                return;
+            crackedAt = at;
+            Owner.RecordNow();
         }
 
         public override void Tick(float now, float dt)
@@ -250,9 +267,31 @@ namespace SickOfIt.Gameplay.Content
                 SickOfIt.Core.Fx.Fx.Dust(new Vector2(Owner.Position.x, FloorKit.Top(Owner)), 0.8f);
                 FloorKit.Record(Owner, "crack");
                 Owner.RecordNow();
+                if (!string.IsNullOrEmpty(group))
+                {
+                    foreach (var other in Owner.World.Live)
+                    {
+                        if (other == null || other == Owner || !other.IsAlive)
+                            continue;
+                        var neighbour = other.FindAbility<CrumbleAbility>();
+                        if (neighbour != null && neighbour.group == group)
+                            neighbour.Infect(now + Vector2.Distance(home, neighbour.home) * chainDelay);
+                    }
+                }
+            }
+            if (falling && rebuildAfter > 0f && now - fellAt >= rebuildAfter)
+            {
+                // The floor is whole again where it stood.
+                crackedAt = -1f;
+                fallSpeed = 0f;
+                fallen = 0f;
+                falling = false;
+                fellAt = -1f;
+                FloorKit.Record(Owner, "rebuild");
+                Owner.RecordNow();
             }
             Vector2 want = home;
-            if (crackedAt >= 0f && !falling)
+            if (crackedAt >= 0f && now >= crackedAt && !falling)
             {
                 float t = now - crackedAt;
                 // Shakes harder as it gives.
@@ -261,6 +300,7 @@ namespace SickOfIt.Gameplay.Content
                 if (t >= Mathf.Max(1f, delay))
                 {
                     falling = true;
+                    fellAt = now;
                     SickOfIt.Core.Audio.Sfx.Play(fallSound);
                     FloorKit.Record(Owner, "fall");
                     Owner.RecordNow();
@@ -276,7 +316,7 @@ namespace SickOfIt.Gameplay.Content
             if (crackedAt < 0f)
                 FloorKit.Tint(Owner, FloorKit.BaseColor(Owner));
             // Painted art: cracks the moment he lands, breaks up as it falls (animator bools "Cracked", "Falling").
-            Owner.Animation.SetBool("Cracked", crackedAt >= 0f);
+            Owner.Animation.SetBool("Cracked", crackedAt >= 0f && now >= crackedAt);
             Owner.Animation.SetBool("Falling", falling);
             FloorKit.Moved(Owner, want, dt);
         }
@@ -291,6 +331,7 @@ namespace SickOfIt.Gameplay.Content
             writer.Float(fallSpeed);
             writer.Float(fallen);
             writer.Bool(falling);
+            writer.Float(fellAt);
         }
 
         public override void LoadState(StateReader reader)
@@ -300,6 +341,7 @@ namespace SickOfIt.Gameplay.Content
             fallSpeed = reader.Float();
             fallen = reader.Float();
             falling = reader.Bool();
+            fellAt = reader.Float();
         }
     }
 

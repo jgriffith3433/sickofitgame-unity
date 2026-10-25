@@ -140,6 +140,10 @@ Assets/GameConfig/
   (`holding` saved), applied through `GameplayWorld.HoldPlayerClimbing` -> `PlayerController.HoldClimbing` (`IsClimbing`, `ClimbPose`): the controller's own flags are
   not rewound, which is why the holder re-holds him every tick. Player states `Climb`/`ClimbDown`/`ClimbIdle` in `player.json` (generated sheets). Played on Floors 999 and 998 (`ladderHaul`; playtest `ladder-floors`, the bot climbs via `PlaytestBot.LadderStep`). Playtest `ladder`
   (scene `ladderTest`).
+- **The Hook and the air kit** (Docs/Story.md "The Hook and the air kit", cookbook "The Hook and the air kit", LevelDesign.md "The air and the paths"): player.json `moves.grapple` (`GrappleConfig`; unlocked by the flag `move:grapple` or `unlockWhen`, today `flag:hook.found` from the `hookPickup` entity),
+  keys E / F, `Gameplay/Core/HeroGrapple.cs` (`GameplayWorld.Grapple`; rope, swing speed and anchor saved in the world's state; it holds the hero through `HoldPlayer`, so a chain or ladder can't hold him at once) and anchors (`grappleAnchor`, tag `anchor`, Swing or Pull). Floor kit in
+  `Gameplay/Content/FloorKitAir.cs`: `mover` (waypoints path), `wind` (hero sideways/lift, bends shots; gusts from the clock), `gravityFlip` (`GameplayWorld.FlipPlayerGravity` -> `PlayerController.SetGravitySign`, saved as `GravityFlipped`); collapsing floors are `crumble` with a `group`
+  (+ `chainDelay`, `rebuildAfter`). Wind reaches the controller as `WindVelocity` (set every tick), gravity as `GravitySign` (ground check, jump, rotation all follow it). Bench `content/scenes/kitFloor.json`, playtest `floor-kit` (`SickOfItPlaytest.FloorKit.cs`); a flipped hero needs a solid ceiling (no top catch).
 - **Weapons** (Docs/Story.md "Weapons", cookbook "Weapons"): `content/weapons/*.json` (`rocketLauncher` = the old gun, the
   default, same numbers as player.json; `fists` = a melee combo with a visible swing, no ammo). `PlayerController` asks its
   `IPlayerArmory` (`Gameplay/Core/PlayerWeapons.cs`) for the equipped weapon's `WeaponStats`, whether it can be used (cooldown,

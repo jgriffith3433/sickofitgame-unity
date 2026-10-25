@@ -1,0 +1,331 @@
+{
+  "schemaVersion": 1,
+  "seed": 1004,
+  "length": 120,
+  "floors": {
+    "start": 1000,
+    "end": 0,
+    "unitsPerFloor": 0.0,
+    "circle": "emberWastes",
+    "signs": false
+  },
+  "world": {
+    "camera": "Travel",
+    "travelLead": 1.2,
+    "followSharpness": 4.0,
+    "holdForPushes": false,
+    "path": [
+      {
+        "name": "across",
+        "direction": "Right",
+        "length": 58.0,
+        "turn": 2.5,
+        "spawns": [
+          {
+            "entity": "lavaSea",
+            "at": [
+              0.0,
+              -5.6
+            ],
+            "id": "lavaSea"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              -4.0,
+              -1.85
+            ],
+            "scale": [
+              3.0,
+              1.0
+            ],
+            "id": "start"
+          },
+          {
+            "entity": "hookPickup",
+            "at": [
+              -2.9,
+              -0.9
+            ],
+            "id": "hook"
+          },
+          {
+            "entity": "grappleRing",
+            "at": [
+              0.0,
+              2.1
+            ],
+            "id": "swingRing"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              5.0,
+              -1.85
+            ],
+            "scale": [
+              3.0,
+              1.0
+            ],
+            "id": "swingLanding"
+          },
+          {
+            "entity": "grappleHook",
+            "at": [
+              8.9,
+              1.2
+            ],
+            "id": "pullHook"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              11.0,
+              0.35
+            ],
+            "scale": [
+              2.0,
+              1.0
+            ],
+            "id": "shelf"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              15.0,
+              -1.85
+            ],
+            "scale": [
+              1.5,
+              1.0
+            ],
+            "id": "gustNear"
+          },
+          {
+            "entity": "windGust",
+            "at": [
+              17.9,
+              -0.1
+            ],
+            "scale": [
+              2.0,
+              2.6
+            ],
+            "id": "gust"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              21.4,
+              -1.85
+            ],
+            "scale": [
+              3.0,
+              1.0
+            ],
+            "id": "gustFar"
+          },
+          {
+            "entity": "moverSlab",
+            "at": [
+              24.4,
+              -1.85
+            ],
+            "id": "mover"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              30.0,
+              -1.85
+            ],
+            "scale": [
+              3.0,
+              1.0
+            ],
+            "id": "moverFar"
+          },
+          {
+            "entity": "collapseSlab",
+            "at": [
+              32.5,
+              -1.85
+            ],
+            "id": "floor0"
+          },
+          {
+            "entity": "collapseSlab",
+            "at": [
+              34.8,
+              -1.85
+            ],
+            "id": "floor1"
+          },
+          {
+            "entity": "collapseSlab",
+            "at": [
+              37.1,
+              -1.85
+            ],
+            "id": "floor2"
+          },
+          {
+            "entity": "collapseSlab",
+            "at": [
+              39.4,
+              -1.85
+            ],
+            "id": "floor3"
+          },
+          {
+            "entity": "collapseSlab",
+            "at": [
+              41.7,
+              -1.85
+            ],
+            "id": "floor4"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              44.2,
+              -1.85
+            ],
+            "scale": [
+              3.0,
+              1.0
+            ],
+            "id": "flipNear"
+          },
+          {
+            "entity": "gravityPad",
+            "at": [
+              49.75,
+              0.1
+            ],
+            "scale": [
+              5.5,
+              2.8
+            ],
+            "id": "flip"
+          },
+          {
+            "entity": "ceilingSlab",
+            "at": [
+              50.1,
+              2.3
+            ],
+            "scale": [
+              6.1,
+              1.0
+            ],
+            "id": "ceiling"
+          },
+          {
+            "entity": "floorLanding",
+            "at": [
+              58.3,
+              -1.85
+            ],
+            "id": "landing"
+          }
+        ]
+      }
+    ]
+  },
+  "objective": {
+    "text": "Swing, pull, ride the gust, the mover, the collapse, the ceiling"
+  },
+  "counters": [
+    {
+      "name": "lavaSpeed",
+      "value": 0.0
+    },
+    {
+      "name": "lavaMax",
+      "value": 0.0
+    }
+  ],
+  "rules": [
+    {
+      "name": "a bolt into the wind",
+      "when": {
+        "type": "signal",
+        "name": "kit:bolt"
+      },
+      "do": [
+        {
+          "type": "spawn",
+          "entity": "projectileEnemy",
+          "at": [
+            16.0,
+            0.3
+          ],
+          "velocity": [
+            5.0,
+            0.0
+          ],
+          "id": "kitBolt",
+          "facePlayer": false
+        }
+      ]
+    },
+    {
+      "name": "heal",
+      "when": {
+        "type": "signal",
+        "name": "kit:heal"
+      },
+      "do": [
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        }
+      ]
+    },
+    {
+      "name": "the landing",
+      "when": {
+        "type": "playerOn",
+        "target": {
+          "id": "landing"
+        }
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "emit",
+          "signal": "landed"
+        },
+        {
+          "type": "runSequence",
+          "steps": [
+            {
+              "type": "showText",
+              "text": "THE KIT! HELL CAN BE CROSSED!",
+              "duration": 2.5,
+              "style": "Banner",
+              "color": "#FFD27A"
+            },
+            {
+              "type": "wait",
+              "seconds": 3.0
+            },
+            {
+              "type": "completeLevel"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "name": "kit",
+      "onEnter": []
+    }
+  ]
+}

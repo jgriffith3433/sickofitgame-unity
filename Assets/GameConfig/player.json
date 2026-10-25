@@ -328,6 +328,26 @@
       "coyoteSeconds": 0.1,
       "firstLine": "vo_hero_wall_first",
       "unlockLine": "vo_hero_wall_unlock"
+    },
+    "grapple": {
+      "enabled": true,
+      "unlockFlag": "move:grapple",
+      "unlockWhen": ["flag:hook.found"],
+      "keys": ["E", "F"],
+      "range": 7.5,
+      "aimCone": 50.0,
+      "maxRope": 9.0,
+      "minRope": 1.4,
+      "gravity": 17.5,
+      "swingPump": 7.0,
+      "damping": 0.06,
+      "reelSpeed": 3.2,
+      "maxSpeed": 13.0,
+      "pullSpeed": 15.0,
+      "pullStop": 0.9,
+      "pullHop": 8.0,
+      "cooldown": 0.35,
+      "releaseJump": 0.6
     }
   },
   "colliderRadius": 0.3,
