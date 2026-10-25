@@ -2288,10 +2288,12 @@ busy. The three are never on screen at once; the hero is the only one who has me
 
 ### Voices and subtitles
 
-All three are **subtitles only** until their voices are cast and made (Hawkes Gen `audio.voice-design`, then `audio.voice`, cents a line): the recipes are
-`Tools/Audio/companion_voices.json` (voice descriptions and the delivery-tagged prompt for every line, so they can be made in one batch) and the `showText` lines
-carry no `sound` until the clips exist. Art is a spec each in `Assets/GameConfig/art/` (`rook`, `wick`, `pointer`), priced, not generated; the stand-ins are
-labelled placeholders tinted in the character's colour. Data is written by `Tools/Levels/companions.py` (edit its table and run it, never the floors by hand;
+All three are **voiced** (2026-10-25): Rook, Wick and Pointer each have a voice designed in Hawkes Gen (`audio.voice-design`, `audio.voice-save`; audio.json `voices` `rook`, `wick`, `pointer`,
+each with its own `voiceId`, so no two cast members share a voice: Rook bright and too loud, Wick a soft wheeze, Pointer gruff and flat). Every line they say is an audio.json sound `vo_<who><floor>_<tag>`
+(68 clips, `eleven_v3`, cents each) and every `showText` of a scene carries it as `sound`; the hero's 31 replies are `vo_hero_cmp_<line>` in the `player` voice. Only Pointer's silent "..." stays a bare subtitle.
+Recipes and the line list: `Tools/Audio/companion_voices.json`. Art is a spec each in `Assets/GameConfig/art/` (`rook`, `wick`, `pointer`: side view, idle / talk / walk / react clips; the Overlord's far
+glimpses `overlordFar`; the five bystander types `hawkerSoul`, `hecklerSoul`, `cheerSoul`, `giverSoul`, `hidingSoul`), priced, not generated (GPU not approved); until `art.mjs` runs, the climbers wear the
+damned soul's sheet tinted in their colour and the bystanders the damned soul's sheet, and the Overlord's glimpses the Magma King's idle tinted obsidian. Data is written by `Tools/Levels/companions.py` (edit its table and run it, never the floors by hand;
 `--check` runs with no Unity). New C# is the `heroState` trigger (`Gameplay/Content/HeroState.cs`). Playtest `companions`.
 
 ## Rules for levels

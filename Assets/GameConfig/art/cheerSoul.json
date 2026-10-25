@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "entity": "cheerSoul",
+  "name": "Cheering soul",
+  "description": "a damned soul of the Ember Wastes, stuck in Hell's loop forever: a thin hunched bald human figure in a long ragged ash-grey shroud, pale ash-grey skin, hollow tired eyes, a soft pale blue-white glow around its outline, bare feet, both thin arms raised overhead, a scrap of ash-grey cloth held like a flag, a weary hopeful smile",
+  "height": 0.7,
+  "pixels": 220,
+  "keepTint": true,
+  "poses": {
+    "stand": "standing hunched, both thin arms raised overhead",
+    "react": "both arms up waving the scrap of cloth"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "rocks gently in place, breathing slowly",
+      "seconds": 2
+    },
+    "react": {
+      "from": "react",
+      "action": "waves the cloth flag side to side, tired but trying, then droops",
+      "seconds": 2,
+      "loop": false
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 2
+  }
+}

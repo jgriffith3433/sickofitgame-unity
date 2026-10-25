@@ -1368,7 +1368,8 @@
                 "text": "Wick: They throw things here. ...Don't catch them.",
                 "duration": 4.2,
                 "style": "Subtitle",
-                "color": "#BFE6C8"
+                "color": "#BFE6C8",
+                "sound": "vo_wick993_intro0"
               },
               {
                 "type": "wait",
@@ -1378,7 +1379,8 @@
                 "type": "showText",
                 "text": "Wasn't planning to.",
                 "duration": 2.2,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_wasn_t_planning_to"
               },
               {
                 "type": "wait",
@@ -1403,7 +1405,8 @@
                         "text": "Wick: You've been up here before. ...So have I.",
                         "duration": 4.1,
                         "style": "Subtitle",
-                        "color": "#BFE6C8"
+                        "color": "#BFE6C8",
+                        "sound": "vo_wick993_dead0"
                       },
                       {
                         "type": "wait",
@@ -1483,7 +1486,8 @@
                             "text": "Wick: A loud one went by. He says he's winning.",
                             "duration": 4.1,
                             "style": "Subtitle",
-                            "color": "#BFE6C8"
+                            "color": "#BFE6C8",
+                            "sound": "vo_wick993_rook0"
                           },
                           {
                             "type": "wait",
@@ -1493,7 +1497,8 @@
                             "type": "showText",
                             "text": "He's second.",
                             "duration": 1.8,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_he_s_second"
                           },
                           {
                             "type": "wait",
@@ -1504,7 +1509,8 @@
                             "text": "Wick: He said that too.",
                             "duration": 2.5,
                             "style": "Subtitle",
-                            "color": "#BFE6C8"
+                            "color": "#BFE6C8",
+                            "sound": "vo_wick993_rook2"
                           },
                           {
                             "type": "wait",
@@ -1565,7 +1571,8 @@
                             "text": "Wick: Light's on. Go quick.",
                             "duration": 2.8,
                             "style": "Subtitle",
-                            "color": "#BFE6C8"
+                            "color": "#BFE6C8",
+                            "sound": "vo_wick993_plain0"
                           },
                           {
                             "type": "wait",

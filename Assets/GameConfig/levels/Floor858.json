@@ -1393,7 +1393,8 @@
                 "text": "Rook: I'm first! I'm first! ...The road tipped. You're first.",
                 "duration": 5.0,
                 "style": "Subtitle",
-                "color": "#F2A93B"
+                "color": "#F2A93B",
+                "sound": "vo_rook858_intro0"
               },
               {
                 "type": "wait",
@@ -1403,7 +1404,8 @@
                 "type": "showText",
                 "text": "It tips.",
                 "duration": 1.8,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_it_tips"
               },
               {
                 "type": "wait",
@@ -1428,7 +1430,8 @@
                         "text": "Rook: You're hurt. I'll say where it tips. Don't make it a thing.",
                         "duration": 5.2,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook858_hurt0"
                       },
                       {
                         "type": "wait",
@@ -1438,7 +1441,8 @@
                         "type": "showText",
                         "text": "Noted.",
                         "duration": 1.8,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_noted"
                       },
                       {
                         "type": "wait",
@@ -1518,7 +1522,8 @@
                             "text": "Rook: Spend those. First place is heavy to carry.",
                             "duration": 4.2,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook858_rich0"
                           },
                           {
                             "type": "wait",
@@ -1528,7 +1533,8 @@
                             "type": "showText",
                             "text": "It's diamonds.",
                             "duration": 1.9,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_it_s_diamonds"
                           },
                           {
                             "type": "wait",
@@ -1539,7 +1545,8 @@
                             "text": "Rook: It's heavy!",
                             "duration": 2.1,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook858_rich2"
                           },
                           {
                             "type": "wait",
@@ -1600,7 +1607,8 @@
                             "text": "Rook: Second. ...Second. It's a number, at least.",
                             "duration": 4.2,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook858_plain0"
                           },
                           {
                             "type": "wait",
@@ -1610,7 +1618,8 @@
                             "type": "showText",
                             "text": "It's a good number.",
                             "duration": 2.2,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_it_s_a_good_number"
                           },
                           {
                             "type": "wait",

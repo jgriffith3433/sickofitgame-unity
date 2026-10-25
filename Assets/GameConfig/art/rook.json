@@ -5,9 +5,10 @@
   "description": "a tall lean soul in a patched mountaineer's coat and a scarf that burns without burning down, one glove, a coil of rope that goes nowhere, a medal on a ribbon around his neck that says 2, always mid-stretch",
   "height": 1.9,
   "poses": {
-    "stand": "standing, facing the viewer, relaxed",
-    "talk": "mid-sentence, one hand raised",
-    "walk": "mid-stride in profile"
+    "stand": "standing in profile facing right, relaxed",
+    "talk": "in profile facing right, mid-sentence, one hand raised",
+    "walk": "mid-stride in profile facing right",
+    "react": "in profile facing right, startled, leaning back, both hands up"
   },
   "clips": {
     "idle": {
@@ -24,6 +25,12 @@
       "from": "walk",
       "action": "walks away unhurried",
       "seconds": 2.5
+    },
+    "react": {
+      "from": "react",
+      "action": "flinches back, then settles and nods",
+      "seconds": 1.5,
+      "loop": false
     }
   },
   "takes": {

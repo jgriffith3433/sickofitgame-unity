@@ -12,6 +12,7 @@ until the clips exist) and the art specs. Idempotent. Run it after long_floors.p
 """
 import json
 import os
+import re
 import sys
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
@@ -54,6 +55,15 @@ WHO = {
                     look="a soul fused to a road sign: planks nailed to a body, one arm a long signpost arm held straight out with a hand at the end, a name board on his chest that reads UP, dusty tan wood",
                     height=1.8),
 }
+
+VOICE_IDS = {"rook": "tyqG7NyoJ3HhzdkhAsW7", "wick": "nXyPsMINc4YNXaqnmYmR", "pointer": "2y1BMYkEPUuMF8p3lf6w"}  # designed with audio.voice-design, saved with audio.voice-save
+HERO_VOICE_ID = "DzkD7I4tf5i3KSaB4cz5"  # audio.json voice `player`
+SILENT = {"..."}  # a beat of silence: subtitle only
+
+
+def slug(text):
+    return re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
+
 
 # ─── the table ─────────────────────────────────────────────────────────────────────────────────────────
 # Line: ("c", text)  the climber says it;  ("h", text)  the hero answers.
@@ -155,12 +165,18 @@ def emit(sc, what):
     return {"type": "emit", "signal": f"cmp:{sc['who']}:{sc['floor']}:{what}"}
 
 
-def talk(sc, who_key, text):
+def talk(sc, who_key, text, tag=None):
     if who_key == "h":
-        return [{"type": "showText", "text": text, "duration": secs(text), "style": "Subtitle"}, wait(secs(text) + 0.3)]
+        show = {"type": "showText", "text": text, "duration": secs(text), "style": "Subtitle"}
+        if text not in SILENT:
+            show["sound"] = f"vo_hero_cmp_{slug(text)}"
+        return [show, wait(secs(text) + 0.3)]
     w = WHO[sc["who"]]
     line = f"{w['name']}: {text}"
-    return [{"type": "showText", "text": line, "duration": secs(line), "style": "Subtitle", "color": w["color"]}, wait(secs(line) + 0.3)]
+    show = {"type": "showText", "text": line, "duration": secs(line), "style": "Subtitle", "color": w["color"]}
+    if text not in SILENT:
+        show["sound"] = f"vo_{sid(sc)}_{tag}"
+    return [show, wait(secs(line) + 0.3)]
 
 
 def spawn(entity, at):
@@ -191,10 +207,10 @@ def reward(code, sc):
 
 def branch_seq(sc, label, lines, rw):
     steps = [emit(sc, "branch:" + label)]
-    for k, t in lines:
-        steps += talk(sc, k, t)
-    for k, t in sc.get("outro", []):
-        steps += talk(sc, k, t)
+    for i, (k, t) in enumerate(lines):
+        steps += talk(sc, k, t, f"{label}{i}")
+    for i, (k, t) in enumerate(sc.get("outro", [])):
+        steps += talk(sc, k, t, f"outro{i}")
     steps += reward(rw, sc)
     if sc.get("flag"):
         steps.append({"type": "setFlag", "flag": sc["flag"]})
@@ -214,8 +230,8 @@ def chain(sc, branches):
 
 def build_scene(sc):
     steps = [wait(1.0), spawn_climber(sc), emit(sc, "enter"), wait(1.0)]
-    for k, t in sc["intro"]:
-        steps += talk(sc, k, t)
+    for i, (k, t) in enumerate(sc["intro"]):
+        steps += talk(sc, k, t, f"intro{i}")
     steps.append(chain(sc, sc["branches"]))
     return [{"name": f"{PREFIX} {sc['who']}, Floor {sc['floor']}", "when": {"type": "sectionReached", "section": sc["section"]}, "maxTimes": 1,
              "do": [{"type": "runSequence", "steps": steps}]}]
@@ -250,10 +266,11 @@ def build_art():
     for key, w in WHO.items():
         save(f"art/{key}.json", {
             "schemaVersion": 1, "entity": key, "name": w["name"], "description": w["look"], "height": w["height"],
-            "poses": {"stand": "standing, facing the viewer, relaxed", "talk": "mid-sentence, one hand raised", "walk": "mid-stride in profile"},
+            "poses": {"stand": "standing in profile facing right, relaxed", "talk": "in profile facing right, mid-sentence, one hand raised", "walk": "mid-stride in profile facing right", "react": "in profile facing right, startled, leaning back, both hands up"},
             "clips": {"idle": {"from": "stand", "action": "breathes slowly, shifts weight", "seconds": 3},
                       "talk": {"from": "talk", "action": "speaks with small gestures", "seconds": 2.5},
-                      "walk": {"from": "walk", "action": "walks away unhurried", "seconds": 2.5}},
+                      "walk": {"from": "walk", "action": "walks away unhurried", "seconds": 2.5},
+                      "react": {"from": "react", "action": "flinches back, then settles and nods", "seconds": 1.5, "loop": False}},
             "takes": {"pose": 3, "clip": 3}})
 
 
@@ -272,12 +289,43 @@ def build_voices():
         for label, cond, bl, rw in sc["branches"]:
             pass
     save("Tools/Audio/companion_voices.json", {
-        "note": "Priced, not made (Docs/Story.md \"The Climbers\"): design each voice with audio.voice-design / audio.voice-save, then make every line with audio.voice (eleven_v3). Until then the scenes show subtitles.",
+        "note": "Voice recipes and lines of the Climbers (Docs/Story.md \"The Climbers\"). The voices are designed and saved in Hawkes Gen, the lines are audio.json sounds (written by build_audio below) with clips in Audio/Generated; the scenes play them through showText `sound`.",
         "voices": {k: {"name": w["name"], "description": w["voice"]} for k, w in WHO.items()},
         "lines": lines,
         "heroLines": sorted({t for sc in SCENES for k, t in sc["intro"] if k == "h"} | {t for sc in SCENES for b in sc["branches"] for k, t in b[2] if k == "h"} |
                             {t for sc in SCENES for k, t in sc.get("outro", []) if k == "h"})}, base=ROOT)
 
+
+def sound_entry(sid_, prompt, voice, voice_id, speed):
+    return {"id": sid_, "kind": "Voice", "prompt": prompt, "durationSeconds": 0, "promptInfluence": 0.3, "loop": False, "voice": voice, "voiceId": "",
+            "clip": f"Audio/Generated/{sid_}.mp3", "generatedFrom": f"voice|{voice_id}|eleven_v3|0.5|{speed}|{prompt}",
+            "volume": 1, "pitchVariation": 0, "maxVoices": 1, "cooldown": 0.5}
+
+
+def build_audio():
+    """The climbers' voices and every line they say (and the hero's answers) as audio.json sounds, clips made through Hawkes Gen."""
+    audio = load("audio.json")
+    have = {v["name"] for v in audio["voices"]}
+    for key, w in WHO.items():
+        if key not in have:
+            audio["voices"].append({"name": key, "description": w["voice"], "sampleText": SAMPLE[key], "voiceId": VOICE_IDS[key], "model": "eleven_v3", "stability": 0.5, "speed": 1})
+    wanted = []
+    for ln in json.load(open(os.path.join(ROOT, "Tools/Audio/companion_voices.json"), encoding="utf-8"))["lines"]:
+        if ln["prompt"] not in SILENT:
+            wanted.append(sound_entry(ln["id"], ln["prompt"], ln["voice"], VOICE_IDS[ln["voice"]], 1))
+    for t in sorted({t for sc in SCENES for k, t in sc["intro"] if k == "h"} | {t for sc in SCENES for b in sc["branches"] for k, t in b[2] if k == "h"} |
+                    {t for sc in SCENES for k, t in sc.get("outro", []) if k == "h"}):
+        wanted.append(sound_entry(f"vo_hero_cmp_{slug(t)}", "[deadpan] " + t, "player", HERO_VOICE_ID, 1))
+    ids = {w["id"] for w in wanted}
+    sounds = [x for x in audio["sounds"] if x["id"] not in ids] + wanted
+    audio["sounds"] = sounds
+    save("audio.json", audio)
+    return ids
+
+
+SAMPLE = {"rook": "First! ...Oh. You're a person. Going up. Racing. Same thing.",
+          "wick": "Oh. Someone. ...Mind the dark. I'll light it.",
+          "pointer": "Up. Not that up. The one that holds."}
 
 # ─── run ───────────────────────────────────────────────────────────────────────────────────────────────
 build_entities()
@@ -288,6 +336,7 @@ for floor, scs in by_floor.items():
     build_floor(floor, scs)
 build_art()
 build_voices()
+build_audio()
 
 problems = []
 for who in WHO:

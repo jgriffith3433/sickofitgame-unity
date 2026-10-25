@@ -1401,7 +1401,8 @@
                 "text": "Pointer: Don't look at the statue.",
                 "duration": 3.2,
                 "style": "Subtitle",
-                "color": "#C9A27A"
+                "color": "#C9A27A",
+                "sound": "vo_pointer860_intro0"
               },
               {
                 "type": "wait",
@@ -1411,7 +1412,8 @@
                 "type": "showText",
                 "text": "Why?",
                 "duration": 1.8,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_why"
               },
               {
                 "type": "wait",
@@ -1422,7 +1424,8 @@
                 "text": "Pointer: It looks back.",
                 "duration": 2.5,
                 "style": "Subtitle",
-                "color": "#C9A27A"
+                "color": "#C9A27A",
+                "sound": "vo_pointer860_intro2"
               },
               {
                 "type": "wait",
@@ -1447,7 +1450,8 @@
                         "text": "Pointer: You carry a lot of promises.",
                         "duration": 3.4,
                         "style": "Subtitle",
-                        "color": "#C9A27A"
+                        "color": "#C9A27A",
+                        "sound": "vo_pointer860_grudges0"
                       },
                       {
                         "type": "wait",
@@ -1523,7 +1527,8 @@
                             "text": "Pointer: Small glowing one sent regards.",
                             "duration": 3.6,
                             "style": "Subtitle",
-                            "color": "#C9A27A"
+                            "color": "#C9A27A",
+                            "sound": "vo_pointer860_wick0"
                           },
                           {
                             "type": "wait",
@@ -1533,7 +1538,8 @@
                             "type": "showText",
                             "text": "He stopped?",
                             "duration": 1.8,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_he_stopped"
                           },
                           {
                             "type": "wait",
@@ -1544,7 +1550,8 @@
                             "text": "Pointer: Sat down.",
                             "duration": 2.2,
                             "style": "Subtitle",
-                            "color": "#C9A27A"
+                            "color": "#C9A27A",
+                            "sound": "vo_pointer860_wick2"
                           },
                           {
                             "type": "wait",
@@ -1611,7 +1618,8 @@
                             "text": "Pointer: Keep moving.",
                             "duration": 2.4,
                             "style": "Subtitle",
-                            "color": "#C9A27A"
+                            "color": "#C9A27A",
+                            "sound": "vo_pointer860_plain0"
                           },
                           {
                             "type": "wait",

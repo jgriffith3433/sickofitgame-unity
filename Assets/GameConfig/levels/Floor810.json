@@ -1560,7 +1560,8 @@
                 "text": "Pointer: That's all I know. ...Up.",
                 "duration": 3.2,
                 "style": "Subtitle",
-                "color": "#C9A27A"
+                "color": "#C9A27A",
+                "sound": "vo_pointer810_intro1"
               },
               {
                 "type": "wait",
@@ -1570,7 +1571,8 @@
                 "type": "showText",
                 "text": "Up's enough.",
                 "duration": 1.8,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_up_s_enough"
               },
               {
                 "type": "wait",
@@ -1595,7 +1597,8 @@
                         "text": "Pointer: Sit. A heart is on the house. ...I'm a sign. It's the house.",
                         "duration": 5.5,
                         "style": "Subtitle",
-                        "color": "#C9A27A"
+                        "color": "#C9A27A",
+                        "sound": "vo_pointer810_hurt0"
                       },
                       {
                         "type": "wait",
@@ -1698,7 +1701,8 @@
                             "text": "Pointer: I was right about all of you.",
                             "duration": 3.5,
                             "style": "Subtitle",
-                            "color": "#C9A27A"
+                            "color": "#C9A27A",
+                            "sound": "vo_pointer810_both0"
                           },
                           {
                             "type": "wait",
@@ -1769,7 +1773,8 @@
                             "text": "Pointer: Don't thank me. I'm a sign.",
                             "duration": 3.3,
                             "style": "Subtitle",
-                            "color": "#C9A27A"
+                            "color": "#C9A27A",
+                            "sound": "vo_pointer810_plain0"
                           },
                           {
                             "type": "wait",

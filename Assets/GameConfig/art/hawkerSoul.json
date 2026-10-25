@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "entity": "hawkerSoul",
+  "name": "Hawker soul",
+  "description": "a damned soul of the Ember Wastes, stuck in Hell's loop forever: a thin hunched bald human figure in a long ragged ash-grey shroud, pale ash-grey skin, hollow tired eyes, a soft pale blue-white glow around its outline, bare feet, holding a shallow tray of glowing cinders against its belly on a frayed strap, mouth open mid-call",
+  "height": 0.7,
+  "pixels": 220,
+  "keepTint": true,
+  "poses": {
+    "stand": "standing hunched, holding a shallow tray of glowing cinders against its belly on a frayed strap",
+    "react": "hawking: tray lifted, mouth wide open calling"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "rocks gently in place, breathing slowly",
+      "seconds": 2
+    },
+    "react": {
+      "from": "react",
+      "action": "calls out, tray bobbing, then slumps flatter and calls again",
+      "seconds": 2,
+      "loop": false
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 2
+  }
+}

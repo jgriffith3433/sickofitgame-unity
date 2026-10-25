@@ -1248,7 +1248,8 @@
                 "text": "Pointer: Up.",
                 "duration": 1.8,
                 "style": "Subtitle",
-                "color": "#C9A27A"
+                "color": "#C9A27A",
+                "sound": "vo_pointer895_intro0"
               },
               {
                 "type": "wait",
@@ -1259,7 +1260,8 @@
                 "text": "Pointer: Not that up.",
                 "duration": 2.4,
                 "style": "Subtitle",
-                "color": "#C9A27A"
+                "color": "#C9A27A",
+                "sound": "vo_pointer895_intro1"
               },
               {
                 "type": "wait",
@@ -1269,7 +1271,8 @@
                 "type": "showText",
                 "text": "Which up?",
                 "duration": 1.8,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_which_up"
               },
               {
                 "type": "wait",
@@ -1280,7 +1283,8 @@
                 "text": "Pointer: The one that holds.",
                 "duration": 2.8,
                 "style": "Subtitle",
-                "color": "#C9A27A"
+                "color": "#C9A27A",
+                "sound": "vo_pointer895_intro3"
               },
               {
                 "type": "wait",
@@ -1305,7 +1309,8 @@
                         "text": "Pointer: I've pointed you here before.",
                         "duration": 3.5,
                         "style": "Subtitle",
-                        "color": "#C9A27A"
+                        "color": "#C9A27A",
+                        "sound": "vo_pointer895_dead0"
                       },
                       {
                         "type": "wait",
@@ -1375,7 +1380,8 @@
                             "text": "Pointer: A man went sideways. I don't recommend it.",
                             "duration": 4.3,
                             "style": "Subtitle",
-                            "color": "#C9A27A"
+                            "color": "#C9A27A",
+                            "sound": "vo_pointer895_rook0"
                           },
                           {
                             "type": "wait",
@@ -1436,7 +1442,8 @@
                             "text": "Pointer: That one.",
                             "duration": 2.2,
                             "style": "Subtitle",
-                            "color": "#C9A27A"
+                            "color": "#C9A27A",
+                            "sound": "vo_pointer895_plain0"
                           },
                           {
                             "type": "wait",
