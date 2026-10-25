@@ -2,38 +2,44 @@
   "schemaVersion": 1,
   "entity": "alphaHound",
   "name": "Alpha Hound",
-  "description": "a huge slag hound, pack leader, cracked basalt hide with a mane of molten slag, glowing cinders trapped in its ribs",
-  "height": 0.8,
+  "description": "the pack leader of the Magma King's slag hounds: a huge muscular wolf-like hound of black cooled slag, a thick mane of molten lava, glowing cinders trapped behind its cracked ribs, scars, burning yellow eyes, a glowing maw full of jagged teeth, four legs on the ground",
+  "height": 0.7,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "standing on all four legs side-on, head high, the lava mane blazing",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "stands growling on all fours, the lava mane rippling",
       "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "trots forward on all four legs, the lava mane streaming, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "crouches low with its mane flaring, then lunges forward to the right with its jaws wide open, then pulls up",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "tripleLobber",
   "name": "Triple Lobber",
-  "description": "a stout road-demon with three glowing lumps of stone balanced on its back and arms, ready to throw",
-  "height": 0.8,
+  "description": "a brimstone demon of the Cracked Road: a hunched body of cracked black basalt with molten orange light glowing through every seam, short curved horns of charred stone, small burning ember eyes, a wide jaw with a furnace glow inside, bigger, pale sandy-grey basalt, three long arms, a round glowing magma ball in each of the three hands",
+  "height": 0.95,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "squatting on its haunches, three glowing magma balls held up in its three long arms",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "squats, juggling three glowing magma balls",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "throws its three glowing magma balls forward and down to the right one after another",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

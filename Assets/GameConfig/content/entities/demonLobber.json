@@ -7,13 +7,98 @@
   "extends": "brimstoneDemon",
   "health": 3,
   "moveSpeed": 0,
-  "tags": [
-    "demonLobber"
-  ],
+  "tags": ["demonLobber"],
   "visual": {
     "scale": 0.28,
-    "color": "#B0A4A8",
-    "fxColor": "#FFB43A"
+    "fxColor": "#FFB43A",
+    "animator": {
+      "parameters": [
+        {
+          "name": "Attack",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/DemonLobber/DemonLobber_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/DemonLobber/DemonLobber_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/DemonLobber/DemonLobber_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/DemonLobber/DemonLobber_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Attack",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "abilities": [
     {
@@ -56,10 +141,7 @@
           "type": "spawn",
           "entity": "lobberGlow",
           "anchor": "Player",
-          "at": [
-            0.0,
-            -0.35
-          ],
+          "at": [0, -0.35],
           "facePlayer": false
         },
         {
@@ -72,11 +154,15 @@
           "to": "idle",
           "when": {
             "type": "after",
-            "seconds": 1.0
+            "seconds": 1
           }
         }
       ]
     }
   ],
-  "sounds": { "hurtSound": "demonLobber_hurt", "deathSound": "demonLobber_die", "attackSound": "demonLobber_attack" }
+  "sounds": {
+    "hurtSound": "demonLobber_hurt",
+    "deathSound": "demonLobber_die",
+    "attackSound": "demonLobber_attack"
+  }
 }

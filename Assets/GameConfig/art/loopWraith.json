@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "loopWraith",
   "name": "Loop wraith",
-  "description": "a pale translucent ghost of the Cracked Road in a tattered hooded shroud, hollow glowing cyan eyes, the lower body unravelling into thin looping threads of light",
-  "height": 0.8,
+  "description": "a hooded wraith of Hell's loop: a floating ragged shroud of pale cyan mist with no body inside, the shroud's folds drawn into a looping spiral, a ring of faint ghostly clock hands turning in its empty hood, two pale cyan eyes, the background visible through it",
+  "height": 0.85,
   "poses": {
-    "stand": "floating, shroud rippling, threads of light looping beneath it, facing right",
-    "struck": "struck: threads snagging and knotting in a bright flash, eyes wide",
-    "dead": "unravelled completely into a spiral of fading threads"
+    "stand": "floating upright, its misty shroud trailing into a loop at the bottom, the ghostly clock hands turning in its hood",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "unravelling into a spiral of pale cyan mist and fading clock hands"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "floats, its shroud curling round and round into the same loop, the clock hands ticking",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "spreads its misty sleeves and spits a pale cyan ember forward to the right, the clock hands in its hood spinning",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

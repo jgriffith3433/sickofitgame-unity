@@ -1,0 +1,24 @@
+{
+  "about": "floorLanding7xx: the landing at the top of a Rune Bridges floor.",
+  "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (landing.png)",
+  "out": "Assets/Art/Climb",
+  "name": "RuneLanding",
+  "key": "none",
+  "size": [
+    884,
+    588
+  ],
+  "pivot": [
+    620.5,
+    189.4
+  ],
+  "worldWidth": 10.42,
+  "widthPixels": 884,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "C:/Projects/SickOfItGameEnemies/Generated/climbrune\\_prep\\runeLanding\\idle",
+      "key": "none"
+    }
+  }
+}

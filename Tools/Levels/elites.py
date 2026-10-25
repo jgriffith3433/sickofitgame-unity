@@ -15,6 +15,9 @@ import json
 import os
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from artkeep import guard  # noqa: E402  (generated art is kept: Tools/Levels/artkeep.py)
+
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 CFG = os.path.join(ROOT, "Assets", "GameConfig")
 check_only = "--check" in sys.argv
@@ -27,8 +30,11 @@ def load(path):
 
 
 def save(path, data):
-    text = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
     full = os.path.join(CFG, path)
+    data = guard(full, data)
+    if data is None:
+        return
+    text = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
     if os.path.exists(full):
         with open(full, encoding="utf-8") as f:
             if f.read() == text:

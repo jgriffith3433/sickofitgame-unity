@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "impPistolBearer",
+  "name": "Pistol bearer imp",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, proudly holding up a pale steel pistol with a glowing blue eye-like crystal in its barrel, far too big for its little claws",
+  "height": 0.75,
+  "poses": {
+    "stand": "hovering on spread bat wings, the pale steel pistol held up in both claws",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes and shifts its weight in place, its glow pulsing slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "points the pale pistol forward to the right and fires it, the recoil knocking it back in the air",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

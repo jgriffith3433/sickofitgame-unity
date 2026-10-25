@@ -6,24 +6,128 @@
   "note": "A bug with a lantern. Of course there is.",
   "health": 1,
   "moveSpeed": 1.15,
-  "activationRange": 14.0,
-  "tags": [
-    "lanternfly"
-  ],
+  "activationRange": 14,
+  "tags": ["lanternfly"],
   "body": {
     "shape": "Circle",
     "radius": 0.3,
     "solid": false,
-    "gravity": 0.0
+    "gravity": 0
   },
   "visual": {
     "scale": 0.1,
-    "color": "#7FD8FF",
     "fxColor": "#7FD8FF",
-    "placeholderColor": "#7FD8FF"
+    "placeholderColor": "#7FD8FF",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsMoving",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/Lanternfly/Lanternfly_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Move",
+          "spriteSheet": "Art/Enemies/Lanternfly/Lanternfly_move.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/Lanternfly/Lanternfly_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/Lanternfly/Lanternfly_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Move",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "loot": {
-    "chance": 0.0,
+    "chance": 0,
     "count": 0,
     "value": 0
   },
@@ -36,8 +140,9 @@
     {
       "type": "chase",
       "speed": 1.15,
-      "stopDistance": 0.0,
-      "face": true
+      "stopDistance": 0,
+      "face": true,
+      "animBool": "IsMoving"
     },
     {
       "type": "lifetime",

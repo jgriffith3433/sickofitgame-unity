@@ -39,7 +39,8 @@
       "type": "patrol",
       "speed": 0.55,
       "distance": 3.0,
-      "pause": 1.2
+      "pause": 1.2,
+      "animBool": "IsMoving"
     },
     {
       "type": "frontShield",
@@ -59,7 +60,9 @@
       "interval": 3.4,
       "initialDelay": 2.0,
       "range": 6.5,
-      "damage": 1
+      "damage": 1,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
     }
   ],
   "sounds": {

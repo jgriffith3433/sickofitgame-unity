@@ -12,13 +12,103 @@
   "extends": "brimstoneDemon",
   "health": 3,
   "moveSpeed": 0,
-  "tags": [
-    "bounceLobber"
-  ],
+  "tags": ["bounceLobber"],
   "visual": {
     "scale": 0.28,
-    "color": "#C8A070",
-    "fxColor": "#FFB43A"
+    "fxColor": "#FFB43A",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsAttacking",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/BounceLobber/BounceLobber_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/BounceLobber/BounceLobber_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 8,
+              "functionName": "FireProjectile"
+            }
+          ]
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/BounceLobber/BounceLobber_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/BounceLobber/BounceLobber_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "drops": [],
   "abilities": [
@@ -34,15 +124,18 @@
       "projectile": "bounceLump",
       "speed": 3.6,
       "aim": "Player",
-      "muzzle": [
-        0.2,
-        0.3
-      ],
+      "muzzle": [0.2, 0.3],
       "interval": 3.2,
       "initialDelay": 1.6,
-      "range": 10.0,
-      "damage": 1
+      "range": 10,
+      "damage": 1,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
     }
   ],
-  "sounds": { "hurtSound": "bounceLobber_hurt", "deathSound": "bounceLobber_die", "attackSound": "bounceLobber_attack" }
+  "sounds": {
+    "hurtSound": "bounceLobber_hurt",
+    "deathSound": "bounceLobber_die",
+    "attackSound": "bounceLobber_attack"
+  }
 }

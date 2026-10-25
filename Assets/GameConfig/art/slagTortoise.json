@@ -2,38 +2,44 @@
   "schemaVersion": 1,
   "entity": "slagTortoise",
   "name": "Slag tortoise",
-  "description": "a large tortoise-like beast of the Ember Wastes made of black cooled slag: a thick plated shell over its whole front half laced with glowing orange cracks, stumpy legs, a small reptilian head, bare and soft at the back",
-  "height": 0.8,
+  "description": "a big slow tortoise of the Ember Wastes, the Magma King's tollkeeper: a thick cracked shell of cooled black slag covering its front like a wall, glowing orange lava between the shell's plates, a bare soft dark red back half, stumpy legs, an old wrinkled head with a glowing mouth",
+  "height": 0.6,
   "poses": {
-    "stand": "standing on four stumpy legs, a heavy cooled-slag shell like a black plate covering its whole front half, glowing orange cracks in the shell, a small reptilian head peeking over the top, facing right",
-    "struck": "just hit and flinching: head snapped back, glowing cracks flaring white across the shell, ash falling off",
-    "dead": "collapsed flat, the shell split in two with a bright lava core spilling out and cooling to black"
+    "stand": "standing on its four stumpy legs side-on, head out, the slag shell's front plate raised",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "plods in place, its legs treading, orange cracks in the shell pulsing slowly",
+      "action": "breathes and shifts its weight in place, its glow pulsing slowly",
       "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "plods slowly forward on its stumpy legs, the shell rocking, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "attack": {
       "from": "stand",
-      "action": "rears its head and spits a slow glob of ember forward to the right, shell glowing brighter",
-      "seconds": 2.0
+      "action": "stretches its neck out and spits a slow glowing ember forward to the right from its mouth",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, shell cracks flaring, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "cracks flare white, the shell splits apart in a burst of embers and the creature slumps and goes dark",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

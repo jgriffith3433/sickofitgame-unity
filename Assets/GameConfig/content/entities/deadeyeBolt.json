@@ -4,7 +4,21 @@
   "visual": {
     "scale": 0.09,
     "color": "#F4FBFF",
-    "fxColor": "#BFE8FF"
+    "fxColor": "#BFE8FF",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Effects/Bolt/Bolt_fly.png",
+          "fps": 16,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
   },
   "abilities": [
     {

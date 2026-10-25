@@ -37,7 +37,11 @@
       "jumpOffSpeed": 1.5,
       "fireRate": 0.55,
       "regrab": 0.35,
-      "grabSound": "player_land"
+      "grabSound": "player_land",
+      "art": {
+        "sheet": "Art/Effects/Ladder/Ladder_tile.png",
+        "fps": 1
+      }
     }
   ]
 }

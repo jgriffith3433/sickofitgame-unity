@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "entity": "impSleeper",
+  "name": "Sleeping imp",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, fast asleep, curled up on its back in the air with its wings folded round it like a blanket, snoring with its mouth open, a bubble of smoke at its nose",
+  "height": 0.6,
+  "poses": {
+    "stand": "curled up asleep on its back, wings wrapped round it, snoring, a little smoke bubble at its nose",
+    "struck": "startled awake mid-snore, eyes bulging, wings flung out",
+    "dead": "tumbling over in a puff of soot"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "sleeps, its belly rising and falling with each snore, the smoke bubble at its nose growing and shrinking",
+      "seconds": 2
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

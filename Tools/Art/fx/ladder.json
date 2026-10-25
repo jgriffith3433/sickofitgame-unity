@@ -1,0 +1,38 @@
+{
+ "about": "A ladder's painted section (ladder, ladderHaul; LadderAbility.art lays it tile after tile up the zone): charred timber rails, iron-bolted rungs, built by the damned.",
+ "out": "Assets/Art/Effects/Ladder",
+ "name": "Ladder",
+ "key": "magenta",
+ "size": [
+  512,
+  1024
+ ],
+ "pivot": [
+  256,
+  512
+ ],
+ "crop": [
+  96,
+  0,
+  416,
+  1024
+ ],
+ "worldWidth": 1.0,
+ "widthPixels": 320,
+ "scale": 0.5,
+ "clips": {
+  "tile": {
+   "image": "tile.png"
+  }
+ },
+ "gen": {
+  "tile.png": {
+   "size": [
+    512,
+    1024
+   ],
+   "canvas": "ff00ff",
+   "prompt": "Paint a straight section of a crude wooden ladder seen from the front: two charred dark timber rails running straight up and down off the top and bottom edges of the picture, three thick wooden rungs between them fixed with iron bolts and rope lashings, glowing ember cracks in the wood. Only the ladder, centered, upright, filling the height of the picture. Plain flat pure magenta background (#ff00ff), no floor, no shadow, no scenery. Dark fantasy video game art: painterly, detailed, gritty, warm rim light from hellfire."
+  }
+ }
+}

@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "slabSniper",
   "name": "Slab sniper",
-  "description": "a small grey stone-skinned imp of the Cracked Road crouched behind a narrow upright stone slab with a slit, a long thin barrel of dark rock resting over the slab, one bright eye at the slit",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, crouched behind a narrow upright slab of grey road stone with a thin slit in it, one yellow eye squinting through the slit, a white-hot dart held ready",
   "height": 0.7,
   "poses": {
-    "stand": "crouched behind the narrow stone slab, barrel resting over the top, bright eye in the slit, facing right",
-    "struck": "struck: the slab chipping, the imp ducking",
-    "dead": "slab toppled and cracked, the imp sprawled behind it"
+    "stand": "crouched low behind the narrow upright stone slab, one eye peering through the slit in it, wings folded",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "crouches behind its slab, the eye in the slit shifting left and right",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "squints through the slit, then pokes a claw through and flicks a thin white-hot dart forward to the right",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

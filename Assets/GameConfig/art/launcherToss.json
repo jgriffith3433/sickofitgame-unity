@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "entity": "launcherToss",
+  "name": "Rocket Launcher (thrown)",
+  "description": "a huge rocket launcher: a long fat tube of battered bronze and dark iron plates with a row of glowing orange chambers along its side, a flared muzzle",
+  "height": 0.5,
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, centered in the frame with plenty of empty space around it, the whole object visible. One object alone, nothing else, no hands, no person. {style} {background}",
+    "pose": "Image 1 is this object. Show the exact same object {action}. Keep everything about it the same as image 1: shape, colors, size and position in the frame and art style. {background}"
+  },
+  "poses": {
+    "stand": "on its own in the air"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "tumbles over and over in place, end over end",
+      "seconds": 2
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "visualScale": 1
+}

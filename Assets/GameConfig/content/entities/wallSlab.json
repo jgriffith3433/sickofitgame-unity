@@ -3,22 +3,40 @@
   "team": "Neutral",
   "health": 0,
   "shootable": false,
-  "tags": ["wall"],
+  "tags": [
+    "wall"
+  ],
   "body": {
     "shape": "Box",
-    "size": [0.6, 9.0],
+    "size": [
+      0.6,
+      9.0
+    ],
     "solid": true,
     "oneWay": false
   },
   "visual": {
     "scale": 1.0,
     "placeholderColor": "#4A2A22",
-    "placeholderShape": "Box",
     "placeholderLabel": false,
     "layer": "Player",
     "sortingOrder": 1,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Effects/KitWall/KitWall_idle.png",
+          "fps": 1,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
   },
   "healthBar": {
     "show": false

@@ -1,0 +1,35 @@
+{
+ "about": "A gravity flip pad (gravityPad): a violet field where up is down.",
+ "out": "Assets/Art/Effects/Gravity",
+ "name": "Gravity",
+ "key": "black",
+ "size": [
+  1024,
+  1024
+ ],
+ "pivot": [
+  512,
+  512
+ ],
+ "crop": [
+  0,
+  0,
+  1024,
+  1024
+ ],
+ "worldWidth": 2.0,
+ "widthPixels": 1024,
+ "scale": 0.25,
+ "clips": {
+  "field": {
+   "image": "field.png",
+   "make": "charge",
+   "frames": 15
+  }
+ },
+ "gen": {
+  "field.png": {
+   "prompt": "Paint a square field of faint swirling violet light filling most of the picture, sparks and dust inside it falling upward, soft edges. Pure light, nothing solid. Plain flat pure black background (#000000), no floor, no scenery, centered with plenty of empty black space around it. Dark fantasy video game effect art, painterly, glowing."
+  }
+ }
+}

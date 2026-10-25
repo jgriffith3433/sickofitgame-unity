@@ -2,38 +2,40 @@
   "schemaVersion": 1,
   "entity": "kilnMatron",
   "name": "The Kiln Matron",
-  "description": "an ancient imp crone with a kiln for a belly, open door glowing, soot-black apron of baked clay, long arms",
+  "description": "an old imp crone of the Ember Wastes who bakes the Heat Stairs: a tall bony hunched imp with wrinkled dark crimson skin, long drooping horns hung with little iron charms, a stained leather baker's apron glowing with heat, a long iron oven peel held like a staff, a hot lavender glow in her eyes, ragged bat wings, a bun of smoke",
   "height": 1.5,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "hovering hunched on ragged bat wings, leaning on the long iron oven peel, apron glowing",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "hovers hunched, tapping the peel, her apron glowing and dimming like an oven",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "raises the oven peel and flings a fan of hot embers off it forward to the right, cackling",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
-  }
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "pixels": 300
 }

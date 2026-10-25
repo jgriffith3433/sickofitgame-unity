@@ -12,6 +12,8 @@ The opening is read from git (BASE) so the script can be run again after editing
 what the game reads. The boss floors (991, 951) and Floors 1000/999/910 and below are not touched.
 """
 import json, math, os, subprocess, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from artkeep import guard  # noqa: E402  (generated art is kept: Tools/Levels/artkeep.py)
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
 LEV = os.path.join(ROOT, 'Assets', 'GameConfig', 'levels')
@@ -32,6 +34,9 @@ def original(n):
 
 
 def dump(path, data):
+    data = guard(path, data)
+    if data is None:
+        return
     with open(path, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write('\n')

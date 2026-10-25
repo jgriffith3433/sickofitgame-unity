@@ -1,10 +1,7 @@
 {
   "schemaVersion": 1,
   "extends": "damnedSoul",
-  "tags": [
-    "damned",
-    "bystander"
-  ],
+  "tags": ["damned", "bystander"],
   "abilities": [
     {
       "type": "react",
@@ -36,10 +33,7 @@
           "type": "spawn",
           "entity": "rewindOrb",
           "anchor": "Self",
-          "at": [
-            -0.7,
-            0.4
-          ],
+          "at": [-0.7, 0.4],
           "facePlayer": false
         },
         {
@@ -48,5 +42,56 @@
         }
       ]
     }
-  ]
+  ],
+  "visual": {
+    "animator": {
+      "parameters": [
+        {
+          "name": "Hiccup",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/GiverSoul/GiverSoul_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hiccup",
+          "spriteSheet": "Art/Enemies/GiverSoul/GiverSoul_hiccup.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Hiccup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hiccup",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hiccup",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
+  }
 }

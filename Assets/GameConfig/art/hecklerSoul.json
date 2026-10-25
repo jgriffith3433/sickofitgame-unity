@@ -1,14 +1,13 @@
 {
   "schemaVersion": 1,
   "entity": "hecklerSoul",
-  "name": "Heckler soul",
+  "name": "Heckling soul",
   "description": "a damned soul of the Ember Wastes, stuck in Hell's loop forever: a thin hunched bald human figure in a long ragged ash-grey shroud, pale ash-grey skin, hollow tired eyes, a soft pale blue-white glow around its outline, bare feet, one thin arm raised with a pointing finger, lip curled, head thrown back sneering",
   "height": 0.7,
   "pixels": 220,
   "keepTint": true,
   "poses": {
-    "stand": "standing hunched, one thin arm raised with a pointing finger",
-    "react": "sneering with a pointing finger raised, chin up"
+    "stand": "standing hunched, one thin arm raised with a pointing finger"
   },
   "clips": {
     "idle": {
@@ -16,15 +15,39 @@
       "action": "rocks gently in place, breathing slowly",
       "seconds": 2
     },
-    "react": {
-      "from": "react",
+    "hiccup": {
+      "from": "stand",
+      "state": "Hiccup",
+      "loop": false,
       "action": "jeers, finger jabbing, shoulders shaking with a nasal laugh, then flatter",
-      "seconds": 2,
-      "loop": false
+      "seconds": 2
     }
   },
+  "animator": {
+    "parameters": [
+      {
+        "name": "Hiccup",
+        "type": "Trigger"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Idle",
+        "to": "Hiccup",
+        "when": [
+          "Hiccup"
+        ]
+      },
+      {
+        "from": "Hiccup",
+        "to": "Idle",
+        "exit": true
+      }
+    ]
+  },
   "takes": {
-    "pose": 3,
-    "clip": 2
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

@@ -1,10 +1,7 @@
 {
   "schemaVersion": 1,
   "extends": "damnedSoul",
-  "tags": [
-    "damned",
-    "bystander"
-  ],
+  "tags": ["damned", "bystander"],
   "abilities": [
     {
       "type": "react",
@@ -121,5 +118,56 @@
         }
       ]
     }
-  ]
+  ],
+  "visual": {
+    "animator": {
+      "parameters": [
+        {
+          "name": "Hiccup",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/HecklerSoul/HecklerSoul_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hiccup",
+          "spriteSheet": "Art/Enemies/HecklerSoul/HecklerSoul_hiccup.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Hiccup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hiccup",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hiccup",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
+  }
 }

@@ -1,0 +1,35 @@
+{
+ "about": "The rewind orb (rewindOrb, a pickup): rewind juice, a teal orb with a little clock inside.",
+ "out": "Assets/Art/Effects/RewindOrb",
+ "name": "RewindOrb",
+ "key": "black",
+ "size": [
+  1024,
+  1024
+ ],
+ "pivot": [
+  512,
+  512
+ ],
+ "crop": [
+  0,
+  0,
+  1024,
+  1024
+ ],
+ "worldWidth": 0.7,
+ "widthPixels": 1024,
+ "scale": 0.25,
+ "clips": {
+  "glow": {
+   "image": "orb.png",
+   "make": "charge",
+   "frames": 15
+  }
+ },
+ "gen": {
+  "orb.png": {
+   "prompt": "Paint a glowing round orb of teal and cyan light with a faint clock face inside it and two tiny glowing clock hands, a soft halo and a few sparks swirling backward around it. Pure light, nothing solid. Plain flat pure black background (#000000), no floor, no scenery, centered with plenty of empty black space around it. Dark fantasy video game effect art, painterly, glowing."
+  }
+ }
+}

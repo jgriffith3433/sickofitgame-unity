@@ -12,13 +12,167 @@
   "extends": "brimstoneDemon",
   "health": 4,
   "moveSpeed": 0.65,
-  "tags": [
-    "risenDemon"
-  ],
+  "tags": ["risenDemon"],
   "visual": {
     "scale": 0.26,
-    "color": "#6E5A66",
-    "fxColor": "#FF8A3A"
+    "fxColor": "#FF8A3A",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsMoving",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "IsAttacking",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/RisenDemon/RisenDemon_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Move",
+          "spriteSheet": "Art/Enemies/RisenDemon/RisenDemon_move.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/RisenDemon/RisenDemon_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 9,
+              "functionName": "FireProjectile"
+            }
+          ]
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/RisenDemon/RisenDemon_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/RisenDemon/RisenDemon_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Move",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "drops": [],
   "loot": {
@@ -39,7 +193,8 @@
       "speed": 0.65,
       "stopDistance": 2.8,
       "horizontalOnly": true,
-      "face": true
+      "face": true,
+      "animBool": "IsMoving"
     },
     {
       "type": "shoot",
@@ -49,16 +204,15 @@
         "count": 3,
         "angle": 24
       },
-      "speed": 4.0,
+      "speed": 4,
       "aim": "Player",
-      "muzzle": [
-        0.22,
-        0.12
-      ],
+      "muzzle": [0.22, 0.12],
       "interval": 2.8,
-      "initialDelay": 2.0,
+      "initialDelay": 2,
       "range": 3.6,
-      "damage": 1
+      "damage": 1,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
     },
     {
       "type": "revive",
@@ -69,5 +223,9 @@
       "riseSound": "risenDemon_rise"
     }
   ],
-  "sounds": { "hurtSound": "risenDemon_hurt", "deathSound": "risenDemon_die", "attackSound": "risenDemon_attack" }
+  "sounds": {
+    "hurtSound": "risenDemon_hurt",
+    "deathSound": "risenDemon_die",
+    "attackSound": "risenDemon_attack"
+  }
 }

@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "whirlImp",
   "name": "Whirl imp",
-  "description": "a small wiry hell imp of the Ember Wastes, one of the Magma King's: leathery skin, short curled horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, pink-hot skin, always half-turned as if spinning",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, its skin a hot pink-red, both arms held straight out to the sides spitting thin trails of embers, dizzy grin, wings blurred",
   "height": 0.75,
   "poses": {
-    "stand": "hovering mid-air on spread bat wings, mid-twirl, arms stretched out to the sides, two thin trails of pink-hot embers curling off its fingertips",
-    "struck": "just hit and caught mid-shriek: eyes bulging, mouth stretched open, wings snapped up, body tilted back with cracks of orange light glowing through its skin",
-    "dead": "bursting apart in a small round pop of black soot and bright orange embers, only its horns tumbling out of the puff"
+    "stand": "hovering mid-twirl with both arms stretched out to the sides, tail curled round it, a little dizzy",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "hovers and slowly twirls on the spot, flapping, pink-hot embers curling off its fingertips",
+      "action": "hovers, swaying a little dizzily, arms out, wings beating",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "spins fast and two spirals of pink embers wind out from its hands, then slows to a hover",
-      "seconds": 2.0
+      "action": "spins round and round in place in the air like a top, arms out, spitting two spiral arms of embers, then wobbles to a stop",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks backward with a yelp, wings crumpling, then recovers",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "shrieks, swells with orange light shining through the cracks in its skin, and pops like a firecracker into a puff of black soot and embers",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

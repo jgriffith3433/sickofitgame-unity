@@ -51,8 +51,14 @@
       "interval": 4.2,
       "initialDelay": 2.4,
       "range": 11.0,
-      "damage": 1
+      "damage": 1,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
     }
   ],
-  "sounds": { "hurtSound": "slabSniper_hurt", "deathSound": "slabSniper_die", "attackSound": "slabSniper_attack" }
+  "sounds": {
+    "hurtSound": "slabSniper_hurt",
+    "deathSound": "slabSniper_die",
+    "attackSound": "slabSniper_attack"
+  }
 }

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "bulwarkImp",
+  "name": "Bulwark imp",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, bigger and stockier than other imps, carrying a heavy slab of cooled black slag in front of it like a shield with both arms, peeking over the top",
+  "height": 0.85,
+  "poses": {
+    "stand": "hovering low, holding the heavy black slag slab up in front of it like a shield, peeking over the top",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes and shifts its weight in place, its glow pulsing slowly",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "paces forward with the slab held in front, wings straining under the weight, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

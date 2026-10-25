@@ -15,6 +15,8 @@ A job file says what to bake:
       "pivot": [416, 262],                         the pivot in that frame (the ground point the entity stands on)
       "worldWidth": 1.5, "widthPixels": 600,       pixels per unit = widthPixels * scale / worldWidth
       "scale": 0.5,                                cells are scaled by this after cropping
+      "tintable": true,                            optional: the art is made to be tinted by each entity's visual.color
+                                                   (a glow, a mark); the .sheet.json says so for the art inventory
       "crop": [x0, y0, x1, y1],                    optional: a fixed box in that frame instead of the art's own bounds
                                                    (every bake prints the box it used; copy it to keep a re-bake's
                                                    cell size, pivot and world size identical)
@@ -227,7 +229,7 @@ def write_meta(meta_path, cells, ppu, pivot):
         f.write(text)
 
 
-def pack(frames, clip, cell_w, cell_h, out_png, ppu, pivot):
+def pack(frames, clip, cell_w, cell_h, out_png, ppu, pivot, tintable=False):
     cols = max(1, min(len(frames), MAX_SHEET // cell_w))
     rows = (len(frames) + cols - 1) // cols
     if rows * cell_h > MAX_SHEET:
@@ -241,8 +243,11 @@ def pack(frames, clip, cell_w, cell_h, out_png, ppu, pivot):
         cells.append({"name": f"{clip}_{i:02d}", "x": col * cell_w, "y": tex_h - (row + 1) * cell_h, "w": cell_w, "h": cell_h})
     sheet.save(out_png, optimize=True)
     with open(os.path.splitext(out_png)[0] + ".sheet.json", "w", encoding="utf-8", newline="\n") as f:
-        json.dump({"generatedBy": "Tools/Art/fx_sheets.py", "pixelsPerUnit": round(ppu, 3), "pivot": [round(pivot[0], 6), round(pivot[1], 6)],
-                   "sprites": cells}, f, indent=1)
+        side_data = {"generatedBy": "Tools/Art/fx_sheets.py", "pixelsPerUnit": round(ppu, 3), "pivot": [round(pivot[0], 6), round(pivot[1], 6)]}
+        if tintable:
+            side_data["tintable"] = True  # painted in white/neutral light so each user tints it (Tools/Art/art_inventory.py accepts the tint)
+        side_data["sprites"] = cells
+        json.dump(side_data, f, indent=1)
         f.write("\n")
     write_meta(out_png + ".meta", cells, round(ppu, 3), pivot)
     side = os.path.splitext(out_png)[0] + ".sheet.json.meta"
@@ -323,7 +328,7 @@ def main():
     for name, frames in clips.items():
         cells = [Image.fromarray(np.clip(f, 0, 255).astype(np.uint8)[y0:y1, x0:x1], "RGBA").resize((cell_w, cell_h), Image.LANCZOS) for f in frames]
         png = os.path.join(out, f"{job['name']}_{name}.png")
-        tw, th = pack(cells, name, cell_w, cell_h, png, ppu, pivot)
+        tw, th = pack(cells, name, cell_w, cell_h, png, ppu, pivot, bool(job.get("tintable")))
         print(f"{name}: {len(cells)} frames of {cell_w}x{cell_h} -> {png} ({tw}x{th}), {ppu:.1f} px/unit, "
               f"{cell_w / ppu:.2f}x{cell_h / ppu:.2f} units, pivot {pivot[0]:.3f},{pivot[1]:.3f}")
         rows.append(cells)

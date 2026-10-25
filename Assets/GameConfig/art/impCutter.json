@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "entity": "impCutter",
+  "name": "Chain-cutter imp",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, hacking with a little notched cleaver in one claw, its tongue out in concentration",
+  "height": 0.75,
+  "poses": {
+    "stand": "hovering on spread bat wings, the notched cleaver raised in one claw, tongue out",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hacks the notched cleaver down hard in front of it to the right, again and again, sparks flying",
+      "seconds": 2
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

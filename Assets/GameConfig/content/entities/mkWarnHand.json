@@ -13,14 +13,17 @@
     "sortingOrder": 4,
     "hurtFlash": false,
     "animator": {
+      "parameters": [],
       "states": [
         {
           "stateName": "Glow",
-          "spriteSheet": "Images/Fireball.png",
+          "spriteSheet": "Art/Effects/Warn/Warn_orb.png",
           "fps": 16,
-          "loop": true
+          "loop": true,
+          "events": []
         }
       ],
+      "transitions": [],
       "defaultStateName": "Glow"
     }
   },

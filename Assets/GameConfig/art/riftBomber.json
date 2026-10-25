@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "riftBomber",
   "name": "Rift bomber",
-  "description": "a small hot-pink imp of the Cracked Road with bat wings and a satchel of round black bombs with burning fuses, shimmering at the edges as if half in another place",
-  "height": 0.6,
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, its skin cracked with violet-pink rift light, a lumpy sack of smouldering black bombs with short lit fuses slung over its shoulder, a bomb held in one claw",
+  "height": 0.8,
   "poses": {
-    "stand": "hovering with the satchel of bombs at its hip, edges shimmering, facing right",
-    "struck": "struck: bomb satchel jolted, shimmer flaring pink, squinting",
-    "dead": "burst into a scatter of pink sparks and a dropped empty satchel"
+    "stand": "hovering on spread bat wings, the bomb sack on its shoulder, a smouldering bomb held out in one claw",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "hovers, juggling a smouldering bomb with a hissing fuse",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "takes a smouldering bomb from its sack and drops it down in front of it to the right, cackling",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

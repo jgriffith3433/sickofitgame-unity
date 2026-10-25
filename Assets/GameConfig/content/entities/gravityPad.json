@@ -17,12 +17,25 @@
   "visual": {
     "scale": 1.0,
     "placeholderColor": "#B273FF1F",
-    "placeholderShape": "Box",
     "placeholderLabel": false,
     "layer": "Background2",
     "sortingOrder": 950,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Field",
+          "spriteSheet": "Art/Effects/Gravity/Gravity_field.png",
+          "fps": 10,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Field"
+    }
   },
   "healthBar": {
     "show": false

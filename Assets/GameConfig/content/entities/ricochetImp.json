@@ -6,7 +6,10 @@
   "hintVoice": "vo_hero_hint_ricochetImp",
   "extends": "imp",
   "health": 3,
-  "tags": ["imp", "ricochetImp"],
+  "tags": [
+    "imp",
+    "ricochetImp"
+  ],
   "visual": {
     "color": "#FFC890",
     "fxColor": "#FFC15A"
@@ -25,11 +28,20 @@
       "projectile": "ricochetEmber",
       "speed": 4.5,
       "aim": "Player",
-      "muzzle": [0.09, 0.09375],
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
       "interval": 2.6,
       "initialDelay": 1.0,
-      "damage": 1
+      "damage": 1,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
     }
   ],
-  "sounds": { "hurtSound": "ricochetImp_hurt", "deathSound": "ricochetImp_die", "attackSound": "ricochetImp_attack" }
+  "sounds": {
+    "hurtSound": "ricochetImp_hurt",
+    "deathSound": "ricochetImp_die",
+    "attackSound": "ricochetImp_attack"
+  }
 }

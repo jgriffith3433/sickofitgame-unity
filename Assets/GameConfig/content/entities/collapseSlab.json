@@ -19,12 +19,103 @@
   "visual": {
     "scale": 1.0,
     "placeholderColor": "#5E3B2A",
-    "placeholderShape": "Box",
     "placeholderLabel": false,
     "layer": "Player",
     "sortingOrder": 0,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [
+        {
+          "name": "Cracked",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "Falling",
+          "type": "Bool",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/CrumblingStone_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Crack",
+          "spriteSheet": "Art/Climb/CrumblingStone_crack.png",
+          "fps": 8,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Fall",
+          "spriteSheet": "Art/Climb/CrumblingStone_fall.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Crack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Cracked",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Crack",
+          "toState": "Fall",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Falling",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Crack",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Cracked",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Fall",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Cracked",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        }
+      ],
+      "defaultStateName": "Idle"
+    }
   },
   "healthBar": {
     "show": false

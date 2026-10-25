@@ -1,0 +1,24 @@
+{
+  "about": "runePillar: a pier of the Rune Bridges, always there.",
+  "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (pillar.png)",
+  "out": "Assets/Art/Climb",
+  "name": "RunePillar",
+  "key": "none",
+  "size": [
+    637,
+    708
+  ],
+  "pivot": [
+    321.0,
+    91.5
+  ],
+  "worldWidth": 4.363,
+  "widthPixels": 637,
+  "scale": 0.5,
+  "clips": {
+    "idle": {
+      "frames": "C:/Projects/SickOfItGameEnemies/Generated/climbrune\\_prep\\runePillar\\idle",
+      "key": "none"
+    }
+  }
+}

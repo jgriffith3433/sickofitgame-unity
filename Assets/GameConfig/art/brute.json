@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "entity": "brute",
+  "name": "Rift brute",
+  "description": "a hulking squat brute that climbed up out of the Rift's magma: a lumpy body of molten rock under a cooled black crust, cracks glowing orange, huge long arms with heavy rock fists dragging on the ground, short legs, a small head sunk between its shoulders with two glowing eyes, steam rising off it",
+  "height": 0.9,
+  "poses": {
+    "stand": "standing hunched on short legs, huge rock fists hanging to the ground",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "stands hunched, breathing steam, cracks pulsing",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "lumbers forward on its short legs, knuckles dragging, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "attack": {
+      "from": "stand",
+      "action": "swings a huge rock fist forward in a heavy punch to the right, then drags it back",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

@@ -54,6 +54,11 @@ const PLAYER_SHEET_PY = path.join(REPO, 'Tools', 'Art', 'player_clip_sheet.py');
 const PLAYER_JSON = path.join(REPO, 'Assets', 'GameConfig', 'player.json');
 const HERO_SHEETS = path.join(REPO, 'Assets', 'Art', 'Sprites', 'Player');
 const HERO_BAKE = { cell: [604, 340], ppu: 100, video: [1280, 720] };
+// The hero's source videos (Idle.mp4, Walk.mp4, ... : SickOfItGamePlayer/<State>/Output/<State>.mp4). "player:Walk" in a spec names one:
+// a hero stand's reference (its first frame) or a clip's driving "motion" (video.animate).
+const PLAYER_SRC = process.env.SOI_PLAYER_SRC
+  ?? [path.join(REPO, '..', 'SickOfItGamePlayer'), 'C:\\Projects\\SickOfItGamePlayer'].find((p) => fs.existsSync(p))
+  ?? path.join(REPO, '..', 'SickOfItGamePlayer');
 const SHEETS_PY = path.join(REPO, 'Tools', 'Art', 'sheets.py');
 const UNITY = process.env.UNITY_EXE || 'C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.7f1\\Editor\\Unity.exe';
 // SOI_ART_PYTHON: any Python with Pillow + numpy (the Linux server has no DoD .venv; rembg is only needed for takes
@@ -141,12 +146,21 @@ function loadSpec(id) {
   // stands up: poses edited from a seated stand stay seated).
   spec.poseBase = {};
   spec.posePrompt = {};
+  spec.poseRefs = {};
+  spec.poseTool = {};
+  spec.poseCanvas = {};
   spec.poses = { stand: 'standing in its normal stance' };
   for (const [pose, v] of Object.entries(raw.poses ?? {})) {
     spec.poses[pose] = typeof v === 'string' ? v : v.action;
     if (typeof v === 'object' && v.from && pose !== 'stand') spec.poseBase[pose] = v.from;
     // "prompt" replaces the pose template ("Show the exact same creature..."), e.g. to take him out of the picture.
     if (typeof v === 'object' && v.prompt && pose !== 'stand') spec.posePrompt[pose] = v.prompt;
+    // "refs": other poses shown to image.edit as images 2 and 3 (the hero's weapon, made first as a pose of its own);
+    // "tool": "image.generate" paints the pose from its prompt alone (a weapon concept), with no image in.
+    if (typeof v === 'object' && Array.isArray(v.refs) && pose !== 'stand') spec.poseRefs[pose] = v.refs;
+    if (typeof v === 'object' && v.tool && pose !== 'stand') spec.poseTool[pose] = v.tool;
+    // "canvas": "00ff00" paints the pose from its prompt alone with image.edit over a flat canvas of that colour (no base pose).
+    if (typeof v === 'object' && v.canvas && pose !== 'stand') { spec.poseTool[pose] = 'canvas'; spec.poseCanvas[pose] = v.canvas; }
   }
   spec.clips = raw.clips ?? {};
   const problems = [];
@@ -164,6 +178,11 @@ function loadSpec(id) {
     const order = Object.keys(spec.poses);
     if (!spec.poses[base] || order.indexOf(base) > order.indexOf(pose)) problems.push(`pose "${pose}": "from" must be a pose listed before it`);
   }
+  for (const [pose, refs] of Object.entries(spec.poseRefs)) {
+    const order = Object.keys(spec.poses);
+    for (const r of refs) if (!spec.poses[r] || order.indexOf(r) > order.indexOf(pose)) problems.push(`pose "${pose}": ref "${r}" must be a pose listed before it`);
+  }
+  for (const [name, c] of Object.entries(spec.clips)) if (c.motion && !fs.existsSync(resolveMotion(c.motion))) problems.push(`clip "${name}": motion ${c.motion} not found (${resolveMotion(c.motion)})`);
   if (problems.length) throw new Error(`${path.relative(REPO, file)}:\n  ${problems.join('\n  ')}`);
   return spec;
 }
@@ -241,20 +260,30 @@ function keys(spec, P) {
     if (pose === 'stand') continue;
     const base = spec.poseBase[pose];
     const p = spec.posePrompt[pose];
-    k[`pose:${pose}`] = sha({ ...(base ? { base: poseKey(k, base) } : { stand: k.stand }), a: spec.poses[pose], b: spec.background, ...(p ? { p } : {}) });
+    const refs = spec.poseRefs[pose];
+    const tool = spec.poseTool[pose];
+    k[`pose:${pose}`] = sha({ ...(tool ? { tool } : base ? { base: poseKey(k, base) } : { stand: k.stand }), a: spec.poses[pose], b: spec.background, ...(p ? { p } : {}), ...(refs ? { refs: refs.map((r) => poseKey(k, r)) } : {}) });
   }
   for (const [name, c] of Object.entries(spec.clips)) {
     if (c.video) continue;
     const from = c.from ?? 'stand';
     const to = c.to ?? from;
-    k[`clip:${name}`] = sha({ from: poseKey(k, from), to: poseKey(k, to), p: clipPrompt(spec, name, c), s: c.seconds ?? 2, n: spec.frameSize, f: spec.frameFill });
+    k[`clip:${name}`] = sha({ from: poseKey(k, from), to: poseKey(k, to), p: clipPrompt(spec, name, c), s: c.seconds ?? 2, n: spec.frameSize, f: spec.frameFill, ...(c.motion ? { m: c.motion, mf: c.motionFrames ?? null } : {}) });
   }
   return k;
 }
 const poseKey = (k, pose) => (pose === 'stand' ? k.stand : k[`pose:${pose}`]);
 const upToDate = (file, key) => fs.existsSync(file) && readJson(file.replace(/\.[^.]+$/, '.json'), {}).key === key;
 
+/** "player:Walk" = the hero's source video SickOfItGamePlayer/Walk/Output/Walk.mp4; anything else is a path (absolute, or under Assets/). */
+function resolveMotion(ref) {
+  const m = /^player:(\w+)$/.exec(ref);
+  if (m) return path.join(PLAYER_SRC, m[1], 'Output', `${m[1]}.mp4`);
+  return resolveAsset(ref);
+}
+
 function resolveAsset(ref) {
+  if (/^player:/.test(ref)) return resolveMotion(ref);
   const file = ref.split('#')[0];
   return path.isAbsolute(file) ? file : path.join(REPO, 'Assets', file);
 }
@@ -262,7 +291,7 @@ function resolveAsset(ref) {
 function clipPrompt(spec, name, c) {
   const from = c.from ?? 'stand';
   const to = c.to ?? from;
-  const frames = from === to ? `It starts and ends ${spec.poses[from]}.` : `It starts ${spec.poses[from]} and ends ${spec.poses[to]}.`;
+  const frames = c.motion ? '' : from === to ? `It starts and ends ${spec.poses[from]}.` : `It starts ${spec.poses[from]} and ends ${spec.poses[to]}.`;
   return fill(c.prompt ?? spec.prompts.clip, { name: spec.name, description: spec.description, action: c.action, frames, background: spec.background, style: spec.style });
 }
 
@@ -361,14 +390,26 @@ async function makePose(spec, P, pose, key, opts) {
   } else {
     input = P.pose(spec.poseBase[pose] ?? 'stand');
     const air = /air|fly|hover|float|leap|jump/i.test(`${spec.poses[pose]} ${spec.poses.stand}`);
-    prompt = fill(spec.posePrompt[pose] ?? spec.prompts.pose, { action: spec.poses[pose], background: spec.background, ground: air ? '' : ', feet on the same ground line as image 1' });
+    prompt = fill(spec.posePrompt[pose] ?? spec.prompts.pose, { action: spec.poses[pose], background: spec.background, ground: air ? '' : ', feet on the same ground line as image 1', description: spec.description, style: spec.style });
   }
   const n = opts.takes ?? (pose === 'stand' ? spec.takes.stand : spec.takes.pose);
   const seeds = Array.from({ length: n }, (_, i) => seedFor(opts, i, key, opts.redo.has(pose)));
   fs.mkdirSync(P.poseTakes, { recursive: true });
+  const tool = spec.poseTool[pose] ?? 'image.edit';
   const params = { prompt };
-  const made = await takes('image.edit', {
-    label: pose, n, seeds, key: `${spec.id}:${pose}:${key}`, inputs: { images: [input] }, params,
+  let images = [input, ...(spec.poseRefs[pose] ?? []).map((r) => P.pose(r))];
+  if (tool === 'image.generate') { params.width = 1024; params.height = 1024; images = null; }
+  else if (tool === 'canvas') {
+    const canvas = path.join(P.poseTakes, `canvas-${spec.poseCanvas[pose]}.png`);
+    fs.mkdirSync(P.poseTakes, { recursive: true });
+    if (!fs.existsSync(canvas)) await run(PYTHON, ['-c', `from PIL import Image; Image.new('RGB', (1024, 1024), '#${spec.poseCanvas[pose]}').save(r'${canvas}')`]);
+    images = [canvas];
+    params.width = 1024; params.height = 1024;
+  }
+  // The hero's poses stay 1280x720 like his videos, so he keeps his size and place in the frame (feet on Idle's ground line).
+  else if (spec.hero) { params.width = HERO_BAKE.video[0]; params.height = HERO_BAKE.video[1]; }
+  const made = await takes(tool === 'canvas' ? 'image.edit' : tool, {
+    label: pose, n, seeds, key: `${spec.id}:${pose}:${key}`, inputs: images ? { images } : {}, params,
     labels: { entity: spec.entity, pose }, file: (seed) => path.join(P.poseTakes, `${pose}-${seed}.png`),
   });
   if (spec.hero) {
@@ -392,7 +433,8 @@ async function makePose(spec, P, pose, key, opts) {
 async function makeHeroStand(spec, P, key) {
   fs.mkdirSync(path.dirname(P.pose('stand')), { recursive: true });
   const ref = spec.reference ? resolveAsset(spec.reference) : null;
-  if (spec.referenceIdle) await run(PYTHON, [PLAYER_SHEET_PY, '--idle-reference', ref, P.pose('stand')], { quiet: true });
+  if (/^player:/.test(spec.reference ?? '')) await run('ffmpeg', ['-v', 'error', '-y', '-i', ref, '-frames:v', '1', P.pose('stand')], { quiet: true });
+  else if (spec.referenceIdle) await run(PYTHON, [PLAYER_SHEET_PY, '--idle-reference', ref, P.pose('stand')], { quiet: true });
   else if (ref && fs.existsSync(ref)) fs.copyFileSync(ref, P.pose('stand'));
   else throw new Error(`hero reference ${spec.reference} not found`);
   writeJson(P.recipe(P.pose('stand')), { key, pose: 'stand', source: spec.reference, referenceIdle: Boolean(spec.referenceIdle), made: new Date().toISOString() });
@@ -439,6 +481,7 @@ async function makeClip(spec, P, name, key, opts) {
   const n = opts.takes ?? spec.takes.clip;
   const seeds = Array.from({ length: n }, (_, i) => seedFor(opts, i, key, opts.redo.has(name)));
   fs.mkdirSync(P.clipTakes, { recursive: true });
+  if (clip.motion) return makeMotionClip(spec, P, name, key, { prompt, negative, vw, vh, n, seeds, from });
   const made = await takes('video.i2v', {
     label: `${name} (${frames} frames)`, n, seeds, key: `${spec.id}:${name}:${key}`,
     inputs: spec.hero ? { start: P.pose(from), end: P.pose(to) } : { start: P.framed(from), end: P.framed(to) }, params,
@@ -448,6 +491,36 @@ async function makeClip(spec, P, name, key, opts) {
     writeJson(P.recipe(m.file), { key, clip: name, from, to, seed: m.seed, prompt, negative, tool: 'video.i2v', settings: params, job: m.job, asset: m.asset, frames, fps: WAN_FPS, made: new Date().toISOString() });
   }
   chooseClip(P, name, made[0].file);
+}
+
+/**
+ * A clip that copies a driving video's motion (video.animate, Wan Animate): the pose `from` performs `motion` (a hero
+ * source video, "player:Walk"), fitted first to 16 fps and the frame (video.fit). The hero's grips walk, jump and fall
+ * exactly like his launcher videos, so every set has the same timing, size and ground line.
+ */
+async function makeMotionClip(spec, P, name, key, { prompt, negative, vw, vh, n, seeds, from }) {
+  const clip = spec.clips[name];
+  const src = resolveMotion(clip.motion);
+  const fitted = path.join(P.work, 'motion', `${path.basename(src, path.extname(src))}-${vw}x${vh}.mp4`);
+  if (!fs.existsSync(fitted)) {
+    const job = await gen.run('video.fit', { inputs: { video: src }, params: { width: vw, height: vh, fps: WAN_FPS, maxFrames: 161 }, labels: { entity: spec.entity, motion: clip.motion } });
+    await gen.download(job.outputs[0].asset, fitted);
+  }
+  const have = await framesOf(fitted);
+  const frames = Math.max(5, Math.floor(((clip.motionFrames ?? have) - 1) / 4) * 4 + 1);
+  const params = { prompt, negative, width: vw, height: vh, frames, fps: WAN_FPS };
+  const made = await takes('video.animate', {
+    label: `${name} (${frames} frames, ${clip.motion})`, n, seeds, key: `${spec.id}:${name}:${key}`,
+    inputs: { reference: P.pose(from), motion: fitted }, params,
+    labels: { entity: spec.entity, clip: name }, file: (seed) => path.join(P.clipTakes, `${name}-${seed}.mp4`),
+  });
+  for (const m of made) writeJson(P.recipe(m.file), { key, clip: name, from, motion: clip.motion, seed: m.seed, prompt, negative, tool: 'video.animate', settings: params, job: m.job, asset: m.asset, frames, fps: WAN_FPS, made: new Date().toISOString() });
+  chooseClip(P, name, made[0].file);
+}
+
+async function framesOf(mp4) {
+  const out = await run('ffprobe', ['-v', 'error', '-count_frames', '-select_streams', 'v:0', '-show_entries', 'stream=nb_read_frames', '-of', 'csv=p=0', mp4], { quiet: true });
+  return parseInt(out.trim(), 10) || 81;
 }
 
 function chooseClip(P, name, take) {
@@ -746,6 +819,7 @@ function parseArgs(argv) {
     else if (a === '--hero-ref') o.heroRef = argv[++i];
     else if (a === '--only') o.only = new Set(argv[++i].split(','));
     else if (a === '--check') o.check = true;
+    else if (a === '--poses-only') o.posesOnly = true;
     else if (a.startsWith('--')) throw new Error(`Unknown flag ${a}`);
     else o.ids.push(a);
   }
@@ -812,26 +886,46 @@ async function make(id, opts) {
       log('stand: making the standing side view');
       await makePose(spec, P, 'stand', k.stand, opts);
     }
-    for (const pose of Object.keys(spec.poses)) {
-      if (pose === 'stand') continue;
-      const used = Object.values(spec.clips).some((c) => !c.video && ((c.from ?? 'stand') === pose || (c.to ?? c.from) === pose));
-      if (!used) continue;
-      if (opts.redo.has(pose) || !upToDate(P.pose(pose), k[`pose:${pose}`])) {
+    // The poses the clips start and end on, and the poses those are made from or shown with (bases and refs).
+    const needed = new Set(Object.values(spec.clips).filter((c) => !c.video).flatMap((c) => [c.from ?? 'stand', c.to ?? c.from ?? 'stand']));
+    for (const pose of [...Object.keys(spec.poses)].reverse()) {
+      if (!needed.has(pose)) continue;
+      if (spec.poseBase[pose]) needed.add(spec.poseBase[pose]);
+      for (const r of spec.poseRefs[pose] ?? []) needed.add(r);
+    }
+    // Poses in waves: every pose whose base and refs are ready is made at once (each its own Hawkes Gen jobs), then the next wave.
+    const todo = Object.keys(spec.poses).filter((pose) => pose !== 'stand' && needed.has(pose) && (opts.redo.has(pose) || !upToDate(P.pose(pose), k[`pose:${pose}`])));
+    const pending = new Set(todo);
+    while (pending.size) {
+      const wave = [...pending].filter((pose) => ![spec.poseBase[pose], ...(spec.poseRefs[pose] ?? [])].some((d) => d && pending.has(d)));
+      if (!wave.length) throw new Error(`poses wait on each other: ${[...pending].join(', ')}`);
+      await Promise.all(wave.map(async (pose) => {
         log(`pose ${pose}: ${spec.poses[pose]}`);
         await makePose(spec, P, pose, k[`pose:${pose}`], opts);
-      }
+        pending.delete(pose);
+      }));
     }
     if (!spec.hero) await frameAll(spec, P);
+    if (opts.posesOnly) return log('poses made (--poses-only): pick takes with --pick, then run again for the clips');
     k = keys(spec, P);
+    const clipsTodo = [];
     for (const [name, c] of Object.entries(spec.clips)) {
       if (c.video) continue;
       const hand = fs.existsSync(P.clip(name)) && !fs.existsSync(P.recipe(P.clip(name)));
       if (hand && !opts.redo.has(name)) continue; // A hand-made clip dropped in clips/ stays.
-      if (opts.redo.has(name) || !upToDate(P.clip(name), k[`clip:${name}`])) {
-        log(`clip ${name}: ${c.action}`);
-        await makeClip(spec, P, name, k[`clip:${name}`], opts);
-      }
+      if (opts.redo.has(name) || !upToDate(P.clip(name), k[`clip:${name}`])) clipsTodo.push(name);
     }
+    // Clips side by side (SOI_ART_PARALLEL at a time, default 1 for enemies, 12 for the hero): Hawkes Gen spreads them over its servers.
+    const parallel = Math.max(1, Number(process.env.SOI_ART_PARALLEL ?? (spec.hero ? 12 : 1)));
+    const failed = [];
+    const worker = async () => {
+      for (let name = clipsTodo.shift(); name; name = clipsTodo.shift()) {
+        log(`clip ${name}: ${spec.clips[name].action}`);
+        try { await makeClip(spec, P, name, k[`clip:${name}`], opts); } catch (e) { failed.push(name); log(`  ${name} failed: ${e.message}`); }
+      }
+    };
+    await Promise.all(Array.from({ length: parallel }, worker));
+    if (failed.length) throw new Error(`clips failed: ${failed.join(', ')} (run again to retry them)`);
   } else if (fs.existsSync(P.pose('stand')) && !spec.hero) {
     await frameAll(spec, P);
   }

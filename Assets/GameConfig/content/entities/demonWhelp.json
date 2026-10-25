@@ -7,17 +7,121 @@
   "extends": "brimstoneDemon",
   "health": 2,
   "moveSpeed": 1.5,
-  "tags": [
-    "demonWhelp"
-  ],
+  "tags": ["demonWhelp"],
   "body": {
     "radius": 0.3,
     "solid": false
   },
   "visual": {
     "scale": 0.19,
-    "color": "#FF8A6A",
-    "fxColor": "#FF6A1F"
+    "fxColor": "#FF6A1F",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsMoving",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/DemonWhelp/DemonWhelp_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Move",
+          "spriteSheet": "Art/Enemies/DemonWhelp/DemonWhelp_move.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/DemonWhelp/DemonWhelp_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/DemonWhelp/DemonWhelp_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Move",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "loot": {
     "chance": 0.15,
@@ -35,10 +139,15 @@
     {
       "type": "chase",
       "speed": 1.5,
-      "stopDistance": 0.0,
+      "stopDistance": 0,
       "horizontalOnly": true,
-      "face": true
+      "face": true,
+      "animBool": "IsMoving"
     }
   ],
-  "sounds": { "hurtSound": "demonWhelp_hurt", "deathSound": "demonWhelp_die", "attackSound": "demonWhelp_attack" }
+  "sounds": {
+    "hurtSound": "demonWhelp_hurt",
+    "deathSound": "demonWhelp_die",
+    "attackSound": "demonWhelp_attack"
+  }
 }
