@@ -52,5 +52,6 @@
         0.35
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "whelpNest_hurt", "deathSound": "whelpNest_die" }
 }

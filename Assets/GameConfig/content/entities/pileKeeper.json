@@ -317,5 +317,6 @@
         }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "pileKeeper_hurt", "deathSound": "pileKeeper_die", "attackSound": "pileKeeper_attack" }
 }

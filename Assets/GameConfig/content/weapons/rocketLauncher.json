@@ -22,8 +22,9 @@
     "multiShot": true
   },
   "sounds": {
+    "empty": "wpn_empty_rocketLauncher",
     "use": "player_shoot",
-    "equip": "ui_click"
+    "equip": "wpn_equip_rocketLauncher"
   },
   "pickup": "rocketLauncherPickup",
   "heroText": "There you are. You smell like imp.",

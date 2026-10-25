@@ -16,5 +16,5 @@
       { "name": "hook", "damage": 2, "reach": 1.4, "windup": 0.12, "recovery": 0.3, "knockback": 5.0, "arc": 150.0, "size": 1.5 }
     ]
   },
-  "sounds": { "use": "punch_swing", "hit": "punch_hit", "equip": "ui_click" }
+  "sounds": { "use": "punch_swing", "hit": "punch_hit", "equip": "wpn_equip_fists" }
 }

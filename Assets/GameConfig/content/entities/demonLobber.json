@@ -76,5 +76,6 @@
         }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "demonLobber_hurt", "deathSound": "demonLobber_die", "attackSound": "demonLobber_attack" }
 }

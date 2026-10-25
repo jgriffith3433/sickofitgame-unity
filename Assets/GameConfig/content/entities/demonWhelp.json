@@ -38,5 +38,6 @@
       "horizontalOnly": true,
       "face": true
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "demonWhelp_hurt", "deathSound": "demonWhelp_die", "attackSound": "demonWhelp_attack" }
 }

@@ -1178,6 +1178,13 @@ namespace SickOfIt.Gameplay
             return Team == Team.Enemy ? enemyDefault : null;
         }
 
+        /// <summary>Plays sounds.attackSound (presentation only; nothing when it has none).</summary>
+        public void PlayAttackSound()
+        {
+            if (Def != null && !string.IsNullOrEmpty(Def.sounds.attackSound))
+                SickOfIt.Core.Audio.Sfx.Play(Def.sounds.attackSound);
+        }
+
         void PlayRandom(List<AudioClip> clips)
         {
             if (clips == null || clips.Count == 0 || audioSource == null)

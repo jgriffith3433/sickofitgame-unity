@@ -40,5 +40,6 @@
       "initialDelay": 1.8,
       "damage": 1
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "blinkImp_hurt", "deathSound": "blinkImp_die", "attackSound": "blinkImp_attack" }
 }

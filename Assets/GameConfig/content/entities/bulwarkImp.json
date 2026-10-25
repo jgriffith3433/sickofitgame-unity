@@ -30,5 +30,6 @@
       "blockSound": "chain_cut",
       "color": "#8FD0FF"
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "bulwarkImp_hurt", "deathSound": "bulwarkImp_die", "attackSound": "bulwarkImp_attack" }
 }

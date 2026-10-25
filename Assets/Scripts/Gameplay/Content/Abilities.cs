@@ -515,6 +515,7 @@ namespace SickOfIt.Gameplay.Content
 
         void StartBurst(float now)
         {
+            Owner.PlayAttackSound();
             burstLeft = Mathf.Max(1, burst);
             nextVolleyAt = now;
             FireVolley();

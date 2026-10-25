@@ -315,5 +315,6 @@
         }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "roadBreaker_hurt", "deathSound": "roadBreaker_die", "attackSound": "roadBreaker_attack" }
 }

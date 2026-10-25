@@ -96,6 +96,7 @@ Assets/GameConfig/
   (cookbook: "Phones, portrait and touch"). Place new UI through `MenuCanvas.Add*` or `MenuResponsive.Track`, never at
   raw pixel positions, or the `layout` playtest flags it. Generators only build the scene shell; restyling
   never needs Generate Project. Don't add prefab buttons to scenes.
+- **Sound audit** (Docs/SoundAudit.md): `python3 Tools/Audio/sound_audit.py --check` is the validator (no sound id without a clip, none referenced but undefined; `SoundClipTests`, the `sound-audit` playtest). Enemies have `sounds.hurtSound` / `deathSound` / `attackSound` (a `shoot` ability plays the last), weapons `sounds.equip` / `empty`; `Tools/Audio/enemy_sounds.py` holds the table for the existing ones. Make a new sound's clip before merging.
 - **Sound is `audio.json`**: every effect and voice line is a prompt plus a `clip` filled in by the generator
   (SickOfIt > Audio > Sound Generator, or the `GenerateSounds` batch command), which makes them through Hawkes Gen's
   `audio.sfx` / `audio.voice` (ElevenLabs). `events` maps game moments to

@@ -315,5 +315,6 @@
         }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "carver_hurt", "deathSound": "carver_die", "attackSound": "carver_attack" }
 }

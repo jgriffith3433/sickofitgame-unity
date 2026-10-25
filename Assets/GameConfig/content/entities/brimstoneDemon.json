@@ -107,5 +107,6 @@
       "fireOnEvent": "FireProjectile",
       "damage": 1
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "brimstoneDemon_hurt", "deathSound": "brimstoneDemon_die", "attackSound": "brimstoneDemon_attack" }
 }
