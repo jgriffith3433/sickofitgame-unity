@@ -81,6 +81,8 @@ namespace SickOfIt.Data
         public RewindBudgetConfig rewindBudget = new RewindBudgetConfig();
         [Tooltip("Grazes, the style meter and the floor rank (Docs/Story.md, \"Style\").")]
         public StyleConfig style = new StyleConfig();
+        [Tooltip("Hit-freeze, hit flash and squash, the hero's recoil, and glows (Docs/Story.md, \"The feel of a hit\").")]
+        public FeelConfig feel = new FeelConfig();
         [Tooltip("Endless Floor, the Daily Challenge and New Game Plus (Docs/Story.md, \"Again\").")]
         public ReplayConfig replay = new ReplayConfig();
 

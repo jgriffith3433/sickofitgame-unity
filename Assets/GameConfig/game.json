@@ -283,5 +283,196 @@
         "minPoints": 0
       }
     ]
+  },
+  "feel": {
+    "enabled": true,
+    "freeze": {
+      "enabled": true,
+      "timeScale": 0.02,
+      "strongDamage": 2,
+      "bossStrongDamage": 6,
+      "strongSeconds": 0.06,
+      "killMinHealth": 2,
+      "killSeconds": 0.045,
+      "bossKillSeconds": 0.22,
+      "explosionSeconds": 0.07,
+      "heroHurtSeconds": 0.08,
+      "cooldownSeconds": 0.3
+    },
+    "hit": {
+      "enabled": true,
+      "flashColor": "#FFFFFF",
+      "flashSeconds": 0.09,
+      "flashStrength": 0.85,
+      "squash": 0.2,
+      "strongSquashScale": 1.6,
+      "bossSquashScale": 0.35,
+      "squashSeconds": 0.14,
+      "recoilDistance": 0.08
+    },
+    "fire": {
+      "enabled": true,
+      "kickDistance": 0.06,
+      "squash": 0.06,
+      "seconds": 0.08,
+      "meleeScale": 0.5
+    },
+    "glow": {
+      "enabled": true,
+      "maxGlows": 48,
+      "intensity": 1.0,
+      "heroShots": true,
+      "heroShotColor": "#FFBF59",
+      "heroShotSize": 0.9,
+      "heroShotAlpha": 0.45,
+      "deathGlowScale": 2.6,
+      "deathGlowAlpha": 0.6,
+      "deathGlowSeconds": 0.3,
+      "explosionGlowScale": 3.4,
+      "explosionGlowAlpha": 0.85,
+      "explosionGlowSeconds": 0.45,
+      "muzzleGlowSize": 0.7,
+      "muzzleGlowAlpha": 0.35,
+      "rules": [
+        {
+          "name": "lava sea",
+          "ids": [
+            "lavaSea",
+            "lavaRiver"
+          ],
+          "tags": [],
+          "sheets": [],
+          "exceptIds": [],
+          "shape": "Top",
+          "color": "#FF6A1F",
+          "entityColor": false,
+          "size": 3.0,
+          "padding": 0.0,
+          "minSize": 0.4,
+          "maxSize": 60.0,
+          "alpha": 0.5,
+          "flicker": 0.15,
+          "flickerSpeed": 2.5,
+          "orderOffset": -1
+        },
+        {
+          "name": "geyser",
+          "ids": [
+            "Geyser"
+          ],
+          "tags": [],
+          "sheets": [],
+          "exceptIds": [],
+          "shape": "Round",
+          "color": "#FF7A2A",
+          "entityColor": false,
+          "size": 1.6,
+          "padding": 0.15,
+          "minSize": 0.4,
+          "maxSize": 30.0,
+          "alpha": 0.3,
+          "flicker": 0.35,
+          "flickerSpeed": 6.0,
+          "orderOffset": -1
+        },
+        {
+          "name": "lava",
+          "ids": [
+            "lavaFall",
+            "lavaSurge",
+            "lavaWave",
+            "lavaFlood",
+            "lavaBurst",
+            "magmaBoulder"
+          ],
+          "tags": [
+            "lava"
+          ],
+          "sheets": [],
+          "exceptIds": [],
+          "shape": "Round",
+          "color": "#FF7322",
+          "entityColor": false,
+          "size": 2.0,
+          "padding": 0.3,
+          "minSize": 0.4,
+          "maxSize": 30.0,
+          "alpha": 0.45,
+          "flicker": 0.2,
+          "flickerSpeed": 3.0,
+          "orderOffset": -1
+        },
+        {
+          "name": "magma",
+          "ids": [
+            "magmaKing",
+            "magmaGeode"
+          ],
+          "tags": [],
+          "sheets": [],
+          "exceptIds": [],
+          "shape": "Round",
+          "color": "#FF5A1A",
+          "entityColor": false,
+          "size": 1.25,
+          "padding": 0.3,
+          "minSize": 0.4,
+          "maxSize": 30.0,
+          "alpha": 0.3,
+          "flicker": 0.15,
+          "flickerSpeed": 2.0,
+          "orderOffset": -1
+        },
+        {
+          "name": "fire",
+          "ids": [],
+          "tags": [],
+          "sheets": [
+            "Fireball"
+          ],
+          "exceptIds": [],
+          "shape": "Round",
+          "color": "#FF8A2A",
+          "entityColor": true,
+          "size": 2.6,
+          "padding": 0.12,
+          "minSize": 0.4,
+          "maxSize": 3.0,
+          "alpha": 0.55,
+          "flicker": 0.25,
+          "flickerSpeed": 11.0,
+          "orderOffset": -1
+        },
+        {
+          "name": "ember",
+          "ids": [
+            "ember",
+            "cinder",
+            "fire",
+            "flame",
+            "pyre",
+            "slagDrip",
+            "fuse"
+          ],
+          "tags": [],
+          "sheets": [],
+          "exceptIds": [
+            "Pickup",
+            "Bearer"
+          ],
+          "shape": "Round",
+          "color": "#FF8A3D",
+          "entityColor": true,
+          "size": 2.2,
+          "padding": 0.15,
+          "minSize": 0.4,
+          "maxSize": 3.0,
+          "alpha": 0.45,
+          "flicker": 0.3,
+          "flickerSpeed": 10.0,
+          "orderOffset": -1
+        }
+      ]
+    }
   }
 }

@@ -1819,6 +1819,25 @@ Hell loves a show, and the announcer's cabinet is the show's frame: nothing on s
 - **Between floors**: each new floor sweeps a band of lava light up the screen; a floor stage's results close on a black cover with the floor's number, and the next scene opens it (`ScreenTransition`; it never holds the player on black for more than 8 s).
 - **Fit**: placed through `MenuCanvas`/`MenuResponsive`, so it holds at 1920x1080 and 1080x1920, inside the safe area (playtest `ui-polish`).
 
+## The feel of a hit (Hell's cabinet hits back)
+
+Hell is an arcade cabinet, and a cabinet sells every blow: the world stops for a beat when something lands hard, monsters
+flinch, the hero's gun kicks, and Hell's fire actually shines. This is feel, not story: no new words or sounds, none of it
+touches the simulation or the rewind, and all of it is tuned in `game.json` `feel` (2026-10-25; playtest `game-feel`).
+
+- **The hit-freeze**: a strong blow (2+ damage: the fists' hook, the whip's last lash, a crit), a kill, an explosion or the hero
+  getting hurt stops the world for 45-80 ms; a Warden's killing blow holds it for about a fifth of a second. It is Unity's clock
+  that slows, never Hell's: every tick of the floor is the same, only a moment later, so a rewind replays exactly what happened.
+  Never two freezes within 0.3 s, so a crowd never stutters; a rewind or a pause ends one at once.
+- **Monsters flinch**: a hit flashes the monster white and squashes it, springing back, pushed a little away from the blow
+  (the sprite moves, never its body). Bosses flinch less; they are big and proud about it.
+- **The hero's kick**: every shot throws his sprite back a few hundredths of a unit from his aim and squeezes it; a swing of the
+  fists leans him into it. He doesn't comment. He has been shot at before.
+- **Hell's fire shines**: fireballs and embers glow their own color, lava falls and geysers light the air around them, the lava
+  sea lights the bottom of the screen, the Magma King smoulders, and explosions and death pops flare. Soft additive sprites
+  (`Glow`), not 2D lights: the game runs the built-in renderer, and on WebGL a few dozen batched quads cost far less than a lighting
+  pass. At most 48 on screen at once.
+
 ## Hell's air (weather and the life far away)
 
 Hell is repetition, so even its air repeats: every Circle has its own weather and its own things going about their business a long way off, and

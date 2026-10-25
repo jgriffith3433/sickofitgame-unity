@@ -87,6 +87,8 @@ namespace SickOfIt.Gameplay
             {
                 // Pausing mid-rewind would leave the clock running backward; end the rewind first.
                 SickOfIt.Core.Rewind.RewindInput.End();
+                // A hit-freeze in progress gives Unity's clock back first, or the resume would restore the frozen scale.
+                SickOfIt.Core.Fx.HitFreeze.Cancel();
                 timeScaleBeforePause = Time.timeScale;
                 Time.timeScale = 0f;
                 clock?.Pause();
@@ -437,8 +439,9 @@ namespace SickOfIt.Gameplay
             {
                 hurtAt = Time.unscaledTime;
                 world.Effects.Shake(0.22f, 0.25f);
-                // A beat of hit-stop sells the impact.
-                world.Effects.SlowMotion(0.08f, 0.07f);
+                // A beat of hit-freeze sells the impact (game.json feel.freeze.heroHurtSeconds). Unity's clock, not the game
+                // clock: the simulation's ticks stay the same, they just come a moment later.
+                world.Feel?.HeroHurt();
             }
             lastSeenHealth = health;
             float age = Time.unscaledTime - hurtAt;
