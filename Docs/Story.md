@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -323,6 +323,16 @@ who carves every floor number and rule on the road; **the Hollow Spire** shortcu
 Needle Stair*, round the outside of the great spire) up to the crack in its side on Floor 802's landing, and through it
 **Floor 801, *The Spire's Heart***, **the Spire Fiend**'s arena (*The Spire Fiend's fight*, below). At most 4 enemies
 on screen.
+
+**The heat (2026-10-25).** Above the Wastes Hell stops being polite: every authored floor of the Cracked Road that is not a
+floor boss (900-892, 860-852, 810-802) runs about five minutes, like Circle X's long floors, and is hotter than any of them. The
+cracks are where the Brimstone family is born, and past Floor 900 they are all open at once: his own opening stays as it was
+(its idea, its first monster alone, its lines), then the road goes on in five set pieces and the demons, whelps, nests and
+lobbers come out of it in numbers, with the imps' tricks that came up from the Wastes (ricochet, blink and lead imps, the
+guards of the hauling route, the Overlord's lens from the last pieces on) and mixed waves of cinders, sparks and brutes from
+the Rift. The climbs include ladders (the demons' own ways up the spires, bolted where they climb every day). The three
+floor bosses (891, 851, 801) stay fights, not floors of this kind. Built by `Tools/Levels/cracked_floors.py`; recipe in
+LevelDesign.md, *A long bullet-hell floor*, point 10.
 
 The **great spire** is Circle IX's glimpse: always straight up through the haze, the Spire Fiend's, its seams pulsing,
 growing floor by floor. The Spire Fiend is never heard on the route; his spire hums and grinds. (The hum is him
