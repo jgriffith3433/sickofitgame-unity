@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -216,6 +216,7 @@ build toward; the first two Circles reuse current art.
 | I | 100–1 | **The Throne Stair:** the Overlord's palace and his half-built gate, daylight leaking through at the top | to make | Everything, at its strongest: the Overlord's personal guard | **The Overlord** (Floor 1) |
 
 Circles VIII to IV are designed in full (looks, Wardens, floor bosses, enemies and weaknesses, signature mechanics, shortcuts, music) in *Circles VIII to IV: the middle descent*, below; the table above is the short form.
+Circles III to I, the Overlord and the ending are designed the same way in *Circles III to I and the top of Hell: the final descent*, below. (Circle I has no Warden of its own: its Warden is the Overlord on Floor 1.)
 
 ### Acts and story beats
 
@@ -224,9 +225,9 @@ Circles VIII to IV are designed in full (looks, Wardens, floor bosses, enemies a
 | Prologue | The Meadow (Level 1) | A nice day. The Overlord rises over the hills; his imps drop in to loot the village; he lasers it; his imps take the diamonds. His lasers burn a portal into the ground near the hero (the fire hole in the footage), who goes to look, shouts down it, hears Hell echo back, says "Nope" and is sucked in. Yooba is slurped in after him. | Video1 → Level1 → portal scene → Video2 → the Shaft |
 | Act 1 | Circles X–VIII | The portal drops the hero at Floor 1,000. Yooba turns up (the slime slurped in after him), coughs up a diamond, and starts helping. First Warden. The hero learns Hell repeats, and that he can rewind it. | Video2, Video3 (Yooba) |
 | Act 2 | Circles VII–IV | Deeper strangeness: souls stuck in loops (Shades) show what Hell does to people. Hints the Overlord is just as stuck. Midpoint at Floor 500: the hero could take a shortcut home and doesn't. | new |
-| Act 3 | Circles III–I | The Overlord's own guard. The gate is almost open; daylight leaks down the stairs. The hero climbs toward it. | new |
-| Finale | Floor 1 | The Overlord at his gate. Phase 1: he doesn't take the hero seriously. Phase 2: he rewinds too (the loop was his first). Phase 3: the gate cracks open on the meadow behind him. | new |
-| Ending | The Meadow | The hero shoves the Overlord back down and the gate shuts on him. Home, the meadow regrowing, Yooba spitting the diamonds back out. The hero sits down for the first time in 1,000 floors. Something knocks from under the ground. (Post-credit: "Floor 1,001".) | new |
+| Act 3 | Circles III–I | The Overlord's own guard. The gate is almost open; daylight leaks down the stairs. The hero climbs toward it. | new; designed in *Circles III to I and the top of Hell* |
+| Finale | Floor 1 | The Overlord at his gate. Phase 1: he doesn't take the hero seriously. Phase 2: he rewinds too (the loop was his first). Phase 3: the gate cracks open on the meadow behind him. | new; designed in *Circles III to I and the top of Hell* |
+| Ending | The Meadow | The hero shoves the Overlord back down and the gate shuts on him. Home, the meadow regrowing, Yooba spitting the diamonds back out. The hero sits down for the first time in 1,000 floors. Something knocks from under the ground. (Post-credit: "Floor 1,001".) | new; designed in *Circles III to I and the top of Hell* |
 
 ### Circle X: the Ember Wastes (one level per floor)
 
@@ -806,6 +807,476 @@ all out he can't ring.
 as the loop's downbeat (the bell *is* the metronome). Push music: war drums and the choir in full, the toll doubled. The
 Bell Ringer's theme: a cracked bell slow on the downbeat over a drone and a plainsong choir; the enrage breaks the beat
 into a flurry of bells and a distorted organ.
+
+## Circles III to I and the top of Hell: the final descent *(working)*
+
+Designed 2026-10-25 (J: *"Same as the Circles VIII to IV atlas task but for Circles III, II and I, plus the top of Hell:
+the final floors up to Floor 1, the Overlord's throne and the ending options"*), before any of it is built. Like the
+middle descent, this is a **design, not content**: no entity, level, scene or sound exists yet and **every name marked
+*(working)* is a placeholder** (the Gatekeeper, the Chain King and the Overlord are canon, already on the Shaft).
+Everything in *Circles VIII to IV* about the shared shape of a Circle holds here too: 100 floors each, the played route
+in three stretches, floor bosses, two shortcuts, one signature mechanic, a weakness for every enemy, the comedy being
+Hell's, and Yooba's one line per Circle. This is Act 3 (see *Acts and story beats*): the Overlord's own guard, the gate
+almost open, daylight leaking down the stairs, and then the one man at the top.
+
+**What changes in the last three Circles**
+
+- **Numbers.** Circle III is Floors 300-201 (Warden on 201), Circle II 200-101 (Warden on 101), Circle I 100-1. The
+  Waystones at 201 and 101 light when the Gatekeeper and the Chain King fall (as 301 does for the Bell Ringer). Circle I
+  has no Waystone of its own: **a death above 101 restarts the run at 101**, so the whole top of Hell, the Overlord
+  included, is climbed from the Chain King's floor in one run.
+- **Circle I is the Overlord's, and its played route is shorter:** stretches 100-91 (floor boss on 91), 60-51 (floor boss
+  on 51) and 10-2 (the door on 2), then Floor 1, the throne. Two shortcuts join them, as below.
+- **Each Circle is the one below promoted** (rule 2 of *Rules for enemies*): the Bastion's garrison are the Peaks'
+  gargoyles turned into soldiers, the Keep's jailers hold what the soldiers didn't catch, and the Throne Stair's guard is
+  the best of everything in a uniform. All five of **Hell's tricks** (*Hell's tricks*) finally get their reason: they are
+  the Overlord's personal guard's drill. Circle I is where they appear, at their strongest, one new idea a floor. (The
+  front shield also belongs to the Gatekeeper's tower shield.)
+- **The comedy gets quieter as the climb gets higher.** The last Circle has the fewest jokes and the hero's driest
+  lines; the funniest thing at the top is a man very tired of a chair.
+- **The Overlord thread pays off.** One clue a Circle, as before, then the answer at the top (*The Overlord: who he is*).
+
+### Circle III: the Bastion (Floors 300-201)
+
+**Theme and look.** After the Peaks' moonlit nothing, stone made by hands: a fortress built into the shaft's wall, grey
+curtain walls, towers, barracks, gatehouses, a flat iron-grey sky and banners that don't move. Torchlight, drums, the
+sound of marching: the Circle is **loud and in step**, the opposite of the Peaks. The banners carry the Overlord's sign (a
+crown of black horns). Every wall has a gate, every gate is shut. *(Look brief: iron-grey stone in layers, torch orange
+against blue-grey sky, oxblood banners, portcullis teeth in the foreground, a drumbeat of repeated towers; the far wall
+always shows the same gate, closed, a little closer each stretch.)*
+
+**Signature mechanic: The Portcullis (`portcullis`, working).** Gates drop and rise on a drum beat: a raised portcullis is
+a doorway, a dropped one is a wall (and a platform on its top). The drum is the clock: **a glint on the gate's teeth at
+least 1 s before it drops**, and a gate never drops on the hero (it jams on a hero standing in it and pushes him out, one
+heart). Enemies hold gates too: a Whistler's blast drops the next one. The first floor teaches it with one gate and
+nothing else; later floors chain gates in the drum's order, run them out of step, and put them between the hero and an
+archer's line. A rewind raises the gate that had dropped. *(Data like the Wastes' slabs; the whistle trigger is the
+only new piece.)*
+
+**Comedy angle.** The garrison marches in step, and one soldier is always a half-beat out of it and is told so, for ever,
+by the one next to him (*"LEFT. LEFT. LEFT. ...YOUR OTHER LEFT."*). Archers carry a single arrow each, loose it, and go and
+fetch it, together, in a queue. Every gate carries a sign: *CLOSED*, *CLOSED (STILL)*, *CLOSED (SEE OTHER GATE)*. The
+garrison has never seen a fight and is thrilled. Hero, at the first drop on the beat: *"Of course it's a drum."* On the
+third: *"I'm not going to get used to this."*
+
+**The Overlord thread.** All over the Bastion, a standing order painted at every post in one huge hand: *HOLD*. Hold the
+gate, hold the wall, hold the stair. The order is old: paint over paint over paint, the same word in the same hand. The
+garrison don't know who wrote it; it was there when they were. Hero: *"Who tells a wall to hold?"* Announcer, quietly:
+*"THEY'VE BEEN HOLDING FOR A VERY LONG TIME."*
+
+**The Warden: the Gatekeeper** (`gatekeeper`, level `Floor201`). An armoured giant built like a gate: a portcullis visor
+(the bars drop and rise over a dark face), a tower shield as tall as the hero's jump, hinges at the shoulders. He holds the
+Hall Gate, the last of the Bastion, and has never opened it, because nobody has ever come with the right word, and he has
+taken that very seriously. *Personality:* stern, literal, slow, dutiful; speaks in orders and repeats the end of them; the
+more he is hurt, the more correct he becomes. Not cruel, only certain he is right, and quietly, desperately bored.
+Hero: *"Going up."* Gatekeeper: *"Halt. ...Halt."* *Voice* `gatekeeper`: a deep iron-barrel baritone, slow and measured, a
+metal clang on the stressed words, no menace in it at all. *Fight idea (working):* the arena is **the Hall Gate**, one
+static screen, the great gate in the far wall under a hung portcullis, banners, a drum on a platform. Phase 1, *Halt*: he
+marches the width of the floor behind his tower shield (a `frontShield`: shots from the front are spent) and slams it down
+at the end of each march (a glow on the floor 1 s before, then a shockwave: jump it); the hero climbs to the gate's ledge
+and shoots his back. At half health, phase 2, *The Gate Shuts*: he raises the shield overhead, lowers his visor and drops
+three gates across the arena on the beat (a glint first), driving the hero into the lanes between them while archers on
+the battlements fire along the lanes (a glow on each line). At a third, phase 3, *Open*: he drops the shield to free both
+hands, swings a wild shieldless mace, and the drum goes on without him; the hero shoots the hinges of his shoulders.
+*Weakness:* his back and the visor, open for 2 s after each slam. Beaten, he kneels, raises the bars of his visor, and says
+the word he never said: *"...Pass."* The Hall Gate opens by itself, the first gate in Hell to. The Waystone at 201 lights;
+Circle II wakes.
+
+**Floor bosses** *(working)*
+- **The Drill Sergeant** (`drillSergeant`, Floor 291). A huge soldier shouting the garrison through a drill, on a parade
+  ground; two tiers (the yard, then the wall-walk). He calls a drill (a drum, then a rank of garrison marches in on the
+  beat: each rank is a wall with one gap) and between drills blasts the whistle that drops a gate (glint first).
+  *Weakness:* his whistle, shot out of his mouth; the garrison stand there confused and he has no more orders. Voice: a
+  parade-ground bark that cracks: *"Aaa-TEN-tion! ...Again!"*
+- **The Ram** (`batteringRam`, Floor 251). A siege ram the size of a house, carried by a team of garrison up a long ramp,
+  charging the hero through the ramp's gates (a glint, then the charge). Two tiers: the ramp, then the ram stuck in the
+  gate with the garrison climbing its beam. *Weakness:* the ram's head-iron, a bright band exposed when it is held at a
+  gate; the garrison drop it, one by one, in a queue.
+
+**Enemies** *(entity ids working; the played floors meet some of them again, promoted, as in Circle VIII)*
+
+| Entity | Name | First met | Why it's there | Weakness / how it plays |
+|---|---|---|---|---|
+| `garrison` | Garrison | 300 | The Overlord's foot soldier, a grey stone man with a spear and a drill. Fights in step. | Marches on a fixed beat; every few steps one turns. Hit it as it turns. |
+| `archer` | Archer | 285 | One arrow each, loosed along a glowing line, then goes and fetches it. | A glow on its line 1 s ahead; shot while fetching, it drops the arrow and the line. |
+| `whistler` | Whistler | 280 | A garrison with a whistle that drops the next gate on the beat. | Shoot the whistle before the blast. |
+| `shieldWall` | Shield Wall | 270 | Three garrison with tower shields (`frontShield`), moving as one. | Shots from the front are spent; get behind or above (a gate's top). |
+| `siegeBird` | Siege Bird | 265 | A heraldic iron bird that dives on whoever crosses a gate. | Dives along a fixed line; hit it mid-dive. |
+| `standardBearer` | Standard Bearer | 262 | Carries the banner the garrison keep in step to; where it goes they go. | Shoot the banner down: the rank halts, out of step, and starts again. |
+| `ironHorse` | Iron Horse | 255 | A statue of a horse that charges the length of a rampart when a gate opens in front of it. | Leave the gate in front of it shut. |
+| `deserter` | The Deserter | 240 | The damned of the Bastion: a soldier stuck running from the same battle, through the gates. | Can't be killed; a shot makes him trip and sit out a lap; a loop shard drops once. |
+| `drillSergeant`, `batteringRam`, `gatekeeper` | the floor bosses and the Warden | 291, 251, 201 | above | above |
+
+**Shortcuts** *(working)*
+- **The Postern** (`postern`), Floor 291 to **Floor 260**: after the Sergeant's whistle falls, a small door in the wall,
+  the garrison's own way out when nobody's looking, with one soldier standing at it holding it open, ashamed. *Cost:* a
+  Grudge. Hero: *"After you."* The soldier doesn't move. Hero: *"Fine."*
+- **The Drawbridge Chain** (`drawbridgeChain`), Floor 251 to **Floor 210**: grab the counterweight chain as the Ram falls
+  and the drawbridge swings him over the next wall. *Cost (risk):* Floor 210 reads `shortcutTaken`: the whole garrison has
+  been told, and the gates drop on the beat from the first second.
+
+**Music.** A snare-and-brass march in C minor at 100 BPM, tight and mechanical, with one bar of silence every eight (the
+gate drop); the loop is the same eight bars, marching in place. Push music: the march doubled, timpani and low brass
+stabs. The Gatekeeper's theme: a slow processional with a tolling anvil and a men's chorus chanting one word, *"Hold."*;
+the enrage cuts the chorus and drops a single great drum, a gate closing, on every bar.
+
+### Circle II: the Keep (Floors 200-101)
+
+**Theme and look.** Under the fortress, the place the fortress keeps what it takes: a courtyard, a hall of cells, a deep
+dungeon, torches that light the stone but never the corners. Iron: bars, rings, chains hanging from every ceiling and
+swinging a little when nothing moves them. Damp, close, orange. *(Look brief: dark wet stone in warm torch-orange, hanging
+chains at two depths, iron doors in rows, a wall of cell numbers; the cells get fewer and bigger as the Circle rises.)*
+
+**Signature mechanic: The Tether (`tether`, working).** A jailer's chain clips to the hero and ties him to a ring in the
+floor for a few seconds, with a maximum range: he can still move, jump and shoot, but no farther than the chain's length
+from its ring (the taut line shows the slack and glows on a short chain). A tether is **broken** by shooting its ring or a
+link (a link takes two shots), or by killing the jailer; a rewind unclips it. Chains also **swing** as hazards (a ball and
+chain on a beat) and **lift** as platforms (a taut chain is a rail, a loose one a rope). The first floor has one chain and
+one ring and no jailer; later floors have jailers who clip him at the worst moment. A tether is never a trap: the ring is
+always shootable from inside its range. *(A range limit on the hero: new C#, rewind-safe, like the Caverns' Gulp.)*
+
+**Comedy angle.** The Keep is run by people who love their keys. A jailer's ring has two hundred keys; he knows which by
+touch and is never right. Every key opens the same cell. A wall counts the cells: *CELL 4, CELL 4, CELL 4*. Prisoners (the
+damned) call out their names, always the same one: *"I'm Dennis!"* from every cell. A sign, scratched through and written
+in again: *PLEASE DO NOT FEED THE PRISONERS*. Hero: *"If I'd known Hell had a basement..."* A floor later: *"There's a
+basement under the basement."*
+
+**The Overlord thread.** On the Keep's lowest floors there is one very large **empty cell**, the biggest in the dungeon,
+its door open, the lock worn smooth from the inside. A chain on its wall has pulled a groove through its ring: one
+prisoner's whole life of pulling. On the wall, scratched with something that wasn't made for it: four small drawings, a
+hill, a hut, a field, a door. Hero: *"Whoever he was, he got out."* The cell number is **1**.
+
+**The Warden: the Chain King** (`chainKing`, level `Floor101`). A jailer king wrapped in chains, an iron spike crown, a
+belt of keys the size of the hero's head. He keeps every prisoner in Hell and has lost exactly one, which he does not
+discuss, and the loss has made him a *collector* who counts what he has, again and again. *Personality:* possessive,
+proud, soft-spoken, deeply attached; tender with the damned in a way that is horrible. He doesn't hate the hero: he wants
+to **keep** him (*"Oh, you're new. You'll like it here. Everyone does."*) and is genuinely hurt when refused. Counts aloud.
+*Voice* `chainKing`: a rich, low, warm voice, slow and affectionate, with a chain's dry rattle in every pause; never
+shouts; the one raised line is when he hears his first prisoner got out. *Fight idea (working):* the arena is **the
+Counting Hall**, one static screen, a high dungeon with cells in a ring and chains hanging in the middle. Phase 1,
+*Keeping*: he tethers the hero (a ring in the floor, a glow first) and sweeps his chain-flail across the floor (a line of
+glow before each sweep); the hero breaks the ring and a link of the flail, then shoots the key on his belt that opens a
+cell and lets out a Convict who runs across the hall (harmless, but it draws his attention). At half health, phase 2,
+*Collecting*: he opens the cells and **the damned come out for the count**, walking a line across the floor on a beat (they
+hurt only if you stand in their line: the Shades' rule), while chains lower cages over spots (a glow, 1 s) that hold the
+hero if he stays. At a third, phase 3, *Mine*: he drops the keys and takes the flail in both hands; every chain in the
+hall comes alive and tethers the hero at once, and he can move only by breaking them in turn (a rewind re-clips).
+*Weakness:* the spikes of his crown, one knocked loose per cage dropped; with all the spikes out he can't tether. Beaten,
+he sits among his cells and counts, gets it right for the first time, and lets the last cell open: *"...One gone. One
+fewer. ...One."* The Waystone at 101 lights; Circle I wakes. Hero: *"Mine was a hole in a field."*
+
+**Floor bosses** *(working)*
+- **The Turnkey** (`turnkey`, Floor 191). A huge jailer with a wing's keys on a ring the size of a wheel, which he whirls as
+  a flail (a glow on the floor, then the sweep). Two tiers: the courtyard, then the cell row, where he opens cells to send
+  Convicts at the hero. *Weakness:* the ring: each key shot off makes the flail shorter, until it is a keyring in his hand.
+  He can't pick the right one: *"It's one of these."*
+- **The Oubliette Keeper** (`oublietteKeeper`, Floor 151). A pale, long-armed jailer who keeps the pit in the middle of the
+  dungeon floor and drops the floor on a beat (a glow under the hero's feet, 1.2 s, then the trapdoor). Two tiers: the
+  dungeon, then the pit's rim with the damned climbing the sides. *Weakness:* the lantern on his pole, the only light in the
+  pit; shot, he can't see where his floor is.
+
+**Enemies** *(entity ids working)*
+
+| Entity | Name | First met | Why it's there | Weakness / how it plays |
+|---|---|---|---|---|
+| `jailer` | Jailer | 200 | A guard who tethers the hero and drags him by the chain. | The ring in the floor; shot, the tether snaps and he staggers. |
+| `ballChain` | Ball and Chain | 190 | A prisoner's iron ball, rolling on a long chain on a fixed beat. | The chain's anchor; shot, the ball stops where it is. |
+| `keyBat` | Key Bat | 180 | A bat carrying a key that opens or locks a door in front of the hero. | Shot, it drops the key; a dropped key holds its door open for 6 s. |
+| `convict` | Convict | 175 | The damned: a prisoner stuck running the same stretch between two cells. | Can't be killed; a shot makes him sit out a lap; a loop shard drops once. |
+| `dungeonHound` | Dungeon Hound | 165 | A chained hound that lunges to the end of its chain and no farther. | Out of its reach it is harmless; the collar is the weak point. |
+| `manacleHand` | Manacle Hand | 160 | A hand reaching out of a wall to clamp on a passer-by. | Its wrist-cuff glints before it grabs; shot, it opens. |
+| `cageDrop` | Cage Drop | 155 | A cage on a chain that falls on whoever stands under it. | A glow on the floor 1.2 s before; cut the chain and the empty cage becomes a platform. |
+| `spikeRoller` | Spike Roller | 140 | A drum of spikes that rolls down a corridor on a rail. | Jam its axle with a shot and it stops. |
+| `turnkey`, `oublietteKeeper`, `chainKing` | the floor bosses and the Warden | 191, 151, 101 | above | above |
+
+**Shortcuts** *(working)*
+- **The Dumbwaiter** (`dumbwaiter`), Floor 191 to **Floor 160**: a food lift from the Turnkey's wing up to the kitchens,
+  built for plates. *Cost:* 40 diamonds (*"It wants paying in something shiny"*). Hero: *"I'm riding with the plates?"*
+- **The Escape Tunnel** (`escapeTunnel`), Floor 151 to **Floor 110**: a hole in the oubliette's wall someone dug with a
+  spoon, ages ago, leading up. *Cost (risk):* Floor 110 reads `shortcutTaken`: the tunnel comes out in the Keeper's own
+  cell, the jailers have been woken, and they tether him from the first second.
+
+**Music.** Slow and clanking: anvil hits and chain-rattle percussion, a harpsichord and a low string drone in F-sharp
+minor at 88 BPM; the loop is one figure played slower each time a key turns, then reset (a lock opening). Push music:
+the chain percussion doubled under distorted organ. The Chain King's theme: a music-box lullaby on a pipe organ with a dry
+rattle, in 6/8; the enrage plays the lullaby faster until it breaks, then hammers it out of tune.
+
+### Circle I: the Throne Stair (Floors 100-1)
+
+**Theme and look.** The Overlord's palace, which is mostly a staircase: one very long obsidian stair, up and up, black
+glass and red inlay, torches that burn the same height, banners in his sign, no windows until the top. Every imp in Hell has
+been carrying the village's diamonds here, on lifts and chains and belts, to a **hopper** at the stair's head that feeds the
+gate. The muck of the deeper Circles is gone; this one is clean, quiet and expensive. And at the top, daylight **leaks
+down**: one pale seam under a door on Floor 60, a stripe of sky on the wall at 30, grass dust drifting on the draught, then,
+on Floor 2, a white door. *(Look brief: black glass and red inlay, long perspectives of stairs and balustrades, columns in
+layers, the glow of the hopper far above, and on the last floors a grey-gold light and wind, the one new colour in the
+game. The meadow's green is saved for the very top.)*
+
+**Signature mechanic: The Draw (`gateDraw`, working).** The half-open gate is **drawing the air of Hell up the stair
+toward the surface**. A draught blows up the Circle: it carries loose things (embers, ash, banners, the hero's shots)
+upward, makes his jump longer and floatier, and slows him walking against it (on floors where it blows sideways). Gusts
+come on a beat (a banner snaps one beat before), and **shafts of daylight** light the stair in lanes: in a daylight lane
+the Overlord's guard flinch and their shots curve with the draught. The first floor teaches the draught alone, a hall
+with a gust and a few embers; later floors turn it sideways, set gusts against jumps, and use it to carry the guard's
+shots. A rewind runs the gusts back. *(C#: a rewind-safe force on the hero and projectiles, like the Caverns' Gulp.)*
+
+**Comedy angle.** Almost none; the Circle is the end of the joke. What is left is the guard, who stand at attention under
+banners the draught has blown into their faces for ages, and are very polite when they shoot you. A sign at the foot of
+the stair: *PLEASE KEEP TO THE LEFT OF THE STAIR (THE LEFT HAS BEEN REMOVED)*. On Floor 13 the announcer, with real feeling:
+*"FLOOR THIRTEEN! UNLUCKY FOR SOMEONE!"* The hero, a floor later, at a patch of daylight: *"...Is that grass?"* The
+announcer, off the beat for the only time: *"...Don't."*
+
+**The Overlord thread.** The footprints. The stair's treads are worn in the middle by one pair of feet, the same pair on
+every tread, an enormous stride, and from Floor 50 on, beside them, a second line: a man's. At the foot of the stair, set
+against the wall like something put down on the way past, the rusted barrel of an old rocket launcher. On the arm of the
+throne at the top (it faces away from the room), a **visor**, small, rusted, its two eye-slits the exact cut of the hero's own.
+Hero: *"...Huh."* (See *The Overlord: who he is*.)
+
+**The floor guard** *(the Overlord's personal guard, entity ids working)*. Everything at its strongest, one new idea a
+floor, four enemies at a time at most, a new one alone first. They are **obsidian**: the Overlord's own stone, carved by
+the Circle's one sculptor, who also made the throne.
+
+| Entity | Name | First met | Why it's there | Weakness / how it plays |
+|---|---|---|---|---|
+| `obsidianGuard` | Obsidian Guard | 100 | The Overlord's elite: obsidian plate and a spear. Fights in pairs, one a half-step behind the other. | A seam of red at the neck; shoot from either side. |
+| `gateImp` | Gate Imp | 95 | A sack imp promoted (rule 2): a fuel-bearer in a sash, carrying one of the village's sacks up the stair to the hopper. | Cut the lift's belt and it drops the sack (diamonds). |
+| `lensSentry` | Lens Sentry | 93 | A column with the Overlord's lens at its head (`laserSweep`). | Break the lens; the column is harmless. |
+| `ricochetGuard` | Ricochet Guard | 60 | Hell's trick, promoted: its shot bounces off the stair three times. | The ember arcs low: wait for the bounce. |
+| `blinkGuard` | Blink Guard | 57 | Hell's trick: it slips through the loop and is next to you. | A violet mark 0.7 s first; shoot where it stands. |
+| `bulwarkGuard` | Bulwark Guard | 54 | Hell's trick: an obsidian plate held in front (`frontShield`). | From behind or above, with the draught's help. |
+| `leadGuard` | Lead Guard | 52 | Hell's trick: it has watched you run for ninety floors. | Stand still; shoot from a daylight lane, where it misjudges the curve. |
+| `echoGuard` | Echo Guard | 9 | The Afterimage promoted: a pale copy of the hero's last three seconds. | Lead it into a lens; a rewind erases it. |
+| `guardCaptain`, `gateSmith`, `overlord` | the floor bosses and the Overlord | 91, 51, 1 | above | above |
+
+**Floor bosses** *(working)*
+- **The Captain of the Guard** (`guardCaptain`, Floor 91). A tall obsidian knight in a red cloak who calls the guard's drill
+  from a balcony; two tiers (the stair hall, then the balcony, with the draught blowing his cloak). He fights with the guard's
+  tricks in order, each telegraphed: ricochet, blink, front shield. *Weakness:* the cloak: the draught blows it across his
+  visor and he fights blind for 3 s, which is when to shoot. Voice: crisp, low, courteous, a little sorry: *"Forgive me. It
+  is the drill."*
+- **The Gate Smith** (`gateSmith`, Floor 51). The sculptor who carves the guard and the gate: a stooped obsidian craftsman
+  at a half-built forge, hammering a door that never gets finished. Two tiers (the forge, then the unfinished gate itself,
+  lit from within): hammered sparks run along the floor (a glow first) and guards are struck out of the stone (a glow on the
+  anvil 1.2 s before each stands). *Weakness:* the rivets of the unfinished gate: shoot them all out and the door falls and he
+  looks at it. He doesn't speak to the hero, only, softly, to the door: *"Nearly. Nearly."* A voice of wet stone and tiny
+  hammering.
+
+**Shortcuts** *(working)*
+- **The Fuel Line** (`fuelLine`), Floor 91 to **Floor 60**: the belt that carries the village's diamonds up the stair to the
+  hopper; ride it, standing on a sack. *Cost:* a Grudge. Hero: *"Riding our own diamonds. Again."* Announcer: *"HE'S ON THE
+  FUEL LINE! THE LINE HAS NO COMMENT!"*
+- **The Daylight Draught** (`daylightDraught`), Floor 51 to **Floor 10**: a crack in the stair's wall where the draught
+  is strong enough to carry a man. *Cost (risk):* Floor 10 reads `shortcutTaken`: the Overlord, for the first time, turns
+  his head (a huge red-eyed profile in the window above, 2 s) and the guard are on the floor from the first second. The
+  announcer says why. Hero: *"Please don't look."*
+
+**Music.** A grand, clean, low orchestra in D minor at 76 BPM, slow for the first time: a theme assembled from the earlier
+Circles' motifs one by one (the Wastes' groove as the bass line; the Road's riff, the Bridges' arpeggio, the Gloomwood's
+lone guitar bar, the Mire's piano, the Maw's heartbeat, the Peaks' bell, the Bastion's march, the Keep's lullaby), so the
+player hears the whole climb played back as he climbs it. The loop is the same sixteen bars, a little brighter every ten
+floors, the key rising a semitone each time, with a single sustained major chord entering at Floor 13 and growing. Push
+music: the full orchestra and distorted guitars on the same tune.
+
+### The Overlord: who he is *(working)*
+
+This is the answer the Act 2 and Act 3 clues have been circling, and it is **one decision for J** (see the summary): the
+Overlord is **the one who climbed first**. A long time ago, before there were 1,000 floors, a man in a visor, tired of
+everything, fell down a hole. He climbed. There was no Shaft, no counter, no Waystones, no Yooba; there was only up, and Hell,
+which was not yet very large, noticed, and made itself bigger above him floor by floor to meet him as he went (that is why it
+has 1,000: it is the length of one climb). He reached the top, and the top was a door in the ground, the **gate**, shut, with
+the meadow's light under it, that opens only from above, or from below with the village's **diamonds** burning in its lock.
+So he climbed the whole of it again, and again (**the loop was his first**: he found Déjà Vu on the way and dragged it
+backward, and learned what the hero will, that rewinding undoes nothing and only gets you another go), and somewhere
+between the hundredth climb and the thousandth he stopped being a man and became the thing the Circles had been making, the
+obsidian titan, **ruler of a place he was only trying to leave**. The imps are his errand; the village is the only fuel
+that opens the gate; the portal he lasers open in Video1 is his way of fishing. *"Mm. ... Stay."* was a man seeing, for
+the first time in an age, another one fall down the hole, and telling him, as one does, not to try it.
+
+- **What he wants** is what the hero wants: to go home. He has just done it for much longer, and gone strange with it.
+  He no longer knows whether the surface is a place or a habit. *Taking* it is what the plan has become.
+- **Why he barely notices the hero:** he has seen ten thousand souls on their way down; this one is going the wrong way.
+- **The canon is unchanged:** he is Hell's ruler, enormous, obsidian, red-eyed, crowned in black horns, slow, says very
+  little, and his voice fills a valley. Every clue fits: *UP* (VIII), the footprint lane (VII), the drowned statue (VI),
+  the Way Home's door at Floor 500 (V: the same daylight under it), the countdown candle with his face (IV: the bell
+  counts toward his gate), *HOLD* (III), Cell 1 and its four drawings (II), the man's footprints and the visor (I).
+  Nothing in the cast table is retold.
+- **The Announcer** never lets on. He is Hell's voice and knows exactly who the Overlord was, and says nothing, because it
+  would spoil the show. In the true ending he says it, once.
+
+### Floor 1: the Overlord (the final boss)
+
+**Floor 1, *The Throne*** (`levels/Floor001.json`, working; the last level), through the white door on Floor 2. One static
+screen (the Warden shape): a round gate-room at the top of the stair, the **half-built gate** filling the far wall (an
+enormous ring of black glass, two thirds shut, a seam of the meadow's light along its unfinished top), the **hopper** above
+it with the village's diamonds burning down a chute into the gate's lock, and before the gate the **throne**, which faces
+the gate with its back to the room. The Overlord sits in it. He doesn't turn. He is bigger than the Magma King: seated, he
+fills the top of the screen, and the screen shows his back, his crowned head over the throne, one huge hand on its arm.
+
+Every attack is telegraphed a second or more ahead, on the spot it will hit, as with every boss. He has **three phases**, as
+the Acts table says, and the first two are about *attention*.
+
+1. **Intro** (input and rewind off, the hero can't be hurt). The title (*"FLOOR ONE! THE OVERLORD!"*). The room is silent,
+   then the gate hums. The hero walks in. Overlord, not turning: *"Mm. ... You."* A pause. *"Stay."* Announcer, low: *"HE DID
+   NOT TURN AROUND."* The boss bar fills.
+2. **Phase 1: *Not Worth It*.** He fights without turning, with one hand: his **shoulder lenses** (`laserSweep`: a thin red
+   line, then the beam sweeps), a slap of the hand along the floor (a glowing strip, then a shockwave: jump it), and the
+   guard dropping in from above (never more than two). Nothing he does is quick, and none of it is meant to kill. *The hero
+   cannot hurt him from here:* his back is armour. To make him turn, the hero shoots **the hopper's straps**: three straps hold
+   the chute, and each one cut drops a little fuel and turns his head (a red eye in the dark) for 3 s, the only time he can
+   be hurt. Three straps, three turns. Overlord: *"...Don't."* (to half health)
+3. **Phase 2: *The Loop Was His*.** He **rewinds**. The screen desaturates for 1 s (the tell: a hum dropping), then **the last
+   three seconds of the fight run backward**: the hero's shots return to the gun, his position is pulled back, and *the
+   Overlord's attacks replay* over the hero's old position. The hero has Déjà Vu too: **holding R in the tell's second
+   cancels his** (a rewind answering a rewind: the screen holds, tears, and settles on the hero's side). A rewind he doesn't
+   answer repeats an attack the hero already dodged, so the tell is a trap *and* a chance. The lenses fire where the hero was;
+   the guard come back from where they died. Overlord, flat: *"I know every second."* In this phase he stands.
+4. **Phase 3: *The Gate Cracks*** (a third of health). The gate splits and **daylight pours in**: a white column from the seam
+   down the room, the real meadow's light, a smell of grass in the draught, which pulls everything toward the crack. He
+   **stops rewinding** (the light won't let the loop close) and his attacks become slow, huge and terrible: both hands slam (a
+   glow the width of the floor, 1.5 s: stand in the lane of daylight, the only safe place), the crown's black horns shed and
+   spear the floor (a glow under each), and the fuel pours down in a burning stream (shoot the lock it runs into). The hero
+   fights **in the light**, and for the first time the music loses its minor chord. *Weakness:* the red eyes (open now
+   whenever he looks at the hero, which is always) and the crown's horns, shed one at a time.
+5. **Defeat.** Slow motion. His last word isn't for the announcer. He sinks to one knee, one hand on the floor; the beams
+   die; the room goes quiet. The gate is still open, the fuel still burning, the light on his back. He looks at the visor on
+   the throne's arm. *The fight is over; the choice isn't* (the ending, next).
+
+**Runs.** A death in the fight restarts at the Waystone at 101: Floors 100-2 are climbed again, minus any shortcut taken
+that run. The usual rewind works throughout; phase 2's tell is the one place it matters twice.
+
+**The Announcer** calls it like a cabinet that knows it is about to lose its star: *"FLOOR ONE! THE OVERLORD!"*, *"HE DID NOT
+TURN AROUND."* (intro); *"HE'S TURNING! HE'S... LOOKING!"* (each turn); *"HE'S REWINDING?! THAT'S... THAT'S YOURS!"* (phase
+2's tell); *"THE GATE! IT'S OPENING! IT'S... DAYLIGHT?!"* (phase 3); *"THE OVERLORD HAS FALLEN. ...HELL WILL NEED A
+MOMENT."* (the defeat).
+
+### The ending: what happens at the gate *(working)*
+
+After the Overlord falls the hero is alone in the gate-room with a kneeling titan, an open gate drawing the room up toward
+a meadow, and the fuel still burning. A short scene (input and rewind off: something bigger has hold of the loop) takes him
+to the throne's arm, where the old visor lies. He picks it up, looks at it, and looks at his own. Overlord, very quietly,
+in the voice of a man much smaller than the one who fought: *"...Home. ... Was it nice?"* Hero: *"It was a nice
+afternoon."* (Video1's words, and the only speech he gives.) Then the **choice**, two cards like a Grudge pick, final (Déjà Vu
+can't undo it, for the last time):
+
+| Card | What it is | Ending |
+|---|---|---|
+| **SHUT IT** *(first card)* | Close the gate. | **The true ending: "Last Time"** |
+| **SIT DOWN** *(the other card; the joke)* | Take the chair. | **The funny ending: "Encore"** |
+
+Two more options were designed and cut, kept here so no one invents them again: **TAKE THE FUEL** (the hero pockets the
+gate's diamonds and walks out through the open gate, leaving it open: Hell would reach the surface, which the pitch rules
+out) and **LET HIM OUT** (he opens the gate for the Overlord: a forgiveness, and a threat to the village; it is the ending
+a sequel would need, which is why the true ending's knock stays).
+
+#### True ending: "Last Time"
+
+*In order: the portal fuel, the loop, rewind's meaning and Yooba's role.*
+
+1. **The fuel.** The gate is held open by the village's diamonds burning in its lock. A shove won't shut it. The hero
+   **rewinds the gate.** For this one scene the meter holds everything he has saved (a bar the length of every loop shard he
+   took from the damned) and he holds R; the gate's own loop runs backward, the burning diamonds leap out of the lock and
+   up the chute, out of the hopper and back along the belts, the imps' whole hauling run **played in reverse** over the
+   climb (the Throne Stair, the Pile, the Depot, the sacks flying home the way they came), a streak of light up the shaft
+   and through the crack into the meadow. *The village's diamonds go home: not burned, not kept, not sold, but returned,
+   by the one trick that returns things.*
+2. **The shove.** The gate is shutting with the Overlord kneeling in its door, half in the light, half out. He doesn't resist.
+   The hero puts a hand on his shoulder (the size of a cart) and shoves him back off the threshold onto Hell's side. Hero:
+   *"Stay."* (The Overlord's own word, now a mercy, because the surface is not where he can go.) The gate closes on the
+   titan, and the Shaft's plunge runs for a moment in reverse, floors flashing past, down, the counter running 1, 2, 3...
+   The room goes dark and quiet. The visor is gone from the throne's arm: he took it with him.
+3. **The loop.** The loop **breaks**: the Waystones go dark one by one on the Shaft's wall, because there is nothing left to
+   restart. A death in Hell now just ends. *Rewind's meaning:* the Overlord used it to look back, and the hero used it to put
+   something right. **Déjà Vu is repetition with a choice: again, on purpose.** Hell's loop was a punishment because it
+   had none. The announcer says so once, the only time he speaks without a show: *"HE WAS A HERO ONCE, TOO. ...WE DON'T TALK
+   ABOUT IT."*
+4. **Yooba.** The hero climbs through the closing light to **the Meadow**. It is not Hell, so the rule that Yooba never appears
+   in a stage doesn't apply (this is a scene, not a floor). He is at the portal's old scorch mark on the grass with the
+   diamonds the gate sent back in a heap, and he is **coughing up the ones he swallowed**, one by one, a very long line.
+   Yooba: *"I kept them SAFE. Mostly in my— anyway. They're warm."* The neighbours come out to look. His last line is a
+   goods list: *"I have a Goo Plaster for that, if you want one."* Hero: *"No."* Yooba: *"It's free."* Hero: *"...Fine."* (The
+   shop's first good, the last.)
+5. **Home.** The meadow is regrowing, the hut is a pile of straw, the neighbours' huts are fine. The hero sits down on the
+   ground for the first time in 1,000 floors. The announcer is gone. Something **knocks** from under the ground: three knocks,
+   a pause, one more, politely. The hero doesn't get up. The orange of his visor's eyes lights, and goes out again. Fade.
+   **Post-credit: "FLOOR 1,001"** (the canonical sting): the Landing's lava, still, and below it in the dark the white outline
+   of a door, knocking, and behind it a man's voice, hoarse and tired and almost cheerful: *"...Hello?"* (the hero's own word at
+   the portal, answered at last).
+
+The true ending **keeps the Acts table**: the hero shoves the Overlord back down, the gate shuts on him, Yooba spits the
+diamonds out, the hero sits for the first time, something knocks, and Floor 1,001 is the sting.
+
+#### Funny ending: "Encore"
+
+The hero, over the kneeling Overlord, looks at the throne, the only chair in 1,000 floors, and picks **SIT DOWN**.
+
+1. **Sitting.** He walks to the throne and sits in it, heavily, with a long breath out. Announcer, after a beat: *"...HE'S
+   SITTING. THE CROWD DOESN'T KNOW WHAT TO DO."* Overlord, looking up from the floor, very slowly: *"Mm. ... That's my chair."*
+   Hero: *"Was."*
+2. **The show stalls.** Hell has no rule for a hero who sits. The announcer tries to call it (*"WHAT A... MOVE?"*) and gives up.
+   The gate, with nobody fighting, nobody feeding it and nobody watching, **shuts by itself out of sheer boredom**; the
+   diamonds go dark in the lock and drop, with a clink, into a pile at its foot.
+3. **The queue.** One by one up the stair the Wardens arrive and sit: the Magma King on a slab of slag, the Spire Fiend on a
+   step (listening), the Bridge Wraith, apologising, the Hollow King, the Drowned Queen, the Mother Maw (small and shy, this
+   once), the Bell Ringer, the Gatekeeper (who sits down slowly, *correctly*), the Chain King (who counts them), the Imp Foreman on
+   his sack. Nobody speaks. They are all, it turns out, as sick of Hell as he is. The Overlord sits on the floor against the
+   throne's leg with the visor in his lap. Yooba, in a corner, coughs up a diamond into each of their laps.
+4. **Yooba's role** is the joke's last step: he has swallowed **all** the gate's diamonds again, to keep them safe, and refuses
+   to give them back. Yooba: *"SHOP'S OPEN."* The credits roll over everyone sitting in the daylight, nobody talking, in one
+   long take.
+5. **The loop.** Because Hell is repetition and nobody got out, the credits end on a **cut to the Landing**: Floor 1,000, the
+   lava, the portal's flash, and the announcer, rested, at full volume: *"WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO
+   GO."* Hero, off-screen: *"...Great."* (the game's first lines, repeated). The save starts a **New Game+** with the
+   Waystones and Yooba's goods kept. *Rewind's meaning here:* the hero took a seat and the loop didn't care; it started
+   again anyway.
+
+The funny ending has **no knock and no Floor 1,001**: it ends on the loop. Both endings keep the tone: deadpan hero, booming
+announcer, no office jokes. Its gag is the hero sitting down, which the true ending ends on too, in grass.
+
+#### Epilogue video idea: "Knock" *(working; not made)*
+
+About **50 seconds**, painted like the portal scene, near-silent; it plays after the true ending's credits (the funny ending
+has its stinger instead). It is the true ending's last beat as a film, so it shows only what the Meadow shows: no Hell, no
+Overlord on screen.
+
+| # | Shot | Seconds | Beat |
+|---|---|---|---|
+| 1 | The meadow at dawn, ash on the grass; a time-lapse as the grass comes up in a green wave over the scorch mark. | 6 | The village after, healing. |
+| 2 | The neighbours' huts and new thatch going onto the hero's, a row of hands. Diamonds in a heap on the fence, glinting. | 6 | The fuel is home. |
+| 3 | The hero in his armour, sitting on the grass with his back to a fence post, eyes shut, visor up. Yooba beside him, wobbling, asleep. | 5 | Nobody asks him for anything. |
+| 4 | A close-up of a blade of grass, then a pebble beside it, trembling. | 4 | |
+| 5 | Three knocks from under the ground, a pause, a fourth, polite. Nobody moves. | 6 | The hook. |
+| 6 | The hero opens one eye. Orange glows in the visor. He looks at the ground for a long beat. | 5 | |
+| 7 | He closes the eye. The orange goes out. Yooba, asleep, burps a diamond. | 5 | His one murmured line: *"Not today."* |
+| 8 | Cut to black. A white outline of a door, drawn in the dark, and a hand in the door, knocking. Title: FLOOR 1,001. | 6 | The sequel hook. |
+| 9 | Black. A small, tired voice behind the door: *"...Hello?"* | 3 | The echo, answered. |
+
+Notes: the meadow is the game's own (Level 1's footage, the website's `QuietVillageAfter`); the knock and the *"Hello?"* are
+voice and sound lines (cents); marketing may not use it (the website carries no finale spoilers, and teasers never go past
+the prologue). Priced in LevelDesign.md section 8.
+
+### Yooba on the Shaft: Circles III to I
+
+One reaction per Circle (the moment/floor model of *Yooba between floors*, in his voice, said once per save; working lines):
+
+- **III (the Bastion, Floor 300):** *"They've all got the same face! I counted. Three hundred and eight. I can do the face,
+  look."* Hero: *"Don't."*
+- **II (the Keep, Floor 200):** *"There's a lot of chains. I'm not scared of chains. Anything with that many gaps is
+  basically fine for a slime."*
+- **I (the Throne Stair, Floor 100):** *"That's the way home. I can smell it. It smells like hay. And a little like us."* Hero:
+  *"Yeah."*
+- **The ending:** above. His shop gets no new goods (the list is final), only one new line at Floor 101: he gives the hero a
+  free *Last Plaster*, a callback to the first thing he ever sold.
+
+### The shape of the climb, from the top
+
+```
+FLOOR 300  THE BASTION       the drum, the gates, HOLD               Warden: the Gatekeeper (201)  "...Pass."
+FLOOR 200  THE KEEP          chains, keys, an empty Cell 1           Warden: the Chain King (101)  "...One."
+FLOOR 100  THE THRONE STAIR  the draw, the guard, daylight leaking   Floor 91: Captain, Floor 51: Smith
+FLOOR 2    THE DOOR          a white door, grass dust
+FLOOR 1    THE THRONE        the Overlord, three phases, the choice  SHUT IT / SIT DOWN
+FLOOR 0    THE MEADOW        the diamonds home, Yooba, a knock       true: "Last Time" / funny: "Encore"
+```
 
 ### Yooba between floors
 
