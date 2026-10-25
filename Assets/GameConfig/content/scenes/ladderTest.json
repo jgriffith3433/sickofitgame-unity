@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "seed": 1002,
+  "length": 90,
+  "floors": {
+    "start": 1000,
+    "end": 0,
+    "unitsPerFloor": 0.0,
+    "circle": "emberWastes",
+    "signs": false
+  },
+  "world": {
+    "camera": "Travel",
+    "travelLead": 1.2,
+    "followSharpness": 4.0,
+    "holdForPushes": false,
+    "path": [
+      {
+        "name": "up",
+        "direction": "Up",
+        "length": 5.0,
+        "turn": 2.5,
+        "spawns": [
+          {
+            "entity": "lavaSea",
+            "at": [
+              0.0,
+              -6.0
+            ],
+            "id": "lavaSea"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              -4.5,
+              -2.45
+            ],
+            "scale": [
+              3.0,
+              1
+            ],
+            "id": "start"
+          },
+          {
+            "entity": "ladder",
+            "at": [
+              -2.6,
+              -0.2
+            ],
+            "scale": [
+              1.0,
+              4.0
+            ],
+            "id": "ladder1"
+          },
+          {
+            "entity": "ledge",
+            "at": [
+              0.0,
+              1.55
+            ],
+            "scale": [
+              4.0,
+              1
+            ],
+            "id": "shelf"
+          }
+        ]
+      },
+      {
+        "name": "across",
+        "direction": "Right",
+        "length": 10.0,
+        "turn": 2.5,
+        "spawns": [
+          {
+            "entity": "floorLanding",
+            "at": [
+              5.2,
+              1.55
+            ],
+            "id": "landing"
+          }
+        ]
+      }
+    ]
+  },
+  "objective": {
+    "text": "Up the ladder"
+  },
+  "counters": [
+    {
+      "name": "lavaSpeed",
+      "value": 0.0
+    },
+    {
+      "name": "lavaMax",
+      "value": 0.0
+    }
+  ],
+  "rules": [
+    {
+      "name": "the shelf",
+      "when": {
+        "type": "playerOn",
+        "target": {
+          "id": "shelf"
+        }
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "emit",
+          "signal": "ladderTop"
+        },
+        {
+          "type": "showText",
+          "text": "A ladder. Hell finally built something that goes up on purpose.",
+          "duration": 3.0,
+          "style": "Subtitle"
+        }
+      ]
+    },
+    {
+      "name": "the landing",
+      "when": {
+        "type": "playerOn",
+        "target": {
+          "id": "landing"
+        }
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "emit",
+          "signal": "landed"
+        },
+        {
+          "type": "runSequence",
+          "steps": [
+            {
+              "type": "showText",
+              "text": "THE LADDER! IT HOLDS!",
+              "duration": 2.5,
+              "style": "Banner",
+              "color": "#FFD27A"
+            },
+            {
+              "type": "wait",
+              "seconds": 3.0
+            },
+            {
+              "type": "completeLevel"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "name": "climb",
+      "onEnter": []
+    }
+  ]
+}

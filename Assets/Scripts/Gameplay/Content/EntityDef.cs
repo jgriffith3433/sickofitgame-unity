@@ -20,6 +20,13 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Starting health. 0 = can't be damaged (most projectiles and hazards).")] public int health = 3;
         [Doc("Seconds it can't be hurt again after a hit.")] public float invincibilityTime;
         [Doc("Base movement speed (world units per second) used by movement abilities that don't set their own.")] public float moveSpeed = 2f;
+        [Doc("The name the hero says and the subtitle shows for this type (\"Imp\"). Entities that extend another share its name, and so its one hint. Empty = no hint (hazards, platforms, anything that is not a creature to size up).")]
+        public string displayName = "";
+        [Doc("The small weakness hint under the name in the hero's first-sighting subtitle (\"Slow embers. Keep moving.\"). Used by the hintOnce action.")]
+        public string hint = "";
+        [SoundRef, Doc("Optional audio.json voice line (voice player) spoken with the hint. Until its clip exists the hint shows as a subtitle only.")]
+        public string hintVoice = "";
+
         [Doc("Labels for selecting it from scripts, e.g. \"boss\", \"wave\".")] public List<string> tags = new List<string>();
         [Doc("The player's shots can hit it. Only applies to team Enemy with health above 0.")] public bool shootable = true;
         [Doc("Abilities only run while the player is closer than this (0 = always).")] public float activationRange;

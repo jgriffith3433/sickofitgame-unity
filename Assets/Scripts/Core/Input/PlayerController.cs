@@ -217,6 +217,38 @@ namespace SickOfIt.Core.Input
         private bool jumpedOffHold;
         // Sideways speed kept from a chain's swing after jumping off it, fading out (or gone on landing).
         private float swingMomentum;
+        // Held on a ladder (HoldClimbing): the climb poses play, shots come slower, and a jump leaves sideways with the held stick.
+        private bool climbing;
+        private float heldJumpOffX;
+        private float climbFireScale = 1f;
+        private string climbPose;
+
+        /// <summary>Climbing a ladder (HoldClimbing): gravity is off and the ladder moves him; Jump lets go.</summary>
+        public bool IsClimbing => held && climbing;
+
+        /// <summary>Which way the move stick is held up (+1) or down (-1), 0 when idle or locked (read by ladders; he grabs on with up).</summary>
+        public float MoveY => InputLocked || Suspended || ScriptedMove.HasValue ? 0f : (Mathf.Abs(moveInput.y) > inputDeadzone ? moveInput.y : 0f);
+
+        /// <summary>Sideways stick, -1..1 (read by ladders: a jump off leaves that way).</summary>
+        public float MoveX => InputLocked || Suspended || ScriptedMove.HasValue ? 0f : Mathf.Clamp(moveInput.x, -1f, 1f);
+
+        /// <summary>The climb pose playing now ("Climb", "ClimbIdle") or null; a playtest reads it.</summary>
+        public string ClimbPose => climbPose;
+
+        /// <summary>
+        /// Holds him on a ladder at 'position' moving at 'velocity'. Like <see cref="Hold"/>, but the climb poses play,
+        /// 'fireScale' slows the guns while he climbs (1 = same as on the ground) and a jump off leaves sideways at 'jumpOffX'.
+        /// Call every tick while climbing.
+        /// </summary>
+        public void HoldClimbing(Vector2 position, Vector2 velocity, float jumpOffX, float fireScale)
+        {
+            if (rb == null || Suspended)
+                return;
+            Hold(position, velocity);
+            climbing = true;
+            heldJumpOffX = jumpOffX;
+            climbFireScale = Mathf.Clamp(fireScale, 0.1f, 1f);
+        }
 
         /// <summary>Holds him at 'position' moving at 'velocity' (a chain he grabbed). Call every tick while holding.</summary>
         public void Hold(Vector2 position, Vector2 velocity)
@@ -243,6 +275,31 @@ namespace SickOfIt.Core.Input
             held = false;
             if (rb != null)
                 rb.gravityScale = gravityBeforeHold;
+            if (climbing)
+                EndClimbPose();
+            climbing = false;
+            heldJumpOffX = 0f;
+            climbFireScale = 1f;
+        }
+
+        // Back to the ordinary animator state once he leaves a ladder (the climb poses are scene-clip states).
+        private void EndClimbPose()
+        {
+            climbPose = null;
+            if (animator != null)
+                PlayAnimatorState(isGrounded ? "Idle" : "Fall");
+        }
+
+        // Plays "Climb" while he moves on the ladder and "ClimbIdle" while he hangs still.
+        private void UpdateClimbPose()
+        {
+            if (!IsClimbing)
+                return;
+            string pose = rb != null && Mathf.Abs(rb.linearVelocity.y) > 0.1f ? "Climb" : "ClimbIdle";
+            if (pose == climbPose)
+                return;
+            climbPose = pose;
+            PlayAnimatorState(pose);
         }
 
         /// <summary>True once after he jumped off what held him (the holder lets go of him).</summary>
@@ -1092,11 +1149,12 @@ namespace SickOfIt.Core.Input
 
             if (held)
             {
-                // Jumping off a chain: let go with its swing plus a jump.
+                // Jumping off a chain: let go with its swing plus a jump (off a ladder: out the way the stick points).
+                float jumpOffX = heldJumpOffX;
                 ReleaseHold();
                 lastJumpPressTime = float.NegativeInfinity;
                 jumpedOffHold = true;
-                swingMomentum = heldVelocity.x;
+                swingMomentum = heldVelocity.x + jumpOffX;
                 isGrounded = false;
                 Jump();
                 return;
@@ -1169,7 +1227,7 @@ namespace SickOfIt.Core.Input
                 return;
             }
 
-            float interval = (armed ? weapon.cooldown : fireRate) / Mathf.Max(0.1f, FireRateMultiplier);
+            float interval = (armed ? weapon.cooldown : fireRate) / Mathf.Max(0.1f, FireRateMultiplier * (IsClimbing ? climbFireScale : 1f));
             if (currentTime < lastFireTime)
                 lastFireTime = currentTime - interval;
             if (currentTime - lastFireTime < interval) return;
@@ -1493,6 +1551,11 @@ namespace SickOfIt.Core.Input
         private void UpdateAnimator()
         {
             if (animator == null) return;
+            if (IsClimbing)
+            {
+                UpdateClimbPose();
+                return;
+            }
             
             animator.SetBool(OnGroundHash, isGrounded);
             if (AnimatorHasFiring())

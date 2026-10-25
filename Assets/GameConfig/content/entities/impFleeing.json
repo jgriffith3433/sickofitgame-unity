@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "",
+  "hint": "",
+  "hintVoice": "",
   "extends": "imp",
   "team": "Neutral",
   "health": 0,

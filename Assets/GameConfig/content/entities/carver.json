@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "",
+  "hint": "",
+  "hintVoice": "",
   "extends": "brimstoneDemon",
   "team": "Enemy",
   "health": 34,

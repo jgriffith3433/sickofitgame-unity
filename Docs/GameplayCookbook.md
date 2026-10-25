@@ -502,6 +502,37 @@ The `weapon-drops` playtest plays all of it (998's theft, the fists floors, each
 shows what it does: `content/scenes/weaponArena.json`, `targetDummy`). Try it on the bench: `?playtest=weapons` (the scene `weaponsTest`: launcher, `giveWeapon`, Q, a punched imp, a rewind,
 the HUD button, `takeWeapon`; each beat is a `check` event).
 
+## The hero sizes them up ("a name and a weakness the first time it shows", `hintOnce`)
+
+The first time a kind of enemy shows up in a save, the hero sizes it up: a subtitle with its name and one small hint at
+its weakness, and, once the clip exists, his voice line. Story: Story.md, "The hero sizes them up". Three fields on the
+entity (`content/entities/{id}.json`) and one action:
+
+```json
+{ "schemaVersion": 1, "extends": "shooter",
+  "displayName": "Imp", "hint": "Slow embers. Keep moving.", "hintVoice": "vo_hero_hint_imp",
+  "onSpawn": [{ "type": "hintOnce" }] }
+```
+
+- `displayName` is the type's name and its key in the save (`EnemyHints`, PlayerPrefs `Enemies_Seen`, like
+  `ShortcutProgress`). Entities that `extends` another share its name and so its one hint (the bearer imps, the guards
+  of a count: all "Imp" / "Imp guard"). Give a child its own `displayName` and `hint` for a hint of its own
+  (`impSack`, `impSwing`). `"displayName": ""` makes a child silent (the fleeing imp, bosses: they have intros).
+  `onSpawn` is a list and a child's replaces the parent's, so put `hintOnce` on the base and leave it off the children.
+- `hint` is the weakness in a few words, the hero's own words, short and deadpan. The subtitle reads `IMP: Slow embers.
+  Keep moving.`. `hintVoice` is an `audio.json` voice (`player`, id `vo_hero_hint_<entity>`); it can be missing or have no
+  clip yet and the line shows as a subtitle only. Generate the clips with the Sound Generator (`-sounds vo_hero_hint_imp`).
+- `hintOnce` with no `entity` talks about the entity it runs on (`onSpawn`, self). A level rule can name one:
+  `{ "type": "hintOnce", "entity": "blinkImp" }` (say it before the first one spawns).
+- **Once per save.** The set is saved at once and is not part of the rewind: a rewind past the spawn, a death, a new run
+  from a Waystone and the next imp do not say it again. Only New Game (`ResetAllRogueliteData`) clears it.
+- **Never over a scene.** It stays silent, and does not use the type up, while a scene (`content/scenes`) is playing,
+  while a script has locked input or rewind (`lockInput`, `lockRewind`) and while rewinding; the type is then
+  announced the next time it spawns where he can speak.
+- The telemetry records `hint` (subject = the name, detail = the subtitle). Check it with `?playtest=enemy-hints`
+  (Level 1's imps: New Game clears it, the first imp is announced once, a rewind, the second imp and a new run do not repeat it,
+  the bystander scene stays silent; each beat is a `check` event).
+
 ## A different kind of level space
 
 `"world"` in the script: `"camera": "Follow"` with `boundsCenter`/`boundsSize` for a wider arena, `"Scroll"` with
@@ -573,6 +604,47 @@ backdrop after three floors. `clipStart`/`clipLength` play just part of a long v
 lava-river shot, `clipStart` 17.6, `clipLength` 5).
 
 Same seed, same floors: platforms, props and pushes come from the level seed, so rewinds and bot playtests repeat.
+
+## Ladders ("a ladder up the wall", "climb, shoot, jump off")
+
+A ladder is an entity with the `ladder` ability (`content/entities/ladder.json`); its body is the climbable zone. Spawn it
+like any floor piece and stretch it with the spawn's `scale`: the entity is 0.8 wide and 1 tall, so `"scale": [1.0, 4.0]`
+is a ladder 4 units tall, centred on `at`. The test floor `content/scenes/ladderTest.json` (Level 2's stage):
+
+```json
+{ "entity": "ledge",  "at": [-4.5, -2.45], "scale": [3.0, 1], "id": "start" },
+{ "entity": "ladder", "at": [-2.6, -0.2],  "scale": [1.0, 4.0], "id": "ladder1" },
+{ "entity": "ledge",  "at": [0.0, 1.55],   "scale": [4.0, 1], "id": "shelf" }
+```
+
+Put the ladder's foot on a ledge's top (here -2.2) and its top level with the top of the ledge he climbs onto (1.8; ledges are
+one-way, so he passes up through the shelf). The shelf must span the ladder's x or he steps out onto air.
+
+**How it plays.**
+- **Grab:** push up (W, up arrow, the left stick or the touch stick) while his body overlaps the zone (`grabReach` beside it), or
+  push down while he stands on its top (he steps down onto the rungs). Not within `regrab` seconds of letting go.
+- **Held:** gravity is off, he slides to the middle of the rungs (`centerSpeed`), up and down climb at `climbSpeed` times the stick,
+  sideways does nothing. The Climb pose plays while he moves and ClimbIdle while he hangs still.
+- **Shooting:** yes, slower: guns fire at `fireRate` (default 0.55) of their rate. A melee weapon is unchanged.
+- **Leave:** Jump lets go with the ordinary jump, out sideways at `jumpOffSpeed` times the stick (0 = straight up); climbing past the top
+  puts his feet a hair over it and he steps out; climbing past the bottom lets go on its foot.
+- Telemetry `floorkit` events: `ladderGrab`, `ladderGrabTop`, `ladderJumpOff`, `ladderTop`, `ladderBottom`.
+
+**Rewind.** What rewind restores of the hero is his transform (`RewindableTransform`), velocity, health and the world's state;
+`PlayerController`'s own flags (held, gravity, jump buffer) are *not* recorded. So a hold can't live in the controller: like the
+swinging chain, the *holder* keeps it. The ladder saves `holding` and `releasedAt`; each tick, while `holding`, it asks
+`GameplayWorld.HoldPlayerClimbing`, which sets `held`, gravity 0, the climb poses, and the fire scale again. A rewind into a climb
+therefore puts him back on the rung (position from the transform, hold from the ladder), and a rewind out of one drops the hold
+the next tick (the world releases him when nothing holds him). His rung is his position, so nothing else is saved.
+The `ladder` playtest checks both: back into the middle of a climb, and back from the shelf into the climb.
+
+**Animator.** `player.json` `animationConfig` has two states, `Climb` and `ClimbIdle`, with placeholder sheets (Walk and Grabbed). They
+have no transitions: the generated controller doesn't have them, so `PlayAnimatorState` plays them from their sheets
+(`PlayerSceneClip`) and hands the sprite back to the Animator when he lets go. Real clips later replace only `spriteSheet` in those two
+states (a separate art task).
+
+**Check it:** playtest `ladder` (~2 min): walks to the foot, grabs, hangs still, climbs up and down, shoots slower than on the ground,
+rewinds in the climb and back into it from the shelf, jumps off, grabs again and exits at the top.
 
 ## A floor with a path ("climb a lava fall, cross the river on a raft, climb again")
 

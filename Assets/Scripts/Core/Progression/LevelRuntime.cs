@@ -194,6 +194,7 @@ namespace SickOfIt.Core.Progression
                 Script = script,
                 LevelNumber = levelNumber,
                 LevelName = config.levelName,
+                SceneId = SceneId,
                 Player = characterObject,
                 Camera = SceneCamera(),
                 Music = musicSource,

@@ -17,6 +17,8 @@ namespace SickOfIt.Gameplay
         public LevelScript Script;
         public int LevelNumber;
         public string LevelName = "";
+        /// <summary>The scene (content/scenes) playing instead of the level's own script, or "".</summary>
+        public string SceneId = "";
         public GameObject Player;
         public Camera Camera;
         public AudioSource Music;
@@ -103,6 +105,8 @@ namespace SickOfIt.Gameplay
         public float InputLockedUntil => inputLockedUntil;
         /// <summary>A script locked rewind (lockRewind): no control can start one until unlockRewind.</summary>
         public bool RewindLocked => rewindLocked;
+        /// <summary>The scene playing instead of the level's script (a scripted scene), or "".</summary>
+        public string SceneId { get; private set; } = "";
         public float Now => GameClock.Instance != null ? GameClock.Instance.Time : 0f;
         public IReadOnlyList<Entity> Live => live;
 
@@ -142,6 +146,7 @@ namespace SickOfIt.Gameplay
             PickupPool = setup.PickupPool;
             LevelNumber = setup.LevelNumber;
             LevelName = setup.LevelName;
+            SceneId = setup.SceneId ?? "";
             boundaryLayer = LayerMask.NameToLayer("Boundary");
             Seed = (uint)(setup.Script != null && setup.Script.seed != 0 ? setup.Script.seed : 1000 + setup.LevelNumber * 7919);
 
@@ -418,6 +423,18 @@ namespace SickOfIt.Gameplay
                 return;
             heldThisTick = true;
             playerController.Hold(position, velocity);
+        }
+
+        /// <summary>
+        /// This tick, a ladder holds him at 'position' moving at 'velocity' (up or down the rungs). The climb poses play, his guns
+        /// fire at 'fireScale' of their rate, and Jump lets go sideways at 'jumpOffX'.
+        /// </summary>
+        public void HoldPlayerClimbing(Vector2 position, Vector2 velocity, float jumpOffX, float fireScale)
+        {
+            if (playerController == null)
+                return;
+            heldThisTick = true;
+            playerController.HoldClimbing(position, velocity, jumpOffX, fireScale);
         }
 
         /// <summary>The live entity spawned with this instance id, or null.</summary>

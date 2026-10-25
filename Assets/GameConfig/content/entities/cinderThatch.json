@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Thatch cinder",
+  "hint": "Bursts into sparks. Dodge them.",
+  "hintVoice": "vo_hero_hint_cinderThatch",
   "extends": "cinder",
   "health": 2,
   "moveSpeed": 1.1,

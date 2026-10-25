@@ -113,6 +113,15 @@ Assets/GameConfig/
   `teleport`, `frontShield` (Entity.Damage asks it; the hero's shots arrive through `IDirectionalDamageable` with the shot's place),
   `laserSweep` (a segment tested against the hero's collider, no physics) and `Aim.Predictive`. Test enemies `ricochetImp`, `blinkImp`,
   `bulwarkImp`, `beamLens`, `leadImp` on the `mechanicsTest` bench (cookbook "Bouncing shots, a blink, ...").
+- **The hero sizes them up** (Docs/Story.md, cookbook "The hero sizes them up"): entity fields `displayName`, `hint`, `hintVoice` and the
+  `hintOnce` action (in a base enemy's `onSpawn`) show the name and weakness as a subtitle, with the hero's `vo_hero_hint_<id>` voice once its
+  clip exists, the first time that type spawns in a save. Remembered in `EnemyHints` (PlayerPrefs `Enemies_Seen`, cleared only by New Game;
+  not rewound), silent during scenes (`GameplayWorld.SceneId`), locked input/rewind and rewinding. Playtest `enemy-hints`.
+- **Ladders** (Docs/Story.md "Ladders", cookbook "Ladders"): entity ability `ladder` (`content/entities/ladder.json`, a tall zone; `scale` stretches it). Up
+  grabs, down from its top grabs, up/down climb, Jump lets go, climbing off the top steps out; guns at `fireRate` (0.55) while held. The hold is the ladder's
+  (`holding` saved), applied through `GameplayWorld.HoldPlayerClimbing` -> `PlayerController.HoldClimbing` (`IsClimbing`, `ClimbPose`): the controller's own flags are
+  not rewound, which is why the holder re-holds him every tick. Player states `Climb`/`ClimbIdle` in `player.json` (placeholder sheets). Playtest `ladder`
+  (scene `ladderTest`).
 - **Weapons** (Docs/Story.md "Weapons", cookbook "Weapons"): `content/weapons/*.json` (`rocketLauncher` = the old gun, the
   default, same numbers as player.json; `fists` = a melee combo with a visible swing, no ammo). `PlayerController` asks its
   `IPlayerArmory` (`Gameplay/Core/PlayerWeapons.cs`) for the equipped weapon's `WeaponStats`, whether it can be used (cooldown,
@@ -419,7 +428,7 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   imp's front shield blocks shots from the front (`shieldBlock`, no damage) and takes them from behind, a lead imp's shots are checked against the
   intercept maths (`predictive`), the Overlord's lens shows a warning line and then sweeps a beam that hurts the hero where it crosses him
   (`laser`); `check`, `station` events; ~3 min; Docs/GameplayCookbook.md "Bouncing shots, a blink, ..."),
-  `bystander` (a bystander in a scene: `content/scenes/bystanderTest.json` on Level 1's stage, setup shortcut, real input: a damned soul stands behind the hero; the scene walks it (`walkEntityTo`), turns it away (`faceEntity`) and plays its Hiccup (`playEntityAnimation`); he walks up and it turns to him and speaks a subtitle; he shoots along the ground at an imp and the shots pass it: it flinches back and settles (`witness` ShotPassed); the imp hurts him and it flinches and speaks (HeroHurt; a scene rule hurts him after 15 s if the imp hasn't); hold R back to before it noticed him: its facing and place return; `check`, `bystander` events; ~2 min),
+  `enemy-hints` (the hero sizes up enemy types once: New Game clears it, Level 1's first imp is announced once, a rewind, the next imps, a new run and a scene do not repeat it; `check`, `hint` events; ~3 min), `bystander` (a bystander in a scene: `content/scenes/bystanderTest.json` on Level 1's stage, setup shortcut, real input: a damned soul stands behind the hero; the scene walks it (`walkEntityTo`), turns it away (`faceEntity`) and plays its Hiccup (`playEntityAnimation`); he walks up and it turns to him and speaks a subtitle; he shoots along the ground at an imp and the shots pass it: it flinches back and settles (`witness` ShotPassed); the imp hurts him and it flinches and speaks (HeroHurt; a scene rule hurts him after 15 s if the imp hasn't); hold R back to before it noticed him: its facing and place return; `check`, `bystander` events; ~2 min),
   `weapons` (the weapons: `content/scenes/weaponsTest.json` on Level 1's stage, setup shortcut, real input: the launcher is the default (HUD name, fire rate and aim as player.json says, its aim guide), `giveWeapon` puts fists in his hands, Q equips them (HUD says FISTS, the aim guide shortens), he punches an imp that appears in front of him (a visible crescent and fist, the combo hits, the imp dies), Q back and hold R back to before the switch (the rewind restores the fists), the HUD weapon button clicked with the mouse (a tap's path) switches, `takeWeapon` takes the fists away; `check`, `weapon` events; ~2 min),
   `aim-guide` (the aim guide: Level 1 loaded directly, every volley's guide lines on the frame it fired against the shots'
   flight directions read back from the projectiles (`aim` events), the stick held (one short line under the gameplay), held

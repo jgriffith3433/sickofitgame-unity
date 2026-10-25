@@ -444,7 +444,7 @@ namespace SickOfIt.Playtest
         {
             var list = new List<int>();
             var definition = GameDefinition.Instance;
-            var content = SickOfIt.Gameplay.Content.GameContent.Current;
+            var content = SickOfIt.Gameplay.GameContent.Current;
             int levels = definition != null ? definition.TotalLevels : 0;
             for (int n = 1; n <= levels; n++)
             {
@@ -659,6 +659,15 @@ namespace SickOfIt.Playtest
                 $"Last, the bench (the scene \"{WeaponArenaScene}\" on level {WeaponsLevel}'s stage): the Spitfire streams at several times the launcher's rate on ammo, the Ricochet Pistol's bullet bounces off the ground, " +
                 "a dummy 2.6 away is out of the fists' reach and in the Chain-Whip's, the Shotgun fires five pellets and hurts point blank but not across the room, and the Boomerang Halo flies out, comes back and hits both ways. " +
                 "Each beat is a check event; weapon, banner and line events log the timeline", WeaponDropsSeconds, "level"));
+            list.Add(new PlaytestScenario(EnemyHintsId, $"The hero sizes up each enemy type once (Docs/GameplayCookbook.md \"The hero sizes them up\"): every named enemy has a hint; New Game forgets; " +
+                $"Level {EnemyHintsLevel}'s first imp gets his subtitle (name and weakness), then a rewind past it and the next imps do not repeat it; a new run (the level loaded again) does not; " +
+                "a scripted scene (the bystander bench) spawns an imp in silence and does not use the type up. Each beat is a check event; hint events log the subtitles", EnemyHintsSeconds, "level"));
+            list.Add(new PlaytestScenario(LadderId, $"Ladders (Docs/GameplayCookbook.md \"Ladders\"): the scene \"{LadderScene}\" on level {LadderLevel}'s stage (setup shortcut), " +
+                "played through real input, no bot. A ladder stands on a ledge and rises to a shelf. The hero walks to its foot (D) and fires on the ground, then W grabs on; " +
+                "held still he does not fall (no gravity), W climbs up and S down (he centres on the rungs, the Climb and ClimbIdle poses play), and he shoots while climbing, " +
+                "slower than on the ground. Hold R back to a moment halfway up: his place and his hold are restored and he keeps hanging. Space lets go (a jump) and he lands; " +
+                "he takes hold again (S from the ladder's top, or W from its foot) and climbs off the top onto the shelf. Then hold R back to standing on the shelf, and back again " +
+                "into the climb itself: the exact place and the hold come back. Each beat is a check event; ladder events log the grabs, jumps and exits", LadderSeconds, "level"));
             list.Add(new PlaytestScenario(BystanderId, $"A bystander in a scene (Docs/GameplayCookbook.md \"Bystanders\"): the scene \"{BystanderScene}\" on level {BystanderLevel}'s stage (setup shortcut), " +
                 "played through real input. A neutral damned soul stands behind the hero looking away. A scene walks it (walkEntityTo: it walks toward him and faces the way it goes), " +
                 "turns it away (faceEntity) and plays its Hiccup animation (playEntityAnimation). He walks up (D); inside 4.5 units it turns to him and speaks a subtitle. An imp appears " +
@@ -993,6 +1002,13 @@ namespace SickOfIt.Playtest
                 yield return session.WeaponDropsRun();
             else if (id == BystanderId)
                 yield return session.BystanderRun();
+            else if (id == LadderId)
+            {
+                session.Prepare(LadderLevel, true);
+                yield return session.LadderRun();
+            }
+            else if (id == EnemyHintsId)
+                yield return session.EnemyHintsRun();
             else if (id == "restart")
                 yield return session.RestartRun();
             else if (id == RewindPerfId)

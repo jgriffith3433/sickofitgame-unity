@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "",
+  "hint": "",
+  "hintVoice": "",
   "extends": "cinder",
   "health": 3,
   "moveSpeed": 1.0,
