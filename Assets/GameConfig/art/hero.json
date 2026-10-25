@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "entity": "player",
+  "name": "Hero",
+  "description": "the hero: a tired, unimpressed man in his thirties with messy dark hair and a deadpan half-lidded stare, worn jacket and boots, a compact rocket launcher on his shoulder; exactly the look of his existing Idle sprite",
+  "height": 0.85,
+  "reference": "Art/Sprites/Player/Idle.png",
+  "pixels": 340,
+  "cellSize": [
+    604,
+    340
+  ],
+  "notes": "Hero clips for Docs/ArtPipeline.md. Cells match the existing hero sheets (604x340, Unity spriteScale 0.25) so he never changes size; every pose starts from the Idle reference. Written 2026-10-25 without GPU; wired into player.json animationConfig by the run.",
+  "poses": {
+    "stand": "standing relaxed, launcher on his shoulder, bored expression",
+    "punchWind": "leaning back with his right fist cocked behind him, launcher slung on his back, scowling",
+    "punchHit": "lunging forward, right fist fully extended, body low and twisted into the punch",
+    "punchHook": "left fist swinging round in a wide hook, shoulders turned",
+    "punchUpper": "rising on his toes with a fist driving upward in an uppercut",
+    "launcherHeld": "holding the rocket launcher on his shoulder, ready to fire",
+    "launcherGone": "hands empty and open at his sides, staring flatly at them",
+    "dashLean": "leaning hard forward mid-sprint, one leg stretched back, coat flaring",
+    "wallCling": "pressed against a wall on his right, one hand and foot on it, looking back over his shoulder",
+    "wallKick": "kicking off the wall, body arched out and up, arms spread",
+    "grappleAim": "arm thrown forward and up, holding a hook on a rope, other hand bracing",
+    "grappleHang": "hanging by one hand from a rope above him, legs swinging, bored",
+    "ledgeHang": "hanging by both hands from a ledge, legs dangling, grunting",
+    "ledgePull": "hauling himself up over a ledge, one knee on top",
+    "grazeSpin": "twisting out of the way with a smug smirk and a raised eyebrow, a tiny spark trailing his sleeve",
+    "victoryPose": "arms crossed, one eyebrow raised, the smallest nod of satisfaction",
+    "deathFlat": "flat on his back, eyes wide open, arms out, smoking"
+  },
+  "clips": {
+    "punch1": {
+      "from": "punchWind",
+      "action": "throws a quick right jab, then shakes out his hand",
+      "seconds": 0.6,
+      "to": "stand",
+      "state": "Punch1",
+      "loop": false
+    },
+    "punch2": {
+      "from": "punchWind",
+      "action": "swings a wide left hook, grunting",
+      "seconds": 0.7,
+      "to": "stand",
+      "state": "Punch2",
+      "loop": false
+    },
+    "punch3": {
+      "from": "punchWind",
+      "action": "rises on his toes into a big finishing uppercut",
+      "seconds": 0.8,
+      "to": "stand",
+      "state": "Punch3",
+      "loop": false
+    },
+    "launcherAway": {
+      "from": "launcherHeld",
+      "action": "the launcher is yanked from his shoulder out of frame; he looks at his empty hands, unimpressed",
+      "seconds": 1.5,
+      "to": "launcherGone",
+      "state": "LauncherTaken",
+      "loop": false
+    },
+    "equipLauncher": {
+      "from": "launcherGone",
+      "action": "swings the rocket launcher up onto his shoulder and checks it",
+      "seconds": 1,
+      "to": "launcherHeld",
+      "state": "EquipLauncher",
+      "loop": false
+    },
+    "equipFists": {
+      "from": "stand",
+      "action": "slings the launcher on his back and cracks his knuckles",
+      "seconds": 1,
+      "to": "punchWind",
+      "state": "EquipFists",
+      "loop": false
+    },
+    "dash": {
+      "from": "stand",
+      "action": "bursts into a low forward dash, coat flaring",
+      "seconds": 0.5,
+      "to": "dashLean",
+      "state": "Dash",
+      "loop": false
+    },
+    "wallSlide": {
+      "from": "wallCling",
+      "action": "slides slowly down the wall, scowling",
+      "seconds": 1,
+      "state": "WallSlide",
+      "loop": true
+    },
+    "wallJump": {
+      "from": "wallCling",
+      "action": "kicks off the wall and launches up and away",
+      "seconds": 0.6,
+      "to": "wallKick",
+      "state": "WallJump",
+      "loop": false
+    },
+    "grappleThrow": {
+      "from": "stand",
+      "action": "throws the hook up and forward on a rope",
+      "seconds": 0.7,
+      "to": "grappleAim",
+      "state": "GrappleThrow",
+      "loop": false
+    },
+    "grappleSwing": {
+      "from": "grappleHang",
+      "action": "swings back and forth hanging from the rope",
+      "seconds": 1.2,
+      "state": "GrappleSwing",
+      "loop": true
+    },
+    "ledgeGrab": {
+      "from": "wallKick",
+      "action": "snatches a ledge with both hands and dangles",
+      "seconds": 0.6,
+      "to": "ledgeHang",
+      "state": "LedgeGrab",
+      "loop": false
+    },
+    "ledgeClimb": {
+      "from": "ledgeHang",
+      "action": "hauls himself up and over the ledge",
+      "seconds": 0.9,
+      "to": "stand",
+      "state": "LedgeClimb",
+      "loop": false
+    },
+    "graze": {
+      "from": "stand",
+      "action": "twists aside as a shot whistles past, smirks smugly",
+      "seconds": 0.6,
+      "to": "grazeSpin",
+      "state": "Graze",
+      "loop": false
+    },
+    "victory": {
+      "from": "stand",
+      "action": "nods once, looks at the camera, flatly says 'fine' with a tiny fist pump",
+      "seconds": 1.5,
+      "to": "victoryPose",
+      "state": "Victory",
+      "loop": false
+    },
+    "deathBurn": {
+      "from": "stand",
+      "action": "is hit, lights up like a firework, goes skeletal for a flash and collapses in a puff of smoke",
+      "seconds": 1.4,
+      "to": "deathFlat",
+      "state": "DeathBurn",
+      "loop": false
+    },
+    "deathSquash": {
+      "from": "stand",
+      "action": "looks up, sighs, and is flattened into a thin pancake which peels off the ground",
+      "seconds": 1.4,
+      "to": "deathFlat",
+      "state": "DeathSquash",
+      "loop": false
+    },
+    "deathSpin": {
+      "from": "stand",
+      "action": "is launched spinning into the air, waving goodbye at the top",
+      "seconds": 1.4,
+      "to": "deathFlat",
+      "state": "DeathSpin",
+      "loop": false
+    },
+    "deathShrug": {
+      "from": "stand",
+      "action": "shrugs, says nothing, and lies down on the ground to quit",
+      "seconds": 1.4,
+      "to": "deathFlat",
+      "state": "DeathShrug",
+      "loop": false
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}
