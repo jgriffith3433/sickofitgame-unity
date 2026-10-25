@@ -1720,6 +1720,29 @@ no new character (the crowd is Hell's audience, never named, never seen), and **
 - Data: `game.json` `style` (distances, meter, tiers and their payouts, the lines, the rank points), lines' words and voices in `audio.json`
   (`vo_style_*` announcer, `vo_crowd_*` crowd; the `graze_tick` effect), words on the screen in `ui/theme.json` `texts`.
 
+## Again: Endless Floor, the Daily Challenge and New Game Plus (built 2026-10-25)
+
+Hell is repetition, so Hell has a rerun. Once the hero has made it through the first Warden he understands what the place is: not a climb with an end but a
+show that runs again. Three ways to go round, all on the main menu, all in the hero's and the announcer's voices, and **no office or work jokes** anywhere in them.
+
+- **Endless Floor** (*"ENDLESS FLOOR"*): the Ember Wastes with no top. Hell's loop sends the pushes one after another and the counter climbs a floor
+  for every push fought off; the pushes get bigger and meaner (the Circle's own ramp over the first dozen, then Hell simply turns it up each push). The
+  announcer: *"THE FLOOR NEVER ENDS! NEITHER DO THEY!"* Hell keeps score: **the best floor climbed is saved** (a new best is called out when he passes
+  the old one). A death plays it again from Floor 1,000; the loop is the point.
+- **Daily Challenge** (*"DAILY CHALLENGE"*): one floor a day, the same for everyone who plays it that day. The date is the seed: same date, same pushes
+  in the same order, same **modifier** (Hell's twist of the day, picked from the list in `game.json` `replay.modifiers`: thick skin, trigger-happy, a
+  crowd, fast hell, short breath, big ones). The floor is ten pushes long (1,000 to 990); it scores floors climbed, kills, grazes and a bonus for finishing.
+  The **local table** keeps the day's best scores on this device (nothing is sent anywhere). Announcer: *"TODAY'S SHOW! SAME FOR EVERYONE!"* Hero: *"Same
+  as yesterday, then."*
+- **New Game Plus** (*"NEW GAME+"*, offered once the Magma King has fallen, i.e. the Waystone on Floor 901 is lit): Hell takes the climb back and gives it again.
+  The hero starts again at the Landing, Floor 1,000, with the Waystones, floors and Grudges reset, but **keeps what he made and found**: every
+  weapon he unlocked, Yooba's goods, the diamonds, what the Codex knows and his best floor ranks. Everything in Hell hits harder, shoots faster and has
+  more health for every cycle (+35% health, +12% fire rate, +5% speed per cycle, a bigger crowd every second cycle, up to cycle 9). Announcer: *"FLOOR
+  1,000! AGAIN! NOW WITH MORE HELL!"* Hero: *"Again. Fine."* The first climb is cycle 1; the New Game+ card says which cycle he is on and which he would start (*"Again (Cycle 3)"*).
+- These are the Ember Wastes' floors made to repeat (`generateFloors` with a ramp, `climbs`, and an `escalation` past it) with the level seed taken from the
+  date; every roll comes from the seeded streams, so a rewind replays the same floor. Data: `game.json` `replay`, the levels `EndlessFloor` and
+  `DailyFloor`, the best/table/cycle in the save (`ReplayModes`). A death in Endless or the Daily is **not a run's end**: no Shaft, no Waystone, it plays again.
+
 ## The HUD and menus (Hell's showmanship)
 
 Hell loves a show, and the announcer's cabinet is the show's frame: nothing on screen just appears. This is feel, not story: no new words

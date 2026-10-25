@@ -91,7 +91,7 @@ namespace SickOfIt.Gameplay
             }
 
             int floor = world.Stage.Floor;
-            var difficulty = circle.DifficultyAt(floor);
+            var difficulty = GenDifficulty(action, circle, floor, out int pickFloor);
             bool reached = action.untilFloor > 0 && world.Stage.HasFloors && floor <= action.untilFloor;
             int alive = world.CountAlive(GeneratedSelector, null);
 
@@ -104,7 +104,7 @@ namespace SickOfIt.Gameplay
                         genPushEndsAt = now + Mathf.Max(1f, difficulty.pushTimeout);
                     }
                     else if (now >= genNextAt)
-                        StartPush(now, action, circle, floor, difficulty);
+                        StartPush(now, action, circle, pickFloor, difficulty);
                     break;
 
                 case GenMode.Push:
@@ -114,13 +114,13 @@ namespace SickOfIt.Gameplay
                         genToSpawn = 0;
                     if (genToSpawn > 0 && now >= genNextAt && alive < Mathf.Max(1, difficulty.maxAlive))
                     {
-                        SpawnGenerated(now, action, circle, floor, difficulty);
+                        SpawnGenerated(now, action, circle, pickFloor, difficulty);
                         genToSpawn--;
                         genNextAt = now + Mathf.Max(0.1f, difficulty.spawnInterval);
                         alive++;
                     }
                     if (genToSpawn == 0 && (alive == 0 || now >= genPushEndsAt))
-                        EndPush(now, reached, difficulty);
+                        EndPush(now, action, difficulty);
                     break;
 
                 case GenMode.Hazard:
@@ -132,7 +132,7 @@ namespace SickOfIt.Gameplay
                         world.RunActions(hazard.actions, Context(now, null, genPushes, genScope));
                     }
                     if (genHazardFired && now >= genPushEndsAt)
-                        EndPush(now, reached, difficulty);
+                        EndPush(now, action, difficulty);
                     break;
 
                 case GenMode.Finishing:
@@ -142,6 +142,7 @@ namespace SickOfIt.Gameplay
                     {
                         genMode = GenMode.Off;
                         world.Telemetry.Record("generatorDone", circle.id, floor);
+                        world.Replay?.Finished();
                         if (!string.IsNullOrEmpty(action.doneSignal))
                             world.Emit(action.doneSignal);
                     }
@@ -149,8 +150,51 @@ namespace SickOfIt.Gameplay
             }
         }
 
-        void EndPush(float now, bool reached, DifficultyDef difficulty)
+        /// <summary>
+        /// The difficulty for this moment: the Circle's ramp by floor, or by pushes fought (rampPushes, the replay modes), with the replay scale
+        /// (a Daily twist, a New Game+ cycle) and Endless Floor's heat on top. 'pickFloor' is the floor the enemy tables are read at.
+        /// </summary>
+        DifficultyDef GenDifficulty(GenerateFloorsAction action, CircleDef circle, int floor, out int pickFloor)
         {
+            pickFloor = floor;
+            DifficultyDef d;
+            float heat = 0f;
+            if (action.rampPushes > 0)
+            {
+                float t = Mathf.Clamp01(genPushes / (float)action.rampPushes);
+                d = DifficultyDef.Lerp(circle.easiest, circle.hardest, t);
+                int from = action.rampStartFloor > 0 ? action.rampStartFloor : circle.firstFloor;
+                pickFloor = from - Mathf.RoundToInt(t * (from - circle.lastFloor));
+                heat = Mathf.Max(0, genPushes - action.rampPushes) * Mathf.Max(0f, action.escalation);
+            }
+            else
+            {
+                d = circle.DifficultyAt(floor);
+            }
+            var scale = world.Scale;
+            d.maxAlive += scale.ExtraAlive;
+            d.pushSize += scale.ExtraPush;
+            d.breather *= scale.BreatherScale;
+            if (heat > 0f)
+            {
+                d.pushSize += Mathf.FloorToInt(heat);
+                d.maxAlive += Mathf.FloorToInt(heat * 0.5f);
+                d.spawnInterval /= 1f + 0.04f * heat;
+                d.breather = Mathf.Max(1.5f, d.breather * (1f - 0.03f * heat));
+                d.healthMultiplier *= 1f + 0.08f * heat;
+            }
+            return d;
+        }
+
+        /// <summary>A push was fought (or timed out): breathe, or finish. With 'climbs' the hero goes up a floor for it.</summary>
+        void EndPush(float now, GenerateFloorsAction action, DifficultyDef difficulty)
+        {
+            if (action.climbs && world.Stage.HasFloors && world.Stage.Floor > 1)
+            {
+                world.Stage.SetFloor(world.Stage.Floor - 1);
+                world.Replay?.Climbed();
+            }
+            bool reached = action.untilFloor > 0 && world.Stage.HasFloors && world.Stage.Floor <= action.untilFloor;
             genMode = reached ? GenMode.Finishing : GenMode.Breather;
             genNextAt = now + Mathf.Max(0f, difficulty.breather);
             if (reached)
@@ -200,6 +244,8 @@ namespace SickOfIt.Gameplay
             Vector2 local = def.areaCenter + new Vector2(
                 genRandom.Range(-0.5f, 0.5f) * def.areaSize.x,
                 genRandom.Range(-0.5f, 0.5f) * def.areaSize.y);
+            if (action.bothSides && genRandom.Value() < 0.5f)
+                local.x = -local.x;
             var context = Context(now, null, genPushes, genScope);
             var options = SpawnOptions.From(context, "", action.tags, 0, null);
             if (!options.Tags.Contains(GeneratedTag))

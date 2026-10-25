@@ -81,6 +81,8 @@ namespace SickOfIt.Data
         public RewindBudgetConfig rewindBudget = new RewindBudgetConfig();
         [Tooltip("Grazes, the style meter and the floor rank (Docs/Story.md, \"Style\").")]
         public StyleConfig style = new StyleConfig();
+        [Tooltip("Endless Floor, the Daily Challenge and New Game Plus (Docs/Story.md, \"Again\").")]
+        public ReplayConfig replay = new ReplayConfig();
 
         [Header("Scene UI Prefabs")]
         [Tooltip("Full MobileController UI prefab for level scenes (movement, jump, shoot, etc.)")]

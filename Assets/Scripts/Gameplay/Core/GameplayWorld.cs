@@ -5,6 +5,7 @@ using SickOfIt.Combat;
 using SickOfIt.Combat.Health;
 using SickOfIt.Core;
 using SickOfIt.Core.Input;
+using SickOfIt.Data;
 using SickOfIt.Gameplay.Content;
 
 namespace SickOfIt.Gameplay
@@ -67,6 +68,10 @@ namespace SickOfIt.Gameplay
         public ObjectPool PickupPool { get; private set; }
         public Camera Camera { get; private set; }
         public uint Seed { get; private set; }
+        /// <summary>Endless Floor or the Daily Challenge on this level (best floor, score table), or null.</summary>
+        public ReplayRun Replay { get; private set; }
+        /// <summary>What a replay mode does to Hell here: the Daily's twist, or New Game+'s cycle on the story's floors. Constant for the whole level.</summary>
+        public ReplayScale Scale { get; private set; } = ReplayScale.None;
         public int LevelNumber { get; private set; }
         public string LevelName { get; private set; } = "";
         public SpriteRenderer[] PlayerRenderers { get; private set; }
@@ -153,6 +158,9 @@ namespace SickOfIt.Gameplay
             SceneId = setup.SceneId ?? "";
             boundaryLayer = LayerMask.NameToLayer("Boundary");
             Seed = (uint)(setup.Script != null && setup.Script.seed != 0 ? setup.Script.seed : 1000 + setup.LevelNumber * 7919);
+            var replayKind = setup.Script != null && string.IsNullOrEmpty(SceneId) ? setup.Script.replay : ReplayKind.None;
+            if (replayKind == ReplayKind.Daily)
+                Seed = ReplayModes.DailySeed(ReplayModes.TodayKey);
 
             templateRoot = new GameObject("EntityTemplates").transform;
             templateRoot.SetParent(transform, false);
@@ -194,6 +202,10 @@ namespace SickOfIt.Gameplay
                 playerController.VolleyScale = Perks.RollVolleyScale;
             Upgrades = new UpgradeSystem(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             Style = new StyleSystem(this);
+            if (replayKind != ReplayKind.None)
+                Replay = new ReplayRun(this, replayKind);
+            Scale = Replay != null ? Replay.Scale
+                : string.IsNullOrEmpty(SceneId) ? ReplayModes.ScaleForCycle(ReplayModes.Cycle) : ReplayScale.None;
             Shortcuts = new ShortcutSystem(this, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             if (playerController != null)
             {
@@ -254,6 +266,10 @@ namespace SickOfIt.Gameplay
             Telemetry.Record("levelStart", LevelName, LevelNumber);
             Stage.Start();
             Director.Start(Now);
+            Replay?.Begin(Now);
+            if (Replay == null && Scale.Active && string.IsNullOrEmpty(SceneId))
+                Telemetry.Record("replay", "ngplus", ReplayModes.Cycle,
+                    $"health x{Scale.Health:0.00}, attack x{Scale.AttackSpeed:0.00}, speed x{Scale.MoveSpeed:0.00}, +{Scale.ExtraAlive} alive");
             history.RecordNow();
         }
 
@@ -310,6 +326,22 @@ namespace SickOfIt.Gameplay
         // ENTITIES
         // =====================================================================
 
+        /// <summary>The replay scale on a spawn (Daily twist, New Game+ cycle): enemies with health only, never their shots.</summary>
+        void AddScaleModifiers(SpawnOptions options)
+        {
+            var scale = Scale;
+            if (!Mathf.Approximately(scale.Health, 1f))
+                options.Modifiers.Add((Stat.MaxHealth, scale.Health, 0f));
+            if (!Mathf.Approximately(scale.AttackSpeed, 1f))
+                options.Modifiers.Add((Stat.AttackSpeed, scale.AttackSpeed, 0f));
+            if (!Mathf.Approximately(scale.MoveSpeed, 1f))
+                options.Modifiers.Add((Stat.MoveSpeed, scale.MoveSpeed, 0f));
+            if (!Mathf.Approximately(scale.ProjectileSpeed, 1f))
+                options.Modifiers.Add((Stat.ProjectileSpeed, scale.ProjectileSpeed, 0f));
+            if (!Mathf.Approximately(scale.Size, 1f))
+                options.Modifiers.Add((Stat.Size, scale.Size, 0f));
+        }
+
         public Entity Spawn(string entityId, Vector2 position, SpawnOptions options)
         {
             if (string.IsNullOrEmpty(entityId) || !Content.Entities.TryGetValue(entityId, out var def))
@@ -323,6 +355,8 @@ namespace SickOfIt.Gameplay
 
             options = options ?? new SpawnOptions();
             Director?.CollectSpawnModifiers(def, options);
+            if (Scale.Active && def.team == Team.Enemy && def.health > 0)
+                AddScaleModifiers(options);
 
             var pool = PoolFor(def);
             var go = pool.Get(new Vector3(position.x, position.y, 0f), Quaternion.identity);

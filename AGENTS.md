@@ -176,6 +176,11 @@ Assets/GameConfig/
   unique reward (a lore flag, the Slag Ladle, the hidden Grudge Held Breath (`weight` 0), diamonds, a health and rewind refill) or chains 4-5 waves with `addRewind` between them. The room leads on to the host's next level, so
   nothing on the route is skipped; it sits on the floor its host ends on, so no Waystone lights. **Written by `Tools/Levels/side_floors.py`** (`--check` runs with no Unity): add a row there, never hand-edit the
   rooms or the `SIDE DOOR` rules. The bot opens doors only with `PlaytestBot.takeSideDoors`; the all-levels runs skip side floors (`IsSideFloor`). Playtests `secret-floors`, `gauntlets`.
+- **Replay modes** (Docs/Story.md "Again", cookbook "Replay modes"): main-menu cards (`Gameplay/Presentation/ReplayPanel.cs`) for **Endless Floor** (`levels/EndlessFloor.json`, `script.replay: Endless`: a generated
+  floor with no top, `generateFloors` `climbs` + `rampPushes` + `escalation`; the best floors climbed are saved), the **Daily Challenge** (`levels/DailyFloor.json`, `script.replay: Daily`: the world's seed is
+  `ReplayModes.DailySeed(yyyyMMdd)`, the day's twist is `game.json` `replay.modifiers`, every attempt a line in the local table) and **New Game+** (`RunFlow.NewGamePlus`: the Landing again, weapons and goods kept, `ReplayModes.Cycle`,
+  `GameplayWorld.Scale` added to every enemy at `Spawn`). `Data/ReplayModes.cs` holds the saves, `Gameplay/Core/ReplayRun.cs` one play. Neither replay level is a run (`RunFlow` ignores them, `IsSideFloor` skips them in the all-levels
+  runs). Playtest `replay-modes` (`ReplayModes.DateOverride` fixes the Daily's date).
 - **Waystones and runs** (Docs/Story.md): a death on a floor stage ends the run: the death screen, then the Shaft drops the
   marker back to the highest Waystone (the Landing, Floor 1,000, then each Circle's top once its Warden is beaten) and the
   run restarts there; Grudges reset, diamonds and Yooba's goods stay. Main menu: Continue (the run) / New Run (the

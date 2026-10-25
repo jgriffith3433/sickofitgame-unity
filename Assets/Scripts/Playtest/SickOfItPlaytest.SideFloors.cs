@@ -62,7 +62,9 @@ namespace SickOfIt.Playtest
         {
             var definition = GameDefinition.Instance;
             var level = definition != null && n > 0 && n <= definition.TotalLevels ? definition.GetLevel(n) : null;
-            return level != null && level.levelName != null && (level.levelName.StartsWith("Secret") || level.levelName.StartsWith("Gauntlet"));
+            // Endless Floor and the Daily Challenge have their own scenario (replay-modes), not the all-levels runs' stage checks.
+            return level != null && level.levelName != null
+                && (level.levelName.StartsWith("Secret") || level.levelName.StartsWith("Gauntlet") || ReplayModes.IsReplayLevel(n));
         }
 
         sealed partial class Session

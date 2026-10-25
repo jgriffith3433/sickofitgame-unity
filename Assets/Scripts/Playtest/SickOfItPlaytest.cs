@@ -767,6 +767,12 @@ namespace SickOfIt.Playtest
                 "(a lore flag, the Slag Ladle unlocked for good, the hidden Held Breath, 20 diamonds, a full health and rewind refill, a gauntlet's purse or flag) and the run leads on to the floor after " +
                 "the host. The two gauntlets also chain 4 and 5 waves (side:wave:N) with a rewind refill (side:refill:N) between them, the juice full at each wave's start. The last check: every reward is different. " +
                 "~35 min; the `gauntlets` scenario is the last two alone (~12 min)", SideFloorsSeconds, "level", "secret"));
+            list.Add(new PlaytestScenario(ReplayModesId, "Replay modes (Docs/Story.md \"Again\", cookbook \"Replay modes\"): Endless Floor, the Daily Challenge and New Game+, each opened from the main menu with real clicks " +
+                "(a card with the mode's best / table / cycle, then Play). Endless Floor: the bot climbs 3+ floors (the counter goes down for each push fought off) and the best is saved " +
+                "(`replay` events, `check` events `replay-modes endless ...`) and shown on the card afterwards. The Daily Challenge on a fixed date (a setup shortcut) is played twice: the same seed, " +
+                "the same twist of the day and the same first generated enemies both times, and both plays are in the date's local table, shown on the card with their places. " +
+                "New Game+ (an unlocked weapon and the Waystone on 901, setup shortcuts) starts the next cycle at the Landing with the weapon still in his hands, enemy health and fire rate scaled " +
+                "(`replay ngplus` event) and the first enemy tougher than its file. ~20 min", ReplayModesSeconds, "level"));
             list.Add(new PlaytestScenario(GauntletsId, "The two gauntlet floors alone (the Cage Match behind Floor 908's cage, the Encore behind Floor 904's curtain): the secret-floors run over just " +
                 "these. Each is reached by its door in the wall, then 4 / 5 waves are cleared by the bot with a rewind refill between them (`side:wave:N`, `side:refill:N` events; the juice is full at " +
                 "each wave's start) and the purse is paid", GauntletsSeconds, "level", "secret"));
@@ -1132,6 +1138,8 @@ namespace SickOfIt.Playtest
                 yield return session.RewindJuiceRun();
             else if (id == SideFloorsId || id == GauntletsId)
                 yield return session.SideFloorsRun(id == GauntletsId);
+            else if (id == ReplayModesId)
+                yield return session.ReplayModesRun();
             else if (id == BystanderId)
                 yield return session.BystanderRun();
             else if (id == BystanderFloorsId)

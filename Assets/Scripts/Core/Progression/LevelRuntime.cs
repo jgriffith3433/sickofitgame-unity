@@ -1224,10 +1224,13 @@ namespace SickOfIt.Core.Progression
             completionCommitted = true;
             gameplayWorld?.Telemetry?.Finish("completed");
 
-            GameProgressManager.Instance.SetLevelCompleted(levelNumber);
+            // Endless Floor and the Daily Challenge are not steps of the climb: finishing one unlocks and saves nothing of it.
+            bool replayLevel = SickOfIt.Data.ReplayModes.IsReplayLevel(levelNumber);
+            if (!replayLevel)
+                GameProgressManager.Instance.SetLevelCompleted(levelNumber);
             PlayAnalytics.Completed(gameplayWorld);
 
-            if (playerHealth != null)
+            if (playerHealth != null && !replayLevel)
                 RogueliteManager.Instance.SaveLevelEndHealth(levelNumber, playerHealth.CurrentHealth, playerHealth.MaxHealth);
 
             if (config != null && !config.returnToMainMenuOnComplete && config.nextVideoNumber > 0)

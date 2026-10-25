@@ -553,6 +553,22 @@ entity (`content/entities/{id}.json`) and one action:
   (Level 1's imps: New Game clears it, the first imp is announced once, a rewind, the second imp and a new run do not repeat it,
   the bystander scene stays silent; each beat is a `check` event).
 
+## Replay modes ("Endless Floor", "a daily floor", "New Game+")
+
+The story is Docs/Story.md "Again". Three main-menu buttons, each opening a card (`ReplayPanel`: the pitch, the best / today's twist and table / the cycle, then Play).
+
+- **Endless Floor** is the level `levels/EndlessFloor.json` (listed last in game.json): `script.replay: "Endless"` and one `generateFloors` with `climbs` (every push fought off takes the
+  hero up a floor), `rampPushes` (the Circle's easiest-to-hardest ramp over that many pushes), `rampStartFloor` (where the enemy tables start, so the imps come at once), `escalation`
+  (past the ramp, "heat" per push: bigger pushes, more alive at once, tougher, faster, shorter breathers) and `bothSides`. The best floors climbed are saved (`ReplayModes.EndlessBest`).
+- **Daily Challenge** is `levels/DailyFloor.json`: `script.replay: "Daily"`. The world's seed is `ReplayModes.DailySeed(date)` (a stable FNV hash of `yyyyMMdd`, UTC), the day's twist is
+  `game.json` `replay.modifiers[seed % count]` (enemy health / attack / speed / shot speed / size, extra alive and in a push, shorter breathers), and every attempt is a line in the
+  date's local table (`ReplayModes.DailyTable`, PlayerPrefs, best ten per day, the last 14 days). A twist is data: add one to `replay.modifiers`. Score = floors, kills, grazes and a bonus for finishing (`replay.score*`).
+- **New Game+** is not a level: `RunFlow.NewGamePlus` (offered once the Waystone on 901 is lit, `replay.ngPlusAfterWaystone`) resets the run, the Waystones, the cleared floors and the Shaft's marker
+  (`RogueliteManager.StartNewGamePlus`) but keeps held and unlocked weapons, Yooba's goods, diamonds, Codex and floor ranks, counts a cycle up (`ReplayModes.Cycle`, cleared by New Game) and starts at the Landing.
+  `GameplayWorld.Scale` (`ReplayModes.ScaleForCycle`: +35% health, +12% fire rate, +5% speed per cycle, a bigger crowd every second cycle) is added to every enemy with health at `Spawn`.
+- Neither replay level is a run: `RunFlow` ignores them (a death plays them again, no Waystone, no Shaft), finishing the Daily saves no level progress, and the all-levels playtest runs skip them (`IsSideFloor`).
+- Playtest `replay-modes` (~20 min): Endless saves a best, the Daily is the same twice and keeps a table, New Game+ keeps a weapon and scales Hell. Tests: change the date with `ReplayModes.DateOverride` (playtest only).
+
 ## A different kind of level space
 
 `"world"` in the script: `"camera": "Follow"` with `boundsCenter`/`boundsSize` for a wider arena, `"Scroll"` with

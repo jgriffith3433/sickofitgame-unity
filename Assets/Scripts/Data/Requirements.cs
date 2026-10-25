@@ -52,7 +52,7 @@ namespace SickOfIt.Data
                 case "weapon": return WeaponProgress.Has(parts[1]) || UnlockFlags.Has("weapon:" + parts[1]);
                 case "shop": return RogueliteManager.Instance != null && RogueliteManager.Instance.GetUpgradeLevel(parts[1]) >= level;
                 case "grudge": return UpgradeProgress.LevelOf(parts[1]) >= level;
-                case "level": return GameProgressManager.Instance != null && GameProgressManager.Instance.IsLevelCompleted(int.Parse(parts[1]));
+                case "level": return (GameProgressManager.Instance != null && GameProgressManager.Instance.IsLevelCompleted(int.Parse(parts[1]))) || ReplayModes.Cycle > 0;
             }
             return false;
         }
