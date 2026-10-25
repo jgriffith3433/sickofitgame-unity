@@ -61,7 +61,10 @@ namespace SickOfIt.Core.Progression
             if (budget != null && !budget.CanRewind) return;
 
             isRewinding = true;
-            GameClock.Instance.StartRewind(rewindSpeed);
+            // Yooba's Quick Unwind goods: rewind runs faster (juice still costs one per second of game time rewound).
+            float speedBonus = SickOfIt.Data.RogueliteManager.Instance != null
+                ? SickOfIt.Data.RogueliteManager.Instance.GetShopTotal(SickOfIt.Data.Config.ShopEffect.RewindSpeed) : 0f;
+            GameClock.Instance.StartRewind(rewindSpeed * (1f + speedBonus));
 
             // The song has to stay running so RewindableAudioSource can play it backward.
             if (musicSource != null && musicSource.GetComponent<RewindableAudioSource>() == null)

@@ -48,6 +48,12 @@ namespace SickOfIt.Gameplay
         int shownHealth = -1;
         float healPopAt = -99f;
         float shownJuice = -1f;
+        SickOfIt.Core.Rewind.RewindBudget rewardBudget;
+        float pendingReward;
+        /// <summary>How many named juice rewards (CLEAN KILL, SURVIVED) the HUD has floated; the rewind-juice playtest reads it.</summary>
+        public int RewardsShown { get; private set; }
+        public string LastRewardShown { get; private set; } = "";
+        string pendingRewardLabel;
         float juicePopAt = -99f;
 
         string shownBanner = "", shownSubtitle = "";
@@ -880,6 +886,23 @@ namespace SickOfIt.Gameplay
             rewindTail.anchorMax = new Vector2(progress, 1f);
             rewindTail.gameObject.SetActive(tail > 0.005f);
             bool rewindingNow = GameClock.Instance != null && GameClock.Instance.IsRewinding;
+            if (rewardBudget != budget)
+            {
+                if (rewardBudget != null)
+                    rewardBudget.Rewarded -= OnJuiceReward;
+                rewardBudget = budget;
+                rewardBudget.Rewarded += OnJuiceReward;
+            }
+            if (pendingReward > 0f)
+            {
+                // A reward names itself ("CLEAN KILL +0.5s"); the plain "+Ns" pop below then skips it.
+                juicePopAt = Time.unscaledTime;
+                floaters?.Spawn((RectTransform)rewindLabel.transform.parent, $"{pendingRewardLabel} +{pendingReward:0.#}s", style.rewind, 40f);
+                shownJuice = budget.Juice;
+                RewardsShown++;
+                LastRewardShown = $"{pendingRewardLabel} +{pendingReward:0.#}s";
+                pendingReward = 0f;
+            }
             if (shownJuice >= 0f && budget.Juice > shownJuice + 0.4f && !rewindingNow)
             {
                 juicePopAt = Time.unscaledTime;
@@ -1027,8 +1050,16 @@ namespace SickOfIt.Gameplay
             else if (keyboard.digit4Key.wasPressedThisFrame) Choose(3);
         }
 
+        void OnJuiceReward(float seconds, string label)
+        {
+            pendingReward += seconds;
+            pendingRewardLabel = label;
+        }
+
         void OnDestroy()
         {
+            if (rewardBudget != null)
+                rewardBudget.Rewarded -= OnJuiceReward;
             // Never leave the game frozen behind us (picker, pause or results open when the level unloads).
             if (PickerOpen || Paused || resultsRoot != null)
                 Time.timeScale = 1f;
