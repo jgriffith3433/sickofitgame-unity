@@ -388,7 +388,7 @@ namespace SickOfIt.Gameplay
                 menu.Back = previousBack;
                 if (Current == view)
                     Current = null;
-                UnityEngine.Object.Destroy(overlay.Root);
+                Overlay.Close(overlay.Root);
                 onClosed?.Invoke();
             }
             view.Close = Close;

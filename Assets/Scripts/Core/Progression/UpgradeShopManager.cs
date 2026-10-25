@@ -22,6 +22,7 @@ namespace SickOfIt.Core.Progression
         private MenuCanvas menu;
         private UpgradeShopConfig config;
         private TextMeshProUGUI pointsChip;
+        private NumberTicker pointsTicker;
         private TextMeshProUGUI healthChip;
         private readonly List<(UpgradeDefinition def, MenuCardView view)> cards = new List<(UpgradeDefinition, MenuCardView)>();
         private bool leaving;
@@ -355,7 +356,16 @@ namespace SickOfIt.Core.Progression
         {
             var roguelite = RogueliteManager.Instance;
             int totalLevels = GameProgressManager.Instance.GetTotalLevels();
-            MenuGraphics.SetText(pointsChip, string.Format(menu.Theme.pointsFormat, roguelite.GetPoints()));
+            // The purse counts to its new total (a purchase counts down, Yooba's quest pay counts up).
+            if (pointsTicker == null)
+            {
+                pointsTicker = NumberTicker.On(pointsChip, v => string.Format(menu.Theme.pointsFormat, v));
+                pointsTicker.Snap(roguelite.GetPoints());
+            }
+            else
+            {
+                pointsTicker.CountTo(roguelite.GetPoints(), 0.45f);
+            }
             MenuGraphics.SetText(healthChip, string.Format(menu.Theme.healthFormat,
                 roguelite.GetCumulativeHealth(totalLevels), roguelite.GetMaxHealth()));
 

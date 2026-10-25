@@ -690,6 +690,10 @@ namespace SickOfIt.Playtest
                 "called ??? with no name, note or weakness (no spoilers); the four tabs are clicked in turn, every page of each is paged through and laid out inside the panel and the screen " +
                 "(MenuLayoutAudit, no overlaps; run it on a 1920x1080 and a 1080x1920 device); closed and resumed, the main menu's Codex button shows the same tallies (they persist). " +
                 "Each beat is a check event; codex events log what each page shows", CodexSeconds, "level"));
+            list.Add(new PlaytestScenario(UiPolishId, "HUD and menu polish (Docs/Story.md \"The HUD and menus\"): the main menu's Codex popup opens and closes with a fade (real clicks); Level 1's HUD gets a diamond pickup " +
+                "(a +7 floats up from the counter and the counter ticks up to its total), the pause menu opens and closes animated and its layout is audited; Level 31's boss bar is introduced (the name lands, the bar " +
+                "fills from empty, inside the screen and safe area, no overlaps); Floor 1000 sweeps the screen when its floor counter ticks over; Level 1 is played to its results, whose numbers count up, and " +
+                "Continue closes the screen on a black transition that the next scene opens. Run it on a 1920x1080 and a 1080x1920 device. Each beat is a check event; ui-polish and boss-intro events log the timeline", UiPolishSeconds, "level"));
             list.Add(new PlaytestScenario(AmbienceId, "A Circle's air (Docs/GameplayCookbook.md \"Weather and life\"): each Circle with an ambience (the Ember Wastes, the Cracked Road, the Rune Bridges) gets its first " +
                 "travelling floor loaded directly (setup shortcut) and played by the bot through real input. The parallax layers move at their own factors (every layer's travel measured against the camera's, " +
                 "`parallax` events); each Circle has its own weather (ash, sparks, cinders, runes, grit: kinds and bits drawn) and its own background life (flyers, walkers, a far-off chase: appearances), " +
@@ -1065,6 +1069,8 @@ namespace SickOfIt.Playtest
                 yield return session.AmbienceRun();
             else if (id == CodexId)
                 yield return session.CodexRun();
+            else if (id == UiPolishId)
+                yield return session.UiPolishRun();
             else if (id == "restart")
                 yield return session.RestartRun();
             else if (id == RewindPerfId)

@@ -171,6 +171,11 @@ Assets/GameConfig/
   `player.json` `availableUpgrades` with an `effect` (MaxHealth, ExtraJump, MoveSpeed, FireRate, Damage, RewindJuice,
   Magnet); `RogueliteManager` stores levels, `UpgradeSystem.ApplyShop` applies them each level. Between-level picks are
   `content/upgrades`.
+- **UI polish** (Docs/Story.md "The HUD and menus"): `Core/UI/Menus/MenuPolish.cs`: `PanelAnim` (every `Overlay` fades/rises open and fades closed: close with
+  `Overlay.Close`/`PanelAnim.CloseAndDestroy`, never `Destroy`), `NumberTicker` (counts a text to its value, unscaled time), `HudFloaters` ("+N" pickups) and
+  `ScreenTransition` (a persistent black cover with a floor label, `Cover`/`Reveal`; any new `MenuCanvas` or loaded scene opens it; `Sweep` on each floor change). The boss
+  bar's intro (name drops in, bar fills) and the weapon chip's switch animation live in `GameplayHud`/`GameplayHud.Weapon`. All presentation, unscaled time. Playtest `ui-polish`
+  (run it on a 1920x1080 and a 1080x1920 device; the `weapons` scenario also checks the switch animation).
 - **Aim cursor**: in a level the mouse cursor is a crosshair (`Gameplay/Presentation/AimCursor.cs`, drawn at runtime
   in theme.json `hud` colors: `marker` ring and fangs, `healthFill` dot on the hotspot, `worldBarOutline` rim; 32x32,
   `Cursor.SetCursor`, a CSS cursor in WebGL). The pause, death and results screens, the Grudge picker, HUD buttons and

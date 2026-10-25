@@ -1600,6 +1600,19 @@ named here, with a note.
 
 Characters: the hero (always), the Overlord (the meadow's laser, always), the Announcer (always) and Yooba (once met).
 
+## The HUD and menus (Hell's showmanship)
+
+Hell loves a show, and the announcer's cabinet is the show's frame: nothing on screen just appears. This is feel, not story: no new words
+(every label is an existing `ui/theme.json` text), and none of it touches the simulation or the rewind.
+
+- **Popups** (pause, results, the Codex, settings, the Grudge picker) fade and rise in (0.28 s) and fade out (0.16 s) instead of vanishing (`PanelAnim`, `Overlay.Create`/`Overlay.Close`).
+- **Numbers count**: the diamond counter, the shop's purse and the results' stats tick up or down to their total (`NumberTicker`); the results count one row after another.
+- **Pickups answer**: a diamond sends a "+N" up from the counter and pops it; a heart refilled pops the heart with a green "+N"; a rewind orb sends "+Ns" from the rewind bar (`HudFloaters`).
+- **Weapons**: switching drops the new name into the weapon chip with a punch of size.
+- **Bosses are introduced**: when a boss bar shows, a flash lights the screen, the boss's name lands from large, and the bar fills from empty (1.3 s) (`GameplayHud.BossIntroSeconds`).
+- **Between floors**: each new floor sweeps a band of lava light up the screen; a floor stage's results close on a black cover with the floor's number, and the next scene opens it (`ScreenTransition`; it never holds the player on black for more than 8 s).
+- **Fit**: placed through `MenuCanvas`/`MenuResponsive`, so it holds at 1920x1080 and 1080x1920, inside the safe area (playtest `ui-polish`).
+
 ## Hell's air (weather and the life far away)
 
 Hell is repetition, so even its air repeats: every Circle has its own weather and its own things going about their business a long way off, and

@@ -43,6 +43,12 @@ namespace SickOfIt.Gameplay
         RectTransform diamondsRoot;
         int shownPoints = -1;
         float diamondsPopAt = -99f;
+        NumberTicker diamondsTicker;
+        HudFloaters floaters;
+        int shownHealth = -1;
+        float healPopAt = -99f;
+        float shownJuice = -1f;
+        float juicePopAt = -99f;
 
         string shownBanner = "", shownSubtitle = "";
 
@@ -138,6 +144,8 @@ namespace SickOfIt.Gameplay
 
             BuildBossBar();
             BuildScreens();
+            // Last, so "+3" rises over everything else on the HUD.
+            floaters = HudFloaters.Create(menu.Root, menu.Font);
         }
 
         // ─── Layout: theme.json hud.landscape / hud.portrait ──────────
@@ -453,6 +461,7 @@ namespace SickOfIt.Gameplay
             diamonds.textWrappingMode = TextWrappingModes.NoWrap;
             diamonds.enableVertexGradient = false;
             diamonds.color = theme.accent;
+            diamondsTicker = NumberTicker.On(diamonds, v => string.Format(theme.pointsFormat, v));
             menu.AddMotion(diamondsRoot.gameObject, null, theme.entrance, 0f);
             Lay(diamondsRoot, l => l.diamonds, MenuElementKind.Panel, pivotAtAnchor: true, controlsSize: false);
         }
@@ -478,9 +487,19 @@ namespace SickOfIt.Gameplay
                     if (child.name == "Panel")
                         ((RectTransform)child).anchoredPosition = shake;
                 }
+                bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
+                if (shownHealth >= 0 && health > shownHealth && !rewinding)
+                {
+                    healPopAt = now;
+                    floaters?.Spawn(heart, $"+{health - shownHealth}", style.healthFill, 52f);
+                }
+                shownHealth = health;
                 float beat = healthBar.IsLow ? 1f + 0.12f * Mathf.Max(0f, Mathf.Sin(now * 9f)) : 1f;
                 if (hit < 0.25f)
                     beat = 1.25f - hit;
+                float healAge = now - healPopAt;
+                if (healAge < 0.45f)
+                    beat *= 1f + 0.35f * Mathf.Sin(healAge / 0.45f * Mathf.PI);
                 heart.localScale = new Vector3(beat, beat, 1f);
             }
 
@@ -494,9 +513,13 @@ namespace SickOfIt.Gameplay
                     {
                         diamondsPopAt = Time.unscaledTime;
                         Sfx.Play(Sfx.Events.pickupDiamond);
+                        floaters?.Spawn(diamondsRoot, $"+{points - shownPoints}", theme.accent);
                     }
+                    if (shownPoints < 0)
+                        diamondsTicker.Snap(points);
+                    else
+                        diamondsTicker.CountTo(points, 0.4f);
                     shownPoints = points;
-                    MenuGraphics.SetText(diamonds, string.Format(theme.pointsFormat, points));
                 }
                 float age = Time.unscaledTime - diamondsPopAt;
                 float pop = age < 0.3f ? 1f + 0.25f * Mathf.Sin(age / 0.3f * Mathf.PI) : 1f;
@@ -657,6 +680,7 @@ namespace SickOfIt.Gameplay
             UpdateFade();
             UpdateHealthAndDiamonds();
             UpdateProgressBar();
+            UpdateBossIntro();
             UpdateRewind();
             UpdateWeapon();
             UpdateScreens();
@@ -722,7 +746,12 @@ namespace SickOfIt.Gameplay
             if (floor != shownFloor)
             {
                 if (shownFloor >= 0)
+                {
                     floorPopAt = Time.unscaledTime;
+                    // The floor changed: a sweep of lava light up the screen (not while rewinding, when floors tick back).
+                    if (GameClock.Instance == null || !GameClock.Instance.IsRewinding)
+                        ScreenTransition.Sweep();
+                }
                 shownFloor = floor;
                 MenuGraphics.SetText(floorText, string.Format(Texts.floorFormat ?? "FLOOR {0}", floor));
             }
@@ -850,6 +879,16 @@ namespace SickOfIt.Gameplay
             rewindTail.anchorMin = new Vector2(progress - tail, 0f);
             rewindTail.anchorMax = new Vector2(progress, 1f);
             rewindTail.gameObject.SetActive(tail > 0.005f);
+            bool rewindingNow = GameClock.Instance != null && GameClock.Instance.IsRewinding;
+            if (shownJuice >= 0f && budget.Juice > shownJuice + 0.4f && !rewindingNow)
+            {
+                juicePopAt = Time.unscaledTime;
+                floaters?.Spawn((RectTransform)rewindLabel.transform.parent, $"+{budget.Juice - shownJuice:0.#}s", style.rewind, 40f);
+            }
+            shownJuice = budget.Juice;
+            float juiceAge = Time.unscaledTime - juicePopAt;
+            float juiceScale = juiceAge < 0.4f ? 1f + 0.3f * Mathf.Sin(juiceAge / 0.4f * Mathf.PI) : 1f;
+            rewindLabel.rectTransform.localScale = new Vector3(juiceScale, juiceScale, 1f);
             bool empty = !budget.CanRewind;
             MenuGraphics.SetText(rewindLabel, empty ? "Rewind empty" : $"Rewind {budget.Juice:0.0}s");
             rewindLabel.enableVertexGradient = false;
@@ -930,6 +969,7 @@ namespace SickOfIt.Gameplay
             var inner = MenuGraphics.NewRect("SafeArea", dim.transform);
             MenuGraphics.Fill(inner);
             inner.gameObject.AddComponent<MenuSafeArea>();
+            PanelAnim.Add(pickerRoot, inner);
 
             menu.AddText(inner, "Title", title, theme.title, new Vector2(0.5f, 0.84f), Vector2.zero, new Vector2(1700f, 170f),
                 out _, Mathf.Min(theme.title.fontSize, 110f), menu.TitleFont, theme.titleEntrance,
@@ -963,7 +1003,7 @@ namespace SickOfIt.Gameplay
         {
             if (!PickerOpen || index < 0 || index >= pickerCount || (pickerLocked != null && pickerLocked.Contains(index)))
                 return;
-            Destroy(pickerRoot);
+            PanelAnim.CloseAndDestroy(pickerRoot);
             pickerRoot = null;
             pickerLocked = null;
             pickerIsShortcut = false;
@@ -1063,13 +1103,81 @@ namespace SickOfIt.Gameplay
                     boss = world.Player;
             }
             if (boss != null && !bossRoot.gameObject.activeSelf)
+            {
                 Sfx.Play(Sfx.Events.bossAppear);
+                bossIntroAt = Time.unscaledTime;
+                BossIntros++;
+                Flash(new Color(1f, 0.85f, 0.6f, 0.35f), 0.4f);
+            }
             bossRoot.gameObject.SetActive(boss != null);
             if (boss != null)
             {
-                bossBar.Set(boss.Health, boss.MaxHealth);
+                bossHealth = boss.Health;
+                bossMaxHealth = boss.MaxHealth;
                 MenuGraphics.SetText(bossLabel, bossName);
+                // Set at once when the intro is over (this also runs while the game is paused for a rewind);
+                // during it, UpdateBossIntro fills the bar.
+                if (Time.unscaledTime - bossIntroAt >= BossIntroSeconds)
+                    SetBossBar();
             }
+        }
+
+        // ─── Boss intro: the name drops in, the bar fills from empty ──
+
+        /// <summary>How long the boss bar's intro takes (name in, bar filling).</summary>
+        public const float BossIntroSeconds = 1.3f;
+        float bossIntroAt = -99f;
+        int bossHealth, bossMaxHealth, bossShownValue;
+
+        /// <summary>How many boss bars have been introduced (the playtest reads it).</summary>
+        public static int BossIntros { get; private set; }
+        /// <summary>Seconds since the boss bar appeared (large when no bar is up).</summary>
+        public float BossIntroAge => bossRoot != null && bossRoot.gameObject.activeSelf ? Time.unscaledTime - bossIntroAt : 999f;
+        /// <summary>How full the boss bar draws right now, 0 to 1 (it climbs during the intro).</summary>
+        public float BossBarFill => bossMaxHealth > 0 ? Mathf.Clamp01((float)bossShownValue / bossMaxHealth) : 0f;
+        /// <summary>The boss bar's rectangle in screen pixels (the playtest checks it is on screen).</summary>
+        public Rect BossBarScreenRect => ScreenRect(bossRoot);
+
+        static Rect ScreenRect(RectTransform rect)
+        {
+            if (rect == null)
+                return Rect.zero;
+            var corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            return Rect.MinMaxRect(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
+        }
+
+        void SetBossBar()
+        {
+            bossShownValue = bossHealth;
+            bossBar.Set(bossHealth, bossMaxHealth);
+        }
+
+        void UpdateBossIntro()
+        {
+            if (bossRoot == null || !bossRoot.gameObject.activeSelf)
+                return;
+            float t = (Time.unscaledTime - bossIntroAt) / BossIntroSeconds;
+            if (t >= 1f)
+            {
+                if (bossLabel.rectTransform.localScale.x != 1f)
+                    bossLabel.rectTransform.localScale = Vector3.one;
+                bossLabel.alpha = 1f;
+                if (bossShownValue != bossHealth)
+                    SetBossBar();
+                return;
+            }
+            // The name first: it lands from large with a small overshoot, the bar waits, then fills.
+            float nameT = Mathf.Clamp01(t / 0.4f);
+            float c1 = 1.70158f, c3 = c1 + 1f;
+            float back = 1f + c3 * Mathf.Pow(nameT - 1f, 3f) + c1 * Mathf.Pow(nameT - 1f, 2f);
+            float s = Mathf.LerpUnclamped(2f, 1f, back);
+            bossLabel.rectTransform.localScale = new Vector3(s, s, 1f);
+            bossLabel.alpha = Mathf.Clamp01(nameT * 3f);
+            float fillT = Mathf.Clamp01((t - 0.35f) / 0.55f);
+            float eased = 1f - (1f - fillT) * (1f - fillT);
+            bossShownValue = Mathf.Min(bossHealth, Mathf.RoundToInt(bossMaxHealth * eased));
+            bossBar.Set(bossShownValue, bossMaxHealth);
         }
 
         // ─── Rewind ───────────────────────────────────────────────────
