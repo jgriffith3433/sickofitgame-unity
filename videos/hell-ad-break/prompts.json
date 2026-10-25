@@ -1,0 +1,39 @@
+{
+ "note": "Lightning animatic (enable_lightning_lora true, megapixels 0.3, 16:9). Final: same prompts, full steps, megapixels 0.5. NOT RUN: no GPU budget.",
+ "style": "Hand-painted comic-fantasy, bold ink outlines, saturated lava palette, 90s cable shopping-channel frame with scanlines. Each character exactly on-model in every shot.",
+ "scenes": [
+  {
+   "id": "A",
+   "seconds": 11.5,
+   "mode": "PERFORM",
+   "inputs": {
+    "set": "the Landing's lava shore as a TV studio backdrop, no people",
+    "audio": "announcer stems, lines 1-2",
+    "image2": "hero kit"
+   },
+   "prompt": "<Picture 1> is the booming announcer shown as a cartoon host with a headset and a huge grin. CUT 1 (0 to 5.5 s): MS, push-in, he speaks in the voice of <Audio 1>: 'Are you sick of it? GOOD! Because Hell has ONE THOUSAND FLOORS!' logo HELL'S AD BREAK slams in behind him. CUT 2 (5.5 to 11.5 s): WS, a fire reel, the hero (<Picture 2>, dark plate armour with orange seams, launcher on shoulder) stands small and shifts his weight, unimpressed, while the host says 'Fire! Fiends! Falling rocks! All of it, forever, now with MORE floors!'"
+  },
+  {
+   "id": "B",
+   "seconds": 7.5,
+   "mode": "PERFORM",
+   "inputs": {
+    "image": "Yooba kit reference",
+    "audio": "yooba stem, line 3"
+   },
+   "prompt": "<Picture 1> is Yooba, a green slime with two eyestalks and big pink square teeth, a sponsor in a shopping-channel spot. MCU, push-in, he wobbles and speaks fast in the voice of <Audio 1>: 'And diamonds! Fresh, shiny, lightly swallowed! Get yours from Yooba, the best slime in Hell!' he holds out a diamond, delighted. Caption: BROUGHT TO YOU BY YOOBA."
+  },
+  {
+   "id": "C",
+   "seconds": 9.2,
+   "mode": "PERFORM",
+   "inputs": {
+    "image": "hero kit",
+    "image2": "yooba kit",
+    "audio": "hero stems, lines 4 and 7",
+    "audio2": "yooba stem, line 6"
+   },
+   "prompt": "CUT 1 (0 to 2.8 s): MCU low angle on the hero (<Picture 1>), helm eye slits flaring, flat, in the voice of <Audio 1>: 'You're selling me the hole I'm stuck in.' CUT 2 (2.8 to 5.8 s): the host shouts 'ACT NOW, and climb the WHOLE thing!' a flash frame. CUT 3 (5.8 to 8 s): Yooba (<Picture 2>) laughs in the voice of <Audio 2>: 'Hee hee! He said yes!' CUT 4 (8 to 9.2 s): CU the hero, a long beat, a sigh: '...Great.' last sound; hold."
+  }
+ ]
+}

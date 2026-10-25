@@ -1,0 +1,22 @@
+{
+ "slug": "hell-ad-break",
+ "stage": "animatic",
+ "cast": {
+  "Hero": {
+   "voice": "DzkD7I4tf5i3KSaB4cz5",
+   "ref": "Assets/Art/Sprites/Player/Shout.png"
+  },
+  "Yooba": {
+   "voice": "EdDvd8GSdCyZwUcsPawi",
+   "ref": "Assets/Art/Yooba/yooba_talk.png"
+  },
+  "Announcer": {
+   "voice": "1xynpTfy7I462pPrU2kL"
+  }
+ },
+ "tableRead": "j_35570e5fb28c (a_ad2035a94bc4a896); stems a_e6c89ee75a6d54eb a_512115fa55c7d071 a_3b949655263a47e3 a_4d1ca5e2a34b2191 a_5996ad8ca7e66abc a_3febb8353c7d7191 a_b753c82b2b35a394",
+ "file": "videos/hell-ad-break/out/animatic.mp4",
+ "seconds": 30.2,
+ "criticNote": "not run: no-GPU animatic; critic once the Lightning scenes are approved",
+ "build": "build_animatic.py"
+}

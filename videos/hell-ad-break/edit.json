@@ -1,0 +1,24 @@
+{
+ "width": 1280,
+ "height": 704,
+ "fps": 24,
+ "clips": [
+  {
+   "file": "videos/hell-ad-break/out/animatic.mp4",
+   "in": 0,
+   "out": 30.2,
+   "beat": "s1-s7",
+   "label": "animatic (game art + ffmpeg)"
+  }
+ ],
+ "audio": [
+  {
+   "asset": "a_ad2035a94bc4a896",
+   "start": 0,
+   "seconds": 28.68,
+   "dialogue": true,
+   "label": "table read"
+  }
+ ],
+ "captions": []
+}

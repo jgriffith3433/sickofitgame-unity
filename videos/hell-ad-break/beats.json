@@ -1,0 +1,143 @@
+[
+ {
+  "key": "s1",
+  "t": 0,
+  "seconds": 5.48,
+  "shot": "MS",
+  "angle": "eye",
+  "camera": "push-in",
+  "who": [
+   "Announcer"
+  ],
+  "line": "Are you sick of it? GOOD! Because Hell has ONE THOUSAND FLOORS!",
+  "action": "logo slams in, mouth works",
+  "expression": "booming grin",
+  "method": "animatic: game art + ffmpeg (no GPU); final: video.scene PERFORM",
+  "attention": "Announcer's face",
+  "expect": "the pitch continues",
+  "change": "the pitch gets bigger",
+  "residue": "next spot",
+  "why": "cut to the voice line's length from the table read"
+ },
+ {
+  "key": "s2",
+  "t": 5.48,
+  "seconds": 6.04,
+  "shot": "WS",
+  "angle": "eye",
+  "camera": "push-in",
+  "who": [
+   "Announcer",
+   "Hero"
+  ],
+  "line": "Fire! Fiends! Falling rocks! All of it, forever, now with MORE floors!",
+  "action": "words slam on; hero small, shifts launcher",
+  "expression": "hero unimpressed",
+  "method": "animatic: game art + ffmpeg (no GPU); final: video.scene PERFORM",
+  "attention": "Announcer's face",
+  "expect": "the pitch continues",
+  "change": "the pitch gets bigger",
+  "residue": "next spot",
+  "why": "cut to the voice line's length from the table read"
+ },
+ {
+  "key": "s3",
+  "t": 11.52,
+  "seconds": 7.52,
+  "shot": "MCU",
+  "angle": "eye",
+  "camera": "push-in",
+  "who": [
+   "Yooba"
+  ],
+  "line": "And diamonds! Fresh, shiny, lightly swallowed! Get yours from Yooba, the best slime in Hell!",
+  "action": "wobbles, hawks a diamond",
+  "expression": "delighted",
+  "method": "animatic: game art + ffmpeg (no GPU); final: video.scene PERFORM",
+  "attention": "Yooba's face",
+  "expect": "the pitch continues",
+  "change": "the pitch gets bigger",
+  "residue": "next spot",
+  "why": "cut to the voice line's length from the table read"
+ },
+ {
+  "key": "s4",
+  "t": 19.04,
+  "seconds": 2.8,
+  "shot": "MCU",
+  "angle": "low",
+  "camera": "push-in",
+  "who": [
+   "Hero"
+  ],
+  "line": "You're selling me the hole I'm stuck in.",
+  "action": "eye slits flare, flat",
+  "expression": "deadpan",
+  "method": "animatic: game art + ffmpeg (no GPU); final: video.scene PERFORM",
+  "attention": "Hero's face",
+  "expect": "the pitch continues",
+  "change": "the hero is not buying",
+  "residue": "next spot",
+  "why": "cut to the voice line's length from the table read"
+ },
+ {
+  "key": "s5",
+  "t": 21.84,
+  "seconds": 2.96,
+  "shot": "MS",
+  "angle": "eye",
+  "camera": "push-in",
+  "who": [
+   "Announcer"
+  ],
+  "line": "ACT NOW, and climb the WHOLE thing!",
+  "action": "ACT NOW flashes",
+  "expression": "booming",
+  "method": "animatic: game art + ffmpeg (no GPU); final: video.scene PERFORM",
+  "attention": "Announcer's face",
+  "expect": "the pitch continues",
+  "change": "they take it as yes",
+  "residue": "next spot",
+  "why": "cut to the voice line's length from the table read"
+ },
+ {
+  "key": "s6",
+  "t": 24.8,
+  "seconds": 2.16,
+  "shot": "CU",
+  "angle": "eye",
+  "camera": "push-in",
+  "who": [
+   "Yooba"
+  ],
+  "line": "Hee hee! He said yes!",
+  "action": "laughs",
+  "expression": "gleeful",
+  "method": "animatic: game art + ffmpeg (no GPU); final: video.scene PERFORM",
+  "attention": "Yooba's face",
+  "expect": "the pitch continues",
+  "change": "they take it as yes",
+  "residue": "next spot",
+  "why": "cut to the voice line's length from the table read"
+ },
+ {
+  "key": "s7",
+  "t": 26.96,
+  "seconds": 3.28,
+  "shot": "MCU",
+  "angle": "eye",
+  "camera": "push-in",
+  "who": [
+   "Hero"
+  ],
+  "line": "...Great.",
+  "action": "holds a long beat, then the line",
+  "expression": "deadpan, a sigh",
+  "method": "animatic: game art + ffmpeg (no GPU); final: video.scene PERFORM",
+  "attention": "Hero's face",
+  "expect": "a reply",
+  "change": "he accepts it",
+  "residue": "next spot",
+  "why": "cut to the voice line's length from the table read"
+ }
+]
