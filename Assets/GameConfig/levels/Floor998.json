@@ -563,38 +563,16 @@
               ]
             },
             {
-              "entity": "wreckRoof",
+              "entity": "ladderHaul",
               "at": [
-                112.4,
-                2.9
+                110.3,
+                4.45
               ],
               "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                110.0,
-                4.2
+                1.0,
+                5.2
               ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "wreckSign",
-              "at": [
-                107.8,
-                5.5
-              ],
-              "scale": [
-                0.9,
-                1
-              ],
-              "facing": 1.0
+              "id": "ladder998"
             },
             {
               "entity": "ledge",
@@ -929,7 +907,18 @@
               {
                 "type": "setCounter",
                 "name": "lavaSpeed",
-                "value": 0.3
+                "value": 0.4
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "showText",
+                "text": "A LADDER! HOW CONVENIENT! HOW SUSPICIOUS!",
+                "duration": 2.8,
+                "style": "Banner",
+                "color": "#FFD27A"
               }
             ]
           }

@@ -121,6 +121,7 @@ namespace SickOfIt.Gameplay
             input.SetMoveX(0f);
             input.SetAim(Vector2.zero);
             HoldDown(false);
+            SetLadderUp(false);
         }
 
         /// <summary>Holds down (to drop through what it stands on): S for one drop, the gamepad's left stick for the next.</summary>
@@ -471,6 +472,74 @@ namespace SickOfIt.Gameplay
         /// <summary>Times it found him hung on a foothold's corner in the air and let go to drop off it.</summary>
         public int Unwedged { get; private set; }
 
+        /// <summary>The ladder he is climbing or walking to, or null.</summary>
+        public Entity LadderTarget { get; private set; }
+        bool ladderUp;
+
+        /// <summary>
+        /// Ladders: a ladder whose foot is at his feet (within a step) and whose top is well above them is the way up. He walks to its
+        /// middle, then holds up (W) until he is held, and keeps holding it until he steps out of the top. Nothing else here: the ladder
+        /// itself holds him, and the shots keep coming while he climbs, as they should.
+        /// </summary>
+        bool LadderStep(Vector2 me, float feet, SickOfIt.Core.Input.PlayerController controller, ref float moveX)
+        {
+            LadderTarget = null;
+            if (controller.IsClimbing)
+            {
+                moveX = 0f;
+                SetLadderUp(true);
+                return true;
+            }
+            Entity best = null;
+            float bestDx = float.MaxValue;
+            if (controller.IsGrounded)
+            {
+                foreach (var e in world.Live)
+                {
+                    if (e == null || !e.IsAlive || e.IsPlayer || !e.Tags.Contains("ladder"))
+                        continue;
+                    var col = e.MainCollider;
+                    if (col == null || !col.enabled)
+                        continue;
+                    var b = col.bounds;
+                    if (b.max.y - feet < 1.2f || Mathf.Abs(b.min.y - feet) > 0.9f)
+                        continue;
+                    float dx = Mathf.Abs(b.center.x - me.x);
+                    if (dx < bestDx && dx < 6f)
+                    {
+                        bestDx = dx;
+                        best = e;
+                    }
+                }
+            }
+            if (best == null)
+            {
+                SetLadderUp(false);
+                return false;
+            }
+            LadderTarget = best;
+            float cx = best.MainCollider.bounds.center.x;
+            if (Mathf.Abs(cx - me.x) > 0.12f)
+            {
+                moveX = Mathf.Sign(cx - me.x);
+                SetLadderUp(false);
+            }
+            else
+            {
+                moveX = 0f;
+                SetLadderUp(true);
+            }
+            return true;
+        }
+
+        void SetLadderUp(bool up)
+        {
+            if (up == ladderUp)
+                return;
+            ladderUp = up;
+            input.SetKey(Key.W, up);
+        }
+
         /// <summary>
         /// On a floor with a path (world.path), picks the next foothold ahead along the current section (a stone, a raft, a ledge,
         /// a chain's handle) within a jump, walks to it and jumps at the right moment (up through a one-way piece above him, too);
@@ -494,6 +563,13 @@ namespace SickOfIt.Gameplay
             var feetBounds = controller.BodyCollider.bounds;
             float feet = feetBounds.min.y;
             float now = Time.time;
+
+            // A ladder is the way on (Floors 999 and 998): walk to its foot, hold up until he steps out at the top.
+            if (LadderStep(me, feet, controller, ref moveX))
+            {
+                fromTakeoff = false;
+                return true;
+            }
 
             if (controller.IsHeld)
             {

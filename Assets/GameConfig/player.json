@@ -123,7 +123,7 @@
       },
       {
         "stateName": "Climb",
-        "spriteSheet": "Art/Sprites/Player/Walk.png",
+        "spriteSheet": "Art/Sprites/Player/Climb.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -134,11 +134,22 @@
       },
       {
         "stateName": "ClimbIdle",
-        "spriteSheet": "Art/Sprites/Player/Grabbed.png",
+        "spriteSheet": "Art/Sprites/Player/ClimbIdle.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
         "fps": 8,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "ClimbDown",
+        "spriteSheet": "Art/Sprites/Player/ClimbDown.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 16,
         "loop": true,
         "events": [],
         "speed": 1.0

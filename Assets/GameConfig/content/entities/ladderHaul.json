@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "ladder"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      0.8,
+      1.0
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#4A3426A0",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": -1,
+    "hurtFlash": false,
+    "deathPop": false,
+    "color": "#FFFFFF",
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "ladder",
+      "climbSpeed": 1.7,
+      "grabReach": 0.25,
+      "jumpOffSpeed": 1.5,
+      "fireRate": 0.55,
+      "regrab": 0.35,
+      "grabSound": "player_land"
+    }
+  ]
+}
