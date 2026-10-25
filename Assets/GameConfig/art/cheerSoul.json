@@ -7,8 +7,7 @@
   "pixels": 220,
   "keepTint": true,
   "poses": {
-    "stand": "standing hunched, both thin arms raised overhead",
-    "react": "both arms up waving the scrap of cloth"
+    "stand": "standing hunched, both thin arms raised overhead holding the cloth scrap"
   },
   "clips": {
     "idle": {
@@ -16,15 +15,39 @@
       "action": "rocks gently in place, breathing slowly",
       "seconds": 2
     },
-    "react": {
-      "from": "react",
+    "hiccup": {
+      "from": "stand",
+      "state": "Hiccup",
+      "loop": false,
       "action": "waves the cloth flag side to side, tired but trying, then droops",
-      "seconds": 2,
-      "loop": false
+      "seconds": 2
     }
   },
+  "animator": {
+    "parameters": [
+      {
+        "name": "Hiccup",
+        "type": "Trigger"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Idle",
+        "to": "Hiccup",
+        "when": [
+          "Hiccup"
+        ]
+      },
+      {
+        "from": "Hiccup",
+        "to": "Idle",
+        "exit": true
+      }
+    ]
+  },
   "takes": {
-    "pose": 3,
-    "clip": 2
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

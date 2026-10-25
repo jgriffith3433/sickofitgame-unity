@@ -63,7 +63,8 @@
       "length": 9,
       "width": 0.4,
       "warningSound": "overlord_beam_charge",
-      "beamSound": "overlord_beam_strike"
+      "beamSound": "overlord_beam_strike",
+      "animBool": "IsAttacking"
     },
     {
       "type": "laserSweep",

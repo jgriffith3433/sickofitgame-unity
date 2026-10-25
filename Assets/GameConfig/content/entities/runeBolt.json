@@ -3,7 +3,21 @@
   "extends": "fireball",
   "visual": {
     "color": "#8FE3FF",
-    "scale": 0.12
+    "scale": 0.12,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Burn",
+          "spriteSheet": "Art/Effects/Rune/Rune_bolt.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Burn"
+    }
   },
   "abilities": [
     {

@@ -1,0 +1,24 @@
+{
+  "about": "Circle VIII's far floating arches (runeBridges ambience, instead of the Road's islands).",
+  "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (island.png)",
+  "out": "Assets/Art/Climb",
+  "name": "RuneIsland",
+  "key": "none",
+  "size": [
+    313,
+    415
+  ],
+  "pivot": [
+    156.5,
+    207.5
+  ],
+  "worldWidth": 2,
+  "widthPixels": 313,
+  "scale": 0.4,
+  "clips": {
+    "still": {
+      "frames": "C:/Projects/SickOfItGameEnemies/Generated/climbrune\\_prep\\runeIsland\\still",
+      "key": "none"
+    }
+  }
+}

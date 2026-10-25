@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "entity": "pileKeeper",
+  "name": "The Pile Keeper",
+  "description": "a huge old imp who keeps a pile of everything that fell into Hell: a big hunched crimson imp with scarred skin, broken horns, ragged bat wings, a cracked iron helmet, sitting on top of a heaped pile of junk: diamonds, a cart wheel, a broken spear, a bent halo, sacks and shoes, clutching a long bent spear",
+  "height": 1.6,
+  "poses": {
+    "stand": "sitting hunched on top of his heaped pile of junk and diamonds, the bent spear held upright, glaring",
+    "struck": "jolted on his pile, eyes bulging, a few diamonds and a shoe tumbling off it",
+    "dead": "the pile collapsing in an avalanche of junk and diamonds as he tumbles off it"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "sits on his pile, clutching it possessively, glaring and grumbling",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "rears up on his pile and hurls the bent spear forward to the right, then grabs another out of the pile",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "pixels": 320
+}

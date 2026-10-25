@@ -1,0 +1,38 @@
+{
+ "about": "The kit's wall (wallSlab): a tall basalt wall to cling to.",
+ "out": "Assets/Art/Effects/KitWall",
+ "name": "KitWall",
+ "key": "magenta",
+ "size": [
+  256,
+  2048
+ ],
+ "pivot": [
+  128,
+  1024
+ ],
+ "crop": [
+  0,
+  0,
+  256,
+  2048
+ ],
+ "worldWidth": 1.125,
+ "widthPixels": 256,
+ "scale": 0.5,
+ "clips": {
+  "idle": {
+   "image": "wall.png"
+  }
+ },
+ "gen": {
+  "wall.png": {
+   "size": [
+    256,
+    2048
+   ],
+   "canvas": "ff00ff",
+   "prompt": "Paint a very tall narrow wall of stacked black basalt blocks with thin glowing orange cracks between them, filling the whole height of the picture from top to bottom, seen from the side. Plain flat pure magenta background (#ff00ff), no floor, no shadow, no scenery, centered with plenty of empty space around it. Dark fantasy video game art: painterly, detailed, gritty, warm rim light from hellfire."
+  }
+ }
+}

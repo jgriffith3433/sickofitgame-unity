@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "bounceLobber",
   "name": "Bounce lobber",
-  "description": "a hunched grey-brown demon of the Cracked Road crouched on a spire ledge with long arms, cradling a glowing ball of magma in both hands, rubbery limbs",
+  "description": "a brimstone demon of the Cracked Road: a hunched body of cracked black basalt with molten orange light glowing through every seam, short curved horns of charred stone, small burning ember eyes, a wide jaw with a furnace glow inside, squatting high, grey-brown dusty basalt, long rubbery arms, cradling a round glowing ball of magma in both hands",
   "height": 0.8,
   "poses": {
-    "stand": "crouched on a ledge cradling a glowing ball of magma, facing right",
-    "struck": "struck: recoiling, the magma ball wobbling in its hands",
-    "dead": "slumped over, the magma ball rolled away and cooling"
+    "stand": "squatting on its haunches, the round glowing magma ball cradled in both long arms",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "squats, bouncing the glowing magma ball between its hands",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "bounces the magma ball once off the ground, then throws it hard forward and down to the right",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

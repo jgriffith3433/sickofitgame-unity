@@ -591,6 +591,113 @@
           "image": "still.png"
         }
       }
+    },
+    "runeSpan": {
+      "name": "RuneSpan",
+      "about": "runeSpan: a pale grey carved slab of the Rune Bridges, its rune groove lit by the runeSpan ability. Fitted so its walkable top is the body's width.",
+      "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (span.png)",
+      "worldWidth": 2.2,
+      "body": 0.5,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "runePillar": {
+      "name": "RunePillar",
+      "about": "runePillar: a pier of the Rune Bridges, always there.",
+      "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (pillar.png)",
+      "worldWidth": 2.2,
+      "body": 0.5,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 2.0
+    },
+    "runeLanding": {
+      "name": "RuneLanding",
+      "about": "floorLanding7xx: the landing at the top of a Rune Bridges floor.",
+      "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (landing.png)",
+      "worldWidth": 6.2,
+      "body": 0.6,
+      "scale": 0.5,
+      "prep": {
+        "key": "magenta",
+        "pivot": "top"
+      },
+      "clips": {
+        "idle": {
+          "image": "still.png"
+        }
+      },
+      "bodyWidth": 6.0
+    },
+    "runeIsland": {
+      "name": "RuneIsland",
+      "about": "Circle VIII's far floating arches (runeBridges ambience, instead of the Road's islands).",
+      "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (island.png)",
+      "worldWidth": 2,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta"
+      },
+      "clips": {
+        "still": {
+          "image": "still.png"
+        }
+      }
+    },
+    "runeArches": {
+      "name": "RuneArches",
+      "about": "Circle VIII's distant pillars and broken arches (instead of the Road's spires).",
+      "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (arches.png)",
+      "worldWidth": 2,
+      "scale": 0.4,
+      "prep": {
+        "key": "magenta",
+        "pivot": "bottom"
+      },
+      "clips": {
+        "still": {
+          "image": "still.png"
+        }
+      }
+    },
+    "runeVoid": {
+      "name": "RuneVoid",
+      "about": "Circle VIII's void far below: ink-violet, rune dust, mist bands (instead of the Rift).",
+      "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (void.png)",
+      "worldWidth": 6,
+      "scale": 0.6,
+      "prep": {
+        "key": "none",
+        "cropY": [
+          0.3,
+          1.0
+        ],
+        "centre": 0.8,
+        "wrap": "x",
+        "wrapShare": 0.15
+      },
+      "clips": {
+        "loop": {
+          "image": "still.png"
+        }
+      }
     }
   }
 }

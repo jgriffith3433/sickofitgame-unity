@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "entity": "ricochetPistolPickup",
+  "name": "Ricochet Pistol (pickup)",
+  "description": "a pale steel pistol with a long bent barrel, angular plates and a bright glowing blue crystal eye in its muzzle and side",
+  "height": 0.38,
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, centered in the frame with plenty of empty space around it, the whole object visible. One object alone, nothing else, no hands, no person. {style} {background}",
+    "pose": "Image 1 is this object. Show the exact same object {action}. Keep everything about it the same as image 1: shape, colors, size and position in the frame and art style. {background}"
+  },
+  "poses": {
+    "stand": "floating a little above the ground with a soft warm glow around it"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "bobs gently up and down in place, turning a little, its colours unchanged",
+      "seconds": 2
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

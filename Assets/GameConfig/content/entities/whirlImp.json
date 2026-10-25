@@ -48,7 +48,8 @@
       "burst": 9,
       "burstInterval": 0.2,
       "animTrigger": "IsAttacking",
-      "damage": 1
+      "damage": 1,
+      "fireOnEvent": "FireProjectile"
     }
   ],
   "sounds": {

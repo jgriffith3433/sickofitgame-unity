@@ -67,7 +67,9 @@
         "type": "spread",
         "count": 3,
         "angle": 18
-      }
+      },
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
     }
   ],
   "moveSpeed": 0,

@@ -1,0 +1,52 @@
+{
+ "about": "Telegraph glows (fmWarnWhip and every *Warn* line/spot, mkWarnHand/mkWarnMouth, slagDrip): white-gold light each entity tints with visual.color. Replaces the tinted Fireball sheet.",
+ "out": "Assets/Art/Effects/Warn",
+ "name": "Warn",
+ "key": "black",
+ "tintable": true,
+ "size": [
+  1024,
+  1024
+ ],
+ "pivot": [
+  512,
+  512
+ ],
+ "crop": [
+  0,
+  0,
+  1024,
+  1024
+ ],
+ "worldWidth": 4.0,
+ "widthPixels": 1024,
+ "scale": 0.25,
+ "clips": {
+  "glow": {
+   "image": "glow.png",
+   "make": "charge",
+   "frames": 15
+  },
+  "orb": {
+   "image": "orb.png",
+   "make": "charge",
+   "frames": 15
+  },
+  "drip": {
+   "image": "drip.png",
+   "make": "charge",
+   "frames": 15
+  }
+ },
+ "gen": {
+  "glow.png": {
+   "prompt": "Paint a warning glow on the ground seen from the side: a flat wide ellipse of hot white-gold light lying on the ground with a blazing white core, little tongues of white flame flickering up from it and tiny sparks rising. Pure light, nothing solid. Plain flat pure black background (#000000), no floor, no scenery, centered with plenty of empty black space around it. Dark fantasy video game effect art, painterly, glowing."
+  },
+  "orb.png": {
+   "prompt": "Paint a round ball of hot white-gold light with a blazing white core, a soft round halo and a few tiny sparks and wisps of flame curling around it. Pure light, nothing solid. Plain flat pure black background (#000000), no floor, no scenery, centered with plenty of empty black space around it. Dark fantasy video game effect art, painterly, glowing."
+  },
+  "drip.png": {
+   "prompt": "Paint a fat glowing drop of molten white-gold light hanging from a thin glowing thread, about to fall, a soft halo and a few sparks. Pure light, nothing solid. Plain flat pure black background (#000000), no floor, no scenery, centered with plenty of empty black space around it. Dark fantasy video game effect art, painterly, glowing."
+  }
+ }
+}

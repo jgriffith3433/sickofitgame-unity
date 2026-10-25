@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "fuseWhelp",
   "name": "Fuse whelp",
-  "description": "a small yellow-orange demon whelp of the Cracked Road with sticks of dynamite-like glowing rock strapped to its back, a short fuse burning and sputtering sparks on its head",
-  "height": 0.5,
+  "description": "a brimstone whelp, a young demon of the Cracked Road the size of a dog, on four stubby clawed legs: cracked black basalt hide with thin orange glowing seams, two stubby charred horns, a big jaw glowing like a furnace, a short rock tail, a fat stick of black road rock strapped to its back with rope, a lit fuse sparking on top of it",
+  "height": 0.4,
   "poses": {
-    "stand": "mid-run on all fours, the burning fuse sputtering on its back, wild eyes, facing right",
-    "struck": "struck: the fuse flaring, the whelp tumbling",
-    "dead": "flash of white light and a scatter of sparks where it stood"
+    "stand": "standing on four stubby legs, the rock bomb strapped on its back, the fuse sparking",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "exploding in a ball of fire, smoke and rock chunks"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "stands panting, the fuse on its back sparking",
       "seconds": 2
     },
-    "attack": {
+    "move": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "runs flat out forward on its stubby legs, the fuse sparking wildly, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "the fuse burns down and it explodes in a ball of fire, smoke and rock chunks",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

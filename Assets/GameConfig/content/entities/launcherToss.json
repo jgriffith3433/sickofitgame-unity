@@ -2,9 +2,7 @@
   "schemaVersion": 1,
   "team": "Neutral",
   "health": 0,
-  "tags": [
-    "prop"
-  ],
+  "tags": ["prop"],
   "body": {
     "radius": 0.3,
     "solid": false
@@ -15,7 +13,23 @@
     "placeholderLabel": true,
     "sortingOrder": 7,
     "hurtFlash": false,
-    "fxColor": "#FF8C33"
+    "fxColor": "#FF8C33",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/LauncherToss/LauncherToss_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false,
+    "scale": 1
   },
   "healthBar": {
     "show": false
@@ -24,11 +38,8 @@
     {
       "type": "move",
       "speed": 4.2,
-      "direction": [
-        1.0,
-        0.7
-      ],
-      "homing": 0.0,
+      "direction": [1, 0.7],
+      "homing": 0,
       "acceleration": 0.5
     },
     {

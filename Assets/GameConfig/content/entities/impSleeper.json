@@ -4,20 +4,17 @@
   "team": "Neutral",
   "health": 0,
   "shootable": false,
-  "tags": [
-    "imp",
-    "sleeper"
-  ],
+  "tags": ["imp", "sleeper"],
   "loot": {
-    "chance": 0.0,
+    "chance": 0,
     "count": 0,
     "value": 0
   },
   "drops": [],
   "body": {
-    "radius": 1.0,
+    "radius": 1,
     "solid": false,
-    "gravity": 0.0
+    "gravity": 0
   },
   "healthBar": {
     "show": false
@@ -39,14 +36,8 @@
           "type": "spawn",
           "entity": "impSleeperFall",
           "anchor": "Self",
-          "at": [
-            0.0,
-            0.0
-          ],
-          "velocity": [
-            0.6,
-            1.2
-          ],
+          "at": [0, 0],
+          "velocity": [0.6, 1.2],
           "facePlayer": false
         },
         {
@@ -61,5 +52,63 @@
         }
       ]
     }
-  ]
+  ],
+  "visual": {
+    "animator": {
+      "parameters": [
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/ImpSleeper/ImpSleeper_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/ImpSleeper/ImpSleeper_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/ImpSleeper/ImpSleeper_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
+  }
 }

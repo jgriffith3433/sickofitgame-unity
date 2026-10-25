@@ -1,0 +1,24 @@
+{
+  "about": "Circle VIII's distant pillars and broken arches (instead of the Road's spires).",
+  "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (arches.png)",
+  "out": "Assets/Art/Climb",
+  "name": "RuneArches",
+  "key": "none",
+  "size": [
+    1024,
+    417
+  ],
+  "pivot": [
+    512.0,
+    413
+  ],
+  "worldWidth": 2,
+  "widthPixels": 1024,
+  "scale": 0.4,
+  "clips": {
+    "still": {
+      "frames": "C:/Projects/SickOfItGameEnemies/Generated/climbrune\\_prep\\runeArches\\still",
+      "key": "none"
+    }
+  }
+}

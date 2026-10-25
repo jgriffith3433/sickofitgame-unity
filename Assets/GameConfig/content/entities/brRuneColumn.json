@@ -23,11 +23,24 @@
     "color": "#BFEFFF",
     "fxColor": "#8FE3FF",
     "placeholderColor": "#8FE3FF",
-    "placeholderShape": "Box",
     "placeholderLabel": false,
     "sortingOrder": 4,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Rise",
+          "spriteSheet": "Art/Effects/RuneColumn/RuneColumn_rise.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Rise"
+    }
   },
   "abilities": [
     {

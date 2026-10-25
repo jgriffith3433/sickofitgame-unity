@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "impSack",
+  "name": "Sack imp",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, hauling a huge bulging cloth sack of stolen glittering diamonds over its shoulders with both claws, bent under the weight, diamonds peeking out of a torn seam",
+  "height": 0.8,
+  "poses": {
+    "stand": "hovering low on straining bat wings, bent under the huge diamond sack held on its back with both claws",
+    "struck": "just hit: the sack tearing open, a diamond spilling out, the imp squawking with eyes bulging",
+    "dead": "bursting into a puff of black soot and embers, the torn empty sack dropping with a few diamonds"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers low under the heavy sack, panting, wings straining",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "hauls the heavy diamond sack along in the air, wings straining, panting, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

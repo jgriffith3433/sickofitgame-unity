@@ -17,10 +17,23 @@
   "visual": {
     "scale": 1.0,
     "placeholderColor": "#FFB050",
-    "placeholderShape": "Box",
     "placeholderLabel": false,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Burst",
+          "spriteSheet": "Art/Effects/Eruption/Eruption_burst.png",
+          "fps": 16,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Burst"
+    }
   },
   "abilities": [
     {

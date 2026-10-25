@@ -2,38 +2,40 @@
   "schemaVersion": 1,
   "entity": "motherFissure",
   "name": "Mother Fissure",
-  "description": "a great cracked demon like a living fissure, glowing split down its chest, whelps crawling from the cracks",
-  "height": 1.5,
+  "description": "the crack that breeds the Road's whelps: a huge lumpy demon mother made of cracked black basalt, a giant glowing orange fissure splitting her belly open, little whelp heads peeking out of it, long sagging arms, small horns, tired furious eyes",
+  "height": 1.6,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "hovering low, her glowing fissure belly open, whelp heads peeking out",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "hovers, breathing heavily, her belly fissure pulsing with light",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "heaves and spits a glowing lump of magma forward to the right out of her fissure",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
-  }
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "pixels": 320
 }

@@ -55,7 +55,8 @@
       "speed": 0.65,
       "stopDistance": 2.8,
       "horizontalOnly": true,
-      "face": true
+      "face": true,
+      "animBool": "IsMoving"
     },
     {
       "type": "shoot",
@@ -74,7 +75,9 @@
       "interval": 2.8,
       "initialDelay": 2.0,
       "range": 3.6,
-      "damage": 1
+      "damage": 1,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
     },
     {
       "type": "revive",

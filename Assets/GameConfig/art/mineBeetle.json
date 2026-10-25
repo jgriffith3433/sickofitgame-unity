@@ -2,38 +2,44 @@
   "schemaVersion": 1,
   "entity": "mineBeetle",
   "name": "Mine beetle",
-  "description": "a dog-sized beetle of the Ember Wastes, glossy dark brown carapace banded with dull orange, six stout legs, long antennae, carrying glowing smouldering eggs",
-  "height": 0.6,
+  "description": "a beetle the size of a dog from the Ember Wastes: a glossy black carapace with glowing orange cracks, six spiky legs, small mandibles, a swollen glowing orange abdomen full of smouldering eggs",
+  "height": 0.45,
   "poses": {
-    "stand": "a dog-sized beetle crawling right on six stout legs, a dark brown glossy carapace banded with dull orange, two small glowing orange eggs tucked under its tail, antennae raised",
-    "struck": "just hit and flipping onto its back, legs splayed, carapace cracked and glowing orange",
-    "dead": "on its back, legs curled, the carapace split with embers fading"
+    "stand": "standing on its six legs side-on, the glowing abdomen raised",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "crawls in place, legs scuttling, antennae twitching",
+      "action": "stands, legs twitching, mandibles clicking, the abdomen pulsing",
       "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "scuttles forward on its six legs, abdomen glowing, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "attack": {
       "from": "stand",
-      "action": "pushes out a glowing orange egg from under its tail onto the ground behind it, then crawls on",
+      "action": "squats and lays a smouldering glowing egg out of its abdomen behind it, then scuttles on",
       "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, flinches, antennae snapping back, then recovers",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flips over, the carapace cracks open with orange light and it bursts into embers and soot",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

@@ -15,6 +15,8 @@ import copy, json, os, random, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import rune_floors as rf
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from artkeep import guard  # noqa: E402  (generated art is kept: Tools/Levels/artkeep.py)
 
 CFG = rf.ROOT
 ENT = rf.ENT
@@ -24,6 +26,9 @@ changed = []
 
 
 def write_json(path, data):
+    data = guard(path, data)
+    if data is None:
+        return
     text = json.dumps(data, indent=2, ensure_ascii=False) + '\n'
     old = open(path, encoding='utf-8').read() if os.path.exists(path) else None
     if old == text:

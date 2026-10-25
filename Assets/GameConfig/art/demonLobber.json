@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "demonLobber",
+  "name": "Brimstone lobber",
+  "description": "a brimstone demon of the Cracked Road: a hunched body of cracked black basalt with molten orange light glowing through every seam, short curved horns of charred stone, small burning ember eyes, a wide jaw with a furnace glow inside, squatting low, ash-grey dusty basalt, long thin arms, holding a glowing lump of brimstone ready to throw",
+  "height": 0.8,
+  "poses": {
+    "stand": "squatting low on its haunches, a glowing lump of brimstone held up in one long arm",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "squats, tossing the glowing lump in its hand, watching",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "winds its long arm back and lobs the glowing brimstone lump forward in a high arc to the right, then picks up another",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

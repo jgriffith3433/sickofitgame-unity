@@ -2,38 +2,44 @@
   "schemaVersion": 1,
   "entity": "plateDemon",
   "name": "Plate demon",
-  "description": "a hulking basalt demon of the Cracked Road holding a huge slab of dark iron plate in front of its body like a wall, glowing orange cracks in its skin behind the plate, small horned head peeking over the top",
-  "height": 0.9,
+  "description": "a brimstone demon of the Cracked Road: a hunched body of cracked black basalt with molten orange light glowing through every seam, short curved horns of charred stone, small burning ember eyes, a wide jaw with a furnace glow inside, carrying a huge torn-up slab of riveted grey iron road plating in front of it like a shield, peeking over the top",
+  "height": 1.0,
   "poses": {
-    "stand": "standing behind the big iron plate held out in front, glowing cracks in the grey skin, facing right",
-    "struck": "struck: the plate rings and sparks, the demon flinching behind it",
-    "dead": "collapsed in a heap, the dropped plate split and glowing"
+    "stand": "standing hunched, the iron plate held up in front of it with both claws, eyes over the top",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "breathes and shifts its weight in place, its glow pulsing slowly",
       "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "trudges forward behind its iron plate, the plate scraping, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "rises up behind its plate and spits two quick glowing rock shards over the top forward to the right",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

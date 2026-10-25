@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "blinkImp",
+  "name": "Blink imp",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, its skin a deep violet-crimson, faint violet afterimages trailing off its outline, glowing violet eyes, an ember in one claw",
+  "height": 0.75,
+  "poses": {
+    "stand": "hovering on spread bat wings, an ember cupped in one hand, leaning forward",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers, flickering in and out of view with faint violet afterimages",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "flickers violet and hurls its ember forward to the right",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

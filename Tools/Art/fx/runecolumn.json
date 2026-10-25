@@ -1,0 +1,40 @@
+{
+ "about": "A column of rune light rising from the bridge (brRuneColumn, llRuneColumn, brWallHit): pale cyan, tinted per entity.",
+ "out": "Assets/Art/Effects/RuneColumn",
+ "name": "RuneColumn",
+ "key": "black",
+ "tintable": true,
+ "size": [
+  512,
+  1024
+ ],
+ "pivot": [
+  256,
+  1000
+ ],
+ "crop": [
+  0,
+  0,
+  512,
+  1024
+ ],
+ "worldWidth": 1.6,
+ "widthPixels": 512,
+ "scale": 0.5,
+ "clips": {
+  "rise": {
+   "image": "column.png",
+   "make": "column",
+   "frames": 12
+  }
+ },
+ "gen": {
+  "column.png": {
+   "size": [
+    512,
+    1024
+   ],
+   "prompt": "Paint a tall narrow column of pale cyan-white rune light rising straight up from the ground, carved glowing glyphs floating up inside it, bright at the base and fading at the top. Pure light, nothing solid. Plain flat pure black background (#000000), no floor, no scenery, centered with plenty of empty black space around it. Dark fantasy video game effect art, painterly, glowing."
+  }
+ }
+}

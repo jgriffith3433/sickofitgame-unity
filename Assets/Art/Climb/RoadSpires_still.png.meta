@@ -118,9 +118,9 @@ TextureImporter:
         width: 257
         height: 492
       alignment: 9
-      pivot: {x: 0.500000, y: 0.003252}
+      pivot: {x: 0.5, y: 0.003252}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -128,7 +128,7 @@ TextureImporter:
       spriteID: 91d2fd29ed16518e0800000000000000
       internalID: -1723363673824613095
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     outline: []

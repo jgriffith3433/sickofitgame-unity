@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "broodWhelp",
   "name": "Brood Whelp",
-  "description": "a swollen brimstone whelp with a split, glowing belly where two smaller whelps can be seen curled inside",
-  "height": 0.55,
+  "description": "a brimstone whelp, a young demon of the Cracked Road the size of a dog, on four stubby clawed legs: cracked black basalt hide with thin orange glowing seams, two stubby charred horns, a big jaw glowing like a furnace, a short rock tail, bigger and fatter, its swollen belly glowing with smaller whelps curled inside like eggs",
+  "height": 0.5,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "standing on four stubby legs, its swollen glowing belly hanging low",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "bursting open in a puff of rock dust with tiny glowing whelp shapes tumbling out"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "stands panting, its belly pulsing with the shapes of whelps inside",
       "seconds": 2
     },
-    "attack": {
+    "move": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "waddles fast forward on its stubby legs, belly swinging, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

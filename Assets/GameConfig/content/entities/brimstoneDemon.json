@@ -4,7 +4,11 @@
   "hint": "Fire breath, short range. Keep your distance.",
   "note": "Breathes fire at arm's length. Poor planning.",
   "hintVoice": "vo_hero_hint_brimstoneDemon",
-  "onSpawn": [{ "type": "hintOnce" }],
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
   "extends": "shooter",
   "health": 4,
   "moveSpeed": 0.7,
@@ -19,28 +23,48 @@
       "parameters": [
         {
           "name": "IsAttacking",
-          "type": "Bool",
-          "defaultValue": 0.0
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
         }
       ],
       "states": [
         {
           "stateName": "Idle",
-          "spriteSheet": "Images/Demon1.png",
-          "fps": 8,
-          "loop": true
+          "spriteSheet": "Art/Enemies/BrimstoneDemon/BrimstoneDemon_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
         },
         {
           "stateName": "Attack",
-          "spriteSheet": "Images/Demon1.png",
-          "fps": 8,
+          "spriteSheet": "Art/Enemies/BrimstoneDemon/BrimstoneDemon_attack.png",
+          "fps": 12,
           "loop": false,
           "events": [
             {
-              "frame": 1,
+              "frame": 7,
               "functionName": "FireProjectile"
             }
           ]
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/BrimstoneDemon/BrimstoneDemon_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/BrimstoneDemon/BrimstoneDemon_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
         }
       ],
       "transitions": [
@@ -48,12 +72,12 @@
           "fromState": "Idle",
           "toState": "Attack",
           "hasExitTime": false,
-          "exitTime": 1.0,
+          "exitTime": 1,
           "conditions": [
             {
               "parameterName": "IsAttacking",
               "mode": "If",
-              "threshold": 0.0
+              "threshold": 0
             }
           ]
         },
@@ -61,18 +85,33 @@
           "fromState": "Attack",
           "toState": "Idle",
           "hasExitTime": true,
-          "exitTime": 0.9,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
           "conditions": [
             {
-              "parameterName": "IsAttacking",
-              "mode": "IfNot",
-              "threshold": 0.0
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
             }
           ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
         }
       ],
       "defaultStateName": "Idle"
-    }
+    },
+    "facesLeft": false
   },
   "loot": {
     "chance": 0.35,
@@ -97,17 +136,25 @@
     {
       "type": "shoot",
       "projectile": "brimstoneBreath",
-      "pattern": { "type": "spread", "count": 3, "angle": 24 },
-      "speed": 4.0,
+      "pattern": {
+        "type": "spread",
+        "count": 3,
+        "angle": 24
+      },
+      "speed": 4,
       "aim": "Player",
       "muzzle": [0.22, 0.12],
       "interval": 2.6,
-      "initialDelay": 2.0,
+      "initialDelay": 2,
       "range": 3.6,
       "animTrigger": "IsAttacking",
       "fireOnEvent": "FireProjectile",
       "damage": 1
     }
   ],
-  "sounds": { "hurtSound": "brimstoneDemon_hurt", "deathSound": "brimstoneDemon_die", "attackSound": "brimstoneDemon_attack" }
+  "sounds": {
+    "hurtSound": "brimstoneDemon_hurt",
+    "deathSound": "brimstoneDemon_die",
+    "attackSound": "brimstoneDemon_attack"
+  }
 }

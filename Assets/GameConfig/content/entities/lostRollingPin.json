@@ -2,10 +2,7 @@
   "schemaVersion": 1,
   "team": "Neutral",
   "health": 0,
-  "tags": [
-    "pickup",
-    "lostThing"
-  ],
+  "tags": ["pickup", "lostThing"],
   "body": {
     "radius": 0.5,
     "solid": false
@@ -16,7 +13,22 @@
     "placeholderLabel": true,
     "sortingOrder": 6,
     "hurtFlash": false,
-    "fxColor": "#E8C98A"
+    "fxColor": "#E8C98A",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/LostRollingPin/LostRollingPin_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": false

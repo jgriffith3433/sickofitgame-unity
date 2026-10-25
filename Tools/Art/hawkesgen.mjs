@@ -67,7 +67,25 @@ export class HawkesGen {
     this.local = !this.key && /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/.test(this.url);
   }
 
-  async request(path, { method = 'GET', body, headers = {}, raw = false, signal } = {}) {
+  /**
+   * One call to Gen. A busy or restarting Gen (502/503/504, no connection) is retried for up to RETRY_MS (10 minutes,
+   * HAWKESGEN_RETRY_MS): job submits carry their key, so a retried submit hands back the same job.
+   */
+  async request(path, opts = {}) {
+    const limit = Number((isNode ? process.env : {}).HAWKESGEN_RETRY_MS ?? 600_000);
+    const started = Date.now();
+    for (let wait = 3000; ; wait = Math.min(wait * 2, 30_000)) {
+      try {
+        return await this.requestOnce(path, opts);
+      } catch (e) {
+        const passing = e?.kind === 'offline' || [502, 503, 504].includes(e?.status);
+        if (!passing || opts.signal?.aborted || Date.now() - started + wait > limit) throw e;
+        await new Promise((r) => setTimeout(r, wait));
+      }
+    }
+  }
+
+  async requestOnce(path, { method = 'GET', body, headers = {}, raw = false, signal } = {}) {
     const h = { 'X-Hawkes-Client': `js/${CLIENT_VERSION}`, ...headers };
     if (this.key) h.Authorization = `Bearer ${this.key}`;
     let payload = body;
@@ -140,7 +158,7 @@ export class HawkesGen {
    * changes. Throws HawkesGenError if it fails or is cancelled (unless
    * throwOnFail is false). signal: an AbortSignal that cancels the job.
    */
-  async wait(id, { onUpdate, pollMs = 1500, timeoutMs = 2 * 60 * 60 * 1000, signal, throwOnFail = true } = {}) {
+  async wait(id, { onUpdate, pollMs = Number((isNode ? process.env : {}).HAWKESGEN_POLL_MS ?? 1500), timeoutMs = 2 * 60 * 60 * 1000, signal, throwOnFail = true } = {}) {
     const until = Date.now() + timeoutMs;
     let last = '';
     let cancelled = false;

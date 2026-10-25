@@ -65,7 +65,7 @@ namespace SickOfIt.Gameplay
 
         /// <summary>Animator names the engine drives itself: a trigger pulsed on every hit that doesn't kill, and the
         /// state played as the death effect.</summary>
-        public const string HurtParameter = "Hurt", DieState = "Die";
+        public const string HurtParameter = "Hurt", DieState = "Die", ScriptWalkParameter = "Walking";
 
         SimHistory history;
         AudioSource audioSource;
@@ -417,6 +417,8 @@ namespace SickOfIt.Gameplay
 
             if (scriptWalking)
                 TickScriptWalk(now, dt);
+            // A scene's walk (walkEntityTo) plays the entity's walk clip: its animator's "Walking" bool, when it has one.
+            Animation.SetBool(ScriptWalkParameter, scriptWalking);
             ApplyMovement(now, dt);
             Animation.Tick(dt);
             if (!alive)

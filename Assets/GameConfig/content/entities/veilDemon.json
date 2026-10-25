@@ -30,7 +30,8 @@
       "type": "patrol",
       "speed": 0.5,
       "distance": 2.4,
-      "pause": 1.0
+      "pause": 1.0,
+      "animBool": "IsMoving"
     },
     {
       "type": "frontShield",
@@ -61,8 +62,14 @@
       "interval": 2.8,
       "initialDelay": 2.0,
       "range": 8.0,
-      "damage": 1
+      "damage": 1,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
     }
   ],
-  "sounds": { "hurtSound": "veilDemon_hurt", "deathSound": "veilDemon_die", "attackSound": "veilDemon_attack" }
+  "sounds": {
+    "hurtSound": "veilDemon_hurt",
+    "deathSound": "veilDemon_die",
+    "attackSound": "veilDemon_attack"
+  }
 }

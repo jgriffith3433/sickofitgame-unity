@@ -13,14 +13,17 @@
     "sortingOrder": 4,
     "hurtFlash": false,
     "animator": {
+      "parameters": [],
       "states": [
         {
           "stateName": "Glow",
-          "spriteSheet": "Images/Fireball.png",
+          "spriteSheet": "Art/Effects/Warn/Warn_drip.png",
           "fps": 16,
-          "loop": true
+          "loop": true,
+          "events": []
         }
       ],
+      "transitions": [],
       "defaultStateName": "Glow"
     }
   },
@@ -28,10 +31,22 @@
     "show": false
   },
   "onSpawn": [
-    { "type": "playSound", "sound": "slag_drip" }
+    {
+      "type": "playSound",
+      "sound": "slag_drip"
+    }
   ],
   "onDeath": [
-    { "type": "spawn", "entity": "slag", "anchor": "Self", "velocity": [0.0, -3.4], "facePlayer": false }
+    {
+      "type": "spawn",
+      "entity": "slag",
+      "anchor": "Self",
+      "velocity": [
+        0.0,
+        -3.4
+      ],
+      "facePlayer": false
+    }
   ],
   "abilities": [
     {

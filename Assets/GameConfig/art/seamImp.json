@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "seamImp",
   "name": "Seam imp",
-  "description": "a small wiry hell imp of the Ember Wastes, one of the Magma King's: leathery skin, short curled horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, teal-tinted skin that flickers at the edges",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, its crimson skin cracked with thin glowing teal seams like a broken mirror, teal glowing eyes, wisps of teal light trailing from its wings",
   "height": 0.75,
   "poses": {
-    "stand": "hovering mid-air on spread bat wings, teal-tinted, its edges faintly glitching like a torn photograph, a thin glowing teal seam in the air at its back",
-    "struck": "just hit and caught mid-shriek: eyes bulging, mouth stretched open, wings snapped up, body tilted back with cracks of orange light glowing through its skin",
-    "dead": "vanishing into a small flash of teal light and black soot, only its horns tumbling out"
+    "stand": "hovering on spread bat wings, hunched forward sneakily, an ember in each clawed hand",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "hovers, flapping, flickering at the edges",
+      "action": "hovers sneakily, glancing over its shoulder, teal seams flickering across its skin",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "snaps both hands out and spits two quick embers, then hovers again",
+      "action": "flickers with teal light, then snaps both arms forward and spits two quick embers to the right",
       "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks backward with a yelp, wings crumpling, then recovers",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "shrieks, flickers teal, and pops into soot and embers",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

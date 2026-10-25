@@ -11,5 +11,21 @@
       "above": -1.1,
       "onFace": true
     }
-  ]
+  ],
+  "visual": {
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/RuneLanding_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
+  }
 }

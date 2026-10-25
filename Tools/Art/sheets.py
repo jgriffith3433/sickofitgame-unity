@@ -171,8 +171,10 @@ def kill_green(img, bg, c):
     dark = ImageChops.lighter(ImageChops.lighter(r, g), b).point(lambda v: 255 if v < 90 else 0)
     shadow = ImageChops.multiply(dark, lead.point(lambda v: 255 if v > 6 else 0))
     keep = ImageChops.multiply(green, ImageChops.invert(shadow))
-    img.putalpha(ImageChops.multiply(a, keep))
-    return img
+    # Despill: a flash, fire or glow painted over the green plate keeps a green cast (yellow-green blobs). Green never
+    # leads the brighter of red and blue in the kept figure, so that cast becomes the warm colour it was meant to be.
+    g = ImageChops.darker(g, ImageChops.lighter(r, b))
+    return Image.merge("RGBA", (r, g, b, ImageChops.multiply(a, keep)))
 
 
 def hit_frame(keyed):

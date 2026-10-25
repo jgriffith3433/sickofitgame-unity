@@ -17,6 +17,8 @@ To add one: append a row to ROOMS (a room builder and its door), run it, add the
 data written from those tables; never hand-edit Secret*.json / Gauntlet*.json or the "SIDE DOOR" rules in the hosts.
 """
 import json, os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from artkeep import guard  # noqa: E402  (generated art is kept: Tools/Levels/artkeep.py)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CONFIG = os.path.join(ROOT, "Assets", "GameConfig")
@@ -280,6 +282,9 @@ def load(path):
         return json.load(f)
 
 def dump(path, data):
+    data = guard(path, data)
+    if data is None:
+        return
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write("\n")

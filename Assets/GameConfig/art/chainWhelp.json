@@ -1,39 +1,40 @@
 {
   "schemaVersion": 1,
   "entity": "chainWhelp",
-  "name": "Chained pair",
-  "description": "a small scrawny demon whelp of the Cracked Road wearing an iron collar from which a thick chain trails off to its right, tugging at it",
-  "height": 0.5,
+  "name": "Chained whelp",
+  "description": "a brimstone whelp, a young demon of the Cracked Road the size of a dog, on four stubby clawed legs: cracked black basalt hide with thin orange glowing seams, two stubby charred horns, a big jaw glowing like a furnace, a short rock tail, a heavy iron shackle round its neck with a broken length of thick iron chain dragging behind it",
+  "height": 0.4,
   "poses": {
-    "stand": "standing on all fours, collar and chain taut to the right, snarling, facing right",
-    "struck": "struck: yanked back by the chain, yelping",
-    "dead": "lying limp, the chain snapped and coiled beside it"
+    "stand": "standing on four stubby legs, the iron shackle on its neck, the chain dragging behind it",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "stands panting and tugging at its chain",
       "seconds": 2
     },
-    "attack": {
+    "move": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "scuttles forward straining against the chain dragging behind it, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "lanternfly",
+  "name": "Lanternfly",
+  "description": "a little moth-like bug of the Rune Bridges with four papery pale wings and a glowing cyan lantern for an abdomen, thin legs, big dark eyes",
+  "height": 0.3,
+  "poses": {
+    "stand": "flying, wings spread, the lantern abdomen glowing",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "flutters in place, the lantern glowing",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "flutters forward to the right, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}
