@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "extends": "damnedSoul",
+  "tags": [
+    "damned",
+    "companion",
+    "rook"
+  ],
+  "visual": {
+    "scale": 1.15,
+    "color": "#F2A93B",
+    "placeholderColor": "#F2A93B",
+    "placeholderSize": 0.8049999999999999,
+    "placeholderLabel": true
+  }
+}

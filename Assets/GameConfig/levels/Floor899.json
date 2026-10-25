@@ -1313,6 +1313,237 @@
             "includeFuture": true
           }
         ]
+      },
+      {
+        "name": "companion: rook, Floor 899",
+        "when": {
+          "type": "sectionReached",
+          "section": "wall"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "rook",
+                "id": "cmp",
+                "anchor": "Player",
+                "at": [
+                  6.0,
+                  0.35
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "cmp:rook:899:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Rook: I tried the R thing. ...It doesn't go backward for me. It goes sideways.",
+                "duration": 6.1,
+                "style": "Subtitle",
+                "color": "#F2A93B"
+              },
+              {
+                "type": "wait",
+                "seconds": 6.4
+              },
+              {
+                "type": "showText",
+                "text": "That's not how it works.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.9
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "heroState",
+                  "requires": [
+                    "flag:rook.asked"
+                  ]
+                },
+                "then": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:899:branch:asked"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Rook: You said hold R. I held R. It's the annoyance, isn't it. You have to bring your own.",
+                        "duration": 6.9,
+                        "style": "Subtitle",
+                        "color": "#F2A93B"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 7.2
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Yeah.",
+                        "duration": 1.8,
+                        "style": "Subtitle"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 2.1
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.6,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:899:reward:diamond2"
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "rook.sideways"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:899:done"
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:899:branch:skipped"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Rook: I heard there's a button. Where's the button?",
+                        "duration": 4.3,
+                        "style": "Subtitle",
+                        "color": "#F2A93B"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 4.6
+                      },
+                      {
+                        "type": "showText",
+                        "text": "R.",
+                        "duration": 1.8,
+                        "style": "Subtitle"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 2.1
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Rook: R. ...R!",
+                        "duration": 1.9,
+                        "style": "Subtitle",
+                        "color": "#F2A93B"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 2.2
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:899:reward:diamond"
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "rook.sideways"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:899:done"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [

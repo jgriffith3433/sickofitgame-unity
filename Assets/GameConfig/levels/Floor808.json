@@ -1276,6 +1276,463 @@
             "includeFuture": true
           }
         ]
+      },
+      {
+        "name": "companion: rook, Floor 808",
+        "when": {
+          "type": "sectionReached",
+          "section": "foot"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "rook",
+                "id": "cmp",
+                "anchor": "Player",
+                "at": [
+                  6.0,
+                  0.35
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "cmp:rook:808:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Rook: Don't look. I'm having a moment.",
+                "duration": 3.5,
+                "style": "Subtitle",
+                "color": "#F2A93B"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.8
+              },
+              {
+                "type": "showText",
+                "text": "You okay?",
+                "duration": 1.8,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.1
+              },
+              {
+                "type": "showText",
+                "text": "Rook: I don't need to be first. ...I need to see you be.",
+                "duration": 4.6,
+                "style": "Subtitle",
+                "color": "#F2A93B"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.9
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "heroState",
+                  "requires": [
+                    "flag:rook.second"
+                  ]
+                },
+                "then": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:808:branch:kind"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Rook: You said second's a good number. It's the best one. You get to watch.",
+                        "duration": 5.9,
+                        "style": "Subtitle",
+                        "color": "#F2A93B"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 6.2
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Rook: Take the rope. It goes where you go.",
+                        "duration": 3.7,
+                        "style": "Subtitle",
+                        "color": "#F2A93B"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 4.0
+                      },
+                      {
+                        "type": "showText",
+                        "text": "It goes nowhere.",
+                        "duration": 2.0,
+                        "style": "Subtitle"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 2.3
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Rook: That's where I was going.",
+                        "duration": 3.0,
+                        "style": "Subtitle",
+                        "color": "#F2A93B"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.3
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.6,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          4.2,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "rewindOrb",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          1.3
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:808:reward:diamond3+orb"
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "rook.done"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:808:done"
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "if",
+                    "condition": {
+                      "type": "heroState",
+                      "deathsAtLeast": 5
+                    },
+                    "then": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:rook:808:branch:dead"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Rook: Die less. It's embarrassing for both of us.",
+                            "duration": 4.2,
+                            "style": "Subtitle",
+                            "color": "#F2A93B"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 4.5
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Rook: Take the rope. It goes where you go.",
+                            "duration": 3.7,
+                            "style": "Subtitle",
+                            "color": "#F2A93B"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 4.0
+                          },
+                          {
+                            "type": "showText",
+                            "text": "It goes nowhere.",
+                            "duration": 2.0,
+                            "style": "Subtitle"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 2.3
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Rook: That's where I was going.",
+                            "duration": 3.0,
+                            "style": "Subtitle",
+                            "color": "#F2A93B"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.3
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.6,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              4.2,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "rewindOrb",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              1.3
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:rook:808:reward:diamond3+orb"
+                          },
+                          {
+                            "type": "setFlag",
+                            "flag": "rook.done"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:rook:808:done"
+                          }
+                        ]
+                      }
+                    ],
+                    "else": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:rook:808:branch:plain"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Rook: Don't die. I'd have to carry on.",
+                            "duration": 3.5,
+                            "style": "Subtitle",
+                            "color": "#F2A93B"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.8
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Rook: Take the rope. It goes where you go.",
+                            "duration": 3.7,
+                            "style": "Subtitle",
+                            "color": "#F2A93B"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 4.0
+                          },
+                          {
+                            "type": "showText",
+                            "text": "It goes nowhere.",
+                            "duration": 2.0,
+                            "style": "Subtitle"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 2.3
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Rook: That's where I was going.",
+                            "duration": 3.0,
+                            "style": "Subtitle",
+                            "color": "#F2A93B"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.3
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.6,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              4.2,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "rewindOrb",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              1.3
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:rook:808:reward:diamond3+orb"
+                          },
+                          {
+                            "type": "setFlag",
+                            "flag": "rook.done"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:rook:808:done"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [

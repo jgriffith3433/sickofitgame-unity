@@ -1509,6 +1509,330 @@
             "includeFuture": true
           }
         ]
+      },
+      {
+        "name": "companion: pointer, Floor 810",
+        "when": {
+          "type": "sectionReached",
+          "section": "stair"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "pointer",
+                "id": "cmp",
+                "anchor": "Player",
+                "at": [
+                  6.0,
+                  0.35
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "cmp:pointer:810:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Pointer: ...",
+                "duration": 1.8,
+                "style": "Subtitle",
+                "color": "#C9A27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.1
+              },
+              {
+                "type": "showText",
+                "text": "Pointer: That's all I know. ...Up.",
+                "duration": 3.2,
+                "style": "Subtitle",
+                "color": "#C9A27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.5
+              },
+              {
+                "type": "showText",
+                "text": "Up's enough.",
+                "duration": 1.8,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.1
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "heroState",
+                  "heartsAtMost": 1
+                },
+                "then": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:pointer:810:branch:hurt"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Pointer: Sit. A heart is on the house. ...I'm a sign. It's the house.",
+                        "duration": 5.5,
+                        "style": "Subtitle",
+                        "color": "#C9A27A"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 5.8
+                      },
+                      {
+                        "type": "heal",
+                        "target": {
+                          "player": true
+                        },
+                        "amount": 1
+                      },
+                      {
+                        "type": "popText",
+                        "text": "+1 heart",
+                        "color": [
+                          1.0,
+                          0.45,
+                          0.5,
+                          1.0
+                        ],
+                        "at": [
+                          0.0,
+                          1.2
+                        ],
+                        "anchor": "Player"
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.6,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:pointer:810:reward:heart+diamond2"
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "pointer.up"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:pointer:810:done"
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "if",
+                    "condition": {
+                      "type": "heroState",
+                      "requires": [
+                        "flag:pointer.right",
+                        "flag:rook.second"
+                      ]
+                    },
+                    "then": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:810:branch:both"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Pointer: I was right about all of you.",
+                            "duration": 3.5,
+                            "style": "Subtitle",
+                            "color": "#C9A27A"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.8
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.6,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:810:reward:diamond2"
+                          },
+                          {
+                            "type": "setFlag",
+                            "flag": "pointer.up"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:810:done"
+                          }
+                        ]
+                      }
+                    ],
+                    "else": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:810:branch:plain"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Pointer: Don't thank me. I'm a sign.",
+                            "duration": 3.3,
+                            "style": "Subtitle",
+                            "color": "#C9A27A"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.6
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.6,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:810:reward:diamond2"
+                          },
+                          {
+                            "type": "setFlag",
+                            "flag": "pointer.up"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:810:done"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [

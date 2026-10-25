@@ -1361,6 +1361,306 @@
             "includeFuture": true
           }
         ]
+      },
+      {
+        "name": "companion: pointer, Floor 860",
+        "when": {
+          "type": "sectionReached",
+          "section": "crack"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "pointer",
+                "id": "cmp",
+                "anchor": "Player",
+                "at": [
+                  6.0,
+                  0.35
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "cmp:pointer:860:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Pointer: Don't look at the statue.",
+                "duration": 3.2,
+                "style": "Subtitle",
+                "color": "#C9A27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.5
+              },
+              {
+                "type": "showText",
+                "text": "Why?",
+                "duration": 1.8,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.1
+              },
+              {
+                "type": "showText",
+                "text": "Pointer: It looks back.",
+                "duration": 2.5,
+                "style": "Subtitle",
+                "color": "#C9A27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "heroState",
+                  "grudgesAtLeast": 2
+                },
+                "then": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:pointer:860:branch:grudges"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Pointer: You carry a lot of promises.",
+                        "duration": 3.4,
+                        "style": "Subtitle",
+                        "color": "#C9A27A"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.7
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.6,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:pointer:860:reward:diamond2"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:pointer:860:done"
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "if",
+                    "condition": {
+                      "type": "heroState",
+                      "requires": [
+                        "flag:wick.rested"
+                      ]
+                    },
+                    "then": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:860:branch:wick"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Pointer: Small glowing one sent regards.",
+                            "duration": 3.6,
+                            "style": "Subtitle",
+                            "color": "#C9A27A"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.9
+                          },
+                          {
+                            "type": "showText",
+                            "text": "He stopped?",
+                            "duration": 1.8,
+                            "style": "Subtitle"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 2.1
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Pointer: Sat down.",
+                            "duration": 2.2,
+                            "style": "Subtitle",
+                            "color": "#C9A27A"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 2.5
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.6,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:860:reward:diamond2"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:860:done"
+                          }
+                        ]
+                      }
+                    ],
+                    "else": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:860:branch:plain"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Pointer: Keep moving.",
+                            "duration": 2.4,
+                            "style": "Subtitle",
+                            "color": "#C9A27A"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 2.7
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:860:reward:diamond"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:860:done"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [

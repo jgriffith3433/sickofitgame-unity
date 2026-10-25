@@ -1,0 +1,466 @@
+{
+  "note": "Priced, not made (Docs/Story.md \"The Climbers\"): design each voice with audio.voice-design / audio.voice-save, then make every line with audio.voice (eleven_v3). Until then the scenes show subtitles.",
+  "voices": {
+    "rook": {
+      "name": "Rook",
+      "description": "Bright, boastful, a little too loud: a game-show host who is not winning. Cracks on the number two. Close-mic studio recording, American accent."
+    },
+    "wick": {
+      "name": "Wick",
+      "description": "A soft wheeze, very kind, in no hurry; every sentence sounds like a match that might not catch. Hums between lines. Close-mic studio recording."
+    },
+    "pointer": {
+      "name": "Pointer",
+      "description": "Gruff, flat, as few words as possible, directions only; the only soul in Hell annoyed at being right. Close-mic studio recording."
+    }
+  },
+  "lines": [
+    {
+      "id": "vo_rook996_intro0",
+      "voice": "rook",
+      "subtitle": "First! ...Oh. You're a person.",
+      "prompt": "First! ...Oh. You're a person."
+    },
+    {
+      "id": "vo_rook996_intro2",
+      "voice": "rook",
+      "subtitle": "Going up. Racing. Same thing.",
+      "prompt": "Going up. Racing. Same thing."
+    },
+    {
+      "id": "vo_rook996_rich0",
+      "voice": "rook",
+      "subtitle": "Look at the pockets on you. Cheating.",
+      "prompt": "Look at the pockets on you. Cheating."
+    },
+    {
+      "id": "vo_rook996_poor0",
+      "voice": "rook",
+      "subtitle": "Slow and poor. I like it. For the effort.",
+      "prompt": "Slow and poor. I like it. For the effort."
+    },
+    {
+      "id": "vo_rook992_intro0",
+      "voice": "rook",
+      "subtitle": "Race you to the bridge. Go!",
+      "prompt": "Race you to the bridge. Go!"
+    },
+    {
+      "id": "vo_rook992_intro2",
+      "voice": "rook",
+      "subtitle": "Too late. I'm winning.",
+      "prompt": "Too late. I'm winning."
+    },
+    {
+      "id": "vo_rook992_hurt0",
+      "voice": "rook",
+      "subtitle": "You're one hit from the floor. Even I won't race that. Take the ember off my scarf.",
+      "prompt": "You're one hit from the floor. Even I won't race that. Take the ember off my scarf."
+    },
+    {
+      "id": "vo_rook992_race0",
+      "voice": "rook",
+      "subtitle": "Third floor in a row I'm second! ...Is the bridge supposed to do that?",
+      "prompt": "Third floor in a row I'm second! ...Is the bridge supposed to do that?"
+    },
+    {
+      "id": "vo_rook955_intro0",
+      "voice": "rook",
+      "subtitle": "Psst. How does the R thing work? Asking for a friend.",
+      "prompt": "Psst. How does the R thing work? Asking for a friend."
+    },
+    {
+      "id": "vo_rook955_intro2",
+      "voice": "rook",
+      "subtitle": "...Me.",
+      "prompt": "...Me."
+    },
+    {
+      "id": "vo_rook955_dead0",
+      "voice": "rook",
+      "subtitle": "You've died more than I have, and you're still ahead?",
+      "prompt": "You've died more than I have, and you're still ahead?"
+    },
+    {
+      "id": "vo_rook955_grudges0",
+      "voice": "rook",
+      "subtitle": "You collect those Grudges like medals.",
+      "prompt": "You collect those Grudges like medals."
+    },
+    {
+      "id": "vo_rook955_plain0",
+      "voice": "rook",
+      "subtitle": "Show me. Slowly.",
+      "prompt": "Show me. Slowly."
+    },
+    {
+      "id": "vo_rook955_plain2",
+      "voice": "rook",
+      "subtitle": "I'm holding it.",
+      "prompt": "I'm holding it."
+    },
+    {
+      "id": "vo_rook955_outro0",
+      "voice": "rook",
+      "subtitle": "Found this. It's yours.",
+      "prompt": "Found this. It's yours."
+    },
+    {
+      "id": "vo_rook899_intro0",
+      "voice": "rook",
+      "subtitle": "I tried the R thing. ...It doesn't go backward for me. It goes sideways.",
+      "prompt": "I tried the R thing. ...It doesn't go backward for me. It goes sideways."
+    },
+    {
+      "id": "vo_rook899_asked0",
+      "voice": "rook",
+      "subtitle": "You said hold R. I held R. It's the annoyance, isn't it. You have to bring your own.",
+      "prompt": "You said hold R. I held R. It's the annoyance, isn't it. You have to bring your own."
+    },
+    {
+      "id": "vo_rook899_skipped0",
+      "voice": "rook",
+      "subtitle": "I heard there's a button. Where's the button?",
+      "prompt": "I heard there's a button. Where's the button?"
+    },
+    {
+      "id": "vo_rook899_skipped2",
+      "voice": "rook",
+      "subtitle": "R. ...R!",
+      "prompt": "R. ...R!"
+    },
+    {
+      "id": "vo_rook858_intro0",
+      "voice": "rook",
+      "subtitle": "I'm first! I'm first! ...The road tipped. You're first.",
+      "prompt": "I'm first! I'm first! ...The road tipped. You're first."
+    },
+    {
+      "id": "vo_rook858_hurt0",
+      "voice": "rook",
+      "subtitle": "You're hurt. I'll say where it tips. Don't make it a thing.",
+      "prompt": "You're hurt. I'll say where it tips. Don't make it a thing."
+    },
+    {
+      "id": "vo_rook858_rich0",
+      "voice": "rook",
+      "subtitle": "Spend those. First place is heavy to carry.",
+      "prompt": "Spend those. First place is heavy to carry."
+    },
+    {
+      "id": "vo_rook858_rich2",
+      "voice": "rook",
+      "subtitle": "It's heavy!",
+      "prompt": "It's heavy!"
+    },
+    {
+      "id": "vo_rook858_plain0",
+      "voice": "rook",
+      "subtitle": "Second. ...Second. It's a number, at least.",
+      "prompt": "Second. ...Second. It's a number, at least."
+    },
+    {
+      "id": "vo_rook808_intro0",
+      "voice": "rook",
+      "subtitle": "Don't look. I'm having a moment.",
+      "prompt": "Don't look. I'm having a moment."
+    },
+    {
+      "id": "vo_rook808_intro2",
+      "voice": "rook",
+      "subtitle": "I don't need to be first. ...I need to see you be.",
+      "prompt": "I don't need to be first. ...I need to see you be."
+    },
+    {
+      "id": "vo_rook808_kind0",
+      "voice": "rook",
+      "subtitle": "You said second's a good number. It's the best one. You get to watch.",
+      "prompt": "You said second's a good number. It's the best one. You get to watch."
+    },
+    {
+      "id": "vo_rook808_dead0",
+      "voice": "rook",
+      "subtitle": "Die less. It's embarrassing for both of us.",
+      "prompt": "Die less. It's embarrassing for both of us."
+    },
+    {
+      "id": "vo_rook808_plain0",
+      "voice": "rook",
+      "subtitle": "Don't die. I'd have to carry on.",
+      "prompt": "Don't die. I'd have to carry on."
+    },
+    {
+      "id": "vo_rook808_outro0",
+      "voice": "rook",
+      "subtitle": "Take the rope. It goes where you go.",
+      "prompt": "Take the rope. It goes where you go."
+    },
+    {
+      "id": "vo_rook808_outro2",
+      "voice": "rook",
+      "subtitle": "That's where I was going.",
+      "prompt": "That's where I was going."
+    },
+    {
+      "id": "vo_wick999_intro0",
+      "voice": "wick",
+      "subtitle": "Oh. Someone. ...Mind the dark. I'll light it.",
+      "prompt": "Oh. Someone. ...Mind the dark. I'll light it."
+    },
+    {
+      "id": "vo_wick999_hurt0",
+      "voice": "wick",
+      "subtitle": "You're running on a wick. Here. Stand by the lamp.",
+      "prompt": "You're running on a wick. Here. Stand by the lamp."
+    },
+    {
+      "id": "vo_wick999_plain0",
+      "voice": "wick",
+      "subtitle": "The lava rises here. Don't stand still.",
+      "prompt": "The lava rises here. Don't stand still."
+    },
+    {
+      "id": "vo_wick993_intro0",
+      "voice": "wick",
+      "subtitle": "They throw things here. ...Don't catch them.",
+      "prompt": "They throw things here. ...Don't catch them."
+    },
+    {
+      "id": "vo_wick993_dead0",
+      "voice": "wick",
+      "subtitle": "You've been up here before. ...So have I.",
+      "prompt": "You've been up here before. ...So have I."
+    },
+    {
+      "id": "vo_wick993_rook0",
+      "voice": "wick",
+      "subtitle": "A loud one went by. He says he's winning.",
+      "prompt": "A loud one went by. He says he's winning."
+    },
+    {
+      "id": "vo_wick993_rook2",
+      "voice": "wick",
+      "subtitle": "He said that too.",
+      "prompt": "He said that too."
+    },
+    {
+      "id": "vo_wick993_plain0",
+      "voice": "wick",
+      "subtitle": "Light's on. Go quick.",
+      "prompt": "Light's on. Go quick."
+    },
+    {
+      "id": "vo_wick960_intro0",
+      "voice": "wick",
+      "subtitle": "It keeps going out. ...I'm not crying, it's the smoke.",
+      "prompt": "It keeps going out. ...I'm not crying, it's the smoke."
+    },
+    {
+      "id": "vo_wick960_rich0",
+      "voice": "wick",
+      "subtitle": "Could you spare a diamond for the oil? ...No. Keep it. I'll owe you.",
+      "prompt": "Could you spare a diamond for the oil? ...No. Keep it. I'll owe you."
+    },
+    {
+      "id": "vo_wick960_grudges0",
+      "voice": "wick",
+      "subtitle": "Hold on to those Grudges. They get heavy.",
+      "prompt": "Hold on to those Grudges. They get heavy."
+    },
+    {
+      "id": "vo_wick960_plain0",
+      "voice": "wick",
+      "subtitle": "Try the left stone. It holds.",
+      "prompt": "Try the left stone. It holds."
+    },
+    {
+      "id": "vo_wick902_intro0",
+      "voice": "wick",
+      "subtitle": "The last lamp. ...I can stop now. Can I stop now?",
+      "prompt": "The last lamp. ...I can stop now. Can I stop now?"
+    },
+    {
+      "id": "vo_wick902_hurt0",
+      "voice": "wick",
+      "subtitle": "Oh, you're hurt. One more match, then.",
+      "prompt": "Oh, you're hurt. One more match, then."
+    },
+    {
+      "id": "vo_wick902_friends0",
+      "voice": "wick",
+      "subtitle": "You talk to everyone, don't you.",
+      "prompt": "You talk to everyone, don't you."
+    },
+    {
+      "id": "vo_wick902_plain0",
+      "voice": "wick",
+      "subtitle": "Go quiet. He hears everything.",
+      "prompt": "Go quiet. He hears everything."
+    },
+    {
+      "id": "vo_wick902_outro0",
+      "voice": "wick",
+      "subtitle": "It stayed lit. ...It stayed lit.",
+      "prompt": "It stayed lit. ...It stayed lit."
+    },
+    {
+      "id": "vo_pointer900_intro0",
+      "voice": "pointer",
+      "subtitle": "Left.",
+      "prompt": "Left."
+    },
+    {
+      "id": "vo_pointer900_intro2",
+      "voice": "pointer",
+      "subtitle": "I'm a person. ...Your other left.",
+      "prompt": "I'm a person. ...Your other left."
+    },
+    {
+      "id": "vo_pointer900_hurt0",
+      "voice": "pointer",
+      "subtitle": "Up. Fast. Please.",
+      "prompt": "Up. Fast. Please."
+    },
+    {
+      "id": "vo_pointer900_plain0",
+      "voice": "pointer",
+      "subtitle": "There.",
+      "prompt": "There."
+    },
+    {
+      "id": "vo_pointer895_intro0",
+      "voice": "pointer",
+      "subtitle": "Up.",
+      "prompt": "Up."
+    },
+    {
+      "id": "vo_pointer895_intro1",
+      "voice": "pointer",
+      "subtitle": "Not that up.",
+      "prompt": "Not that up."
+    },
+    {
+      "id": "vo_pointer895_intro3",
+      "voice": "pointer",
+      "subtitle": "The one that holds.",
+      "prompt": "The one that holds."
+    },
+    {
+      "id": "vo_pointer895_dead0",
+      "voice": "pointer",
+      "subtitle": "I've pointed you here before.",
+      "prompt": "I've pointed you here before."
+    },
+    {
+      "id": "vo_pointer895_rook0",
+      "voice": "pointer",
+      "subtitle": "A man went sideways. I don't recommend it.",
+      "prompt": "A man went sideways. I don't recommend it."
+    },
+    {
+      "id": "vo_pointer895_plain0",
+      "voice": "pointer",
+      "subtitle": "That one.",
+      "prompt": "That one."
+    },
+    {
+      "id": "vo_pointer860_intro0",
+      "voice": "pointer",
+      "subtitle": "Don't look at the statue.",
+      "prompt": "Don't look at the statue."
+    },
+    {
+      "id": "vo_pointer860_intro2",
+      "voice": "pointer",
+      "subtitle": "It looks back.",
+      "prompt": "It looks back."
+    },
+    {
+      "id": "vo_pointer860_grudges0",
+      "voice": "pointer",
+      "subtitle": "You carry a lot of promises.",
+      "prompt": "You carry a lot of promises."
+    },
+    {
+      "id": "vo_pointer860_wick0",
+      "voice": "pointer",
+      "subtitle": "Small glowing one sent regards.",
+      "prompt": "Small glowing one sent regards."
+    },
+    {
+      "id": "vo_pointer860_wick2",
+      "voice": "pointer",
+      "subtitle": "Sat down.",
+      "prompt": "Sat down."
+    },
+    {
+      "id": "vo_pointer860_plain0",
+      "voice": "pointer",
+      "subtitle": "Keep moving.",
+      "prompt": "Keep moving."
+    },
+    {
+      "id": "vo_pointer810_intro0",
+      "voice": "pointer",
+      "subtitle": "...",
+      "prompt": "..."
+    },
+    {
+      "id": "vo_pointer810_intro1",
+      "voice": "pointer",
+      "subtitle": "That's all I know. ...Up.",
+      "prompt": "That's all I know. ...Up."
+    },
+    {
+      "id": "vo_pointer810_hurt0",
+      "voice": "pointer",
+      "subtitle": "Sit. A heart is on the house. ...I'm a sign. It's the house.",
+      "prompt": "Sit. A heart is on the house. ...I'm a sign. It's the house."
+    },
+    {
+      "id": "vo_pointer810_both0",
+      "voice": "pointer",
+      "subtitle": "I was right about all of you.",
+      "prompt": "I was right about all of you."
+    },
+    {
+      "id": "vo_pointer810_plain0",
+      "voice": "pointer",
+      "subtitle": "Don't thank me. I'm a sign.",
+      "prompt": "Don't thank me. I'm a sign."
+    }
+  ],
+  "heroLines": [
+    "Appreciated.",
+    "He stopped?",
+    "He's second.",
+    "Hell's weird.",
+    "Hold R.",
+    "I wasn't going to.",
+    "I'm just going up.",
+    "It goes nowhere.",
+    "It tips.",
+    "It's a good number.",
+    "It's called picking things up.",
+    "It's diamonds.",
+    "It's not on you.",
+    "No.",
+    "Noted.",
+    "R.",
+    "Stop. Sit.",
+    "Thanks.",
+    "Thanks. I think.",
+    "That's not how it works.",
+    "They collect me.",
+    "They talk to me.",
+    "Up's enough.",
+    "Wasn't planning to.",
+    "Which up?",
+    "Who's the friend?",
+    "Why?",
+    "Yeah.",
+    "Yes.",
+    "You okay?",
+    "You're a sign."
+  ]
+}

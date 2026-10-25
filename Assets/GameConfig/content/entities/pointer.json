@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "extends": "damnedSoul",
+  "tags": [
+    "damned",
+    "companion",
+    "pointer"
+  ],
+  "visual": {
+    "scale": 1.2,
+    "color": "#C9A27A",
+    "placeholderColor": "#C9A27A",
+    "placeholderSize": 0.84,
+    "placeholderLabel": true
+  }
+}
