@@ -469,6 +469,12 @@ the prologue portal scene's sounds in scene order, every take, then the Meadow's
   pages) and the engine post, linked from the blog and Development; on every page no link or button overlaps another
   or leaves the screen and nothing scrolls sideways (run it on device "phone"); `check` and `site-layout` events;
   `Plugins/WebGL/HawkesSite.jslib`).
+- **Daily budgets and the balance report** (`SickOfItPlaytest.Balance.cs`): every `all-levels` run (and its parts, `floors-A-B`, `climb-start`) ends with a
+  per-floor balance report: `balance` events, `balance.level<n>.*` metrics (clearSeconds, deaths, diamonds, rewinds, rewoundSeconds, grazes, hits,
+  frameAvgMs, frameWorstMs), a markdown table in the report's log and a `frame-time level <n>` check per floor (average <= `FramePlayAverageMs`, <= 2% of frames over
+  100 ms; a Warning problem when over). Grazes count `graze` telemetry events, so the graze system only has to record that kind. `rewind-perf` also checks the
+  absolute budgets (playing <= 40 ms, rewinding <= 50 ms a frame; `frameTime.*` metrics). Scenario `daily` (~20 min) = rewind-perf, then Level 1 and Floors
+  1000-998 with the report. A new system needs its own scenario in a `SickOfItPlaytest.<Name>.cs` partial, registered in `SickOfItPlaytest.cs` (list + dispatch).
 - **Start one:** in a browser `?playtest=smoke` (plus `&seed=`, `&speed=`), or `hawkesPlaytest.start("level-2")`; in the
   editor or a test, `HawkesPlaytest.StartScenario("level-2")`. Note: `smoke` and `full` press New Game, which resets
   the save in that browser.
