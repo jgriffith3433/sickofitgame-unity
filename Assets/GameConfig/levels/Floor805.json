@@ -1375,6 +1375,35 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "elite: Brood Whelp",
+            "when": {
+              "type": "every",
+              "seconds": 24.0,
+              "startAfter": 6.0,
+              "maxTimes": 3
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "broodWhelp",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "elite"
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1627,6 +1656,35 @@
                 ],
                 "tags": [
                   "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "elite: Veil Matron",
+            "when": {
+              "type": "every",
+              "seconds": 24.0,
+              "startAfter": 6.0,
+              "maxTimes": 3
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "veilMatron",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "elite"
                 ]
               }
             ]

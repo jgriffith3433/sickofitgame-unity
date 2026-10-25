@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Brood Whelp",
+  "hint": "Pops into two more whelps. Count them.",
+  "note": "Born pregnant with whelps. Great.",
+  "hintVoice": "vo_hero_hint_broodWhelp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "demonWhelp",
+  "health": 4,
+  "tags": [
+    "broodWhelp",
+    "demonWhelp",
+    "elite"
+  ],
+  "visual": {
+    "scale": 0.285,
+    "color": "#FFB09A",
+    "fxColor": "#FF8A3A"
+  },
+  "healthBar": {
+    "show": true,
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
+    "width": 0.6
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.5
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "chase",
+      "speed": 1.3,
+      "stopDistance": 0.0,
+      "horizontalOnly": true,
+      "face": true
+    }
+  ],
+  "moveSpeed": 1.3,
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "demonWhelp",
+      "anchor": "Self",
+      "count": 2,
+      "spacing": [
+        0.7,
+        0.0
+      ],
+      "facePlayer": false
+    }
+  ],
+  "sounds": {
+    "hurtSound": "demonWhelp_hurt",
+    "deathSound": "demonWhelp_die",
+    "attackSound": "demonWhelp_attack"
+  }
+}

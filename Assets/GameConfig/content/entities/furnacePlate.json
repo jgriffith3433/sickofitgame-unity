@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Furnace Plate",
+  "hint": "Hot armor, and it burns near. Go around.",
+  "note": "A stove that walks.",
+  "hintVoice": "vo_hero_hint_furnacePlate",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "plateDemon",
+  "health": 10,
+  "tags": [
+    "elite",
+    "furnacePlate",
+    "plateDemon"
+  ],
+  "visual": {
+    "scale": 0.312,
+    "color": "#C04A2A",
+    "fxColor": "#FF8A3A"
+  },
+  "healthBar": {
+    "show": true,
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
+    "width": 0.6
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.5
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 0.5,
+      "distance": 2.6,
+      "pause": 1.4
+    },
+    {
+      "type": "frontShield",
+      "arc": 150,
+      "blockSound": "chain_cut",
+      "color": "#C8C0E0",
+      "leak": 0.0
+    },
+    {
+      "type": "shoot",
+      "projectile": "plateShard",
+      "pattern": {
+        "type": "spread",
+        "count": 3,
+        "angle": 22
+      },
+      "speed": 3.4,
+      "aim": "Player",
+      "muzzle": [
+        0.3,
+        0.1
+      ],
+      "interval": 2.6,
+      "initialDelay": 1.8,
+      "range": 8.5,
+      "damage": 1
+    },
+    {
+      "type": "aura",
+      "radius": 1.2,
+      "damagePerTick": 1,
+      "interval": 1.5
+    }
+  ],
+  "moveSpeed": 0.55,
+  "sounds": {
+    "hurtSound": "plateDemon_hurt",
+    "deathSound": "plateDemon_die",
+    "attackSound": "plateDemon_attack"
+  }
+}

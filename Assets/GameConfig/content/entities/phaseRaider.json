@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Phase Raider",
+  "hint": "Blinks in behind you and fires twice. Leave when the mark shows.",
+  "note": "Never where I looked last.",
+  "hintVoice": "vo_hero_hint_phaseRaider",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "blinkImp",
+  "health": 5,
+  "tags": [
+    "blinkImp",
+    "elite",
+    "imp",
+    "phaseRaider"
+  ],
+  "visual": {
+    "scale": 0.36,
+    "color": "#D8A8FF",
+    "fxColor": "#C58BFF"
+  },
+  "healthBar": {
+    "show": true,
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
+    "width": 0.6
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.5
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "teleport",
+      "to": "NearPlayer",
+      "distance": 3.0,
+      "interval": 2.0,
+      "initialDelay": 0.8,
+      "telegraph": 0.7,
+      "marker": "blinkMark",
+      "flashColor": "#C58BFF",
+      "sound": "banner_whoosh",
+      "behind": true
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "speed": 3.8,
+      "aim": "Player",
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 2.4,
+      "initialDelay": 1.8,
+      "damage": 1,
+      "burst": 2,
+      "burstInterval": 0.3
+    }
+  ],
+  "sounds": {
+    "hurtSound": "blinkImp_hurt",
+    "deathSound": "blinkImp_die",
+    "attackSound": "blinkImp_attack"
+  }
+}

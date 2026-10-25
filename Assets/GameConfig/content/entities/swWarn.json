@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "extends": "fmWarnWhip",
+  "visual": {
+    "color": "#E0D8F0"
+  },
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "swHit",
+      "anchor": "Self",
+      "facePlayer": false
+    },
+    {
+      "type": "playSound",
+      "sound": "lava_burst"
+    }
+  ]
+}

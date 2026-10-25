@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Triple Lobber",
+  "hint": "Three lumps that bounce. Wait for them.",
+  "note": "Three times the bounce.",
+  "hintVoice": "vo_hero_hint_tripleLobber",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "bounceLobber",
+  "health": 5,
+  "tags": [
+    "bounceLobber",
+    "elite",
+    "tripleLobber"
+  ],
+  "visual": {
+    "scale": 0.35,
+    "color": "#E8C898",
+    "fxColor": "#FFD27A"
+  },
+  "healthBar": {
+    "show": true,
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
+    "width": 0.6
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.5
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "bounceLump",
+      "speed": 3.6,
+      "aim": "Player",
+      "muzzle": [
+        0.2,
+        0.3
+      ],
+      "interval": 4.0,
+      "initialDelay": 1.6,
+      "range": 10.0,
+      "damage": 1,
+      "pattern": {
+        "type": "spread",
+        "count": 3,
+        "angle": 18
+      }
+    }
+  ],
+  "moveSpeed": 0,
+  "sounds": {
+    "hurtSound": "bounceLobber_hurt",
+    "deathSound": "bounceLobber_die",
+    "attackSound": "bounceLobber_attack"
+  }
+}

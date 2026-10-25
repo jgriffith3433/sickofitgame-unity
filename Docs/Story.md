@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; the hero's moves, a dash and a wall-jump, 2026-10-25; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; elites and mid-bosses on the x5 floors, 2026-10-25; the hero's moves, a dash and a wall-jump, 2026-10-25; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -2132,6 +2132,53 @@ King (901), the Road Breaker (891), the Carver (851) and the Spire Fiend (801); 
   (A boss's `hintOnce` stays silent in his locked intro, so the level says it once the fight starts.)
 
 Playtest: `boss-fights` (all six, ~50 min), and every stage run that reaches one (`floors-*`, `all-levels-*`) gets the same `bossFight.*` checks.
+
+## Elites and mid-bosses (Hell promotes its own, built 2026-10-25)
+
+Hell is repetition, and so is its ladder: the ones who survive a Circle's floors long enough get a name, a bigger body and a trick the common kind
+doesn't have. The hero has met a thousand imps by now; these are the ones that stayed. Twelve of them turn up on the x5 floors, and four stand in
+the way as **mid-bosses**: not Wardens, not floor bosses, just the nastiest thing on their floor. Data written by `Tools/Levels/elites.py`
+(edit its tables and run it, never the files by hand; `--check` runs with no Unity).
+
+**Elites** (entity tag `elite`, gold health bar, a bigger body, more loot and a better chance at a rewind orb). Each is a named variant of an
+existing enemy with one twist, and the hero sizes each up the first time one spawns in a save (`hintOnce`: a name, a weakness, a voiced line):
+
+| Elite | Of | The twist | Floors |
+|---|---|---|---|
+| Quickfire Imp | imp | faster, two shots a volley | 995 |
+| Corona Imp | halo imp | 14-ember ring and a burning aura | 995 |
+| Ironhide Bulwark | bulwark imp | armored: a front shield 150 degrees wide, and it shoots now | 955 |
+| Alpha Hound | slag hound | faster lunge; bursts into three cinders when it dies | 955 |
+| Twin-Bolt Deadeye | deadeye imp | two led bolts a volley | 905 |
+| Twin Lens | lens imp | a second beam sweeping the other way | 905 |
+| Phase Raider | blink imp | blinks in behind him, two shots | 905 |
+| Brood Whelp | brimstone whelp | bursts into two more whelps | 895, 805 |
+| Furnace Plate | plate demon | hot armor (150 degree shield) and a burning aura | 895 |
+| Triple Lobber | bounce lobber | three bouncing lumps at once | 855 |
+| Twice-Risen | risen demon | gets up twice | 855 |
+| Veil Matron | veil demon | shield, faster blink, burning aura | 805 |
+
+They use Hell's tricks (`frontShield`, `teleport`, `Aim.Predictive`, `laserSweep`, `bounces`, `revive`) plus the `aura` and `onDeath` spawns. Floors 995,
+955, 905, 895, 855 and 805 are authored floors, so the elites are rules in their scripts: an `every` rule in a section's phase (three times, 24 s apart),
+or a one-off when a section is reached.
+
+**Mid-boss fights.** On Floors 955 (Circle X, the Falls), 905 (the Heat Stairs), 895 and 855 (the Cracked Road) the last stretch of the floor stops the camera
+(`lockTravel`), the floor's own hazards stop, and the announcer calls him; his line, the hero's line (voiced: he says what he has seen and what he will do
+about it), the boss bar, the fight. Four phases: **alone** (a glow on the floor under the hero, a fan of bouncing embers, bolts thrown where he is going,
+every attack a glow 1+ s ahead), the **wave** below 70% (3 minions of the floor's mix at most, a camera shake and a line), the **rage** below 35% (5 at most,
+the wave is gone, a wider fan, a special: the elites join the crowd) and the defeat (slow motion, diamonds, the announcer's banner, the hero's closing line).
+The landing waits for the counter `midboss`. He hovers near the hero; killing the minions is never the way (they keep coming), he is.
+
+| Mid-boss | Floor | Who he is | His trick | Minions | Hero |
+|---|---|---|---|---|---|
+| Baron Spillway | 955 | An imp noble in a slag cape who keeps the Falls and charges a toll on everything that falls | bouncing embers and spots; bolts in the rage | halo imps, slag hounds, deadeye imps; then ricochet, whirl, Corona Imps | *"Baron. Embers bounce, marks glow first. I can read that."* |
+| The Kiln Matron | 905 | An old imp crone who bakes the Heat Stairs; they are still hot | blinks in beside him (`teleport`), a laser sweep in the rage | guards, bulwark, lens imps; then Twin Lens, Phase Raiders | *"She blinks in, then the beam. I leave first."* |
+| Mother Fissure | 895 | The crack that breeds the Road's whelps | bouncing lumps in threes, then fives | whelps, fuse whelps, bounce lobbers; then Brood Whelps, Triple Lobbers, plate demons | *"Whelps keep coming. I hit the mother."* |
+| The Shardwright | 855 | The Carver's apprentice: the master carves the rules, he carves the visitors | blinks behind him, bolts in fives | plate demons, slab snipers; then Veil Matrons, Furnace Plates, Twice-Risen | *"Bolts aimed ahead of me. So I stop being ahead."* |
+
+Voice: the hero's lines and the announcer's call are made (`vo_hero_hint_<elite>`, `vo_mb_<bs|km|mf|sw>_title|hero|end`); the mid-bosses' own lines are subtitles
+until their voices are made. Art: specs in `Assets/GameConfig/art/<id>.json` for all sixteen, not generated (GPU priced, not approved); until then each wears its
+base creature's art, tinted and larger (rule 5). Test arena `content/scenes/eliteArena.json`, playtest `elites` (~40 min: the arena, then the four floors).
 
 ## Rules for levels
 

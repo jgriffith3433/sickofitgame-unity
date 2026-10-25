@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "extends": "fmLash",
+  "visual": {
+    "placeholderColor": "#B8B0D8"
+  }
+}

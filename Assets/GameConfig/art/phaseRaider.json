@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "phaseRaider",
+  "name": "Phase Raider",
+  "description": "a violet imp half-faded into smoke at the edges, glowing violet eyes, two small embers in its hands",
+  "height": 0.85,
+  "poses": {
+    "stand": "standing ready, facing right, glowing with heat",
+    "struck": "struck and flinching, sparks flying",
+    "dead": "collapsed and breaking apart in a burst of embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes and shifts in place, glow pulsing slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "performs its signature attack toward the right, glow flaring",
+      "seconds": 2.0
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks back, then settles",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}
