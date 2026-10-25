@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -215,6 +215,8 @@ build toward; the first two Circles reuse current art.
 | II | 200–101 | **The Keep:** courtyard, dungeon, torches | Video2 (dungeon) | **Jailers**, **Chains** | The Chain King |
 | I | 100–1 | **The Throne Stair:** the Overlord's palace and his half-built gate, daylight leaking through at the top | to make | Everything, at its strongest: the Overlord's personal guard | **The Overlord** (Floor 1) |
 
+Circles VIII to IV are designed in full (looks, Wardens, floor bosses, enemies and weaknesses, signature mechanics, shortcuts, music) in *Circles VIII to IV: the middle descent*, below; the table above is the short form.
+
 ### Acts and story beats
 
 | Act | Where | What happens | Media |
@@ -391,6 +393,419 @@ stand-ins, as Circle X's do. The first, `CrackedRoad` (900-891), is gone: Floors
 | 64 (`Level16`) | 860-851 | **Demon Row** | Off the path (the level select only): Floors 860-851 are played now. |
 | 65 (`Level17`) | 850-841 | **Halfway Up the Road** | Floor 850, the Circle's milestone (*"FLOOR 850: HALFWAY UP THE ROAD"*). |
 | 66 (`Level18`) | 840-831 | **The Stairhead** | Where the Old Stair comes out, under *MIND THE RUBBLE*. Then Floor 810 (830-811 have no stand-in yet). |
+
+## Circles VIII to IV: the middle descent *(working)*
+
+Designed 2026-10-25 (J: *"Design Circles VIII, VII, VI, V and IV"*), before any of it is built. Everything here is a
+**design, not content**: no entity, level or sound for these Circles exists yet, and **every name marked *(working)*
+is a placeholder** (the five Warden names are canon, already on the Shaft). Entity ids are the ids the files will
+take. It is Act 2 (see *Acts and story beats*): Hell gets stranger, the damned show what Hell does to people, and the
+Overlord turns out to be as stuck as the hero.
+
+**What every Circle below shares**
+
+- **100 floors each**, the Warden on the top floor (701, 601, 501, 401, 301; each lights a Waystone, so the Shaft's
+  Waystones sit at 701, 601, 501, 401 and 301 as before).
+- **The played route is the Circle X/IX shape**: about 30 floors in three stretches (`x00-x91`, `x60-x51`, `x10-x01`),
+  a floor boss at the end of the first two (`x91`, `x51`), a shortcut after each (`x91` to `x60`, `x51` to `x10`), the
+  last stretch ending at the Warden's door (`x02`) and his arena (`x01`). One level = one floor. The route sketches are
+  in [LevelDesign.md](LevelDesign.md), section 7.
+- **Slimes are villagers, never enemies.** The Mire and the Caverns are wet; nothing in them is slime, and Yooba
+  (who runs the shop on the Shaft) says so himself when he sees them.
+- **One new idea per floor**, a new monster always alone first, at most 4 enemies on screen (section 1 of
+  LevelDesign.md). **Each Circle has one signature mechanic** that the player must learn: it gets its own floor with
+  nothing else on it (the Circle's first), is used in a harder way every few floors and is the heart of the Warden's fight.
+- **Every enemy has a weakness** the player can read and use (rule 1 of *Rules for enemies*). Damned souls (the
+  Shades, the Drowned, the Votives) are the only things that drop loop shards.
+- **The comedy is Hell's**: repetition, showmanship, creatures that are very bad at being scary. Never office or work
+  jokes. The hero stays deadpan, the announcer booms.
+- **The Overlord thread.** One clue per Circle that he is as stuck as the hero (the quiet spine of Act 2).
+- **Yooba** has one reaction line per Circle on the Shaft (`ui/yooba.json`, as for Circle X), kept in his voice.
+- **Rewind** is the answer to each Circle's hazard in a different way; the floors may not require it, only reward it.
+
+### Circle VIII: the Rune Bridges (Floors 800-701)
+
+**Theme and look.** After the Road's red and black, cold: a void the colour of a bruise with no bottom, and across it
+thin stone bridges and arches carved with glowing blue runes, far apart, strung like a thought nobody finished. Blue
+fog, glass-clear light, floating eyes that follow the hero's every step. The runes are the Circle's lights; there is
+no other. *(Look brief for the art pass: ink-violet void, cyan runes with a soft halo, pale grey masonry, mist bands
+at three depths, distant bridges as silhouettes; the Road's embers are gone, replaced by drifting rune dust.)* Falling
+off is not death but a drop to the span's start and a heart (`PitCatch`, as on the Wastes' path floors).
+
+**Signature mechanic: Rune Spans (`runeSpan`, working).** A bridge piece is solid only while its rune is lit. A rune
+brightens 1 s before the span appears (a hum) and dims 1 s before it goes out, on a fixed beat, so a row of spans
+is a rhythm to read and cross (Hell's loop again: a rewind brings a vanished span back). The first floor teaches it
+with one lit span and nothing else; later floors chain them, run them out of step, and make them follow the
+Watchers' gaze.
+
+**Comedy angle.** The runes only ever say what the thing in front of them is: *BRIDGE. THIS IS THE BRIDGE. STILL THE
+BRIDGE. BRIDGE (AHEAD).* A Watcher has watched one bridge forever, has never once seen anyone cross it, and doesn't
+know what to do with its face. Hero, the first time one blinks at him: *"Please stop looking at me."*
+
+**The Overlord thread.** On the Circle's last stretch, a huge handprint is worn into a parapet, and below it a rune in
+a hand much larger than the others: *UP*. Written, rubbed out, written again. Hero: *"He was trying to get out of here
+too."*
+
+**The Warden: the Bridge Wraith** (`bridgeWraith`, level `Floor701`). A hooded wraith with no legs, floating at the
+middle of the Great Span with a lantern of blue runes, the keeper of every bridge in the Circle: she lights a rune
+when someone needs to cross and puts it out behind them, and nobody has ever needed to for ages, so she is very
+excited and very afraid of doing it wrong. *Personality:* hushed, courteous, anxious; apologises before every
+terrible thing (*"Sorry. Sorry. Mind the gap. ...There isn't one. Sorry."*). Hates being rushed. Never raises her
+voice; the lantern does it for her. *Voice* `bridgeWraith`: a dry, hollow whisper with a long echo tail, as if from the
+far end of a hall; politely worried; a little breath-catch before her attacks; the lantern chimes when she speaks
+loudest. *Fight idea (working):* the arena is the **Great Span**, a ring of bridges round her. Phase 1, *The Lantern*:
+she sweeps the lantern and lights runes in a pattern: the pattern is the floor, so the hero must cross where she lights
+and shoot the lantern's shutters when they open; her bolts come from the runes she lit. At half health, phase 2, *Snuffed*:
+she shuts the lantern and the Great Span goes dark except for the runes the hero shoots: a shot rune holds its span for 5 s,
+so he writes his own way across while her afterimages (`afterimage`) trace his path. At a third, phase 3, *Unwritten*:
+she drops the lantern, the bridges unwrite themselves behind him on the beat and she floats after him, apologising.
+Beaten, she puts her lantern down and the runes read, for the first time, something else: *THANK YOU*.
+*Weakness:* the lantern's shutters (open for 2 s each time she lights something).
+
+**Floor bosses** *(working)*
+- **The Keystone** (`keystone`, Floor 791). The arch-stone every bridge hangs from: a stone golem who holds the first
+  bridge up by standing under it and refuses to move. Slams that send a ring of broken span along the bridge
+  (a glow 1 s first) and drops chunks of arch. *Weakness:* the lit rune on his brow, open only when he slams; shot
+  out, the arch stays up by itself. At half, he steps aside and the bridge sways. Voice: slow stone, one word at a
+  time: *"Load. ...Bearing."*
+- **The Lamplighter** (`lamplighter`, Floor 751). The Wraith's chief carrier: a hunched wraith on a long pole lighting
+  runes under the hero and a second later putting them out. *Weakness:* his pole's flame, shot out (he wanders blind
+  and off the bridge in a gag the announcer calls). Two tiers: one bridge, then a double bridge with Watchers added.
+
+**Enemies** *(entity ids working; all new)*
+
+| Entity | Name | First met | Why it's there | Weakness / how it plays |
+|---|---|---|---|---|
+| `watcher` | Watcher | 800 | Floating eye that guards one bridge forever; sweeps a gaze cone, and a hero in it takes a bolt. | Closes its lid against shots; opens it to fire: shoot as it opens. |
+| `lensWatcher` | Lens Watcher | 780 | A Watcher with a rune lens in front, firing a long beam along a bridge. | Break the lens (the bright disc); the eye behind is harmless. |
+| `glyphScrawler` | Glyph Scrawler | 770 | A small hooded thing that scribbles runes on bridges because it can't stop. Its false runes look like spans but flicker wrong and aren't there. | Shoot it while it scribbles (it can't dodge mid-word); false runes vanish with it. |
+| `lanternfly` | Lanternfly | 765 | Blue lantern-bugs that follow the lit runes and drift into the hero. | They die in the dark: shoot a lit rune off (or run past a dimming span) and they fall. |
+| `edgeBiter` | Edge Biter | 760 | Something in the void that bites the edge of bridges. | Only its jaw shows; shoot it open-mouthed; it takes a bite out of the span and leaves it a gap. |
+| `afterimage` | Afterimage | 745 | The bridges remember who crossed: a pale copy that walks the hero's route from 3 s ago. | Lead it into a Watcher's beam or off the edge; a rewind erases it. |
+| `runeHound` | Rune Hound | 735 | Stone hound statues set by the spans: they wake when a lit rune is stepped on. | Shoot the rune on its collar; it sleeps again. Slow to turn. |
+| `sleepwalker` | Sleepwalker | 725 | A wraith asleep on its feet that drifts along the bridge exactly one way. | Harmless until woken; a shot sets it off, so don't: wait for it to pass. |
+| `keystone`, `lamplighter`, `bridgeWraith` | the floor bosses and the Warden | 791, 751, 701 | above | above |
+
+**Shortcuts** *(working)*
+- **The Watcher's Favour** (`watchersFavour`), Floor 791 to **Floor 760**: the Watcher that has watched the Keystone's
+  bridge for ever is so thrilled someone finally crossed that it flies him over the next stretch in its gaze. *Cost:*
+  30 diamonds ("It wants a keepsake"). Hero: *"It's... crying. Okay."*
+- **The Unwritten Span** (`unwrittenSpan`), Floor 751 to **Floor 710**: a span with a blank rune over the void, a
+  single stone with nothing written on it; shoot it and write a way up. *Cost (risk):* Floor 710 reads
+  `shortcutTaken`: its runes are scribbled over by the Scrawler's false ones from the first second.
+
+**Music.** Glassy: FM bells and a slow arpeggio in E-flat minor at 112 BPM that "writes" a new note every time a rune
+lights, over a thin choir. The loop is one phrase that plays itself backward after four bars (the bridge is read, then
+unread). Push music: the arpeggio in sixteenths with synth-brass stabs. The Wraith's theme: a whispered choir over a
+funeral march in 3/4 and a single bell; the enrage drops the bell and plays the march twice as fast.
+
+### Circle VII: the Gloomwood (Floors 700-601)
+
+**Theme and look.** A dead forest at no time of day: black trees with their bark peeling in sheets, grey fog at knee
+height, torches on posts burning a sick yellow, paths worn bare in loops and a faint footprint on every one. Shadow
+blobs with yellow eyes in the gaps between trunks. Nothing here is lit well. *(Look brief: charcoal trunks against
+bruised-green sky, torchlight as the only warm colour, fog banks that scroll, a lane of worn dirt marked by torches on
+the floors with Shades.)*
+
+**Signature mechanic: Loop Lanes (`loopLane`, working).** A **lane** is a torch-marked circuit on the floor along
+which Shades walk the same walk on a fixed beat, forever. A Shade only hurts the hero if he is standing in its lane
+when it passes; he can cross a lane in a gap, stand behind a Shade and walk with it, or jump over. Lanes never change
+(they are loops already; a rewind replays them to the frame), and in the Circle's **Long Walk** floors the *same floor
+is placed three times in a row*: the way up is the one Shade walking the wrong way. The first floor has one lane, one
+Shade and nothing else.
+
+**Shades** are the Circle's damned: souls stuck repeating the same walk. Shot, a Shade stumbles and sits out a lap
+(it cannot be killed), and its loop shard drops once. They are never enemies in a way the hero resents: they are what
+Hell does to people. Each is a person with a walk: one carrying a bucket, one who is always late and never
+arrives, one who stops and checks his pockets in the same place on every lap.
+
+**Comedy angle.** The Shades are very polite: when two meet in a lane they apologise and step aside, in the same
+order, on every lap, for ever. A sign counting laps (*LAP 47,212*) is tallied by a Shade who is not at all
+bothered. One of them waves at the hero at the same point on every lap, and the hero waves back on the third. Hero:
+*"Hell: now with scenery."*
+
+**The Overlord thread.** A very large lane, many times the size of the others, its footprints deep and each the
+same: an enormous Shade-like walker at the far edge of the forest, walking a circuit round a tree. Never reached.
+Hero: *"...That one's tall."* Announcer, quietly, the only time: *"DO NOT FOLLOW THAT ONE."*
+
+**The Warden: the Hollow King** (`hollowKing`, level `Floor601`). A dead hollow tree with yellow eyes in its trunk and
+a crown of branches: the oldest tree in the Gloomwood, a king whose kingdom is its walkers. Anyone who walks into his
+hollow comes out a Shade; he loves company, has had a lot of it, and remembers every guest. *Personality:* wide,
+welcoming, lonely, creaking; hospitable to a fault and quite unable to let anyone leave; repeats the ends of his own
+sentences, softly, as if the forest answered. *Voice* `hollowKing`: a big wooden barrel of a voice, deep and kind,
+with an echo tail and creaks between the words; sad when he's being kind, never raised. *Fight idea (working):* the
+arena is **his clearing**, three ring lanes round the trunk with Shades walking each at a different speed. Phase 1,
+*Company*: the hero must stand in the safe gaps of the lanes and shoot the yellow eyes in the trunk when a branch lifts
+away; roots erupt after a glow where he stands too long. At half health, phase 2, *The Hollow*: the trunk opens and
+shows a crowd of Shades standing in it, politely, waving; he sucks the hero toward the hollow (a pull to the trunk) while
+the Shades walk the ring lanes faster. At a third, phase 3, *The Long Walk*: he steps out of his roots and walks his own
+lap round the clearing, every attack replaying in the same order each lap, which a rewind rewards the player for
+learning: a pattern seen once is a pattern solved. *Weakness:* the yellow eyes, open only when he speaks.
+
+**Floor bosses** *(working)*
+- **The Pathfinder** (`pathfinder`, Floor 691). The Shade who has been walking the longest, grown huge: a hunched
+  pilgrim with a lantern, walking a circuit round the arena's middle that the hero has to cross. Each lap he drops his
+  lantern's embers (a glow on the lane first). *Weakness:* a shot to the lantern makes him stumble for a lap; three
+  stumbles and he sits down, finally, and says "Oh," and the lane stops. Voice: faint, thoughtful: *"Is this the way?
+  ...It's always the way."*
+- **The Woodsman** (`woodsman`, Floor 651). A hulking Shade with an axe who has been chopping the same tree for as long
+  as the forest has been dead. The tree never falls. The axe swings on a fixed beat (a glow on the floor under the
+  blade 1 s ahead); the tree sheds the trunk-eyed Gloomlings. *Weakness:* the tree: shoot it and it finally falls, he
+  stares at it, and the hero walks past him. Two tiers: the clearing, then the log run.
+
+**Enemies** *(entity ids working; `shade` and its variants are all damned and drop loop shards)*
+
+| Entity | Name | First met | Why it's there | Weakness / how it plays |
+|---|---|---|---|---|
+| `shade` | Shade | 700 | A soul stuck repeating one walk. Hurts only inside its lane as it passes. | Can't be killed. A shot makes it stumble and sit out a lap; a loop shard drops once. |
+| `shadeTorch` | Torchbearer | 685 | A Shade whose walk is carrying the torch that marks the lane. | Shoot the torch: the lane's Shade lays its walk down, and the lane is safe. |
+| `gloomling` | Gloomling | 680 | The shadow blobs with yellow eyes that live in the gaps between trunks and pounce on whoever stands in shade. | Torchlight pops them: stand in a torch's pool, or shoot a torch down onto them. |
+| `grabBranch` | Grasping Branch | 670 | A dead limb that lashes at passers-by on a beat. | Its knot, a yellow eye in the wood; shot, it goes limp. |
+| `rootSnare` | Root Snare | 665 | Roots that come up through the loop's footprints. | A glow 1 s first, then a snare. Can't be shot, only left. They are weakest where the hero keeps moving. |
+| `carrionCrow` | Carrion Crow | 660 | Crows that fly the same loop every lap. | Its loop is exact: shoot where it will be at its apex. |
+| `hollowStag` | Hollow Stag | 640 | An antlered husk, charging down the path it has charged for ever. | Its antlers lodge in a trunk at the end of its charge, stunning it: shoot it then. |
+| `stumpMimic` | Stump Mimic | 635 | A stump that looks like a seat; it wakes when you stand on it. | Torchlight and a shot to its hollow when it gapes. |
+| `pathfinder`, `woodsman`, `hollowKing` | the floor bosses and the Warden | 691, 651, 601 | above | above |
+
+**Shortcuts** *(working)*
+- **The Wrong Way Round** (`wrongWay`), Floor 691 to **Floor 660**: after the Pathfinder sits down, one Shade is
+  still walking, the wrong way, out of the loop. Follow it a full lap without shooting (it leaves the lane at the
+  end). *Cost:* a Grudge. Hero: *"Where are you going?"* The Shade turns, shrugs, and is gone.
+- **The Hollow Way** (`hollowWay`), Floor 651 to **Floor 610**: a door in a trunk, the King's roots from the inside.
+  *Cost (risk):* Floor 610 reads `shortcutTaken`: roots erupt from the first second, and the announcer says why.
+
+**Music.** Spare and dry: a lone detuned guitar, wooden blocks and a low drone in A minor at 92 BPM; the loop is one
+bar repeated, audibly, and the longer you stand in the forest the more the bar thickens by one layer. Push music:
+drums and wolves under the same bar. The Hollow King's theme: a choir of Shades humming one note, a big hollow drum,
+a bowed saw; the enrage is the humming in unison at double time and the drum beaten on the trunk.
+
+### Circle VI: the Mire (Floors 600-501)
+
+**Theme and look.** A drowned graveyard: black water to the ankle and in places the waist, tilted headstones and
+stone crosses standing up out of it, reeds, ghost lights green and pale hovering where nothing should be, mist,
+rain that doesn't wet. Everything is cold and wet and quiet. **Nothing here is slime**: the water is clear, black
+and cold, the mud is peat, and Yooba says so (*"That's a swamp. I'm a villager."*). *(Look brief: green-black water
+with a hard surface line, tombstones as platforms at the tide's different heights, reeds as parallax, green lights
+glowing as the only colour, a pale moon through the mist.)*
+
+**Signature mechanic: The Tide (`mireTide`, working).** The water rises and falls on a beat (the tide comes in on
+the dot, Hell's loop). In the water the hero is slowed and **Bog Hands** can grab; out of it (on tombstones, mausoleum
+roofs, the path) he moves freely. Tide marks on the stones show the rise 2 s ahead. It is the Wastes' rising lava
+turned into a clock you read: a hot bath, never a pit. A rewind sends the tide back. The first floor teaches it with one
+slow tide and a lone tombstone; later the tide is mixed with the Wisps' lures, the Epitaphs' text and the Pallbearers' lanes.
+
+**Comedy angle.** The ghost lights are terrible at luring: *"Over here! ...No, other here. Sorry."* The epitaphs
+are the jokes: *HERE LIES SOMEONE (AGAIN). BELOVED BY THE ONE WHO DUG THIS. GONE TO A BETTER FLOOR (THIS ONE).* The Bog
+Hands only ever grab one thing, a single boot, which gets passed from hand to hand across the whole Circle. Hero: *"Everyone
+down here is waiting for something."*
+
+**The Overlord thread.** A statue of the Overlord, as big as a house, drowned to its chest at the Mire's lowest point
+and rimed with moss: put there by the Drowned Queen, who once waited for him. The inscription: *HE NEVER CAME BACK FOR US.* Hero:
+*"He wasn't a good date, then."* *(Working: confirm with J whether the Queen's story is hers or the Overlord's before building.)*
+
+**The Warden: the Drowned Queen** (`drownedQueen`, level `Floor501`). Soaked hair over her face, a waterlogged gown
+that never dries, a crown of wound weed, green ghost lights hovering where her crown's jewels were. She is a
+queen who is sure the wedding is today: she has set a ballroom in the flooded crypt for guests that never came, and
+every guest the hero kills is a guest she never got. *Personality:* grand, grieving, theatrical, soaked, with sudden
+bright cheer that turns on a word; sulks magnificently. Calls the hero "guest", then "late". Takes the water personally.
+*Voice* `drownedQueen`: bubbling, watery, slow and mournful with a bright, brittle cheer that keeps breaking through; drip
+and gurgle between phrases; sobs that become laughter. *Fight idea (working):* the arena is the **flooded ballroom**,
+the tide as her mood. Phase 1, *Tears*: she weeps and the tide climbs; her tears rain in lines (a glow on the surface
+1 s first); the hero crosses tombstone tables and shoots the green lights of her crown to dry her. At half health, phase 2,
+*The Waltz*: the water drops to the floor and her gown sweeps round the hall in a slow, wide wave to jump (the glow
+first), with Bog Hands as dancing partners. At a third, phase 3, *Drained*: she pulls the plug on the ballroom, the
+water rushes toward the middle in a current that drags the hero, and she calls every wisp to herself; the hero
+fights toward the centre against the current to put out her last lights. *Weakness:* the green lights in her crown
+(each one shot dries a patch of her gown and slows the tide).
+
+**Floor bosses** *(working)*
+- **The Gravedigger** (`gravedigger`, Floor 591). A stooped drowned digger who digs graves wherever the hero stands,
+  and never finishes one. A glow under the hero's feet for 1 s, then a pit with a lid of earth (jump out of it, a heart
+  if he's caught). *Weakness:* his spade hits stone at the end of every third dig and rings: a shot to the
+  blade then stuns him. He is the Mire's simplest soul and never says why. Voice: low, plain, soft: *"Nearly done."*
+- **The Ferryman** (`ferryman`, Floor 551). A drowned boatman poling a barge through the tide lanes; the hero fights
+  on the barge deck while the tide rises and the barge drifts. He won't take passengers. Strikes with the pole (a
+  swing across the deck, a glow first), drops the barge's moorings. *Weakness:* his lantern at the stern; shot, the barge
+  runs aground on a tombstone and tips him in. Two tiers: the barge, then the half-sunk wreck.
+
+**Enemies** *(entity ids working)*
+
+| Entity | Name | First met | Why it's there | Weakness / how it plays |
+|---|---|---|---|---|
+| `wisp` | Wisp | 600 | A green ghost light that lures walkers into the water. It drifts toward the hero and pops cold. | It hides in the reeds; hit it when it drifts out. Two hits, and it hates loud noises: it dims when a shot passes near. |
+| `bogHand` | Bog Hand | 595 | A hand reaching up out of the water and the peat, grabbing ankles. | Grabs only if the hero stands still on its spot 1 s: keep moving. Shot at the wrist it lets go. |
+| `drownedMourner` | Drowned Mourner | 585 | A drowned figure in black with a wreath, weeping. Throws wreaths in arcs. | Sobs (stunned and open) every three throws: shoot then. |
+| `graveEel` | Grave Eel | 575 | A long eel in the tide, snapping at tombstone edges. | Surfaces to bite and is stranded at low tide: shoot it then. |
+| `epitaph` | Epitaph | 570 | A headstone that spits its own inscription, letter by letter, as shots. | Shoot the date at the bottom; the letters stop. |
+| `pallbearer` | Pallbearer | 560 | Four drowned bearers carrying a coffin along a lane. | Kill one and the coffin tips, opens and blocks the lane (a diamond inside); the rest drop it. |
+| `mistHeron` | Mist Heron | 550 | A tall bird that stalks the tide line and spears at the platforms. | Rooted while striking: shoot between strikes. |
+| `bogBloom` | Bog Bloom | 540 | A water lily that opens and spits spores slowly. | Closes if shot from the front: shoot as it opens. |
+| `gravedigger`, `ferryman`, `drownedQueen` | the floor bosses and the Warden | 591, 551, 501 | above | above |
+
+**Shortcuts** *(working)*
+- **The Plug** (`mirePlug`), Floor 591 to **Floor 560**: a stone plug in the mire; pull it and the tide drains for 30
+  seconds and the hero walks across the Mire's bed, past everything the water was hiding. *Cost:* 25 diamonds
+  ("The Mire keeps what it's owed"). Hero: *"Why is there a plug."*
+- **The Widow's Coffin** (`widowsCoffin`), Floor 551 to **Floor 510**: a coffin that floats up the flooded crypt's
+  stairs. *Cost (risk):* Floor 510 reads `shortcutTaken`: the ballroom's water is already in the room.
+
+**Music.** A dirge on a waterlogged piano and a bowed cello in F-sharp minor at 76 BPM, with a pizzicato ping for the
+wisps and bubbling for percussion. Push music: rain and cello stabs, the tide turning up. The Queen's theme: a
+slow waltz on a drowned piano and a wet choir that sounds like it is singing through a bath; the enrage is the waltz
+at double time falling apart.
+
+### Circle V: the Caverns (Floors 500-401)
+
+**Theme and look.** Warm, pink-grey, wet, and breathing: caves of stone that look like gums, stalactites like teeth,
+walls that swell and settle, drool in ribbons from the ceiling, pale light from glowing cysts. After the cold, the
+heat of a mouth. The Caverns are the Mother Maw's, and she is huge; the further up, the more it is her mouth. *(Look
+brief: fleshy rose-grey stone, tooth-white stalactites and ridges, glossy drool, deep red throat openings, glowing
+cysts as the light; the camera sits low and the ceiling hangs.)*
+
+**Signature mechanic: The Gulp (`gulp`, working).** The Caverns breathe: on a fixed beat the cave inhales (a wet wind
+that drags everything toward the throat, a sliding pull on the hero), then exhales (a push the other way). **Drool**
+pools slow him and slick the floor. A floor teaches it with one gulp and the drool alone; later floors put ledges
+the gulp sweeps, **peristaltic floors** that move a stretch of floor like a conveyor on the beat, and tooth-ledges that
+close on the exhale. A rewind runs the breath backward.
+
+**Midpoint: Floor 500, *The Way Home*.** The first floor of the Caverns, and the halfway point of the game. A door in
+the cave wall with daylight under it, a real meadow smell. Yooba (on the Shaft the
+floor before): *"That's... home. That's the way home."* It is the hero's chance to leave (Act 2's midpoint). The
+Overlord's gate will open anyway; the village will not be saved. He opens the door, looks at the village whole,
+sees the sky behind it is already Hell-red, says *"...Yeah. No,"* and closes it. The card always ends there: the
+Door is a **shortcut he doesn't take** (it appears on the Shaft as a dotted line that goes up and back down, then
+the climb on). *(Working: confirm with J that a card whose only real option is "no" is what he wants.)*
+
+**Comedy angle.** Everything here is hungry and polite about it: the Droolers say grace; the Lurkers sulk when spotted;
+every creature calls the Mother Maw "Mum", including the ones who are clearly not her kids. A sign: *PLEASE DO NOT FEED
+THE FLOOR* (the floor eats it). The echoes in the cave repeat the hero's lines back wrong. The same half-eaten things come round on the
+Gulp again and again. Hero: *"It's like being inside a sneeze."*
+
+**The Overlord thread.** On the Way Home's floor, the door has been opened many times: the handle is worn, and the
+hand that wore it was enormous. The grass under the step is dead, trodden down. Hero: *"He's tried this door.
+...A lot."*
+
+**The Warden: the Mother Maw** (`motherMaw`, level `Floor401`). A cave beast that is mostly mouth: teeth, drool, many
+small eyes along her brow, and tiny forelimbs for fussing. Hell's greatest mother: she feeds everything, never
+stops feeding, and cannot understand why the hero keeps running. *Personality:* warm, smothering, insistent,
+mortified by manners (hers and others'); coos and complains with her mouth full. Calls the hero "love" and "dear" and
+"you're skin and bones". *Voice* `motherMaw`: huge, wet and cooing, a lullaby-baritone with slurps and swallows between
+words, tender in a way that makes it worse; booms only when she says "EAT." *Fight idea (working):* the arena is
+**her mouth**. Phase 1, *Open Wide*: the floor is her tongue, lashing along the arena on a beat (a glow first, jump it);
+her teeth hang from the ceiling and bite down on a toll (stalactite glow, 1 s); the hero shoots the sore tooth she
+hides behind her tongue. At half health, phase 2, *Swallow*: she gulps and the arena becomes the **throat**, a
+climbing arena down which a swallow pulls him on the beat; he climbs it against the gulp, with drool slowing every
+ledge. At a third, phase 3, *Sulk*: all her small eyes open at once along her brow, each a turret (glow, then beam);
+shoot them out one by one while she sobs *"After everything I've done for you."* *Weakness:* a cracked tooth at the back.
+
+**Floor bosses** *(working)*
+- **The Baby Maw** (`babyMaw`, Floor 491). The Mother's cub, a toddler all mouth and no sense, in a nursery of gnawed
+  bones and a cradle of ribs. Throws tantrums: bounces across the arena (a shadow on the floor first), spits drool-bombs,
+  cries (a shockwave from its mouth). *Weakness:* the pacifier-shaped lump in its mouth: shoot it and it lets out a
+  wail that stuns the cub. At half health it calls for Mum (a distant boom, the Warden's voice, the first time the
+  hero hears her: *"What's the matter, dear?"*). Voice: a high, wet whine, "Maaa".
+- **The Grand Molar** (`grandMolar`, Floor 451). A huge tooth with a mind of its own, grinding across a tier of the
+  gum. Rolls and grinds (a trail glow first), drops its roots. *Weakness:* the cavity (a dark spot on its crown): shoot it
+  and the tooth wobbles. Two tiers: the lower jaw, then the upper, where the roof bites down.
+
+**Enemies** *(entity ids working; the Drooler and the Lurker use art that exists)*
+
+| Entity | Name | First met | Why it's there | Weakness / how it plays |
+|---|---|---|---|---|
+| `fighter` → `drooler` | Drooler | 500 | Cave beast, the Mother's loudest child, forever drooling (`Fighter` art; Death2 is it eating you). | Slobbers a slick behind it: it slips on its own drool and is open when it falls; the drool sack on its chin. |
+| `sentinel` → `lurker` | Lurker | 497 | Crouching cave hunter that waits in alcoves for the hero to pass, then pounces (`Level3Enemy` art; Death3). | Freezes when watched: face it and it holds still; shoot it then. |
+| `gumGrub` | Gum Grub | 490 | Larvae in the gum that wriggle out of the wall in a stream. | Stick in the drool and can't turn: shoot them in a line. |
+| `molar` | Molar | 485 | A rolling tooth that tumbles down the slope. | The cavity on its crown; a hit splits it. |
+| `stalactooth` | Stalactooth | 480 | A hanging tooth that drops when the hero's shadow passes. | Fall to the floor and stick in it; the second one is slower. |
+| `tongueLasher` | Tongue Lasher | 470 | A tongue that reaches along the floor from a wall hole and lashes. | The tip is tender: shoot it and it retreats. |
+| `belcher` | Belcher | 460 | A cave creature that burps gas bubbles that rise slowly. | The bubbles pop when shot (harmless); touched, they burst. |
+| `leftover` | Leftover | 455 | Something the Maw ate long ago (an imp's helm, a demon's horn, a bridge's lamp) that got up again. | Half-digested: one hit. |
+| `babyMaw`, `grandMolar`, `motherMaw` | the floor bosses and the Warden | 491, 451, 401 | above | above |
+
+**Shortcuts** *(working)*
+- **The Way Home** (Floor 500): above; the shortcut he never takes.
+- **The Swallow** (`swallow`), Floor 491 to **Floor 460**: let a Drooler eat him and ride the gulp up the throat.
+  *Cost:* his Déjà Vu meter is emptied on arrival (rewind juice to zero, a sacrifice). Hero: *"I'm going to
+  regret this. ...I do regret this."*
+- **The Hiccup** (`hiccup`), Floor 451 to **Floor 410**: the Caverns hiccup and shoot everything on the floor up the
+  throat; he holds on. *Cost (risk):* Floor 410 reads `shortcutTaken`: the Gulp pulls twice as hard, because the Mother noticed.
+
+**Music.** Wet, slow industrial in C minor at 100 BPM: a bass that is a heartbeat under a squelching sub, gurgles for
+percussion, a distant moan in the pad. The loop is a heartbeat and a breath, audibly in step with the Gulp. Push
+music: the heartbeat doubles and a tuba joins. The Mother Maw's theme: a lullaby played on a tuba choir over wet bass; the
+enrage is the lullaby at double time and screamed.
+
+### Circle IV: the Dead Peaks (Floors 400-301)
+
+**Theme and look.** After the Maw's heat, cold: moonlit mountains with nothing living on them, black crags edged in
+blue-white, dead pines, snow that falls upward in the wind, and in every ledge a candle shrine with a flame that
+shouldn't still be burning. Rope bridges, monastery walls cut into the cliff, bells, wind. Down the middle of the sky,
+the **Bell Tower**, tall and cracked, far above. *(Look brief: silver moon, ink crags in layers, ice-blue light, warm
+candle-yellow as the only warmth, rope bridges and prayer flags, mist in the valleys, the tower in every sky.)*
+
+**Signature mechanic: The Toll (`toll`, working).** A great bell tolls across the whole Circle on a fixed beat. The
+candles of the shrines flicker one beat before it; on the toll a ring of force runs along the ledges and rope bridges
+(jump it) and loose stones shake free; in the quiet between tolls he is free. **Candles** light safe pools:
+**Gargoyles** are stone while their shrine's candle burns and wake when it goes out, so shooting a candle is a
+weapon *and* a risk. The first floor teaches the toll alone with one ledge and no monster; later floors pair it with the
+candles, the wind and the rope bridges. A rewind runs the toll back, and a bell that has not yet rung can be avoided.
+
+**Comedy angle.** The monks are deeply devoted to a service that never arrives: they rehearse the same service, light
+the same candles, put them out and say *"Again."* The gargoyles are very bad at being statues: they hold the pose
+when watched, and strain. A sign beside the first great bell: *DO NOT RING*; the bell has been rung every time. Hell is
+repetition: ring, ring, ring. Hero: *"I'd say it's a bit much. But here we are."*
+
+**The Overlord thread.** The tower's toll is a **countdown**: the Bell Ringer rings once for each floor the gate has
+left to open; the hero's climb has been moving the number, and the count on the bell's wall matches the Shaft's
+marker. The shrine's candle that is the biggest has the Overlord's face in its wax. Hero: *"It's a countdown. For him."* The
+Announcer: *"HE IS RUNNING OUT OF TIME. SO ARE YOU. IT'S A DRAW."* *(Working.)*
+
+**The Warden: the Bell Ringer** (`bellRinger`, level `Floor301`). A hooded gargoyle monk with a cracked iron bell
+on his back and candles melting on his shoulders, grey stone and old wax. He rings the toll that counts the
+gate down; the bell is cracked, never rings true, and it drives him quietly mad. *Personality:* devout, tired,
+patient to the point of menace; a perfectionist about one note he can never make; everything is "almost". Never hurries;
+hums between phrases. *Voice* `bellRinger`: a low, flat monotone chant, hushed and devout, with a dead clang
+under each phrase; when he's really speaking the bell answers. *Fight idea (working):* the arena is the **belfry**,
+bells hung round a platform in a ring. Phase 1, *The Toll*: he swings the bell on his back and the toll sends a ring
+along the floor (a glow, then the ring: jump it) with falling plaster; the hero shoots his shoulder candles out, each of which
+silences one of the tolls in the rhythm. At half health, phase 2, *The Peal*: he rings the belfry's bells in a sequence,
+readable on the glints, the rhythm being the attack, with the wax from his candles slowing the floor. At a third, phase 3,
+*Cracked*: the bell splits and his toll becomes a whole-screen ring (jump on the beat, the screen shakes) and he does
+nothing else; the hero drops a bell on him from the rope by shooting it free. *Weakness:* the candles on his shoulders; with
+all out he can't ring.
+
+**Floor bosses** *(working)*
+- **The Cantor** (`cantor`, Floor 391). A gargoyle who sings in bell notes, perched over a chapel ledge: each note
+  a ring of force that wakes the statues round him. *Weakness:* his open mouth, shot between notes silences him a
+  bar. Two tiers: the ledge, then the choir loft where the statues wake.
+- **The Wax Abbot** (`waxAbbot`, Floor 351). An abbot made of candle wax who melts when shot and reforms from the puddles
+  (a glow on each puddle 1 s before the piece stands up). *Weakness:* the cold: lead him into the open window and his wax sets
+  where he stands; a shot then shatters it. Voice: soft, kind, going out: *"Bless... bless..."*
+
+**Enemies** *(entity ids working)*
+
+| Entity | Name | First met | Why it's there | Weakness / how it plays |
+|---|---|---|---|---|
+| `gargoyle` | Gargoyle | 400 | Stone guardians on the ledges. | Stone while its shrine's candle burns; wakes and dives when it goes out. Hit it mid-dive (eyes), not perched. |
+| `candleMonk` | Candle Monk | 395 | A robed monk who keeps one candle lit and drips wax pools (slowing) wherever he goes. | The candle: shot, he crumples to ash, and the pool dries. |
+| `moonMoth` | Moon Moth | 385 | Pale moths drawn to candle flames; they spiral into the hero. | They go for flames: shoot a candle out and they flutter off. |
+| `prayerWheel` | Prayer Wheel | 380 | A rolling wheel on a rail that fires a petal on each turn. | Jam the axle with a shot and it stops. |
+| `rimeHound` | Rime Hound | 370 | A ghost wolf that howls on the toll. | Drowns out the toll: dies to a toll it can't hear. |
+| `screeSnake` | Scree Snake | 365 | A slide of rock that comes down slopes like a snake. | Soft belly: jump it and shoot from behind. |
+| `votive` | Votive | 350 | The damned: tiny flames, each carrying a bell, that walk a procession round the Peaks. | Pop one and the next pops (a chain); loop shards drop from the damned. |
+| `clapper` | Clapper | 340 | A bell's clapper that got out and swings on a chain. | Hit the bell it hangs from. |
+| `cantor`, `waxAbbot`, `bellRinger` | the floor bosses and the Warden | 391, 351, 301 | above | above |
+
+**Shortcuts** *(working)*
+- **The Ringer's Rope** (`ringersRope`), Floor 391 to **Floor 360**: a bell rope that rings a counter-toll and
+  rocks a stone staircase loose. *Cost:* 30 diamonds. Hero: *"Please don't be loud."*
+- **The Pilgrim's Lift** (`pilgrimsLift`), Floor 351 to **Floor 310**: a cable car in the open wind. *Cost (risk):*
+  Floor 310 reads `shortcutTaken`: a storm, with the tolls closer together.
+
+**Music.** Choral and cold: a men's choir, tubular bells and a low church-organ drone in D minor at 84 BPM, with the toll
+as the loop's downbeat (the bell *is* the metronome). Push music: war drums and the choir in full, the toll doubled. The
+Bell Ringer's theme: a cracked bell slow on the downbeat over a drone and a plainsong choir; the enrage breaks the beat
+into a flurry of bells and a distorted organ.
 
 ### Yooba between floors
 
