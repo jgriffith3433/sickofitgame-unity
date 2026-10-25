@@ -346,6 +346,32 @@ namespace SickOfIt.Playtest
                 MoveCheck("the dash is ready again after the cooldown", dashCount == beforeReady + 1, $"{dashCount - beforeReady} dash(es)");
                 yield return Run.Until(() => c.DashCooldownLeft <= 0f, 3f, "the dash cooldown to end");
 
+                // 5b. Run-and-shoot: walking while firing shows the RunFire pose, standing still while firing does not.
+                yield return MovesWalkTo(-6.0f);
+                bool sawRunFire = false, sawRunFireStill = false;
+                input.SetAim(Vector2.right);
+                input.SetKey(Key.D, true);
+                float runUntil = Time.realtimeSinceStartup + 0.8f;
+                while (!Run.Done && Time.realtimeSinceStartup < runUntil)
+                {
+                    MoveNote();
+                    sawRunFire |= c.IsRunFiring;
+                    yield return null;
+                }
+                input.SetKey(Key.D, false);
+                float stillUntil = Time.realtimeSinceStartup + 0.6f;
+                while (!Run.Done && Time.realtimeSinceStartup < stillUntil)
+                {
+                    MoveNote();
+                    if (Time.realtimeSinceStartup > stillUntil - 0.3f)
+                        sawRunFireStill |= c.IsRunFiring;
+                    yield return null;
+                }
+                input.SetAim(Vector2.zero);
+                MoveCheck("firing while walking shows the RunFire pose", sawRunFire, $"RunFire seen walking {sawRunFire}");
+                MoveCheck("firing standing still does not", !sawRunFireStill, $"RunFire seen standing {sawRunFireStill}");
+                yield return MovesWalkTo(-6.0f);
+
                 // 6. Rewind: back into the middle of a burst, and back to before it.
                 yield return MovesWalkTo(-6.0f);
                 yield return MovesFor(0.3f);
