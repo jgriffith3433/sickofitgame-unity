@@ -1354,7 +1354,8 @@
                 "text": "Pointer: Left.",
                 "duration": 1.9,
                 "style": "Subtitle",
-                "color": "#C9A27A"
+                "color": "#C9A27A",
+                "sound": "vo_pointer900_intro0"
               },
               {
                 "type": "wait",
@@ -1364,7 +1365,8 @@
                 "type": "showText",
                 "text": "You're a sign.",
                 "duration": 1.9,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_you_re_a_sign"
               },
               {
                 "type": "wait",
@@ -1375,7 +1377,8 @@
                 "text": "Pointer: I'm a person. ...Your other left.",
                 "duration": 3.7,
                 "style": "Subtitle",
-                "color": "#C9A27A"
+                "color": "#C9A27A",
+                "sound": "vo_pointer900_intro2"
               },
               {
                 "type": "wait",
@@ -1400,7 +1403,8 @@
                         "text": "Pointer: Up. Fast. Please.",
                         "duration": 2.7,
                         "style": "Subtitle",
-                        "color": "#C9A27A"
+                        "color": "#C9A27A",
+                        "sound": "vo_pointer900_hurt0"
                       },
                       {
                         "type": "wait",
@@ -1461,7 +1465,8 @@
                         "text": "Pointer: There.",
                         "duration": 2.0,
                         "style": "Subtitle",
-                        "color": "#C9A27A"
+                        "color": "#C9A27A",
+                        "sound": "vo_pointer900_plain0"
                       },
                       {
                         "type": "wait",
@@ -1471,7 +1476,8 @@
                         "type": "showText",
                         "text": "Thanks.",
                         "duration": 1.8,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_thanks"
                       },
                       {
                         "type": "wait",

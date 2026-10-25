@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "entity": "hidingSoul",
+  "name": "Hiding soul",
+  "description": "a damned soul of the Ember Wastes, stuck in Hell's loop forever: a thin hunched bald human figure in a long ragged ash-grey shroud, pale ash-grey skin, hollow tired eyes, a soft pale blue-white glow around its outline, bare feet, crouched low behind a scrap of its own shroud pulled up to the eyes, a finger to its lips",
+  "height": 0.7,
+  "pixels": 220,
+  "keepTint": true,
+  "poses": {
+    "stand": "standing hunched, crouched low behind a scrap of its own shroud pulled up to the eyes",
+    "react": "hunched small, shroud pulled up over its nose, finger to lips"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "rocks gently in place, breathing slowly",
+      "seconds": 2
+    },
+    "react": {
+      "from": "react",
+      "action": "peeks over the shroud, ducks, peeks again, whole body trembling slightly",
+      "seconds": 2,
+      "loop": false
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 2
+  }
+}

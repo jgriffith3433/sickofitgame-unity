@@ -1,5 +1,5 @@
 {
-  "note": "Priced, not made (Docs/Story.md \"The Climbers\"): design each voice with audio.voice-design / audio.voice-save, then make every line with audio.voice (eleven_v3). Until then the scenes show subtitles.",
+  "note": "Voice recipes and lines of the Climbers (Docs/Story.md \"The Climbers\"). The voices are designed and saved in Hawkes Gen, the lines are audio.json sounds (written by build_audio below) with clips in Audio/Generated; the scenes play them through showText `sound`.",
   "voices": {
     "rook": {
       "name": "Rook",

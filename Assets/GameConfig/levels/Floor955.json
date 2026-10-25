@@ -1607,7 +1607,8 @@
                 "text": "Rook: Psst. How does the R thing work? Asking for a friend.",
                 "duration": 4.8,
                 "style": "Subtitle",
-                "color": "#F2A93B"
+                "color": "#F2A93B",
+                "sound": "vo_rook955_intro0"
               },
               {
                 "type": "wait",
@@ -1617,7 +1618,8 @@
                 "type": "showText",
                 "text": "Who's the friend?",
                 "duration": 2.1,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_who_s_the_friend"
               },
               {
                 "type": "wait",
@@ -1628,7 +1630,8 @@
                 "text": "Rook: ...Me.",
                 "duration": 1.8,
                 "style": "Subtitle",
-                "color": "#F2A93B"
+                "color": "#F2A93B",
+                "sound": "vo_rook955_intro2"
               },
               {
                 "type": "wait",
@@ -1653,7 +1656,8 @@
                         "text": "Rook: You've died more than I have, and you're still ahead?",
                         "duration": 4.8,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook955_dead0"
                       },
                       {
                         "type": "wait",
@@ -1663,7 +1667,8 @@
                         "type": "showText",
                         "text": "Hell's weird.",
                         "duration": 1.8,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_hell_s_weird"
                       },
                       {
                         "type": "wait",
@@ -1674,7 +1679,8 @@
                         "text": "Rook: Found this. It's yours.",
                         "duration": 2.9,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook955_outro0"
                       },
                       {
                         "type": "wait",
@@ -1742,7 +1748,8 @@
                             "text": "Rook: You collect those Grudges like medals.",
                             "duration": 3.9,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook955_grudges0"
                           },
                           {
                             "type": "wait",
@@ -1752,7 +1759,8 @@
                             "type": "showText",
                             "text": "They collect me.",
                             "duration": 2.0,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_they_collect_me"
                           },
                           {
                             "type": "wait",
@@ -1763,7 +1771,8 @@
                             "text": "Rook: Found this. It's yours.",
                             "duration": 2.9,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook955_outro0"
                           },
                           {
                             "type": "wait",
@@ -1824,7 +1833,8 @@
                             "text": "Rook: Show me. Slowly.",
                             "duration": 2.4,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook955_plain0"
                           },
                           {
                             "type": "wait",
@@ -1834,7 +1844,8 @@
                             "type": "showText",
                             "text": "Hold R.",
                             "duration": 1.8,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_hold_r"
                           },
                           {
                             "type": "wait",
@@ -1845,7 +1856,8 @@
                             "text": "Rook: I'm holding it.",
                             "duration": 2.4,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook955_plain2"
                           },
                           {
                             "type": "wait",
@@ -1855,7 +1867,8 @@
                             "type": "showText",
                             "text": "It's not on you.",
                             "duration": 2.0,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_it_s_not_on_you"
                           },
                           {
                             "type": "wait",
@@ -1866,7 +1879,8 @@
                             "text": "Rook: Found this. It's yours.",
                             "duration": 2.9,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook955_outro0"
                           },
                           {
                             "type": "wait",

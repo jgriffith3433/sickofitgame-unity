@@ -471,7 +471,8 @@
                 "text": "Wick: Oh. Someone. ...Mind the dark. I'll light it.",
                 "duration": 4.3,
                 "style": "Subtitle",
-                "color": "#BFE6C8"
+                "color": "#BFE6C8",
+                "sound": "vo_wick999_intro0"
               },
               {
                 "type": "wait",
@@ -496,7 +497,8 @@
                         "text": "Wick: You're running on a wick. Here. Stand by the lamp.",
                         "duration": 4.6,
                         "style": "Subtitle",
-                        "color": "#BFE6C8"
+                        "color": "#BFE6C8",
+                        "sound": "vo_wick999_hurt0"
                       },
                       {
                         "type": "wait",
@@ -506,7 +508,8 @@
                         "type": "showText",
                         "text": "Thanks.",
                         "duration": 1.8,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_thanks"
                       },
                       {
                         "type": "wait",
@@ -579,7 +582,8 @@
                         "text": "Wick: The lava rises here. Don't stand still.",
                         "duration": 3.9,
                         "style": "Subtitle",
-                        "color": "#BFE6C8"
+                        "color": "#BFE6C8",
+                        "sound": "vo_wick999_plain0"
                       },
                       {
                         "type": "wait",
@@ -589,7 +593,8 @@
                         "type": "showText",
                         "text": "I wasn't going to.",
                         "duration": 2.2,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_i_wasn_t_going_to"
                       },
                       {
                         "type": "wait",

@@ -5,9 +5,10 @@
   "description": "a small bent soul with a candle for a head that is always lit and never shorter, holding a long pole with a wick on the end, pale green flame, a worn hood",
   "height": 1.1,
   "poses": {
-    "stand": "standing, facing the viewer, relaxed",
-    "talk": "mid-sentence, one hand raised",
-    "walk": "mid-stride in profile"
+    "stand": "standing in profile facing right, relaxed",
+    "talk": "in profile facing right, mid-sentence, one hand raised",
+    "walk": "mid-stride in profile facing right",
+    "react": "in profile facing right, startled, leaning back, both hands up"
   },
   "clips": {
     "idle": {
@@ -24,6 +25,12 @@
       "from": "walk",
       "action": "walks away unhurried",
       "seconds": 2.5
+    },
+    "react": {
+      "from": "react",
+      "action": "flinches back, then settles and nods",
+      "seconds": 1.5,
+      "loop": false
     }
   },
   "takes": {

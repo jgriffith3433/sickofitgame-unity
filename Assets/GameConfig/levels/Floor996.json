@@ -1476,7 +1476,8 @@
                 "text": "Rook: First! ...Oh. You're a person.",
                 "duration": 3.3,
                 "style": "Subtitle",
-                "color": "#F2A93B"
+                "color": "#F2A93B",
+                "sound": "vo_rook996_intro0"
               },
               {
                 "type": "wait",
@@ -1486,7 +1487,8 @@
                 "type": "showText",
                 "text": "I'm just going up.",
                 "duration": 2.2,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_i_m_just_going_up"
               },
               {
                 "type": "wait",
@@ -1497,7 +1499,8 @@
                 "text": "Rook: Going up. Racing. Same thing.",
                 "duration": 3.3,
                 "style": "Subtitle",
-                "color": "#F2A93B"
+                "color": "#F2A93B",
+                "sound": "vo_rook996_intro2"
               },
               {
                 "type": "wait",
@@ -1522,7 +1525,8 @@
                         "text": "Rook: Look at the pockets on you. Cheating.",
                         "duration": 3.8,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook996_rich0"
                       },
                       {
                         "type": "wait",
@@ -1532,7 +1536,8 @@
                         "type": "showText",
                         "text": "It's called picking things up.",
                         "duration": 3.0,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_it_s_called_picking_things_up"
                       },
                       {
                         "type": "wait",
@@ -1579,7 +1584,8 @@
                         "text": "Rook: Slow and poor. I like it. For the effort.",
                         "duration": 4.1,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook996_poor0"
                       },
                       {
                         "type": "wait",
@@ -1589,7 +1595,8 @@
                         "type": "showText",
                         "text": "Thanks. I think.",
                         "duration": 2.0,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_thanks_i_think"
                       },
                       {
                         "type": "wait",

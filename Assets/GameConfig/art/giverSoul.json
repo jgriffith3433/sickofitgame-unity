@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "entity": "giverSoul",
+  "name": "Giving soul",
+  "description": "a damned soul of the Ember Wastes, stuck in Hell's loop forever: a thin hunched bald human figure in a long ragged ash-grey shroud, pale ash-grey skin, hollow tired eyes, a soft pale blue-white glow around its outline, bare feet, arms held out stiffly in front, one small dark stone offered on its open palm, eyes averted",
+  "height": 0.7,
+  "pixels": 220,
+  "keepTint": true,
+  "poses": {
+    "stand": "standing hunched, arms held out stiffly in front",
+    "react": "arms out, the small dark stone offered on an open palm"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "rocks gently in place, breathing slowly",
+      "seconds": 2
+    },
+    "react": {
+      "from": "react",
+      "action": "holds out the stone, flinches, pulls it back an inch, offers it again",
+      "seconds": 2,
+      "loop": false
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 2
+  }
+}

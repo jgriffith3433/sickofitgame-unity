@@ -459,7 +459,8 @@
                 "text": "Wick: The last lamp. ...I can stop now. Can I stop now?",
                 "duration": 4.6,
                 "style": "Subtitle",
-                "color": "#BFE6C8"
+                "color": "#BFE6C8",
+                "sound": "vo_wick902_intro0"
               },
               {
                 "type": "wait",
@@ -469,7 +470,8 @@
                 "type": "showText",
                 "text": "Stop. Sit.",
                 "duration": 1.8,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_stop_sit"
               },
               {
                 "type": "wait",
@@ -494,7 +496,8 @@
                         "text": "Wick: Oh, you're hurt. One more match, then.",
                         "duration": 3.9,
                         "style": "Subtitle",
-                        "color": "#BFE6C8"
+                        "color": "#BFE6C8",
+                        "sound": "vo_wick902_hurt0"
                       },
                       {
                         "type": "wait",
@@ -505,7 +508,8 @@
                         "text": "Wick: It stayed lit. ...It stayed lit.",
                         "duration": 3.5,
                         "style": "Subtitle",
-                        "color": "#BFE6C8"
+                        "color": "#BFE6C8",
+                        "sound": "vo_wick902_outro0"
                       },
                       {
                         "type": "wait",
@@ -608,7 +612,8 @@
                             "text": "Wick: You talk to everyone, don't you.",
                             "duration": 3.5,
                             "style": "Subtitle",
-                            "color": "#BFE6C8"
+                            "color": "#BFE6C8",
+                            "sound": "vo_wick902_friends0"
                           },
                           {
                             "type": "wait",
@@ -618,7 +623,8 @@
                             "type": "showText",
                             "text": "They talk to me.",
                             "duration": 2.0,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_they_talk_to_me"
                           },
                           {
                             "type": "wait",
@@ -629,7 +635,8 @@
                             "text": "Wick: It stayed lit. ...It stayed lit.",
                             "duration": 3.5,
                             "style": "Subtitle",
-                            "color": "#BFE6C8"
+                            "color": "#BFE6C8",
+                            "sound": "vo_wick902_outro0"
                           },
                           {
                             "type": "wait",
@@ -710,7 +717,8 @@
                             "text": "Wick: Go quiet. He hears everything.",
                             "duration": 3.3,
                             "style": "Subtitle",
-                            "color": "#BFE6C8"
+                            "color": "#BFE6C8",
+                            "sound": "vo_wick902_plain0"
                           },
                           {
                             "type": "wait",
@@ -721,7 +729,8 @@
                             "text": "Wick: It stayed lit. ...It stayed lit.",
                             "duration": 3.5,
                             "style": "Subtitle",
-                            "color": "#BFE6C8"
+                            "color": "#BFE6C8",
+                            "sound": "vo_wick902_outro0"
                           },
                           {
                             "type": "wait",

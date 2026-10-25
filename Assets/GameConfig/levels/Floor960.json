@@ -1374,7 +1374,8 @@
                 "text": "Wick: It keeps going out. ...I'm not crying, it's the smoke.",
                 "duration": 4.9,
                 "style": "Subtitle",
-                "color": "#BFE6C8"
+                "color": "#BFE6C8",
+                "sound": "vo_wick960_intro0"
               },
               {
                 "type": "wait",
@@ -1399,7 +1400,8 @@
                         "text": "Wick: Could you spare a diamond for the oil? ...No. Keep it. I'll owe you.",
                         "duration": 5.8,
                         "style": "Subtitle",
-                        "color": "#BFE6C8"
+                        "color": "#BFE6C8",
+                        "sound": "vo_wick960_rich0"
                       },
                       {
                         "type": "wait",
@@ -1473,7 +1475,8 @@
                             "text": "Wick: Hold on to those Grudges. They get heavy.",
                             "duration": 4.1,
                             "style": "Subtitle",
-                            "color": "#BFE6C8"
+                            "color": "#BFE6C8",
+                            "sound": "vo_wick960_grudges0"
                           },
                           {
                             "type": "wait",
@@ -1530,7 +1533,8 @@
                             "text": "Wick: Try the left stone. It holds.",
                             "duration": 3.3,
                             "style": "Subtitle",
-                            "color": "#BFE6C8"
+                            "color": "#BFE6C8",
+                            "sound": "vo_wick960_plain0"
                           },
                           {
                             "type": "wait",
@@ -1540,7 +1544,8 @@
                             "type": "showText",
                             "text": "Thanks.",
                             "duration": 1.8,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_thanks"
                           },
                           {
                             "type": "wait",

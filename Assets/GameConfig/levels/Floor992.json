@@ -1618,7 +1618,8 @@
                 "text": "Rook: Race you to the bridge. Go!",
                 "duration": 3.1,
                 "style": "Subtitle",
-                "color": "#F2A93B"
+                "color": "#F2A93B",
+                "sound": "vo_rook992_intro0"
               },
               {
                 "type": "wait",
@@ -1628,7 +1629,8 @@
                 "type": "showText",
                 "text": "No.",
                 "duration": 1.8,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_no"
               },
               {
                 "type": "wait",
@@ -1639,7 +1641,8 @@
                 "text": "Rook: Too late. I'm winning.",
                 "duration": 2.8,
                 "style": "Subtitle",
-                "color": "#F2A93B"
+                "color": "#F2A93B",
+                "sound": "vo_rook992_intro2"
               },
               {
                 "type": "wait",
@@ -1664,7 +1667,8 @@
                         "text": "Rook: You're one hit from the floor. Even I won't race that. Take the ember off my scarf.",
                         "duration": 6.8,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook992_hurt0"
                       },
                       {
                         "type": "wait",
@@ -1674,7 +1678,8 @@
                         "type": "showText",
                         "text": "Appreciated.",
                         "duration": 1.8,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_appreciated"
                       },
                       {
                         "type": "wait",
@@ -1747,7 +1752,8 @@
                         "text": "Rook: Third floor in a row I'm second! ...Is the bridge supposed to do that?",
                         "duration": 5.9,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook992_race0"
                       },
                       {
                         "type": "wait",
@@ -1757,7 +1763,8 @@
                         "type": "showText",
                         "text": "Yes.",
                         "duration": 1.8,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_yes"
                       },
                       {
                         "type": "wait",

@@ -1316,7 +1316,8 @@
                 "text": "Rook: Don't look. I'm having a moment.",
                 "duration": 3.5,
                 "style": "Subtitle",
-                "color": "#F2A93B"
+                "color": "#F2A93B",
+                "sound": "vo_rook808_intro0"
               },
               {
                 "type": "wait",
@@ -1326,7 +1327,8 @@
                 "type": "showText",
                 "text": "You okay?",
                 "duration": 1.8,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_you_okay"
               },
               {
                 "type": "wait",
@@ -1337,7 +1339,8 @@
                 "text": "Rook: I don't need to be first. ...I need to see you be.",
                 "duration": 4.6,
                 "style": "Subtitle",
-                "color": "#F2A93B"
+                "color": "#F2A93B",
+                "sound": "vo_rook808_intro2"
               },
               {
                 "type": "wait",
@@ -1364,7 +1367,8 @@
                         "text": "Rook: You said second's a good number. It's the best one. You get to watch.",
                         "duration": 5.9,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook808_kind0"
                       },
                       {
                         "type": "wait",
@@ -1375,7 +1379,8 @@
                         "text": "Rook: Take the rope. It goes where you go.",
                         "duration": 3.7,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook808_outro0"
                       },
                       {
                         "type": "wait",
@@ -1385,7 +1390,8 @@
                         "type": "showText",
                         "text": "It goes nowhere.",
                         "duration": 2.0,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_it_goes_nowhere"
                       },
                       {
                         "type": "wait",
@@ -1396,7 +1402,8 @@
                         "text": "Rook: That's where I was going.",
                         "duration": 3.0,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook808_outro2"
                       },
                       {
                         "type": "wait",
@@ -1494,7 +1501,8 @@
                             "text": "Rook: Die less. It's embarrassing for both of us.",
                             "duration": 4.2,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook808_dead0"
                           },
                           {
                             "type": "wait",
@@ -1505,7 +1513,8 @@
                             "text": "Rook: Take the rope. It goes where you go.",
                             "duration": 3.7,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook808_outro0"
                           },
                           {
                             "type": "wait",
@@ -1515,7 +1524,8 @@
                             "type": "showText",
                             "text": "It goes nowhere.",
                             "duration": 2.0,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_it_goes_nowhere"
                           },
                           {
                             "type": "wait",
@@ -1526,7 +1536,8 @@
                             "text": "Rook: That's where I was going.",
                             "duration": 3.0,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook808_outro2"
                           },
                           {
                             "type": "wait",
@@ -1617,7 +1628,8 @@
                             "text": "Rook: Don't die. I'd have to carry on.",
                             "duration": 3.5,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook808_plain0"
                           },
                           {
                             "type": "wait",
@@ -1628,7 +1640,8 @@
                             "text": "Rook: Take the rope. It goes where you go.",
                             "duration": 3.7,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook808_outro0"
                           },
                           {
                             "type": "wait",
@@ -1638,7 +1651,8 @@
                             "type": "showText",
                             "text": "It goes nowhere.",
                             "duration": 2.0,
-                            "style": "Subtitle"
+                            "style": "Subtitle",
+                            "sound": "vo_hero_cmp_it_goes_nowhere"
                           },
                           {
                             "type": "wait",
@@ -1649,7 +1663,8 @@
                             "text": "Rook: That's where I was going.",
                             "duration": 3.0,
                             "style": "Subtitle",
-                            "color": "#F2A93B"
+                            "color": "#F2A93B",
+                            "sound": "vo_rook808_outro2"
                           },
                           {
                             "type": "wait",

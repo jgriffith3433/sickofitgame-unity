@@ -1353,7 +1353,8 @@
                 "text": "Rook: I tried the R thing. ...It doesn't go backward for me. It goes sideways.",
                 "duration": 6.1,
                 "style": "Subtitle",
-                "color": "#F2A93B"
+                "color": "#F2A93B",
+                "sound": "vo_rook899_intro0"
               },
               {
                 "type": "wait",
@@ -1363,7 +1364,8 @@
                 "type": "showText",
                 "text": "That's not how it works.",
                 "duration": 2.6,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_hero_cmp_that_s_not_how_it_works"
               },
               {
                 "type": "wait",
@@ -1390,7 +1392,8 @@
                         "text": "Rook: You said hold R. I held R. It's the annoyance, isn't it. You have to bring your own.",
                         "duration": 6.9,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook899_asked0"
                       },
                       {
                         "type": "wait",
@@ -1400,7 +1403,8 @@
                         "type": "showText",
                         "text": "Yeah.",
                         "duration": 1.8,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_yeah"
                       },
                       {
                         "type": "wait",
@@ -1471,7 +1475,8 @@
                         "text": "Rook: I heard there's a button. Where's the button?",
                         "duration": 4.3,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook899_skipped0"
                       },
                       {
                         "type": "wait",
@@ -1481,7 +1486,8 @@
                         "type": "showText",
                         "text": "R.",
                         "duration": 1.8,
-                        "style": "Subtitle"
+                        "style": "Subtitle",
+                        "sound": "vo_hero_cmp_r"
                       },
                       {
                         "type": "wait",
@@ -1492,7 +1498,8 @@
                         "text": "Rook: R. ...R!",
                         "duration": 1.9,
                         "style": "Subtitle",
-                        "color": "#F2A93B"
+                        "color": "#F2A93B",
+                        "sound": "vo_rook899_skipped2"
                       },
                       {
                         "type": "wait",
