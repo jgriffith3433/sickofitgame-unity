@@ -669,6 +669,9 @@ namespace SickOfIt.Playtest
                 "`parallax` events); each Circle has its own weather (ash, sparks, cinders, runes, grit: kinds and bits drawn) and its own background life (flyers, walkers, a far-off chase: appearances), " +
                 "and no two Circles share a set; the frame time is measured with the ambience on, off for 10 s (the baseline) and on again, and must stay within budget (on <= off x1.2 + 2 ms, no frame over 120 ms; " +
                 "ambience.<circle>.frameOnMs / frameOffMs metrics). Each beat is a check event", AmbienceSeconds, "level"));
+            list.Add(new PlaytestScenario(MusicLayersId, $"The intensity music layer (Docs/Story.md \"Music\"): Floor 997 (level {MusicLayersLevel}) loaded directly (setup shortcut) and played by the bot through real input for 150 s of game time. " +
+                "The Circle's layer (a stand-in loop until the real stems are made, nothing is generated) must be silent on the empty floor, fade in as enemies and shots crowd the screen and fade out again as it empties. " +
+                "`musicLayer` events log its level (0-100%) and the crowd; each beat is a check event", MusicLayersSeconds, "level"));
             list.Add(new PlaytestScenario(EnemyHintsId, $"The hero sizes up each enemy type once (Docs/GameplayCookbook.md \"The hero sizes them up\"): every named enemy has a hint; New Game forgets; " +
                 $"Level {EnemyHintsLevel}'s first imp gets his subtitle (name and weakness), then a rewind past it and the next imps do not repeat it; a new run (the level loaded again) does not; " +
                 "a scripted scene (the bystander bench) spawns an imp in silence and does not use the type up. Each beat is a check event; hint events log the subtitles", EnemyHintsSeconds, "level"));
@@ -1020,6 +1023,8 @@ namespace SickOfIt.Playtest
                 session.Prepare(LadderLevel, true);
                 yield return session.LadderRun();
             }
+            else if (id == MusicLayersId)
+                yield return session.MusicLayersRun();
             else if (id == EnemyHintsId)
                 yield return session.EnemyHintsRun();
             else if (id == AmbienceId)

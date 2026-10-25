@@ -438,6 +438,8 @@ namespace SickOfIt.Data.Config
         public int minScore;
         public string quip = "";
         public Color color = Color.white;
+        [Tooltip("Music stinger (a sound id from audio.json) that plays with the grade stamp.")]
+        public string stingSound = "";
     }
 
     /// <summary>Words on the in-level screens (pause, settings, results, death).</summary>

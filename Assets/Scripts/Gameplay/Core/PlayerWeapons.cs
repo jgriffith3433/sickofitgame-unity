@@ -314,6 +314,7 @@ namespace SickOfIt.Gameplay
                 return;
             string banner = string.IsNullOrEmpty(def.banner) ? "NEW WEAPON: " + def.displayName.ToUpperInvariant() : def.banner;
             world.Hud.ShowText(banner, TextStyle.Banner, def.color, world.Now + 3.2f);
+            Sfx.Play(Sfx.Events.weaponSting);
             if (!string.IsNullOrEmpty(def.heroText) || !string.IsNullOrEmpty(def.heroLine))
             {
                 float shown = Mathf.Max(3f, Sfx.LengthOf(def.heroLine) + 0.4f);
