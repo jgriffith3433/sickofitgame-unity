@@ -325,7 +325,10 @@ Counters: `kills`, `kills:{entityId}`, `spawned`, `spawned:{entityId}`, `playerH
 ## The arcade loop: rewind juice, orbs, upgrades
 
 **Rewind is limited.** `game.json` → `"rewindBudget"`: `startSeconds` of juice per level, `maxSeconds` held, `costPerSecond`
-spent per second rewound. The bottom progress bar shows the level played so far (length = script `"length"`, ticks from
+spent per second rewound. Defaults: 10 s at the start and as the cap (Yooba's Loop Jar x5, Bottomless Jar x2 and the in-run Déjà Vu x3 take it to 30 s,
+the history window `rewindMaxHistorySeconds`). Rewards: `cleanKillRefund` juice for an enemy killed while the hero hasn't been hurt for `cleanKillSeconds` (once per
+creature; the HUD floats "CLEAN KILL +0.5s"), and `survivalBonus` for living `survivalSeconds` after undoing a death with a rewind ("SURVIVED +3s"; `RewindBudget.ArmSurvival`).
+Quick Unwind (`RewindSpeed` shop effect) makes the rewind itself faster. Playtest `rewind-juice`. The bottom progress bar shows the level played so far (length = script `"length"`, ticks from
 `"markers"`) and the juice as a teal tail behind the playhead: exactly how far back you can go.
 
 **Orbs refill it.** Enemies drop pickups through `"drops"`; `content/entities/rewindOrb.json` is a `collect` pickup that runs

@@ -1348,7 +1348,9 @@ is proud of). His voice is `yooba` (designed for him: fast, wet, gurgling, a bit
   | Slick Heels | runs 8% faster | slime on the heels |
   | Licked Trigger | fires 10% faster | he licked it |
   | Tummy-Dipped Shots | 15% more damage | every shot dipped in his stomach |
-  | Loop Jar | +1 s of Déjà Vu (rewind) | a loop shard one of the damned dropped; he only keeps it in a jar |
+  | Loop Jar | +2 s of Déjà Vu (rewind) per level, 5 levels (the hero starts with 10 s) | a loop shard one of the damned dropped; he only keeps it in a jar |
+  | Bottomless Jar *(gated)* | +2 s more per level, 2 levels (needs Loop Jar 3) | Yooba's stomach, but for loops |
+  | Quick Unwind | rewinds 25% faster per level, 3 levels | Yooba greased the loop |
   | Shiny Sniffer | diamonds come from farther away | a wobbly bit of Yooba that sniffs out diamonds |
   | Double-Dipped Shots *(gated)* | a further 20% more damage | he only offers it to someone who has had the first dip twice (*Tummy-Dipped Shots*, level 2); back in the stomach they go |
   | Slimed Knuckles *(gated)* | punches (fists) hit 50% harder per level, 2 levels | a coat of slime on both fists |

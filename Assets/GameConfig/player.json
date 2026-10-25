@@ -358,11 +358,30 @@
     {
       "id": "juiceBox",
       "title": "Loop Jar",
-      "description": "A loop shard one of the damned dropped. He keeps it in a jar. +1 second of Déjà Vu.",
-      "costsPerLevel": [30, 65, 105],
-      "maxLevel": 3,
+      "description": "A loop shard one of the damned dropped. He keeps it in a jar. +2 seconds of Déjà Vu.",
+      "costsPerLevel": [30, 55, 85, 120, 160],
+      "maxLevel": 5,
       "effect": "RewindJuice",
-      "amountPerLevel": 1.0
+      "amountPerLevel": 2.0
+    },
+    {
+      "id": "bottomlessJar",
+      "title": "Bottomless Jar",
+      "description": "Yooba's stomach, but for loops. Nobody asked where the bottom went. +2 more seconds of Déjà Vu.",
+      "costsPerLevel": [200, 290],
+      "maxLevel": 2,
+      "effect": "RewindJuice",
+      "amountPerLevel": 2.0,
+      "requires": ["shop:juiceBox:3"]
+    },
+    {
+      "id": "quickUnwind",
+      "title": "Quick Unwind",
+      "description": "Yooba greased the loop. You rewind 25% faster, so Hell repeats itself less at you.",
+      "costsPerLevel": [45, 95, 160],
+      "maxLevel": 3,
+      "effect": "RewindSpeed",
+      "amountPerLevel": 0.25
     },
     {
       "id": "diamondMagnet",

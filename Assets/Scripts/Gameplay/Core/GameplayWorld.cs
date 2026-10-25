@@ -181,6 +181,9 @@ namespace SickOfIt.Gameplay
             {
                 var budget = gameObject.AddComponent<SickOfIt.Core.Rewind.RewindBudget>();
                 budget.Configure(setup.RewindBudget.startSeconds, setup.RewindBudget.maxSeconds, setup.RewindBudget.costPerSecond);
+                budget.ConfigureRewards(setup.RewindBudget.survivalSeconds, setup.RewindBudget.survivalBonus);
+                cleanKillRefund = setup.RewindBudget.cleanKillRefund;
+                cleanKillSeconds = setup.RewindBudget.cleanKillSeconds;
             }
             Upgrades = new UpgradeSystem(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             Shortcuts = new ShortcutSystem(this, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
@@ -567,6 +570,26 @@ namespace SickOfIt.Gameplay
         {
             Telemetry.Record("damage", entity.DefId, amount, source != null ? source.DefId : label ?? "");
             NoteHurt(entity);
+            if (entity.IsPlayer)
+                lastHeroHurtAt = Now;
+        }
+
+        // Rewind juice paid for a clean kill: no hurt on the hero for cleanKillSeconds. lastHeroHurtAt is saved, so a rewind forgets a hurt that hasn't happened yet.
+        float cleanKillRefund;
+        float cleanKillSeconds = 3f;
+        float lastHeroHurtAt = -999f;
+
+        void PayCleanKill(Entity entity)
+        {
+            var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
+            var def = entity.Def;
+            if (budget == null || cleanKillRefund <= 0f || def == null || def.team != Team.Enemy || entity.IsPlayer)
+                return;
+            if (entity.FindAbility<ProjectileAbility>() != null || Now - lastHeroHurtAt < cleanKillSeconds)
+                return;
+            // Once per creature, even when a rewind replays the kill.
+            if (TryGrantOnce("cleanKill:" + entity.Serial))
+                budget.Reward(cleanKillRefund, "CLEAN KILL");
         }
 
         // ─── What bystanders notice (the witness trigger) ─────────────
@@ -670,6 +693,7 @@ namespace SickOfIt.Gameplay
             {
                 AddCounter("kills", 1f);
                 AddCounter("kills:" + entity.DefId, 1f);
+                PayCleanKill(entity);
                 var killedDef = entity.Def;
                 if (killedDef != null && killedDef.team == Team.Enemy && !string.IsNullOrEmpty(killedDef.displayName) && string.IsNullOrEmpty(SceneId)
                     && TryGrantOnce("codexKill:" + entity.Serial))
@@ -821,6 +845,7 @@ namespace SickOfIt.Gameplay
         {
             w.Int(nextSerial);
             w.Float(inputLockedUntil);
+            w.Float(lastHeroHurtAt);
             w.Bool(rewindLocked);
             w.Int(counters.Count);
             foreach (var pair in counters)
@@ -853,6 +878,7 @@ namespace SickOfIt.Gameplay
         {
             nextSerial = r.Int();
             inputLockedUntil = r.Float();
+            lastHeroHurtAt = r.Float();
             rewindLocked = r.Bool();
             SickOfIt.Core.Rewind.RewindInput.Locked = rewindLocked;
             counters.Clear();

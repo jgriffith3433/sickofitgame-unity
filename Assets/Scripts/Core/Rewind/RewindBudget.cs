@@ -38,6 +38,44 @@ namespace SickOfIt.Core.Rewind
                 Instance = null;
         }
 
+        float survivalSeconds;
+        float survivalBonus;
+        bool survivalArmed;
+        float survivalSince;
+
+        /// <summary>Fires when a reward pays juice (amount actually added, label for the HUD). Not rewound, like the juice.</summary>
+        public event Action<float, string> Rewarded;
+
+        public void ConfigureRewards(float survivalAfterSeconds, float bonus)
+        {
+            survivalSeconds = Mathf.Max(0f, survivalAfterSeconds);
+            survivalBonus = Mathf.Max(0f, bonus);
+        }
+
+        /// <summary>Pays juice as a reward and tells the HUD. Returns the amount added (0 when full).</summary>
+        public float Reward(float seconds, string label)
+        {
+            if (seconds <= 0f)
+                return 0f;
+            float before = juice;
+            juice = Mathf.Min(max, juice + seconds);
+            float added = juice - before;
+            if (added > 0.001f)
+                Rewarded?.Invoke(added, label);
+            return added;
+        }
+
+        /// <summary>A death was undone by a rewind: living on for a while pays the survival bonus.</summary>
+        public void ArmSurvival()
+        {
+            if (survivalSeconds <= 0f || survivalBonus <= 0f)
+                return;
+            survivalArmed = true;
+            survivalSince = -1f;
+        }
+
+        public void DisarmSurvival() => survivalArmed = false;
+
         public void Configure(float start, float maxSeconds, float cost)
         {
             max = Mathf.Max(0.1f, maxSeconds);
@@ -70,8 +108,19 @@ namespace SickOfIt.Core.Rewind
             if (!clock.IsRewinding)
             {
                 draining = false;
+                if (survivalArmed && !clock.IsPaused)
+                {
+                    if (survivalSince < 0f)
+                        survivalSince = clock.Time;
+                    else if (clock.Time - survivalSince >= survivalSeconds)
+                    {
+                        survivalArmed = false;
+                        Reward(survivalBonus, "SURVIVED");
+                    }
+                }
                 return;
             }
+            survivalArmed = false;
 
             if (!draining)
             {

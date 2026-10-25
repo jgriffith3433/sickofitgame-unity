@@ -197,6 +197,7 @@ namespace SickOfIt.Data.Config
         [Tooltip("+amount x100% damage.")] Damage,
         [Tooltip("+amount seconds of rewind juice (max and starting).")] RewindJuice,
         [Tooltip("+amount world units of pickup magnet range.")] Magnet,
+        [Tooltip("+amount x100% rewind speed (juice cost per second of game time rewound is unchanged).")] RewindSpeed,
         [Tooltip("+amount x100% damage for melee weapons (fists) only.")] MeleeDamage,
         [Tooltip("+amount x100% reach for melee weapons (fists) only.")] MeleeReach,
         [Tooltip("Any level: the weapons he holds survive the end of a run (WeaponProgress is not cleared).")] KeepWeapons,
