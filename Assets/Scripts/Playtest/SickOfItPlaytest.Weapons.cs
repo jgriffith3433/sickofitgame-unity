@@ -249,6 +249,25 @@ namespace SickOfIt.Playtest
                     yield return WeaponsClick(rect);
                 }
 
+                // 6b. The pointer over a HUD button must not stop the mouse firing (the button still gets its click).
+                WeaponCheck("weapon button is pause-sized", rect.width <= 140f && rect.height <= 140f && Mathf.Abs(rect.width - rect.height) < 2f,
+                    $"button {rect.width:0}x{rect.height:0} px");
+                int volleysOver = controller.VolleysFired;
+                input.MoveMouse(rect.center);
+                yield return WaitReal(0.4f);
+                bool overUi = AimCursor.PointerOverUi;
+                input.SetMouseButton(true);
+                yield return WaitReal(0.8f);
+                input.SetMouseButton(false);
+                yield return WaitReal(0.3f);
+                WeaponCheck("fires with the pointer over a button", overUi && controller.VolleysFired > volleysOver,
+                    $"pointer over UI: {overUi}; {controller.VolleysFired - volleysOver} volley(s) while held on the weapon button");
+                if (weapons.CurrentId != PlayerWeapons.Launcher)
+                {
+                    yield return Tap(Key.Q);
+                    yield return WaitReal(0.4f);
+                }
+
                 // 7. A level action takes the weapon away again.
                 world.Emit("wpn:take");
                 yield return Run.Until(() => !weapons.Has("fists"), 6f, "takeWeapon to take the fists away");

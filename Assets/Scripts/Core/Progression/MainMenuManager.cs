@@ -94,6 +94,7 @@ namespace SickOfIt.Core.Progression
             var labels = config.labels ?? new MainMenuLabels();
             menu = MenuCanvas.Create("MainMenuUI", gd != null ? gd.menuTheme : null, config.layout, gameObject);
             var list = menu.AddList(config.layout.list, menu.Theme.button.size);
+            entries.Clear();
 
             // Continue: the current run, where it left off. New Run: a fresh run from the highest Waystone reached
             // (Docs/Story.md, "Waystones and runs"). New Game: everything from the Meadow again.
@@ -150,6 +151,8 @@ namespace SickOfIt.Core.Progression
             if (config.showQuitButton && (rageQuitAgain || Application.platform != RuntimePlatform.WebGLPlayer))
                 Add(list, rageQuitAgain ? labels.rageQuitAgain : labels.quit, OnQuitClicked);
 
+            BuildPages(list);
+
             if (config.showCumulativeHealth)
             {
                 int maxHealth = RogueliteManager.Instance.GetMaxHealth();
@@ -163,9 +166,64 @@ namespace SickOfIt.Core.Progression
         /// <summary>Analytics: which main menu button was pressed.</summary>
         private static void Picked(string option) => AnalyticsManager.Choice("main_menu", option);
 
+        // The buttons are queued and then split into pages (like the Codex's tabs) so the list never scrolls.
+        private const int ButtonsPerPage = 6;
+        private const string MoreLabel = "More >";
+        private const string FirstPageLabel = "< Back";
+        private readonly List<KeyValuePair<string, Action>> entries = new List<KeyValuePair<string, Action>>();
+        private readonly List<List<GameObject>> pageSlots = new List<List<GameObject>>();
+        private readonly List<string> pageLabels = new List<string>();
+
         private void Add(RectTransform list, string text, Action onClick)
         {
-            menu.AddButton(list, text, menu.Theme.button, onClick);
+            entries.Add(new KeyValuePair<string, Action>(text, onClick));
+        }
+
+        private void BuildPages(RectTransform list)
+        {
+            pageSlots.Clear();
+            pageLabels.Clear();
+            int pages = Mathf.Max(1, Mathf.CeilToInt(entries.Count / (float)ButtonsPerPage));
+            for (int p = 0; p < pages; p++)
+            {
+                var slots = new List<GameObject>();
+                for (int i = p * ButtonsPerPage; i < Mathf.Min(entries.Count, (p + 1) * ButtonsPerPage); i++)
+                {
+                    var button = menu.AddButton(list, entries[i].Key, menu.Theme.button, entries[i].Value);
+                    slots.Add(button.transform.parent.gameObject);
+                    pageLabels.Add(entries[i].Key + "|" + p);
+                }
+                if (pages > 1)
+                {
+                    int target = (p + 1) % pages;
+                    var nav = menu.AddButton(list, p + 1 < pages ? MoreLabel : FirstPageLabel, menu.Theme.button, () => ShowPage(target));
+                    slots.Add(nav.transform.parent.gameObject);
+                }
+                pageSlots.Add(slots);
+            }
+            ShowPage(0);
+        }
+
+        private void ShowPage(int index)
+        {
+            for (int p = 0; p < pageSlots.Count; p++)
+                foreach (var slot in pageSlots[p])
+                    if (slot != null) slot.SetActive(p == index);
+        }
+
+        /// <summary>Shows the page holding the button with this label (the playtest looks for buttons by their words).</summary>
+        public void ShowPageHolding(string label)
+        {
+            if (string.IsNullOrEmpty(label)) return;
+            foreach (var entry in pageLabels)
+            {
+                int bar = entry.LastIndexOf('|');
+                if (string.Equals(entry.Substring(0, bar), label.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    ShowPage(int.Parse(entry.Substring(bar + 1)));
+                    return;
+                }
+            }
         }
 
         private void OnContinueClicked()

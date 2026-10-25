@@ -490,8 +490,8 @@
         "use": true,
         "hide": false,
         "anchor": [1.0, 1.0],
-        "offset": [-190.0, -400.0],
-        "size": [340.0, 104.0]
+        "offset": [-80.0, -380.0],
+        "size": [88.0, 88.0]
       },
       "dash": {
         "use": true,
@@ -597,8 +597,8 @@
         "use": true,
         "hide": false,
         "anchor": [1.0, 0.0],
-        "offset": [-450.0, 160.0],
-        "size": [380.0, 150.0]
+        "offset": [-340.0, 160.0],
+        "size": [124.0, 124.0]
       },
       "dash": {
         "use": true,
