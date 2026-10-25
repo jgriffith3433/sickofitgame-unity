@@ -44,6 +44,8 @@ namespace SickOfIt.Core
         private bool warnWhenGrowing = true;
 
         public int ActiveCount => active.Count;
+        /// <summary>The instances in play now (read only; the witness trigger looks for shots passing a bystander).</summary>
+        public IReadOnlyList<GameObject> ActiveObjects => active;
         public int AvailableCount => available.Count;
 
         private void Awake()

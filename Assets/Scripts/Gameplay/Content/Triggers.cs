@@ -233,6 +233,43 @@ namespace SickOfIt.Gameplay.Content
         }
     }
 
+    [Doc("What a bystander can notice (the witness trigger).")]
+    public enum WitnessKind
+    {
+        [Doc("A shot came within 'within' of the watcher: the hero's, or one fired by another team than the watcher's (a projectile entity).")] ShotPassed,
+        [Doc("Another entity on the watcher's own team was hurt within 'within' of it.")] AllyHurt,
+        [Doc("The hero was hurt within 'within' of the watcher.")] HeroHurt,
+    }
+
+    [Serializable, JsonType("witness")]
+    [Doc("Something happened near the watcher (an entity, or the one named by 'watcher'): a shot passed, an ally was hurt, or the hero was hurt. " +
+         "Fires when it starts; a hurt stays true for 'window' seconds, a shot while it is within range. Rewind-safe: the world remembers recent hurts in its saved state.")]
+    public sealed class WitnessTrigger : Trigger
+    {
+        [Doc("What it noticed.")] public WitnessKind what = WitnessKind.ShotPassed;
+        [Doc("How close it has to be to the watcher, in world units.")] public float within = 3f;
+        [Doc("Seconds a hurt keeps counting (ShotPassed ignores it).")] public float window = 0.25f;
+        [Doc("Instance id (spawn 'id') of the watcher, for level rules and sequences; inside an entity it defaults to that entity.")] public string watcher = "";
+
+        public override bool Check(TriggerContext context)
+        {
+            Entity who = context.Self;
+            if (!string.IsNullOrEmpty(watcher))
+            {
+                who = null;
+                foreach (var e in context.World.Live)
+                {
+                    if (e.IsAlive && e.InstanceId == watcher)
+                    {
+                        who = e;
+                        break;
+                    }
+                }
+            }
+            return who != null && context.World.TryWitness(what, who, within, window, out _);
+        }
+    }
+
     [Serializable, JsonType("animationDone")]
     [Doc("Inside an entity: the current non-looping animation has played to the end.")]
     public sealed class AnimationDoneTrigger : Trigger

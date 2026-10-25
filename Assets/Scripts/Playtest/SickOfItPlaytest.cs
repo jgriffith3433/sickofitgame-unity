@@ -627,6 +627,12 @@ namespace SickOfIt.Playtest
                 "the swing is drawn (a crescent and a fist), the combo hits and the imp dies. Q back to the launcher, then hold R back to before that switch: the rewind brings the fists back. " +
                 "The HUD's weapon button is clicked with the mouse (a touch tap takes the same path) and switches; a second level action (takeWeapon) takes the fists away and the HUD " +
                 "is back to the launcher. Each beat is a check event; weapon events log every equip, swing and hit", WeaponsSeconds, "level"));
+            list.Add(new PlaytestScenario(BystanderId, $"A bystander in a scene (Docs/GameplayCookbook.md \"Bystanders\"): the scene \"{BystanderScene}\" on level {BystanderLevel}'s stage (setup shortcut), " +
+                "played through real input. A neutral damned soul stands behind the hero looking away. A scene walks it (walkEntityTo: it walks toward him and faces the way it goes), " +
+                "turns it away (faceEntity) and plays its Hiccup animation (playEntityAnimation). He walks up (D); inside 4.5 units it turns to him and speaks a subtitle. An imp appears " +
+                "behind it and he shoots along the ground: the shots pass the soul and it flinches (the witness trigger, ShotPassed), then settles back; the imp's shots hurt him " +
+                "and the soul flinches and speaks again (HeroHurt; a scene rule hurts him if the imp hasn't in 15 s). Last, hold R back to before it noticed him: its facing and place " +
+                "are restored. Each beat is a check event; bystander events log the actions and signals", BystanderSeconds, "level"));
             list.Add(new PlaytestScenario("analytics", $"Hawkes Analytics (AGENTS.md \"Analytics\"): the SDK's debug log on, then Level {AnalyticsLevel} " +
                 "(the Meadow, loaded directly) played until Hell kills the hero three times (the bot holds R once early on for a rewind, then plays to " +
                 "lose): each death screen, and on the third one the feedback card (\"Too hard? Not fun?\", thumbs and a comment) over it, held while it's " +
@@ -936,6 +942,8 @@ namespace SickOfIt.Playtest
                 yield return session.AimGuideRun();
             else if (id == WeaponsId)
                 yield return session.WeaponsRun();
+            else if (id == BystanderId)
+                yield return session.BystanderRun();
             else if (id == "restart")
                 yield return session.RestartRun();
             else if (id == RewindPerfId)
