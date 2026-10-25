@@ -70,6 +70,8 @@ namespace SickOfIt.Playtest
 
         /// <summary>Real seconds with no progress (same cell, phase and path section) after which a level ends as "stalled" with its place named.</summary>
         public static float StallSeconds = 240f;
+        /// <summary>A hit/rewind loop at one spot ends the level as stuck after this long (real seconds).</summary>
+        public static float LoopSeconds = 60f;
 
         /// <summary>The level-N scenario's last result, for the PlayMode playtest report.</summary>
         public static string LastLevelOutcome { get; private set; }
@@ -9526,6 +9528,11 @@ namespace SickOfIt.Playtest
                 float lastClock = -1f, clockMovedAt = started, nextScan = 0f, shownProgress = -1f, heartbeatClock = -1f, heartbeatAt = started;
                 string stallMarker = null;
                 float stallSince = started;
+                // A hit/rewind loop at one spot: deaths and rewinds keep the marker below changing, so this one ignores them. The same
+                // 6-unit column of the same phase for LoopSeconds (real) with 3+ deaths or rewinds in it is a loop, not progress.
+                string loopMarker = null;
+                float loopSince = started;
+                int loopCount0 = 0;
                 string outcome = "timeout";
                 bool dying = false;
                 while (!Run.Done)
@@ -9590,6 +9597,26 @@ namespace SickOfIt.Playtest
                             lastWhere = HeroWhere(world);
                             Run.Event("stuck", $"level {n}: no progress for {StallSeconds / 60f:0} min, {lastWhere}");
                             Run.Problem(PlaytestSeverity.Bug, $"stuck: level {n} made no progress for {StallSeconds / 60f:0} min, {lastWhere}");
+                            outcome = "stalled";
+                            break;
+                        }
+                    }
+
+                    if (!held && world.Player != null)
+                    {
+                        string loopNow = $"{world.Director?.PhaseName}|{Mathf.FloorToInt(world.Player.Position.x / 6f)}";
+                        int loopCount = deaths + (bot != null ? bot.RewindsStarted : 0);
+                        if (loopNow != loopMarker)
+                        {
+                            loopMarker = loopNow;
+                            loopSince = Time.realtimeSinceStartup;
+                            loopCount0 = loopCount;
+                        }
+                        else if (Time.realtimeSinceStartup - loopSince > LoopSeconds && loopCount - loopCount0 >= 3)
+                        {
+                            lastWhere = HeroWhere(world);
+                            Run.Event("stuck", $"level {n}: hit and rewind loop at x {world.Player.Position.x:0.0} for {LoopSeconds:0} s ({loopCount - loopCount0} rewinds/deaths), {lastWhere}");
+                            Run.Problem(PlaytestSeverity.Bug, $"stuck: level {n} died or rewound {loopCount - loopCount0} times in {LoopSeconds:0} s at x {world.Player.Position.x:0.0}, {lastWhere}");
                             outcome = "stalled";
                             break;
                         }
