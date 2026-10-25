@@ -1432,6 +1432,10 @@
                         "signal": "cmp:wick:960:reward:orb2"
                       },
                       {
+                        "type": "emit",
+                        "signal": "cmp:wick:960:done"
+                      },
+                      {
                         "type": "walkEntityTo",
                         "target": "cmp",
                         "x": 14.0,
@@ -1447,10 +1451,6 @@
                         "target": {
                           "id": "cmp"
                         }
-                      },
-                      {
-                        "type": "emit",
-                        "signal": "cmp:wick:960:done"
                       }
                     ]
                   }
@@ -1497,6 +1497,10 @@
                             "signal": "cmp:wick:960:reward:orb"
                           },
                           {
+                            "type": "emit",
+                            "signal": "cmp:wick:960:done"
+                          },
+                          {
                             "type": "walkEntityTo",
                             "target": "cmp",
                             "x": 14.0,
@@ -1512,10 +1516,6 @@
                             "target": {
                               "id": "cmp"
                             }
-                          },
-                          {
-                            "type": "emit",
-                            "signal": "cmp:wick:960:done"
                           }
                         ]
                       }
@@ -1566,6 +1566,10 @@
                             "signal": "cmp:wick:960:reward:orb"
                           },
                           {
+                            "type": "emit",
+                            "signal": "cmp:wick:960:done"
+                          },
+                          {
                             "type": "walkEntityTo",
                             "target": "cmp",
                             "x": 14.0,
@@ -1581,10 +1585,6 @@
                             "target": {
                               "id": "cmp"
                             }
-                          },
-                          {
-                            "type": "emit",
-                            "signal": "cmp:wick:960:done"
                           }
                         ]
                       }

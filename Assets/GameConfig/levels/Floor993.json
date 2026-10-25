@@ -1441,6 +1441,10 @@
                         "flag": "wick.lit"
                       },
                       {
+                        "type": "emit",
+                        "signal": "cmp:wick:993:done"
+                      },
+                      {
                         "type": "walkEntityTo",
                         "target": "cmp",
                         "x": 14.0,
@@ -1456,10 +1460,6 @@
                         "target": {
                           "id": "cmp"
                         }
-                      },
-                      {
-                        "type": "emit",
-                        "signal": "cmp:wick:993:done"
                       }
                     ]
                   }
@@ -1535,6 +1535,10 @@
                             "flag": "wick.lit"
                           },
                           {
+                            "type": "emit",
+                            "signal": "cmp:wick:993:done"
+                          },
+                          {
                             "type": "walkEntityTo",
                             "target": "cmp",
                             "x": 14.0,
@@ -1550,10 +1554,6 @@
                             "target": {
                               "id": "cmp"
                             }
-                          },
-                          {
-                            "type": "emit",
-                            "signal": "cmp:wick:993:done"
                           }
                         ]
                       }
@@ -1597,6 +1597,10 @@
                             "flag": "wick.lit"
                           },
                           {
+                            "type": "emit",
+                            "signal": "cmp:wick:993:done"
+                          },
+                          {
                             "type": "walkEntityTo",
                             "target": "cmp",
                             "x": 14.0,
@@ -1612,10 +1616,6 @@
                             "target": {
                               "id": "cmp"
                             }
-                          },
-                          {
-                            "type": "emit",
-                            "signal": "cmp:wick:993:done"
                           }
                         ]
                       }

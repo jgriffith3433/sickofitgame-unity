@@ -1482,6 +1482,10 @@
                         "signal": "cmp:pointer:860:reward:diamond2"
                       },
                       {
+                        "type": "emit",
+                        "signal": "cmp:pointer:860:done"
+                      },
+                      {
                         "type": "walkEntityTo",
                         "target": "cmp",
                         "x": 14.0,
@@ -1497,10 +1501,6 @@
                         "target": {
                           "id": "cmp"
                         }
-                      },
-                      {
-                        "type": "emit",
-                        "signal": "cmp:pointer:860:done"
                       }
                     ]
                   }
@@ -1582,6 +1582,10 @@
                             "signal": "cmp:pointer:860:reward:diamond2"
                           },
                           {
+                            "type": "emit",
+                            "signal": "cmp:pointer:860:done"
+                          },
+                          {
                             "type": "walkEntityTo",
                             "target": "cmp",
                             "x": 14.0,
@@ -1597,10 +1601,6 @@
                             "target": {
                               "id": "cmp"
                             }
-                          },
-                          {
-                            "type": "emit",
-                            "signal": "cmp:pointer:860:done"
                           }
                         ]
                       }
@@ -1640,6 +1640,10 @@
                             "signal": "cmp:pointer:860:reward:diamond"
                           },
                           {
+                            "type": "emit",
+                            "signal": "cmp:pointer:860:done"
+                          },
+                          {
                             "type": "walkEntityTo",
                             "target": "cmp",
                             "x": 14.0,
@@ -1655,10 +1659,6 @@
                             "target": {
                               "id": "cmp"
                             }
-                          },
-                          {
-                            "type": "emit",
-                            "signal": "cmp:pointer:860:done"
                           }
                         ]
                       }
