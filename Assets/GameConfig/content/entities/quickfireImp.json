@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Quickfire Imp",
+  "hint": "Twice as fast, two shots. Move between them.",
+  "note": "Same imp. Double the hurry.",
+  "hintVoice": "vo_hero_hint_quickfireImp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "imp",
+  "health": 4,
+  "tags": [
+    "elite",
+    "imp",
+    "quickfireImp"
+  ],
+  "visual": {
+    "scale": 0.36,
+    "color": "#FF9A5A",
+    "fxColor": "#FFC46A"
+  },
+  "healthBar": {
+    "show": true,
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
+    "width": 0.6
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.5
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "chase",
+      "speed": 1.1,
+      "stopDistance": 3.2,
+      "horizontalOnly": true,
+      "face": true
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "speed": 4.0,
+      "aim": "Player",
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 2.0,
+      "initialDelay": 1.4,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile",
+      "damage": 1,
+      "burst": 2,
+      "burstInterval": 0.28
+    }
+  ],
+  "moveSpeed": 1.1,
+  "sounds": {
+    "hurtSound": "imp_hurt",
+    "deathSound": "imp_die",
+    "attackSound": "imp_attack"
+  }
+}

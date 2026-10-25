@@ -119,6 +119,10 @@ Assets/GameConfig/
   `xxPhase2`, `xxPhase3`/`xxEnrage`, `mkLast`/`sfLast` signals), spawner crowds of mixed roster types sharing the boss's cap (4/6/8: a spawner's `maxAlive` counts everything the owner spawned),
   fans of bouncing embers and predictive bolt bursts behind a `mkWarnHand` glow, doubled-plus health and a voiced hero hint (`vo_hero_hint_<boss>`). Their entity states and level additions are written by
   `Tools/Levels/boss_rework.py` (`--check` runs with no Unity): edit its tables, never the states. Playtest `boss-fights` (the `bossFight.*` checks also run in every stage run that reaches a boss).
+- **Elites and mid-bosses** (Docs/Story.md "Elites and mid-bosses"): twelve named elite variants (entity tag `elite`: `quickfireImp`, `coronaImp`, `ironhideBulwark`, `alphaHound`, `twinBoltDeadeye`, `twinLensImp`, `phaseRaider`, `broodWhelp`,
+  `furnacePlate`, `tripleLobber`, `twiceRisen`, `veilMatron`) placed by rules on Floors 995, 955, 905, 895, 855 and 805, and four mid-bosses (`baronSpillway` 955, `kilnMatron` 905, `motherFissure` 895, `shardwright` 855: tag `midBoss`) whose fight is a
+  `midBoss<floor>` phase (`lockTravel`, hazards stopped, intro, boss bar; the landing waits for the counter `midboss`). All written by `Tools/Levels/elites.py` (`--check` runs with no Unity): edit its tables, never the files. Art specs priced, not generated.
+  Arena `content/scenes/eliteArena.json`, playtest `elites`.
 - **Hell's tricks** (Docs/Story.md, "Hell's tricks"): five JSON mechanics in `Gameplay/Content/Mechanics.cs` and `projectile`: `bounces`,
   `teleport`, `frontShield` (Entity.Damage asks it; the hero's shots arrive through `IDirectionalDamageable` with the shot's place),
   `laserSweep` (a segment tested against the hero's collider, no physics) and `Aim.Predictive`. Test enemies `ricochetImp`, `blinkImp`,

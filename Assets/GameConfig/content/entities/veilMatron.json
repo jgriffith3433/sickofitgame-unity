@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Veil Matron",
+  "hint": "Shielded, blinks and burns. Hit it from the side.",
+  "note": "A curtain that bites.",
+  "hintVoice": "vo_hero_hint_veilMatron",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "veilDemon",
+  "health": 8,
+  "tags": [
+    "elite",
+    "veilDemon",
+    "veilMatron"
+  ],
+  "visual": {
+    "scale": 0.325,
+    "color": "#A890E0",
+    "fxColor": "#C8A8FF"
+  },
+  "healthBar": {
+    "show": true,
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
+    "width": 0.6
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.5
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 0.5,
+      "distance": 2.4,
+      "pause": 1.0
+    },
+    {
+      "type": "frontShield",
+      "arc": 120,
+      "blockSound": "chain_cut",
+      "color": "#B08AFF",
+      "leak": 0.0
+    },
+    {
+      "type": "teleport",
+      "to": "NearPlayer",
+      "distance": 3.2,
+      "interval": 3.6,
+      "initialDelay": 2.8,
+      "telegraph": 0.8,
+      "marker": "veilMark",
+      "flashColor": "#B08AFF",
+      "sound": "banner_whoosh"
+    },
+    {
+      "type": "shoot",
+      "projectile": "veilEmber",
+      "speed": 3.2,
+      "aim": "Facing",
+      "muzzle": [
+        0.3,
+        0.1
+      ],
+      "interval": 2.8,
+      "initialDelay": 2.0,
+      "range": 8.0,
+      "damage": 1
+    },
+    {
+      "type": "aura",
+      "radius": 1.0,
+      "damagePerTick": 1,
+      "interval": 1.5
+    }
+  ],
+  "moveSpeed": 0.55,
+  "sounds": {
+    "hurtSound": "veilDemon_hurt",
+    "deathSound": "veilDemon_die",
+    "attackSound": "veilDemon_attack"
+  }
+}

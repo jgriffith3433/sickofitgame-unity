@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Twin-Bolt Deadeye",
+  "hint": "Two led bolts. Turn after the first.",
+  "note": "One bolt for where I am, one for where I went.",
+  "hintVoice": "vo_hero_hint_twinBoltDeadeye",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "deadeyeImp",
+  "health": 4,
+  "tags": [
+    "deadeyeImp",
+    "elite",
+    "imp",
+    "twinBoltDeadeye"
+  ],
+  "visual": {
+    "scale": 0.36,
+    "color": "#FFFFFF",
+    "fxColor": "#BFE8FF"
+  },
+  "healthBar": {
+    "show": true,
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
+    "width": 0.6
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.5
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "deadeyeBolt",
+      "speed": 9.5,
+      "aim": "Predictive",
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 5.0,
+      "initialDelay": 2.2,
+      "range": 11.0,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile",
+      "damage": 1,
+      "burst": 2,
+      "burstInterval": 0.45
+    }
+  ],
+  "sounds": {
+    "hurtSound": "deadeyeImp_hurt",
+    "deathSound": "deadeyeImp_die",
+    "attackSound": "deadeyeImp_attack"
+  }
+}

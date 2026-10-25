@@ -16,7 +16,7 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 180.0,
+  "duration": 520.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 28,
@@ -283,6 +283,10 @@
       {
         "name": "lavaMax",
         "value": 0.0
+      },
+      {
+        "name": "midboss",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -378,10 +382,20 @@
       {
         "name": "the landing",
         "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "midboss",
+              "atLeast": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
@@ -581,6 +595,104 @@
             "style": "Subtitle"
           }
         ]
+      },
+      {
+        "name": "elite: Twin-Bolt Deadeye, collapse",
+        "when": {
+          "type": "sectionReached",
+          "section": "collapse"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawnWave",
+            "entity": "twinBoltDeadeye",
+            "count": 1,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "elite"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "elite: Twin Lens, updraft",
+        "when": {
+          "type": "sectionReached",
+          "section": "updraft"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawnWave",
+            "entity": "twinLensImp",
+            "count": 1,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "elite"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "elite: Phase Raider, landing",
+        "when": {
+          "type": "sectionReached",
+          "section": "landing"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawnWave",
+            "entity": "phaseRaider",
+            "count": 1,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "elite"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "midboss: The Kiln Matron stands on the way",
+        "when": {
+          "type": "sectionReached",
+          "section": "ledgeRun"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "midBoss905"
+          }
+        ]
       }
     ],
     "phases": [
@@ -623,6 +735,271 @@
             "facePlayer": false
           }
         ]
+      },
+      {
+        "name": "midBoss905",
+        "onEnter": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "wave"
+            }
+          },
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "brute"
+            }
+          },
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "playerInvincible",
+            "seconds": 16.0
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "lockInput"
+              },
+              {
+                "type": "lockRewind"
+              },
+              {
+                "type": "spawn",
+                "entity": "kilnMatron",
+                "anchor": "Camera",
+                "at": [
+                  4.2,
+                  2.2
+                ],
+                "id": "midboss"
+              },
+              {
+                "type": "emit",
+                "signal": "kmIntro"
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.14,
+                "duration": 0.5
+              },
+              {
+                "type": "playSound",
+                "sound": "magma_rumble"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "showText",
+                "text": "THE KILN MATRON! SHE BAKES THE STAIRS!",
+                "duration": 2.8,
+                "style": "Banner",
+                "sound": "vo_mb_km_title",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "showText",
+                "text": "Mind the step, dear. I only just baked it.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "color": "#FFB040"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "showText",
+                "text": "She blinks in, then the beam. I leave first.",
+                "duration": 3.4,
+                "style": "Subtitle",
+                "sound": "vo_mb_km_hero"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.6
+              },
+              {
+                "type": "bossBar",
+                "target": {
+                  "id": "midboss"
+                },
+                "label": "THE KILN MATRON"
+              },
+              {
+                "type": "unlockInput"
+              },
+              {
+                "type": "unlockRewind"
+              },
+              {
+                "type": "emit",
+                "signal": "kmFight"
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "kilnMatron: falls",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "id": "midboss"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "midBossDefeat905"
+              }
+            ]
+          },
+          {
+            "name": "kilnMatron: his wave",
+            "when": {
+              "type": "signal",
+              "name": "kmWave"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.18,
+                "duration": 0.7
+              },
+              {
+                "type": "showText",
+                "text": "Come, my embers. Supper's hot.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "color": "#FFB040"
+              }
+            ]
+          },
+          {
+            "name": "kilnMatron: his rage",
+            "when": {
+              "type": "signal",
+              "name": "kmRage"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.3,
+                "duration": 0.7
+              },
+              {
+                "type": "showText",
+                "text": "Too RAW! Everything is too RAW!",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "color": "#FF8A3A"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "midBossDefeat905",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "kmDefeat"
+              },
+              {
+                "type": "hideBossBar"
+              },
+              {
+                "type": "slowMotion",
+                "scale": 0.35,
+                "duration": 1.2
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.8
+              },
+              {
+                "type": "spawn",
+                "entity": "diamond",
+                "anchor": "Camera",
+                "at": [
+                  0.4,
+                  -0.2
+                ],
+                "count": 8,
+                "spacing": [
+                  0.35,
+                  0.0
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "showText",
+                "text": "Cold... at last...",
+                "duration": 2.4,
+                "style": "Subtitle",
+                "color": "#FFB040"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "showText",
+                "text": "THE KILN MATRON HAS GONE COLD!",
+                "duration": 3.0,
+                "style": "Banner",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "showText",
+                "text": "Stairs are cooling. Nice of her.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_mb_km_end"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "setCounter",
+                "name": "midboss",
+                "value": 1.0
+              },
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "afterMidBoss905"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "afterMidBoss905"
       }
     ]
   }

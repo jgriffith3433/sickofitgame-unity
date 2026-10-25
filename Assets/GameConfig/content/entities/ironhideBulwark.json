@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Ironhide Bulwark",
+  "hint": "Armored. Shots from the front are wasted. Get behind it.",
+  "note": "Plated all the way round, almost.",
+  "hintVoice": "vo_hero_hint_ironhideBulwark",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "bulwarkImp",
+  "health": 9,
+  "tags": [
+    "bulwarkImp",
+    "elite",
+    "imp",
+    "ironhideBulwark"
+  ],
+  "visual": {
+    "scale": 0.413,
+    "color": "#6C8294",
+    "fxColor": "#8FD0FF"
+  },
+  "healthBar": {
+    "show": true,
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
+    "width": 0.6
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.5
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 1.2,
+      "distance": 3.0,
+      "pause": 0.9
+    },
+    {
+      "type": "frontShield",
+      "arc": 150,
+      "blockSound": "chain_cut",
+      "color": "#8FD0FF",
+      "leak": 0.0
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "speed": 3.0,
+      "aim": "Player",
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 3.6,
+      "initialDelay": 2.2,
+      "damage": 1
+    }
+  ],
+  "moveSpeed": 1.2,
+  "sounds": {
+    "hurtSound": "bulwarkImp_hurt",
+    "deathSound": "bulwarkImp_die",
+    "attackSound": "bulwarkImp_attack"
+  }
+}

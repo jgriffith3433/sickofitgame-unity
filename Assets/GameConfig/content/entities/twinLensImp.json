@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Twin Lens",
+  "hint": "Two beams, one after the other. The red line comes first.",
+  "note": "Two lenses. Twice the squinting.",
+  "hintVoice": "vo_hero_hint_twinLensImp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "lensImp",
+  "health": 5,
+  "tags": [
+    "elite",
+    "imp",
+    "lensImp",
+    "twinLensImp"
+  ],
+  "visual": {
+    "scale": 0.36,
+    "color": "#FF3A3A",
+    "fxColor": "#FF4A4A"
+  },
+  "healthBar": {
+    "show": true,
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
+    "width": 0.6
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.5
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "laserSweep",
+      "damage": 1,
+      "interval": 7.0,
+      "initialDelay": 1.6,
+      "warning": 1.2,
+      "sweepTime": 1.6,
+      "sweepDegrees": 70,
+      "aimAtPlayer": true,
+      "length": 9,
+      "width": 0.4,
+      "warningSound": "overlord_beam_charge",
+      "beamSound": "overlord_beam_strike"
+    },
+    {
+      "type": "laserSweep",
+      "damage": 1,
+      "interval": 7.0,
+      "initialDelay": 4.8,
+      "warning": 1.2,
+      "sweepTime": 1.6,
+      "sweepDegrees": -70,
+      "aimAtPlayer": true,
+      "length": 9,
+      "width": 0.4,
+      "warningSound": "overlord_beam_charge",
+      "beamSound": "overlord_beam_strike"
+    }
+  ],
+  "sounds": {
+    "hurtSound": "lensImp_hurt",
+    "deathSound": "lensImp_die"
+  }
+}

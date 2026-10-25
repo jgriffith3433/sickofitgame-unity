@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Alpha Hound",
+  "hint": "Pack leader. It bursts into cinders. Shoot from range.",
+  "note": "It leaves a litter behind.",
+  "hintVoice": "vo_hero_hint_alphaHound",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "slagHound",
+  "health": 6,
+  "tags": [
+    "alphaHound",
+    "elite",
+    "slagHound"
+  ],
+  "visual": {
+    "scale": 0.286,
+    "color": "#7A3A2A",
+    "fxColor": "#FF8A3A"
+  },
+  "healthBar": {
+    "show": true,
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
+    "width": 0.6
+  },
+  "loot": {
+    "chance": 1.0,
+    "count": 2,
+    "value": 1
+  },
+  "drops": [
+    {
+      "entity": "rewindOrb",
+      "chance": 0.5
+    }
+  ],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "chase",
+      "speed": 0.9,
+      "stopDistance": 2.0,
+      "horizontalOnly": true,
+      "face": true
+    },
+    {
+      "type": "charge",
+      "interval": 2.4,
+      "initialDelay": 1.2,
+      "windup": 0.6,
+      "duration": 0.55,
+      "speed": 8.5,
+      "range": 6.5
+    }
+  ],
+  "moveSpeed": 0.9,
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "cinder",
+      "anchor": "Self",
+      "count": 3,
+      "spacing": [
+        0.5,
+        0.0
+      ],
+      "facePlayer": false
+    }
+  ],
+  "sounds": {
+    "hurtSound": "slagHound_hurt",
+    "deathSound": "slagHound_die"
+  }
+}

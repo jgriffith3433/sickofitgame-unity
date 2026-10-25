@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "coronaImp",
+  "name": "Corona Imp",
+  "description": "a hell imp ringed by a floating halo of white-hot embers that scorches the air around it, pale gold skin",
+  "height": 0.9,
+  "poses": {
+    "stand": "standing ready, facing right, glowing with heat",
+    "struck": "struck and flinching, sparks flying",
+    "dead": "collapsed and breaking apart in a burst of embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes and shifts in place, glow pulsing slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "performs its signature attack toward the right, glow flaring",
+      "seconds": 2.0
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks back, then settles",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

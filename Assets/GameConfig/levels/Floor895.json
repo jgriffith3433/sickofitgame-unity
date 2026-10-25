@@ -16,7 +16,7 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 400.0,
+  "duration": 520.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 38,
@@ -853,6 +853,10 @@
       {
         "name": "finale",
         "value": 0.0
+      },
+      {
+        "name": "midboss",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -896,6 +900,11 @@
             {
               "type": "counter",
               "name": "finale",
+              "atLeast": 1.0
+            },
+            {
+              "type": "counter",
+              "name": "midboss",
               "atLeast": 1.0
             }
           ]
@@ -1030,7 +1039,7 @@
           },
           {
             "type": "goToPhase",
-            "phase": "TheLastHeave5"
+            "phase": "midBoss895"
           }
         ]
       },
@@ -1329,6 +1338,35 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "elite: Brood Whelp",
+            "when": {
+              "type": "every",
+              "seconds": 24.0,
+              "startAfter": 6.0,
+              "maxTimes": 3
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "broodWhelp",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "elite"
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1613,6 +1651,35 @@
                 ],
                 "tags": [
                   "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "elite: Furnace Plate",
+            "when": {
+              "type": "every",
+              "seconds": 24.0,
+              "startAfter": 6.0,
+              "maxTimes": 3
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "furnacePlate",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "elite"
                 ]
               }
             ]
@@ -1931,6 +1998,275 @@
             ]
           }
         ]
+      },
+      {
+        "name": "midBoss895",
+        "onEnter": [
+          {
+            "type": "stopHazard",
+            "id": "rain"
+          },
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "wave"
+            }
+          },
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "brute"
+            }
+          },
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "playerInvincible",
+            "seconds": 16.0
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "lockInput"
+              },
+              {
+                "type": "lockRewind"
+              },
+              {
+                "type": "spawn",
+                "entity": "motherFissure",
+                "anchor": "Camera",
+                "at": [
+                  4.2,
+                  2.2
+                ],
+                "id": "midboss"
+              },
+              {
+                "type": "emit",
+                "signal": "mfIntro"
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.14,
+                "duration": 0.5
+              },
+              {
+                "type": "playSound",
+                "sound": "magma_rumble"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "showText",
+                "text": "MOTHER FISSURE! SHE BREEDS THE ROAD'S WHELPS!",
+                "duration": 2.8,
+                "style": "Banner",
+                "sound": "vo_mb_mf_title",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "showText",
+                "text": "Hsss. Come out, my little cracks. We have a guest.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "color": "#FFB040"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "showText",
+                "text": "Whelps keep coming. I hit the mother.",
+                "duration": 3.4,
+                "style": "Subtitle",
+                "sound": "vo_mb_mf_hero"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.6
+              },
+              {
+                "type": "bossBar",
+                "target": {
+                  "id": "midboss"
+                },
+                "label": "MOTHER FISSURE"
+              },
+              {
+                "type": "unlockInput"
+              },
+              {
+                "type": "unlockRewind"
+              },
+              {
+                "type": "emit",
+                "signal": "mfFight"
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "motherFissure: falls",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "id": "midboss"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "midBossDefeat895"
+              }
+            ]
+          },
+          {
+            "name": "motherFissure: his wave",
+            "when": {
+              "type": "signal",
+              "name": "mfWave"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.18,
+                "duration": 0.7
+              },
+              {
+                "type": "showText",
+                "text": "Out, out, out!",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "color": "#FFB040"
+              }
+            ]
+          },
+          {
+            "name": "motherFissure: his rage",
+            "when": {
+              "type": "signal",
+              "name": "mfRage"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.3,
+                "duration": 0.7
+              },
+              {
+                "type": "showText",
+                "text": "NOBODY touches my brood!",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "color": "#FF8A3A"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "midBossDefeat895",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "mfDefeat"
+              },
+              {
+                "type": "hideBossBar"
+              },
+              {
+                "type": "slowMotion",
+                "scale": 0.35,
+                "duration": 1.2
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.8
+              },
+              {
+                "type": "spawn",
+                "entity": "diamond",
+                "anchor": "Camera",
+                "at": [
+                  0.4,
+                  -0.2
+                ],
+                "count": 8,
+                "spacing": [
+                  0.35,
+                  0.0
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "showText",
+                "text": "My... cracks...",
+                "duration": 2.4,
+                "style": "Subtitle",
+                "color": "#FFB040"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "showText",
+                "text": "MOTHER FISSURE HAS SEALED SHUT!",
+                "duration": 3.0,
+                "style": "Banner",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "showText",
+                "text": "Sealed. One crack fewer.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_mb_mf_end"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "setCounter",
+                "name": "midboss",
+                "value": 1.0
+              },
+              {
+                "type": "unlockTravel"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "TheLastHeave5"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "afterMidBoss895"
       }
     ]
   }
