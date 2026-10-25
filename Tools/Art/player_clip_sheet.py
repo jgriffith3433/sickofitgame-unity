@@ -9,9 +9,13 @@ world size, so a clip framed like the Idle video must use the same cell or the h
 picks the cell from the frame count: re-baking a shorter clip there makes the hero bigger.)
 
     python player_clip_sheet.py <clip.mp4> <State> <Assets/Art/Sprites/Player> [--fps 16] [--start S] [--end S]
-        [--template Assets/Art/Sprites/Player/Idle.png.meta]
+        [--template Assets/Art/Sprites/Player/Idle.png.meta] [--cell 604x340] [--ppu 100]
 
-Needs ffmpeg, Pillow and numpy. A sheet that already has a .meta keeps its guid.
+    python player_clip_sheet.py --idle-reference <Assets/Art/Sprites/Player/Idle.png> <out.png>
+        writes Idle's first frame (one 604x340 cell) as a 1280x720 still on black: the reference image for hero poses (art.mjs hero --hero-ref idle).
+
+Cells default to 604x340, centre pivot, 100 pixels per unit (CELL_W/CELL_H/PPU); --cell and --ppu exist only to
+read them back in tests. Needs ffmpeg, Pillow and numpy. A sheet that already has a .meta keeps its guid.
 """
 import argparse
 import os
@@ -30,6 +34,7 @@ from PIL import Image
 CELL_W, CELL_H = 604, 340
 CLEAR_CUTOFF = 28
 MAX_SHEET = 4096
+PPU = 100
 
 
 def extract(mp4, fps, start, end, folder):
@@ -102,6 +107,7 @@ def write_meta(template_path, meta_path, state, rects):
         guid = m.group(1) if m else None
     guid = guid or uuid.uuid4().hex
     text = re.sub(r"^guid: \w+", f"guid: {guid}", text, count=1, flags=re.M)
+    text = re.sub(r"^  spritePixelsToUnits: [\d.]+", f"  spritePixelsToUnits: {PPU}", text, count=1, flags=re.M)
 
     rng = random.Random(f"{state}:{guid}")
     ids = [internal_id(rng) for _ in rects]
@@ -143,17 +149,33 @@ def write_meta(template_path, meta_path, state, rects):
         f.write(text)
 
 
+def idle_reference(sheet, out):
+    """Idle's first frame on a black 1280x720 plate (what the hero's videos are made at), the look every pose starts from."""
+    cell = Image.open(sheet).convert("RGBA").crop((0, 0, CELL_W, CELL_H)).resize((1280, 720), Image.LANCZOS)
+    plate = Image.new("RGB", (1280, 720), (0, 0, 0))
+    plate.paste(cell, (0, 0), cell)
+    plate.save(out)
+    print(f"{out}: 1280x720 from the first {CELL_W}x{CELL_H} cell of {sheet}")
+
+
 def main():
+    global CELL_W, CELL_H, PPU
+    if len(sys.argv) == 4 and sys.argv[1] == "--idle-reference":
+        return idle_reference(sys.argv[2], sys.argv[3])
     ap = argparse.ArgumentParser()
     ap.add_argument("mp4")
     ap.add_argument("state")
     ap.add_argument("folder")
+    ap.add_argument("--cell", default=f"{CELL_W}x{CELL_H}")
+    ap.add_argument("--ppu", type=int, default=PPU)
     ap.add_argument("--fps", type=float, default=16)
     ap.add_argument("--start", type=float, default=0)
     ap.add_argument("--end", type=float, default=0)
     ap.add_argument("--template", default=None)
     args = ap.parse_args()
 
+    CELL_W, CELL_H = (int(v) for v in args.cell.split("x"))
+    PPU = args.ppu
     template = args.template or os.path.join(args.folder, "Idle.png.meta")
     with tempfile.TemporaryDirectory() as tmp:
         frames = extract(args.mp4, args.fps, args.start, args.end, tmp)

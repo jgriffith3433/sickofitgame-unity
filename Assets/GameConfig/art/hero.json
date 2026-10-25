@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "entity": "player",
   "name": "Hero",
-  "description": "the hero: a tired, unimpressed man in his thirties with messy dark hair and a deadpan half-lidded stare, worn jacket and boots, a compact rocket launcher on his shoulder; exactly the look of his existing Idle sprite",
+  "description": "the hero: an armoured knight in battered dark iron plate with brass trim, cracked here and there with glowing orange seams, a plain closed helm with a crest and two glowing orange eye slits, tattered maroon cloth hanging from the belt, heavy gauntlets and greaves, carrying a huge rocket launcher on his shoulder whose glowing orange chambers light the armour; broad, tired, unimpressed posture; exactly the look of his existing Idle sprite (the source videos in SickOfItGamePlayer)",
   "height": 0.85,
   "reference": "Art/Sprites/Player/Idle.png",
   "pixels": 340,
@@ -10,35 +10,36 @@
     604,
     340
   ],
-  "notes": "Hero clips for Docs/ArtPipeline.md. Cells match the existing hero sheets (604x340, Unity spriteScale 0.25) so he never changes size; every pose starts from the Idle reference. Written 2026-10-25 without GPU; wired into player.json animationConfig by the run. Climb clips (Climb, ClimbIdle, ClimbDown) were generated 2026-10-25 from an image.edit pose of the Idle frame (Hawkes Gen, 1280x720 on black), baked with Tools/Art/player_clip_sheet.py into Assets/Art/Sprites/Player/.",
+  "notes": "Hero clips for Docs/ArtPipeline.md, 'Hero clips'. The hero is the ARMOURED KNIGHT with the glowing launcher (Idle.mp4 in SickOfItGamePlayer), never a man in a jacket or coat. Cells are 604x340, centre pivot, 100 pixels per unit (Unity spriteScale 0.25), exactly the existing hero sheets, so he never changes size; every pose starts from the Idle reference ('referenceIdle': true, node Tools/Art/art.mjs hero --hero-ref idle). 'wired' per clip says what player.json does today: 'own' = its state plays its own sheet; 'standIn' = the state exists but plays another sheet (see 'standIn'); false = no state in player.json yet (make the sheet, add the state: PlayerSceneClip falls back to the state's sheet). Tools/Art/art.mjs hero --check keeps this honest against player.json. Only the three climb clips have been generated; the rest wait on GPU approval.",
   "poses": {
-    "stand": "standing relaxed, launcher on his shoulder, bored expression",
-    "punchWind": "leaning back with his right fist cocked behind him, launcher slung on his back, scowling",
-    "punchHit": "lunging forward, right fist fully extended, body low and twisted into the punch",
-    "punchHook": "left fist swinging round in a wide hook, shoulders turned",
-    "punchUpper": "rising on his toes with a fist driving upward in an uppercut",
+    "stand": "standing relaxed in his armour, launcher on his shoulder, bored under the helm",
+    "punchWind": "leaning back with his right armoured fist cocked behind him, launcher slung on his back, glowing eyes narrowed",
+    "punchHit": "lunging forward, right gauntlet fully extended, body low and twisted into the punch, armour seams flaring",
+    "punchHook": "left gauntlet swinging round in a wide hook, shoulders turned",
+    "punchUpper": "rising on his toes with a gauntlet driving upward in an uppercut",
     "launcherHeld": "holding the rocket launcher on his shoulder, ready to fire",
-    "launcherGone": "hands empty and open at his sides, staring flatly at them",
-    "dashLean": "leaning hard forward mid-sprint, one leg stretched back, coat flaring",
-    "wallCling": "pressed against a wall on his right, one hand and foot on it, looking back over his shoulder",
-    "wallKick": "kicking off the wall, body arched out and up, arms spread",
-    "grappleAim": "arm thrown forward and up, holding a hook on a rope, other hand bracing",
-    "grappleHang": "hanging by one hand from a rope above him, legs swinging, bored",
-    "ledgeHang": "hanging by both hands from a ledge, legs dangling, grunting",
-    "ledgePull": "hauling himself up over a ledge, one knee on top",
-    "grazeSpin": "twisting out of the way with a smug smirk and a raised eyebrow, a tiny spark trailing his sleeve",
-    "victoryPose": "arms crossed, one eyebrow raised, the smallest nod of satisfaction",
-    "deathFlat": "flat on his back, eyes wide open, arms out, smoking",
-    "climbHang": "side view, one fist raised gripping, the other fist low, one knee lifted high, launcher slung across his back, leaning in; no ladder drawn (the game draws it)"
+    "launcherGone": "armoured hands empty and open at his sides, helm tilted down to stare flatly at them",
+    "dashLean": "leaning hard forward mid-sprint in his armour, one leg stretched back, maroon cloth streaming behind",
+    "wallCling": "pressed against a wall on his right, one gauntlet and boot on it, helm turned back over his shoulder",
+    "wallKick": "kicking off the wall, armoured body arched out and up, arms spread",
+    "grappleAim": "arm thrown forward and up, gauntlet holding a hook on a rope, other hand bracing",
+    "grappleHang": "hanging by one gauntlet from a rope above him, legs swinging, bored",
+    "ledgeHang": "hanging by both gauntlets from a ledge, greaves dangling, armour creaking",
+    "ledgePull": "hauling his armoured self up over a ledge, one knee on top",
+    "grazeSpin": "twisting out of the way, helm tilted smugly, a tiny spark trailing his pauldron",
+    "victoryPose": "arms crossed, launcher on his shoulder, the smallest nod of the helm",
+    "deathFlat": "flat on his back in his armour, eye slits dim, arms out, smoking",
+    "climbHang": "side view, one gauntlet raised gripping, the other low, one knee lifted high, launcher slung across his back, leaning in; no ladder drawn (the game draws it)"
   },
   "clips": {
     "punch1": {
       "from": "punchWind",
-      "action": "throws a quick right jab, then shakes out his hand",
+      "action": "throws a quick right jab with his gauntlet, then shakes out his hand",
       "seconds": 0.6,
       "to": "stand",
       "state": "Punch1",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "punch2": {
       "from": "punchWind",
@@ -46,7 +47,8 @@
       "seconds": 0.7,
       "to": "stand",
       "state": "Punch2",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "punch3": {
       "from": "punchWind",
@@ -54,7 +56,8 @@
       "seconds": 0.8,
       "to": "stand",
       "state": "Punch3",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "launcherAway": {
       "from": "launcherHeld",
@@ -62,7 +65,8 @@
       "seconds": 1.5,
       "to": "launcherGone",
       "state": "LauncherTaken",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "equipLauncher": {
       "from": "launcherGone",
@@ -70,30 +74,36 @@
       "seconds": 1,
       "to": "launcherHeld",
       "state": "EquipLauncher",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "equipFists": {
       "from": "stand",
-      "action": "slings the launcher on his back and cracks his knuckles",
+      "action": "slings the launcher on his back and cracks his gauntleted knuckles",
       "seconds": 1,
       "to": "punchWind",
       "state": "EquipFists",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "dash": {
       "from": "stand",
-      "action": "bursts into a low forward dash, coat flaring",
+      "action": "bursts into a low forward dash in his armour, cloth streaming behind",
       "seconds": 0.5,
       "to": "dashLean",
       "state": "Dash",
-      "loop": false
+      "loop": false,
+      "wired": "standIn",
+      "standIn": "Walk.png"
     },
     "wallSlide": {
       "from": "wallCling",
       "action": "slides slowly down the wall, scowling",
       "seconds": 1,
       "state": "WallSlide",
-      "loop": true
+      "loop": true,
+      "wired": "standIn",
+      "standIn": "Grabbed.png"
     },
     "wallJump": {
       "from": "wallCling",
@@ -101,7 +111,9 @@
       "seconds": 0.6,
       "to": "wallKick",
       "state": "WallJump",
-      "loop": false
+      "loop": false,
+      "wired": "standIn",
+      "standIn": "Jump.png"
     },
     "grappleThrow": {
       "from": "stand",
@@ -109,14 +121,16 @@
       "seconds": 0.7,
       "to": "grappleAim",
       "state": "GrappleThrow",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "grappleSwing": {
       "from": "grappleHang",
       "action": "swings back and forth hanging from the rope",
       "seconds": 1.2,
       "state": "GrappleSwing",
-      "loop": true
+      "loop": true,
+      "wired": false
     },
     "ledgeGrab": {
       "from": "wallKick",
@@ -124,7 +138,8 @@
       "seconds": 0.6,
       "to": "ledgeHang",
       "state": "LedgeGrab",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "ledgeClimb": {
       "from": "ledgeHang",
@@ -132,31 +147,35 @@
       "seconds": 0.9,
       "to": "stand",
       "state": "LedgeClimb",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "graze": {
       "from": "stand",
-      "action": "twists aside as a shot whistles past, smirks smugly",
+      "action": "twists aside as a shot whistles past, helm tilted smugly",
       "seconds": 0.6,
       "to": "grazeSpin",
       "state": "Graze",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "victory": {
       "from": "stand",
-      "action": "nods once, looks at the camera, flatly says 'fine' with a tiny fist pump",
+      "action": "nods once, looks at the camera, flatly says 'fine' with a tiny gauntlet pump",
       "seconds": 1.5,
       "to": "victoryPose",
       "state": "Victory",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "deathBurn": {
       "from": "stand",
-      "action": "is hit, lights up like a firework, goes skeletal for a flash and collapses in a puff of smoke",
+      "action": "is hit, armour seams light up like a firework, goes skeletal for a flash and collapses in a puff of smoke",
       "seconds": 1.4,
       "to": "deathFlat",
       "state": "DeathBurn",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "deathSquash": {
       "from": "stand",
@@ -164,7 +183,8 @@
       "seconds": 1.4,
       "to": "deathFlat",
       "state": "DeathSquash",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "deathSpin": {
       "from": "stand",
@@ -172,7 +192,8 @@
       "seconds": 1.4,
       "to": "deathFlat",
       "state": "DeathSpin",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "deathShrug": {
       "from": "stand",
@@ -180,32 +201,51 @@
       "seconds": 1.4,
       "to": "deathFlat",
       "state": "DeathShrug",
-      "loop": false
+      "loop": false,
+      "wired": false
     },
     "climbUp": {
       "from": "climbHang",
-      "action": "climbs hand over hand, alternating arms and knees, going up",
+      "action": "climbs hand over hand in his armour, alternating arms and knees, going up",
       "seconds": 2,
       "state": "Climb",
-      "loop": true
+      "loop": true,
+      "wired": "own"
     },
     "climbIdle": {
       "from": "climbHang",
-      "action": "hangs still on the rungs, breathing, one bored glance",
+      "action": "hangs still on the rungs, breathing, one bored glance of the glowing eyes",
       "seconds": 2,
       "state": "ClimbIdle",
-      "loop": true
+      "loop": true,
+      "wired": "own"
     },
     "climbDown": {
       "from": "climbHang",
       "action": "climbs down hand under hand, going down",
       "seconds": 2,
       "state": "ClimbDown",
-      "loop": true
+      "loop": true,
+      "wired": "own"
     }
   },
   "takes": {
     "pose": 3,
     "clip": 3
+  },
+  "kind": "hero",
+  "referenceIdle": true,
+  "bake": {
+    "cell": [
+      604,
+      340
+    ],
+    "pixelsPerUnit": 100,
+    "pivot": [
+      0.5,
+      0.5
+    ],
+    "folder": "Art/Sprites/Player",
+    "playerJson": "player.json"
   }
 }
