@@ -283,6 +283,36 @@
       "reply": "",
       "replyText": "",
       "once": false
+    },
+    {
+      "moment": "ShopBuyWeapon",
+      "floor": 0,
+      "sound": "vo_yooba_weapon_thief",
+      "text": "Hrrk... what's this? Fists? I don't make fists. I don't HAVE fists. You've been in my tummy, haven't you? THIEF!",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "ShopBuyWeapon",
+      "floor": 0,
+      "sound": "vo_yooba_weapon_mine",
+      "text": "Weapons? What weapons? I have goo, and diamonds, and... That's MINE, isn't it? Somebody stole that from me! ...You stole that from me!",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false
+    },
+    {
+      "moment": "ShopBuyWeapon",
+      "floor": 0,
+      "sound": "vo_yooba_weapon_pockets",
+      "text": "I don't have pockets, I don't have fists, and I definitely don't have weapons! So how did you take them from me?! Thief! Lovely, but thief!",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false
     }
   ],
   "shaftPortrait": {

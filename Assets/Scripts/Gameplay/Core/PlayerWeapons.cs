@@ -4,6 +4,7 @@ using SickOfIt.Core;
 using SickOfIt.Core.Audio;
 using SickOfIt.Core.Input;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 using SickOfIt.Gameplay.Content;
 
 namespace SickOfIt.Gameplay
@@ -210,6 +211,8 @@ namespace SickOfIt.Gameplay
             if (index < 0)
             {
                 owned.Add(id);
+                if (id != Launcher)
+                    UnlockFlags.Set("weapon:" + id); // unlocks his weapon goods in Yooba's shop for good
                 ammo.Add(capacity > 0 ? (rounds > 0 ? Mathf.Min(capacity, rounds) : def.ammo.start > 0 ? Mathf.Min(capacity, def.ammo.start) : capacity) : 0f);
             }
             else if (capacity > 0)
@@ -307,13 +310,14 @@ namespace SickOfIt.Gameplay
                 return;
             Vector2 dir = SwingDirection;
             Vector2 from = SwingOrigin;
-            float reach = Mathf.Max(0.1f, s.reach);
+            var shop = RogueliteManager.Instance;
+            float reach = Mathf.Max(0.1f, s.reach * (1f + (shop != null ? shop.GetShopTotal(ShopEffect.MeleeReach) : 0f)));
             Vector2 center = from + dir * (reach * 0.5f);
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             var filter = new ContactFilter2D { useTriggers = true };
             int n = Physics2D.OverlapBox(center, new Vector2(reach, Mathf.Max(0.2f, def.melee.height)), angle, filter, hitBuffer);
             struck.Clear();
-            int damage = Mathf.Max(1, Mathf.RoundToInt(s.damage * swingDamage));
+            int damage = Mathf.Max(1, Mathf.RoundToInt(s.damage * swingDamage * (1f + (shop != null ? shop.GetShopTotal(ShopEffect.MeleeDamage) : 0f))));
             for (int i = 0; i < n; i++)
             {
                 if (!world.TryGetEntity(hitBuffer[i], out var entity) || entity == player || struck.Contains(entity))

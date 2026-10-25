@@ -1312,13 +1312,25 @@ is proud of). His voice is `yooba` (designed for him: fast, wet, gurgling, a bit
   | Loop Jar | +1 s of Déjà Vu (rewind) | a loop shard one of the damned dropped; he only keeps it in a jar |
   | Shiny Sniffer | diamonds come from farther away | a wobbly bit of Yooba that sniffs out diamonds |
   | Double-Dipped Shots *(gated)* | a further 20% more damage | he only offers it to someone who has had the first dip twice (*Tummy-Dipped Shots*, level 2); back in the stomach they go |
+  | Slimed Knuckles *(gated)* | punches (fists) hit 50% harder per level, 2 levels | a coat of slime on both fists |
+  | Stretchy Wraps *(gated)* | punches reach 15% farther per level, 2 levels | wraps of stretched slime |
+  | Keep Weapons *(gated)* | the weapons he holds survive a run's end | the hero will not put them down |
+- **Weapon goods** (2026-10-25). Yooba does not make weapons and has never seen one: the fists (and whatever comes next) are
+  Hell's business, not his. The three weapon goods have `requires: ["weapon:fists"]`, so they are not on the counter until the
+  hero has held the fists once (`PlayerWeapons.Give` writes the unlock flag `weapon:<id>`; it outlives runs, New Game forgets it).
+  *Keep Weapons* is the one thing that changes the run rule: a death normally clears his weapons with the Grudges
+  (`WeaponProgress`); with it bought they stay in his hands (and the equipped one stays equipped). He pays for these goods
+  like any other, but Yooba hasn't a clue what he sold: buying a weapon good makes him **confused and then offended**, and he
+  accuses the hero of stealing from his stomach (`ShopBuyWeapon` lines: *"I don't make fists. I don't HAVE fists. You've been in
+  my tummy, haven't you? THIEF!"*). He still takes the diamonds, and the good still works. Never an office joke; he is a gossip
+  who is sure the world is rummaging in him.
 - **Goods that aren't on the counter yet** (2026-10-25): a good can carry a `requires` (`player.json`): until the hero
   has what Yooba wants to see (a weapon unlocked, a story flag, another good bought to a level, a Grudge held, a level
   cleared) it is *not on the counter at all*, not greyed out: Yooba doesn't show off what you can't use. The moment it
   is met, the card appears. A hero who already owns a good always sees it (an older save loses nothing).
 - **Yooba's prices** (2026-10-25). Hell is repetition, and so is saving up: the shop now takes about **three times as
   many floors** to empty as it did (diamond drops are unchanged; the prices went up). To buy every level of every good
-  used to take **655** diamonds; now it takes **1,705**, or **1,970** with *Double-Dipped Shots*. About 2.6x the old
+  used to take **655** diamonds; now it takes **1,705**, or **1,970** with *Double-Dipped Shots* (**2,435** with the weapon goods below: Slimed Knuckles 60+120, Stretchy Wraps 45+90, Keep Weapons 150). About 2.6x the old
   prices on the old goods; with the new good on the counter, 3.0x the old total.
 
   | Goods | Levels | Old prices | New prices | Old total | New total |

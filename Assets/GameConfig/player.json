@@ -349,6 +349,36 @@
       "effect": "Damage",
       "amountPerLevel": 0.2,
       "requires": ["shop:spicyFireballs:2"]
+    },
+    {
+      "id": "fistGoo",
+      "title": "Slimed Knuckles",
+      "description": "A coat of slime on both fists. Punches hit 50% harder. Yooba would like to know where you got fists.",
+      "costsPerLevel": [60, 120],
+      "maxLevel": 2,
+      "effect": "MeleeDamage",
+      "amountPerLevel": 0.5,
+      "requires": ["weapon:fists"]
+    },
+    {
+      "id": "fistReach",
+      "title": "Stretchy Wraps",
+      "description": "Wraps for the fists, made of stretched slime. Punches reach 15% farther.",
+      "costsPerLevel": [45, 90],
+      "maxLevel": 2,
+      "effect": "MeleeReach",
+      "amountPerLevel": 0.15,
+      "requires": ["weapon:fists"]
+    },
+    {
+      "id": "keepWeapons",
+      "title": "Keep Weapons",
+      "description": "Whatever is in your hands stays in your hands when Hell sends you back to a Waystone. Yooba doesn't want to know.",
+      "costsPerLevel": [150],
+      "maxLevel": 1,
+      "effect": "KeepWeapons",
+      "amountPerLevel": 1.0,
+      "requires": ["weapon:fists"]
     }
   ]
 }

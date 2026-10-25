@@ -650,6 +650,7 @@ namespace SickOfIt.Playtest
                 "clicks, then shows it; the shop's prices are reported (diamonds to max everything, with and without the gated good). Then the scene " +
                 $"\"{GrudgeScene}\" on level {CutsceneLevel}'s stage offers a Grudge pick that must list Not Today (picked with 1: the hero's hit is followed by " +
                 "a longer invincibility). Each beat is a check event, `shop.*` metrics carry the prices and `level<n>.diamonds` the diamonds each level paid", 150, "menus"));
+            list.Add(new PlaytestScenario(ShopWeaponsId, "Yooba's weapon goods: the shop hides Slimed Knuckles, Stretchy Wraps and Keep Weapons while no weapon is unlocked, shows them once the fists are, Keep Weapons and Slimed Knuckles bought with real clicks make Yooba accuse the hero of stealing from him (a ShopBuyWeapon line, voiced), and a run ending keeps the fists only with Keep Weapons bought (setup shortcuts: the unlock, the run end). Each beat is a check event", 120, "menus"));
             list.Add(new PlaytestScenario("cutscene", $"The scene \"{CutsceneScene}\" on level {CutsceneLevel}'s stage (setup shortcut): with input and rewind locked " +
                 "the hero walks to a point by himself and stops, turns left and right, R does nothing; the camera zooms in and back; the screen fades " +
                 "to black and back; he is pulled into a point, spinning and shrinking until he disappears. Each beat is checked", 75, "level"));
@@ -945,6 +946,8 @@ namespace SickOfIt.Playtest
                 yield return session.Cutscene();
             else if (id == "shop-gate")
                 yield return session.ShopGate();
+            else if (id == ShopWeaponsId)
+                yield return session.ShopWeapons();
             else if (id == "climb")
             {
                 session.Prepare(ClimbLevel, true);
