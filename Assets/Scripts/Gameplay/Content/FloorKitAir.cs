@@ -322,7 +322,7 @@ namespace SickOfIt.Gameplay.Content
                 var streak = FloorKit.Child(Owner, "Streak" + i, SpriteLayer.Player, SpriteLayers.Platform + 2);
                 float lane = (i * 0.618034f) % 1f - 0.5f;
                 float u = Mathf.Repeat(now * (0.35f + 0.05f * (i % 3)) * (0.4f + blow) + i * 0.137f, 1f);
-                Vector2 at = b.center + dir * ((u - 0.5f) * run) + side * (lane * across * 0.9f);
+                Vector2 at = (Vector2)b.center + dir * ((u - 0.5f) * run) + side * (lane * across * 0.9f);
                 float fade = Mathf.Sin(u * Mathf.PI);
                 streak.color = new Color(streakColor.r, streakColor.g, streakColor.b, (0.15f + 0.5f * blow) * fade);
                 FloorKit.PlaceWorld(Owner, streak, at, new Vector2(0.7f, 0.035f), angle);
