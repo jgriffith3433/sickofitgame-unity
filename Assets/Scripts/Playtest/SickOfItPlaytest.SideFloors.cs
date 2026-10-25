@@ -18,7 +18,8 @@ namespace SickOfIt.Playtest
         /// `gauntlets` is the same run over just the two gauntlet floors.
         /// </summary>
         public const string SideFloorsId = "secret-floors", GauntletsId = "gauntlets";
-        const float SideFloorsSeconds = 2400f, GauntletsSeconds = 900f;
+        const float SideFloorsSeconds = 600f, GauntletsSeconds = 900f;
+        const float SideRunBudget = 3.5f * 60f, SideRunHardEnd = 8f * 60f;
 
         /// <summary>One side floor: the door's id (offerShortcut), its host floor and its own level (levels/*.json), what it pays and how many waves it chains.</summary>
         struct SideRoom
@@ -158,14 +159,31 @@ namespace SickOfIt.Playtest
                 }
             }
 
-            public IEnumerator SideFloorsRun(bool gauntletsOnly)
+            public IEnumerator SideFloorsRun(bool gauntletsOnly, string at = null)
             {
                 var rooms = new List<SideRoom>();
                 foreach (var room in SideRooms)
                     if (!gauntletsOnly || room.Waves > 0)
                         rooms.Add(room);
+                // A start point: the room "at" names (its door's key, its host floor or its side floor's level file), from there on.
+                if (at != null)
+                {
+                    int firstRoom = rooms.FindIndex(r => string.Equals(r.Key, at, System.StringComparison.OrdinalIgnoreCase) || string.Equals(r.Host, at, System.StringComparison.OrdinalIgnoreCase)
+                                                    || string.Equals(r.Host, "Floor" + at.Trim().Replace("Floor ", ""), System.StringComparison.OrdinalIgnoreCase)
+                                                    || string.Equals(r.Side, at, System.StringComparison.OrdinalIgnoreCase));
+                    if (firstRoom >= 0)
+                    {
+                        Run.Event("start-at", $"from the room \"{rooms[firstRoom].Key}\" (host {rooms[firstRoom].Host})");
+                        rooms = rooms.GetRange(firstRoom, rooms.Count - firstRoom);
+                    }
+                    else
+                        Run.Event("start-at", $"\"{at}\" names no side room; playing from the first");
+                }
                 var content = GameContent.Current;
-                float deadline = Time.realtimeSinceStartup + (gauntletsOnly ? GauntletsSeconds : SideFloorsSeconds) / 2f - 120f;
+                // Studio's check must finish in 10 minutes (docs/playtest.md): no new room after 3.5 min of run time, a room already begun
+                // is cut off by 8. Rooms left out are logged, not failed.
+                float started = Time.realtimeSinceStartup;
+                float deadline = started + SideRunBudget, hardEnd = started + SideRunHardEnd;
                 var rewardsSeen = new List<string>();
                 int reached = 0, cleared = 0;
                 takeShortcuts = true;
@@ -183,7 +201,7 @@ namespace SickOfIt.Playtest
                             continue;
                         if (Time.realtimeSinceStartup > deadline)
                         {
-                            Run.Event("budget", $"no time left: {room.Key} not reached");
+                            Run.Event("budget", $"no time left: {room.Key} not reached (start the run nearer with \"at\")");
                             continue;
                         }
                         float lo = i / (float)rooms.Count, hi = (i + 1) / (float)rooms.Count;
@@ -212,7 +230,7 @@ namespace SickOfIt.Playtest
                                 if (Run.Done) yield break;
                             }
                             stage = null;
-                            yield return PlayLevel(host, 0f, null, lo, Mathf.Lerp(lo, hi, 0.45f), 330f, waitOutDeath: true);
+                            yield return PlayLevel(host, 0f, null, lo, Mathf.Lerp(lo, hi, 0.45f), Mathf.Clamp(hardEnd - Time.realtimeSinceStartup, 30f, 330f), waitOutDeath: true);
                             if (Run.Done) yield break;
                             if (lastOutcome != "died")
                                 break;
@@ -241,7 +259,7 @@ namespace SickOfIt.Playtest
                         if (loadSide != null)
                             yield return loadSide;
                         stage = null;
-                        yield return PlayLevel(side, 0f, null, Mathf.Lerp(lo, hi, 0.45f), hi, 420f, waitOutDeath: true);
+                        yield return PlayLevel(side, 0f, null, Mathf.Lerp(lo, hi, 0.45f), hi, Mathf.Clamp(hardEnd - Time.realtimeSinceStartup, 30f, 420f), waitOutDeath: true);
                         if (Run.Done) yield break;
                         SideCheck($"{room.Key} played", lastOutcome == "completed" && SideCount(sideSignals, "side:enter") > 0 && SideCount(sideSignals, "side:cleared") > 0,
                             $"{room.Side} ended {lastOutcome}; {sideSignals.Count} signals: {string.Join(" ", sideSignals)}");

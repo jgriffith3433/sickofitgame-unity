@@ -516,7 +516,7 @@ SPECS[959] = dict(
 
 SPECS[958] = dict(
     layouts=['line', 'low', 'low', 'low', 'low'],
-    keep=['slope', 'ride', 'bank'], last=(14.2, 6.5), landing='floorLanding958', flavor={'cinder': 'cinderThatch'},
+    keep=['slope', 'ride', 'bank'], leads={'bank': 0.4}, last=(14.2, 6.5), landing='floorLanding958', flavor={'cinder': 'cinderThatch'},
     kinds=['run', 'climb', 'run', 'climb', 'run'],
     pieces=[('somebodysRoof', "SOMEBODY'S ROOF!"), ('hayBusters', 'HAY BUSTERS!'), ('thatchClimb', 'THATCH CLIMB!'),
             ('sparkShower', 'SPARK SHOWER!'), ('lastRoof', 'THE LAST ROOF!')],
@@ -561,7 +561,7 @@ SPECS[954] = dict(
 )
 
 SPECS[953] = dict(
-    keep=['lap1up', 'lap1run', 'lap1top', 'lap2up', 'lap2run'], last=(18.2, 6.2), landing='floorLanding953b',
+    keep=['lap1up', 'lap1run', 'lap1top', 'lap2up', 'lap2run'], leads={'lap1up': 0.4, 'lap2up': 0.8}, last=(18.2, 6.2), landing='floorLanding953b',
     kinds=['run', 'run', 'climb', 'run', 'run'],
     pieces=[('againAgain', 'AGAIN, AGAIN!'), ('sameVent', 'SAME VENT, NEW LAP!'), ('lapSeven', 'LAP... SEVEN?'),
             ('geysersKnowYou', 'THE GEYSERS KNOW YOU!'), ('noMoreLaps', 'NO MORE LAPS. REALLY.')],
@@ -608,6 +608,10 @@ def build(n, report):
     path = script['world']['path']
     kept = [p for p in path if p['name'] in spec['keep']]
     assert len(kept) == len(spec['keep']), (n, [p['name'] for p in path])
+    # a kept Up section whose sinking stone drops out of the camera's view (floor_check.py "sunk is N under the screen") gets a lower camera lead
+    for s in kept:
+        if s['name'] in spec.get('leads', {}):
+            s['lead'] = spec['leads'][s['name']]
     # the old landing goes (the new one ends the floor); a floor whose last foothold was its landing keeps a ledge there
     for s in kept:
         fixed = []

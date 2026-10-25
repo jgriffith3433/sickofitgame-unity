@@ -155,6 +155,7 @@
           "direction": "Up",
           "length": 5.12,
           "turn": 2.0,
+          "lead": 0.4,
           "spawns": [
             {
               "entity": "sinkingStone",
