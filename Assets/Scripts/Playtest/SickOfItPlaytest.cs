@@ -659,6 +659,11 @@ namespace SickOfIt.Playtest
                 $"Last, the bench (the scene \"{WeaponArenaScene}\" on level {WeaponsLevel}'s stage): the Spitfire streams at several times the launcher's rate on ammo, the Ricochet Pistol's bullet bounces off the ground, " +
                 "a dummy 2.6 away is out of the fists' reach and in the Chain-Whip's, the Shotgun fires five pellets and hurts point blank but not across the room, and the Boomerang Halo flies out, comes back and hits both ways. " +
                 "Each beat is a check event; weapon, banner and line events log the timeline", WeaponDropsSeconds, "level"));
+            list.Add(new PlaytestScenario(CodexId, $"The Codex (Docs/Story.md \"The Codex\"): New Game forgets everything; level {CodexLevel} is played by the bot until it has met imps; " +
+                "the pause menu's Codex button (real clicks) opens the screen: the Enemies tab lists the imp with the hero's note, its weakness and times met/killed, every unmet entry is a black silhouette " +
+                "called ??? with no name, note or weakness (no spoilers); the four tabs are clicked in turn, every page of each is paged through and laid out inside the panel and the screen " +
+                "(MenuLayoutAudit, no overlaps; run it on a 1920x1080 and a 1080x1920 device); closed and resumed, the main menu's Codex button shows the same tallies (they persist). " +
+                "Each beat is a check event; codex events log what each page shows", CodexSeconds, "level"));
             list.Add(new PlaytestScenario(EnemyHintsId, $"The hero sizes up each enemy type once (Docs/GameplayCookbook.md \"The hero sizes them up\"): every named enemy has a hint; New Game forgets; " +
                 $"Level {EnemyHintsLevel}'s first imp gets his subtitle (name and weakness), then a rewind past it and the next imps do not repeat it; a new run (the level loaded again) does not; " +
                 "a scripted scene (the bystander bench) spawns an imp in silence and does not use the type up. Each beat is a check event; hint events log the subtitles", EnemyHintsSeconds, "level"));
@@ -1012,6 +1017,8 @@ namespace SickOfIt.Playtest
             }
             else if (id == EnemyHintsId)
                 yield return session.EnemyHintsRun();
+            else if (id == CodexId)
+                yield return session.CodexRun();
             else if (id == "restart")
                 yield return session.RestartRun();
             else if (id == RewindPerfId)

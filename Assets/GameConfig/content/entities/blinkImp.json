@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Blink imp",
   "hint": "Watch the violet mark. It lands there.",
+  "note": "Vanishes mid-sentence. Rude.",
   "hintVoice": "vo_hero_hint_blinkImp",
   "extends": "imp",
   "health": 5,

@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Chain-cutter imp",
   "hint": "Hacks the chain. Shoot it first.",
+  "note": "Cuts chains. Mine, specifically.",
   "hintVoice": "vo_hero_hint_impCutter",
   "extends": "imp",
   "health": 2,

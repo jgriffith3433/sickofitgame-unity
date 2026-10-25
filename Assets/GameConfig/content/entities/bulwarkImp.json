@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Bulwark imp",
   "hint": "Slag shield in front. Shoot it from behind.",
+  "note": "Carries a wall. Forgot the back.",
   "hintVoice": "vo_hero_hint_bulwarkImp",
   "extends": "imp",
   "health": 4,

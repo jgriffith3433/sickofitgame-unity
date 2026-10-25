@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Cinder",
   "hint": "Drifts at you and pops. Shoot it early.",
+  "note": "A spark with a grudge.",
   "hintVoice": "vo_hero_hint_cinder",
   "onSpawn": [{ "type": "hintOnce" }],
   "extends": "chaser",

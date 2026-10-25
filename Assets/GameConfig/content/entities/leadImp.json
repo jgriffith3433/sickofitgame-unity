@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Lead imp",
   "hint": "Throws where you're going. Stand still.",
+  "note": "Aims where I'm going. Annoyingly smart.",
   "hintVoice": "vo_hero_hint_leadImp",
   "extends": "imp",
   "health": 3,

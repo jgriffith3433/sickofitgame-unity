@@ -327,6 +327,9 @@ namespace SickOfIt.Gameplay
             AddCounter("spawned", 1f);
             AddCounter("spawned:" + def.id, 1f);
             Telemetry.Record("spawn", def.id, serial);
+            // The Codex counts each creature once, even when a rewind plays its spawn again (not in a scene).
+            if (def.team == Team.Enemy && !string.IsNullOrEmpty(def.displayName) && string.IsNullOrEmpty(SceneId) && TryGrantOnce("codexMet:" + serial))
+                SickOfIt.Data.CodexProgress.Meet(def.displayName);
             return entity;
         }
 
@@ -665,6 +668,10 @@ namespace SickOfIt.Gameplay
             {
                 AddCounter("kills", 1f);
                 AddCounter("kills:" + entity.DefId, 1f);
+                var killedDef = entity.Def;
+                if (killedDef != null && killedDef.team == Team.Enemy && !string.IsNullOrEmpty(killedDef.displayName) && string.IsNullOrEmpty(SceneId)
+                    && TryGrantOnce("codexKill:" + entity.Serial))
+                    SickOfIt.Data.CodexProgress.Kill(killedDef.displayName);
             }
             Hud.OnEntityDied(entity);
             Telemetry.Record("death", entity.DefId, entity.Serial, cause.ToString());

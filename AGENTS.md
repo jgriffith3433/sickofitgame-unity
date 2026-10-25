@@ -118,6 +118,10 @@ Assets/GameConfig/
   `hintOnce` action (in a base enemy's `onSpawn`) show the name and weakness as a subtitle, with the hero's `vo_hero_hint_<id>` voice once its
   clip exists, the first time that type spawns in a save. Remembered in `EnemyHints` (PlayerPrefs `Enemies_Seen`, cleared only by New Game;
   not rewound), silent during scenes (`GameplayWorld.SceneId`), locked input/rewind and rewinding. Playtest `enemy-hints`.
+- **The Codex** (Docs/Story.md "The Codex", cookbook "The Codex"): `ui/codex.json` + `CodexPanel` (`Gameplay/Presentation`): Enemies / Bosses / Weapons /
+  Characters, from the main menu and the pause menu. Entity field `note` is the hero's line; the weakness is the `hint`. Met and killed
+  tallies are `CodexProgress` (by `displayName`, once per creature, cleared by New Game) and the known set is shared with `EnemyHints`.
+  An unmet entry is `???` and a black silhouette. Playtest `codex` (run it on a 1920x1080 and a 1080x1920 device).
 - **Ladders** (Docs/Story.md "Ladders", cookbook "Ladders"): entity ability `ladder` (`content/entities/ladder.json`, a tall zone; `scale` stretches it). Up
   grabs, down from its top grabs, up/down climb, Jump lets go, climbing off the top steps out; guns at `fireRate` (0.55) while held. The hold is the ladder's
   (`holding` saved), applied through `GameplayWorld.HoldPlayerClimbing` -> `PlayerController.HoldClimbing` (`IsClimbing`, `ClimbPose`): the controller's own flags are

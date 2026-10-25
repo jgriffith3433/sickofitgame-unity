@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Spire Fiend",
+  "hint": "Stay calm. He counts your steps.",
+  "note": "Grew the spire so nothing stands above him. I'm going up it.",
   "team": "Enemy",
   "health": 80,
   "moveSpeed": 0,

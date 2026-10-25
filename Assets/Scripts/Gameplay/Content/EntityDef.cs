@@ -24,6 +24,8 @@ namespace SickOfIt.Gameplay.Content
         public string displayName = "";
         [Doc("The small weakness hint under the name in the hero's first-sighting subtitle (\"Slow embers. Keep moving.\"). Used by the hintOnce action.")]
         public string hint = "";
+        [Doc("The hero's note in the Codex (Docs/Story.md, \"The Codex\"): one short deadpan line about it, under the name. Empty = none. A child that extends another inherits the note, so give it its own.")]
+        public string note = "";
         [SoundRef, Doc("Optional audio.json voice line (voice player) spoken with the hint. Until its clip exists the hint shows as a subtitle only.")]
         public string hintVoice = "";
 
