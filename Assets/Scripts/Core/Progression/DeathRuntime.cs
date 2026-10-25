@@ -335,8 +335,27 @@ namespace SickOfIt.Core.Progression
                 return;
             }
 
-            audioSource.enabled = true;
-            audioSource.Play();
+            // A clip that won't start must never hold the death screen up: it goes on without the sound.
+            try
+            {
+                audioSource.enabled = true;
+                audioSource.Play();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"[DeathRuntime] The death soundtrack could not start: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Stops the soundtrack and lets go of its clip. On WebGL a playing clip holds a browser media player
+        /// (about 75 allowed at once); a death that ends or is skipped must give it back before the next scene.
+        /// </summary>
+        private void ReleaseAudio()
+        {
+            if (audioSource == null) return;
+            audioSource.Stop();
+            audioSource.clip = null;
         }
 
         private void StartExperience()
@@ -404,6 +423,7 @@ namespace SickOfIt.Core.Progression
         {
             if (Current == this)
                 Current = null;
+            ReleaseAudio();
             if (rewindButton != null && !rewindAlsoSkips)
             {
                 rewindButton.TapStartEvent.RemoveListener(OnRewindButtonDown);
@@ -435,6 +455,7 @@ namespace SickOfIt.Core.Progression
         {
             if (deathCompleted) return;
             deathCompleted = true;
+            ReleaseAudio();
             StartCoroutine(ReloadLevelAfterDelay());
         }
 
