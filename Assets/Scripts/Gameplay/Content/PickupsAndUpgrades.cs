@@ -67,7 +67,12 @@ namespace SickOfIt.Gameplay.Content
     {
         public int amount = 1;
 
-        public override void Run(ActionContext context) => SickOfIt.Data.RogueliteManager.Instance?.AddPoints(amount);
+        public override void Run(ActionContext context)
+        {
+            // Fat Diamonds: a pickup can be worth more (keyed on the pickup, so a replay agrees).
+            int extra = context.Self != null && context.World != null && context.World.Perks != null ? context.World.Perks.DiamondExtra(context.Self.Serial) : 0;
+            SickOfIt.Data.RogueliteManager.Instance?.AddPoints(amount + extra);
+        }
     }
 
     [Serializable, JsonType("addRewind")]

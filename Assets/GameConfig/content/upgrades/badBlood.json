@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Bad Blood",
+  "icon": "B",
+  "description": "Every kill leaves a taste. 8% of the time it's a heart.",
+  "maxLevel": 3,
+  "weight": 1,
+  "perksPerLevel": [
+    {
+      "effect": "HealOnKill",
+      "amount": 0.08
+    }
+  ],
+  "color": "#FF6E6E"
+}

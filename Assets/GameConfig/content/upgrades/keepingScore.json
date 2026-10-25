@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Keeping Score",
+  "icon": "K",
+  "description": "You remember every clean kill. Each pays 0.5 seconds more Déjà Vu.",
+  "maxLevel": 3,
+  "weight": 1,
+  "perksPerLevel": [
+    {
+      "effect": "CleanKillBonus",
+      "amount": 0.5
+    }
+  ],
+  "color": "#40E0D0"
+}

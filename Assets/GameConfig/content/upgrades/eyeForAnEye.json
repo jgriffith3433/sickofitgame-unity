@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Eye For An Eye",
+  "icon": "E",
+  "description": "The next hit you take, you hand back. Gravy bomb: one a floor, per level.",
+  "maxLevel": 2,
+  "weight": 1,
+  "perksPerLevel": [
+    {
+      "effect": "BombCharges",
+      "amount": 1
+    }
+  ],
+  "color": "#B6FF4A"
+}

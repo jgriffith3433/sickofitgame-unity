@@ -758,6 +758,9 @@ namespace SickOfIt.Gameplay
             {
                 if (playerHealth == null || (!ignoreInvincibility && playerHealth.IsInvincible))
                     return false;
+                // Bubbles, plates, slips, a last gasp and the bomb (HeroPerks); damage over time skips them.
+                if (!ignoreInvincibility && World.Perks != null && !World.Perks.FilterHit(ref final))
+                    return false;
                 // Record first: a killing hit ends the level (and its log) inside TakeDamage.
                 World.NotifyDamaged(this, final, source, damageLabel);
                 playerHealth.TakeDamage(final, ignoreInvincibility);

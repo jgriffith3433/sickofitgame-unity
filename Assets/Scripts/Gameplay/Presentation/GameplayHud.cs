@@ -942,7 +942,7 @@ namespace SickOfIt.Gameplay
                 cards.Add(new MenuCardData
                 {
                     Badge = (i + 1).ToString(),
-                    Caption = $"Level {level + 1}/{def.maxLevel}",
+                    Caption = (string.IsNullOrEmpty(def.icon) ? "" : def.icon + "  ") + $"Level {level + 1}/{def.maxLevel}",
                     Title = def.title,
                     Description = def.description,
                     Status = "Take it",

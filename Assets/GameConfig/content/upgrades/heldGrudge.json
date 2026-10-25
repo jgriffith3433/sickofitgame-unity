@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Held Grudge",
+  "icon": "G",
+  "description": "A bubble of pure spite at the start of every floor. It pops on the first hit.",
+  "maxLevel": 3,
+  "weight": 1,
+  "perksPerLevel": [
+    {
+      "effect": "ShieldCharges",
+      "amount": 1
+    }
+  ],
+  "color": "#9FE8FF"
+}

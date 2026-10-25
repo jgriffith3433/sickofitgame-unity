@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Sour Grapes",
+  "icon": "S",
+  "description": "You didn't want to win that anyway. 10% of volleys crit.",
+  "maxLevel": 3,
+  "weight": 1,
+  "perksPerLevel": [
+    {
+      "effect": "CritChance",
+      "amount": 0.1
+    }
+  ],
+  "color": "#C48CFF"
+}

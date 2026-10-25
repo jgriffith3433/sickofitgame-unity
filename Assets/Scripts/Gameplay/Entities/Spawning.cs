@@ -128,6 +128,8 @@ namespace SickOfIt.Gameplay
             Vector2 origin, float speed, int damage, int volleyIndex, IRandomSource random)
         {
             float speedMultiplier = owner != null ? owner.Stat(Stat.ProjectileSpeed, 1f) : 1f;
+            if (owner != null && owner.Team == Team.Enemy && world.Perks != null)
+                speedMultiplier *= world.Perks.EnemyShotSpeed; // Sticky Air
             var input = new EmitInput
             {
                 Origin = origin,
