@@ -1,3 +1,0 @@
-- convention: long bullet-hell floor — a floor script with `length` >= 200 is "long" for the playtest (240-360 s, 16 enemies, `setpiece:` signals, density); see LevelDesign.md "A long bullet-hell floor".
-- lesson: floor length must come from the camera — path sections with `autoSpeed` plus an `atTime` gate on the landing keep the time independent of the bot; a hand-paced path varies by minutes.
-- lesson: no Unity editor on the agent server — data and playtest C# written there are unverified until beta's playtest runs.
