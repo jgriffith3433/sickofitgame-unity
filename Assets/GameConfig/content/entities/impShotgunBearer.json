@@ -9,10 +9,6 @@
     {
       "entity": "shotgunPickup",
       "chance": 1.0
-    },
-    {
-      "entity": "rewindOrb",
-      "chance": 0.2
     }
   ]
 }
