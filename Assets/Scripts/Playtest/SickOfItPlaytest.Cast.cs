@@ -4,6 +4,7 @@ using Hawkes.Playtest;
 using UnityEngine;
 using SickOfIt.Core;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 using SickOfIt.Gameplay;
 
 namespace SickOfIt.Playtest
