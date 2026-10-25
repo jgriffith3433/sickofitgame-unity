@@ -605,6 +605,47 @@ lava-river shot, `clipStart` 17.6, `clipLength` 5).
 
 Same seed, same floors: platforms, props and pushes come from the level seed, so rewinds and bot playtests repeat.
 
+## Ladders ("a ladder up the wall", "climb, shoot, jump off")
+
+A ladder is an entity with the `ladder` ability (`content/entities/ladder.json`); its body is the climbable zone. Spawn it
+like any floor piece and stretch it with the spawn's `scale`: the entity is 0.8 wide and 1 tall, so `"scale": [1.0, 4.0]`
+is a ladder 4 units tall, centred on `at`. The test floor `content/scenes/ladderTest.json` (Level 2's stage):
+
+```json
+{ "entity": "ledge",  "at": [-4.5, -2.45], "scale": [3.0, 1], "id": "start" },
+{ "entity": "ladder", "at": [-2.6, -0.2],  "scale": [1.0, 4.0], "id": "ladder1" },
+{ "entity": "ledge",  "at": [0.0, 1.55],   "scale": [4.0, 1], "id": "shelf" }
+```
+
+Put the ladder's foot on a ledge's top (here -2.2) and its top level with the top of the ledge he climbs onto (1.8; ledges are
+one-way, so he passes up through the shelf). The shelf must span the ladder's x or he steps out onto air.
+
+**How it plays.**
+- **Grab:** push up (W, up arrow, the left stick or the touch stick) while his body overlaps the zone (`grabReach` beside it), or
+  push down while he stands on its top (he steps down onto the rungs). Not within `regrab` seconds of letting go.
+- **Held:** gravity is off, he slides to the middle of the rungs (`centerSpeed`), up and down climb at `climbSpeed` times the stick,
+  sideways does nothing. The Climb pose plays while he moves and ClimbIdle while he hangs still.
+- **Shooting:** yes, slower: guns fire at `fireRate` (default 0.55) of their rate. A melee weapon is unchanged.
+- **Leave:** Jump lets go with the ordinary jump, out sideways at `jumpOffSpeed` times the stick (0 = straight up); climbing past the top
+  puts his feet a hair over it and he steps out; climbing past the bottom lets go on its foot.
+- Telemetry `floorkit` events: `ladderGrab`, `ladderGrabTop`, `ladderJumpOff`, `ladderTop`, `ladderBottom`.
+
+**Rewind.** What rewind restores of the hero is his transform (`RewindableTransform`), velocity, health and the world's state;
+`PlayerController`'s own flags (held, gravity, jump buffer) are *not* recorded. So a hold can't live in the controller: like the
+swinging chain, the *holder* keeps it. The ladder saves `holding` and `releasedAt`; each tick, while `holding`, it asks
+`GameplayWorld.HoldPlayerClimbing`, which sets `held`, gravity 0, the climb poses, and the fire scale again. A rewind into a climb
+therefore puts him back on the rung (position from the transform, hold from the ladder), and a rewind out of one drops the hold
+the next tick (the world releases him when nothing holds him). His rung is his position, so nothing else is saved.
+The `ladder` playtest checks both: back into the middle of a climb, and back from the shelf into the climb.
+
+**Animator.** `player.json` `animationConfig` has two states, `Climb` and `ClimbIdle`, with placeholder sheets (Walk and Grabbed). They
+have no transitions: the generated controller doesn't have them, so `PlayAnimatorState` plays them from their sheets
+(`PlayerSceneClip`) and hands the sprite back to the Animator when he lets go. Real clips later replace only `spriteSheet` in those two
+states (a separate art task).
+
+**Check it:** playtest `ladder` (~2 min): walks to the foot, grabs, hangs still, climbs up and down, shoots slower than on the ground,
+rewinds in the climb and back into it from the shelf, jumps off, grabs again and exits at the top.
+
 ## A floor with a path ("climb a lava fall, cross the river on a raft, climb again")
 
 The one-floor layout (Docs/LevelDesign.md, *A floor's path*): a level is one floor, and its way up turns. Working

@@ -441,6 +441,155 @@ namespace SickOfIt.Gameplay.Content
         }
     }
 
+    [Serializable, JsonType("ladder")]
+    [Doc("A ladder: the entity's body is the climbable zone (a tall, narrow box; stretch it with the spawn's scale). The hero grabs it by " +
+         "pressing up (W, up arrow, the stick or the touch stick pushed up) while he overlaps it, or down while he stands on its top. Held, he has no " +
+         "gravity, climbs and descends with up and down at 'climbSpeed', can shoot (guns at 'fireRate' of their rate), and lets go with Jump " +
+         "(straight up, or out the way the stick points) or by climbing off its top (he steps out on whatever stands at its top) or its bottom. " +
+         "Rewind brings back the climb: where he was on the rungs and whether he held on.")]
+    public sealed class LadderAbility : Ability
+    {
+        [Doc("Units per second he climbs at full stick.")] public float climbSpeed = 2.6f;
+        [Doc("How far beside the zone (units, each side) his body may be and still grab on.")] public float grabReach = 0.25f;
+        [Doc("Sideways speed (units per second) a jump off leaves with, in the direction the stick points; 0 jumps straight up.")] public float jumpOffSpeed = 1.5f;
+        [Doc("Fraction of the guns' rate while climbing (1 = as on the ground, 0.5 = half as fast). A melee weapon is unchanged.")] public float fireRate = 0.55f;
+        [Doc("Seconds after letting go before he can grab it again.")] public float regrab = 0.35f;
+        [Doc("Units per second he slides to the middle of the rungs when he grabs on.")] public float centerSpeed = 8f;
+        [Doc("Spacing of the drawn rungs (units).")] public float rungSpacing = 0.45f;
+        public Color railColor = new Color(0.45f, 0.3f, 0.2f, 1f);
+        public Color rungColor = new Color(0.6f, 0.42f, 0.28f, 1f);
+        [SoundRef, Doc("Played when he grabs on.")] public string grabSound = "";
+
+        const int MaxRungs = 48;
+        bool holding;
+        float releasedAt = -99f;
+
+        public override void OnSpawn()
+        {
+            holding = false;
+            releasedAt = -99f;
+        }
+
+        public bool Holding => holding;
+
+        public override void Tick(float now, float dt)
+        {
+            var zone = Owner.MainCollider;
+            if (zone == null)
+                return;
+            Bounds lb = zone.bounds;
+            Draw(lb);
+
+            var world = Owner.World;
+            var controller = world.PlayerController;
+            var player = world.Player;
+            if (controller == null || player == null || !player.IsAlive || controller.BodyCollider == null || controller.Suspended)
+            {
+                holding = false;
+                return;
+            }
+
+            Bounds hb = controller.BodyCollider.bounds;
+            float x = lb.center.x;
+            float stick = controller.MoveY;
+
+            if (holding)
+            {
+                if (controller.ConsumeJumpOff())
+                {
+                    holding = false;
+                    releasedAt = now;
+                    FloorKit.Record(Owner, "ladderJumpOff", Mathf.RoundToInt(hb.min.y * 100f));
+                    Owner.RecordNow();
+                    return;
+                }
+                float vy = stick * climbSpeed;
+                Vector2 at = player.Position;
+                float dx = Mathf.MoveTowards(at.x, x, centerSpeed * dt) - at.x;
+                float dy = vy * dt;
+                float feet = hb.min.y;
+                string left = null;
+                if (feet + dy >= lb.max.y)
+                {
+                    // Over the top: he steps out on what stands there (his feet a hair above it; gravity does the rest).
+                    dy = lb.max.y + 0.02f - feet;
+                    left = "ladderTop";
+                }
+                else if (feet + dy <= lb.min.y)
+                {
+                    dy = lb.min.y - feet;
+                    left = "ladderBottom";
+                }
+                world.HoldPlayerClimbing(at + new Vector2(dx, dy), left != null ? Vector2.zero : new Vector2(0f, vy),
+                    controller.MoveX * jumpOffSpeed, fireRate);
+                if (left != null)
+                {
+                    holding = false;
+                    releasedAt = now;
+                    FloorKit.Record(Owner, left, Mathf.RoundToInt((feet + dy) * 100f));
+                    Owner.RecordNow();
+                }
+                return;
+            }
+
+            if (now - releasedAt < regrab || controller.IsHeld)
+                return;
+            bool beside = Mathf.Abs(hb.center.x - x) <= lb.extents.x + grabReach;
+            if (!beside)
+                return;
+            // Up while on the rungs' height (not already standing at the very top), or down while standing on the top.
+            bool up = stick > 0.5f && hb.max.y > lb.min.y + 0.2f && hb.min.y < lb.max.y - 0.3f;
+            bool down = stick < -0.5f && controller.IsGrounded && Mathf.Abs(hb.min.y - lb.max.y) < 0.25f;
+            if (!up && !down)
+                return;
+            holding = true;
+            controller.ConsumeJumpOff();
+            // From the top he steps down onto the rungs (feet a little under the top), so the first push up doesn't just walk him off again.
+            Vector2 start = player.Position;
+            if (down)
+                start.y -= hb.min.y - (lb.max.y - 0.35f);
+            world.HoldPlayerClimbing(start, Vector2.zero, 0f, fireRate);
+            SickOfIt.Core.Audio.Sfx.Play(grabSound);
+            FloorKit.Record(Owner, down ? "ladderGrabTop" : "ladderGrab", Mathf.RoundToInt(hb.min.y * 100f));
+            Owner.RecordNow();
+        }
+
+        // Two rails and rungs between them over the zone (cosmetic; the zone's box is invisible to the hero's feet).
+        void Draw(Bounds b)
+        {
+            var rails = new[] { -1f, 1f };
+            for (int i = 0; i < rails.Length; i++)
+            {
+                var rail = FloorKit.Child(Owner, "Rail" + i, Owner.Def.visual.layer, SpriteLayers.Platform);
+                rail.color = railColor;
+                FloorKit.PlaceWorld(Owner, rail, new Vector2(b.center.x + rails[i] * (b.extents.x - 0.06f), b.center.y), new Vector2(0.1f, b.size.y));
+            }
+            int count = Mathf.Min(MaxRungs, Mathf.Max(1, Mathf.FloorToInt(b.size.y / Mathf.Max(0.15f, rungSpacing))));
+            for (int i = 0; i < MaxRungs; i++)
+            {
+                var rung = FloorKit.Child(Owner, "Rung" + i, Owner.Def.visual.layer, SpriteLayers.Platform);
+                rung.enabled = i < count;
+                if (i >= count)
+                    continue;
+                rung.color = rungColor;
+                float y = b.min.y + (i + 0.5f) * (b.size.y / count);
+                FloorKit.PlaceWorld(Owner, rung, new Vector2(b.center.x, y), new Vector2(Mathf.Max(0.1f, b.size.x - 0.12f), 0.07f));
+            }
+        }
+
+        public override void SaveState(StateWriter writer)
+        {
+            writer.Bool(holding);
+            writer.Float(releasedAt);
+        }
+
+        public override void LoadState(StateReader reader)
+        {
+            holding = reader.Bool();
+            releasedAt = reader.Float();
+        }
+    }
+
     [Serializable, JsonType("swingChain")]
     [Doc("A swinging chain (or rope): the entity is the handle at the end, swinging from a pivot 'length' above where it spawned. The hero " +
          "grabs it by jumping into it, swings with it, and lets go with Jump, keeping the swing's speed. The chain rattles (drawn) as it goes.")]

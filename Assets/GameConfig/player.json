@@ -120,6 +120,28 @@
         "loop": true,
         "events": [],
         "speed": 1.0
+      },
+      {
+        "stateName": "Climb",
+        "spriteSheet": "Art/Sprites/Player/Walk.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 10,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "ClimbIdle",
+        "spriteSheet": "Art/Sprites/Player/Grabbed.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 8,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
       }
     ],
     "transitions": [

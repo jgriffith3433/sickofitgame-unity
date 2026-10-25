@@ -1643,6 +1643,22 @@ soul); no voice is cast for the damned yet.
 |---|---|---|
 | `bystanderSoul` (extends `damnedSoul`) | the test bench `content/scenes/bystanderTest.json`, none on a floor yet | Stands looking away. Hero within 4.5: turns to him, speaks. A shot passes within 1.6: hiccups, steps back 0.5, settles. Hero hurt within 6: hiccups, steps back, speaks (once). Drops nothing: the shard belongs to the plain `damnedSoul`. |
 
+## Ladders (the damned built ways up)
+
+Hell is repetition, and so are its stairs: the imps and the damned who haul, mine and keep watch have bolted ladders to
+every wall they had to go up more than once (2026-10-25). A **ladder** is a way up that asks for no jump: the hero stands
+at its foot, pushes up and holds on. Held, he doesn't fall; he climbs and descends at the pace of a man who has done
+this before and would like it noted, and lets go with a jump, or just climbs off the top. His gun stays in his hand
+and comes out slower, because it is hard to aim while holding on with the other one (about half the rate). Rewind
+takes it back like everything else in Hell: the rung he was on and whether he held it.
+
+No ladder is placed on a played floor yet; each use needs its reason written here first (*Rules for levels*). It is
+a tool for floors where the way on is straight up a wall: a Gloomwood trunk, the Caverns' mine shafts, the Keep's
+watchtowers. Until then it lives on the test floor `content/scenes/ladderTest.json` (the `ladder` playtest).
+
+The hero's lines (subtitles; no clip is cast yet): *"A ladder. Hell finally built something that goes up on purpose."*
+The announcer, once a floor has one: *"A LADDER! HOW CONVENIENT! HOW SUSPICIOUS!"*
+
 ## Rules for levels
 
 - **A level is a place in the story**, named after the place. `displayName` is the place ("The Meadow",
