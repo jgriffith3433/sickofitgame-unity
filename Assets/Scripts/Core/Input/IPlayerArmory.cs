@@ -57,6 +57,12 @@ namespace SickOfIt.Core.Input
         /// swing's times and 'damage' multiplies its damage.
         /// </summary>
         bool Swing(float now, Vector2 origin, Vector2 direction, float attackSpeed, float damage);
+        /// <summary>A melee swing is on at 'now' (button to the end of its recovery).</summary>
+        bool Swinging(float now);
+        /// <summary>The combo step of the swing now (0 = first); for picking its punch clip.</summary>
+        int SwingStep { get; }
+        /// <summary>When the current swing began, when its hit lands and when it ends (game clock time).</summary>
+        void SwingTimes(out float start, out float hit, out float end);
         /// <summary>Equips the next (+1) or previous (-1) weapon he holds. True if the weapon changed.</summary>
         bool Cycle(int step, float now);
     }

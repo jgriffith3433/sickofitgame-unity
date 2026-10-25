@@ -60,6 +60,15 @@ namespace SickOfIt.Core.Input
             return true;
         }
 
+        /// <summary>Stretches the playing one-shot clip over 'seconds' (a punch over its swing, so the hit falls mid-clip).</summary>
+        public void FitTo(float seconds)
+        {
+            if (State == null || frames == null || seconds <= 0.01f)
+                return;
+            loop = false;
+            fps = frames.Count / seconds;
+        }
+
         /// <summary>Hands the sprite back to the Animator.</summary>
         public void Stop()
         {
