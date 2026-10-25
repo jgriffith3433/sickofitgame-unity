@@ -485,7 +485,8 @@ who runs the hauling.
   air); the roar far below, rising whenever he drops toward it.
 - **Lines:** Announcer: *"FLOOR NINE NINETY-SEVEN! IMP RUN!"* Hero: *"Those are ours."* At the breather: *"One less
   sack for his gate."*
-- **Length:** ~85 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **The Sack Route** (ledges with sack imps swinging over every second gap), **The High Haul** (a climb with imps swinging beside it), **Diamond Shower**, **Chains Everywhere** (an imp over every gap) and **The Lift Stop** (the finale). The idea: the hauling chains' sack imps, only now a whole route of them; fists only (Floors 998-994): the cinders and sparks come with the usual fists brutes. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 996: The Slag Falls
 
@@ -504,7 +505,8 @@ who runs the hauling.
 - **Feel:** a medium shake for every eruption within a screen; slow motion when a column misses him by a hair; the
   roar swells as the falls get close and the vents gurgle a second ahead of each blow.
 - **Lines:** Announcer: *"FLOOR NINE NINETY-SIX! THE SLAG FALLS!"* Hero (first geyser): *"The floor sneezed."*
-- **Length:** ~80 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **The Vent Row** (a vent on every second ledge), **Up the Falls** (a climb with vents on its ledges), **A Sneezing Fit** (a vent on every ledge), **Everything Is Orange** and **Mind the Spout** (the finale, the landing's carving). The idea: geysers on the ledges and the scenery falls behind; fists only. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 995: The Loop
 
@@ -526,7 +528,8 @@ who runs the hauling.
   leaves the key stone on its last instant. The roar holds steady (it's on a loop too).
 - **Lines:** Announcer: *"FLOOR NINE NINETY-FIVE! THE LOOP!"* Hero (second lap): *"It's doing that on purpose."*,
   then *"Hell runs on a loop. So I can drag it back."* Landing, announcer: *"THE LOOP: SURVIVED. AGAIN."*
-- **Length:** ~90 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **Lap Three** (two more laps: the same five stones, the rest with its geyser, the carving), **Still the Same Rock** (a row of stones), **Lap Five. Again.**, **The Loop Goes Up** (a climb with geysers on the world's clock) and **The Last Lap. Maybe.** (a lap, then the landing). The idea: the loop's own pattern repeated until the joke is over; fists only. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 994: Chain Lift
 
@@ -545,7 +548,8 @@ who runs the hauling.
 - **Feel:** a medium shake and a slow-motion beat when a lift drops a notch; the roar recedes as he rises and the
   chains clank close; push music on the second lift.
 - **Lines:** Announcer: *"FLOOR NINE NINETY-FOUR! THE CHAIN LIFT!"* Hero (first jolt): *"Don't. Don't do that."*
-- **Length:** ~90 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **The Long Haul** (a row of ledges and sinking stones with a swing chain over every fourth gap), **Lift, and Another!** (a shaft with a chain lift and a cutter imp at its top), **Cut Chains!**, **The High Shaft** (a second lift shaft, two cutters) and **The Lift That Keeps Going!** (the finale). The thief throws the launcher back at the old landing, so the five pieces are played with it. The idea: the chain lifts and swing chains, with the cutters' imps; the launcher is back for the pieces. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 993: Ember Ledges
 
@@ -565,7 +569,8 @@ who runs the hauling.
   hold's push music cuts to the bare loop when the hollows are clear.
 - **Lines:** Announcer: *"FLOOR NINE NINETY-THREE! EMBER LEDGES!"* Hero (first throw): *"Oh, this one throws."* The
   sleeper: *"One less."*
-- **Length:** ~85 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **The Throwers' Ledge** (an imp perched above the row), **Embers From Above**, **Two On A Ledge**, **The Ember Stairs** (a climb with an imp beside it) and **Everyone Throws!** (three perches above the finale). The idea: the imps that throw, a few more on every piece; ledges and sinking stones. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 992: Bad Footing
 
@@ -585,7 +590,8 @@ who runs the hauling.
   last stone as it falls; the roar rises under the bridge as the span drops into it.
 - **Lines:** Announcer: *"FLOOR NINE NINETY-TWO! BAD FOOTING!"* Hero (first crumble): *"Nothing down here holds."* At
   the gap: *"Of course."*
-- **Length:** ~90 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **Nothing Holds!** (a span of crumbling stones, a solid ledge every fifth), **The Wall Cracks!** (a climb of crumbling ledges), **The Long Bridge!** (a gap in the span with a swing chain), **Step, Fall, Repeat!** and **The Last Span!** (the finale on crumbling stones); imps throw from the third piece on. The idea: the crumbling bridge again and again, the span falling away behind him. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 991: The Foreman's Pile (floor boss)
 
@@ -649,7 +655,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
   him; the roar drops away as the pans lift him.
 - **Lines:** Announcer: *"FLOOR NINE SIXTY! THE DEPOT!"* Hero: *"They're using our diamonds as weights."* At the
   glow: *"Something up there's glowing. I'm going there, aren't I."*
-- **Length:** ~85 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **Pulley Parade!** (a row with a counterweight pair), **Heavy Diamonds!**, **Up the Depot!** (a climb with sacks swinging beside it), **Swinging Sacks!** (a pair and sack imps over every gap) and **The Last Pulley!** (the finale). The idea: the depot's counterweights, one more pair each piece (`counterweightP1`-`P3`, partners named in their files) and the sack imps' swings. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 959: The Rest of the Village
 
@@ -669,7 +676,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
   tipping raft throws him and he lands on the next.
 - **Lines:** Announcer: *"FLOOR NINE FIFTY-NINE! THE REST OF THE VILLAGE!"* Hero (on the roof): *"I used to sit
   under this."* On the sign: *"Welcome to. Yeah. Thanks."*
-- **Length:** ~90 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **The River Returns!** (rafts, a bank every fourth), **Roof Hopping!**, **The Bank!** (a climb), **The Sign Comes Back!** and **Still Floating!** (the finale). The idea: the village's wreckage on the current: roofs, carts and hay carried along; cinders as the river's sparks. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 958: The Burning Thatch
 
@@ -688,7 +696,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
   ride.
 - **Lines:** Announcer: *"FLOOR NINE FIFTY-EIGHT! THE BURNING THATCH!"* Hero (first burst): *"That was somebody's
   roof."*
-- **Length:** ~85 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **Somebody's Roof!** (hay rafts and sinking stones), **Hay Busters!**, **Thatch Climb!** (a climb), **Spark Shower!** and **The Last Roof!** (the finale). The idea: the burning thatch: the floor's cinders are `cinderThatch`, which burst into two sparks when they die. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 957: Hot Air
 
@@ -709,7 +718,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
   floats, looks around, then drops onto the ledge); no shake.
 - **Lines:** Announcer: *"FLOOR NINE FIFTY-SEVEN! HOT AIR!"* Hero (first updraft): *"Huh. That's actually nice."*,
   then, a beat later: *"No. It's still Hell."*
-- **Length:** ~80 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **Up, Up, Up!** (a row of columns of hot air: each throws him a step up), **The Chimney!** (a climb with a tall column), **Hot Air Hopping!**, **Another Chimney!** and **The Long Draft!** (the finale); an imp or two on the chimney tops late. The idea: updrafts as the way along, not only up. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 956: The Drip
 
@@ -726,7 +736,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
 - **Feel:** every drip hisses as it gathers; a medium shake when a lump lands near him, a big one for the last;
   slow motion on a lump that misses by a hair.
 - **Lines:** Announcer: *"FLOOR NINE FIFTY-SIX! THE DRIP!"* Hero: *"The ceiling's melting. Great."*
-- **Length:** ~85 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **The First Drips!** (a row of ledges and sinking stones under dripping slag), **The Lift Shaft!** (a chain lift up), **Ceiling Run!**, **Drip Drop!** and **The Big Drip!** (the finale). The idea: the dripping ceiling: slag drips with a one-second tell stand in for the fireball rain on this floor. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 955: The Falls
 
@@ -744,7 +755,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
 - **Feel:** the roar is loud and wet, each fall's gurgle a second before it pours; a medium shake when a fall pours on
   right beside him; slow motion as he slips through a fall a hair before it pours again.
 - **Lines:** Announcer: *"FLOOR NINE FIFTY-FIVE! THE FALLS!"* Hero: *"Wait for it. ...Wait for it."*
-- **Length:** ~90 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **The Curtain!** (a bank of shelves with three lava falls pouring in turn), **Wait For It!** (four falls), **Behind The Falls!** (a climb), **Three Falls At Once!** and **Slipping Through!** (seven falls, then two over the finale). The idea: the falls' curtains: wait, then hop between them. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 954: The Guard Post
 
@@ -763,7 +775,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
   border wall's run is quiet, the roar far below.
 - **Lines:** Announcer: *"FLOOR NINE FIFTY-FOUR! THE GUARD POST!"* Hero (first guard): *"This one's not carrying
   anything. Bad sign."* At the pulse: *"...Hi."*
-- **Length:** ~85 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **Border Patrol!** (a guard above the row), **Guards On Guard!** (a climb), **Not Carrying Anything!** (two guards), **The Helmet Ledge!** and **The Whole Post!** (three guards over the finale). The idea: the guards that carry nothing: spread-firing imps over the rows, more each piece. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 953: Second Lap
 
@@ -783,7 +796,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
   the second he knows); the roar and every sound exactly the same both laps.
 - **Lines:** Announcer, the second time: *"FLOOR NINE FIFTY-THREE! ...AGAIN!"* Hero: *"I know this one."* Landing,
   announcer: *"SECOND LAP: DONE!"*
-- **Length:** ~110 s (two laps of ~55 s).
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **Again, Again!** (ledges with geysers on the world's clock and lava falls), **Same Vent, New Lap!**, **Lap... Seven?** (a climb with geysers), **The Geysers Know You!** and **No More Laps. Really.** (the finale). The idea: the second lap, lapped again: the same geysers on the same clock. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 952: The Sack Pile
 
@@ -802,7 +816,8 @@ the Magma King's guard taking over from the haulers. The Sack Lift lands here; t
   sails past him.
 - **Lines:** Announcer: *"FLOOR NINE FIFTY-TWO! THE SACK PILE!"* Hero (clearing the line): *"He keeps guards. So
   he's expecting someone."*
-- **Length:** ~110 s.
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **The Pile's Edge!** (rafts and ledges, one guard), **Pile-On!** (a climb), **Guards Count Up!** (two guards), **The Pile Spills!** and **The Top Of The Pile!** (three guards over the finale). The idea: the sack pile's guards and rafts, one more guard each piece. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~285 s (a long floor).
 
 #### Floor 951: The Keeper's Mound (floor boss)
 
@@ -1694,6 +1709,18 @@ A floor of 240-360 seconds with many enemies and shots, for a player who has lea
    are the announcer's; they may be silent until their line is generated (audio.json, `announcer` voice, cents).
 8. **Check it.** `level-<n>` (the floor's scenario) logs a `setpiece` event per piece, a `density` event with the average
    and peak alive, and the checks `length`, `maxEnemies`, `long.setPieces` and `long.density`.
+9. **Circle X's floors 997-992 and 960-952 (2026-10-25)** are this recipe applied to the stages they were: the opening is the
+   old stage (minus its landing), then a `riser` (an Up section lifting the rows clear of the opening), five pieces (a run of
+   28 units or a climb of 8, autoSpeed 0.55 / 0.36) and the landing, gated on `finale` (255 s). Pieces take strength
+   `s = 1 + 0.09 * floor index + 0.9 * piece` (a little less per piece on later floors) and add hazards in a floor-specific
+   order (C cinders, R rain, S sparks, A aimed fans, B brutes: the pieces after the first add the next kind, the later floors
+   start with two or three): the first piece of 997 holds ~1.4 enemies and shots, its last ~12.7, and the first piece of 952
+   ~5.4, its last ~13.8 (`long_floors.py` prints the estimate; the bot's `density` events are the real figures). The footholds of
+   a piece are the floor's own (swinging sack imps, vents, laps of loop stones, lifts and chains, perched imps, crumbling
+   spans, counterweight pairs, rafts, hot-air columns, slag drips, lava falls, guards); the enemies of a piece are tagged
+   `pc<i>` and despawned when the next piece starts (the enemy count is the whole world's). The boss floors (991, 951) and
+   Floors 1000, 999 and 910-902 are not long floors. `python3 Tools/Levels/long_floors.py` writes the files from its tables
+   (the openings are read from git: `BASE`); `python3 Tools/Levels/floor_check.py Floor997 ...` checks every jump.
 
 ## Building it
 

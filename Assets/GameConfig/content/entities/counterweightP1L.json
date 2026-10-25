@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "extends": "counterweightLeft",
+  "abilities": [
+    {
+      "type": "counterweight",
+      "partner": "cwP1R",
+      "drop": 0.8,
+      "speed": 1.0,
+      "chainArt": {
+        "sheet": "Art/Climb/Chain_links.png",
+        "spriteNameFilter": "",
+        "fps": 1,
+        "scroll": 0,
+        "color": "#FFFFFF"
+      },
+      "chainHeight": 4.0,
+      "chainWidth": 0.2
+    }
+  ]
+}
