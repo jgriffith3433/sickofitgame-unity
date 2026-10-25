@@ -125,6 +125,37 @@ namespace SickOfIt.Gameplay
         public float Now => GameClock.Instance != null ? GameClock.Instance.Time : 0f;
         public IReadOnlyList<Entity> Live => live;
 
+        /// <summary>Aim assist (settings > Accessibility): a shot aimed within a few degrees of a living enemy bends most of the way onto it.</summary>
+        public const float AssistConeDegrees = 9f, AssistRange = 16f, AssistPull = 0.75f;
+
+        /// <summary>Where the hero's aim from 'muzzle' along 'direction' is nudged to; the aim itself when the toggle is off or nothing is near it.</summary>
+        public Vector2 AssistAim(Vector2 muzzle, Vector2 direction)
+        {
+            if (!GameSettings.AimAssist || direction.sqrMagnitude < 0.0001f)
+                return direction;
+            Vector2 dir = direction.normalized;
+            float best = AssistConeDegrees;
+            Vector2 target = dir;
+            bool found = false;
+            for (int i = 0; i < live.Count; i++)
+            {
+                var e = live[i];
+                if (e == null || e.Team != Team.Enemy || !e.IsAlive || e.MaxHealth <= 0)
+                    continue;
+                Vector2 to = e.Position - muzzle;
+                if (to.sqrMagnitude < 0.25f || to.sqrMagnitude > AssistRange * AssistRange)
+                    continue;
+                float angle = Vector2.Angle(dir, to);
+                if (angle < best)
+                {
+                    best = angle;
+                    target = to.normalized;
+                    found = true;
+                }
+            }
+            return found ? Vector2.Lerp(dir, target, AssistPull).normalized : direction;
+        }
+
         // =====================================================================
         // SETUP
         // =====================================================================
@@ -200,14 +231,19 @@ namespace SickOfIt.Gameplay
             if (setup.RewindBudget != null && setup.RewindBudget.enabled)
             {
                 var budget = gameObject.AddComponent<SickOfIt.Core.Rewind.RewindBudget>();
-                budget.Configure(setup.RewindBudget.startSeconds, setup.RewindBudget.maxSeconds, setup.RewindBudget.costPerSecond);
-                budget.ConfigureRewards(setup.RewindBudget.survivalSeconds, setup.RewindBudget.survivalBonus);
-                cleanKillRefund = setup.RewindBudget.cleanKillRefund;
+                float juiceScale = SickOfIt.Data.Difficulty.Juice; // the difficulty: Assist holds and earns more rewind, Hell Loop less
+                budget.Configure(setup.RewindBudget.startSeconds * juiceScale, setup.RewindBudget.maxSeconds * juiceScale, setup.RewindBudget.costPerSecond);
+                budget.ConfigureRewards(setup.RewindBudget.survivalSeconds, setup.RewindBudget.survivalBonus * juiceScale);
+                cleanKillRefund = setup.RewindBudget.cleanKillRefund * juiceScale;
                 cleanKillSeconds = setup.RewindBudget.cleanKillSeconds;
             }
             Perks = new HeroPerks(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             if (playerController != null)
+            {
                 playerController.VolleyScale = Perks.RollVolleyScale;
+                playerController.AimAssist = AssistAim;
+                HitboxDot.Attach(playerController);
+            }
             Upgrades = new UpgradeSystem(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             Style = new StyleSystem(this);
             if (replayKind != ReplayKind.None)

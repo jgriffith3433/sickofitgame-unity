@@ -630,8 +630,13 @@ namespace SickOfIt.Gameplay
             }
         }
 
+        /// <summary>The opacity of the last full-screen flash started, after the accessibility setting (the playtest reads it).</summary>
+        public float LastFlashAlpha => flashColor.a;
+
         public void Flash(Color color, float duration)
         {
+            if (SickOfIt.Data.GameSettings.ReducedFlash)
+                color.a *= 0.25f;
             flashColor = color;
             flashDuration = Mathf.Max(0.01f, duration);
             flashEndsAt = Time.unscaledTime + flashDuration;

@@ -185,6 +185,9 @@ Assets/GameConfig/
   a script's `playMusic`; `musicLayer` telemetry). Stingers are audio.json sounds: event `weaponSting` (first find of a weapon) and `stingSound` on each `ui/theme.json`
   grade. `Tools/Audio/music_manifest.json` lists the 34 tracks still to make (stand-ins play meanwhile; `python3 Tools/Audio/music_manifest.py --check --price`): replace
   a stand-in's path with the made file. Playtest `music-layers` (~3 min).
+- **Difficulty and accessibility** (Docs/Story.md "How sick of it are you?"): `Data/Difficulty.cs` (Assist/Normal/Hard/Hell Loop, Normal = all 1): New Game opens `SettingsPanel.ShowDifficulty` first (`MainMenuManager.StartNewGame` runs after the pick); the numbers
+  act in `Spawning.Fire` (enemy shot speed), the `shoot` ability (density), `Entity.Damage` (`Difficulty.ScaleHit`, keyed on the shot's serial, never a random stream) and `GameplayWorld`'s rewind budget setup. Accessibility is `GameSettings` (`BulletOutlines`, `HighContrastBullets`, `ReducedFlash`, `ReducedShake`, `HitboxDot`,
+  `AimAssist`; page `SettingsPanel.ShowAccessibility`); `BulletReadability`/`HitboxDot` draw, `GameplayWorld.AssistAim` -> `PlayerController.AimAssist` bends shots inside `AimVolley`. Every playtest New Game click goes through `ClickNewGame` (picks Normal). Playtest `difficulty` (~10 min).
 - **Style** (Docs/Story.md "Style"): `game.json` `style` (`StyleConfig`) + `Gameplay/Core/StyleSystem.cs`: a hostile shot (an `Enemy` entity with a `projectile` ability) that passes within
   `grazeDistance` of the hero and moves away without hitting is a graze (`Entity.GapTo`), counted in the world counter `grazes`; the meter, streak, tier and the shots watched are saved
   state (rewind takes credit back, `grazeUndone` telemetry), payouts (diamonds, `RewindBudget.Add`) and lines are keyed on the graze count through `TryGrantOnce` so a replay never pays or speaks

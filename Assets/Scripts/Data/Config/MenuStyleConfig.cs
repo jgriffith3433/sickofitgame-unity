@@ -465,6 +465,16 @@ namespace SickOfIt.Data.Config
         public string voiceVolume = "Voices";
         public string screenShake = "Screen Shake";
         public string hints = "Hints";
+        public string accessibility = "Accessibility";
+        public string accessibilityTitle = "Accessibility";
+        public string bulletOutlines = "Bullet Outlines";
+        public string highContrastBullets = "High-Contrast Bullets";
+        public string reducedFlash = "Reduced Flash";
+        public string reducedShake = "Reduced Shake";
+        public string hitboxDot = "Hitbox Dot";
+        public string aimAssist = "Aim Assist";
+        public string difficultyTitle = "Pick Your Hell";
+        public string difficultyBack = "Back";
         public string on = "On";
         public string off = "Off";
         public string done = "Done";

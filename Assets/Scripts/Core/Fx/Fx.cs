@@ -15,6 +15,8 @@ namespace SickOfIt.Core.Fx
         /// <summary>A circle that pops out and fades (muzzle flash, hit, death pop).</summary>
         public static void Flash(Vector2 at, Color color, float size, float life = 0.12f)
         {
+            if (SickOfIt.Data.GameSettings.ReducedFlash)
+                color.a *= 0.3f; // bright pops of light dimmed (accessibility)
             var runner = FxRunner.Get();
             if (runner != null)
                 runner.Spawn(at, Vector2.zero, color, size * 0.4f, size, life, 0f, MenuShape.Circle);

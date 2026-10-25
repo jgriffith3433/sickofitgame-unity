@@ -2498,3 +2498,14 @@ Port the Dose Of Destruction pipeline (`C:\Projects\doseofdestructionwebsite`, s
 - **Maps:** each Circle gets a painted backdrop and props (Qwen, two passes) plus the existing video loops.
 - **Agent-first:** a request like "make the Lurker" should be one config entry (description, poses, clips) and a
   command that queues the GPU jobs, builds sheets and writes the entity's animator, with a preview to check.
+
+## How sick of it are you? (difficulty and accessibility)
+
+New Game asks first, on a card called *Pick Your Hell*: **Assist**, **Normal**, **Hard**, **Hell Loop** (2026-10-25). It is the hero's mood, not a
+story fork: the same Hell, the same lines. Normal is the bullet hell as designed and changes nothing. The pick scales four things for a whole play
+(`Data/Difficulty.cs`; saved in PlayerPrefs `Difficulty`, changed only by the next New Game): how fast hostile shots fly (x0.8 / 1 / 1.15 / 1.3), how
+often enemies shoot (density x0.75 / 1 / 1.25 / 1.5, on `shoot` abilities), how hard a hit lands on the hero (x0.5 / 1 / 1.5 / 2, a whole number of hearts,
+the fraction paid by a roll that belongs to the shot, so a rewind replays it; pits and lava are not scaled) and rewind juice held and earned
+(x1.5 / 1 / 0.75 / 0.5). Assist also turns Aim Assist on. Settings > Accessibility holds six toggles, each saved at once: bullet outlines, high-contrast
+bullets (one hot colour with an ink rim), reduced flash, reduced shake, a hitbox ring and dot on the hero, aim assist (a shot aimed within 9 degrees of an
+enemy bends most of the way onto it). `BulletReadability`, `HitboxDot` (`Gameplay/Presentation/AccessibilityVisuals.cs`) are presentation only. Playtest `difficulty`.

@@ -251,6 +251,13 @@ namespace SickOfIt.Core.Progression
         private void OnNewGameClicked()
         {
             if (isTransitioning) return;
+            // New Game asks how sick of it he is first (Docs/Story.md "How sick of it are you?"); the pick is saved, then the game starts.
+            SettingsPanel.ShowDifficulty(menu, _ => StartNewGame(), null);
+        }
+
+        private void StartNewGame()
+        {
+            if (isTransitioning) return;
             isTransitioning = true;
 
             Picked("new_game");
