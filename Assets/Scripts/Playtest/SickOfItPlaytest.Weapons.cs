@@ -180,6 +180,7 @@ namespace SickOfIt.Playtest
                 float switched1 = clock.Time;
                 WeaponCheck("keyboard switch", weapons.CurrentId == "fists", $"equipped {weapons.CurrentId} after Q");
                 WeaponCheck("hud shows fists", hud.WeaponText.ToUpperInvariant().Contains("FISTS"), $"the weapon button reads \"{hud.WeaponText}\"");
+                WeaponCheck("hud plays the switch animation", hud.WeaponSwaps >= 1, $"{hud.WeaponSwaps} switch animation(s) played, the last {hud.WeaponSwapAge:0.0} s ago");
                 input.SetAim(aim);
                 yield return WaitReal(0.3f);
                 float fistGuide = guide != null && guide.Visible ? guide.Length : 0f;

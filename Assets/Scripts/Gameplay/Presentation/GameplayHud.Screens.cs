@@ -97,8 +97,7 @@ namespace SickOfIt.Gameplay
             else
             {
                 // Hide at once: Destroy waits for the end of the frame, and the title must never outlive the resume.
-                pauseRoot.SetActive(false);
-                Destroy(pauseRoot);
+                PanelAnim.CloseAndDestroy(pauseRoot);
                 pauseRoot = null;
                 if (settingsRoot != null)
                 {
@@ -212,13 +211,13 @@ namespace SickOfIt.Gameplay
                 out _, Mathf.Min(theme.title.fontSize, 130f), menu.TitleFont, theme.titleEntrance,
                 new MenuMotion { type = MenuMotionType.Wobble, amount = 1.2f, speed = 0.4f }, -3f);
 
-            var stats = new List<(string label, string value)>
+            var stats = new List<(string label, string value, int amount, Func<int, string> format)>
             {
-                (Texts.resultsTime, FormatTime(summary.duration)),
-                (Texts.resultsKills, summary.kills.ToString()),
-                (Texts.resultsHits, summary.playerHits.ToString()),
-                (Texts.resultsRewinds, summary.rewinds.ToString()),
-                (Texts.resultsDiamonds, "♦ " + diamondsGained),
+                (Texts.resultsTime, FormatTime(summary.duration), Mathf.Max(0, Mathf.FloorToInt(summary.duration)), s => FormatTime(s)),
+                (Texts.resultsKills, summary.kills.ToString(), summary.kills, s => s.ToString()),
+                (Texts.resultsHits, summary.playerHits.ToString(), summary.playerHits, s => s.ToString()),
+                (Texts.resultsRewinds, summary.rewinds.ToString(), summary.rewinds, s => s.ToString()),
+                (Texts.resultsDiamonds, "♦ " + diamondsGained, diamondsGained, s => "♦ " + s),
             };
             // Landscape: the stats on the left, the grade beside them. Portrait: stats on top, grade under them.
             var screens = Screens;
@@ -238,6 +237,10 @@ namespace SickOfIt.Gameplay
                 value.alignment = TextAlignmentOptions.MidlineRight;
                 value.enableVertexGradient = false;
                 value.color = theme.accent;
+                // The numbers count up one row after another once the screen is in.
+                var ticker = NumberTicker.On(value, stats[i].format);
+                ticker.Snap(0);
+                ticker.CountTo(stats[i].amount, 0.7f, 0.55f + i * 0.14f);
             }
 
             // The grade: a stamped starburst that slams in after the stats.
@@ -271,12 +274,26 @@ namespace SickOfIt.Gameplay
             go.size = new Vector2(420f, 100f);
             menu.AddButtonAt(new Vector2(0.5f, 0.1f), Vector2.zero, Texts.continueText, go, () =>
             {
-                Destroy(resultsRoot);
-                resultsRoot = null;
-                Time.timeScale = 1f;
-                GameClock.Instance?.Resume();
-                onContinue?.Invoke();
+                if (!continuing)
+                    StartCoroutine(ContinueThroughCover(onContinue));
             }, inner, screens.resultsContinue);
+        }
+
+        bool continuing;
+
+        /// <summary>The screen transition between floors: the results fade out, the screen closes on the floor's number, then the next scene opens it.</summary>
+        System.Collections.IEnumerator ContinueThroughCover(Action onContinue)
+        {
+            continuing = true;
+            PanelAnim.CloseAndDestroy(resultsRoot);
+            string label = world.Stage != null && world.Stage.HasFloors ? string.Format(Texts.floorFormat ?? "FLOOR {0}", world.Stage.Floor) : "";
+            ScreenTransition.Cover(label);
+            yield return new WaitForSecondsRealtime(ScreenTransition.CoverSeconds + 0.05f);
+            resultsRoot = null;
+            continuing = false;
+            Time.timeScale = 1f;
+            GameClock.Instance?.Resume();
+            onContinue?.Invoke();
         }
 
         float gradeSoundAt = -1f;

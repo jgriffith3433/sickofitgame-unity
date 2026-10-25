@@ -68,7 +68,7 @@ namespace SickOfIt.Core.UI.Menus
                     return;
                 Sfx.Play(Sfx.Events.uiBack);
                 menu.Back = previousBack;
-                UnityEngine.Object.Destroy(overlay.Root);
+                Overlay.Close(overlay.Root);
                 onClosed?.Invoke();
             }
 
@@ -161,7 +161,11 @@ namespace SickOfIt.Core.UI.Menus
             var inner = MenuGraphics.NewRect("SafeArea", image.transform);
             MenuGraphics.Fill(inner);
             inner.gameObject.AddComponent<MenuSafeArea>();
+            PanelAnim.Add(image.gameObject, inner);
             return new Overlay { Root = image.gameObject, Inner = inner };
         }
+
+        /// <summary>Closes an overlay with a quick fade (it is destroyed when the fade ends).</summary>
+        public static void Close(GameObject root) => PanelAnim.CloseAndDestroy(root);
     }
 }
