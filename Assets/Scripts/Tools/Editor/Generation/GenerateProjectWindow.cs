@@ -192,6 +192,40 @@ namespace SickOfIt.Tools.Editor.Generation
                 EditorApplication.Exit(failed == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// Batch mode: bakes one clip from its source mp4 at its own rate:
+        /// -executeMethod SickOfIt.Tools.Editor.Generation.GenerateProjectWindow.RegenerateClipSheets -clip Video3 -fps 12
+        /// </summary>
+        public static void RegenerateClipSheets()
+        {
+            bool ok = false;
+            try
+            {
+                var args = System.Environment.GetCommandLineArgs();
+                string clip = null;
+                float fps = 0f;
+                for (int i = 0; i < args.Length - 1; i++)
+                {
+                    if (args[i] == "-clip")
+                        clip = args[i + 1];
+                    else if (args[i] == "-fps")
+                        float.TryParse(args[i + 1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out fps);
+                }
+
+                if (string.IsNullOrEmpty(clip))
+                    Debug.LogError("[GenerateProject] RegenerateClipSheets needs -clip <name> (and -fps <rate>).");
+                else
+                    ok = VideoSpriteSheetBaker.RegenerateClip(LoadGameDefinition(), clip, fps);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogException(e);
+            }
+
+            if (Application.isBatchMode)
+                EditorApplication.Exit(ok ? 0 : 1);
+        }
+
         static GameDefinition LoadGameDefinition()
         {
             string[] guids = AssetDatabase.FindAssets("t:GameDefinition");

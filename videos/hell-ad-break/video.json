@@ -1,22 +1,39 @@
 {
  "slug": "hell-ad-break",
- "stage": "animatic",
+ "stage": "final",
  "cast": {
   "Hero": {
    "voice": "DzkD7I4tf5i3KSaB4cz5",
-   "ref": "Assets/Art/Sprites/Player/Shout.png"
+   "ref": "Assets/Art/Sprites/Player/Shout.png cell 0 (on flat grey)"
   },
   "Yooba": {
    "voice": "EdDvd8GSdCyZwUcsPawi",
-   "ref": "Assets/Art/Yooba/yooba_talk.png"
+   "ref": "Assets/Art/Yooba/yooba_talk.png cell 0 (on flat grey)"
   },
   "Announcer": {
-   "voice": "1xynpTfy7I462pPrU2kL"
+   "voice": "1xynpTfy7I462pPrU2kL",
+   "ref": "asset a_9fe39c547c00c53e (a red horned showman host, made for this film)"
   }
  },
  "tableRead": "j_35570e5fb28c (a_ad2035a94bc4a896); stems a_e6c89ee75a6d54eb a_512115fa55c7d071 a_3b949655263a47e3 a_4d1ca5e2a34b2191 a_5996ad8ca7e66abc a_3febb8353c7d7191 a_b753c82b2b35a394",
- "file": "videos/hell-ad-break/out/animatic.mp4",
- "seconds": 30.2,
- "criticNote": "not run: no-GPU animatic; critic once the Lightning scenes are approved",
- "build": "build_animatic.py"
+ "file": "videos/hell-ad-break/out/cut.mp4",
+ "seconds": 29.71,
+ "criticNote": "video.review (Gemini) v1 6.2 fail (story 6.5, pacing 5.8, voices 6.4, lipsync 5.7, movement 5.2, consistency 6, sound 5.6); after the cheap fixes v2 6.2 fail (story 6.4, pacing 6.3, voices 6.5, lipsync 5.4, movement 5, consistency 6.2, sound 6.1). Left: the hero stands frozen in scene A's wide (5.5-11.5 s), Yooba's lips drift on 'lightly swallowed' (scene B), the cut into ACT NOW is clipped (22.8 s). Those need re-takes of the scenes (about $0.8-0.9 each), over the approved $1.55: J's call.",
+ "build": "build_final.sh",
+ "poster": "videos/hell-ad-break/out/poster.png",
+ "scenes": {
+  "A": "a_28f4c349b85110db",
+  "B": "a_0706f3f9e4c25c84",
+  "C": "a_f3642b1500251181",
+  "announcerRef": "a_9fe39c547c00c53e",
+  "setRef": "a_9bd1f32a05980a09"
+ },
+ "gen": {
+  "jobs": [
+   "j_57262b9eb2bf",
+   "j_7077c1fc9db6",
+   "j_6aff6f5c236d"
+  ],
+  "usd": 2.51
+ }
 }
