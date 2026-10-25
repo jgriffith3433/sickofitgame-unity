@@ -4,6 +4,7 @@
   "references": [
     "SickOfIt.Json",
     "SickOfIt.Data",
+    "SickOfIt.Core",
     "SickOfIt.Tools.Editor",
     "SickOfIt.Gameplay",
     "UnityEngine.TestRunner",

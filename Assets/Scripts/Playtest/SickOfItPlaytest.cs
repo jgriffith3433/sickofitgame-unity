@@ -755,6 +755,10 @@ namespace SickOfIt.Playtest
                 list.Add(new PlaytestScenario(BystanderFloorsId, $"Bystanders on the floors ({bystanderFloors.Count} floors, {PathRange(bystanderFloors)}; Docs/Story.md \"Bystanders on the floors\"): each opened directly (a setup shortcut) and played by the bot through real input. " +
                     "Damned souls ahead of him (a hawker, a heckler, a hand-over soul, a hiding soul, a cheering soul) turn, speak a voiced subtitle, flinch from his shots and step back; a hawker gives a free sample, a giver hands him a loop shard, a heckler is passed by a stray shot. " +
                     "A `bystander-floor` event per reaction (signal by:<kind>:<what>), and the closing check counts the floors that reacted, the kinds and the three scripted hero interactions", PathRunSeconds(bystanderFloors), "full", "levels"));
+            list.Add(new PlaytestScenario(RewindJuiceId, "Longer, more rewarding rewind (Docs/GameplayCookbook.md \"The arcade loop\"): Level 1 loaded directly with the shop reset (a setup shortcut): " +
+                "the new game's juice must be 10 s (it was 3). Then Yooba's rewind goods are bought through the shop's own purchase (diamonds given first, a setup shortcut: Loop Jar x5, Bottomless Jar x2, Quick Unwind x3) " +
+                "and Level 1 loads again: the cap must reach 24 s and the rewind runs 75% faster. The bot plays through real input until a clean kill pays juice back: the juice goes up by the refund and the HUD floats " +
+                "\"CLEAN KILL +0.5s\". Also logs the SURVIVED bonus if a death-rewind happens. Reports the history window. check, juice events", RewindJuiceSeconds, "level"));
             list.Add(new PlaytestScenario(BystanderId, $"A bystander in a scene (Docs/GameplayCookbook.md \"Bystanders\"): the scene \"{BystanderScene}\" on level {BystanderLevel}'s stage (setup shortcut), " +
                 "played through real input. A neutral damned soul stands behind the hero looking away. A scene walks it (walkEntityTo: it walks toward him and faces the way it goes), " +
                 "turns it away (faceEntity) and plays its Hiccup animation (playEntityAnimation). He walks up (D); inside 4.5 units it turns to him and speaks a subtitle. An imp appears " +
@@ -1109,6 +1113,8 @@ namespace SickOfIt.Playtest
                 yield return session.WeaponsRun();
             else if (id == WeaponDropsId)
                 yield return session.WeaponDropsRun();
+            else if (id == RewindJuiceId)
+                yield return session.RewindJuiceRun();
             else if (id == BystanderId)
                 yield return session.BystanderRun();
             else if (id == BystanderFloorsId)
@@ -1283,6 +1289,7 @@ namespace SickOfIt.Playtest
                     Run.Event("rewind-perf", $"playing: {forward}");
                     Run.Event("rewind-perf", $"rewinding: {rewinding}");
                     Run.Event("rewind-perf", $"just after a rewind: {after}, longest clock step {RewindPerf.WorstStepAfterRewind * 1000f:0.0} ms");
+                    Run.Event("rewind-perf", $"history window {GameDefinition.Instance.rewindMaxHistorySeconds:0} s every {GameDefinition.Instance.rewindRecordInterval:0.00} s, juice start {GameDefinition.Instance.rewindBudget.startSeconds:0} s");
                     Run.Event("rewind-perf", $"{RewindPerf.Rewindables} rewindables ({RewindPerf.ActiveRewindables} on) at the last rewind, longest history " +
                                              $"{RewindPerf.LongestHistory} snapshots");
                 }

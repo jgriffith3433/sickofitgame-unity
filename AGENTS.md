@@ -79,6 +79,9 @@ Assets/GameConfig/
   playtest compares them. Right after a rewind stops, `GameClock` clamps the next 3 frames (and Unity's
   `maximumDeltaTime`) to 1/30 s, so the heavy stop frame can't run unseen fixed steps that kill the hero.
 - Content can reference only assets that some config uses (the importer builds `GameDefinition.assetRegistry`).
+- **Rewind juice** (cookbook "The arcade loop"): 10 s at the start and as the base cap; Loop Jar x5 + Bottomless Jar x2 + Déjà Vu x3 reach 30 s (= the 30 s history, `SimHistory` holds 1024 snapshots = 51 s).
+  Clean kills (`rewindBudget.cleanKillRefund`, hero unhurt `cleanKillSeconds`; `GameplayWorld.PayCleanKill`, `lastHeroHurtAt` saved) and living `survivalSeconds` after a death-rewind
+  (`RewindBudget.ArmSurvival`) pay juice through `RewindBudget.Reward`; the HUD floats the label. Shop `RewindSpeed` (Quick Unwind). Playtest `rewind-juice`.
 - **Arcade loop**: rewind is limited by juice (`game.json` `rewindBudget`, `RewindBudget`), refilled by `rewindOrb` drops;
   the HUD progress bar shows level progress and juice; levels end with `offerUpgrades` (see the cookbook). Rewards are
   paid once per play via `GameplayWorld.TryGrantOnce`, never re-paid by a rewind.

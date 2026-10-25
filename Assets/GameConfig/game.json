@@ -41,9 +41,13 @@
   "rewindMaxHistorySeconds": 30.0,
   "rewindBudget": {
     "enabled": true,
-    "startSeconds": 3.0,
-    "maxSeconds": 5.0,
-    "costPerSecond": 1.0
+    "startSeconds": 10.0,
+    "maxSeconds": 10.0,
+    "costPerSecond": 1.0,
+    "cleanKillRefund": 0.5,
+    "cleanKillSeconds": 3.0,
+    "survivalSeconds": 6.0,
+    "survivalBonus": 3.0
   },
   "levelUIPrefab": "Prefabs/MobileController.prefab",
   "videoUIPrefab": "Prefabs/MobileController.prefab",

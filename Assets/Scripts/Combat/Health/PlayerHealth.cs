@@ -176,6 +176,7 @@ namespace SickOfIt.Combat.Health
                 return;
 
             deathPending = true;
+            SickOfIt.Core.Rewind.RewindBudget.Instance?.DisarmSurvival();
             onDeath?.Invoke();
 
             // Play death SFX via PlayerController
@@ -243,6 +244,7 @@ namespace SickOfIt.Combat.Health
         private void CancelDeath()
         {
             deathPending = false;
+            SickOfIt.Core.Rewind.RewindBudget.Instance?.ArmSurvival();
             DeathTimeLeft = -1f;
             deathUndoGraceTimer = DeathUndoGraceDuration;
             invincibilityTimer = Mathf.Max(invincibilityTimer, DeathUndoGraceDuration);
