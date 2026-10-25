@@ -605,6 +605,7 @@ namespace SickOfIt.Core.Input
             HandleFiring();
             UpdateRotationTarget();
             UpdateMovePose();
+            UpdateUnarmedPose();
             UpdateAnimator();
             UpdateShadow();
         }
@@ -1597,6 +1598,54 @@ namespace SickOfIt.Core.Input
             return true;
         }
 
+        // With the fists equipped he has no launcher in his hands: the Unarmed* locomotion states (player.json; stand-in sheets until
+        // the Hawkes Gen clips are made) replace Idle/Walk/Jump/Fall, and each swing plays its combo step's Punch1/2/3 clip, stretched
+        // over the swing so its middle falls on the hit (PlayerWeapons times the swing; its state is rewound, so this follows it).
+        private static readonly string[] PunchStates = { "Punch1", "Punch2", "Punch3" };
+        private string unarmedPose;
+        private float unarmedSwingStart = -1f;
+
+        /// <summary>The unarmed state playing now (UnarmedIdle/Walk/Jump/Fall, Punch1-3) or null while he holds a gun; a playtest reads it.</summary>
+        public string UnarmedPose => unarmedPose;
+
+        private void UpdateUnarmedPose()
+        {
+            string want = null;
+            float swingStart = -1f, swingHit = 0f, swingEnd = 0f;
+            if (animator != null && !IsClimbing && heroClip == null && movePose == null
+                && Armory != null && Armory.TryGetCurrent(out var weapon) && weapon.melee)
+            {
+                float now = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+                if (Armory.Swinging(now))
+                {
+                    Armory.SwingTimes(out swingStart, out swingHit, out swingEnd);
+                    want = PunchStates[Mathf.Clamp(Armory.SwingStep, 0, PunchStates.Length - 1)];
+                }
+                else if (!isGrounded)
+                    want = rb != null && rb.linearVelocity.y * gravitySign > 0.1f ? "UnarmedJump" : "UnarmedFall";
+                else
+                    want = IsWalkingOnGround() ? "UnarmedWalk" : "UnarmedIdle";
+            }
+            if (want == unarmedPose && swingStart == unarmedSwingStart)
+                return;
+            bool wasUnarmed = unarmedPose != null;
+            unarmedPose = want;
+            unarmedSwingStart = swingStart;
+            if (want == null)
+            {
+                if (wasUnarmed && animator != null && heroClip == null && movePose == null && !IsClimbing)
+                    PlayAnimatorState(isGrounded ? "Idle" : "Fall");
+                return;
+            }
+            if (!PlayAnimatorState(want))
+            {
+                unarmedPose = null;
+                return;
+            }
+            if (swingStart >= 0f && TryGetComponent(out PlayerSceneClip clip))
+                clip.FitTo(swingEnd - swingStart);
+        }
+
         // The Dash, WallSlide and WallJump clips (player.json states; stand-in sheets until the Hawkes Gen clips are made) play over the Animator while the move lasts.
         private void UpdateMovePose()
         {
@@ -1667,7 +1716,9 @@ namespace SickOfIt.Core.Input
             VolleysFired++;
             lastVolley.Clear();
             lastVolley.Add(direction.normalized);
-            PlayFireAnimation();
+            UpdateUnarmedPose();
+            if (unarmedPose == null)
+                PlayFireAnimation();
         }
 
         /// <summary>Switch weapon: Q or the mouse wheel on the keyboard, the gamepad's top button and left shoulder; the HUD's weapon button on touch.</summary>
@@ -1986,7 +2037,7 @@ namespace SickOfIt.Core.Input
                 UpdateClimbPose();
                 return;
             }
-            if (movePose != null)
+            if (movePose != null || unarmedPose != null)
             {
                 runFirePlaying = false;
                 return;

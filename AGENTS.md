@@ -165,6 +165,7 @@ Assets/GameConfig/
   between floors in `WeaponProgress` and cleared with the Grudges. Actions `giveWeapon` / `takeWeapon`. Switch: Q / wheel / gamepad /
   the HUD weapon button (`GameplayHud.Weapon.cs`, `hud.*.weapon` placement). The aim guide follows the weapon (`GuideLengthScale`).
   Playtest `weapons` (scene `weaponsTest`).
+  **The unarmed hero**: with a melee weapon equipped `PlayerController.UpdateUnarmedPose` plays player.json states `UnarmedIdle/Walk/Jump/Fall` instead of Idle/Walk/Jump/Fall, and each swing plays `Punch1/2/3` (its combo step, via `IPlayerArmory.Swinging/SwingStep/SwingTimes`), stretched over the swing by `PlayerSceneClip.FitTo` so the hit lands inside it. Sheets are stand-ins (Idle/Walk/Jump/Fall/Fire.png) until `art/hero.json` unarmed* and punch1-3 are generated (GPU, priced). Playtest `unarmed-hero` (`SickOfItPlaytest.UnarmedHero.cs`).
   **Found weapons, Floors 998-951** (Docs/Story.md "Weapons"): Floor 998 takes the launcher (`takeWeapon`, `takeAllWeapons`) and gives fists
   for Floors 998-994; weapons with a `pickup` (`spitfire`, `ricochetPistol`, `chainWhip`, `shotgun`, `boomerangHalo`, and the launcher's
   return on 994) are found on 993, 992, 991 (the Foreman), 954 and 951 (the Pile Keeper) and **unlocked for good**

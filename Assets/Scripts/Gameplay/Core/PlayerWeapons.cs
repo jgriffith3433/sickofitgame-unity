@@ -85,6 +85,7 @@ namespace SickOfIt.Gameplay
         public float SwingWindupProgress(float now) => hitAt > swingStart ? Mathf.Clamp01((now - swingStart) / (hitAt - swingStart)) : 1f;
         public Vector2 SwingDirection => new Vector2(swingDirX, swingDirY);
         public int SwingStep => swingStep;
+        public void SwingTimes(out float start, out float hit, out float end) { start = swingStart; hit = hitAt; end = swingEnd; }
         public MeleeStepDef SwingStepDef
         {
             get
