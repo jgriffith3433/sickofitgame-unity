@@ -966,10 +966,33 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | `sparedWhelp` | The spared whelp | IX (Floor 891) | A whelp pinned under the broken road after the Road Breaker falls, squealing. Harmless. Let go, it owes him: the Spared Demon shortcut. | the whelp's art |
 | `roadSlab`, `settleSlab`, `splitSlab`, `risingSlab`, `seesawSlab`, `roadCreep` | The road's pieces | IX | The Cracked Road itself: solid slabs, slabs settling into the Rift, slabs splitting apart, slabs the Rift heaves up, slabs balanced on spire tips, road sliding off the spires (LevelDesign.md section 6). | `Art/Climb/Road*` (Hawkes Gen, 2026-10-19) |
 | `spireShard`, `shard`, `brimstoneVent` | Spire shards, brimstone vents (hazards) | IX | The spires shedding (a glowing seam, then a shard), and the cracks breathing fire on a beat (a glowing crack, then a column). | the slag drip's and the geyser's art, tinted |
+| `ricochetImp`, `ricochetEmber` | Ricochet imp | none yet (test bench) | An imp that throws Hell's habit: an ember that doesn't stop. Nothing in Hell is allowed to just end, so its ember bounces off the floor three times before it gives up (*Hell's tricks*). Throws slow, from above, so the bounce can be read. | the imp's art, tinted warm; the ember is the shared `Fireball` sheet |
+| `blinkImp`, `blinkMark` | Blink imp | none yet (test bench) | An imp that slips through the seams of Hell's loop, the way the damned hiccup, but on purpose. It shows a violet mark next to the hero, stands still for 0.7 s, then is there. Not damned: no loop shards. | the imp's art, tinted violet |
+| `bulwarkImp` | Bulwark imp | none yet (test bench) | An imp that carries a slab of slag in front of it (a bar of light on its facing side): shots from the front are spent on the slab. It paces; when it turns away, its back is bare. The first enemy that makes the hero move to shoot. | the imp's art, big and tinted steel |
+| `leadImp` | Lead imp | none yet (test bench) | An imp that has watched the hero run and throws where he is going, not where he is. Standing still beats it; running in a line is the worst thing to do. | the imp's art, tinted ice-blue |
+| `beamLens` | The Overlord's lens | none yet (test bench) | A shard of the lens the Overlord lasered the meadow with, left glowing on a ledge. A thin red line shows where it will start, 1.2 s later the beam sweeps across (a real beam: it stops at the floor and hurts where it crosses him). Not a creature: nothing to kill, only to get out of the way of. | `Fireball`, tinted and scaled |
 | `fighter` → Drooler | Drooler | V | Cave beast; Death2 is it eating you. | `Fighter*` (exists) |
 | `sentinel` → Lurker | Lurker | V | Crouching cave hunter; Death3. | `Level3Enemy*` (exists) |
 | `chaser`, `swarmer`, `exploder`, `sludge`, `slimeGlob`, `slimeSplat` | (retired) | none | Slime enemies. Not in any level once the levels are rebuilt. Keep the files until nothing references them. | slime |
 | `gunner`, `drone`, `sprayer`, `spinner`, `brute` | (to recast) | | Generic tinted variants from the arcade version. Each gets a Circle and a reason, or is retired. | tints |
+
+## Hell's tricks (five mechanics)
+
+Hell is repetition, so its monsters have a few tricks and use them forever. Five are built as JSON abilities so floors
+can mix them (2026-10-25). They live on the **mechanics test bench** (`content/scenes/mechanicsTest.json`, the
+`mechanics` playtest) until a Circle is given a reason to use them; rule 1 of *Rules for enemies* still holds: no
+floor gets one without a reason written here first.
+
+| Trick | In the story | Ability / option |
+|---|---|---|
+| **The ember that bounces** | Nothing in Hell is allowed to just end. A shot that hits the floor goes on, a few more times. | `projectile` `bounces` (Ricochet imp's ember) |
+| **The blink** | The loop hiccups and the imp is somewhere else. It always shows where first: a mark, a flash, 0.7 s. | `teleport` (Blink imp) |
+| **The front shield** | An imp with a slab of slag held out front. The hero beats it by being behind it, which means running, which Hell would rather he didn't. | `frontShield` (Bulwark imp) |
+| **The Overlord's lens** | His lasers, small: a warning line, then a sweep. Where the beam crosses the hero it hurts; the floor stops it. | `laserSweep` (the lens) |
+| **The lead** | An imp that has watched the hero run. | `shoot` `aim: "Predictive"` (Lead imp) |
+
+Tone: the announcer calls them out in the bench's banners (*"HELL'S EMBERS DON'T STOP. THEY BOUNCE."*), the hero says
+nothing, and no joke is about work.
 
 ## Rules for levels
 
@@ -1102,6 +1125,11 @@ This milestone (*Into Hell*, approved 2026-10-18) builds:
    script branches on; a taken shortcut's `nextLevel` replaces the stage's `nextLevelNumber`, the run goes on from it,
    and `ShortcutProgress` (Data) keeps it for the Shaft's dotted jump (`ShaftStop.ShortcutFrom`/`ShortcutTo`). The
    first one is the Old Stair's (`Level14.json`, level 62, Floor 871 to 841). Playtest: `shortcut`.
+
+10. **Hell's tricks** (built 2026-10-25; see *Hell's tricks*; recipe: GameplayCookbook "Bouncing shots, a blink, a front shield, a sweeping laser, predictive aim"):
+   `projectile.bounces`, the `teleport`, `frontShield` and `laserSweep` abilities (`Gameplay/Content/Mechanics.cs`) and `Aim.Predictive`.
+   One test enemy each (`ricochetImp`, `blinkImp`, `bulwarkImp`, `beamLens`, `leadImp`), all on the `mechanicsTest` bench. Playtest: `mechanics`.
+   Not built: a shield that sends shots back (it only spends them), and their own art (the imps are tinted).
 
 ## On the website
 

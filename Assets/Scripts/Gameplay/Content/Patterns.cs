@@ -16,6 +16,7 @@ namespace SickOfIt.Gameplay.Content
         Left,
         Right,
         [Doc("A random direction each volley (deterministic).")] Random,
+        [Doc("Where the player will be when the shot gets there: leads his current velocity (needs the shot's speed; falls back to Player when no lead hits).")] Predictive,
     }
 
     /// <summary>One projectile to launch.</summary>

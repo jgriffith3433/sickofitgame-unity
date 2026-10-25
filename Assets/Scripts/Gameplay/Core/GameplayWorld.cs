@@ -658,6 +658,9 @@ namespace SickOfIt.Gameplay
             }
         }
 
+        /// <summary>The hero's velocity, for aiming that leads him.</summary>
+        public Vector2 PlayerVelocity => Player != null && Player.Body != null ? Player.Body.linearVelocity : Vector2.zero;
+
         /// <summary>Where shots aimed at the player should go: the upper body, not the feet.</summary>
         public Vector2 PlayerAimPoint
         {

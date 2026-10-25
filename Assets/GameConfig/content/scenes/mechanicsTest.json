@@ -1,0 +1,326 @@
+{
+  "schemaVersion": 1,
+  "seed": 7311,
+  "length": 150,
+  "objective": {
+    "text": "Hell's tricks, one at a time"
+  },
+  "phases": [
+    {
+      "name": "bounce",
+      "onEnter": [
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "HELL'S EMBERS DON'T STOP. THEY BOUNCE.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "ricochetImp",
+          "anchor": "Camera",
+          "at": [
+            4.5,
+            1.6
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "mech:bounce"
+        }
+      ],
+      "rules": [
+        {
+          "name": "bounce beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "goToPhase",
+              "phase": "blink"
+            }
+          ]
+        },
+        {
+          "name": "bounce took too long",
+          "when": {
+            "type": "after",
+            "seconds": 40
+          },
+          "do": [
+            {
+              "type": "goToPhase",
+              "phase": "blink"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "blink",
+      "onEnter": [
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "THE LOOP HICCUPS. THE IMP DOESN'T.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "blinkImp",
+          "anchor": "Camera",
+          "at": [
+            4.2,
+            -2.0
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "mech:blink"
+        }
+      ],
+      "rules": [
+        {
+          "name": "blink beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "goToPhase",
+              "phase": "shield"
+            }
+          ]
+        },
+        {
+          "name": "blink took too long",
+          "when": {
+            "type": "after",
+            "seconds": 45
+          },
+          "do": [
+            {
+              "type": "goToPhase",
+              "phase": "shield"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "shield",
+      "onEnter": [
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "A SLAG PLATE IN FRONT. HIS BACK IS ALL YOURS.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "bulwarkImp",
+          "anchor": "Camera",
+          "at": [
+            3.5,
+            -2.0
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "mech:shield"
+        }
+      ],
+      "rules": [
+        {
+          "name": "shield beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "goToPhase",
+              "phase": "lead"
+            }
+          ]
+        },
+        {
+          "name": "shield took too long",
+          "when": {
+            "type": "after",
+            "seconds": 50
+          },
+          "do": [
+            {
+              "type": "goToPhase",
+              "phase": "lead"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "lead",
+      "onEnter": [
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "HE KNOWS WHERE YOU'RE GOING.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "leadImp",
+          "anchor": "Camera",
+          "at": [
+            4.5,
+            -1.6
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "mech:lead"
+        }
+      ],
+      "rules": [
+        {
+          "name": "lead beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "goToPhase",
+              "phase": "laser"
+            }
+          ]
+        },
+        {
+          "name": "lead took too long",
+          "when": {
+            "type": "after",
+            "seconds": 40
+          },
+          "do": [
+            {
+              "type": "goToPhase",
+              "phase": "laser"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "laser",
+      "onEnter": [
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "THE OVERLORD'S LENS. EYES UP. THEN MOVE.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "beamLens",
+          "anchor": "Camera",
+          "at": [
+            3.4,
+            0.4
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": false
+        },
+        {
+          "type": "emit",
+          "signal": "mech:laser"
+        }
+      ],
+      "rules": [
+        {
+          "name": "two sweeps seen",
+          "when": {
+            "type": "after",
+            "seconds": 13
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "emit",
+              "signal": "mech:done"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

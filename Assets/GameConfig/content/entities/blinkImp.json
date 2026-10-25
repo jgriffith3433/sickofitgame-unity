@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "extends": "imp",
+  "health": 5,
+  "tags": ["imp", "blinkImp"],
+  "visual": {
+    "color": "#D2A8FF",
+    "fxColor": "#C58BFF"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "teleport",
+      "to": "NearPlayer",
+      "distance": 3.5,
+      "interval": 2.6,
+      "initialDelay": 0.8,
+      "telegraph": 0.7,
+      "marker": "blinkMark",
+      "flashColor": "#C58BFF",
+      "sound": "banner_whoosh"
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "speed": 3.4,
+      "aim": "Player",
+      "muzzle": [0.09, 0.09375],
+      "interval": 2.4,
+      "initialDelay": 1.8,
+      "damage": 1
+    }
+  ]
+}

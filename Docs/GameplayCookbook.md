@@ -333,6 +333,62 @@ comedic text beats (`showText` banners and subtitles, boss intros, upgrade descr
 { "schemaVersion": 1, "duration": 2, "modifiers": [ { "stat": "MoveSpeed", "multiply": 0.4 } ], "tint": "#66AAFF88" }
 ```
 
+## Bouncing shots, a blink, a front shield, a sweeping laser, predictive aim
+
+Five mechanics, all JSON, each with a test enemy in `content/entities/` and all on the test bench
+`content/scenes/mechanicsTest.json` (playtest `mechanics`). Story: Story.md, "Hell's tricks". Each is rewind-safe: every
+runtime field is in `SaveState`/`LoadState`, and what they draw is read back from that state every frame.
+
+**A bouncing shot** (`ricochetEmber`, thrown by `ricochetImp`): `projectile` takes `bounces` (how many times it
+mirrors its velocity off ground, walls and platforms before `dieOnSolid` applies), `bounceKeep` (speed kept per bounce)
+and `bounceSound`. It needs a body moved by velocity (the default Kinematic projectile), not a Dynamic one. Entities
+(stones, platforms made of entities) and the screen's edge don't bounce it; the level's own ground and walls do.
+
+```json
+{ "type": "projectile", "damage": 1, "dieOnSolid": true, "bounces": 3, "bounceKeep": 0.95, "bounceSound": "shaft_tick" }
+```
+
+**A blink** (`blinkImp`): `teleport` picks a spot, shows it for `telegraph` seconds (the body flashes; `marker` is an
+entity spawned there, give it a `lifetime` and `"team": "Neutral"` like `blinkMark`), then appears there. `to`:
+`NearPlayer` (`distance` to a side, or `behind` him), `Point` (`point`) or `Random` (anywhere in view that is clear).
+It stands still during the telegraph and skips the blink (tries again in a second) if the spot is inside the ground.
+
+```json
+{ "type": "teleport", "to": "NearPlayer", "distance": 3.5, "interval": 2.6, "telegraph": 0.7, "marker": "blinkMark", "sound": "banner_whoosh" }
+```
+
+**A front shield** (`bulwarkImp`): `frontShield` blocks damage that comes from the side the entity faces (`arc` is the
+half-width in degrees: 90 is the whole front half). A blocked shot is spent with a spark and the `blockSound`; a hit from
+behind counts as normal. Which way it faces is up to its other abilities (`patrol` and `move` face the way it walks,
+`faceTarget` always faces the hero, which makes it hard to get behind). `leak` lets a share of the damage through.
+It works for the hero's shots and for entity damage with a source (a blast's centre counts as where it came from).
+
+```json
+{ "type": "frontShield", "arc": 90, "blockSound": "chain_cut" }
+```
+
+**A sweeping laser** (`beamLens`): `laserSweep` shows a thin warning line for `warning` seconds (where the sweep
+starts: by default `sweepDegrees` centred on the hero's place when the warning began), then a beam of `width` turns
+`sweepDegrees` over `sweepTime`. The beam is a real segment from the muzzle that the first ground stops, and it hurts
+the hero where it crosses his collider (once per `hitInterval`). Standing still is the thing to fix. Give it
+`"shootable": false, "health": 0` for a lens that can't be shot, or health for a turret that can.
+
+```json
+{ "type": "laserSweep", "damage": 1, "interval": 5, "warning": 1.2, "sweepTime": 1.6, "sweepDegrees": 80, "length": 14 }
+```
+
+**Predictive aim** (`leadImp`): `"aim": "Predictive"` on `shoot`
+aims at where the hero will be when the shot gets there, leading his current velocity at the shot's `speed` (at most two
+seconds ahead; with no intercept, or a standing hero, it aims straight at him). Spreads and other patterns turn around
+that aim as usual.
+
+```json
+{ "type": "shoot", "projectile": "projectileEnemy", "speed": 5.5, "aim": "Predictive", "interval": 1.8 }
+```
+
+The telemetry says what happened: `bounce`, `shieldBlock`, `laser` (warning/sweep/end), `teleport` (telegraph/blink).
+Try them on the bench: `?playtest=mechanics` (the bot fights the five stations in turn; each beat is a `check` event).
+
 ## A different kind of level space
 
 `"world"` in the script: `"camera": "Follow"` with `boundsCenter`/`boundsSize` for a wider arena, `"Scroll"` with
