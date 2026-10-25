@@ -26,6 +26,7 @@ namespace SickOfIt.Combat.Health
         [SerializeField] private float invincibilityDuration = 0.5f;
         private const float DeathUndoGraceDuration = 1.25f;
         private float invincibilityTimer;
+        private float invincibilityBonus;
         private float deathUndoGraceTimer;
 
         [Header("Events")]
@@ -54,9 +55,9 @@ namespace SickOfIt.Combat.Health
             onHealthChanged?.Invoke(currentHealth);
         }
 
-        /// <summary>
-        /// Set invincibility timer directly (used by rewind system to restore i-frame state).
-        /// </summary>
+        /// <summary>Longer invincibility after each hit for this level (the Not Today Grudge); constant, so rewinds agree.</summary>
+        public void AddInvincibilityBonus(float seconds) => invincibilityBonus += Mathf.Max(0f, seconds);
+
         /// <summary>Raises (or lowers) maximum health mid-level, healing by <paramref name="heal"/>.</summary>
         public void SetMaxHealth(int max, int heal)
         {
@@ -65,6 +66,9 @@ namespace SickOfIt.Combat.Health
             onHealthChanged?.Invoke(currentHealth);
         }
 
+        /// <summary>
+        /// Set invincibility timer directly (used by rewind system to restore i-frame state).
+        /// </summary>
         public void SetInvincibilityTimer(float time)
         {
             invincibilityTimer = Mathf.Max(0f, time);
@@ -149,7 +153,7 @@ namespace SickOfIt.Combat.Health
             onHealthChanged?.Invoke(currentHealth);
 
             if (hasInvincibilityFrames)
-                invincibilityTimer = invincibilityDuration;
+                invincibilityTimer = invincibilityDuration + invincibilityBonus;
 
             // Play SFX via PlayerController
             if (controller != null)

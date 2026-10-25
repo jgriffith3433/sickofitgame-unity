@@ -24,7 +24,15 @@ namespace SickOfIt.Gameplay
             foreach (var pair in content.Effects.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateObject(content, pair.Value, content.SourceOf(pair.Value), "", null, null, issues, inSequence: false);
             foreach (var pair in content.Upgrades.OrderBy(p => p.Key, StringComparer.Ordinal))
+            {
                 ValidateObject(content, pair.Value, content.SourceOf(pair.Value), "", null, null, issues, inSequence: false);
+                foreach (string requirement in pair.Value.requires)
+                {
+                    string problem = SickOfIt.Data.Requirements.Check(requirement);
+                    if (problem != null)
+                        issues.Error(content.SourceOf(pair.Value), "requires", problem);
+                }
+            }
             foreach (var pair in content.Circles.OrderBy(p => p.Key, StringComparer.Ordinal))
                 ValidateCircle(content, pair.Value, issues);
             foreach (var pair in content.LevelScripts.OrderBy(p => p.Key, StringComparer.Ordinal))

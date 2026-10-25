@@ -335,6 +335,32 @@ namespace SickOfIt.Data
             }
         }
 
+        /// <summary>The shop's goods as the hero sees them: those whose <c>requires</c> hold, plus any he already owns.</summary>
+        public List<UpgradeDefinition> VisibleCatalog()
+        {
+            var list = new List<UpgradeDefinition>();
+            foreach (var upgrade in ShopCatalog)
+                if (upgrade != null && upgrade.IsForSale(GetUpgradeLevel(upgrade.id)))
+                    list.Add(upgrade);
+            return list;
+        }
+
+        /// <summary>Diamonds to buy every level of every good in the catalog (gated ones too), or only the ungated ones.</summary>
+        public static int TotalPrice(bool includeGated)
+        {
+            int total = 0;
+            foreach (var upgrade in ShopCatalog)
+            {
+                if (upgrade == null || upgrade.costsPerLevel == null || upgrade.costsPerLevel.Length == 0)
+                    continue;
+                if (!includeGated && upgrade.requires != null && upgrade.requires.Count > 0)
+                    continue;
+                for (int level = 0; level < upgrade.maxLevel; level++)
+                    total += upgrade.costsPerLevel[Mathf.Min(level, upgrade.costsPerLevel.Length - 1)];
+            }
+            return total;
+        }
+
         static string LevelKey(string id) => id == "extraJump" ? KEY_EXTRA_JUMPS_PURCHASED : string.Format(KEY_SHOP_LEVEL, id);
 
         /// <summary>How many levels of a shop upgrade the player owns.</summary>
@@ -477,6 +503,7 @@ namespace SickOfIt.Data
             }
             PlayerPrefs.DeleteKey(KEY_MAX_HEALTH);
             UpgradeProgress.Reset();
+            UnlockFlags.Reset();
 
             // Clear game progress data (level completions, video unlocks, highest level)
             for (int i = 1; i <= totalLevels; i++)

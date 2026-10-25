@@ -1311,6 +1311,32 @@ is proud of). His voice is `yooba` (designed for him: fast, wet, gurgling, a bit
   | Tummy-Dipped Shots | 15% more damage | every shot dipped in his stomach |
   | Loop Jar | +1 s of Déjà Vu (rewind) | a loop shard one of the damned dropped; he only keeps it in a jar |
   | Shiny Sniffer | diamonds come from farther away | a wobbly bit of Yooba that sniffs out diamonds |
+  | Double-Dipped Shots *(gated)* | a further 20% more damage | he only offers it to someone who has had the first dip twice (*Tummy-Dipped Shots*, level 2); back in the stomach they go |
+- **Goods that aren't on the counter yet** (2026-10-25): a good can carry a `requires` (`player.json`): until the hero
+  has what Yooba wants to see (a weapon unlocked, a story flag, another good bought to a level, a Grudge held, a level
+  cleared) it is *not on the counter at all*, not greyed out: Yooba doesn't show off what you can't use. The moment it
+  is met, the card appears. A hero who already owns a good always sees it (an older save loses nothing).
+- **Yooba's prices** (2026-10-25). Hell is repetition, and so is saving up: the shop now takes about **three times as
+  many floors** to empty as it did (diamond drops are unchanged; the prices went up). To buy every level of every good
+  used to take **655** diamonds; now it takes **1,705**, or **1,970** with *Double-Dipped Shots*. About 2.6x the old
+  prices on the old goods; with the new good on the counter, 3.0x the old total.
+
+  | Goods | Levels | Old prices | New prices | Old total | New total |
+  |---|---|---|---|---|---|
+  | Goo Plaster | 5 | 10, 20, 35, 55, 80 | 25, 55, 90, 145, 210 | 200 | 525 |
+  | Bouncy Soles | 2 | 15, 35 | 40, 90 | 50 | 130 |
+  | Slick Heels | 3 | 12, 25, 40 | 30, 65, 105 | 77 | 200 |
+  | Licked Trigger | 3 | 15, 30, 50 | 40, 80, 130 | 95 | 250 |
+  | Tummy-Dipped Shots | 3 | 20, 40, 70 | 50, 105, 180 | 130 | 335 |
+  | Loop Jar | 3 | 12, 25, 40 | 30, 65, 105 | 77 | 200 |
+  | Shiny Sniffer | 2 | 8, 18 | 20, 45 | 26 | 65 |
+  | Double-Dipped Shots *(gated)* | 2 | - | 100, 165 | - | 265 |
+  | **All** | | | | **655** | **1,705** (1,970 with the gated good) |
+
+  How many floors that is depends on how many diamonds a floor pays; the playtest reports the diamonds each level paid
+  (`level<n>.diamonds`) and the shop's total (`shop.totalPrice`, `shop.basePrice`), so the ratio can be read off any
+  run. Enemy `loot` chances and values are left alone on purpose (the unit of the economy is the diamond; changing
+  both sides at once hides which one moved); to slow the shop further, raise prices, to speed it up, raise `loot`.
 - He gossips, he counts, he is proud of his stomach. He is never scared for long and never mean. Slimes are
   villagers: nobody in the game ever fights him or his kind.
 
@@ -1393,7 +1419,7 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 |---|---|---|
 | **Rewind** (hold R) | **Déjà Vu.** Hell runs everything on a loop; the hero grabs the loop and pulls it backward. The floor is part of the loop too: a stone that sank comes back up, a ledge that fell is back in place, the lava drops to where it was. | The juice meter is "Déjà Vu". **Rewind orbs** are *loop shards* that drop only from the damned: souls stuck in Hell's loop, repeating a floor forever (in the Wastes, a damned soul on a ledge whose loop hiccups as the hero passes; deeper down, the Shades). Never from imps, cinders or guards. In a **scene** something bigger has hold of the loop (the portal's pull, a Warden's entrance), so he can't grab it: rewind is locked and the button says "Not now". |
 | **Death and runs** | Hell doesn't let you die; it sends you back to repeat the floors. "YOU OBVIOUSLY DIED." | A run restarts at the highest **Waystone** reached (the Landing, then the top of each Circle once its Warden is beaten); see *Waystones and runs*. Death videos are Hell's announcer gloating. |
-| **Between-level picks** (`content/upgrades`) | **Grudges.** Every floor gives the hero something new to be annoyed about, and spite is fuel. Lost when a run ends. | Titles are grudges: "Spite Rounds", "Short Fuse", "Not Today", "Déjà Vu". |
+| **Between-level picks** (`content/upgrades`) | **Grudges.** Every floor gives the hero something new to be annoyed about, and spite is fuel. Lost when a run ends. A Grudge can carry a `requires` too (not offered until met). | Titles are grudges: "Spite Rounds", "Short Fuse", "Not Today", "Déjà Vu". **Not Today** (`notToday`, built 2026-10-25): whatever hit him, he decides it is not today; after a hit he is untouchable for 0.5 s longer per level (2 levels). It is the Magma King's murmured *"Not today."*, taken as a motto. |
 | **Diamonds and the shop** | The village's diamonds, the portal fuel the imps stole; enemies drop them back. **Yooba** works them into the hero's gear between floors. Permanent. | Shop = Yooba. Shop upgrade names are things a village slime can make. |
 | **Floor counter and progress bar** | How far up you are. | Progress bar = floors left in the stage; markers = Warden, shortcut, milestone. |
 

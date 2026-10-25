@@ -83,6 +83,8 @@ namespace SickOfIt.Gameplay
             }
             if (def.rewindSecondsPerLevel > 0f)
                 RewindBudget.Instance?.RaiseMax(def.rewindSecondsPerLevel, fill: true);
+            if (def.invincibilitySecondsPerLevel > 0f)
+                health?.AddInvincibilityBonus(def.invincibilitySecondsPerLevel);
             // Max health is stored by RogueliteManager, so it is added only when picked (it already persists).
             if (picked && def.maxHealthPerLevel > 0)
             {
@@ -122,7 +124,7 @@ namespace SickOfIt.Gameplay
             var pool = (action.choices.Count > 0
                     ? action.choices.Select(id => world.Content.Upgrades.TryGetValue(id, out var d) ? d : null).Where(d => d != null)
                     : world.Content.Upgrades.Values.Where(d => d.weight > 0f))
-                .Where(d => !IsMaxed(d))
+                .Where(d => !IsMaxed(d) && Requirements.Met(d.requires))
                 .OrderBy(d => d.id, System.StringComparer.Ordinal)
                 .ToList();
             if (pool.Count == 0)

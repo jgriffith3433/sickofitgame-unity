@@ -401,6 +401,10 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   through a rewind and the pause (hidden), the mouse hovering and clicking; then the same with 2 levels of `spreadShot`
   (setup shortcut, 3 lines); then dead and in the `cutsceneTest` scene with the stick held (hidden); `check` events
   `aim-guide <beat>`; ~5 min),
+  `shop-gate` (Yooba's `requires` gate and the Not Today Grudge: an old save (raw PlayerPrefs, no unlock flags) keeps its purchase; the gated
+  Double-Dipped Shots is missing from the counter until Tummy-Dipped Shots is level 2, bought with real clicks, then shown; the shop's prices
+  as `economy` event and `shop.totalPrice`/`shop.basePrice` metrics; then the scene `content/scenes/grudgeTest.json` offers a Grudge pick that
+  must list Not Today; `check` events `shop-gate <beat>`; every level also reports `level<n>.diamonds`; ~2 min),
   `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game

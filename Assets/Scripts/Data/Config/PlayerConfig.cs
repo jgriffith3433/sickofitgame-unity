@@ -176,6 +176,11 @@ namespace SickOfIt.Data.Config
         public ShopEffect effect = ShopEffect.None;
         [Tooltip("How much each level adds: health points, air jumps, seconds of rewind, magnet range, or a fraction (0.1 = +10%) for speed, fire rate and damage.")]
         public float amountPerLevel = 1f;
+        [Tooltip("Hidden from Yooba's shop until every condition holds: flag:<id>, weapon:<id>, shop:<id>[:level], grudge:<id>[:level], level:<n> (Requirements). Empty = always for sale. A good already owned is never hidden.")]
+        public List<string> requires = new List<string>();
+
+        /// <summary>For sale: owned already (a save from before the gate keeps its goods) or every requirement met.</summary>
+        public bool IsForSale(int ownedLevel) => ownedLevel > 0 || SickOfIt.Data.Requirements.Met(requires);
 
         /// <summary>The effect, treating the original "extraJump" entry (written before effects existed) as ExtraJump.</summary>
         public ShopEffect Effect => effect == ShopEffect.None && id == "extraJump" ? ShopEffect.ExtraJump : effect;
