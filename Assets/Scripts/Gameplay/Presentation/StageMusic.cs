@@ -247,7 +247,7 @@ namespace SickOfIt.Gameplay
                 layer.Play();
                 layer.time = main.clip != null && main.clip.length > 0.1f ? main.time % Mathf.Max(layerClip.length - 0.05f, 0.1f) : 0f;
             }
-            else if (Mathf.Abs(layerClip.length - main.clip.length) < 0.05f && Mathf.Abs(layer.time - main.time) > LayerDriftSeconds)
+            else if (main.clip != null && Mathf.Abs(layerClip.length - main.clip.length) < 0.05f && Mathf.Abs(layer.time - main.time) > LayerDriftSeconds)
             {
                 layer.time = Mathf.Min(main.time, layerClip.length - 0.05f);
             }
@@ -263,7 +263,7 @@ namespace SickOfIt.Gameplay
 
         void Switch(AudioClip to, float toVolume, bool fromTop, string why)
         {
-            float at = main.time;
+            float at = main.clip != null ? main.time : 0f;
             if (main.clip != null && main.isPlaying)
             {
                 if (tail == null)
