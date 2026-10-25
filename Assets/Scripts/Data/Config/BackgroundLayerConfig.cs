@@ -52,10 +52,14 @@ namespace SickOfIt.Data.Config
         public int sortingOrder;
 
         [Header("Parallax")]
-        [Tooltip("Parallax multiplier (0 = static background, 1 = moves with camera)")]
-        public float parallaxFactor = 0f;
-        [Tooltip("If true, tile this layer horizontally for infinite scroll")]
+        [Tooltip("How much the layer follows the camera (ParallaxController): 1 = glued to the screen (the default), 0 = fixed in the world, " +
+                 "between = a far layer that drifts slowly the other way as the camera travels. A layer that follows less than 1 must be bigger than the " +
+                 "view (scale > 1) or tiled, or its edge would show; the controller keeps it covering the screen.")]
+        public float parallaxFactor = 1f;
+        [Tooltip("If true, tile this layer horizontally for infinite scroll (static sprites; the copies wrap around the camera)")]
         public bool tileHorizontally = false;
+        [Tooltip("If true, tile this layer vertically too (Up-travel stages)")]
+        public bool tileVertically = false;
 
         [Header("Sequence")]
         [Tooltip("When this layer appears, in seconds on the game clock (the same clock as the music). Negative means it plays from the start, stacked with the other layers.")]

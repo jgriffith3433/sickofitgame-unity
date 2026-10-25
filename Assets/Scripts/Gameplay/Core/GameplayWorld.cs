@@ -173,6 +173,8 @@ namespace SickOfIt.Gameplay
             Stage = new StageProgress(this, setup.Script);
             if (setup.Script != null)
                 Effects.BuildTrack(setup.Script, Stage.Circle);
+            if (setup.Script != null && string.IsNullOrEmpty(SceneId))
+                Ambience = CircleAmbience.Create(this, Stage.Circle);
 
             LevelLength = setup.Script != null && setup.Script.length > 0f ? setup.Script.length : Mathf.Max(1f, setup.LevelDuration);
             if (setup.RewindBudget != null && setup.RewindBudget.enabled)
@@ -772,6 +774,9 @@ namespace SickOfIt.Gameplay
         // =====================================================================
         // GEOMETRY
         // =====================================================================
+
+        /// <summary>The Circle's weather, depth layers and distant life (null without a Circle or without any).</summary>
+        public CircleAmbience Ambience { get; private set; }
 
         public Vector2 CameraCenter => Camera != null ? (Vector2)Effects.CameraBase : Vector2.zero;
 

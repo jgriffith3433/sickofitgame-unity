@@ -14,6 +14,105 @@
       "sequenceLoop": true
     }
   ],
+  "ambience": {
+    "depth": [
+      {
+        "name": "far arches",
+        "shape": "Block",
+        "color": "#1C28548C",
+        "size": [0.5, 3.0],
+        "sizeVariation": 0.5,
+        "parallax": [0.9, 0.9],
+        "spacing": [3.2, 0.0],
+        "chance": 0.5,
+        "baseY": -2.0,
+        "sortingOrder": -60
+      },
+      {
+        "name": "hanging stalactites",
+        "shape": "Spire",
+        "color": "#141C3C99",
+        "size": [1.1, 2.8],
+        "sizeVariation": 0.4,
+        "parallax": [0.7, 0.7],
+        "spacing": [3.8, 0.0],
+        "chance": 0.6,
+        "baseY": 4.2,
+        "hanging": true,
+        "sortingOrder": -55
+      }
+    ],
+    "weather": [
+      {
+        "name": "runes lifting off the walls",
+        "kind": "Runes",
+        "count": 20,
+        "color": "#6FD8FFCC",
+        "size": [0.14, 0.26],
+        "speed": [0.25, 0.6],
+        "wind": 0.1,
+        "sway": 0.5,
+        "parallax": 0.55
+      },
+      {
+        "name": "rune dust",
+        "kind": "Ash",
+        "count": 36,
+        "color": "#BFEFFF66",
+        "size": [0.03, 0.08],
+        "speed": [0.15, 0.4],
+        "wind": 0.15,
+        "sway": 0.4,
+        "parallax": 0.7
+      },
+      {
+        "name": "cold sparks",
+        "kind": "Sparks",
+        "count": 12,
+        "color": "#9FE8FFE6",
+        "size": [0.04, 0.08],
+        "speed": [0.5, 1.1],
+        "wind": 0.0,
+        "sway": 0.3,
+        "parallax": 0.4
+      }
+    ],
+    "life": [
+      {
+        "name": "watchers drifting in the void",
+        "behavior": "Flyer",
+        "shape": "Wisp",
+        "color": "#8FE3FF99",
+        "size": 0.6,
+        "speed": 1.0,
+        "height": [0.5, 0.9],
+        "interval": [8.0, 15.0],
+        "parallax": 0.9
+      },
+      {
+        "name": "a statue walking a far bridge",
+        "behavior": "Walker",
+        "shape": "Horned",
+        "color": "#1C2A54A0",
+        "size": 1.0,
+        "speed": 0.5,
+        "height": [0.1, 0.18],
+        "interval": [14.0, 24.0],
+        "parallax": 0.9
+      },
+      {
+        "name": "a wisp and the hound after it",
+        "behavior": "Chase",
+        "shape": "Wisp",
+        "color": "#6FD8FFB3",
+        "size": 0.4,
+        "speed": 2.2,
+        "height": [0.16, 0.3],
+        "interval": [20.0, 32.0],
+        "parallax": 0.93
+      }
+    ]
+  },
   "track": {
     "groundY": -2.5,
     "groundColor": "#0A0C18",

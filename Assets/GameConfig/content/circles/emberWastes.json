@@ -27,6 +27,106 @@
       "clipLength": 5.0
     }
   ],
+  "ambience": {
+    "depth": [
+      {
+        "name": "far slag ridges",
+        "shape": "Rock",
+        "color": "#1A0A0A99",
+        "size": [3.4, 1.6],
+        "sizeVariation": 0.4,
+        "parallax": [0.9, 0.9],
+        "spacing": [4.5, 0.0],
+        "chance": 0.8,
+        "baseY": -2.3,
+        "sortingOrder": -60
+      },
+      {
+        "name": "middle spires",
+        "shape": "Spire",
+        "color": "#10060799",
+        "size": [1.4, 3.6],
+        "sizeVariation": 0.35,
+        "parallax": [0.7, 0.7],
+        "spacing": [4.0, 6.0],
+        "chance": 0.55,
+        "baseY": -2.4,
+        "sortingOrder": -55
+      }
+    ],
+    "weather": [
+      {
+        "name": "ash",
+        "kind": "Ash",
+        "count": 40,
+        "color": "#B8A8A07A",
+        "size": [0.04, 0.1],
+        "speed": [0.25, 0.6],
+        "wind": -0.25,
+        "sway": 0.35,
+        "parallax": 0.6
+      },
+      {
+        "name": "sparks off the lava",
+        "kind": "Sparks",
+        "count": 26,
+        "color": "#FFB347E6",
+        "size": [0.05, 0.1],
+        "speed": [0.8, 1.8],
+        "wind": -0.1,
+        "sway": 0.25,
+        "parallax": 0.35
+      },
+      {
+        "name": "falling cinders",
+        "kind": "Cinders",
+        "count": 14,
+        "color": "#FF6A1FD9",
+        "size": [0.09, 0.18],
+        "speed": [0.9, 1.7],
+        "wind": -0.4,
+        "sway": 0.2,
+        "parallax": 0.45,
+        "fromFloor": 990
+      }
+    ],
+    "life": [
+      {
+        "name": "cinder bats",
+        "behavior": "Flyer",
+        "shape": "Wing",
+        "color": "#1A0808B3",
+        "size": 0.55,
+        "speed": 1.9,
+        "height": [0.55, 0.9],
+        "interval": [7.0, 13.0],
+        "parallax": 0.9
+      },
+      {
+        "name": "imps on the far ridge",
+        "behavior": "Walker",
+        "shape": "Figure",
+        "color": "#12080899",
+        "size": 0.5,
+        "speed": 0.9,
+        "height": [0.12, 0.2],
+        "interval": [9.0, 16.0],
+        "parallax": 0.88
+      },
+      {
+        "name": "a soul and what chases it",
+        "behavior": "Chase",
+        "shape": "Figure",
+        "color": "#0E060699",
+        "size": 0.4,
+        "speed": 2.1,
+        "height": [0.14, 0.24],
+        "interval": [18.0, 30.0],
+        "parallax": 0.92,
+        "fromFloor": 996
+      }
+    ]
+  },
   "track": {
     "groundY": -2.5,
     "groundColor": "#1A0D0B",
