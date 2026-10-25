@@ -75,8 +75,8 @@ namespace SickOfIt.Playtest
                     return null;
                 foreach (var s in states)
                 {
-                    if (s != null && s.stateName == state && !string.IsNullOrEmpty(s.spriteSheet))
-                        return System.IO.Path.GetFileNameWithoutExtension(s.spriteSheet);
+                    if (s != null && s.stateName == state && s.spriteSheet != null)
+                        return s.spriteSheet.name;
                 }
                 return null;
             }
