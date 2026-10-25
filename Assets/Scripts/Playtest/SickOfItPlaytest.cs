@@ -738,6 +738,9 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(MusicLayersId, $"The intensity music layer (Docs/Story.md \"Music\"): Floor 997 (level {MusicLayersLevel}) loaded directly (setup shortcut) and played by the bot through real input for 150 s of game time. " +
                 "The Circle's layer (a stand-in loop until the real stems are made, nothing is generated) must be silent on the empty floor, fade in as enemies and shots crowd the screen and fade out again as it empties. " +
                 "`musicLayer` events log its level (0-100%) and the crowd; each beat is a check event", MusicLayersSeconds, "level"));
+            list.Add(new PlaytestScenario(StyleId, $"Style (Docs/Story.md \"Style\"): level {StyleLevel} loaded directly and played by the bot through real input; the graze distance is widened (setup shortcut). " +
+                "A graze sparks (the meter pops and fills), a rewind right after one takes the credit back (graze count and meter fall; `graze-undone` event), the announcer and crowd lines fire on a streak (`style-line`), " +
+                "tiers pay (`style-payout`); then the results screen is opened with the hits zeroed (setup shortcut): a rank S/A/B/C (`rank` event), saved as the floor's best, and the no-hit line said. Each beat is a check event", StyleSeconds, "level"));
             list.Add(new PlaytestScenario(EnemyHintsId, $"The hero sizes up each enemy type once (Docs/GameplayCookbook.md \"The hero sizes them up\"): every named enemy has a hint; New Game forgets; " +
                 $"Level {EnemyHintsLevel}'s first imp gets his subtitle (name and weakness), then a rewind past it and the next imps do not repeat it; a new run (the level loaded again) does not; " +
                 "a scripted scene (the bystander bench) spawns an imp in silence and does not use the type up. Each beat is a check event; hint events log the subtitles", EnemyHintsSeconds, "level"));
@@ -1123,6 +1126,8 @@ namespace SickOfIt.Playtest
             }
             else if (id == MusicLayersId)
                 yield return session.MusicLayersRun();
+            else if (id == StyleId)
+                yield return session.StyleRun();
             else if (id == EnemyHintsId)
                 yield return session.EnemyHintsRun();
             else if (id == AmbienceId)

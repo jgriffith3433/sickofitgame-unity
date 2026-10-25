@@ -471,6 +471,13 @@ namespace SickOfIt.Data.Config
         public string resultsHits = "Hits Taken";
         public string resultsRewinds = "Rewinds";
         public string resultsDiamonds = "Diamonds";
+        [Tooltip("{0} = par time.")]
+        public string resultsTimePar = "Time (par {0})";
+        public string resultsGrazes = "Grazes";
+        public string resultsNoHit = "NO-HIT FLOOR!";
+        public string resultsNewBest = "NEW BEST";
+        [Tooltip("{0} = the floor's best rank.")]
+        public string resultsBest = "Best: {0}";
         public string continueText = "Continue";
 
         public string deathTitle = "You Died";

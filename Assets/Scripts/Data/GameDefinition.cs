@@ -79,6 +79,8 @@ namespace SickOfIt.Data
         public float rewindMaxHistorySeconds = 30f;
         [Tooltip("How much rewinding the player gets per level, and how it refills.")]
         public RewindBudgetConfig rewindBudget = new RewindBudgetConfig();
+        [Tooltip("Grazes, the style meter and the floor rank (Docs/Story.md, \"Style\").")]
+        public StyleConfig style = new StyleConfig();
 
         [Header("Scene UI Prefabs")]
         [Tooltip("Full MobileController UI prefab for level scenes (movement, jump, shoot, etc.)")]

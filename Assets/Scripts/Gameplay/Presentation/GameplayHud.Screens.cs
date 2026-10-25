@@ -193,10 +193,24 @@ namespace SickOfIt.Gameplay
             var summary = world.Telemetry.Summarize("complete");
             int points = RogueliteManager.Instance != null ? RogueliteManager.Instance.GetPoints() : 0;
             int diamondsGained = pointsAtStart >= 0 ? Mathf.Max(0, points - pointsAtStart) : 0;
+            // The floor's rank (S/A/B/C: par time, no hits, grazes, rewind use), saved per floor when it is the best.
+            var rank = world.Style != null && world.Style.Active ? world.Style.Rank(summary) : (FloorRank?)null;
             int score = Mathf.Clamp(100 - summary.playerHits * 12 - summary.rewinds * 4, 0, 100);
             var grades = theme.grades != null && theme.grades.Count > 0 ? theme.grades : DefaultGrades.ToList();
-            var grade = grades.Where(g => score >= g.minScore).OrderByDescending(g => g.minScore).FirstOrDefault()
+            var grade = rank.HasValue
+                ? grades.FirstOrDefault(g => g.grade == rank.Value.Letter) ?? DefaultGrades.FirstOrDefault(g => g.grade == rank.Value.Letter) ?? grades.OrderBy(g => g.minScore).First()
+                : grades.Where(g => score >= g.minScore).OrderByDescending(g => g.minScore).FirstOrDefault()
                         ?? grades.OrderBy(g => g.minScore).First();
+            bool newBest = false;
+            string bestLine = "";
+            if (rank.HasValue)
+            {
+                newBest = StyleRanks.Record(world.LevelNumber, rank.Value.Letter, rank.Value.Points);
+                StyleRanks.TryGet(world.LevelNumber, out var now);
+                bestLine = newBest ? Texts.resultsNewBest : string.Format(Texts.resultsBest, now.Letter);
+                world.Telemetry?.Record("rank", rank.Value.Letter, rank.Value.Points,
+                    $"level {world.LevelNumber} par {rank.Value.Par:0} time {rank.Value.Seconds:0} hits {rank.Value.Hits} grazes {rank.Value.Grazes} kills {rank.Value.Kills} rewinds {summary.rewinds} best {(newBest ? "new" : now.Letter)} saved {(StyleRanks.TryGet(world.LevelNumber, out var saved) ? saved.Letter + saved.Points : "none")}");
+            }
 
             Time.timeScale = 0f;
             GameClock.Instance?.Pause();
@@ -213,18 +227,20 @@ namespace SickOfIt.Gameplay
 
             var stats = new List<(string label, string value, int amount, Func<int, string> format)>
             {
-                (Texts.resultsTime, FormatTime(summary.duration), Mathf.Max(0, Mathf.FloorToInt(summary.duration)), s => FormatTime(s)),
+                (rank.HasValue ? string.Format(Texts.resultsTimePar, FormatTime(rank.Value.Par)) : Texts.resultsTime, FormatTime(summary.duration), Mathf.Max(0, Mathf.FloorToInt(summary.duration)), s => FormatTime(s)),
                 (Texts.resultsKills, summary.kills.ToString(), summary.kills, s => s.ToString()),
                 (Texts.resultsHits, summary.playerHits.ToString(), summary.playerHits, s => s.ToString()),
-                (Texts.resultsRewinds, summary.rewinds.ToString(), summary.rewinds, s => s.ToString()),
-                (Texts.resultsDiamonds, "♦ " + diamondsGained, diamondsGained, s => "♦ " + s),
             };
+            if (rank.HasValue)
+                stats.Add((Texts.resultsGrazes, rank.Value.Grazes.ToString(), rank.Value.Grazes, s => s.ToString()));
+            stats.Add((Texts.resultsRewinds, summary.rewinds.ToString(), summary.rewinds, s => s.ToString()));
+            stats.Add((Texts.resultsDiamonds, "♦ " + diamondsGained, diamondsGained, s => "♦ " + s));
             // Landscape: the stats on the left, the grade beside them. Portrait: stats on top, grade under them.
             var screens = Screens;
             for (int i = 0; i < stats.Count; i++)
             {
                 float y = 0.66f - i * 0.085f;
-                float tallY = screens.resultsStatsTop - i * screens.resultsStatsStep;
+                float tallY = screens.resultsStatsTop - i * (stats.Count > 5 ? Mathf.Min(screens.resultsStatsStep, 0.046f) : screens.resultsStatsStep);
                 var label = menu.AddText(inner, "Stat", stats[i].label, theme.heading, new Vector2(0.36f, y), Vector2.zero,
                     new Vector2(520f, 70f), out _, 44f, null, theme.entrance);
                 label.alignment = TextAlignmentOptions.MidlineLeft;
@@ -269,6 +285,27 @@ namespace SickOfIt.Gameplay
             MenuResponsive.Track((RectTransform)quip.transform.parent, MenuPlacement.At(0.72f, 0.27f, 0f, 0f, 620f, 80f), screens.resultsQuip,
                 MenuElementKind.Text, menu.Responsive);
             quipMotion.EntranceDelay = 1.2f;
+
+            // A no-hit floor: Hell's cabinet and its crowd say so (subtitle on the screen, then the voices); the best rank sits under the quip.
+            string callout = "";
+            if (rank.HasValue)
+            {
+                if (rank.Value.NoHit)
+                    callout = world.Style.SayOnResults("perfect");
+                else if (rank.Value.Letter == "S")
+                    callout = world.Style.SayOnResults("rankS");
+            }
+            string under = rank.HasValue && rank.Value.NoHit ? Texts.resultsNoHit + (callout.Length > 0 ? "\n" + callout : "") : callout;
+            if (bestLine.Length > 0)
+                under = under.Length > 0 ? under + "\n" + bestLine : bestLine;
+            if (under.Length > 0)
+            {
+                var extra = menu.AddText(inner, "Rank", under, theme.caption, new Vector2(0.72f, 0.185f), Vector2.zero, new Vector2(900f, 100f),
+                    out var extraMotion, 30f, null, theme.entrance, null, 4f);
+                MenuResponsive.Track((RectTransform)extra.transform.parent, MenuPlacement.At(0.72f, 0.185f, 0f, 0f, 900f, 100f),
+                    MenuPlacement.At(0.5f, 0.155f, 0f, 0f, 1000f, 130f), MenuElementKind.Text, menu.Responsive);
+                extraMotion.EntranceDelay = 1.5f;
+            }
 
             var go = theme.button.Clone();
             go.size = new Vector2(420f, 100f);

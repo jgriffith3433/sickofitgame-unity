@@ -98,6 +98,7 @@ namespace SickOfIt.Gameplay
             public int playerHealthEnd;
             public int playerMaxHealth;
             public int rewinds;
+            public int grazes;
             public float rewoundSeconds;
             public int errors;
             public string lastPhase;
@@ -123,6 +124,7 @@ namespace SickOfIt.Gameplay
                 playerHealthEnd = world.Player != null ? world.Player.Health : 0,
                 playerMaxHealth = world.Player != null ? world.Player.MaxHealth : 0,
                 rewinds = rewinds,
+                grazes = (int)world.GetCounter("grazes"),
                 rewoundSeconds = rewoundSeconds,
                 lastPhase = world.Director != null ? world.Director.PhaseName : "",
                 floorEnd = world.Stage != null ? world.Stage.Floor : 0,

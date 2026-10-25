@@ -114,6 +114,7 @@ namespace SickOfIt.Gameplay
             BuildDiamonds();
             BuildRewind();
             BuildWeapon();
+            BuildStyle();
 
             var place = Landscape.objective;
             objective = menu.AddText(menu.Root, "Objective", "", theme.caption, place.anchor, place.offset,
@@ -689,6 +690,7 @@ namespace SickOfIt.Gameplay
             UpdateBossIntro();
             UpdateRewind();
             UpdateWeapon();
+            UpdateStyle();
             UpdateScreens();
             UpdatePickerKeys();
             UpdateCursor();

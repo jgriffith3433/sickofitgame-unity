@@ -57,5 +57,114 @@
   "deathCameraPrefab": "Prefabs/Camera.prefab",
   "remoteContentUrl": "",
   "pickupPrefab": "Prefabs/Diamond.prefab",
-  "platformPrefab": "Prefabs/Platform.prefab"
+  "platformPrefab": "Prefabs/Platform.prefab",
+  "style": {
+    "enabled": true,
+    "grazeDistance": 0.35,
+    "grazeSound": "graze_tick",
+    "meterMax": 100.0,
+    "grazeGain": 12.0,
+    "streakBonus": 2.0,
+    "streakBonusCap": 8,
+    "streakWindow": 2.5,
+    "decayDelay": 1.5,
+    "decayPerSecond": 14.0,
+    "lineGapSeconds": 6.0,
+    "tiers": [
+      {
+        "name": "COOL",
+        "at": 25.0,
+        "diamonds": 0,
+        "juice": 0.5,
+        "color": "#4DD9FF"
+      },
+      {
+        "name": "HOT",
+        "at": 55.0,
+        "diamonds": 1,
+        "juice": 1.0,
+        "color": "#FF994D"
+      },
+      {
+        "name": "SICK OF IT",
+        "at": 85.0,
+        "diamonds": 2,
+        "juice": 1.5,
+        "color": "#FFD940"
+      }
+    ],
+    "lines": [
+      {
+        "on": "streak5",
+        "sounds": [
+          "vo_style_streak5",
+          "vo_crowd_gasp"
+        ],
+        "color": "#FFD940"
+      },
+      {
+        "on": "streak10",
+        "sounds": [
+          "vo_style_streak10",
+          "vo_crowd_roar"
+        ],
+        "color": "#FFD940"
+      },
+      {
+        "on": "streak20",
+        "sounds": [
+          "vo_style_streak20",
+          "vo_crowd_roar"
+        ],
+        "color": "#FFD940"
+      },
+      {
+        "on": "tier3",
+        "sounds": [
+          "vo_style_sick"
+        ],
+        "color": "#FFD940"
+      },
+      {
+        "on": "perfect",
+        "sounds": [
+          "vo_style_perfect",
+          "vo_crowd_cheer"
+        ],
+        "color": "#FFD940"
+      },
+      {
+        "on": "rankS",
+        "sounds": [
+          "vo_style_ranks"
+        ],
+        "color": "#FFD940"
+      }
+    ],
+    "parFactor": 1.0,
+    "parPoints": 30,
+    "noHitPoints": 30,
+    "grazePoints": 20,
+    "grazeGoal": 20,
+    "rewindPoints": 20,
+    "rewindsForHalf": 2,
+    "ranks": [
+      {
+        "letter": "S",
+        "minPoints": 90
+      },
+      {
+        "letter": "A",
+        "minPoints": 70
+      },
+      {
+        "letter": "B",
+        "minPoints": 45
+      },
+      {
+        "letter": "C",
+        "minPoints": 0
+      }
+    ]
+  }
 }

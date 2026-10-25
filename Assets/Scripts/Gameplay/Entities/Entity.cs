@@ -444,6 +444,30 @@ namespace SickOfIt.Gameplay
                 Dispatch(a => a.OnContact(player, entering));
         }
 
+        /// <summary>
+        /// The gap between this entity's colliders and another's (the nearest points; 0 or less when they overlap), or
+        /// infinity if either has none. The graze check reads it (Docs/Story.md, "Style"); nothing here changes state.
+        /// </summary>
+        public float GapTo(Entity other)
+        {
+            float gap = float.PositiveInfinity;
+            if (colliders == null || other == null || other.colliders == null)
+                return gap;
+            foreach (var mine in colliders)
+            {
+                if (mine == null || !mine.enabled)
+                    continue;
+                foreach (var theirs in other.colliders)
+                {
+                    if (theirs == null || !theirs.enabled || theirs.isTrigger || !theirs.gameObject.activeInHierarchy)
+                        continue;
+                    var d = mine.Distance(theirs);
+                    gap = Mathf.Min(gap, d.isOverlapped ? 0f : d.distance);
+                }
+            }
+            return gap;
+        }
+
         bool Overlaps(Entity other)
         {
             foreach (var mine in colliders)

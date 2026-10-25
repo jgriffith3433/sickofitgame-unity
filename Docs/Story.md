@@ -1612,6 +1612,27 @@ named here, with a note.
 
 Characters: the hero (always), the Overlord (the meadow's laser, always), the Announcer (always) and Yooba (once met).
 
+## Style: grazes, the meter and the floor's rank (built 2026-10-25)
+
+Hell is a show and the show keeps score. A shot that goes past the hero close enough to ruffle his coat without touching him is a **graze**, and Hell's
+audience loves a graze: the announcer notices, the crowd gasps, and the hero gets paid for nerve. This is feel and a reward, not story: no new place,
+no new character (the crowd is Hell's audience, never named, never seen), and **no office or work jokes** in any line.
+
+- **A graze**: a hostile shot passes within 0.35 world units of the hero's body without hitting him. It counts once the shot has gone by its closest point
+  (a shot that goes on to hit him is not a graze). A spark where it passed, a short ticking sound that climbs in pitch with the streak. Nothing else is noisy.
+- **The style meter** (bottom of the screen, above the progress bar) fills with every graze (more for a longer streak) and drains by itself after a short
+  grace. Being hit empties it. Crossing a tier pays once: **COOL** (a little rewind juice), **HOT** (1 diamond, more juice), **SICK OF IT** (2 diamonds,
+  more juice). The payout is paid once per play: a rewind that undoes the graze takes the credit away (meter, streak and graze count are rewound like
+  everything else), and replaying it does not pay twice.
+- **Lines**: the announcer on streaks of 5, 10 and 20 and on SICK OF IT, the crowd gasping and roaring with him; a no-hit floor gets the announcer and the
+  crowd on the rank screen. Subtitle first (the line's text is its audio.json prompt), voice when its clip exists; one line at a time, never twice for the
+  same graze, never more often than every 6 s.
+- **The rank screen** (the floor's results): time against the floor's **par** (its expected length), hits taken (a **no-hit floor** is flagged), grazes,
+  kills, rewind use and diamonds, and a rank **S, A, B or C** (points: 30 for par time, 30 for no hits, 20 for grazes up to a goal of 20, 20 for no
+  rewinds). The best rank per floor is kept for good (until New Game) and the screen says when a floor is a new best.
+- Data: `game.json` `style` (distances, meter, tiers and their payouts, the lines, the rank points), lines' words and voices in `audio.json`
+  (`vo_style_*` announcer, `vo_crowd_*` crowd; the `graze_tick` effect), words on the screen in `ui/theme.json` `texts`.
+
 ## The HUD and menus (Hell's showmanship)
 
 Hell loves a show, and the announcer's cabinet is the show's frame: nothing on screen just appears. This is feel, not story: no new words
