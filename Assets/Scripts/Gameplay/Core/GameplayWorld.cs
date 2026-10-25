@@ -85,6 +85,8 @@ namespace SickOfIt.Gameplay
         public PlayerWeapons Weapons { get; private set; }
         /// <summary>The visible melee swing (fists).</summary>
         public MeleeSwingFx SwingFx { get; private set; }
+        /// <summary>The hit-freeze, hit flash and squash, the hero's recoil and the glows (game.json "feel"; presentation only).</summary>
+        public GameFeel Feel { get; private set; }
 
         readonly List<Entity> live = new List<Entity>();
         readonly List<Entity> tickList = new List<Entity>();
@@ -172,6 +174,7 @@ namespace SickOfIt.Gameplay
             Effects = gameObject.AddComponent<WorldEffects>();
             Effects.Init(this, setup.Music, setup.Script?.world, setup.BackgroundRoot);
             Hud = GameplayHud.Create(this);
+            Feel = GameFeel.Create(this);
 
             if (setup.Player != null)
                 WrapPlayer(setup.Player);
@@ -372,6 +375,7 @@ namespace SickOfIt.Gameplay
             if (go.transform.parent == null && go.scene != gameObject.scene)
                 UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(go, gameObject.scene);
             pool.CaptureLaunchState(go);
+            Feel?.OnSpawned(entity);
 
             AddCounter("spawned", 1f);
             AddCounter("spawned:" + def.id, 1f);

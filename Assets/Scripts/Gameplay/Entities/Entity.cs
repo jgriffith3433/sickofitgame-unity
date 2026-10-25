@@ -801,6 +801,8 @@ namespace SickOfIt.Gameplay
             if (lethal && FindAbility<ReviveAbility>() is ReviveAbility rise && rise.TryRevive())
                 lethal = false;
             FindAbility<ChainLinkAbility>()?.Share(final, lethal);
+            // The freeze, flash, squash and recoil (presentation: GameFeel).
+            World.Feel?.EnemyHit(this, final, lethal, hasHitFrom || source != null, hasHitFrom ? hitFrom : source != null ? source.Position : Position);
             if (lethal)
                 Die(DeathCause.Damage);
             return true;
@@ -879,6 +881,8 @@ namespace SickOfIt.Gameplay
                 }
                 // An animator with a "Die" state plays it where the entity was (presentation only: the entity is
                 // already gone from the simulation). Otherwise enemies pop into bits; things without health just vanish.
+                if (maxHealth > 0 && Def.visual.deathPop)
+                    World.Feel?.DeathPop(this, at);
                 if (Animation != null && Animation.TryGetClip(DieState, out var dieFrames, out float dieFps))
                 {
                     SickOfIt.Core.Fx.Fx.Flipbook(dieFrames, dieFps, transform.position, transform.lossyScale, Sprite != null && Sprite.flipX,
