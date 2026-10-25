@@ -668,6 +668,45 @@ it to the screen by its own edge. Videos can scale up for room; they cannot tile
 Check it: `Tools > Run Tests` (`AmbienceTests`: the parallax rule, every Circle has weather, life and depth within the cap and none share a set) and the
 `ambience` playtest (below), which also measures the frame time with the air on, off and on again.
 
+## The hero's moves ("a dash through a bolt", "wall-jump up a shaft", "unlock a move")
+
+Two moves on `PlayerController`, configured in player.json `moves` (`HeroMovesConfig`): **dash** and **wallJump**. Each is locked until it is unlocked.
+
+```json
+"moves": {
+  "dash":     { "distance": 2.6, "duration": 0.16, "invulnerableSeconds": 0.26, "cooldown": 0.9, "airDashes": 1,
+                "keys": ["LeftShift", "RightShift"], "unlockWhen": [], "firstLine": "vo_hero_dash_first" },
+  "wallJump": { "slideSpeed": 1.3, "kickSpeed": 5.2, "kickUp": 9.0, "kickLockSeconds": 0.2, "wallCheckDistance": 0.12, "coyoteSeconds": 0.1,
+                "unlockWhen": ["level:6"], "firstLine": "vo_hero_wall_first", "unlockLine": "vo_hero_wall_unlock" }
+}
+```
+
+**Unlocking.** `HeroMoves.Arm` runs when a floor starts: a move is his if its flag (`move:dash`, `move:wallJump`, `unlockFlag`) is set, a shop good with the matching effect is owned
+(`"effect": "Dash"`: the Slimed Lining, `requires level:4`), or every `unlockWhen` condition holds (the same forms as a shop good's `requires`: `level:6`, `flag:x`, `weapon:x`).
+A move that just became his writes its flag, so it stays (cleared by New Game). For a new story unlock, give `unlockWhen` a condition, or add a `setFlag` action
+(`move:wallJump`) to a rule on a floor and re-arm by loading the next one. The `unlockLine` / `firstLine` are audio.json voice ids (the prompt is the subtitle); they are
+silent in scenes (`SceneId`).
+
+**Input.** Dash: Shift (keys in `keys`), the gamepad's B or left stick click, the HUD's Dash chip (`hud.landscape.dash` / `hud.portrait.dash` in ui/theme.json; `GameplayHud.Dash.cs`). R is taken by rewind;
+don't rebind it. Wall-jump uses Jump while clinging; pushing toward the wall is what makes him cling. The bot does not use either (it never presses Shift); the playtests press keys.
+
+**What a dash does.** Flat burst at `distance / duration`, no gravity during it, `DashInvulnerable` for `invulnerableSeconds` (`PlayerHealth.IsInvincible` includes it, so every damage path honours it), and hostile shots
+pass through him (`Entity.Phased`; the `projectile` ability skips a phased hero, so the shot flies on instead of dying on him). Cooldown `cooldown`; `airDashes` in the air, refilled on landing and by a wall kick.
+**What a wall does.** Airborne, not held, pushing sideways: a box cast of the body toward that side finds a solid, non-trigger, non-one-way collider on the level layers within `wallCheckDistance`. That is a cling
+(`PlayerController.WallSide`, the fall capped at `slideSpeed`); Jump while clinging (or within `coyoteSeconds` of losing the wall) kicks.
+
+**Rewind.** The controller's own flags are not recorded, so the moves' timers live in `PlayerController.MoveState` and `GameplayWorld.SaveState` saves it through `HeroMoves.SaveState`
+(times are game-clock seconds). Anything new in the moves must be added to `MoveState`, `HeroMoves.SaveState`/`LoadState` and `Get/SetMoveState`, or a rewind will not put it back. Unlocks are for good and never undone.
+
+**Animations.** player.json states `Dash`, `WallSlide`, `WallJump` play over the Animator (`PlayAnimatorState`, like the climb poses; `PlayerController.MovePose` names the one playing). Placeholders reuse the
+Walk, Grabbed and Jump sheets until the clips in `art/hero.json` are generated (GPU, priced). **Sounds:** audio.json events `playerDash`, `playerDashReady`, `playerWallCling`, `playerWallJump`.
+
+**Level design.** A wall is any solid entity: `content/entities/wallSlab.json` (0.6 x 9, not one-way). Make a shaft with two of them about 2.4 apart; the kick crosses 2.4 comfortably. Spawn them from a path or a rule.
+Telemetry `move` events: `dash`, `wallCling`, `wallJump`, `unlocked`, `line`.
+
+**Check it:** playtests `dash`, `wall-jump` and `hero-moves` (both; ~4 min), on `content/scenes/moveTest.json` (Level 2's stage): locked, then unlocked the way a player does (Yooba's good, bought; Floor 996 cleared), a bolt dashed through unharmed,
+cooldown, a shaft climbed by wall-kicks, and rewind into a burst, to before it, and back to a cling.
+
 ## Ladders ("a ladder up the wall", "climb, shoot, jump off")
 
 A ladder is an entity with the `ladder` ability (`content/entities/ladder.json`); its body is the climbable zone. Spawn it

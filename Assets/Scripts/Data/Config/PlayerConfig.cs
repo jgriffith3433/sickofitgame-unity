@@ -50,6 +50,8 @@ namespace SickOfIt.Data.Config
         public Vector2 projectileSpawnOffset = new Vector2(0.5f, 0f);
         [Tooltip("The aim guide: a faint laser line from the muzzle along each shot his next volley fires.")]
         public AimGuideConfig aimGuide = new AimGuideConfig();
+        [Tooltip("The hero's two moves, the dash and the wall-jump (Docs/Story.md, \"The hero's moves\"). Locked until the story or Yooba's shop gives them.")]
+        public HeroMovesConfig moves = new HeroMovesConfig();
 
         [Header("Physics")]
         public float colliderRadius = 0.3f;
@@ -138,6 +140,70 @@ namespace SickOfIt.Data.Config
     }
 
     /// <summary>
+    /// The hero's moves (PlayerController): a dash and a wall-jump. Each is locked until it is unlocked: a story moment
+    /// (<c>unlockWhen</c>, the same conditions as a shop good's <c>requires</c>) or a Yooba good with the matching
+    /// <see cref="ShopEffect"/>. All times are game-clock seconds, so a rewind replays them.
+    /// </summary>
+    [Serializable]
+    public class HeroMovesConfig
+    {
+        public DashConfig dash = new DashConfig();
+        public WallJumpConfig wallJump = new WallJumpConfig();
+    }
+
+    /// <summary>The dash: a short flat burst, untouchable while it lasts, then a cooldown.</summary>
+    [Serializable]
+    public class DashConfig
+    {
+        [Tooltip("Off switch for the whole move.")]
+        public bool enabled = true;
+        [Tooltip("UnlockFlags id written when the move is unlocked.")]
+        public string unlockFlag = "move:dash";
+        [Tooltip("Story unlock: every condition holds (flag:, level:, ... as a shop good's requires) and the move is his. Empty = only the shop good unlocks it.")]
+        public System.Collections.Generic.List<string> unlockWhen = new System.Collections.Generic.List<string>();
+        [Tooltip("World units covered by one dash.")]
+        public float distance = 2.6f;
+        [Tooltip("Seconds the burst lasts.")]
+        public float duration = 0.16f;
+        [Tooltip("Seconds untouchable, from the first frame (a hair longer than the burst so the shot he went through can't catch him as he stops).")]
+        public float invulnerableSeconds = 0.26f;
+        [Tooltip("Seconds from one dash's start to the next being ready.")]
+        public float cooldown = 0.9f;
+        [Tooltip("Dashes in the air before he lands (the ground refills it).")]
+        public int airDashes = 1;
+        [Tooltip("Keyboard keys that dash (Input System key names).")]
+        public string[] keys = { "LeftShift", "RightShift" };
+        [Tooltip("Hero line (audio.json voice id) the first time he dashes in a save.")]
+        public string firstLine = "vo_hero_dash_first";
+    }
+
+    /// <summary>The wall-jump: cling to a solid wall by pushing into it in the air, slide slowly, kick off with Jump.</summary>
+    [Serializable]
+    public class WallJumpConfig
+    {
+        public bool enabled = true;
+        public string unlockFlag = "move:wallJump";
+        [Tooltip("Story unlock: every condition holds (level:, flag:, ...). Floor 996 cleared gives it.")]
+        public System.Collections.Generic.List<string> unlockWhen = new System.Collections.Generic.List<string>();
+        [Tooltip("Fastest he falls while clinging (world units per second).")]
+        public float slideSpeed = 1.3f;
+        [Tooltip("Sideways speed of the kick, away from the wall.")]
+        public float kickSpeed = 5.2f;
+        [Tooltip("Upward speed of the kick.")]
+        public float kickUp = 9.0f;
+        [Tooltip("Seconds the kick keeps pushing him off the wall whatever the stick says.")]
+        public float kickLockSeconds = 0.2f;
+        [Tooltip("How far from his body a wall still counts (world units).")]
+        public float wallCheckDistance = 0.12f;
+        [Tooltip("A kick pressed this long after he lost the wall still works.")]
+        public float coyoteSeconds = 0.1f;
+        [Tooltip("Hero line (audio.json voice id) the first time he clings in a save.")]
+        public string firstLine = "vo_hero_wall_first";
+        [Tooltip("Hero line played once when the story unlocks the move (the next floor's start).")]
+        public string unlockLine = "vo_hero_wall_unlock";
+    }
+
+    /// <summary>
     /// The aim guide (AimGuide): one thin, see-through line per shot of the next volley, drawn from the muzzle in the
     /// direction the shot will fly. Presentation only.
     /// </summary>
@@ -203,6 +269,7 @@ namespace SickOfIt.Data.Config
         [Tooltip("+amount x100% damage for melee weapons (fists) only.")] MeleeDamage,
         [Tooltip("+amount x100% reach for melee weapons (fists) only.")] MeleeReach,
         [Tooltip("Any level: the weapons he holds survive the end of a run (WeaponProgress is not cleared).")] KeepWeapons,
+        [Tooltip("Any level: unlocks the dash (player.json moves.dash).")] Dash,
         [Tooltip("+amount armour plates: each blocks one hit, then grows back 20 s later (HeroPerks).")] Armor,
         [Tooltip("+amount bubbles at the start of every floor: each pops on the first hit it meets.")] ShieldCharges,
         [Tooltip("+amount x100% chance that a hit is slipped (no damage).")] Dodge,

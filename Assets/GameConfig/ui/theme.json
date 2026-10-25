@@ -493,6 +493,13 @@
         "offset": [-190.0, -400.0],
         "size": [340.0, 104.0]
       },
+      "dash": {
+        "use": true,
+        "hide": false,
+        "anchor": [1.0, 1.0],
+        "offset": [-190.0, -516.0],
+        "size": [340.0, 104.0]
+      },
       "progressBar": {
         "use": true,
         "hide": false,
@@ -592,6 +599,13 @@
         "anchor": [1.0, 0.0],
         "offset": [-450.0, 160.0],
         "size": [380.0, 150.0]
+      },
+      "dash": {
+        "use": true,
+        "hide": false,
+        "anchor": [1.0, 0.0],
+        "offset": [-170.0, 380.0],
+        "size": [280.0, 150.0]
       },
       "progressBar": {
         "use": true,

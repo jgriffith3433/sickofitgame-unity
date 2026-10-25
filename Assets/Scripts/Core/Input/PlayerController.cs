@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using MobileControllerFramework;
 using SickOfIt.Core.Rewind;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Core.Input
 {
@@ -490,6 +491,11 @@ namespace SickOfIt.Core.Input
             if (cfg.fireSound != null) fireSound = cfg.fireSound;
             if (cfg.landSound != null) landSound = cfg.landSound;
             pitchVariation = cfg.pitchVariation;
+
+            // Moves (dash, wall-jump)
+            moves = cfg.moves ?? new HeroMovesConfig();
+            airDashesLeft = Mathf.Max(0, moves.dash.airDashes);
+            ResolveDashKeys();
         }
 
         private void Awake()
@@ -583,13 +589,17 @@ namespace SickOfIt.Core.Input
             ReadMoveInput();
             ReadJumpInput();
             ReadFireInput();
+            ReadDashInput();
             ApplyInputOverrides();
             CheckGrounded();
             HandlePlatformCollision();
+            UpdateWall();
+            HandleDash();
             HandleJump();
             HandleWeaponSwitch();
             HandleFiring();
             UpdateRotationTarget();
+            UpdateMovePose();
             UpdateAnimator();
             UpdateShadow();
         }
@@ -646,6 +656,7 @@ namespace SickOfIt.Core.Input
             if (isGrounded && !wasGrounded)
             {
                 airJumpsRemaining = maxAirJumps;
+                airDashesLeft = Mathf.Max(0, moves.dash.airDashes);
                 if (Cue(landSound, SickOfIt.Core.Audio.Sfx.Events.playerLand))
                     SickOfIt.Core.Fx.Fx.Dust(Feet, 1f);
             }
@@ -1055,7 +1066,20 @@ namespace SickOfIt.Core.Input
                 swingMomentum = Mathf.MoveTowards(swingMomentum, 0f, 3f * Time.fixedDeltaTime);
 
             Vector2 velocity = rb.linearVelocity;
+            float now = MoveNow;
+            if (now < dashEnd)
+            {
+                // The dash: a flat burst (gravity can't pull him down out of it), whatever the stick says.
+                velocity.x = dashDir * moves.dash.distance / Mathf.Max(0.02f, moves.dash.duration) + CarrierVelocity.x;
+                velocity.y = 0f;
+                rb.linearVelocity = velocity;
+                return;
+            }
             velocity.x = horizontalInput * moveSpeed * MoveSpeedMultiplier + CarrierVelocity.x + swingMomentum;
+            if (now < kickUntil)
+                velocity.x = kickDir * moves.wallJump.kickSpeed;
+            if (wallSide != 0)
+                velocity.y = Mathf.Max(velocity.y, -moves.wallJump.slideSpeed);
             rb.linearVelocity = velocity;
         }
         
@@ -1166,6 +1190,9 @@ namespace SickOfIt.Core.Input
                 return;
             }
 
+            if (TryWallKick())
+                return;
+
             bool fresh = lastJumpPressTime == Time.time;
             // ... and just after leaving a surface he can still jump off it (not while already rising).
             bool coyote = Time.time - lastGroundedTime <= CoyoteSeconds && (rb == null || rb.linearVelocity.y <= 0.1f);
@@ -1208,6 +1235,268 @@ namespace SickOfIt.Core.Input
         
         #endregion
         
+        #region Hero Moves (dash, wall-jump)
+
+        // player.json "moves". Locked until the story or Yooba's shop unlocks each one (SetMovesUnlocked).
+        private HeroMovesConfig moves = new HeroMovesConfig();
+        private bool dashUnlocked, wallJumpUnlocked;
+        private bool dashRequested;
+        private Key[] dashKeys;
+
+        // State a rewind must put back (GetMoveState / SetMoveState, saved with the world). Times are game-clock seconds.
+        private float dashEnd = -100f, dashInvulnUntil = -100f, dashReadyAt = -100f, dashDir = 1f;
+        private int airDashesLeft;
+        private int wallSide, lastWallSide;
+        private float wallCoyoteUntil = -100f, kickUntil = -100f, kickDir;
+        // Presentation only: the pose playing now.
+        private string movePose;
+        private float kickPoseUntil = -100f;
+        private bool dashReadyPending;
+
+        private static readonly RaycastHit2D[] wallHits = new RaycastHit2D[8];
+
+        /// <summary>He dashed (the dash just started).</summary>
+        public static event System.Action<PlayerController> Dashed;
+        /// <summary>He caught a wall (the side: -1 left, +1 right).</summary>
+        public static event System.Action<PlayerController, int> WallClung;
+        /// <summary>He kicked off a wall (the side the wall was on).</summary>
+        public static event System.Action<PlayerController, int> WallJumped;
+        /// <summary>A move's first use in this save (for the hero's line): "dash" or "wallJump".</summary>
+        public static event System.Action<PlayerController, string> MoveFirstUsed;
+
+        /// <summary>What a rewind keeps of the moves (the controller's own flags are not recorded).</summary>
+        public struct MoveState
+        {
+            public float dashEnd, dashInvulnUntil, dashReadyAt, dashDir, wallCoyoteUntil, kickUntil, kickDir;
+            public int airDashesLeft, wallSide, lastWallSide;
+        }
+
+        public MoveState GetMoveState() => new MoveState
+        {
+            dashEnd = dashEnd, dashInvulnUntil = dashInvulnUntil, dashReadyAt = dashReadyAt, dashDir = dashDir,
+            wallCoyoteUntil = wallCoyoteUntil, kickUntil = kickUntil, kickDir = kickDir,
+            airDashesLeft = airDashesLeft, wallSide = wallSide, lastWallSide = lastWallSide,
+        };
+
+        public void SetMoveState(MoveState s)
+        {
+            dashEnd = s.dashEnd; dashInvulnUntil = s.dashInvulnUntil; dashReadyAt = s.dashReadyAt; dashDir = s.dashDir;
+            wallCoyoteUntil = s.wallCoyoteUntil; kickUntil = s.kickUntil; kickDir = s.kickDir;
+            airDashesLeft = s.airDashesLeft; wallSide = s.wallSide; lastWallSide = s.lastWallSide;
+            dashRequested = false;
+            dashReadyPending = s.dashReadyAt > MoveNow;
+        }
+
+        /// <summary>The world unlocks the moves (story flags and Yooba's goods) when a floor starts.</summary>
+        public void SetMovesUnlocked(bool dash, bool wallJump)
+        {
+            dashUnlocked = dash;
+            wallJumpUnlocked = wallJump;
+        }
+
+        public bool DashUnlocked => dashUnlocked && moves.dash.enabled;
+        public bool WallJumpUnlocked => wallJumpUnlocked && moves.wallJump.enabled;
+        private static float MoveNow => GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+
+        /// <summary>The dash burst is under way.</summary>
+        public bool IsDashing => MoveNow < dashEnd;
+        /// <summary>Nothing can hurt him (the dash's grace, a hair longer than the burst).</summary>
+        public bool DashInvulnerable => MoveNow < dashInvulnUntil;
+        /// <summary>Seconds until the next dash is ready (0 = ready).</summary>
+        public float DashCooldownLeft => Mathf.Max(0f, dashReadyAt - MoveNow);
+        public int AirDashesLeft => airDashesLeft;
+        /// <summary>Which side he clings to a wall on: -1 left, +1 right, 0 none.</summary>
+        public int WallSide => wallSide;
+        /// <summary>Clinging to a wall and sliding down it (not rising).</summary>
+        public bool IsWallClinging => wallSide != 0 && rb != null && rb.linearVelocity.y <= 0.1f;
+        /// <summary>Kicking off a wall: the kick's push is still on.</summary>
+        public bool IsWallKicking => MoveNow < kickUntil;
+        /// <summary>The move pose playing now ("Dash", "WallSlide", "WallJump") or null; a playtest reads it.</summary>
+        public string MovePose => movePose;
+        /// <summary>The dash's distance in world units (player.json moves.dash).</summary>
+        public float DashDistance => moves.dash.distance;
+        public float DashDuration => moves.dash.duration;
+
+        /// <summary>Asks for a dash on the next frame (the HUD's touch button).</summary>
+        public void RequestDash() => dashRequested = true;
+
+        private void ResolveDashKeys()
+        {
+            var list = new System.Collections.Generic.List<Key>();
+            if (moves.dash.keys != null)
+            {
+                foreach (string name in moves.dash.keys)
+                    if (System.Enum.TryParse(name, out Key key))
+                        list.Add(key);
+            }
+            dashKeys = list.ToArray();
+        }
+
+        private void ReadDashInput()
+        {
+            var keyboard = Keyboard.current;
+            if (keyboard != null && dashKeys != null)
+            {
+                foreach (var key in dashKeys)
+                {
+                    if (keyboard[key].wasPressedThisFrame)
+                        dashRequested = true;
+                }
+            }
+            var pad = Gamepad.current;
+            if (pad != null && (pad.buttonEast.wasPressedThisFrame || pad.leftStickButton.wasPressedThisFrame))
+                dashRequested = true;
+        }
+
+        /// <summary>Starts a dash when one was asked for and he can: unlocked, ready, a charge in the air, not held or locked.</summary>
+        private void HandleDash()
+        {
+            if (dashReadyPending && MoveNow >= dashReadyAt)
+            {
+                dashReadyPending = false;
+                Cue(null, SickOfIt.Core.Audio.Sfx.Events.playerDashReady);
+            }
+            bool want = dashRequested;
+            dashRequested = false;
+            if (!want || !DashUnlocked || held || Suspended || InputLocked || ScriptedMove.HasValue || rb == null)
+                return;
+            var dash = moves.dash;
+            float now = MoveNow;
+            if (now < dashReadyAt || now < dashEnd)
+                return;
+            if (!isGrounded && airDashesLeft <= 0)
+                return;
+            float dir = Mathf.Abs(moveInput.x) > inputDeadzone ? Mathf.Sign(moveInput.x) : (FacingRight ? 1f : -1f);
+            // Never into the wall he hangs on: away from it.
+            if (wallSide != 0 && dir == wallSide)
+                dir = -wallSide;
+            if (!isGrounded)
+                airDashesLeft--;
+            dashDir = dir;
+            dashEnd = now + dash.duration;
+            dashInvulnUntil = now + Mathf.Max(dash.duration, dash.invulnerableSeconds);
+            dashReadyAt = now + Mathf.Max(dash.cooldown, dash.duration);
+            wallSide = 0;
+            dashReadyPending = true;
+            Face(dir);
+            // Straight into it: the burst is flat, and he stops falling at once.
+            rb.linearVelocity = new Vector2(dir * dash.distance / Mathf.Max(0.02f, dash.duration), 0f);
+            if (Cue(null, SickOfIt.Core.Audio.Sfx.Events.playerDash))
+            {
+                SickOfIt.Core.Fx.Fx.Dust(Feet, 1.2f);
+                SickOfIt.Core.Fx.Fx.Flash(transform.position, new Color(0.7f, 1f, 0.8f, 0.4f), 0.5f, 0.1f);
+            }
+            Dashed?.Invoke(this);
+            FirstUse("dash");
+        }
+
+        // The hero's line the first time a move is used (kept in UnlockFlags, so a save hears it once).
+        private void FirstUse(string move)
+        {
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return;
+            MoveFirstUsed?.Invoke(this, move);
+        }
+
+        /// <summary>
+        /// Looks for a wall on the side he pushes toward while airborne. Touching one lets him cling (slide slowly) and kick off;
+        /// the kick's own push, a dash, a hold and the ground all mean no wall.
+        /// </summary>
+        private void UpdateWall()
+        {
+            int side = 0;
+            float now = MoveNow;
+            if (WallJumpUnlocked && !isGrounded && !held && !Suspended && col != null
+                && now >= kickUntil && now >= dashEnd && Mathf.Abs(moveInput.x) > 0.3f)
+            {
+                int want = moveInput.x > 0f ? 1 : -1;
+                if (TouchingWall(want))
+                    side = want;
+            }
+            if (side != 0)
+            {
+                if (wallSide == 0)
+                {
+                    if (Cue(null, SickOfIt.Core.Audio.Sfx.Events.playerWallCling))
+                        SickOfIt.Core.Fx.Fx.Dust(new Vector2(col.bounds.center.x + side * col.bounds.extents.x, col.bounds.center.y), 0.5f);
+                    WallClung?.Invoke(this, side);
+                    FirstUse("wallJump");
+                }
+                lastWallSide = side;
+                wallCoyoteUntil = now + moves.wallJump.coyoteSeconds;
+            }
+            wallSide = side;
+        }
+
+        /// <summary>A solid wall within reach on this side (the level's walls and solid entities; never a one-way piece or a trigger).</summary>
+        private bool TouchingWall(int side)
+        {
+            var b = col.bounds;
+            var filter = new ContactFilter2D { useLayerMask = true, layerMask = groundLayer | 1, useTriggers = false };
+            Vector2 size = new Vector2(b.size.x, b.size.y * 0.7f);
+            int n = Physics2D.BoxCast(b.center, size, 0f, new Vector2(side, 0f), filter, wallHits, moves.wallJump.wallCheckDistance);
+            for (int i = 0; i < n; i++)
+            {
+                var hit = wallHits[i];
+                if (hit.collider == null || hit.collider.isTrigger || hit.collider.attachedRigidbody == rb || DropThroughPlatform.IsOneWay(hit.collider))
+                    continue;
+                if (Mathf.Abs(hit.normal.x) > 0.7f && hit.normal.x * side < 0f)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>Jump while clinging (or a hair after losing the wall) kicks off it: up and away, with the dash charge back.</summary>
+        private bool TryWallKick()
+        {
+            float now = MoveNow;
+            if (isGrounded || !WallJumpUnlocked || rb == null || now < kickUntil)
+                return false;
+            if (wallSide == 0 && now >= wallCoyoteUntil)
+                return false;
+            int onSide = wallSide != 0 ? wallSide : lastWallSide;
+            if (onSide == 0)
+                return false;
+            var kick = moves.wallJump;
+            lastJumpPressTime = float.NegativeInfinity;
+            kickDir = -onSide;
+            kickUntil = now + kick.kickLockSeconds;
+            kickPoseUntil = now + 0.35f;
+            wallCoyoteUntil = -100f;
+            wallSide = 0;
+            swingMomentum = 0f;
+            airDashesLeft = Mathf.Max(0, moves.dash.airDashes);
+            rb.linearVelocity = new Vector2(kickDir * kick.kickSpeed, kick.kickUp);
+            Face(kickDir);
+            if (Cue(null, SickOfIt.Core.Audio.Sfx.Events.playerWallJump))
+                SickOfIt.Core.Fx.Fx.Dust(new Vector2(col.bounds.center.x + onSide * col.bounds.extents.x, col.bounds.center.y), 0.8f);
+            WallJumped?.Invoke(this, onSide);
+            return true;
+        }
+
+        // The Dash, WallSlide and WallJump clips (player.json states; placeholders for now) play over the Animator while the move lasts.
+        private void UpdateMovePose()
+        {
+            if (animator == null || IsClimbing)
+                return;
+            float now = MoveNow;
+            string pose = now < dashEnd ? "Dash" : now < kickPoseUntil ? "WallJump" : IsWallClinging ? "WallSlide" : null;
+            if (pose == movePose)
+                return;
+            movePose = pose;
+            if (pose != null)
+            {
+                if (!PlayAnimatorState(pose))
+                    movePose = null;
+            }
+            else
+            {
+                PlayAnimatorState(isGrounded ? "Idle" : "Fall");
+            }
+        }
+
+        #endregion
+
         #region Projectile Firing
         
         private void HandleFiring()
@@ -1564,6 +1853,8 @@ namespace SickOfIt.Core.Input
                 UpdateClimbPose();
                 return;
             }
+            if (movePose != null)
+                return;
             
             animator.SetBool(OnGroundHash, isGrounded);
             if (AnimatorHasFiring())

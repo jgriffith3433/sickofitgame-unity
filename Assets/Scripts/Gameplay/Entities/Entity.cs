@@ -332,6 +332,9 @@ namespace SickOfIt.Gameplay
             return 0;
         }
 
+        /// <summary>The hero mid-dash: hostile shots pass through him instead of landing (or dying on him).</summary>
+        public bool Phased => IsPlayer && playerController != null && playerController.DashInvulnerable;
+
         /// <summary>Wraps the player so scripts and abilities can treat it like an entity.</summary>
         public void BeginAsPlayer(GameplayWorld world, PlayerHealth health, PlayerController controller)
         {

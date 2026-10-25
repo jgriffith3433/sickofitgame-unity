@@ -83,6 +83,8 @@ namespace SickOfIt.Gameplay
         public AimGuide AimGuide { get; private set; }
         /// <summary>The hero's weapons (content/weapons): held, equipped, ammo, the melee swing. Null without a player.</summary>
         public PlayerWeapons Weapons { get; private set; }
+        /// <summary>The hero's dash and wall-jump (unlocks, lines, rewind state).</summary>
+        public HeroMoves Moves { get; private set; }
         /// <summary>The visible melee swing (fists).</summary>
         public MeleeSwingFx SwingFx { get; private set; }
         /// <summary>The hit-freeze, hit flash and squash, the hero's recoil and the glows (game.json "feel"; presentation only).</summary>
@@ -147,6 +149,7 @@ namespace SickOfIt.Gameplay
                 Instance = null;
                 SickOfIt.Core.Rewind.RewindInput.Locked = false;
             }
+            Moves?.Dispose();
             Telemetry?.Finish("scene unloaded");
         }
 
@@ -218,6 +221,11 @@ namespace SickOfIt.Gameplay
             }
             Upgrades.ApplyOwned();
             Upgrades.ApplyShop();
+            if (playerController != null)
+            {
+                Moves = new HeroMoves(this, playerController);
+                Moves.Arm(RogueliteManager.Instance);
+            }
             Hud.BuildProgressBar();
 
             history = gameObject.AddComponent<SimHistory>();
@@ -925,6 +933,7 @@ namespace SickOfIt.Gameplay
             Weapons?.SaveState(w);
             Style?.SaveState(w);
             Perks?.SaveState(w);
+            Moves?.SaveState(w);
         }
 
         public void LoadState(StateReader r)
@@ -959,6 +968,7 @@ namespace SickOfIt.Gameplay
             Weapons?.LoadState(r);
             Style?.LoadState(r);
             Perks?.LoadState(r);
+            Moves?.LoadState(r);
         }
 
         /// <summary>Saves the world's state at this moment (after a discrete event such as a swing or a weapon change), so a rewind to just after can't undo it.</summary>

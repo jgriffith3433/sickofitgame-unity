@@ -881,6 +881,15 @@ namespace SickOfIt.Playtest
                 "slower than on the ground. Hold R back to a moment halfway up: his place and his hold are restored and he keeps hanging. Space lets go (a jump) and he lands; " +
                 "he takes hold again (S from the ladder's top, or W from its foot) and climbs off the top onto the shelf. Then hold R back to standing on the shelf, and back again " +
                 "into the climb itself: the exact place and the hold come back. Each beat is a check event; ladder events log the grabs, jumps and exits", LadderSeconds, "level"));
+            string movesHow = $"the scene \"{MovesScene}\" on level {MovesLevel}'s stage (setup shortcut: a new game's save, so both moves start locked), played through real input, no bot. ";
+            string dashHow = "DASH: Yooba's Slimed Lining is hidden until Floor 998 is cleared; Shift does nothing while it is locked; with Floor 998 cleared and the diamonds given (setup shortcuts) it is bought through the shop's own purchase. " +
+                "A bolt that is not dashed hurts him; a bolt dashed into (Shift, the dash starts, `DashInvulnerable`, the Dash pose) passes through him: health unchanged and the bolt flies on behind him. " +
+                "A second press in the cooldown does nothing, the dash is back after it. Hold R back into the middle of a burst (dashing, untouchable, place and cooldown restored) and to before the dash (the dash is given back and goes again); the unlock stays. ";
+            string wallHow = "WALL-JUMP: a shaft of two walls rises around him. Locked, pushing into the wall in the air does nothing. Floor 997 cleared alone does not give it; clearing Floor 996 (setup shortcut) does, and sets the `move:wallJump` flag. " +
+                "Then jump at one wall, cling (a slow slide, the WallSlide pose), Space kicks off it (WallJump pose), cross, kick again: he climbs 4.5+ units with 3+ kicks, more than a jump reaches. Hold R back to a moment clinging: the wall side and his place return and the kick works again. ";
+            list.Add(new PlaytestScenario(HeroMovesId, "The hero's moves (Docs/GameplayCookbook.md \"The hero's moves\"): " + movesHow + dashHow + wallHow + "Each beat is a check event; `move` events log every dash, cling and kick", MovesSeconds, "level"));
+            list.Add(new PlaytestScenario(DashId, "The hero's dash (Docs/GameplayCookbook.md \"The hero's moves\"): " + movesHow + dashHow + "Each beat is a check event; `move` events log every dash", MovesSeconds, "level"));
+            list.Add(new PlaytestScenario(WallJumpId, "The hero's wall-jump (Docs/GameplayCookbook.md \"The hero's moves\"): " + movesHow + wallHow + "Each beat is a check event; `move` events log every cling and kick", MovesSeconds, "level"));
             var bystanderFloors = BystanderFloorLevels();
             if (bystanderFloors.Count > 0)
                 list.Add(new PlaytestScenario(BystanderFloorsId, $"Bystanders on the floors ({bystanderFloors.Count} floors, {PathRange(bystanderFloors)}; Docs/Story.md \"Bystanders on the floors\"): each opened directly (a setup shortcut) and played by the bot through real input. " +
@@ -1286,6 +1295,11 @@ namespace SickOfIt.Playtest
             {
                 session.Prepare(LadderLevel, true);
                 yield return session.LadderRun();
+            }
+            else if (id == HeroMovesId || id == DashId || id == WallJumpId)
+            {
+                session.Prepare(MovesLevel, true);
+                yield return session.HeroMovesRun(id != WallJumpId, id != DashId);
             }
             else if (id == MusicLayersId)
                 yield return session.MusicLayersRun();

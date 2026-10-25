@@ -356,6 +356,19 @@
     {
       "moment": "ShopBuy",
       "floor": 0,
+      "sound": "vo_yooba_buy_lining",
+      "text": "Slimed Lining! Shove off and whoosh! Mind the coat. It's still a bit me.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "slimedLining",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
       "sound": "vo_yooba_buy_trigger",
       "text": "I licked that trigger myself. Twice, for luck. Don't wipe it.",
       "clip": "laugh",
