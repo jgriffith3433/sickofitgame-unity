@@ -17,17 +17,21 @@ namespace SickOfIt.Playtest
         /// setup shortcuts). The two runs must take different branches. Tools/Levels/companions.py writes the scenes.
         /// </summary>
         public const string CompanionsId = "companions";
-        const float CompanionsSeconds = 1800f;
+        const float CompanionsSeconds = 600f;
+        // Studio's check must finish in 10 minutes (docs/playtest.md): no new floor after 5 min of run time, one begun is cut off by 8.5.
+        // Without "at" the run plays the first floors of the climb that fit; "at" (a floor, "902") starts it later in the table.
+        const float CompanionsBudget = 5f * 60f, CompanionsHardEnd = 8.5f * 60f;
 
         // floor, who, the default branch, the other branch, the save that makes it ($=diamonds d=deaths h=hearts left f=flags, comma separated)
         static readonly (int floor, string who, string plain, string other, string setup)[] CompanionScenes =
         {
-            (996, "rook", "poor", "rich", "$=12"), (992, "rook", "race", "hurt", "h=1"), (955, "rook", "plain", "dead", "d=3"),
-            (899, "rook", "skipped", "asked", "f=rook.asked"), (858, "rook", "plain", "rich", "$=35"), (808, "rook", "plain", "kind", "f=rook.second"),
-            (999, "wick", "plain", "hurt", "h=1"), (993, "wick", "plain", "dead", "d=3"), (960, "wick", "plain", "rich", "$=25"),
-            (902, "wick", "plain", "friends", "f=wick.lit,rook.asked"),
-            (900, "pointer", "plain", "hurt", "h=1"), (895, "pointer", "plain", "rook", "f=rook.sideways"), (860, "pointer", "plain", "wick", "f=wick.rested"),
-            (810, "pointer", "plain", "both", "f=pointer.right,rook.second"),
+            // In the order of the climb (floors counting down = level numbers going up), so the run's progress only goes forward.
+            (999, "wick", "plain", "hurt", "h=1"), (996, "rook", "poor", "rich", "$=12"), (993, "wick", "plain", "dead", "d=3"),
+            (992, "rook", "race", "hurt", "h=1"), (960, "wick", "plain", "rich", "$=25"), (955, "rook", "plain", "dead", "d=3"),
+            (902, "wick", "plain", "friends", "f=wick.lit,rook.asked"), (900, "pointer", "plain", "hurt", "h=1"),
+            (899, "rook", "skipped", "asked", "f=rook.asked"), (895, "pointer", "plain", "rook", "f=rook.sideways"),
+            (860, "pointer", "plain", "wick", "f=wick.rested"), (858, "rook", "plain", "rich", "$=35"),
+            (810, "pointer", "plain", "both", "f=pointer.right,rook.second"), (808, "rook", "plain", "kind", "f=rook.second"),
         };
 
         sealed partial class Session
@@ -35,6 +39,7 @@ namespace SickOfIt.Playtest
             readonly HashSet<string> companionSignals = new HashSet<string>();
             readonly List<string> companionOrder = new List<string>();
             int companionHurtFloor;
+            float companionHardEnd = float.MaxValue;
 
             void CompanionTelemetry(GameplayTelemetry log, GameplayTelemetry.Event e)
             {
@@ -94,31 +99,57 @@ namespace SickOfIt.Playtest
                     yield return OpenLevel(n, attempt);
                     if (Run.Done || !openedLevel)
                         break;
-                    yield return PlayLevel(n, 120f, null, (float)index / total, (float)(index + 1) / total, 240f, waitOutDeath: true, until: () => CompanionUntil(floor, who, hurt));
+                    yield return PlayLevel(n, 120f, null, (float)index / total, (float)(index + 1) / total, Mathf.Clamp(companionHardEnd - Time.realtimeSinceStartup, 30f, 240f), waitOutDeath: true, until: () => CompanionUntil(floor, who, hurt));
                 }
             }
 
-            public IEnumerator CompanionsRun()
+            public IEnumerator CompanionsRun(string startAt = null)
             {
                 GameplayTelemetry.Recorded += CompanionTelemetry;
-                int total = CompanionScenes.Length * 2;
+                int first = 0;
+                if (startAt != null)
+                {
+                    int atLevel = ResolveAt(startAt, out string atWhat);
+                    first = CompanionScenes.Length;
+                    for (int k = 0; k < CompanionScenes.Length; k++)
+                        if (LevelNumberOf("Floor" + CompanionScenes[k].floor) >= atLevel && atLevel > 0) { first = k; break; }
+                    if (first >= CompanionScenes.Length)
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"companions: start point \"{startAt}\": {atWhat}; no climber scene on or after it");
+                        End(PlaytestOutcome.Error);
+                        yield break;
+                    }
+                    Run.Event("start-at", $"companions from Floor {CompanionScenes[first].floor} ({atWhat})");
+                }
+                float started = Time.realtimeSinceStartup;
+                float budgetEnd = started + CompanionsBudget, hardEnd = started + CompanionsHardEnd;
+                int total = (CompanionScenes.Length - first) * 2;
+                var planned = new Dictionary<string, int>();
+                bool stalled = false;
                 try
                 {
                     var encounters = new Dictionary<string, int>();
                     var branchesSeen = new Dictionary<string, HashSet<string>>();
-                    for (int i = 0; i < CompanionScenes.Length && !Run.Done; i++)
+                    for (int i = first; i < CompanionScenes.Length && !Run.Done; i++)
                     {
                         var (floor, who, plain, other, setup) = CompanionScenes[i];
+                        if (Time.realtimeSinceStartup >= budgetEnd)
+                        {
+                            Run.Event("budget", $"time budget reached at {(Time.realtimeSinceStartup - started) / 60f:0.0} min: Floor {floor} ({who}) and the {CompanionScenes.Length - i - 1} after it not reached (start nearer with \"at\")");
+                            break;
+                        }
+                        planned[who] = (planned.TryGetValue(who, out int pl) ? pl : 0) + 1;
+                        companionHardEnd = hardEnd;
                         string at = $"cmp:{who}:{floor}:";
                         // 1. a plain save: the default branch
-                        yield return CompanionPlay(i * 2, floor, who, "", false, total);
+                        yield return CompanionPlay((i - first) * 2, floor, who, "", false, total);
                         bool plainOk = companionSignals.Contains(at + "branch:" + plain) && companionSignals.Contains(at + "done");
                         bool hadDone = companionSignals.Contains(at + "done");
                         // 2. the other save: the other branch (the same scene again, so forget the first run's signals)
                         foreach (string s in new List<string>(companionSignals))
                             if (s.StartsWith(at))
                                 companionSignals.Remove(s);
-                        yield return CompanionPlay(i * 2 + 1, floor, who, setup, setup.StartsWith("h="), total);
+                        yield return CompanionPlay((i - first) * 2 + 1, floor, who, setup, setup.StartsWith("h="), total);
                         bool otherOk = companionSignals.Contains(at + "branch:" + other) && !companionSignals.Contains(at + "branch:" + plain) && companionSignals.Contains(at + "done");
                         CompanionCheck($"floor {floor} ({who}) plain save", plainOk, plainOk ? $"took \"{plain}\"" : "the default branch did not play to the end");
                         CompanionCheck($"floor {floor} ({who}) reacts to the hero ({setup})", otherOk,
@@ -130,6 +161,12 @@ namespace SickOfIt.Playtest
                             set.Add($"{floor}:{plain}");
                             if (otherOk) set.Add($"{floor}:{other}");
                         }
+                        if (lastOutcome == "stalled")
+                        {
+                            // The hero made no progress for minutes: the report names the place (the stuck event); the run ends here.
+                            stalled = true;
+                            break;
+                        }
                     }
                     foreach (string who in new[] { "rook", "wick", "pointer" })
                     {
@@ -137,8 +174,15 @@ namespace SickOfIt.Playtest
                         int branches = branchesSeen.TryGetValue(who, out var set) ? set.Count : 0;
                         Run.Metric($"companions.{who}.encounters", count);
                         Run.Metric($"companions.{who}.branches", branches);
-                        CompanionCheck($"{who} appears in 3+ encounters", count >= 3, $"{count} scenes played");
-                        CompanionCheck($"{who} has branches that react to the hero", branches >= 6, $"{branches} different branches played");
+                        // With the time budget (or an "at") not every scene of a climber is played: ask for three, or all that were planned.
+                        int want = Mathf.Min(3, planned.TryGetValue(who, out int pw) ? pw : 0);
+                        if (want == 0)
+                        {
+                            Run.Event("check", $"companions {who}: no scene in this run (not reached)");
+                            continue;
+                        }
+                        CompanionCheck($"{who} appears in {want}+ encounters", count >= want, $"{count} scenes played");
+                        CompanionCheck($"{who} has branches that react to the hero", branches >= want * 2, $"{branches} different branches played");
                     }
                 }
                 finally
@@ -146,6 +190,11 @@ namespace SickOfIt.Playtest
                     GameplayTelemetry.Recorded -= CompanionTelemetry;
                     UnlockFlags.Reset();
                     YoobaProgress.Deaths = 0;
+                }
+                if (stalled && !Run.Done)
+                {
+                    Run.Progress(1f);
+                    End(PlaytestOutcome.Stuck);
                 }
             }
         }

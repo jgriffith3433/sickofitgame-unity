@@ -99,9 +99,12 @@ namespace SickOfIt.Playtest
                             yield return OpenLevel(n, attempt);
                             if (Run.Done || !openedLevel)
                                 break;
-                            yield return PlayLevel(n, 240f, null, (float)i / OverlordScenes.Length, (float)(i + 1) / OverlordScenes.Length, 420f, waitOutDeath: true,
+                            yield return PlayLevel(n, 240f, null, (float)i / OverlordScenes.Length, (float)(i + 1) / OverlordScenes.Length, 300f, waitOutDeath: true,
                                 until: () => OverlordUntil(floor));
                             input.SetKey(Key.R, false);
+                            // Only a death earns a second try: a floor that stalled or ran out of time is reported (the stuck event names the place) and the next one starts.
+                            if (lastOutcome != "died")
+                                break;
                         }
                         bool all = overlordSignals.Contains($"ovl:{floor}:enter") && overlordSignals.Contains($"ovl:{floor}:line")
                                    && overlordSignals.Contains($"ovl:{floor}:{proof}") && overlordSignals.Contains(done);

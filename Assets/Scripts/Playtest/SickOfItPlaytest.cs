@@ -68,6 +68,9 @@ namespace SickOfIt.Playtest
         /// <summary>Real seconds the game clock may stand still mid-level (not paused) before it counts as a softlock.</summary>
         public static float SoftlockSeconds = 15f;
 
+        /// <summary>Real seconds with no progress (same cell, phase and path section) after which a level ends as "stalled" with its place named.</summary>
+        public static float StallSeconds = 240f;
+
         /// <summary>The level-N scenario's last result, for the PlayMode playtest report.</summary>
         public static string LastLevelOutcome { get; private set; }
 
@@ -559,6 +562,12 @@ namespace SickOfIt.Playtest
         /// Wraith's Floor 701 played like level-N: her fight, the Waystone and the Shaft waking Circle VII. The whole lower half runs in rune-bridges-3 and on.
         /// </summary>
         public const string BridgeDescentId = "bridge-descent";
+        /// <summary>Where bridge-descent starts without an "at": the hound's floor, so the run (three floors, then the Wraith) fits Studio's 10 minutes.</summary>
+        public const string BridgeDescentDefaultAt = "Floor735";
+
+        /// <summary>Scenarios a beta check plays must finish in 10 minutes (docs/playtest.md): no new floor after 6 min of run time, the last one over by 8.</summary>
+        const float ShortRunBudget = 6f * 60f, ShortRunHardEnd = 8f * 60f;
+
         public static readonly string[] BridgeDescentFloors = { "Floor751", "Floor750", "Floor745", "Floor735", "Floor725", "Floor705" };
 
         /// <summary>The level number (1-based position in game.json) of a level file's name, or 0.</summary>
@@ -916,7 +925,7 @@ namespace SickOfIt.Playtest
                     "A `bystander-floor` event per reaction (signal by:<kind>:<what>), and the closing check counts the floors that reacted, the kinds and the three scripted hero interactions", PathRunSeconds(bystanderFloors), "full", "levels"));
             list.Add(new PlaytestScenario(OverlordCameosId, "The Overlord on the far ledge (Docs/Story.md \"The Overlord on the far ledge\"): eight floors of Circles X and IX (997, 994, 958, 953, 906, 896, 857, 806), each opened directly (a setup shortcut) and played by the bot through real input until its scene ends. On a far ledge the Overlord taunts, drops an ember, rides a lift out of sight, lasers the floor, takes a diamond, walks his ledge, sends two whelps, lets a diamond fall; each with his voiced line and the hero's voiced reply, and `overlord` events for every beat (signal ovl:<floor>:<beat>). On Floor 896 a real hold of R while he walks drags him back and he says \"Again\" (the clock must drop). One check event per floor, then the rewind and the eight distinct floors", OverlordCameosSeconds, "level"));
             list.Add(new PlaytestScenario(CastId, "The recurring cast (Rook, Wick, Pointer, the Overlord's far glimpses, Yooba, the bystander souls): checked as data (each voice has its own Hawkes Gen voice id, every cast line has a clip, each character has an animator with an idle and a reaction), then Rook on Floor 996, Wick on 999 and Pointer on 900 played by the bot through real input until their scenes end (voiced lines, hero answers). `check` events cast <beat>", CastSeconds, "level"));
-            list.Add(new PlaytestScenario(CompanionsId, "The Climbers (Docs/Story.md \"The Climbers\"): Rook the rival (Floors 996, 992, 955, 899, 858, 808), Wick the lamplighter (999, 993, 960, 902) and Pointer the fingerpost (900, 895, 860, 810), fourteen floors each opened twice directly (a setup shortcut) and played by the bot through real input until the scene ends: the climber appears ahead, speaks subtitles, then BRANCHES on the hero (hearts, diamonds, deaths, Grudges, the flags earlier scenes wrote), pays a small reward and walks on. The first run has a plain save, the second the save that makes the scene take its other branch (diamonds, deaths, flags set as setup shortcuts; for hearts the hero is hurt down to one heart); the two must differ. `companion` events (signal cmp:<who>:<floor>:<beat>, with branch:<label> and reward:<kind>), a check per floor and per climber (3+ encounters, 6+ branches)", CompanionsSeconds, "level"));
+            list.Add(new PlaytestScenario(CompanionsId, "The Climbers (Docs/Story.md \"The Climbers\"): Rook the rival (Floors 996, 992, 955, 899, 858, 808), Wick the lamplighter (999, 993, 960, 902) and Pointer the fingerpost (900, 895, 860, 810), fourteen floors each opened twice directly (a setup shortcut) and played by the bot through real input until the scene ends: the climber appears ahead, speaks subtitles, then BRANCHES on the hero (hearts, diamonds, deaths, Grudges, the flags earlier scenes wrote), pays a small reward and walks on. The first run has a plain save, the second the save that makes the scene take its other branch (diamonds, deaths, flags set as setup shortcuts; for hearts the hero is hurt down to one heart); the two must differ. `companion` events (signal cmp:<who>:<floor>:<beat>, with branch:<label> and reward:<kind>), a check per floor and per climber (3+ encounters, 6+ branches). The floors run in the climb's order (progress only goes forward); under 10 min: no floor is begun after 5 min of run time, `at` (a floor like \"902\") starts later in the climb", CompanionsSeconds, "level"));
             list.Add(new PlaytestScenario(RewindJuiceId, "Longer, more rewarding rewind (Docs/GameplayCookbook.md \"The arcade loop\"): Level 1 loaded directly with the shop reset (a setup shortcut): " +
                 "the new game's juice must be 10 s (it was 3). Then Yooba's rewind goods are bought through the shop's own purchase (diamonds given first, a setup shortcut: Loop Jar x5, Bottomless Jar x2, Quick Unwind x3) " +
                 "and Level 1 loads again: the cap must reach 24 s and the rewind runs 75% faster. The bot plays through real input until a clean kill pays juice back: the juice goes up by the refund and the HUD floats " +
@@ -927,7 +936,7 @@ namespace SickOfIt.Playtest
                 "the run now leads to the side floor, the side floor is cleared (`side-floor` events: side:enter, side:guard, side:reward:<kind>, side:cleared), what it paid is in the save " +
                 "(a lore flag, the Slag Ladle unlocked for good, the hidden Held Breath, 20 diamonds, a full health and rewind refill, a gauntlet's purse or flag) and the run leads on to the floor after " +
                 "the host. The two gauntlets also chain 4 and 5 waves (side:wave:N) with a rewind refill (side:refill:N) between them, the juice full at each wave's start. The last check: every reward is different. " +
-                "~35 min; the `gauntlets` scenario is the last two alone (~12 min)", SideFloorsSeconds, "level", "secret"));
+                "Under 10 min: no room is begun after 3.5 min of run time (the rest are logged as not reached); `at` (a door key, a host floor like \"906\", or a side floor's level file) starts later in the table. The `gauntlets` scenario is the last two alone", SideFloorsSeconds, "level", "secret"));
             list.Add(new PlaytestScenario(ReplayModesId, "Replay modes (Docs/Story.md \"Again\", cookbook \"Replay modes\"): Endless Floor, the Daily Challenge and New Game+, each opened from the main menu with real clicks " +
                 "(a card with the mode's best / table / cycle, then Play). Endless Floor: the bot climbs 3+ floors (the counter goes down for each push fought off) and the best is saved " +
                 "(`replay` events, `check` events `replay-modes endless ...`) and shown on the card afterwards. The Daily Challenge on a fixed date (a setup shortcut) is played twice: the same seed, " +
@@ -1255,7 +1264,8 @@ namespace SickOfIt.Playtest
             else if (id == CrackedHeatId || id.StartsWith(CrackedHeatId + "-", StringComparison.Ordinal))
                 yield return session.AllLevels(CrackedHeatLevels(id == CrackedHeatId ? 1 : int.Parse(id.Substring(CrackedHeatId.Length + 1))), "Circle IX, the heat pass", checkEvery: true, at: at, ladders: true);
             else if (id == RuneBridgesId || id.StartsWith(RuneBridgesId + "-", StringComparison.Ordinal))
-                yield return session.AllLevels(RuneBridgeLevels(id == RuneBridgesId ? 1 : int.Parse(id.Substring(RuneBridgesId.Length + 1))), "Circle VIII, the Rune Bridges", checkEvery: true, at: at);
+                yield return session.AllLevels(RuneBridgeLevels(id == RuneBridgesId ? 1 : int.Parse(id.Substring(RuneBridgesId.Length + 1))), "Circle VIII, the Rune Bridges", checkEvery: true, at: at,
+                    budget: ShortRunBudget, hardEndSeconds: ShortRunHardEnd);
             else if (id == LadderFloorsId)
                 yield return session.AllLevels(LadderFloorLevels(), "the floors with a ladder", checkEvery: true, at: at, ladders: true);
             else if (id == ClimbStartId)
@@ -1312,7 +1322,7 @@ namespace SickOfIt.Playtest
             else if (id == RewindJuiceId)
                 yield return session.RewindJuiceRun();
             else if (id == SideFloorsId || id == GauntletsId)
-                yield return session.SideFloorsRun(id == GauntletsId);
+                yield return session.SideFloorsRun(id == GauntletsId, at);
             else if (id == ReplayModesId)
                 yield return session.ReplayModesRun();
             else if (id == BystanderId)
@@ -1322,7 +1332,7 @@ namespace SickOfIt.Playtest
             else if (id == CastId)
                 yield return session.CastRun();
             else if (id == CompanionsId)
-                yield return session.CompanionsRun();
+                yield return session.CompanionsRun(at);
             else if (id == BystanderFloorsId)
                 yield return session.BystanderFloorsRun();
             else if (id == LadderId)
@@ -1425,7 +1435,8 @@ namespace SickOfIt.Playtest
             else if (id == SpireFiend.Scenario)
                 yield return session.WardenRun(SpireFiend, true);
             else if (id == BridgeDescentId)
-                yield return session.AllLevels(BridgeDescentLevels(), "Circle VIII's lower half", checkEvery: true, at: at, thenLevel: LevelNumberOf(BridgeWraithLevel));
+                yield return session.AllLevels(BridgeDescentLevels(), "Circle VIII's lower half", checkEvery: true, at: at ?? BridgeDescentDefaultAt, thenLevel: LevelNumberOf(BridgeWraithLevel),
+                    budget: ShortRunBudget * 0.5f, hardEndSeconds: ShortRunHardEnd * 0.6f);
             else if (id == BridgeWraith.Scenario)
             {
                 int wraithLevel = LevelNumberOf(BridgeWraithLevel);
@@ -7001,7 +7012,7 @@ namespace SickOfIt.Playtest
             /// death, and reported: cleared, died (where and by what) or stuck (where). A level the bot can't clear goes in the table
             /// and the next one starts; the run ends with the table.
             /// </summary>
-            public IEnumerator AllLevels(List<int> levels, string what, bool checkEvery = false, string at = null, bool ladders = false, int thenLevel = 0)
+            public IEnumerator AllLevels(List<int> levels, string what, bool checkEvery = false, string at = null, bool ladders = false, int thenLevel = 0, float budget = 0f, float hardEndSeconds = 0f)
             {
                 var results = new List<PathResult>();
                 takeShortcuts = false;
@@ -7026,9 +7037,10 @@ namespace SickOfIt.Playtest
                     what += $" from {where}";
                 }
                 Run.Event("all-levels", $"{what}: {levels.Count} levels, {PathRange(levels)}; each opened directly (setup shortcut), played once more after a death");
-                float budgetEnd = sessionStarted + PathRunBudget, hardEnd = sessionStarted + PathRunHardEnd;
-                Run.Event("budget", $"time budget: no new level after {PathRunBudget / 60f:0} min of run time (now {RunMinutes():0.0} min in), " +
-                                    $"the last one ends by {PathRunHardEnd / 60f:0} min; each level capped at {PathLevelCap(1, Speed) / 60f:0} min of real time " +
+                float runBudget = budget > 0f ? budget : PathRunBudget, runHardEnd = hardEndSeconds > 0f ? hardEndSeconds : PathRunHardEnd;
+                float budgetEnd = sessionStarted + runBudget, hardEnd = sessionStarted + runHardEnd;
+                Run.Event("budget", $"time budget: no new level after {runBudget / 60f:0.#} min of run time (now {RunMinutes():0.0} min in), " +
+                                    $"the last one ends by {runHardEnd / 60f:0.#} min; each level capped at {PathLevelCap(1, Speed) / 60f:0} min of real time " +
                                     "(a floor boss's a little more), both tries and the loads; a stuck or a timeout moves on to the next level; " +
                                     $"the runner stops at {RunnerLimitMinutes:0} min, encoding the video included (up to ~{RunnerAfterMinutes:0} min after the table)");
                 int reached = 0;
@@ -7141,7 +7153,7 @@ namespace SickOfIt.Playtest
                 Run.Metric("path.played", played);
                 Run.Metric("path.notReached", notReached);
                 Run.Metric("path.budgetMinutes", Mathf.Round(RunMinutes() * 10f) / 10f);
-                Run.Event("budget", $"time budget used: {RunMinutes():0.0} of {PathRunBudget / 60f:0} min (hard end {PathRunHardEnd / 60f:0}; " +
+                Run.Event("budget", $"time budget used: {RunMinutes():0.0} of {runBudget / 60f:0.#} min (hard end {runHardEnd / 60f:0.#}; " +
                                     $"{RunnerLimitMinutes - RunMinutes():0.0} min left of the runner's {RunnerLimitMinutes:0} for the video); levels covered: {played} of {levels.Count}" +
                                     (played > 0 ? $" ({PathRange(levels.GetRange(0, played))})" : "") +
                                     (notReached > 0 ? $"; not reached: {notReached} ({PathRange(levels.GetRange(played, notReached))})" : "; every level reached"));
@@ -9504,6 +9516,8 @@ namespace SickOfIt.Playtest
                 float started = Time.realtimeSinceStartup;
                 float realLimit = Mathf.Min(limit / Speed + 60f, realBudget);
                 float lastClock = -1f, clockMovedAt = started, nextScan = 0f, shownProgress = -1f, heartbeatClock = -1f, heartbeatAt = started;
+                string stallMarker = null;
+                float stallSince = started;
                 string outcome = "timeout";
                 bool dying = false;
                 while (!Run.Done)
@@ -9551,6 +9565,28 @@ namespace SickOfIt.Playtest
                         break;
                     }
 
+                    // No progress for StallSeconds (real): the hero in the same 2-unit cell, the same phase and path section, no death: the
+                    // run says where it stands and the level ends as "stalled" (the scenario goes on or ends as stuck, never waits out the runner's 60 min).
+                    if (!held && world.Player != null)
+                    {
+                        var at = world.Player.Position;
+                        var section = world.Effects != null && world.Effects.HasPath ? world.Effects.CurrentSection : null;
+                        string marker = $"{world.Director?.PhaseName}|{section?.name}|{Mathf.FloorToInt(at.x / 2f)},{Mathf.FloorToInt(at.y / 2f)}|{deaths}";
+                        if (marker != stallMarker)
+                        {
+                            stallMarker = marker;
+                            stallSince = Time.realtimeSinceStartup;
+                        }
+                        else if (Time.realtimeSinceStartup - stallSince > StallSeconds)
+                        {
+                            lastWhere = HeroWhere(world);
+                            Run.Event("stuck", $"level {n}: no progress for {StallSeconds / 60f:0} min, {lastWhere}");
+                            Run.Problem(PlaytestSeverity.Bug, $"stuck: level {n} made no progress for {StallSeconds / 60f:0} min, {lastWhere}");
+                            outcome = "stalled";
+                            break;
+                        }
+                    }
+
                     if (Time.realtimeSinceStartup >= nextScan)
                     {
                         nextScan = Time.realtimeSinceStartup + 0.5f;
@@ -9563,7 +9599,8 @@ namespace SickOfIt.Playtest
                     // all-levels run died on Level 5. While the game clock moves, the bot is playing: report it every 5 s. A clock
                     // that stands still is this loop's own softlock check (15 s); a held one (pause, picker) still gets the 60 s.
                     if (progress - shownProgress >= 0.01f
-                        || (Time.realtimeSinceStartup - heartbeatAt >= 5f && Mathf.Abs(now - heartbeatClock) > 0.0001f))
+                        || (Time.realtimeSinceStartup - heartbeatAt >= 5f && Mathf.Abs(now - heartbeatClock) > 0.0001f)
+                        || Time.realtimeSinceStartup - heartbeatAt >= 30f)
                     {
                         shownProgress = progress;
                         heartbeatClock = now;
@@ -9579,7 +9616,7 @@ namespace SickOfIt.Playtest
                 }
 
                 // A level that didn't end: where the hero was, so the report shows which climb he couldn't make.
-                if (outcome != "completed" && outcome != "died" && world != null && world.Player != null)
+                if (outcome != "completed" && outcome != "died" && outcome != "stalled" && world != null && world.Player != null)
                 {
                     lastWhere = HeroWhere(world);
                     if (outcome == "timeout" || outcome == "time up")

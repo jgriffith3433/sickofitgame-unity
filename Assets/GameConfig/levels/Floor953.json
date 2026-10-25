@@ -42,6 +42,7 @@
           "direction": "Up",
           "length": 1.45,
           "turn": 2.0,
+          "lead": 0.4,
           "spawns": [
             {
               "entity": "lavaSea",
@@ -174,6 +175,7 @@
           "direction": "Up",
           "length": 4.9,
           "turn": 2.0,
+          "lead": 0.8,
           "spawns": [
             {
               "entity": "sinkingStone",
