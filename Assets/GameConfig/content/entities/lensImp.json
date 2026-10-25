@@ -11,13 +11,97 @@
   ],
   "extends": "imp",
   "health": 3,
-  "tags": [
-    "imp",
-    "lensImp"
-  ],
+  "tags": ["imp", "lensImp"],
   "visual": {
-    "color": "#FF6A6A",
-    "fxColor": "#FF4A4A"
+    "fxColor": "#FF4A4A",
+    "animator": {
+      "parameters": [
+        {
+          "name": "Attack",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/LensImp/LensImp_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/LensImp/LensImp_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/LensImp/LensImp_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/LensImp/LensImp_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Attack",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "drops": [],
   "abilities": [
@@ -40,7 +124,8 @@
       "length": 9,
       "width": 0.4,
       "warningSound": "overlord_beam_charge",
-      "beamSound": "overlord_beam_strike"
+      "beamSound": "overlord_beam_strike",
+      "animBool": "IsAttacking"
     }
   ],
   "sounds": {

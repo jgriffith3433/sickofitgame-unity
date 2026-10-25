@@ -6,7 +6,20 @@
     "runePillar"
   ],
   "visual": {
-    "color": "#A9BFDA",
-    "placeholderColor": "#6F8CB0"
+    "placeholderColor": "#6F8CB0",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/RunePillar_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
   }
 }

@@ -12,17 +12,166 @@
   "extends": "brimstoneDemon",
   "health": 3,
   "moveSpeed": 0.8,
-  "tags": [
-    "mineBeetle"
-  ],
+  "tags": ["mineBeetle"],
   "body": {
     "radius": 0.4,
     "solid": false
   },
   "visual": {
     "scale": 0.2,
-    "color": "#5A3A2A",
-    "fxColor": "#FF6A1F"
+    "fxColor": "#FF6A1F",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsMoving",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "IsAttacking",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/MineBeetle/MineBeetle_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Move",
+          "spriteSheet": "Art/Enemies/MineBeetle/MineBeetle_move.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/MineBeetle/MineBeetle_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/MineBeetle/MineBeetle_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/MineBeetle/MineBeetle_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Move",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "loot": {
     "chance": 0.35,
@@ -39,18 +188,17 @@
       "type": "patrol",
       "speed": 0.9,
       "distance": 3.4,
-      "pause": 0.4
+      "pause": 0.4,
+      "animBool": "IsMoving"
     },
     {
       "type": "spawner",
       "entity": "emberMine",
-      "interval": 3.0,
+      "interval": 3,
       "initialDelay": 1.2,
       "maxAlive": 4,
-      "offset": [
-        0.0,
-        -0.05
-      ]
+      "offset": [0, -0.05],
+      "animTrigger": "IsAttacking"
     }
   ],
   "sounds": {

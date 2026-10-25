@@ -7,7 +7,21 @@
   ],
   "visual": {
     "color": "#FFFFFF",
-    "placeholderColor": "#9FD8FF"
+    "placeholderColor": "#9FD8FF",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/RuneSpan_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
   },
   "abilities": [
     {

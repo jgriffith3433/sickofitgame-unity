@@ -12,17 +12,166 @@
   "extends": "brimstoneDemon",
   "health": 3,
   "moveSpeed": 0.7,
-  "tags": [
-    "slagHound"
-  ],
+  "tags": ["slagHound"],
   "body": {
     "radius": 0.4,
     "solid": false
   },
   "visual": {
     "scale": 0.22,
-    "color": "#3A2A28",
-    "fxColor": "#FF6A1F"
+    "fxColor": "#FF6A1F",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsMoving",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "Attack",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/SlagHound/SlagHound_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Move",
+          "spriteSheet": "Art/Enemies/SlagHound/SlagHound_move.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/SlagHound/SlagHound_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/SlagHound/SlagHound_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/SlagHound/SlagHound_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Move",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Attack",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Attack",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "loot": {
     "chance": 0.3,
@@ -41,9 +190,10 @@
     {
       "type": "chase",
       "speed": 0.7,
-      "stopDistance": 2.0,
+      "stopDistance": 2,
       "horizontalOnly": true,
-      "face": true
+      "face": true,
+      "animBool": "IsMoving"
     },
     {
       "type": "charge",
@@ -51,8 +201,9 @@
       "initialDelay": 1.2,
       "windup": 0.7,
       "duration": 0.55,
-      "speed": 7.0,
-      "range": 6.5
+      "speed": 7,
+      "range": 6.5,
+      "windupBool": "IsAttacking"
     }
   ],
   "sounds": {

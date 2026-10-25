@@ -9,11 +9,7 @@
   "health": 32,
   "moveSpeed": 0,
   "activationRange": 0,
-  "tags": [
-    "boss",
-    "midBoss",
-    "motherFissure"
-  ],
+  "tags": ["boss", "midBoss", "motherFissure"],
   "body": {
     "shape": "Circle",
     "radius": 0.6,
@@ -25,12 +21,99 @@
   },
   "visual": {
     "scale": 0.55,
-    "color": "#C05030",
     "fxColor": "#FF6A1F",
     "deathPunch": 0.35,
     "deathFlash": true,
     "deathBits": 30,
-    "deathFade": 0.8
+    "deathFade": 0.8,
+    "animator": {
+      "parameters": [
+        {
+          "name": "Attack",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/MotherFissure/MotherFissure_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/MotherFissure/MotherFissure_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/MotherFissure/MotherFissure_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/MotherFissure/MotherFissure_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Attack",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "loot": {
     "chance": 1,
@@ -40,7 +123,7 @@
   "drops": [
     {
       "entity": "rewindOrb",
-      "chance": 1.0
+      "chance": 1
     }
   ],
   "abilities": [
@@ -71,10 +154,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -82,24 +162,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "ricochetEmber",
-          "speed": 4.0,
+          "speed": 4,
           "aim": "Player",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -111,24 +185,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "bounceLump",
           "speed": 3.4,
           "aim": "Player",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -162,10 +230,7 @@
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            0.0,
-            -0.3
-          ],
+          "at": [0, -0.3],
           "facePlayer": false
         }
       ],
@@ -173,10 +238,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -205,10 +267,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -216,24 +275,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "deadeyeBolt",
-          "speed": 6.0,
+          "speed": 6,
           "aim": "Predictive",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "burst": 2,
@@ -242,24 +295,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "bounceLump",
           "speed": 3.4,
           "aim": "Player",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -293,20 +340,14 @@
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            -1.8,
-            -0.3
-          ],
+          "at": [-1.8, -0.3],
           "facePlayer": false
         },
         {
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            1.8,
-            -0.3
-          ],
+          "at": [1.8, -0.3],
           "facePlayer": false
         }
       ],
@@ -314,10 +355,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -356,10 +394,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -388,10 +423,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -399,24 +431,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "ricochetEmber",
-          "speed": 4.0,
+          "speed": 4,
           "aim": "Player",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -428,24 +454,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "bounceLump",
           "speed": 3.4,
           "aim": "Player",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -460,10 +480,7 @@
           "interval": 3.4,
           "initialDelay": 0.5,
           "maxAlive": 3,
-          "offset": [
-            -3.0,
-            -2.2
-          ]
+          "offset": [-3, -2.2]
         },
         {
           "type": "spawner",
@@ -471,10 +488,7 @@
           "interval": 3.4,
           "initialDelay": 1.05,
           "maxAlive": 3,
-          "offset": [
-            3.2,
-            -2.0
-          ]
+          "offset": [3.2, -2]
         },
         {
           "type": "spawner",
@@ -482,10 +496,7 @@
           "interval": 3.4,
           "initialDelay": 1.6,
           "maxAlive": 3,
-          "offset": [
-            0.6,
-            -2.5
-          ]
+          "offset": [0.6, -2.5]
         }
       ],
       "transitions": [
@@ -512,30 +523,21 @@
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            -2.4,
-            -0.3
-          ],
+          "at": [-2.4, -0.3],
           "facePlayer": false
         },
         {
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            0.0,
-            -0.3
-          ],
+          "at": [0, -0.3],
           "facePlayer": false
         },
         {
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            2.4,
-            -0.3
-          ],
+          "at": [2.4, -0.3],
           "facePlayer": false
         }
       ],
@@ -543,10 +545,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -557,10 +556,7 @@
           "interval": 3.4,
           "initialDelay": 0.5,
           "maxAlive": 3,
-          "offset": [
-            -3.0,
-            -2.2
-          ]
+          "offset": [-3, -2.2]
         },
         {
           "type": "spawner",
@@ -568,10 +564,7 @@
           "interval": 3.4,
           "initialDelay": 1.05,
           "maxAlive": 3,
-          "offset": [
-            3.2,
-            -2.0
-          ]
+          "offset": [3.2, -2]
         },
         {
           "type": "spawner",
@@ -579,10 +572,7 @@
           "interval": 3.4,
           "initialDelay": 1.6,
           "maxAlive": 3,
-          "offset": [
-            0.6,
-            -2.5
-          ]
+          "offset": [0.6, -2.5]
         }
       ],
       "transitions": [
@@ -608,10 +598,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -619,24 +606,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "deadeyeBolt",
-          "speed": 6.0,
+          "speed": 6,
           "aim": "Predictive",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "burst": 3,
@@ -645,24 +626,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "bounceLump",
           "speed": 3.4,
           "aim": "Player",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -677,10 +652,7 @@
           "interval": 3.4,
           "initialDelay": 0.5,
           "maxAlive": 3,
-          "offset": [
-            -3.0,
-            -2.2
-          ]
+          "offset": [-3, -2.2]
         },
         {
           "type": "spawner",
@@ -688,10 +660,7 @@
           "interval": 3.4,
           "initialDelay": 1.05,
           "maxAlive": 3,
-          "offset": [
-            3.2,
-            -2.0
-          ]
+          "offset": [3.2, -2]
         },
         {
           "type": "spawner",
@@ -699,10 +668,7 @@
           "interval": 3.4,
           "initialDelay": 1.6,
           "maxAlive": 3,
-          "offset": [
-            0.6,
-            -2.5
-          ]
+          "offset": [0.6, -2.5]
         }
       ],
       "transitions": [
@@ -729,10 +695,7 @@
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            0.0,
-            -0.3
-          ],
+          "at": [0, -0.3],
           "facePlayer": false
         }
       ],
@@ -740,10 +703,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -754,10 +714,7 @@
           "interval": 3.4,
           "initialDelay": 0.5,
           "maxAlive": 3,
-          "offset": [
-            -3.0,
-            -2.2
-          ]
+          "offset": [-3, -2.2]
         },
         {
           "type": "spawner",
@@ -765,10 +722,7 @@
           "interval": 3.4,
           "initialDelay": 1.05,
           "maxAlive": 3,
-          "offset": [
-            3.2,
-            -2.0
-          ]
+          "offset": [3.2, -2]
         },
         {
           "type": "spawner",
@@ -776,10 +730,7 @@
           "interval": 3.4,
           "initialDelay": 1.6,
           "maxAlive": 3,
-          "offset": [
-            0.6,
-            -2.5
-          ]
+          "offset": [0.6, -2.5]
         }
       ],
       "transitions": [
@@ -821,10 +772,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -846,10 +794,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -857,24 +802,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "ricochetEmber",
-          "speed": 4.0,
+          "speed": 4,
           "aim": "Player",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -886,57 +825,42 @@
         {
           "type": "spawner",
           "entity": "broodWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.4,
           "maxAlive": 5,
-          "offset": [
-            -3.0,
-            -2.2
-          ]
+          "offset": [-3, -2.2]
         },
         {
           "type": "spawner",
           "entity": "fuseWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.95,
           "maxAlive": 5,
-          "offset": [
-            3.2,
-            -2.0
-          ]
+          "offset": [3.2, -2]
         },
         {
           "type": "spawner",
           "entity": "tripleLobber",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.5,
           "maxAlive": 5,
-          "offset": [
-            0.6,
-            -2.5
-          ]
+          "offset": [0.6, -2.5]
         },
         {
           "type": "spawner",
           "entity": "demonWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.05,
           "maxAlive": 5,
-          "offset": [
-            -1.6,
-            -1.2
-          ]
+          "offset": [-1.6, -1.2]
         },
         {
           "type": "spawner",
           "entity": "plateDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.6,
           "maxAlive": 5,
-          "offset": [
-            4.4,
-            -1.0
-          ]
+          "offset": [4.4, -1]
         }
       ],
       "transitions": [
@@ -956,30 +880,21 @@
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            -2.4,
-            -0.3
-          ],
+          "at": [-2.4, -0.3],
           "facePlayer": false
         },
         {
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            0.0,
-            -0.3
-          ],
+          "at": [0, -0.3],
           "facePlayer": false
         },
         {
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            2.4,
-            -0.3
-          ],
+          "at": [2.4, -0.3],
           "facePlayer": false
         }
       ],
@@ -987,10 +902,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -998,57 +910,42 @@
         {
           "type": "spawner",
           "entity": "broodWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.4,
           "maxAlive": 5,
-          "offset": [
-            -3.0,
-            -2.2
-          ]
+          "offset": [-3, -2.2]
         },
         {
           "type": "spawner",
           "entity": "fuseWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.95,
           "maxAlive": 5,
-          "offset": [
-            3.2,
-            -2.0
-          ]
+          "offset": [3.2, -2]
         },
         {
           "type": "spawner",
           "entity": "tripleLobber",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.5,
           "maxAlive": 5,
-          "offset": [
-            0.6,
-            -2.5
-          ]
+          "offset": [0.6, -2.5]
         },
         {
           "type": "spawner",
           "entity": "demonWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.05,
           "maxAlive": 5,
-          "offset": [
-            -1.6,
-            -1.2
-          ]
+          "offset": [-1.6, -1.2]
         },
         {
           "type": "spawner",
           "entity": "plateDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.6,
           "maxAlive": 5,
-          "offset": [
-            4.4,
-            -1.0
-          ]
+          "offset": [4.4, -1]
         }
       ],
       "transitions": [
@@ -1067,10 +964,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -1078,24 +972,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "bounceLump",
           "speed": 3.4,
           "aim": "Player",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -1107,57 +995,42 @@
         {
           "type": "spawner",
           "entity": "broodWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.4,
           "maxAlive": 5,
-          "offset": [
-            -3.0,
-            -2.2
-          ]
+          "offset": [-3, -2.2]
         },
         {
           "type": "spawner",
           "entity": "fuseWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.95,
           "maxAlive": 5,
-          "offset": [
-            3.2,
-            -2.0
-          ]
+          "offset": [3.2, -2]
         },
         {
           "type": "spawner",
           "entity": "tripleLobber",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.5,
           "maxAlive": 5,
-          "offset": [
-            0.6,
-            -2.5
-          ]
+          "offset": [0.6, -2.5]
         },
         {
           "type": "spawner",
           "entity": "demonWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.05,
           "maxAlive": 5,
-          "offset": [
-            -1.6,
-            -1.2
-          ]
+          "offset": [-1.6, -1.2]
         },
         {
           "type": "spawner",
           "entity": "plateDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.6,
           "maxAlive": 5,
-          "offset": [
-            4.4,
-            -1.0
-          ]
+          "offset": [4.4, -1]
         }
       ],
       "transitions": [
@@ -1165,7 +1038,7 @@
           "to": "rageLead",
           "when": {
             "type": "after",
-            "seconds": 5.0
+            "seconds": 5
           }
         }
       ]
@@ -1176,10 +1049,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -1187,24 +1057,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "deadeyeBolt",
-          "speed": 6.0,
+          "speed": 6,
           "aim": "Predictive",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "burst": 4,
@@ -1213,24 +1077,18 @@
         {
           "type": "shoot",
           "projectile": "mkWarnHand",
-          "speed": 0.0,
+          "speed": 0,
           "aim": "Down",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
-          "initialDelay": 0.0
+          "initialDelay": 0
         },
         {
           "type": "shoot",
           "projectile": "bounceLump",
           "speed": 3.4,
           "aim": "Player",
-          "muzzle": [
-            0.2,
-            0.3
-          ],
+          "muzzle": [0.2, 0.3],
           "interval": 99,
           "initialDelay": 1.2,
           "pattern": {
@@ -1242,57 +1100,42 @@
         {
           "type": "spawner",
           "entity": "broodWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.4,
           "maxAlive": 5,
-          "offset": [
-            -3.0,
-            -2.2
-          ]
+          "offset": [-3, -2.2]
         },
         {
           "type": "spawner",
           "entity": "fuseWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.95,
           "maxAlive": 5,
-          "offset": [
-            3.2,
-            -2.0
-          ]
+          "offset": [3.2, -2]
         },
         {
           "type": "spawner",
           "entity": "tripleLobber",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.5,
           "maxAlive": 5,
-          "offset": [
-            0.6,
-            -2.5
-          ]
+          "offset": [0.6, -2.5]
         },
         {
           "type": "spawner",
           "entity": "demonWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.05,
           "maxAlive": 5,
-          "offset": [
-            -1.6,
-            -1.2
-          ]
+          "offset": [-1.6, -1.2]
         },
         {
           "type": "spawner",
           "entity": "plateDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.6,
           "maxAlive": 5,
-          "offset": [
-            4.4,
-            -1.0
-          ]
+          "offset": [4.4, -1]
         }
       ],
       "transitions": [
@@ -1312,30 +1155,21 @@
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            -2.4,
-            -0.3
-          ],
+          "at": [-2.4, -0.3],
           "facePlayer": false
         },
         {
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            0.0,
-            -0.3
-          ],
+          "at": [0, -0.3],
           "facePlayer": false
         },
         {
           "type": "spawn",
           "entity": "mfWarn",
           "anchor": "Player",
-          "at": [
-            2.4,
-            -0.3
-          ],
+          "at": [2.4, -0.3],
           "facePlayer": false
         }
       ],
@@ -1343,10 +1177,7 @@
         {
           "type": "hover",
           "speed": 2.4,
-          "offset": [
-            3.4,
-            2.3
-          ],
+          "offset": [3.4, 2.3],
           "keepSide": true,
           "bobHeight": 0.2,
           "bobSpeed": 1.6
@@ -1354,57 +1185,42 @@
         {
           "type": "spawner",
           "entity": "broodWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.4,
           "maxAlive": 5,
-          "offset": [
-            -3.0,
-            -2.2
-          ]
+          "offset": [-3, -2.2]
         },
         {
           "type": "spawner",
           "entity": "fuseWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 0.95,
           "maxAlive": 5,
-          "offset": [
-            3.2,
-            -2.0
-          ]
+          "offset": [3.2, -2]
         },
         {
           "type": "spawner",
           "entity": "tripleLobber",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 1.5,
           "maxAlive": 5,
-          "offset": [
-            0.6,
-            -2.5
-          ]
+          "offset": [0.6, -2.5]
         },
         {
           "type": "spawner",
           "entity": "demonWhelp",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.05,
           "maxAlive": 5,
-          "offset": [
-            -1.6,
-            -1.2
-          ]
+          "offset": [-1.6, -1.2]
         },
         {
           "type": "spawner",
           "entity": "plateDemon",
-          "interval": 3.0,
+          "interval": 3,
           "initialDelay": 2.6,
           "maxAlive": 5,
-          "offset": [
-            4.4,
-            -1.0
-          ]
+          "offset": [4.4, -1]
         }
       ],
       "transitions": [

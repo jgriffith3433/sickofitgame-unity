@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "entity": "roadBreaker",
+  "name": "The Road Breaker",
+  "description": "the biggest brimstone demon on the Cracked Road: a colossal hulking demon of black basalt with blazing orange seams, huge shoulders, small horned head, wielding a broken slab of road with iron rebar sticking out of it as a club",
+  "height": 1.9,
+  "poses": {
+    "stand": "standing hunched, the road-slab club resting on one huge shoulder",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "stands, breathing heavily, tapping the club on his palm",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "raises the road-slab club high and smashes it down on the ground in front of him to the right, cracks of orange light shooting out",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "pixels": 340
+}

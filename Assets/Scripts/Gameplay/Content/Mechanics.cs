@@ -453,6 +453,7 @@ namespace SickOfIt.Gameplay.Content
         public Color beamColor = new Color(1f, 0.25f, 0.15f, 0.95f);
         [SoundRef, Doc("Sound id (audio.json) played when the warning starts; empty = none.")] public string warningSound = "";
         [SoundRef, Doc("Sound id (audio.json) played when the beam fires; empty = none.")] public string beamSound = "";
+        [Doc("Animator bool set while the laser warns and sweeps (the entity's Attack clip).")] public string animBool = "";
 
         const int Idle = 0, Warning = 1, Sweeping = 2;
         int phase;
@@ -504,6 +505,8 @@ namespace SickOfIt.Gameplay.Content
                 view = MechanicView.Create(Owner, "LaserSweep", 2);
                 view.Draw = Draw;
             }
+            if (!string.IsNullOrEmpty(animBool))
+                Owner.Animation.SetBool(animBool, phase != Idle);
 
             if (phase == Idle)
             {

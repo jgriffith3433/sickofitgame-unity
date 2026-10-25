@@ -2,38 +2,44 @@
   "schemaVersion": 1,
   "entity": "ironhideBulwark",
   "name": "Ironhide Bulwark",
-  "description": "a squat imp bolted into a full suit of riveted iron plate, shield-like pauldrons, only red eyes showing",
-  "height": 0.95,
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, big and stocky, in riveted black iron armour plates, carrying a tall slab shield of riveted iron with glowing orange rivets in front of it, an ember in its free claw",
+  "height": 1.0,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "hovering low, the tall riveted iron slab shield held in front of it, peeking over the top",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "breathes and shifts its weight in place, its glow pulsing slowly",
       "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "paces forward with the heavy iron shield held in front, wings straining, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "peeks over the shield and lobs an ember forward to the right over the top of it",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

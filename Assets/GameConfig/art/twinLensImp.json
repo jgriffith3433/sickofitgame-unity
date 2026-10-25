@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "twinLensImp",
   "name": "Twin Lens",
-  "description": "an imp carrying two big red glass lenses on its arms, aimed apart, beams of red light leaking from the rims",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, larger than other imps, holding a glowing red lens shard in each clawed hand, one held high and one low, both eyes squinting through monocle-like glass",
   "height": 0.85,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "hovering on spread bat wings, a red lens shard held out in each hand, one high, one low",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "hovers, turning both red lens shards and squinting through them",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "raises the upper red lens so it flares with a red beam to the right, then the lower lens flares with a second beam, then it lowers both",
+      "seconds": 2
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

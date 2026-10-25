@@ -1,0 +1,17 @@
+{
+ "generatedBy": "Tools/Art/fx_sheets.py",
+ "pixelsPerUnit": 69.7,
+ "pivot": [
+  0.5,
+  0.5
+ ],
+ "sprites": [
+  {
+   "name": "loop_00",
+   "x": 0,
+   "y": 0,
+   "w": 418,
+   "h": 430
+  }
+ ]
+}

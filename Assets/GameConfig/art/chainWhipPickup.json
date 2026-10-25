@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "entity": "chainWhipPickup",
+  "name": "Chain-Whip (pickup)",
+  "description": "a chain whip: a short wooden grip wrapped in black leather with an iron pommel and a long heavy dark iron chain ending in a hooked barb, coiled",
+  "height": 0.4,
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, centered in the frame with plenty of empty space around it, the whole object visible. One object alone, nothing else, no hands, no person. {style} {background}",
+    "pose": "Image 1 is this object. Show the exact same object {action}. Keep everything about it the same as image 1: shape, colors, size and position in the frame and art style. {background}"
+  },
+  "poses": {
+    "stand": "floating a little above the ground with a soft warm glow around it"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "bobs gently up and down in place, glowing softly, turning a little",
+      "seconds": 2
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

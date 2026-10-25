@@ -3,16 +3,13 @@
   "team": "Neutral",
   "health": 0,
   "shootable": false,
-  "tags": [
-    "overlordCameo"
-  ],
+  "tags": ["overlordCameo"],
   "body": {
     "radius": 0.3,
     "solid": false
   },
   "visual": {
     "scale": 0.5,
-    "color": "#3B2F46",
     "placeholderColor": "#2A2030",
     "placeholderSize": 1.6,
     "placeholderLabel": false,
@@ -25,7 +22,7 @@
       "states": [
         {
           "stateName": "Idle",
-          "spriteSheet": "Art/Enemies/MagmaKing/MagmaKing_idle.png",
+          "spriteSheet": "Art/Enemies/OverlordFar/OverlordFar_idle.png",
           "fps": 12,
           "loop": true,
           "events": []
@@ -42,15 +39,9 @@
   "abilities": [
     {
       "type": "screenAnchor",
-      "offset": [
-        2.8,
-        1.8
-      ],
-      "drift": [
-        0.0,
-        0.0
-      ],
-      "driftAfter": 0.0
+      "offset": [2.8, 1.8],
+      "drift": [0, 0],
+      "driftAfter": 0
     }
   ]
 }

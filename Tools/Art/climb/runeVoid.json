@@ -1,0 +1,24 @@
+{
+  "about": "Circle VIII's void far below: ink-violet, rune dust, mist bands (instead of the Rift).",
+  "gpu": "fx_make Tools/Art/fx/runebridges.json (image.edit over flat magenta / ink-violet, Qwen-Image-Edit 2511), 2026-10-25; takes in SickOfItGameEnemies/Generated/fx/runebridges/_takes (void.png)",
+  "out": "Assets/Art/Climb",
+  "name": "RuneVoid",
+  "key": "none",
+  "size": [
+    697,
+    717
+  ],
+  "pivot": [
+    348.5,
+    358.5
+  ],
+  "worldWidth": 6,
+  "widthPixels": 697,
+  "scale": 0.6,
+  "clips": {
+    "loop": {
+      "frames": "C:/Projects/SickOfItGameEnemies/Generated/climbrune\\_prep\\runeVoid\\loop",
+      "key": "none"
+    }
+  }
+}

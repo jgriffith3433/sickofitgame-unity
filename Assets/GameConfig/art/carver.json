@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "entity": "carver",
+  "name": "The Carver",
+  "description": "a tall gaunt fussy demon of the Cracked Road who carves everything: pale grey basalt skin with thin orange seams, a long thin face with a disapproving frown, a stone chisel instead of a right hand, a mallet in the left hand, a little pair of spectacles, a neat leather apron dusty with rock",
+  "height": 1.8,
+  "poses": {
+    "stand": "standing upright and stiff, chisel hand and mallet raised precisely",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "stands, peering through his spectacles, tutting, tapping the chisel with the mallet",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "drives the chisel into the ground in front of him with a strike of the mallet, cracks shooting forward to the right",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "pixels": 320
+}

@@ -2,10 +2,7 @@
   "schemaVersion": 1,
   "team": "Neutral",
   "health": 0,
-  "tags": [
-    "pickup",
-    "hook"
-  ],
+  "tags": ["pickup", "hook"],
   "body": {
     "radius": 0.5,
     "solid": false
@@ -16,7 +13,22 @@
     "placeholderLabel": true,
     "sortingOrder": 6,
     "hurtFlash": false,
-    "fxColor": "#8FD3E8"
+    "fxColor": "#8FD3E8",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/HookPickup/HookPickup_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": false

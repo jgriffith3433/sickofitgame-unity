@@ -7,8 +7,7 @@
   "pixels": 220,
   "keepTint": true,
   "poses": {
-    "stand": "standing hunched, arms held out stiffly in front",
-    "react": "arms out, the small dark stone offered on an open palm"
+    "stand": "standing hunched, arms held out stiffly, the small dark stone on its palm"
   },
   "clips": {
     "idle": {
@@ -16,15 +15,39 @@
       "action": "rocks gently in place, breathing slowly",
       "seconds": 2
     },
-    "react": {
-      "from": "react",
+    "hiccup": {
+      "from": "stand",
+      "state": "Hiccup",
+      "loop": false,
       "action": "holds out the stone, flinches, pulls it back an inch, offers it again",
-      "seconds": 2,
-      "loop": false
+      "seconds": 2
     }
   },
+  "animator": {
+    "parameters": [
+      {
+        "name": "Hiccup",
+        "type": "Trigger"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Idle",
+        "to": "Hiccup",
+        "when": [
+          "Hiccup"
+        ]
+      },
+      {
+        "from": "Hiccup",
+        "to": "Idle",
+        "exit": true
+      }
+    ]
+  },
   "takes": {
-    "pose": 3,
-    "clip": 2
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

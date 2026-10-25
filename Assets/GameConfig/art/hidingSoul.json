@@ -7,8 +7,7 @@
   "pixels": 220,
   "keepTint": true,
   "poses": {
-    "stand": "standing hunched, crouched low behind a scrap of its own shroud pulled up to the eyes",
-    "react": "hunched small, shroud pulled up over its nose, finger to lips"
+    "stand": "crouched low, the shroud pulled up to its eyes"
   },
   "clips": {
     "idle": {
@@ -16,15 +15,39 @@
       "action": "rocks gently in place, breathing slowly",
       "seconds": 2
     },
-    "react": {
-      "from": "react",
-      "action": "peeks over the shroud, ducks, peeks again, whole body trembling slightly",
-      "seconds": 2,
-      "loop": false
+    "hiccup": {
+      "from": "stand",
+      "state": "Hiccup",
+      "loop": false,
+      "action": "peeks over the shroud, ducks, peeks again, trembling",
+      "seconds": 2
     }
   },
+  "animator": {
+    "parameters": [
+      {
+        "name": "Hiccup",
+        "type": "Trigger"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Idle",
+        "to": "Hiccup",
+        "when": [
+          "Hiccup"
+        ]
+      },
+      {
+        "from": "Hiccup",
+        "to": "Idle",
+        "exit": true
+      }
+    ]
+  },
   "takes": {
-    "pose": 3,
-    "clip": 2
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

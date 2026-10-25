@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "cinderBrute",
+  "name": "Cinder brute",
+  "description": "a big angry living flame from the burning village: a hulking round fireball body of orange and red fire with a hot white core, two thick stubby arms of flame with clenched fists, heavy brows of smoke over two black eyes, a scowling mouth",
+  "height": 0.55,
+  "poses": {
+    "stand": "floating in the air, fists of flame clenched, scowling",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "bursting apart in a big puff of smoke and sparks"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "floats, flexing its fists of flame, flickering",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "lumbers forward through the air to the right, fists swinging, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

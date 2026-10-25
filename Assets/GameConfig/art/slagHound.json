@@ -2,38 +2,44 @@
   "schemaVersion": 1,
   "entity": "slagHound",
   "name": "Slag hound",
-  "description": "a lean hunting hound of black slag with lava cracks glowing along its spine and ribs, ember eyes, the Magma King's dog",
+  "description": "the Magma King's hunting dog: a lean wolf-like hound of black cooled slag, molten orange lava glowing along its spine and in the cracks of its ribs, long legs, a narrow head with burning yellow eyes and a glowing maw, smoke curling off its back, four legs on the ground",
   "height": 0.55,
   "poses": {
-    "stand": "a lean hound of black slag standing in profile facing right, hunting-dog build, orange lava cracks glowing along its spine and ribs, ember eyes, low and ready",
-    "struck": "just hit and recoiling, head thrown back in a snarl, lava cracks flaring white",
-    "dead": "collapsed in a heap of cooling black slag with a last glow fading"
+    "stand": "standing on all four legs side-on, head low, lava glowing along its back",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "stalks in place with a low prowl, head swaying, spine cracks pulsing",
+      "action": "stands panting on all fours, smoke curling off its glowing back",
       "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "trots forward on all four legs, lava pulsing along its back, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "attack": {
       "from": "stand",
-      "action": "crouches low on its haunches then lunges forward to the right with jaws open, cracks blazing, then lands",
+      "action": "crouches low, then lunges forward to the right with its jaws wide open, then pulls up",
       "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, yelps and staggers, then regains its footing",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "cracks blaze white, it bursts apart into a shower of slag and embers",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

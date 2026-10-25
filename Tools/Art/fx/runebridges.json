@@ -1,0 +1,44 @@
+{
+ "about": "Circle VIII, the Rune Bridges (Docs/Story.md: ink-violet void, cyan runes with a soft halo, pale grey masonry, mist bands at three depths, distant bridges as silhouettes): the stills Tools/Art/climb_art.py bakes (climb.json pieces runeSpan, runePillar, runeLanding, runeVoid, runeIsland, runeArches). fx_make --no-bake makes them into SickOfItGameEnemies/Generated/fx/runebridges/.",
+ "out": "Assets/Art/Climb",
+ "name": "RuneBridges",
+ "key": "magenta",
+ "size": [
+  1024,
+  1024
+ ],
+ "pivot": [
+  512,
+  512
+ ],
+ "worldWidth": 2,
+ "widthPixels": 1024,
+ "scale": 0.5,
+ "clips": {},
+ "gen": {
+  "span.png": {
+   "canvas": "ff00ff",
+   "prompt": "Paint one long flat slab of pale grey carved stone seen from the side, the deck of a narrow floating bridge segment: a flat walkable top, a thick edge face carved with a long groove of rune glyphs (dark, unlit), chipped worn corners, a few hanging stone teeth underneath. One object alone, wide and flat across the picture. Plain flat pure magenta background (#ff00ff), no floor, no shadow, no scenery, centered with empty space around it. Dark fantasy video game art for a side-scrolling game: painterly, detailed, cold pale cyan rune light, ink-violet shadows."
+  },
+  "pillar.png": {
+   "canvas": "ff00ff",
+   "prompt": "Paint one sturdy square pier of pale grey stacked masonry blocks seen from the side, a flat walkable top, carved rune glyphs down its face glowing faint cyan, weathered edges, its bottom crumbling away into nothing. One object alone. Plain flat pure magenta background (#ff00ff), no floor, no shadow, no scenery, centered with empty space around it. Dark fantasy video game art for a side-scrolling game: painterly, detailed, cold pale cyan rune light, ink-violet shadows."
+  },
+  "landing.png": {
+   "canvas": "ff00ff",
+   "prompt": "Paint one wide flat landing of pale grey carved flagstones seen from the side, like the end of a great stone bridge: a long flat walkable top, a thick carved edge with a band of rune glyphs glowing faint cyan, two short carved posts at its ends, its underside breaking away into floating rubble. One object alone, very wide across the picture. Plain flat pure magenta background (#ff00ff), no floor, no shadow, no scenery, centered with empty space around it. Dark fantasy video game art for a side-scrolling game: painterly, detailed, cold pale cyan rune light, ink-violet shadows."
+  },
+  "island.png": {
+   "canvas": "ff00ff",
+   "prompt": "Paint a far-off silhouette of a single floating stone bridge arch hanging in the void, pale violet-grey and hazy with distance, a few tiny cyan rune lights on it, wisps of mist around it. One object alone. Plain flat pure magenta background (#ff00ff), no floor, no shadow, no scenery, centered with empty space around it. Dark fantasy video game art for a side-scrolling game: painterly, detailed, cold pale cyan rune light, ink-violet shadows."
+  },
+  "arches.png": {
+   "canvas": "ff00ff",
+   "prompt": "Paint a group of distant tall carved stone pillars and broken arches rising from the bottom of the picture, pale violet-grey with distance, small glowing cyan runes on them, mist at their feet. Plain flat pure magenta background (#ff00ff), no floor, no shadow, no scenery, centered with empty space around it. Dark fantasy video game art for a side-scrolling game: painterly, detailed, cold pale cyan rune light, ink-violet shadows."
+  },
+  "void.png": {
+   "canvas": "1a1030",
+   "prompt": "Paint an endless ink-violet void seen from far above the abyss: deep violet and black darkness with drifting specks of glowing cyan rune dust, three soft bands of pale violet mist at different depths, and very faint silhouettes of distant stone bridges crossing the lower half. No sky, no ground, no characters. Dark fantasy video game background, painterly, seamless wide."
+  }
+ }
+}

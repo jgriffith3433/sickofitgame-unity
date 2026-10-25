@@ -19,12 +19,25 @@
   "visual": {
     "scale": 1.0,
     "placeholderColor": "#4B3A33",
-    "placeholderShape": "Box",
     "placeholderLabel": false,
     "layer": "Player",
     "sortingOrder": 0,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/Ledge_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    }
   },
   "healthBar": {
     "show": false

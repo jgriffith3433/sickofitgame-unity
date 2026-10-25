@@ -503,6 +503,8 @@ namespace SickOfIt.Gameplay.Content
         [Doc("The dark edge behind the rails and under each rung.")] public Color outlineColor = new Color(0.08f, 0.05f, 0.04f, 1f);
         [Doc("The lit edge down the rails and along the top of each rung.")] public Color highlightColor = new Color(0.78f, 0.5f, 0.3f, 1f);
         [Doc("The iron bolt at the end of each rung.")] public Color boltColor = new Color(0.8f, 0.62f, 0.4f, 1f);
+        [Doc("Painted ladder laid up the zone, tile after tile (instead of the drawn rails and rungs).")] public ArtLoopDef art = new ArtLoopDef();
+        [Doc("Width of the painted ladder as a share of the zone's width.")] public float artWidth = 1.2f;
         [SoundRef, Doc("Played when he grabs on.")] public string grabSound = "";
 
         const int MaxRungs = 48;
@@ -604,6 +606,9 @@ namespace SickOfIt.Gameplay.Content
         // a bolt at each rung end and a capped post top, so it reads as built rather than as flat bars.
         void Draw(Bounds b)
         {
+            if (art.IsSet && FloorArt.Strip(Owner.transform, "LadderArt", art, FloorArt.Frames(art, Owner.World), new Vector2(b.center.x, b.max.y),
+                    new Vector2(b.center.x, b.min.y), b.size.x * artWidth, Owner.Now, Owner.Def.visual.layer, SpriteLayers.Platform, true))
+                return;
             float railW = 0.16f;
             float railX = b.extents.x - railW * 0.5f;
             var rails = new[] { -1f, 1f };

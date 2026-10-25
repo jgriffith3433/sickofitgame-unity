@@ -2,7 +2,9 @@
   "schemaVersion": 1,
   "team": "Neutral",
   "health": 0,
-  "tags": ["pickup"],
+  "tags": [
+    "pickup"
+  ],
   "body": {
     "radius": 0.3,
     "solid": false
@@ -12,7 +14,21 @@
     "placeholderSize": 0.32,
     "placeholderLabel": false,
     "sortingOrder": 6,
-    "hurtFlash": false
+    "hurtFlash": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Glow",
+          "spriteSheet": "Art/Effects/RewindOrb/RewindOrb_glow.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Glow"
+    }
   },
   "healthBar": {
     "show": false

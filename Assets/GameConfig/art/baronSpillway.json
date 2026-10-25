@@ -2,38 +2,40 @@
   "schemaVersion": 1,
   "entity": "baronSpillway",
   "name": "Baron Spillway",
-  "description": "an imp baron in a cape of cooled slag, a crown of dripping lava, a little lava fall pouring off one shoulder, smug",
+  "description": "an imp noble of the Ember Wastes who keeps the Slag Falls: a fat crimson imp with curled horns and a waxed moustache, a long heavy cape of cooled black slag with glowing orange cracks, a crown of dripping lava, a little lava fall pouring off one shoulder, smug half-closed yellow eyes, small bat wings, a jewelled toll cup in one claw",
   "height": 1.5,
   "poses": {
-    "stand": "standing ready, facing right, glowing with heat",
-    "struck": "struck and flinching, sparks flying",
-    "dead": "collapsed and breaking apart in a burst of embers"
+    "stand": "hovering grandly on small bat wings, cape draped, the toll cup held out, lava dripping from his crown",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "breathes and shifts in place, glow pulsing slowly",
+      "action": "hovers smugly, stroking his moustache, lava dripping from his crown onto his shoulder",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "performs its signature attack toward the right, glow flaring",
-      "seconds": 2.0
+      "action": "sweeps his slag cape and flicks a spray of glowing embers off it forward to the right, smirking",
+      "seconds": 1.5
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks back, then settles",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "flares bright, breaks apart in a burst of embers and goes still",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
-  }
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "pixels": 300
 }

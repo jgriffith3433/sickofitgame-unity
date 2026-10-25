@@ -1,0 +1,36 @@
+{
+ "about": "Rune Bridges shots (runeBolt and its tinted kin): a cyan rune glyph of light.",
+ "out": "Assets/Art/Effects/Rune",
+ "name": "Rune",
+ "key": "black",
+ "tintable": true,
+ "size": [
+  1024,
+  1024
+ ],
+ "pivot": [
+  512,
+  512
+ ],
+ "crop": [
+  0,
+  0,
+  1024,
+  1024
+ ],
+ "worldWidth": 4.0,
+ "widthPixels": 1024,
+ "scale": 0.25,
+ "clips": {
+  "bolt": {
+   "image": "bolt.png",
+   "make": "charge",
+   "frames": 10
+  }
+ },
+ "gen": {
+  "bolt.png": {
+   "prompt": "Paint a small carved rune glyph made of glowing pale cyan-white light, sharp angular strokes, a soft cyan halo around it and a short trail of fading glyph dust to the left. Pure light, nothing solid. Plain flat pure black background (#000000), no floor, no scenery, centered with plenty of empty black space around it. Dark fantasy video game effect art, painterly, glowing."
+  }
+ }
+}

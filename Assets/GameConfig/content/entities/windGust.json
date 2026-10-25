@@ -17,12 +17,25 @@
   "visual": {
     "scale": 1.0,
     "placeholderColor": "#BFE3FF1A",
-    "placeholderShape": "Box",
     "placeholderLabel": false,
     "layer": "Background2",
     "sortingOrder": 950,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Blow",
+          "spriteSheet": "Art/Effects/Wind/Wind_blow.png",
+          "fps": 10,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Blow"
+    }
   },
   "healthBar": {
     "show": false

@@ -1,0 +1,613 @@
+fileFormatVersion: 2
+guid: 66b31fc4489dbd84f963de55012f30ac
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 314.2857
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: hiccup_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39e67d4a2dfe64c90800000000000000
+      internalID: -7185792467435295085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_01
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cbaf9f1abed7c280800000000000000
+      internalID: -9022998437437658169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_02
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89c12b0e1885e6f70800000000000000
+      internalID: 9182374005098814616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_03
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37f1e1afb4ed89c50800000000000000
+      internalID: 6672327265849581427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_04
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69f30a95379cab690800000000000000
+      internalID: -7585529125090082922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_05
+      rect:
+        serializedVersion: 2
+        x: 620
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4485ad0435086970800000000000000
+      internalID: 8748247997292577867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_06
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbb5f04b7c5576ad0800000000000000
+      internalID: -2709102334632305731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_07
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 944a3f6f04c8b1e30800000000000000
+      internalID: 4475324865371677769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_08
+      rect:
+        serializedVersion: 2
+        x: 992
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da6538ae54c2e3df0800000000000000
+      internalID: -198672654758881619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_09
+      rect:
+        serializedVersion: 2
+        x: 1116
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c9c333cfd11ef790800000000000000
+      internalID: -7494533077147596351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_10
+      rect:
+        serializedVersion: 2
+        x: 1240
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 295f1239a3b84c080800000000000000
+      internalID: -9168049857726646894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_11
+      rect:
+        serializedVersion: 2
+        x: 1364
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94741fb9c38154a80800000000000000
+      internalID: -8483347674489075895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_12
+      rect:
+        serializedVersion: 2
+        x: 1488
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52e8638c2e4788f40800000000000000
+      internalID: 5730959043199405605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_13
+      rect:
+        serializedVersion: 2
+        x: 1612
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49b244084f65356f0800000000000000
+      internalID: -697117909188334700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_14
+      rect:
+        serializedVersion: 2
+        x: 1736
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b2eafe1cc7baa3e0800000000000000
+      internalID: -2041617393738128716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_15
+      rect:
+        serializedVersion: 2
+        x: 1860
+        y: 226
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25f94642c9ef19350800000000000000
+      internalID: 6021874123349991250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 919a9a1f0900fb390800000000000000
+      internalID: -7800515407052691175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_17
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 0
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6ae6793d32b04510800000000000000
+      internalID: 1531419849332812399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_18
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 0
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22c3f9e82cb2293b0800000000000000
+      internalID: -5507291279704245214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_19
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 0
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d27110f3868cdfc30800000000000000
+      internalID: 4394889161442662189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hiccup_20
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 0
+        width: 124
+        height: 226
+      alignment: 9
+      pivot: {x: 0.25933272, y: 0.4916857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d87b94d9ee9d3d70800000000000000
+      internalID: 9024543955451869399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      hiccup_00: -7185792467435295085
+      hiccup_01: -9022998437437658169
+      hiccup_02: 9182374005098814616
+      hiccup_03: 6672327265849581427
+      hiccup_04: -7585529125090082922
+      hiccup_05: 8748247997292577867
+      hiccup_06: -2709102334632305731
+      hiccup_07: 4475324865371677769
+      hiccup_08: -198672654758881619
+      hiccup_09: -7494533077147596351
+      hiccup_10: -9168049857726646894
+      hiccup_11: -8483347674489075895
+      hiccup_12: 5730959043199405605
+      hiccup_13: -697117909188334700
+      hiccup_14: -2041617393738128716
+      hiccup_15: 6021874123349991250
+      hiccup_16: -7800515407052691175
+      hiccup_17: 1531419849332812399
+      hiccup_18: -5507291279704245214
+      hiccup_19: 4394889161442662189
+      hiccup_20: 9024543955451869399
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

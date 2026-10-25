@@ -9,8 +9,100 @@
   "tags": ["imp", "impGuard"],
   "visual": {
     "scale": 0.33,
-    "color": "#E07060",
-    "fxColor": "#FF5B3A"
+    "fxColor": "#FF5B3A",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsAttacking",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/ImpGuard/ImpGuard_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/ImpGuard/ImpGuard_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 6,
+              "functionName": "FireProjectile"
+            }
+          ]
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/ImpGuard/ImpGuard_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/ImpGuard/ImpGuard_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "loot": {
     "chance": 0.35,
@@ -29,8 +121,12 @@
     {
       "type": "shoot",
       "projectile": "projectileEnemy",
-      "pattern": { "type": "spread", "count": 3, "angle": 28 },
-      "speed": 3.0,
+      "pattern": {
+        "type": "spread",
+        "count": 3,
+        "angle": 28
+      },
+      "speed": 3,
       "aim": "Player",
       "muzzle": [0.09, 0.09375],
       "interval": 3.4,
@@ -40,5 +136,9 @@
       "damage": 1
     }
   ],
-  "sounds": { "hurtSound": "impGuard_hurt", "deathSound": "impGuard_die", "attackSound": "impGuard_attack" }
+  "sounds": {
+    "hurtSound": "impGuard_hurt",
+    "deathSound": "impGuard_die",
+    "attackSound": "impGuard_attack"
+  }
 }

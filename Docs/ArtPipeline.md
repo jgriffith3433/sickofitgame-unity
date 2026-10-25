@@ -200,10 +200,31 @@ jacket. His spec lists every clip he could have; each clip's `wired` says what `
 sheet), `standIn` (the state exists but plays another sheet, named in `standIn`) or `false` (no state yet). `node Tools/Art/art.mjs hero --check`
 (no GPU) fails when that is untrue, when a prompt says jacket/coat/hair, or when the bake isn't 604x340 at 100 PPU.
 
-Making one: `node Tools/Art/art.mjs hero --hero-ref idle --only dash` uses Idle's first frame (1280x720 on black) as the standing reference, makes
-poses and a Wan clip at 1280x720 (GPU, priced and approved first), then `player_clip_sheet.py` bakes it to **604x340 cells, centre pivot,
-100 pixels per unit** (exactly Idle's, so his on-screen size never changes) into `Assets/Art/Sprites/Player/<State>.png` and `player.json` gets the
-state (or the stand-in's sheet is replaced). A new state needs nothing else: `PlayerSceneClip` falls back to the state's sheet. Then set the clip's `wired` to `own`.
+His `stand` is the first frame of `Idle.mp4` (`"reference": "player:Idle"`, 1280x720 on black). Every other pose is made from it at 1280x720,
+so he keeps his size and his place in the frame; `player_clip_sheet.py` bakes each clip to **604x340 cells, centre pivot, 100 pixels per unit**
+(exactly Idle's, so his on-screen size never changes) into `Assets/Art/Sprites/Player/<State>.png` and `player.json` gets the state (or the
+stand-in's sheet is replaced). A new state needs nothing else: `PlayerSceneClip` falls back to the state's sheet. Then set the clip's `wired` to `own`.
+
+**Grips: one animation set per weapon** (content/weapons `hands`, PlayerController's grip poses). What he holds is in every frame he plays;
+nothing is drawn over the sheets. Per grip, hero.json has:
+
+- `weapon<Grip>`: the weapon alone, painted from its prompt on flat green (`"canvas": "00ff00"`: image.edit over a blank canvas);
+- `carry<Grip>`: Idle's first frame with the launcher swapped for that weapon, held in the same raised hand (`"refs": ["weapon<Grip>"]`: the
+  concept is image 2), so the launcher videos' arm poses fit every grip;
+- Idle, Run, Jump, Fall and a gun's standing and running attacks copied from his launcher videos' motion: `"motion": "player:Walk"`
+  (`video.animate`, Wan Animate: the carry pose performs `SickOfItGamePlayer/Walk/Output/Walk.mp4`, fitted first with `video.fit`). Every set
+  has the launcher set's timing, size and ground line. `motionFrames` cuts the driving video (a ladder's loop);
+- Land, the air attack, the melee steps (Punch1-3, WhipLash/Snap/Crack) and the equip clip as first-last-frame clips (video.i2v) between poses.
+
+Shared moves (Dash, WallSlide, WallJump, GrappleThrow, GrappleSwing, Graze, Hurt, the four deaths, Victory, the ladder) show him with empty
+hands (pose `unarmed`), one look whatever he holds. The ladder clips drive Wan Animate with the old Climb sheets rendered back to mp4
+(`SickOfItGamePlayer/Climb/Output/Climb.mp4`). Run it in two passes: `node Tools/Art/art.mjs hero --poses-only` (pick the best takes with
+`--pick carryShotgun=<seed>`; keys come from the spec, so `--redo` a clip whose pose you re-picked), then `node Tools/Art/art.mjs hero` for the
+clips (`SOI_ART_PARALLEL`, default 12 for the hero, runs them side by side), which also bakes and wires them. `Tools/Art/art_inventory.py`
+checks that every grip's states have sheets of their own. Ledge grab and ledge climb have no clip: the game has no ledge mechanic.
+
+**Things, not creatures** (pickups, thrown lumps, mines, the target dummy) use the same command with an object prompt in the spec
+(`prompts.standFromText` / `prompts.pose`: "one object alone, no body, no person"), or Qwen paints a body under them.
 
 ## Effects (portals, beams, bursts): `Tools/Art/fx_sheets.py`
 
@@ -230,6 +251,17 @@ python Tools/Art/fx_sheets.py <job.json> --preview preview.png
   came from, are `Tools/Art/fx/*.json`; their sources (the chosen stills and mp4s) are in the work folder,
   `SickOfItGameEnemies/Generated/fx/<job>/` next to this repo: `python Tools/Art/fx_sheets.py Tools/Art/fx/portal.json
   --src ../SickOfItGameEnemies/Generated/fx/portal`.
+- `node Tools/Art/fx_make.mjs Tools/Art/fx/<job>.json` makes a job's stills itself (its `"gen"`: a prompt per source image, painted with
+  image.edit over a flat canvas of the key's colour, takes in `_takes/`, `--pick still=seed`, `--redo still`) and then bakes it.
+- `"tintable": true` marks art painted in white light for each user to tint (`visual.color`): the telegraph glows (`Warn`), the sniper bolt,
+  the rune glyph and column, the boss floor-attack burst (`Eruption`). The `.sheet.json` says so and the inventory accepts the tint.
+
+## The inventory: `python Tools/Art/art_inventory.py`
+
+Writes [ArtInventory.md](ArtInventory.md): every entity in use (a labeled circle or a coloured box is a placeholder; another creature's
+sheet tinted is a stand-in; the same creature's sheet untinted is fine, rule 5), every hero clip and every weapon grip. `--check` exits 1
+while any row is a placeholder or a stand-in: run it after art work and before a push. The floor writers in Tools/Levels keep generated art
+(`Tools/Levels/artkeep.py`): they never rewrite an existing art spec, and an entity whose animator plays art.mjs sheets keeps them untinted.
 
 ## How the Unity side works
 
@@ -253,5 +285,7 @@ python Tools/Art/fx_sheets.py <job.json> --preview preview.png
 6. Check `Logs/GameConfig.log`; playtest.
 7. Update the roster's *Art* column in Story.md.
 
-The current specs: `imp` (Circle X shooter, **made**: `Assets/Art/Enemies/Imp/`), `cinder` (living spark, chaser: give its `chase` an `"animBool":
-"IsMoving"` for the move clip), `magmaKing` (Warden of Circle X).
+Every creature, pickup and thrown thing in the game has a spec in `Assets/GameConfig/art/` and generated sheets in `Assets/Art/Enemies/`
+(the full art pass of 2026-10-25); [ArtInventory.md](ArtInventory.md) lists them all. Movers name `"animBool": "IsMoving"` on their
+`chase`/`patrol`, shooters `"animTrigger": "IsAttacking"` (+ `"fireOnEvent": "FireProjectile"`), a laser its `laserSweep.animBool`, a hound
+its `charge.windupBool`, so the Move and Attack clips play. A scene's `walkEntityTo` sets the animator bool `Walking` (the climbers' Walk clip).

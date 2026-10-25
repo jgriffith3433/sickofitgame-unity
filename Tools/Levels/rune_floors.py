@@ -11,6 +11,8 @@ tables, run it, then `python3 Tools/Levels/floor_check.py Floor800 ...`. Everyth
 source of the numbers, the JSON is what the game reads.
 """
 import json, os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from artkeep import guard  # noqa: E402  (generated art is kept: Tools/Levels/artkeep.py)
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'Assets', 'GameConfig')
 ENT = os.path.join(ROOT, 'content', 'entities')
@@ -26,6 +28,9 @@ GOLD = '#8FE3FF'       # the Circle's banner colour: rune cyan
 
 
 def dump(path, data):
+    data = guard(path, data)
+    if data is None:
+        return
     with open(path, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write('\n')

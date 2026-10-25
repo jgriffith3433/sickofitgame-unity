@@ -1,0 +1,35 @@
+{
+ "about": "A wind zone (windGust, windSteady): pale streaks of hot wind.",
+ "out": "Assets/Art/Effects/Wind",
+ "name": "Wind",
+ "key": "black",
+ "size": [
+  1024,
+  1024
+ ],
+ "pivot": [
+  512,
+  512
+ ],
+ "crop": [
+  0,
+  0,
+  1024,
+  1024
+ ],
+ "worldWidth": 2.0,
+ "widthPixels": 1024,
+ "scale": 0.25,
+ "clips": {
+  "blow": {
+   "image": "wind.png",
+   "make": "charge",
+   "frames": 15
+  }
+ },
+ "gen": {
+  "wind.png": {
+   "prompt": "Paint faint streaks of pale blue-white wind blowing to the right across most of the picture, long curling air lines and a few specks of ash carried along. Pure light, nothing solid. Plain flat pure black background (#000000), no floor, no scenery, centered with plenty of empty black space around it. Dark fantasy video game effect art, painterly, glowing."
+  }
+ }
+}

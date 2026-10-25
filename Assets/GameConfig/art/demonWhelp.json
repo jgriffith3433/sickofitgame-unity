@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "demonWhelp",
+  "name": "Brimstone whelp",
+  "description": "a brimstone whelp, a young demon of the Cracked Road the size of a dog, on four stubby clawed legs: cracked black basalt hide with thin orange glowing seams, two stubby charred horns, a big jaw glowing like a furnace, a short rock tail",
+  "height": 0.4,
+  "poses": {
+    "stand": "standing on four stubby legs side-on, jaw glowing, tail up",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "stands panting, its jaw glowing, tail wagging",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "scuttles fast forward on its stubby legs, jaw glowing, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

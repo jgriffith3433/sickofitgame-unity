@@ -2,38 +2,39 @@
   "schemaVersion": 1,
   "entity": "lensImp",
   "name": "Lens imp",
-  "description": "a small wiry hell imp of the Ember Wastes, one of the Magma King's: leathery skin, short curled horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, red-tinted, carrying a jagged shard of red-hot glass",
+  "description": "a small wiry hell imp of the Ember Wastes: crimson leathery skin, short curled black horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, holding out in front of it, like a lantern, a jagged shard of glowing red lens glass that shines a thin red beam, squinting one eye",
   "height": 0.75,
   "poses": {
-    "stand": "hovering mid-air on spread bat wings, holding out in both hands a jagged shard of red glass like a lantern, glowing a hot red-white, a thin red beam line starting from it",
-    "struck": "just hit and caught mid-shriek: eyes bulging, mouth stretched open, wings snapped up, body tilted back with cracks of orange light glowing through its skin",
-    "dead": "bursting apart in a small round pop of black soot and bright orange embers, only its horns tumbling out of the puff"
+    "stand": "hovering on spread bat wings, holding the red glass shard out in front of it in both claws",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "hovers, flapping, the shard glowing and pulsing in its hands",
+      "action": "hovers, squinting through the red glass shard and turning it this way and that",
       "seconds": 2
     },
     "attack": {
       "from": "stand",
-      "action": "raises the shard overhead and swings it slowly down to the right, the glass blazing, then hovers again",
-      "seconds": 2.0
+      "action": "raises the red lens shard and it flares blinding red, a thick red beam blasting out of it to the right, then it lowers the shard, blinking",
+      "seconds": 2
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks backward with a yelp, wings crumpling, then recovers",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "shrieks, swells with orange light shining through the cracks in its skin, and pops like a firecracker into a puff of black soot and embers",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
   }
 }

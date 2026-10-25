@@ -11,17 +11,106 @@
   ],
   "extends": "imp",
   "health": 4,
-  "tags": [
-    "imp",
-    "loopWraith"
-  ],
+  "tags": ["imp", "loopWraith"],
   "visual": {
-    "color": "#9AD8E8C8",
-    "fxColor": "#9AD8E8"
+    "fxColor": "#9AD8E8",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsAttacking",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/LoopWraith/LoopWraith_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/LoopWraith/LoopWraith_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 11,
+              "functionName": "FireProjectile"
+            }
+          ]
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/LoopWraith/LoopWraith_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/LoopWraith/LoopWraith_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "drops": [],
   "loot": {
-    "chance": 1.0,
+    "chance": 1,
     "count": 1,
     "value": 3
   },
@@ -36,21 +125,24 @@
     {
       "type": "shoot",
       "projectile": "wraithEmber",
-      "speed": 3.0,
+      "speed": 3,
       "aim": "Player",
-      "muzzle": [
-        0.09,
-        0.09375
-      ],
+      "muzzle": [0.09, 0.09375],
       "interval": 2.8,
       "initialDelay": 1.4,
-      "damage": 1
+      "damage": 1,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile"
     },
     {
       "type": "rewindSnag",
-      "window": 4.0,
+      "window": 4,
       "deflectSound": "loopWraith_pass"
     }
   ],
-  "sounds": { "hurtSound": "loopWraith_hurt", "deathSound": "loopWraith_die", "attackSound": "loopWraith_attack" }
+  "sounds": {
+    "hurtSound": "loopWraith_hurt",
+    "deathSound": "loopWraith_die",
+    "attackSound": "loopWraith_attack"
+  }
 }
