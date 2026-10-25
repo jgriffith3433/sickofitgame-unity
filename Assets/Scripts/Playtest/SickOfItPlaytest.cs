@@ -444,7 +444,7 @@ namespace SickOfIt.Playtest
         {
             var list = new List<int>();
             var definition = GameDefinition.Instance;
-            var content = SickOfIt.Gameplay.Content.GameContent.Current;
+            var content = SickOfIt.Gameplay.GameContent.Current;
             int levels = definition != null ? definition.TotalLevels : 0;
             for (int n = 1; n <= levels; n++)
             {
