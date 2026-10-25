@@ -66,6 +66,8 @@ namespace SickOfIt.Core.Progression
         /// <summary>A level started. A floor stage is where the run is now (main menu Continue); one that starts on a Waystone (the Landing) reaches it.</summary>
         public static void LevelStarted(int level)
         {
+            if (ReplayModes.IsReplayLevel(level))
+                return;
             ShaftScreen.LevelFloors(level, out int start, out int end);
             if (start <= 0 || end <= 0)
                 return;
@@ -126,6 +128,8 @@ namespace SickOfIt.Core.Progression
         /// <summary>A level was cleared: the run goes on from 'next' (0 = nothing on the path); a stage that ends on a Waystone (its Warden beaten) reaches it.</summary>
         public static void LevelCleared(int level, int next)
         {
+            if (ReplayModes.IsReplayLevel(level))
+                return;
             if (next > 0)
                 WaystoneProgress.RunLevel = next;
             ShaftScreen.LevelFloors(level, out int start, out int end);
@@ -152,6 +156,9 @@ namespace SickOfIt.Core.Progression
         public static bool EndRun(int level, out ShaftStop stop)
         {
             stop = default;
+            // Endless Floor and the Daily Challenge are not the climb: a death there plays them again.
+            if (ReplayModes.IsReplayLevel(level))
+                return false;
             ShaftScreen.LevelFloors(level, out int start, out int end);
             if (start <= 0 || end <= 0)
                 return false;
@@ -191,6 +198,25 @@ namespace SickOfIt.Core.Progression
             RogueliteManager.Instance?.EndRun();
             WaystoneProgress.RunLevel = level;
             Debug.Log($"[Runs] New Run from the Waystone on FLOOR {WaystoneProgress.Highest}: level {level}");
+            return level;
+        }
+
+        /// <summary>
+        /// Main menu New Game+ (Docs/Story.md, "Again"): the climb starts again at the Landing with the next cycle's harder Hell. Returns the level to
+        /// load, or 0 when it isn't offered yet.
+        /// </summary>
+        public static int NewGamePlus()
+        {
+            if (!ReplayModes.NewGamePlusOpen)
+                return 0;
+            int level = LevelFrom(Waystones()[0]);
+            if (level <= 0)
+                return 0;
+            CloseRun("quit", WaystoneProgress.RunLevel, 0);
+            RogueliteManager.Instance?.StartNewGamePlus();
+            ReplayModes.StartNextCycle();
+            WaystoneProgress.RunLevel = level;
+            Debug.Log($"[Runs] New Game+ cycle {ReplayModes.Cycle}: level {level}, weapons and goods kept");
             return level;
         }
 

@@ -857,6 +857,11 @@ Fills the stage with floors built from a Circle (content/circles): pushes of ene
 | `seed` | integer | `0` | Added to the level seed, so two generated stretches in one stage differ. |
 | `persist` | true/false | `false` | Keep running after the phase that started it ends. |
 | `doneSignal` | string | `"floorsDone"` | Signal emitted when it stops at untilFloor and its last push is over. |
+| `climbs` | true/false | `false` | Replay modes: every push fought off takes the hero up one floor (the counter goes down by one), on stages that stand still. With untilFloor it ends the stretch there, without it the floors never end (Endless Floor). |
+| `rampPushes` | integer | `0` | Replay modes: the Circle's easiest-to-hardest ramp is walked over this many pushes instead of over its floors (0 = by floor). The enemies' fromFloor follow the ramp, as if the hero were that far up the Circle. |
+| `rampStartFloor` | integer | `0` | Replay modes: the floor the ramp's enemy tables start at (0 = the Circle's first floor). Enemies come in at their fromFloor, so a ramp that starts on 990 has the imps from its first push. |
+| `escalation` | number | `0.0` | Replay modes: past the ramp, every push is this much 'heat' harder (0 = no more): heat = pushes past the ramp x this; each heat adds +1 enemy to a push, +0.5 alive at once, +8% health, 4% faster spawns and 3% shorter breathers. Endless Floor never stops getting worse. |
+| `bothSides` | true/false | `false` | Replay modes: each generated enemy comes from a random side of the camera instead of always from ahead. |
 
 ### goToLevel
 
@@ -1339,6 +1344,7 @@ A level's gameplay, written as the "script" object in levels/{name}.json. Rules 
 | Field | Type | Default | Notes |
 |---|---|---|---|
 | `seed` | integer | `0` | Random seed (0 = derived from the level number). Same seed, same level, same choices. |
+| `replay` | [ReplayKind](#replaykind) | `"None"` | Replay modes (Docs/Story.md, "Again"): Endless Floor keeps the best floor climbed, the Daily Challenge takes its seed and twist from the date and keeps a local score table. Neither ends a run (no Waystone, no Shaft). |
 | `world` | [WorldDef](#worlddef) | (object) |  |
 | `floors` | [FloorsDef](#floorsdef) | (object) |  |
 | `objective` | [ObjectiveDef](#objectivedef) | `{"complete":null,"fail":null,"text":""}` |  |
@@ -1778,6 +1784,14 @@ Where a teleport lands.
 - `NearPlayer` — Beside the player, 'distance' away (behind him with 'behind').
 - `Point` — The 'point' field.
 - `Random` — Anywhere in view that is clear of ground.
+
+### ReplayKind
+
+Which replay mode a level is.
+
+- `None` — An ordinary level.
+- `Endless` — Endless Floor: the best floor climbed is saved.
+- `Daily` — Daily Challenge: the date is the seed, the twist of the day applies and scores go in a local table.
 
 ### TextStyle
 

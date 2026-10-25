@@ -8,12 +8,22 @@ namespace SickOfIt.Gameplay.Content
     /// <summary>
     /// A level's gameplay, written in the level file's "script" field (levels/{name}.json).
     /// </summary>
+    [Doc("Which replay mode a level is.")]
+    public enum ReplayKind
+    {
+        [Doc("An ordinary level.")] None,
+        [Doc("Endless Floor: the best floor climbed is saved.")] Endless,
+        [Doc("Daily Challenge: the date is the seed, the twist of the day applies and scores go in a local table.")] Daily,
+    }
+
     [Serializable]
     [Doc("A level's gameplay, written as the \"script\" object in levels/{name}.json. Rules fire actions when their trigger fires; " +
          "global rules run the whole level, phase rules only while their phase is active. The first phase starts the level.")]
     public class LevelScript
     {
         [Doc("Random seed (0 = derived from the level number). Same seed, same level, same choices.")] public int seed;
+        [Doc("Replay modes (Docs/Story.md, \"Again\"): Endless Floor keeps the best floor climbed, the Daily Challenge takes its seed and twist from the date and keeps " +
+             "a local score table. Neither ends a run (no Waystone, no Shaft).")] public ReplayKind replay = ReplayKind.None;
         public WorldDef world = new WorldDef();
         public FloorsDef floors = new FloorsDef();
         public ObjectiveDef objective = new ObjectiveDef();

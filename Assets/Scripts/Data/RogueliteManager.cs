@@ -206,7 +206,8 @@ namespace SickOfIt.Data
         {
             int maxHealth = GetMaxHealth();
 
-            if (levelNumber <= 1)
+            // Endless Floor and the Daily Challenge start fresh: they aren't a step of the climb.
+            if (levelNumber <= 1 || ReplayModes.IsReplayLevel(levelNumber))
                 return maxHealth;
 
             int previousLevelEndHealth = GetLevelEndHealth(levelNumber - 1);
@@ -479,6 +480,29 @@ namespace SickOfIt.Data
             PlayerPrefs.Save();
         }
 
+        /// <summary>
+        /// New Game+ (Docs/Story.md, "Again"): the climb starts again at the Landing. The run's Grudges and carried health go, the Waystones, the
+        /// cleared floors and the Shaft's marker are reset; the weapons he holds and has unlocked, Yooba's goods, the diamonds, the Codex and the
+        /// floor ranks are kept.
+        /// </summary>
+        public void StartNewGamePlus()
+        {
+            var held = WeaponProgress.Owned();
+            string equipped = WeaponProgress.Equipped();
+            EndRun();
+            WeaponProgress.Store(held, equipped, false);
+            WeaponProgress.StoreSuspended(new List<string>());
+
+            int totalLevels = GameDefinition.Instance?.TotalLevels ?? 100;
+            for (int i = 1; i <= totalLevels; i++)
+                PlayerPrefs.DeleteKey($"Level_{i}_Completed");
+            PlayerPrefs.DeleteKey("HighestLevelReached");
+            ShortcutProgress.Reset();
+            WaystoneProgress.Reset();
+            ShaftProgress.Floor = 1000;
+            PlayerPrefs.Save();
+        }
+
         // =========================================================================
         // RESET
         // =========================================================================
@@ -512,6 +536,7 @@ namespace SickOfIt.Data
             EnemyHints.Reset();
             CodexProgress.Reset();
             StyleRanks.Reset();
+            ReplayModes.ResetCycle();
 
             // Clear game progress data (level completions, video unlocks, highest level)
             for (int i = 1; i <= totalLevels; i++)

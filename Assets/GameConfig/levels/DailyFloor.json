@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "levelName": "DailyFloor",
+  "displayName": "Daily Challenge",
+  "levelNumber": 98,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [
+    {
+      "name": "Throne_LavaRiver",
+      "spriteFramesData": "Videos/Video2.asset",
+      "layer": "Background1",
+      "sequenceBy": "Time",
+      "sequenceStart": 0,
+      "sequenceDuration": 0,
+      "sequenceLoop": true,
+      "clipStart": 17.6,
+      "clipLength": 5.0
+    }
+  ],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 300.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 0,
+  "returnToMainMenuOnComplete": true,
+  "script": {
+    "replay": "Daily",
+    "length": 150,
+    "floors": {
+      "start": 1000,
+      "end": 990,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Today's floor"
+    },
+    "phases": [
+      {
+        "name": "daily",
+        "onEnter": [
+          {
+            "type": "generateFloors",
+            "circle": "emberWastes",
+            "untilFloor": 990,
+            "firstBreather": 3.0,
+            "climbs": true,
+            "rampPushes": 10,
+            "rampStartFloor": 990,
+            "bothSides": true,
+            "seed": 4
+          }
+        ],
+        "rules": [
+          {
+            "name": "the day's floor is done",
+            "when": {
+              "type": "signal",
+              "name": "floorsDone"
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 3.5
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

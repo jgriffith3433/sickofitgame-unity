@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "levelName": "EndlessFloor",
+  "displayName": "Endless Floor",
+  "levelNumber": 97,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [
+    {
+      "name": "Throne_LavaRiver",
+      "spriteFramesData": "Videos/Video2.asset",
+      "layer": "Background1",
+      "sequenceBy": "Time",
+      "sequenceStart": 0,
+      "sequenceDuration": 0,
+      "sequenceLoop": true,
+      "clipStart": 17.6,
+      "clipLength": 5.0
+    }
+  ],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 300.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 0,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "replay": "Endless",
+    "length": 300,
+    "floors": {
+      "start": 1000,
+      "end": 1,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "neverEnds",
+        "atLeast": 1
+      },
+      "text": "Climb until Hell runs out of floors"
+    },
+    "phases": [
+      {
+        "name": "endless",
+        "onEnter": [
+          {
+            "type": "showText",
+            "text": "The floor never ends. Great.",
+            "style": "Subtitle",
+            "duration": 3.5
+          },
+          {
+            "type": "generateFloors",
+            "circle": "emberWastes",
+            "firstBreather": 3.0,
+            "climbs": true,
+            "rampPushes": 14,
+            "rampStartFloor": 990,
+            "escalation": 1.0,
+            "bothSides": true,
+            "seed": 3,
+            "persist": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -83,6 +83,15 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Added to the level seed, so two generated stretches in one stage differ.")] public int seed;
         [Doc("Keep running after the phase that started it ends.")] public bool persist;
         [Doc("Signal emitted when it stops at untilFloor and its last push is over.")] public string doneSignal = "floorsDone";
+        [Doc("Replay modes: every push fought off takes the hero up one floor (the counter goes down by one), on stages that stand still. " +
+             "With untilFloor it ends the stretch there, without it the floors never end (Endless Floor).")] public bool climbs;
+        [Doc("Replay modes: the Circle's easiest-to-hardest ramp is walked over this many pushes instead of over its floors (0 = by floor). " +
+             "The enemies' fromFloor follow the ramp, as if the hero were that far up the Circle.")] public int rampPushes;
+        [Doc("Replay modes: the floor the ramp's enemy tables start at (0 = the Circle's first floor). Enemies come in at their fromFloor, so a ramp that " +
+             "starts on 990 has the imps from its first push.")] public int rampStartFloor;
+        [Doc("Replay modes: past the ramp, every push is this much 'heat' harder (0 = no more): +1 enemy per push per 1.0, +0.5 alive at once, " +
+             "+8% health... (see LevelDirector.Generator). Endless Floor never stops getting worse.")] public float escalation;
+        [Doc("Replay modes: each generated enemy comes from a random side of the camera instead of always from ahead.")] public bool bothSides;
 
         public override void Run(ActionContext context) => context.Director.StartGenerator(this, context);
     }

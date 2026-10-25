@@ -107,6 +107,17 @@ namespace SickOfIt.Core.Progression
                     waystone.ToString("N0", System.Globalization.CultureInfo.InvariantCulture)), OnNewRunClicked);
             if (config.showNewGameButton)
                 Add(list, labels.newGame, OnNewGameClicked);
+            // The replay modes (Docs/Story.md, "Again"): each opens a card with its best / table / cycle and a Play button.
+            var replay = gd != null ? gd.replay : null;
+            if (replay != null && replay.enabled)
+            {
+                var replayLabels = replay.labels ?? new ReplayLabels();
+                if (ReplayModes.NewGamePlusOpen)
+                    Add(list, ReplayModes.Cycle > 0 ? string.Format(System.Globalization.CultureInfo.InvariantCulture, replayLabels.ngPlusLabel, ReplayModes.Cycle + 1) : replayLabels.newGamePlus,
+                        () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.NewGamePlus, "new_game_plus"));
+                Add(list, replayLabels.endless, () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.Endless, "endless"));
+                Add(list, replayLabels.daily, () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.Daily, "daily"));
+            }
             if (config.showLevelSelectButton)
                 Add(list, labels.levelSelect, OnLevelSelectClicked);
             if (config.showVideosButton)
@@ -181,6 +192,47 @@ namespace SickOfIt.Core.Progression
             if (level <= 0) return;
             isTransitioning = true;
             Picked("new_run");
+
+            if (bundleDownloadManager != null)
+                bundleDownloadManager.StartDownloadForLevel(level);
+            else if (BundleDownloadManager.Instance != null)
+                BundleDownloadManager.Instance.StartDownloadForLevel(level);
+
+            StartCoroutine(TransitionThenExecute(() =>
+            {
+                if (sceneLoadingManager != null)
+                    sceneLoadingManager.LoadLevel(level);
+                else
+                    SceneTransitionManager.Instance.LoadLevel(level);
+            }));
+        }
+
+        /// <summary>Endless Floor, the Daily Challenge or New Game+: the card first (best, today's table, the cycle), then Play.</summary>
+        private void OpenReplay(SickOfIt.Gameplay.ReplayPanelKind kind, string option)
+        {
+            if (isTransitioning) return;
+            Picked(option);
+            SickOfIt.Gameplay.ReplayPanel.Show(menu, kind, () => StartReplay(kind), () => AnalyticsManager.Screen("menu"));
+            AnalyticsManager.Screen("replay");
+        }
+
+        private void StartReplay(SickOfIt.Gameplay.ReplayPanelKind kind)
+        {
+            if (isTransitioning) return;
+            int level;
+            switch (kind)
+            {
+                case SickOfIt.Gameplay.ReplayPanelKind.Endless: level = ReplayModes.LevelNumber(ReplayModes.EndlessLevelName); break;
+                case SickOfIt.Gameplay.ReplayPanelKind.Daily: level = ReplayModes.LevelNumber(ReplayModes.DailyLevelName); break;
+                default: level = RunFlow.NewGamePlus(); break;
+            }
+            if (level <= 0)
+            {
+                Debug.LogWarning($"[Replay] {kind}: no level to start.");
+                return;
+            }
+            isTransitioning = true;
+            Picked("play_" + kind.ToString().ToLowerInvariant());
 
             if (bundleDownloadManager != null)
                 bundleDownloadManager.StartDownloadForLevel(level);
