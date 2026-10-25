@@ -1,0 +1,9 @@
+{
+ "id": "hero",
+ "reference": "Assets/Art/Sprites/Player/Shout.png (6x5 sheet, 25 cells)",
+ "voice": "DzkD7I4tf5i3KSaB4cz5",
+ "motionStyle": "deadpan: stands, shifts weight, never gestures big; helm has no mouth, eye slits flare on lines",
+ "expressions": "from existing game sheets only; expression set to be generated with image.edit on approval",
+ "forms": "2D sprite sheets in the game repo; no Gen asset ids yet",
+ "note": "kit built from existing art, no GPU"
+}

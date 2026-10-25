@@ -303,13 +303,20 @@ the fire, and the whole stretch of floor the flood will cover glowing red before
 Video3 (Yooba, talking) plays after **The Landing** (Floor 1000, and the Shaft's climb to 999): the slime from the meadow turns up at the bottom of Hell,
 pleased to see a familiar face, and coughs up a diamond. From then on Yooba is the shop.
 
-**Video3's redo (J, 2026-10-24: the old footage "doesn't fit").** The talking slime is the old game's footage, not the
-Landing. The new Video3 is ~25-30 s, six shots, no talking head: (1) the Landing's lava shore, the hero face down in the
-ash where Video2's tunnel spat him; (2) he sits up, deadpan, looks at the lava sea; announcer, far off: *"WELCOME TO THE
-BOTTOM."*; (3) something wet slaps down behind him, a green blob with two eyestalks: Yooba, from the village; (4) Yooba
-gurgles hello, the hero looks at him a long beat; (5) Yooba coughs up a diamond, holds it out, delighted; (6) the hero
-takes it, looks up the dark Shaft: *"...Great."* The Shaft's hello (Floor 999) then picks up from there. Hero in the
-Meadow's clothes, Landing in the game's lava palette, Yooba as his portrait (`ui/yooba.json`); no office jokes.
+**Video3 is Hell's Ad Break (J, 2026-10-25, replacing the 2026-10-24 redo: the old footage "doesn't fit").** The talking-slime
+footage is the old game's, not the Landing. The new Video3 is a ~30 s **cable-TV ad break for "1,000 FLOORS"**, played
+after the Landing: Hell advertises itself like a late-night shop. (1) the **announcer** (Hell's own voice, booming) over a
+logo card, HELL'S AD BREAK: *"Are you sick of it? GOOD! Because Hell has ONE THOUSAND FLOORS!"*; (2) fire, fiends, falling
+rocks, the hero small in the picture: *"All of it, forever, now with MORE floors!"*; (3) a **sponsor spot**: **Yooba**, the
+village's slime, hawks diamonds like a salesman, delighted: *"And diamonds! Fresh, shiny, lightly swallowed! Get yours from
+Yooba, the best slime in Hell!"* (the joke is his own: he swallowed them in the Prologue); (4) the **hero cuts in**, deadpan,
+the only one not buying it: *"You're selling me the hole I'm stuck in."*; (5) *"ACT NOW, and climb the WHOLE thing!"*;
+(6) Yooba: *"Hee hee! He said yes!"*; (7) the hero, a long beat, then the last line, which the video ends on: *"...Great."*
+No office or work jokes (the register is a shopping channel, never a job); Yooba is a villager and a seller, never an
+enemy; the Overlord does not appear. Yooba's own hello stays on the Shaft at Floor 999 and picks up after it (he is not
+introduced here: the ad is how he *sells*, the Shaft is how he *greets*). Hero in the Meadow's armour as in `player.json`,
+Yooba as his portrait (`ui/yooba.json`). Voices are the existing `player`, `announcer` and `yooba`. Recipe and prices:
+[LoreVideos.md](LoreVideos.md) "Video 3: Hell's Ad Break"; files in `videos/hell-ad-break/`.
 
 ### Circle IX: the Cracked Road (one level per floor)
 

@@ -1,0 +1,9 @@
+{
+ "id": "yooba",
+ "reference": "Assets/Art/Yooba/yooba_talk.png / yooba_laugh.png / yooba_idle.png / yooba_cough.png (4x4)",
+ "voice": "EdDvd8GSdCyZwUcsPawi",
+ "motionStyle": "wobbles, fast, wet, bounces on his own jokes",
+ "expressions": "from existing game sheets only; expression set to be generated with image.edit on approval",
+ "forms": "2D sprite sheets in the game repo; no Gen asset ids yet",
+ "note": "kit built from existing art, no GPU"
+}

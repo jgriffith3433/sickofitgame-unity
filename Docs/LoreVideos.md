@@ -244,6 +244,46 @@ nods to Floor 901's beaten state: the hero has won, and the King rates him, as a
 
 ---
 
+## Video 3: Hell's Ad Break (replaces the old Video3 footage)
+
+Added 2026-10-25 (J: *concept A, "Hell's Ad Break"*). Plays after the Landing (`afterLevel: 2`, `nextLevel: 3`), where the old talking-slime
+footage was; the story is Story.md, *Video3 is Hell's Ad Break*. 25-35 s, 1280x704 (16:9), 24 fps, hand-painted comic-fantasy
+with ink outlines, the Landing's lava palette; a cable-TV frame (scanlines, bezel) over everything.
+
+**Logline.** Hell runs a cable-TV ad for its own 1,000 floors, with a slime sponsor selling diamonds, and the hero, the only
+one in the picture who is actually in it, is not buying.
+
+**Script** (voices: Announcer `1xynpTfy7I462pPrU2kL`, Yooba `EdDvd8GSdCyZwUcsPawi`, Hero `DzkD7I4tf5i3KSaB4cz5`; table read 28.7 s)
+> ANNOUNCER: Are you sick of it? GOOD! Because Hell has ONE THOUSAND FLOORS!
+> ANNOUNCER: Fire! Fiends! Falling rocks! All of it, forever, now with MORE floors!
+> YOOBA: And diamonds! Fresh, shiny, lightly swallowed! Get yours from Yooba, the best slime in Hell!
+> HERO: You're selling me the hole I'm stuck in.
+> ANNOUNCER: ACT NOW, and climb the WHOLE thing!
+> YOOBA: Hee hee! He said yes!
+> HERO: ...Great.
+
+| # | Time | Shot | Action / camera | Recipe |
+|---|---|---|---|---|
+| 1 | 0-5.5 | Logo card, MS announcer | HELL'S AD BREAK / 1,000 FLOORS slams in, his mouth works; push-in | `video.scene` |
+| 2 | 5.5-11.5 | WS, the hero small in a fire reel | words slam on: FIRE! FIENDS! FALLING ROCKS!; the hero shifts his launcher, unimpressed | `video.scene` |
+| 3 | 11.5-19 | MCU Yooba, sponsor card | wobbles, talks fast, holds out a diamond; push-in | `video.scene` |
+| 4 | 19-21.8 | MCU hero | eyes flare, flat; slow push | `video.scene` (his line is the cut-in) |
+| 5 | 21.8-24.8 | Announcer, ACT NOW flash | flashing frame, mouth | `video.scene` |
+| 6 | 24.8-27 | CU Yooba | laughs | `video.scene` |
+| 7 | 27-30.2 | CU hero, held | a long beat; "...Great." is the last sound | `video.scene` |
+
+Canon check: Yooba a seller and a villager; no Overlord; no office joke; the hero's "...Great." is his catchphrase.
+
+**Status.** Rough animatic (`"stage": "animatic"`) made **without GPU** from the game's own art (Yooba's talk and laugh sheets,
+the hero's Shout sheet) with the table read's real voices: Yooba's mouth is his sheet, the announcer's is a drawn mouth, the hero's
+helm has no mouth so his eye slits flare. The Lightning scene version (prompts in `videos/hell-ad-break/prompts.json`) and the
+final are priced below and wait for J's go.
+
+**Price** (`hawkesgen_estimate`, project `sickofit`, 2026-10-25): three Lightning `video.scene` animatic scenes and three
+full-quality final scenes, one batch: 1.53 GPU h incl. loads, **$2.84 GPU + $0.48 API = $3.32** ($5.80 with the idle tail).
+
+---
+
 ## What each video costs
 
 Prices come from `hawkesgen_estimate` (project `sickofit`, 2026-10-25, median of past jobs; GPU at $1.861/h). The
