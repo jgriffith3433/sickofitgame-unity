@@ -117,6 +117,11 @@ Assets/GameConfig/
   `hintOnce` action (in a base enemy's `onSpawn`) show the name and weakness as a subtitle, with the hero's `vo_hero_hint_<id>` voice once its
   clip exists, the first time that type spawns in a save. Remembered in `EnemyHints` (PlayerPrefs `Enemies_Seen`, cleared only by New Game;
   not rewound), silent during scenes (`GameplayWorld.SceneId`), locked input/rewind and rewinding. Playtest `enemy-hints`.
+- **Ladders** (Docs/Story.md "Ladders", cookbook "Ladders"): entity ability `ladder` (`content/entities/ladder.json`, a tall zone; `scale` stretches it). Up
+  grabs, down from its top grabs, up/down climb, Jump lets go, climbing off the top steps out; guns at `fireRate` (0.55) while held. The hold is the ladder's
+  (`holding` saved), applied through `GameplayWorld.HoldPlayerClimbing` -> `PlayerController.HoldClimbing` (`IsClimbing`, `ClimbPose`): the controller's own flags are
+  not rewound, which is why the holder re-holds him every tick. Player states `Climb`/`ClimbIdle` in `player.json` (placeholder sheets). Playtest `ladder`
+  (scene `ladderTest`).
 - **Weapons** (Docs/Story.md "Weapons", cookbook "Weapons"): `content/weapons/*.json` (`rocketLauncher` = the old gun, the
   default, same numbers as player.json; `fists` = a melee combo with a visible swing, no ammo). `PlayerController` asks its
   `IPlayerArmory` (`Gameplay/Core/PlayerWeapons.cs`) for the equipped weapon's `WeaponStats`, whether it can be used (cooldown,

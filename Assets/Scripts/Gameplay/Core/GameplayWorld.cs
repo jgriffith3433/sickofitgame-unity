@@ -425,6 +425,18 @@ namespace SickOfIt.Gameplay
             playerController.Hold(position, velocity);
         }
 
+        /// <summary>
+        /// This tick, a ladder holds him at 'position' moving at 'velocity' (up or down the rungs). The climb poses play, his guns
+        /// fire at 'fireScale' of their rate, and Jump lets go sideways at 'jumpOffX'.
+        /// </summary>
+        public void HoldPlayerClimbing(Vector2 position, Vector2 velocity, float jumpOffX, float fireScale)
+        {
+            if (playerController == null)
+                return;
+            heldThisTick = true;
+            playerController.HoldClimbing(position, velocity, jumpOffX, fireScale);
+        }
+
         /// <summary>The live entity spawned with this instance id, or null.</summary>
         public Entity FindById(string id)
         {
