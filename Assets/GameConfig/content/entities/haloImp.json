@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Halo imp",
+  "hint": "Ring of embers. Find the gap.",
+  "note": "Ten embers at once. Overcompensating.",
+  "hintVoice": "vo_hero_hint_haloImp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "imp",
+  "health": 3,
+  "tags": [
+    "imp",
+    "haloImp"
+  ],
+  "visual": {
+    "color": "#FFD27A",
+    "fxColor": "#FFD27A"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "haloEmber",
+      "pattern": {
+        "type": "radial",
+        "count": 10,
+        "rotationPerVolley": 18
+      },
+      "speed": 1.9,
+      "aim": "Player",
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 4.2,
+      "initialDelay": 1.6,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile",
+      "damage": 1
+    }
+  ],
+  "sounds": {
+    "hurtSound": "haloImp_hurt",
+    "deathSound": "haloImp_die",
+    "attackSound": "haloImp_attack"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Mine beetle",
+  "hint": "Leaves mines. Shoot them early.",
+  "note": "Lays eggs. The eggs go off. Great.",
+  "hintVoice": "vo_hero_hint_mineBeetle",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "brimstoneDemon",
+  "health": 3,
+  "moveSpeed": 0.8,
+  "tags": [
+    "mineBeetle"
+  ],
+  "body": {
+    "radius": 0.4,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.2,
+    "color": "#5A3A2A",
+    "fxColor": "#FF6A1F"
+  },
+  "loot": {
+    "chance": 0.35,
+    "count": 1,
+    "value": 1
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 0.9,
+      "distance": 3.4,
+      "pause": 0.4
+    },
+    {
+      "type": "spawner",
+      "entity": "emberMine",
+      "interval": 3.0,
+      "initialDelay": 1.2,
+      "maxAlive": 4,
+      "offset": [
+        0.0,
+        -0.05
+      ]
+    }
+  ],
+  "sounds": {
+    "hurtSound": "mineBeetle_hurt",
+    "deathSound": "mineBeetle_die"
+  }
+}

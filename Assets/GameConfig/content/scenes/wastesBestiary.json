@@ -1,0 +1,1331 @@
+{
+  "schemaVersion": 1,
+  "seed": 9021,
+  "length": 600,
+  "objective": {
+    "text": "The Ember Wastes' bestiary, one at a time"
+  },
+  "phases": [
+    {
+      "name": "haloImp",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "cinder"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "geodeBit"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "emberMine"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "TEN EMBERS. ONE FENCE. FIND THE GAP.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "haloImp",
+          "anchor": "Camera",
+          "at": [
+            4.2,
+            0.6
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "best:haloImp"
+        }
+      ],
+      "rules": [
+        {
+          "name": "haloImp beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "whirlImp"
+            }
+          ]
+        },
+        {
+          "name": "haloImp took too long",
+          "when": {
+            "type": "after",
+            "seconds": 38
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "whirlImp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "whirlImp",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "cinder"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "geodeBit"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "emberMine"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "THE WHIRL. STAY BETWEEN THE ARMS.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "whirlImp",
+          "anchor": "Camera",
+          "at": [
+            4.2,
+            0.6
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "best:whirlImp"
+        }
+      ],
+      "rules": [
+        {
+          "name": "whirlImp beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "seamImp"
+            }
+          ]
+        },
+        {
+          "name": "whirlImp took too long",
+          "when": {
+            "type": "after",
+            "seconds": 38
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "seamImp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "seamImp",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "cinder"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "geodeBit"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "emberMine"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "THE SEAM OPENS BEHIND YOU.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "seamImp",
+          "anchor": "Camera",
+          "at": [
+            3.6,
+            -0.4
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "best:seamImp"
+        }
+      ],
+      "rules": [
+        {
+          "name": "seamImp beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "slagTortoise"
+            }
+          ]
+        },
+        {
+          "name": "seamImp took too long",
+          "when": {
+            "type": "after",
+            "seconds": 38
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "slagTortoise"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "slagTortoise",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "cinder"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "geodeBit"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "emberMine"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "A WALL THAT WALKS. WALLS HAVE BACKS.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "slagTortoise",
+          "anchor": "Camera",
+          "at": [
+            4.0,
+            -2.05
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "best:slagTortoise"
+        }
+      ],
+      "rules": [
+        {
+          "name": "slagTortoise beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "magmaGeode"
+            }
+          ]
+        },
+        {
+          "name": "slagTortoise took too long",
+          "when": {
+            "type": "after",
+            "seconds": 38
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "magmaGeode"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "magmaGeode",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "cinder"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "geodeBit"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "emberMine"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "CRACK IT OPEN. THERE ARE TWO.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "magmaGeode",
+          "anchor": "Camera",
+          "at": [
+            4.2,
+            0.4
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "best:magmaGeode"
+        }
+      ],
+      "rules": [
+        {
+          "name": "magmaGeode beaten",
+          "when": {
+            "type": "allOf",
+            "triggers": [
+              {
+                "type": "allDead",
+                "target": {
+                  "tag": "station"
+                }
+              },
+              {
+                "type": "allDead",
+                "target": {
+                  "tag": "geodeBit"
+                }
+              }
+            ]
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "mineBeetle"
+            }
+          ]
+        },
+        {
+          "name": "magmaGeode took too long",
+          "when": {
+            "type": "after",
+            "seconds": 38
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "mineBeetle"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "mineBeetle",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "cinder"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "geodeBit"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "emberMine"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "THE EGGS GO OFF.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "mineBeetle",
+          "anchor": "Camera",
+          "at": [
+            3.8,
+            -2.05
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "best:mineBeetle"
+        }
+      ],
+      "rules": [
+        {
+          "name": "mineBeetle beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "lensImp"
+            }
+          ]
+        },
+        {
+          "name": "mineBeetle took too long",
+          "when": {
+            "type": "after",
+            "seconds": 38
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "lensImp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "lensImp",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "cinder"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "geodeBit"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "emberMine"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "A RED LINE. THEN THE LENS SWEEPS.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "lensImp",
+          "anchor": "Camera",
+          "at": [
+            3.8,
+            0.4
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "best:lensImp"
+        }
+      ],
+      "rules": [
+        {
+          "name": "lensImp beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "pyreCaller"
+            }
+          ]
+        },
+        {
+          "name": "lensImp took too long",
+          "when": {
+            "type": "after",
+            "seconds": 38
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "pyreCaller"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pyreCaller",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "cinder"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "geodeBit"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "emberMine"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "THE PYRE CALLER SENDS SPARKS TO DO ITS FIGHTING.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "pyreCaller",
+          "anchor": "Camera",
+          "at": [
+            4.0,
+            0.4
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "best:pyreCaller"
+        }
+      ],
+      "rules": [
+        {
+          "name": "pyreCaller beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "slagHound"
+            }
+          ]
+        },
+        {
+          "name": "pyreCaller took too long",
+          "when": {
+            "type": "after",
+            "seconds": 38
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "slagHound"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "slagHound",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "cinder"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "geodeBit"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "emberMine"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "CROUCH. LUNGE. SIDESTEP.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "slagHound",
+          "anchor": "Camera",
+          "at": [
+            4.0,
+            -2.05
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "best:slagHound"
+        }
+      ],
+      "rules": [
+        {
+          "name": "slagHound beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "deadeyeImp"
+            }
+          ]
+        },
+        {
+          "name": "slagHound took too long",
+          "when": {
+            "type": "after",
+            "seconds": 38
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "goToPhase",
+              "phase": "deadeyeImp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "deadeyeImp",
+      "onEnter": [
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "cinder"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "geodeBit"
+          }
+        },
+        {
+          "type": "despawn",
+          "target": {
+            "tag": "emberMine"
+          }
+        },
+        {
+          "type": "heal",
+          "target": {
+            "player": true
+          },
+          "amount": 5
+        },
+        {
+          "type": "showText",
+          "text": "THE DEADEYE LEADS ITS SHOT.",
+          "duration": 3.0,
+          "color": "#FFD27A"
+        },
+        {
+          "type": "spawn",
+          "entity": "deadeyeImp",
+          "anchor": "Camera",
+          "at": [
+            4.4,
+            0.2
+          ],
+          "tags": [
+            "station"
+          ],
+          "facePlayer": true
+        },
+        {
+          "type": "emit",
+          "signal": "best:deadeyeImp"
+        }
+      ],
+      "rules": [
+        {
+          "name": "deadeyeImp beaten",
+          "when": {
+            "type": "allDead",
+            "target": {
+              "tag": "station"
+            }
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "emit",
+              "signal": "best:done"
+            }
+          ]
+        },
+        {
+          "name": "deadeyeImp took too long",
+          "when": {
+            "type": "after",
+            "seconds": 38
+          },
+          "do": [
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "station"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "cinder"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "geodeBit"
+              }
+            },
+            {
+              "type": "despawn",
+              "target": {
+                "tag": "emberMine"
+              }
+            },
+            {
+              "type": "emit",
+              "signal": "best:done"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

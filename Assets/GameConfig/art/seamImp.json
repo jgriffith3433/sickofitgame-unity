@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "seamImp",
+  "name": "Seam imp",
+  "description": "a small wiry hell imp of the Ember Wastes, one of the Magma King's: leathery skin, short curled horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, teal-tinted skin that flickers at the edges",
+  "height": 0.75,
+  "poses": {
+    "stand": "hovering mid-air on spread bat wings, teal-tinted, its edges faintly glitching like a torn photograph, a thin glowing teal seam in the air at its back",
+    "struck": "just hit and caught mid-shriek: eyes bulging, mouth stretched open, wings snapped up, body tilted back with cracks of orange light glowing through its skin",
+    "dead": "vanishing into a small flash of teal light and black soot, only its horns tumbling out"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers, flapping, flickering at the edges",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "snaps both hands out and spits two quick embers, then hovers again",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a yelp, wings crumpling, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "shrieks, flickers teal, and pops into soot and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

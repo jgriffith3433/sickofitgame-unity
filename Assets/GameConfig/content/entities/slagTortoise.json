@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Slag tortoise",
+  "hint": "Armored front. Shoot its back.",
+  "note": "A wall that walks. Walls have backs.",
+  "hintVoice": "vo_hero_hint_slagTortoise",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "brimstoneDemon",
+  "health": 6,
+  "moveSpeed": 0.5,
+  "tags": [
+    "slagTortoise"
+  ],
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.26,
+    "color": "#8A7468",
+    "fxColor": "#C8A27A"
+  },
+  "loot": {
+    "chance": 0.45,
+    "count": 1,
+    "value": 1
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 0.55,
+      "distance": 3.0,
+      "pause": 1.2
+    },
+    {
+      "type": "frontShield",
+      "arc": 140,
+      "blockSound": "chain_cut",
+      "color": "#FFB070"
+    },
+    {
+      "type": "shoot",
+      "projectile": "tortoiseEmber",
+      "speed": 2.2,
+      "aim": "Facing",
+      "muzzle": [
+        0.35,
+        0.1
+      ],
+      "interval": 3.4,
+      "initialDelay": 2.0,
+      "range": 6.5,
+      "damage": 1
+    }
+  ],
+  "sounds": {
+    "hurtSound": "slagTortoise_hurt",
+    "deathSound": "slagTortoise_die",
+    "attackSound": "slagTortoise_attack"
+  }
+}

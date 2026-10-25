@@ -829,6 +829,7 @@ namespace SickOfIt.Playtest
                 "from the front (shieldBlock events, no damage) and takes them from behind until it dies; a lead imp's shots go where the moving hero will be " +
                 "(checked against the intercept maths); the Overlord's lens shows a thin warning line, then sweeps a beam that hurts the hero where it crosses him. " +
                 "Each beat is a check event", MechanicsSeconds, "level"));
+            list.Add(new PlaytestScenario(BestiaryId, $"The Ember Wastes' ten new enemies (Docs/Story.md \"The Wastes' bestiary\"): checked as data (each has a name, a hint, a hint voice and a place in the Circle's enemy table; no two share an attack), then the arena \"{BestiaryScene}\" on level {BestiaryLevel}'s stage (setup shortcut) played by the bot through real input, one creature per station: the Halo imp's ring of embers, the Whirl imp's spiral, the Seam imp blinking behind the hero after a mark, the Slag tortoise's front shield blocking shots, the Magma geode splitting in two, the Mine beetle laying mines, the Lens imp's red line then sweep, the Pyre caller calling cinders, the Slag hound crouching then lunging, the Deadeye imp's fast led bolt. One check event per creature; bestiary events log what each did", BestiarySeconds, "level"));
             list.Add(new PlaytestScenario("video-" + OverlayVideo, $"Video {OverlayVideo}, started directly (setup shortcut) and watched instead of skipped: " +
                 $"the overlay \"{OverlayName}\" (the hero) appears as the camera goes through the burning door, spins 3+ turns and shrinks into the tunnel's " +
                 "centre and is gone before the lava river (~14.5 s); holding R mid-spin plays it backward; then Escape skips the video. Each beat is checked", 75, "video"));
@@ -1190,6 +1191,11 @@ namespace SickOfIt.Playtest
             {
                 session.Prepare(MechanicsLevel, true);
                 yield return session.MechanicsRun();
+            }
+            else if (id == BestiaryId)
+            {
+                session.Prepare(BestiaryLevel, true);
+                yield return session.BestiaryRun();
             }
             else if (id == MagmaKing.Scenario)
                 yield return session.WardenRun(MagmaKing, false);

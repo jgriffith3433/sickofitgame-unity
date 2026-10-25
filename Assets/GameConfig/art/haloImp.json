@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "haloImp",
+  "name": "Halo imp",
+  "description": "a small wiry hell imp of the Ember Wastes, one of the Magma King's: leathery skin, short curled horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, gold-tinted skin, a ring of glowing embers circling its head",
+  "height": 0.75,
+  "poses": {
+    "stand": "hovering mid-air on spread bat wings, both arms held out wide, a ring of ten small glowing embers floating round its head like a halo",
+    "struck": "just hit and caught mid-shriek: eyes bulging, mouth stretched open, wings snapped up, body tilted back with cracks of orange light glowing through its skin",
+    "dead": "bursting apart in a small round pop of black soot and bright orange embers, only its horns tumbling out of the puff"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers, flapping its wings, the ring of embers circling slowly round its head",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "throws both arms wide and the ring of embers bursts outward all at once, then hovers again",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a yelp, wings crumpling, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "shrieks, swells with orange light shining through the cracks in its skin, and pops like a firecracker into a puff of black soot and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

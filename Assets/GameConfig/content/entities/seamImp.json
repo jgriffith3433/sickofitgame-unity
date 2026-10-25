@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Seam imp",
+  "hint": "Blinks behind you. Watch the mark.",
+  "note": "Comes out of the seam behind me. Every time.",
+  "hintVoice": "vo_hero_hint_seamImp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "imp",
+  "health": 4,
+  "tags": [
+    "imp",
+    "seamImp"
+  ],
+  "visual": {
+    "color": "#6FE0C8",
+    "fxColor": "#6FE0C8"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "teleport",
+      "to": "NearPlayer",
+      "distance": 2.4,
+      "behind": true,
+      "interval": 4.0,
+      "initialDelay": 1.0,
+      "telegraph": 0.7,
+      "marker": "seamMark",
+      "flashColor": "#6FE0C8",
+      "sound": "banner_whoosh"
+    },
+    {
+      "type": "shoot",
+      "projectile": "seamEmber",
+      "speed": 4.2,
+      "aim": "Player",
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 4.0,
+      "initialDelay": 2.0,
+      "burst": 2,
+      "burstInterval": 0.18,
+      "damage": 1
+    }
+  ],
+  "sounds": {
+    "hurtSound": "seamImp_hurt",
+    "deathSound": "seamImp_die",
+    "attackSound": "seamImp_attack"
+  }
+}
