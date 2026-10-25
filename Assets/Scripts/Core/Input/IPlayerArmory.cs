@@ -31,6 +31,8 @@ namespace SickOfIt.Core.Input
         public int pellets;
         /// <summary>Degrees between neighbouring pellets.</summary>
         public float pelletSpread;
+        /// <summary>How the weapon looks in his hands (the prop over the Fire pose); null = nothing drawn.</summary>
+        public HeldLook look;
     }
 
     /// <summary>
@@ -44,6 +46,10 @@ namespace SickOfIt.Core.Input
         bool TryGetCurrent(out WeaponStats stats);
         /// <summary>True when the equipped weapon can be used at 'now': not switching, not mid-swing, ammo left.</summary>
         bool CanUse(float now);
+        /// <summary>The equipped weapon's id (content/weapons).</summary>
+        string CurrentId { get; }
+        /// <summary>He holds this weapon right now (the launcher too: a scene can take it).</summary>
+        bool Holds(string id);
         /// <summary>The equipped weapon is out of ammo.</summary>
         bool Empty { get; }
         /// <summary>He pulled the trigger on an empty weapon (a dry click, rate-limited).</summary>

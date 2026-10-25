@@ -1971,6 +1971,17 @@ weapon and drops its pickup when it dies, or a boss that drops it as it falls; n
 is always something he took off someone. Picking one up again later only refills its ammo. A floor that gives or takes a
 weapon says why in its own script. Switching: Q, the mouse wheel or the gamepad's top button; a button on the HUD on touch.
 
+### In his hands (swaps and looks)
+
+What he holds is **seen**. Each weapon has a look of its own in his hands (weapon JSON `look`), one overlay on his one set of sheets:
+the launcher a fat dark tube with an orange mouth, the Spitfire a live orange lizard, the Ricochet Pistol a pale pistol with a blue
+eye, the Chain-Whip a brown grip and a line of links, the Shotgun two grey barrels on a wooden stock, the Boomerang Halo a gold ring
+held up, the Slag Ladle a long handle and a bowl of slag, the fists two brass-knuckled gauntlets. Firing or swinging kicks the prop
+and flashes in the weapon's own colour. Three **swaps** get a clip, because they mean something: the launcher **leaving** him
+(Floor 998: yanked from his shoulder, he looks at his empty hands, unimpressed), the launcher **coming back** (swung up onto the
+shoulder and checked) and the **fists** (the launcher slung on his back, knuckles cracked). No other swap has a clip: the prop just changes.
+Sheets and the prop are stand-ins until art is made (`art/hero.json`, priced).
+
 ### The Spill's theft (Floor 998 to 994)
 
 On Floor 998, as the river carries him past the hay cart, an imp (the **thief**, a launcher-sized sack on his back)

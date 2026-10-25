@@ -29,5 +29,63 @@
   "pickup": "rocketLauncherPickup",
   "heroText": "There you are. You smell like imp.",
   "heroLine": "vo_wpn_launcher",
-  "banner": "ROCKET LAUNCHER: BACK IN HAND"
+  "banner": "ROCKET LAUNCHER: BACK IN HAND",
+  "look": {
+    "parts": [
+      {
+        "offset": [
+          0.2,
+          0.0
+        ],
+        "size": [
+          0.46,
+          0.17
+        ],
+        "color": "#3A3430"
+      },
+      {
+        "offset": [
+          0.42,
+          0.0
+        ],
+        "size": [
+          0.1,
+          0.21
+        ],
+        "color": "#FF7A1F"
+      },
+      {
+        "offset": [
+          0.03,
+          0.03
+        ],
+        "size": [
+          0.12,
+          0.13
+        ],
+        "color": "#7A6A5A"
+      },
+      {
+        "offset": [
+          0.2,
+          0.1
+        ],
+        "size": [
+          0.24,
+          0.04
+        ],
+        "color": "#FFB347"
+      }
+    ],
+    "muzzle": [
+      0.55,
+      0
+    ],
+    "flash": "#FF9A33",
+    "flashSize": [
+      0.3,
+      0.24
+    ],
+    "kick": 0.1
+  }
 }
