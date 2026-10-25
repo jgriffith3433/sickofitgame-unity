@@ -71,7 +71,7 @@ namespace SickOfIt.Gameplay
                 pressScale = 0.94f,
                 hoverRotation = 0f,
             };
-            dashButton = menu.AddButtonAt(place.anchor, place.offset, "", buttonStyle, null);
+            dashButton = menu.AddButtonAt(place.anchor, place.offset, " ", buttonStyle, null); // non-empty: MenuButton makes no Label for ""
             Lay(dashButton.transform.parent, l => l.dash, MenuElementKind.Button);
             dashButton.Clicked += OnDashButton;
             // Out of keyboard/gamepad navigation, like the rewind and weapon buttons.
