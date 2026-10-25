@@ -141,6 +141,11 @@ Assets/GameConfig/
   (`unlockWeapon`, `WeaponUnlocks`: kept when a run ends, cleared by New Game; a scene's `suspended` weapons come back with the run). Shots of their
   own are player-team entities (`projectile.entity`: `ricochetShot`, `haloShot` with `returnToHero`); the shotgun fans `projectile.pellets`.
   Playtest `weapon-drops` (~20 min; scenario `weaponArena`, `targetDummy`).
+- **Circle air and parallax** (Docs/Story.md "Hell's air", cookbook "Weather and life"): `CircleDef.ambience` (depth layers, weather, far-off life; `CircleAmbience`,
+  pooled and capped at 150 bits / 8 actors, presentation only) and `BackgroundLayerConfig.parallaxFactor` (`ParallaxController`: 1 glued to the screen = the default,
+  0 fixed in the world, tiling wraps static sprites). Every built Circle (`emberWastes`, `crackedRoad`, `runeBridges`) has its own set; a new Circle gets one.
+  `CircleAmbience.Enabled`/`Quality` switch it off / thin it (the playtest's baseline). Playtest `ambience` (~7 min: parallax measured against the camera,
+  weather and life per Circle, frame time on vs off); tests `Assets/Tests/Editor/AmbienceTests.cs`.
 - **Bystanders** (Docs/Story.md "Bystanders", cookbook "Bystanders"): scene actions that direct any entity by instance id (`walkEntityTo`,
   `faceEntity`, `playEntityAnimation`; `"player"` and `"self"` work as ids; the walk is `Entity.ScriptWalkTo`, saved on the entity) and the `witness`
   trigger (`ShotPassed` / `AllyHurt` / `HeroHurt` near the watcher; `GameplayWorld.TryWitness`, with the last 2 s of hurts in the world's saved state).
@@ -435,6 +440,9 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   (`laser`); `check`, `station` events; ~3 min; Docs/GameplayCookbook.md "Bouncing shots, a blink, ..."),
   `enemy-hints` (the hero sizes up enemy types once: New Game clears it, Level 1's first imp is announced once, a rewind, the next imps, a new run and a scene do not repeat it; `check`, `hint` events; ~3 min), `bystander` (a bystander in a scene: `content/scenes/bystanderTest.json` on Level 1's stage, setup shortcut, real input: a damned soul stands behind the hero; the scene walks it (`walkEntityTo`), turns it away (`faceEntity`) and plays its Hiccup (`playEntityAnimation`); he walks up and it turns to him and speaks a subtitle; he shoots along the ground at an imp and the shots pass it: it flinches back and settles (`witness` ShotPassed); the imp hurts him and it flinches and speaks (HeroHurt; a scene rule hurts him after 15 s if the imp hasn't); hold R back to before it noticed him: its facing and place return; `check`, `bystander` events; ~2 min),
   `weapons` (the weapons: `content/scenes/weaponsTest.json` on Level 1's stage, setup shortcut, real input: the launcher is the default (HUD name, fire rate and aim as player.json says, its aim guide), `giveWeapon` puts fists in his hands, Q equips them (HUD says FISTS, the aim guide shortens), he punches an imp that appears in front of him (a visible crescent and fist, the combo hits, the imp dies), Q back and hold R back to before the switch (the rewind restores the fists), the HUD weapon button clicked with the mouse (a tap's path) switches, `takeWeapon` takes the fists away; `check`, `weapon` events; ~2 min),
+  `ambience` (every Circle's air: its first travelling floor loaded directly and played by the bot; every parallax layer moves at its own factor of the camera's travel
+  (`parallax` events), weather kinds and bits drawn, depth rows, background life seen, no two Circles with the same set, and the frame time with the air on, off for 10 s and on again within
+  budget (on <= off x1.2 + 2 ms, no frame over 120 ms; `ambience.<circle>.frameOnMs`/`frameOffMs`); `check`, `ambience`, `parallax` events; ~7 min),
   `aim-guide` (the aim guide: Level 1 loaded directly, every volley's guide lines on the frame it fired against the shots'
   flight directions read back from the projectiles (`aim` events), the stick held (one short line under the gameplay), held
   through a rewind and the pause (hidden), the mouse hovering and clicking; then the same with 2 levels of `spreadShot`

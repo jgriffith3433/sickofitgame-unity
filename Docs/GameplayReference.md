@@ -1552,8 +1552,9 @@ A line for reaching a floor.
 | `scale` | [x, y] | `[1.0,1.0]` | Scale multiplier |
 | `layer` | [SpriteLayer](#spritelayer) | `"Background1"` | Draw band. Background1 is furthest back. Foreground bands cover the player. |
 | `sortingOrder` | integer | `0` | Order inside the chosen band. Higher draws in front of other sprites on that same band. |
-| `parallaxFactor` | number | `0.0` | Parallax multiplier (0 = static background, 1 = moves with camera) |
-| `tileHorizontally` | true/false | `false` | If true, tile this layer horizontally for infinite scroll |
+| `parallaxFactor` | number | `1.0` | How much the layer follows the camera (ParallaxController): 1 = glued to the screen (the default), 0 = fixed in the world, between = a far layer that drifts slowly the other way as the camera travels. A layer that follows less than 1 must be bigger than the view (scale > 1) or tiled, or its edge would show; the controller keeps it covering the screen. |
+| `tileHorizontally` | true/false | `false` | If true, tile this layer horizontally for infinite scroll (static sprites; the copies wrap around the camera) |
+| `tileVertically` | true/false | `false` | If true, tile this layer vertically too (Up-travel stages) |
 | `sequenceStart` | number | `-1.0` | When this layer appears, in seconds on the game clock (the same clock as the music). Negative means it plays from the start, stacked with the other layers. |
 | `sequenceDuration` | number | `0.0` | How long this layer stays up. The clip loops or holds inside that window. 0 means until the next sequenced layer, or for the rest of the level if it is the last one. |
 | `sequenceLoop` | true/false | `true` | Repeat the clip until the window ends. Off plays it once and holds the last frame. |

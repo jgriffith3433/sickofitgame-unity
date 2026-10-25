@@ -1580,6 +1580,20 @@ named here, with a note.
 
 Characters: the hero (always), the Overlord (the meadow's laser, always), the Announcer (always) and Yooba (once met).
 
+## Hell's air (weather and the life far away)
+
+Hell is repetition, so even its air repeats: every Circle has its own weather and its own things going about their business a long way off, and
+none of it has anything to do with the hero. It is there so the climb looks like a place. (2026-10-25; `content/circles/*.json` `ambience`.)
+
+| Circle | Weather | Far away |
+|---|---|---|
+| X, the Ember Wastes | grey ash sinking, sparks flicking up off the lava, cinders falling (from Floor 990) | cinder bats crossing, imps trudging a far ridge, a small soul running from something bigger (from Floor 996) |
+| IX, the Cracked Road | grit shed by the spires and blown along the road, sparks from the cracks, ash from the Rift | shard-wings over the Rift, a demon walking the far road, a whelp chased by a bigger demon |
+| VIII, the Rune Bridges | runes lifting off the walls, pale rune dust, cold sparks | watchers drifting in the void, a statue walking a far bridge, a wisp chased by a hound |
+
+The deeper Circles get theirs when they are built: a new Circle's `ambience` is part of building it (two or three kinds of weather, at least two kinds
+of life, a depth layer or two, a set no other Circle has). The chases are never explained and never resolved: they cross, they leave, they come back.
+
 ## Hell's tricks (five mechanics)
 
 Hell is repetition, so its monsters have a few tricks and use them forever. Five are built as JSON abilities so floors
