@@ -101,6 +101,14 @@ namespace SickOfIt.Gameplay
         float damageMultiplier = 1f;
         int stateIndex = -1;
         float stateEnteredAt;
+        // A scripted walk (walkEntityTo): saved, so a rewind picks the walk up where it was.
+        bool scriptWalking;
+        float scriptWalkX;
+        float scriptWalkSpeed;
+        string scriptWalkSignal = "";
+        bool scriptWalkKeepFacing;
+        float scriptWalkClosest;
+        float scriptWalkCloserAt;
         readonly List<ModifierInstance> modifiers = new List<ModifierInstance>();
         readonly List<StatusInstance> statuses = new List<StatusInstance>();
 
@@ -284,6 +292,7 @@ namespace SickOfIt.Gameplay
 
             Animation.Reset();
             alive = true;
+            scriptWalking = false;
 
             UpdateTriggerContext();
             foreach (var a in always)
@@ -402,6 +411,8 @@ namespace SickOfIt.Gameplay
                 }
             }
 
+            if (scriptWalking)
+                TickScriptWalk(now, dt);
             ApplyMovement(now, dt);
             Animation.Tick(dt);
             if (!alive)
@@ -538,6 +549,53 @@ namespace SickOfIt.Gameplay
                 Body.linearVelocity = Vector2.zero;
             }
             dirty = true;
+        }
+
+        /// <summary>Is a script walking this entity (walkEntityTo)?</summary>
+        public bool ScriptWalking => scriptWalking;
+
+        /// <summary>
+        /// A scene walks this entity sideways to world x, whatever its abilities want, and emits <paramref name="signal"/> on
+        /// arrival (or when it gets stuck). <paramref name="speed"/> is world units per second (0 = its moveSpeed).
+        /// </summary>
+        public void ScriptWalkTo(float x, float speed, string signal, bool keepFacing = false)
+        {
+            if (IsPlayer || !alive)
+                return;
+            scriptWalking = true;
+            scriptWalkX = x;
+            scriptWalkSpeed = speed > 0f ? speed : (Def != null ? Def.moveSpeed : 1f);
+            scriptWalkSignal = signal ?? "";
+            scriptWalkKeepFacing = keepFacing;
+            scriptWalkClosest = float.MaxValue;
+            scriptWalkCloserAt = Now;
+            dirty = true;
+        }
+
+        void TickScriptWalk(float now, float dt)
+        {
+            float dx = scriptWalkX - transform.position.x;
+            float distance = Mathf.Abs(dx);
+            if (distance < scriptWalkClosest - 0.01f)
+            {
+                scriptWalkClosest = distance;
+                scriptWalkCloserAt = now;
+            }
+            bool arrived = distance <= Mathf.Max(0.05f, scriptWalkSpeed * dt);
+            bool stuck = now - scriptWalkCloserAt > 1.5f;
+            if (!arrived && !stuck)
+            {
+                if (!scriptWalkKeepFacing)
+                    SetFacing(dx);
+                Move(new Vector2(Mathf.Sign(dx) * scriptWalkSpeed, 0f));
+                return;
+            }
+            scriptWalking = false;
+            Move(Vector2.zero);
+            dirty = true;
+            World.Telemetry.Record("cutscene", stuck && !arrived ? "entityWalkBlocked" : "entityWalkArrived", Serial, string.IsNullOrEmpty(InstanceId) ? DefId : InstanceId);
+            if (!string.IsNullOrEmpty(scriptWalkSignal))
+                World.Emit(scriptWalkSignal);
         }
 
         /// <summary>Stand still until this time (attacks, wind-ups).</summary>
@@ -1187,6 +1245,13 @@ namespace SickOfIt.Gameplay
             w.Float(damageMultiplier);
             w.Int(stateIndex);
             w.Float(stateEnteredAt);
+            w.Bool(scriptWalking);
+            w.Float(scriptWalkX);
+            w.Float(scriptWalkSpeed);
+            w.String(scriptWalkSignal);
+            w.Bool(scriptWalkKeepFacing);
+            w.Float(scriptWalkClosest);
+            w.Float(scriptWalkCloserAt);
 
             w.Int(modifiers.Count);
             foreach (var m in modifiers)
@@ -1238,6 +1303,13 @@ namespace SickOfIt.Gameplay
             damageMultiplier = r.Float();
             stateIndex = r.Int();
             stateEnteredAt = r.Float();
+            scriptWalking = r.Bool();
+            scriptWalkX = r.Float();
+            scriptWalkSpeed = r.Float();
+            scriptWalkSignal = r.String();
+            scriptWalkKeepFacing = r.Bool();
+            scriptWalkClosest = r.Float();
+            scriptWalkCloserAt = r.Float();
 
             modifiers.Clear();
             int modifierCount = r.Int();

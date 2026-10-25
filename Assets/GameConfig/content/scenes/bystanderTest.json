@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "seed": 7311,
+  "length": 120,
+  "objective": { "text": "A damned soul is watching" },
+  "phases": [
+    {
+      "name": "bench",
+      "onEnter": [
+        { "type": "heal", "target": { "player": true }, "amount": 5 },
+        { "type": "spawn", "entity": "bystanderSoul", "id": "soul", "anchor": "Player", "at": [6.5, 0.1], "facePlayer": false }
+      ],
+      "rules": [
+        { "name": "an imp that shoots", "when": { "type": "signal", "name": "bys:imp" }, "do": [
+          { "type": "heal", "target": { "player": true }, "amount": 5 },
+          { "type": "spawn", "entity": "imp", "id": "shooter", "anchor": "Player", "at": [10, 0.1], "health": 8, "facePlayer": true }
+        ] },
+        { "name": "walk him away from the shots", "when": { "type": "signal", "name": "bys:walk" }, "do": [
+          { "type": "walkEntityTo", "target": "soul", "relativeTo": "player", "x": 5.2, "speed": 2.5, "emit": "bys:walked" }
+        ] },
+        { "name": "turn his back", "when": { "type": "signal", "name": "bys:turn" }, "do": [
+          { "type": "faceEntity", "target": "soul", "awayFrom": "player" }
+        ] },
+        { "name": "a hurt, as a fallback", "when": { "type": "signal", "name": "bys:hurt" }, "do": [
+          { "type": "damage", "target": { "player": true }, "amount": 1 }
+        ] },
+        { "name": "the soul hiccups on cue", "when": { "type": "signal", "name": "bys:anim" }, "do": [
+          { "type": "playEntityAnimation", "target": "soul", "state": "Hiccup" }
+        ] }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "seed": 4243,
+  "length": 20,
+  "objective": { "text": "" },
+  "phases": [
+    {
+      "name": "offer",
+      "onEnter": [
+        { "type": "runSequence", "steps": [
+          { "type": "wait", "seconds": 1.0 },
+          { "type": "offerUpgrades", "title": "Pick a grudge", "count": 3, "choices": [ "notToday", "bigDamage", "rapidFire" ] },
+          { "type": "wait", "seconds": 1.5 },
+          { "type": "emit", "signal": "scene:done" }
+        ] }
+      ]
+    }
+  ]
+}

@@ -27,6 +27,8 @@ namespace SickOfIt.Data.Config
         ShopBroke,
         /// <summary>The hero leaves the shop.</summary>
         ShopLeave,
+        /// <summary>Something for a weapon was bought (a weapon upgrade, Keep Weapons): Yooba has never heard of weapons.</summary>
+        ShopBuyWeapon,
     }
 
     /// <summary>One of Yooba's portrait loops: a sprite sheet cut into equal cells, read left to right, top to bottom.</summary>

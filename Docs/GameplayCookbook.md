@@ -232,6 +232,52 @@ Then, on `atPortal`:
 `script`, no `objective` needed). The playtest's `cutscene` scenario plays `content/scenes/cutsceneTest.json` on
 Level 1's stage (`LevelRuntime.PendingScene`, a setup shortcut) and checks every action above.
 
+## Bystanders ("a soul turns to the hero, flinches from shots, speaks")
+
+The hero isn't the only one a scene can direct. Three actions work on **any entity by instance id** (the spawn `id`;
+`"player"` is the hero, `"self"` is the entity running its own ability), and one trigger lets a bystander or an enemy
+notice what happens near it. Demo: the damned soul `bystanderSoul` (`content/entities/bystanderSoul.json`, Story.md
+"Bystanders") on the bench `content/scenes/bystanderTest.json`, played by the `bystander` playtest.
+
+**Directing it from a scene** (level rules, phases, sequences):
+
+```json
+{ "type": "walkEntityTo", "target": "soul", "relativeTo": "player", "x": 5.2, "speed": 2.5, "emit": "soulThere" },
+{ "type": "faceEntity", "target": "soul", "awayFrom": "player" },
+{ "type": "playEntityAnimation", "target": "soul", "state": "Hiccup" }
+```
+
+- `walkEntityTo` walks it sideways to a world `x` (from `anchor`, or an offset from the entity named in `relativeTo`,
+  negative = on its left) at `speed` world units per second (0 = its own `moveSpeed`). It overrides its own movement
+  abilities while it goes, faces the way it walks (`keepFacing: true` to back away without turning), and stops on the
+  spot, or after 1.5 s stuck, and `emit`s a signal. It keeps its height (kinematic or gravity-less bodies; a Dynamic
+  one still falls). The hero has his own: `walkPlayerTo`.
+- `faceEntity`: `direction`, or `toward` / `awayFrom` another entity. An ability that faces something every tick
+  (`hover`, `chase`) turns it back, so use it on entities that stand still.
+- `playEntityAnimation` plays an animator state by name (the entity must have art for it: a missing state is logged
+  as a scene `error`). `playAnimation` with `"target": { "self": false, "id": "soul" }` does the same; this one
+  takes a plain id and is logged as a `cutscene` event. Hero: `playPlayerAnimation`.
+
+**Reacting on its own** (inside the entity, as `react` abilities or state transitions): the `witness` trigger.
+
+```json
+{ "type": "react", "maxTimes": 0, "when": { "type": "witness", "what": "ShotPassed", "within": 1.6 },
+  "do": [ { "type": "playEntityAnimation", "target": "self", "state": "Hiccup" },
+          { "type": "walkEntityTo", "target": "self", "anchor": "Self", "x": 0.5, "speed": 3, "keepFacing": true } ] }
+```
+
+- `what`: `ShotPassed` (the hero's shot, or a projectile entity of another team, comes within `within` world units),
+  `AllyHurt` (another entity on the watcher's own team is hurt within `within`), `HeroHurt` (the hero is hurt within
+  `within`). A hurt counts for `window` seconds (0.25) after it; a shot counts while it is that close.
+- Like every trigger it fires on the rising edge: a stream of shots stays one "true" until the last leaves range.
+  `maxTimes: 0` makes a `react` fire each time; the default 1 is once.
+- In a level rule or sequence there is no "self": name the watcher, `"watcher": "soul"`.
+- Teams matter: `AllyHurt` needs a hurtable ally (health above 0; the damned can't be hurt), and a `Neutral` watcher
+  sees a `Neutral` neighbour hurt. A shot of the watcher's own team is never "a shot passing".
+- Rewind-safe: the walk is saved with the entity; the world keeps the last 2 s of hurts in its saved state
+  (`GameplayWorld.TryWitness`), so a rewind forgets what hasn't happened yet. Checked by `BystanderTests`.
+- Limits: shots made by legacy shooter prefabs (old levels without a `script`) aren't seen; projectile entities are.
+
 ## Something moving over a video ("the hero tumbles down the fire tunnel")
 
 Videos, deaths and levels have a `timeline.overlays` list: pictures drawn over the scene and moved by keyframes.
@@ -323,6 +369,16 @@ comedic text beats (`showText` banners and subtitles, boss intros, upgrade descr
   hero: **Visit Yooba** beside Continue (`ui/shaft.json` `yoobaButton`/`continueBesideYooba` and their portrait
   placements, text `shaftVisitYooba`) builds the same shop over the Shaft (`UpgradeShopManager.OpenOverShaft`, no
   scene load); its Back closes it and the Shaft's Continue goes on to the next level.
+- **Gating a good or a Grudge** (`requires`, shop goods in `player.json` and `content/upgrades/*.json`): a list of
+  conditions, all of which must hold before it is shown (shop) or offered (Grudge picker); until then it is simply
+  absent. Forms: `flag:<id>` (an `UnlockFlags` id: `UnlockFlags.Set("...")` from C#), `weapon:<id>` (the flag
+  `weapon:<id>`: the weapon system sets it when a weapon is unlocked), `shop:<id>[:level]` (a good owned at that level),
+  `grudge:<id>[:level]` (held this run), `level:<n>` (level n cleared). A good already owned is never hidden, so a
+  save from before the gate keeps its purchases (nothing is migrated: no flags is an empty set). The content validator
+  rejects a malformed condition. Flags are cleared on New Game, kept through runs. Example:
+  `"requires": ["shop:spicyFireballs:2"]` (Double-Dipped Shots).
+- **Prices** (Docs/Story.md, "Yooba's prices"): `RogueliteManager.TotalPrice` sums the catalog; the playtest reports it
+  as `shop.totalPrice` / `shop.basePrice`, with `level<n>.diamonds` per level. Test it with `ShopGateTests`.
 - Between-level picks (content/upgrades) are separate: bigger, run-long boosts offered at the end of each level.
 
 ## Status effects (poison, slow, stun, shield)

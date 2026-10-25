@@ -544,6 +544,102 @@ namespace SickOfIt.Gameplay
         internal void NotifyDamaged(Entity entity, int amount, Entity source, string label = null)
         {
             Telemetry.Record("damage", entity.DefId, amount, source != null ? source.DefId : label ?? "");
+            NoteHurt(entity);
+        }
+
+        // ─── What bystanders notice (the witness trigger) ─────────────
+
+        /// <summary>A hurt remembered for a moment, so an entity ticking just after it can still notice. Saved: a rewind forgets what hasn't happened yet.</summary>
+        struct WitnessEvent
+        {
+            public float Time;
+            public Vector2 At;
+            public int Team;
+            public int Serial;
+            public bool Hero;
+        }
+
+        const int MaxWitnessEvents = 16;
+        const float WitnessKeepSeconds = 2f;
+        readonly List<WitnessEvent> witnessEvents = new List<WitnessEvent>();
+
+        void NoteHurt(Entity entity)
+        {
+            float now = Now;
+            for (int i = witnessEvents.Count - 1; i >= 0; i--)
+            {
+                if (now - witnessEvents[i].Time > WitnessKeepSeconds)
+                    witnessEvents.RemoveAt(i);
+            }
+            if (witnessEvents.Count >= MaxWitnessEvents)
+                witnessEvents.RemoveAt(0);
+            witnessEvents.Add(new WitnessEvent { Time = now, At = entity.Position, Team = (int)entity.Team, Serial = entity.Serial, Hero = entity.IsPlayer });
+        }
+
+        /// <summary>
+        /// Did <paramref name="watcher"/> just notice <paramref name="kind"/> within <paramref name="within"/> of itself? A hurt counts for
+        /// <paramref name="window"/> seconds; a shot counts while it is that close. <paramref name="at"/> is where it happened.
+        /// </summary>
+        public bool TryWitness(WitnessKind kind, Entity watcher, float within, float window, out Vector2 at)
+        {
+            at = default;
+            if (watcher == null || !watcher.IsAlive)
+                return false;
+            Vector2 here = watcher.Position;
+            float limit = within * within;
+            if (kind == WitnessKind.ShotPassed)
+                return TryShotNear(watcher, here, limit, out at);
+
+            float now = Now;
+            for (int i = witnessEvents.Count - 1; i >= 0; i--)
+            {
+                var e = witnessEvents[i];
+                if (now - e.Time > window || e.Time > now + 0.001f)
+                    continue;
+                bool match = kind == WitnessKind.HeroHurt ? e.Hero : !e.Hero && e.Team == (int)watcher.Team && e.Serial != watcher.Serial;
+                if (match && (e.At - here).sqrMagnitude <= limit)
+                {
+                    at = e.At;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool TryShotNear(Entity watcher, Vector2 here, float limit, out Vector2 at)
+        {
+            at = default;
+            // The hero's shots are pooled objects (legacy prefabs); he never shoots his own side.
+            var pool = playerController != null ? playerController.ShotPool : null;
+            if (pool != null && watcher.Team != Team.Player)
+            {
+                var shots = pool.ActiveObjects;
+                for (int i = 0; i < shots.Count; i++)
+                {
+                    var shot = shots[i];
+                    if (shot == null || !shot.activeInHierarchy)
+                        continue;
+                    Vector2 p = shot.transform.position;
+                    if ((p - here).sqrMagnitude <= limit)
+                    {
+                        at = p;
+                        return true;
+                    }
+                }
+            }
+            // Projectile entities (content/entities) of any team but the watcher's own.
+            for (int i = 0; i < live.Count; i++)
+            {
+                var e = live[i];
+                if (e == null || e == watcher || e.IsPlayer || !e.IsAlive || e.Team == watcher.Team || e.FindAbility<ProjectileAbility>() == null)
+                    continue;
+                if ((e.Position - here).sqrMagnitude <= limit)
+                {
+                    at = e.Position;
+                    return true;
+                }
+            }
+            return false;
         }
 
         internal void NotifyDied(Entity entity, DeathCause cause)
@@ -706,6 +802,16 @@ namespace SickOfIt.Gameplay
             w.Int(signalsNext.Count);
             foreach (var s in signalsNext)
                 w.String(s);
+            w.Int(witnessEvents.Count);
+            foreach (var e in witnessEvents)
+            {
+                w.Float(e.Time);
+                w.Float(e.At.x);
+                w.Float(e.At.y);
+                w.Int(e.Team);
+                w.Int(e.Serial);
+                w.Bool(e.Hero);
+            }
             Director.SaveState(w);
             Hud.SaveState(w);
             Effects.SaveState(w);
@@ -728,6 +834,15 @@ namespace SickOfIt.Gameplay
             int signalCount = r.Int();
             for (int i = 0; i < signalCount; i++)
                 signalsNext.Add(r.String());
+            witnessEvents.Clear();
+            int witnessCount = r.Int();
+            for (int i = 0; i < witnessCount; i++)
+            {
+                witnessEvents.Add(new WitnessEvent
+                {
+                    Time = r.Float(), At = new Vector2(r.Float(), r.Float()), Team = r.Int(), Serial = r.Int(), Hero = r.Bool(),
+                });
+            }
             Director.LoadState(r);
             Hud.LoadState(r);
             Effects.LoadState(r);

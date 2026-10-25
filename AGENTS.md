@@ -123,6 +123,10 @@ Assets/GameConfig/
   (`unlockWeapon`, `WeaponUnlocks`: kept when a run ends, cleared by New Game; a scene's `suspended` weapons come back with the run). Shots of their
   own are player-team entities (`projectile.entity`: `ricochetShot`, `haloShot` with `returnToHero`); the shotgun fans `projectile.pellets`.
   Playtest `weapon-drops` (~20 min; scenario `weaponArena`, `targetDummy`).
+- **Bystanders** (Docs/Story.md "Bystanders", cookbook "Bystanders"): scene actions that direct any entity by instance id (`walkEntityTo`,
+  `faceEntity`, `playEntityAnimation`; `"player"` and `"self"` work as ids; the walk is `Entity.ScriptWalkTo`, saved on the entity) and the `witness`
+  trigger (`ShotPassed` / `AllyHurt` / `HeroHurt` near the watcher; `GameplayWorld.TryWitness`, with the last 2 s of hurts in the world's saved state).
+  Demo `bystanderSoul` on the bench `content/scenes/bystanderTest.json` (playtest `bystander`); tests `Assets/Tests/PlayMode/BystanderTests.cs`.
 - **Shortcuts** (Docs/Story.md, "Shortcuts"): a choice point in a stage (`offerShortcut`: keep climbing or the shortcut,
   its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
   stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the
@@ -411,12 +415,17 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   imp's front shield blocks shots from the front (`shieldBlock`, no damage) and takes them from behind, a lead imp's shots are checked against the
   intercept maths (`predictive`), the Overlord's lens shows a warning line and then sweeps a beam that hurts the hero where it crosses him
   (`laser`); `check`, `station` events; ~3 min; Docs/GameplayCookbook.md "Bouncing shots, a blink, ..."),
+  `bystander` (a bystander in a scene: `content/scenes/bystanderTest.json` on Level 1's stage, setup shortcut, real input: a damned soul stands behind the hero; the scene walks it (`walkEntityTo`), turns it away (`faceEntity`) and plays its Hiccup (`playEntityAnimation`); he walks up and it turns to him and speaks a subtitle; he shoots along the ground at an imp and the shots pass it: it flinches back and settles (`witness` ShotPassed); the imp hurts him and it flinches and speaks (HeroHurt; a scene rule hurts him after 15 s if the imp hasn't); hold R back to before it noticed him: its facing and place return; `check`, `bystander` events; ~2 min),
   `weapons` (the weapons: `content/scenes/weaponsTest.json` on Level 1's stage, setup shortcut, real input: the launcher is the default (HUD name, fire rate and aim as player.json says, its aim guide), `giveWeapon` puts fists in his hands, Q equips them (HUD says FISTS, the aim guide shortens), he punches an imp that appears in front of him (a visible crescent and fist, the combo hits, the imp dies), Q back and hold R back to before the switch (the rewind restores the fists), the HUD weapon button clicked with the mouse (a tap's path) switches, `takeWeapon` takes the fists away; `check`, `weapon` events; ~2 min),
   `aim-guide` (the aim guide: Level 1 loaded directly, every volley's guide lines on the frame it fired against the shots'
   flight directions read back from the projectiles (`aim` events), the stick held (one short line under the gameplay), held
   through a rewind and the pause (hidden), the mouse hovering and clicking; then the same with 2 levels of `spreadShot`
   (setup shortcut, 3 lines); then dead and in the `cutsceneTest` scene with the stick held (hidden); `check` events
   `aim-guide <beat>`; ~5 min),
+  `shop-gate` (Yooba's `requires` gate and the Not Today Grudge: an old save (raw PlayerPrefs, no unlock flags) keeps its purchase; the gated
+  Double-Dipped Shots is missing from the counter until Tummy-Dipped Shots is level 2, bought with real clicks, then shown; the shop's prices
+  as `economy` event and `shop.totalPrice`/`shop.basePrice` metrics; then the scene `content/scenes/grudgeTest.json` offers a Grudge pick that
+  must list Not Today; `check` events `shop-gate <beat>`; every level also reports `level<n>.diamonds`; ~2 min),
   `portal-audio` (on the main menu, plays
 the prologue portal scene's sounds in scene order, every take, then the Meadow's lines; a sound without a clip is a bug), `site` (the website around the game: each page opened
   over the game checks its "Powered by HAWKES GEN" link, the landing page's Hawkes Biomedical link, and that the game

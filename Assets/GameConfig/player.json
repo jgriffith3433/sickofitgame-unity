@@ -281,7 +281,7 @@
       "id": "moreHealth",
       "title": "Goo Plaster",
       "description": "+1 max health. A dab of Yooba over the dents. Sticks better than skin.",
-      "costsPerLevel": [10, 20, 35, 55, 80],
+      "costsPerLevel": [25, 55, 90, 145, 210],
       "maxLevel": 5,
       "effect": "MaxHealth",
       "amountPerLevel": 1.0
@@ -290,7 +290,7 @@
       "id": "extraJump",
       "title": "Bouncy Soles",
       "description": "Slime in the boots. Jump, then bounce off nothing and jump again.",
-      "costsPerLevel": [15, 35],
+      "costsPerLevel": [40, 90],
       "maxLevel": 2,
       "effect": "ExtraJump",
       "amountPerLevel": 1.0
@@ -299,7 +299,7 @@
       "id": "comfySneakers",
       "title": "Slick Heels",
       "description": "Slime on the heels. Slide away from trouble 8% faster.",
-      "costsPerLevel": [12, 25, 40],
+      "costsPerLevel": [30, 65, 105],
       "maxLevel": 3,
       "effect": "MoveSpeed",
       "amountPerLevel": 0.08
@@ -308,7 +308,7 @@
       "id": "triggerFinger",
       "title": "Licked Trigger",
       "description": "He licked it. It fires 10% faster now. Don't ask.",
-      "costsPerLevel": [15, 30, 50],
+      "costsPerLevel": [40, 80, 130],
       "maxLevel": 3,
       "effect": "FireRate",
       "amountPerLevel": 0.1
@@ -317,7 +317,7 @@
       "id": "spicyFireballs",
       "title": "Tummy-Dipped Shots",
       "description": "Every shot dipped in his stomach. 15% more sting.",
-      "costsPerLevel": [20, 40, 70],
+      "costsPerLevel": [50, 105, 180],
       "maxLevel": 3,
       "effect": "Damage",
       "amountPerLevel": 0.15
@@ -326,7 +326,7 @@
       "id": "juiceBox",
       "title": "Loop Jar",
       "description": "A loop shard one of the damned dropped. He keeps it in a jar. +1 second of Déjà Vu.",
-      "costsPerLevel": [12, 25, 40],
+      "costsPerLevel": [30, 65, 105],
       "maxLevel": 3,
       "effect": "RewindJuice",
       "amountPerLevel": 1.0
@@ -335,10 +335,50 @@
       "id": "diamondMagnet",
       "title": "Shiny Sniffer",
       "description": "A wobbly bit of Yooba that sniffs out diamonds. They come to you from farther away.",
-      "costsPerLevel": [8, 18],
+      "costsPerLevel": [20, 45],
       "maxLevel": 2,
       "effect": "Magnet",
       "amountPerLevel": 1.2
+    },
+    {
+      "id": "doubleDip",
+      "title": "Double-Dipped Shots",
+      "description": "Yooba saw you like the first dip. Back in the stomach they go. 20% more sting.",
+      "costsPerLevel": [100, 165],
+      "maxLevel": 2,
+      "effect": "Damage",
+      "amountPerLevel": 0.2,
+      "requires": ["shop:spicyFireballs:2"]
+    },
+    {
+      "id": "fistGoo",
+      "title": "Slimed Knuckles",
+      "description": "A coat of slime on both fists. Punches hit 50% harder. Yooba would like to know where you got fists.",
+      "costsPerLevel": [60, 120],
+      "maxLevel": 2,
+      "effect": "MeleeDamage",
+      "amountPerLevel": 0.5,
+      "requires": ["weapon:fists"]
+    },
+    {
+      "id": "fistReach",
+      "title": "Stretchy Wraps",
+      "description": "Wraps for the fists, made of stretched slime. Punches reach 15% farther.",
+      "costsPerLevel": [45, 90],
+      "maxLevel": 2,
+      "effect": "MeleeReach",
+      "amountPerLevel": 0.15,
+      "requires": ["weapon:fists"]
+    },
+    {
+      "id": "keepWeapons",
+      "title": "Keep Weapons",
+      "description": "Whatever is in your hands stays in your hands when Hell sends you back to a Waystone. Yooba doesn't want to know.",
+      "costsPerLevel": [150],
+      "maxLevel": 1,
+      "effect": "KeepWeapons",
+      "amountPerLevel": 1.0,
+      "requires": ["weapon:fists"]
     }
   ]
 }
