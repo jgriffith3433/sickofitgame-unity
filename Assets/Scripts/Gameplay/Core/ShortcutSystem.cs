@@ -81,7 +81,8 @@ namespace SickOfIt.Gameplay
         UpgradeDef GrudgeToPay()
         {
             var owned = UpgradeProgress.Owned()
-                .Where(p => p.Value > 0 && world.Content.Upgrades.ContainsKey(p.Key))
+                // A hidden Grudge (weight 0: Held Breath, found on a secret floor) is never the one a shortcut takes.
+                .Where(p => p.Value > 0 && world.Content.Upgrades.TryGetValue(p.Key, out var held) && held.weight > 0f)
                 .OrderByDescending(p => p.Value)
                 .ThenBy(p => p.Key, StringComparer.Ordinal)
                 .ToList();

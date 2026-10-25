@@ -1,0 +1,643 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Gauntlet1",
+  "displayName": "Floor 907 and a half: The Cage Match",
+  "levelNumber": 95,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [
+    {
+      "name": "Throne_LavaRiver",
+      "spriteFramesData": "Videos/Video2.asset",
+      "layer": "Background1",
+      "sequenceBy": "Time",
+      "sequenceStart": 0,
+      "sequenceDuration": 0,
+      "sequenceLoop": true,
+      "clipStart": 17.6,
+      "clipLength": 5.0
+    }
+  ],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.7,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 300.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 25,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "length": 120,
+    "floors": {
+      "start": 907,
+      "end": 907,
+      "unitsPerFloor": 0.0,
+      "circle": "emberWastes",
+      "signs": false
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "The Cage Match"
+    },
+    "counters": [
+      {
+        "name": "lavaSpeed",
+        "value": 0.0
+      },
+      {
+        "name": "lavaMax",
+        "value": 0.0
+      },
+      {
+        "name": "secretFound",
+        "value": 0.0
+      }
+    ],
+    "phases": [
+      {
+        "name": "enter",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "side:enter"
+              },
+              {
+                "type": "showText",
+                "text": "FLOOR 907 AND A HALF: THE CAGE MATCH",
+                "duration": 3.0,
+                "style": "Banner",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "showText",
+                "text": "A cage. Round. Sand on the floor. Of course.",
+                "duration": 3.0,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "goToPhase",
+                "phase": "wave1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "wave1",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "side:wave:1"
+          },
+          {
+            "type": "showText",
+            "text": "WAVE 1!",
+            "duration": 2.0,
+            "style": "Banner",
+            "color": "#FF9A5C"
+          },
+          {
+            "type": "spawnWave",
+            "entity": "imp",
+            "count": 3,
+            "points": [
+              [
+                -3.2,
+                1.0
+              ],
+              [
+                0.0,
+                1.8
+              ],
+              [
+                3.2,
+                1.0
+              ]
+            ],
+            "anchor": "Camera",
+            "interval": 0.0,
+            "tags": [
+              "wave"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "wave 1 is down",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "wave"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "refill1"
+              }
+            ]
+          },
+          {
+            "name": "stragglers leave (no soft-lock)",
+            "when": {
+              "type": "after",
+              "seconds": 55.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "despawn",
+                "target": {
+                  "tag": "wave"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "refill1",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "side:refill:1"
+              },
+              {
+                "type": "showText",
+                "text": "WAVE 1 DOWN! REWIND REFILLED!",
+                "duration": 2.4,
+                "style": "Banner",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "addRewind",
+                "seconds": 10.0,
+                "text": "REWIND REFILLED"
+              },
+              {
+                "type": "showText",
+                "text": "The crowd loves it.",
+                "duration": 2.4,
+                "style": "Subtitle",
+                "color": "#D2DAE4"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "goToPhase",
+                "phase": "wave2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "wave2",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "side:wave:2"
+          },
+          {
+            "type": "showText",
+            "text": "WAVE 2!",
+            "duration": 2.0,
+            "style": "Banner",
+            "color": "#FF9A5C"
+          },
+          {
+            "type": "spawnWave",
+            "entity": "impGuard",
+            "count": 2,
+            "points": [
+              [
+                -3.0,
+                1.1
+              ],
+              [
+                3.0,
+                1.1
+              ]
+            ],
+            "anchor": "Camera",
+            "interval": 0.0,
+            "tags": [
+              "wave"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "wave 2 is down",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "wave"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "refill2"
+              }
+            ]
+          },
+          {
+            "name": "stragglers leave (no soft-lock)",
+            "when": {
+              "type": "after",
+              "seconds": 55.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "despawn",
+                "target": {
+                  "tag": "wave"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "refill2",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "side:refill:2"
+              },
+              {
+                "type": "showText",
+                "text": "WAVE 2 DOWN! REWIND REFILLED!",
+                "duration": 2.4,
+                "style": "Banner",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "addRewind",
+                "seconds": 10.0,
+                "text": "REWIND REFILLED"
+              },
+              {
+                "type": "showText",
+                "text": "Again! ...Again!",
+                "duration": 2.4,
+                "style": "Subtitle",
+                "color": "#D2DAE4"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "goToPhase",
+                "phase": "wave3"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "wave3",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "side:wave:3"
+          },
+          {
+            "type": "showText",
+            "text": "WAVE 3!",
+            "duration": 2.0,
+            "style": "Banner",
+            "color": "#FF9A5C"
+          },
+          {
+            "type": "spawnWave",
+            "entity": "cinder",
+            "count": 3,
+            "points": [
+              [
+                -3.4,
+                1.4
+              ],
+              [
+                0.0,
+                2.0
+              ],
+              [
+                3.4,
+                1.4
+              ]
+            ],
+            "anchor": "Camera",
+            "interval": 0.0,
+            "tags": [
+              "wave"
+            ]
+          },
+          {
+            "type": "spawnWave",
+            "entity": "imp",
+            "count": 1,
+            "points": [
+              [
+                0.0,
+                0.8
+              ]
+            ],
+            "anchor": "Camera",
+            "interval": 0.0,
+            "tags": [
+              "wave"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "wave 3 is down",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "wave"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "refill3"
+              }
+            ]
+          },
+          {
+            "name": "stragglers leave (no soft-lock)",
+            "when": {
+              "type": "after",
+              "seconds": 55.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "despawn",
+                "target": {
+                  "tag": "wave"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "refill3",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "side:refill:3"
+              },
+              {
+                "type": "showText",
+                "text": "WAVE 3 DOWN! REWIND REFILLED!",
+                "duration": 2.4,
+                "style": "Banner",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "addRewind",
+                "seconds": 10.0,
+                "text": "REWIND REFILLED"
+              },
+              {
+                "type": "showText",
+                "text": "More! ...More!",
+                "duration": 2.4,
+                "style": "Subtitle",
+                "color": "#D2DAE4"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "goToPhase",
+                "phase": "wave4"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "wave4",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "side:wave:4"
+          },
+          {
+            "type": "showText",
+            "text": "LAST WAVE! WAVE 4!",
+            "duration": 2.0,
+            "style": "Banner",
+            "color": "#FF9A5C"
+          },
+          {
+            "type": "spawnWave",
+            "entity": "impGuard",
+            "count": 2,
+            "points": [
+              [
+                -3.0,
+                1.1
+              ],
+              [
+                3.0,
+                1.1
+              ]
+            ],
+            "anchor": "Camera",
+            "interval": 0.0,
+            "tags": [
+              "wave"
+            ]
+          },
+          {
+            "type": "spawnWave",
+            "entity": "imp",
+            "count": 2,
+            "points": [
+              [
+                -1.4,
+                1.8
+              ],
+              [
+                1.4,
+                1.8
+              ]
+            ],
+            "anchor": "Camera",
+            "interval": 0.0,
+            "tags": [
+              "wave"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "wave 4 is down",
+            "when": {
+              "type": "allDead",
+              "target": {
+                "tag": "wave"
+              }
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "goToPhase",
+                "phase": "reward"
+              }
+            ]
+          },
+          {
+            "name": "stragglers leave (no soft-lock)",
+            "when": {
+              "type": "after",
+              "seconds": 55.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "despawn",
+                "target": {
+                  "tag": "wave"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "reward",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "THE CAGE OPENS!",
+                "duration": 2.6,
+                "style": "Banner",
+                "color": "#FF9A5C"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "addDiamonds",
+                "amount": 12
+              },
+              {
+                "type": "setFlag",
+                "flag": "gauntlet.cage"
+              },
+              {
+                "type": "popText",
+                "text": "PURSE: +12 DIAMONDS",
+                "color": "#FFD27A",
+                "at": [
+                  0.0,
+                  1.0
+                ],
+                "anchor": "Player",
+                "size": 0.95
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "emit",
+                    "signal": "side:reward:gauntlet"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.5
+                  },
+                  {
+                    "type": "showText",
+                    "text": "GAUNTLET CLEARED! THE CROWD IS HOARSE!",
+                    "duration": 2.8,
+                    "style": "Banner",
+                    "color": "#FFD27A"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.0
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Twelve diamonds. For that. Fine.",
+                    "duration": 2.8,
+                    "style": "Subtitle"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 3.0
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "side:cleared"
+                  },
+                  {
+                    "type": "setCounter",
+                    "name": "cleared",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

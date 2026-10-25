@@ -959,6 +959,9 @@ namespace SickOfIt.Gameplay
         /// <summary>The cost line on the shortcut's card, as shown (the playtest reads it).</summary>
         public string ShortcutCostShown { get; private set; } = "";
 
+        /// <summary>The title of the shortcut's choice, as shown (the bot tells a door in the wall from the route's own shortcuts by it).</summary>
+        public string ShortcutPromptShown { get; private set; } = "";
+
         /// <summary>
         /// A shortcut's choice point, in the picker's panel (pauses the game the same way): card 1 keeps climbing,
         /// card 2 takes the shortcut, with its cost on it ('lockedStamp' greys it out when it can't be paid).
@@ -969,6 +972,7 @@ namespace SickOfIt.Gameplay
                 return;
             take.LockedStamp = lockedStamp;
             ShortcutCostShown = costShown ?? "";
+            ShortcutPromptShown = title ?? "";
             var locked = string.IsNullOrEmpty(lockedStamp) ? null : new HashSet<int> { 1 };
             ShowPicker(title, "Click a card or press its number", new List<MenuCardData> { stay, take },
                 new List<Color> { theme.muted, takeColor }, picked, locked);

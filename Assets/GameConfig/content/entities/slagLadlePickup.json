@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "tags": [
+    "pickup",
+    "weaponPickup"
+  ],
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#FF8A3D",
+    "placeholderSize": 0.62,
+    "placeholderLabel": true,
+    "sortingOrder": 6,
+    "hurtFlash": false,
+    "fxColor": "#FF8A3D"
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "collect",
+      "magnetRadius": 4.5,
+      "magnetSpeed": 7,
+      "pickupRadius": 0.35,
+      "bobHeight": 0.12,
+      "do": [
+        {
+          "type": "unlockWeapon",
+          "weapon": "slagLadle",
+          "equip": true
+        },
+        {
+          "type": "setCounter",
+          "name": "secretFound",
+          "value": 1
+        }
+      ],
+      "soundId": "pickup_weapon"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 120
+    }
+  ]
+}

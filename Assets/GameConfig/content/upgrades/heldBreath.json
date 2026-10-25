@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "title": "Held Breath",
+  "description": "You held it the whole way. +2 max health and 2s more rewind. Found, never offered.",
+  "maxLevel": 1,
+  "weight": 0.0,
+  "maxHealthPerLevel": 2,
+  "rewindSecondsPerLevel": 2.0,
+  "color": "#7FE8FF"
+}

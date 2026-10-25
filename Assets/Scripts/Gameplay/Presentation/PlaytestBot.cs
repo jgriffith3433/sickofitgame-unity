@@ -27,6 +27,13 @@ namespace SickOfIt.Gameplay
         /// it presses 1 like on every picker, and keeps climbing the long way.
         /// </summary>
         public bool takeShortcuts;
+        /// <summary>
+        /// With takeShortcuts, also opens the doors in the wall (a choice titled <see cref="SideDoorPrompt"/>: the secret floors and
+        /// gauntlets, Docs/Story.md "Secret floors and gauntlets"). Off, the route scenarios take only the route's own shortcuts.
+        /// </summary>
+        public bool takeSideDoors;
+        /// <summary>The start of the title of every door-in-the-wall choice (Tools/Levels/side_floors.py writes it).</summary>
+        public const string SideDoorPrompt = "A door in the wall";
         /// <summary>Holds down wherever it stands (the one-way scenario, on solid ground: it must not drop through).</summary>
         public bool holdDown;
         /// <summary>
@@ -146,7 +153,8 @@ namespace SickOfIt.Gameplay
             if (world.Hud != null && world.Hud.PickerOpen)
             {
                 Idle();
-                var key = takeShortcuts && world.Hud.ShortcutOpen ? Key.Digit2 : Key.Digit1;
+                bool sideDoor = world.Hud.ShortcutPromptShown.StartsWith(SideDoorPrompt, System.StringComparison.Ordinal);
+                var key = takeShortcuts && world.Hud.ShortcutOpen && (!sideDoor || takeSideDoors) ? Key.Digit2 : Key.Digit1;
                 if (releasePickFrame < 0 && !input.IsHeld(key))
                 {
                     pickKey = key;

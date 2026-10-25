@@ -524,7 +524,8 @@ namespace SickOfIt.Playtest
             var list = new List<int>();
             int levels = GameDefinition.Instance != null ? GameDefinition.Instance.TotalLevels : 0;
             for (int n = 1; n <= levels; n++)
-                list.Add(n);
+                if (!IsSideFloor(n))
+                    list.Add(n);
             return list;
         }
 
@@ -759,6 +760,16 @@ namespace SickOfIt.Playtest
                 "the new game's juice must be 10 s (it was 3). Then Yooba's rewind goods are bought through the shop's own purchase (diamonds given first, a setup shortcut: Loop Jar x5, Bottomless Jar x2, Quick Unwind x3) " +
                 "and Level 1 loads again: the cap must reach 24 s and the rewind runs 75% faster. The bot plays through real input until a clean kill pays juice back: the juice goes up by the refund and the HUD floats " +
                 "\"CLEAN KILL +0.5s\". Also logs the SURVIVED bonus if a death-rewind happens. Reports the history window. check, juice events", RewindJuiceSeconds, "level"));
+            list.Add(new PlaytestScenario(SideFloorsId, "Secret floors and gauntlets (Docs/Story.md \"Secret floors and gauntlets\", cookbook \"A secret floor\"): the eight side floors, each reached " +
+                "through real input from the door in the wall on its host floor (the Heat Stairs: Floors 910-903; the host is opened directly, a setup shortcut, with diamonds and a Grudge in hand " +
+                "so any door's cost can be paid) and played to the end. Per floor, `check` events: the door was offered (`side-door` event, its cost on the card) and taken, the cost was paid, " +
+                "the run now leads to the side floor, the side floor is cleared (`side-floor` events: side:enter, side:guard, side:reward:<kind>, side:cleared), what it paid is in the save " +
+                "(a lore flag, the Slag Ladle unlocked for good, the hidden Held Breath, 20 diamonds, a full health and rewind refill, a gauntlet's purse or flag) and the run leads on to the floor after " +
+                "the host. The two gauntlets also chain 4 and 5 waves (side:wave:N) with a rewind refill (side:refill:N) between them, the juice full at each wave's start. The last check: every reward is different. " +
+                "~35 min; the `gauntlets` scenario is the last two alone (~12 min)", SideFloorsSeconds, "level", "secret"));
+            list.Add(new PlaytestScenario(GauntletsId, "The two gauntlet floors alone (the Cage Match behind Floor 908's cage, the Encore behind Floor 904's curtain): the secret-floors run over just " +
+                "these. Each is reached by its door in the wall, then 4 / 5 waves are cleared by the bot with a rewind refill between them (`side:wave:N`, `side:refill:N` events; the juice is full at " +
+                "each wave's start) and the purse is paid", GauntletsSeconds, "level", "secret"));
             list.Add(new PlaytestScenario(BystanderId, $"A bystander in a scene (Docs/GameplayCookbook.md \"Bystanders\"): the scene \"{BystanderScene}\" on level {BystanderLevel}'s stage (setup shortcut), " +
                 "played through real input. A neutral damned soul stands behind the hero looking away. A scene walks it (walkEntityTo: it walks toward him and faces the way it goes), " +
                 "turns it away (faceEntity) and plays its Hiccup animation (playEntityAnimation). He walks up (D); inside 4.5 units it turns to him and speaks a subtitle. An imp appears " +
@@ -1115,6 +1126,8 @@ namespace SickOfIt.Playtest
                 yield return session.WeaponDropsRun();
             else if (id == RewindJuiceId)
                 yield return session.RewindJuiceRun();
+            else if (id == SideFloorsId || id == GauntletsId)
+                yield return session.SideFloorsRun(id == GauntletsId);
             else if (id == BystanderId)
                 yield return session.BystanderRun();
             else if (id == BystanderFloorsId)
@@ -1952,7 +1965,8 @@ namespace SickOfIt.Playtest
             static bool IsFloorStage(int n)
             {
                 ShaftScreen.LevelFloors(n, out int start, out int end);
-                return start > 0 && end > 0;
+                // A side floor (secret floor, gauntlet) has no stage checks: the secret-floors scenario judges it.
+                return start > 0 && end > 0 && !IsSideFloor(n);
             }
 
             void StageCheck(string beat, bool ok, string detail)
@@ -9143,7 +9157,8 @@ namespace SickOfIt.Playtest
                 if (bot != null && takeShortcuts)
                 {
                     bot.takeShortcuts = true;
-                    Run.Event("bot", $"level {n}: the bot takes Hell's shortcuts (presses 2 on a shortcut's choice)");
+                    bot.takeSideDoors = takeSideDoors;
+                    Run.Event("bot", $"level {n}: the bot takes Hell's shortcuts (presses 2 on a shortcut's choice{(takeSideDoors ? ", the doors in the wall too" : "")})");
                 }
                 if (bot != null && reckless)
                 {
