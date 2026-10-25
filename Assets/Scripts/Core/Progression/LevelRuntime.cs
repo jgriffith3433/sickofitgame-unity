@@ -1180,6 +1180,10 @@ namespace SickOfIt.Core.Progression
             if (levelCompleted) return;
             levelCompleted = true;
 
+            // The floor is clear: the hero's Victory clip (a rewind that undoes the clear gives him back).
+            if (characterObject != null && characterObject.GetComponentInChildren<SickOfIt.Core.Input.PlayerController>() is var hero && hero != null)
+                hero.PlayHeroClip("Victory");
+
             // Progress is written when the level actually changes. Rewind during
             // the delay can still undo the clear.
             Invoke(nameof(ShowResultsThenLeave), config.completionDelay);
@@ -1213,6 +1217,8 @@ namespace SickOfIt.Core.Progression
         {
             if (completionCommitted) return;
             levelCompleted = false;
+            if (characterObject != null && characterObject.GetComponentInChildren<SickOfIt.Core.Input.PlayerController>() is var back && back != null && back.HeroClip == "Victory")
+                back.EndHeroClip();
             CancelInvoke(nameof(ShowResultsThenLeave));
             CancelInvoke(nameof(ProceedToNextLevel));
             CancelInvoke(nameof(FinishAndReturnToMainMenu));

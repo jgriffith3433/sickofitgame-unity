@@ -159,6 +159,16 @@
       "loop": false,
       "wired": false
     },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, flinches back with his helm snapping to one side, armour seams flaring, then rights himself with a flat look",
+      "seconds": 0.4,
+      "to": "stand",
+      "state": "Hurt",
+      "loop": false,
+      "wired": "standIn",
+      "standIn": "Grabbed.png"
+    },
     "victory": {
       "from": "stand",
       "action": "nods once, looks at the camera, flatly says 'fine' with a tiny gauntlet pump",
@@ -166,7 +176,8 @@
       "to": "victoryPose",
       "state": "Victory",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Shout.png"
     },
     "deathBurn": {
       "from": "stand",
@@ -175,7 +186,8 @@
       "to": "deathFlat",
       "state": "DeathBurn",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Fall.png"
     },
     "deathSquash": {
       "from": "stand",
@@ -184,7 +196,8 @@
       "to": "deathFlat",
       "state": "DeathSquash",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Grabbed.png"
     },
     "deathSpin": {
       "from": "stand",
@@ -193,7 +206,8 @@
       "to": "deathFlat",
       "state": "DeathSpin",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Jump.png"
     },
     "deathShrug": {
       "from": "stand",
@@ -202,7 +216,8 @@
       "to": "deathFlat",
       "state": "DeathShrug",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Shout.png"
     },
     "climbUp": {
       "from": "climbHang",

@@ -2509,3 +2509,10 @@ the fraction paid by a roll that belongs to the shot, so a rewind replays it; pi
 (x1.5 / 1 / 0.75 / 0.5). Assist also turns Aim Assist on. Settings > Accessibility holds six toggles, each saved at once: bullet outlines, high-contrast
 bullets (one hot colour with an ink rim), reduced flash, reduced shake, a hitbox ring and dot on the hero, aim assist (a shot aimed within 9 degrees of an
 enemy bends most of the way onto it). `BulletReadability`, `HitboxDot` (`Gameplay/Presentation/AccessibilityVisuals.cs`) are presentation only. Playtest `difficulty`.
+
+## The hero's own flinch, deaths and victory
+
+The hero is on screen when Hell hits him, kills him and when a floor falls. A hit makes him flinch (state `Hurt`, a short clip, never only a red flash). Hell kills him four ways, which come round in turn,
+one per death: `DeathBurn` (lit up like a firework, a puff of smoke), `DeathSquash` (looks up, sighs, flattened), `DeathSpin` (launched, waves goodbye at the top) and `DeathShrug` (shrugs and lies down to quit).
+The death scene (the baked video) shows the same death over it. Clearing a floor plays `Victory`: a nod and the smallest gauntlet pump, a flat "fine". All deadpan; specs in `Assets/GameConfig/art/hero.json`.
+Until the real clips are generated (GPU priced, not approved) these states play stand-in sheets.

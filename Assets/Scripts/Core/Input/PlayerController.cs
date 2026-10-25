@@ -1597,7 +1597,7 @@ namespace SickOfIt.Core.Input
         // The Dash, WallSlide and WallJump clips (player.json states; placeholders for now) play over the Animator while the move lasts.
         private void UpdateMovePose()
         {
-            if (animator == null || IsClimbing)
+            if (animator == null || IsClimbing || heroClip != null)
                 return;
             float now = MoveNow;
             string pose = now < dashEnd ? "Dash" : now < kickPoseUntil ? "WallJump" : IsWallClinging ? "WallSlide" : null;
@@ -1970,6 +1970,14 @@ namespace SickOfIt.Core.Input
         private void UpdateAnimator()
         {
             if (animator == null) return;
+            if (heroClip != null)
+            {
+                // A hurt flinch is short; a death or the victory holds until EndHeroClip.
+                if (heroClip == "Hurt" && Time.time >= heroClipUntil)
+                    EndHeroClip();
+                else
+                    return;
+            }
             if (IsClimbing)
             {
                 UpdateClimbPose();
@@ -2052,11 +2060,45 @@ namespace SickOfIt.Core.Input
             PlaySFX(clips[Random.Range(0, clips.Length)]);
         }
 
+        // The hero's Hurt, death and Victory clips (player.json states) play over the Animator; HeroClip says which.
+        private string heroClip;
+        private float heroClipUntil;
+        private const float HurtClipSeconds = 0.4f;
+
+        /// <summary>The Hurt, Death* or Victory state playing over the Animator, or null.</summary>
+        public string HeroClip => heroClip;
+
+        /// <summary>Plays <paramref name="state"/> as a hero clip. False while time runs backward or when the state can't play.</summary>
+        public bool PlayHeroClip(string state)
+        {
+            if (animator == null || (GameClock.Instance != null && GameClock.Instance.IsRewinding) || IsClimbing)
+                return false;
+            if (!PlayAnimatorState(state))
+                return false;
+            heroClip = state;
+            heroClipUntil = Time.time + HurtClipSeconds;
+            movePose = null;
+            return true;
+        }
+
+        /// <summary>Hands the sprite back to the Animator (a hurt flinch ending, a death undone, a clear undone).</summary>
+        public void EndHeroClip()
+        {
+            if (heroClip == null)
+                return;
+            heroClip = null;
+            PlayAnimatorState(isGrounded ? "Idle" : "Fall");
+        }
+
         /// <summary>
         /// Called by PlayerHealth when the player is damaged: the player's own hurt clips, else audio.json's playerHurt.
         /// </summary>
         public void PlayHurtSound()
         {
+            if (heroClip == "Hurt")
+                heroClipUntil = Time.time + HurtClipSeconds; // damage over time: keep the flinch, don't restart it
+            else if (heroClip == null)
+                PlayHeroClip("Hurt");
             if (hurtSounds != null && hurtSounds.Length > 0)
                 PlayRandomSFX(hurtSounds);
             else
