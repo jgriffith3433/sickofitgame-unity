@@ -1,5 +1,9 @@
 {
   "schemaVersion": 1,
+  "displayName": "Brimstone demon",
+  "hint": "Fire breath, short range. Keep your distance.",
+  "hintVoice": "vo_hero_hint_brimstoneDemon",
+  "onSpawn": [{ "type": "hintOnce" }],
   "extends": "shooter",
   "health": 4,
   "moveSpeed": 0.7,

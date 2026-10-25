@@ -1,5 +1,9 @@
 {
   "schemaVersion": 1,
+  "displayName": "Whelp nest",
+  "hint": "Spits whelps until shot shut.",
+  "hintVoice": "vo_hero_hint_whelpNest",
+  "onSpawn": [{ "type": "hintOnce" }],
   "team": "Enemy",
   "health": 3,
   "shootable": true,

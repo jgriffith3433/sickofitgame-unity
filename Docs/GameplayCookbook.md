@@ -502,6 +502,37 @@ The `weapon-drops` playtest plays all of it (998's theft, the fists floors, each
 shows what it does: `content/scenes/weaponArena.json`, `targetDummy`). Try it on the bench: `?playtest=weapons` (the scene `weaponsTest`: launcher, `giveWeapon`, Q, a punched imp, a rewind,
 the HUD button, `takeWeapon`; each beat is a `check` event).
 
+## The hero sizes them up ("a name and a weakness the first time it shows", `hintOnce`)
+
+The first time a kind of enemy shows up in a save, the hero sizes it up: a subtitle with its name and one small hint at
+its weakness, and, once the clip exists, his voice line. Story: Story.md, "The hero sizes them up". Three fields on the
+entity (`content/entities/{id}.json`) and one action:
+
+```json
+{ "schemaVersion": 1, "extends": "shooter",
+  "displayName": "Imp", "hint": "Slow embers. Keep moving.", "hintVoice": "vo_hero_hint_imp",
+  "onSpawn": [{ "type": "hintOnce" }] }
+```
+
+- `displayName` is the type's name and its key in the save (`EnemyHints`, PlayerPrefs `Enemies_Seen`, like
+  `ShortcutProgress`). Entities that `extends` another share its name and so its one hint (the bearer imps, the guards
+  of a count: all "Imp" / "Imp guard"). Give a child its own `displayName` and `hint` for a hint of its own
+  (`impSack`, `impSwing`). `"displayName": ""` makes a child silent (the fleeing imp, bosses: they have intros).
+  `onSpawn` is a list and a child's replaces the parent's, so put `hintOnce` on the base and leave it off the children.
+- `hint` is the weakness in a few words, the hero's own words, short and deadpan. The subtitle reads `IMP: Slow embers.
+  Keep moving.`. `hintVoice` is an `audio.json` voice (`player`, id `vo_hero_hint_<entity>`); it can be missing or have no
+  clip yet and the line shows as a subtitle only. Generate the clips with the Sound Generator (`-sounds vo_hero_hint_imp`).
+- `hintOnce` with no `entity` talks about the entity it runs on (`onSpawn`, self). A level rule can name one:
+  `{ "type": "hintOnce", "entity": "blinkImp" }` (say it before the first one spawns).
+- **Once per save.** The set is saved at once and is not part of the rewind: a rewind past the spawn, a death, a new run
+  from a Waystone and the next imp do not say it again. Only New Game (`ResetAllRogueliteData`) clears it.
+- **Never over a scene.** It stays silent, and does not use the type up, while a scene (`content/scenes`) is playing,
+  while a script has locked input or rewind (`lockInput`, `lockRewind`) and while rewinding; the type is then
+  announced the next time it spawns where he can speak.
+- The telemetry records `hint` (subject = the name, detail = the subtitle). Check it with `?playtest=enemy-hints`
+  (Level 1's imps: New Game clears it, the first imp is announced once, a rewind, the second imp and a new run do not repeat it,
+  the bystander scene stays silent; each beat is a `check` event).
+
 ## A different kind of level space
 
 `"world"` in the script: `"camera": "Follow"` with `boundsCenter`/`boundsSize` for a wider arena, `"Scroll"` with

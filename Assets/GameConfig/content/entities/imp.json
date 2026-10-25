@@ -1,5 +1,9 @@
 {
   "schemaVersion": 1,
+  "displayName": "Imp",
+  "hint": "Slow embers. Keep moving.",
+  "hintVoice": "vo_hero_hint_imp",
+  "onSpawn": [{ "type": "hintOnce" }],
   "extends": "shooter",
   "health": 2,
   "tags": ["imp"],

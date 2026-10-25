@@ -348,6 +348,42 @@ namespace SickOfIt.Gameplay.Content
         }
     }
 
+    [Serializable, JsonType("hintOnce")]
+    [Doc("The hero sizes up an enemy type the first time it spawns in a save: its displayName and hint as a subtitle (and its hintVoice), " +
+         "once. Put it in an enemy's onSpawn (self) or name an 'entity' in a level rule. Remembered in the save (EnemyHints) so a death, " +
+         "a rewind or a new run does not repeat it; New Game forgets. Silent, and not used up, during a scene, while input or rewind is " +
+         "locked by a script, and while rewinding.")]
+    public sealed class HintOnceAction : GameAction
+    {
+        [EntityRef, Doc("The entity type to talk about (empty = the entity running this).")] public string entity = "";
+        [Doc("Seconds the subtitle stays up (at least as long as the voice line).")] public float duration = 3.5f;
+
+        public override void Run(ActionContext context)
+        {
+            var world = context.World;
+            EntityDef def = null;
+            if (string.IsNullOrEmpty(entity))
+                def = context.Self != null ? context.Self.Def : null;
+            else
+                world.Content.Entities.TryGetValue(entity, out def);
+            if (def == null || string.IsNullOrEmpty(def.displayName))
+                return;
+            if (!string.IsNullOrEmpty(world.SceneId) || world.RewindLocked || context.Now < world.InputLockedUntil
+                || (SickOfIt.Core.GameClock.Instance != null && SickOfIt.Core.GameClock.Instance.IsRewinding))
+                return;
+            if (!SickOfIt.Data.EnemyHints.Add(def.displayName))
+                return;
+
+            string text = string.IsNullOrEmpty(def.hint) ? def.displayName.ToUpperInvariant() : def.displayName.ToUpperInvariant() + ": " + def.hint;
+            bool voiced = !string.IsNullOrEmpty(def.hintVoice) && SickOfIt.Core.Audio.Sfx.Has(def.hintVoice);
+            float shown = voiced ? Mathf.Max(duration, SickOfIt.Core.Audio.Sfx.LengthOf(def.hintVoice) + 0.4f) : duration;
+            world.Hud.ShowText(text, TextStyle.Subtitle, Color.white, context.Now + shown);
+            if (voiced)
+                SickOfIt.Core.Audio.Sfx.Play(def.hintVoice);
+            world.Telemetry.Record("hint", def.displayName, 0, text);
+        }
+    }
+
     public enum TextStyle
     {
         [Doc("Big, centered.")] Banner,

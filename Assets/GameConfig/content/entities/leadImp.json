@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Lead imp",
+  "hint": "Throws where you're going. Stand still.",
+  "hintVoice": "vo_hero_hint_leadImp",
   "extends": "imp",
   "health": 3,
   "tags": ["imp", "leadImp"],

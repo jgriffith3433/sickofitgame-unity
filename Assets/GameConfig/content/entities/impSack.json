@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Sack imp",
+  "hint": "Too busy to throw. Shoot the sack.",
+  "hintVoice": "vo_hero_hint_impSack",
   "extends": "imp",
   "health": 4,
   "tags": ["imp", "impSack"],

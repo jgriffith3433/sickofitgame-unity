@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "",
+  "hint": "",
+  "hintVoice": "",
   "extends": "impGuard",
   "team": "Enemy",
   "health": 36,

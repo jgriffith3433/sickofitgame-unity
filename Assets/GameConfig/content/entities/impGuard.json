@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Imp guard",
+  "hint": "Fans three embers. Find the gap.",
+  "hintVoice": "vo_hero_hint_impGuard",
   "extends": "imp",
   "health": 3,
   "tags": ["imp", "impGuard"],

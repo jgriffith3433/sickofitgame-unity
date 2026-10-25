@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Brimstone lobber",
+  "hint": "Lobs brimstone. The glow shows where.",
+  "hintVoice": "vo_hero_hint_demonLobber",
   "extends": "brimstoneDemon",
   "health": 3,
   "moveSpeed": 0,
