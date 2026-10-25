@@ -70,6 +70,10 @@ namespace SickOfIt.Gameplay
         public PlayerController PlayerController => playerController;
         /// <summary>The aim guide's lines (null when player.json turns it off).</summary>
         public AimGuide AimGuide { get; private set; }
+        /// <summary>The hero's weapons (content/weapons): held, equipped, ammo, the melee swing. Null without a player.</summary>
+        public PlayerWeapons Weapons { get; private set; }
+        /// <summary>The visible melee swing (fists).</summary>
+        public MeleeSwingFx SwingFx { get; private set; }
 
         readonly List<Entity> live = new List<Entity>();
         readonly List<Entity> tickList = new List<Entity>();
@@ -173,6 +177,12 @@ namespace SickOfIt.Gameplay
             }
             Upgrades = new UpgradeSystem(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             Shortcuts = new ShortcutSystem(this, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
+            if (playerController != null)
+            {
+                Weapons = new PlayerWeapons(this, playerController);
+                playerController.Armory = Weapons;
+                SwingFx = MeleeSwingFx.Create(this);
+            }
             Upgrades.ApplyOwned();
             Upgrades.ApplyShop();
             Hud.BuildProgressBar();
@@ -266,6 +276,7 @@ namespace SickOfIt.Gameplay
                     playerController.ReleaseHold();
             }
             Scripted.Tick(now, dt);
+            Weapons?.Tick(now, dt);
             if (Player != null && Player.isActiveAndEnabled)
                 Player.Tick(now, dt);
 
@@ -700,6 +711,7 @@ namespace SickOfIt.Gameplay
             Effects.SaveState(w);
             Stage.SaveState(w);
             Scripted.SaveState(w);
+            Weapons?.SaveState(w);
         }
 
         public void LoadState(StateReader r)
@@ -721,6 +733,10 @@ namespace SickOfIt.Gameplay
             Effects.LoadState(r);
             Stage.LoadState(r);
             Scripted.LoadState(r);
+            Weapons?.LoadState(r);
         }
+
+        /// <summary>Saves the world's state at this moment (after a discrete event such as a swing or a weapon change), so a rewind to just after can't undo it.</summary>
+        public void RecordNow() => history?.RecordNow();
     }
 }

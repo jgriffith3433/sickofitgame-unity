@@ -464,6 +464,7 @@ namespace SickOfIt.Data
                 PlayerPrefs.DeleteKey(string.Format(KEY_LEVEL_MAX_HEALTH, i));
             }
             UpgradeProgress.Reset();
+            WeaponProgress.Reset();
 
             // Max health is one number for both: a Grudge (thickSkin) raised it too. Back to the base plus Yooba's goods.
             int fromShop = 0;
@@ -504,6 +505,7 @@ namespace SickOfIt.Data
             PlayerPrefs.DeleteKey(KEY_MAX_HEALTH);
             UpgradeProgress.Reset();
             UnlockFlags.Reset();
+            WeaponProgress.Reset();
 
             // Clear game progress data (level completions, video unlocks, highest level)
             for (int i = 1; i <= totalLevels; i++)

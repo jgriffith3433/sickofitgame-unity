@@ -1491,6 +1491,22 @@ floor gets one without a reason written here first.
 Tone: the announcer calls them out in the bench's banners (*"HELL'S EMBERS DON'T STOP. THEY BOUNCE."*), the hero says
 nothing, and no joke is about work.
 
+## Weapons (the hero's hands)
+
+The hero starts with one thing: the **rocket launcher**, the gun he has fired since the Meadow. It is always in his hands and
+cannot be lost or taken. Everything else Hell hands him is **picked up on a floor and lost with the run**, like a Grudge
+(2026-10-25). A weapon is a JSON file in `content/weapons`; a floor gives or takes one with `giveWeapon` / `takeWeapon`.
+
+| Weapon | In the story | How it plays |
+|---|---|---|
+| **Rocket launcher** | His own gun. No ammo; it never runs dry because he never stops being annoyed. | Fires along the aim at 0.3 s; the spread Grudge fans it out. |
+| **Fists** | What a man has when Hell has taken everything else. Two jabs and a hook, and each lands like he has been meaning to do it for a long time. No jokes about work: the joke is how personal it is. | Melee, no ammo, 1.2 reach: jab, cross, then a hook for double damage. He has to be right there. |
+
+Rules: the announcer says nothing about a weapon being found (the hero's name for it appears over his head, in capitals,
+as a pop); a floor that gives a weapon says why in its own script. **Floor 998 (The Spill)** is the first floor that is
+expected to give one (planned: the village's wreckage has something in it he can use); until its script does, only the test
+bench `weaponsTest` gives the fists. Switching: Q, the mouse wheel or the gamepad's top button; a button on the HUD on touch.
+
 ## Rules for levels
 
 - **A level is a place in the story**, named after the place. `displayName` is the place ("The Meadow",

@@ -49,7 +49,7 @@ namespace SickOfIt.Data
             switch (parts[0])
             {
                 case "flag": return UnlockFlags.Has(parts[1]);
-                case "weapon": return UnlockFlags.Has("weapon:" + parts[1]);
+                case "weapon": return WeaponProgress.Has(parts[1]) || UnlockFlags.Has("weapon:" + parts[1]);
                 case "shop": return RogueliteManager.Instance != null && RogueliteManager.Instance.GetUpgradeLevel(parts[1]) >= level;
                 case "grudge": return UpgradeProgress.LevelOf(parts[1]) >= level;
                 case "level": return GameProgressManager.Instance != null && GameProgressManager.Instance.IsLevelCompleted(int.Parse(parts[1]));

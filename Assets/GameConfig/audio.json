@@ -8060,6 +8060,38 @@
       "pitchVariation": 0,
       "maxVoices": 1,
       "cooldown": 0.5
+    },
+    {
+      "id": "punch_swing",
+      "kind": "Effect",
+      "prompt": "A quick fist swing, a short sharp whoosh of a punch through the air. One-shot, dry, no music. Very short, ends immediately.",
+      "durationSeconds": 0.5,
+      "promptInfluence": 0.6,
+      "loop": false,
+      "voice": "",
+      "voiceId": "",
+      "clip": "Audio/Generated/punch_swing.mp3",
+      "generatedFrom": "effect|0.5|0.6|False|A quick fist swing, a short sharp whoosh of a punch through the air. One-shot, dry, no music. Very short, ends immediately.",
+      "volume": 0.5,
+      "pitchVariation": 0.08,
+      "maxVoices": 3,
+      "cooldown": 0.05
+    },
+    {
+      "id": "punch_hit",
+      "kind": "Effect",
+      "prompt": "A heavy meaty fist punch landing on a body, a short dull thud with a crack. One-shot, dry, no music. Very short, ends immediately.",
+      "durationSeconds": 0.5,
+      "promptInfluence": 0.6,
+      "loop": false,
+      "voice": "",
+      "voiceId": "",
+      "clip": "Audio/Generated/punch_hit.mp3",
+      "generatedFrom": "effect|0.5|0.6|False|A heavy meaty fist punch landing on a body, a short dull thud with a crack. One-shot, dry, no music. Very short, ends immediately.",
+      "volume": 0.65,
+      "pitchVariation": 0.08,
+      "maxVoices": 4,
+      "cooldown": 0.05
     }
   ]
 }
