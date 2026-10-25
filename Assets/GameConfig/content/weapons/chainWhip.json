@@ -49,9 +49,10 @@
     ]
   },
   "sounds": {
+    "empty": "wpn_empty_chainWhip",
     "use": "whip_crack",
     "hit": "whip_hit",
-    "equip": "ui_click"
+    "equip": "wpn_equip_chainWhip"
   },
   "pickup": "chainWhipPickup",
   "heroText": "He won't be needing this. Finally, something with reach.",

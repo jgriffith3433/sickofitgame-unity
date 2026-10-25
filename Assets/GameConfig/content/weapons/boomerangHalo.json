@@ -23,9 +23,10 @@
     "entity": "haloShot"
   },
   "sounds": {
+    "empty": "wpn_empty_boomerangHalo",
     "use": "halo_throw",
     "hit": "",
-    "equip": "ui_click"
+    "equip": "wpn_equip_boomerangHalo"
   },
   "pickup": "boomerangHaloPickup",
   "heroText": "It's a halo. You throw it, and it comes back. Unlike everything else I've thrown.",

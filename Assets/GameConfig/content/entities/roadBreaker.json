@@ -1,8 +1,10 @@
 {
   "schemaVersion": 1,
-  "displayName": "",
-  "hint": "",
+  "displayName": "Road Breaker",
+  "hint": "Watch the glow on the road. Move before it bursts.",
+  "note": "Keeps the road broken so nothing climbs it. Hasn't met me.",
   "hintVoice": "",
+  "onSpawn": [],
   "extends": "brimstoneDemon",
   "team": "Enemy",
   "health": 34,
@@ -315,5 +317,6 @@
         }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "roadBreaker_hurt", "deathSound": "roadBreaker_die", "attackSound": "roadBreaker_attack" }
 }

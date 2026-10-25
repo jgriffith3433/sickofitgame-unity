@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Imp",
   "hint": "Slow embers. Keep moving.",
+  "note": "Throws embers like it's the only thing it knows. It is.",
   "hintVoice": "vo_hero_hint_imp",
   "onSpawn": [{ "type": "hintOnce" }],
   "extends": "shooter",
@@ -138,5 +139,6 @@
       "fireOnEvent": "FireProjectile",
       "damage": 1
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "imp_hurt", "deathSound": "imp_die", "attackSound": "imp_attack" }
 }

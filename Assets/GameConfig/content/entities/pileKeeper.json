@@ -1,8 +1,10 @@
 {
   "schemaVersion": 1,
-  "displayName": "",
-  "hint": "",
+  "displayName": "Pile Keeper",
+  "hint": "Shoot the guards first. He keeps a pile.",
+  "note": "Keeps a pile of everything that fell. Won't share.",
   "hintVoice": "",
+  "onSpawn": [],
   "extends": "impGuard",
   "team": "Enemy",
   "health": 36,
@@ -317,5 +319,6 @@
         }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "pileKeeper_hurt", "deathSound": "pileKeeper_die", "attackSound": "pileKeeper_attack" }
 }

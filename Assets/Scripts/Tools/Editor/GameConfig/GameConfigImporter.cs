@@ -141,6 +141,8 @@ namespace SickOfIt.Tools.Editor.GameConfig
                     issues.Error(file, $"sounds[{i}].id", $"Sound \"{sound.id}\" is defined twice.");
                 if (sound.clip == null && string.IsNullOrEmpty(sound.prompt))
                     issues.Warning(file, $"sounds[{i}]", $"Sound \"{sound.id}\" has neither a clip nor a prompt to generate one from.");
+                else if (sound.clip == null)
+                    issues.Warning(file, $"sounds[{i}].clip", $"Sound \"{sound.id}\" has no clip yet: generate it (SickOfIt > Audio > Sound Generator). Tools/Audio/sound_audit.py --check and SoundClipTests fail until it has one.");
                 if (sound.kind == SickOfIt.Data.Config.SoundKind.Effect && sound.durationSeconds != 0f
                     && (sound.durationSeconds < 0.5f || sound.durationSeconds > 30f))
                     issues.Error(file, $"sounds[{i}].durationSeconds", "The ElevenLabs API accepts 0.5-30 seconds (0 = let it decide); for shorter sounds, use 0.5 and ask for a very short sound in the prompt.");

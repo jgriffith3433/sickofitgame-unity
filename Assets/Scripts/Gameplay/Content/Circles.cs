@@ -36,10 +36,21 @@ namespace SickOfIt.Gameplay.Content
              "over. null = the stage's music plays throughout.")]
         public AudioClip pushMusic;
         [Doc("Volume of pushMusic (0-1, times the player's Music setting).")] public float pushMusicVolume = 1f;
+        [Doc("The Circle's intensity layer (Docs/Story.md, \"Music\"): a stem the same length and tempo as the stage's music, played in step with it and faded in as enemies and " +
+             "bullets crowd the screen, out again as it empties. Only over the stage's own music: a push track or a script's playMusic (a Warden's theme) is intense already. null = no layer.")]
+        public AudioClip intensityMusic;
+        [Doc("Volume of intensityMusic at full intensity (0-1, times the player's Music setting).")] public float intensityMusicVolume = 0.8f;
+        [Doc("What the layer counts: each live enemy is worth this much.")] public float intensityEnemyWeight = 1f;
+        [Doc("What the layer counts: each live hostile shot (a projectile) is worth this much.")] public float intensityBulletWeight = 0.35f;
+        [Doc("Crowding (enemies x weight + shots x weight) at which the layer starts to fade in.")] public float intensityLow = 3f;
+        [Doc("Crowding at which the layer is fully in.")] public float intensityHigh = 14f;
         [Doc("Lines that play when the floor counter reaches a floor in this circle (any stage), e.g. 999: \"Only nine hundred ninety-nine to go.\"")]
         public List<MilestoneDef> milestones = new List<MilestoneDef>();
         [Doc("Floors with a path in this Circle: the world below them (the lava sea, parallax layers, embers, shimmer).")]
         public SkyDef sky = new SkyDef();
+        [Doc("The Circle's air: depth layers at their own parallax, weather (ash, sparks, cinders, runes, grit) and distant life (demons, flyers, far-off chases). " +
+             "Drawn on every floor stage in the Circle. Empty = clean air.")]
+        public AmbienceDef ambience = new AmbienceDef();
         [Doc("Pieces of floor the generator fills a path's 'generate' sections with (a climb of sinking stones, a raft ride, a chase).")]
         public List<PathChunkDef> chunks = new List<PathChunkDef>();
 

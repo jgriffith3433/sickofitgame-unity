@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Swinging sack imp",
   "hint": "Rides the chain's beat. Time the swing.",
+  "note": "Hangs off a chain and throws things. Hell's idea of fun.",
   "hintVoice": "vo_hero_hint_impSwing",
   "extends": "impSack",
   "tags": [
@@ -106,5 +107,6 @@
         }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "impSwing_hurt", "deathSound": "impSwing_die", "attackSound": "impSwing_attack" }
 }

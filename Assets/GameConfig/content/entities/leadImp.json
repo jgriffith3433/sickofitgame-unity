@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Lead imp",
   "hint": "Throws where you're going. Stand still.",
+  "note": "Aims where I'm going. Annoyingly smart.",
   "hintVoice": "vo_hero_hint_leadImp",
   "extends": "imp",
   "health": 3,
@@ -29,5 +30,6 @@
       "initialDelay": 0.8,
       "damage": 1
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "leadImp_hurt", "deathSound": "leadImp_die", "attackSound": "leadImp_attack" }
 }

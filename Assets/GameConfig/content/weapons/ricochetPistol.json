@@ -23,9 +23,10 @@
     "entity": "ricochetShot"
   },
   "sounds": {
+    "empty": "wpn_empty_ricochetPistol",
     "use": "ricochet_shot",
     "hit": "",
-    "equip": "ui_click"
+    "equip": "wpn_equip_ricochetPistol"
   },
   "pickup": "ricochetPistolPickup",
   "heroText": "Bounces. Of course it bounces. Everything down here does.",

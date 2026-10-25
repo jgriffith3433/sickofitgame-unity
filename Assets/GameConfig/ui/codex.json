@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "title": "Codex",
+  "buttonLabel": "Codex",
+  "tabEnemies": "Enemies",
+  "tabBosses": "Bosses",
+  "tabWeapons": "Weapons",
+  "tabCharacters": "Characters",
+  "unknownName": "???",
+  "unknownLine": "Not met yet.",
+  "weaknessPrefix": "Weakness: ",
+  "tallyFormat": "Met {0}  |  Killed {1}",
+  "weaponFound": "Found",
+  "pageFormat": "Page {0}/{1}  ({2}/{3} met)",
+  "previous": "<",
+  "next": ">",
+  "empty": "Nothing here yet.",
+  "panel": { "use": true, "anchor": [0.5, 0.5], "offset": [0.0, 0.0], "size": [1600.0, 960.0] },
+  "panelPortrait": { "use": true, "anchor": [0.5, 0.5], "offset": [0.0, 0.0], "size": [1032.0, 1640.0] },
+  "rowsLandscape": 4,
+  "rowsPortrait": 7,
+  "showOnMainMenu": true,
+  "showOnPauseMenu": true,
+  "characters": [
+    {
+      "id": "hero",
+      "displayName": "The Hero",
+      "note": "No name. Doesn't need one.",
+      "about": "Sick of it. All of it.",
+      "unlock": "Always",
+      "sheet": "Art/Sprites/Player/Idle.png",
+      "color": "#C9B8A0"
+    },
+    {
+      "id": "overlord",
+      "displayName": "The Overlord",
+      "note": "Lasered my village. Barely looked.",
+      "about": "Rules all 1,000 floors. Wants the surface.",
+      "unlock": "Always",
+      "color": "#3A2E40"
+    },
+    {
+      "id": "announcer",
+      "displayName": "The Announcer",
+      "note": "Loud. Enjoys my deaths.",
+      "about": "Hell's own voice. Calls every floor like a show.",
+      "unlock": "Always",
+      "color": "#E0A030"
+    },
+    {
+      "id": "yooba",
+      "displayName": "Yooba",
+      "note": "A slime. A villager. Talks a lot.",
+      "about": "Hides diamonds in his stomach. Trades between floors.",
+      "unlock": "YoobaMet",
+      "color": "#2BA033"
+    }
+  ]
+}

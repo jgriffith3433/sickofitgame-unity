@@ -96,6 +96,7 @@ Assets/GameConfig/
   (cookbook: "Phones, portrait and touch"). Place new UI through `MenuCanvas.Add*` or `MenuResponsive.Track`, never at
   raw pixel positions, or the `layout` playtest flags it. Generators only build the scene shell; restyling
   never needs Generate Project. Don't add prefab buttons to scenes.
+- **Sound audit** (Docs/SoundAudit.md): `python3 Tools/Audio/sound_audit.py --check` is the validator (no sound id without a clip, none referenced but undefined; `SoundClipTests`, the `sound-audit` playtest). Enemies have `sounds.hurtSound` / `deathSound` / `attackSound` (a `shoot` ability plays the last), weapons `sounds.equip` / `empty`; `Tools/Audio/enemy_sounds.py` holds the table for the existing ones. Make a new sound's clip before merging.
 - **Sound is `audio.json`**: every effect and voice line is a prompt plus a `clip` filled in by the generator
   (SickOfIt > Audio > Sound Generator, or the `GenerateSounds` batch command), which makes them through Hawkes Gen's
   `audio.sfx` / `audio.voice` (ElevenLabs). `events` maps game moments to
@@ -117,6 +118,10 @@ Assets/GameConfig/
   `hintOnce` action (in a base enemy's `onSpawn`) show the name and weakness as a subtitle, with the hero's `vo_hero_hint_<id>` voice once its
   clip exists, the first time that type spawns in a save. Remembered in `EnemyHints` (PlayerPrefs `Enemies_Seen`, cleared only by New Game;
   not rewound), silent during scenes (`GameplayWorld.SceneId`), locked input/rewind and rewinding. Playtest `enemy-hints`.
+- **The Codex** (Docs/Story.md "The Codex", cookbook "The Codex"): `ui/codex.json` + `CodexPanel` (`Gameplay/Presentation`): Enemies / Bosses / Weapons /
+  Characters, from the main menu and the pause menu. Entity field `note` is the hero's line; the weakness is the `hint`. Met and killed
+  tallies are `CodexProgress` (by `displayName`, once per creature, cleared by New Game) and the known set is shared with `EnemyHints`.
+  An unmet entry is `???` and a black silhouette. Playtest `codex` (run it on a 1920x1080 and a 1080x1920 device).
 - **Ladders** (Docs/Story.md "Ladders", cookbook "Ladders"): entity ability `ladder` (`content/entities/ladder.json`, a tall zone; `scale` stretches it). Up
   grabs, down from its top grabs, up/down climb, Jump lets go, climbing off the top steps out; guns at `fireRate` (0.55) while held. The hold is the ladder's
   (`holding` saved), applied through `GameplayWorld.HoldPlayerClimbing` -> `PlayerController.HoldClimbing` (`IsClimbing`, `ClimbPose`): the controller's own flags are
@@ -136,10 +141,20 @@ Assets/GameConfig/
   (`unlockWeapon`, `WeaponUnlocks`: kept when a run ends, cleared by New Game; a scene's `suspended` weapons come back with the run). Shots of their
   own are player-team entities (`projectile.entity`: `ricochetShot`, `haloShot` with `returnToHero`); the shotgun fans `projectile.pellets`.
   Playtest `weapon-drops` (~20 min; scenario `weaponArena`, `targetDummy`).
+- **Circle air and parallax** (Docs/Story.md "Hell's air", cookbook "Weather and life"): `CircleDef.ambience` (depth layers, weather, far-off life; `CircleAmbience`,
+  pooled and capped at 150 bits / 8 actors, presentation only) and `BackgroundLayerConfig.parallaxFactor` (`ParallaxController`: 1 glued to the screen = the default,
+  0 fixed in the world, tiling wraps static sprites). Every built Circle (`emberWastes`, `crackedRoad`, `runeBridges`) has its own set; a new Circle gets one.
+  `CircleAmbience.Enabled`/`Quality` switch it off / thin it (the playtest's baseline). Playtest `ambience` (~7 min: parallax measured against the camera,
+  weather and life per Circle, frame time on vs off); tests `Assets/Tests/Editor/AmbienceTests.cs`.
 - **Bystanders** (Docs/Story.md "Bystanders", cookbook "Bystanders"): scene actions that direct any entity by instance id (`walkEntityTo`,
   `faceEntity`, `playEntityAnimation`; `"player"` and `"self"` work as ids; the walk is `Entity.ScriptWalkTo`, saved on the entity) and the `witness`
   trigger (`ShotPassed` / `AllyHurt` / `HeroHurt` near the watcher; `GameplayWorld.TryWitness`, with the last 2 s of hurts in the world's saved state).
   Demo `bystanderSoul` on the bench `content/scenes/bystanderTest.json` (playtest `bystander`); tests `Assets/Tests/PlayMode/BystanderTests.cs`.
+- **Music layers and stingers** (Docs/Story.md "Music"): `CircleDef.intensityMusic` (+ `intensityMusicVolume`, `intensityEnemyWeight`/`BulletWeight`, `intensityLow`/`High`)
+  is a stem `StageMusic` plays silently in step with the stage's track and fades with the live enemies and hostile shots (rise 1.5 s, fall 4 s; off under push music or
+  a script's `playMusic`; `musicLayer` telemetry). Stingers are audio.json sounds: event `weaponSting` (first find of a weapon) and `stingSound` on each `ui/theme.json`
+  grade. `Tools/Audio/music_manifest.json` lists the 34 tracks still to make (stand-ins play meanwhile; `python3 Tools/Audio/music_manifest.py --check --price`): replace
+  a stand-in's path with the made file. Playtest `music-layers` (~3 min).
 - **Shortcuts** (Docs/Story.md, "Shortcuts"): a choice point in a stage (`offerShortcut`: keep climbing or the shortcut,
   its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
   stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the
@@ -430,6 +445,9 @@ every other scenario checks imp kills the same way, without the slow motion), `c
   (`laser`); `check`, `station` events; ~3 min; Docs/GameplayCookbook.md "Bouncing shots, a blink, ..."),
   `enemy-hints` (the hero sizes up enemy types once: New Game clears it, Level 1's first imp is announced once, a rewind, the next imps, a new run and a scene do not repeat it; `check`, `hint` events; ~3 min), `bystander` (a bystander in a scene: `content/scenes/bystanderTest.json` on Level 1's stage, setup shortcut, real input: a damned soul stands behind the hero; the scene walks it (`walkEntityTo`), turns it away (`faceEntity`) and plays its Hiccup (`playEntityAnimation`); he walks up and it turns to him and speaks a subtitle; he shoots along the ground at an imp and the shots pass it: it flinches back and settles (`witness` ShotPassed); the imp hurts him and it flinches and speaks (HeroHurt; a scene rule hurts him after 15 s if the imp hasn't); hold R back to before it noticed him: its facing and place return; `check`, `bystander` events; ~2 min),
   `weapons` (the weapons: `content/scenes/weaponsTest.json` on Level 1's stage, setup shortcut, real input: the launcher is the default (HUD name, fire rate and aim as player.json says, its aim guide), `giveWeapon` puts fists in his hands, Q equips them (HUD says FISTS, the aim guide shortens), he punches an imp that appears in front of him (a visible crescent and fist, the combo hits, the imp dies), Q back and hold R back to before the switch (the rewind restores the fists), the HUD weapon button clicked with the mouse (a tap's path) switches, `takeWeapon` takes the fists away; `check`, `weapon` events; ~2 min),
+  `ambience` (every Circle's air: its first travelling floor loaded directly and played by the bot; every parallax layer moves at its own factor of the camera's travel
+  (`parallax` events), weather kinds and bits drawn, depth rows, background life seen, no two Circles with the same set, and the frame time with the air on, off for 10 s and on again within
+  budget (on <= off x1.2 + 2 ms, no frame over 120 ms; `ambience.<circle>.frameOnMs`/`frameOffMs`); `check`, `ambience`, `parallax` events; ~7 min),
   `aim-guide` (the aim guide: Level 1 loaded directly, every volley's guide lines on the frame it fired against the shots'
   flight directions read back from the projectiles (`aim` events), the stick held (one short line under the gameplay), held
   through a rewind and the pause (hidden), the mouse hovering and clicking; then the same with 2 levels of `spreadShot`
@@ -581,3 +599,6 @@ by themselves): `soi-enemy` (story → entity → art spec → `Tools/Art/art.mj
 bot playtest), `soi-level` (a stretch of floors in a Circle, travel script, beats, lines), `soi-voice-music`. Story.md
 comes first, GPU work is priced (`hawkesgen_estimate`) and needs J's OK, and the content playtest is the level's
 `level-<n>` scenario (`.hawkes/scenario.txt`).
+Circle X's long floors (997-992, 960-952) are written by `Tools/Levels/long_floors.py` from its tables (an opening read from git, a riser,
+five set pieces, a gated landing); edit the tables and run it rather than hand-editing the piece sections, then
+`python3 Tools/Levels/floor_check.py Floor997 ...` (Docs/LevelDesign.md "A long bullet-hell floor", point 9).

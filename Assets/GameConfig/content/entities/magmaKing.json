@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Magma King",
+  "hint": "Dodge the breath. Don't wake him early.",
+  "note": "Sits on a throne of slag. Thinks I'm the entertainment.",
   "team": "Enemy",
   "health": 80,
   "moveSpeed": 0,
@@ -890,5 +893,6 @@
       "type": "emit",
       "signal": "mkFallen"
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "magmaKing_hurt", "deathSound": "magmaKing_die", "attackSound": "magmaKing_attack" }
 }

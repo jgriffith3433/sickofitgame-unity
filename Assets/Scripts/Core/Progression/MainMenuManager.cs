@@ -113,6 +113,14 @@ namespace SickOfIt.Core.Progression
                 Add(list, labels.videos, OnVideosClicked);
             if (config.showUpgradeShopButton)
                 Add(list, labels.shop, OnUpgradeShopClicked);
+            var codex = gd != null ? gd.codex : null;
+            if (codex != null && codex.enabled && codex.showOnMainMenu)
+                Add(list, codex.buttonLabel, () =>
+                {
+                    Picked("codex");
+                    SickOfIt.Gameplay.CodexPanel.Show(menu, () => AnalyticsManager.Screen("menu"));
+                    AnalyticsManager.Screen("codex");
+                });
             if (config.showSettingsButton)
                 Add(list, labels.settings, () =>
                 {

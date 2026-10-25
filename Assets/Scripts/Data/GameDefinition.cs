@@ -109,6 +109,8 @@ namespace SickOfIt.Data
         public ShaftConfig shaft = new ShaftConfig();
         [Tooltip("Yooba's talking portrait and lines on the Shaft and in the shop (ui/yooba.json)")]
         public YoobaConfig yooba = new YoobaConfig();
+        [Tooltip("The Codex: what the hero has seen, from the main and pause menus (ui/codex.json)")]
+        public CodexConfig codex = new CodexConfig();
         [Tooltip("Shared look of all menus (ui/theme.json)")]
         public MenuTheme menuTheme = new MenuTheme();
         [Tooltip("Sounds (generated with ElevenLabs) and which plays for each game event (audio.json)")]

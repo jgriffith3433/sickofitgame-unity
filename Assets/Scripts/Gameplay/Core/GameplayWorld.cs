@@ -173,6 +173,8 @@ namespace SickOfIt.Gameplay
             Stage = new StageProgress(this, setup.Script);
             if (setup.Script != null)
                 Effects.BuildTrack(setup.Script, Stage.Circle);
+            if (setup.Script != null && string.IsNullOrEmpty(SceneId))
+                Ambience = CircleAmbience.Create(this, Stage.Circle);
 
             LevelLength = setup.Script != null && setup.Script.length > 0f ? setup.Script.length : Mathf.Max(1f, setup.LevelDuration);
             if (setup.RewindBudget != null && setup.RewindBudget.enabled)
@@ -327,6 +329,9 @@ namespace SickOfIt.Gameplay
             AddCounter("spawned", 1f);
             AddCounter("spawned:" + def.id, 1f);
             Telemetry.Record("spawn", def.id, serial);
+            // The Codex counts each creature once, even when a rewind plays its spawn again (not in a scene).
+            if (def.team == Team.Enemy && !string.IsNullOrEmpty(def.displayName) && string.IsNullOrEmpty(SceneId) && TryGrantOnce("codexMet:" + serial))
+                SickOfIt.Data.CodexProgress.Meet(def.displayName);
             return entity;
         }
 
@@ -665,6 +670,10 @@ namespace SickOfIt.Gameplay
             {
                 AddCounter("kills", 1f);
                 AddCounter("kills:" + entity.DefId, 1f);
+                var killedDef = entity.Def;
+                if (killedDef != null && killedDef.team == Team.Enemy && !string.IsNullOrEmpty(killedDef.displayName) && string.IsNullOrEmpty(SceneId)
+                    && TryGrantOnce("codexKill:" + entity.Serial))
+                    SickOfIt.Data.CodexProgress.Kill(killedDef.displayName);
             }
             Hud.OnEntityDied(entity);
             Telemetry.Record("death", entity.DefId, entity.Serial, cause.ToString());
@@ -765,6 +774,9 @@ namespace SickOfIt.Gameplay
         // =====================================================================
         // GEOMETRY
         // =====================================================================
+
+        /// <summary>The Circle's weather, depth layers and distant life (null without a Circle or without any).</summary>
+        public CircleAmbience Ambience { get; private set; }
 
         public Vector2 CameraCenter => Camera != null ? (Vector2)Effects.CameraBase : Vector2.zero;
 

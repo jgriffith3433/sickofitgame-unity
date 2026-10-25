@@ -24,6 +24,8 @@ namespace SickOfIt.Gameplay.Content
         public string displayName = "";
         [Doc("The small weakness hint under the name in the hero's first-sighting subtitle (\"Slow embers. Keep moving.\"). Used by the hintOnce action.")]
         public string hint = "";
+        [Doc("The hero's note in the Codex (Docs/Story.md, \"The Codex\"): one short deadpan line about it, under the name. Empty = none. A child that extends another inherits the note, so give it its own.")]
+        public string note = "";
         [SoundRef, Doc("Optional audio.json voice line (voice player) spoken with the hint. Until its clip exists the hint shows as a subtitle only.")]
         public string hintVoice = "";
 
@@ -232,6 +234,8 @@ namespace SickOfIt.Gameplay.Content
         [SoundRef] public string hurtSound = "";
         [Doc("audio.json sound for deaths, used when 'death' has no clips. Empty = the game's enemyDie sound (enemies only).")]
         [SoundRef] public string deathSound = "";
+        [Doc("audio.json sound played when it starts an attack (a shoot ability's volley). Empty = silent.")]
+        [SoundRef] public string attackSound = "";
         [Doc("audio.json sound played on a loop while it is alive (a portal's hum, an engine). Stops when it dies or despawns.")]
         [SoundRef] public string loopSound = "";
         public float pitchVariation = 0.1f;

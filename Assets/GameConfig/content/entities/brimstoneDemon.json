@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Brimstone demon",
   "hint": "Fire breath, short range. Keep your distance.",
+  "note": "Breathes fire at arm's length. Poor planning.",
   "hintVoice": "vo_hero_hint_brimstoneDemon",
   "onSpawn": [{ "type": "hintOnce" }],
   "extends": "shooter",
@@ -107,5 +108,6 @@
       "fireOnEvent": "FireProjectile",
       "damage": 1
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "brimstoneDemon_hurt", "deathSound": "brimstoneDemon_die", "attackSound": "brimstoneDemon_attack" }
 }

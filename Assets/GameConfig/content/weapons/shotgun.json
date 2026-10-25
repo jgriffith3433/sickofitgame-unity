@@ -27,9 +27,10 @@
     "pelletSpread": 9.0
   },
   "sounds": {
+    "empty": "wpn_empty_shotgun",
     "use": "shotgun_blast",
     "hit": "",
-    "equip": "ui_click"
+    "equip": "wpn_equip_shotgun"
   },
   "pickup": "shotgunPickup",
   "heroText": "One trigger. Five opinions.",

@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Whelp nest",
   "hint": "Spits whelps until shot shut.",
+  "note": "Makes more of them. Of course it does.",
   "hintVoice": "vo_hero_hint_whelpNest",
   "onSpawn": [{ "type": "hintOnce" }],
   "team": "Enemy",
@@ -52,5 +53,6 @@
         0.35
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "whelpNest_hurt", "deathSound": "whelpNest_die" }
 }

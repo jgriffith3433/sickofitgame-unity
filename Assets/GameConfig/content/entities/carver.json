@@ -1,8 +1,10 @@
 {
   "schemaVersion": 1,
-  "displayName": "",
-  "hint": "",
+  "displayName": "Carver",
+  "hint": "Shards fall after the glow. Stay out of it.",
+  "note": "Carves the rules into the road. Offended by footprints.",
   "hintVoice": "",
+  "onSpawn": [],
   "extends": "brimstoneDemon",
   "team": "Enemy",
   "health": 34,
@@ -315,5 +317,6 @@
         }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "carver_hurt", "deathSound": "carver_die", "attackSound": "carver_attack" }
 }

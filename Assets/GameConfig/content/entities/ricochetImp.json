@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Ricochet imp",
   "hint": "Its ember bounces. Count the bounces.",
+  "note": "Its embers come back. Everything here does.",
   "hintVoice": "vo_hero_hint_ricochetImp",
   "extends": "imp",
   "health": 3,
@@ -29,5 +30,6 @@
       "initialDelay": 1.0,
       "damage": 1
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "ricochetImp_hurt", "deathSound": "ricochetImp_die", "attackSound": "ricochetImp_attack" }
 }

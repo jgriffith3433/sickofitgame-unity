@@ -658,31 +658,36 @@
       "grade": "S",
       "minScore": 95,
       "quip": "Flawless. Suspicious, even.",
-      "color": "#FFD940"
+      "color": "#FFD940",
+      "stingSound": "sting_rank_s"
     },
     {
       "grade": "A",
       "minScore": 80,
       "quip": "Hell felt that.",
-      "color": "#80FF73"
+      "color": "#80FF73",
+      "stingSound": "sting_rank_a"
     },
     {
       "grade": "B",
       "minScore": 60,
       "quip": "Acceptable. Barely.",
-      "color": "#4DD9FF"
+      "color": "#4DD9FF",
+      "stingSound": "sting_rank_b"
     },
     {
       "grade": "C",
       "minScore": 40,
       "quip": "Hell yawned.",
-      "color": "#FF994D"
+      "color": "#FF994D",
+      "stingSound": "sting_rank_c"
     },
     {
       "grade": "D",
       "minScore": 0,
       "quip": "You survived. Technically.",
-      "color": "#FF594D"
+      "color": "#FF594D",
+      "stingSound": "sting_rank_d"
     }
   ],
   "healthFormat": "♥ {0}/{1}",

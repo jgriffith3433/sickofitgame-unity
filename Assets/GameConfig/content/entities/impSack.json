@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Sack imp",
   "hint": "Too busy to throw. Shoot the sack.",
+  "note": "Hauling my village's diamonds. Not happy about it.",
   "hintVoice": "vo_hero_hint_impSack",
   "extends": "imp",
   "health": 4,
@@ -58,5 +59,6 @@
         { "type": "playSound", "sound": "sack_spill" }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "impSack_hurt", "deathSound": "impSack_die", "attackSound": "impSack_attack" }
 }

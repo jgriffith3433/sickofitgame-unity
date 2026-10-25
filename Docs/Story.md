@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -378,8 +378,8 @@ overhead before a shard drops, and, for his worst, the whole floor glowing excep
    EIGHT! THE RUNE BRIDGES!"*). Next Warden: the Bridge Wraith. Continue goes to the level select until Circle VIII is
    built.
 
-**Music:** the Cracked Road has no music of its own yet (*Music*); the hall is silent but for the hum through the
-intro, and the fight plays the Wastes' push music until the Spire Fiend's theme is made.
+**Music:** the Cracked Road's loop and the Spire Fiend's theme are designed (*Music*) and in the manifest but not yet made; the hall is
+silent but for the hum through the intro, and the fight plays the Wastes' push music until his theme is made.
 
 #### Circle IX's long way
 
@@ -1465,6 +1465,26 @@ the picks and the trims are recorded in `Tools/Audio/music.json` and made by `To
   appears. The fight starts on his theme: swaggering doom metal and organ, a king who loves an audience. When he
   loses his temper (the **enrage**) it turns frantic: blast beats, a screaming solo, sirens. When he falls, the
   music sinks under the slow motion.
+- **Every Circle has a loop and a Warden a theme** (designed, 2026-10-25; the *Music* paragraphs of each Circle above are the
+  brief). Circle IX (the Cracked Road) had none: its loop is a **grinding half-time stone riff** in C-sharp minor at
+  120 BPM (down-tuned guitar, slabs cracking for percussion, a low brass drone); the Spire Fiend's theme is **patient
+  doom** at 84 BPM (a sparse stone drone, a hollow whispered choir holding single notes, one dry bass pulse on the
+  downbeat: it adds one note at a time, like someone counting steps). The Overlord (Circle I's, Floor 1) gets the
+  full orchestra and distorted organ on the same grand slow tune as Circle I's loop, enormous and in no hurry (the major
+  chord of his third phase is made later). Circle X's loop and the Magma King's theme exist; the rest are in the manifest.
+- **The intensity layer.** Hell gets louder when it gets crowded. Each Circle has a **layer**: a stem the same length, tempo and key
+  as its loop (the rhythm section turned up: Wastes' double kicks and alarms, the Bridges' sixteenth arpeggio, the Maw's doubled
+  heartbeat, the Keep's chains), played silently in step with the loop all the time and **faded in as enemies and hostile shots
+  crowd the screen** (`CircleDef.intensityMusic`, `StageMusic`): each live enemy counts 1, each hostile shot 0.35, the layer starts at a
+  crowd of 3 and is fully in at 14; it comes in over 1.5 s and leaves over 4 s so a single volley doesn't flicker it. It is not used under a
+  push track or a Warden's theme (they are intense already), and stops for a rewind. Until the layers are made, the Wastes' push track stands in
+  for every Circle's.
+- **Stingers.** A short fanfare when a **new weapon** is found for the first time (`sting_weapon`, with the "NEW WEAPON" banner)
+  and one per **rank** on the results screen (`sting_rank_s` to `sting_rank_d`, `theme.json` grade `stingSound`): S golden and huge, A
+  confident, B tidy, C a lazy shrug, D a sad comedic wah-wah. Stand-ins (the Shaft's climb sting) play until they are made.
+- **The manifest** `Tools/Audio/music_manifest.json` lists every track still to make (prompt, tempo, key, takes, file, stand-in) and its
+  price (`python3 Tools/Audio/music_manifest.py --price`): 34 tracks, 102 takes, ~$0.58 of GPU. Best of three takes each, picked against the
+  manifest's `pick` line, then cut by `music-mix.py`. Nothing in it is generated until J approves the price.
 - **The Shaft:** the plunge after Video2 is a **falling riser** that **slams** as the marker hits Floor 1,000; each
   climb gets a **short rising sting** as the marker goes up.
 
@@ -1564,6 +1584,35 @@ under ten words of hint, never a joke about work. Recipe: GameplayCookbook "The 
 Not named yet: the retired slime-era arcade enemies (`chaser`, `swarmer`, `exploder`) and the arcade variants still
 to be recast (`gunner`, `drone`, `sprayer`, `spinner`, `brute`, `fighter`, `sentinel`); they get a line when they get a
 Circle. New enemies come with a `displayName`, a `hint` and a line from now on (`soi-enemy`).
+
+### The Codex (what the hero has seen, built 2026-10-25)
+
+The hero keeps no diary, but the Shaft remembers for him: **the Codex** is the list of everything he has laid eyes on,
+opened from the main menu and the pause menu. Four tabs: **Enemies**, **Bosses** (the Wardens and floor bosses),
+**Weapons** and **Characters**. A page holds a few entries, each with a picture, its name, the hero's note (one deadpan
+line, never a joke about work), the weakness (the same hint he says the first time it shows) and the tally: **times met,
+times killed**. A weapon shows whether he has it. What he has not met is a **black silhouette called "???"** with no name,
+note, weakness or numbers: the Codex never tells him what is coming. Met is the same memory as "The hero sizes them up"
+(`EnemyHints`): an enemy he has named is in the Codex, and he can meet one in a scene without a subtitle and still find it
+there. The tallies are kept with the save like the hints (a death or a rewind does not take them back; one rewound kill is
+counted once); only a New Game empties the Codex. The Wardens do not introduce themselves with a hint line, but they are
+named here, with a note.
+
+Characters: the hero (always), the Overlord (the meadow's laser, always), the Announcer (always) and Yooba (once met).
+
+## Hell's air (weather and the life far away)
+
+Hell is repetition, so even its air repeats: every Circle has its own weather and its own things going about their business a long way off, and
+none of it has anything to do with the hero. It is there so the climb looks like a place. (2026-10-25; `content/circles/*.json` `ambience`.)
+
+| Circle | Weather | Far away |
+|---|---|---|
+| X, the Ember Wastes | grey ash sinking, sparks flicking up off the lava, cinders falling (from Floor 990) | cinder bats crossing, imps trudging a far ridge, a small soul running from something bigger (from Floor 996) |
+| IX, the Cracked Road | grit shed by the spires and blown along the road, sparks from the cracks, ash from the Rift | shard-wings over the Rift, a demon walking the far road, a whelp chased by a bigger demon |
+| VIII, the Rune Bridges | runes lifting off the walls, pale rune dust, cold sparks | watchers drifting in the void, a statue walking a far bridge, a wisp chased by a hound |
+
+The deeper Circles get theirs when they are built: a new Circle's `ambience` is part of building it (two or three kinds of weather, at least two kinds
+of life, a depth layer or two, a set no other Circle has). The chases are never explained and never resolved: they cross, they leave, they come back.
 
 ## Hell's tricks (five mechanics)
 

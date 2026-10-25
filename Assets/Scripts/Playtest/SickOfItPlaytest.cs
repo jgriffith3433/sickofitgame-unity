@@ -685,6 +685,19 @@ namespace SickOfIt.Playtest
                 $"Last, the bench (the scene \"{WeaponArenaScene}\" on level {WeaponsLevel}'s stage): the Spitfire streams at several times the launcher's rate on ammo, the Ricochet Pistol's bullet bounces off the ground, " +
                 "a dummy 2.6 away is out of the fists' reach and in the Chain-Whip's, the Shotgun fires five pellets and hurts point blank but not across the room, and the Boomerang Halo flies out, comes back and hits both ways. " +
                 "Each beat is a check event; weapon, banner and line events log the timeline", WeaponDropsSeconds, "level"));
+            list.Add(new PlaytestScenario(CodexId, $"The Codex (Docs/Story.md \"The Codex\"): New Game forgets everything; level {CodexLevel} is played by the bot until it has met imps; " +
+                "the pause menu's Codex button (real clicks) opens the screen: the Enemies tab lists the imp with the hero's note, its weakness and times met/killed, every unmet entry is a black silhouette " +
+                "called ??? with no name, note or weakness (no spoilers); the four tabs are clicked in turn, every page of each is paged through and laid out inside the panel and the screen " +
+                "(MenuLayoutAudit, no overlaps; run it on a 1920x1080 and a 1080x1920 device); closed and resumed, the main menu's Codex button shows the same tallies (they persist). " +
+                "Each beat is a check event; codex events log what each page shows", CodexSeconds, "level"));
+            list.Add(new PlaytestScenario(AmbienceId, "A Circle's air (Docs/GameplayCookbook.md \"Weather and life\"): each Circle with an ambience (the Ember Wastes, the Cracked Road, the Rune Bridges) gets its first " +
+                "travelling floor loaded directly (setup shortcut) and played by the bot through real input. The parallax layers move at their own factors (every layer's travel measured against the camera's, " +
+                "`parallax` events); each Circle has its own weather (ash, sparks, cinders, runes, grit: kinds and bits drawn) and its own background life (flyers, walkers, a far-off chase: appearances), " +
+                "and no two Circles share a set; the frame time is measured with the ambience on, off for 10 s (the baseline) and on again, and must stay within budget (on <= off x1.2 + 2 ms, no frame over 120 ms; " +
+                "ambience.<circle>.frameOnMs / frameOffMs metrics). Each beat is a check event", AmbienceSeconds, "level"));
+            list.Add(new PlaytestScenario(MusicLayersId, $"The intensity music layer (Docs/Story.md \"Music\"): Floor 997 (level {MusicLayersLevel}) loaded directly (setup shortcut) and played by the bot through real input for 150 s of game time. " +
+                "The Circle's layer (a stand-in loop until the real stems are made, nothing is generated) must be silent on the empty floor, fade in as enemies and shots crowd the screen and fade out again as it empties. " +
+                "`musicLayer` events log its level (0-100%) and the crowd; each beat is a check event", MusicLayersSeconds, "level"));
             list.Add(new PlaytestScenario(EnemyHintsId, $"The hero sizes up each enemy type once (Docs/GameplayCookbook.md \"The hero sizes them up\"): every named enemy has a hint; New Game forgets; " +
                 $"Level {EnemyHintsLevel}'s first imp gets his subtitle (name and weakness), then a rewind past it and the next imps do not repeat it; a new run (the level loaded again) does not; " +
                 "a scripted scene (the bystander bench) spawns an imp in silence and does not use the type up. Each beat is a check event; hint events log the subtitles", EnemyHintsSeconds, "level"));
@@ -912,6 +925,9 @@ namespace SickOfIt.Playtest
                 "or a HUD panel, none leaves the screen, and every button is thumb-sized", 120, "menus"));
             list.Add(new PlaytestScenario("portal-audio", "The prologue's portal scene, by ear, on the main menu: every Overlord line, hero take, " +
                 "Hell's echo (three repeats, each deeper) and effect plays in scene order, then the Meadow's lines; any without a clip is a bug", 150, "menus", "audio"));
+            list.Add(new PlaytestScenario("sound-audit", "The sound audit on the main menu: every sound in audio.json has a clip (a missing one is a bug, " +
+                "listed by id), every enemy's hurt, death and attack sound, every weapon's equip and empty sound, every enemy's hint line and Yooba's shop lines are heard once, " +
+                "in the voice that speaks them; `sound` and `check` events, metrics soundAudit.*", 240, "menus", "audio"));
             list.Add(new PlaytestScenario("site", "The game's main menu (no credit on the game page), then the landing page, blog and sub pages each opened over it: " +
                 "Powered by HAWKES GEN on every one, Hawkes Biomedical on the landing page; the lore (the Descent, its floor counter at 1,000 at the bottom, " +
                 "the new lore pages) and the post about the engine, linked from the blog and Development; on each page no link or button overlaps " +
@@ -1041,14 +1057,22 @@ namespace SickOfIt.Playtest
                 session.Prepare(LadderLevel, true);
                 yield return session.LadderRun();
             }
+            else if (id == MusicLayersId)
+                yield return session.MusicLayersRun();
             else if (id == EnemyHintsId)
                 yield return session.EnemyHintsRun();
+            else if (id == AmbienceId)
+                yield return session.AmbienceRun();
+            else if (id == CodexId)
+                yield return session.CodexRun();
             else if (id == "restart")
                 yield return session.RestartRun();
             else if (id == RewindPerfId)
                 yield return session.RewindPerfRun();
             else if (id == "portal-audio")
                 yield return session.PortalAudio();
+            else if (id == "sound-audit")
+                yield return session.SoundAudit();
             else if (id == "cutscene")
                 yield return session.Cutscene();
             else if (id == "shop-gate")
@@ -4312,6 +4336,58 @@ namespace SickOfIt.Playtest
                 if (Run.Done) yield break;
                 Run.Metric("portalSounds", PortalSounds.Length - missing);
                 Run.Metric("portalSoundsMissing", missing);
+                Run.Progress(1f);
+                End(PlaytestOutcome.Done);
+            }
+
+            /// <summary>
+            /// sound-audit: every sound in audio.json must have a clip (the same rule as Tools/Audio/sound_audit.py --check and
+            /// the SoundClipTests EditMode test), then one of each kind is played through Sfx: an enemy's hurt, death and attack,
+            /// a weapon's equip and empty click, a hero hint and a Yooba shop line. Presentation only.
+            /// </summary>
+            public IEnumerator SoundAudit()
+            {
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                var sounds = GameDefinition.Instance != null && GameDefinition.Instance.audio != null ? GameDefinition.Instance.audio.sounds : null;
+                if (sounds == null)
+                {
+                    Run.Problem(PlaytestSeverity.Bug, "sound-audit: no audio config loaded");
+                    End(PlaytestOutcome.Done);
+                    yield break;
+                }
+                int missing = 0;
+                foreach (var sound in sounds)
+                {
+                    if (sound == null || Sfx.Has(sound.id))
+                        continue;
+                    missing++;
+                    Run.Problem(PlaytestSeverity.Bug, $"sound-audit: \"{sound.id}\" has no clip");
+                }
+                Run.Metric("soundAudit.sounds", sounds.Count);
+                Run.Metric("soundAudit.missing", missing);
+                Run.Event("check", $"every sound has a clip: {(missing == 0 ? "ok" : "FAILED")} ({sounds.Count - missing} of {sounds.Count})");
+                var samples = new[]
+                {
+                    "imp_hurt", "imp_die", "imp_attack", "brimstoneDemon_attack", "watcher_die", "magmaKing_hurt", "spireFiend_die",
+                    "wpn_equip_shotgun", "wpn_empty_shotgun", "wpn_equip_fists", "vo_hero_hint_imp", "vo_hero_hint_watcher",
+                    "vo_yooba_buy_plaster", "vo_yooba_quest_offer", "vo_mk_defeat",
+                };
+                for (int i = 0; i < samples.Length && !Run.Done; i++)
+                {
+                    string id = samples[i];
+                    Run.Progress((float)i / samples.Length);
+                    if (!Sfx.Has(id))
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"sound-audit: \"{id}\" has no clip");
+                        continue;
+                    }
+                    float length = Sfx.LengthOf(id);
+                    Run.Event("sound", $"{id} ({length:0.0} s)");
+                    Sfx.Play(id);
+                    yield return WaitReal(length + 0.4f);
+                }
+                if (Run.Done) yield break;
                 Run.Progress(1f);
                 End(PlaytestOutcome.Done);
             }

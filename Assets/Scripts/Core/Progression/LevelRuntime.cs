@@ -520,8 +520,12 @@ namespace SickOfIt.Core.Progression
                 var layer = layers[i];
                 if (!layer.HasContent) continue;
 
-                var layerGo = new GameObject(string.IsNullOrEmpty(layer.name) ? $"BG_{i}" : layer.name);
-                layerGo.transform.SetParent(container);
+                // The pivot is what the ParallaxController moves; the layer sits at its origin (a video player resets its own position).
+                string layerName = string.IsNullOrEmpty(layer.name) ? $"BG_{i}" : layer.name;
+                var pivot = new GameObject("Parallax_" + layerName);
+                pivot.transform.SetParent(container);
+                var layerGo = new GameObject(layerName);
+                layerGo.transform.SetParent(pivot.transform, false);
 
                 var sr = layerGo.AddComponent<SpriteRenderer>();
                 SpriteLayers.Apply(sr, layer.layer, layer.sortingOrder);
@@ -530,8 +534,10 @@ namespace SickOfIt.Core.Progression
                 Vector3 basePos = cam != null
                     ? new Vector3(cam.transform.position.x, cam.transform.position.y, 0f)
                     : Vector3.zero;
-                layerGo.transform.position = basePos + new Vector3(
+                pivot.transform.position = basePos + new Vector3(
                     layer.offset.x, layer.offset.y, SpriteLayers.Depth(layer.layer));
+                layerGo.transform.localPosition = Vector3.zero;
+                Vector2 contentSize = Vector2.zero;
 
                 if (layer.IsAnimated)
                 {
@@ -547,6 +553,7 @@ namespace SickOfIt.Core.Progression
                             float scale = camHeight / spriteHeight;
                             layerGo.transform.localScale = new Vector3(
                                 scale * layer.scale.x, scale * layer.scale.y, 1f);
+                            contentSize = new Vector2(framesData.frameWidth / framesData.FramePixelsPerUnit * scale * layer.scale.x, camHeight * layer.scale.y);
                         }
 
                         var player = layerGo.AddComponent<SpriteFramePlayer>();
@@ -596,6 +603,8 @@ namespace SickOfIt.Core.Progression
                     // Static sprite background
                     sr.sprite = layer.staticSprite;
                     layerGo.transform.localScale = new Vector3(layer.scale.x, layer.scale.y, 1f);
+                    contentSize = Vector2.Scale(layer.staticSprite.bounds.size, layer.scale);
+                    TileBackground(pivot.transform, layer, sr, contentSize, cam);
                 }
                 else if (layer.solidColor.a > 0)
                 {
@@ -607,11 +616,65 @@ namespace SickOfIt.Core.Progression
                         float camWidth = camHeight * cam.aspect;
                         layerGo.transform.localScale = new Vector3(
                             camWidth * layer.scale.x, camHeight * layer.scale.y, 1f);
+                        contentSize = new Vector2(camWidth * layer.scale.x, camHeight * layer.scale.y);
                     }
                 }
+
+                RegisterParallax(pivot.transform, layerName, layer, cam, contentSize);
             }
 
             //Debug.Log($"[LevelRuntime] Setup {layers.Count} background layers");
+        }
+
+        /// <summary>
+        /// Hands a background layer to the ParallaxController (BackgroundLayerConfig.parallaxFactor). The layers of a moving camera
+        /// are kept covering the screen: a layer that follows less than 1 can stray only as far as its art is bigger than the view.
+        /// </summary>
+        private void RegisterParallax(Transform pivot, string layerName, BackgroundLayerConfig layer, Camera cam, Vector2 contentSize)
+        {
+            if (cam == null || !cam.orthographic)
+                return;
+            var controller = ParallaxController.Obtain(cam);
+            if (controller == null)
+                return;
+            bool tiledX = layer.tileHorizontally && layer.staticSprite != null, tiledY = layer.tileVertically && layer.staticSprite != null;
+            var entry = controller.Add(layerName, pivot, new Vector2(layer.parallaxFactor, layer.parallaxFactor),
+                new Vector2(tiledX ? contentSize.x : 0f, tiledY ? contentSize.y : 0f));
+            bool moves = script != null && script.world.camera != CameraMode.Static;
+            if (moves && contentSize.x > 0f && contentSize.y > 0f)
+            {
+                float viewH = cam.orthographicSize * 2f, viewW = viewH * cam.aspect;
+                entry.Slack = new Vector2(tiledX ? float.PositiveInfinity : Mathf.Max(0f, (contentSize.x - viewW) * 0.5f),
+                    tiledY ? float.PositiveInfinity : Mathf.Max(0f, (contentSize.y - viewH) * 0.5f));
+            }
+        }
+
+        /// <summary>A tiled static layer: copies of the sprite either side of the first, enough to cover the view while the controller wraps them.</summary>
+        private static void TileBackground(Transform pivot, BackgroundLayerConfig layer, SpriteRenderer first, Vector2 size, Camera cam)
+        {
+            bool tileX = layer.tileHorizontally && size.x > 0.01f, tileY = layer.tileVertically && size.y > 0.01f;
+            if ((!tileX && !tileY) || cam == null || !cam.orthographic)
+                return;
+            float viewH = cam.orthographicSize * 2f, viewW = viewH * cam.aspect;
+            int kx = tileX ? Mathf.Min(8, Mathf.CeilToInt(viewW * 0.5f / size.x)) : 0;
+            int ky = tileY ? Mathf.Min(8, Mathf.CeilToInt(viewH * 0.5f / size.y)) : 0;
+            for (int ix = -kx; ix <= kx; ix++)
+            {
+                for (int iy = -ky; iy <= ky; iy++)
+                {
+                    if (ix == 0 && iy == 0)
+                        continue;
+                    var copy = new GameObject(first.gameObject.name + $"_tile{ix}_{iy}");
+                    copy.transform.SetParent(pivot, false);
+                    copy.transform.localPosition = new Vector3(ix * size.x, iy * size.y, 0f);
+                    copy.transform.localScale = first.transform.localScale;
+                    var csr = copy.AddComponent<SpriteRenderer>();
+                    csr.sprite = first.sprite;
+                    csr.color = first.color;
+                    SpriteLayers.Apply(csr, layer.layer, layer.sortingOrder);
+                    copy.transform.localPosition = new Vector3(ix * size.x, iy * size.y, 0f);
+                }
+            }
         }
 
         /// <summary>

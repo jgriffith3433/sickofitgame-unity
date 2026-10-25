@@ -502,6 +502,23 @@ The `weapon-drops` playtest plays all of it (998's theft, the fists floors, each
 shows what it does: `content/scenes/weaponArena.json`, `targetDummy`). Try it on the bench: `?playtest=weapons` (the scene `weaponsTest`: launcher, `giveWeapon`, Q, a punched imp, a rewind,
 the HUD button, `takeWeapon`; each beat is a `check` event).
 
+## The Codex (what the hero has seen: `ui/codex.json`, entity `note`)
+
+Story: Story.md, "The Codex". The screen (`CodexPanel`, `Gameplay/Presentation/CodexPanel.cs`) opens from the main menu and the pause menu
+(`showOnMainMenu`, `showOnPauseMenu`), four tabs, a page of rows (4 in landscape, 7 in portrait: `rowsLandscape`/`rowsPortrait`, paged with < >).
+
+- **Enemies and bosses** are the entities with a `displayName` on the enemy team (a `"boss"` tag makes it a boss). Types that share a name share
+  a row. Each row: the picture (first frame of the entity's first animator state), `displayName`, the hero's `note` (new entity field: one deadpan
+  line, inherited by `extends`, so give a child its own), the weakness (`hint`, the same words as the first-sight subtitle) and the tally. A new
+  enemy gets a `note` next to its `displayName` and `hint`. A boss gets a `displayName`, `hint` and `note` and, if it extends a base with `hintOnce`,
+  `"onSpawn": []` (bosses introduce themselves; the Codex is the only place their hint shows).
+- **Weapons** are `content/weapons/*.json` (name, `heroText` as the note, `description`, the pickup entity's art); met = the launcher, or
+  `UnlockFlags` `weapon:<id>`. **Characters** are listed in `ui/codex.json` `characters` (`unlock` Always / YoobaMet, optional `sheet` for the picture).
+- **Met, killed**: `CodexProgress` (PlayerPrefs `Codex_Tally`, cleared by New Game) counts spawns and kills by `displayName` once per creature
+  (`GameplayWorld.TryGrantOnce`, so a rewind does not count twice; silent in scenes). A type is known if `EnemyHints` (the hint set) has its name
+  or the tally says met. Unmet rows are `???` in a black silhouette and show nothing else.
+- Words are in `ui/codex.json`; the look is `ui/theme.json` (`card` surface, `heading`/`body`, `smallButton`, `accent`, `muted`). Playtest `codex`.
+
 ## The hero sizes them up ("a name and a weakness the first time it shows", `hintOnce`)
 
 The first time a kind of enemy shows up in a save, the hero sizes it up: a subtitle with its name and one small hint at
@@ -604,6 +621,33 @@ backdrop after three floors. `clipStart`/`clipLength` play just part of a long v
 lava-river shot, `clipStart` 17.6, `clipLength` 5).
 
 Same seed, same floors: platforms, props and pushes come from the level seed, so rewinds and bot playtests repeat.
+
+## Weather and life ("ash in the Wastes", "runes in the air", "demons far away", "make a layer drift slower than the camera")
+
+A Circle's air is `ambience` in `content/circles/<id>.json`; it is drawn on every floor stage in that Circle (`CircleAmbience`, made by
+`GameplayWorld`), behind the action, and is presentation only (no rewind, no simulation). Three lists:
+
+- `depth`: rows of silhouettes (`shape` or `sprite`, `color`, `size`, `spacing`, `baseY`) at their own `parallax` [x, y]. 1 = stuck to the
+  screen, 0 = fixed in the world, 0.9 = far away, drifting by slowly. The row repeats around the camera, so it covers any distance
+  (a `spacing` y above 0 repeats it upward too, for Up-travel stages). `hanging` for stalactites.
+- `weather`: bits in the air. `kind` is `Ash` (sinking flakes), `Sparks` (flickering, rising), `Cinders` (heavy, glowing, falling, turning),
+  `Runes` (glyphs floating up and pulsing) or `Grit` (pebbles blown sideways). `count` alive at once, `speed`, `wind`, `sway`, `parallax`
+  (negative = close and rushing past), `fromFloor` (counting down, 990 = from floor 990 up), `inFront` (draw over the hero).
+- `life`: `behavior` `Flyer` (crosses at a height, flapping), `Walker` (along a far ledge) or `Chase` (a small figure and a bigger one after
+  it); `shape` `Wing`, `Figure`, `Horned` or `Wisp` (built-in silhouettes, or `sprite`), `size`, `speed`, `height` (fractions of the view),
+  `interval` (seconds between appearances), `parallax`. The first one shows within a few seconds of arriving.
+
+The budget: **at most 150 weather bits** over a Circle (`CircleAmbience.MaxBits`, half on phones) and **8 actors**; everything is pooled when the stage
+loads and moved in one LateUpdate (no allocation). Keep a Circle to two or three kinds of weather. Each Circle has its own set (a test fails when two
+share one): Wastes = ash, sparks, cinders; Cracked Road = shed grit, sparks from the cracks, Rift ash; Rune Bridges = runes, rune dust, cold sparks.
+
+`BackgroundLayerConfig.parallaxFactor` works the same way for a level's or Circle's background layers (`ParallaxController`): 1 is glued to the screen
+(the default, and what a Travel stage always did), 0 is fixed in the world, in between a far layer. A layer that follows less than 1 must be bigger than
+the view (`scale` above 1) or a tiled static sprite (`tileHorizontally`, `tileVertically`), or its edge would show; on a moving camera the controller holds
+it to the screen by its own edge. Videos can scale up for room; they cannot tile.
+
+Check it: `Tools > Run Tests` (`AmbienceTests`: the parallax rule, every Circle has weather, life and depth within the cap and none share a set) and the
+`ambience` playtest (below), which also measures the frame time with the air on, off and on again.
 
 ## Ladders ("a ladder up the wall", "climb, shoot, jump off")
 

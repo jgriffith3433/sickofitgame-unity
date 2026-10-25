@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Thatch cinder",
   "hint": "Bursts into sparks. Dodge them.",
+  "note": "Somebody's roof, still angry.",
   "hintVoice": "vo_hero_hint_cinderThatch",
   "extends": "cinder",
   "health": 2,
@@ -21,5 +22,6 @@
     { "type": "spawn", "entity": "cinderSpark", "anchor": "Self", "at": [-0.3, 0.2], "facePlayer": false },
     { "type": "spawn", "entity": "cinderSpark", "anchor": "Self", "at": [0.3, 0.2], "facePlayer": false },
     { "type": "playSound", "sound": "thatch_burst" }
-  ]
+  ],
+  "sounds": { "hurtSound": "cinderThatch_hurt", "deathSound": "cinderThatch_die" }
 }

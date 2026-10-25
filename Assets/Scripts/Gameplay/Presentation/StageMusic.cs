@@ -12,6 +12,8 @@ namespace SickOfIt.Gameplay
     /// back a moment after the floor goes quiet. Tracks cross-fade; between the level's track and the push track the
     /// playhead carries over, so the beat goes on. The script's choice is saved with the world (WorldEffects.SaveState),
     /// so a rewind past a playMusic brings the old track back, and the push track follows the generator's saved state.
+    /// The Circle's intensity layer (Circle.intensityMusic) rides over the level's own track: it fades in as enemies and hostile
+    /// shots crowd the world and out as it empties, and stays out under a push track or a Warden's theme.
     /// Presentation only: it reads the simulation and never changes it.
     /// </summary>
     public sealed class StageMusic : MonoBehaviour
@@ -19,6 +21,12 @@ namespace SickOfIt.Gameplay
         const float FadeSeconds = 0.8f;
         // The push track stays this long after a push ends, so a short breather doesn't flip the music back and forth.
         const float PushHoldSeconds = 2f;
+        // The intensity layer: how fast it comes in when the world crowds, how slowly it leaves, how often the crowd is counted.
+        const float LayerRiseSeconds = 1.5f;
+        const float LayerFallSeconds = 4f;
+        const float CrowdEvery = 0.1f;
+        // A layer of the same length as the track is kept in step with it when it drifts more than this.
+        const float LayerDriftSeconds = 0.12f;
 
         GameplayWorld world;
         AudioSource main;
@@ -28,6 +36,14 @@ namespace SickOfIt.Gameplay
         AudioClip pushClip;
         float pushVolume = 1f;
         bool circleRead;
+        AudioClip layerClip;
+        float layerVolume = 1f;
+        float layerEnemyWeight = 1f, layerBulletWeight = 0.35f, layerLow = 3f, layerHigh = 14f;
+        AudioSource layer;
+        float layerLevel;
+        int layerReported = -1;
+        float crowd;
+        float nextCrowd;
         // Every clip a playMusic asked for in this level; the saved cue is an index into it.
         readonly List<AudioClip> clips = new List<AudioClip>();
 
@@ -113,6 +129,8 @@ namespace SickOfIt.Gameplay
                 // RewindableAudioSource plays the main track backward; the fading-out one would just be noise.
                 if (!wasRewinding && tail != null)
                     tail.Stop();
+                if (!wasRewinding && layer != null)
+                    layer.Stop();
                 wasRewinding = true;
                 return;
             }
@@ -144,6 +162,12 @@ namespace SickOfIt.Gameplay
                 {
                     pushClip = circle.pushMusic;
                     pushVolume = circle.pushMusicVolume;
+                    layerClip = circle.intensityMusic;
+                    layerVolume = circle.intensityMusicVolume;
+                    layerEnemyWeight = circle.intensityEnemyWeight;
+                    layerBulletWeight = circle.intensityBulletWeight;
+                    layerLow = circle.intensityLow;
+                    layerHigh = Mathf.Max(circle.intensityHigh, circle.intensityLow + 0.1f);
                 }
             }
             if (pushClip != null && world != null && world.Director != null && world.Director.GeneratorPushing)
@@ -173,6 +197,68 @@ namespace SickOfIt.Gameplay
             if (want != null && want != main.clip)
                 Switch(want, wantVolume, restart, why);
             restart = false;
+            TickLayer(want == levelClip && want == main.clip);
+        }
+
+        /// <summary>Enemies and hostile shots alive now, weighted by the Circle's numbers (counted a few times a second).</summary>
+        float Crowd()
+        {
+            if (world == null)
+                return 0f;
+            float total = 0f;
+            var live = world.Live;
+            for (int i = 0; i < live.Count; i++)
+            {
+                var e = live[i];
+                if (e == null || !e.IsAlive || e.IsPlayer || e.Team != Team.Enemy)
+                    continue;
+                total += e.FindAbility<ProjectileAbility>() != null ? layerBulletWeight : layerEnemyWeight;
+            }
+            return total;
+        }
+
+        void TickLayer(bool overLevelTrack)
+        {
+            if (layerClip == null)
+                return;
+            if (Time.unscaledTime >= nextCrowd)
+            {
+                nextCrowd = Time.unscaledTime + CrowdEvery;
+                crowd = Crowd();
+            }
+            float target = overLevelTrack ? Mathf.Clamp01((crowd - layerLow) / (layerHigh - layerLow)) : 0f;
+            float speed = Time.unscaledDeltaTime / (target > layerLevel ? LayerRiseSeconds : LayerFallSeconds);
+            layerLevel = Mathf.MoveTowards(layerLevel, target, speed);
+
+            if (layer == null)
+            {
+                var go = new GameObject("MusicLayer");
+                go.transform.SetParent(main.transform, false);
+                layer = go.AddComponent<AudioSource>();
+                layer.playOnAwake = false;
+                layer.spatialBlend = 0f;
+                layer.dopplerLevel = 0f;
+                layer.loop = true;
+                layer.clip = layerClip;
+            }
+            // It plays silently the whole time (so it is already in step when it comes in) and only its volume moves.
+            if (!layer.isPlaying)
+            {
+                layer.Play();
+                layer.time = main.clip != null && main.clip.length > 0.1f ? main.time % Mathf.Max(layerClip.length - 0.05f, 0.1f) : 0f;
+            }
+            else if (Mathf.Abs(layerClip.length - main.clip.length) < 0.05f && Mathf.Abs(layer.time - main.time) > LayerDriftSeconds)
+            {
+                layer.time = Mathf.Min(main.time, layerClip.length - 0.05f);
+            }
+            Volume.Set(layer, layerVolume * layerLevel);
+
+            int steps = Mathf.RoundToInt(layerLevel * 4f) * 25;
+            if (steps != layerReported)
+            {
+                layerReported = steps;
+                world?.Telemetry?.Record("musicLayer", layerClip.name, steps, "crowd " + crowd.ToString("0.0"));
+            }
         }
 
         void Switch(AudioClip to, float toVolume, bool fromTop, string why)
