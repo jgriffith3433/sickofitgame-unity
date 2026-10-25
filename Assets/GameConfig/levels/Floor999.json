@@ -546,6 +546,10 @@
                         "flag": "wick.met"
                       },
                       {
+                        "type": "emit",
+                        "signal": "cmp:wick:999:done"
+                      },
+                      {
                         "type": "walkEntityTo",
                         "target": "cmp",
                         "x": 14.0,
@@ -561,10 +565,6 @@
                         "target": {
                           "id": "cmp"
                         }
-                      },
-                      {
-                        "type": "emit",
-                        "signal": "cmp:wick:999:done"
                       }
                     ]
                   }
@@ -619,6 +619,10 @@
                         "flag": "wick.met"
                       },
                       {
+                        "type": "emit",
+                        "signal": "cmp:wick:999:done"
+                      },
+                      {
                         "type": "walkEntityTo",
                         "target": "cmp",
                         "x": 14.0,
@@ -634,10 +638,6 @@
                         "target": {
                           "id": "cmp"
                         }
-                      },
-                      {
-                        "type": "emit",
-                        "signal": "cmp:wick:999:done"
                       }
                     ]
                   }

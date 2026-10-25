@@ -214,8 +214,11 @@ def branch_seq(sc, label, lines, rw):
     steps += reward(rw, sc)
     if sc.get("flag"):
         steps.append({"type": "setFlag", "flag": sc["flag"]})
-    steps += [{"type": "walkEntityTo", "target": "cmp", "x": 14.0, "relativeTo": "player", "speed": 3.0},
-              wait(3.0), {"type": "despawn", "target": {"id": "cmp"}}, emit(sc, "done")]
+    # "done" goes out as soon as the reward and flag are paid: the walk away is only dressing, and a floor that ends
+    # or kills the hero in its last seconds must not leave a finished scene looking unfinished.
+    steps += [emit(sc, "done"),
+              {"type": "walkEntityTo", "target": "cmp", "x": 14.0, "relativeTo": "player", "speed": 3.0},
+              wait(3.0), {"type": "despawn", "target": {"id": "cmp"}}]
     return {"type": "runSequence", "steps": steps}
 
 

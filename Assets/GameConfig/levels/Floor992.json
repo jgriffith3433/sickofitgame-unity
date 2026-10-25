@@ -1716,6 +1716,10 @@
                         "flag": "rook.dared"
                       },
                       {
+                        "type": "emit",
+                        "signal": "cmp:rook:992:done"
+                      },
+                      {
                         "type": "walkEntityTo",
                         "target": "cmp",
                         "x": 14.0,
@@ -1731,10 +1735,6 @@
                         "target": {
                           "id": "cmp"
                         }
-                      },
-                      {
-                        "type": "emit",
-                        "signal": "cmp:rook:992:done"
                       }
                     ]
                   }
@@ -1789,6 +1789,10 @@
                         "flag": "rook.dared"
                       },
                       {
+                        "type": "emit",
+                        "signal": "cmp:rook:992:done"
+                      },
+                      {
                         "type": "walkEntityTo",
                         "target": "cmp",
                         "x": 14.0,
@@ -1804,10 +1808,6 @@
                         "target": {
                           "id": "cmp"
                         }
-                      },
-                      {
-                        "type": "emit",
-                        "signal": "cmp:rook:992:done"
                       }
                     ]
                   }

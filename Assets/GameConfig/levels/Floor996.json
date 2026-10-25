@@ -1548,6 +1548,10 @@
                         "flag": "rook.met"
                       },
                       {
+                        "type": "emit",
+                        "signal": "cmp:rook:996:done"
+                      },
+                      {
                         "type": "walkEntityTo",
                         "target": "cmp",
                         "x": 14.0,
@@ -1563,10 +1567,6 @@
                         "target": {
                           "id": "cmp"
                         }
-                      },
-                      {
-                        "type": "emit",
-                        "signal": "cmp:rook:996:done"
                       }
                     ]
                   }
@@ -1621,6 +1621,10 @@
                         "flag": "rook.met"
                       },
                       {
+                        "type": "emit",
+                        "signal": "cmp:rook:996:done"
+                      },
+                      {
                         "type": "walkEntityTo",
                         "target": "cmp",
                         "x": 14.0,
@@ -1636,10 +1640,6 @@
                         "target": {
                           "id": "cmp"
                         }
-                      },
-                      {
-                        "type": "emit",
-                        "signal": "cmp:rook:996:done"
                       }
                     ]
                   }
