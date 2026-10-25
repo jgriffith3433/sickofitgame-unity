@@ -183,10 +183,14 @@ namespace SickOfIt.Playtest
                 if (Run.Done) yield break;
 
                 // 4. A click on the unlocked row wears its title.
+                // The page was just rebuilt by the '<' click: let the layout place the rows before aiming at one.
+                yield return WaitReal(0.6f);
                 first = CodexPanel.Current.Rows.Count > 0 ? CodexPanel.Current.Rows[0] : null;
                 if (first != null)
                 {
-                    input.MoveMouse(ScreenPoint(first.Rect));
+                    Vector2 rowPoint = ScreenPoint(first.Rect);
+                    Run.Event("achievements", $"click row {first.Entry.Id} at {rowPoint.x:0},{rowPoint.y:0} on page {CodexPanel.Current.Page + 1}");
+                    input.MoveMouse(rowPoint);
                     yield return null;
                     yield return null;
                     input.SetMouseButton(true);
