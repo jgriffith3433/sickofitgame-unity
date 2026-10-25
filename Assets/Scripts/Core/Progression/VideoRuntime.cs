@@ -235,8 +235,27 @@ namespace SickOfIt.Core.Progression
             if (!playbackAudio.gameObject.activeInHierarchy)
                 return;
 
-            playbackAudio.enabled = true;
-            playbackAudio.Play();
+            // A clip that won't start (the browser is out of media players, say) must never hold the video up.
+            try
+            {
+                playbackAudio.enabled = true;
+                playbackAudio.Play();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"[VideoRuntime] Video {videoNumber}'s soundtrack could not start: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Stops the soundtrack and lets go of its clip. On WebGL a playing clip holds a browser media player
+        /// (about 75 allowed at once); a video that ends or is skipped must give it back before the next scene.
+        /// </summary>
+        private void ReleaseAudio()
+        {
+            if (playbackAudio == null) return;
+            playbackAudio.Stop();
+            playbackAudio.clip = null;
         }
 
         private void StartExperience()
@@ -352,6 +371,7 @@ namespace SickOfIt.Core.Progression
 
         private void OnDestroy()
         {
+            ReleaseAudio();
             if (rewindButton != null && !rewindAlsoSkips)
             {
                 rewindButton.TapStartEvent.RemoveListener(OnRewindButtonDown);
@@ -395,6 +415,7 @@ namespace SickOfIt.Core.Progression
         {
             if (videoCompleted) return;
             videoCompleted = true;
+            ReleaseAudio();
 
             if (!videoWasSkipped)
                 TrackVideo("complete");

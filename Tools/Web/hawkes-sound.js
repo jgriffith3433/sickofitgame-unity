@@ -14,6 +14,8 @@
  *    sets `onstatechange` never fires it and every sound waits in Unity's queue for good (all sound silent).
  *    The tap also plays a silent buffer, and on iOS primes a pool of <audio> elements that Unity's `new Audio` is
  *    handed (iOS only lets an element play if it was started in a touch).
+ *    On every device the <audio> elements Unity makes are tracked and the oldest spent ones released once 40 are alive:
+ *    the browser allows ~75 media players, and a long session of videos and deaths used to run out (see "never run out").
  * 3. Audio resumes when the tab comes back, the page is restored, or iOS reports the context "interrupted"; any
  *    later touch, click or key also resumes it.
  * 4. Not sound, but it needs to run first: the first time the site's service worker takes control of the page, the
@@ -117,18 +119,63 @@
     }
   }
 
-  if (NativeAudio && IOS) {
+  // ─── <audio> elements: never run out of browser media players ───
+  //
+  // Every <audio> element Unity makes (a streamed clip, a long soundtrack) holds a browser WebMediaPlayer until the
+  // element is released, and Chrome allows about 75 at once. Past that every new one fails ("Blocked attempt to
+  // create a WebMediaPlayer ...", "Failed to load because no supported source was found") and the game floods the
+  // console and stops loading levels (a bridge-descent playtest, after ~600 s of deaths and videos). Unity lets
+  // finished elements go to the garbage collector, which is too late. So the elements Unity makes are tracked and,
+  // once more than MAX_LIVE are alive, the oldest ones that are over (ended, failed, or paused) are released.
+  var MAX_LIVE = 40;
+  var MIN_AGE_MS = 3000;  // a new element is paused until Unity starts it
+  var live = [];
+  var born = [];  // when each element in `live` was made
+
+  function release(element) {
+    try {
+      element.pause();
+      element.removeAttribute('src');
+      element.load();  // drops the media player
+    } catch (e) { /* already gone */ }
+  }
+
+  function isSpent(element) {
+    return element.ended || !!element.error || element.paused;
+  }
+
+  function sweep() {
+    // Oldest first; an element still playing, or made moments ago, is never touched.
+    var i;
+    var now = Date.now();
+    var before = live.length;
+    if (before <= MAX_LIVE) return;
+    for (i = 0; i < live.length && live.length > MAX_LIVE; ) {
+      if (now - born[i] > MIN_AGE_MS && isSpent(live[i])) { release(live[i]); live.splice(i, 1); born.splice(i, 1); }
+      else i++;
+    }
+    if (live.length < before) log('released ' + (before - live.length) + ' spent <audio> elements, ' + live.length + ' still alive');
+  }
+
+  function keep(element) {
+    live.push(element);
+    born.push(Date.now());
+    sweep();
+    return element;
+  }
+
+  if (NativeAudio) {
     var HawkesAudio = function (src) {
-      var element = pool.pop();
+      var element = IOS ? pool.pop() : null;
       if (element) {
         element.removeAttribute('src');
         element.muted = false;
         element.loop = false;
         element.autoplay = false;
         if (src !== undefined) element.src = src;
-        return element;
+        return keep(element);
       }
-      return src === undefined ? new NativeAudio() : new NativeAudio(src);
+      return keep(src === undefined ? new NativeAudio() : new NativeAudio(src));
     };
     HawkesAudio.prototype = NativeAudio.prototype;
     window.Audio = HawkesAudio;
@@ -222,6 +269,7 @@
     }
     resumeAll();
     primePool();
+    sweep();
   }
 
   function onVisible() {
@@ -250,14 +298,15 @@
       overlay.click();
       return true;
     },
-    /** {"prompt":"shown"|"gone"|"loading","taps":n,"trusted":bool,"audio":"running"|"suspended"|...|"none","pool":n} */
+    /** {"prompt":"shown"|"gone"|"loading","taps":n,"trusted":bool,"audio":"running"|"suspended"|...|"none","pool":n,"liveAudio":n} */
     state: function () {
       return JSON.stringify({
         prompt: overlay ? 'shown' : (taps > 0 ? 'gone' : 'loading'),
         taps: taps,
         trusted: trusted,
         audio: audioState(),
-        pool: pool.length
+        pool: pool.length,
+        liveAudio: live.length
       });
     },
   };
