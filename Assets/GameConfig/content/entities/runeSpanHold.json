@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "extends": "ledge",
+  "tags": [
+    "foothold",
+    "runeSpan"
+  ],
+  "visual": {
+    "color": "#FFFFFF",
+    "placeholderColor": "#9FD8FF"
+  },
+  "abilities": [
+    {
+      "type": "runeSpan",
+      "period": 10.0,
+      "hum": 1.0,
+      "lit": 6.5,
+      "dim": 1.0,
+      "phasePerUnit": 0.03,
+      "holdWhileStoodOn": true,
+      "humSound": "rune_hum"
+    }
+  ]
+}

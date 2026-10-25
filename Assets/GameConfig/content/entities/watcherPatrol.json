@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "extends": "chaser",
+  "health": 6,
+  "moveSpeed": 0.0,
+  "activationRange": 14.0,
+  "tags": [
+    "watcher"
+  ],
+  "body": {
+    "radius": 2.6
+  },
+  "visual": {
+    "scale": 0.2,
+    "color": "#CFF4FF",
+    "fxColor": "#7FD8FF",
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Gaze",
+          "spriteSheet": "Images/Fireball.png",
+          "fps": 8,
+          "loop": true
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Gaze"
+    }
+  },
+  "loot": {
+    "chance": 0.5,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "patrol",
+      "speed": 1.0,
+      "distance": 5.0,
+      "pause": 1.2
+    }
+  ],
+  "states": [
+    {
+      "name": "shut",
+      "animation": "",
+      "abilities": [
+        {
+          "type": "frontShield",
+          "arc": 180,
+          "blockSound": "chain_cut",
+          "color": "#BFEFFF"
+        }
+      ],
+      "transitions": [
+        {
+          "to": "open",
+          "when": {
+            "type": "after",
+            "seconds": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "name": "open",
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "runeBolt",
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 30
+          },
+          "speed": 2.9,
+          "aim": "Player",
+          "interval": 1.4,
+          "initialDelay": 0.5,
+          "damage": 1
+        }
+      ],
+      "transitions": [
+        {
+          "to": "shut",
+          "when": {
+            "type": "after",
+            "seconds": 2.2
+          }
+        }
+      ]
+    }
+  ],
+  "onDeath": []
+}

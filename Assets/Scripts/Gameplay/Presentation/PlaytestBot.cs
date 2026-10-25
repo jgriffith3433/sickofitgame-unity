@@ -578,6 +578,10 @@ namespace SickOfIt.Gameplay
                 var sink = e.FindAbility<SickOfIt.Gameplay.Content.SinkAbility>();
                 if (sink != null && sink.Sunk > sink.depth * 0.6f)
                     continue;
+                // A rune span (Circle VIII) is jumped for only while its rune will stay lit long enough to land and leave.
+                var runeSpan = e.FindAbility<SickOfIt.Gameplay.Content.RuneSpanAbility>();
+                if (runeSpan != null && !runeSpan.SolidFor(world.Now, 2.2f))
+                    continue;
                 var b = col.bounds;
                 float topY = chain ? e.Position.y - 0.5f : b.max.y;
                 float rise = topY - fromY;

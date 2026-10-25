@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "extends": "ledge",
+  "tags": [
+    "foothold",
+    "runeSpan"
+  ],
+  "visual": {
+    "color": "#FFFFFF",
+    "placeholderColor": "#9FD8FF"
+  },
+  "abilities": [
+    {
+      "type": "runeSpan",
+      "gazeTag": "watcher",
+      "gazeRadius": 2.6,
+      "humRadius": 5.2,
+      "humSound": "rune_hum"
+    }
+  ]
+}
