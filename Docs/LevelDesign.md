@@ -1777,3 +1777,175 @@ order it can be built and played:
    layout placed twice (as 995); the shard that stands up on 898 and the vent's whelp on 896 are spawned pieces; the
    statues on 852 are demons standing still until the hold starts. Floor 802 leads to the level select until Floor 801
    exists.
+
+## 7. Circles VIII to IV: route sketches *(working)*
+
+The designs (looks, Wardens, floor bosses, enemies and their weaknesses, signature mechanics, shortcuts, music) are in
+[Story.md](Story.md), *Circles VIII to IV: the middle descent*. This section is how each Circle plays as floors. All
+five follow Circle IX's shape (section 6): about 30 floors played in three stretches of ten (`x00-x91`, `x60-x51`,
+`x10-x01`), a floor boss ending each of the first two, a shortcut after each, the last stretch ending at the Warden's door
+on `x02` and his arena on `x01`; one level = one floor, the climb grammar of section 1, at most 4 enemies on screen, one
+new idea a floor, a new monster alone, a 3 s breather before every new enemy, a breather ledge with a damned soul
+(a loop shard) every 3-4 floors. Everything here is *working*: floor numbers are the plan, and each Circle becomes
+levels only through its own task. The floors in between the stretches (skipped by the shortcuts) are the long way,
+built later by the generator from the Circle's data (`content/circles/<id>.json`: backdrop, track, props, enemy table, hazards).
+
+The toolkit pieces each Circle needs (new data pieces, and C# only where noted):
+
+| Circle | New floor pieces | Needs C# |
+|---|---|---|
+| VIII | `runeSpan` (solid while lit, a hum 1 s before), `falseRune` (the Scrawler's), `bridgeLens` (a lit lens a beam passes through) | `runeSpan` is a beat-driven platform like `settleSlab`: likely data only; the lens a beam relay (check) |
+| VII | `loopLane` (a path a walker follows on a beat), `torchPool` (light that pops Gloomlings), `fellTree` | a path-follower ability (check what `drift` and rafts already do) |
+| VI | `mireTide` (water level on a beat, slowing, Bog Hands only in it), `tombstone` platforms at tide heights, `drainPlug` | tide = the lava sea with a slow effect (the Wastes' `lavaSea` + `slow`); likely data |
+| V | `gulp` (a timed pull/push on the hero), `peristalticFloor` (a floor that slides on a beat), `droolPool` (slick + slow), `toothLedge` | the pull as a world force: probably new C# (a rewind-safe force on the hero) |
+| IV | `toll` (a ring of force along ledges, glint a beat before), `candleShrine` (a light pool and a gargoyle's switch), `ropeBridge` | `toll` as a timed hazard ring: data (like `slamShockwave`); the gargoyle switch a new trigger |
+
+### Circle VIII: the Rune Bridges (800-701)
+
+```
+FLOOR 800-791    THE BRIDGE FOOT          10 floors played          791: the Keystone
+      │  SHORTCUT 1: THE WATCHER'S FAVOUR     (a thrilled Watcher flies him over, 791 → 760; 30 diamonds)
+      │  skips 790-761 (the long way: Rune Rows, the Scrawlers' Span)
+FLOOR 760-751    THE LONG SPAN            10 floors played          751: the Lamplighter
+      │  SHORTCUT 2: THE UNWRITTEN SPAN    (write a way up the blank rune, 751 → 710; a harder 710)
+      │  skips 750-711 (the long way: the Hound Arch, Afterimages)
+FLOOR 710-701    THE GREAT SPAN           10 floors played          701: THE BRIDGE WRAITH (his arena)
+```
+
+| Floors | Place | The beats |
+|---|---|---|
+| 800 | **The Bridge Foot** | The Circle's milestone (*"FLOOR 800: THE RUNE BRIDGES"*). Runes read *BRIDGE*. One lit span, nothing else: Rune Spans learnt alone. |
+| 799-797 | **Beat** | Two, then three spans in rhythm; a breather ledge with a damned soul. 797: the first Watcher, alone, its gaze cone only. |
+| 796-794 | **Out of Step** | Spans in staggered rhythms; the Watcher's lid taught (shoot as it opens). 794: a lit rune that holds a span for 4 s when shot (the Wraith's phase-2 trick, taught early). |
+| 793-792 | **Glance Away** | Spans that follow a Watcher's gaze (lit while it looks). Hero: *"Please stop looking at me."* |
+| 791 | **The Keystone** (floor boss) | A bridge under an arch the Keystone holds up; two tiers. |
+| 760-757 | **The Long Span** | A long bridge in sections; 760: the Lens Watcher alone (780 on the long way, here met again, promoted). |
+| 756-753 | **Scrawl** | The Glyph Scrawler alone; false runes; learning to tell a true rune (steady) from a false one (flicker). |
+| 752-751 | **Lamplight** | The Lanternfly follows lit runes; 751: **the Lamplighter**, two tiers (bridge, then a double bridge with Watchers). |
+| 710-708 | **The Great Span** | Floor 710 reads `shortcutTaken` if the Unwritten Span was used: false runes from the first second. The Afterimage alone. |
+| 707-704 | **Hounds of the Span** | Rune Hounds and Sleepwalkers; the handprint on the parapet and the rune *UP*. |
+| 703-702 | **The Lantern Walk** | Everything at once, 4 enemies; 702: the door, the Wraith's apology heard through it (*"Sorry. Sorry."*), a Waystone below. |
+| 701 | **The Great Span** (the Warden) | The Bridge Wraith's fight (Story.md). Beaten, the runes read *THANK YOU*; the Waystone at 701 lights; Circle VII wakes. |
+
+### Circle VII: the Gloomwood (700-601)
+
+```
+FLOOR 700-691    THE FIRST LAP            10 floors played          691: the Pathfinder
+      │  SHORTCUT 1: THE WRONG WAY ROUND   (follow the Shade who left the lap, 691 → 660; a Grudge)
+      │  skips 690-661 (the long way: the Long Walk, three floors the same)
+FLOOR 660-651    THE WOODSMAN'S TRAIL     10 floors played          651: the Woodsman
+      │  SHORTCUT 2: THE HOLLOW WAY        (a door in a trunk, 651 → 610; a harder 610)
+      │  skips 650-611 (the long way: the Crow Roads, the Stag Run)
+FLOOR 610-601    THE HOLLOW KING'S ROAD   10 floors played          601: THE HOLLOW KING (his arena)
+```
+
+| Floors | Place | The beats |
+|---|---|---|
+| 700 | **The Gloomwood** | Milestone (*"FLOOR 700: THE GLOOMWOOD"*). One lane, one Shade: Loop Lanes learnt alone (cross in the gap; shoot it and it sits a lap). |
+| 699-697 | **Two Lanes** | Crossing lanes; a Shade who waves at the same point every lap. The hero waves back on the third. |
+| 696-694 | **Gloom** | The Gloomling alone in the trunk-gaps, then torchlight as the answer; the Torchbearer. |
+| 693-692 | **Grasp** | The Grasping Branch alone, then the Root Snare. 692: the huge lane at the forest's edge (the Overlord thread, far). |
+| 691 | **The Pathfinder** (floor boss) | Ring lane arena; three stumbles and he sits down. |
+| 660-657 | **The Woodsman's Trail** | Carrion Crows' exact loops; the lap counter sign, *LAP 47,212*. |
+| 656-653 | **The Long Walk** (the Circle's set piece) | The same floor three times in a row (as 995's laps): the way up is the Shade walking the wrong way; the counter reads each floor twice. |
+| 652-651 | **Stag Run** | The Hollow Stag alone; 651: **the Woodsman**, two tiers (the clearing, the log run). |
+| 610-608 | **The Hollow King's Road** | Floor 610 reads `shortcutTaken`: roots from the first second. The Stump Mimic alone. |
+| 607-603 | **Company** | Everything at once, 4 enemies; the enormous footprints seen from close; hero: *"...That one's tall."* |
+| 602 | **The Door** | The King's voice through a hollow trunk: *"Come in. ...Come in."* |
+| 601 | **The King's Clearing** (the Warden) | The Hollow King's fight; the Waystone at 601 lights; Circle VI wakes. |
+
+### Circle VI: the Mire (600-501)
+
+```
+FLOOR 600-591    THE SUNKEN GATE          10 floors played          591: the Gravedigger
+      │  SHORTCUT 1: THE PLUG              (pull it and the tide drains, 591 → 560; 25 diamonds)
+      │  skips 590-561 (the long way: the Reed Maze, the Epitaph Row)
+FLOOR 560-551    THE FERRY ROAD           10 floors played          551: the Ferryman
+      │  SHORTCUT 2: THE WIDOW'S COFFIN    (a coffin up the crypt's stairs, 551 → 510; a harder 510)
+      │  skips 550-511 (the long way: Pallbearers' Lane, the Heron Flats)
+FLOOR 510-501    THE BALLROOM STAIRS      10 floors played          501: THE DROWNED QUEEN (her arena)
+```
+
+| Floors | Place | The beats |
+|---|---|---|
+| 600 | **The Sunken Gate** | Milestone (*"FLOOR 600: THE MIRE"*). One tide, one tombstone: The Tide learnt alone. Yooba's lines on the slime question. |
+| 599-597 | **Low Tide** | Tombstones at three heights; the tide marks; the first Wisp, alone. |
+| 596-594 | **Grab** | The Bog Hand alone, then Hands under Wisps; keep moving. The single boot. |
+| 593-592 | **Mourning** | The Drowned Mourner alone. 592: the lights lead the wrong way, *"No, other here."* |
+| 591 | **The Gravedigger** (floor boss) | Two tiers; a pit under the feet after a glow. |
+| 560-557 | **The Ferry Road** | The Grave Eel; low tide strands it. |
+| 556-553 | **Epitaph Row** | The Epitaph alone; the epitaphs are the jokes. |
+| 552-551 | **The Landing Stage** | The Mist Heron; 551: **the Ferryman**, two tiers (the barge, the wreck). |
+| 510-508 | **The Ballroom Stairs** | Floor 510 reads `shortcutTaken`: water already in the room. The Pallbearers' lane. |
+| 507-503 | **The Guests** | Bog Blooms and Wisps and Hands, 4 enemies; the drowned statue of the Overlord (the thread). |
+| 502 | **The Door** | The Queen's cheerful voice through the ballroom doors: *"You're late. Come in, come in."* |
+| 501 | **The Ballroom** (the Warden) | The Drowned Queen's fight; the Waystone at 501 lights; Circle V wakes. |
+
+### Circle V: the Caverns (500-401)
+
+```
+FLOOR 500-491    THE WAY HOME             10 floors played          491: the Baby Maw
+      │  THE WAY HOME (Floor 500, the door he doesn't take)     the midpoint of the game
+      │  SHORTCUT 1: THE SWALLOW           (ride the gulp up the throat, 491 → 460; rewind juice emptied)
+      │  skips 490-461 (the long way: the Gum Slope, Molar Run)
+FLOOR 460-451    THE LOWER JAW            10 floors played          451: the Grand Molar
+      │  SHORTCUT 2: THE HICCUP            (shot up the throat, 451 → 410; a harder 410)
+      │  skips 450-411 (the long way: the Tongue Road)
+FLOOR 410-401    THE THROAT               10 floors played          401: THE MOTHER MAW (her arena)
+```
+
+| Floors | Place | The beats |
+|---|---|---|
+| 500 | **The Way Home** | Milestone (*"FLOOR 500: HALFWAY"*). The door with daylight under it, the dead grass, the worn handle; the choice the hero refuses. Then the first drool and the first gulp, alone. |
+| 499-497 | **Breath** | The Gulp learnt: pull and push on a beat; a ledge to cling to. 497: the Lurker, alone (freezes when watched). |
+| 496-494 | **Slick** | Drool pools; the Drooler alone; slipping. |
+| 493-492 | **Peristalsis** | A floor that slides on the beat; Gum Grubs in a line. |
+| 491 | **The Baby Maw** (floor boss) | Nursery arena, tantrum bounces; the Warden's voice heard for the first time. |
+| 460-457 | **The Lower Jaw** | Molars rolling, Stalactooth; teeth ledges close on the exhale. |
+| 456-453 | **Tongue Road** | The Tongue Lasher alone; the Belcher alone. |
+| 452-451 | **The Leftovers** | A Leftover on a ledge: an imp's helm from Circle X, which the hero recognises (*"That's from way down."*); 451: **the Grand Molar**, two tiers (lower, upper jaw). |
+| 410-408 | **The Throat** | Floor 410 reads `shortcutTaken`: the Gulp twice as hard. |
+| 407-403 | **Swallow** | Everything at once, 4 enemies, the gulp pulling downward toward a glimpsed uvula; the Mother's coos from above. |
+| 402 | **The Door** | The Mother's voice: *"Is that you, dear? Come in, you're letting the cold in."* |
+| 401 | **The Mouth** (the Warden) | The Mother Maw's fight; the Waystone at 401 lights; Circle IV wakes. |
+
+### Circle IV: the Dead Peaks (400-301)
+
+```
+FLOOR 400-391    THE FIRST SHRINES        10 floors played          391: the Cantor
+      │  SHORTCUT 1: THE RINGER'S ROPE      (a counter-toll loosens the stair, 391 → 360; 30 diamonds)
+      │  skips 390-361 (the long way: the Rope Bridges, Prayer Wheel Row)
+FLOOR 360-351    THE MONASTERY WALL       10 floors played          351: the Wax Abbot
+      │  SHORTCUT 2: THE PILGRIM'S LIFT     (the cable car in the wind, 351 → 310; a harder 310)
+      │  skips 350-311 (the long way: Votive Road, the Scree Slopes)
+FLOOR 310-301    THE BELL TOWER STAIR     10 floors played          301: THE BELL RINGER (his arena)
+```
+
+| Floors | Place | The beats |
+|---|---|---|
+| 400 | **The Dead Peaks** | Milestone (*"FLOOR 400: THE DEAD PEAKS"*). One ledge, one toll: The Toll learnt alone; the bell seen far above. |
+| 399-397 | **On the Beat** | Rings of force along ledges; the candle flicker a beat before. 397: the first Gargoyle, perched, stone. |
+| 396-394 | **Candlelit** | Shrines as light pools; shoot a candle and the Gargoyle wakes (the risk); the Candle Monk alone. |
+| 393-392 | **Moths** | The Moon Moth alone; the *DO NOT RING* sign. |
+| 391 | **The Cantor** (floor boss) | Chapel ledge, then choir loft. |
+| 360-357 | **Monastery Wall** | Rope bridges in the wind; the Prayer Wheel alone. |
+| 356-353 | **Rime** | The Rime Hound alone (it drowns out the toll); the Scree Snake. |
+| 352-351 | **The Melting** | Votives in procession (the damned); 351: **the Wax Abbot**, two tiers (wax reforms; the open window). |
+| 310-308 | **The Bell Tower Stair** | Floor 310 reads `shortcutTaken`: a storm, tolls closer. The Clapper alone. |
+| 307-303 | **The Peal** | Everything at once, 4 enemies; the bell's wall countdown matches the Shaft's marker. |
+| 302 | **The Door** | The chanting through the belfry doors, one note, flat: *"Almost."* |
+| 301 | **The Belfry** (the Warden) | The Bell Ringer's fight; the Waystone at 301 lights; Circle III (the Bastion) wakes. |
+
+### Checks for these Circles
+
+Per Circle, before it ships: its signature mechanic is on its first floor alone; no floor has more than one new idea;
+the 4-enemy cap holds; every enemy has a readable weakness and a reason (Story.md); every floor boss and the Warden
+has voiced intro lines and a warning glow 1 s or more before each attack; no slime enemy; no office or work joke.
+Each becomes a `floors-A-B` and a `level-<n>` scenario like Circle IX's.
+
+### Cost of the art (GPU, priced, nothing started)
+
+Priced 2026-10-25 with `hawkesgen_estimate` (one server, nothing started): 20 backdrops (4 per Circle), 50 enemy
+concepts and 10 music tracks (5 loops, 5 Warden themes) come to about 0.28 GPU hours, **$0.53 ($1.15 with the idle tail)**,
+~18 min. That is concepts, backdrops and music only: the enemies' animated sheets (`Tools/Art/art.mjs`, poses and
+clips per enemy, ~50 enemies) are a larger batch, priced per enemy when each Circle's task starts. Nothing made yet.
