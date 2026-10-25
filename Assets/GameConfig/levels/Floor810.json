@@ -1655,6 +1655,10 @@
                         "flag": "pointer.up"
                       },
                       {
+                        "type": "emit",
+                        "signal": "cmp:pointer:810:done"
+                      },
+                      {
                         "type": "walkEntityTo",
                         "target": "cmp",
                         "x": 14.0,
@@ -1670,10 +1674,6 @@
                         "target": {
                           "id": "cmp"
                         }
-                      },
-                      {
-                        "type": "emit",
-                        "signal": "cmp:pointer:810:done"
                       }
                     ]
                   }
@@ -1737,6 +1737,10 @@
                             "flag": "pointer.up"
                           },
                           {
+                            "type": "emit",
+                            "signal": "cmp:pointer:810:done"
+                          },
+                          {
                             "type": "walkEntityTo",
                             "target": "cmp",
                             "x": 14.0,
@@ -1752,10 +1756,6 @@
                             "target": {
                               "id": "cmp"
                             }
-                          },
-                          {
-                            "type": "emit",
-                            "signal": "cmp:pointer:810:done"
                           }
                         ]
                       }
@@ -1809,6 +1809,10 @@
                             "flag": "pointer.up"
                           },
                           {
+                            "type": "emit",
+                            "signal": "cmp:pointer:810:done"
+                          },
+                          {
                             "type": "walkEntityTo",
                             "target": "cmp",
                             "x": 14.0,
@@ -1824,10 +1828,6 @@
                             "target": {
                               "id": "cmp"
                             }
-                          },
-                          {
-                            "type": "emit",
-                            "signal": "cmp:pointer:810:done"
                           }
                         ]
                       }
