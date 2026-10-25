@@ -60,6 +60,8 @@ namespace SickOfIt.Gameplay
         public ShortcutSystem Shortcuts { get; private set; }
         /// <summary>Grazes, the style meter and the floor rank (Docs/Story.md, "Style").</summary>
         public StyleSystem Style { get; private set; }
+        /// <summary>The hero's shop-good and Grudge perks (armour, bubbles, crits, bombs, ...; Docs/Story.md, "Yooba's new goods").</summary>
+        public HeroPerks Perks { get; private set; }
         /// <summary>Expected level length in seconds, for the progress bar.</summary>
         public float LevelLength { get; private set; } = 60f;
         public ObjectPool PickupPool { get; private set; }
@@ -187,6 +189,9 @@ namespace SickOfIt.Gameplay
                 cleanKillRefund = setup.RewindBudget.cleanKillRefund;
                 cleanKillSeconds = setup.RewindBudget.cleanKillSeconds;
             }
+            Perks = new HeroPerks(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
+            if (playerController != null)
+                playerController.VolleyScale = Perks.RollVolleyScale;
             Upgrades = new UpgradeSystem(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             Style = new StyleSystem(this);
             Shortcuts = new ShortcutSystem(this, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
@@ -293,6 +298,7 @@ namespace SickOfIt.Gameplay
             if (Player != null && Player.isActiveAndEnabled)
                 Player.Tick(now, dt);
             Style?.Tick(now, dt);
+            Perks?.Tick(now, dt);
 
             Effects.Tick(now, dt);
             Stage.Tick(now);
@@ -587,13 +593,14 @@ namespace SickOfIt.Gameplay
         {
             var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
             var def = entity.Def;
+            float refund = cleanKillRefund + (Perks != null ? Perks.CleanKillBonus : 0f);
             if (budget == null || cleanKillRefund <= 0f || def == null || def.team != Team.Enemy || entity.IsPlayer)
                 return;
             if (entity.FindAbility<ProjectileAbility>() != null || Now - lastHeroHurtAt < cleanKillSeconds)
                 return;
             // Once per creature, even when a rewind replays the kill.
             if (TryGrantOnce("cleanKill:" + entity.Serial))
-                budget.Reward(cleanKillRefund, "CLEAN KILL");
+                budget.Reward(refund, "CLEAN KILL");
         }
 
         // ─── What bystanders notice (the witness trigger) ─────────────
@@ -698,6 +705,8 @@ namespace SickOfIt.Gameplay
                 AddCounter("kills", 1f);
                 AddCounter("kills:" + entity.DefId, 1f);
                 PayCleanKill(entity);
+                if (entity.Def != null && entity.Def.team == Team.Enemy && !entity.IsPlayer && entity.FindAbility<ProjectileAbility>() == null)
+                    Perks?.OnEnemyKilled(entity);
                 var killedDef = entity.Def;
                 if (killedDef != null && killedDef.team == Team.Enemy && !string.IsNullOrEmpty(killedDef.displayName) && string.IsNullOrEmpty(SceneId)
                     && TryGrantOnce("codexKill:" + entity.Serial))
@@ -877,6 +886,7 @@ namespace SickOfIt.Gameplay
             Scripted.SaveState(w);
             Weapons?.SaveState(w);
             Style?.SaveState(w);
+            Perks?.SaveState(w);
         }
 
         public void LoadState(StateReader r)
@@ -910,6 +920,7 @@ namespace SickOfIt.Gameplay
             Scripted.LoadState(r);
             Weapons?.LoadState(r);
             Style?.LoadState(r);
+            Perks?.LoadState(r);
         }
 
         /// <summary>Saves the world's state at this moment (after a discrete event such as a swing or a weapon change), so a rewind to just after can't undo it.</summary>

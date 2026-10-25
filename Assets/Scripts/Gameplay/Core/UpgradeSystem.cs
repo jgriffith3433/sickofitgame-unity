@@ -54,6 +54,8 @@ namespace SickOfIt.Gameplay
             if (juice > 0f)
                 RewindBudget.Instance?.RaiseMax(juice, fill: true);
             world.PickupMagnetBonus = roguelite.GetShopTotal(ShopEffect.Magnet);
+            world.Perks?.AddShop(roguelite);
+            world.Perks?.Arm();
         }
 
         public void ApplyOwned()
@@ -81,6 +83,8 @@ namespace SickOfIt.Gameplay
                 if (controller != null)
                     controller.ExtraShots = Mathf.Max(0, extraShots);
             }
+            foreach (var perk in def.perksPerLevel)
+                world.Perks?.Add(perk.effect, perk.amount);
             if (def.rewindSecondsPerLevel > 0f)
                 RewindBudget.Instance?.RaiseMax(def.rewindSecondsPerLevel, fill: true);
             if (def.invincibilitySecondsPerLevel > 0f)

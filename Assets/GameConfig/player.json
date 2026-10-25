@@ -431,6 +431,223 @@
       "effect": "KeepWeapons",
       "amountPerLevel": 1.0,
       "requires": ["weapon:fists"]
+    },
+    {
+      "id": "crustyBits",
+      "title": "Crusty Bits",
+      "icon": "P",
+      "description": "Plates of dried Yooba on your shirt. Each one eats a hit, then grows back 20 seconds later. He sheds them like a dog.",
+      "costsPerLevel": [55, 120, 200],
+      "maxLevel": 3,
+      "effect": "Armor",
+      "amountPerLevel": 1
+    },
+    {
+      "id": "thickerCrusts",
+      "title": "Thicker Crusts",
+      "icon": "P2",
+      "description": "He let the plates dry longer. One more plate each. Do not lick.",
+      "costsPerLevel": [120, 265],
+      "maxLevel": 2,
+      "effect": "Armor",
+      "amountPerLevel": 1,
+      "requires": ["shop:crustyBits:3"]
+    },
+    {
+      "id": "snotBubble",
+      "title": "Snot Bubble",
+      "icon": "B",
+      "description": "A bubble at the start of every floor. It pops on the first hit that meets it. Nobody asked where it came from.",
+      "costsPerLevel": [50, 110, 180],
+      "maxLevel": 3,
+      "effect": "ShieldCharges",
+      "amountPerLevel": 1
+    },
+    {
+      "id": "spareBubble",
+      "title": "Spare Bubble",
+      "icon": "B2",
+      "description": "One more bubble each floor, blown from the other side.",
+      "costsPerLevel": [110, 240],
+      "maxLevel": 2,
+      "effect": "ShieldCharges",
+      "amountPerLevel": 1,
+      "requires": ["shop:snotBubble:3"]
+    },
+    {
+      "id": "greasedElbows",
+      "title": "Greased Elbows",
+      "icon": "S",
+      "description": "Slime on the elbows. 8% of hits just slide off. Hell is very rude about it.",
+      "costsPerLevel": [40, 90, 145],
+      "maxLevel": 3,
+      "effect": "Dodge",
+      "amountPerLevel": 0.08
+    },
+    {
+      "id": "luckyLick",
+      "title": "Lucky Lick",
+      "icon": "C",
+      "description": "He licked the barrel for luck. 7% of volleys hit twice as hard.",
+      "costsPerLevel": [45, 100, 160],
+      "maxLevel": 3,
+      "effect": "CritChance",
+      "amountPerLevel": 0.07
+    },
+    {
+      "id": "fourLeafSlime",
+      "title": "Four-Leaf Slime",
+      "icon": "C2",
+      "description": "Found it growing out of the wall. 8% more crits. He won't say what the wall was.",
+      "costsPerLevel": [100, 220],
+      "maxLevel": 2,
+      "effect": "CritChance",
+      "amountPerLevel": 0.08,
+      "requires": ["shop:luckyLick:3"]
+    },
+    {
+      "id": "meanerLick",
+      "title": "Meaner Lick",
+      "icon": "M",
+      "description": "A longer lick. Crits hit 50% harder still.",
+      "costsPerLevel": [60, 130, 215],
+      "maxLevel": 3,
+      "effect": "CritDamage",
+      "amountPerLevel": 0.5,
+      "requires": ["shop:luckyLick:1"]
+    },
+    {
+      "id": "yoobaBurp",
+      "title": "Yooba's Burp",
+      "icon": "H",
+      "description": "When something dies he burps, and sometimes the burp is a heart. 7% a kill.",
+      "costsPerLevel": [50, 110, 180],
+      "maxLevel": 3,
+      "effect": "HealOnKill",
+      "amountPerLevel": 0.07
+    },
+    {
+      "id": "hungrierBurp",
+      "title": "Hungrier Burp",
+      "icon": "H2",
+      "description": "He skipped breakfast. 7% more burps. Same hearts.",
+      "costsPerLevel": [110, 240],
+      "maxLevel": 2,
+      "effect": "HealOnKill",
+      "amountPerLevel": 0.07,
+      "requires": ["shop:yoobaBurp:3"]
+    },
+    {
+      "id": "gravyNet",
+      "title": "Gravy Net",
+      "icon": "N",
+      "description": "A wide net of slime for the diamonds. They come from much farther away and they are not shy.",
+      "costsPerLevel": [25, 55, 90],
+      "maxLevel": 3,
+      "effect": "Magnet",
+      "amountPerLevel": 1.5,
+      "requires": ["shop:diamondMagnet:2"]
+    },
+    {
+      "id": "fatDiamonds",
+      "title": "Fat Diamonds",
+      "icon": "F",
+      "description": "He feeds the diamonds before he gives them back. 15% of them are worth one more.",
+      "costsPerLevel": [70, 155, 250],
+      "maxLevel": 3,
+      "effect": "DiamondValue",
+      "amountPerLevel": 0.15
+    },
+    {
+      "id": "stickyAir",
+      "title": "Sticky Air",
+      "icon": "G",
+      "description": "Slime in the air. Enemy shots fly 6% slower. They don't like it either.",
+      "costsPerLevel": [65, 145, 235],
+      "maxLevel": 3,
+      "effect": "SlowShots",
+      "amountPerLevel": 0.06
+    },
+    {
+      "id": "loopCrumbs",
+      "title": "Loop Crumbs",
+      "icon": "K",
+      "description": "Crumbs of the loop he keeps for later. A clean kill pays 0.4 seconds more Déjà Vu.",
+      "costsPerLevel": [45, 100, 160],
+      "maxLevel": 3,
+      "effect": "CleanKillBonus",
+      "amountPerLevel": 0.4
+    },
+    {
+      "id": "thriftyLoop",
+      "title": "Thrifty Loop",
+      "icon": "L",
+      "description": "Yooba folded the loop twice. Rewinding costs 8% less juice.",
+      "costsPerLevel": [55, 120, 200],
+      "maxLevel": 3,
+      "effect": "RewindDiscount",
+      "amountPerLevel": 0.08
+    },
+    {
+      "id": "belchBomb",
+      "title": "Belch Bomb",
+      "icon": "X",
+      "description": "Get hit and he belches: shots near you pop and anything close gets a face of gravy. One a floor, per jar.",
+      "costsPerLevel": [85, 185],
+      "maxLevel": 2,
+      "effect": "BombCharges",
+      "amountPerLevel": 1
+    },
+    {
+      "id": "louderBelch",
+      "title": "Louder Belch",
+      "icon": "X2",
+      "description": "Bigger belch. The blast reaches 0.6 farther. The floor is not what it was.",
+      "costsPerLevel": [60, 130, 215],
+      "maxLevel": 3,
+      "effect": "BombRadius",
+      "amountPerLevel": 0.6,
+      "requires": ["shop:belchBomb:1"]
+    },
+    {
+      "id": "afterglowGoo",
+      "title": "Afterglow Goo",
+      "icon": "A",
+      "description": "A glow after every hit. 0.15 seconds more of being untouchable, and slightly sticky.",
+      "costsPerLevel": [55, 120, 200],
+      "maxLevel": 3,
+      "effect": "Afterglow",
+      "amountPerLevel": 0.15
+    },
+    {
+      "id": "slipperyShots",
+      "title": "Slippery Shots",
+      "icon": "Z",
+      "description": "The shots are greased. They leave the barrel 10% faster and refuse to explain.",
+      "costsPerLevel": [35, 75, 125],
+      "maxLevel": 3,
+      "effect": "ShotSpeed",
+      "amountPerLevel": 0.1
+    },
+    {
+      "id": "floorPudding",
+      "title": "Floor Pudding",
+      "icon": "D",
+      "description": "A pudding waiting at the start of every floor. Heals a heart. Do not ask what it is made of.",
+      "costsPerLevel": [75, 165],
+      "maxLevel": 2,
+      "effect": "FloorHeal",
+      "amountPerLevel": 1
+    },
+    {
+      "id": "spareGasp",
+      "title": "Spare Gasp",
+      "icon": "Y",
+      "description": "A hit that would end you leaves you on one heart instead. Once a floor, per gasp. He keeps them in a jar.",
+      "costsPerLevel": [120, 265],
+      "maxLevel": 2,
+      "effect": "LastGasp",
+      "amountPerLevel": 1
     }
   ]
 }

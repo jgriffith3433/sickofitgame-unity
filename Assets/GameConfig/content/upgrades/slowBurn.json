@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Slow Burn",
+  "icon": "F",
+  "description": "You've been angry longer than they've been shooting. Enemy shots fly 8% slower.",
+  "maxLevel": 3,
+  "weight": 1,
+  "perksPerLevel": [
+    {
+      "effect": "SlowShots",
+      "amount": 0.08
+    }
+  ],
+  "color": "#FFB347"
+}

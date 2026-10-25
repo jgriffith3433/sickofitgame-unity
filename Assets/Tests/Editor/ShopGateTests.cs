@@ -87,7 +87,8 @@ namespace SickOfIt.Tests.Editor
         public void ThePlayerJsonPricesAreTheDocumentedOnes()
         {
             string path = Path.Combine(Application.dataPath, "GameConfig", "player.json");
-            var goods = JObject.Parse(File.ReadAllText(path))["availableUpgrades"].Cast<JObject>().ToList();
+            // Yooba's new goods (they carry a card icon) are priced in ShopGoodsTests; these are the older ones.
+            var goods = JObject.Parse(File.ReadAllText(path))["availableUpgrades"].Cast<JObject>().Where(g => g["icon"] == null).ToList();
             int Price(JObject g)
             {
                 var costs = g["costsPerLevel"].Select(t => (int)t).ToArray();
@@ -98,8 +99,8 @@ namespace SickOfIt.Tests.Editor
             }
             int all = goods.Sum(Price);
             int gated = goods.Where(g => g["requires"] != null && g["requires"].HasValues).Sum(Price);
-            Assert.AreEqual(2435, all, "Docs/Story.md, \"Yooba's prices\" and \"Weapon goods\": 2,435 diamonds for everything");
-            Assert.AreEqual(1705, all - gated, "1,705 without the gated goods");
+            Assert.AreEqual(3475, all, "Docs/Story.md, \"Yooba's prices\": 3,475 diamonds for the older goods (Yooba's rewind goods and the weapon goods included)");
+            Assert.AreEqual(2255, all - gated, "2,255 without the gated goods");
             foreach (var g in goods)
                 foreach (var r in g["requires"] ?? new JArray())
                     Assert.IsNull(Requirements.Check((string)r), (string)g["id"]);

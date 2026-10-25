@@ -164,6 +164,11 @@ namespace SickOfIt.Core.Input
         public float FireRateMultiplier { get; set; } = 1f;
         /// <summary>Multiplies the damage of each shot. Set by upgrades.</summary>
         public float DamageMultiplier { get; set; } = 1f;
+        /// <summary>Asked once per volley for its damage scale (a crit is more than 1); set by the world (HeroPerks).</summary>
+        public System.Func<float> VolleyScale { get; set; }
+        /// <summary>Slippery Shots: his shots fly this much faster.</summary>
+        public float ShotSpeedScale { get; set; } = 1f;
+        private float shotCrit = 1f;
         /// <summary>Extra shots per volley, fanned out around the aim. Set by upgrades.</summary>
         public int ExtraShots { get; set; }
         /// <summary>Degrees between the shots of a volley.</summary>
@@ -1314,6 +1319,8 @@ namespace SickOfIt.Core.Input
                 shotSound = weapon.useSound;
             }
 
+            shotSpeed *= ShotSpeedScale;
+            shotCrit = VolleyScale != null ? VolleyScale() : 1f;
             Vector2 muzzle = AimVolley(direction, mouseAimPoint, volley);
             VolleysFired++;
             lastVolley.Clear();
@@ -1323,7 +1330,7 @@ namespace SickOfIt.Core.Input
                 float now = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
                 for (int i = 0; i < volley.Count; i++)
                     lastVolley.Add(volley[i].normalized);
-                Armory.SpawnShots(muzzle, volley, shotSpeed, DamageMultiplier * shotDamageScale, now);
+                Armory.SpawnShots(muzzle, volley, shotSpeed, DamageMultiplier * shotDamageScale * shotCrit, now);
                 if (Cue(fireSound, string.IsNullOrEmpty(shotSound) ? SickOfIt.Core.Audio.Sfx.Events.playerShoot : shotSound))
                     SickOfIt.Core.Fx.Fx.Flash(muzzle, new Color(1f, 0.85f, 0.45f, 0.35f), 0.26f, 0.06f);
                 PlayFireAnimation();
@@ -1489,7 +1496,7 @@ namespace SickOfIt.Core.Input
                 damage = projectile.GetComponent<IProjectileDamage>();
                 shotDamage[projectile] = damage;
             }
-            damage?.SetDamageMultiplier(DamageMultiplier * shotDamageScale);
+            damage?.SetDamageMultiplier(DamageMultiplier * shotDamageScale * shotCrit);
 
             // Use pool-cached ProjectileLifetime when available
             var lifetime = projectilePool.GetCachedLifetime(projectile);

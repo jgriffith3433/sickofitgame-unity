@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Holding On",
+  "icon": "H",
+  "description": "A hit that would end you leaves you on one heart instead. Once a floor.",
+  "maxLevel": 2,
+  "weight": 1,
+  "perksPerLevel": [
+    {
+      "effect": "LastGasp",
+      "amount": 1
+    }
+  ],
+  "color": "#FF9ECF"
+}
