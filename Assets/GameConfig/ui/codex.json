@@ -56,5 +56,635 @@
       "unlock": "YoobaMet",
       "color": "#2BA033"
     }
+  ],
+  "tabAchievements": "Achievements",
+  "toastHeading": "ACHIEVEMENT UNLOCKED",
+  "toastTitleFormat": "New title: {0}",
+  "progressFormat": "{0} / {1}",
+  "titleHeaderFormat": "Wearing: {0}   ({1}/{2} unlocked)",
+  "noTitle": "nothing",
+  "titleLineFormat": "Title: {0}",
+  "wearHint": "Tap to wear this title",
+  "worn": "Worn",
+  "lockedTag": "Locked",
+  "achievements": [
+    {
+      "id": "helloHell",
+      "name": "Hello, Hell",
+      "description": "Kill your first demon.",
+      "title": "the Newcomer",
+      "stat": "kills",
+      "target": 1
+    },
+    {
+      "id": "dentInPopulation",
+      "name": "Dent in the Population",
+      "description": "Kill 25 demons.",
+      "title": "Population Dent",
+      "stat": "kills",
+      "target": 25
+    },
+    {
+      "id": "centuryOfSin",
+      "name": "Century of Sin",
+      "description": "Kill 100 demons.",
+      "title": "Centurion of Sin",
+      "stat": "kills",
+      "target": 100
+    },
+    {
+      "id": "overkillEnthusiast",
+      "name": "Overkill Enthusiast",
+      "description": "Kill 500 demons.",
+      "title": "the Enthusiast",
+      "stat": "kills",
+      "target": 500
+    },
+    {
+      "id": "hellRunningLow",
+      "name": "Hell Is Running Low",
+      "description": "Kill 2,000 demons.",
+      "title": "Last One Standing",
+      "stat": "kills",
+      "target": 2000
+    },
+    {
+      "id": "oneFloorManyFunerals",
+      "name": "One Floor, Many Funerals",
+      "description": "Kill 30 demons on a single floor.",
+      "title": "Floor Undertaker",
+      "stat": "killsOneFloor",
+      "target": 30
+    },
+    {
+      "id": "varietyPack",
+      "name": "Variety Pack of Pain",
+      "description": "Kill 8 different kinds of demon.",
+      "title": "Connoisseur",
+      "stat": "species",
+      "target": 8
+    },
+    {
+      "id": "completeBestiary",
+      "name": "Everything Bleeds",
+      "description": "Kill 20 different kinds of demon.",
+      "title": "the Naturalist",
+      "stat": "species",
+      "target": 20
+    },
+    {
+      "id": "impressive",
+      "name": "Imp-ressive Numbers",
+      "description": "Kill 50 imps.",
+      "title": "Imp Collector",
+      "stat": "kill:Imp",
+      "target": 50
+    },
+    {
+      "id": "impShortage",
+      "name": "Imp Shortage",
+      "description": "Kill 250 imps.",
+      "title": "Imp Shortage",
+      "stat": "kill:Imp",
+      "target": 250
+    },
+    {
+      "id": "badDogWalker",
+      "name": "Who's a Good Hound? Nobody.",
+      "description": "Kill 10 slag hounds.",
+      "title": "Bad Dog Walker",
+      "stat": "kill:Slag hound",
+      "target": 10
+    },
+    {
+      "id": "haloGoodbye",
+      "name": "Halo, Goodbye",
+      "description": "Kill 10 halo imps.",
+      "title": "Halo Breaker",
+      "stat": "kill:Halo imp",
+      "target": 10
+    },
+    {
+      "id": "shellGame",
+      "name": "Shell Game",
+      "description": "Kill 5 slag tortoises.",
+      "title": "Shell Cracker",
+      "stat": "kill:Slag tortoise",
+      "target": 5
+    },
+    {
+      "id": "bugOff",
+      "name": "Bug Off",
+      "description": "Kill 5 mine beetles.",
+      "title": "Beetle Bane",
+      "stat": "kill:Mine beetle",
+      "target": 5
+    },
+    {
+      "id": "almostDefused",
+      "name": "Defused, Mostly",
+      "description": "Kill 5 rift bombers.",
+      "title": "Almost Defused",
+      "stat": "kill:Rift bomber",
+      "target": 5
+    },
+    {
+      "id": "outSquinted",
+      "name": "Out-Squinted",
+      "description": "Kill 5 deadeye imps.",
+      "title": "Squint Champion",
+      "stat": "kill:Deadeye imp",
+      "target": 5
+    },
+    {
+      "id": "putOutThePyre",
+      "name": "Pyre Retardant",
+      "description": "Kill 5 pyre callers.",
+      "title": "Fire Marshal of Nothing",
+      "stat": "kill:Pyre caller",
+      "target": 5
+    },
+    {
+      "id": "eyesUpHere",
+      "name": "Eyes Up Here",
+      "description": "Kill 5 lens imps.",
+      "title": "Lens Cracker",
+      "stat": "kill:Lens imp",
+      "target": 5
+    },
+    {
+      "id": "rockSolid",
+      "name": "Rock Bottom",
+      "description": "Kill 5 magma geodes.",
+      "title": "Geode Gouger",
+      "stat": "kill:Magma geode",
+      "target": 5
+    },
+    {
+      "id": "whipHandReversed",
+      "name": "Whip Hand Reversed",
+      "description": "Beat the Imp Foreman.",
+      "title": "Whip Breaker",
+      "stat": "kill:Imp Foreman",
+      "target": 1
+    },
+    {
+      "id": "pileDriver",
+      "name": "Pile Driver",
+      "description": "Beat the Pile Keeper.",
+      "title": "Pile Driver",
+      "stat": "kill:Pile Keeper",
+      "target": 1
+    },
+    {
+      "id": "slagRegicide",
+      "name": "Regicide, Slag Edition",
+      "description": "Beat the Magma King.",
+      "title": "Slag Regicide",
+      "stat": "kill:Magma King",
+      "target": 1
+    },
+    {
+      "id": "roadkill",
+      "name": "Roadkill Royalty",
+      "description": "Beat the Road Breaker.",
+      "title": "Roadkill Royalty",
+      "stat": "kill:Road Breaker",
+      "target": 1
+    },
+    {
+      "id": "cutAbove",
+      "name": "A Cut Above",
+      "description": "Beat the Carver.",
+      "title": "Cut Above",
+      "stat": "kill:Carver",
+      "target": 1
+    },
+    {
+      "id": "spireSlayer",
+      "name": "Brought Down the Spire",
+      "description": "Beat the Spire Fiend.",
+      "title": "Spire Slayer",
+      "stat": "kill:Spire Fiend",
+      "target": 1
+    },
+    {
+      "id": "serialDethroner",
+      "name": "Serial Dethroner",
+      "description": "Beat 3 different bosses.",
+      "title": "the Dethroner",
+      "stat": "bosses",
+      "target": 3
+    },
+    {
+      "id": "hellsMostWanted",
+      "name": "Hell's Most Wanted",
+      "description": "Beat 6 different bosses.",
+      "title": "Most Wanted",
+      "stat": "bosses",
+      "target": 6
+    },
+    {
+      "id": "notAScratch",
+      "name": "Not a Scratch",
+      "description": "Clear a floor without being hit once.",
+      "title": "the Untouched",
+      "stat": "noHit",
+      "target": 1
+    },
+    {
+      "id": "teflonHero",
+      "name": "Teflon Hero",
+      "description": "Clear 5 floors without being hit.",
+      "title": "Teflon",
+      "stat": "noHit",
+      "target": 5
+    },
+    {
+      "id": "hellsSlipperiest",
+      "name": "Hell's Slipperiest",
+      "description": "Clear 15 floors without being hit.",
+      "title": "the Slippery",
+      "stat": "noHit",
+      "target": 15
+    },
+    {
+      "id": "flawlessDethroning",
+      "name": "Flawless Dethroning",
+      "description": "Beat a boss without being hit once.",
+      "title": "the Flawless",
+      "stat": "noHitBoss",
+      "target": 1
+    },
+    {
+      "id": "floorCollector",
+      "name": "Floor Collector",
+      "description": "Clear 10 floors.",
+      "title": "Floor Collector",
+      "stat": "levels",
+      "target": 10
+    },
+    {
+      "id": "holdThatThought",
+      "name": "Hold That Thought",
+      "description": "Rewind for the first time.",
+      "title": "the Rewinder",
+      "stat": "rewinds",
+      "target": 1
+    },
+    {
+      "id": "dejaVuAgain",
+      "name": "Deja Vu, Again",
+      "description": "Rewind 50 times.",
+      "title": "Deja Vu",
+      "stat": "rewinds",
+      "target": 50
+    },
+    {
+      "id": "deathDeclined",
+      "name": "Death? Declined.",
+      "description": "Rewind a death and walk away from it.",
+      "title": "Death's Returned Item",
+      "stat": "deathUndone",
+      "target": 1
+    },
+    {
+      "id": "deathsWorstCustomer",
+      "name": "Death's Worst Customer",
+      "description": "Rewind 10 deaths.",
+      "title": "Death's Nemesis",
+      "stat": "deathUndone",
+      "target": 10,
+      "secret": true,
+      "hint": "Undo death often enough, and Death will have a word."
+    },
+    {
+      "id": "timeHoarder",
+      "name": "Five Minutes Back",
+      "description": "Rewind 300 seconds in total.",
+      "title": "Time Hoarder",
+      "stat": "rewindSeconds",
+      "target": 300
+    },
+    {
+      "id": "freshlyDead",
+      "name": "Welcome to the Club",
+      "description": "Die for the first time.",
+      "title": "Freshly Dead",
+      "stat": "deaths",
+      "target": 1
+    },
+    {
+      "id": "cardioCorpse",
+      "name": "Dying Is My Cardio",
+      "description": "Die 25 times.",
+      "title": "Cardio Corpse",
+      "stat": "deaths",
+      "target": 25
+    },
+    {
+      "id": "frequentFaller",
+      "name": "Frequent Faller, Lava Class",
+      "description": "Die 100 times.",
+      "title": "Frequent Faller",
+      "stat": "deaths",
+      "target": 100
+    },
+    {
+      "id": "impSnack",
+      "name": "Killed by an Imp. Embarrassing.",
+      "description": "Be killed by the smallest thing in Hell.",
+      "title": "Imp Snack",
+      "stat": "diedToImp",
+      "target": 1,
+      "secret": true,
+      "hint": "The smallest thing in Hell has a surprising reach."
+    },
+    {
+      "id": "pincushion",
+      "name": "Pincushion",
+      "description": "Get hit 100 times.",
+      "title": "Pincushion",
+      "stat": "hurt",
+      "target": 100
+    },
+    {
+      "id": "lavaDiver",
+      "name": "Swan Dive",
+      "description": "Fall off the bottom of a floor into the lava.",
+      "title": "Lava Diver",
+      "stat": "pits",
+      "target": 1,
+      "secret": true,
+      "hint": "The floor below is lava. Just saying."
+    },
+    {
+      "id": "closeShave",
+      "name": "Close Shave",
+      "description": "Graze 10 shots.",
+      "title": "Close Shave",
+      "stat": "grazes",
+      "target": 10
+    },
+    {
+      "id": "edgeWalker",
+      "name": "Edge Walker",
+      "description": "Graze 100 shots.",
+      "title": "Edge Walker",
+      "stat": "grazes",
+      "target": 100
+    },
+    {
+      "id": "bulletHugger",
+      "name": "Bullet Hugger",
+      "description": "Graze 500 shots.",
+      "title": "Bullet Hugger",
+      "stat": "grazes",
+      "target": 500
+    },
+    {
+      "id": "sForSmug",
+      "name": "S for Smug",
+      "description": "Earn an S rank on a floor.",
+      "title": "S-Rank Smug",
+      "stat": "rankS",
+      "target": 1
+    },
+    {
+      "id": "tenFloorsCloser",
+      "name": "Ten Floors Closer",
+      "description": "Climb 10 floors.",
+      "title": "the Climber",
+      "stat": "climbed",
+      "target": 10
+    },
+    {
+      "id": "tripleDigits",
+      "name": "Triple Digits",
+      "description": "Climb 100 floors.",
+      "title": "Wasteland Walker",
+      "stat": "climbed",
+      "target": 100
+    },
+    {
+      "id": "crackedRoadTourist",
+      "name": "Cracked Road Tourist",
+      "description": "Climb 200 floors.",
+      "title": "Road Tripper",
+      "stat": "climbed",
+      "target": 200
+    },
+    {
+      "id": "halfwayToTheTop",
+      "name": "Halfway Up the Chimney",
+      "description": "Climb 500 floors.",
+      "title": "Halfway Hero",
+      "stat": "climbed",
+      "target": 500
+    },
+    {
+      "id": "doorInTheWall",
+      "name": "A Door in the Wall",
+      "description": "Step through a door in a wall and clear the room behind it.",
+      "title": "Wall Knocker",
+      "stat": "secretRooms",
+      "target": 1
+    },
+    {
+      "id": "everyWallHasADoor",
+      "name": "Every Wall Has a Door",
+      "description": "Clear all six secret rooms.",
+      "title": "Door Whisperer",
+      "stat": "secretRooms",
+      "target": 6,
+      "secret": true,
+      "hint": "There are six doors. Knock on every wall."
+    },
+    {
+      "id": "gauntletRunner",
+      "name": "Gauntlet Runner",
+      "description": "Clear a gauntlet.",
+      "title": "Gauntlet Runner",
+      "stat": "gauntlets",
+      "target": 1
+    },
+    {
+      "id": "gauntletGlutton",
+      "name": "Gauntlet Glutton",
+      "description": "Clear both gauntlets.",
+      "title": "Glutton for Gauntlets",
+      "stat": "gauntlets",
+      "target": 2,
+      "secret": true,
+      "hint": "Two gauntlets. Both of them."
+    },
+    {
+      "id": "skippingClass",
+      "name": "Skip Day in Hell",
+      "description": "Take a shortcut.",
+      "title": "Shortcut Taker",
+      "stat": "shortcuts",
+      "target": 1
+    },
+    {
+      "id": "scenicRoute",
+      "name": "The Long Way Round",
+      "description": "Decline 3 shortcuts and climb every floor.",
+      "title": "Scenic Route",
+      "stat": "shortcutsDeclined",
+      "target": 3
+    },
+    {
+      "id": "retailTherapy",
+      "name": "Retail Therapy, Hell Branch",
+      "description": "Buy something from Yooba.",
+      "title": "Big Spender",
+      "stat": "shopBuys",
+      "target": 1
+    },
+    {
+      "id": "yoobasRegular",
+      "name": "Yooba's Favorite Customer",
+      "description": "Spend 100 diamonds in Yooba's shop.",
+      "title": "Yooba's Regular",
+      "stat": "shopSpent",
+      "target": 100
+    },
+    {
+      "id": "slimeBaron",
+      "name": "Slime Baron",
+      "description": "Spend 1,000 diamonds in Yooba's shop.",
+      "title": "Slime Baron",
+      "stat": "shopSpent",
+      "target": 1000
+    },
+    {
+      "id": "windowShopper",
+      "name": "One of Everything",
+      "description": "Buy 10 different goods.",
+      "title": "the Collector",
+      "stat": "shopGoods",
+      "target": 10
+    },
+    {
+      "id": "pocketFullOfRocks",
+      "name": "Pocket Full of Rocks",
+      "description": "Collect 100 diamonds.",
+      "title": "Rock Pocket",
+      "stat": "diamondsEarned",
+      "target": 100
+    },
+    {
+      "id": "dragonsHoard",
+      "name": "Dragon's Hoard",
+      "description": "Collect 1,000 diamonds.",
+      "title": "the Hoarder",
+      "stat": "diamondsEarned",
+      "target": 1000
+    },
+    {
+      "id": "slimeFriend",
+      "name": "Friend of the Slime",
+      "description": "Meet Yooba.",
+      "title": "Yooba's Friend",
+      "stat": "yoobaMet",
+      "target": 1
+    },
+    {
+      "id": "holdingAGrudge",
+      "name": "Holding a Grudge",
+      "description": "Pick a Grudge.",
+      "title": "Grudge Holder",
+      "stat": "grudges",
+      "target": 1
+    },
+    {
+      "id": "grudgeCollector",
+      "name": "Grudge Collector",
+      "description": "Pick 10 Grudges.",
+      "title": "Grudge Collector",
+      "stat": "grudges",
+      "target": 10
+    },
+    {
+      "id": "newToy",
+      "name": "New Toy",
+      "description": "Find a weapon.",
+      "title": "Armed",
+      "stat": "weapons",
+      "target": 1
+    },
+    {
+      "id": "arsenal",
+      "name": "Arsenal",
+      "description": "Find 3 weapons.",
+      "title": "Arms Dealer",
+      "stat": "weapons",
+      "target": 3
+    },
+    {
+      "id": "hellsArmory",
+      "name": "Hell's Armory",
+      "description": "Find 6 weapons.",
+      "title": "Walking Armory",
+      "stat": "weapons",
+      "target": 6
+    },
+    {
+      "id": "boomstick",
+      "name": "Boomstick",
+      "description": "Find the shotgun.",
+      "title": "Boomstick",
+      "stat": "weapon:shotgun",
+      "target": 1
+    },
+    {
+      "id": "whiplash",
+      "name": "Whiplash",
+      "description": "Find the chain whip.",
+      "title": "Whiplash",
+      "stat": "weapon:chainWhip",
+      "target": 1
+    },
+    {
+      "id": "handsOn",
+      "name": "Hands-On",
+      "description": "Get your hands on the fists.",
+      "title": "Hands-On",
+      "stat": "weaponHeld:fists",
+      "target": 1
+    },
+    {
+      "id": "gottaGoFast",
+      "name": "Gotta Go Fast",
+      "description": "Dash.",
+      "title": "Dasher",
+      "stat": "dashes",
+      "target": 1
+    },
+    {
+      "id": "wallHugger",
+      "name": "Wall Hugger",
+      "description": "Wall-jump.",
+      "title": "Wall Hugger",
+      "stat": "wallJumps",
+      "target": 1
+    },
+    {
+      "id": "hookLineSinker",
+      "name": "Hook, Line and Sinker",
+      "description": "Use the Hook.",
+      "title": "Hookmaster",
+      "stat": "grapples",
+      "target": 1
+    },
+    {
+      "id": "swingingTime",
+      "name": "Swinging Time",
+      "description": "Use the Hook 25 times.",
+      "title": "the Swinger",
+      "stat": "grapples",
+      "target": 25
+    }
   ]
 }

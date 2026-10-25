@@ -286,6 +286,8 @@ namespace SickOfIt.Data
             int newTotal = current + amount;
             PlayerPrefs.SetInt(KEY_PLAYER_POINTS, newTotal);
             PlayerPrefs.Save();
+            if (amount > 0)
+                Achievements.Bump("diamondsEarned", amount);
             OnPointsChanged?.Invoke(newTotal);
         }
 
@@ -394,6 +396,9 @@ namespace SickOfIt.Data
             if (cost < 0 || !SpendPoints(cost))
                 return false;
             PlayerPrefs.SetInt(LevelKey(upgrade.id), GetUpgradeLevel(upgrade.id) + 1);
+            Achievements.Bump("shopBuys");
+            Achievements.Bump("shopSpent", cost);
+            Achievements.AddUnique("shopGoods", upgrade.id);
             if (upgrade.Effect == ShopEffect.MaxHealth)
             {
                 int amount = Mathf.Max(1, Mathf.RoundToInt(upgrade.amountPerLevel));
@@ -535,6 +540,7 @@ namespace SickOfIt.Data
             WeaponUnlocks.Reset();
             EnemyHints.Reset();
             CodexProgress.Reset();
+            Achievements.Reset();
             StyleRanks.Reset();
             ReplayModes.ResetCycle();
 

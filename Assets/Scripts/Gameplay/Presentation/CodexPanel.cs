@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +13,7 @@ using SickOfIt.Gameplay.Content;
 
 namespace SickOfIt.Gameplay
 {
-    public enum CodexTab { Enemies, Bosses, Weapons, Characters }
+    public enum CodexTab { Enemies, Bosses, Weapons, Characters, Achievements }
 
     /// <summary>One page of the Codex: what to show about a creature, a weapon or a character, and whether the hero has met it.</summary>
     public sealed class CodexEntry
@@ -30,6 +31,12 @@ namespace SickOfIt.Gameplay
         public bool Creature;
         public int TimesMet;
         public int TimesKilled;
+        /// <summary>An achievement: its line is the title it gives, its progress and target are counted, and tapping an unlocked one wears the title.</summary>
+        public bool IsAchievement;
+        public int Progress;
+        public int Target;
+        public bool Worn;
+        public string Title;
     }
 
     /// <summary>
@@ -45,6 +52,7 @@ namespace SickOfIt.Gameplay
                 case CodexTab.Enemies: return Creatures(content, boss: false);
                 case CodexTab.Bosses: return Creatures(content, boss: true);
                 case CodexTab.Weapons: return Weapons(content);
+                case CodexTab.Achievements: return AchievementEntries(config);
                 default: return Characters(config);
             }
         }
@@ -125,6 +133,41 @@ namespace SickOfIt.Gameplay
             return list;
         }
 
+        /// <summary>Every achievement, unlocked ones first (in the order he earned them), then the rest in the file's order. A secret one stays ??? until unlocked.</summary>
+        static List<CodexEntry> AchievementEntries(CodexConfig config)
+        {
+            var list = new List<CodexEntry>();
+            if (config == null)
+                return list;
+            var done = new List<CodexEntry>();
+            foreach (var a in config.achievements)
+            {
+                if (a == null || string.IsNullOrEmpty(a.name))
+                    continue;
+                bool unlocked = Achievements.IsUnlocked(a.id);
+                var entry = new CodexEntry
+                {
+                    Id = a.id,
+                    Name = a.name,
+                    Note = a.description,
+                    Line = unlocked ? a.title : a.hint,
+                    Title = a.title,
+                    Tint = unlocked ? new Color(0.85f, 0.55f, 0.1f, 1f) : new Color(0.22f, 0.16f, 0.26f, 1f),
+                    IsAchievement = true,
+                    Progress = Achievements.Progress(a),
+                    Target = a.target,
+                    Worn = unlocked && Achievements.WornId == a.id,
+                    // Secret and locked: ??? with a hint. Otherwise the name and what it asks for are shown, with the progress.
+                    Met = unlocked || !a.secret,
+                };
+                (unlocked ? done : list).Add(entry);
+            }
+            var order = Achievements.UnlockedIds.ToList();
+            done.Sort((x, y) => order.IndexOf(x.Id).CompareTo(order.IndexOf(y.Id)));
+            done.AddRange(list);
+            return done;
+        }
+
         static List<CodexEntry> Characters(CodexConfig config)
         {
             var list = new List<CodexEntry>();
@@ -137,7 +180,8 @@ namespace SickOfIt.Gameplay
                 list.Add(new CodexEntry
                 {
                     Id = c.id,
-                    Name = c.displayName,
+                    // The hero goes by the title he wears.
+                    Name = c.id == "hero" && !string.IsNullOrEmpty(Achievements.WornTitle) ? c.displayName + ", " + Achievements.WornTitle : c.displayName,
                     Note = c.note,
                     Line = c.about,
                     Art = FirstSprite(c.sheet, c.spriteNameFilter),
@@ -217,6 +261,7 @@ namespace SickOfIt.Gameplay
         public readonly List<CodexRowView> Rows = new List<CodexRowView>();
         public readonly List<MenuButton> Tabs = new List<MenuButton>();
         public MenuButton Previous, Next, Done;
+        public TextMeshProUGUI Wearing;
         public Action<CodexTab> SelectTab;
         public Action Close;
     }
@@ -272,8 +317,20 @@ namespace SickOfIt.Gameplay
             tabLayout.childForceExpandHeight = false;
 
             var tabStyle = theme.smallButton.Clone();
-            tabStyle.size = new Vector2(210f, 70f);
-            string[] tabNames = { config.tabEnemies, config.tabBosses, config.tabWeapons, config.tabCharacters };
+            tabStyle.size = new Vector2(176f, 70f);
+            string[] tabNames = { config.tabEnemies, config.tabBosses, config.tabWeapons, config.tabCharacters, config.tabAchievements };
+
+            // The title he wears, under the tabs (Achievements only).
+            var wearing = MenuGraphics.NewRect("Wearing", panel);
+            wearing.anchorMin = new Vector2(0f, 1f);
+            wearing.anchorMax = new Vector2(1f, 1f);
+            wearing.pivot = new Vector2(0.5f, 1f);
+            wearing.offsetMin = new Vector2(40f, -300f);
+            wearing.offsetMax = new Vector2(-40f, -254f);
+            var wearingText = MenuGraphics.Text(wearing, "Text", "", theme.body, menu.Font, 30f);
+            wearingText.color = theme.accent;
+            wearing.gameObject.SetActive(false);
+            view.Wearing = wearingText;
 
             // The rows between the tabs and the footer.
             var rows = MenuGraphics.NewRect("Rows", panel);
@@ -320,11 +377,20 @@ namespace SickOfIt.Gameplay
                 view.Total = entries.Count;
                 view.Met = 0;
                 foreach (var e in entries)
-                    if (e.Met)
+                    if (e.IsAchievement ? Achievements.IsUnlocked(e.Id) : e.Met)
                         view.Met++;
                 view.Pages = Mathf.Max(1, Mathf.CeilToInt(entries.Count / (float)view.RowsPerPage));
                 view.Page = Mathf.Clamp(view.Page, 0, view.Pages - 1);
                 view.Tab = tab;
+                bool achievements = tab == CodexTab.Achievements;
+                rows.offsetMax = new Vector2(-40f, achievements ? -306f : -256f);
+                wearing.gameObject.SetActive(achievements);
+                if (achievements)
+                {
+                    string worn = Achievements.WornTitle;
+                    MenuGraphics.SetText(wearingText, string.Format(CultureInfo.InvariantCulture, config.titleHeaderFormat,
+                        string.IsNullOrEmpty(worn) ? config.noTitle : worn, view.Met, view.Total));
+                }
 
                 for (int i = rows.childCount - 1; i >= 0; i--)
                 {
@@ -339,7 +405,7 @@ namespace SickOfIt.Gameplay
                 {
                     int index = first + i;
                     if (index < entries.Count)
-                        view.Rows.Add(BuildRow(menu, rows, entries[index], config, portrait));
+                        view.Rows.Add(BuildRow(menu, rows, entries[index], config, portrait, Refresh));
                     else if (entries.Count == 0 && i == 0)
                         BuildEmpty(menu, rows, config.empty);
                     else
@@ -409,12 +475,24 @@ namespace SickOfIt.Gameplay
             t.color = menu.Theme.muted;
         }
 
-        static CodexRowView BuildRow(MenuCanvas menu, RectTransform rows, CodexEntry entry, CodexConfig config, bool portrait)
+        static CodexRowView BuildRow(MenuCanvas menu, RectTransform rows, CodexEntry entry, CodexConfig config, bool portrait, Action refresh)
         {
             var theme = menu.Theme;
             var row = MenuGraphics.NewRect(entry.Met ? "Row" : "RowUnknown", rows);
             var view = new CodexRowView { Entry = entry, Rect = row, Silhouette = !entry.Met };
-            MenuGraphics.Surface(row, theme.card.surface, entry.Met ? new Color(0.13f, 0.08f, 0.18f, 0.9f) : new Color(0.05f, 0.03f, 0.07f, 0.8f));
+            var fillImage = MenuGraphics.Surface(row, theme.card.surface, entry.Met ? new Color(0.13f, 0.08f, 0.18f, 0.9f) : new Color(0.05f, 0.03f, 0.07f, 0.8f));
+            if (entry.IsAchievement && entry.Met && Achievements.IsUnlocked(entry.Id) && !string.IsNullOrEmpty(entry.Title))
+            {
+                // Tapping an unlocked achievement wears its title (again: takes it off).
+                var button = row.gameObject.AddComponent<Button>();
+                button.targetGraphic = fillImage;
+                string id = entry.Id;
+                button.onClick.AddListener(() =>
+                {
+                    Achievements.Wear(id);
+                    refresh();
+                });
+            }
             var line = row.gameObject.AddComponent<HorizontalLayoutGroup>();
             line.padding = new RectOffset(16, 20, 10, 10);
             line.spacing = 20f;
@@ -475,7 +553,10 @@ namespace SickOfIt.Gameplay
                 name.color = theme.muted;
             if (entry.Met)
             {
-                string tally = entry.IsWeapon
+                bool unlocked = entry.IsAchievement && Achievements.IsUnlocked(entry.Id);
+                string tally = entry.IsAchievement
+                    ? (entry.Worn ? config.worn : unlocked ? "" : string.Format(CultureInfo.InvariantCulture, config.progressFormat, entry.Progress, entry.Target))
+                    : entry.IsWeapon
                     ? config.weaponFound
                     : string.Format(CultureInfo.InvariantCulture, config.tallyFormat, entry.TimesMet, entry.TimesKilled);
                 var t = Cell(menu, view, head, "Tally", tally, theme.body, bodySize, TextAlignmentOptions.MidlineRight, 0f, portrait ? 330f : 420f);
@@ -485,13 +566,14 @@ namespace SickOfIt.Gameplay
             if (entry.Met)
             {
                 Cell(menu, view, column, "Note", entry.Note, theme.body, bodySize, TextAlignmentOptions.MidlineLeft, 1f);
-                string second = string.IsNullOrEmpty(entry.Line) ? "" : entry.Creature ? config.weaknessPrefix + entry.Line : entry.Line;
+                string second = string.IsNullOrEmpty(entry.Line) ? (entry.IsAchievement ? config.lockedTag : "")
+                    : entry.Creature ? config.weaknessPrefix + entry.Line : entry.IsAchievement ? string.Format(CultureInfo.InvariantCulture, config.titleLineFormat, entry.Line) : entry.Line;
                 var w = Cell(menu, view, column, "Line", second, theme.body, bodySize, TextAlignmentOptions.MidlineLeft, 1f);
                 w.color = theme.muted;
             }
             else
             {
-                var u = Cell(menu, view, column, "Unknown", config.unknownLine, theme.body, bodySize, TextAlignmentOptions.MidlineLeft, 1f);
+                var u = Cell(menu, view, column, "Unknown", entry.IsAchievement && !string.IsNullOrEmpty(entry.Line) ? entry.Line : config.unknownLine, theme.body, bodySize, TextAlignmentOptions.MidlineLeft, 1f);
                 u.color = theme.muted;
             }
             return view;
