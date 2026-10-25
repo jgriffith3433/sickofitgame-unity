@@ -267,3 +267,205 @@ estimates: the keyframe shots have no job history yet (the tool's own guess), so
 Not started: no server was run, no clip made, no voice generated. What remains after J approves: voices and
 table reads, the keyframes, the takes, the critic loop, then baking each into `Videos/VideoN.asset` + audio +
 thumbnail, `videos/VideoN.json` + the `game.json` list, and the `story-path` scenario's checks.
+
+
+---
+---
+
+# Part 2: the cinematic plan (titles, boss stings, Shaft bridges, epilogues)
+
+Added 2026-10-25 (J's task: *extend the lore video plan with a short title cinematic per Circle, a boss intro sting for
+each Warden and mid-boss, a Shaft descent/ascent bridge clip, and the epilogue for the true ending and the funny ending*).
+**Design and prices only: nothing is generated, no server was started.** The memory note m_e3fc0457efb4 says GPU is approved
+at any cost for Sick Of It, but this task's brief set a GPU budget of none, so the clips wait for J's go (the price is at the
+end). Tone for all of it: absurd comedy from Hell itself, **Hell is repetition**, the deadpan hero, the booming announcer;
+no office or work jokes; slimes are villagers. Nothing here spoils the Overlord's origin (*The Overlord: who he is*) beyond
+what each ending already shows, and the website carries none of it (no finale spoilers).
+
+| Group | Count | Length | Files | Plays |
+|---|---|---|---|---|
+| **Circle titles** | 10 | ~8 s | `Video9`-`Video18` (`CircleTitleX` ... `CircleTitleI`) | on the Shaft as each Circle wakes |
+| **Boss stings** | 30 (10 Wardens, 20 floor bosses) | 6 s / 4 s | `Videos/Sting_<entityId>.asset` | in the boss's arena intro |
+| **Shaft bridges** | 2 | 12 s / 10 s | `Video19` (Descent), `Video20` (Ascent) | after Video2; in the true ending |
+| **Epilogues** | 2 | ~50 s / ~36 s | `Video21` (Knock), `Video22` (Encore) | after each ending |
+
+Voices are the existing ones (Announcer `1xynpTfy7I462pPrU2kL`, Hero `DzkD7I4tf5i3KSaB4cz5`, Overlord, Yooba, Magma King); the
+other Wardens' and floor bosses' short lines are from Story.md's Circle sections and are voiced when their Circle is built.
+Look and format as in the table at the top (1280x704, 24 fps, each in its Circle's palette); the Circles' look briefs are in
+Story.md. Recipes: `video.scene`, `video.keyframes`, `video.compose`, `video.review`, as in Part 1.
+
+## Where they sit in the flow
+
+```
+Video1 > Level 1 > portal > Video2 > [Video19 Descent] > Shaft plunge > [Title X] > Floor 1000 ...
+ Floor 991 / 951 ... each floor boss:  arena intro starts with its 4 s STING, then the fight
+ Warden floor (901, 801 ... 101, Floor 1): arena intro starts with its 6 s STING
+ Warden beaten > Waystone > Shaft > [Video8 etc. if due] > [Title of the Circle above] > Continue
+ Floor 1 beaten > SHUT IT > ... Yooba on the Meadow > [Video20 Ascent] > the sit > credits > [Video21 Knock] > FLOOR 1,001
+ Floor 1 beaten > SIT DOWN > the queue > credits take > [Video22 Encore] > Landing, New Game+
+```
+
+Rules: all skippable with Escape (a sting is skipped with the same key as the intro), each plays **once per save** (stings once
+per boss, so a retry after a death goes straight to the fight; a rewind never replays one) and every title/bridge/epilogue is
+watchable again from the video select (stings from the Codex's Bosses tab, once met). A Shaft visit plays at most one title; if a
+story video is due too (Video8 after Level 31) the title plays last, so the climb is the last thing on screen. The Circle titles
+for Circles II and I and the epilogues are the only ones that spoil anything, so they unlock in the video select only after the
+ending. **Engine work (not built, small):** a `playClip` scene action for stings and a `Video` entry per title/bridge/epilogue
+in `videos/` + game.json `videos` + `afterLevel`/`nextLevel`; the baked sheets and audio come from the clips. None of that can be
+wired before the clips exist, so a `story-path` check per clip is added when they are baked.
+
+## Circle title cinematics (10, ~8 s each)
+
+One shape, ten times, which is the joke: *Hell is repetition, so every Circle gets the same title card, and each one is
+slightly more tired of it.* 0-3 s a slow push through the Circle's biome, 3-6 s the card slams in (CIRCLE ROMAN NUMERAL, name,
+floor range, in the game's HUD font), 6-8 s a Circle-specific gag, a button of music, cut. Announcer reads the card; the gag is
+one hero line or one sound. Shots: `video.scene` x2 (establishing, gag) plus 3 keyframes (`image.edit`), a 10 s music sting
+(`audio.music`), `video.compose` for the card. Plays on the Shaft as the Circle wakes.
+
+| # | Circle | Biome shot | Announcer | Gag (6-8 s) | Plays after |
+|---|---|---|---|---|---|
+| 9 | **X, the Ember Wastes** | Lava river, imps with sacks crossing a ledge | *"CIRCLE TEN! THE EMBER WASTES! NINE HUNDRED NINETY-NINE TO GO!"* | An imp carries a sack past, stops, looks at us, carries it back the way it came. Hero: *"...Great."* | the Shaft's first plunge |
+| 10 | **IX, the Cracked Road** | Black spires, glowing seams, the road splitting | *"CIRCLE NINE! THE CRACKED ROAD! KEEP TO THE ROAD!"* | The road cracks under the title card; the card falls off. | Floor 901 (with Video8 first) |
+| 11 | **VIII, the Rune Bridges** | Violet void, thin bridges, floating eyes | *"CIRCLE EIGHT! THE RUNE BRIDGES! PLEASE STAY ON THEM!"* | Every eye in the void turns to the card at once, then to us. | Floor 801 |
+| 12 | **VII, the Gloomwood** | Dead forest, torch lane, a Shade pacing | *"CIRCLE SEVEN! THE GLOOMWOOD! YOU'VE BEEN HERE BEFORE!"* | The same Shade crosses the card twice, identically, and the card hasn't moved. Hero: *"Same."* | Floor 701 |
+| 13 | **VI, the Mire** | Black water, tilted headstones, green lights | *"CIRCLE SIX! THE MIRE! IT'S A SWAMP! IT'S NOT A SLIME!"* | A ghost light drifts in: *"Over here! ...No, other here. Sorry."* | Floor 601 |
+| 14 | **V, the Caverns** | Pink-grey gum-stone, drool, breathing walls | *"CIRCLE FIVE! THE CAVERNS! HALFWAY! WELL DONE!"* | The cave inhales; the card slides toward the throat; it exhales; it slides back. | Floor 501 |
+| 15 | **IV, the Dead Peaks** | Moonlit crags, candle shrines, the Bell Tower far off | *"CIRCLE FOUR! THE DEAD PEAKS! MIND THE BELL!"* | The bell tolls; the card shakes; a candle goes out; a gargoyle opens one eye. | Floor 401 |
+| 16 | **III, the Bastion** | Iron-grey walls, banners, a closed gate | *"CIRCLE THREE! THE BASTION! EVERY GATE IS SHUT!"* | A portcullis drops over the card with a clang; a tiny hatch opens in it. | Floor 301 |
+| 17 | **II, the Keep** | Dungeon rows, hanging chains, torches | *"CIRCLE TWO! THE KEEP! HANDS WHERE WE CAN SEE THEM!"* | The card swings on a chain; a jailer fusses through two hundred keys for the right one. | Floor 201 |
+| 18 | **I, the Throne Stair** | Black glass stair, red inlay, a seam of daylight at the top | *"CIRCLE ONE! THE THRONE STAIR! ...HE'S EXPECTING YOU."* (the only one with no joke: a long hold on the seam of daylight; the draught lifts the card's edge) | | Floor 101 |
+
+Canon check: each Circle's biome, Warden and enemy family follow *The Circles* table and its section; the hero line is one of
+his stock one-liners; nothing in these asks a question the Story answers later.
+
+## Boss intro stings (30, 4-6 s each)
+
+A sting is a short clip that opens the boss's arena intro, before the boss bar fills: one hard shot of the boss, a line, the name
+card (`NAME` and `FLOOR n` in the HUD font) and a hit of sound. It uses the boss's `art/` sheets as the keyframe (`image.edit`
+for the pose), one `video.scene` of 4-6 s, the line (existing voice if the boss has one, else the announcer) and a shared
+stinger (`audio.sfx`, cents). **Warden stings are 6 s** with the Warden's theme's first bar; **floor-boss stings are 4 s**. The
+announcer's name call is the sting's last second and replaces the text banner so the fight starts on time. Placement: the
+level's intro sequence (`bossIntro`), once per save per boss.
+
+| Floor | Boss (entity) | Kind | Shot (the single beat) | Line |
+|---|---|---|---|---|
+| 991 | Imp Foreman (`impForeman`) | floor | Fat imp on his sack, whip cracking the air | Announcer: *"THE FOREMAN! HE'S VERY LARGE ABOUT IT!"* |
+| 951 | Pile Keeper (`pileKeeper`) | floor | Keeper rising out of the sack pile, diamonds sliding off him | Announcer: *"THE PILE KEEPER! SOMETHING IS MISSING!"* |
+| 901 | **Magma King** (`magmaKing`) | Warden | Slag throne, lava crown, he doesn't stand; one slow eye opens | King: *"Mm-hm-hm. ... Come up."* |
+| 891 | Road Breaker (`roadBreaker`) | floor | A slab of road smashing down the frame | Announcer: *"THE ROAD BREAKER! IT'S BROKEN. HE BROKE IT."* |
+| 851 | Carver (`carver`) | floor | A chisel carving the boss name into the wall; he stands back, pleased | Announcer: *"THE CARVER! HE'S SPELLED YOU WRONG!"* |
+| 801 | **Spire Fiend** (`spireFiend`) | Warden | The great spire; a gaunt face in the stone turns toward us, listening | Fiend (whisper): *"...There you are."* |
+| 791 | Keystone (`keystone`) | floor | A stone arch; a rune on its brow lights | Keystone: *"Load. ...Bearing."* |
+| 751 | Lamplighter (`lamplighter`) | floor | A hunched wraith on a pole lights a rune, then puts it out | Announcer: *"THE LAMPLIGHTER! LIGHTS ON! LIGHTS OFF!"* |
+| 701 | **Bridge Wraith** (`bridgeWraith`) | Warden | Hooded wraith, a lantern of blue runes, drifting over the void | Wraith: *"Mind the... oh. Do mind it."* |
+| 691 | Pathfinder (`pathfinder`) | floor | Huge pilgrim with a lantern walking a ring, passing the same post | Pathfinder: *"Is this the way? ...It's always the way."* |
+| 651 | Woodsman (`woodsman`) | floor | An axe falling on a tree that does not fall | Announcer: *"THE WOODSMAN! HE'S ALMOST DONE."* |
+| 601 | **Hollow King** (`hollowKing`) | Warden | A dead tree; yellow eyes open in the trunk; a crown of branches | Hollow King (hollow, faint): *"Again."* |
+| 591 | Gravedigger (`gravedigger`) | floor | A spade lifting earth under the camera | Gravedigger: *"Nearly done."* |
+| 551 | Ferryman (`ferryman`) | floor | A barge, a pole, a stern lantern | Announcer: *"THE FERRYMAN! NO PASSENGERS!"* |
+| 501 | **Drowned Queen** (`drownedQueen`) | Warden | Soaked hair parting over a weed-wound crown, green lights rising | Queen: *"Stay for the tide."* |
+| 491 | Baby Maw (`babyMaw`) | floor | A cub bouncing in a cradle of ribs, mouth open | Baby Maw: *"Maaa."* |
+| 451 | Grand Molar (`grandMolar`) | floor | A huge tooth grinding into frame | Announcer: *"THE GRAND MOLAR! IT'S A TOOTH! IT MOVES!"* |
+| 401 | **Mother Maw** (`motherMaw`) | Warden | The cave wall opens: teeth, drool, many small eyes | Maw: *"What's the matter, dear?"* |
+| 391 | Cantor (`cantor`) | floor | Gargoyle drawing breath; a bell note rings out | Announcer: *"THE CANTOR! TAKE A NOTE!"* |
+| 351 | Wax Abbot (`waxAbbot`) | floor | A kind abbot of wax, a candle on his head, dripping | Abbot: *"Bless... bless..."* |
+| 301 | **Bell Ringer** (`bellRinger`) | Warden | The cracked iron bell swings; candles on the monk's shoulders gutter | Announcer: *"THE BELL RINGER! THE BELL IS FOR YOU!"* |
+| 291 | Drill Sergeant (`drillSergeant`) | floor | A huge soldier mid-shout, rank behind him | Sergeant: *"Aaa-TEN-tion! ...Again!"* |
+| 251 | Battering Ram (`batteringRam`) | floor | The ram coming up a ramp on the shoulders of the garrison | Announcer: *"THE RAM! IT'S ALL OF THEM!"* |
+| 201 | **Gatekeeper** (`gatekeeper`) | Warden | A giant built like a gate; the portcullis visor lifts | Gatekeeper (formal): *"State your business. ...Denied."* |
+| 191 | Turnkey (`turnkey`) | floor | A wheel of keys swung overhead | Turnkey: *"It's one of these."* |
+| 151 | Oubliette Keeper (`oublietteKeeper`) | floor | Long pale arms and a lantern on a pole over a pit | Announcer: *"THE KEEPER! WATCH THE FLOOR!"* |
+| 101 | **Chain King** (`chainKing`) | Warden | Jailer king in chains, spike crown, keys at his belt, counting under his breath | Chain King: *"One. ...You're one."* |
+| 91 | Captain of the Guard (`guardCaptain`) | floor | A knight in a red cloak on a balcony, the draught lifting the cloak | Captain: *"Forgive me. It is the drill."* |
+| 51 | Gate Smith (`gateSmith`) | floor | A hammer falling on a door that is never finished | Announcer: *"THE GATE SMITH! HE'S ALMOST DONE!"* |
+| 1 | **The Overlord** (`overlord`) | Warden | The throne's back; the red eyes open; the door behind him is white | Overlord: *"Mm. ... You."* then *"Stay."* |
+
+Canon check: every name, floor and line matches *Floor bosses* in each Circle's section; the Overlord's two lines are the ones the
+`overlord` playtest already expects at his intro; nothing is a work joke (a Foreman, a Sergeant and a Captain are Hell's
+rank, not office). The Overlord's sting has no new reveal.
+
+## Shaft bridges (2)
+
+### Video19: Descent (~12 s, after Video2, before the Shaft's live plunge)
+
+**Idea.** Video2 ends in the lava river; the Shaft then plunges the camera past all ten Circles. The Descent is the film of that
+fall, so the plunge is the first thing the player sees *as Hell*, and every Circle gets one frame of its look and one gag: the same
+fall, ten times, faster. Hero falling, arms folded, unimpressed; the Circles slide past in order of the Story's table, each for about
+a second: the Meadow (grass, a hen), then Circle I down to Circle X. Hell is repetition: in every Circle the same small silhouette
+waves at him as he passes, identically.
+- 0-3 s: the portal's scorch mark closing, the hero tumbling in; 3-9 s: ten Circle strips streak past (keyframes of the ten biomes, 0.6 s each, `video.keyframes` between pairs); 9-12 s: the lava river rushes up; the card FLOOR 1,000 slams.
+- Hero (V.O.): *"Are we there yet."* Announcer: *"WELCOME TO THE BOTTOM!"* (the Shaft then says the rest of the line live.)
+- Sound: one rising whoosh, a tiny hen cluck; music cue from `audio.music`.
+
+### Video20: Ascent (~10 s, in the true ending between the Meadow's arrival and the sit)
+
+**Idea.** The true ending has the hero climb *through the closing light* to the Meadow. The Ascent is that climb: the Shaft in
+reverse, the ten Circles falling away beneath him in daylight (Circle I's stair, the Keep's chains slack, the Bastion's gates
+open, down to the Wastes' lava going dark), the Waystones going out one by one on the wall as he passes (the loop broke), and
+finally the green of the grass. No jokes, a quiet hold; Yooba's voice, from above, a long way off: *"...Is that him?"*
+- 0-6 s: the climb, Waystones darkening in order; 6-9 s: the daylight; 9-10 s: grass. Music: the Meadow's theme, finally in tune.
+- Plays once, only after SHUT IT; the funny ending has no ascent (nobody left).
+
+## Epilogues (2)
+
+### Video21: Knock (the true ending, ~50 s, after the credits)
+
+The Story's own epilogue idea ("Knock"), made into a plan. Painted like the portal scene, near-silent, nothing from Hell on screen.
+Plays after the credits; leads straight to the "FLOOR 1,001" card, which is its last shot (so the post-credit sting is this
+video's end, not a second clip).
+
+**Script.** *(Narration none. Lines: the Hero's `Not today.` and the voice behind the door, `...Hello?`, the hero's own word.)*
+
+| # | Time | Shot | Action / camera | Sound | Recipe |
+|---|---|---|---|---|---|
+| 1 | 0-6 | The meadow at dawn, ash on the grass | Time-lapse, the grass comes up in a green wave over the portal's scorch mark | Birds returning, wind | `video.scene` (Level 1's footage as the keyframe) |
+| 2 | 6-12 | Neighbours' huts, new thatch going onto the hero's, a row of hands | Diamonds in a heap on the fence, glinting | Thatch rustle, clink | `video.scene` |
+| 3 | 12-17 | The hero sitting on the grass against a fence post, eyes shut, visor up; Yooba asleep beside him, wobbling | Slow push in | Breathing, a gurgle | `video.keyframes` |
+| 4 | 17-21 | Close on a blade of grass, then a pebble beside it, trembling | Rack focus | One low thump | `video.scene` |
+| 5 | 21-27 | Three knocks from under the ground, a pause, a fourth, polite | Nobody moves; the hens look at the ground | Knocks (`audio.sfx`) | `video.scene` |
+| 6 | 27-32 | The hero opens one eye; orange glows in the visor | He looks at the ground a long beat | Held silence | `video.keyframes` |
+| 7 | 32-37 | He closes the eye; the orange goes out; Yooba burps a diamond | Hero (murmur): *"Not today."* | Burp (`audio.sfx`) | `video.scene` |
+| 8 | 37-44 | Cut to black; the white outline of a door drawn in the dark; a hand knocking; title FLOOR 1,001 | Hold | Knock, once | `video.keyframes` |
+| 9 | 44-50 | Black | A small tired voice: *"...Hello?"* | Voice only | audio |
+
+Music: none until shot 7, then one low piano note. Canon check: matches *True ending* steps 4-5 and the Acts table; the hero never
+rises (the funny ending is the other path); Yooba is a villager asleep, the diamonds are the village's.
+
+### Video22: Encore (the funny ending, ~36 s, replaces the credits' last beat before the cut to the Landing)
+
+The funny ending's credits are one long take of everyone sitting in the daylight; Encore is that take as a film, ending on the loop.
+It is the *funny* answer to Knock: the same quiet, but because there is nothing left to climb.
+
+**Script.** *(Lines: the Announcer, the hero, the Overlord, Yooba.)*
+
+| # | Time | Shot | Action / camera | Sound | Recipe |
+|---|---|---|---|---|---|
+| 1 | 0-5 | The throne room, the gate shut by itself, the diamonds in a pile at its foot | Slow pull back, nobody moving | Gate thunk, a clink | `video.scene` |
+| 2 | 5-12 | The hero in the throne, arms folded; the Overlord on the floor against its leg, the visor in his lap | Overlord: *"Mm. ... That's my chair."* Hero: *"Was."* | Lines | `video.keyframes` |
+| 3 | 12-22 | The Wardens arrive up the stair one by one and sit: the Magma King on a slab, the Spire Fiend on a step, the Bridge Wraith apologising, the Hollow King, the Drowned Queen, the Mother Maw small and shy, the Bell Ringer, the Gatekeeper sitting *correctly*, the Chain King counting them, the Imp Foreman on his sack | Pan along the row, each a one-second beat | Footsteps, chairs of stone | `video.scene` x3 + `video.compose` |
+| 4 | 22-27 | Yooba in the corner coughs a diamond into each lap, then looks at the pile | Yooba: *"Shop's open."* | Cough, clink | `video.scene` |
+| 5 | 27-31 | Announcer, to nobody: *"...THE CROWD DOESN'T KNOW WHAT TO DO."* | Held wide: everyone sits | Silence | `video.keyframes` |
+| 6 | 31-36 | Cut to the Landing: lava, the portal's flash | Announcer (rested, at full volume): *"WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO."* Hero (off-screen): *"...Great."* | The game's first lines | `video.compose` (re-uses Video2's lava footage) |
+
+Music: the Throne's theme in a lounge arrangement, ending on the Landing's drone. It has no knock and no Floor 1,001
+(the funny ending's rule), and the save then starts New Game+. Canon check: the Wardens in the queue are exactly Story.md's list.
+
+## What it all costs (`hawkesgen_estimate`, project `sickofit`, 2026-10-25, nothing started)
+
+Counts: 80 keyframes (`image.edit`), 58 `video.scene` shots, 12 `video.keyframes` shots, 16 `audio.music` tracks (10 title
+stings, 2 bridge cues, 2 epilogue tracks, 2 retakes), 4 table reads (`audio.dialogue`), 16 upscales (titles, bridges, epilogues).
+
+| Group | GPU work | GPU $ (before loads) | Notes |
+|---|---|---|---|
+| 10 Circle titles | 4.7 h | ~$8.7 | 3 keyframes + 2 shots + music + upscale each (~$0.87) |
+| 10 Warden stings | 2.2 h | ~$4.1 | 1 keyframe + 1 shot each (~$0.41) |
+| 20 floor-boss stings | 4.4 h | ~$8.1 | ~$0.40 each |
+| 2 Shaft bridges | 0.9 h | ~$1.7 | ~$0.87 each |
+| Knock | 2.1 h | ~$3.9 | 12 keyframes, 8 keyframe shots |
+| Encore | 1.9 h | ~$3.6 | 10 keyframes, 4 shots + 4 keyframe shots |
+| **Whole batch** | 17.2 h incl. 3,200 s of model loads and 480 s of boots | **$32.0 GPU + $1.0 API = $32.9** | **$37.9 with the 20-minute idle tail**; 8 servers, ~132 min wall |
+
+Plan for **about $50 all in** with the critic's retakes (two shots a clip on the ones that matter) and ±30% on the keyframe
+shots (`video.keyframes` has no job history: the tool's own guess). Part 1's four films are $18.3 on top, **about $68 for every
+lore and cinematic clip**. The boss lines not already recorded (about 25) are voice at cents each, no GPU. If J wants less:
+the 30 stings and the 10 titles are independent; the epilogues and bridges alone are ~$11 ($12 with the idle tail).

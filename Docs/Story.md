@@ -2211,6 +2211,12 @@ Level 13) and the Magma King's backstory (after Level 31). Scripts, shot lists, 
 prices are in [LoreVideos.md](LoreVideos.md); none is made yet. They keep the canon above: no Overlord origin (the
 late clues keep that), slimes are villagers, no office jokes.
 
+**The cinematic plan** (LoreVideos.md, Part 2, 2026-10-25) adds 10 Circle title cinematics (~8 s, on the Shaft as each Circle
+wakes), 30 boss intro stings (6 s for each Warden and the Overlord, 4 s for each floor boss, once per save in the arena
+intro), two Shaft bridges (the Descent after Video2, the Ascent in the true ending) and the two ending epilogues (*Knock* after
+the true ending, *Encore* closing the funny one). Scripts, shot lists, placement and prices (about $33, $38 with the idle tail)
+are there; none is made, the GPU waits for J.
+
 ## Teasers
 
 Teasers and trailers (`Marketing/`, made from the game's own art through Hawkes Gen) tell the prologue's edges, never
