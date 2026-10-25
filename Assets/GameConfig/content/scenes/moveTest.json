@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "seed": 1003,
+  "length": 120,
+  "floors": {
+    "start": 1000,
+    "end": 0,
+    "unitsPerFloor": 0.0,
+    "circle": "emberWastes",
+    "signs": false
+  },
+  "world": {
+    "camera": "Travel",
+    "travelLead": 1.2,
+    "followSharpness": 4.0,
+    "holdForPushes": false,
+    "path": [
+      {
+        "name": "up",
+        "direction": "Up",
+        "length": 14.0,
+        "turn": 2.5,
+        "spawns": [
+          { "entity": "ledge", "at": [-4.5, -2.45], "scale": [5.0, 1], "id": "start" }
+        ]
+      },
+      {
+        "name": "across",
+        "direction": "Right",
+        "length": 10.0,
+        "turn": 2.5,
+        "spawns": []
+      }
+    ]
+  },
+  "objective": { "text": "Dash through it. Kick up the shaft." },
+  "counters": [
+    { "name": "lavaSpeed", "value": 0.0 },
+    { "name": "lavaMax", "value": 0.0 }
+  ],
+  "rules": [
+    { "name": "a bolt at him", "when": { "type": "signal", "name": "mv:bolt" }, "do": [
+      { "type": "spawn", "entity": "projectileEnemy", "anchor": "Player", "at": [3.2, 0.05], "velocity": [-8.0, 0.0], "id": "moveBolt", "facePlayer": false }
+    ] },
+    { "name": "a shaft around him", "when": { "type": "signal", "name": "mv:walls" }, "do": [
+      { "type": "spawn", "entity": "wallSlab", "anchor": "Player", "at": [-1.5, 3.2], "id": "wallL", "facePlayer": false },
+      { "type": "spawn", "entity": "wallSlab", "anchor": "Player", "at": [1.5, 3.2], "id": "wallR", "facePlayer": false }
+    ] },
+    { "name": "heal", "when": { "type": "signal", "name": "mv:heal" }, "do": [
+      { "type": "heal", "target": { "player": true }, "amount": 5 }
+    ] }
+  ],
+  "phases": [
+    { "name": "bench", "onEnter": [] }
+  ]
+}

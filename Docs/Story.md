@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; the hero's moves, a dash and a wall-jump, 2026-10-25; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -1452,7 +1452,7 @@ is proud of). His voice is `yooba` (designed for him: fast, wet, gurgling, a bit
   both sides at once hides which one moved); to slow the shop further, raise prices, to speed it up, raise `loot`.
 - **Yooba's new goods and the new Grudges** (2026-10-25; `Gameplay/Core/HeroPerks.cs`, `ShopEffect` Armor..LastGasp, `UpgradeDef.perksPerLevel`). More things a slime can make out of his stomach, 21 goods (7 of them gated) and 10 Grudges, all small
   effects with something to see: a *POP!*, *CLANK!*, *SLIPPED!*, *CRIT!*, *+1 BURP*, *BELCH!* or *LAST GASP!* floats over the hero. Totals are constant for a floor; what is spent (bubbles, bombs, gasps, plates) is saved state; every chance is a hash of the seed and the moment, so a rewind replays the same.
-  Prices follow the curve Goo Plaster set: the first level's price times 1, 2.2, 3.6, 5.8, 8.4, rounded to 5 (`ShopGoodsTests`). The new goods add **7,125** diamonds (10,600 for the whole counter; the older goods stay 3,475).
+  Prices follow the curve Goo Plaster set: the first level's price times 1, 2.2, 3.6, 5.8, 8.4, rounded to 5 (`ShopGoodsTests`). The new goods add **7,125** diamonds (10,690 for the whole counter; the older goods are 3,565, the Slimed Lining included).
 
   | Good (card tag) | Levels | Prices | What it does |
   |---|---|---|---|
@@ -2014,6 +2014,35 @@ plays instead; no clips are cast for either).
 
 **The hero's climb on the ladder** is three clips (generated, `art/hero.json`): `ClimbIdle` (hanging on the rungs, bored), `Climb`
 (going up, hand over hand) and `ClimbDown` (the same, going down).
+
+## The hero's moves (a shove and a kick)
+
+Hell is repetition, and by Floor 998 the hero has been hit by the same bolt often enough to have opinions about it. Two things he
+learns to do about it, both small, both his own (2026-10-25). Neither makes him a hero; they make him a man who is slightly harder to hit and
+slightly better at leaving.
+
+**The dash (Yooba's Slimed Lining).** The slime does the work. Once the hero has lost the launcher on Floor 998 and has nothing left to
+hide behind, Yooba puts a slick of himself in the inside of the coat: shove off the floor and the coat carries him a few steps (2.6 units, a
+sixth of a second) with nothing able to touch him while it does, bolts included: they pass through and fly on. Then it needs a moment to dry (0.9
+seconds). One dash in the air before he lands. It is sold in Yooba's shop for 90 diamonds once Floor 998 is cleared (`requires level:4`). He pushes
+it with **Shift**, the **Dash** button on touch (a chip under the weapon chip; it says READY or the seconds to wait) or the gamepad's B; the
+way the stick points, or the way he faces. The hero's line the first time: *"Oh. It slides. Nobody said it slides."* Yooba's when it is bought:
+*"Slimed Lining! Shove off and whoosh! Mind the coat. It's still a bit me."*
+
+**The wall-jump (a story moment).** Nobody sells this one: he works it out. The moment Floor 996 is cleared (lava falls, geysers, walls that
+look worse than they are) the next floor's start gives it to him with a line, *"Walls. Hell has plenty. I could kick off one."* From then on,
+in the air, pushing into a solid wall (the level's walls, a solid slab; never a one-way ledge) makes him cling and slide down it slowly (1.3 units
+a second at most, the hands are not made for it), and Jump kicks him off, up and away from the wall (up 9, away 5.2, the stick ignored for a fifth of
+a second so he leaves it); a kick refills his air dash. Kicking from wall to wall climbs a shaft. First cling: *"A hot wall. Sure. I'll hold on to that."*
+
+Both moves are unlocked **for good** (`UnlockFlags` `move:dash`, `move:wallJump`, cleared with New Game; a rewind never takes them back, like a found weapon).
+What rewind restores of them is their state: the dash's burst, its untouchable moment and its cooldown, the air charge, the wall he clings to and the kick's push
+(`GameplayWorld` saves `PlayerController.MoveState`, because the controller's own flags are not recorded). The announcer has nothing to say about either:
+he is busy, and neither is a boss. Where the moves are *needed* (a shaft floor, a gap that only a dash crosses) is written per floor, with its reason here first; so far they
+are optional, and the bench `content/scenes/moveTest.json` (playtests `dash`, `wall-jump`, `hero-moves`) is the only place with a shaft.
+
+Art: the hero's `Dash`, `WallSlide` and `WallJump` clips are specified in `Assets/GameConfig/art/hero.json` (not generated; priced, GPU not approved). Until then they play
+placeholders from the existing sheets (`Walk`, `Grabbed`, `Jump`). Sounds are made: `player_dash`, `player_dash_ready`, `player_wall_cling`, `player_wall_jump`.
 
 ## The bosses' second look (six fights, 2-4 minutes, a crowd)
 

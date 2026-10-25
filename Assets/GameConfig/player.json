@@ -153,6 +153,39 @@
         "loop": true,
         "events": [],
         "speed": 1.0
+      },
+      {
+        "stateName": "Dash",
+        "spriteSheet": "Art/Sprites/Player/Walk.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 30,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "WallSlide",
+        "spriteSheet": "Art/Sprites/Player/Grabbed.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 8,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "WallJump",
+        "spriteSheet": "Art/Sprites/Player/Jump.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 16,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
       }
     ],
     "transitions": [
@@ -269,6 +302,33 @@
     "length": 0.16,
     "width": 0.004,
     "sortingOrder": -1
+  },
+  "moves": {
+    "dash": {
+      "enabled": true,
+      "unlockFlag": "move:dash",
+      "unlockWhen": [],
+      "distance": 2.6,
+      "duration": 0.16,
+      "invulnerableSeconds": 0.26,
+      "cooldown": 0.9,
+      "airDashes": 1,
+      "keys": ["LeftShift", "RightShift"],
+      "firstLine": "vo_hero_dash_first"
+    },
+    "wallJump": {
+      "enabled": true,
+      "unlockFlag": "move:wallJump",
+      "unlockWhen": ["level:6"],
+      "slideSpeed": 1.3,
+      "kickSpeed": 5.2,
+      "kickUp": 9.0,
+      "kickLockSeconds": 0.2,
+      "wallCheckDistance": 0.12,
+      "coyoteSeconds": 0.1,
+      "firstLine": "vo_hero_wall_first",
+      "unlockLine": "vo_hero_wall_unlock"
+    }
   },
   "colliderRadius": 0.3,
   "hasInvincibilityFrames": true,
@@ -648,6 +708,16 @@
       "maxLevel": 2,
       "effect": "LastGasp",
       "amountPerLevel": 1
+    },
+    {
+      "id": "slimedLining",
+      "title": "Slimed Lining",
+      "description": "Yooba slimed the inside of your coat. Shove off and slide a few steps, untouchable for a blink. Shift (or the Dash button). It takes a moment to dry.",
+      "costsPerLevel": [90],
+      "maxLevel": 1,
+      "effect": "Dash",
+      "amountPerLevel": 1,
+      "requires": ["level:4"]
     }
   ]
 }

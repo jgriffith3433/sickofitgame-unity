@@ -43,7 +43,7 @@ namespace SickOfIt.Combat.Health
         public int CurrentHealth => currentHealth;
         public int MaxHealth => maxHealth;
         public bool IsAlive => currentHealth > 0;
-        public bool IsInvincible => invincibilityTimer > 0 || deathUndoGraceTimer > 0;
+        public bool IsInvincible => invincibilityTimer > 0 || deathUndoGraceTimer > 0 || (controller != null && controller.DashInvulnerable);
         public float InvincibilityTimer => Mathf.Max(invincibilityTimer, deathUndoGraceTimer);
 
         /// <summary>

@@ -775,6 +775,9 @@ namespace SickOfIt.Gameplay.Content
                 return;
             if (onlyHitLiving && other.MaxHealth <= 0)
                 return;
+            // The hero's dash goes through shots untouched: the shot flies on.
+            if (other.Phased)
+                return;
             int amount = Mathf.RoundToInt((Owner.DamageOverride > 0 ? Owner.DamageOverride : damage) * Owner.DamageMultiplier);
             if (other.Damage(amount, Owner))
                 other.Knockback(Owner.Body.linearVelocity.normalized * knockback);

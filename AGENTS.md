@@ -131,6 +131,10 @@ Assets/GameConfig/
   Characters, from the main menu and the pause menu. Entity field `note` is the hero's line; the weakness is the `hint`. Met and killed
   tallies are `CodexProgress` (by `displayName`, once per creature, cleared by New Game) and the known set is shared with `EnemyHints`.
   An unmet entry is `???` and a black silhouette. Playtest `codex` (run it on a 1920x1080 and a 1080x1920 device).
+- **The hero's moves** (Docs/Story.md "The hero's moves", cookbook "The hero's moves"): player.json `moves` (`HeroMovesConfig`): a **dash** (Shift / gamepad B / the HUD chip `GameplayHud.Dash.cs`; a flat burst, `DashInvulnerable`
+  through `PlayerHealth.IsInvincible`, hostile shots pass a phased hero: `Entity.Phased`) and a **wall-jump** (cling and slide on solid walls in the air, Jump kicks off). Locked until unlocked, for good, by `UnlockFlags` `move:dash` /
+  `move:wallJump`: Yooba's Slimed Lining (`ShopEffect.Dash`, `requires level:4`) and the story (`unlockWhen level:6`), armed by `Gameplay/Core/HeroMoves.cs`. The controller's flags are not rewound, so the timers are
+  `PlayerController.MoveState`, saved by `GameplayWorld.SaveState` (`HeroMoves`). Bench `content/scenes/moveTest.json`, entity `wallSlab`; playtests `dash`, `wall-jump`, `hero-moves` (`SickOfItPlaytest.Moves.cs`).
 - **Ladders** (Docs/Story.md "Ladders", cookbook "Ladders"): entity ability `ladder` (`content/entities/ladder.json`, a tall zone; `scale` stretches it). Up
   grabs, down from its top grabs, up/down climb, Jump lets go, climbing off the top steps out; guns at `fireRate` (0.55) while held. The hold is the ladder's
   (`holding` saved), applied through `GameplayWorld.HoldPlayerClimbing` -> `PlayerController.HoldClimbing` (`IsClimbing`, `ClimbPose`): the controller's own flags are

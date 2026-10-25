@@ -90,6 +90,10 @@ namespace SickOfIt.Data.Config
         public string playerShoot = "player_shoot";
         public string playerJump = "player_jump";
         public string playerLand = "player_land";
+        public string playerDash = "player_dash";
+        public string playerDashReady = "player_dash_ready";
+        public string playerWallCling = "player_wall_cling";
+        public string playerWallJump = "player_wall_jump";
         public string playerHurt = "player_hurt";
         public string playerDie = "player_die";
         public string enemyHurt = "enemy_hurt";
