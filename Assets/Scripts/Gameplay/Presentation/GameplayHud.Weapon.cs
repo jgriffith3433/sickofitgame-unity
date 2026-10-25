@@ -8,8 +8,8 @@ using SickOfIt.Gameplay.Content;
 namespace SickOfIt.Gameplay
 {
     /// <summary>
-    /// The weapon button: the equipped weapon's name (and its ammo) on a pill under the rewind button, a thumb-sized
-    /// button in portrait. Pressing it (mouse or touch) equips the next weapon he holds; Q / the mouse wheel / the
+    /// The weapon button: the equipped weapon's name (and its ammo) in a pause-button-sized pill under the rewind button, thumb-sized
+    /// in portrait. Pressing it (mouse or touch) equips the next weapon he holds; Q / the mouse wheel / the
     /// gamepad do the same. Presentation only: it reads the weapons' saved state and asks them to switch.
     /// </summary>
     public sealed partial class GameplayHud
@@ -26,8 +26,6 @@ namespace SickOfIt.Gameplay
         /// <summary>How many times the chip played its switch animation, and how long ago the last one began (the playtest reads both).</summary>
         public int WeaponSwaps { get; private set; }
         public float WeaponSwapAge => Time.unscaledTime - weaponSwapAt;
-
-        static string WeaponKeyText => Application.isMobilePlatform ? "Tap: switch" : "Q: switch";
 
         /// <summary>The weapon chip's current text (the playtest reads what the player sees).</summary>
         public string WeaponText => weaponButton != null ? weaponButton.Label.text : "";
@@ -69,7 +67,7 @@ namespace SickOfIt.Gameplay
                 },
                 label = new MenuTextStyle
                 {
-                    fontSize = 34f,
+                    fontSize = 24f,
                     color = new Color(1f, 0.96f, 0.84f, 1f),
                     outlineColor = ink,
                     outlineWidth = 0.2f,
@@ -134,12 +132,13 @@ namespace SickOfIt.Gameplay
             shownHeld = weapons.HeldCount;
             string text = def.displayName.ToUpperInvariant();
             if (ammo >= 0)
-                text += $"  {ammo}/{weapons.CurrentCapacity}";
-            if (weapons.HeldCount > 1)
-                text += $"\n<size=60%>{WeaponKeyText}</size>";
+                text += $"\n{ammo}/{weapons.CurrentCapacity}";
             shownWeapon = text;
             weaponButton.SetText(text);
             weaponButton.Label.enableVertexGradient = false;
+            weaponButton.Label.enableAutoSizing = true;
+            weaponButton.Label.fontSizeMin = 10f;
+            weaponButton.Label.fontSizeMax = 26f;
             weaponButton.Label.color = Color.Lerp(def.color, Color.white, 0.35f);
         }
 
