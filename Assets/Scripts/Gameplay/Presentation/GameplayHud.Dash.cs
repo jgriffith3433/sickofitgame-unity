@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using SickOfIt.Core.UI.Menus;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Gameplay
 {
