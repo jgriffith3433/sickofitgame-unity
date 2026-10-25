@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "seed": 5151,
+  "length": 120,
+  "objective": { "text": "Weapon looks: seven weapons, swapped in his hands" },
+  "phases": [
+    {
+      "name": "bench",
+      "onEnter": [
+        { "type": "heal", "target": { "player": true }, "amount": 5 }
+      ],
+      "rules": [
+        { "name": "give the rest", "when": { "type": "signal", "name": "look:all" }, "do": [
+          { "type": "giveWeapon", "weapon": "fists", "equip": false, "announce": false },
+          { "type": "giveWeapon", "weapon": "spitfire", "equip": false, "announce": false },
+          { "type": "giveWeapon", "weapon": "ricochetPistol", "equip": false, "announce": false },
+          { "type": "giveWeapon", "weapon": "chainWhip", "equip": false, "announce": false },
+          { "type": "giveWeapon", "weapon": "shotgun", "equip": false, "announce": false },
+          { "type": "giveWeapon", "weapon": "boomerangHalo", "equip": false, "announce": false },
+          { "type": "giveWeapon", "weapon": "slagLadle", "equip": false, "announce": false }
+        ] },
+        { "name": "the launcher is taken", "when": { "type": "signal", "name": "look:take" }, "do": [
+          { "type": "takeWeapon", "weapon": "rocketLauncher", "announce": false }
+        ] },
+        { "name": "the launcher comes back", "when": { "type": "signal", "name": "look:return" }, "do": [
+          { "type": "giveWeapon", "weapon": "rocketLauncher", "equip": true, "announce": false }
+        ] }
+      ]
+    }
+  ]
+}

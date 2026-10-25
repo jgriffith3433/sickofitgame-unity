@@ -68,6 +68,7 @@ namespace SickOfIt.Gameplay
         public IReadOnlyList<string> Held => owned;
         public int HeldCount => owned.Count;
         public bool Has(string id) => owned.Contains(id);
+        public bool Holds(string id) => owned.Contains(id);
 
         /// <summary>The equipped weapon's definition (null if the content has none).</summary>
         public WeaponDef CurrentDef => world.Content.Weapons.TryGetValue(current, out var def) ? def : null;
@@ -85,6 +86,7 @@ namespace SickOfIt.Gameplay
         public float SwingWindupProgress(float now) => hitAt > swingStart ? Mathf.Clamp01((now - swingStart) / (hitAt - swingStart)) : 1f;
         public Vector2 SwingDirection => new Vector2(swingDirX, swingDirY);
         public int SwingStep => swingStep;
+        public void SwingTimes(out float start, out float hit, out float end) { start = swingStart; hit = hitAt; end = swingEnd; }
         public MeleeStepDef SwingStepDef
         {
             get
@@ -127,6 +129,7 @@ namespace SickOfIt.Gameplay
                 useSound = def.sounds.use,
                 aimGuide = def.aimGuide.show,
                 aimGuideLength = def.aimGuide.length,
+                look = def.look.Built(),
             };
             return true;
         }

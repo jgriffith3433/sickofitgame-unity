@@ -56,5 +56,90 @@
   },
   "pickup": "chainWhipPickup",
   "heroText": "He won't be needing this. Finally, something with reach.",
-  "heroLine": "vo_wpn_whip"
+  "heroLine": "vo_wpn_whip",
+  "look": {
+    "parts": [
+      {
+        "offset": [
+          0.06,
+          0.0
+        ],
+        "size": [
+          0.18,
+          0.08
+        ],
+        "color": "#6B4A2B"
+      },
+      {
+        "offset": [
+          0.2,
+          0.04
+        ],
+        "size": [
+          0.07,
+          0.07
+        ],
+        "color": "#9AA0A6",
+        "angle": 45
+      },
+      {
+        "offset": [
+          0.29,
+          -0.01
+        ],
+        "size": [
+          0.07,
+          0.07
+        ],
+        "color": "#9AA0A6",
+        "angle": 45
+      },
+      {
+        "offset": [
+          0.38,
+          0.05
+        ],
+        "size": [
+          0.07,
+          0.07
+        ],
+        "color": "#9AA0A6",
+        "angle": 45
+      },
+      {
+        "offset": [
+          0.47,
+          0.0
+        ],
+        "size": [
+          0.07,
+          0.07
+        ],
+        "color": "#9AA0A6",
+        "angle": 45
+      },
+      {
+        "offset": [
+          0.57,
+          0.06
+        ],
+        "size": [
+          0.13,
+          0.12
+        ],
+        "color": "#D8DDE2",
+        "angle": 45
+      }
+    ],
+    "muzzle": [
+      0.66,
+      0.06
+    ],
+    "flash": "#E8EEF2",
+    "flashSize": [
+      0.22,
+      0.08
+    ],
+    "kick": 0.12
+  }
 }

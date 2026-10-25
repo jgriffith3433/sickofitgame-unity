@@ -1,0 +1,24 @@
+{
+ "width": 1280,
+ "height": 704,
+ "fps": 24,
+ "clips": [
+  {
+   "file": "videos/market-day/out/animatic.mp4",
+   "in": 0,
+   "out": 34.17,
+   "beat": "all",
+   "label": "animatic (game art + ffmpeg)"
+  }
+ ],
+ "audio": [
+  {
+   "asset": "a_fb9909d05584f242",
+   "start": 0,
+   "seconds": 34.17,
+   "dialogue": true,
+   "label": "table read"
+  }
+ ],
+ "captions": []
+}

@@ -17,6 +17,7 @@
     "punchHit": "lunging forward, right gauntlet fully extended, body low and twisted into the punch, armour seams flaring",
     "punchHook": "left gauntlet swinging round in a wide hook, shoulders turned",
     "punchUpper": "rising on his toes with a gauntlet driving upward in an uppercut",
+    "unarmedStand": "standing relaxed in his armour with empty open gauntlets, the launcher slung on his back, bored under the helm",
     "launcherHeld": "holding the rocket launcher on his shoulder, ready to fire",
     "launcherGone": "armoured hands empty and open at his sides, helm tilted down to stare flatly at them",
     "dashLean": "leaning hard forward mid-sprint in his armour, one leg stretched back, maroon cloth streaming behind",
@@ -33,14 +34,51 @@
     "climbHang": "side view, one gauntlet raised gripping, the other low, one knee lifted high, launcher slung across his back, leaning in; no ladder drawn (the game draws it)"
   },
   "clips": {
+    "unarmedIdle": {
+      "from": "unarmedStand",
+      "action": "stands with empty gauntlets, shifts his weight and sighs under the helm, launcher slung on his back",
+      "seconds": 1.2,
+      "state": "UnarmedIdle",
+      "loop": true,
+      "wired": "standIn",
+      "standIn": "Idle.png"
+    },
+    "unarmedWalk": {
+      "from": "unarmedStand",
+      "action": "walks in his armour with empty swinging gauntlets, launcher slung on his back, cloth swaying",
+      "seconds": 1,
+      "state": "UnarmedWalk",
+      "loop": true,
+      "wired": "standIn",
+      "standIn": "Walk.png"
+    },
+    "unarmedJump": {
+      "from": "unarmedStand",
+      "action": "jumps up in his armour, empty gauntlets thrown up, launcher slung on his back",
+      "seconds": 0.5,
+      "state": "UnarmedJump",
+      "loop": false,
+      "wired": "standIn",
+      "standIn": "Jump.png"
+    },
+    "unarmedFall": {
+      "from": "unarmedStand",
+      "action": "falls in his armour, empty gauntlets flailing, launcher slung on his back, cloth streaming up",
+      "seconds": 0.6,
+      "state": "UnarmedFall",
+      "loop": true,
+      "wired": "standIn",
+      "standIn": "Fall.png"
+    },
     "punch1": {
-      "from": "punchWind",
+      "from": "unarmedStand",
       "action": "throws a quick right jab with his gauntlet, then shakes out his hand",
       "seconds": 0.6,
       "to": "stand",
       "state": "Punch1",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Fire.png"
     },
     "punch2": {
       "from": "punchWind",
@@ -49,7 +87,8 @@
       "to": "stand",
       "state": "Punch2",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Fire.png"
     },
     "punch3": {
       "from": "punchWind",
@@ -58,7 +97,8 @@
       "to": "stand",
       "state": "Punch3",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Fire.png"
     },
     "launcherAway": {
       "from": "launcherHeld",
@@ -67,7 +107,8 @@
       "to": "launcherGone",
       "state": "LauncherTaken",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Grabbed.png"
     },
     "equipLauncher": {
       "from": "launcherGone",
@@ -76,7 +117,8 @@
       "to": "launcherHeld",
       "state": "EquipLauncher",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Curious.png"
     },
     "equipFists": {
       "from": "stand",
@@ -85,7 +127,8 @@
       "to": "punchWind",
       "state": "EquipFists",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Shout.png"
     },
     "dash": {
       "from": "stand",

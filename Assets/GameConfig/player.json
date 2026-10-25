@@ -263,6 +263,116 @@
         "loop": false,
         "events": [],
         "speed": 1.0
+      },
+      {
+        "stateName": "UnarmedIdle",
+        "spriteSheet": "Art/Sprites/Player/Idle.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "UnarmedWalk",
+        "spriteSheet": "Art/Sprites/Player/Walk.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 15,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "UnarmedJump",
+        "spriteSheet": "Art/Sprites/Player/Jump.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "UnarmedFall",
+        "spriteSheet": "Art/Sprites/Player/Fall.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": true,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Punch1",
+        "spriteSheet": "Art/Sprites/Player/Fire.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 30,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Punch2",
+        "spriteSheet": "Art/Sprites/Player/Fire.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 30,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Punch3",
+        "spriteSheet": "Art/Sprites/Player/Fire.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 30,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "LauncherTaken",
+        "spriteSheet": "Art/Sprites/Player/Grabbed.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "EquipLauncher",
+        "spriteSheet": "Art/Sprites/Player/Curious.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "EquipFists",
+        "spriteSheet": "Art/Sprites/Player/Shout.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
       }
     ],
     "transitions": [

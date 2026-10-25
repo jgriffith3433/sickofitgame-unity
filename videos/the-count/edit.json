@@ -1,0 +1,24 @@
+{
+ "width": 1280,
+ "height": 704,
+ "fps": 24,
+ "clips": [
+  {
+   "file": "videos/the-count/out/animatic.mp4",
+   "in": 0,
+   "out": 26.75,
+   "beat": "all",
+   "label": "animatic (game art + ffmpeg)"
+  }
+ ],
+ "audio": [
+  {
+   "asset": "a_cffed524ee7af408",
+   "start": 0,
+   "seconds": 26.75,
+   "dialogue": true,
+   "label": "table read"
+  }
+ ],
+ "captions": []
+}

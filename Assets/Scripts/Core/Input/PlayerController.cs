@@ -547,6 +547,8 @@ namespace SickOfIt.Core.Input
         
         private void Start()
         {
+            if (!TryGetComponent(out HeldWeaponProp _))
+                gameObject.AddComponent<HeldWeaponProp>();
             // Apply roguelite jump upgrades
             if (useRogueliteJumps)
             {
@@ -604,7 +606,9 @@ namespace SickOfIt.Core.Input
             HandleWeaponSwitch();
             HandleFiring();
             UpdateRotationTarget();
+            UpdateSwapClip();
             UpdateMovePose();
+            UpdateUnarmedPose();
             UpdateAnimator();
             UpdateShadow();
         }
@@ -1597,12 +1601,144 @@ namespace SickOfIt.Core.Input
             return true;
         }
 
+        // With the fists equipped he has no launcher in his hands: the Unarmed* locomotion states (player.json; stand-in sheets until
+        // the Hawkes Gen clips are made) replace Idle/Walk/Jump/Fall, and each swing plays its combo step's Punch1/2/3 clip, stretched
+        // over the swing so its middle falls on the hit (PlayerWeapons times the swing; its state is rewound, so this follows it).
+        private static readonly string[] PunchStates = { "Punch1", "Punch2", "Punch3" };
+        private string unarmedPose;
+        private float unarmedSwingStart = -1f;
+
+        /// <summary>The unarmed state playing now (UnarmedIdle/Walk/Jump/Fall, Punch1-3) or null while he holds a gun; a playtest reads it.</summary>
+        public string UnarmedPose => unarmedPose;
+
+        private void UpdateUnarmedPose()
+        {
+            if (swapPose != null)
+                return;
+            string want = null;
+            float swingStart = -1f, swingHit = 0f, swingEnd = 0f;
+            if (animator != null && !IsClimbing && heroClip == null && movePose == null
+                && Armory != null && Armory.TryGetCurrent(out var weapon) && weapon.melee)
+            {
+                float now = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+                if (Armory.Swinging(now))
+                {
+                    Armory.SwingTimes(out swingStart, out swingHit, out swingEnd);
+                    want = PunchStates[Mathf.Clamp(Armory.SwingStep, 0, PunchStates.Length - 1)];
+                }
+                else if (!isGrounded)
+                    want = rb != null && rb.linearVelocity.y * gravitySign > 0.1f ? "UnarmedJump" : "UnarmedFall";
+                else
+                    want = IsWalkingOnGround() ? "UnarmedWalk" : "UnarmedIdle";
+            }
+            if (want == unarmedPose && swingStart == unarmedSwingStart)
+                return;
+            bool wasUnarmed = unarmedPose != null;
+            unarmedPose = want;
+            unarmedSwingStart = swingStart;
+            if (want == null)
+            {
+                if (wasUnarmed && animator != null && heroClip == null && movePose == null && !IsClimbing)
+                    PlayAnimatorState(isGrounded ? "Idle" : "Fall");
+                return;
+            }
+            if (!PlayAnimatorState(want))
+            {
+                unarmedPose = null;
+                return;
+            }
+            if (swingStart >= 0f && TryGetComponent(out PlayerSceneClip clip))
+                clip.FitTo(swingEnd - swingStart);
+        }
+
+        // Swapping weapons plays a clip over the Animator (player.json states; stand-in sheets until the Hawkes Gen clips are made, art/hero.json):
+        // LauncherTaken when the launcher leaves his hands (Floor 998), EquipLauncher when it comes back to the shoulder, EquipFists when he slings it
+        // and takes up the fists. Other weapons have no swap clip; their prop (HeldWeaponProp) changes instead. Presentation only: it reads the armory,
+        // never plays during a rewind (the weapon just is what it was) and a shot, a swing or a dash cuts it short.
+        private string swapPose;
+        private float swapUntil;
+        private string seenWeapon;
+        private bool seenLauncher = true;
+
+        /// <summary>The swap clip playing now (LauncherTaken, EquipLauncher, EquipFists) or null; a playtest reads it.</summary>
+        public string SwapPose => swapPose;
+        /// <summary>Swap clips started so far, and the last one's name.</summary>
+        public int SwapsPlayed { get; private set; }
+        public string LastSwap { get; private set; }
+
+        /// <summary>False while a clip or scene owns his sprite, so the weapon prop is hidden.</summary>
+        public bool PropVisible => animator != null && heroClip == null && !IsClimbing && swapPose == null && !Suspended;
+
+        /// <summary>Where he aims now: the stick or mouse while firing, otherwise the way he faces.</summary>
+        public Vector2 AimDirection => isFiring && fireDirection.sqrMagnitude > 0.0001f ? fireDirection.normalized : FacingRight ? Vector2.right : Vector2.left;
+
+        private static float SwapSeconds(string clip) => clip == "LauncherTaken" ? 1.5f : 1f;
+
+        private void UpdateSwapClip()
+        {
+            if (Armory == null || animator == null)
+                return;
+            string id = Armory.CurrentId;
+            bool hasLauncher = Armory.Holds("rocketLauncher");
+            if (seenWeapon == null)
+            {
+                seenWeapon = id;
+                seenLauncher = hasLauncher;
+            }
+            else if (id != seenWeapon || hasLauncher != seenLauncher)
+            {
+                string from = seenWeapon;
+                bool hadLauncher = seenLauncher;
+                seenWeapon = id;
+                seenLauncher = hasLauncher;
+                bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
+                string clip = null;
+                if (hadLauncher && !hasLauncher)
+                    clip = "LauncherTaken";
+                else if (id == "rocketLauncher" && from != "rocketLauncher")
+                    clip = "EquipLauncher";
+                else if (id == "fists" && from != "fists")
+                    clip = "EquipFists";
+                if (clip != null && !rewinding && !IsClimbing && heroClip == null && PlayAnimatorState(clip))
+                {
+                    swapPose = clip;
+                    swapUntil = Time.time + SwapSeconds(clip);
+                    movePose = null;
+                    unarmedPose = null;
+                    unarmedSwingStart = -1f;
+                    runFirePlaying = false;
+                    SwapsPlayed++;
+                    LastSwap = clip;
+                    if (TryGetComponent(out PlayerSceneClip playing))
+                        playing.FitTo(SwapSeconds(clip));
+                }
+            }
+            if (swapPose != null && (Time.time >= swapUntil || heroClip != null || IsClimbing))
+                CancelSwap();
+        }
+
+        private void CancelSwap()
+        {
+            if (swapPose == null)
+                return;
+            swapPose = null;
+            if (animator != null && heroClip == null && !IsClimbing)
+                PlayAnimatorState(isGrounded ? "Idle" : "Fall");
+        }
+
         // The Dash, WallSlide and WallJump clips (player.json states; stand-in sheets until the Hawkes Gen clips are made) play over the Animator while the move lasts.
         private void UpdateMovePose()
         {
             if (animator == null || IsClimbing || heroClip != null)
                 return;
             float now = MoveNow;
+            if (swapPose != null)
+            {
+                if (now < dashEnd || now < kickPoseUntil)
+                    CancelSwap();
+                else
+                    return;
+            }
             string pose = now < dashEnd ? "Dash" : now < kickPoseUntil ? "WallJump" : IsWallClinging ? "WallSlide" : null;
             if (pose == movePose)
                 return;
@@ -1667,7 +1803,10 @@ namespace SickOfIt.Core.Input
             VolleysFired++;
             lastVolley.Clear();
             lastVolley.Add(direction.normalized);
-            PlayFireAnimation();
+            CancelSwap();
+            UpdateUnarmedPose();
+            if (unarmedPose == null)
+                PlayFireAnimation();
         }
 
         /// <summary>Switch weapon: Q or the mouse wheel on the keyboard, the gamepad's top button and left shoulder; the HUD's weapon button on touch.</summary>
@@ -1934,6 +2073,7 @@ namespace SickOfIt.Core.Input
         /// </summary>
         private void PlayFireAnimation()
         {
+            CancelSwap();
             if (animator != null && IsWalkingOnGround() && animator.HasState(0, WalkStateHash))
                 return;
             if (animator != null && animator.HasState(0, FireStateHash))
@@ -1986,7 +2126,7 @@ namespace SickOfIt.Core.Input
                 UpdateClimbPose();
                 return;
             }
-            if (movePose != null)
+            if (movePose != null || unarmedPose != null || swapPose != null)
             {
                 runFirePlaying = false;
                 return;

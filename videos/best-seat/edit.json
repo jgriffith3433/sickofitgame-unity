@@ -1,0 +1,24 @@
+{
+ "width": 1280,
+ "height": 704,
+ "fps": 24,
+ "clips": [
+  {
+   "file": "videos/best-seat/out/animatic.mp4",
+   "in": 0,
+   "out": 45.63,
+   "beat": "all",
+   "label": "animatic (game art + ffmpeg)"
+  }
+ ],
+ "audio": [
+  {
+   "asset": "a_b7d1dfbc6d76a044",
+   "start": 0,
+   "seconds": 45.63,
+   "dialogue": true,
+   "label": "table read"
+  }
+ ],
+ "captions": []
+}

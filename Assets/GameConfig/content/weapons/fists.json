@@ -16,5 +16,52 @@
       { "name": "hook", "damage": 2, "reach": 1.4, "windup": 0.12, "recovery": 0.3, "knockback": 5.0, "arc": 150.0, "size": 1.5 }
     ]
   },
-  "sounds": { "use": "punch_swing", "hit": "punch_hit", "equip": "wpn_equip_fists" }
+  "sounds": { "use": "punch_swing", "hit": "punch_hit", "equip": "wpn_equip_fists" },
+  "look": {
+    "parts": [
+      {
+        "offset": [
+          0.34,
+          0.06
+        ],
+        "size": [
+          0.17,
+          0.17
+        ],
+        "color": "#D9A441"
+      },
+      {
+        "offset": [
+          0.38,
+          0.06
+        ],
+        "size": [
+          0.04,
+          0.17
+        ],
+        "color": "#6B5420"
+      },
+      {
+        "offset": [
+          0.12,
+          -0.1
+        ],
+        "size": [
+          0.15,
+          0.15
+        ],
+        "color": "#B8892F"
+      }
+    ],
+    "muzzle": [
+      0.5,
+      0.06
+    ],
+    "flash": "#FFE0A0",
+    "flashSize": [
+      0.3,
+      0.22
+    ],
+    "kick": 0.16
+  }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using SickOfIt.Core.Input;
 using SickOfIt.Json;
 
 namespace SickOfIt.Gameplay.Content
@@ -33,6 +34,41 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Banner shown the first time he finds it (capitals; empty = 'NEW WEAPON: <name>').")] public string banner = "";
         [Doc("The hero's subtitle for that first find (empty = none).")] public string heroText = "";
         [SoundRef, Doc("The hero's voice line for that first find (audio.json).")] public string heroLine = "";
+        [Doc("How it looks in his hands: a prop of coloured blocks drawn over his Fire pose, and the flash of a shot or swing. The hero's sheets stay one set; each weapon is this overlay.")]
+        public WeaponLookDef look = new WeaponLookDef();
+    }
+
+    [Serializable]
+    [Doc("A weapon's look in the hero's hands (a stand-in prop made of coloured blocks until real art replaces it). Positions are in aim space: x along the aim from the shoulder, y across it, in world units (the hero is 0.85 tall).")]
+    public class WeaponLookDef
+    {
+        [Doc("The prop's blocks, drawn in order. Empty = nothing is drawn over the sheet.")] public List<WeaponLookPartDef> parts = new List<WeaponLookPartDef>();
+        [Doc("Shoulder, from his feet (x mirrors with his facing).")] public Vector2 shoulder = new Vector2(0.02f, 0.22f);
+        [Doc("Where a shot leaves or a swing lands (the flash).")] public Vector2 muzzle = new Vector2(0.45f, 0f);
+        [Doc("Color of the flash on each shot or swing.")] public Color flash = new Color(1f, 0.85f, 0.45f, 1f);
+        [Doc("Size of the flash.")] public Vector2 flashSize = new Vector2(0.18f, 0.18f);
+        [Doc("How far the prop kicks back (a gun) or lunges forward (a swing) when used.")] public float kick = 0.08f;
+
+        [NonSerialized] HeldLook built;
+        public HeldLook Built()
+        {
+            if (built != null)
+                return built;
+            built = new HeldLook { shoulder = shoulder, muzzle = muzzle, flash = flash, flashSize = flashSize, kick = kick, parts = new HeldPart[parts.Count] };
+            for (int i = 0; i < parts.Count; i++)
+                built.parts[i] = new HeldPart { offset = parts[i].offset, size = parts[i].size, angle = parts[i].angle, color = parts[i].color };
+            return built;
+        }
+    }
+
+    [Serializable]
+    [Doc("One coloured block of a held weapon's prop.")]
+    public class WeaponLookPartDef
+    {
+        [Doc("Centre, in aim space.")] public Vector2 offset;
+        [Doc("Length along the aim and thickness.")] public Vector2 size = new Vector2(0.2f, 0.1f);
+        [Doc("Degrees turned from the aim.")] public float angle;
+        [Doc("The block's color.")] public Color color = Color.white;
     }
 
     public enum WeaponKind

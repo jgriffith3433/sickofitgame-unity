@@ -165,12 +165,14 @@ Assets/GameConfig/
   between floors in `WeaponProgress` and cleared with the Grudges. Actions `giveWeapon` / `takeWeapon`. Switch: Q / wheel / gamepad /
   the HUD weapon button (`GameplayHud.Weapon.cs`, `hud.*.weapon` placement). The aim guide follows the weapon (`GuideLengthScale`).
   Playtest `weapons` (scene `weaponsTest`).
+  **The unarmed hero**: with a melee weapon equipped `PlayerController.UpdateUnarmedPose` plays player.json states `UnarmedIdle/Walk/Jump/Fall` instead of Idle/Walk/Jump/Fall, and each swing plays `Punch1/2/3` (its combo step, via `IPlayerArmory.Swinging/SwingStep/SwingTimes`), stretched over the swing by `PlayerSceneClip.FitTo` so the hit lands inside it. Sheets are stand-ins (Idle/Walk/Jump/Fall/Fire.png) until `art/hero.json` unarmed* and punch1-3 are generated (GPU, priced). Playtest `unarmed-hero` (`SickOfItPlaytest.UnarmedHero.cs`).
   **Found weapons, Floors 998-951** (Docs/Story.md "Weapons"): Floor 998 takes the launcher (`takeWeapon`, `takeAllWeapons`) and gives fists
   for Floors 998-994; weapons with a `pickup` (`spitfire`, `ricochetPistol`, `chainWhip`, `shotgun`, `boomerangHalo`, and the launcher's
   return on 994) are found on 993, 992, 991 (the Foreman), 954 and 951 (the Pile Keeper) and **unlocked for good**
   (`unlockWeapon`, `WeaponUnlocks`: kept when a run ends, cleared by New Game; a scene's `suspended` weapons come back with the run). Shots of their
   own are player-team entities (`projectile.entity`: `ricochetShot`, `haloShot` with `returnToHero`); the shotgun fans `projectile.pellets`.
   Playtest `weapon-drops` (~20 min; scenario `weaponArena`, `targetDummy`).
+  **Swaps and looks** (Docs/Story.md "In his hands"): weapon JSON `look` (`WeaponLookDef`: coloured blocks in aim space, shoulder, muzzle, flash, kick) is drawn by `Core/Input/HeldWeaponProp.cs` over the hero's one set of sheets (presentation only; hidden under any scene clip or swap). `PlayerController.UpdateSwapClip` plays player.json `LauncherTaken` (the launcher leaves his hands), `EquipLauncher` and `EquipFists` (stand-in sheets Grabbed/Curious/Shout until `art/hero.json` is generated); never during a rewind, cut short by a shot, a swing or a dash. Playtest `weapon-looks` (scene `weaponLooks`, ~2 min).
 - **Circle air and parallax** (Docs/Story.md "Hell's air", cookbook "Weather and life"): `CircleDef.ambience` (depth layers, weather, far-off life; `CircleAmbience`,
   pooled and capped at 150 bits / 8 actors, presentation only) and `BackgroundLayerConfig.parallaxFactor` (`ParallaxController`: 1 glued to the screen = the default,
   0 fixed in the world, tiling wraps static sprites). Every built Circle (`emberWastes`, `crackedRoad`, `runeBridges`) has its own set; a new Circle gets one.

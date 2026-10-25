@@ -31,6 +31,8 @@ namespace SickOfIt.Core.Input
         public int pellets;
         /// <summary>Degrees between neighbouring pellets.</summary>
         public float pelletSpread;
+        /// <summary>How the weapon looks in his hands (the prop over the Fire pose); null = nothing drawn.</summary>
+        public HeldLook look;
     }
 
     /// <summary>
@@ -44,6 +46,10 @@ namespace SickOfIt.Core.Input
         bool TryGetCurrent(out WeaponStats stats);
         /// <summary>True when the equipped weapon can be used at 'now': not switching, not mid-swing, ammo left.</summary>
         bool CanUse(float now);
+        /// <summary>The equipped weapon's id (content/weapons).</summary>
+        string CurrentId { get; }
+        /// <summary>He holds this weapon right now (the launcher too: a scene can take it).</summary>
+        bool Holds(string id);
         /// <summary>The equipped weapon is out of ammo.</summary>
         bool Empty { get; }
         /// <summary>He pulled the trigger on an empty weapon (a dry click, rate-limited).</summary>
@@ -57,6 +63,12 @@ namespace SickOfIt.Core.Input
         /// swing's times and 'damage' multiplies its damage.
         /// </summary>
         bool Swing(float now, Vector2 origin, Vector2 direction, float attackSpeed, float damage);
+        /// <summary>A melee swing is on at 'now' (button to the end of its recovery).</summary>
+        bool Swinging(float now);
+        /// <summary>The combo step of the swing now (0 = first); for picking its punch clip.</summary>
+        int SwingStep { get; }
+        /// <summary>When the current swing began, when its hit lands and when it ends (game clock time).</summary>
+        void SwingTimes(out float start, out float hit, out float end);
         /// <summary>Equips the next (+1) or previous (-1) weapon he holds. True if the weapon changed.</summary>
         bool Cycle(int step, float now);
     }
