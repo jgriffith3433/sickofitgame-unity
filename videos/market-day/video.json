@@ -1,0 +1,13 @@
+{
+ "slug": "market-day",
+ "stage": "animatic",
+ "video": "Video7",
+ "afterLevel": 13,
+ "tableRead": "j_631f300295d8 (a_fb9909d05584f242)",
+ "stems": "a_a2eecb2bf1040d50 a_c89f675cbe6e3dc8 a_bfba00f8219c96e3 a_8223a0798b8ef104 a_f76219abb1831369 a_3e9169ae77feeb88 a_53dc6923c7ea9b0d",
+ "file": "videos/market-day/out/animatic.mp4",
+ "seconds": 34.17,
+ "criticNote": "not run: no-GPU animatic",
+ "build": "../lore-kit/build_animatic.py",
+ "story": "Logline: Yooba remembers the village the way he tells everything, far too fast and a bit too pleased with himself, and the morning the sky went red, when he swallowed the diamonds to hide them.\nCharacters: Yooba: wants you to see how good it was; fast, wet, proud. Hero: asleep in his armour through the festival, then flat. Announcer: pleased.\nTurn: The sky does the thing and Yooba swallows a handful of diamonds.\nPayoff: On the Landing the hero: 'You've been carrying those the whole time.' Yooba: 'Yes?' The announcer: a very nice village.\nWhy it matters: Video7 after Level 13 (Floor 959), written in Docs/LoreVideos.md; Hell's showmanship and repetition, no office jokes, slimes are villagers.\nWho it's for: anyone, no game knowledge needed.\n"
+}

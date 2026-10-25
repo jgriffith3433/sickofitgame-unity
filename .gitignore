@@ -101,3 +101,5 @@ InitTestScene*.unity*
 # Hawkes Analytics build info: written for a player build and removed after it (AnalyticsBuildInfo.cs)
 /Assets/Resources/HawkesBuildInfo.json
 /Assets/Resources/HawkesBuildInfo.json.meta
+
+videos/*/out/

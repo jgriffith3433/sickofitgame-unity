@@ -1,0 +1,13 @@
+{
+ "slug": "the-count",
+ "stage": "animatic",
+ "video": "Video5",
+ "afterLevel": 21,
+ "tableRead": "j_f8dc759c98ce (a_cffed524ee7af408)",
+ "stems": "a_bb43663a0ad51286 a_970435189d60e7c8 a_9ef66a7b37ff547c a_58eaaecef9c57c38 a_f00f99a3f06b1ac3 a_3a1d7b1e91abba3c",
+ "file": "videos/the-count/out/animatic.mp4",
+ "seconds": 26.75,
+ "criticNote": "not run: no-GPU animatic",
+ "build": "../lore-kit/build_animatic.py",
+ "story": "Logline: The Overlord counts the village's diamonds one at a time into a row that runs off the slab, and one place stays empty: someone has been keeping some.\nCharacters: Overlord: bored, enormous, wants the count right. Announcer: delighted, distant, wants a show. Imps: bow and go.\nTurn: The sack turns out empty and one place in the row is a diamond short; he looks up the shaft at a pinpoint of daylight.\nPayoff: The announcer cheers, he says 'Quiet.', cut to black.\nWhy it matters: Video5 after Level 21 (Floor 951), written in Docs/LoreVideos.md; Hell's showmanship and repetition, no office jokes, slimes are villagers.\nWho it's for: anyone, no game knowledge needed.\n"
+}

@@ -509,3 +509,16 @@ Plan for **about $50 all in** with the critic's retakes (two shots a clip on the
 shots (`video.keyframes` has no job history: the tool's own guess). Part 1's four films are $18.3 on top, **about $68 for every
 lore and cinematic clip**. The boss lines not already recorded (about 25) are voice at cents each, no GPU. If J wants less:
 the 30 stings and the 10 titles are independent; the epilogues and bridges alone are ~$11 ($12 with the idle tail).
+
+
+---
+
+## Status of Videos 5, 7 and 8 (2026-10-25)
+
+Animatics made **without GPU** (`videos/the-count`, `videos/market-day`, `videos/best-seat`, built by `videos/lore-kit/build_animatic.py`):
+the game's own art (Magma King and Imp Foreman sheets, Yooba's talk/laugh sheets, the hero's Shout sheet), the **real table-read voices**
+(`audio.dialogue`, stems kept) and ffmpeg moves; lines are subtitled. Mouths: Yooba's sheet cells cycle on his lines, the announcer's
+drawn mouth works on his, the King's and Overlord's eyes and crown flare and the helmed hero's eye slits flare, only while each speaks.
+Lengths follow the table read: The Count 26.7 s, Market Day 34.2 s, The Best Seat 45.6 s (the King's V.O. runs longer than the 35 s design).
+Waiting on J's notes, then (GPU approval): Lightning scenes, finals, bake into `Videos/VideoN.asset`, `videos/VideoN.json` + game.json list
+(`afterLevel` 21 / 13 / 31), and the `story-path` checks. Stand-ins until then: the Overlord is not drawn (eyes, a finger, a diamond row) and the imp is the Foreman's sheet.

@@ -1,0 +1,13 @@
+{
+ "slug": "best-seat",
+ "stage": "animatic",
+ "video": "Video8",
+ "afterLevel": 31,
+ "tableRead": "j_5c686e3a29c3 (a_b7d1dfbc6d76a044)",
+ "stems": "a_308f17f603ee2d28 a_2fa8e81acd31a2fc a_c41391506506c62d a_32f6f3f3c23db3f4 a_5b501afd1a032932 a_237306bb38307ca8 a_2d35bde695c800bc a_c8384f5afd014998",
+ "file": "videos/best-seat/out/animatic.mp4",
+ "seconds": 45.63,
+ "criticNote": "not run: no-GPU animatic",
+ "build": "../lore-kit/build_animatic.py",
+ "story": "Logline: Before he had a throne the Magma King was a rock that discovered anything warm stops and looks, and he has collected audiences since: he never gets up because the best seat comes to the show.\nCharacters: Magma King: smug, slow, warm; rates everything like a review. Hero: unimpressed. Announcer: booming.\nTurn: The throne stands and the hero climbs to it: the King rates him.\nPayoff: The hero: 'You're not even the worst I've met.' King, pleased: 'Four stars.' Announcer: undefeated in seating.\nWhy it matters: Video8 after Level 31 (Floor 901), written in Docs/LoreVideos.md; Hell's showmanship and repetition, no office jokes, slimes are villagers.\nWho it's for: anyone, no game knowledge needed.\n"
+}
