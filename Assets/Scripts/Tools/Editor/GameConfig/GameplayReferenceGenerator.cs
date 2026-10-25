@@ -64,7 +64,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
             sb.AppendLine();
 
             sb.AppendLine("## Contents");
-            foreach (var title in new[] { "Entity", "Abilities", "Triggers", "Actions", "Patterns", "Level script", "Circle", "Sequence", "Status effect", "Shared types", "Enums" })
+            foreach (var title in new[] { "Entity", "Abilities", "Triggers", "Actions", "Patterns", "Level script", "Circle", "Weapon", "Sequence", "Status effect", "Shared types", "Enums" })
                 sb.AppendLine($"- [{title}](#{Anchor(title)})");
             sb.AppendLine();
 
@@ -90,6 +90,12 @@ namespace SickOfIt.Tools.Editor.GameConfig
             sb.AppendLine();
             foreach (var t in new[] { typeof(CircleDef), typeof(TrackDef), typeof(PropDef), typeof(CircleEnemyDef), typeof(CircleHazardDef),
                          typeof(DifficultyDef), typeof(MilestoneDef), typeof(SickOfIt.Data.Config.BackgroundLayerConfig) })
+                Class(sb, t, enums, helpers, 3);
+
+            sb.AppendLine("## Weapon");
+            sb.AppendLine();
+            foreach (var t in new[] { typeof(WeaponDef), typeof(WeaponGuideDef), typeof(WeaponAmmoDef), typeof(WeaponProjectileDef), typeof(WeaponMeleeDef),
+                         typeof(MeleeStepDef), typeof(WeaponSoundsDef) })
                 Class(sb, t, enums, helpers, 3);
 
             sb.AppendLine("## Sequence");

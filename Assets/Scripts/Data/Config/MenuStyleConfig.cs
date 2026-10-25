@@ -303,6 +303,8 @@ namespace SickOfIt.Data.Config
         public MenuPlacement rewindHint = new MenuPlacement();
         [Tooltip("Level progress / rewind juice bar.")]
         public MenuPlacement progressBar = new MenuPlacement();
+        [Tooltip("The equipped weapon (its name and ammo); a press switches to the next weapon he holds.")]
+        public MenuPlacement weapon = new MenuPlacement();
 
         /// <summary>The desktop/landscape HUD, as it always looked (1920x1080 space).</summary>
         public static MenuHudLayout Landscape() => new MenuHudLayout
@@ -319,6 +321,7 @@ namespace SickOfIt.Data.Config
             rewinding = MenuPlacement.At(0.5f, 0.8f, 0f, 0f, 1200f, 130f),
             rewindHint = MenuPlacement.At(1f, 1f, -520f, -300f, 760f, 70f),
             progressBar = MenuPlacement.At(0.5f, 0f, 0f, 42f, 1500f, 30f),
+            weapon = MenuPlacement.At(1f, 1f, -190f, -400f, 340f, 104f),
         };
 
         /// <summary>
@@ -340,6 +343,7 @@ namespace SickOfIt.Data.Config
             rewinding = MenuPlacement.At(0.5f, 1f, 0f, -620f, 1000f, 130f),
             rewindHint = MenuPlacement.At(0.5f, 1f, 0f, -530f, 1000f, 70f),
             progressBar = MenuPlacement.At(0.5f, 0f, 0f, 320f, 1000f, 30f),
+            weapon = MenuPlacement.At(1f, 0f, -450f, 160f, 380f, 150f),
         };
     }
 

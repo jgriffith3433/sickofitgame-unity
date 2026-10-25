@@ -93,7 +93,7 @@ namespace SickOfIt.Gameplay
 
             Muzzle = muzzle;
             float shortSide = ShortSide();
-            Length = config.length * shortSide;
+            Length = config.length * shortSide * controller.GuideLengthScale;
             float width = Mathf.Max(0.005f, config.width * shortSide);
             var sprite = LineSprite;
             Vector2 native = sprite.bounds.size;

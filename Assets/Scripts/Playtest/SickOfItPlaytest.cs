@@ -620,6 +620,12 @@ namespace SickOfIt.Playtest
                 $"the mouse: hovering shows where a click goes, clicking fires along it. Then with {AimGuideSpreadLevels} levels of the spread Grudge " +
                 $"\"{AimGuideSpread}\" (setup shortcut) the level again: one fainter line per shot, each matching its shot. Then the bot plays to lose with " +
                 $"the stick held once he is dead (hidden), and the scene \"{CutsceneScene}\" with the stick held while it has the hero (hidden)", 420, "level"));
+            list.Add(new PlaytestScenario(WeaponsId, $"The weapons (content/weapons, Docs/GameplayCookbook.md \"Weapons\"): the scene \"{WeaponsScene}\" on level {WeaponsLevel}'s stage (setup shortcut), " +
+                "played through real input. The rocket launcher is the default: the HUD names it, it fires at player.json's rate along the aim, and its aim guide shows. A level action (giveWeapon) " +
+                "puts fists in his hands; Q switches to them (keyboard), the HUD shows FISTS and the aim guide shortens to their reach; he punches an imp that appears in front of him: " +
+                "the swing is drawn (a crescent and a fist), the combo hits and the imp dies. Q back to the launcher, then hold R back to before that switch: the rewind brings the fists back. " +
+                "The HUD's weapon button is clicked with the mouse (a touch tap takes the same path) and switches; a second level action (takeWeapon) takes the fists away and the HUD " +
+                "is back to the launcher. Each beat is a check event; weapon events log every equip, swing and hit", WeaponsSeconds, "level"));
             list.Add(new PlaytestScenario("analytics", $"Hawkes Analytics (AGENTS.md \"Analytics\"): the SDK's debug log on, then Level {AnalyticsLevel} " +
                 "(the Meadow, loaded directly) played until Hell kills the hero three times (the bot holds R once early on for a rewind, then plays to " +
                 "lose): each death screen, and on the third one the feedback card (\"Too hard? Not fun?\", thumbs and a comment) over it, held while it's " +
@@ -921,6 +927,8 @@ namespace SickOfIt.Playtest
                 yield return session.AnalyticsRun();
             else if (id == AimGuideScenario)
                 yield return session.AimGuideRun();
+            else if (id == WeaponsId)
+                yield return session.WeaponsRun();
             else if (id == "restart")
                 yield return session.RestartRun();
             else if (id == RewindPerfId)
