@@ -260,6 +260,7 @@ namespace SickOfIt.Gameplay
             MenuResponsive.Track(stamp, MenuPlacement.At(0.72f, 0.5f, 0f, 0f, 330f, 330f), screens.resultsGrade, MenuElementKind.Panel, menu.Responsive);
             stampMotion.EntranceDelay = 0.9f;
             gradeSoundAt = Time.unscaledTime + 0.95f;
+            gradeSting = grade.stingSound;
             var quip = menu.AddText(inner, "Quip", grade.quip, theme.subtitle, new Vector2(0.72f, 0.27f), Vector2.zero, new Vector2(620f, 80f),
                 out var quipMotion, 36f, null, theme.entrance, null, 4f);
             MenuResponsive.Track((RectTransform)quip.transform.parent, MenuPlacement.At(0.72f, 0.27f, 0f, 0f, 620f, 80f), screens.resultsQuip,
@@ -279,6 +280,7 @@ namespace SickOfIt.Gameplay
         }
 
         float gradeSoundAt = -1f;
+        string gradeSting = "";
 
         static string FormatTime(float seconds)
         {
@@ -410,6 +412,7 @@ namespace SickOfIt.Gameplay
             {
                 gradeSoundAt = -1f;
                 Sfx.Play(Sfx.Events.gradeReveal);
+                Sfx.Play(gradeSting);
             }
         }
     }

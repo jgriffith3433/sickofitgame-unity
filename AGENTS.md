@@ -150,6 +150,11 @@ Assets/GameConfig/
   `faceEntity`, `playEntityAnimation`; `"player"` and `"self"` work as ids; the walk is `Entity.ScriptWalkTo`, saved on the entity) and the `witness`
   trigger (`ShotPassed` / `AllyHurt` / `HeroHurt` near the watcher; `GameplayWorld.TryWitness`, with the last 2 s of hurts in the world's saved state).
   Demo `bystanderSoul` on the bench `content/scenes/bystanderTest.json` (playtest `bystander`); tests `Assets/Tests/PlayMode/BystanderTests.cs`.
+- **Music layers and stingers** (Docs/Story.md "Music"): `CircleDef.intensityMusic` (+ `intensityMusicVolume`, `intensityEnemyWeight`/`BulletWeight`, `intensityLow`/`High`)
+  is a stem `StageMusic` plays silently in step with the stage's track and fades with the live enemies and hostile shots (rise 1.5 s, fall 4 s; off under push music or
+  a script's `playMusic`; `musicLayer` telemetry). Stingers are audio.json sounds: event `weaponSting` (first find of a weapon) and `stingSound` on each `ui/theme.json`
+  grade. `Tools/Audio/music_manifest.json` lists the 34 tracks still to make (stand-ins play meanwhile; `python3 Tools/Audio/music_manifest.py --check --price`): replace
+  a stand-in's path with the made file. Playtest `music-layers` (~3 min).
 - **Shortcuts** (Docs/Story.md, "Shortcuts"): a choice point in a stage (`offerShortcut`: keep climbing or the shortcut,
   its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
   stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the

@@ -109,6 +109,7 @@ namespace SickOfIt.Data.Config
         [UnityEngine.Tooltip("Spoken when you die.")] public string deathVoice = "vo_you_died";
         public string gradeReveal = "grade_reveal";
         public string deathWarning = "death_warning";
+        [UnityEngine.Tooltip("Music stinger when a weapon is found for the first time.")] public string weaponSting = "sting_weapon";
         public string pause = "ui_pause";
         public string uiHover = "ui_hover";
         public string uiClick = "ui_click";
