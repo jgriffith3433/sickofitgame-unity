@@ -4,7 +4,7 @@ How a floor of Hell is built. [Story.md](Story.md) says what Hell is and who liv
 plays, and agents build floors from it. Every floor here must fit the story; if a floor needs something the story
 doesn't explain, add it to Story.md first.
 
-Status: **design for review** (2026-10-18, J's decision m_daf635ad1287: one level = one floor, a floor boss every 10th
+Status: **design for review** (2026-10-18; section 8, Circles III to I and the top of Hell, 2026-10-25; J's decision m_daf635ad1287: one level = one floor, a floor boss every 10th
 floor, the Warden on the Circle's top floor, shortcuts skip stretches; revised the same day for J's *"some scrolling
 horizontally ... as immersive as you can"*: every floor's path, set piece, surprise, rewind moment and feel). The
 floor engine is built (see *Building it*); **the whole played route is built** (2026-10-18/19): Floors 1000-991 (levels
@@ -1949,3 +1949,172 @@ Priced 2026-10-25 with `hawkesgen_estimate` (one server, nothing started): 20 ba
 concepts and 10 music tracks (5 loops, 5 Warden themes) come to about 0.28 GPU hours, **$0.53 ($1.15 with the idle tail)**,
 ~18 min. That is concepts, backdrops and music only: the enemies' animated sheets (`Tools/Art/art.mjs`, poses and
 clips per enemy, ~50 enemies) are a larger batch, priced per enemy when each Circle's task starts. Nothing made yet.
+
+## 8. Circles III to I and the top of Hell: route sketches *(working)*
+
+The designs (looks, Wardens, floor bosses, enemies and their weaknesses, signature mechanics, shortcuts, music, the
+Overlord's fight and both endings) are in [Story.md](Story.md), *Circles III to I and the top of Hell: the final descent*.
+This section is how they play as floors, in the shape of section 7: about 30 floors in three stretches (`x00-x91`, `x60-x51`,
+`x10-x01`), a floor boss ending each of the first two, a shortcut after each, the last stretch ending at the Warden's door
+(`x02`) and his arena (`x01`); one level = one floor, at most 4 enemies on screen, one new idea a floor, a new monster alone,
+a 3 s breather before every new enemy, a breather ledge with a damned soul (a loop shard) every 3-4 floors. Circle I is the
+same shape with its Warden replaced by the Overlord (Floor 1) and its numbers counted to 1: its stretches are 100-91, 60-51
+and 10-2. Everything is *working*; each Circle becomes levels only through its own task. The floors between the stretches
+are the long way, built later by the generator from the Circle's data (`content/circles/<id>.json`).
+
+The toolkit pieces these Circles need:
+
+| Circle | New floor pieces | Needs C# |
+|---|---|---|
+| III | `portcullis` (a gate that drops on a drum beat, glint first; its top is a platform), `drumBeat` (the clock the gates read), `whistleTrigger` | `portcullis` is a beat-driven platform like the Wastes' slabs: data; the whistle a trigger that fires the next gate (check) |
+| II | `tether` (a ring in the floor and a range limit on the hero), `swingBall`, `chainRail` (a taut chain as a rail), `cageDrop`, `trapdoor` (a glow, then the floor opens) | the range limit on the hero: new C#, rewind-safe (like the Gulp); the rest data |
+| I | `gateDraw` (a draught: a beat-driven force on the hero and projectiles), `daylightLane` (a shaft of light that curves shots and makes the guard flinch), `fuelBelt` (a belt platform), `lensColumn` | `gateDraw` as a rewind-safe world force: C#, shared with the Caverns' Gulp if that is built first |
+| Floor 1 | `rewindTell` (a 1 s tell, then a 3 s replay of the fight), `strapChute` (three straps a hit cuts), `daylightColumn`, the ending scenes | the fight's rewind replays `SimHistory`'s last 3 s as an attack: new C#, must save every field; the choice cards reuse the shortcut card |
+
+### Circle III: the Bastion (300-201)
+
+```
+FLOOR 300-291    THE FOOT OF THE WALL      10 floors played          291: the Drill Sergeant
+      │  SHORTCUT 1: THE POSTERN             (a soldier holds the door, 291 → 260; a Grudge)
+      │  skips 290-261 (the long way: the Barracks Row, the Archers' Walk)
+FLOOR 260-251    THE CURTAIN WALL          10 floors played          251: the Ram
+      │  SHORTCUT 2: THE DRAWBRIDGE CHAIN    (the counterweight, 251 → 210; a harder 210)
+      │  skips 250-211 (the long way: the Rampart Run, the Iron Horses)
+FLOOR 210-201    THE HALL GATE             10 floors played          201: THE GATEKEEPER (his arena)
+```
+
+| Floors | Place | The beats |
+|---|---|---|
+| 300 | **The Bastion** | Milestone (*"FLOOR 300: THE BASTION"*). One gate, one drum: the Portcullis learnt alone; *CLOSED* on the sign. |
+| 299-297 | **On the Beat** | Two, then three gates in the drum's order; a breather ledge with a damned soul (a Deserter). 297: the first Garrison, alone, marching in step. |
+| 296-294 | **Out of Step** | Gates run out of step; the Garrison's turn taught (hit it as it turns); the one soldier out of step. |
+| 293-292 | **The Whistle** | The Whistler alone; the gate drops on the blast and the whistle is shot first. |
+| 291 | **The Drill Sergeant** (floor boss) | Parade ground, then wall-walk; ranks with one gap; the whistle. |
+| 260-257 | **The Curtain Wall** | The Archer alone (the glowing line); a gate between the hero and a line; the queue for the arrow. |
+| 256-253 | **Shields** | The Shield Wall alone (go over the top of a dropped gate); the Standard Bearer. |
+| 252-251 | **The Ramp** | The Siege Bird; 251: **the Ram**, two tiers (the ramp, the ram in the gate). |
+| 210-208 | **The Hall Gate** | Floor 210 reads `shortcutTaken`: gates drop on the beat from the first second. The Iron Horse alone. |
+| 207-203 | **The Muster** | Everything at once, 4 enemies; *HOLD* painted on every post, huge. |
+| 202 | **The Door** | The Gatekeeper's voice through the gate: *"Halt. ...Halt."* The Waystone below. |
+| 201 | **The Hall Gate** (the Warden) | The Gatekeeper's fight; *"...Pass."*; the Waystone at 201 lights; Circle II wakes. |
+
+### Circle II: the Keep (200-101)
+
+```
+FLOOR 200-191    THE COURTYARD             10 floors played          191: the Turnkey
+      │  SHORTCUT 1: THE DUMBWAITER          (the plates' lift, 191 → 160; 40 diamonds)
+      │  skips 190-161 (the long way: the Cell Rows, Hound Corridor)
+FLOOR 160-151    THE OUBLIETTE             10 floors played          151: the Oubliette Keeper
+      │  SHORTCUT 2: THE ESCAPE TUNNEL       (the spoon-dug hole, 151 → 110; a harder 110)
+      │  skips 150-111 (the long way: the Rack Hall, the Hanging Gardens)
+FLOOR 110-101    THE COUNTING HALL         10 floors played          101: THE CHAIN KING (his arena)
+```
+
+| Floors | Place | The beats |
+|---|---|---|
+| 200 | **The Keep** | Milestone (*"FLOOR 200: THE KEEP"*). One chain, one ring, no jailer: the Tether learnt alone. |
+| 199-197 | **Slack** | Chains as rails and ropes; a ball and chain on a beat; the first Jailer, alone (shoot the ring). |
+| 196-194 | **Cells** | Key Bats open the wrong doors; *CELL 4, CELL 4, CELL 4*; the Convict (a damned soul, a loop shard). |
+| 193-192 | **Hounds** | The Dungeon Hound alone: beyond the chain, harmless. |
+| 191 | **The Turnkey** (floor boss) | Courtyard, then cell row; the keyring flail. |
+| 160-157 | **The Oubliette** | Manacle Hands in the walls; trapdoors on a glow. |
+| 156-153 | **Cages** | The Cage Drop alone; the empty cage as a platform. |
+| 152-151 | **The Pit** | The Spike Roller; 151: **the Oubliette Keeper**, two tiers (the dungeon, the pit's rim). |
+| 110-108 | **The Counting Hall** | Floor 110 reads `shortcutTaken`: jailers tether from the first second. |
+| 107-103 | **Cell 1** | Everything at once, 4 enemies; the empty cell (the biggest, the groove, the four drawings); hero: *"Whoever he was, he got out."* |
+| 102 | **The Door** | The Chain King's voice: *"My first. My best. ...Mine."* The Waystone below. |
+| 101 | **The Counting Hall** (the Warden) | The Chain King's fight; *"...One."*; the Waystone at 101 lights; Circle I wakes. |
+
+### Circle I: the Throne Stair (100-2) and Floor 1
+
+```
+FLOOR 100-91     THE FOOT OF THE STAIR     10 floors played          91: the Captain of the Guard
+      │  SHORTCUT 1: THE FUEL LINE           (ride the belt of our diamonds, 91 → 60; a Grudge)
+      │  skips 90-61 (the long way: the Long Flight, Hall of Banners)
+FLOOR 60-51      THE FORGE LANDING         10 floors played          51: the Gate Smith
+      │  SHORTCUT 2: THE DAYLIGHT DRAUGHT    (the crack in the wall, 51 → 10; a harder 10, he turns his head)
+      │  skips 50-11 (the long way: the Gallery of Statues, the Hopper Hall)
+FLOOR 10-2       THE DOOR OF DAYLIGHT      9 floors played           2: the white door
+FLOOR 1          THE THRONE                the Overlord (final boss), then the choice and the ending
+```
+
+| Floors | Place | The beats |
+|---|---|---|
+| 100 | **The Throne Stair** | Milestone (*"FLOOR 100: THE THRONE STAIR"*). Black glass; the Draw learnt alone (one gust, a few embers). The Obsidian Guard alone. |
+| 99-97 | **The Fuel Line** | The belt of diamonds carried up to the hopper; a breather ledge with a damned soul. 97: the Gate Imp alone. |
+| 96-92 | **The Lens Hall** | 95-94: the Draw turned sideways. 93: the Lens Sentry alone. Daylight lanes. |
+| 91 | **The Captain of the Guard** (floor boss) | The stair hall, then the balcony; ricochet, blink, front shield in order; the cloak. |
+| 60-58 | **The Forge Landing** | A pale seam under a door: daylight, first sight. The Ricochet Guard alone. |
+| 57-55 | **Blink** | The Blink Guard alone; a mark, then it is there. |
+| 54-52 | **The Plate and the Lead** | The Bulwark Guard alone, the Lead Guard alone; daylight lanes as the answer. |
+| 51 | **The Gate Smith** (floor boss) | The forge, then the unfinished gate; sparks, guards struck from stone; the rivets; *"Nearly."* |
+| 10-9 | **The Door of Daylight** | Floor 10 reads `shortcutTaken`: the Overlord turns his head in the window above. The Echo Guard alone; grass dust on the draught. |
+| 51 → 10 | **Floor 13** | Skipped by the Daylight Draught (a long-way floor otherwise): the milestone (*"FLOOR THIRTEEN! UNLUCKY FOR SOMEONE!"*) is called by the announcer as the jump passes it, or as a banner on the long way's floor. |
+| 8-5 | **Everything** | Four enemies at once, the guard's every trick; the footprints; the man's second line beside them; the launcher barrel; hero: *"...Is that grass?"* Announcer: *"...Don't."* |
+| 4-3 | **The Last Stair** | Daylight on both walls and wind at its strongest; no enemies on Floor 3 (a breather the player can hear); the Draw carries him up. |
+| 2 | **The Door** | A white door, grass dust, the gate's hum behind it. A Waystone is not lit here: Hell has none to give. |
+| 1 | **The Throne** (the final boss) | See below; then the choice and one of two endings. |
+
+#### Floor 1: The Throne (the final boss)
+
+**New:** the Overlord's three phases; the rewind-vs-rewind tell. **Path:** none; a Warden-shaped static arena like Floor 901
+and Floor 701: the hero on the floor in front, the throne and gate at the far wall. **Obstacles:** shoulder lenses
+(`laserSweep`), a hand-slap strip, guard dropping in (at most 2), the hopper's burning stream in phase 3.
+
+Beats (the full fight: Story.md, *Floor 1: the Overlord*):
+
+1. **Intro** (input and rewind locked): title; silence; the gate hums; *"Mm. ... You."* ... *"Stay."*; *"HE DID NOT TURN AROUND."*;
+   boss bar.
+2. **Phase 1, Not Worth It** (to half): he doesn't turn; lenses, hand-slap, the guard; the hero shoots the hopper's three
+   straps, each cut turning his head 3 s (the only time he takes damage). A glow of at least 1 s before every attack.
+3. **Phase 2, The Loop Was His** (to a third): the 1 s tell (the screen desaturates, a hum drops); his rewind replays the
+   last 3 s of the fight as attacks; the hero cancels it by holding R inside the tell; an unanswered one repeats an attack
+   already dodged. `lockRewind` is *not* set here (it is the point), but the tell is a scripted `emit` the playtest
+   can read.
+4. **Phase 3, The Gate Cracks** (to the end): daylight lanes are the safe place; the horns shed and spear the floor; the
+   fuel stream burns the floor until the lock is shot; no rewinding from him.
+5. **Defeat** (slow motion), the quiet; the visor on the throne's arm; then the ending scene and the choice.
+
+**Surprise:** the second time he turns his head, the hero sees his own visor on the arm of the throne and the Overlord
+sees him see it. **Rewind:** the hero's own, cancelling the Overlord's, and then, in the true ending, spent on the gate.
+**Feel:** the draught pulling everything toward the seam; the music losing its minor chord in phase 3. **Length:** 4-6 min
+(a Warden's, with the intro and the defeat). **Lines:** Story.md.
+
+The two endings are scenes, not levels of their own: `content/scenes/endingTrue.json` and `content/scenes/endingFunny.json`
+(working), played on Floor 1's stage after the defeat, then the credits (a video: the Meadow, true; the long take, funny),
+then Video "Knock" (true only) and the post-credit "FLOOR 1,001" (true only) or the cut to the Landing (funny, a New Game+).
+The choice is two cards on the shortcut card's code (`offerShortcut` with `costNone`; each card's `then` starts a scene).
+
+### Checks for these Circles
+
+Per Circle, before it ships: its signature mechanic is on its first floor alone; no floor has more than one new idea; the
+4-enemy cap holds; every enemy has a readable weakness and a reason (Story.md); every floor boss and the Warden has voiced
+intro lines and a warning glow 1 s or more before each attack; no slime enemy; no office or work joke. Each becomes a
+`floors-A-B` and a `level-<n>` scenario like Circle IX's (`floors-300-291`, `floors-260-251`, `floors-210-201`,
+`floors-200-191`, ..., `floors-10-2`; names come from game.json). For the top of Hell, working scenarios:
+
+- **`overlord`**: Floor 1 loaded directly with the usual setup shortcut; the bot plays the fight; checks: the voiced intro
+  (the title, *"Mm. ... You."*, *"Stay."*), the boss bar before the fight, the three straps cut and each one's turn (a `signal`
+  per strap), phase 2's tell logged (`overlordTell`) with at least 1 s before the replay and the bot holding R inside it
+  (a cancelled replay logged as `overlordCancelled`), phase 3's daylight lanes and the horns' glow lead of 1 s or more, the
+  defeat in slow motion, the visor.
+- **`ending-true`** and **`ending-funny`**: the defeat loaded directly (setup shortcut), the choice on screen (a `check` that both
+  cards show), the card pressed (1 = SHUT IT, 2 = SIT DOWN); then the scene's beats, each a `check`: true: the meter holding
+  the saved Déjà Vu, the reverse run, the shove and the Overlord's fall, the Waystones dark, Yooba on the Meadow with the
+  diamonds home, the sit, the knock, "FLOOR 1,001"; funny: the sit, the stall, the Wardens' queue, Yooba's last line, the cut
+  to the Landing and the New Game+ save.
+
+### Cost of the art (GPU, priced, nothing started)
+
+Priced 2026-10-25 with `hawkesgen_estimate` (one server, nothing started):
+
+| Batch | What | GPU time | Cost (idle tail) |
+|---|---|---|---|
+| Concepts, backdrops, music | 16 backdrops (4 each for III, II, I and the throne room and the Meadow), 32 enemy / floor-boss / Warden / Overlord-phase concepts, 8 music tracks (3 Circle loops, the Gatekeeper's, the Chain King's and the Overlord's themes, 2 ending tracks) | 0.24 h, ~15 min | **$0.44** ($1.06 with the idle tail) |
+| Epilogue video "Knock" | 12 key frames and ~12 five-second shots (Wan image-to-video), assembled in the `video` skill's flow | 0.49 h, ~30 min | **$0.91** ($1.54 with the idle tail) |
+
+Both together on one server come to about 0.73 GPU hours, **$1.36 ($1.98 with one idle tail)**. That is concepts, backdrops,
+music and the epilogue only: the enemies' animated sheets (`Tools/Art/art.mjs`, poses and clips for ~30 enemies, three
+floor bosses a Circle, two Wardens and the Overlord's three phases) are a larger batch, priced per enemy when each Circle's
+task starts, as for Circles VIII to IV. Voice lines (the Gatekeeper, the Chain King, the Overlord's few words, Yooba's
+Shaft lines, the epilogue's two) are Hawkes Gen voice at cents each and need no GPU. Nothing made yet.
