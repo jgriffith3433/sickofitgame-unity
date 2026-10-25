@@ -59,6 +59,8 @@ Every floor is the same sentence with different words, so the player always know
 
 - **Quiet first 5 seconds**, always.
 - **60 to 120 seconds** on a good run; floor bosses 90 to 180; the Warden separate.
+- **A long bullet-hell floor** is the one exception: 240 to 360 seconds, many enemies and shots, built as the recipe below
+  says (Floor 998 is the reference). A floor is long only when its script says `"length"` 200 or more.
 - **Pushes and breathers**: 2 to 4 pushes, a breather of 3+ seconds between each.
 - **At most 3 enemies on screen in Circle X**, rising slowly per Circle (4 in IX-VIII, 5 in VII-V, 6 above).
 - **Every hazard telegraphed at least 1 second ahead**, on the spot it will hit (a glow, a drip, a rumble, a crack).
@@ -449,7 +451,14 @@ who runs the hauling.
   roar is right under him on the river (loud, close), with the hay cart's crackle drifting past.
 - **Lines:** Announcer: *"FLOOR NINE HUNDRED NINETY-EIGHT! THE SPILL!"* Hero (at the sign): *"That was the baker's
   cart."* First cinder: *"The hay's following me now."*
-- **Length:** ~80 s.
+- **Long floor (the reference, 2026-10-19):** The Spill is the first long bullet-hell floor, ~280 s with five set pieces
+  after the opening river and procession, in this order: **The Hay Wakes** (cinders trickling in, two at a time),
+  **Ember Rain** (fireballs from the top of the screen, thicker every second), **Sparks From the Sign** (a swarm of
+  `cinderSpark` rising out of the lava plus aimed fans), **The Jam** (the climb with the lava rising and rain on top)
+  and **The Spire** (the finale: rain, aimed fans, cinders and sparks together on a run of ledges to the landing).
+  The comedy lines stay: *"That was the baker's cart."* at the sign, *"The hay's following me now."* as the procession
+  starts. Recipe: "A long bullet-hell floor" below.
+- **Length:** ~280 s (a long floor).
 
 #### Floor 997: Imp Run
 
@@ -1640,6 +1649,46 @@ spot, at most four enemies counting the boss. Each gives a diamond burst and sta
 - **Lines:** Carver: *"Don't. Touch. The carvings."* Hero: *"Wasn't going to."* At half: *"You SMUDGED it."*
   Defeat: *"My... masterpiece..."* Voice `carver`: thin, fussy, precise, offended (Story.md).
 - **Art:** the demon's sheets, thinner and paler, until his own are made.
+
+### A long bullet-hell floor
+
+A floor of 240-360 seconds with many enemies and shots, for a player who has learned the toolkit. Everything is data
+(`levels/Floor<n>.json`, no C#). `levels/Floor998.json` is the reference; copy its shape.
+
+1. **Say it is long.** Set the script's `length` to the expected seconds (200 or more; Floor 998: 280) and the level's
+   `duration` to about 1.4x that (400): the bot's time limit is `duration + 10`. The playtest reads `length >= 200` as
+   "long": it judges the floor on 240-360 s, up to 16 enemies at once and its set pieces instead of the 3 s breather
+   and the 60-120 s of a normal floor. Keep one new enemy per floor and let it arrive alone in the opening.
+2. **Let the camera keep the time.** Time must not depend on how well the hero plays. Build the path as long `Right`
+   sections with an `autoSpeed` (0.55-0.6: a raft ride) of 28-30 units each, ~50 s a piece, and a slow `Up` climb
+   (0.36). Ledges and wreckage every 3 units; a solid `ledge` at least every fifth piece. Add a gate to the landing:
+   an `atTime` rule sets a counter (`finale`) and the landing's rule is `allOf` `playerOn` + that `counter`, so a fast
+   hero waits for the end.
+3. **Open quiet, then 4-5 set pieces.** Opening: the title, a hero line, the new enemy alone (Floor 998: 40 s of river
+   and procession). Then one **set piece per section**, each a *phase*: a global rule `sectionReached` ->
+   `goToPhase`, and the phase's `onEnter` starts with `{"type":"emit","signal":"setpiece:<name>"}` and a banner. A set
+   piece has its own idea (a different attack, a different place on the floor), not just more of the last one. The
+   playtest counts the `setpiece:` signals (4+ wanted) and logs a `density` event for each. Hazards, `every` rules
+   and timed modifiers belong to the phase and end with it.
+4. **Raise the density in steps, with the toolkit you already have.**
+   - *Per piece:* the hazard's `rampPerSecond` (volleys per second added each second), a shorter `interval`, a larger
+     `count` in the next piece's `spawnWave`, one more hazard (an aimed `spread` on top of the `rain`).
+   - *Over the whole floor:* a `heat` counter (`every` 20 s -> `addCounter`) and one `counter` rule per step that
+     applies a `modifier` (`MoveSpeed` x1.1, `includeFuture: true`) to the chasers, so late cinders are faster than
+     early ones. Use `multiplyPerRepeat` in a `spawnWave`'s modifiers to make each wave of an `every` rule tougher.
+   - *Targets:* the average number of enemies and shots alive per piece should rise from ~2 on the first to ~9+ on the
+     last; the playtest wants the last piece >= 1.3x the first and no sharp drop between neighbours. A piece
+     may rest a beat while another idea comes in, but never below two thirds of the one before.
+5. **Fair, not cheap.** Every aimed or falling shot is slow (speed 3-3.4) so a hero on the move can read it; the rain
+   is random but never wider than one hop; sparks come from the lava line where he can see them rise; no piece asks
+   for a jump and a dodge in the same beat. The shots die on the ledges, so a hero standing under one is covered.
+6. **The bot's side.** `PlaytestBot` plans a lane through a dense volley on a long floor (>= 3 shots and chasers close):
+   it scores stepping left, staying and stepping right over the next second, stays on the foothold, and uses the rewind
+   when hit. If it fails on your floor, thin the piece first, don't loosen the check.
+7. **Lines.** The title banner and the hero's jokes keep their voices (every `showText` with a `sound`). Set-piece banners
+   are the announcer's; they may be silent until their line is generated (audio.json, `announcer` voice, cents).
+8. **Check it.** `level-<n>` (the floor's scenario) logs a `setpiece` event per piece, a `density` event with the average
+   and peak alive, and the checks `length`, `maxEnemies`, `long.setPieces` and `long.density`.
 
 ## Building it
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using SickOfIt.Core;
@@ -273,6 +274,11 @@ namespace SickOfIt.Gameplay
             }
             if (waveComing && !climbing)
                 moveX = 0f;
+            // A dense volley (a long bullet-hell floor): several shots and chasers at once, so the nearest-miss rule above isn't
+            // enough. Free of a path's footholds, weigh standing still, stepping left and stepping right over the next second
+            // and take the way with the fewest predicted hits, staying on what he stands on.
+            if (!climbing && !waveComing && LongFloor && DenseVolley(me, moveX, out float dense))
+                moveX = dense;
 
             var view = world.View;
             if (me.x < view.xMin + 0.8f) moveX = 1f;
@@ -345,6 +351,85 @@ namespace SickOfIt.Gameplay
                     && releaseJumpFrame < 0 && !input.IsHeld(Key.Space))
                     Press(Key.Space, ref releaseJumpFrame);
             }
+        }
+
+        // ─── Dense volleys: pick the lane with the fewest predicted hits ───────────
+
+        /// <summary>How many shots and chasers must be on their way before the bot plans its lane instead of dodging one at a time.</summary>
+        const int DenseThreats = 3;
+        const float LaneSpeed = 2.5f, LaneHorizon = 1.0f, LaneStep = 0.1f, LaneHit = 0.75f;
+        readonly List<Entity> laneThreats = new List<Entity>();
+
+        /// <summary>A long bullet-hell floor (its script's expected length is 200 s or more): the only place the lane planning runs, so the
+        /// shorter floors keep the play their checks were tuned on.</summary>
+        bool LongFloor => world.Director != null && world.Director.Script != null && world.Director.Script.length >= 200f;
+
+        /// <summary>The most threats the last <see cref="DenseVolley"/> looked at (the playtest reads it for its density events).</summary>
+        public int LaneThreats { get; private set; }
+
+        /// <summary>
+        /// Looks at the hostile things moving toward him within a couple of screens' reach. With <see cref="DenseThreats"/> or more it
+        /// scores moving left, staying and moving right: each predicted pass within <see cref="LaneHit"/> of where he would be
+        /// costs more the sooner it comes, leaving the foothold under him (or the view) costs a lot, and the way he was going wins a
+        /// tie. Returns false (leave moveX alone) with fewer threats.
+        /// </summary>
+        bool DenseVolley(Vector2 me, float wanted, out float lane)
+        {
+            lane = wanted;
+            laneThreats.Clear();
+            foreach (var e in world.Live)
+            {
+                if (!e.IsAlive || !world.Player.IsHostileTo(e) || e.Body == null)
+                    continue;
+                Vector2 rel = e.Position - me;
+                if (Mathf.Abs(rel.x) > 9f || Mathf.Abs(rel.y) > 7f)
+                    continue;
+                laneThreats.Add(e);
+            }
+            LaneThreats = laneThreats.Count;
+            if (laneThreats.Count < DenseThreats)
+                return false;
+
+            var view = world.View;
+            var controller = world.PlayerController;
+            var ground = controller != null ? controller.GroundCollider : null;
+            float minX = view.xMin + 0.8f, maxX = view.xMax - 0.8f;
+            if (ground != null)
+            {
+                minX = Mathf.Max(minX, ground.bounds.min.x + 0.4f);
+                maxX = Mathf.Min(maxX, ground.bounds.max.x - 0.4f);
+            }
+            if (minX >= maxX)
+                return false;
+            float bestCost = float.MaxValue;
+            float bestLane = wanted;
+            for (int option = -1; option <= 1; option++)
+            {
+                float cost = option == Mathf.RoundToInt(wanted) ? 0f : 0.15f;
+                for (float t = LaneStep; t <= LaneHorizon; t += LaneStep)
+                {
+                    float x = me.x + option * LaneSpeed * t;
+                    if (x < minX || x > maxX)
+                    {
+                        cost += 3f;
+                        x = Mathf.Clamp(x, minX, maxX);
+                    }
+                    foreach (var e in laneThreats)
+                    {
+                        Vector2 at = e.Position + e.Body.linearVelocity * t;
+                        // Only what is level with him or falling onto him counts: a jump or the ground deals with the rest.
+                        if (Mathf.Abs(at.y - me.y) < LaneHit * 1.6f && Mathf.Abs(at.x - x) < LaneHit)
+                            cost += 2f - t;
+                    }
+                }
+                if (cost < bestCost)
+                {
+                    bestCost = cost;
+                    bestLane = option;
+                }
+            }
+            lane = bestLane;
+            return true;
         }
 
         // ─── Floors with a path: climb like a player would ───────────
