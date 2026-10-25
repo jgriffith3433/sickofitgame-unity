@@ -7001,6 +7001,8 @@ namespace SickOfIt.Playtest
 
             /// <summary>Set by OpenLevel: the level asked for is running in a world of its own.</summary>
             bool openedLevel;
+            // The last Progress value sent: OpenLevel repeats it while it waits (the package ends a run after 60 s without one).
+            float lastProgressSent;
 
             /// <summary>When the scenario started (real time): all-levels' time budget counts from here, boot included.</summary>
             readonly float sessionStarted = Time.realtimeSinceStartup;
@@ -7247,7 +7249,7 @@ namespace SickOfIt.Playtest
                        && Object.FindAnyObjectByType<MainMenuManager>() == null && Object.FindAnyObjectByType<LevelSelectionManager>() == null)
                     yield return null;
                 var before = GameplayWorld.Instance;
-                float end = Time.realtimeSinceStartup + 90f, loadAt = -99f, skipAt = -1f;
+                float end = Time.realtimeSinceStartup + 90f, loadAt = -99f, skipAt = -1f, beatAt = Time.realtimeSinceStartup;
                 GameplayWorld loadedFrom = null;
                 int loads = 0;
                 while (!Run.Done)
@@ -7260,6 +7262,12 @@ namespace SickOfIt.Playtest
                     }
                     if (Time.realtimeSinceStartup > end || (loads >= 3 && Time.realtimeSinceStartup - loadAt > 45f))
                         yield break;
+                    if (Time.realtimeSinceStartup - beatAt >= 10f)
+                    {
+                        // A slow load, the Shaft or a death scene can take over a minute: say the bot is alive.
+                        beatAt = Time.realtimeSinceStartup;
+                        Run.Progress(lastProgressSent);
+                    }
                     yield return ResumeStrayPause(n);
                     if (ShaftScreen.Current != null)
                     {
@@ -9603,6 +9611,7 @@ namespace SickOfIt.Playtest
                         || Time.realtimeSinceStartup - heartbeatAt >= 30f)
                     {
                         shownProgress = progress;
+                        lastProgressSent = progress;
                         heartbeatClock = now;
                         heartbeatAt = Time.realtimeSinceStartup;
                         Run.Progress(progress);
