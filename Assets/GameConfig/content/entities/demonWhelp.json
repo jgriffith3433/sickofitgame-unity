@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Brimstone whelp",
+  "hint": "Small, fast, two hits. Back up and shoot.",
+  "hintVoice": "vo_hero_hint_demonWhelp",
   "extends": "brimstoneDemon",
   "health": 2,
   "moveSpeed": 1.5,

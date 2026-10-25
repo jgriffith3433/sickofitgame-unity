@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Blink imp",
+  "hint": "Watch the violet mark. It lands there.",
+  "hintVoice": "vo_hero_hint_blinkImp",
   "extends": "imp",
   "health": 5,
   "tags": ["imp", "blinkImp"],

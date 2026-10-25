@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Ricochet imp",
+  "hint": "Its ember bounces. Count the bounces.",
+  "hintVoice": "vo_hero_hint_ricochetImp",
   "extends": "imp",
   "health": 3,
   "tags": ["imp", "ricochetImp"],

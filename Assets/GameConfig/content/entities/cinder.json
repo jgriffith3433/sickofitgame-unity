@@ -1,5 +1,9 @@
 {
   "schemaVersion": 1,
+  "displayName": "Cinder",
+  "hint": "Drifts at you and pops. Shoot it early.",
+  "hintVoice": "vo_hero_hint_cinder",
+  "onSpawn": [{ "type": "hintOnce" }],
   "extends": "chaser",
   "health": 1,
   "moveSpeed": 1.4,

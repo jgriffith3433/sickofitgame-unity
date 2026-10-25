@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Swinging sack imp",
+  "hint": "Rides the chain's beat. Time the swing.",
+  "hintVoice": "vo_hero_hint_impSwing",
   "extends": "impSack",
   "tags": [
     "imp",

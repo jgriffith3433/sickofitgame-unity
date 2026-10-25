@@ -1531,6 +1531,40 @@ Mechanics keep working as they do; their names and reasons come from here. Renam
 | `chaser`, `swarmer`, `exploder`, `sludge`, `slimeGlob`, `slimeSplat` | (retired) | none | Slime enemies. Not in any level once the levels are rebuilt. Keep the files until nothing references them. | slime |
 | `gunner`, `drone`, `sprayer`, `spinner`, `brute` | (to recast) | | Generic tinted variants from the arcade version. Each gets a Circle and a reason, or is retired. | tints |
 
+### The hero sizes them up (built 2026-10-25)
+
+Hell has a lot of things in it and the hero has no time to learn them properly, so he does what a tired person does:
+he looks at it once, says what it is and what it can't do, and moves on. **The first time a kind of enemy appears in a
+save**, the hero says its name and one small hint at its weakness, in one short line (the subtitle shows the same
+words, `IMP: Slow embers. Keep moving.`). He never repeats himself: not for the second imp, not after he dies, not after
+a rewind, not on the next run from a Waystone; only a New Game makes everything new to him again. He says nothing during
+a scene (when something bigger than him has hold of the loop) and nothing about the Wardens and floor bosses, who
+introduce themselves. Hazards are not creatures and get no line. Voice `player` (`vo_hero_hint_<entity>`), deadpan,
+under ten words of hint, never a joke about work. Recipe: GameplayCookbook "The hero sizes them up".
+
+| Entity | Name and hint |
+|---|---|
+| `imp` (and every plain imp that extends it) | Imp: Slow embers. Keep moving. |
+| `cinder` | Cinder: Drifts at you and pops. Shoot it early. |
+| `impSack` | Sack imp: Too busy to throw. Shoot the sack. |
+| `impSwing` | Swinging sack imp: Rides the chain's beat. Time the swing. |
+| `impCutter` | Chain-cutter imp: Hacks the chain. Shoot it first. |
+| `cinderThatch` | Thatch cinder: Bursts into sparks. Dodge them. |
+| `impGuard` | Imp guard: Fans three embers. Find the gap. |
+| `brimstoneDemon` (and `demonFirst`) | Brimstone demon: Fire breath, short range. Keep your distance. |
+| `demonWhelp` | Brimstone whelp: Small, fast, two hits. Back up and shoot. |
+| `demonLobber` | Brimstone lobber: Lobs brimstone. The glow shows where. |
+| `whelpNest` | Whelp nest: Spits whelps until shot shut. |
+| `ricochetImp` | Ricochet imp: Its ember bounces. Count the bounces. |
+| `blinkImp` | Blink imp: Watch the violet mark. It lands there. |
+| `bulwarkImp` | Bulwark imp: Slag shield in front. Shoot it from behind. |
+| `leadImp` | Lead imp: Throws where you're going. Stand still. |
+| `watcher` | Watcher: Shoot as its lid opens. |
+
+Not named yet: the retired slime-era arcade enemies (`chaser`, `swarmer`, `exploder`) and the arcade variants still
+to be recast (`gunner`, `drone`, `sprayer`, `spinner`, `brute`, `fighter`, `sentinel`); they get a line when they get a
+Circle. New enemies come with a `displayName`, a `hint` and a line from now on (`soi-enemy`).
+
 ## Hell's tricks (five mechanics)
 
 Hell is repetition, so its monsters have a few tricks and use them forever. Five are built as JSON abilities so floors
