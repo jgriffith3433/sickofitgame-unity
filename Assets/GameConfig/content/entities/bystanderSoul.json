@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "extends": "damnedSoul",
+  "tags": ["damned", "bystander"],
+  "abilities": [
+    {
+      "type": "react",
+      "when": { "type": "distanceToPlayer", "below": 4.5 },
+      "maxTimes": 1,
+      "do": [
+        { "type": "faceEntity", "target": "self", "toward": "player" },
+        { "type": "showText", "text": "Oh. A visitor. ...A visitor.", "duration": 2.5, "style": "Subtitle", "color": "#D2DAE4" },
+        { "type": "emit", "signal": "soul:noticed" }
+      ]
+    },
+    {
+      "type": "react",
+      "when": { "type": "witness", "what": "ShotPassed", "within": 1.6 },
+      "maxTimes": 0,
+      "do": [
+        { "type": "playEntityAnimation", "target": "self", "state": "Hiccup" },
+        { "type": "walkEntityTo", "target": "self", "anchor": "Self", "x": 0.5, "speed": 3, "keepFacing": true, "emit": "soul:flinchedBack" },
+        { "type": "emit", "signal": "soul:flinchShot" }
+      ]
+    },
+    {
+      "type": "react",
+      "when": { "type": "witness", "what": "HeroHurt", "within": 6 },
+      "maxTimes": 0,
+      "do": [
+        { "type": "playEntityAnimation", "target": "self", "state": "Hiccup" },
+        { "type": "walkEntityTo", "target": "self", "anchor": "Self", "x": 0.5, "speed": 3, "keepFacing": true, "emit": "soul:flinchedBack" },
+        { "type": "emit", "signal": "soul:flinchHurt" }
+      ]
+    },
+    {
+      "type": "react",
+      "when": { "type": "witness", "what": "HeroHurt", "within": 6 },
+      "maxTimes": 1,
+      "do": [
+        { "type": "faceEntity", "target": "self", "toward": "player" },
+        { "type": "showText", "text": "That looked like it hurt. ...That looked like it hurt.", "duration": 2.8, "style": "Subtitle", "color": "#D2DAE4" },
+        { "type": "emit", "signal": "soul:spoke" }
+      ]
+    },
+    {
+      "type": "react",
+      "when": { "type": "signal", "name": "soul:flinchedBack" },
+      "maxTimes": 0,
+      "do": [
+        { "type": "walkEntityTo", "target": "self", "anchor": "Self", "x": -0.5, "speed": 1, "keepFacing": true, "emit": "soul:settled" }
+      ]
+    }
+  ]
+}

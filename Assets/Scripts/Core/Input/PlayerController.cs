@@ -961,6 +961,8 @@ namespace SickOfIt.Core.Input
         
         /// <summary>Set at runtime by LevelRuntime after resolving references.</summary>
         public void SetProjectilePool(ObjectPool pool) => projectilePool = pool;
+        /// <summary>The pool his shots come from (read only: the witness trigger notices them passing).</summary>
+        public ObjectPool ShotPool => projectilePool;
         
         #endregion
         

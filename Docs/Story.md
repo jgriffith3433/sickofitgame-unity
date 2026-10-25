@@ -1519,6 +1519,25 @@ as a pop); a floor that gives a weapon says why in its own script. **Floor 998 (
 expected to give one (planned: the village's wreckage has something in it he can use); until its script does, only the test
 bench `weaponsTest` gives the fists. Switching: Q, the mouse wheel or the gamepad's top button; a button on the HUD on touch.
 
+## Bystanders (the damned notice)
+
+Hell is repetition, and the damned are its most repetitive people, but a loop that is brushed hiccups, and a soul whose
+loop hiccups *notices* (2026-10-25). Until now they sat and did their one thing; a bystander is a damned soul that
+also **watches the hero**: it turns to him when he comes close, flinches back from shots that go past it and from
+anything that hurts him, and says one line about it. It can't be hurt and can't fight; it only reacts, and then goes
+back to its place and its loop (`walkEntityTo`, `faceEntity`, `playEntityAnimation` and the `witness` trigger,
+cookbook "Bystanders"). The same tools let an imp look up when a shot passes, or a guard step back when an ally goes
+down, but nothing in a Circle does that yet: each use needs its reason written here first (*Rules for enemies*).
+
+Voice: a soul speaks the way Hell makes everyone speak: it says the thing, then says it again, flatter, because that
+is how a loop works. Short, never a joke about work. *"Oh. A visitor. ...A visitor."* when he comes near; *"That looked
+like it hurt. ...That looked like it hurt."* when he is hurt next to it. Subtitles only for now (grey-blue, like the
+soul); no voice is cast for the damned yet.
+
+| Entity | Where | What it does |
+|---|---|---|
+| `bystanderSoul` (extends `damnedSoul`) | the test bench `content/scenes/bystanderTest.json`, none on a floor yet | Stands looking away. Hero within 4.5: turns to him, speaks. A shot passes within 1.6: hiccups, steps back 0.5, settles. Hero hurt within 6: hiccups, steps back, speaks (once). Drops nothing: the shard belongs to the plain `damnedSoul`. |
+
 ## Rules for levels
 
 - **A level is a place in the story**, named after the place. `displayName` is the place ("The Meadow",

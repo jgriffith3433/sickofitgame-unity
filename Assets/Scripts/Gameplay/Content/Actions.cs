@@ -486,6 +486,11 @@ namespace SickOfIt.Gameplay.Content
                 entity = context.World.Player;
                 return entity != null;
             }
+            if (id == "self")
+            {
+                entity = context.Self;
+                return entity != null;
+            }
             foreach (var e in context.World.Live)
             {
                 if (e.IsAlive && e.InstanceId == id)
@@ -706,6 +711,109 @@ namespace SickOfIt.Gameplay.Content
     public sealed class ReturnToMenuAction : GameAction
     {
         public override void Run(ActionContext context) => context.Director.Host?.ReturnToMenu();
+    }
+
+    // =====================================================================
+    // SCENES: directing other entities (bystanders, enemies); the hero has his own actions above
+    // =====================================================================
+
+    [Serializable, JsonType("walkEntityTo")]
+    [Doc("Walks any entity except the hero (for him: walkPlayerTo) sideways to a world x by itself, overriding its own movement abilities while it goes. " +
+         "It faces the way it walks, stops there (or after 1.5 s without getting closer, e.g. against a wall) and 'emit' fires. Rewind-safe.")]
+    public sealed class WalkEntityToAction : GameAction
+    {
+        [Required, Doc("Instance id (spawn 'id') of the entity; \"self\" inside an entity's own abilities.")] public string target = "";
+        [Doc("Where to stop (world x), measured from 'anchor'; with 'relativeTo', an offset from that entity.")] public float x;
+        public Anchor anchor = Anchor.World;
+        [Doc("Instance id of an entity to walk to (\"player\" works): x is then an offset from it, negative = on its left.")] public string relativeTo = "";
+        [Doc("World units per second (0 = the entity's own moveSpeed).")] public float speed = 1.5f;
+        [Doc("Walk without turning to face the way it goes (backing away from something, or a flinch).")] public bool keepFacing;
+        [Doc("Signal emitted when it arrives.")] public string emit = "";
+
+        public override void Run(ActionContext context)
+        {
+            if (!SceneTargets.TryFind(context, target, out var entity))
+                return;
+            if (entity.IsPlayer)
+            {
+                context.World.Telemetry.Record("error", "walkEntityTo", 0, "the hero walks with walkPlayerTo");
+                return;
+            }
+            float to;
+            if (!string.IsNullOrEmpty(relativeTo))
+            {
+                if (!SceneTargets.TryFind(context, relativeTo, out var other))
+                    return;
+                to = other.Position.x + x;
+            }
+            else
+            {
+                to = context.Resolve(new Vector2(x, 0f), anchor).x;
+            }
+            entity.ScriptWalkTo(to, speed, emit, keepFacing);
+            context.World.Telemetry.Record("cutscene", "walkEntityTo", Mathf.RoundToInt(to * 100f), target);
+        }
+    }
+
+    [Serializable, JsonType("faceEntity")]
+    [Doc("Turns any entity except the hero (for him: facePlayer) left or right, toward another entity or away from it. Its own abilities may turn it again (a hover or chase faces the hero).")]
+    public sealed class FaceEntityAction : GameAction
+    {
+        [Required, Doc("Instance id (spawn 'id') of the entity; \"self\" inside an entity's own abilities.")] public string target = "";
+        public FaceDirection direction = FaceDirection.Right;
+        [Doc("Instance id of an entity to face (\"player\" works), instead of 'direction'.")] public string toward = "";
+        [Doc("Instance id of an entity to turn away from (\"player\" works), instead of 'direction'.")] public string awayFrom = "";
+
+        public override void Run(ActionContext context)
+        {
+            if (!SceneTargets.TryFind(context, target, out var entity))
+                return;
+            if (entity.IsPlayer)
+            {
+                context.World.Telemetry.Record("error", "faceEntity", 0, "the hero turns with facePlayer");
+                return;
+            }
+            float dir = direction == FaceDirection.Right ? 1f : -1f;
+            if (!string.IsNullOrEmpty(toward) || !string.IsNullOrEmpty(awayFrom))
+            {
+                bool away = string.IsNullOrEmpty(toward);
+                if (!SceneTargets.TryFind(context, away ? awayFrom : toward, out var other))
+                    return;
+                dir = other.Position.x >= entity.Position.x ? 1f : -1f;
+                if (away)
+                    dir = -dir;
+            }
+            entity.SetFacing(dir);
+            context.World.Telemetry.Record("cutscene", "faceEntity", (int)dir, target);
+        }
+    }
+
+    [Serializable, JsonType("playEntityAnimation")]
+    [Doc("Plays a state of an entity's animator by instance id (\"player\" works too: his Animator, see playPlayerAnimation). " +
+         "A state the entity has no clip for is logged and skipped. The animator's own transitions take over when a non-looping clip ends.")]
+    public sealed class PlayEntityAnimationAction : GameAction
+    {
+        [Required, Doc("Instance id (spawn 'id') of the entity; \"self\" inside an entity's own abilities.")] public string target = "";
+        [Required, Doc("Animator state name, e.g. Hiccup.")] public string state = "";
+
+        public override void Run(ActionContext context)
+        {
+            if (!SceneTargets.TryFind(context, target, out var entity))
+                return;
+            if (entity.IsPlayer)
+            {
+                context.World.PlayPlayerAnimation(state);
+                return;
+            }
+            if (!entity.Animation.TryGetClip(state, out _, out _))
+            {
+                context.World.Telemetry.Record("error", "playEntityAnimation", 0, $"{target} has no animation state \"{state}\"");
+                return;
+            }
+            entity.Animation.Play(state);
+            entity.RecordNow();
+            context.World.Telemetry.Record("cutscene", "playEntityAnimation", 0, $"{target}:{state}");
+        }
     }
 
     // =====================================================================
