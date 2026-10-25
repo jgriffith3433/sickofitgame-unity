@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "extends": "imp",
+  "tags": [
+    "imp",
+    "bearer"
+  ],
+  "drops": [
+    {
+      "entity": "spitfirePickup",
+      "chance": 1.0
+    }
+  ]
+}

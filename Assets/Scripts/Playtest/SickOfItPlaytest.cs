@@ -651,6 +651,14 @@ namespace SickOfIt.Playtest
                 "the swing is drawn (a crescent and a fist), the combo hits and the imp dies. Q back to the launcher, then hold R back to before that switch: the rewind brings the fists back. " +
                 "The HUD's weapon button is clicked with the mouse (a touch tap takes the same path) and switches; a second level action (takeWeapon) takes the fists away and the HUD " +
                 "is back to the launcher. Each beat is a check event; weapon events log every equip, swing and hit", WeaponsSeconds, "level"));
+            list.Add(new PlaytestScenario(WeaponDropsId, "The weapon drops (Docs/Story.md \"Weapons\"), real input, each floor opened directly with the save a hero arriving there has (setup shortcuts; nothing unlocked at the start): " +
+                "Floor 998, where a thief imp comes out of the hay and takes the rocket launcher (weaponTaken, the banner and his line, fists equipped, the fists landing hits); " +
+                "Floors 997-995 fought with fists only (brawls of cinders and brutes); Floor 994's end, where the thief throws the launcher back (a pickup: banner and line); then each weapon found on its floor with a first-pickup banner " +
+                "and the hero's line: the Spitfire (993), the Ricochet Pistol (992), the Chain-Whip (the Imp Foreman, 991), the Shotgun (954) and the Boomerang Halo (the Pile Keeper, 951). " +
+                "Then a real death on Floor 999 (the bot plays to lose): the run ends, and the next run still holds the launcher and all five unlocked weapons (a weapon given for the run only, fists, is gone). " +
+                $"Last, the bench (the scene \"{WeaponArenaScene}\" on level {WeaponsLevel}'s stage): the Spitfire streams at several times the launcher's rate on ammo, the Ricochet Pistol's bullet bounces off the ground, " +
+                "a dummy 2.6 away is out of the fists' reach and in the Chain-Whip's, the Shotgun fires five pellets and hurts point blank but not across the room, and the Boomerang Halo flies out, comes back and hits both ways. " +
+                "Each beat is a check event; weapon, banner and line events log the timeline", WeaponDropsSeconds, "level"));
             list.Add(new PlaytestScenario(BystanderId, $"A bystander in a scene (Docs/GameplayCookbook.md \"Bystanders\"): the scene \"{BystanderScene}\" on level {BystanderLevel}'s stage (setup shortcut), " +
                 "played through real input. A neutral damned soul stands behind the hero looking away. A scene walks it (walkEntityTo: it walks toward him and faces the way it goes), " +
                 "turns it away (faceEntity) and plays its Hiccup animation (playEntityAnimation). He walks up (D); inside 4.5 units it turns to him and speaks a subtitle. An imp appears " +
@@ -681,6 +689,10 @@ namespace SickOfIt.Playtest
                 $"\"{GrudgeScene}\" on level {CutsceneLevel}'s stage offers a Grudge pick that must list Not Today (picked with 1: the hero's hit is followed by " +
                 "a longer invincibility). Each beat is a check event, `shop.*` metrics carry the prices and `level<n>.diamonds` the diamonds each level paid", 150, "menus"));
             list.Add(new PlaytestScenario(ShopWeaponsId, "Yooba's weapon goods: the shop hides Slimed Knuckles, Stretchy Wraps and Keep Weapons while no weapon is unlocked, shows them once the fists are, Keep Weapons and Slimed Knuckles bought with real clicks make Yooba accuse the hero of stealing from him (a ShopBuyWeapon line, voiced), and a run ending keeps the fists only with Keep Weapons bought (setup shortcuts: the unlock, the run end). Each beat is a check event", 120, "menus"));
+            list.Add(new PlaytestScenario(YoobaAliveId, "Yooba's living shop (Docs/Story.md, \"Yooba's shop\"), clicked with the virtual mouse: the shelf starts with one jar and nine gaps, " +
+                "fills as floors are cleared (setup shortcuts: levels marked cleared, deaths counted) and Yooba points out each new ware, asks for the Lost Things quest, reacts to the deaths " +
+                "and to a Goo Plaster bought, fidgets (blink, look, hop, hum, sniff) and mutters to himself when it is quiet; with the three lost things found (setup shortcut: the flags " +
+                "their pickups on Floors 997, 995 and 992 write) he pays the reward once and the Thank-You Jar joins the shelf. At least 20 reactive lines. Each beat is a check event", 300, "menus"));
             list.Add(new PlaytestScenario("cutscene", $"The scene \"{CutsceneScene}\" on level {CutsceneLevel}'s stage (setup shortcut): with input and rewind locked " +
                 "the hero walks to a point by himself and stops, turns left and right, R does nothing; the camera zooms in and back; the screen fades " +
                 "to black and back; he is pulled into a point, spinning and shrinking until he disappears. Each beat is checked", 75, "level"));
@@ -977,6 +989,8 @@ namespace SickOfIt.Playtest
                 yield return session.AimGuideRun();
             else if (id == WeaponsId)
                 yield return session.WeaponsRun();
+            else if (id == WeaponDropsId)
+                yield return session.WeaponDropsRun();
             else if (id == BystanderId)
                 yield return session.BystanderRun();
             else if (id == "restart")
@@ -991,6 +1005,8 @@ namespace SickOfIt.Playtest
                 yield return session.ShopGate();
             else if (id == ShopWeaponsId)
                 yield return session.ShopWeapons();
+            else if (id == YoobaAliveId)
+                yield return session.YoobaAlive();
             else if (id == "climb")
             {
                 session.Prepare(ClimbLevel, true);

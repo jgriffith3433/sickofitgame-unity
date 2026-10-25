@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "team": "Player",
+  "health": 0,
+  "tags": [
+    "heroShot"
+  ],
+  "body": {
+    "radius": 0.8,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.15,
+    "sortingOrder": 5,
+    "hurtFlash": false,
+    "fxColor": "#FFD27A",
+    "color": "#FFD27A",
+    "animator": {
+      "states": [
+        {
+          "stateName": "Burn",
+          "spriteSheet": "Images/Fireball.png",
+          "fps": 12,
+          "loop": true
+        }
+      ],
+      "defaultStateName": "Burn"
+    }
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "pierce": 99,
+      "onlyHitLiving": true
+    },
+    {
+      "type": "returnToHero",
+      "turnAfter": 0.7,
+      "returnSpeed": 1.3,
+      "catchRadius": 0.45
+    },
+    {
+      "type": "spin",
+      "degreesPerSecond": 720
+    },
+    {
+      "type": "lifetime",
+      "seconds": 4
+    }
+  ]
+}

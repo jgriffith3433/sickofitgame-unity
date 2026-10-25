@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "extends": "cinder",
+  "health": 3,
+  "moveSpeed": 1.0,
+  "tags": [
+    "cinder",
+    "brute"
+  ],
+  "visual": {
+    "scale": 0.17,
+    "fxColor": "#FF6A2A",
+    "deathPunch": 0.3,
+    "deathFlash": true,
+    "deathBits": 12
+  },
+  "loot": {
+    "chance": 0.9,
+    "count": 1,
+    "value": 2
+  }
+}

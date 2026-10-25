@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "tags": [
+    "pickup",
+    "weaponPickup"
+  ],
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#FF5A36",
+    "placeholderSize": 0.62,
+    "placeholderLabel": true,
+    "sortingOrder": 6,
+    "hurtFlash": false,
+    "fxColor": "#FF5A36"
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "collect",
+      "magnetRadius": 4.5,
+      "magnetSpeed": 7,
+      "pickupRadius": 0.35,
+      "bobHeight": 0.12,
+      "do": [
+        {
+          "type": "unlockWeapon",
+          "weapon": "spitfire",
+          "equip": true
+        }
+      ],
+      "soundId": "pickup_weapon"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 120
+    }
+  ]
+}

@@ -52,6 +52,8 @@ namespace SickOfIt.Gameplay
         public Team Team { get; private set; }
         public int Serial { get; private set; }
         public bool IsPlayer { get; private set; }
+        /// <summary>One of the hero's own shots (a weapon's shot entity, tag "heroShot"): things that hurt on touch don't react to it, it hits them.</summary>
+        public bool IsHeroShot { get; private set; }
         /// <summary>Tag given to entities this one spawns with a spawner ability.</summary>
         public string ChildTag => "child:" + Serial;
 
@@ -267,6 +269,7 @@ namespace SickOfIt.Gameplay
             transform.localScale = new Vector3(scale, scale, 1f);
             radius = (def.body.shape == ShapeKind.Circle ? def.body.radius : Mathf.Max(def.body.size.x, def.body.size.y) * 0.5f) * scale;
 
+            IsHeroShot = def.tags != null && def.tags.Contains("heroShot");
             maxHealth = options.Health > 0 ? options.Health : Mathf.Max(0, Mathf.RoundToInt(def.health * Stat(Content.Stat.MaxHealth, 1f)));
             health = maxHealth;
 
@@ -1106,7 +1109,8 @@ namespace SickOfIt.Gameplay
                 return;
             if (World.TryGetEntity(other, out var entity))
             {
-                if (entity != this)
+                // An enemy's bullet or a cinder touching his shot does nothing: the shot decides what it hits (onlyHitLiving).
+                if (entity != this && !(entity.IsHeroShot && !IsHeroShot))
                     Dispatch(a => a.OnContact(entity, entering));
                 return;
             }

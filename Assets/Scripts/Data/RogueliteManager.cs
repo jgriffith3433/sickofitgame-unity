@@ -508,6 +508,7 @@ namespace SickOfIt.Data
             UpgradeProgress.Reset();
             UnlockFlags.Reset();
             WeaponProgress.Reset();
+            WeaponUnlocks.Reset();
 
             // Clear game progress data (level completions, video unlocks, highest level)
             for (int i = 1; i <= totalLevels; i++)

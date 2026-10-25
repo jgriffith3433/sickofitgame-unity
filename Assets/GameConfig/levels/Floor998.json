@@ -720,6 +720,10 @@
       {
         "name": "finale",
         "value": 0.0
+      },
+      {
+        "name": "fistsDone",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -741,10 +745,145 @@
         ]
       },
       {
+        "name": "the hay hides a thief: the launcher goes",
+        "when": {
+          "type": "anyOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "hayCart"
+              }
+            },
+            {
+              "type": "sectionReached",
+              "section": "procession"
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "cameraShake",
+                "intensity": 0.12,
+                "duration": 0.3
+              },
+              {
+                "type": "spawn",
+                "entity": "launcherThief",
+                "anchor": "Player",
+                "at": [
+                  1.4,
+                  0.9
+                ],
+                "facePlayer": false,
+                "tags": [
+                  "thief"
+                ]
+              },
+              {
+                "type": "spawn",
+                "entity": "launcherToss",
+                "anchor": "Player",
+                "at": [
+                  0.5,
+                  0.8
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "playSound",
+                "sound": "thief_snatch"
+              },
+              {
+                "type": "slowMotion",
+                "scale": 0.35,
+                "duration": 1.4
+              },
+              {
+                "type": "giveWeapon",
+                "weapon": "fists",
+                "equip": true,
+                "announce": false
+              },
+              {
+                "type": "takeWeapon",
+                "weapon": "rocketLauncher",
+                "announce": true
+              },
+              {
+                "type": "takeAllWeapons",
+                "except": "fists",
+                "announce": false
+              },
+              {
+                "type": "showText",
+                "text": "HELL HAS TAKEN YOUR GUN!",
+                "duration": 2.6,
+                "style": "Banner",
+                "sound": "vo_f998_gun_gone",
+                "color": "#FF8C33"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "showText",
+                "text": "Oh, sure. Take the rocket launcher. Take it.",
+                "duration": 2.8,
+                "style": "Subtitle",
+                "sound": "vo_f998_taken"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "showText",
+                "text": "USE YOUR HANDS! GET CLOSE! AIM AND FIRE!",
+                "duration": 2.8,
+                "style": "Banner",
+                "color": "#FFD27A"
+              },
+              {
+                "type": "showText",
+                "text": "Fine. Personal, then.",
+                "duration": 2.4,
+                "style": "Subtitle",
+                "sound": "vo_f998_fists"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "setCounter",
+                "name": "fistsDone",
+                "value": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      {
         "name": "the hay cart comes alive",
         "when": {
-          "type": "sectionReached",
-          "section": "procession"
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "sectionReached",
+              "section": "procession"
+            },
+            {
+              "type": "counter",
+              "name": "fistsDone",
+              "atLeast": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
@@ -1318,6 +1457,35 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "sparks: a brute for the fists",
+            "when": {
+              "type": "every",
+              "seconds": 15.0,
+              "startAfter": 6.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1404,6 +1572,35 @@
                 ],
                 "tags": [
                   "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "jam: a brute for the fists",
+            "when": {
+              "type": "every",
+              "seconds": 16.0,
+              "startAfter": 6.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
                 ]
               }
             ]
@@ -1512,6 +1709,35 @@
                 ],
                 "tags": [
                   "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "spire: a brute for the fists",
+            "when": {
+              "type": "every",
+              "seconds": 12.0,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "cinderBrute",
+                "count": 1,
+                "interval": 0.8,
+                "anchor": "Camera",
+                "areaCenter": [
+                  0.0,
+                  2.2
+                ],
+                "areaSize": [
+                  14.0,
+                  1.5
+                ],
+                "tags": [
+                  "brute"
                 ]
               }
             ]

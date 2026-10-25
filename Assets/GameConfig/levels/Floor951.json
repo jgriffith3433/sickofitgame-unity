@@ -787,6 +787,20 @@
                 "seconds": 2.4
               },
               {
+                "type": "spawn",
+                "entity": "boomerangHaloPickup",
+                "anchor": "Player",
+                "at": [
+                  1.4,
+                  0.9
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "wait",
+                "seconds": 4.2
+              },
+              {
                 "type": "nextSection"
               }
             ]

@@ -105,6 +105,10 @@ Assets/GameConfig/
 - **Yooba** (`ui/yooba.json`, `YoobaPortrait`): the village slime's talking portrait (idle/talk/laugh/cough sheets, a shape
   placeholder until painted) and lines on the Shaft (his hello after Video3, one reaction per climb) and in the shop. Lines
   are audio.json voices `yooba` (hero replies `player`); which line plays is `moment` + `floor` (Docs/Story.md, "Yooba between floors").
+- **Yooba's living shop** (Docs/Story.md "Yooba between floors", "The shop is alive"): `ui/yooba.json` `shelves` (wares with `requires`, e.g. `level:11`), `quest`
+  (the Lost Things: pickups `lostRollingPin`/`lostMitt`/`lostBell` on Floors 997/995/992 use the `setFlag` action, the shop pays once), `idleBehaviorSeconds`/`idleLineSeconds`,
+  and line fields `item` (ShopBuy/ShopStocked for one good or ware), `minDeaths`, `requires`; moments ShopDeaths, ShopStocked, ShopIdle, Quest*. `YoobaShelf`,
+  `UpgradeShopManager.OpeningLines`, `YoobaPortrait.IdleBehaviors`. Playtest `yooba-alive`.
 - **Hell's tricks** (Docs/Story.md, "Hell's tricks"): five JSON mechanics in `Gameplay/Content/Mechanics.cs` and `projectile`: `bounces`,
   `teleport`, `frontShield` (Entity.Damage asks it; the hero's shots arrive through `IDirectionalDamageable` with the shot's place),
   `laserSweep` (a segment tested against the hero's collider, no physics) and `Aim.Predictive`. Test enemies `ricochetImp`, `blinkImp`,
@@ -117,6 +121,12 @@ Assets/GameConfig/
   between floors in `WeaponProgress` and cleared with the Grudges. Actions `giveWeapon` / `takeWeapon`. Switch: Q / wheel / gamepad /
   the HUD weapon button (`GameplayHud.Weapon.cs`, `hud.*.weapon` placement). The aim guide follows the weapon (`GuideLengthScale`).
   Playtest `weapons` (scene `weaponsTest`).
+  **Found weapons, Floors 998-951** (Docs/Story.md "Weapons"): Floor 998 takes the launcher (`takeWeapon`, `takeAllWeapons`) and gives fists
+  for Floors 998-994; weapons with a `pickup` (`spitfire`, `ricochetPistol`, `chainWhip`, `shotgun`, `boomerangHalo`, and the launcher's
+  return on 994) are found on 993, 992, 991 (the Foreman), 954 and 951 (the Pile Keeper) and **unlocked for good**
+  (`unlockWeapon`, `WeaponUnlocks`: kept when a run ends, cleared by New Game; a scene's `suspended` weapons come back with the run). Shots of their
+  own are player-team entities (`projectile.entity`: `ricochetShot`, `haloShot` with `returnToHero`); the shotgun fans `projectile.pellets`.
+  Playtest `weapon-drops` (~20 min; scenario `weaponArena`, `targetDummy`).
 - **Bystanders** (Docs/Story.md "Bystanders", cookbook "Bystanders"): scene actions that direct any entity by instance id (`walkEntityTo`,
   `faceEntity`, `playEntityAnimation`; `"player"` and `"self"` work as ids; the walk is `Entity.ScriptWalkTo`, saved on the entity) and the `witness`
   trigger (`ShotPassed` / `AllyHurt` / `HeroHurt` near the watcher; `GameplayWorld.TryWitness`, with the last 2 s of hurts in the world's saved state).

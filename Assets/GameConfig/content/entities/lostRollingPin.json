@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "tags": [
+    "pickup",
+    "lostThing"
+  ],
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#E8C98A",
+    "placeholderSize": 0.6,
+    "placeholderLabel": true,
+    "sortingOrder": 6,
+    "hurtFlash": false,
+    "fxColor": "#E8C98A"
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "collect",
+      "magnetRadius": 1.8,
+      "magnetSpeed": 6,
+      "pickupRadius": 0.35,
+      "bobHeight": 0.1,
+      "do": [
+        {
+          "type": "setFlag",
+          "flag": "lost.pin"
+        },
+        {
+          "type": "popText",
+          "text": "FOUND: THE BAKER'S ROLLING PIN",
+          "color": "#BFF58A",
+          "size": 0.9
+        }
+      ],
+      "soundId": "pickup_lost_thing"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 600
+    }
+  ]
+}

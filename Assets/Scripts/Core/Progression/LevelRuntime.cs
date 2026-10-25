@@ -251,6 +251,7 @@ namespace SickOfIt.Core.Progression
         {
             // Yooba hears about it on the next Shaft (presentation only).
             YoobaProgress.HeroDied = true;
+            YoobaProgress.Deaths++;
             // Where the Shaft's drop back to the Waystone starts, if the death stands.
             RunFlow.HeroDied(gameplayWorld != null && gameplayWorld.Stage != null ? gameplayWorld.Stage.Floor : 0);
         }

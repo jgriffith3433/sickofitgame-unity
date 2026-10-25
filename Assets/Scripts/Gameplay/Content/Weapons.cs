@@ -9,8 +9,9 @@ namespace SickOfIt.Gameplay.Content
     [Serializable]
     [Doc("A weapon the hero can hold (content/weapons/{id}.json). He holds several and switches with Q / the mouse wheel / the gamepad's top button, " +
          "or the weapon button on the HUD (touch). 'rocketLauncher' is his gun from the start and is always in hand; others come with the giveWeapon " +
-         "action and leave with takeWeapon. A weapon is either a projectile gun (fires the hero's rocket) or a melee swing (a hit box in front of him, " +
-         "with a combo). The aim guide follows the weapon.")]
+         "action and leave with takeWeapon. A weapon is either a projectile gun (fires the hero's rocket, or a shot entity of its own) or a melee swing " +
+         "(a hit box in front of him, with a combo). The aim guide follows the weapon. A weapon with a 'pickup' is found on a floor, and finding it " +
+         "(the unlockWeapon action) unlocks it for good: he has it again after dying and in every later run.")]
     public class WeaponDef
     {
         [NonSerialized] public string id;
@@ -27,6 +28,11 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Used when kind is Projectile. The shot is the hero's rocket.")] public WeaponProjectileDef projectile = new WeaponProjectileDef();
         [Doc("Used when kind is Melee.")] public WeaponMeleeDef melee = new WeaponMeleeDef();
         public WeaponSoundsDef sounds = new WeaponSoundsDef();
+        [EntityRef, Doc("The pickup entity that carries this weapon (a 'collect' ability whose 'do' is an unlockWeapon action). Empty = never found on a floor.")]
+        public string pickup = "";
+        [Doc("Banner shown the first time he finds it (capitals; empty = 'NEW WEAPON: <name>').")] public string banner = "";
+        [Doc("The hero's subtitle for that first find (empty = none).")] public string heroText = "";
+        [SoundRef, Doc("The hero's voice line for that first find (audio.json).")] public string heroLine = "";
     }
 
     public enum WeaponKind
@@ -64,6 +70,11 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Degrees the rocket sprite points away from 'right'.")] public float spriteAngle = 225f;
         [Doc("Multiplies each shot's damage.")] public float damageScale = 1f;
         [Doc("Extra shots from the spread Grudge apply to this weapon.")] public bool multiShot = true;
+        [EntityRef, Doc("Fire this entity (a player-team shot, e.g. one with a 'projectile' ability that bounces or a 'returnToHero' ability) instead of the hero's rocket. Empty = the rocket.")]
+        public string entity = "";
+        [Doc("Shots per pull of the trigger, fanned evenly 'pelletSpread' degrees apart (a shotgun's blast). The spread Grudge adds to them.")]
+        public int pellets = 1;
+        [Doc("Degrees between neighbouring pellets.")] public float pelletSpread = 8f;
     }
 
     [Serializable]
@@ -109,7 +120,8 @@ namespace SickOfIt.Gameplay.Content
 
     [Serializable, JsonType("giveWeapon")]
     [Doc("Puts a weapon in the hero's hands (he keeps holding the others) and, with 'equip', takes it out. Ammo weapons come with 'ammo' rounds, or " +
-         "full. Giving what he holds only adds ammo. A rewind that goes back before it takes the weapon away again; the weapon stays until a death ends the run.")]
+         "full. Giving what he holds only adds ammo; giving one a scene took away (the launcher on Floor 998) brings it back. A rewind that goes back " +
+         "before it takes the weapon away again; the weapon stays until a death ends the run (a pickup's unlockWeapon keeps it for good).")]
     public sealed class GiveWeaponAction : GameAction
     {
         [Required, WeaponRef] public string weapon = "";
@@ -121,12 +133,92 @@ namespace SickOfIt.Gameplay.Content
     }
 
     [Serializable, JsonType("takeWeapon")]
-    [Doc("Takes a weapon out of the hero's hands (the rocket launcher can't be taken). If it was in his hands he is left with the launcher.")]
+    [Doc("Takes a weapon out of the hero's hands, the rocket launcher too (he is never left empty-handed: a scene gives him something first). " +
+         "A weapon he has unlocked for good is only taken for this run: it comes back with the next run, a giveWeapon or a pickup. If it was in his hands the next one he holds is.")]
     public sealed class TakeWeaponAction : GameAction
     {
         [Required, WeaponRef] public string weapon = "";
         [Doc("Say so over the hero's head.")] public bool announce = true;
 
         public override void Run(ActionContext context) => context.World.Weapons?.Take(weapon, announce);
+    }
+
+    [Serializable, JsonType("takeAllWeapons")]
+    [Doc("Takes every weapon out of the hero's hands except 'except' (Floor 998: Hell takes it all and leaves him his fists). Unlocked weapons are only taken for this run.")]
+    public sealed class TakeAllWeaponsAction : GameAction
+    {
+        [WeaponRef, Doc("The weapon he keeps; empty = none (he keeps the last one he holds anyway).")] public string except = "";
+        [Doc("Say so over the hero's head.")] public bool announce = false;
+
+        public override void Run(ActionContext context) => context.World.Weapons?.TakeAll(except, announce);
+    }
+
+    [Serializable, JsonType("unlockWeapon")]
+    [Doc("A pickup's action: puts the weapon in his hands and unlocks it for good (saved; he has it again after dying and in every later run). " +
+         "The first time shows the weapon's banner and the hero's line (weapon 'banner', 'heroText', 'heroLine'); later finds just refill its ammo. " +
+         "Use it in a 'collect' pickup's 'do', which pays out once even if a rewind brings the pickup back.")]
+    public sealed class UnlockWeaponAction : GameAction
+    {
+        [Required, WeaponRef] public string weapon = "";
+        [Doc("Take it out now.")] public bool equip = true;
+
+        public override void Run(ActionContext context) => context.World.Weapons?.Unlock(weapon, equip);
+    }
+
+    [Serializable, JsonType("returnToHero")]
+    [Doc("A boomerang: flies out along its first velocity, slowing to a stop in 'turnAfter' seconds, then comes back to the hero faster and faster and is caught " +
+         "(dies without a hit) when it reaches him. Put it on a player-team shot with a 'projectile' ability that has 'pierce', so it hurts on the way out and the way back.")]
+    public sealed class ReturnToHeroAbility : Ability
+    {
+        [Doc("Seconds out before it turns.")] public float turnAfter = 0.55f;
+        [Doc("Speed coming back as a multiple of the speed it was thrown at.")] public float returnSpeed = 1.3f;
+        [Doc("Caught inside this distance of the hero.")] public float catchRadius = 0.45f;
+
+        Vector2 thrown;
+        bool started;
+
+        public override void OnSpawn() { thrown = Vector2.zero; started = false; }
+
+        public override void Tick(float now, float dt)
+        {
+            if (!started)
+            {
+                started = true;
+                thrown = Owner.Body != null ? Owner.Body.linearVelocity : Vector2.zero;
+            }
+            float t = now - Owner.SpawnTime;
+            if (t < turnAfter)
+            {
+                Owner.SetVelocity(thrown * Mathf.Clamp01(1f - t / Mathf.Max(0.05f, turnAfter)));
+                return;
+            }
+            var player = Player;
+            if (player == null || !player.IsAlive)
+            {
+                Owner.Die(DeathCause.Despawn);
+                return;
+            }
+            Vector2 to = player.Position + Vector2.up * 0.5f - Owner.Position;
+            if (to.magnitude <= catchRadius + player.Radius)
+            {
+                Owner.Die(DeathCause.Despawn);
+                return;
+            }
+            float back = Mathf.Min(1f, (t - turnAfter) / 0.35f);
+            Owner.SetVelocity(to.normalized * thrown.magnitude * returnSpeed * Mathf.Max(0.2f, back));
+        }
+
+        public override void SaveState(StateWriter writer)
+        {
+            writer.Bool(started);
+            writer.Float(thrown.x);
+            writer.Float(thrown.y);
+        }
+
+        public override void LoadState(StateReader reader)
+        {
+            started = reader.Bool();
+            thrown = new Vector2(reader.Float(), reader.Float());
+        }
     }
 }

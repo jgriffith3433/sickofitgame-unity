@@ -29,6 +29,10 @@ namespace SickOfIt.Core.Progression
         public bool Painted => frames.TryGetValue(Clip, out var list) && list.Count > 0;
         /// <summary>Loops with a painted sheet.</summary>
         public int PaintedClips => frames.Count;
+        /// <summary>The idle behavior playing now (blink, look, hop, hum, sniff), or "".</summary>
+        public string Behavior => behavior;
+        /// <summary>How many idle behaviors he has done (the playtest reads it).</summary>
+        public int BehaviorsDone { get; private set; }
         /// <summary>A line is being said right now.</summary>
         public bool Speaking { get; private set; }
 
@@ -39,7 +43,11 @@ namespace SickOfIt.Core.Progression
         Image art;
         Image blob;
         Image mouth;
+        Image pupilL, pupilR;
         float clipStarted;
+        string behavior = "";
+        float behaviorStart, behaviorLength, nextBehavior = -1f;
+        static readonly string[] Behaviors = { "blink", "look", "hop", "hum", "sniff" };
         float clipEnds = -1f;
 
         /// <summary>Builds the portrait under 'parent', placed (and kept on screen) like any menu element.</summary>
@@ -138,8 +146,8 @@ namespace SickOfIt.Core.Progression
             Part(holder, "BallL", pink, MenuShape.Circle, new Vector2(0.27f, 0.75f), new Vector2(0.43f, 0.91f), 0f);
             Part(holder, "BallR", pink, MenuShape.Circle, new Vector2(0.57f, 0.75f), new Vector2(0.73f, 0.91f), 0f);
             var pupil = new Color(0.1f, 0.3f, 0.1f, 1f);
-            Part(holder, "PupilL", pupil, MenuShape.Circle, new Vector2(0.32f, 0.8f), new Vector2(0.38f, 0.86f), 0f);
-            Part(holder, "PupilR", pupil, MenuShape.Circle, new Vector2(0.62f, 0.8f), new Vector2(0.68f, 0.86f), 0f);
+            pupilL = Part(holder, "PupilL", pupil, MenuShape.Circle, new Vector2(0.32f, 0.8f), new Vector2(0.38f, 0.86f), 0f);
+            pupilR = Part(holder, "PupilR", pupil, MenuShape.Circle, new Vector2(0.62f, 0.8f), new Vector2(0.68f, 0.86f), 0f);
             mouth = Part(holder, "Mouth", pink, MenuShape.Rounded, new Vector2(0.3f, 0.3f), new Vector2(0.7f, 0.36f), 10f);
         }
 
@@ -173,11 +181,68 @@ namespace SickOfIt.Core.Progression
             Report("clip", $"{clip} ({(frames.ContainsKey(clip) ? "painted" : painted ? "painted idle" : "placeholder")})");
         }
 
+        /// <summary>Stops talking at once (the line was cut off): back to idle, ready for the next line.</summary>
+        public void Silence()
+        {
+            Speaking = false;
+            Play("idle");
+        }
+
+        /// <summary>
+        /// Idle life (ui/yooba.json idleBehaviorSeconds): while he is quiet he blinks, looks about, hops, hums and sniffs
+        /// by himself, so the counter is never a still picture. Returns the body's lift and tilt for this frame.
+        /// </summary>
+        void IdleBehaviors(out float lift, out float tilt, out float pupilScale, out float pupilShift)
+        {
+            lift = tilt = pupilShift = 0f;
+            pupilScale = 1f;
+            float now = Time.unscaledTime;
+            bool free = !Speaking && Clip == "idle" && config.idleBehaviorSeconds > 0f;
+            if (!free)
+            {
+                behavior = "";
+                nextBehavior = -1f;
+                return;
+            }
+            if (nextBehavior < 0f)
+                nextBehavior = now + UnityEngine.Random.Range(0.4f, 1f) * config.idleBehaviorSeconds;
+            if (behavior == "" && now >= nextBehavior)
+            {
+                behavior = Behaviors[UnityEngine.Random.Range(0, Behaviors.Length)];
+                behaviorStart = now;
+                behaviorLength = behavior == "blink" ? 0.35f : behavior == "hop" ? 0.7f : 1.4f;
+                BehaviorsDone++;
+                Report("idle", behavior);
+            }
+            if (behavior == "")
+                return;
+            float u = (now - behaviorStart) / behaviorLength;
+            if (u >= 1f)
+            {
+                behavior = "";
+                nextBehavior = now + UnityEngine.Random.Range(0.6f, 1.4f) * config.idleBehaviorSeconds;
+                return;
+            }
+            switch (behavior)
+            {
+                case "blink": pupilScale = 1f - 0.9f * Mathf.Sin(u * Mathf.PI); break;
+                case "look": pupilShift = Mathf.Sin(u * Mathf.PI * 2f) * 0.03f; tilt = Mathf.Sin(u * Mathf.PI * 2f) * 3f; break;
+                case "hop": lift = Mathf.Sin(u * Mathf.PI) * 18f; break;
+                case "hum": tilt = Mathf.Sin(u * Mathf.PI * 6f) * 4f; lift = Mathf.Abs(Mathf.Sin(u * Mathf.PI * 6f)) * 4f; break;
+                case "sniff": lift = Mathf.Abs(Mathf.Sin(u * Mathf.PI * 4f)) * 6f; pupilShift = 0.02f; break;
+            }
+        }
+
         void Update()
         {
             if (clipEnds > 0f && Time.unscaledTime >= clipEnds)
                 Play("idle");
             float t = Time.unscaledTime - clipStarted;
+            IdleBehaviors(out float lift, out float tilt, out float pupilScale, out float pupilShift);
+            body.anchoredPosition = new Vector2(0f, lift);
+            body.localRotation = Quaternion.Euler(0f, 0f, tilt);
+            if (pupilL != null)
+                PlacePupils(pupilScale, pupilShift);
             if (art.enabled)
             {
                 var list = frames.TryGetValue(Clip, out var own) ? own : frames["idle"];
@@ -194,6 +259,16 @@ namespace SickOfIt.Core.Progression
             var m = mouth.rectTransform;
             m.anchorMin = new Vector2(0.3f, 0.33f - 0.12f * open);
             m.anchorMax = new Vector2(0.7f, 0.36f);
+        }
+
+        void PlacePupils(float scale, float shift)
+        {
+            foreach (var (pupil, x) in new[] { (pupilL, 0.32f), (pupilR, 0.62f) })
+            {
+                var r = pupil.rectTransform;
+                r.anchorMin = new Vector2(x + shift, 0.83f - 0.03f * scale);
+                r.anchorMax = new Vector2(x + 0.06f + shift, 0.83f + 0.03f * scale);
+            }
         }
 
         // ─── Saying lines ─────────────────────────────────────────────
@@ -304,18 +379,65 @@ namespace SickOfIt.Core.Progression
             return null;
         }
 
-        /// <summary>A shop line for the moment: the next one not said in this visit's rotation.</summary>
-        public static YoobaLine PickShop(YoobaMoment moment)
+        /// <summary>The lines of a moment that fit now: its item (when asked for), the deaths counted and its requires.</summary>
+        public static List<YoobaLine> Candidates(YoobaMoment moment, string item = null)
+        {
+            var list = new List<YoobaLine>();
+            if (!Enabled)
+                return list;
+            int deaths = YoobaProgress.Deaths;
+            foreach (var line in Config.lines)
+            {
+                if (line == null || line.moment != moment)
+                    continue;
+                if (item != null && line.item != item)
+                    continue;
+                if (item == null && !string.IsNullOrEmpty(line.item))
+                    continue;
+                if (line.minDeaths > deaths || !Requirements.Met(line.requires))
+                    continue;
+                list.Add(line);
+            }
+            return list;
+        }
+
+        /// <summary>The first line of a moment not said yet that fits now (null = none left): for lines that come once, like a reaction to a find.</summary>
+        public static YoobaLine PickNew(YoobaMoment moment, string item = null)
+        {
+            foreach (var line in Candidates(moment, item))
+                if (!YoobaProgress.HasSaid(line.sound))
+                    return line;
+            return null;
+        }
+
+        /// <summary>
+        /// Something to mutter while the hero looks at the shelf: a running gag the hero's climb has just unlocked (its requires
+        /// hold, not said yet; the latest first), else a line not said yet, else any repeatable line, else null.
+        /// </summary>
+        public static YoobaLine PickIdle()
+        {
+            var all = Candidates(YoobaMoment.ShopIdle);
+            var fresh = all.FindAll(l => !YoobaProgress.HasSaid(l.sound));
+            for (int i = fresh.Count - 1; i >= 0; i--)
+                if (fresh[i].requires.Count > 0)
+                    return fresh[i];
+            if (fresh.Count > 0)
+                return fresh[0];
+            var again = all.FindAll(l => !l.once);
+            return again.Count > 0 ? again[UnityEngine.Random.Range(0, again.Count)] : null;
+        }
+
+        /// <summary>A shop line for the moment: the next one not said in this visit's rotation. 'item' picks the lines made for that good.</summary>
+        public static YoobaLine PickShop(YoobaMoment moment, string item = null)
         {
             if (!Enabled)
                 return null;
-            var candidates = new List<YoobaLine>();
-            foreach (var line in Config.lines)
-                if (line != null && line.moment == moment)
-                    candidates.Add(line);
+            var candidates = Candidates(moment, item);
+            if (candidates.Count == 0 && item != null)
+                candidates = Candidates(moment);
             if (candidates.Count == 0)
                 return null;
-            int key = (int)moment;
+            int key = (int)moment * 1000 + (item != null ? item.GetHashCode() & 0x3ff : 0);
             shopTurn.TryGetValue(key, out int turn);
             shopTurn[key] = turn + 1;
             return candidates[turn % candidates.Count];
@@ -333,6 +455,13 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>After a Shaft: the line is said and the news is old.</summary>
+        /// <summary>Remembers that a shop line was said (the ones that come once).</summary>
+        public static void Said(YoobaLine line)
+        {
+            if (line != null && line.once)
+                YoobaProgress.MarkSaid(line.sound);
+        }
+
         public static void Heard(YoobaLine line)
         {
             if (line != null)

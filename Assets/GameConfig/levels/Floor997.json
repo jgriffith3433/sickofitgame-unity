@@ -232,6 +232,14 @@
                 1.1,
                 1
               ]
+            },
+            {
+              "entity": "lostRollingPin",
+              "at": [
+                20.0,
+                9.3
+              ],
+              "id": "lostThing"
             }
           ]
         },
@@ -470,12 +478,97 @@
             ]
           }
         ]
+      },
+      {
+        "name": "the village's sparks followed him up",
+        "when": {
+          "type": "sectionReached",
+          "section": "gap2"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawnWave",
+            "entity": "cinder",
+            "count": 2,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "wave"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "a brute on the high crossing",
+        "when": {
+          "type": "sectionReached",
+          "section": "higher"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawnWave",
+            "entity": "cinderBrute",
+            "count": 1,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "brute"
+            ]
+          },
+          {
+            "type": "spawnWave",
+            "entity": "cinder",
+            "count": 1,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "wave"
+            ]
+          }
+        ]
       }
     ],
     "phases": [
       {
         "name": "ledge",
         "onEnter": [
+          {
+            "type": "giveWeapon",
+            "weapon": "fists",
+            "equip": false,
+            "announce": false
+          },
+          {
+            "type": "takeAllWeapons",
+            "except": "fists",
+            "announce": false
+          },
           {
             "type": "runSequence",
             "steps": [
