@@ -890,5 +890,6 @@
       "type": "emit",
       "signal": "mkFallen"
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "magmaKing_hurt", "deathSound": "magmaKing_die", "attackSound": "magmaKing_attack" }
 }

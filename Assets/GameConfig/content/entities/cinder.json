@@ -45,5 +45,6 @@
       "face": true
     }
   ],
-  "onDeath": []
+  "onDeath": [],
+  "sounds": { "hurtSound": "cinder_hurt", "deathSound": "cinder_die" }
 }

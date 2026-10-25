@@ -104,5 +104,6 @@
       ]
     }
   ],
-  "onDeath": []
+  "onDeath": [],
+  "sounds": { "hurtSound": "watcher_hurt", "deathSound": "watcher_die", "attackSound": "watcher_attack" }
 }

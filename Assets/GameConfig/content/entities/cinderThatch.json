@@ -21,5 +21,6 @@
     { "type": "spawn", "entity": "cinderSpark", "anchor": "Self", "at": [-0.3, 0.2], "facePlayer": false },
     { "type": "spawn", "entity": "cinderSpark", "anchor": "Self", "at": [0.3, 0.2], "facePlayer": false },
     { "type": "playSound", "sound": "thatch_burst" }
-  ]
+  ],
+  "sounds": { "hurtSound": "cinderThatch_hurt", "deathSound": "cinderThatch_die" }
 }

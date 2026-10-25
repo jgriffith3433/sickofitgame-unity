@@ -106,5 +106,6 @@
         }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "impSwing_hurt", "deathSound": "impSwing_die", "attackSound": "impSwing_attack" }
 }

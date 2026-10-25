@@ -880,6 +880,9 @@ namespace SickOfIt.Playtest
                 "or a HUD panel, none leaves the screen, and every button is thumb-sized", 120, "menus"));
             list.Add(new PlaytestScenario("portal-audio", "The prologue's portal scene, by ear, on the main menu: every Overlord line, hero take, " +
                 "Hell's echo (three repeats, each deeper) and effect plays in scene order, then the Meadow's lines; any without a clip is a bug", 150, "menus", "audio"));
+            list.Add(new PlaytestScenario("sound-audit", "The sound audit on the main menu: every sound in audio.json has a clip (a missing one is a bug, " +
+                "listed by id), every enemy's hurt, death and attack sound, every weapon's equip and empty sound, every enemy's hint line and Yooba's shop lines are heard once, " +
+                "in the voice that speaks them; `sound` and `check` events, metrics soundAudit.*", 240, "menus", "audio"));
             list.Add(new PlaytestScenario("site", "The game's main menu (no credit on the game page), then the landing page, blog and sub pages each opened over it: " +
                 "Powered by HAWKES GEN on every one, Hawkes Biomedical on the landing page; the lore (the Descent, its floor counter at 1,000 at the bottom, " +
                 "the new lore pages) and the post about the engine, linked from the blog and Development; on each page no link or button overlaps " +
@@ -1015,6 +1018,8 @@ namespace SickOfIt.Playtest
                 yield return session.RewindPerfRun();
             else if (id == "portal-audio")
                 yield return session.PortalAudio();
+            else if (id == "sound-audit")
+                yield return session.SoundAudit();
             else if (id == "cutscene")
                 yield return session.Cutscene();
             else if (id == "shop-gate")
@@ -4266,6 +4271,58 @@ namespace SickOfIt.Playtest
                 if (Run.Done) yield break;
                 Run.Metric("portalSounds", PortalSounds.Length - missing);
                 Run.Metric("portalSoundsMissing", missing);
+                Run.Progress(1f);
+                End(PlaytestOutcome.Done);
+            }
+
+            /// <summary>
+            /// sound-audit: every sound in audio.json must have a clip (the same rule as Tools/Audio/sound_audit.py --check and
+            /// the SoundClipTests EditMode test), then one of each kind is played through Sfx: an enemy's hurt, death and attack,
+            /// a weapon's equip and empty click, a hero hint and a Yooba shop line. Presentation only.
+            /// </summary>
+            public IEnumerator SoundAudit()
+            {
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                var sounds = GameDefinition.Instance != null && GameDefinition.Instance.audio != null ? GameDefinition.Instance.audio.sounds : null;
+                if (sounds == null)
+                {
+                    Run.Problem(PlaytestSeverity.Bug, "sound-audit: no audio config loaded");
+                    End(PlaytestOutcome.Done);
+                    yield break;
+                }
+                int missing = 0;
+                foreach (var sound in sounds)
+                {
+                    if (sound == null || Sfx.Has(sound.id))
+                        continue;
+                    missing++;
+                    Run.Problem(PlaytestSeverity.Bug, $"sound-audit: \"{sound.id}\" has no clip");
+                }
+                Run.Metric("soundAudit.sounds", sounds.Count);
+                Run.Metric("soundAudit.missing", missing);
+                Run.Event("check", $"every sound has a clip: {(missing == 0 ? "ok" : "FAILED")} ({sounds.Count - missing} of {sounds.Count})");
+                var samples = new[]
+                {
+                    "imp_hurt", "imp_die", "imp_attack", "brimstoneDemon_attack", "watcher_die", "magmaKing_hurt", "spireFiend_die",
+                    "wpn_equip_shotgun", "wpn_empty_shotgun", "wpn_equip_fists", "vo_hero_hint_imp", "vo_hero_hint_watcher",
+                    "vo_yooba_buy_plaster", "vo_yooba_quest_offer", "vo_mk_defeat",
+                };
+                for (int i = 0; i < samples.Length && !Run.Done; i++)
+                {
+                    string id = samples[i];
+                    Run.Progress((float)i / samples.Length);
+                    if (!Sfx.Has(id))
+                    {
+                        Run.Problem(PlaytestSeverity.Bug, $"sound-audit: \"{id}\" has no clip");
+                        continue;
+                    }
+                    float length = Sfx.LengthOf(id);
+                    Run.Event("sound", $"{id} ({length:0.0} s)");
+                    Sfx.Play(id);
+                    yield return WaitReal(length + 0.4f);
+                }
+                if (Run.Done) yield break;
                 Run.Progress(1f);
                 End(PlaytestOutcome.Done);
             }

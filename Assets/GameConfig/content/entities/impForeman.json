@@ -436,5 +436,6 @@
         }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "impForeman_hurt", "deathSound": "impForeman_die", "attackSound": "impForeman_attack" }
 }

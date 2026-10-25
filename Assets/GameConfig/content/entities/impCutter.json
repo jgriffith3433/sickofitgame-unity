@@ -30,5 +30,6 @@
       "bobHeight": 0.12,
       "bobSpeed": 5.0
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "impCutter_hurt", "deathSound": "impCutter_die", "attackSound": "impCutter_attack" }
 }

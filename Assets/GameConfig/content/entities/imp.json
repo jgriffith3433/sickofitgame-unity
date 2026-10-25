@@ -138,5 +138,6 @@
       "fireOnEvent": "FireProjectile",
       "damage": 1
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "imp_hurt", "deathSound": "imp_die", "attackSound": "imp_attack" }
 }

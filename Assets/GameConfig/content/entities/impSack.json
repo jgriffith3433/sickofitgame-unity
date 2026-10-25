@@ -58,5 +58,6 @@
         { "type": "playSound", "sound": "sack_spill" }
       ]
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "impSack_hurt", "deathSound": "impSack_die", "attackSound": "impSack_attack" }
 }

@@ -29,5 +29,6 @@
       "initialDelay": 0.8,
       "damage": 1
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "leadImp_hurt", "deathSound": "leadImp_die", "attackSound": "leadImp_attack" }
 }

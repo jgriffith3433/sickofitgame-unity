@@ -661,5 +661,6 @@
       "type": "emit",
       "signal": "sfFallen"
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "spireFiend_hurt", "deathSound": "spireFiend_die", "attackSound": "spireFiend_attack" }
 }

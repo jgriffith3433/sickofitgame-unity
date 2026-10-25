@@ -29,5 +29,6 @@
       "initialDelay": 1.0,
       "damage": 1
     }
-  ]
+  ],
+  "sounds": { "hurtSound": "ricochetImp_hurt", "deathSound": "ricochetImp_die", "attackSound": "ricochetImp_attack" }
 }
