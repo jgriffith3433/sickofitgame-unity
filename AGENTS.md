@@ -155,6 +155,11 @@ Assets/GameConfig/
   a script's `playMusic`; `musicLayer` telemetry). Stingers are audio.json sounds: event `weaponSting` (first find of a weapon) and `stingSound` on each `ui/theme.json`
   grade. `Tools/Audio/music_manifest.json` lists the 34 tracks still to make (stand-ins play meanwhile; `python3 Tools/Audio/music_manifest.py --check --price`): replace
   a stand-in's path with the made file. Playtest `music-layers` (~3 min).
+- **Style** (Docs/Story.md "Style"): `game.json` `style` (`StyleConfig`) + `Gameplay/Core/StyleSystem.cs`: a hostile shot (an `Enemy` entity with a `projectile` ability) that passes within
+  `grazeDistance` of the hero and moves away without hitting is a graze (`Entity.GapTo`), counted in the world counter `grazes`; the meter, streak, tier and the shots watched are saved
+  state (rewind takes credit back, `grazeUndone` telemetry), payouts (diamonds, `RewindBudget.Add`) and lines are keyed on the graze count through `TryGrantOnce` so a replay never pays or speaks
+  twice. Lines are `style.lines` -> audio.json sounds (`vo_style_*` announcer, `vo_crowd_*` effects; the subtitle is the first sound's prompt, `Sfx.SpokenText`). HUD meter `GameplayHud.Style.cs`;
+  the results screen shows par time, grazes and a rank S/A/B/C saved per level in `StyleRanks` (cleared by New Game). Playtest `style`.
 - **Shortcuts** (Docs/Story.md, "Shortcuts"): a choice point in a stage (`offerShortcut`: keep climbing or the shortcut,
   its cost a Grudge shown on the card, never how far it goes) and the `shortcutChosen` trigger to branch on. Taken, the
   stage ends on the shortcut's `toFloor` with no Grudge pick, leads to its `nextLevel` (past the skipped stages), and the

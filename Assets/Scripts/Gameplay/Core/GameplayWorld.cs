@@ -58,6 +58,8 @@ namespace SickOfIt.Gameplay
         public UpgradeSystem Upgrades { get; private set; }
         /// <summary>Hell's shortcuts offered in this level (offerShortcut) and the one taken, if any.</summary>
         public ShortcutSystem Shortcuts { get; private set; }
+        /// <summary>Grazes, the style meter and the floor rank (Docs/Story.md, "Style").</summary>
+        public StyleSystem Style { get; private set; }
         /// <summary>Expected level length in seconds, for the progress bar.</summary>
         public float LevelLength { get; private set; } = 60f;
         public ObjectPool PickupPool { get; private set; }
@@ -183,6 +185,7 @@ namespace SickOfIt.Gameplay
                 budget.Configure(setup.RewindBudget.startSeconds, setup.RewindBudget.maxSeconds, setup.RewindBudget.costPerSecond);
             }
             Upgrades = new UpgradeSystem(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
+            Style = new StyleSystem(this);
             Shortcuts = new ShortcutSystem(this, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             if (playerController != null)
             {
@@ -286,6 +289,7 @@ namespace SickOfIt.Gameplay
             Weapons?.Tick(now, dt);
             if (Player != null && Player.isActiveAndEnabled)
                 Player.Tick(now, dt);
+            Style?.Tick(now, dt);
 
             Effects.Tick(now, dt);
             Stage.Tick(now);
@@ -847,6 +851,7 @@ namespace SickOfIt.Gameplay
             Stage.SaveState(w);
             Scripted.SaveState(w);
             Weapons?.SaveState(w);
+            Style?.SaveState(w);
         }
 
         public void LoadState(StateReader r)
@@ -878,6 +883,7 @@ namespace SickOfIt.Gameplay
             Stage.LoadState(r);
             Scripted.LoadState(r);
             Weapons?.LoadState(r);
+            Style?.LoadState(r);
         }
 
         /// <summary>Saves the world's state at this moment (after a discrete event such as a swing or a weapon change), so a rewind to just after can't undo it.</summary>

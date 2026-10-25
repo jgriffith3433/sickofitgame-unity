@@ -130,6 +130,15 @@ namespace SickOfIt.Core.Audio
             return byId.TryGetValue(id, out var sound) && sound.clip != null ? sound.clip.length : 0f;
         }
 
+        /// <summary>The words of a voice line (its audio.json prompt without the [delivery tags]): the subtitle, available before the clip is made.</summary>
+        public static string SpokenText(string id)
+        {
+            _ = Config;
+            if (string.IsNullOrEmpty(id) || !byId.TryGetValue(id, out var sound) || sound.prompt == null)
+                return "";
+            return System.Text.RegularExpressions.Regex.Replace(sound.prompt, @"\[[^\]]*\]", "").Replace("  ", " ").Trim();
+        }
+
         /// <summary>True when the id names a sound that has a clip (handy for "fall back to X" decisions).</summary>
         public static bool Has(string id)
         {
