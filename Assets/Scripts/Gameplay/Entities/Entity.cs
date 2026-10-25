@@ -17,7 +17,7 @@ namespace SickOfIt.Gameplay
     /// through <see cref="SimHistory"/>; position and velocity are saved by RewindableTransform and
     /// RewindableRigidbody2D, and active/inactive by RewindableGameObject.
     /// </summary>
-    public sealed class Entity : MonoBehaviour, ISimState, IRandomSource, IDamageable, IPoolReturnable
+    public sealed class Entity : MonoBehaviour, ISimState, IRandomSource, IDirectionalDamageable, IPoolReturnable
     {
         sealed class StateRuntime
         {
@@ -113,6 +113,8 @@ namespace SickOfIt.Gameplay
         Color baseColor = Color.white;
         float radius = 0.5f;
         bool touchingPlayer;
+        Vector2 hitFrom;
+        bool hasHitFrom;
 
         // ─── Public state ─────────────────────────────────────────────
 
@@ -523,6 +525,18 @@ namespace SickOfIt.Gameplay
             hasVelocityIntent = true;
         }
 
+        /// <summary>Appears at this point at once (a blink): position, body and velocity. Rewind restores where it was.</summary>
+        public void TeleportTo(Vector2 point)
+        {
+            transform.position = new Vector3(point.x, point.y, transform.position.z);
+            if (Body != null)
+            {
+                Body.position = point;
+                Body.linearVelocity = Vector2.zero;
+            }
+            dirty = true;
+        }
+
         /// <summary>Stand still until this time (attacks, wind-ups).</summary>
         public void HoldPosition(float until)
         {
@@ -627,6 +641,15 @@ namespace SickOfIt.Gameplay
 
         public void TakeDamage(int damage) => Damage(damage, null);
 
+        /// <summary>Damage from a shot that is at this point (so a front shield knows which side it came from).</summary>
+        public void TakeDamageFrom(int damage, Vector2 point)
+        {
+            hitFrom = point;
+            hasHitFrom = true;
+            try { Damage(damage, null); }
+            finally { hasHitFrom = false; }
+        }
+
         /// <summary>Hurts this entity. Returns true if any damage was dealt.</summary>
         public bool Damage(int amount, Entity source, bool ignoreInvincibility = false)
         {
@@ -634,6 +657,13 @@ namespace SickOfIt.Gameplay
                 return false;
             if (HasStatus(s => s.invulnerable))
                 return false;
+
+            if (!IsPlayer && (source != null || hasHitFrom))
+            {
+                var shield = FindAbility<FrontShieldAbility>();
+                if (shield != null && shield.TryBlock(source != null ? source.Position : hitFrom, ref amount))
+                    return false;
+            }
 
             int final = Mathf.Max(0, Mathf.RoundToInt(amount * Stat(Content.Stat.DamageTaken, 1f)));
             if (final <= 0)
@@ -1076,7 +1106,7 @@ namespace SickOfIt.Gameplay
                 healthBar.Show(maxHealth > 0 ? (float)health / maxHealth : 0f, transform.lossyScale.x);
         }
 
-        Color FxColor => Def.visual.fxColor.a > 0f ? Def.visual.fxColor : new Color(1f, 0.95f, 0.82f, 1f);
+        public Color FxColor => Def.visual.fxColor.a > 0f ? Def.visual.fxColor : new Color(1f, 0.95f, 0.82f, 1f);
 
         /// <summary>The entity's own sound id; for enemies with none, the game-wide fallback.</summary>
         string SoundOr(string own, string enemyDefault)

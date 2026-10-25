@@ -77,7 +77,10 @@ namespace SickOfIt.Combat.Damage
             IDamageable damageable = other.GetComponent<IDamageable>();
             if (damageable != null && damageable.IsAlive)
             {
-                damageable.TakeDamage(damageAmount);
+                if (damageable is IDirectionalDamageable directional)
+                    directional.TakeDamageFrom(damageAmount, transform.position);
+                else
+                    damageable.TakeDamage(damageAmount);
                 hasDealtDamage = true;
 
                 // Play hit SFX at impact point (PlayClipAtPoint so it persists after pool return)

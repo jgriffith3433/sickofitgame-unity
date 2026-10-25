@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "extends": "imp",
+  "health": 3,
+  "tags": ["imp", "ricochetImp"],
+  "visual": {
+    "color": "#FFC890",
+    "fxColor": "#FFC15A"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "ricochetEmber",
+      "speed": 4.5,
+      "aim": "Player",
+      "muzzle": [0.09, 0.09375],
+      "interval": 2.6,
+      "initialDelay": 1.0,
+      "damage": 1
+    }
+  ]
+}

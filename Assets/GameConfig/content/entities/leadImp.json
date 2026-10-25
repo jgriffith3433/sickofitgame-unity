@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "extends": "imp",
+  "health": 3,
+  "tags": ["imp", "leadImp"],
+  "visual": {
+    "color": "#A8D4FF",
+    "fxColor": "#9AD0FF"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "shoot",
+      "projectile": "projectileEnemy",
+      "speed": 5.5,
+      "aim": "Predictive",
+      "muzzle": [0.09, 0.09375],
+      "interval": 1.8,
+      "initialDelay": 0.8,
+      "damage": 1
+    }
+  ]
+}

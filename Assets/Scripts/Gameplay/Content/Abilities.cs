@@ -747,14 +747,24 @@ namespace SickOfIt.Gameplay.Content
     {
         public int damage = 1;
         [Doc("Extra targets it can pass through.")] public int pierce;
-        [Doc("Disappear when hitting ground, walls, or platforms.")] public bool dieOnSolid;
+        [Doc("Disappear when hitting ground, walls, or platforms (after its last bounce, if it has any).")] public bool dieOnSolid;
+        [Doc("Bounces off ground, walls and platforms this many times, mirroring its velocity about the surface, before 'dieOnSolid' applies. 0 = none. Needs a body that moves by velocity (not Dynamic).")] public int bounces;
+        [Doc("Speed kept after each bounce (1 = all of it).")] public float bounceKeep = 1f;
+        [SoundRef, Doc("Sound id (audio.json) played at each bounce; empty = none.")] public string bounceSound = "";
         [EffectRef] public string effect = "";
         public float knockback;
         public AudioClip hitSound;
 
         int hits;
+        int bouncesLeft;
 
-        public override void OnSpawn() => hits = 0;
+        public int BouncesLeft => bouncesLeft;
+
+        public override void OnSpawn()
+        {
+            hits = 0;
+            bouncesLeft = bounces;
+        }
 
         public override void OnContact(Entity other, bool entering)
         {
@@ -774,12 +784,56 @@ namespace SickOfIt.Gameplay.Content
 
         public override void OnSolidContact(Collider2D collider)
         {
-            if (dieOnSolid && Owner.IsAlive)
+            if (!Owner.IsAlive)
+                return;
+            if (bouncesLeft > 0 && Owner.Body != null && TryBounce(collider))
+                return;
+            if (dieOnSolid)
                 Owner.Die(DeathCause.Self);
         }
 
-        public override void SaveState(StateWriter writer) => writer.Int(hits);
-        public override void LoadState(StateReader reader) => hits = reader.Int();
+        /// <summary>Mirrors the velocity about the surface it touched. False if it was already moving away from it.</summary>
+        bool TryBounce(Collider2D collider)
+        {
+            Vector2 position = Owner.Position;
+            Vector2 velocity = Owner.Body.linearVelocity;
+            Vector2 normal = position - collider.ClosestPoint(position);
+            if (normal.sqrMagnitude < 0.000001f)
+            {
+                // Its centre is inside the solid: leave by the nearest face of the solid's box.
+                Bounds box = collider.bounds;
+                float left = position.x - box.min.x, right = box.max.x - position.x;
+                float below = position.y - box.min.y, above = box.max.y - position.y;
+                float nearest = Mathf.Min(Mathf.Min(left, right), Mathf.Min(below, above));
+                normal = nearest == left ? Vector2.left : nearest == right ? Vector2.right : nearest == below ? Vector2.down : Vector2.up;
+            }
+            normal.Normalize();
+            float into = Vector2.Dot(velocity, normal);
+            if (into >= 0f)
+                return false;
+            Vector2 mirrored = (velocity - 2f * into * normal) * bounceKeep;
+            Owner.Body.linearVelocity = mirrored;
+            Owner.Body.position = position + normal * 0.03f;
+            bouncesLeft--;
+            if (!string.IsNullOrEmpty(bounceSound))
+                SickOfIt.Core.Audio.Sfx.Play(bounceSound);
+            SickOfIt.Core.Fx.Fx.Spark(position, Owner.FxColor, 0.25f);
+            Owner.World.Telemetry?.Record("bounce", Owner.DefId, bouncesLeft, $"{normal.x:0.#},{normal.y:0.#}");
+            Owner.RecordNow();
+            return true;
+        }
+
+        public override void SaveState(StateWriter writer)
+        {
+            writer.Int(hits);
+            writer.Int(bouncesLeft);
+        }
+
+        public override void LoadState(StateReader reader)
+        {
+            hits = reader.Int();
+            bouncesLeft = reader.Int();
+        }
     }
 
     [Serializable, JsonType("lifetime")]
