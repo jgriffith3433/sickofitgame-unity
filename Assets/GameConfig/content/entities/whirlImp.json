@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Whirl imp",
+  "hint": "Spiral embers. Weave with the spin.",
+  "note": "Spins while it spits. Hell's idea of a sprinkler.",
+  "hintVoice": "vo_hero_hint_whirlImp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "imp",
+  "health": 3,
+  "tags": [
+    "imp",
+    "whirlImp"
+  ],
+  "visual": {
+    "color": "#FF7AC8",
+    "fxColor": "#FF7AC8"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "shoot",
+      "projectile": "whirlEmber",
+      "pattern": {
+        "type": "radial",
+        "count": 2,
+        "rotationPerVolley": 23
+      },
+      "speed": 2.4,
+      "aim": "Direction",
+      "direction": [
+        1,
+        0
+      ],
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 4.6,
+      "initialDelay": 1.4,
+      "burst": 9,
+      "burstInterval": 0.2,
+      "animTrigger": "IsAttacking",
+      "damage": 1
+    }
+  ],
+  "sounds": {
+    "hurtSound": "whirlImp_hurt",
+    "deathSound": "whirlImp_die",
+    "attackSound": "whirlImp_attack"
+  }
+}

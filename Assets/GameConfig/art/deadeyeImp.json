@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "deadeyeImp",
+  "name": "Deadeye imp",
+  "description": "a small wiry hell imp of the Ember Wastes, one of the Magma King's: leathery skin, short curled horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, pale-skinned, one eye squinting behind a shard of glass",
+  "height": 0.75,
+  "poses": {
+    "stand": "perched hovering on spread bat wings, one eye squeezed shut and the other behind a small shard of glass held up like a monocle, a long thin white-hot ember held at the end of its pointing arm",
+    "struck": "just hit and caught mid-shriek: eyes bulging, mouth stretched open, wings snapped up, body tilted back with cracks of orange light glowing through its skin",
+    "dead": "bursting apart in a small round pop of black soot and bright orange embers, only its horns tumbling out of the puff"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers almost still, flapping slowly, the monocle glinting",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "leans forward, squints, and flicks the thin white-hot bolt away to the right, then settles",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a yelp, wings crumpling, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "shrieks, swells with orange light shining through the cracks in its skin, and pops like a firecracker into a puff of black soot and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "mineBeetle",
+  "name": "Mine beetle",
+  "description": "a dog-sized beetle of the Ember Wastes, glossy dark brown carapace banded with dull orange, six stout legs, long antennae, carrying glowing smouldering eggs",
+  "height": 0.6,
+  "poses": {
+    "stand": "a dog-sized beetle crawling right on six stout legs, a dark brown glossy carapace banded with dull orange, two small glowing orange eggs tucked under its tail, antennae raised",
+    "struck": "just hit and flipping onto its back, legs splayed, carapace cracked and glowing orange",
+    "dead": "on its back, legs curled, the carapace split with embers fading"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "crawls in place, legs scuttling, antennae twitching",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "pushes out a glowing orange egg from under its tail onto the ground behind it, then crawls on",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, flinches, antennae snapping back, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flips over, the carapace cracks open with orange light and it bursts into embers and soot",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

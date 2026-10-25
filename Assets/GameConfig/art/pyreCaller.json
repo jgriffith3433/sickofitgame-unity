@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "entity": "pyreCaller",
+  "name": "Pyre caller",
+  "description": "an elder hell imp, hunched and round, with a ragged cloak of soot, dark ashen skin, yellow eyes, one fist burning with a small fire from which sparks crawl",
+  "height": 0.9,
+  "poses": {
+    "stand": "hovering on spread bat wings, larger and rounder than a normal imp, a ragged cloak of sooty ash around its shoulders, one fist held up wreathed in fire, tiny orange sparks crawling off its fingers",
+    "struck": "just hit and caught mid-shriek: eyes bulging, mouth stretched open, wings snapped up, body tilted back with cracks of orange light glowing through its skin",
+    "dead": "bursting apart in a small round pop of black soot and bright orange embers, only its horns tumbling out of the puff"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers, flapping heavily, the burning fist swaying",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "lifts the burning fist and a small living spark of fire crawls out of it and drifts away, then hovers again",
+      "seconds": 2.0
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a yelp, wings crumpling, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "shrieks, swells with orange light shining through the cracks in its skin, and pops like a firecracker into a puff of black soot and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

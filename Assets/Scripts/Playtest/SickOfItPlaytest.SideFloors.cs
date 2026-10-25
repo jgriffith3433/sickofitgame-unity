@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Hawkes.Playtest;
 using UnityEngine;
 using SickOfIt.Combat.Health;
+using SickOfIt.Core.Progression;
 using SickOfIt.Core.Rewind;
 using SickOfIt.Data;
 using SickOfIt.Gameplay;

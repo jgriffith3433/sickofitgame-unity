@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Lens imp",
+  "hint": "Red line, then a sweep. Move.",
+  "note": "Borrowed the Overlord's trick. Smaller. Still rude.",
+  "hintVoice": "vo_hero_hint_lensImp",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "imp",
+  "health": 3,
+  "tags": [
+    "imp",
+    "lensImp"
+  ],
+  "visual": {
+    "color": "#FF6A6A",
+    "fxColor": "#FF4A4A"
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1
+    },
+    {
+      "type": "faceTarget"
+    },
+    {
+      "type": "laserSweep",
+      "damage": 1,
+      "interval": 5.5,
+      "initialDelay": 1.6,
+      "warning": 1.2,
+      "sweepTime": 1.6,
+      "sweepDegrees": 70,
+      "aimAtPlayer": true,
+      "length": 9,
+      "width": 0.4,
+      "warningSound": "overlord_beam_charge",
+      "beamSound": "overlord_beam_strike"
+    }
+  ],
+  "sounds": {
+    "hurtSound": "lensImp_hurt",
+    "deathSound": "lensImp_die"
+  }
+}

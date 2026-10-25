@@ -227,6 +227,83 @@
       "fromFloor": 930,
       "areaCenter": [3.7, -1.3],
       "areaSize": [1.0, 0.6]
+    },
+    {
+      "entity": "deadeyeImp",
+      "weight": 0.5,
+      "fromFloor": 950,
+      "areaCenter": [4.2, -0.4],
+      "areaSize": [1.0, 1.2]
+    },
+    {
+      "entity": "magmaGeode",
+      "weight": 0.6,
+      "fromFloor": 945,
+      "areaCenter": [4.0, 0.9],
+      "areaSize": [0.6, 1.0]
+    },
+    {
+      "entity": "mineBeetle",
+      "weight": 0.6,
+      "fromFloor": 940,
+      "areaCenter": [3.8, -2.05],
+      "areaSize": [1.2, 0.1]
+    },
+    {
+      "entity": "seamImp",
+      "weight": 0.6,
+      "fromFloor": 935,
+      "areaCenter": [3.7, -1.0],
+      "areaSize": [1.0, 1.0]
+    },
+    {
+      "entity": "slagHound",
+      "weight": 0.7,
+      "fromFloor": 930,
+      "areaCenter": [3.9, -2.05],
+      "areaSize": [1.0, 0.1]
+    },
+    {
+      "entity": "haloImp",
+      "weight": 0.7,
+      "fromFloor": 925,
+      "areaCenter": [3.7, -0.6],
+      "areaSize": [1.0, 1.2]
+    },
+    {
+      "entity": "whirlImp",
+      "weight": 0.6,
+      "fromFloor": 920,
+      "areaCenter": [3.7, -0.6],
+      "areaSize": [1.0, 1.2]
+    },
+    {
+      "entity": "ricochetImp",
+      "weight": 0.6,
+      "fromFloor": 918,
+      "areaCenter": [3.6, 0.3],
+      "areaSize": [1.0, 1.0]
+    },
+    {
+      "entity": "slagTortoise",
+      "weight": 0.7,
+      "fromFloor": 915,
+      "areaCenter": [3.8, -2.05],
+      "areaSize": [1.0, 0.1]
+    },
+    {
+      "entity": "pyreCaller",
+      "weight": 0.5,
+      "fromFloor": 910,
+      "areaCenter": [3.9, -0.6],
+      "areaSize": [0.8, 1.0]
+    },
+    {
+      "entity": "lensImp",
+      "weight": 0.6,
+      "fromFloor": 905,
+      "areaCenter": [3.7, -0.2],
+      "areaSize": [1.0, 1.0]
     }
   ],
   "hazards": [

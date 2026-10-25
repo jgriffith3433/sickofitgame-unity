@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Magma geode",
+  "hint": "Splits in two. Shoot the bits.",
+  "note": "Crack it open and there are two of it. Typical.",
+  "hintVoice": "vo_hero_hint_magmaGeode",
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
+  "extends": "cinder",
+  "health": 3,
+  "moveSpeed": 0.9,
+  "tags": [
+    "cinder",
+    "magmaGeode"
+  ],
+  "visual": {
+    "scale": 0.2,
+    "color": "#B04A2A",
+    "fxColor": "#FF6A1F"
+  },
+  "loot": {
+    "chance": 0.3,
+    "count": 1,
+    "value": 1
+  },
+  "abilities": [
+    {
+      "type": "contactDamage",
+      "damage": 1,
+      "dieOnHit": true
+    },
+    {
+      "type": "chase",
+      "stopDistance": 0.0,
+      "face": true
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "geodeBit",
+      "anchor": "Self",
+      "at": [
+        -0.3,
+        0.15
+      ],
+      "facePlayer": false
+    },
+    {
+      "type": "spawn",
+      "entity": "geodeBit",
+      "anchor": "Self",
+      "at": [
+        0.3,
+        0.15
+      ],
+      "facePlayer": false
+    },
+    {
+      "type": "playSound",
+      "sound": "thatch_burst"
+    }
+  ],
+  "sounds": {
+    "hurtSound": "magmaGeode_hurt",
+    "deathSound": "magmaGeode_die"
+  }
+}
