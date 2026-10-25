@@ -82,7 +82,7 @@ namespace SickOfIt.Gameplay
                 pressScale = 0.94f,
                 hoverRotation = 0f,
             };
-            weaponButton = menu.AddButtonAt(place.anchor, place.offset, "", buttonStyle, null);
+            weaponButton = menu.AddButtonAt(place.anchor, place.offset, " ", buttonStyle, null); // non-empty: MenuButton makes no Label for ""
             Lay(weaponButton.transform.parent, l => l.weapon, MenuElementKind.Button);
             weaponButton.Clicked += OnWeaponButton;
             // Out of keyboard/gamepad navigation, like the rewind button: arrow keys never select it mid-fight.
