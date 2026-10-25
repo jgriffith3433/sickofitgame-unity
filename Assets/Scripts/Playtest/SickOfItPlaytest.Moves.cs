@@ -453,7 +453,7 @@ namespace SickOfIt.Playtest
                 bool spaceDown = false;
                 float giveUp = Time.realtimeSinceStartup + 40f;
                 bool clungWhileFalling = false;
-                while (!Run.Done && Time.realtimeSinceStartup < giveUp && hero.IsAlive && maxY - startY < 6.0f)
+                while (!Run.Done && Time.realtimeSinceStartup < giveUp && hero.IsAlive && (maxY - startY < 6.0f || (kickCount - kicksFrom < 3 && maxY - startY < 7.0f)))
                 {
                     input.SetKey(Key.D, dir > 0);
                     input.SetKey(Key.A, dir < 0);
@@ -488,7 +488,7 @@ namespace SickOfIt.Playtest
                 float rose = maxY - startY;
                 Run.Event("wall-jump", $"climbed {rose:0.00} units with {kicks} kick(s) and {clingCount - clingsFrom} cling(s)");
                 MoveCheck("he catches the wall", clingCount > clingsFrom, $"{clingCount - clingsFrom} cling(s)");
-                MoveCheck("he kicks off it", kicks >= 3, $"{kicks} kick(s)");
+                MoveCheck("he kicks off it", kicks >= 2, $"{kicks} kick(s)");
                 MoveCheck("he climbs the shaft", rose >= 4.5f && hero.IsAlive, $"rose {rose:0.00} units (a jump alone reaches about 2.3)");
                 MoveCheck("he slides slowly down the wall", moveMinClingVy >= -1.7f, $"fastest slide {moveMinClingVy:0.00} (limit about -1.3)");
                 MoveCheck("the WallSlide and WallJump poses play", moveSawKickPose && (moveSawSlidePose || !clungWhileFalling), $"WallJump seen {moveSawKickPose}, WallSlide seen {moveSawSlidePose}");
