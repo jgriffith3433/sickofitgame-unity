@@ -107,7 +107,8 @@
       "to": "launcherGone",
       "state": "LauncherTaken",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Grabbed.png"
     },
     "equipLauncher": {
       "from": "launcherGone",
@@ -116,7 +117,8 @@
       "to": "launcherHeld",
       "state": "EquipLauncher",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Curious.png"
     },
     "equipFists": {
       "from": "stand",
@@ -125,7 +127,8 @@
       "to": "punchWind",
       "state": "EquipFists",
       "loop": false,
-      "wired": false
+      "wired": "standIn",
+      "standIn": "Shout.png"
     },
     "dash": {
       "from": "stand",

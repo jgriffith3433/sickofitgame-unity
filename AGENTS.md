@@ -172,6 +172,7 @@ Assets/GameConfig/
   (`unlockWeapon`, `WeaponUnlocks`: kept when a run ends, cleared by New Game; a scene's `suspended` weapons come back with the run). Shots of their
   own are player-team entities (`projectile.entity`: `ricochetShot`, `haloShot` with `returnToHero`); the shotgun fans `projectile.pellets`.
   Playtest `weapon-drops` (~20 min; scenario `weaponArena`, `targetDummy`).
+  **Swaps and looks** (Docs/Story.md "In his hands"): weapon JSON `look` (`WeaponLookDef`: coloured blocks in aim space, shoulder, muzzle, flash, kick) is drawn by `Core/Input/HeldWeaponProp.cs` over the hero's one set of sheets (presentation only; hidden under any scene clip or swap). `PlayerController.UpdateSwapClip` plays player.json `LauncherTaken` (the launcher leaves his hands), `EquipLauncher` and `EquipFists` (stand-in sheets Grabbed/Curious/Shout until `art/hero.json` is generated); never during a rewind, cut short by a shot, a swing or a dash. Playtest `weapon-looks` (scene `weaponLooks`, ~2 min).
 - **Circle air and parallax** (Docs/Story.md "Hell's air", cookbook "Weather and life"): `CircleDef.ambience` (depth layers, weather, far-off life; `CircleAmbience`,
   pooled and capped at 150 bits / 8 actors, presentation only) and `BackgroundLayerConfig.parallaxFactor` (`ParallaxController`: 1 glued to the screen = the default,
   0 fixed in the world, tiling wraps static sprites). Every built Circle (`emberWastes`, `crackedRoad`, `runeBridges`) has its own set; a new Circle gets one.
