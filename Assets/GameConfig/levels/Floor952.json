@@ -417,7 +417,10 @@
                 3.1
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc0"
+              ]
             }
           ]
         },
@@ -508,7 +511,10 @@
                 3.4
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc1"
+              ]
             }
           ]
         },
@@ -610,7 +616,10 @@
                 3.1
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc2"
+              ]
             },
             {
               "entity": "impGuard",
@@ -619,7 +628,10 @@
                 3.1
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc2"
+              ]
             }
           ]
         },
@@ -721,7 +733,10 @@
                 3.1
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
             },
             {
               "entity": "impGuard",
@@ -730,7 +745,10 @@
                 3.1
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
             }
           ]
         },
@@ -829,7 +847,10 @@
                 3.1
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
             },
             {
               "entity": "impGuard",
@@ -838,7 +859,10 @@
                 3.1
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
             },
             {
               "entity": "impGuard",
@@ -847,7 +871,10 @@
                 3.1
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
             }
           ]
         }
@@ -1059,6 +1086,12 @@
         "maxTimes": 1,
         "do": [
           {
+            "type": "despawn",
+            "target": {
+              "tag": "pc0"
+            }
+          },
+          {
             "type": "goToPhase",
             "phase": "pileOn"
           }
@@ -1072,6 +1105,12 @@
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc1"
+            }
+          },
           {
             "type": "goToPhase",
             "phase": "guardsCountUp"
@@ -1087,6 +1126,12 @@
         "maxTimes": 1,
         "do": [
           {
+            "type": "despawn",
+            "target": {
+              "tag": "pc2"
+            }
+          },
+          {
             "type": "goToPhase",
             "phase": "pileSpills"
           }
@@ -1100,6 +1145,12 @@
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc3"
+            }
+          },
           {
             "type": "goToPhase",
             "phase": "topOfThePile"

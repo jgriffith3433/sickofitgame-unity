@@ -18,6 +18,7 @@ LEV = os.path.join(ROOT, 'Assets', 'GameConfig', 'levels')
 ENT = os.path.join(ROOT, 'Assets', 'GameConfig', 'content', 'entities')
 BASE = '4bfdbcdb'          # the commit whose Floor<n>.json files are the openings
 GOLD = '#FFD27A'
+ENEMIES = {'imp', 'impGuard', 'impSwing', 'impSwingB', 'impCutter'}
 FINALE_AT = 255.0          # seconds before the landing opens (Floor 998: 250)
 
 ORDER = [997, 996, 995, 994, 993, 992, 960, 959, 958, 957, 956, 955, 954, 953, 952]
@@ -667,9 +668,14 @@ def build(n, report):
             sec = {'name': pname, 'direction': 'Up', 'length': length, 'turn': 2.0, 'lead': 0.4, 'autoSpeed': 0.36, 'spawns': spawns}
         if spec.get('extra'):
             sec['spawns'].extend(spec['extra'](i, kind, last))
+        for q in sec['spawns']:
+            if q['entity'] in ENEMIES:
+                q.setdefault('tags', []).append(f'pc{i}')
         sections.append(sec)
+        # the imps of the piece before stay behind: they go when the next piece starts (the enemy count is the whole world's)
+        gone = [{'type': 'despawn', 'target': {'tag': f'pc{i - 1}'}}] if i > 0 else []
         new_rules.append({'name': f'to {pname}', 'when': {'type': 'sectionReached', 'section': pname}, 'maxTimes': 1,
-                          'do': [{'type': 'goToPhase', 'phase': pname}]})
+                          'do': gone + [{'type': 'goToPhase', 'phase': pname}]})
         on_enter = [{'type': 'emit', 'signal': 'setpiece:' + pname},
                     {'type': 'showText', 'text': banner, 'duration': 2.4, 'style': 'Banner', 'color': GOLD}]
         prules = []

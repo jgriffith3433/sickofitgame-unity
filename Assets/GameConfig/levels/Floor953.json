@@ -1093,6 +1093,12 @@
         "maxTimes": 1,
         "do": [
           {
+            "type": "despawn",
+            "target": {
+              "tag": "pc0"
+            }
+          },
+          {
             "type": "goToPhase",
             "phase": "sameVent"
           }
@@ -1106,6 +1112,12 @@
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc1"
+            }
+          },
           {
             "type": "goToPhase",
             "phase": "lapSeven"
@@ -1121,6 +1133,12 @@
         "maxTimes": 1,
         "do": [
           {
+            "type": "despawn",
+            "target": {
+              "tag": "pc2"
+            }
+          },
+          {
             "type": "goToPhase",
             "phase": "geysersKnowYou"
           }
@@ -1134,6 +1152,12 @@
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc3"
+            }
+          },
           {
             "type": "goToPhase",
             "phase": "noMoreLaps"

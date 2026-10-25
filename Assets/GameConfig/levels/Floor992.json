@@ -820,7 +820,10 @@
                 3.0
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc2"
+              ]
             }
           ]
         },
@@ -990,7 +993,10 @@
                 3.0
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
             }
           ]
         },
@@ -1089,7 +1095,10 @@
                 3.0
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
             },
             {
               "entity": "imp",
@@ -1098,7 +1107,10 @@
                 3.0
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
             }
           ]
         }
@@ -1330,6 +1342,12 @@
         "maxTimes": 1,
         "do": [
           {
+            "type": "despawn",
+            "target": {
+              "tag": "pc0"
+            }
+          },
+          {
             "type": "goToPhase",
             "phase": "theWallCracks"
           }
@@ -1343,6 +1361,12 @@
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc1"
+            }
+          },
           {
             "type": "goToPhase",
             "phase": "theLongBridge"
@@ -1358,6 +1382,12 @@
         "maxTimes": 1,
         "do": [
           {
+            "type": "despawn",
+            "target": {
+              "tag": "pc2"
+            }
+          },
+          {
             "type": "goToPhase",
             "phase": "stepFallRepeat"
           }
@@ -1371,6 +1401,12 @@
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc3"
+            }
+          },
           {
             "type": "goToPhase",
             "phase": "theLastSpan"

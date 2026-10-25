@@ -875,6 +875,12 @@
         "maxTimes": 1,
         "do": [
           {
+            "type": "despawn",
+            "target": {
+              "tag": "pc0"
+            }
+          },
+          {
             "type": "goToPhase",
             "phase": "liftShaft"
           }
@@ -888,6 +894,12 @@
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc1"
+            }
+          },
           {
             "type": "goToPhase",
             "phase": "ceilingRun"
@@ -903,6 +915,12 @@
         "maxTimes": 1,
         "do": [
           {
+            "type": "despawn",
+            "target": {
+              "tag": "pc2"
+            }
+          },
+          {
             "type": "goToPhase",
             "phase": "dripDrop"
           }
@@ -916,6 +934,12 @@
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc3"
+            }
+          },
           {
             "type": "goToPhase",
             "phase": "theBigDrip"

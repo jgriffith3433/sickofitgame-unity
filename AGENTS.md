@@ -572,3 +572,6 @@ by themselves): `soi-enemy` (story → entity → art spec → `Tools/Art/art.mj
 bot playtest), `soi-level` (a stretch of floors in a Circle, travel script, beats, lines), `soi-voice-music`. Story.md
 comes first, GPU work is priced (`hawkesgen_estimate`) and needs J's OK, and the content playtest is the level's
 `level-<n>` scenario (`.hawkes/scenario.txt`).
+Circle X's long floors (997-992, 960-952) are written by `Tools/Levels/long_floors.py` from its tables (an opening read from git, a riser,
+five set pieces, a gated landing); edit the tables and run it rather than hand-editing the piece sections, then
+`python3 Tools/Levels/floor_check.py Floor997 ...` (Docs/LevelDesign.md "A long bullet-hell floor", point 9).

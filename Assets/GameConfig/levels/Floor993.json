@@ -367,7 +367,10 @@
                 1.65
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc0"
+              ]
             },
             {
               "entity": "ledge",
@@ -469,7 +472,10 @@
                 1.65
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc1"
+              ]
             },
             {
               "entity": "ledge",
@@ -514,7 +520,10 @@
                 1.9
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc1"
+              ]
             },
             {
               "entity": "ledge",
@@ -581,7 +590,10 @@
                 5.85
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc2"
+              ]
             },
             {
               "entity": "ledge",
@@ -659,7 +671,10 @@
                 1.9
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
             },
             {
               "entity": "ledge",
@@ -692,7 +707,10 @@
                 1.9
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
             },
             {
               "entity": "sinkingStone",
@@ -725,7 +743,10 @@
                 1.9
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc3"
+              ]
             },
             {
               "entity": "ledge",
@@ -779,7 +800,10 @@
                 1.9
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
             },
             {
               "entity": "ledge",
@@ -812,7 +836,10 @@
                 1.9
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
             },
             {
               "entity": "sinkingStone",
@@ -833,7 +860,10 @@
                 1.65
               ],
               "anchor": "Section",
-              "onEnter": true
+              "onEnter": true,
+              "tags": [
+                "pc4"
+              ]
             },
             {
               "entity": "ledge",
@@ -1062,6 +1092,12 @@
         "maxTimes": 1,
         "do": [
           {
+            "type": "despawn",
+            "target": {
+              "tag": "pc0"
+            }
+          },
+          {
             "type": "goToPhase",
             "phase": "embersFromAbove"
           }
@@ -1075,6 +1111,12 @@
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc1"
+            }
+          },
           {
             "type": "goToPhase",
             "phase": "twoOnALedge"
@@ -1090,6 +1132,12 @@
         "maxTimes": 1,
         "do": [
           {
+            "type": "despawn",
+            "target": {
+              "tag": "pc2"
+            }
+          },
+          {
             "type": "goToPhase",
             "phase": "emberStairs"
           }
@@ -1103,6 +1151,12 @@
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "pc3"
+            }
+          },
           {
             "type": "goToPhase",
             "phase": "everyoneThrows"
