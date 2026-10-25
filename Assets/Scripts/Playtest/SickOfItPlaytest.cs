@@ -876,6 +876,10 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(StyleId, $"Style (Docs/Story.md \"Style\"): level {StyleLevel} loaded directly and played by the bot through real input; the graze distance is widened (setup shortcut). " +
                 "A graze sparks (the meter pops and fills), a rewind right after one takes the credit back (graze count and meter fall; `graze-undone` event), the announcer and crowd lines fire on a streak (`style-line`), " +
                 "tiers pay (`style-payout`); then the results screen is opened with the hits zeroed (setup shortcut): a rank S/A/B/C (`rank` event), saved as the floor's best, and the no-hit line said. Each beat is a check event", StyleSeconds, "level"));
+            list.Add(new PlaytestScenario(DifficultyId, "Difficulty and accessibility (Docs/Story.md \"How sick of it are you?\"): New Game opens a card with Assist, Normal, Hard and Hell Loop (real clicks; Back returns); " +
+                "the settings' Accessibility page toggles bullet outlines, high-contrast bullets, reduced flash, reduced shake, the hitbox dot and aim assist and each is saved in PlayerPrefs; the bot clears Level 1 on Assist and on Normal " +
+                "(enemy shot speed measured on both: Assist's are slower, `shot-speed` events); then plays reckless on Hell Loop with every option on: the first hit lands for twice Normal's damage, shots have a rim and one colour, " +
+                "the dot shows, shake and flash are dimmed, aim assist bends a near-miss onto an enemy. Each beat is a check event", DifficultySeconds, "level"));
             list.Add(new PlaytestScenario(EnemyHintsId, $"The hero sizes up each enemy type once (Docs/GameplayCookbook.md \"The hero sizes them up\"): every named enemy has a hint; New Game forgets; " +
                 $"Level {EnemyHintsLevel}'s first imp gets his subtitle (name and weakness), then a rewind past it and the next imps do not repeat it; a new run (the level loaded again) does not; " +
                 "a scripted scene (the bystander bench) spawns an imp in silence and does not use the type up. Each beat is a check event; hint events log the subtitles", EnemyHintsSeconds, "level"));
@@ -1332,6 +1336,8 @@ namespace SickOfIt.Playtest
                 yield return session.StyleRun();
             else if (id == EnemyHintsId)
                 yield return session.EnemyHintsRun();
+            else if (id == DifficultyId)
+                yield return session.DifficultyRun();
             else if (id == AmbienceId)
                 yield return session.AmbienceRun();
             else if (id == BossFightsId)
@@ -6847,7 +6853,7 @@ namespace SickOfIt.Playtest
                 if (Run.Done) yield break;
                 Run.Progress(0.1f);
 
-                yield return ClickUntil(labels.newGame, () => Object.FindAnyObjectByType<VideoRuntime>() != null || LevelRunning(1), 30f);
+                yield return ClickNewGame(() => Object.FindAnyObjectByType<VideoRuntime>() != null || LevelRunning(1));
                 if (Run.Done) yield break;
                 yield return ReachLevel(1);
                 if (Run.Done) yield break;
@@ -7271,7 +7277,7 @@ namespace SickOfIt.Playtest
 
                 yield return ToMainMenu();
                 if (Run.Done) yield break;
-                yield return ClickUntil(labels.newGame, () => Object.FindAnyObjectByType<VideoRuntime>() != null || LevelRunning(1), 30f);
+                yield return ClickNewGame(() => Object.FindAnyObjectByType<VideoRuntime>() != null || LevelRunning(1));
                 if (Run.Done) yield break;
 
                 int completed = 0;
@@ -7432,7 +7438,7 @@ namespace SickOfIt.Playtest
 
                 yield return ToMainMenu();
                 if (Run.Done) yield break;
-                yield return ClickUntil(labels.newGame, () => Object.FindAnyObjectByType<VideoRuntime>() != null || GameplayWorld.Instance != null, 30f);
+                yield return ClickNewGame(() => Object.FindAnyObjectByType<VideoRuntime>() != null || GameplayWorld.Instance != null);
                 if (Run.Done) yield break;
 
                 bool reachedEnd = true;

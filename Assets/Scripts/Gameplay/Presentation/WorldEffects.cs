@@ -560,10 +560,14 @@ namespace SickOfIt.Gameplay
         {
             if (!SickOfIt.Data.GameSettings.ScreenShake)
                 return;
-            shakeIntensity = intensity;
+            shakeIntensity = SickOfIt.Data.GameSettings.ReducedShake ? intensity * 0.3f : intensity;
             shakeEndsAt = Time.unscaledTime + duration;
             movesCamera = true;
+            LastShakeIntensity = shakeIntensity;
         }
+
+        /// <summary>The strength of the last shake started, after the accessibility setting (the playtest reads it).</summary>
+        public float LastShakeIntensity { get; private set; }
 
         public void Flash(Color color, float duration) => world.Hud.Flash(color, duration);
 

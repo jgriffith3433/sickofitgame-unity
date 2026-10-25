@@ -308,6 +308,7 @@ namespace SickOfIt.Gameplay
             if (states.Length > 0)
                 EnterState(InitialState());
 
+            BulletReadability.Attach(this);
             ApplyLook();
             world.Register(this);
 
@@ -765,6 +766,13 @@ namespace SickOfIt.Gameplay
             {
                 if (playerHealth == null || (!ignoreInvincibility && playerHealth.IsInvincible))
                     return false;
+                // The difficulty's say on how hard a hit lands (Normal: untouched). Pits and lava (ignoreInvincibility) stay as they are.
+                if (!ignoreInvincibility)
+                {
+                    final = SickOfIt.Data.Difficulty.ScaleHit(final, source != null ? source.Serial : Mathf.RoundToInt(Now * 4f));
+                    if (final <= 0)
+                        return false;
+                }
                 // Bubbles, plates, slips, a last gasp and the bomb (HeroPerks); damage over time skips them.
                 if (!ignoreInvincibility && World.Perks != null && !World.Perks.FilterHit(ref final))
                     return false;

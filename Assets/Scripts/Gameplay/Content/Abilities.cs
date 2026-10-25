@@ -491,7 +491,8 @@ namespace SickOfIt.Gameplay.Content
                 bool inRange = range <= 0f || DistanceToPlayer() <= range;
                 if (inRange)
                 {
-                    nextAttackAt = now + interval / Mathf.Max(0.01f, Owner.Stat(Stat.AttackSpeed, 1f));
+                    float density = Owner.Team == Team.Enemy ? SickOfIt.Data.Difficulty.Density : 1f;
+                    nextAttackAt = now + interval / Mathf.Max(0.01f, Owner.Stat(Stat.AttackSpeed, 1f) * density);
                     if (!string.IsNullOrEmpty(animTrigger))
                         Owner.Animation.Pulse(animTrigger);
                     if (string.IsNullOrEmpty(fireOnEvent))

@@ -34,6 +34,13 @@ namespace SickOfIt.Data
         public static float MasterVolume { get => Get("Master", 1f); set => Set("Master", value); }
         public static float VoiceVolume { get => Get("Voice", 1f); set => Set("Voice", value); }
         public static bool ScreenShake { get => Get("Shake", 1f) > 0.5f; set => Set("Shake", value ? 1f : 0f); }
+        // Accessibility (settings > Accessibility). All off by default: Normal is played as designed.
+        public static bool BulletOutlines { get => Get("BulletOutlines", 0f) > 0.5f; set => Set("BulletOutlines", value ? 1f : 0f); }
+        public static bool HighContrastBullets { get => Get("HighContrast", 0f) > 0.5f; set => Set("HighContrast", value ? 1f : 0f); }
+        public static bool ReducedFlash { get => Get("ReducedFlash", 0f) > 0.5f; set => Set("ReducedFlash", value ? 1f : 0f); }
+        public static bool ReducedShake { get => Get("ReducedShake", 0f) > 0.5f; set => Set("ReducedShake", value ? 1f : 0f); }
+        public static bool HitboxDot { get => Get("HitboxDot", 0f) > 0.5f; set => Set("HitboxDot", value ? 1f : 0f); }
+        public static bool AimAssist { get => Get("AimAssist", 0f) > 0.5f; set => Set("AimAssist", value ? 1f : 0f); }
         public static bool Hints { get => Get("Hints", 1f) > 0.5f; set => Set("Hints", value ? 1f : 0f); }
 
         /// <summary>The saved hawkes.sound value, as JSON (what the settings and the playtest read back).</summary>

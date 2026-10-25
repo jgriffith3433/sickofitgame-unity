@@ -445,7 +445,7 @@ namespace SickOfIt.Gameplay
             }
             lastSeenHealth = health;
             float age = Time.unscaledTime - hurtAt;
-            float alpha = age < 0.45f ? 0.75f * (1f - age / 0.45f) : 0f;
+            float alpha = age < 0.45f ? (SickOfIt.Data.GameSettings.ReducedFlash ? 0.3f : 0.75f) * (1f - age / 0.45f) : 0f;
             hurtVignette.color = new Color(0.9f, 0.08f, 0.1f, alpha);
         }
 

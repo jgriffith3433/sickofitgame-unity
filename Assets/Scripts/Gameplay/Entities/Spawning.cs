@@ -130,6 +130,8 @@ namespace SickOfIt.Gameplay
             float speedMultiplier = owner != null ? owner.Stat(Stat.ProjectileSpeed, 1f) : 1f;
             if (owner != null && owner.Team == Team.Enemy && world.Perks != null)
                 speedMultiplier *= world.Perks.EnemyShotSpeed; // Sticky Air
+            if (owner != null && owner.Team == Team.Enemy)
+                speedMultiplier *= SickOfIt.Data.Difficulty.BulletSpeed;
             var input = new EmitInput
             {
                 Origin = origin,

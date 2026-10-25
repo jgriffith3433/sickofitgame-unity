@@ -167,6 +167,8 @@ namespace SickOfIt.Core.Input
         public float DamageMultiplier { get; set; } = 1f;
         /// <summary>Asked once per volley for its damage scale (a crit is more than 1); set by the world (HeroPerks).</summary>
         public System.Func<float> VolleyScale { get; set; }
+        /// <summary>Aim assist: (muzzle, aim direction) -> the direction nudged onto a nearby enemy (set by the world; null = none).</summary>
+        public System.Func<Vector2, Vector2, Vector2> AimAssist { get; set; }
         /// <summary>Slippery Shots: his shots fly this much faster.</summary>
         public float ShotSpeedScale { get; set; } = 1f;
         private float shotCrit = 1f;
@@ -1774,6 +1776,9 @@ namespace SickOfIt.Core.Input
                 if (toCursor.sqrMagnitude > 0.0001f && Vector2.Dot(toCursor, direction) > 0f)
                     direction = toCursor.normalized;
             }
+
+            if (AimAssist != null)
+                direction = AimAssist(muzzle, direction);
 
             // Extra shots fan out evenly around the aim.
             directions.Clear();
