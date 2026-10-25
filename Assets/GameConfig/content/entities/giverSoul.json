@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "extends": "damnedSoul",
+  "tags": [
+    "damned",
+    "bystander"
+  ],
+  "abilities": [
+    {
+      "type": "react",
+      "when": {
+        "type": "distanceToPlayer",
+        "below": 3.2
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "faceEntity",
+          "target": "self",
+          "toward": "player"
+        },
+        {
+          "type": "showText",
+          "text": "Here. It's not mine. ...It's not mine.",
+          "duration": 2.6,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_giver_hand"
+        },
+        {
+          "type": "playEntityAnimation",
+          "target": "self",
+          "state": "Hiccup"
+        },
+        {
+          "type": "spawn",
+          "entity": "rewindOrb",
+          "anchor": "Self",
+          "at": [
+            -0.7,
+            0.4
+          ],
+          "facePlayer": false
+        },
+        {
+          "type": "emit",
+          "signal": "by:giver:hand"
+        }
+      ]
+    }
+  ]
+}

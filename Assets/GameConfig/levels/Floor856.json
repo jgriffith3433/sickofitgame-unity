@@ -1309,6 +1309,17 @@
                 "color": "#FFD27A"
               }
             ]
+          },
+          {
+            "type": "spawn",
+            "entity": "giverSoul",
+            "id": "by_giver",
+            "anchor": "Player",
+            "at": [
+              6.5,
+              0.35
+            ],
+            "facePlayer": false
           }
         ]
       },

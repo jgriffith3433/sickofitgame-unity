@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "extends": "damnedSoul",
+  "tags": [
+    "damned",
+    "bystander"
+  ],
+  "abilities": [
+    {
+      "type": "react",
+      "when": {
+        "type": "distanceToPlayer",
+        "below": 5
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "faceEntity",
+          "target": "self",
+          "toward": "player"
+        },
+        {
+          "type": "showText",
+          "text": "Is that all? ...Is that all?",
+          "duration": 2.2,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_heckler_jeer"
+        },
+        {
+          "type": "emit",
+          "signal": "by:heckler:jeer"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "witness",
+        "what": "ShotPassed",
+        "within": 0.9
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "playEntityAnimation",
+          "target": "self",
+          "state": "Hiccup"
+        },
+        {
+          "type": "walkEntityTo",
+          "target": "self",
+          "anchor": "Self",
+          "x": 0.6,
+          "speed": 3,
+          "keepFacing": true
+        },
+        {
+          "type": "showText",
+          "text": "Hey! Aim at someone else! ...Someone else!",
+          "duration": 2.8,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_heckler_shot"
+        },
+        {
+          "type": "emit",
+          "signal": "by:heckler:stray"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "witness",
+        "what": "ShotPassed",
+        "within": 0.9
+      },
+      "maxTimes": 0,
+      "do": [
+        {
+          "type": "playEntityAnimation",
+          "target": "self",
+          "state": "Hiccup"
+        },
+        {
+          "type": "walkEntityTo",
+          "target": "self",
+          "anchor": "Self",
+          "x": 0.6,
+          "speed": 3,
+          "keepFacing": true
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "witness",
+        "what": "HeroHurt",
+        "within": 6
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "faceEntity",
+          "target": "self",
+          "toward": "player"
+        },
+        {
+          "type": "showText",
+          "text": "Ha! Do it again. ...Do it again.",
+          "duration": 2.4,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_heckler_hurt"
+        },
+        {
+          "type": "emit",
+          "signal": "by:heckler:laugh"
+        }
+      ]
+    }
+  ]
+}

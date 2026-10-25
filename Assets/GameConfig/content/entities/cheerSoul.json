@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "extends": "damnedSoul",
+  "tags": [
+    "damned",
+    "bystander"
+  ],
+  "abilities": [
+    {
+      "type": "react",
+      "when": {
+        "type": "distanceToPlayer",
+        "below": 4.5
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "faceEntity",
+          "target": "self",
+          "toward": "player"
+        },
+        {
+          "type": "showText",
+          "text": "Go on up. ...Go on up.",
+          "duration": 2.2,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_cheer_go"
+        },
+        {
+          "type": "emit",
+          "signal": "by:cheer:go"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "witness",
+        "what": "ShotPassed",
+        "within": 2.5
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "playEntityAnimation",
+          "target": "self",
+          "state": "Hiccup"
+        },
+        {
+          "type": "showText",
+          "text": "Again! ...Again!",
+          "duration": 1.8,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_cheer_again"
+        },
+        {
+          "type": "emit",
+          "signal": "by:cheer:again"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "witness",
+        "what": "ShotPassed",
+        "within": 2.5
+      },
+      "maxTimes": 0,
+      "do": [
+        {
+          "type": "playEntityAnimation",
+          "target": "self",
+          "state": "Hiccup"
+        }
+      ]
+    }
+  ]
+}

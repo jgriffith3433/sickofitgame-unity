@@ -440,6 +440,28 @@
                 "color": "#FFD27A"
               }
             ]
+          },
+          {
+            "type": "spawn",
+            "entity": "hawkerSoul",
+            "id": "by_hawker",
+            "anchor": "Player",
+            "at": [
+              6.5,
+              0.35
+            ],
+            "facePlayer": false
+          },
+          {
+            "type": "spawn",
+            "entity": "cheerSoul",
+            "id": "by_cheer",
+            "anchor": "Player",
+            "at": [
+              11.0,
+              0.6499999999999999
+            ],
+            "facePlayer": false
           }
         ]
       }

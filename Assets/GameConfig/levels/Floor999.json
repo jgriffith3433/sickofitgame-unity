@@ -460,6 +460,17 @@
                 "sound": "vo_landing_999"
               }
             ]
+          },
+          {
+            "type": "spawn",
+            "entity": "hawkerSoul",
+            "id": "by_hawker",
+            "anchor": "Player",
+            "at": [
+              6.5,
+              0.35
+            ],
+            "facePlayer": false
           }
         ]
       }

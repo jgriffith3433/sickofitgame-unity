@@ -422,6 +422,17 @@
                 "color": "#FFD27A"
               }
             ]
+          },
+          {
+            "type": "spawn",
+            "entity": "hidingSoul",
+            "id": "by_hiding",
+            "anchor": "Player",
+            "at": [
+              6.5,
+              0.35
+            ],
+            "facePlayer": false
           }
         ]
       }
