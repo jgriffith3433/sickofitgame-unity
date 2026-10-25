@@ -36,6 +36,16 @@ namespace SickOfIt.Data
             PlayerPrefs.Save();
         }
 
+        /// <summary>Takes one unlock back (a playtest's start point, so a save left by an earlier scenario can't give a move the floor hasn't).</summary>
+        public static void Remove(string id)
+        {
+            var set = All();
+            if (!set.Remove(id))
+                return;
+            PlayerPrefs.SetString(Key, string.Join(";", set.OrderBy(s => s, StringComparer.Ordinal)));
+            PlayerPrefs.Save();
+        }
+
         public static void Reset()
         {
             PlayerPrefs.DeleteKey(Key);

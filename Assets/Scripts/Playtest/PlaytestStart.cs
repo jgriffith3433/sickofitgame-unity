@@ -185,6 +185,9 @@ namespace SickOfIt.Playtest
                 RogueliteManager.Instance.EndRun();
                 said.Add("a fresh run (no Grudges, full health)");
             }
+            string moves = TakeBackLockedMoves(n);
+            if (moves != null)
+                said.Add(moves);
             if (n == 1)
             {
                 said.Add("the Meadow: the save left as it is");
@@ -241,6 +244,45 @@ namespace SickOfIt.Playtest
             YoobaProgress.HeroDied = false;
             said.Add(met ? "Yooba met" : "Yooba not met yet");
             return string.Join("; ", said);
+        }
+
+        /// <summary>
+        /// The dash and the wall-jump are the story's to give (player.json moves.*.unlockWhen "level:K": K cleared). A local browser or
+        /// editor save keeps what an earlier scenario (moves, wall-jump, hero-anim) unlocked, so a bot warped to Floor 1000 or 998
+        /// clung to the ledges' corners and hung there. Takes back the clears of level n and later, and the flags they gave, so a
+        /// floor starts with the moves a player arriving there has (Yooba's dash is bought, so it comes back by itself).
+        /// </summary>
+        static string TakeBackLockedMoves(int n)
+        {
+            var moves = GameDefinition.Instance != null && GameDefinition.Instance.player != null ? GameDefinition.Instance.player.moves : null;
+            if (moves == null || GameProgressManager.Instance == null)
+                return null;
+            var taken = new List<string>();
+            void Take(string flag, List<string> when)
+            {
+                bool locked = false;
+                if (when != null)
+                {
+                    foreach (string requirement in when)
+                    {
+                        string[] parts = requirement.Split(':');
+                        if (parts.Length == 2 && parts[0] == "level" && int.TryParse(parts[1], out int level) && level >= n)
+                        {
+                            PlayerPrefs.DeleteKey($"Level_{level}_Completed");
+                            locked = true;
+                        }
+                    }
+                }
+                if (locked && UnlockFlags.Has(flag))
+                {
+                    UnlockFlags.Remove(flag);
+                    taken.Add(flag);
+                }
+            }
+            Take(string.IsNullOrEmpty(moves.dash.unlockFlag) ? SickOfIt.Gameplay.HeroMoves.DashFlag : moves.dash.unlockFlag, moves.dash.unlockWhen);
+            Take(string.IsNullOrEmpty(moves.wallJump.unlockFlag) ? SickOfIt.Gameplay.HeroMoves.WallJumpFlag : moves.wallJump.unlockFlag, moves.wallJump.unlockWhen);
+            PlayerPrefs.Save();
+            return taken.Count > 0 ? "moves not his yet on this floor, taken back: " + string.Join(", ", taken) : null;
         }
 
         /// <summary>
