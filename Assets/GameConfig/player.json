@@ -122,6 +122,72 @@
         "speed": 1.0
       },
       {
+        "stateName": "Hurt",
+        "spriteSheet": "Art/Sprites/Player/Grabbed.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 16,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "DeathBurn",
+        "spriteSheet": "Art/Sprites/Player/Fall.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "DeathSquash",
+        "spriteSheet": "Art/Sprites/Player/Grabbed.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "DeathSpin",
+        "spriteSheet": "Art/Sprites/Player/Jump.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "DeathShrug",
+        "spriteSheet": "Art/Sprites/Player/Shout.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 12,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
+        "stateName": "Victory",
+        "spriteSheet": "Art/Sprites/Player/Shout.png",
+        "spriteNameFilter": "",
+        "firstFrame": 0,
+        "frameCount": 0,
+        "fps": 16,
+        "loop": false,
+        "events": [],
+        "speed": 1.0
+      },
+      {
         "stateName": "Climb",
         "spriteSheet": "Art/Sprites/Player/Climb.png",
         "spriteNameFilter": "",

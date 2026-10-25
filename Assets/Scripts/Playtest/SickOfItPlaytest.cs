@@ -873,6 +873,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(MusicLayersId, $"The intensity music layer (Docs/Story.md \"Music\"): Floor 997 (level {MusicLayersLevel}) loaded directly (setup shortcut) and played by the bot through real input for 150 s of game time. " +
                 "The Circle's layer (a stand-in loop until the real stems are made, nothing is generated) must be silent on the empty floor, fade in as enemies and shots crowd the screen and fade out again as it empties. " +
                 "`musicLayer` events log its level (0-100%) and the crowd; each beat is a check event", MusicLayersSeconds, "level"));
+            list.Add(new PlaytestScenario(HeroClipsId, $"The hero's own clips (art/hero.json; player.json Hurt, DeathBurn/Squash/Spin/Shrug, Victory): the bot plays level {HeroClipsDeathLevel} to lose four times through real input. Every first hit must show the Hurt clip (`hero-clip` events), every death its own clip, the four in turn, and the death scene the same one; then the bot clears level {HeroClipsClearLevel} and the clear must show Victory. Sheets are stand-ins until the real clips are generated. Each beat is a check event", HeroClipsSeconds, "level"));
             list.Add(new PlaytestScenario(StyleId, $"Style (Docs/Story.md \"Style\"): level {StyleLevel} loaded directly and played by the bot through real input; the graze distance is widened (setup shortcut). " +
                 "A graze sparks (the meter pops and fills), a rewind right after one takes the credit back (graze count and meter fall; `graze-undone` event), the announcer and crowd lines fire on a streak (`style-line`), " +
                 "tiers pay (`style-payout`); then the results screen is opened with the hits zeroed (setup shortcut): a rank S/A/B/C (`rank` event), saved as the floor's best, and the no-hit line said. Each beat is a check event", StyleSeconds, "level"));
@@ -1332,6 +1333,8 @@ namespace SickOfIt.Playtest
             }
             else if (id == MusicLayersId)
                 yield return session.MusicLayersRun();
+            else if (id == HeroClipsId)
+                yield return session.HeroClipsRun();
             else if (id == StyleId)
                 yield return session.StyleRun();
             else if (id == EnemyHintsId)
