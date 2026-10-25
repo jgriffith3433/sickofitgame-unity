@@ -815,10 +815,11 @@ namespace SickOfIt.Core.Input
             
             // Attack is bound to F. Left click is the expected fire button, so poll it
             // directly as well as the action (the prefab still references Attack).
-            bool pointerOverUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+            // Firing ignores what the pointer is over: a HUD button under the cursor still gets its click
+            // from the EventSystem, and the shot goes out too.
             bool actionFire = fireAction?.action != null && fireAction.action.IsPressed();
             bool mouseFire = Mouse.current != null && Mouse.current.leftButton.isPressed;
-            if ((actionFire || mouseFire) && !pointerOverUi)
+            if (actionFire || mouseFire)
             {
                 isFiring = true;
                 fireDirection = GetMouseDirectionFromPlayer();
@@ -1829,8 +1830,7 @@ namespace SickOfIt.Core.Input
                 direction = fireDirection;
                 aimPoint = mouseAimPoint;
             }
-            else if (aimingWithMouse && InputOverride == null && !TouchAim && mainCamera != null && Mouse.current != null && MouseOnScreen()
-                     && (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject()))
+            else if (aimingWithMouse && InputOverride == null && !TouchAim && mainCamera != null && Mouse.current != null && MouseOnScreen())
             {
                 // Not firing: where a click would fire (ReadFireInput's mouse path).
                 direction = GetMouseDirectionFromPlayer();
