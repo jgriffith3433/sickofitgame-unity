@@ -375,6 +375,18 @@ namespace SickOfIt.Playtest
         public static List<int> ClimbStartLevels() =>
             PathLevels().FindAll(n => n == 1 || PathFloor(n) <= ClimbStartTopFloor && PathFloor(n) >= ClimbStartLastFloor);
         const float PathFloorSeconds = 160f, PathBossSeconds = 250f;
+        /// <summary>A long bullet-hell floor (Docs/LevelDesign.md, "A long bullet-hell floor"): its script's expected length is at least
+        /// LongFloorLength seconds. It runs 240-360 s, so all-levels gives it PathLongFloorSeconds and its pace row 6 minutes.</summary>
+        const float LongFloorLength = 200f, PathLongFloorSeconds = 420f, LongFloorMin = 240f, LongFloorMax = 360f;
+        const int LongFloorEnemies = 16, LongFloorMinPieces = 4;
+
+        static bool IsLongFloor(int n)
+        {
+            var config = GameDefinition.Instance != null ? GameDefinition.Instance.GetLevel(n) : null;
+            var content = GameContent.Current;
+            return config != null && content != null && content.LevelScripts.TryGetValue(config.levelName, out var script)
+                   && script != null && script.length >= LongFloorLength;
+        }
         const int PathTries = 2;
 
         /// <summary>
@@ -490,6 +502,8 @@ namespace SickOfIt.Playtest
             int floor = PathFloor(n);
             if (n > 1 && floor <= 0)
                 return Mathf.Min(own + 20f, PathBossSeconds);
+            if (floor > 0 && IsLongFloor(n))
+                return Mathf.Min(own, PathLongFloorSeconds);
             return Mathf.Min(own, floor > 0 && floor % 10 == 1 ? PathBossSeconds : PathFloorSeconds);
         }
 
@@ -569,7 +583,8 @@ namespace SickOfIt.Playtest
                             "with their voices, the floor counter on its floor and ticking to the next on the landing, the floor's own new idea (1000 sinking " +
                             "stones, 999 the rising lava and its wave, 998 the village's wreckage with cinders, 997 imps swinging with diamond sacks and an " +
                             "empty chain ridden, 996 lava falls and geysers), at most one new enemy type and the first one alone, a 3+ s breather where it " +
-                            "has enemies, no more than 3 enemies at once, 60-120 s, every scripted line with its voice, the Grudge pick; then Continue on " +
+                            "has enemies, no more than 3 enemies at once, 60-120 s, every scripted line with its voice, the Grudge pick (a long bullet-hell floor, " +
+                            "Floor 998: 240-360 s, up to 16 enemies and shots at once, 4+ set pieces announced by `setpiece:` signals and a rising density); then Continue on " +
                             "the results, the Shaft climbing one floor, and what comes next";
                     seconds += 40f;
                 }
@@ -1147,6 +1162,12 @@ namespace SickOfIt.Playtest
                     {
                         if (!stage.Signals.ContainsKey(e.Subject))
                             stage.Signals[e.Subject] = e.Time;
+                        if (stage.Long && e.Subject.StartsWith("setpiece:", StringComparison.Ordinal))
+                        {
+                            if (!stage.Pieces.Contains(e.Subject))
+                                Run.Event("setpiece", $"{level} at {e.Time:0.0} s: set piece {stage.Pieces.Count + 1}, {e.Subject.Substring(9)}");
+                            stage.PieceBegan(e.Subject, e.Time);
+                        }
                         if (Array.Exists(FloorBossSignals, x => x.signal == e.Subject) || e.Subject == "loopRepeat" || e.Subject == "liftCut" || e.Subject == "sleeperFell")
                             Run.Event("signal", $"{level} at {e.Time:0.0} s: {e.Subject}");
                     }
@@ -1419,6 +1440,31 @@ namespace SickOfIt.Playtest
                 public readonly HashSet<string> Entered = new HashSet<string>();
                 public float FirstHostileAt = -1f, QuietSince = -1f, LongestQuiet, Clock, DoorSeenAt = -1f;
 
+                // ─── A long bullet-hell floor (script length >= LongFloorLength): its set pieces and how dense each one got ───
+                /// <summary>A long floor: 240-360 s, many enemies and shots, judged on its set pieces and a rising density.</summary>
+                public bool Long;
+                /// <summary>The set pieces in the order they began (script signals "setpiece:<name>"), when, and per piece: seconds
+                /// spent, hostile-seconds (enemies and shots alive, summed over time) and the most alive at once.</summary>
+                public readonly List<string> Pieces = new List<string>();
+                public readonly Dictionary<string, float> PieceAt = new Dictionary<string, float>(), PieceSeconds = new Dictionary<string, float>(), PieceLoad = new Dictionary<string, float>();
+                public readonly Dictionary<string, int> PiecePeak = new Dictionary<string, int>();
+                public float LastSampleAt = -1f;
+                public int MostHostile;
+
+                public void PieceBegan(string name, float at)
+                {
+                    if (Pieces.Contains(name))
+                        return;
+                    Pieces.Add(name);
+                    PieceAt[name] = at;
+                    PieceSeconds[name] = 0f;
+                    PieceLoad[name] = 0f;
+                    PiecePeak[name] = 0;
+                }
+
+                /// <summary>Density of piece i: the average number of enemies and shots alive while it ran.</summary>
+                public float Density(int i) => PieceSeconds[Pieces[i]] > 0.5f ? PieceLoad[Pieces[i]] / PieceSeconds[Pieces[i]] : 0f;
+
                 // ─── A Warden's arena (IsArena): the boss, his fight's signals and his telegraphs ───
                 public readonly bool Arena;
                 /// <summary>Whose fight the arena is (Wardens, by the level's file).</summary>
@@ -1549,6 +1595,7 @@ namespace SickOfIt.Playtest
                         return;
                     Start = script.floors.start;
                     End = script.floors.end;
+                    Long = script.length >= LongFloorLength;
                     Sign = script.floors.sign ?? "";
                     Door = script.floors.door ?? "";
                     if (script.floors.repeat != null)
@@ -1712,6 +1759,19 @@ namespace SickOfIt.Playtest
                         fresh = e;
                 }
                 s.MaxEnemies = Mathf.Max(s.MaxEnemies, enemies);
+                if (s.Long)
+                {
+                    s.MostHostile = Mathf.Max(s.MostHostile, hostile);
+                    if (s.Pieces.Count > 0 && s.LastSampleAt >= 0f && now > s.LastSampleAt)
+                    {
+                        string piece = s.Pieces[s.Pieces.Count - 1];
+                        float dt = Mathf.Min(now - s.LastSampleAt, 0.5f);
+                        s.PieceSeconds[piece] += dt;
+                        s.PieceLoad[piece] += hostile * dt;
+                        s.PiecePeak[piece] = Mathf.Max(s.PiecePeak[piece], hostile);
+                    }
+                    s.LastSampleAt = now;
+                }
                 if (fresh != null)
                 {
                     s.NewSerial = fresh.Serial;
@@ -1998,13 +2058,15 @@ namespace SickOfIt.Playtest
                         : s.NewSerial < 0 ? $"the new enemy ({s.NewTypes[0]}) never appeared"
                         : $"the first {s.NewTypes[0]} arrived with {s.OthersAtNewSpawn} other enemies alive{(s.NewAlone ? " and stayed alone" : ", and another joined it")}");
                 // A Warden's arena is one fight with the boss alive throughout: its pauses are the phase changes (FinishArena).
-                if (!s.Arena)
+                if (s.Long)
+                    check(prefix + "breather", true, $"a long bullet-hell floor is judged on its set pieces and rising density instead (longest quiet stretch {s.LongestQuiet:0.0} s)");
+                else if (!s.Arena)
                     check(prefix + "breather", s.LongestQuiet >= 3f || s.OneFloor && s.FirstHostileAt < 0f,
                         s.FirstHostileAt < 0f ? "nothing attacked on this floor (its lava and stones are the floor)"
                             : $"longest stretch with nothing attacking after the first push: {s.LongestQuiet:0.0} s (want 3+)");
                 // Docs/LevelDesign.md, "The pace": 3 on screen in Circle X, 4 in Circles IX-VIII.
-                int allowed = s.Start > 0 && s.Start <= 900 ? 4 : 3;
-                check(prefix + "maxEnemies", s.MaxEnemies <= allowed, $"at most {s.MaxEnemies} enemies on screen at once ({(allowed == 3 ? "Circle X" : "Circle IX")} allows {allowed})");
+                int allowed = s.Long ? LongFloorEnemies : s.Start > 0 && s.Start <= 900 ? 4 : 3;
+                check(prefix + "maxEnemies", s.MaxEnemies <= allowed, $"at most {s.MaxEnemies} enemies on screen at once ({(s.Long ? "a long bullet-hell floor" : allowed == 3 ? "Circle X" : "Circle IX")} allows {allowed})");
                 if (s.Opening.Count > 0)
                 {
                     var late = s.Opening.FindAll(t => !s.ShownAt.TryGetValue(t, out float at) || s.FirstHostileAt >= 0f && at > s.FirstHostileAt);
@@ -2038,6 +2100,8 @@ namespace SickOfIt.Playtest
                         check(prefix + "length", s.Clock >= 60f && s.Clock <= 240f, $"the arena cleared in {s.Clock:0} s of game time (a boss fight: target 60-240)");
                     else if (s.FloorBoss)
                         check(prefix + "length", s.Clock >= 60f && s.Clock <= 180f, $"the floor boss cleared in {s.Clock:0} s of game time (target 60-180)");
+                    else if (s.Long)
+                        check(prefix + "length", s.Clock >= LongFloorMin && s.Clock <= LongFloorMax, $"a long bullet-hell floor cleared in {s.Clock:0} s of game time (target {LongFloorMin:0}-{LongFloorMax:0})");
                     else
                         check(prefix + "length", s.Clock >= 60f && s.Clock <= 120f, $"cleared in {s.Clock:0} s of game time (target 60-120)");
                     // A shortcut is paid with a Grudge instead of picking one.
@@ -2055,8 +2119,43 @@ namespace SickOfIt.Playtest
                 }
                 if (s.Arena)
                     FinishArena(s, completed);
+                if (s.Long)
+                    FinishLongFloor(s, completed);
                 if (s.OneFloor)
                     FinishFloorIdea(s, completed);
+            }
+
+            /// <summary>
+            /// A long bullet-hell floor (Docs/LevelDesign.md, "A long bullet-hell floor"): at least LongFloorMinPieces set pieces, each
+            /// announced by the script's `emit` of "setpiece:&lt;name&gt;", and the load (enemies and shots alive at once) rising from the
+            /// first piece to the last. Every piece logs its density in a `density` event so the timeline shows the ramp.
+            /// </summary>
+            void FinishLongFloor(StageWatch s, bool completed)
+            {
+                string prefix = "level" + s.Level + ".long";
+                var rows = new List<string>();
+                for (int i = 0; i < s.Pieces.Count; i++)
+                {
+                    string piece = s.Pieces[i];
+                    rows.Add($"{piece.Substring(9)} at {s.PieceAt[piece]:0} s: {s.Density(i):0.0} alive on average, {s.PiecePeak[piece]} at most");
+                    Run.Event("density", $"level {s.Level} set piece {i + 1} ({piece.Substring(9)}): {s.Density(i):0.0} enemies and shots alive on average over {s.PieceSeconds[piece]:0} s, peak {s.PiecePeak[piece]}");
+                }
+                int want = completed ? LongFloorMinPieces : 1;
+                s.Check(prefix + ".setPieces", s.Pieces.Count >= want,
+                    $"{s.Pieces.Count} distinct set pieces (want {LongFloorMinPieces}+): {(rows.Count > 0 ? string.Join(" | ", rows) : "none")}");
+                if (s.Pieces.Count >= 2)
+                {
+                    // Rising density: the last piece is busier than the first, and the ramp never falls by more than a third from one piece to the next.
+                    int last = s.Pieces.Count - 1;
+                    bool rising = s.Density(last) > s.Density(0) * 1.3f;
+                    int drops = 0;
+                    for (int i = 1; i <= last; i++)
+                        if (s.Density(i) < s.Density(i - 1) * 0.67f)
+                            drops++;
+                    s.Check(prefix + ".density", !completed || rising && drops <= 1,
+                        $"density {s.Density(0):0.0} on the first piece, {s.Density(last):0.0} on the last ({(rising ? "rising" : "NOT rising: want 1.3x")}, {drops} sharp drop(s), at most 1); " +
+                        $"the most alive at once was {s.MostHostile}");
+                }
             }
 
             /// <summary>
@@ -6408,7 +6507,7 @@ namespace SickOfIt.Playtest
                 {
                     if (!checkEvery && row.Level != 1 && row.Floor != LandingFirstFloor)
                         continue;
-                    float most = row.Floor > 0 && row.Floor % 10 == 1 ? 180f : 120f;
+                    float most = row.Floor > 0 && IsLongFloor(row.Level) ? LongFloorMax : row.Floor > 0 && row.Floor % 10 == 1 ? 180f : 120f;
                     string pace = row.Result != "cleared" || row.Floor == 0 ? "" :
                         row.Seconds < 60f ? ", pace short (under 1 min)" : row.Seconds > most ? $", pace long (over {most / 60f:0} min)" : ", pace ok";
                     if (row.Result == NotReached)

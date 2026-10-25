@@ -603,6 +603,8 @@ nothing, and no joke is about work.
   - every hazard is telegraphed at least 1 second ahead;
   - a floor has a breather (a few seconds with nothing attacking) between each push;
   - target floor length 60 to 120 seconds; floor bosses up to 3 minutes; Wardens separate.
+  - the exception is a **long bullet-hell floor** (240 to 360 seconds, many embers and shots, five set pieces; Floor 998, the
+    Spill, is the first): Hell showing off. Recipe in LevelDesign.md.
 - **Story beats are voiced**: one title line from the announcer, one or two lines from the hero, a beat at the
   end. Lines are written for the character's voice (see `audio.json` voices) and are short.
 - **Rewards make sense**: diamonds drop from things that were carrying them; loop shards from the damned.
