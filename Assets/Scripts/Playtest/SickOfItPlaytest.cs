@@ -216,7 +216,54 @@ namespace SickOfIt.Playtest
             LastLine = "Nothing... higher... than... me...", Fallen = "THE SPIRE FIEND HAS FALLEN!",
         };
 
-        public static readonly WardenFight[] Wardens = { MagmaKing, SpireFiend };
+        /// <summary>The bridge-wraith scenario: Floor 701, the Great Span (Docs/Story.md "The Bridge Wraith's fight"). No art is generated yet (specs priced, not approved), so no animation states are asked for.</summary>
+        public const string BridgeWraithLevel = "Floor701", BridgeWraithId = "bridgeWraith";
+        public static readonly WardenFight BridgeWraith = new WardenFight
+        {
+            Level = BridgeWraithLevel, Id = BridgeWraithId, Name = "Bridge Wraith", Scenario = "bridge-wraith", Seconds = 420f,
+            States = new string[0],
+            Lines = new[]
+            {
+                ("intro", "Oh. Oh, hello. Someone needs to cross. ...Sorry. It has been so long.", "vo_br_intro", "bridgeWraith"),
+                ("hero intro", "She's already sorry. That's worse.", "vo_br_hero_intro", "player"),
+                ("phase 1", "Mind the gap. ...There is not one. Sorry.", "vo_br_phase1", "bridgeWraith"),
+                ("hurt", "Oh! That was the lantern. Sorry. Sorry.", "vo_br_hurt1", "bridgeWraith"),
+                ("snuff", "I will put it out. It is the only way to do it right.", "vo_br_snuff", "bridgeWraith"),
+                ("lights", "Come along. Come along, little lights.", "vo_br_flies", "bridgeWraith"),
+                ("enrage", "Unwritten. Unwritten. Please, do not rush me. I will lose my place.", "vo_br_enrage", "bridgeWraith"),
+                ("unwriting", "The bridge is unwriting itself. Behind me. Of course it is.", "vo_br_hero_field", "player"),
+                ("hurt 2", "Please. I will write it wrong.", "vo_br_hurt2", "bridgeWraith"),
+                ("defeat", "Oh. ...Thank you for crossing.", "vo_br_defeat", "bridgeWraith"),
+                ("fallen", "THE BRIDGE WRAITH HAS FALLEN!", "vo_br_fallen", "announcer"),
+                ("hero defeat", "She said thank you. Hell, first time.", "vo_br_hero_defeat", "player"),
+            },
+            Telegraphs = new[]
+            {
+                ("brLampBolt", "brWarnLamp", "lantern fan"),
+                ("brMarkBolt", "brWarnLamp", "marked burst"),
+                ("brRuneColumn", "brWarnRune", "falling rune"),
+                ("brWallHit", "brWarnWall", "rune wall"),
+            },
+            Signals = new[]
+            {
+                ("brIntro", "intro: she rises over the Span"),
+                ("brFight", "phase 1: The Lantern"),
+                ("brSnuff", "half health: Snuffed, the Span goes dark"),
+                ("brPhase2", "phase 2: her little lights and afterimages"),
+                ("brEnrage", "a third: Unwritten"),
+                ("brUnwrite", "phase 3: the walls of runes"),
+                ("brDefeat", "defeat"),
+                ("waystoneLit", "the Waystone lights"),
+            },
+            Intro = "brIntro", Fight = "brFight", Half = "brSnuff", Phase2 = "brPhase2", Enrage = "brEnrage", Optional = "brUnwrite", Defeat = "brDefeat",
+            HalfState = "snuffed", EnrageState = "unwriting",
+            Adds = "lanternfly", AddsWhat = "lanternfly",
+            IntroLines = new[] { "FLOOR 701! THE WARDEN OF THE RUNE BRIDGES!", "THE BRIDGE WRAITH",
+                "Oh. Oh, hello. Someone needs to cross. ...Sorry. It has been so long.", "She's already sorry. That's worse." },
+            LastLine = "Oh. ...Thank you for crossing.", Fallen = "THE BRIDGE WRAITH HAS FALLEN!",
+        };
+
+        public static readonly WardenFight[] Wardens = { MagmaKing, SpireFiend, BridgeWraith };
 
         /// <summary>What a Floor 801 arena run checks (level-61 and spire-fiend).</summary>
         const string SpireFiendArena = "the title banner (\"FLOOR 801: THE SPIRE'S HEART\") with its voice, then the intro (input and rewind " +
@@ -350,6 +397,8 @@ namespace SickOfIt.Playtest
             new BossFightDef { Level = "Floor891", Name = "Road Breaker", Hint = "vo_hero_hint_roadBreaker", Fight = "rbFight", Defeat = "rbDefeat", Phases = new[] { "rbFight", "rbSurge", "rbPhase2", "rbPhase3" } },
             new BossFightDef { Level = "Floor851", Name = "Carver", Hint = "vo_hero_hint_carver", Fight = "cvFight", Defeat = "cvDefeat", Phases = new[] { "cvFight", "cvSurge", "cvPhase2", "cvPhase3" } },
             new BossFightDef { Level = "Floor801", Name = "Spire Fiend", Hint = "vo_hero_hint_spireFiend", Fight = "sfFight", Defeat = "sfDefeat", Phases = new[] { "sfFight", "sfWave", "sfPhase2", "sfEnrage", "sfLast" } },
+            new BossFightDef { Level = "Floor751", Name = "Lamplighter", Hint = "vo_hero_hint_lamplighter", Fight = "llFight", Defeat = "llDefeat", Phases = new[] { "llFight", "llTier2", "llBlindSignal", "llLast" } },
+            new BossFightDef { Level = "Floor701", Name = "Bridge Wraith", Hint = "vo_hero_hint_bridgeWraith", Fight = "brFight", Defeat = "brDefeat", Phases = new[] { "brFight", "brWave", "brPhase2", "brEnrage", "brLast" } },
         };
 
         /// <summary>The boss and up to 8 minions; the fight alone 120-240 s; the whole level (intro, fight, defeat) up to BossLevelMax.</summary>
@@ -498,6 +547,40 @@ namespace SickOfIt.Playtest
                         if (spawn.entity != null && content.Entities.TryGetValue(spawn.entity, out var def) && def.abilities.Exists(a => a is SickOfIt.Gameplay.Content.LadderAbility))
                             ladder = true;
                 if (ladder)
+                    list.Add(n);
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// bridge-descent: Circle VIII's lower half (Docs/Story.md "The Rune Bridges' lower half"): a sample of Floors 751-702 (the Lamplighter, the halfway
+        /// floor, then the floors that bring the afterimage, the hound and the sleepwalker, and the last crossing), each opened directly, then the Bridge
+        /// Wraith's Floor 701 played like level-N: her fight, the Waystone and the Shaft waking Circle VII. The whole lower half runs in rune-bridges-3 and on.
+        /// </summary>
+        public const string BridgeDescentId = "bridge-descent";
+        public static readonly string[] BridgeDescentFloors = { "Floor751", "Floor750", "Floor745", "Floor735", "Floor725", "Floor705" };
+
+        /// <summary>The level number (1-based position in game.json) of a level file's name, or 0.</summary>
+        public static int LevelNumberOf(string levelName)
+        {
+            var definition = GameDefinition.Instance;
+            int levels = definition != null ? definition.TotalLevels : 0;
+            for (int n = 1; n <= levels; n++)
+            {
+                var config = definition.GetLevel(n);
+                if (config != null && config.levelName == levelName)
+                    return n;
+            }
+            return 0;
+        }
+
+        public static List<int> BridgeDescentLevels()
+        {
+            var list = new List<int>();
+            foreach (string name in BridgeDescentFloors)
+            {
+                int n = LevelNumberOf(name);
+                if (n > 0)
                     list.Add(n);
             }
             return list;
@@ -682,6 +765,15 @@ namespace SickOfIt.Playtest
                             "climb to 801 with that Waystone saved and lit and Circle VIII's band waking up (voiced), and the level select";
                     seconds += 120f;
                 }
+                else if (IsArena(n) && WardenOf(n) == BridgeWraith)
+                {
+                    what += ": a Warden's arena (a locked screen), checked as it plays: the title banner (\"FLOOR 701: THE GREAT SPAN\") with its voice, the voiced intro " +
+                            "(\"FLOOR 701! THE WARDEN OF THE RUNE BRIDGES!\", \"THE BRIDGE WRAITH\", her whisper, the hero's reply, the boss bar), her phases in order from the signals " +
+                            "(brIntro, brFight, brSnuff at half health, brPhase2 with the lanternflies, the only adds, brEnrage at a third, brUnwrite, brDefeat, waystoneLit), 4+ minions at the peak, " +
+                            "every attack after its glow 1+ s ahead, the hero's hint line, her defeat (\"THANK YOU\" on the runes, \"THE BRIDGE WRAITH HAS FALLEN!\"), the Waystone lit at 701; then Continue, " +
+                            "the Shaft's climb to 701 with that Waystone saved and lit and Circle VII, the Gloomwood, waking up (voiced)";
+                    seconds += 120f;
+                }
                 else if (IsArena(n))
                 {
                     what += ": a Warden's arena (a locked screen), checked as it plays: the title banner (\"FLOORS N-M: PLACE\") with its voice, then the " +
@@ -825,6 +917,13 @@ namespace SickOfIt.Playtest
                 "lose): each death screen, and on the third one the feedback card (\"Too hard? Not fun?\", thumbs and a comment) over it, held while it's " +
                 "open, then Escape goes on; then what went out: level_start, death (with its cause), feature rewind and level_end, each sent with the build " +
                 "version and the env (beta on the beta site). Each beat is a check event, and every event the game sends is an analytics event", 420, "level"));
+            var descent = BridgeDescentLevels();
+            if (descent.Count > 0 && LevelNumberOf(BridgeWraithLevel) > 0)
+                list.Add(new PlaytestScenario(BridgeDescentId, "Circle VIII's lower half (Docs/Story.md \"The Rune Bridges' lower half\"): " + PathRange(descent) + " (the Lamplighter on Floor 751, the halfway floor, " +
+                    "the afterimage on 745, the rune hound on 735, the sleepwalker on 725, the last crossings), each opened directly (a setup shortcut) and played by the bot through real input, " +
+                    "once more after a death, the Lamplighter's floor with its boss checks (3+ phases, 4+ minions, the hero's hint); then Floor 701 as level-N: the Bridge Wraith's Great Span, " +
+                    "her phases in order (The Lantern, Snuffed, Unwritten), the minions, every attack after its glow, the hero's hint line, her voice, the Waystone at 701 and the Shaft waking Circle VII (voiced). " +
+                    "The whole lower half runs as rune-bridges-3 and on.", PathRunSeconds(descent) + BridgeWraith.Seconds + 240f, "full", "levels"));
             list.Add(new PlaytestScenario(SpireFiend.Scenario, $"The Spire Fiend's fight, Circle IX's Warden (Docs/Story.md \"The Spire Fiend's fight\"): " +
                 $"\"{SpireFiendLevel}\" (Floor 801, the Spire's Heart) loaded directly (a setup shortcut), the bot fighting through real input, up to 3 tries. " +
                 "His generated animations seen at game size, each a check event: Rise (unfolding out of his spire), Idle, Slam (claws into the floor), " +
@@ -1255,6 +1354,14 @@ namespace SickOfIt.Playtest
                 yield return session.WardenRun(MagmaKing, false);
             else if (id == SpireFiend.Scenario)
                 yield return session.WardenRun(SpireFiend, true);
+            else if (id == BridgeDescentId)
+                yield return session.AllLevels(BridgeDescentLevels(), "Circle VIII's lower half", checkEvery: true, at: at, thenLevel: LevelNumberOf(BridgeWraithLevel));
+            else if (id == BridgeWraith.Scenario)
+            {
+                int wraithLevel = LevelNumberOf(BridgeWraithLevel);
+                session.Prepare(wraithLevel, true);
+                yield return session.LevelScenario(wraithLevel);
+            }
             else if (id == "video-" + OverlayVideo)
                 yield return session.VideoOverlay();
             else if (id == "video-" + OverlayVideo + "-tunnel")
@@ -6821,7 +6928,7 @@ namespace SickOfIt.Playtest
             /// death, and reported: cleared, died (where and by what) or stuck (where). A level the bot can't clear goes in the table
             /// and the next one starts; the run ends with the table.
             /// </summary>
-            public IEnumerator AllLevels(List<int> levels, string what, bool checkEvery = false, string at = null, bool ladders = false)
+            public IEnumerator AllLevels(List<int> levels, string what, bool checkEvery = false, string at = null, bool ladders = false, int thenLevel = 0)
             {
                 var results = new List<PathResult>();
                 takeShortcuts = false;
@@ -7019,6 +7126,14 @@ namespace SickOfIt.Playtest
                 }
                 BalanceReport(what, levels);
                 Run.Progress(1f);
+                if (thenLevel > 0 && !Run.Done)
+                {
+                    // Then one level played like level-N (a Warden's arena and the Shaft after it), which ends the run.
+                    Run.Event("all-levels", $"{what}: the floors are done, now level {thenLevel} as a scenario of its own");
+                    Prepare(thenLevel, true);
+                    yield return LevelScenario(thenLevel);
+                    yield break;
+                }
                 End(cleared == results.Count ? PlaytestOutcome.Won : PlaytestOutcome.Done);
             }
 

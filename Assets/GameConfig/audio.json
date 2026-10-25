@@ -10092,22 +10092,6 @@
       "cooldown": 0.5
     },
     {
-      "id": "vo_hero_hint_lanternfly",
-      "kind": "Voice",
-      "prompt": "[calm] A bug with a lantern. One shot.",
-      "durationSeconds": 0,
-      "promptInfluence": 0.3,
-      "loop": false,
-      "voice": "player",
-      "voiceId": "",
-      "clip": "Audio/Generated/vo_hero_hint_lanternfly.mp3",
-      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[calm] A bug with a lantern. One shot.",
-      "volume": 1,
-      "pitchVariation": 0,
-      "maxVoices": 1,
-      "cooldown": 0.5
-    },
-    {
       "id": "br_chime",
       "kind": "Effect",
       "prompt": "A single soft glassy bell chime with a long cold echo tail, a lantern of runes being lifted. One-shot, dry, no music.",

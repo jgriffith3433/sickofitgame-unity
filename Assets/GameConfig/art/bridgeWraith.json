@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "entity": "bridgeWraith",
+  "name": "The Bridge Wraith",
+  "description": "the Warden of the Rune Bridges, a tall hooded wraith with no legs, her robe trailing off into pale mist, a deep hood with only two small pale-blue eyes inside it, long thin grey hands holding up a lantern made of glowing cyan runes with little shutters, soft cyan rune light on her robe's folds, anxious and polite posture",
+  "height": 2.4,
+  "pixels": 260,
+  "frameFill": 0.5,
+  "visualScale": 1,
+  "poses": {
+    "stand": "floating upright with the rune lantern held up in one hand, the shutters half open, her other hand clasped to her chest, hood tilted a little as if worried",
+    "dormant": {
+      "from": "stand",
+      "action": "folded down into a still grey hooded shape resting on the bridge, hood bowed, lantern dark and held against her chest"
+    },
+    "unwritten": {
+      "from": "stand",
+      "action": "the lantern held out wide with all its shutters flung open and blazing white-cyan, runes streaming off her robe like unravelling script, hood thrown back a little, eyes wide"
+    },
+    "dead": {
+      "from": "stand",
+      "action": "gone: only the rune lantern left standing alone on the bridge, set down, its shutters open and calm and glowing a soft steady cyan"
+    }
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "loop": true,
+      "action": "drifts and bobs gently in the air, robe mist swaying, the lantern's runes pulsing slowly",
+      "seconds": 2
+    },
+    "rise": {
+      "from": "dormant",
+      "to": "stand",
+      "state": "Rise",
+      "action": "unfolds upward off the bridge, lantern lighting rune by rune, mist curling off her robe",
+      "seconds": 2
+    },
+    "lantern": {
+      "from": "stand",
+      "state": "Lantern",
+      "event": "lantern",
+      "action": "raises the lantern and opens its shutters wide, a ripple of cyan runes running out from it to the right, then lowers it with a small apologetic bow",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck and flinches, the lantern's shutter flicking shut, a few runes scattering off her robe",
+      "seconds": 1
+    },
+    "enrage": {
+      "from": "stand",
+      "to": "unwritten",
+      "state": "Enrage",
+      "action": "flings the lantern's shutters open and her robe starts to unravel into streams of glowing script, trembling",
+      "seconds": 1.5
+    },
+    "idleEnraged": {
+      "from": "unwritten",
+      "state": "IdleEnraged",
+      "loop": true,
+      "action": "trembles in the air with the lantern held wide, runes streaming off her robe and fading, quick pulses of white-cyan light",
+      "seconds": 2
+    },
+    "die": {
+      "from": "unwritten",
+      "to": "dead",
+      "action": "stops trembling, sighs, sets the lantern down on the bridge and fades away into mist and drifting runes, leaving only the calm lantern",
+      "seconds": 2
+    }
+  },
+  "animator": {
+    "parameters": [
+      {
+        "name": "Enraged",
+        "type": "Bool"
+      },
+      {
+        "name": "Lantern",
+        "type": "Trigger"
+      },
+      {
+        "name": "Hurt",
+        "type": "Trigger"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Rise",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Idle",
+        "to": "Lantern",
+        "when": [
+          "Lantern"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Lantern",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Hurt",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Enrage",
+        "to": "IdleEnraged",
+        "exit": true
+      }
+    ]
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}
