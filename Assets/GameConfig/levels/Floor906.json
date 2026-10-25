@@ -311,6 +311,10 @@
       {
         "name": "lavaMax",
         "value": 0.0
+      },
+      {
+        "name": "ovlOn",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -553,6 +557,113 @@
             "text": "Nope. Nothing good is behind a seam.",
             "duration": 2.4,
             "style": "Subtitle"
+          }
+        ]
+      },
+      {
+        "name": "overlord: steal, Floor 906",
+        "when": {
+          "type": "sectionReached",
+          "section": "loop1"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordFar906",
+                "id": "ovl",
+                "anchor": "Camera",
+                "at": [
+                  2.8,
+                  1.8
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 1
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:906:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Mm. ... Mine.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_ovl_906_mine",
+                "color": "#E0605A"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:906:line"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordBaitDiamond",
+                "anchor": "Player",
+                "at": [
+                  3.5,
+                  0.7
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:906:bait"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.2
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:906:stolen"
+              },
+              {
+                "type": "showText",
+                "text": "It was never yours either.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_hero_ovl_906"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "ovl"
+                }
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 0
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:906:done"
+              }
+            ]
           }
         ]
       }

@@ -27,6 +27,9 @@ namespace SickOfIt.Core
         /// rewind (RewindSnagAbility) compare it with the value saved in their own state.</summary>
         public static int RewindsEnded { get; private set; }
 
+        /// <summary>Real (unscaled) time the last rewind ended; -1000 before any. Not rewound; the `heroRewound` trigger reads it.</summary>
+        public static float LastRewindEndedAt { get; private set; } = -1000f;
+
         [Header("State (Read-Only)")]
         [SerializeField] private float currentTime;
         [SerializeField] private float timeScale = 1f;
@@ -170,6 +173,7 @@ namespace SickOfIt.Core
             isRewinding = false;
             timeScale = 1f;
             RewindsEnded++;
+            LastRewindEndedAt = UnityEngine.Time.unscaledTime;
             BeginPostRewindClamp();
             OnRewindStopped?.Invoke();
         }

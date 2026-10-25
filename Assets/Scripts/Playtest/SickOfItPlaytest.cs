@@ -905,6 +905,7 @@ namespace SickOfIt.Playtest
                 list.Add(new PlaytestScenario(BystanderFloorsId, $"Bystanders on the floors ({bystanderFloors.Count} floors, {PathRange(bystanderFloors)}; Docs/Story.md \"Bystanders on the floors\"): each opened directly (a setup shortcut) and played by the bot through real input. " +
                     "Damned souls ahead of him (a hawker, a heckler, a hand-over soul, a hiding soul, a cheering soul) turn, speak a voiced subtitle, flinch from his shots and step back; a hawker gives a free sample, a giver hands him a loop shard, a heckler is passed by a stray shot. " +
                     "A `bystander-floor` event per reaction (signal by:<kind>:<what>), and the closing check counts the floors that reacted, the kinds and the three scripted hero interactions", PathRunSeconds(bystanderFloors), "full", "levels"));
+            list.Add(new PlaytestScenario(OverlordCameosId, "The Overlord on the far ledge (Docs/Story.md \"The Overlord on the far ledge\"): eight floors of Circles X and IX (997, 994, 958, 953, 906, 896, 857, 806), each opened directly (a setup shortcut) and played by the bot through real input until its scene ends. On a far ledge the Overlord taunts, drops an ember, rides a lift out of sight, lasers the floor, takes a diamond, walks his ledge, sends two whelps, lets a diamond fall; each with his voiced line and the hero's voiced reply, and `overlord` events for every beat (signal ovl:<floor>:<beat>). On Floor 896 a real hold of R while he walks drags him back and he says \"Again\" (the clock must drop). One check event per floor, then the rewind and the eight distinct floors", OverlordCameosSeconds, "level"));
             list.Add(new PlaytestScenario(RewindJuiceId, "Longer, more rewarding rewind (Docs/GameplayCookbook.md \"The arcade loop\"): Level 1 loaded directly with the shop reset (a setup shortcut): " +
                 "the new game's juice must be 10 s (it was 3). Then Yooba's rewind goods are bought through the shop's own purchase (diamonds given first, a setup shortcut: Loop Jar x5, Bottomless Jar x2, Quick Unwind x3) " +
                 "and Level 1 loads again: the cap must reach 24 s and the rewind runs 75% faster. The bot plays through real input until a clean kill pays juice back: the juice goes up by the refund and the HUD floats " +
@@ -1300,6 +1301,8 @@ namespace SickOfIt.Playtest
                 yield return session.ReplayModesRun();
             else if (id == BystanderId)
                 yield return session.BystanderRun();
+            else if (id == OverlordCameosId)
+                yield return session.OverlordCameosRun();
             else if (id == BystanderFloorsId)
                 yield return session.BystanderFloorsRun();
             else if (id == LadderId)

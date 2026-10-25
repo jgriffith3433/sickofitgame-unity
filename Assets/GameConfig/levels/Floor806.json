@@ -959,6 +959,10 @@
       {
         "name": "finale",
         "value": 0.0
+      },
+      {
+        "name": "ovlOn",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -1439,6 +1443,123 @@
               }
             ],
             "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "overlord: drop-diamond, Floor 806",
+        "when": {
+          "type": "sectionReached",
+          "section": "under"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordFar806",
+                "id": "ovl",
+                "anchor": "Camera",
+                "at": [
+                  3.8,
+                  1.8
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 1
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:806:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Mm. ... Heavy.",
+                "duration": 2.8,
+                "style": "Subtitle",
+                "sound": "vo_ovl_806_heavy",
+                "color": "#E0605A"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:806:line"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "wait",
+                "seconds": 1.4
+              },
+              {
+                "type": "spawn",
+                "entity": "diamond",
+                "anchor": "Player",
+                "at": [
+                  3.5,
+                  0.6
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "spawn",
+                "entity": "diamondGlint",
+                "anchor": "Player",
+                "at": [
+                  3.5,
+                  0.6
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:806:drop"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.4
+              },
+              {
+                "type": "showText",
+                "text": "Not picking that up for him. ... Fine. I am.",
+                "duration": 3.6,
+                "style": "Subtitle",
+                "sound": "vo_hero_ovl_806"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "ovl"
+                }
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 0
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:806:done"
+              }
+            ]
           }
         ]
       }

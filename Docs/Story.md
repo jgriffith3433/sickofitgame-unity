@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; elites and mid-bosses on the x5 floors, 2026-10-25; the hero's moves, a dash and a wall-jump, 2026-10-25; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; the Overlord on the far ledge, eight glimpses on Circles X and IX, 2026-10-25; elites and mid-bosses on the x5 floors, 2026-10-25; the hero's moves, a dash and a wall-jump, 2026-10-25; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -2179,6 +2179,41 @@ The landing waits for the counter `midboss`. He hovers near the hero; killing th
 Voice: the hero's lines and the announcer's call are made (`vo_hero_hint_<elite>`, `vo_mb_<bs|km|mf|sw>_title|hero|end`); the mid-bosses' own lines are subtitles
 until their voices are made. Art: specs in `Assets/GameConfig/art/<id>.json` for all sixteen, not generated (GPU priced, not approved); until then each wears its
 base creature's art, tinted and larger (rule 5). Test arena `content/scenes/eliteArena.json`, playtest `elites` (~40 min: the arena, then the four floors).
+
+## The Overlord on the far ledge (eight glimpses, Circles X and IX, built 2026-10-25)
+
+J (2026-10-25): *"Give the Overlord (2 voice lines today) at least 8 mid-floor appearances across Circles X and IX."* Until now he is in Video1, the
+portal scene and (one day) the Floor 1 throne room. These are the glimpses between: the hero climbing a floor looks up and the Overlord is **somewhere
+far above, on a ledge**, busy with Hell. They keep the cast table intact:
+
+- **He never answers the hero, never turns to him and never looks down at him.** He is talking to the air, his back or his shoulder to the screen, as he
+  is until Floor 10 (*Shortcuts*, Circle I). The hero talks to *him*; the Overlord's lines are to nobody. (This is the whole joke of the glimpses.)
+- **His voice is the table's:** deep, slow, enormous, barely bothered, at most six words, each a `Mm.` and a long pause first. No speeches, no threats,
+  no office or work jokes; nothing he says is about the hero.
+- **The hero's replies are deadpan one-liners**, said once the Overlord has finished. The hero never says he *wants* to catch him; he is just in the way.
+- **They are scenes** (the scene engine's actions on a floor's own rule, `sectionReached`, once a play): the camera holds for the few seconds it lasts,
+  nothing new is introduced, the scene never ends a floor and the floor goes on afterwards. **Rewinding through one is part of the design**: the scene is
+  world state, so he steps back, the line is said again and the hero answers again (Hell is repetition). Only the dropped ember can hurt, once, 1 heart,
+  after a glow that tells the hero where. Nothing it does touches the diamonds he is carrying or the save: what he "steals" is on the floor, not in the shop.
+- **Look:** a huge obsidian silhouette with red eyes, a crown of black horns, far off and small on the screen (`overlordFar`; placeholder until the art
+  is made: spec `Assets/GameConfig/art/overlordFar.json`, priced, not approved). Voice: `overlord` (audio.json `vo_ovl_*`, hero `vo_hero_ovl_*`).
+
+| # | Floor, section | What he does | Overlord | Hero | Why here |
+|---|---|---|---|---|---|
+| 1 | 997, *higher* | **Taunt:** sits on a far ledge, looking up, hand on a horn | *"Mm. ... Up. They always try up."* | *"Don't mind me."* | The first floor with the hauling chains: the imps work for him. |
+| 2 | 994, *cross* | **Drops a hazard:** a glow on the stone ahead, then an ember falls from his fingers | *"Mm. ... Catch."* | *"Great. A present."* | The floor where the thief throws things back. |
+| 3 | 958, *bank* | **Flees upward on a lift:** steps onto a chain lift that rises out of the screen | *"Mm. ... Higher."* | *"He has a lift. Of course he has a lift."* | Hell's burning village floors; the hero has none. |
+| 4 | 953, *lap2up* | **Lasers the floor:** a glow, then a column of his beam into the stone far ahead; the screen shakes, nothing is hit | *"Mm. ... Floor."* | *"Missed. Or he didn't care."* | The Loop's floor: the beam is the one from Video1, again. |
+| 5 | 906, *loop1* | **Steals a diamond:** one hangs ahead; he marks it with the beam, and takes it if the hero doesn't first | *"Mm. ... Mine."* | *"It was never yours either."* | The Heat Stairs, where the diamonds are the point. |
+| 6 | 896, *slope* | **Rewound by the hero:** he strolls along the ledge. The hero (*"Let's see what R does to him."*) holds R: he walks back the way he came | on the rewind: *"Hhh. ... Again."* | *"Yeah. Same here."* | The first Circle IX floor of breathing vents; Hell breathes in and out, and so does he. First clue he knows the loop (*The Overlord: who he is*). |
+| 7 | 857, *behind* | **Summons:** points down the road; two whelps drop in | *"Mm. ... Go."* | *"He sends the help."* | The Carver's road: Hell's errands. |
+| 8 | 806, *under* | **Loses a diamond:** crossing the ledge with a sack, one falls out and drops by the hero's path | *"Mm. ... Heavy."* | *"Not picking that up for him. ... Fine. I am."* | The Spire's last stretch: the sack is nearly full; he is nearly up. |
+
+Eight floors, eight different interactions (a taunt, a hazard, a lift, a laser, a theft, a rewind, a summons, a drop). His voice is **made once**: the
+two lines the game had (*Stay.* and the exhale, the portal) are joined by these nine (`vo_ovl_997_up` ... `vo_ovl_806_heavy`, plus `vo_ovl_896_again`) and
+the hero's ten replies (`vo_hero_ovl_*`). Data written by `Tools/Levels/overlord_cameos.py` (edit its table and run it, never the files by hand;
+`--check` runs with no Unity); two small mechanics make them possible, `screenAnchor` (an entity held at a place on the screen, drifting) and the
+`heroRewound` trigger (true for a moment after a rewind ends). Playtest `overlord-cameos`.
 
 ## Rules for levels
 
