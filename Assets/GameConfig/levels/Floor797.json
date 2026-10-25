@@ -1,0 +1,1228 @@
+{
+  "schemaVersion": 1,
+  "levelName": "Floor797",
+  "displayName": "Floor 797: The First Watcher",
+  "levelNumber": 83,
+  "thumbnail": "Videos/Video2_FirstFrame.png",
+  "backgrounds": [],
+  "backgroundLayers": [],
+  "music": "Audio/Music/wastes_loop.ogg",
+  "musicVolume": 0.85,
+  "platforms": [],
+  "placedSprites": [],
+  "enemies": [],
+  "playerSpawnPosition": [
+    -4.0,
+    0.0
+  ],
+  "deathConfigName": "Death1",
+  "duration": 420.0,
+  "completionDelay": 2.0,
+  "nextVideoNumber": 0,
+  "nextLevelNumber": 84,
+  "returnToMainMenuOnComplete": false,
+  "script": {
+    "seed": 797,
+    "length": 300,
+    "floors": {
+      "start": 797,
+      "end": 796,
+      "unitsPerFloor": 0.0,
+      "circle": "runeBridges",
+      "signs": false
+    },
+    "world": {
+      "camera": "Travel",
+      "travelLead": 1.2,
+      "followSharpness": 4.0,
+      "holdForPushes": false,
+      "path": [
+        {
+          "name": "foot",
+          "direction": "Right",
+          "length": 12.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                -1.45
+              ],
+              "id": "start",
+              "scale": [
+                2.0,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                1.0,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                4.81,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                8.63,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                12.44,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "watcher",
+              "at": [
+                8.0,
+                0.9
+              ],
+              "id": "opening0",
+              "onEnter": true
+            }
+          ],
+          "autoSpeed": 0.6
+        },
+        {
+          "name": "eye",
+          "direction": "Right",
+          "length": 30.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "runePillar",
+              "at": [
+                16.25,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                20.07,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                23.88,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                27.7,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                31.51,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                35.32,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                39.14,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                42.95,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.55
+        },
+        {
+          "name": "lid",
+          "direction": "Right",
+          "length": 30.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "runePillar",
+              "at": [
+                46.76,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                50.58,
+                -0.7
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                54.39,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                58.2,
+                -1.6
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                62.02,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                65.83,
+                -0.7
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                69.65,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                73.46,
+                -1.6
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.55
+        },
+        {
+          "name": "gaze",
+          "direction": "Right",
+          "length": 30.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "runePillar",
+              "at": [
+                77.27,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                81.09,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                84.9,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                88.71,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                92.53,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                96.34,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                100.15,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanUnison",
+              "at": [
+                103.97,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.55
+        },
+        {
+          "name": "crossing",
+          "direction": "Right",
+          "length": 30.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "runeSpan",
+              "at": [
+                107.78,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                111.6,
+                -1.5
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                115.41,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                119.22,
+                -0.8
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                123.04,
+                -0.4
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                126.85,
+                -0.8
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpan",
+              "at": [
+                130.66,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.55
+        },
+        {
+          "name": "stare",
+          "direction": "Right",
+          "length": 30.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "runePillar",
+              "at": [
+                134.48,
+                -1.6
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanQuick",
+              "at": [
+                138.29,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanQuick",
+              "at": [
+                142.1,
+                -0.7
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanQuick",
+              "at": [
+                145.92,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanQuick",
+              "at": [
+                149.73,
+                -1.6
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                153.55,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanQuick",
+              "at": [
+                157.36,
+                -0.7
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runeSpanQuick",
+              "at": [
+                161.17,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.55
+        },
+        {
+          "name": "far",
+          "direction": "Right",
+          "length": 12.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "runeSpan",
+              "at": [
+                164.99,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "runePillar",
+              "at": [
+                168.8,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "floorLanding797",
+              "at": [
+                174.4,
+                -1.2
+              ],
+              "id": "landing"
+            }
+          ],
+          "autoSpeed": 0.6
+        }
+      ]
+    },
+    "objective": {
+      "complete": {
+        "type": "counter",
+        "name": "cleared",
+        "atLeast": 1
+      },
+      "text": "Cross"
+    },
+    "counters": [
+      {
+        "name": "finale",
+        "value": 0.0
+      }
+    ],
+    "rules": [
+      {
+        "name": "hero: first line",
+        "when": {
+          "type": "atTime",
+          "seconds": 14.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "It's just looking. Why is it looking?",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "sound": "vo_f797_a"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "hero: second line",
+        "when": {
+          "type": "sectionReached",
+          "section": "lid"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 6.0
+              },
+              {
+                "type": "showText",
+                "text": "Please stop looking at me.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "sound": "vo_f797_b"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "to eye",
+        "when": {
+          "type": "sectionReached",
+          "section": "eye"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "eye"
+          }
+        ]
+      },
+      {
+        "name": "to lid",
+        "when": {
+          "type": "sectionReached",
+          "section": "lid"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "lid"
+          }
+        ]
+      },
+      {
+        "name": "to gaze",
+        "when": {
+          "type": "sectionReached",
+          "section": "gaze"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "gaze"
+          }
+        ]
+      },
+      {
+        "name": "to crossing",
+        "when": {
+          "type": "sectionReached",
+          "section": "crossing"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "crossing"
+          }
+        ]
+      },
+      {
+        "name": "to stare",
+        "when": {
+          "type": "sectionReached",
+          "section": "stare"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "goToPhase",
+            "phase": "stare"
+          }
+        ]
+      },
+      {
+        "name": "the bridge has had its minutes",
+        "when": {
+          "type": "atTime",
+          "seconds": 270.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "finale",
+            "value": 1.0
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finale",
+              "atLeast": 1.0
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFloor",
+                "floor": 796,
+                "skipMilestones": true
+              },
+              {
+                "type": "showText",
+                "text": "Watched me the whole way. Never waved.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "sound": "vo_f797_c"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "FLOOR 796: OUT OF STEP",
+                "duration": 3.2,
+                "style": "Banner",
+                "sound": "vo_f797_clear",
+                "color": "#8FE3FF"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "offerUpgrades",
+                "title": "Pick a grudge"
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "phases": [
+      {
+        "name": "ledge",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "FLOOR 797: THE FIRST WATCHER",
+                "duration": 3.5,
+                "style": "Banner",
+                "sound": "vo_f797_title",
+                "color": "#8FE3FF"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "eye",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:eye"
+          },
+          {
+            "type": "showText",
+            "text": "IT BLINKED!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#8FE3FF"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.0,
+            "interval": 2.8,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.008
+          }
+        ]
+      },
+      {
+        "name": "lid",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:lid"
+          },
+          {
+            "type": "showText",
+            "text": "SHOOT AS IT OPENS!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#8FE3FF"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.0,
+            "interval": 2.4,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "lid: watcher",
+            "when": {
+              "type": "every",
+              "seconds": 14.0,
+              "startAfter": 3.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "watcher",
+                "count": 1,
+                "interval": 0.9,
+                "anchor": "Camera",
+                "areaCenter": [
+                  4.0,
+                  1.4
+                ],
+                "areaSize": [
+                  1.2,
+                  2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "gaze",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:gaze"
+          },
+          {
+            "type": "showText",
+            "text": "THE WATCHERS WATCH!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#8FE3FF"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.0,
+            "interval": 2.2,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.01
+          }
+        ],
+        "rules": [
+          {
+            "name": "gaze: watcher",
+            "when": {
+              "type": "every",
+              "seconds": 12.0,
+              "startAfter": 3.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "watcher",
+                "count": 1,
+                "interval": 0.9,
+                "anchor": "Camera",
+                "areaCenter": [
+                  4.0,
+                  1.4
+                ],
+                "areaSize": [
+                  1.2,
+                  2.0
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "gaze: imp",
+            "when": {
+              "type": "every",
+              "seconds": 14.0,
+              "startAfter": 6.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "imp",
+                "count": 1,
+                "interval": 0.9,
+                "anchor": "Camera",
+                "areaCenter": [
+                  4.0,
+                  1.0
+                ],
+                "areaSize": [
+                  1.2,
+                  2.4
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "crossing",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:crossing"
+          },
+          {
+            "type": "showText",
+            "text": "CROSSING UNDER GAZE!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#8FE3FF"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.0,
+            "interval": 1.8,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.011
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "spread",
+              "count": 3,
+              "angle": 34
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.0,
+            "interval": 3.4,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "crossing: watcher",
+            "when": {
+              "type": "every",
+              "seconds": 12.0,
+              "startAfter": 3.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "watcher",
+                "count": 2,
+                "interval": 0.9,
+                "anchor": "Camera",
+                "areaCenter": [
+                  4.0,
+                  1.4
+                ],
+                "areaSize": [
+                  1.2,
+                  2.2
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "stare",
+        "onEnter": [
+          {
+            "type": "emit",
+            "signal": "setpiece:stare"
+          },
+          {
+            "type": "showText",
+            "text": "THE STARING CONTEST!",
+            "duration": 2.4,
+            "style": "Banner",
+            "color": "#8FE3FF"
+          },
+          {
+            "type": "startHazard",
+            "id": "rain",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "rain",
+              "count": 1
+            },
+            "speed": 3.0,
+            "interval": 1.5,
+            "initialDelay": 1.5,
+            "rampPerSecond": 0.012
+          },
+          {
+            "type": "startHazard",
+            "id": "aimed",
+            "projectile": "runeBolt",
+            "pattern": {
+              "type": "spread",
+              "count": 3,
+              "angle": 34
+            },
+            "aim": "Player",
+            "origin": [
+              8.0,
+              0.5
+            ],
+            "anchor": "Camera",
+            "speed": 3.0,
+            "interval": 2.8,
+            "initialDelay": 2.0
+          }
+        ],
+        "rules": [
+          {
+            "name": "stare: watcher",
+            "when": {
+              "type": "every",
+              "seconds": 9.0,
+              "startAfter": 2.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "watcher",
+                "count": 2,
+                "interval": 0.9,
+                "anchor": "Camera",
+                "areaCenter": [
+                  4.0,
+                  1.4
+                ],
+                "areaSize": [
+                  1.2,
+                  2.2
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "stare: imp",
+            "when": {
+              "type": "every",
+              "seconds": 12.0,
+              "startAfter": 5.0,
+              "maxTimes": 0
+            },
+            "do": [
+              {
+                "type": "spawnWave",
+                "entity": "imp",
+                "count": 1,
+                "interval": 0.9,
+                "anchor": "Camera",
+                "areaCenter": [
+                  4.0,
+                  1.0
+                ],
+                "areaSize": [
+                  1.2,
+                  2.4
+                ],
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

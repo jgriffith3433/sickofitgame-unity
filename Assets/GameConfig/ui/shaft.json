@@ -81,7 +81,7 @@
       "wakeVoice": "vo_shaft_wake_ix"
     },
     {
-      "circle": "",
+      "circle": "runeBridges",
       "numeral": "VIII",
       "name": "The Rune Bridges",
       "firstFloor": 800,

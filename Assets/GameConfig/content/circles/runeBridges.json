@@ -1,0 +1,398 @@
+{
+  "schemaVersion": 1,
+  "displayName": "The Rune Bridges",
+  "firstFloor": 800,
+  "lastFloor": 701,
+  "backgroundLayers": [
+    {
+      "name": "Road_Path",
+      "spriteFramesData": "Videos/Level2_Background1.asset",
+      "layer": "Background1",
+      "sequenceBy": "Floors",
+      "sequenceStart": 0,
+      "sequenceDuration": 0,
+      "sequenceLoop": true
+    }
+  ],
+  "track": {
+    "groundY": -2.5,
+    "groundColor": "#0A0C18",
+    "groundEdgeColor": "#6FD8FF",
+    "segmentLength": 6.0,
+    "platformChance": 0.4,
+    "platformHeight": [
+      1.1,
+      1.7
+    ],
+    "platformWidth": [
+      1.4,
+      2.4
+    ],
+    "platformColor": "#8FA8C8",
+    "clearStart": 8.0
+  },
+  "props": [
+    {
+      "name": "far arches",
+      "shape": "Spire",
+      "color": "#1A2448D9",
+      "size": [
+        1.2,
+        3.6
+      ],
+      "sizeVariation": 0.35,
+      "across": -2.5,
+      "parallax": 0.8,
+      "spacing": 3.0,
+      "chance": 0.8,
+      "layer": "Background2",
+      "sortingOrder": 0
+    },
+    {
+      "name": "rune halos",
+      "shape": "Glow",
+      "color": "#6FD8FF70",
+      "size": [
+        0.9,
+        0.9
+      ],
+      "sizeVariation": 0.4,
+      "across": -1.2,
+      "parallax": 0.6,
+      "spacing": 3.6,
+      "chance": 0.6,
+      "layer": "Background2",
+      "sortingOrder": 1
+    },
+    {
+      "name": "rune dust",
+      "shape": "Glow",
+      "color": "#BFEFFF50",
+      "size": [
+        0.12,
+        0.12
+      ],
+      "sizeVariation": 0.6,
+      "across": 0.5,
+      "parallax": 0.3,
+      "spacing": 1.4,
+      "chance": 0.9,
+      "layer": "Foreground1",
+      "sortingOrder": 0
+    }
+  ],
+  "enemies": [
+    {
+      "entity": "watcher",
+      "weight": 1.0,
+      "fromFloor": 797,
+      "areaCenter": [
+        3.8,
+        1.2
+      ],
+      "areaSize": [
+        1.2,
+        1.6
+      ]
+    },
+    {
+      "entity": "imp",
+      "weight": 0.8,
+      "fromFloor": 799,
+      "areaCenter": [
+        4.0,
+        1.0
+      ],
+      "areaSize": [
+        1.0,
+        2.2
+      ]
+    },
+    {
+      "entity": "ricochetImp",
+      "weight": 0.6,
+      "fromFloor": 798,
+      "areaCenter": [
+        4.0,
+        1.0
+      ],
+      "areaSize": [
+        1.0,
+        2.2
+      ]
+    },
+    {
+      "entity": "bulwarkImp",
+      "weight": 0.5,
+      "fromFloor": 796,
+      "areaCenter": [
+        4.0,
+        1.0
+      ],
+      "areaSize": [
+        1.0,
+        2.2
+      ]
+    },
+    {
+      "entity": "blinkImp",
+      "weight": 0.5,
+      "fromFloor": 795,
+      "areaCenter": [
+        4.0,
+        1.0
+      ],
+      "areaSize": [
+        1.0,
+        2.2
+      ]
+    },
+    {
+      "entity": "leadImp",
+      "weight": 0.5,
+      "fromFloor": 794,
+      "areaCenter": [
+        4.0,
+        1.0
+      ],
+      "areaSize": [
+        1.0,
+        2.2
+      ]
+    }
+  ],
+  "hazards": [
+    {
+      "name": "rune hail",
+      "weight": 1.0,
+      "fromFloor": 800,
+      "warning": "The runes are shedding.",
+      "warningSound": "",
+      "telegraph": 1.5,
+      "actions": [
+        {
+          "type": "startHazard",
+          "id": "runeHail",
+          "projectile": "runeBolt",
+          "pattern": {
+            "type": "rain",
+            "count": 1
+          },
+          "speed": 2.8,
+          "interval": 1.4,
+          "duration": 6.0
+        }
+      ],
+      "duration": 7.0
+    }
+  ],
+  "easiest": {
+    "maxAlive": 2,
+    "pushSize": 2,
+    "spawnInterval": 1.6,
+    "breather": 4.5,
+    "hazardChance": 0.25,
+    "healthMultiplier": 1.0,
+    "pushTimeout": 22.0
+  },
+  "hardest": {
+    "maxAlive": 3,
+    "pushSize": 5,
+    "spawnInterval": 1.0,
+    "breather": 3.0,
+    "hazardChance": 0.35,
+    "healthMultiplier": 1.5,
+    "pushTimeout": 25.0
+  },
+  "pushMusic": null,
+  "pushMusicVolume": 1.0,
+  "milestones": [
+    {
+      "floor": 750,
+      "text": "FLOOR 750: HALFWAY ACROSS",
+      "sound": "",
+      "style": "Banner",
+      "color": "#8FE3FF",
+      "duration": 2.5
+    }
+  ],
+  "sky": {
+    "enabled": true,
+    "top": "#0A0820",
+    "glow": "#1A2A5A",
+    "sea": "#2A1A4A",
+    "seaLevel": -6.0,
+    "seaParallax": 0.9,
+    "seaMinOnScreen": 0.06,
+    "seaArt": {
+      "sheet": "Art/Climb/Rift_loop.png",
+      "spriteNameFilter": "",
+      "fps": 1,
+      "scroll": 0.02,
+      "color": "#4A3A8A"
+    },
+    "seaArtHeight": 2.4,
+    "layers": [
+      {
+        "name": "far spires",
+        "sprite": "Art/Climb/RoadSpires_still.png#still_00",
+        "shape": "Spire",
+        "color": "#3A4A8AC0",
+        "size": [
+          2.0,
+          2.4
+        ],
+        "sizeVariation": 0.35,
+        "parallax": [
+          0.92,
+          0.9
+        ],
+        "spacing": [
+          3.0,
+          1.0
+        ],
+        "chance": 0.75,
+        "onSea": true,
+        "order": 0
+      },
+      {
+        "name": "smoke",
+        "shape": "Glow",
+        "color": "#1A2A6040",
+        "size": [
+          6.0,
+          1.4
+        ],
+        "sizeVariation": 0.4,
+        "parallax": [
+          0.85,
+          0.75
+        ],
+        "spacing": [
+          7.0,
+          4.0
+        ],
+        "chance": 0.5,
+        "drift": 0.25,
+        "order": 1
+      },
+      {
+        "name": "far islands",
+        "sprite": "Art/Climb/RoadIsland_still.png#still_00",
+        "shape": "Rock",
+        "color": "#4A5C9ED0",
+        "size": [
+          1.5,
+          0.9
+        ],
+        "sizeVariation": 0.35,
+        "parallax": [
+          0.88,
+          0.8
+        ],
+        "spacing": [
+          4.0,
+          3.5
+        ],
+        "chance": 0.45,
+        "hanging": false,
+        "order": 2
+      },
+      {
+        "name": "near spires",
+        "sprite": "Art/Climb/RoadSpires_still.png#still_00",
+        "shape": "Spire",
+        "color": "#7A90C0",
+        "size": [
+          3.2,
+          3.8
+        ],
+        "sizeVariation": 0.3,
+        "parallax": [
+          0.8,
+          0.9
+        ],
+        "spacing": [
+          4.6,
+          1.0
+        ],
+        "chance": 0.6,
+        "onSea": true,
+        "order": 3
+      },
+      {
+        "name": "floating islands",
+        "sprite": "Art/Climb/RoadIsland_still.png#still_00",
+        "shape": "Rock",
+        "color": "#8FA8D0",
+        "size": [
+          2.6,
+          1.5
+        ],
+        "sizeVariation": 0.3,
+        "parallax": [
+          0.7,
+          0.6
+        ],
+        "spacing": [
+          6.0,
+          5.0
+        ],
+        "chance": 0.45,
+        "hanging": false,
+        "order": 4
+      }
+    ],
+    "bands": [
+      {
+        "name": "low haze",
+        "art": {
+          "sheet": "Art/Climb/Haze_band.png",
+          "spriteNameFilter": "",
+          "fps": 1,
+          "scroll": 0.03,
+          "color": "#8FB0E0A0"
+        },
+        "anchor": "Sea",
+        "offset": 0.9,
+        "height": 2.0,
+        "parallax": 0.9,
+        "order": 1
+      },
+      {
+        "name": "high haze",
+        "art": {
+          "sheet": "Art/Climb/Haze_band.png",
+          "spriteNameFilter": "",
+          "fps": 1,
+          "scroll": -0.02,
+          "color": "#7090D060"
+        },
+        "anchor": "Sea",
+        "offset": 4.2,
+        "height": 2.6,
+        "parallax": 0.82,
+        "order": 3
+      },
+      {
+        "name": "ceiling glow",
+        "art": {
+          "sheet": "Art/Climb/Ceiling_band.png",
+          "spriteNameFilter": "",
+          "fps": 1,
+          "scroll": 0,
+          "color": "#5070B0"
+        },
+        "anchor": "Top",
+        "offset": 0.35,
+        "height": 1.1,
+        "parallax": 0.95,
+        "order": -1
+      }
+    ],
+    "embers": 18,
+    "emberColor": "#9FE6FFB0",
+    "shimmer": 0.35
+  },
+  "chunks": []
+}

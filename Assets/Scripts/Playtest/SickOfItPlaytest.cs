@@ -437,6 +437,30 @@ namespace SickOfIt.Playtest
             return list;
         }
 
+        public const string RuneBridgesId = "rune-bridges";
+
+        /// <summary>The levels of Circle VIII (the Rune Bridges): floors whose script says circle "runeBridges", in game.json's order.</summary>
+        public static List<int> RuneBridgeLevels(int part = 0)
+        {
+            var list = new List<int>();
+            var definition = GameDefinition.Instance;
+            var content = SickOfIt.Gameplay.Content.GameContent.Current;
+            int levels = definition != null ? definition.TotalLevels : 0;
+            for (int n = 1; n <= levels; n++)
+            {
+                var config = definition.GetLevel(n);
+                if (config != null && content != null && config.levelName != null && content.LevelScripts.TryGetValue(config.levelName, out var script)
+                    && script != null && script.floors != null && script.floors.circle == "runeBridges")
+                    list.Add(n);
+            }
+            // Parts of five floors (about 5 minutes each, two tries): the run's time budget covers five, not nine.
+            if (part > 0)
+                list = list.GetRange(Mathf.Min(list.Count, (part - 1) * RuneBridgesPerPart), Mathf.Max(0, Mathf.Min(RuneBridgesPerPart, list.Count - (part - 1) * RuneBridgesPerPart)));
+            return list;
+        }
+
+        public const int RuneBridgesPerPart = 5;
+
         /// <summary>Every level in game.json's order, 1 to the last: the path, then the long way's old stages and the arcade levels.</summary>
         public static List<int> AllGameLevels()
         {
@@ -715,6 +739,15 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(OffPathId, $"The levels in game.json after the path ({PathRange(offPath)}: Circle IX's long way, Levels13-18, " +
                 "Circle X's old stages, Level3-10, and the arcade levels), the all-levels run over just these with a check event per level " +
                 "(cleared, or died/stuck and where, with its time): " + pathHow, PathRunSeconds(offPath), "full", "levels"));
+            for (int part = 1; part * RuneBridgesPerPart - RuneBridgesPerPart < RuneBridgeLevels().Count; part++)
+            {
+            var runeLevels = RuneBridgeLevels(part);
+            list.Add(new PlaytestScenario(part == 1 ? RuneBridgesId : RuneBridgesId + "-" + part, "Circle VIII, the Rune Bridges (Floors 800 on, one level per floor): each floor opened directly " +
+                "(a setup shortcut) and played by the bot through real input, once more after a death. Floor 800 is the safe intro: its spans wait for the hero and " +
+                "no enemy appears; the rest teach the beat, the out-of-step rows and the Watchers' gaze. A check event per floor (cleared or how not, its time: " +
+                "a long floor runs 4-6 minutes, its set pieces and density) and the rune checks (every kind of span hummed, lit and went out: `rune` events " +
+                "and the `rune` check): " + pathHow, PathRunSeconds(runeLevels), "full", "levels"));
+            }
             var climbStart = ClimbStartLevels();
             list.Add(new PlaytestScenario(ClimbStartId, $"The start of the climb ({PathRange(climbStart)}): Level 1 (the Meadow), then Floors " +
                 $"{ClimbStartTopFloor}-{ClimbStartLastFloor} one level per floor, the all-levels run over just these with a check event per level " +
@@ -907,6 +940,8 @@ namespace SickOfIt.Playtest
                 yield return session.AllLevels(AllGameLevels(), "every level in game.json", at: at);
             else if (id == OffPathId)
                 yield return session.AllLevels(OffPathLevels(), "the levels after the path", checkEvery: true, at: at);
+            else if (id == RuneBridgesId || id.StartsWith(RuneBridgesId + "-", StringComparison.Ordinal))
+                yield return session.AllLevels(RuneBridgeLevels(id == RuneBridgesId ? 1 : int.Parse(id.Substring(RuneBridgesId.Length + 1))), "Circle VIII, the Rune Bridges", checkEvery: true, at: at);
             else if (id == ClimbStartId)
                 yield return session.AllLevels(ClimbStartLevels(), $"Level 1 and Floors {ClimbStartTopFloor}-{ClimbStartLastFloor}", checkEvery: true, at: at);
             else if (id.StartsWith(StretchPrefix, StringComparison.Ordinal) && PathStretches().Exists(s => StretchId(s) == id))
@@ -1197,6 +1232,9 @@ namespace SickOfIt.Playtest
                         stage.Kit[key] = had + 1;
                         if (e.Subject.StartsWith("geyser:", StringComparison.Ordinal) || e.Subject.StartsWith("swingGrab:", StringComparison.Ordinal))
                             Run.Event("floorkit", $"{level}: {e.Subject} ({e.Detail})");
+                        // Rune spans (Circle VIII): the first hum, lit and out of each kind of span on the floor.
+                        if (had == 0 && e.Subject.StartsWith("rune", StringComparison.Ordinal))
+                            Run.Event("rune", $"{level} at {e.Time:0.0} s: {key}");
                     }
                     else if (e.Kind == "spawn")
                     {
@@ -2172,6 +2210,14 @@ namespace SickOfIt.Playtest
                     check(prefix + "lines", unheard.Count == 0,
                         unheard.Count == 0 ? $"all {scripted} scripted lines shown with their voices"
                             : $"{unheard.Count} scripted line(s) not shown with their voice: {string.Join(" | ", unheard)}");
+                }
+                // Rune spans (Circle VIII): on a floor built of them every rune hummed, lit and went out at least once: the beat ran.
+                int runesLit = s.KitCount("runeLit");
+                if (runesLit + s.KitCount("runeHum") > 0)
+                {
+                    int hums = s.KitCount("runeHum"), outs = s.KitCount("runeOut");
+                    check(prefix + "rune", hums > 0 && runesLit > 0 && outs > 0,
+                        $"rune spans: {hums} hums, {runesLit} lit, {outs} went out (the beat needs all three)");
                 }
                 if (s.Arena)
                     FinishArena(s, completed);

@@ -500,6 +500,35 @@ lights, over a thin choir. The loop is one phrase that plays itself backward aft
 unread). Push music: the arpeggio in sixteenths with synth-brass stabs. The Wraith's theme: a whispered choir over a
 funeral march in 3/4 and a single bell; the enrage drops the bell and plays the march twice as fast.
 
+**Built: the first nine floors (2026-10-25, Floors 800-792, `levels/Floor800.json` to `Floor792.json`).** Each is a long
+bullet-hell floor of about five minutes: a quiet opening, then five set pieces along one bridge, each with its own idea. The
+Circle is `content/circles/runeBridges.json`.
+- **Rune Spans are `runeSpan`** (data plus one ability, `RuneSpan.cs`). A rune hums for 1 s (cyan, flickering, not yet solid),
+  the span is solid for 5.5 s (its last second blinks), then it is a faint outline until the next beat; a rewind brings a
+  vanished span back. A row is a wave (each span lights a moment after the one before: `runeSpan`), all on one beat
+  (`runeSpanUnison`) with a row a third of a beat behind it (`runeSpanLate`), a quick beat (`runeSpanQuick`, 6 s), spans
+  that wait for him (`runeSpanHold`: lit while he stands on it), or spans that follow a Watcher's gaze (`runeSpanGaze`).
+  A pier (`runePillar`) is the bridge's own stone and always there; falling off is the Circle's pit (a heart, thrown back
+  up). Rune bolts (`runeBolt`) are cold, die on a lit span and pass through a dark one.
+- **The Watcher** (`watcher`, first met on Floor 797) is a floating eye: lid shut for 2.6 s (shots from every side are
+  blocked), lid open for 2.2 s (a slow fan of three bolts, and it can be shot): *shoot as it opens.* On Floor 793 a
+  Watcher patrols above the bridge (`watcherPatrol`) and the spans under its gaze light.
+- **The safe intro is Floor 800, The Bridge Foot.** No enemy at all: the first stretch is spans that wait for him (he
+  cannot be dropped by a rune he is standing on), then spans on a slow wave, then rows with piers between, then a thin
+  rain of bolts. Everything the Circle asks of him is learnt there.
+- **The nine floors and their one new idea each.** 800 The Bridge Foot (the span alone); 799 Two In A Row (the beat, the
+  first imp); 798 Three In Time (ricochet imps bounce their embers off the bridge); 797 The First Watcher; 796 Out Of
+  Step (rows a third of a beat apart, bulwark imps); 795 The Stagger (blink imps); 794 The Hum And The Glow (lead imps
+  that aim where he will be); 793 Glance Away (spans that follow a gaze); 792 Still The Bridge (everything, ahead of
+  the Keystone on 791). The runes only ever say what the thing in front of them is: each landing is carved *BRIDGE*,
+  *STILL THE BRIDGE*, *BRIDGE (AHEAD)*, *THIS IS THE BRIDGE*, *BRIDGE (BEHIND)*, *STILL BRIDGE*, *BRIDGE, LIT*,
+  *BRIDGE (WATCHED)*, *BRIDGE. MORE BRIDGE.*
+- **Not built yet:** the Keystone (791), the Watcher's Favour, Floors 760-751 and the Lamplighter, the Unwritten Span,
+  the Circle's lower floors and the Bridge Wraith, the Lens Watcher, the Glyph Scrawler and Lanternfly, and the rune a
+  shot holds lit for 4 s. Continue after Floor 792 returns to the level select until the Keystone is built.
+- **The Shaft wakes Circle VIII** as before (*"CIRCLE EIGHT! THE RUNE BRIDGES!"*): the band now belongs to the Circle, so
+  its floors-left and next Warden read from it, and Continue after Floor 801 goes on to Floor 800.
+
 ### Circle VII: the Gloomwood (Floors 700-601)
 
 **Theme and look.** A dead forest at no time of day: black trees with their bark peeling in sheets, grey fog at knee

@@ -1831,6 +1831,14 @@ FLOOR 710-701    THE GREAT SPAN           10 floors played          701: THE BRI
 | 703-702 | **The Lantern Walk** | Everything at once, 4 enemies; 702: the door, the Wraith's apology heard through it (*"Sorry. Sorry."*), a Waystone below. |
 | 701 | **The Great Span** (the Warden) | The Bridge Wraith's fight (Story.md). Beaten, the runes read *THANK YOU*; the Waystone at 701 lights; Circle VII wakes. |
 
+**Built (Floors 800-792):** `Tools/Levels/rune_floors.py` writes the nine floors, their landings and the span entities
+(edit its tables, run it, then `python3 Tools/Levels/floor_check.py Floor800 ...`). Each floor is the long bullet-hell
+recipe: a 12-unit opening and five 30-unit pieces at an `autoSpeed` of 0.55, a landing gated until 270 s (~300 s in all).
+The bridge is a span every 3.8 units (2.4 wide, a 1.4 gap: inside the bot's and a player's jump) with a pier every 3rd-6th
+element, so the bot always has a foothold that is there. `runeSpan` is solid for 5.5 of 9 s, and the bot (`PlaytestBot`)
+only jumps for a span that stays solid 2.2 s more (`RuneSpanAbility.SolidFor`). Playtest: `rune-bridges` (Floors 800-796) and
+`rune-bridges-2` (795-792), with a `rune` event for the first hum, lit and out of each kind of span and a `rune` check.
+
 ### Circle VII: the Gloomwood (700-601)
 
 ```

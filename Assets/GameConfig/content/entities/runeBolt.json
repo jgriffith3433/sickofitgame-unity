@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "extends": "fireball",
+  "visual": {
+    "color": "#8FE3FF",
+    "scale": 0.12
+  },
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "dieOnSolid": true
+    },
+    {
+      "type": "lifetime",
+      "seconds": 6
+    }
+  ]
+}

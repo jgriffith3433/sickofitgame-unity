@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "extends": "ledge",
+  "tags": [
+    "foothold",
+    "runePillar"
+  ],
+  "visual": {
+    "color": "#A9BFDA",
+    "placeholderColor": "#6F8CB0"
+  }
+}
