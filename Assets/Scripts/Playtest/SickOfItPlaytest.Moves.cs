@@ -283,6 +283,8 @@ namespace SickOfIt.Playtest
                 yield return MovesWalkTo(-4.5f);
                 int health = hero.Health;
                 world.Emit("mv:bolt");
+                // The rule runs on the next world tick, so the bolt exists a frame or two after Emit: wait for it, then for it to land or go.
+                yield return Run.Until(() => world.FindById("moveBolt") != null, 2f, "the bolt to spawn");
                 yield return Run.Until(() => hero.Health < health || world.FindById("moveBolt") == null, 4f, "the bolt to land");
                 yield return MovesFor(0.3f);
                 MoveCheck("a bolt that is not dashed hurts", hero.Health < health, $"health {health} -> {hero.Health}");
@@ -295,7 +297,7 @@ namespace SickOfIt.Playtest
                 moveSawDashPose = false;
                 float startX = hero.Position.x;
                 world.Emit("mv:bolt");
-                yield return null;
+                yield return Run.Until(() => world.FindById("moveBolt") != null, 2f, "the bolt to spawn");
                 var bolt = world.FindById("moveBolt");
                 if (bolt == null)
                 {
