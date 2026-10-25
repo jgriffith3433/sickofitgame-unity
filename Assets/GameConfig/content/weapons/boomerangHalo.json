@@ -30,5 +30,87 @@
   },
   "pickup": "boomerangHaloPickup",
   "heroText": "It's a halo. You throw it, and it comes back. Unlike everything else I've thrown.",
-  "heroLine": "vo_wpn_halo"
+  "heroLine": "vo_wpn_halo",
+  "look": {
+    "parts": [
+      {
+        "offset": [
+          0.28,
+          0.0
+        ],
+        "size": [
+          0.3,
+          0.05
+        ],
+        "color": "#FFD24A",
+        "angle": 45
+      },
+      {
+        "offset": [
+          0.28,
+          0.0
+        ],
+        "size": [
+          0.3,
+          0.05
+        ],
+        "color": "#FFD24A",
+        "angle": -45
+      },
+      {
+        "offset": [
+          0.28,
+          0.14
+        ],
+        "size": [
+          0.05,
+          0.05
+        ],
+        "color": "#FFF3B0"
+      },
+      {
+        "offset": [
+          0.28,
+          -0.14
+        ],
+        "size": [
+          0.05,
+          0.05
+        ],
+        "color": "#FFF3B0"
+      },
+      {
+        "offset": [
+          0.42,
+          0.0
+        ],
+        "size": [
+          0.05,
+          0.05
+        ],
+        "color": "#FFF3B0"
+      },
+      {
+        "offset": [
+          0.14,
+          0.0
+        ],
+        "size": [
+          0.05,
+          0.05
+        ],
+        "color": "#FFF3B0"
+      }
+    ],
+    "muzzle": [
+      0.5,
+      0.0
+    ],
+    "flash": "#FFE680",
+    "flashSize": [
+      0.28,
+      0.28
+    ],
+    "kick": 0.06
+  }
 }

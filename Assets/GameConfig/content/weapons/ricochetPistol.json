@@ -30,5 +30,64 @@
   },
   "pickup": "ricochetPistolPickup",
   "heroText": "Bounces. Of course it bounces. Everything down here does.",
-  "heroLine": "vo_wpn_ricochet"
+  "heroLine": "vo_wpn_ricochet",
+  "look": {
+    "parts": [
+      {
+        "offset": [
+          0.2,
+          0.02
+        ],
+        "size": [
+          0.34,
+          0.09
+        ],
+        "color": "#C9D4DE"
+      },
+      {
+        "offset": [
+          0.08,
+          -0.06
+        ],
+        "size": [
+          0.09,
+          0.2
+        ],
+        "color": "#4A5560",
+        "angle": -18
+      },
+      {
+        "offset": [
+          0.38,
+          0.02
+        ],
+        "size": [
+          0.1,
+          0.12
+        ],
+        "color": "#7FE3FF"
+      },
+      {
+        "offset": [
+          0.26,
+          0.09
+        ],
+        "size": [
+          0.12,
+          0.03
+        ],
+        "color": "#FFFFFF"
+      }
+    ],
+    "muzzle": [
+      0.42,
+      0.02
+    ],
+    "flash": "#7FE3FF",
+    "flashSize": [
+      0.16,
+      0.16
+    ],
+    "kick": 0.06
+  }
 }
