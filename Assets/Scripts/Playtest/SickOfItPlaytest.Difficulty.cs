@@ -5,6 +5,7 @@ using Hawkes.Playtest;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using SickOfIt.VideoFrameExtractor.Runtime;
+using SickOfIt.Core.Progression;
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
 using SickOfIt.Gameplay;
