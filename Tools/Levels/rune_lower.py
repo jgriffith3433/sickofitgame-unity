@@ -682,8 +682,7 @@ def wraith_level(position):
     # the Great Span: a ring of bridges round her, lit on the beat (spans above the ground to hop onto)
     ring = []
     for i, (x, y) in enumerate([(-2.6, -0.7), (0.4, -0.2), (3.4, -0.7), (6.2, -0.2)]):
-        ring.append({'type': 'spawn', 'entity': 'runeSpanUnison' if i % 2 == 0 else 'runeSpanLate', 'anchor': 'Camera', 'at': [x, y], 'id': 'span%d' % i,
-                     'scale': [1.0, 1]})
+        ring.append({'type': 'spawn', 'entity': 'runeSpanUnison' if i % 2 == 0 else 'runeSpanLate', 'anchor': 'Camera', 'at': [x, y], 'id': 'span%d' % i})
     intro['onEnter'] = ring + intro['onEnter']
 
     # fight
@@ -705,15 +704,15 @@ def wraith_level(position):
     fight['rules'] += [
         {'name': 'snuffed: the Span goes dark', 'when': {'type': 'signal', 'name': 'brSnuff'}, 'maxTimes': 1,
          'do': [{'type': 'despawn', 'target': {'entity': 'runeSpanUnison'}}, {'type': 'despawn', 'target': {'entity': 'runeSpanLate'}},
-                {'type': 'spawn', 'entity': 'runeSpanHold', 'anchor': 'Camera', 'at': [-2.2, -0.6], 'scale': [1.0, 1]},
-                {'type': 'spawn', 'entity': 'runeSpanHold', 'anchor': 'Camera', 'at': [1.2, -0.2], 'scale': [1.0, 1]},
-                {'type': 'spawn', 'entity': 'runeSpanHold', 'anchor': 'Camera', 'at': [4.4, -0.6], 'scale': [1.0, 1]},
+                {'type': 'spawn', 'entity': 'runeSpanHold', 'anchor': 'Camera', 'at': [-2.2, -0.6]},
+                {'type': 'spawn', 'entity': 'runeSpanHold', 'anchor': 'Camera', 'at': [1.2, -0.2]},
+                {'type': 'spawn', 'entity': 'runeSpanHold', 'anchor': 'Camera', 'at': [4.4, -0.6]},
                 {'type': 'cameraShake', 'intensity': 0.15, 'duration': 0.7}]},
         {'name': 'unwritten: the bridges go on the beat', 'when': {'type': 'signal', 'name': 'brEnrage'}, 'maxTimes': 1,
          'do': [{'type': 'despawn', 'target': {'entity': 'runeSpanHold'}},
-                {'type': 'spawn', 'entity': 'runeSpanQuick', 'anchor': 'Camera', 'at': [-2.6, -0.7], 'scale': [1.0, 1]},
-                {'type': 'spawn', 'entity': 'runeSpanQuick', 'anchor': 'Camera', 'at': [0.6, -0.2], 'scale': [1.0, 1]},
-                {'type': 'spawn', 'entity': 'runeSpanQuick', 'anchor': 'Camera', 'at': [3.8, -0.7], 'scale': [1.0, 1]}]},
+                {'type': 'spawn', 'entity': 'runeSpanQuick', 'anchor': 'Camera', 'at': [-2.6, -0.7]},
+                {'type': 'spawn', 'entity': 'runeSpanQuick', 'anchor': 'Camera', 'at': [0.6, -0.2]},
+                {'type': 'spawn', 'entity': 'runeSpanQuick', 'anchor': 'Camera', 'at': [3.8, -0.7]}]},
     ]
 
     # defeat
