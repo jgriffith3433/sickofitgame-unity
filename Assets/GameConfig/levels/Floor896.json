@@ -1312,6 +1312,17 @@
                 "color": "#FFD27A"
               }
             ]
+          },
+          {
+            "type": "spawn",
+            "entity": "cheerSoul",
+            "id": "by_cheer",
+            "anchor": "Player",
+            "at": [
+              6.5,
+              0.35
+            ],
+            "facePlayer": false
           }
         ]
       },

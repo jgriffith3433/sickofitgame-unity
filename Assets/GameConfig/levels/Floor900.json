@@ -1355,6 +1355,28 @@
                 "sound": "vo_f900_same"
               }
             ]
+          },
+          {
+            "type": "spawn",
+            "entity": "hecklerSoul",
+            "id": "by_heckler",
+            "anchor": "Player",
+            "at": [
+              6.5,
+              0.35
+            ],
+            "facePlayer": false
+          },
+          {
+            "type": "spawn",
+            "entity": "giverSoul",
+            "id": "by_giver",
+            "anchor": "Player",
+            "at": [
+              11.0,
+              0.6499999999999999
+            ],
+            "facePlayer": false
           }
         ]
       },

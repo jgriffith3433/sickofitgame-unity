@@ -747,6 +747,11 @@ namespace SickOfIt.Playtest
                 "slower than on the ground. Hold R back to a moment halfway up: his place and his hold are restored and he keeps hanging. Space lets go (a jump) and he lands; " +
                 "he takes hold again (S from the ladder's top, or W from its foot) and climbs off the top onto the shelf. Then hold R back to standing on the shelf, and back again " +
                 "into the climb itself: the exact place and the hold come back. Each beat is a check event; ladder events log the grabs, jumps and exits", LadderSeconds, "level"));
+            var bystanderFloors = BystanderFloorLevels();
+            if (bystanderFloors.Count > 0)
+                list.Add(new PlaytestScenario(BystanderFloorsId, $"Bystanders on the floors ({bystanderFloors.Count} floors, {PathRange(bystanderFloors)}; Docs/Story.md \"Bystanders on the floors\"): each opened directly (a setup shortcut) and played by the bot through real input. " +
+                    "Damned souls ahead of him (a hawker, a heckler, a hand-over soul, a hiding soul, a cheering soul) turn, speak a voiced subtitle, flinch from his shots and step back; a hawker gives a free sample, a giver hands him a loop shard, a heckler is passed by a stray shot. " +
+                    "A `bystander-floor` event per reaction (signal by:<kind>:<what>), and the closing check counts the floors that reacted, the kinds and the three scripted hero interactions", PathRunSeconds(bystanderFloors), "full", "levels"));
             list.Add(new PlaytestScenario(BystanderId, $"A bystander in a scene (Docs/GameplayCookbook.md \"Bystanders\"): the scene \"{BystanderScene}\" on level {BystanderLevel}'s stage (setup shortcut), " +
                 "played through real input. A neutral damned soul stands behind the hero looking away. A scene walks it (walkEntityTo: it walks toward him and faces the way it goes), " +
                 "turns it away (faceEntity) and plays its Hiccup animation (playEntityAnimation). He walks up (D); inside 4.5 units it turns to him and speaks a subtitle. An imp appears " +
@@ -1103,6 +1108,8 @@ namespace SickOfIt.Playtest
                 yield return session.WeaponDropsRun();
             else if (id == BystanderId)
                 yield return session.BystanderRun();
+            else if (id == BystanderFloorsId)
+                yield return session.BystanderFloorsRun();
             else if (id == LadderId)
             {
                 session.Prepare(LadderLevel, true);

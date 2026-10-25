@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "extends": "damnedSoul",
+  "tags": [
+    "damned",
+    "bystander"
+  ],
+  "abilities": [
+    {
+      "type": "react",
+      "when": {
+        "type": "distanceToPlayer",
+        "below": 5
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "faceEntity",
+          "target": "self",
+          "awayFrom": "player"
+        },
+        {
+          "type": "showText",
+          "text": "Shh. ...Shh.",
+          "duration": 1.6,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_hider_whisper"
+        },
+        {
+          "type": "emit",
+          "signal": "by:hider:whisper"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "witness",
+        "what": "HeroHurt",
+        "within": 8
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "faceEntity",
+          "target": "self",
+          "awayFrom": "player"
+        },
+        {
+          "type": "walkEntityTo",
+          "target": "self",
+          "anchor": "Self",
+          "x": 2.5,
+          "speed": 3,
+          "keepFacing": false
+        },
+        {
+          "type": "showText",
+          "text": "I'm not here. ...I'm not here.",
+          "duration": 2.4,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_hider_gone"
+        },
+        {
+          "type": "emit",
+          "signal": "by:hider:hide"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "witness",
+        "what": "ShotPassed",
+        "within": 3
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "faceEntity",
+          "target": "self",
+          "awayFrom": "player"
+        },
+        {
+          "type": "walkEntityTo",
+          "target": "self",
+          "anchor": "Self",
+          "x": 2.5,
+          "speed": 3,
+          "keepFacing": false
+        },
+        {
+          "type": "emit",
+          "signal": "by:hider:duck"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "extends": "damnedSoul",
+  "tags": [
+    "damned",
+    "bystander"
+  ],
+  "abilities": [
+    {
+      "type": "react",
+      "when": {
+        "type": "distanceToPlayer",
+        "below": 4.5
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "faceEntity",
+          "target": "self",
+          "toward": "player"
+        },
+        {
+          "type": "showText",
+          "text": "Cinders! Fresh cinders! ...Fresh cinders!",
+          "duration": 2.6,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_hawker_pitch"
+        },
+        {
+          "type": "emit",
+          "signal": "by:hawker:pitch"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "distanceToPlayer",
+        "below": 2.6
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "showText",
+          "text": "Free sample. It's the same cinder. ...Same cinder.",
+          "duration": 2.8,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_hawker_sample"
+        },
+        {
+          "type": "spawn",
+          "entity": "diamond",
+          "anchor": "Self",
+          "at": [
+            -0.6,
+            0.45
+          ],
+          "facePlayer": false
+        },
+        {
+          "type": "emit",
+          "signal": "by:hawker:sample"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "witness",
+        "what": "ShotPassed",
+        "within": 1.8
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "playEntityAnimation",
+          "target": "self",
+          "state": "Hiccup"
+        },
+        {
+          "type": "walkEntityTo",
+          "target": "self",
+          "anchor": "Self",
+          "x": 3,
+          "speed": 4,
+          "keepFacing": true
+        },
+        {
+          "type": "showText",
+          "text": "Not the stall! ...Not the stall!",
+          "duration": 2.2,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_hawker_flee"
+        },
+        {
+          "type": "emit",
+          "signal": "by:hawker:flee"
+        }
+      ]
+    },
+    {
+      "type": "react",
+      "when": {
+        "type": "witness",
+        "what": "HeroHurt",
+        "within": 6
+      },
+      "maxTimes": 1,
+      "do": [
+        {
+          "type": "faceEntity",
+          "target": "self",
+          "toward": "player"
+        },
+        {
+          "type": "showText",
+          "text": "No refunds. ...No refunds.",
+          "duration": 2.2,
+          "style": "Subtitle",
+          "color": "#D2DAE4",
+          "sound": "vo_by_hawker_hurt"
+        },
+        {
+          "type": "emit",
+          "signal": "by:hawker:hurt"
+        }
+      ]
+    }
+  ]
+}

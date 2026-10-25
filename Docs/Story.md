@@ -1715,6 +1715,27 @@ soul); no voice is cast for the damned yet.
 |---|---|---|
 | `bystanderSoul` (extends `damnedSoul`) | the test bench `content/scenes/bystanderTest.json`, none on a floor yet | Stands looking away. Hero within 4.5: turns to him, speaks. A shot passes within 1.6: hiccups, steps back 0.5, settles. Hero hurt within 6: hiccups, steps back, speaks (once). Drops nothing: the shard belongs to the plain `damnedSoul`. |
 
+### Bystanders on the floors (2026-10-25)
+
+The damned who sit on a ledge doing their one thing now include **five kinds that notice him**, each on its own floors
+(`Tools/Levels/bystanders.py` writes them into the first phase of 21 floors: 999, 997-992, 960, 958, 955, 953, 910, 908, 905,
+904, 900, 896, 894, 860, 856, 854; one or two a floor, floating ahead of where he starts, never in a Warden's arena).
+All are damned souls: they can't be hurt or fight, they say a line and then say it again, flatter (the loop), and what
+they hand him is whatever their loop was holding. No human villagers: nobody from the village is in Hell but Yooba, so
+no hiding villager. Hell has its own cowards, a **hiding soul**. Voices (cast through Hawkes Gen, clips
+`vo_by_*`): `soul` (flat, thin), `hawker` (hoarse, sing-song), `heckler` (nasal, sneering).
+
+| Entity | Reacts to | Lines |
+|---|---|---|
+| `hawkerSoul` | hero within 4.5: pitches. Within 2.6: hands him a **free sample** (a diamond, once). A shot past the stall: hiccups, backs off, "Not the stall!". Hero hurt: shrugs. | *"Cinders! Fresh cinders! ...Fresh cinders!"*, *"Free sample. It's the same cinder."*, *"No refunds."* |
+| `hecklerSoul` | hero within 5: jeers. **A stray shot** passes within 0.9: hiccups, steps back, "Aim at someone else!" (it can't be hit; the shot goes through). Hero hurt: cackles. | *"Is that all? ...Is that all?"*, *"Hey! Aim at someone else!"*, *"Ha! Do it again."* |
+| `giverSoul` | hero within 3.2: **hands him a loop shard** (a rewind orb) with a hiccup, once. | *"Here. It's not mine. ...It's not mine."* |
+| `hidingSoul` | hero within 5: turns its back and whispers. Hero hurt within 8 or a shot within 3: backs away, "I'm not here." | *"Shh."*, *"I'm not here. ...I'm not here."* |
+| `cheerSoul` | hero within 4.5: encourages. A shot passes: hiccups and cheers. | *"Go on up. ...Go on up."*, *"Again! ...Again!"* |
+
+Taunting or flinching imps are not placed yet: each needs its reason written here first, and a floor's enemy rules
+(one new type, at most three at once) say where. Every reaction emits a `by:<kind>:<what>` signal for the playtest (`bystander-floors`).
+
 ## Ladders (the damned built ways up)
 
 Hell is repetition, and so are its stairs: the imps and the damned who haul, mine and keep watch have bolted ladders to
