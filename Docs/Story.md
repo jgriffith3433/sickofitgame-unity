@@ -1722,6 +1722,14 @@ follows what the game has revealed:
   corrected on the pages themselves, each in a *What changed* note: Yooba is the village slime, nobody chose the portal,
   and Hell is 1,000 floors.
 
+## Lore videos
+
+Four short films (~25-40 s each) tell what the game only hints at: the Overlord counting the village's diamonds (after
+Level 21), the Shades' endless walk (after Circle VII's first floor), the village and Yooba before the portal (after
+Level 13) and the Magma King's backstory (after Level 31). Scripts, shot lists, placement in the level/Shaft flow and
+prices are in [LoreVideos.md](LoreVideos.md); none is made yet. They keep the canon above: no Overlord origin (the
+late clues keep that), slimes are villagers, no office jokes.
+
 ## Teasers
 
 Teasers and trailers (`Marketing/`, made from the game's own art through Hawkes Gen) tell the prologue's edges, never
