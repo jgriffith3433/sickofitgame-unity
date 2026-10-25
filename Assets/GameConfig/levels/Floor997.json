@@ -232,6 +232,14 @@
                 1.1,
                 1
               ]
+            },
+            {
+              "entity": "lostRollingPin",
+              "at": [
+                20.0,
+                9.3
+              ],
+              "id": "lostThing"
             }
           ]
         },

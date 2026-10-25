@@ -1315,6 +1315,23 @@ is proud of). His voice is `yooba` (designed for him: fast, wet, gurgling, a bit
   | Slimed Knuckles *(gated)* | punches (fists) hit 50% harder per level, 2 levels | a coat of slime on both fists |
   | Stretchy Wraps *(gated)* | punches reach 15% farther per level, 2 levels | wraps of stretched slime |
   | Keep Weapons *(gated)* | the weapons he holds survive a run's end | the hero will not put them down |
+- **The shop is alive** (2026-10-25; `ui/yooba.json`, `YoobaShelf`, `UpgradeShopManager`). Yooba's counter is a room, and it changes as the hero climbs:
+  - **The shelf.** Behind the counter stands a shelf of ten slots. It starts with one jar (*Spare Goo*) and nine dusty gaps. Each time the hero clears a
+    floor Yooba cares about, a jar from that floor turns up: a Licked Rock (Floor 999), a Cart Wheel off the baker's cart (998), a Loop Pebble (995),
+    a Sack Scrap (991, the Foreman's), a Pile Crumb (951), a Soot Tin from the King's Chimney (910), a jar of Magma King (901) and a Spire Splinter (Circle IX).
+    They are not for sale; they are trophies, and he points each new one out once (`ShopStocked`). The tenth is the Thank-You Jar, for the quest below.
+  - **He reacts.** To what the hero buys (a line made for each good: the plaster, the soles, the licked trigger...), and to his deaths: Yooba keeps count and
+    says something at 1, 5, 15 and 40 (`ShopDeaths`; the line for the highest count reached, the lower ones are old news). The welcome also changes after the Foreman, the Chimney and the Magma King.
+  - **Running gags across Circles**, said to himself when the shop is quiet (`ShopIdle`): the *lick count* (three rocks, then forty, then two hundred and the Magma King's throne tastes of gravy), the
+    *baker's daughter and the blacksmith* (a secret, then a letter, then engaged), *he still has no pockets*, and his humming. A new stage of a gag turns up once the hero has climbed far enough.
+  - **Idle life.** While he is quiet Yooba is never still: he blinks, looks about, hops, hums and sniffs on his own every few seconds.
+  - **The Lost Things** (a short quest). Once Floor 999 is cleared Yooba asks, in a whisper, for three things that fell out of the village when the portal took them:
+    **the baker's rolling pin** (Floor 997), **the blacksmith's mitt** (Floor 995) and **the bell's clapper** (Floor 992). Each lies on a ledge off the climb (`lostRollingPin`,
+    `lostMitt`, `lostBell`; touching one writes the flag `lost.pin`/`lost.mitt`/`lost.bell`, kept for good). On the next visit Yooba has a line for each find, a
+    ledger chip (LOST THINGS 1/3) counts them, and when all three are in he pays **60 diamonds once** and adds the Thank-You Jar to the shelf. Never an office joke: they are a village's things,
+    and Yooba is a gossip who wants his village's lost-and-found back.
+  New lines: 40 Yooba lines and 6 hero replies as `audio.json` voice prompts (ElevenLabs, ~0.78 USD to make; the clips are not made yet, so they show as subtitles with the line's timing until the Sound Generator runs).
+  Not built: the shelf and idle fidgets are drawn from menu shapes (a painted shelf and idle clips would need GPU art; priced in the pull request); the shop room on the Shaft's Visit Yooba overlay is the same screen.
 - **Weapon goods** (2026-10-25). Yooba does not make weapons and has never seen one: the fists (and whatever comes next) are
   Hell's business, not his. The three weapon goods have `requires: ["weapon:fists"]`, so they are not on the counter until the
   hero has held the fists once (`PlayerWeapons.Give` writes the unlock flag `weapon:<id>`; it outlives runs, New Game forgets it).

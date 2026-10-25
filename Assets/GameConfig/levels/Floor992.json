@@ -298,6 +298,14 @@
               ],
               "id": "topImp",
               "onEnter": true
+            },
+            {
+              "entity": "lostBell",
+              "at": [
+                22.2,
+                8.3
+              ],
+              "id": "lostThing"
             }
           ]
         },

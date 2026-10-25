@@ -86,6 +86,16 @@ namespace SickOfIt.Gameplay.Content
         }
     }
 
+    [Serializable, JsonType("setFlag")]
+    [Doc("Writes an unlock flag for good (saved; kept through runs, cleared by New Game). Yooba's shop and Grudges read them with 'flag:<id>' in 'requires'. " +
+         "Use it in a pickup's collect actions (the lost things of Yooba's quest), which pay out once even if rewound.")]
+    public sealed class SetFlagAction : GameAction
+    {
+        [Required, Doc("Letters, digits, dots and dashes (no ';').")] public string flag = "";
+
+        public override void Run(ActionContext context) => SickOfIt.Data.UnlockFlags.Set(flag);
+    }
+
     [Serializable, JsonType("popText")]
     [Doc("Floats a short text up from a point (damage numbers, jokes, \"NICE\").")]
     public sealed class PopTextAction : GameAction

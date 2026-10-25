@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "tags": [
+    "pickup",
+    "lostThing"
+  ],
+  "body": {
+    "radius": 0.5,
+    "solid": false
+  },
+  "visual": {
+    "placeholderColor": "#B0A090",
+    "placeholderSize": 0.6,
+    "placeholderLabel": true,
+    "sortingOrder": 6,
+    "hurtFlash": false,
+    "fxColor": "#B0A090"
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "collect",
+      "magnetRadius": 1.8,
+      "magnetSpeed": 6,
+      "pickupRadius": 0.35,
+      "bobHeight": 0.1,
+      "do": [
+        {
+          "type": "setFlag",
+          "flag": "lost.mitt"
+        },
+        {
+          "type": "popText",
+          "text": "FOUND: THE BLACKSMITH'S MITT",
+          "color": "#BFF58A",
+          "size": 0.9
+        }
+      ],
+      "soundId": "pickup_lost_thing"
+    },
+    {
+      "type": "lifetime",
+      "seconds": 600
+    }
+  ]
+}

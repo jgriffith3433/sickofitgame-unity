@@ -665,6 +665,10 @@ namespace SickOfIt.Playtest
                 $"\"{GrudgeScene}\" on level {CutsceneLevel}'s stage offers a Grudge pick that must list Not Today (picked with 1: the hero's hit is followed by " +
                 "a longer invincibility). Each beat is a check event, `shop.*` metrics carry the prices and `level<n>.diamonds` the diamonds each level paid", 150, "menus"));
             list.Add(new PlaytestScenario(ShopWeaponsId, "Yooba's weapon goods: the shop hides Slimed Knuckles, Stretchy Wraps and Keep Weapons while no weapon is unlocked, shows them once the fists are, Keep Weapons and Slimed Knuckles bought with real clicks make Yooba accuse the hero of stealing from him (a ShopBuyWeapon line, voiced), and a run ending keeps the fists only with Keep Weapons bought (setup shortcuts: the unlock, the run end). Each beat is a check event", 120, "menus"));
+            list.Add(new PlaytestScenario(YoobaAliveId, "Yooba's living shop (Docs/Story.md, \"Yooba's shop\"), clicked with the virtual mouse: the shelf starts with one jar and nine gaps, " +
+                "fills as floors are cleared (setup shortcuts: levels marked cleared, deaths counted) and Yooba points out each new ware, asks for the Lost Things quest, reacts to the deaths " +
+                "and to a Goo Plaster bought, fidgets (blink, look, hop, hum, sniff) and mutters to himself when it is quiet; with the three lost things found (setup shortcut: the flags " +
+                "their pickups on Floors 997, 995 and 992 write) he pays the reward once and the Thank-You Jar joins the shelf. At least 20 reactive lines. Each beat is a check event", 300, "menus"));
             list.Add(new PlaytestScenario("cutscene", $"The scene \"{CutsceneScene}\" on level {CutsceneLevel}'s stage (setup shortcut): with input and rewind locked " +
                 "the hero walks to a point by himself and stops, turns left and right, R does nothing; the camera zooms in and back; the screen fades " +
                 "to black and back; he is pulled into a point, spinning and shrinking until he disappears. Each beat is checked", 75, "level"));
@@ -966,6 +970,8 @@ namespace SickOfIt.Playtest
                 yield return session.ShopGate();
             else if (id == ShopWeaponsId)
                 yield return session.ShopWeapons();
+            else if (id == YoobaAliveId)
+                yield return session.YoobaAlive();
             else if (id == "climb")
             {
                 session.Prepare(ClimbLevel, true);

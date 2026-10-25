@@ -313,6 +313,548 @@
       "reply": "",
       "replyText": "",
       "once": false
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
+      "sound": "vo_yooba_buy_plaster",
+      "text": "A Goo Plaster! Hold still. Hrrk... there. Now you're a little bit me.",
+      "clip": "cough",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "moreHealth",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
+      "sound": "vo_yooba_buy_soles",
+      "text": "Bouncy Soles! Don't ask where the bounce comes from. Nobody asks. It's so restful.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "extraJump",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
+      "sound": "vo_yooba_buy_heels",
+      "text": "Slick Heels! Fast as a rumour, and I'd know. I started most of them.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "comfySneakers",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
+      "sound": "vo_yooba_buy_trigger",
+      "text": "I licked that trigger myself. Twice, for luck. Don't wipe it.",
+      "clip": "laugh",
+      "reply": "vo_hero_yooba_wipe",
+      "replyText": "Wouldn't dream of it.",
+      "once": false,
+      "item": "triggerFinger",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
+      "sound": "vo_yooba_buy_dip",
+      "text": "Tummy-dipped! Every shot goes through my stomach first. It's practically family.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "spicyFireballs",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
+      "sound": "vo_yooba_buy_jar",
+      "text": "A Loop Jar! Don't open it. It just keeps saying the same thing. Like everybody down here.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "juiceBox",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
+      "sound": "vo_yooba_buy_sniffer",
+      "text": "A Shiny Sniffer! It'll sniff your diamonds out. Mine too, so keep an eye on it.",
+      "clip": "cough",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "diamondMagnet",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopBuy",
+      "floor": 0,
+      "sound": "vo_yooba_buy_doubledip",
+      "text": "Double-dipped! That's the second dip. The third dip is a lifestyle.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "doubleDip",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopDeaths",
+      "floor": 0,
+      "sound": "vo_yooba_deaths_1",
+      "text": "One splat! They grow up so fast. I've put a little tick on the wall. The wall is me.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 1,
+      "requires": []
+    },
+    {
+      "moment": "ShopDeaths",
+      "floor": 0,
+      "sound": "vo_yooba_deaths_5",
+      "text": "Five splats! I've run out of wall. I'm ticking on my other side now.",
+      "clip": "laugh",
+      "reply": "vo_hero_yooba_deaths5",
+      "replyText": "Stop counting.",
+      "once": true,
+      "item": "",
+      "minDeaths": 5,
+      "requires": []
+    },
+    {
+      "moment": "ShopDeaths",
+      "floor": 0,
+      "sound": "vo_yooba_deaths_15",
+      "text": "Fifteen! Hell's got a favourite, and I think it's you. It keeps picking you up and putting you down. Very fond.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 15,
+      "requires": []
+    },
+    {
+      "moment": "ShopDeaths",
+      "floor": 0,
+      "sound": "vo_yooba_deaths_40",
+      "text": "Forty splats! I gave each one a name. They're all called 'Again'. ...Again. Again. Hello, Again.",
+      "clip": "laugh",
+      "reply": "vo_hero_yooba_deaths40",
+      "replyText": "I hate that I laughed.",
+      "once": true,
+      "item": "",
+      "minDeaths": 40,
+      "requires": []
+    },
+    {
+      "moment": "ShopStocked",
+      "floor": 0,
+      "sound": "vo_yooba_stock_rock",
+      "text": "New on the shelf! A rock I licked on nine-ninety-nine. Tastes like floor. Not for sale. For looking at.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "rockSample",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopStocked",
+      "floor": 0,
+      "sound": "vo_yooba_stock_wheel",
+      "text": "That wheel's off the baker's cart! He'll want it back. I'll say it's a display. ...Don't tell him.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "cartWheel",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopStocked",
+      "floor": 0,
+      "sound": "vo_yooba_stock_pebble",
+      "text": "A pebble from Floor 995! I put it on the shelf. It was there yesterday. And yesterday. And yesterday.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "loopPebble",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopStocked",
+      "floor": 0,
+      "sound": "vo_yooba_stock_sack",
+      "text": "A scrap of the Foreman's sack! He's still looking for it. I'm not hiding it. It's decorating.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "sackScrap",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopStocked",
+      "floor": 0,
+      "sound": "vo_yooba_stock_pile",
+      "text": "A crumb off the Pile Keeper's pile! Smells like a hundred hauls. Lovely.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "pileCrumb",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopStocked",
+      "floor": 0,
+      "sound": "vo_yooba_stock_soot",
+      "text": "Soot from the King's chimney! Don't sneeze near it. I sneezed near it. Look at my shelf.",
+      "clip": "cough",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "chimneySoot",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopStocked",
+      "floor": 0,
+      "sound": "vo_yooba_stock_king",
+      "text": "A jar of Magma King! Well, of what's left. He's a bit runny but he's still smug. I can tell.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "kingPuddle",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopStocked",
+      "floor": 0,
+      "sound": "vo_yooba_stock_spire",
+      "text": "A splinter off the Spire Fiend's road! Don't call it stealing. He grows more.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "spireSplinter",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopStocked",
+      "floor": 0,
+      "sound": "vo_yooba_stock_thanks",
+      "text": "That jar's a thank-you. For you. It's empty. It's the thought, and the jar.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "thankYouJar",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopWelcome",
+      "floor": 0,
+      "sound": "vo_yooba_welcome_sack",
+      "text": "Foreman's sack's gone quiet, hasn't it? I could hear it sulking from here. Welcome back!",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "level:11"
+      ]
+    },
+    {
+      "moment": "ShopWelcome",
+      "floor": 0,
+      "sound": "vo_yooba_welcome_chimney",
+      "text": "You smell of chimney! Don't worry, I like it. I like everything. Come in, come in.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "level:22"
+      ]
+    },
+    {
+      "moment": "ShopWelcome",
+      "floor": 0,
+      "sound": "vo_yooba_welcome_king",
+      "text": "The one who melted a king! In my shop! Mind the shelf, everything on it is very, very proud.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "level:31"
+      ]
+    },
+    {
+      "moment": "ShopIdle",
+      "floor": 0,
+      "sound": "vo_yooba_lick_1",
+      "text": "Lick count: three rocks. Same taste. I'm keeping a list.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopIdle",
+      "floor": 0,
+      "sound": "vo_yooba_lick_2",
+      "text": "Lick count: forty rocks. The embers taste like burnt toast. ...Don't picture that.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "level:11"
+      ]
+    },
+    {
+      "moment": "ShopIdle",
+      "floor": 0,
+      "sound": "vo_yooba_lick_3",
+      "text": "Lick count: two hundred. The Magma King's throne tastes like gravy. Please don't tell him I licked it.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "level:31"
+      ]
+    },
+    {
+      "moment": "ShopIdle",
+      "floor": 0,
+      "sound": "vo_yooba_gossip_1",
+      "text": "The baker's daughter and the blacksmith. Still. Nobody's said anything. Everybody knows.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopIdle",
+      "floor": 0,
+      "sound": "vo_yooba_gossip_2",
+      "text": "Guess what. The baker's daughter wrote to the blacksmith. Down here. I read it. ...I held it. Not read.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "level:11"
+      ]
+    },
+    {
+      "moment": "ShopIdle",
+      "floor": 0,
+      "sound": "vo_yooba_gossip_3",
+      "text": "They're engaged! I heard it from a damned soul. The soul's thrilled. The soul is dead. Lovely day.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "level:31"
+      ]
+    },
+    {
+      "moment": "ShopIdle",
+      "floor": 0,
+      "sound": "vo_yooba_pockets",
+      "text": "I still haven't any pockets. Have you noticed? I keep checking.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "ShopIdle",
+      "floor": 0,
+      "sound": "vo_yooba_humming",
+      "text": "Hm-hm-hm-hmmm... Sorry. Humming. It isn't a song. It's just what I do when nobody's talking.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": false,
+      "item": "",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "QuestOffer",
+      "floor": 0,
+      "sound": "vo_yooba_quest_offer",
+      "text": "Psst. Three things fell out of the village when the portal took us. The baker's rolling pin, the blacksmith's mitt, the bell's clapper. Find them on the floors and I'll make it worth your while.",
+      "clip": "talk",
+      "reply": "vo_hero_yooba_quest_ask",
+      "replyText": "They're in Hell. Of course they are.",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "level:3"
+      ]
+    },
+    {
+      "moment": "QuestRemind",
+      "floor": 0,
+      "sound": "vo_yooba_quest_remind1",
+      "text": "Still some of my lost things out there! I can smell the baker's flour from here. It's very faint. It's very sad.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "QuestRemind",
+      "floor": 0,
+      "sound": "vo_yooba_quest_remind2",
+      "text": "Not to nag. Just: bell, pin, mitt. Pin, mitt, bell. I'm saying it so I don't lose them too.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "QuestFound",
+      "floor": 0,
+      "sound": "vo_yooba_quest_pin",
+      "text": "My baker's pin! He'll weep. Then shout. Both lovely.",
+      "clip": "laugh",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "flag:lost.pin"
+      ]
+    },
+    {
+      "moment": "QuestFound",
+      "floor": 0,
+      "sound": "vo_yooba_quest_mitt",
+      "text": "The blacksmith's mitt! Smells of coal and sweat and, ooh, a little bit of romance.",
+      "clip": "cough",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "flag:lost.mitt"
+      ]
+    },
+    {
+      "moment": "QuestFound",
+      "floor": 0,
+      "sound": "vo_yooba_quest_bell",
+      "text": "The bell's clapper! Dong. Dong. ...That wasn't me. That was my tummy.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": [
+        "flag:lost.bell"
+      ]
+    },
+    {
+      "moment": "QuestDone",
+      "floor": 0,
+      "sound": "vo_yooba_quest_done1",
+      "text": "All three! You marvellous thing. Sixty diamonds and a jar for the shelf. I'd hug you but, you know. Slime.",
+      "clip": "laugh",
+      "reply": "vo_hero_yooba_quest_done",
+      "replyText": "Please don't.",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": []
+    },
+    {
+      "moment": "QuestDone",
+      "floor": 0,
+      "sound": "vo_yooba_quest_done2",
+      "text": "That's the whole village's lost-and-found, found! I'm putting it on the shelf where I can see it.",
+      "clip": "cough",
+      "reply": "",
+      "replyText": "",
+      "once": true,
+      "item": "",
+      "minDeaths": 0,
+      "requires": []
     }
   ],
   "shaftPortrait": {
@@ -409,6 +951,153 @@
     "size": [
       740.0,
       90.0
+    ]
+  },
+  "shelves": [
+    {
+      "id": "spareGoo",
+      "label": "SPARE GOO",
+      "description": "A jar of Yooba, the first on the shelf.",
+      "color": "#6FD05A",
+      "requires": []
+    },
+    {
+      "id": "rockSample",
+      "label": "LICKED ROCK",
+      "description": "A rock from Floor 999.",
+      "color": "#B4A38C",
+      "requires": [
+        "level:3"
+      ]
+    },
+    {
+      "id": "cartWheel",
+      "label": "CART WHEEL",
+      "description": "The baker's cart, from the Spill.",
+      "color": "#D9A860",
+      "requires": [
+        "level:4"
+      ]
+    },
+    {
+      "id": "loopPebble",
+      "label": "LOOP PEBBLE",
+      "description": "From Floor 995.",
+      "color": "#9FB4C8",
+      "requires": [
+        "level:7"
+      ]
+    },
+    {
+      "id": "sackScrap",
+      "label": "SACK SCRAP",
+      "description": "The Foreman's sack.",
+      "color": "#C79A6B",
+      "requires": [
+        "level:11"
+      ]
+    },
+    {
+      "id": "pileCrumb",
+      "label": "PILE CRUMB",
+      "description": "The Pile Keeper's pile.",
+      "color": "#A8A8A0",
+      "requires": [
+        "level:21"
+      ]
+    },
+    {
+      "id": "chimneySoot",
+      "label": "SOOT TIN",
+      "description": "The King's Chimney.",
+      "color": "#5C5C66",
+      "requires": [
+        "level:22"
+      ]
+    },
+    {
+      "id": "kingPuddle",
+      "label": "KING PUDDLE",
+      "description": "A jar of the Magma King.",
+      "color": "#F2742E",
+      "requires": [
+        "level:31"
+      ]
+    },
+    {
+      "id": "spireSplinter",
+      "label": "SPIRE SPLINTER",
+      "description": "The Cracked Road.",
+      "color": "#8E6F5E",
+      "requires": [
+        "level:52"
+      ]
+    },
+    {
+      "id": "thankYouJar",
+      "label": "THANK-YOU JAR",
+      "description": "Empty. For finding the lost things.",
+      "color": "#FFD86B",
+      "requires": [
+        "flag:lost.paid"
+      ]
+    }
+  ],
+  "quest": {
+    "enabled": true,
+    "title": "LOST THINGS",
+    "things": [
+      {
+        "flag": "lost.pin",
+        "label": "The baker's rolling pin"
+      },
+      {
+        "flag": "lost.mitt",
+        "label": "The blacksmith's mitt"
+      },
+      {
+        "flag": "lost.bell",
+        "label": "The bell's clapper"
+      }
+    ],
+    "rewardDiamonds": 60,
+    "paidFlag": "lost.paid",
+    "askedFlag": "lost.asked",
+    "chipFormat": "LOST THINGS {0}/{1}",
+    "doneText": "LOST THINGS: DONE"
+  },
+  "idleBehaviorSeconds": 4.0,
+  "idleLineSeconds": 20.0,
+  "shelf": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      0.0
+    ],
+    "offset": [
+      0.0,
+      36.0
+    ],
+    "size": [
+      1300.0,
+      64.0
+    ]
+  },
+  "shelfPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [
+      0.5,
+      0.0
+    ],
+    "offset": [
+      0.0,
+      190.0
+    ],
+    "size": [
+      1000.0,
+      64.0
     ]
   }
 }
