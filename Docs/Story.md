@@ -1652,12 +1652,23 @@ this before and would like it noted, and lets go with a jump, or just climbs off
 and comes out slower, because it is hard to aim while holding on with the other one (about half the rate). Rewind
 takes it back like everything else in Hell: the rung he was on and whether he held it.
 
-No ladder is placed on a played floor yet; each use needs its reason written here first (*Rules for levels*). It is
-a tool for floors where the way on is straight up a wall: a Gloomwood trunk, the Caverns' mine shafts, the Keep's
-watchtowers. Until then it lives on the test floor `content/scenes/ladderTest.json` (the `ladder` playtest).
+Two played floors have one (2026-10-25), both because the way on really is straight up a wall and Hell's haulers had already
+bolted something to it: **Floor 999** (*Only 999 To Go*), where the lava starts to rise and the last ledges of the climb are
+replaced by the ladder the imps hauled sacks up (one ladder, 5 units, no jump needed: the lava is the clock); and **Floor 998**
+(*The Spill*), the jam, where the wrecked village is piled up against the spire's foot and the damned bolted a ladder up the
+pile: the ember rain and the cinders fall on him all the way up, and he has only fists (the launcher was stolen on this floor),
+so he can't shoot back at all. These two are `ladderHaul` (`content/entities/ladderHaul.json`, a ladder that climbs at 1.7
+instead of 2.6: the hauling ladders are old and he takes his time on them, which is the point of the pressure). Other uses are
+for floors where the way on is straight up a wall (a Gloomwood trunk, the Caverns' mine shafts, the Keep's watchtowers), each
+with its reason written here first (*Rules for levels*). The test floor is `content/scenes/ladderTest.json` (the `ladder`
+playtest); the played ones are the `ladder-floors` playtest.
 
 The hero's lines (subtitles; no clip is cast yet): *"A ladder. Hell finally built something that goes up on purpose."*
-The announcer, once a floor has one: *"A LADDER! HOW CONVENIENT! HOW SUSPICIOUS!"*
+The announcer, once a floor has one: *"A LADDER! HOW CONVENIENT! HOW SUSPICIOUS!"* (a banner on Floor 998; on Floor 999 the hero's line
+plays instead; no clips are cast for either).
+
+**The hero's climb on the ladder** is three clips (generated, `art/hero.json`): `ClimbIdle` (hanging on the rungs, bored), `Climb`
+(going up, hand over hand) and `ClimbDown` (the same, going down).
 
 ## Rules for levels
 

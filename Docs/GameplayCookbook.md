@@ -638,10 +638,15 @@ therefore puts him back on the rung (position from the transform, hold from the 
 the next tick (the world releases him when nothing holds him). His rung is his position, so nothing else is saved.
 The `ladder` playtest checks both: back into the middle of a climb, and back from the shelf into the climb.
 
-**Animator.** `player.json` `animationConfig` has two states, `Climb` and `ClimbIdle`, with placeholder sheets (Walk and Grabbed). They
+**Animator.** `player.json` `animationConfig` has three states, `Climb`, `ClimbDown` and `ClimbIdle` (generated sheets). They
 have no transitions: the generated controller doesn't have them, so `PlayAnimatorState` plays them from their sheets
-(`PlayerSceneClip`) and hands the sprite back to the Animator when he lets go. Real clips later replace only `spriteSheet` in those two
-states (a separate art task).
+(`PlayerSceneClip`) and hands the sprite back to the Animator when he lets go. Three states now (`Climb` up, `ClimbDown`, `ClimbIdle`) with the generated sheets `Art/Sprites/Player/Climb*.png`
+(604x340 cells, made by `Tools/Art/player_clip_sheet.py`).
+
+**Under pressure.** Floors 999 and 998 use `ladderHaul` (a ladder with `climbSpeed` 1.7) as the way up for 5.2 units, the lava rising at 0.8 / 0.4 and,
+on 998, the ember rain falling. Put the ladder's foot on a ledge's top and its top level with the next ledge's top, spanning the same x. The playtest bot
+(`PlaytestBot.LadderStep`) climbs a ladder whose foot is at his feet and whose top is 1.2+ above them; the `ladder-floors` playtest plays both floors
+(`ladder` events per grab and exit, a `check` per floor).
 
 **Check it:** playtest `ladder` (~2 min): walks to the foot, grabs, hangs still, climbs up and down, shoots slower than on the ground,
 rewinds in the climb and back into it from the shelf, jumps off, grabs again and exits at the top.

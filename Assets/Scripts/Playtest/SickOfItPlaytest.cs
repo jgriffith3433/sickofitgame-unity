@@ -437,6 +437,32 @@ namespace SickOfIt.Playtest
             return list;
         }
 
+        public const string LadderFloorsId = "ladder-floors";
+
+        /// <summary>The levels with a ladder on their floor: a spawn in the script's path of an entity that has the ladder ability, in game.json's order.</summary>
+        public static List<int> LadderFloorLevels()
+        {
+            var list = new List<int>();
+            var definition = GameDefinition.Instance;
+            var content = SickOfIt.Gameplay.GameContent.Current;
+            int levels = definition != null ? definition.TotalLevels : 0;
+            for (int n = 1; n <= levels && content != null; n++)
+            {
+                var config = definition.GetLevel(n);
+                if (config == null || config.levelName == null || !content.LevelScripts.TryGetValue(config.levelName, out var script)
+                    || script == null || script.world == null || script.world.path == null)
+                    continue;
+                bool ladder = false;
+                foreach (var section in script.world.path)
+                    foreach (var spawn in section.spawns)
+                        if (spawn.entity != null && content.Entities.TryGetValue(spawn.entity, out var def) && def.abilities.Exists(a => a is SickOfIt.Gameplay.Content.LadderAbility))
+                            ladder = true;
+                if (ladder)
+                    list.Add(n);
+            }
+            return list;
+        }
+
         public const string RuneBridgesId = "rune-bridges";
 
         /// <summary>The levels of Circle VIII (the Rune Bridges): floors whose script says circle "runeBridges", in game.json's order.</summary>
@@ -757,6 +783,12 @@ namespace SickOfIt.Playtest
                 "a long floor runs 4-6 minutes, its set pieces and density) and the rune checks (every kind of span hummed, lit and went out: `rune` events " +
                 "and the `rune` check): " + pathHow, PathRunSeconds(runeLevels), "full", "levels"));
             }
+            var ladderLevels = LadderFloorLevels();
+            if (ladderLevels.Count > 0)
+                list.Add(new PlaytestScenario(LadderFloorsId, $"The floors with a ladder ({PathRange(ladderLevels)}: Floors 999 and 998 today): each opened directly (a setup shortcut) and played by the bot " +
+                    "through real input, once more after a death. The bot walks to the ladder's foot and holds up to climb it while the lava rises (999) and the ember rain and cinders fall (998). " +
+                    "A `ladder` event per grab and exit, a check event per floor: the ladder was climbed to its top (grabbed, left by the top), and cleared or how not, with its time: " + pathHow,
+                    PathRunSeconds(ladderLevels), "full", "levels"));
             var climbStart = ClimbStartLevels();
             list.Add(new PlaytestScenario(ClimbStartId, $"The start of the climb ({PathRange(climbStart)}): Level 1 (the Meadow), then Floors " +
                 $"{ClimbStartTopFloor}-{ClimbStartLastFloor} one level per floor, the all-levels run over just these with a check event per level " +
@@ -951,6 +983,8 @@ namespace SickOfIt.Playtest
                 yield return session.AllLevels(OffPathLevels(), "the levels after the path", checkEvery: true, at: at);
             else if (id == RuneBridgesId || id.StartsWith(RuneBridgesId + "-", StringComparison.Ordinal))
                 yield return session.AllLevels(RuneBridgeLevels(id == RuneBridgesId ? 1 : int.Parse(id.Substring(RuneBridgesId.Length + 1))), "Circle VIII, the Rune Bridges", checkEvery: true, at: at);
+            else if (id == LadderFloorsId)
+                yield return session.AllLevels(LadderFloorLevels(), "the floors with a ladder", checkEvery: true, at: at, ladders: true);
             else if (id == ClimbStartId)
                 yield return session.AllLevels(ClimbStartLevels(), $"Level 1 and Floors {ClimbStartTopFloor}-{ClimbStartLastFloor}", checkEvery: true, at: at);
             else if (id.StartsWith(StretchPrefix, StringComparison.Ordinal) && PathStretches().Exists(s => StretchId(s) == id))
@@ -1211,6 +1245,10 @@ namespace SickOfIt.Playtest
                     Run.Problem(PlaytestSeverity.Warning, $"missing sound: \"{id}\" is not in audio.json");
             }
 
+            // Ladder grabs per level and the levels where a ladder was climbed off at its top (the ladder-floors checks).
+            readonly Dictionary<int, int> ladderKit = new Dictionary<int, int>();
+            readonly HashSet<int> ladderTops = new HashSet<int>();
+
             void OnTelemetry(GameplayTelemetry log, GameplayTelemetry.Event e)
             {
                 if (Run.Done)
@@ -1222,6 +1260,14 @@ namespace SickOfIt.Playtest
                 if (e.Kind == "upgradeOffer")
                     lastGrudgeOffer = e.Subject ?? "";
                 string level = "level " + log.World.LevelNumber;
+                if (e.Kind == "floorkit" && e.Subject != null && e.Subject.StartsWith("ladder", StringComparison.Ordinal))
+                {
+                    ladderKit.TryGetValue(log.World.LevelNumber, out var had);
+                    ladderKit[log.World.LevelNumber] = had + (e.Subject.StartsWith("ladderGrab", StringComparison.Ordinal) ? 1 : 0);
+                    if (e.Subject == "ladderTop")
+                        ladderTops.Add(log.World.LevelNumber);
+                    Run.Event("ladder", $"{level}: {e.Subject} at {e.Time:0.0} s ({e.Detail})");
+                }
                 if (stage != null && stage.OneFloor && stage.Level == log.World.LevelNumber)
                 {
                     bool scald = e.Kind == "damage" && e.Subject == "player" && e.Detail != null && e.Detail.StartsWith("lava", StringComparison.Ordinal);
@@ -6453,7 +6499,7 @@ namespace SickOfIt.Playtest
             /// death, and reported: cleared, died (where and by what) or stuck (where). A level the bot can't clear goes in the table
             /// and the next one starts; the run ends with the table.
             /// </summary>
-            public IEnumerator AllLevels(List<int> levels, string what, bool checkEvery = false, string at = null)
+            public IEnumerator AllLevels(List<int> levels, string what, bool checkEvery = false, string at = null, bool ladders = false)
             {
                 var results = new List<PathResult>();
                 takeShortcuts = false;
@@ -6635,6 +6681,19 @@ namespace SickOfIt.Playtest
                     }
                     Run.Event("check", $"all-levels {row.Name} {row.Title}: {(row.Result == "cleared" ? "ok (cleared)" : "not cleared (" + row.Result + (row.Where.Length > 0 ? ": " + row.Where : "") + ")")}" +
                                        $" in {row.Seconds:0} s, {row.Tries} {(row.Tries == 1 ? "try" : "tries")}{pace}");
+                }
+                if (ladders)
+                {
+                    foreach (var row in results)
+                    {
+                        if (row.Result == NotReached)
+                            continue;
+                        ladderKit.TryGetValue(row.Level, out int grabs);
+                        bool top = ladderTops.Contains(row.Level);
+                        Run.Event("check", $"ladder floor {row.Floor} ({row.Name}): {(grabs > 0 && top ? "ok" : "not climbed")}: grabbed {grabs} time(s), " +
+                                           $"{(top ? "stepped off the top" : "never reached the top")}; {(row.Result == "cleared" ? "cleared" : "not cleared (" + row.Result + ")")}");
+                        Run.Metric($"ladder{row.Floor}.grabs", grabs);
+                    }
                 }
                 Run.Progress(1f);
                 End(cleared == results.Count ? PlaytestOutcome.Won : PlaytestOutcome.Done);
