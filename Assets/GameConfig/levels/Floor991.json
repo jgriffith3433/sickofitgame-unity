@@ -651,6 +651,20 @@
                 "seconds": 2.0
               },
               {
+                "type": "spawn",
+                "entity": "chainWhipPickup",
+                "anchor": "Player",
+                "at": [
+                  1.4,
+                  0.9
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "wait",
+                "seconds": 4.2
+              },
+              {
                 "type": "setFloor",
                 "floor": 990,
                 "skipMilestones": true

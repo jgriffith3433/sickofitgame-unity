@@ -459,6 +459,10 @@ who runs the hauling.
   The comedy lines stay: *"That was the baker's cart."* at the sign, *"The hay's following me now."* as the procession
   starts. Recipe: "A long bullet-hell floor" below.
 - **Length:** ~280 s (a long floor).
+- **The theft (2026-10-25):** halfway down the river a thief imp bursts out of the hay cart, takes the rocket launcher and runs
+  off with it (`launcherThief`, `launcherToss`; rule "the hay hides a thief", `takeWeapon` / `giveWeapon fists`). From here
+  to Floor 994 he fights with fists (Docs/Story.md "The Spill's theft"): the hazards stay, the sparks come in larger numbers and
+  in brutes (`cinderBrute`: three health, a hook and a jab) in The Sparks, The Jam and The Spire.
 
 #### Floor 997: Imp Run
 

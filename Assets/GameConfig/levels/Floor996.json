@@ -460,12 +460,79 @@
             ]
           }
         ]
+      },
+      {
+        "name": "sparks in the slag falls",
+        "when": {
+          "type": "sectionReached",
+          "section": "run"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawnWave",
+            "entity": "cinder",
+            "count": 2,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "wave"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "a brute beside the falls",
+        "when": {
+          "type": "sectionReached",
+          "section": "beside"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawnWave",
+            "entity": "cinderBrute",
+            "count": 1,
+            "interval": 0.8,
+            "anchor": "Camera",
+            "areaCenter": [
+              0.0,
+              2.2
+            ],
+            "areaSize": [
+              14.0,
+              1.5
+            ],
+            "tags": [
+              "brute"
+            ]
+          }
+        ]
       }
     ],
     "phases": [
       {
         "name": "ledge",
         "onEnter": [
+          {
+            "type": "giveWeapon",
+            "weapon": "fists",
+            "equip": false,
+            "announce": false
+          },
+          {
+            "type": "takeAllWeapons",
+            "except": "fists",
+            "announce": false
+          },
           {
             "type": "runSequence",
             "steps": [

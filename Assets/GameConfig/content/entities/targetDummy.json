@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "team": "Enemy",
+  "health": 60,
+  "moveSpeed": 0,
+  "activationRange": 0,
+  "tags": [
+    "dummy"
+  ],
+  "body": {
+    "shape": "Circle",
+    "radius": 0.5,
+    "solid": false,
+    "gravity": 0
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#8899AA",
+    "placeholderSize": 0.9,
+    "placeholderLabel": true,
+    "hurtFlash": true,
+    "fxColor": "#8899AA"
+  },
+  "healthBar": {
+    "show": true
+  },
+  "abilities": []
+}

@@ -209,6 +209,13 @@ namespace SickOfIt.Gameplay
                 // After a boss's first flood he stays back, near the strip it doesn't reach, like a player who has seen it.
                 bool floodKnown = target.Serial == floodBoss && world == floodWorld;
                 float near = floodKnown ? 6f : preferredDistanceMin, far = floodKnown ? 7.5f : preferredDistanceMax;
+                // Fists and a whip hit only what is in reach: close in on the target instead of keeping a gunner's distance.
+                var held = world.Weapons != null ? world.Weapons.CurrentDef : null;
+                if (held != null && held.kind == SickOfIt.Gameplay.Content.WeaponKind.Melee && held.melee.steps.Count > 0)
+                {
+                    near = 0.3f;
+                    far = Mathf.Max(0.8f, held.melee.steps[0].reach * 0.75f);
+                }
                 if (targetDistance < near)
                     moveX = -Mathf.Sign(dx);
                 else if (targetDistance > far)

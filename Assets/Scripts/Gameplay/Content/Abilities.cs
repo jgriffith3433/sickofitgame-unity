@@ -751,6 +751,7 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Bounces off ground, walls and platforms this many times, mirroring its velocity about the surface, before 'dieOnSolid' applies. 0 = none. Needs a body that moves by velocity (not Dynamic).")] public int bounces;
         [Doc("Speed kept after each bounce (1 = all of it).")] public float bounceKeep = 1f;
         [SoundRef, Doc("Sound id (audio.json) played at each bounce; empty = none.")] public string bounceSound = "";
+        [Doc("Passes through hostile things that have no health (enemy fireballs, hazards) instead of hitting them: the hero's own shots use it so they can't cancel a bullet.")] public bool onlyHitLiving;
         [EffectRef] public string effect = "";
         public float knockback;
         public AudioClip hitSound;
@@ -769,6 +770,8 @@ namespace SickOfIt.Gameplay.Content
         public override void OnContact(Entity other, bool entering)
         {
             if (!entering || !Owner.IsAlive || !other.IsAlive || !Owner.IsHostileTo(other))
+                return;
+            if (onlyHitLiving && other.MaxHealth <= 0)
                 return;
             int amount = Mathf.RoundToInt((Owner.DamageOverride > 0 ? Owner.DamageOverride : damage) * Owner.DamageMultiplier);
             if (other.Damage(amount, Owner))

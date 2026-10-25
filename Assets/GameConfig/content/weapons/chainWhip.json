@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Chain-Whip",
+  "description": "The Foreman's own whip. A melee combo with three times the reach of fists: lash, snap, then a crack for double damage. Thin and long, so it hits what is in a line and not what is above him.",
+  "color": "#C9B8A6",
+  "kind": "Melee",
+  "switchDelay": 0.2,
+  "aimGuide": {
+    "show": true,
+    "length": 1.3
+  },
+  "ammo": {
+    "capacity": 0
+  },
+  "melee": {
+    "comboWindow": 0.5,
+    "height": 0.7,
+    "steps": [
+      {
+        "name": "lash",
+        "damage": 1,
+        "reach": 2.8,
+        "windup": 0.1,
+        "recovery": 0.2,
+        "knockback": 1.0,
+        "arc": 40.0,
+        "size": 1.4
+      },
+      {
+        "name": "snap",
+        "damage": 1,
+        "reach": 3.0,
+        "windup": 0.1,
+        "recovery": 0.2,
+        "knockback": 1.0,
+        "arc": 40.0,
+        "size": 1.5
+      },
+      {
+        "name": "crack",
+        "damage": 2,
+        "reach": 3.5,
+        "windup": 0.2,
+        "recovery": 0.42,
+        "knockback": 6.0,
+        "arc": 30.0,
+        "size": 1.9
+      }
+    ]
+  },
+  "sounds": {
+    "use": "whip_crack",
+    "hit": "whip_hit",
+    "equip": "ui_click"
+  },
+  "pickup": "chainWhipPickup",
+  "heroText": "He won't be needing this. Finally, something with reach.",
+  "heroLine": "vo_wpn_whip"
+}

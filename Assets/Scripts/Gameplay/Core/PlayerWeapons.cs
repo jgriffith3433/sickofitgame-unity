@@ -15,8 +15,10 @@ namespace SickOfIt.Gameplay
     ///
     /// Everything that decides what happens is saved with the world's state (SaveState / LoadState), so a rewind
     /// brings back the equipped weapon, the ammo and a swing's timers exactly. The rocket launcher is always in hand
-    /// and fires the way player.json says; it is the first weapon and cannot be taken. What he holds past the launcher
-    /// is kept between floors in <see cref="WeaponProgress"/> (cleared when a run ends).
+    /// and fires the way player.json says; it is the first weapon and a scene (Floor 998) can take it for a while.
+    /// What he holds past the launcher is kept between floors in <see cref="WeaponProgress"/> (cleared when a run
+    /// ends); what a pickup unlocked is in <see cref="WeaponUnlocks"/> and is in his hands at the start of every level
+    /// unless a scene has taken it ("suspended") this run.
     /// </summary>
     public sealed class PlayerWeapons : IPlayerArmory
     {
@@ -29,6 +31,7 @@ namespace SickOfIt.Gameplay
         // ─── Saved state ──────────────────────────────────────────────
         readonly List<string> owned = new List<string>();
         readonly List<float> ammo = new List<float>();
+        readonly List<string> suspended = new List<string>();
         string current = Launcher;
         float usableAt;
         bool hitPending;
@@ -110,6 +113,9 @@ namespace SickOfIt.Gameplay
                 id = def.id,
                 displayName = def.displayName,
                 melee = def.kind == WeaponKind.Melee,
+                shotEntity = def.projectile.entity,
+                pellets = Mathf.Max(1, def.projectile.pellets),
+                pelletSpread = def.projectile.pelletSpread,
                 cooldown = def.cooldown,
                 projectileSpeed = def.projectile.speed,
                 projectileLifetime = def.projectile.lifetime,
@@ -152,6 +158,27 @@ namespace SickOfIt.Gameplay
         {
             SpendAmmo();
             world.RecordNow();
+        }
+
+        public void SpawnShots(Vector2 muzzle, IReadOnlyList<Vector2> directions, float speed, float damageMultiplier, float now)
+        {
+            var def = CurrentDef;
+            if (def == null || string.IsNullOrEmpty(def.projectile.entity))
+                return;
+            for (int i = 0; i < directions.Count; i++)
+            {
+                var options = new SpawnOptions
+                {
+                    Team = Team.Player,
+                    FacePlayer = false,
+                    Facing = directions[i].x >= 0f ? 1f : -1f,
+                    Velocity = directions[i] * speed,
+                    DamageMultiplier = damageMultiplier,
+                    Owner = world.Player,
+                };
+                world.Spawn(def.projectile.entity, muzzle, options);
+            }
+            world.Telemetry.Record("weaponShot", current, directions.Count, def.projectile.entity);
         }
 
         public bool Swing(float now, Vector2 origin, Vector2 direction, float attackSpeed, float damage)
@@ -205,6 +232,7 @@ namespace SickOfIt.Gameplay
             if (!world.Content.Weapons.TryGetValue(id, out var def))
                 return;
             float now = world.Now;
+            suspended.Remove(id);
             int index = owned.IndexOf(id);
             int capacity = def.ammo.capacity;
             if (index < 0)
@@ -226,14 +254,19 @@ namespace SickOfIt.Gameplay
             world.RecordNow();
         }
 
-        /// <summary>Takes a weapon away (takeWeapon). The launcher stays.</summary>
+        /// <summary>
+        /// Takes a weapon away (takeWeapon), the launcher too. He is never left empty-handed: the last weapon stays.
+        /// One he has unlocked for good (and the launcher) is only suspended: it is back with the next run, a giveWeapon or a pickup.
+        /// </summary>
         public void Take(string id, bool announce)
         {
             int index = owned.IndexOf(id);
-            if (id == Launcher || index < 0)
+            if (index < 0 || owned.Count <= 1)
                 return;
             owned.RemoveAt(index);
             ammo.RemoveAt(index);
+            if ((id == Launcher || WeaponUnlocks.Has(id)) && !suspended.Contains(id))
+                suspended.Add(id);
             world.Telemetry.Record("weaponTaken", id, owned.Count);
             if (announce && world.Player != null && world.Content.Weapons.TryGetValue(id, out var def))
                 world.Effects.PopText(world.Player.Position + Vector2.up * 0.6f, def.displayName.ToUpperInvariant() + " GONE", def.color, 1.0f);
@@ -243,13 +276,48 @@ namespace SickOfIt.Gameplay
                 hitPending = false;
                 comboNext = 0;
                 swingEnd = Mathf.Min(swingEnd, world.Now);
-                Equip(Launcher, world.Now);
+                Equip(owned[0], world.Now);
             }
             else
             {
                 Store(true);
             }
             world.RecordNow();
+        }
+
+        /// <summary>Takes everything except 'except' (takeAllWeapons); if that isn't held, the first weapon stays.</summary>
+        public void TakeAll(string except, bool announce)
+        {
+            string keep = !string.IsNullOrEmpty(except) && owned.Contains(except) ? except : owned.Count > 0 ? owned[0] : "";
+            foreach (string id in new List<string>(owned))
+            {
+                if (id != keep)
+                    Take(id, announce);
+            }
+        }
+
+        /// <summary>
+        /// A pickup (unlockWeapon): the weapon is his for good. The first find shows its banner and the hero's line;
+        /// later finds refill the ammo. The launcher counts as new when a scene had taken it.
+        /// </summary>
+        public void Unlock(string id, bool equip)
+        {
+            if (!world.Content.Weapons.TryGetValue(id, out var def))
+                return;
+            bool news = id == Launcher ? suspended.Contains(id) || !owned.Contains(id) : WeaponUnlocks.Add(id);
+            Give(id, equip, 0, !news);
+            world.Telemetry.Record("weaponUnlocked", id, owned.Count, news ? "new" : "again");
+            if (!news)
+                return;
+            string banner = string.IsNullOrEmpty(def.banner) ? "NEW WEAPON: " + def.displayName.ToUpperInvariant() : def.banner;
+            world.Hud.ShowText(banner, TextStyle.Banner, def.color, world.Now + 3.2f);
+            if (!string.IsNullOrEmpty(def.heroText) || !string.IsNullOrEmpty(def.heroLine))
+            {
+                float shown = Mathf.Max(3f, Sfx.LengthOf(def.heroLine) + 0.4f);
+                if (!string.IsNullOrEmpty(def.heroText))
+                    world.Hud.ShowText(def.heroText, TextStyle.Subtitle, Color.white, world.Now + shown);
+                Sfx.Play(def.heroLine);
+            }
         }
 
         void Equip(string id, float now)
@@ -339,8 +407,13 @@ namespace SickOfIt.Gameplay
         {
             owned.Clear();
             ammo.Clear();
-            owned.Add(Launcher);
-            ammo.Add(0f);
+            suspended.Clear();
+            suspended.AddRange(WeaponProgress.Suspended());
+            if (!suspended.Contains(Launcher))
+            {
+                owned.Add(Launcher);
+                ammo.Add(0f);
+            }
             foreach (var pair in WeaponProgress.Owned())
             {
                 if (pair.Key == Launcher || owned.Contains(pair.Key) || !world.Content.Weapons.ContainsKey(pair.Key))
@@ -348,9 +421,27 @@ namespace SickOfIt.Gameplay
                 owned.Add(pair.Key);
                 ammo.Add(pair.Value);
             }
+            AddUnlocked();
+            if (owned.Count == 0)
+            {
+                owned.Add(Launcher);
+                ammo.Add(0f);
+            }
             string equipped = WeaponProgress.Equipped();
-            current = !string.IsNullOrEmpty(equipped) && owned.Contains(equipped) ? equipped : Launcher;
+            current = !string.IsNullOrEmpty(equipped) && owned.Contains(equipped) ? equipped : owned[0];
             MarkStored();
+        }
+
+        /// <summary>Puts every weapon a pickup unlocked for good into his hands (full ammo), except the ones a scene took this run.</summary>
+        void AddUnlocked()
+        {
+            foreach (string id in WeaponUnlocks.All())
+            {
+                if (owned.Contains(id) || suspended.Contains(id) || !world.Content.Weapons.TryGetValue(id, out var def))
+                    continue;
+                owned.Add(id);
+                ammo.Add(Mathf.Max(0, def.ammo.capacity));
+            }
         }
 
         void Store(bool flush)
@@ -361,6 +452,7 @@ namespace SickOfIt.Gameplay
                 if (owned[i] != Launcher)
                     storeScratch.Add(new KeyValuePair<string, int>(owned[i], Mathf.FloorToInt(ammo[i] + 0.0001f)));
             }
+            WeaponProgress.StoreSuspended(suspended);
             WeaponProgress.Store(storeScratch, current == Launcher ? "" : current, flush);
             MarkStored();
         }
@@ -383,6 +475,9 @@ namespace SickOfIt.Gameplay
                 w.String(owned[i]);
                 w.Float(ammo[i]);
             }
+            w.Int(suspended.Count);
+            for (int i = 0; i < suspended.Count; i++)
+                w.String(suspended[i]);
             w.String(current);
             w.Float(usableAt);
             w.Bool(hitPending);
@@ -407,6 +502,10 @@ namespace SickOfIt.Gameplay
                 owned.Add(r.String());
                 ammo.Add(r.Float());
             }
+            int suspendedCount = r.Int();
+            suspended.Clear();
+            for (int i = 0; i < suspendedCount; i++)
+                suspended.Add(r.String());
             current = r.String();
             usableAt = r.Float();
             hitPending = r.Bool();
@@ -419,6 +518,16 @@ namespace SickOfIt.Gameplay
             comboNext = r.Int();
             comboUntil = r.Float();
             swingDamage = r.Float();
+
+            // What a pickup unlocked for good is his again even if a rewind went back before he picked it up.
+            AddUnlocked();
+            if (owned.Count == 0)
+            {
+                owned.Add(Launcher);
+                ammo.Add(0f);
+            }
+            if (!owned.Contains(current))
+                current = owned[0];
 
             // Rewinding past a pickup takes the weapon back out of the saved prefs too (written when play resumes).
             if (!storeDirty && (current != storedCurrent || !SameHeld()))

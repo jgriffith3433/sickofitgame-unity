@@ -212,7 +212,7 @@
               "onEnter": true
             },
             {
-              "entity": "imp",
+              "entity": "impShotgunBearer",
               "at": [
                 6.8,
                 5.15

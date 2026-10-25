@@ -56,6 +56,11 @@ namespace SickOfIt.Gameplay
             {
                 issues.Error(file, "cooldown", "A projectile weapon needs a cooldown above 0.");
             }
+            if (weapon.projectile.pellets < 1)
+                issues.Error(file, "projectile.pellets", "A weapon fires at least one shot per pull.");
+            if (weapon.kind == WeaponKind.Projectile && !string.IsNullOrEmpty(weapon.projectile.entity)
+                && content.Entities.TryGetValue(weapon.projectile.entity, out var shot) && shot.team != Team.Player)
+                issues.Error(file, "projectile.entity", $"The shot \"{shot.id}\" must be on team Player, or it would hurt the hero instead of his enemies.");
             if (weapon.ammo.capacity < 0 || (weapon.ammo.capacity > 0 && weapon.ammo.perShot < 1))
                 issues.Error(file, "ammo", "Ammo capacity can't be negative, and a weapon with ammo spends at least 1 per shot.");
             if (weapon.id == "rocketLauncher" && weapon.kind != WeaponKind.Projectile)

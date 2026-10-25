@@ -1241,8 +1241,10 @@ namespace SickOfIt.Core.Input
             shotSpriteAngle = projectileSpriteAngle;
             shotDamageScale = 1f;
             shotSound = null;
+            shotEntity = null;
             if (Armory != null && Armory.TryGetCurrent(out var weapon) && !weapon.melee)
             {
+                shotEntity = weapon.shotEntity;
                 shotSpeed = weapon.projectileSpeed;
                 shotLifetime = weapon.projectileLifetime;
                 shotFaceAim = weapon.projectileFaceAim;
@@ -1254,13 +1256,25 @@ namespace SickOfIt.Core.Input
             Vector2 muzzle = AimVolley(direction, mouseAimPoint, volley);
             VolleysFired++;
             lastVolley.Clear();
+            if (!string.IsNullOrEmpty(shotEntity))
+            {
+                // A weapon with a shot of its own (a bouncing bullet, a boomerang): the world spawns it as a rewindable entity.
+                float now = GameClock.Instance != null ? GameClock.Instance.Time : Time.time;
+                for (int i = 0; i < volley.Count; i++)
+                    lastVolley.Add(volley[i].normalized);
+                Armory.SpawnShots(muzzle, volley, shotSpeed, DamageMultiplier * shotDamageScale, now);
+                if (Cue(fireSound, string.IsNullOrEmpty(shotSound) ? SickOfIt.Core.Audio.Sfx.Events.playerShoot : shotSound))
+                    SickOfIt.Core.Fx.Fx.Flash(muzzle, new Color(1f, 0.85f, 0.45f, 0.35f), 0.26f, 0.06f);
+                PlayFireAnimation();
+                return;
+            }
             for (int i = 0; i < volley.Count; i++)
                 SpawnShot(muzzle, volley[i], i == 0);
         }
 
         private float shotSpeed, shotLifetime, shotSpriteAngle, shotDamageScale = 1f;
         private bool shotFaceAim;
-        private string shotSound;
+        private string shotSound, shotEntity;
 
         private readonly System.Collections.Generic.List<Vector2> volley = new System.Collections.Generic.List<Vector2>();
         private readonly System.Collections.Generic.List<Vector2> lastVolley = new System.Collections.Generic.List<Vector2>();
@@ -1290,11 +1304,18 @@ namespace SickOfIt.Core.Input
             // Extra shots fan out evenly around the aim.
             directions.Clear();
             int shots = 1;
+            float spread = ShotSpreadDegrees;
+            if (Armory != null && Armory.TryGetCurrent(out var held) && held.pellets > 1)
+            {
+                // A blast: the weapon's own pellets, fanned by its own spread.
+                shots = held.pellets;
+                spread = held.pelletSpread;
+            }
             if (Armory == null || !Armory.TryGetCurrent(out var weapon) || weapon.multiShot)
                 shots += Mathf.Max(0, ExtraShots);
             for (int i = 0; i < shots; i++)
             {
-                float angle = (i - (shots - 1) * 0.5f) * ShotSpreadDegrees;
+                float angle = (i - (shots - 1) * 0.5f) * spread;
                 directions.Add(Quaternion.Euler(0f, 0f, angle) * direction);
             }
             return muzzle;

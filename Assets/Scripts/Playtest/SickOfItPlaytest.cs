@@ -626,6 +626,14 @@ namespace SickOfIt.Playtest
                 "the swing is drawn (a crescent and a fist), the combo hits and the imp dies. Q back to the launcher, then hold R back to before that switch: the rewind brings the fists back. " +
                 "The HUD's weapon button is clicked with the mouse (a touch tap takes the same path) and switches; a second level action (takeWeapon) takes the fists away and the HUD " +
                 "is back to the launcher. Each beat is a check event; weapon events log every equip, swing and hit", WeaponsSeconds, "level"));
+            list.Add(new PlaytestScenario(WeaponDropsId, "The weapon drops (Docs/Story.md \"Weapons\"), real input, each floor opened directly with the save a hero arriving there has (setup shortcuts; nothing unlocked at the start): " +
+                "Floor 998, where a thief imp comes out of the hay and takes the rocket launcher (weaponTaken, the banner and his line, fists equipped, the fists landing hits); " +
+                "Floors 997-995 fought with fists only (brawls of cinders and brutes); Floor 994's end, where the thief throws the launcher back (a pickup: banner and line); then each weapon found on its floor with a first-pickup banner " +
+                "and the hero's line: the Spitfire (993), the Ricochet Pistol (992), the Chain-Whip (the Imp Foreman, 991), the Shotgun (954) and the Boomerang Halo (the Pile Keeper, 951). " +
+                "Then a real death on Floor 999 (the bot plays to lose): the run ends, and the next run still holds the launcher and all five unlocked weapons (a weapon given for the run only, fists, is gone). " +
+                $"Last, the bench (the scene \"{WeaponArenaScene}\" on level {WeaponsLevel}'s stage): the Spitfire streams at several times the launcher's rate on ammo, the Ricochet Pistol's bullet bounces off the ground, " +
+                "a dummy 2.6 away is out of the fists' reach and in the Chain-Whip's, the Shotgun fires five pellets and hurts point blank but not across the room, and the Boomerang Halo flies out, comes back and hits both ways. " +
+                "Each beat is a check event; weapon, banner and line events log the timeline", WeaponDropsSeconds, "level"));
             list.Add(new PlaytestScenario("analytics", $"Hawkes Analytics (AGENTS.md \"Analytics\"): the SDK's debug log on, then Level {AnalyticsLevel} " +
                 "(the Meadow, loaded directly) played until Hell kills the hero three times (the bot holds R once early on for a rewind, then plays to " +
                 "lose): each death screen, and on the third one the feedback card (\"Too hard? Not fun?\", thumbs and a comment) over it, held while it's " +
@@ -929,6 +937,8 @@ namespace SickOfIt.Playtest
                 yield return session.AimGuideRun();
             else if (id == WeaponsId)
                 yield return session.WeaponsRun();
+            else if (id == WeaponDropsId)
+                yield return session.WeaponDropsRun();
             else if (id == "restart")
                 yield return session.RestartRun();
             else if (id == RewindPerfId)

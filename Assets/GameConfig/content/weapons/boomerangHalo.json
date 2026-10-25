@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Boomerang Halo",
+  "description": "A halo off something that fell a long way. Thrown, it flies out, hangs, and comes back to him faster, hitting everything it passes both ways and going through it. Slow to throw, and he has to be in its way to catch it.",
+  "color": "#FFD27A",
+  "kind": "Projectile",
+  "cooldown": 0.75,
+  "switchDelay": 0.2,
+  "aimGuide": {
+    "show": true,
+    "length": 0.7
+  },
+  "ammo": {
+    "capacity": 0
+  },
+  "projectile": {
+    "speed": 9.0,
+    "lifetime": 4.0,
+    "faceAim": false,
+    "spriteAngle": 0.0,
+    "damageScale": 1.0,
+    "multiShot": true,
+    "entity": "haloShot"
+  },
+  "sounds": {
+    "use": "halo_throw",
+    "hit": "",
+    "equip": "ui_click"
+  },
+  "pickup": "boomerangHaloPickup",
+  "heroText": "It's a halo. You throw it, and it comes back. Unlike everything else I've thrown.",
+  "heroLine": "vo_wpn_halo"
+}

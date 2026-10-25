@@ -479,6 +479,7 @@ namespace SickOfIt.Data
             PlayerPrefs.DeleteKey(KEY_MAX_HEALTH);
             UpgradeProgress.Reset();
             WeaponProgress.Reset();
+            WeaponUnlocks.Reset();
 
             // Clear game progress data (level completions, video unlocks, highest level)
             for (int i = 1; i <= totalLevels; i++)
