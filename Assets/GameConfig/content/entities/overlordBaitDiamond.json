@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "tags": [
+    "pickup"
+  ],
+  "body": {
+    "radius": 1.4,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.125,
+    "sortingOrder": 6,
+    "hurtFlash": false,
+    "fxColor": "#7FE8FF",
+    "animator": {
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Images/Diamond.png",
+          "fps": 12,
+          "loop": true
+        }
+      ],
+      "defaultStateName": "Idle"
+    }
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "collect",
+      "magnetRadius": 2.2,
+      "magnetSpeed": 9,
+      "do": [
+        {
+          "type": "addDiamonds",
+          "amount": 1
+        },
+        {
+          "type": "popText",
+          "text": "+1 ♦",
+          "color": "#7FE8FF",
+          "size": 0.8
+        }
+      ]
+    },
+    {
+      "type": "lifetime",
+      "seconds": 1.9
+    }
+  ],
+  "onSpawn": [
+    {
+      "type": "spawn",
+      "entity": "overlordBeamGlow",
+      "anchor": "Self",
+      "at": [
+        0.0,
+        0.0
+      ],
+      "facePlayer": false
+    }
+  ],
+  "onDeath": [
+    {
+      "type": "spawn",
+      "entity": "overlordBeam",
+      "anchor": "Self",
+      "at": [
+        0.0,
+        0.0
+      ],
+      "facePlayer": false
+    },
+    {
+      "type": "spawn",
+      "entity": "overlordBeamImpact",
+      "anchor": "Self",
+      "at": [
+        0.0,
+        0.0
+      ],
+      "facePlayer": false
+    },
+    {
+      "type": "playSound",
+      "sound": "overlord_beam_strike"
+    },
+    {
+      "type": "cameraShake",
+      "intensity": 0.15,
+      "duration": 0.4
+    }
+  ]
+}

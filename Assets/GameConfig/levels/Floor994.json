@@ -704,6 +704,10 @@
       {
         "name": "finale",
         "value": 0.0
+      },
+      {
+        "name": "ovlOn",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -1122,6 +1126,131 @@
               }
             ],
             "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "overlord: drop, Floor 994",
+        "when": {
+          "type": "sectionReached",
+          "section": "cross"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordFar994",
+                "id": "ovl",
+                "anchor": "Camera",
+                "at": [
+                  2.8,
+                  1.8
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 1
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:994:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Mm. ... Catch.",
+                "duration": 2.8,
+                "style": "Subtitle",
+                "sound": "vo_ovl_994_catch",
+                "color": "#E0605A"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:994:line"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "spawn",
+                "entity": "mkWarnHand",
+                "anchor": "Player",
+                "at": [
+                  3.0,
+                  0.2
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:994:warn"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.1
+              },
+              {
+                "type": "spawn",
+                "entity": "slag",
+                "anchor": "Player",
+                "at": [
+                  3.0,
+                  3.6
+                ],
+                "velocity": [
+                  0.0,
+                  -3.2
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:994:drop"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.8
+              },
+              {
+                "type": "showText",
+                "text": "Great. A present.",
+                "duration": 2.2,
+                "style": "Subtitle",
+                "sound": "vo_hero_ovl_994"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "ovl"
+                }
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 0
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:994:done"
+              }
+            ]
           }
         ]
       }

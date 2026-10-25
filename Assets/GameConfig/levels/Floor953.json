@@ -960,6 +960,10 @@
       {
         "name": "finale",
         "value": 0.0
+      },
+      {
+        "name": "ovlOn",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -1327,6 +1331,155 @@
               }
             ],
             "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "overlord: laser, Floor 953",
+        "when": {
+          "type": "sectionReached",
+          "section": "lap2up"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordFar953",
+                "id": "ovl",
+                "anchor": "Camera",
+                "at": [
+                  2.8,
+                  1.8
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 1
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:953:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Mm. ... Floor.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_ovl_953_floor",
+                "color": "#E0605A"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:953:line"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "playSound",
+                "sound": "overlord_beam_charge"
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordBeamGlow",
+                "anchor": "Player",
+                "at": [
+                  5.5,
+                  -0.4
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:953:warn"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.25
+              },
+              {
+                "type": "flash",
+                "color": "#FF5A3C",
+                "duration": 0.3
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.7
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordBeam",
+                "anchor": "Player",
+                "at": [
+                  5.5,
+                  -0.4
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordBeamImpact",
+                "anchor": "Player",
+                "at": [
+                  5.5,
+                  -0.4
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "playSound",
+                "sound": "overlord_beam_strike"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:953:laser"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "showText",
+                "text": "Missed. Or he didn't care.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_hero_ovl_953"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "ovl"
+                }
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 0
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:953:done"
+              }
+            ]
           }
         ]
       }

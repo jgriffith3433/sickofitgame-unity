@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "overlordCameo"
+  ],
+  "body": {
+    "radius": 0.3,
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "color": "#FFFFFF",
+    "placeholderColor": "#4A3A35",
+    "placeholderShape": "Box",
+    "placeholderSize": 1.2,
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 2,
+    "hurtFlash": false,
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Climb/ChainLift_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "screenAnchor",
+      "offset": [
+        2.8,
+        1.25
+      ],
+      "drift": [
+        0.0,
+        2.0
+      ],
+      "driftAfter": 3.6
+    }
+  ]
+}

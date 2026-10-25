@@ -860,6 +860,10 @@
       {
         "name": "finale",
         "value": 0.0
+      },
+      {
+        "name": "ovlOn",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -1240,6 +1244,114 @@
               }
             ],
             "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "overlord: summon, Floor 857",
+        "when": {
+          "type": "sectionReached",
+          "section": "behind"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordFar857",
+                "id": "ovl",
+                "anchor": "Camera",
+                "at": [
+                  2.8,
+                  1.8
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 1
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:857:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Mm. ... Go.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_ovl_857_go",
+                "color": "#E0605A"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:857:line"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "spawnWave",
+                "entity": "demonWhelp",
+                "count": 2,
+                "interval": 0.7,
+                "anchor": "Camera",
+                "areaCenter": [
+                  1.5,
+                  2.4
+                ],
+                "areaSize": [
+                  4.0,
+                  0.6
+                ]
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:857:summon"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "showText",
+                "text": "He sends the help.",
+                "duration": 2.4,
+                "style": "Subtitle",
+                "sound": "vo_hero_ovl_857"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "ovl"
+                }
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 0
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:857:done"
+              }
+            ]
           }
         ]
       }

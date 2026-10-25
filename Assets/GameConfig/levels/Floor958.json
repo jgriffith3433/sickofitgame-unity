@@ -764,6 +764,10 @@
       {
         "name": "finale",
         "value": 0.0
+      },
+      {
+        "name": "ovlOn",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -1158,6 +1162,120 @@
               }
             ],
             "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "overlord: lift, Floor 958",
+        "when": {
+          "type": "sectionReached",
+          "section": "bank"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordLift958",
+                "id": "ovlLift",
+                "anchor": "Camera",
+                "at": [
+                  2.8,
+                  1.25
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordFar958",
+                "id": "ovl",
+                "anchor": "Camera",
+                "at": [
+                  2.8,
+                  1.8
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 1
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:958:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Mm. ... Higher.",
+                "duration": 2.8,
+                "style": "Subtitle",
+                "sound": "vo_ovl_958_higher",
+                "color": "#E0605A"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:958:line"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "wait",
+                "seconds": 0.4
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:958:lift"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "He has a lift. Of course he has a lift.",
+                "duration": 3.2,
+                "style": "Subtitle",
+                "sound": "vo_hero_ovl_958"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.6
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "ovl"
+                }
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "ovlLift"
+                }
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 0
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:958:done"
+              }
+            ]
           }
         ]
       }

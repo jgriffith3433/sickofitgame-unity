@@ -910,6 +910,10 @@
       {
         "name": "finale",
         "value": 0.0
+      },
+      {
+        "name": "ovlOn",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -1292,6 +1296,155 @@
               }
             ],
             "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "overlord: rewind, Floor 896",
+        "when": {
+          "type": "sectionReached",
+          "section": "slope"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordFar896",
+                "id": "ovl",
+                "anchor": "Camera",
+                "at": [
+                  3.8,
+                  1.8
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 1
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:896:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Mm. ... Down.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_ovl_896_down",
+                "color": "#E0605A"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:896:line"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "wait",
+                "seconds": 0.4
+              },
+              {
+                "type": "showText",
+                "text": "Let's see what R does to him.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "sound": "vo_hero_ovl_896"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:896:walk"
+              },
+              {
+                "type": "wait",
+                "seconds": 7.0
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "ovl"
+                }
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 0
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:896:done"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "overlord: caught in the loop, Floor 896",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "counter",
+              "name": "ovlOn",
+              "atLeast": 1.0
+            },
+            {
+              "type": "heroRewound",
+              "within": 2.5
+            }
+          ]
+        },
+        "maxTimes": 3,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.4
+              },
+              {
+                "type": "showText",
+                "text": "Hhh. ... Again.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "sound": "vo_ovl_896_again",
+                "color": "#E0605A"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:896:rewound"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.2
+              },
+              {
+                "type": "showText",
+                "text": "Yeah. Same here.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "sound": "vo_hero_ovl_896_again"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              }
+            ]
           }
         ]
       }

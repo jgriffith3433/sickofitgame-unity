@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "entity": "overlordFar",
+  "name": "The Overlord (far)",
+  "description": "a giant obsidian titan seen from far away on a ledge, red glowing eyes, a crown of black horns, broad shoulders in a heavy cloak of black stone, his back and one shoulder to the viewer, tired posture, no expression; a dark silhouette lit only by lava glow from below",
+  "height": 1.6,
+  "poses": {
+    "stand": "standing on a ledge in profile looking up, one hand resting on a horn of his crown",
+    "walk": "mid-stride in profile, heavy sack over one shoulder",
+    "lift": "standing on a small chain lift platform, back to the viewer, looking up"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes slowly, shoulders rising and falling, eyes glowing",
+      "seconds": 3
+    },
+    "walk": {
+      "from": "walk",
+      "action": "walks slowly along the ledge, unhurried",
+      "seconds": 2.5
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

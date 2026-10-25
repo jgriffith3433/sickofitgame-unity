@@ -1073,6 +1073,10 @@
       {
         "name": "finale",
         "value": 0.0
+      },
+      {
+        "name": "ovlOn",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -1538,6 +1542,99 @@
               }
             ],
             "includeFuture": true
+          }
+        ]
+      },
+      {
+        "name": "overlord: taunt, Floor 997",
+        "when": {
+          "type": "sectionReached",
+          "section": "higher"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "overlordFar997",
+                "id": "ovl",
+                "anchor": "Camera",
+                "at": [
+                  2.8,
+                  1.8
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 1
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:997:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Mm. ... Up. They always try up.",
+                "duration": 3.6,
+                "style": "Subtitle",
+                "sound": "vo_ovl_997_up",
+                "color": "#E0605A"
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:997:line"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:997:taunt"
+              },
+              {
+                "type": "showText",
+                "text": "Don't mind me.",
+                "duration": 2.0,
+                "style": "Subtitle",
+                "sound": "vo_hero_ovl_997"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "ovl"
+                }
+              },
+              {
+                "type": "setCounter",
+                "name": "ovlOn",
+                "value": 0
+              },
+              {
+                "type": "emit",
+                "signal": "ovl:997:done"
+              }
+            ]
           }
         ]
       }
