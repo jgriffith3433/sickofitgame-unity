@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Watcher",
   "hint": "Shoot as its lid opens.",
+  "note": "An eye that follows me around. Seen worse.",
   "hintVoice": "vo_hero_hint_watcher",
   "onSpawn": [{ "type": "hintOnce" }],
   "extends": "chaser",

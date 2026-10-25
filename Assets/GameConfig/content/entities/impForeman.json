@@ -1,5 +1,8 @@
 {
   "schemaVersion": 1,
+  "displayName": "Imp Foreman",
+  "hint": "Mind the whip. Climb past him.",
+  "note": "Fattest imp in the Wastes, on my village's diamonds.",
   "team": "Enemy",
   "health": 40,
   "moveSpeed": 0,

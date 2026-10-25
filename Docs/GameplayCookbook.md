@@ -502,6 +502,23 @@ The `weapon-drops` playtest plays all of it (998's theft, the fists floors, each
 shows what it does: `content/scenes/weaponArena.json`, `targetDummy`). Try it on the bench: `?playtest=weapons` (the scene `weaponsTest`: launcher, `giveWeapon`, Q, a punched imp, a rewind,
 the HUD button, `takeWeapon`; each beat is a `check` event).
 
+## The Codex (what the hero has seen: `ui/codex.json`, entity `note`)
+
+Story: Story.md, "The Codex". The screen (`CodexPanel`, `Gameplay/Presentation/CodexPanel.cs`) opens from the main menu and the pause menu
+(`showOnMainMenu`, `showOnPauseMenu`), four tabs, a page of rows (4 in landscape, 7 in portrait: `rowsLandscape`/`rowsPortrait`, paged with < >).
+
+- **Enemies and bosses** are the entities with a `displayName` on the enemy team (a `"boss"` tag makes it a boss). Types that share a name share
+  a row. Each row: the picture (first frame of the entity's first animator state), `displayName`, the hero's `note` (new entity field: one deadpan
+  line, inherited by `extends`, so give a child its own), the weakness (`hint`, the same words as the first-sight subtitle) and the tally. A new
+  enemy gets a `note` next to its `displayName` and `hint`. A boss gets a `displayName`, `hint` and `note` and, if it extends a base with `hintOnce`,
+  `"onSpawn": []` (bosses introduce themselves; the Codex is the only place their hint shows).
+- **Weapons** are `content/weapons/*.json` (name, `heroText` as the note, `description`, the pickup entity's art); met = the launcher, or
+  `UnlockFlags` `weapon:<id>`. **Characters** are listed in `ui/codex.json` `characters` (`unlock` Always / YoobaMet, optional `sheet` for the picture).
+- **Met, killed**: `CodexProgress` (PlayerPrefs `Codex_Tally`, cleared by New Game) counts spawns and kills by `displayName` once per creature
+  (`GameplayWorld.TryGrantOnce`, so a rewind does not count twice; silent in scenes). A type is known if `EnemyHints` (the hint set) has its name
+  or the tally says met. Unmet rows are `???` in a black silhouette and show nothing else.
+- Words are in `ui/codex.json`; the look is `ui/theme.json` (`card` surface, `heading`/`body`, `smallButton`, `accent`, `muted`). Playtest `codex`.
+
 ## The hero sizes them up ("a name and a weakness the first time it shows", `hintOnce`)
 
 The first time a kind of enemy shows up in a save, the hero sizes it up: a subtitle with its name and one small hint at

@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Brimstone whelp",
   "hint": "Small, fast, two hits. Back up and shoot.",
+  "note": "Small, fast, and still wants me dead.",
   "hintVoice": "vo_hero_hint_demonWhelp",
   "extends": "brimstoneDemon",
   "health": 2,

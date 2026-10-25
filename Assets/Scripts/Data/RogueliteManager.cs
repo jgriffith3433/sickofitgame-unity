@@ -510,6 +510,7 @@ namespace SickOfIt.Data
             WeaponProgress.Reset();
             WeaponUnlocks.Reset();
             EnemyHints.Reset();
+            CodexProgress.Reset();
 
             // Clear game progress data (level completions, video unlocks, highest level)
             for (int i = 1; i <= totalLevels; i++)

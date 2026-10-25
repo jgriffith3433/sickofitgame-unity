@@ -142,6 +142,14 @@ namespace SickOfIt.Gameplay
                 settingsRoot = SettingsPanel.Show(menu, () => { settingsRoot = null; menu.Back = () => SetPaused(false); });
                 SickOfIt.Core.AnalyticsManager.Screen("settings");
             });
+            var codex = SickOfIt.Data.GameDefinition.Instance != null ? SickOfIt.Data.GameDefinition.Instance.codex : null;
+            if (codex != null && codex.enabled && codex.showOnPauseMenu)
+                menu.AddButton(list, codex.buttonLabel, theme.button, () =>
+                {
+                    // Shares settingsRoot: while it is up, P does not resume and a resume closes it.
+                    settingsRoot = CodexPanel.Show(menu, () => { settingsRoot = null; menu.Back = () => SetPaused(false); }).Root;
+                    SickOfIt.Core.AnalyticsManager.Screen("codex");
+                });
             if (world.Host != null)
                 menu.AddButton(list, Texts.quitToMenu, theme.button, () => Leave(() => world.Host.ReturnToMenu(), "quit"));
             menu.Back = () => SetPaused(false);

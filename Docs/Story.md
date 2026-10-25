@@ -1565,6 +1565,21 @@ Not named yet: the retired slime-era arcade enemies (`chaser`, `swarmer`, `explo
 to be recast (`gunner`, `drone`, `sprayer`, `spinner`, `brute`, `fighter`, `sentinel`); they get a line when they get a
 Circle. New enemies come with a `displayName`, a `hint` and a line from now on (`soi-enemy`).
 
+### The Codex (what the hero has seen, built 2026-10-25)
+
+The hero keeps no diary, but the Shaft remembers for him: **the Codex** is the list of everything he has laid eyes on,
+opened from the main menu and the pause menu. Four tabs: **Enemies**, **Bosses** (the Wardens and floor bosses),
+**Weapons** and **Characters**. A page holds a few entries, each with a picture, its name, the hero's note (one deadpan
+line, never a joke about work), the weakness (the same hint he says the first time it shows) and the tally: **times met,
+times killed**. A weapon shows whether he has it. What he has not met is a **black silhouette called "???"** with no name,
+note, weakness or numbers: the Codex never tells him what is coming. Met is the same memory as "The hero sizes them up"
+(`EnemyHints`): an enemy he has named is in the Codex, and he can meet one in a scene without a subtitle and still find it
+there. The tallies are kept with the save like the hints (a death or a rewind does not take them back; one rewound kill is
+counted once); only a New Game empties the Codex. The Wardens do not introduce themselves with a hint line, but they are
+named here, with a note.
+
+Characters: the hero (always), the Overlord (the meadow's laser, always), the Announcer (always) and Yooba (once met).
+
 ## Hell's tricks (five mechanics)
 
 Hell is repetition, so its monsters have a few tricks and use them forever. Five are built as JSON abilities so floors

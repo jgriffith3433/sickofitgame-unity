@@ -1,8 +1,10 @@
 {
   "schemaVersion": 1,
-  "displayName": "",
-  "hint": "",
+  "displayName": "Pile Keeper",
+  "hint": "Shoot the guards first. He keeps a pile.",
+  "note": "Keeps a pile of everything that fell. Won't share.",
   "hintVoice": "",
+  "onSpawn": [],
   "extends": "impGuard",
   "team": "Enemy",
   "health": 36,

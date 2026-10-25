@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "displayName": "Thatch cinder",
   "hint": "Bursts into sparks. Dodge them.",
+  "note": "Somebody's roof, still angry.",
   "hintVoice": "vo_hero_hint_cinderThatch",
   "extends": "cinder",
   "health": 2,
