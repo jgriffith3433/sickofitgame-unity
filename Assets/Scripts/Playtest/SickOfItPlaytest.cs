@@ -881,6 +881,12 @@ namespace SickOfIt.Playtest
                 "slower than on the ground. Hold R back to a moment halfway up: his place and his hold are restored and he keeps hanging. Space lets go (a jump) and he lands; " +
                 "he takes hold again (S from the ladder's top, or W from its foot) and climbs off the top onto the shelf. Then hold R back to standing on the shelf, and back again " +
                 "into the climb itself: the exact place and the hold come back. Each beat is a check event; ladder events log the grabs, jumps and exits", LadderSeconds, "level"));
+            list.Add(new PlaytestScenario(FloorKitId, $"The grapple hook and the air-and-path floor kit (Docs/GameplayCookbook.md \"The Hook and the air kit\"): the scene \"{FloorKitScene}\" on level {FloorKitLevel}'s stage (setup shortcut: flags cleared), " +
+                "crossed from the start ledge to the landing through real input, no bot, no teleporting. The Hook is picked up (locked until then: E does nothing); E throws it up and ahead: it attaches to a ring over a 6-wide gap (`grapple` events, the rope, the swing's dip and top speed), " +
+                "hold R back mid-swing (his place and the rope come back), Space lets go at the swing's rise and he lands on the far ledge. A pull anchor reels him in and hops him onto a shelf. A wind zone blows in gusts: a hostile bolt flown into it and his own shot are bent along the wind, " +
+                "his sideways speed peaks above walking speed, and a jump timed to a rising gust crosses a 3.4 gap a plain jump (~2) cannot. A moving platform on a path carries him (no key held), hold R back mid-ride (platform and rider return). " +
+                "A collapsing floor of five stones cracks one after another (`floorkit` crack events spaced 0.8+ s) in a wave he outruns; hold R back to before it (every stone whole again); it rebuilds by itself later. A gravity-flip zone turns him over: " +
+                "he falls up to a ceiling and walks it upside down; hold R back on the ceiling (gravity, place and ceiling restored) and back to before the zone (gravity back down, the floor); then he crosses to the landing. Each beat is a check event; `grapple` and `floorkit` events log every hook, crack, rebuild and flip", FloorKitSeconds, "level"));
             string movesHow = $"the scene \"{MovesScene}\" on level {MovesLevel}'s stage (setup shortcut: a new game's save, so both moves start locked), played through real input, no bot. ";
             string dashHow = "DASH: Yooba's Slimed Lining is hidden until Floor 998 is cleared; Shift does nothing while it is locked; with Floor 998 cleared and the diamonds given (setup shortcuts) it is bought through the shop's own purchase. " +
                 "A bolt that is not dashed hurts him; a bolt dashed into (Shift, the dash starts, `DashInvulnerable`, the Dash pose) passes through him: health unchanged and the bolt flies on behind him. " +
@@ -1295,6 +1301,11 @@ namespace SickOfIt.Playtest
             {
                 session.Prepare(LadderLevel, true);
                 yield return session.LadderRun();
+            }
+            else if (id == FloorKitId)
+            {
+                session.Prepare(FloorKitLevel, true);
+                yield return session.FloorKitRun();
             }
             else if (id == HeroMovesId || id == DashId || id == WallJumpId)
             {

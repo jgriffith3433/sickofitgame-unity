@@ -2044,6 +2044,40 @@ are optional, and the bench `content/scenes/moveTest.json` (playtests `dash`, `w
 Art: the hero's `Dash`, `WallSlide` and `WallJump` clips are specified in `Assets/GameConfig/art/hero.json` (not generated; priced, GPU not approved). Until then they play
 placeholders from the existing sheets (`Walk`, `Grabbed`, `Jump`). Sounds are made: `player_dash`, `player_dash_ready`, `player_wall_cling`, `player_wall_jump`.
 
+## The Hook and the air kit (a hook, a gust, a ceiling) (built 2026-10-25)
+
+Hell is repetition, and the imps who haul its sacks on chains have done the same lift a million times, which is why every hauler's belt still carries
+the thing they climb with: a **hook** on a length of chain. The hero finds one lying on the first ledge of the kit floor, next to a hauler
+nobody has bothered to bury (**the Hook**, a pickup, `hookPickup`; it sets the flag `hook.found` for good, kept through runs, cleared with New Game).
+*"Somebody's hook. Somebody's not using it."* From then on **E** (or F, the gamepad's left shoulder or Y) throws it.
+
+**How the hook works.** It throws up and ahead: along the right stick, the mouse (once he has used it), the move stick leaning up (sideways = up and that way),
+else up and the way he faces. It takes the **anchor** (a ring in a wall, a hanging hook, a stump of chain; `grappleRing`, `grappleHook`) nearest his aim inside a
+50 degree cone and 7.5 units. A **swing** anchor holds a rope of the length he hooked it at: he swings on it like a damned soul on a chain, A / D pump the swing, up reels
+in and down lets out, **Jump** lets go with the swing's speed and a hop (the way to cross a gap), E again lets go without one. A **pull** anchor reels him straight in
+and hops him up onto the ledge it sits on. The rope is drawn from his hand; the anchor glows when the hook would take it. It never works on the floor's footholds, only on anchors:
+Hell leaves them where it wants a climber to go. The hero's line is the pickup's text and nothing else: he is not impressed by a hook, only by what it hooks.
+
+**The air and the paths.** Four more pieces for floors that want more than ledges (Docs/LevelDesign.md "The air and the paths"):
+
+- **A moving platform on a path** (`mover`): a slab that travels waypoints and waits at each, carrying whoever stands on it. The Wastes' haulers ride these between the
+  lava and the stairs; the damned have long stopped asking where they go.
+- **Wind** (`wind`): the Wastes breathe. A zone that blows the hero sideways (walking into it is slow, standing in it is not an option), lifts him or presses him down, and bends
+  every shot in it, his and Hell's. Some blow in gusts a hero can time. The hero's line, if he ever gets one: *"It's breathing on me."*
+- **Collapsing floors** (`crumble` with a `group`): old slag that gives way one stone after the next in a wave he can outrun, and is rebuilt a little later because Hell
+  likes things to be where they were. The same stone as the crumbling stone of Floor 992, now in rows.
+- **Gravity-flip zones** (`gravityFlip`): pockets where Hell's loop runs the other way. In one, gravity pulls up: he falls to the ceiling and walks it upside down, jumps down
+  from it, and when he leaves (a moment later, so he can cross) the floor is the floor again. Put a ceiling over one, or he falls out of the top of the view.
+
+**Rewind.** All of it is rewound with everything else: the rope (anchor, length, swing speed), the platform's place on its path, a stone that cracked and fell and came back,
+a gust (they follow the game clock), and which way gravity pulls. Dragging Hell's loop backward off the ceiling puts him back on the floor he stood on.
+
+**Where it is built.** So far on the bench `content/scenes/kitFloor.json` (the playtest `floor-kit`: swing, pull, gust, mover, collapse, ceiling, in that order, on Level 2's stage). Where the
+pieces are *needed* on the played route (a Circle whose floors cross a gap only a hook crosses) is written per floor, with its reason here first; none is yet.
+
+Art: the anchors, the slab and the zones are drawn from plain shapes (rings, streaks, arrows) until painted; the hero's `Grapple` / `Hang` clips are not specified yet. Sounds: the hook
+takes hold with `player_land`; new sounds (a throw, a creak, a gust) go through Hawkes Gen later. Priced: nothing here needs the GPU until the art is painted.
+
 ## The bosses' second look (six fights, 2-4 minutes, a crowd)
 
 The first fights were a boss and a pattern. Hell, though, loves a crowd, and the hero has by now been through nine Circles' worth of

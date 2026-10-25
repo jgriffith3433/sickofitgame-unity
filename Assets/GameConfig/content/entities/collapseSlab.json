@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "foothold",
+    "collapse"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      2.0,
+      0.45
+    ],
+    "solid": true,
+    "oneWay": true
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#5E3B2A",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 0,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "crumble",
+      "delay": 1.3,
+      "group": "kitFloor",
+      "chainDelay": 0.62,
+      "rebuildAfter": 7.0,
+      "gravity": 16.0,
+      "fallDistance": 14.0,
+      "crackSound": "",
+      "fallSound": ""
+    }
+  ]
+}

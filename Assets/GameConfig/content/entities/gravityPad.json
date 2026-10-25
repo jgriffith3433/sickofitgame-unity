@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "gravityFlip"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      2.0,
+      2.0
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#B273FF1F",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 950,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "gravityFlip",
+      "linger": 0.35
+    }
+  ]
+}

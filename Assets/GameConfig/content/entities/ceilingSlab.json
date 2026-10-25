@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "ceiling"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      2.0,
+      0.5
+    ],
+    "solid": true,
+    "oneWay": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#3A1E17",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 0,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": []
+}
