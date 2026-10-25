@@ -1132,7 +1132,7 @@ namespace SickOfIt.Playtest
             else if (id == DailyId)
             {
                 yield return session.RewindPerfRun(finish: false);
-                if (!Run.Done)
+                if (!session.Run.Done)
                     yield return session.AllLevels(DailyLevels(), $"the daily sample ({PathRange(DailyLevels())})", checkEvery: true);
             }
             else if (id == "portal-audio")
