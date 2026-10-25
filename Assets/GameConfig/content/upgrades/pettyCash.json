@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Petty Cash",
+  "icon": "P",
+  "description": "You keep the change. 25% of diamonds are worth one more.",
+  "maxLevel": 3,
+  "weight": 1,
+  "perksPerLevel": [
+    {
+      "effect": "DiamondValue",
+      "amount": 0.25
+    }
+  ],
+  "color": "#7FE8FF"
+}

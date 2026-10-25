@@ -113,6 +113,7 @@ Assets/GameConfig/
   (the Lost Things: pickups `lostRollingPin`/`lostMitt`/`lostBell` on Floors 997/995/992 use the `setFlag` action, the shop pays once), `idleBehaviorSeconds`/`idleLineSeconds`,
   and line fields `item` (ShopBuy/ShopStocked for one good or ware), `minDeaths`, `requires`; moments ShopDeaths, ShopStocked, ShopIdle, Quest*. `YoobaShelf`,
   `UpgradeShopManager.OpeningLines`, `YoobaPortrait.IdleBehaviors`. Playtest `yooba-alive`.
+- **Yooba's new goods and Grudges** (Docs/Story.md "Yooba's new goods"): `Gameplay/Core/HeroPerks.cs` (`GameplayWorld.Perks`) holds the 16 perk effects (`ShopEffect` Armor..LastGasp; goods in `player.json`, Grudges via `perksPerLevel` in `content/upgrades`), hooks in `Entity.Damage` (`FilterHit`), `Spawning.Fire`, `PlayerController.VolleyScale`, `AddDiamondsAction`, `PayCleanKill`; spent charges are saved in `SaveState`, chances are hashes (never random streams). Card `icon` is a placeholder tag. Playtest `shop-goods`; tests `ShopGoodsTests`.
 - **Hell's tricks** (Docs/Story.md, "Hell's tricks"): five JSON mechanics in `Gameplay/Content/Mechanics.cs` and `projectile`: `bounces`,
   `teleport`, `frontShield` (Entity.Damage asks it; the hero's shots arrive through `IDirectionalDamageable` with the shot's place),
   `laserSweep` (a segment tested against the hero's collider, no physics) and `Aim.Predictive`. Test enemies `ricochetImp`, `blinkImp`,

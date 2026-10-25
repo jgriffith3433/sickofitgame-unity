@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Side Eye",
+  "icon": "I",
+  "description": "You saw it coming. 10% of hits slip off.",
+  "maxLevel": 3,
+  "weight": 1,
+  "perksPerLevel": [
+    {
+      "effect": "Dodge",
+      "amount": 0.1
+    }
+  ],
+  "color": "#8FFFB0"
+}

@@ -15,6 +15,8 @@ namespace SickOfIt.Core.Rewind
         float juice;
         float max = 5f;
         float costPerSecond = 1f;
+        /// <summary>Thrifty Loop and friends: what a second of rewind costs is multiplied by this (constant per level, so rewinds agree).</summary>
+        public float CostScale { get; set; } = 1f;
         float lastClockTime;
         bool draining;
 
@@ -131,7 +133,7 @@ namespace SickOfIt.Core.Rewind
 
             float rewound = Mathf.Max(0f, lastClockTime - clock.Time);
             lastClockTime = clock.Time;
-            juice = Mathf.Max(0f, juice - rewound * costPerSecond);
+            juice = Mathf.Max(0f, juice - rewound * costPerSecond * CostScale);
             if (juice <= 0f)
                 clock.StopRewind();
         }

@@ -1407,6 +1407,37 @@ is proud of). His voice is `yooba` (designed for him: fast, wet, gurgling, a bit
   (`level<n>.diamonds`) and the shop's total (`shop.totalPrice`, `shop.basePrice`), so the ratio can be read off any
   run. Enemy `loot` chances and values are left alone on purpose (the unit of the economy is the diamond; changing
   both sides at once hides which one moved); to slow the shop further, raise prices, to speed it up, raise `loot`.
+- **Yooba's new goods and the new Grudges** (2026-10-25; `Gameplay/Core/HeroPerks.cs`, `ShopEffect` Armor..LastGasp, `UpgradeDef.perksPerLevel`). More things a slime can make out of his stomach, 21 goods (7 of them gated) and 10 Grudges, all small
+  effects with something to see: a *POP!*, *CLANK!*, *SLIPPED!*, *CRIT!*, *+1 BURP*, *BELCH!* or *LAST GASP!* floats over the hero. Totals are constant for a floor; what is spent (bubbles, bombs, gasps, plates) is saved state; every chance is a hash of the seed and the moment, so a rewind replays the same.
+  Prices follow the curve Goo Plaster set: the first level's price times 1, 2.2, 3.6, 5.8, 8.4, rounded to 5 (`ShopGoodsTests`). The new goods add **7,125** diamonds (10,600 for the whole counter; the older goods stay 3,475).
+
+  | Good (card tag) | Levels | Prices | What it does |
+  |---|---|---|---|
+  | Crusty Bits (P) | 3 | 55, 120, 200 | Armour plates: each blocks a hit, grows back 20 s later |
+  | Thicker Crusts (P2) *needs Crusty Bits 3* | 2 | 120, 265 | +1 plate per level |
+  | Snot Bubble (B) | 3 | 50, 110, 180 | A bubble at the start of each floor; pops on the first hit |
+  | Spare Bubble (B2) *needs Snot Bubble 3* | 2 | 110, 240 | +1 bubble per level |
+  | Greased Elbows (S) | 3 | 40, 90, 145 | 8% of hits slip off |
+  | Lucky Lick (C) | 3 | 45, 100, 160 | 7% of volleys crit (x2) |
+  | Four-Leaf Slime (C2) *needs Lucky Lick 3* | 2 | 100, 220 | +8% crit |
+  | Meaner Lick (M) *needs Lucky Lick 1* | 3 | 60, 130, 215 | Crits +50% harder |
+  | Yooba's Burp (H) | 3 | 50, 110, 180 | 7% of kills heal a heart |
+  | Hungrier Burp (H2) *needs Burp 3* | 2 | 110, 240 | +7% |
+  | Gravy Net (N) *needs Shiny Sniffer 2* | 3 | 25, 55, 90 | Bigger magnet (+1.5) |
+  | Fat Diamonds (F) | 3 | 70, 155, 250 | 15% of diamonds are worth one more |
+  | Sticky Air (G) | 3 | 65, 145, 235 | Enemy shots 6% slower |
+  | Loop Crumbs (K) | 3 | 45, 100, 160 | Clean kills pay 0.4 s more Déjà Vu |
+  | Thrifty Loop (L) | 3 | 55, 120, 200 | Rewinds cost 8% less juice |
+  | Belch Bomb (X) | 2 | 85, 185 | A hit that lands pops the shots near him and hurts what's close (one a floor per level) |
+  | Louder Belch (X2) *needs Belch Bomb 1* | 3 | 60, 130, 215 | Bomb radius +0.6 |
+  | Afterglow Goo (A) | 3 | 55, 120, 200 | +0.15 s untouchable after a hit |
+  | Slippery Shots (Z) | 3 | 35, 75, 125 | His shots fly 10% faster |
+  | Floor Pudding (D) | 2 | 75, 165 | Heals a heart as each floor starts |
+  | Spare Gasp (Y) | 2 | 120, 265 | A killing hit leaves one heart, once a floor per level |
+
+  The Grudges (`content/upgrades`, perks per level held, gone when the run ends): **Held Grudge** (a bubble), **Sour Grapes** (+10% crit), **Bad Blood** (+8% heal on kill), **Petty Cash** (+25% fat diamonds),
+  **Slow Burn** (enemy shots 8% slower), **Eye For An Eye** (a belch bomb), **Holding On** (a last gasp), **Side Eye** (+10% slip), **Keeping Score** (clean kills +0.5 s), **Rubbing It In** (crits +50%).
+  Card art is a one or two letter tag until the icons are painted (31 icons, priced in the pull request).
 - He gossips, he counts, he is proud of his stomach. He is never scared for long and never mean. Slimes are
   villagers: nobody in the game ever fights him or his kind.
 

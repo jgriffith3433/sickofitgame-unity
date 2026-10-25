@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Rubbing It In",
+  "icon": "R",
+  "description": "Meaner when it lands. Crits hit 50% harder.",
+  "maxLevel": 3,
+  "weight": 1,
+  "perksPerLevel": [
+    {
+      "effect": "CritDamage",
+      "amount": 0.5
+    }
+  ],
+  "color": "#FFD24A"
+}

@@ -169,6 +169,8 @@ namespace SickOfIt.Data.Config
         public string id;
         public string title;
         public string description;
+        [Tooltip("A one or two letter tag drawn on the card's badge until real icon art exists (e.g. B). Empty = no badge.")]
+        public string icon = "";
         [Tooltip("Diamonds for each level, in order (the last price repeats).")]
         public int[] costsPerLevel;
         public int maxLevel;
@@ -201,5 +203,21 @@ namespace SickOfIt.Data.Config
         [Tooltip("+amount x100% damage for melee weapons (fists) only.")] MeleeDamage,
         [Tooltip("+amount x100% reach for melee weapons (fists) only.")] MeleeReach,
         [Tooltip("Any level: the weapons he holds survive the end of a run (WeaponProgress is not cleared).")] KeepWeapons,
+        [Tooltip("+amount armour plates: each blocks one hit, then grows back 20 s later (HeroPerks).")] Armor,
+        [Tooltip("+amount bubbles at the start of every floor: each pops on the first hit it meets.")] ShieldCharges,
+        [Tooltip("+amount x100% chance that a hit is slipped (no damage).")] Dodge,
+        [Tooltip("+amount x100% chance that a volley crits (double damage).")] CritChance,
+        [Tooltip("+amount x100% more damage on a crit (a crit is x2 plus this).")] CritDamage,
+        [Tooltip("+amount x100% chance that a kill heals one heart.")] HealOnKill,
+        [Tooltip("+amount x100% chance per diamond picked up to be worth one more (above 1: a sure one more and a chance of two).")] DiamondValue,
+        [Tooltip("-amount x100% speed of enemy shots.")] SlowShots,
+        [Tooltip("+amount seconds of Deja Vu on top of a clean kill's refund.")] CleanKillBonus,
+        [Tooltip("-amount x100% of the juice a rewind costs.")] RewindDiscount,
+        [Tooltip("+amount bombs per floor: a hit that lands pops the shots near him and hurts the enemies there.")] BombCharges,
+        [Tooltip("+amount world units of bomb radius.")] BombRadius,
+        [Tooltip("+amount seconds untouchable after a hit.")] Afterglow,
+        [Tooltip("+amount x100% speed of his own shots.")] ShotSpeed,
+        [Tooltip("+amount hearts healed when a floor starts.")] FloorHeal,
+        [Tooltip("+amount per floor: a hit that would kill him leaves him on one heart instead.")] LastGasp,
     }
 }
