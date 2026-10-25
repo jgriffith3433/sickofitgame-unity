@@ -211,7 +211,10 @@ namespace SickOfIt.Playtest
                 while (!Run.Done && Time.realtimeSinceStartup < giveUp && clock.Time > target)
                     yield return null;
                 input.SetKey(Key.R, false);
-                yield return WaitReal(0.35f);
+                // Only a couple of frames: the clock runs forward again once R is up, and a longer wait
+                // lands the checks after the burst they ask about (0.34 s late).
+                yield return null;
+                yield return null;
             }
 
             /// <summary>Walks to world x with A/D (real input).</summary>
