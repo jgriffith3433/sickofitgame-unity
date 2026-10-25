@@ -419,6 +419,382 @@
             ]
           }
         ]
+      },
+      {
+        "name": "companion: wick, Floor 902",
+        "when": {
+          "type": "sectionReached",
+          "section": "stairs"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "wick",
+                "id": "cmp",
+                "anchor": "Player",
+                "at": [
+                  6.0,
+                  0.35
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "cmp:wick:902:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Wick: The last lamp. ...I can stop now. Can I stop now?",
+                "duration": 4.6,
+                "style": "Subtitle",
+                "color": "#BFE6C8"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.9
+              },
+              {
+                "type": "showText",
+                "text": "Stop. Sit.",
+                "duration": 1.8,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.1
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "heroState",
+                  "heartsAtMost": 1
+                },
+                "then": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:wick:902:branch:hurt"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Wick: Oh, you're hurt. One more match, then.",
+                        "duration": 3.9,
+                        "style": "Subtitle",
+                        "color": "#BFE6C8"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 4.2
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Wick: It stayed lit. ...It stayed lit.",
+                        "duration": 3.5,
+                        "style": "Subtitle",
+                        "color": "#BFE6C8"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.8
+                      },
+                      {
+                        "type": "heal",
+                        "target": {
+                          "player": true
+                        },
+                        "amount": 1
+                      },
+                      {
+                        "type": "popText",
+                        "text": "+1 heart",
+                        "color": [
+                          1.0,
+                          0.45,
+                          0.5,
+                          1.0
+                        ],
+                        "at": [
+                          0.0,
+                          1.2
+                        ],
+                        "anchor": "Player"
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.6,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:wick:902:reward:heart+diamond2"
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "wick.rested"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:wick:902:done"
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "if",
+                    "condition": {
+                      "type": "heroState",
+                      "requires": [
+                        "flag:wick.lit",
+                        "flag:rook.asked"
+                      ]
+                    },
+                    "then": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:902:branch:friends"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Wick: You talk to everyone, don't you.",
+                            "duration": 3.5,
+                            "style": "Subtitle",
+                            "color": "#BFE6C8"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.8
+                          },
+                          {
+                            "type": "showText",
+                            "text": "They talk to me.",
+                            "duration": 2.0,
+                            "style": "Subtitle"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 2.3
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Wick: It stayed lit. ...It stayed lit.",
+                            "duration": 3.5,
+                            "style": "Subtitle",
+                            "color": "#BFE6C8"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.8
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.6,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              4.2,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:902:reward:diamond3"
+                          },
+                          {
+                            "type": "setFlag",
+                            "flag": "wick.rested"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:902:done"
+                          }
+                        ]
+                      }
+                    ],
+                    "else": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:902:branch:plain"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Wick: Go quiet. He hears everything.",
+                            "duration": 3.3,
+                            "style": "Subtitle",
+                            "color": "#BFE6C8"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.6
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Wick: It stayed lit. ...It stayed lit.",
+                            "duration": 3.5,
+                            "style": "Subtitle",
+                            "color": "#BFE6C8"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.8
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              3.6,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "diamond",
+                            "anchor": "Player",
+                            "at": [
+                              4.2,
+                              0.9
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:902:reward:diamond3"
+                          },
+                          {
+                            "type": "setFlag",
+                            "flag": "wick.rested"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:902:done"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [

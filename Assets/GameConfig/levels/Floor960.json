@@ -1334,6 +1334,262 @@
             "includeFuture": true
           }
         ]
+      },
+      {
+        "name": "companion: wick, Floor 960",
+        "when": {
+          "type": "sectionReached",
+          "section": "stones"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "wick",
+                "id": "cmp",
+                "anchor": "Player",
+                "at": [
+                  6.0,
+                  0.35
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "cmp:wick:960:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Wick: It keeps going out. ...I'm not crying, it's the smoke.",
+                "duration": 4.9,
+                "style": "Subtitle",
+                "color": "#BFE6C8"
+              },
+              {
+                "type": "wait",
+                "seconds": 5.2
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "heroState",
+                  "diamondsAtLeast": 20
+                },
+                "then": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:wick:960:branch:rich"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Wick: Could you spare a diamond for the oil? ...No. Keep it. I'll owe you.",
+                        "duration": 5.8,
+                        "style": "Subtitle",
+                        "color": "#BFE6C8"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 6.1
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "rewindOrb",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          1.3
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "rewindOrb",
+                        "anchor": "Player",
+                        "at": [
+                          3.6,
+                          1.3
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:wick:960:reward:orb2"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:wick:960:done"
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "if",
+                    "condition": {
+                      "type": "heroState",
+                      "grudgesAtLeast": 2
+                    },
+                    "then": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:960:branch:grudges"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Wick: Hold on to those Grudges. They get heavy.",
+                            "duration": 4.1,
+                            "style": "Subtitle",
+                            "color": "#BFE6C8"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 4.4
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "rewindOrb",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              1.3
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:960:reward:orb"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:960:done"
+                          }
+                        ]
+                      }
+                    ],
+                    "else": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:960:branch:plain"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Wick: Try the left stone. It holds.",
+                            "duration": 3.3,
+                            "style": "Subtitle",
+                            "color": "#BFE6C8"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.6
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Thanks.",
+                            "duration": 1.8,
+                            "style": "Subtitle"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 2.1
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "rewindOrb",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              1.3
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:960:reward:orb"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:960:done"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [

@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; the Overlord on the far ledge, eight glimpses on Circles X and IX, 2026-10-25; elites and mid-bosses on the x5 floors, 2026-10-25; the hero's moves, a dash and a wall-jump, 2026-10-25; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; the Climbers, a rival and a guide per Circle, 2026-10-25; the Overlord on the far ledge, eight glimpses on Circles X and IX, 2026-10-25; elites and mid-bosses on the x5 floors, 2026-10-25; the hero's moves, a dash and a wall-jump, 2026-10-25; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -36,6 +36,7 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 | **The Overlord** | Giant obsidian titan with red eyes. Ruler of Hell's 1,000 floors, as sick of Hell as the hero is of everything, and done waiting to take the surface. Never in a hurry; barely notices the hero until he can't ignore him. Says very little, and every word sounds like it cost him nothing. | `audio.json` voice `overlord`: deep, slow, enormous, barely bothered; a voice that fills a valley without being raised. Short lines, long pauses. When he lasers the portal open he barely notices the hero: *"Mm. ... Stay."* or a bored exhale. | Video1, Level1 backgrounds |
 | **Yooba** | The village's green slime and its gossip, and J's own character (the same Yooba as Yooba Land; his name is final, not a working one). Swallowed a handful of the village's diamonds to hide them from the imps, got sucked through the portal with the hero, and now trades and tinkers between floors out of his own stomach. **Slimes are villagers, never enemies.** | `audio.json` voice `yooba`: friendly, chatty, wet; talks fast, gurgles between words, never stops for breath, delighted to see anyone, a bit too pleased with himself. | Video3 (the talking slime); his talking portrait (`ui/yooba.json`, see *Yooba between floors*) |
 | **The Announcer** | Hell's own voice: loves a show, calls out floors, bosses and deaths like an arcade cabinet. | `announcer` | Floor titles, death screens |
+| **The Climbers** | **Rook** (the rival, always second), **Wick** (Circle X's lamplighter guide) and **Pointer** (Circle IX's fingerpost guide): damned souls met again and again on the floors, with scenes that branch on the hero. See *The Climbers*. | `rook`, `wick`, `pointer` (subtitles until cast) | `art/rook.json`, `wick.json`, `pointer.json` |
 | **The Wardens** | One boss per Circle: the monster that rules it. Each guards its Circle's top floor. | Per Warden | Death videos, bosses |
 | **The Magma King** | Circle X's Warden: a huge king of slag and obsidian with a lava crown, slouched on a throne of slag at Floor 901. He never gets up, unless you make him: the Wastes come to him. Smug where the Overlord is bored; proud, loves an audience and takes Hell's show seriously (a challenger is the best entertainment the Wastes have had in ages). He hears everything that climbs his stairs and enjoys the wait. Making him stand is what enrages him (see *The Magma King's fight*). | `audio.json` voice `magmaKing`: very deep, thick, gurgling bass; slow, smug, amused, lazy, proud; chuckles (*"Mm-hm-hm."*), never shouts. The one line with weight is when he stands. Heard before he's seen, from ahead on the Heat Stairs. | `art/magmaKing.json`: generated sheets in `Assets/Art/Enemies/MagmaKing/` |
 | **The Spire Fiend** | Circle IX's Warden: a gaunt basalt demon rooted in the heart of the great spire at Floor 801, his lower body a spire instead of legs, rock spires bristling from his head, shoulders and back, thin orange seams glowing all over him. He **grows the spires**: every spire on the Cracked Road is one he pushed up through the road (that is why the road keeps splitting), and the great spire is the one he has grown for ages so that nothing in the Circle stands higher than him. Hell's loop is his too: every night the spire sheds back to the same height, every day he grows it again. He can't bear anything above him, and a hero climbing *up* is the worst thing he can think of. Not a showman like the Magma King: he **listens** (the hum on the Needle Stair is him, listening through the rock), counts steps, and whispers. Making him lose his calm is what enrages him (see *The Spire Fiend's fight*). | `audio.json` voice `spireFiend`: a dry, hollow, rasping whisper with stone grinding under it; slow, patient, cold, precise; hums (*"Hmmmm."*) instead of laughing. The one line he raises is the enrage. Never heard on the route, only his spire's hum. | `art/spireFiend.json`: generated sheets in `Assets/Art/Enemies/SpireFiend/` |
@@ -2214,6 +2215,84 @@ two lines the game had (*Stay.* and the exhale, the portal) are joined by these 
 the hero's ten replies (`vo_hero_ovl_*`). Data written by `Tools/Levels/overlord_cameos.py` (edit its table and run it, never the files by hand;
 `--check` runs with no Unity); two small mechanics make them possible, `screenAnchor` (an entity held at a place on the screen, drifting) and the
 `heroRewound` trigger (true for a moment after a rewind ends). Playtest `overlord-cameos`.
+
+## The Climbers: a rival and a guide for each Circle (built 2026-10-25)
+
+J (2026-10-25): *"Invent a rival climber and one recurring guide character per built Circle."* The Overlord is far away and says nothing to the hero; the
+bystanders say one line and are gone. The climb needs people who are met **again**, who remember the last floor, and who are funny to him. These three
+are damned souls like the rest of Hell's loop-keepers, but each has a loop that *almost* lets him leave it, and the hero is the reason it almost does. They
+share the bystanders' rules: they can't be hurt, can't fight and are never an enemy; they never speak of work, bosses-as-managers, offices or coffee;
+nobody from the village is in Hell but Yooba, so none of them is a villager; none is a slime.
+
+| Who | Where | Why they are in Hell | Look | Voice (`audio.json` voice, cast through Hawkes Gen) |
+|---|---|---|---|---|
+| **Rook**, the Other Climber (the rival) | Circle X: Floors 996, 992, 955. Circle IX: 899, 858, 808 | In life he came **second at everything**, by a hair, and was sure he would have won with one more try. Hell's sentence for that is the loop: he climbs the Wastes, and on every floor he arrives exactly one step behind whoever is ahead. He has been the runner-up of the whole climb since before the hero fell. Now there is someone ahead of him who is *not even trying*, and it is the best and worst thing that ever happened to him. | Tall, lean, a soul in a patched mountaineer's coat and a scarf that burns without burning down, one glove, a coiled rope that goes nowhere. Amber glow (`#F2A93B` in subtitles). A medal on a ribbon around his neck that says **2**. He is always mid-stretch, as if someone has just taken his photograph. | `rook`: bright, boastful, a little too loud, a game-show host who is not winning; cracks on the "2". Third-person when he is hurt (*"Rook will be fine."*). |
+| **Wick**, the Lamplighter (Circle X's guide) | Circle X: Floors 999, 993, 960, 902 | He lights **the one lamp** on a ledge so travellers can see the safe stone; it goes out the moment anyone passes, so he lights it again, for a different traveller, for ever. He wants one traveller to get to the top, so the lamp stays lit once. | Small, bent, a candle for a head that is always lit and never shorter, a long pole with a wick on the end. Pale green flame (`#BFE6C8`). | `wick`: a soft wheeze, very kind, in no hurry, speaks as if every sentence were a match that might not catch. Hums. |
+| **Pointer**, the Fingerpost (Circle IX's guide) | Circle IX: Floors 900, 895, 860, 810 | A soul fused to a road sign when the Cracked Road split under him: one arm is stuck out straight, **he can only point**, and he is right about where the road holds, always, to nobody's thanks. He used to say *"the road is cracked"* to every passer-by; they thought it was a sign. | Planks nailed to a body, one arm a long signpost arm with a hand at the end, a name board on his chest that reads UP. Dusty tan (`#C9A27A`). | `pointer`: gruff, flat, as few words as possible, directions only. Says *"Left."*, *"Up."*, *"Your other left."* The only soul in Hell who is annoyed at being right. |
+
+### What a climber is, in the game
+
+A climber is a **scene** on a floor (the scene engine, like the Overlord's glimpses): when the hero reaches a section, the climber is there, ahead, the camera
+holds a few seconds, the lines run, a **small reward** is paid once, a **flag** is written (for good, kept until New Game) and the climber goes on its way; the floor
+then goes on. Nothing in a scene ends a floor, introduces an enemy or takes anything from him. **Every scene branches on the hero** (`heroState`, a new trigger that
+reads his hearts, diamonds, Grudges, deaths and the flags earlier scenes wrote), so the same scene says something else to a hero who is bleeding, rich, hurt
+often, or who has met the same person before. Rewinding through a scene replays it (Hell is repetition); the reward is keyed to the floor (`TryGrantOnce` through the
+spawned pickup's own collect), so a rewind never pays twice, and the flags are `setFlag`.
+
+The rewards are small on purpose: a diamond or three, a rewind orb, a heart when he is down to one. They are never the floor's best prize, and none is required.
+
+### Rook, the rival (six scenes, Circles X and IX)
+
+Rook is always **one step ahead and one step behind**: he is ahead on the screen, and he loses. The hero never races him on purpose and never says he wants to win.
+Rook thinks R is cheating, so he keeps a tally, and the tally is his arc (flags `rook.met`, `rook.dared`, `rook.asked`, `rook.sideways`, `rook.second`, `rook.done`).
+
+| # | Floor, section | What happens | Branches on the hero | Reward | Flag |
+|---|---|---|---|---|---|
+| 1 | 996, *foot* | He is stretching on a ledge ahead. *"First! ...Oh. You're a person."* He announces the race the hero hasn't entered. | **Diamonds 10+:** *"Look at the pockets on you. Cheating."* **Otherwise:** *"Slow and poor. I like it."* The hero: *"I'm just going up."* | Diamonds 10+: nothing (he's offended). Otherwise he tosses a diamond: *"For the effort."* | `rook.met` |
+| 2 | 992, *wall* | A dare: *"Race you to the bridge. Go!"* He runs ahead and the cracking stone drops under him; he scrambles back, angry. | **Hearts 1:** *"You're one hit from the floor. Even I won't race that."* and he gives up the dare. **Hearts 2+:** *"Third floor in a row I'm second!"* | Hearts 1: a heart (a shard of his scarf's ember heals him). Else: a diamond he drops. | `rook.dared` |
+| 3 | 955, *falls* | He hides behind the falls to watch the hero's R. *"How does it work? Asking for a friend. The friend is me."* | **Deaths 3+:** *"You've died more than I have, and you're still ahead?"* **Grudges 2+:** *"You collect those like medals."* **Otherwise:** *"Show me. Slowly."* | A rewind orb he "found". | `rook.asked` |
+| 4 | 899, *wall* | He tried R on his own. *"It doesn't go backward for me. It goes... sideways."* He steps sideways. | **Flag `rook.asked`:** he says the trick he learned from the hero is "bring your own annoyance". **Else (he skipped 955):** *"I heard there's a button."* | Diamonds 2. | `rook.sideways` |
+| 5 | 858, *foot* | The road leans and he gets there first, then the road drops him behind the hero again. *"Second. ...Second. It's a number, at least."* | **Hearts 1:** he gives up the lead and walks beside him, warning the hero where the road tips. **Diamonds 30+:** *"Spend those. You'll get tired of carrying the first place."* | A heart if hearts are 1; else a rewind orb. | `rook.second` |
+| 6 | 808, *foot* | The last scene. He sits on the bottom step with his medal in his hand. *"I don't need to be first. I need to see you be."* He gives the hero the rope that goes nowhere: *"It goes where you go."* | **Flag `rook.second`:** the kindest line he has. **Deaths 5+:** *"Die less. It's embarrassing for both of us."* **Otherwise:** *"Don't die, I'd have to carry on."* | Three diamonds and a rewind orb. | `rook.done` |
+
+The hero's side of it is all deadpan: *"I'm not racing."*, *"You're ahead."* *"Then why am I behind?"*, *"It's a button."*, *"Fine. Second's a good place."*
+
+### Wick, the Lamplighter (Circle X's guide, four scenes)
+
+Wick teaches the Wastes by what he lights. The lamp on each of his ledges is lit **once** when the hero reaches it and **stays lit** (the one lamp in Hell that does).
+His arc: he is a stranger who wants a traveller to arrive; by the Heat Stairs he is a friend who says he can stop now. Flags `wick.met`, `wick.lit`, `wick.rested`.
+
+| # | Floor, section | What happens | Branches on the hero | Reward | Flag |
+|---|---|---|---|---|---|
+| 1 | 999, *ledges* | *"Oh. Someone. ...Mind the dark. I'll light it."* The lamp over the next ledge lights. | **Hearts 1:** *"You're running on a wick."* he lights the lamp over him and it heals. **Otherwise:** the usual welcome and a tip: the lava rises. | Hearts 1: a heart. Otherwise a rewind orb. | `wick.met` |
+| 2 | 993, *ledges* | *"They throw things here. ...Don't catch them."* He lights the lamp where the hollows are. | **Deaths 3+:** *"You've been up here before. ...So have I."* **Flag `rook.met`:** *"A loud one went by. He said he's winning."* | A rewind orb (two if deaths 3+). | `wick.lit` |
+| 3 | 960, *stones* | He can't keep the lamp lit; the pulleys are loud. *"It keeps going out. ...I'm not crying, it's the smoke."* | **Diamonds 20+:** he asks for one for the oil and gives back two orbs ("I'll owe you"; the diamonds are *not* taken). **Grudges 2+:** *"Hold on to those. They'll get heavy."* | Two rewind orbs, or one. | none |
+| 4 | 902, *stairs* | The last lamp before the Magma King's door. *"I can stop now. ...Can I stop now?"* | **Flag `wick.lit` and `rook.asked`:** *"You talk to everyone, don't you."* **Hearts 1:** he heals him. **Otherwise:** *"Go quiet. He hears everything."* | A heart if low; otherwise three diamonds. | `wick.rested` |
+
+### Pointer, the Fingerpost (Circle IX's guide, four scenes)
+
+Pointer is the opposite of Wick: he does not speak to be kind, he points. The pointing is the **hint**: the glow follows his arm to the next crack that holds. His arc is
+that he is fed up with being right, and by the Spire he points at something other than the road. Flags `pointer.met`, `pointer.right`, `pointer.up`.
+
+| # | Floor, section | What happens | Branches on the hero | Reward | Flag |
+|---|---|---|---|---|---|
+| 1 | 900, *rise* | *"Left."* The hero goes right. *"Your other left."* A glow marks the ledge that holds. | **Hearts 1:** *"Up. Fast. Please."* he points at an orb. **Otherwise:** the diamond sits where his arm points. | Diamond (or an orb at hearts 1). | `pointer.met` |
+| 2 | 895, *road* | The road heaves. *"Up."* Then *"Not that up."* | **Deaths 2+:** *"I've pointed you here before."* **Flag `rook.sideways`:** *"A man went sideways. I don't recommend it."* | A rewind orb. | `pointer.right` |
+| 3 | 860, *crack* | Under the Carver's yard. *"Don't look at the statue."* | **Grudges 2+:** *"You're carrying a lot of promises."* **Flag `wick.rested`:** *"Little glowing one sent regards."* | Two diamonds. | none |
+| 4 | 810, *stair* | At the foot of the Spire's last flight. His arm droops for the first time and points up at the Needle. *"That's all I know. ...Up."* | **Hearts 1:** he heals him. **Flag `pointer.right` and `rook.second`:** *"I was right about all of you."* | A heart and two diamonds. | `pointer.up` |
+
+### How they meet each other
+
+Wick mentions Rook on Floor 993 if the hero has met him; Pointer mentions Rook (895) and Wick (860) the same way. Rook never mentions them, because he is
+busy. The three are never on screen at once; the hero is the only one who has met all three, which is why each one asks the same thing: *"Are you the one going up?"*
+
+### Voices and subtitles
+
+All three are **subtitles only** until their voices are cast and made (Hawkes Gen `audio.voice-design`, then `audio.voice`, cents a line): the recipes are
+`Tools/Audio/companion_voices.json` (voice descriptions and the delivery-tagged prompt for every line, so they can be made in one batch) and the `showText` lines
+carry no `sound` until the clips exist. Art is a spec each in `Assets/GameConfig/art/` (`rook`, `wick`, `pointer`), priced, not generated; the stand-ins are
+labelled placeholders tinted in the character's colour. Data is written by `Tools/Levels/companions.py` (edit its table and run it, never the floors by hand;
+`--check` runs with no Unity). New C# is the `heroState` trigger (`Gameplay/Content/HeroState.cs`). Playtest `companions`.
 
 ## Rules for levels
 

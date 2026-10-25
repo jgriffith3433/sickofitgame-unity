@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "entity": "pointer",
+  "name": "Pointer",
+  "description": "a soul fused to a road sign: planks nailed to a body, one arm a long signpost arm held straight out with a hand at the end, a name board on his chest that reads UP, dusty tan wood",
+  "height": 1.8,
+  "poses": {
+    "stand": "standing, facing the viewer, relaxed",
+    "talk": "mid-sentence, one hand raised",
+    "walk": "mid-stride in profile"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes slowly, shifts weight",
+      "seconds": 3
+    },
+    "talk": {
+      "from": "talk",
+      "action": "speaks with small gestures",
+      "seconds": 2.5
+    },
+    "walk": {
+      "from": "walk",
+      "action": "walks away unhurried",
+      "seconds": 2.5
+    }
+  },
+  "takes": {
+    "pose": 3,
+    "clip": 3
+  }
+}

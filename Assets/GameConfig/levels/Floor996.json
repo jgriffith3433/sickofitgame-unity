@@ -1436,6 +1436,211 @@
             "includeFuture": true
           }
         ]
+      },
+      {
+        "name": "companion: rook, Floor 996",
+        "when": {
+          "type": "sectionReached",
+          "section": "foot"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "rook",
+                "id": "cmp",
+                "anchor": "Player",
+                "at": [
+                  6.0,
+                  0.35
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "cmp:rook:996:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Rook: First! ...Oh. You're a person.",
+                "duration": 3.3,
+                "style": "Subtitle",
+                "color": "#F2A93B"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.6
+              },
+              {
+                "type": "showText",
+                "text": "I'm just going up.",
+                "duration": 2.2,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "showText",
+                "text": "Rook: Going up. Racing. Same thing.",
+                "duration": 3.3,
+                "style": "Subtitle",
+                "color": "#F2A93B"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.6
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "heroState",
+                  "diamondsAtLeast": 10
+                },
+                "then": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:996:branch:rich"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Rook: Look at the pockets on you. Cheating.",
+                        "duration": 3.8,
+                        "style": "Subtitle",
+                        "color": "#F2A93B"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 4.1
+                      },
+                      {
+                        "type": "showText",
+                        "text": "It's called picking things up.",
+                        "duration": 3.0,
+                        "style": "Subtitle"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.3
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "rook.met"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:996:done"
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:996:branch:poor"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Rook: Slow and poor. I like it. For the effort.",
+                        "duration": 4.1,
+                        "style": "Subtitle",
+                        "color": "#F2A93B"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 4.4
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Thanks. I think.",
+                        "duration": 2.0,
+                        "style": "Subtitle"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 2.3
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:996:reward:diamond"
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "rook.met"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:996:done"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [

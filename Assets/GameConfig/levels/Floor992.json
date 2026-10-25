@@ -1578,6 +1578,237 @@
             "includeFuture": true
           }
         ]
+      },
+      {
+        "name": "companion: rook, Floor 992",
+        "when": {
+          "type": "sectionReached",
+          "section": "wall"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "rook",
+                "id": "cmp",
+                "anchor": "Player",
+                "at": [
+                  6.0,
+                  0.35
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "cmp:rook:992:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Rook: Race you to the bridge. Go!",
+                "duration": 3.1,
+                "style": "Subtitle",
+                "color": "#F2A93B"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "showText",
+                "text": "No.",
+                "duration": 1.8,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.1
+              },
+              {
+                "type": "showText",
+                "text": "Rook: Too late. I'm winning.",
+                "duration": 2.8,
+                "style": "Subtitle",
+                "color": "#F2A93B"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.1
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "heroState",
+                  "heartsAtMost": 1
+                },
+                "then": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:992:branch:hurt"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Rook: You're one hit from the floor. Even I won't race that. Take the ember off my scarf.",
+                        "duration": 6.8,
+                        "style": "Subtitle",
+                        "color": "#F2A93B"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 7.1
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Appreciated.",
+                        "duration": 1.8,
+                        "style": "Subtitle"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 2.1
+                      },
+                      {
+                        "type": "heal",
+                        "target": {
+                          "player": true
+                        },
+                        "amount": 1
+                      },
+                      {
+                        "type": "popText",
+                        "text": "+1 heart",
+                        "color": [
+                          1.0,
+                          0.45,
+                          0.5,
+                          1.0
+                        ],
+                        "at": [
+                          0.0,
+                          1.2
+                        ],
+                        "anchor": "Player"
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:992:reward:heart"
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "rook.dared"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:992:done"
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:992:branch:race"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Rook: Third floor in a row I'm second! ...Is the bridge supposed to do that?",
+                        "duration": 5.9,
+                        "style": "Subtitle",
+                        "color": "#F2A93B"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 6.2
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Yes.",
+                        "duration": 1.8,
+                        "style": "Subtitle"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 2.1
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "diamond",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          0.9
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:992:reward:diamond"
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "rook.dared"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:rook:992:done"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [

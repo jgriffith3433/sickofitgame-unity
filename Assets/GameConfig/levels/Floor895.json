@@ -1208,6 +1208,288 @@
             "includeFuture": true
           }
         ]
+      },
+      {
+        "name": "companion: pointer, Floor 895",
+        "when": {
+          "type": "sectionReached",
+          "section": "road"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "pointer",
+                "id": "cmp",
+                "anchor": "Player",
+                "at": [
+                  6.0,
+                  0.35
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "cmp:pointer:895:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Pointer: Up.",
+                "duration": 1.8,
+                "style": "Subtitle",
+                "color": "#C9A27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.1
+              },
+              {
+                "type": "showText",
+                "text": "Pointer: Not that up.",
+                "duration": 2.4,
+                "style": "Subtitle",
+                "color": "#C9A27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.7
+              },
+              {
+                "type": "showText",
+                "text": "Which up?",
+                "duration": 1.8,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.1
+              },
+              {
+                "type": "showText",
+                "text": "Pointer: The one that holds.",
+                "duration": 2.8,
+                "style": "Subtitle",
+                "color": "#C9A27A"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.1
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "heroState",
+                  "deathsAtLeast": 2
+                },
+                "then": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:pointer:895:branch:dead"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Pointer: I've pointed you here before.",
+                        "duration": 3.5,
+                        "style": "Subtitle",
+                        "color": "#C9A27A"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.8
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "rewindOrb",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          1.3
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:pointer:895:reward:orb"
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "pointer.right"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:pointer:895:done"
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "if",
+                    "condition": {
+                      "type": "heroState",
+                      "requires": [
+                        "flag:rook.sideways"
+                      ]
+                    },
+                    "then": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:895:branch:rook"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Pointer: A man went sideways. I don't recommend it.",
+                            "duration": 4.3,
+                            "style": "Subtitle",
+                            "color": "#C9A27A"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 4.6
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "rewindOrb",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              1.3
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:895:reward:orb"
+                          },
+                          {
+                            "type": "setFlag",
+                            "flag": "pointer.right"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:895:done"
+                          }
+                        ]
+                      }
+                    ],
+                    "else": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:895:branch:plain"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Pointer: That one.",
+                            "duration": 2.2,
+                            "style": "Subtitle",
+                            "color": "#C9A27A"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 2.5
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "rewindOrb",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              1.3
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:895:reward:orb"
+                          },
+                          {
+                            "type": "setFlag",
+                            "flag": "pointer.right"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:pointer:895:done"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [

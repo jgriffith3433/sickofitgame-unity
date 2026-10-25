@@ -1328,6 +1328,297 @@
             "includeFuture": true
           }
         ]
+      },
+      {
+        "name": "companion: wick, Floor 993",
+        "when": {
+          "type": "sectionReached",
+          "section": "ledges"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "spawn",
+                "entity": "wick",
+                "id": "cmp",
+                "anchor": "Player",
+                "at": [
+                  6.0,
+                  0.35
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "cmp:wick:993:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Wick: They throw things here. ...Don't catch them.",
+                "duration": 4.2,
+                "style": "Subtitle",
+                "color": "#BFE6C8"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.5
+              },
+              {
+                "type": "showText",
+                "text": "Wasn't planning to.",
+                "duration": 2.2,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "if",
+                "condition": {
+                  "type": "heroState",
+                  "deathsAtLeast": 3
+                },
+                "then": [
+                  {
+                    "type": "runSequence",
+                    "steps": [
+                      {
+                        "type": "emit",
+                        "signal": "cmp:wick:993:branch:dead"
+                      },
+                      {
+                        "type": "showText",
+                        "text": "Wick: You've been up here before. ...So have I.",
+                        "duration": 4.1,
+                        "style": "Subtitle",
+                        "color": "#BFE6C8"
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 4.4
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "rewindOrb",
+                        "anchor": "Player",
+                        "at": [
+                          3.0,
+                          1.3
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "spawn",
+                        "entity": "rewindOrb",
+                        "anchor": "Player",
+                        "at": [
+                          3.6,
+                          1.3
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:wick:993:reward:orb2"
+                      },
+                      {
+                        "type": "setFlag",
+                        "flag": "wick.lit"
+                      },
+                      {
+                        "type": "walkEntityTo",
+                        "target": "cmp",
+                        "x": 14.0,
+                        "relativeTo": "player",
+                        "speed": 3.0
+                      },
+                      {
+                        "type": "wait",
+                        "seconds": 3.0
+                      },
+                      {
+                        "type": "despawn",
+                        "target": {
+                          "id": "cmp"
+                        }
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "cmp:wick:993:done"
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "if",
+                    "condition": {
+                      "type": "heroState",
+                      "requires": [
+                        "flag:rook.met"
+                      ]
+                    },
+                    "then": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:993:branch:rook"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Wick: A loud one went by. He says he's winning.",
+                            "duration": 4.1,
+                            "style": "Subtitle",
+                            "color": "#BFE6C8"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 4.4
+                          },
+                          {
+                            "type": "showText",
+                            "text": "He's second.",
+                            "duration": 1.8,
+                            "style": "Subtitle"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 2.1
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Wick: He said that too.",
+                            "duration": 2.5,
+                            "style": "Subtitle",
+                            "color": "#BFE6C8"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 2.8
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "rewindOrb",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              1.3
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:993:reward:orb"
+                          },
+                          {
+                            "type": "setFlag",
+                            "flag": "wick.lit"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:993:done"
+                          }
+                        ]
+                      }
+                    ],
+                    "else": [
+                      {
+                        "type": "runSequence",
+                        "steps": [
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:993:branch:plain"
+                          },
+                          {
+                            "type": "showText",
+                            "text": "Wick: Light's on. Go quick.",
+                            "duration": 2.8,
+                            "style": "Subtitle",
+                            "color": "#BFE6C8"
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.1
+                          },
+                          {
+                            "type": "spawn",
+                            "entity": "rewindOrb",
+                            "anchor": "Player",
+                            "at": [
+                              3.0,
+                              1.3
+                            ],
+                            "facePlayer": false
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:993:reward:orb"
+                          },
+                          {
+                            "type": "setFlag",
+                            "flag": "wick.lit"
+                          },
+                          {
+                            "type": "walkEntityTo",
+                            "target": "cmp",
+                            "x": 14.0,
+                            "relativeTo": "player",
+                            "speed": 3.0
+                          },
+                          {
+                            "type": "wait",
+                            "seconds": 3.0
+                          },
+                          {
+                            "type": "despawn",
+                            "target": {
+                              "id": "cmp"
+                            }
+                          },
+                          {
+                            "type": "emit",
+                            "signal": "cmp:wick:993:done"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "phases": [
