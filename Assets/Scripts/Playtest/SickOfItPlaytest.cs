@@ -788,6 +788,9 @@ namespace SickOfIt.Playtest
                 "clicks, then shows it; the shop's prices are reported (diamonds to max everything, with and without the gated good). Then the scene " +
                 $"\"{GrudgeScene}\" on level {CutsceneLevel}'s stage offers a Grudge pick that must list Not Today (picked with 1: the hero's hit is followed by " +
                 "a longer invincibility). Each beat is a check event, `shop.*` metrics carry the prices and `level<n>.diamonds` the diamonds each level paid", 150, "menus"));
+            list.Add(new PlaytestScenario(ShopGoodsId, "Yooba's new goods and the new Grudges: the shop lists 20+ new goods (a card tag each) priced on the retuned curve, every level is bought with the shop's own purchase (setup shortcut: the purse), " +
+                "Level 1 starts with their perks in the hero's hands (totals, full bubbles, plates, bombs and gasps, slower enemy shots, a cheaper rewind), the 8+ new Grudges are granted one by one and each adds its perk, " +
+                "then the bot plays and the perks that fire (crit, bubble pop, plate, slip, fat diamond, burp, bomb, gasp) are logged as `perk` events. Each beat is a check event", ShopGoodsSeconds, "level"));
             list.Add(new PlaytestScenario(ShopWeaponsId, "Yooba's weapon goods: the shop hides Slimed Knuckles, Stretchy Wraps and Keep Weapons while no weapon is unlocked, shows them once the fists are, Keep Weapons and Slimed Knuckles bought with real clicks make Yooba accuse the hero of stealing from him (a ShopBuyWeapon line, voiced), and a run ending keeps the fists only with Keep Weapons bought (setup shortcuts: the unlock, the run end). Each beat is a check event", 120, "menus"));
             list.Add(new PlaytestScenario(YoobaAliveId, "Yooba's living shop (Docs/Story.md, \"Yooba's shop\"), clicked with the virtual mouse: the shelf starts with one jar and nine gaps, " +
                 "fills as floors are cleared (setup shortcuts: levels marked cleared, deaths counted) and Yooba points out each new ware, asks for the Lost Things quest, reacts to the deaths " +
@@ -1154,6 +1157,8 @@ namespace SickOfIt.Playtest
                 yield return session.Cutscene();
             else if (id == "shop-gate")
                 yield return session.ShopGate();
+            else if (id == ShopGoodsId)
+                yield return session.ShopGoodsRun();
             else if (id == ShopWeaponsId)
                 yield return session.ShopWeapons();
             else if (id == YoobaAliveId)
