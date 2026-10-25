@@ -417,6 +417,164 @@
             ]
           }
         ]
+      },
+      {
+        "name": "SIDE DOOR: The Applause Room",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            16.2,
+            6.6
+          ],
+          "size": [
+            2.8,
+            2.6
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.3
+              },
+              {
+                "type": "showText",
+                "text": "Is that... clapping? Behind the wall?",
+                "duration": 2.6,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "offerShortcut",
+                "id": "applauseRoom",
+                "prompt": "A door in the wall: a noise behind the wall",
+                "title": "Follow the clapping",
+                "description": "Someone is clapping behind the wall. Slowly. At him.",
+                "stayTitle": "Leave it",
+                "stayDescription": "Keep climbing. Pick a Grudge at the top.",
+                "toFloor": 906,
+                "nextLevel": 92,
+                "color": "#FFB84D",
+                "costGrudges": 0,
+                "costText": "Risk: Hell is watching.",
+                "cantPayText": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SIDE DOOR: The Applause Room, taken",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "applauseRoom",
+          "taken": true
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "lockInput"
+              },
+              {
+                "type": "lockRewind"
+              },
+              {
+                "type": "playerInvincible",
+                "seconds": 30.0
+              },
+              {
+                "type": "showText",
+                "text": "Fine. I want to see who's clapping.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "AN AUDIENCE?! HE HAS FOUND THE AUDIENCE!",
+                "duration": 3.0,
+                "style": "Banner",
+                "color": "#FFB84D"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "fade",
+                "to": "Black",
+                "duration": 0.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.18,
+                "duration": 0.8
+              },
+              {
+                "type": "setFloor",
+                "floor": 906,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "fade",
+                "to": "Clear",
+                "duration": 0.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SIDE DOOR: The Applause Room, left",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "applauseRoom",
+          "taken": false
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "showText",
+            "text": "It's a trap. Applause is always a trap.",
+            "duration": 2.4,
+            "style": "Subtitle"
+          }
+        ]
       }
     ],
     "phases": [

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Slag Ladle",
+  "description": "Somebody was stirring something with this. A slow glob of slag for two hits' worth of damage, 10 scoops that come back slowly.",
+  "color": "#FF8A3D",
+  "kind": "Projectile",
+  "cooldown": 0.42,
+  "switchDelay": 0.2,
+  "aimGuide": {
+    "show": true,
+    "length": 0.8
+  },
+  "ammo": {
+    "capacity": 10,
+    "start": 10,
+    "perShot": 1,
+    "regenPerSecond": 0.9
+  },
+  "projectile": {
+    "speed": 7.5,
+    "lifetime": 1.9,
+    "faceAim": true,
+    "spriteAngle": 225.0,
+    "damageScale": 2.2,
+    "multiShot": true
+  },
+  "sounds": {
+    "empty": "wpn_empty_shotgun",
+    "use": "shotgun_blast",
+    "hit": "",
+    "equip": "wpn_equip_shotgun"
+  },
+  "pickup": "slagLadlePickup",
+  "banner": "SECRET WEAPON: SLAG LADLE",
+  "heroText": "A ladle. Somebody's cooking. I don't ask what."
+}

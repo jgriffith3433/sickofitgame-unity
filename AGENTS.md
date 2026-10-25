@@ -171,6 +171,11 @@ Assets/GameConfig/
   a risk: Floor 910 reads `shortcutTaken`); Circle IX's Old Stair (`levels/Level14.json`, level 62, on Circle IX's long way), 871 to 841, level 66
   (`Level18.json`) next; Circle IX's played route has the Spared Demon (Floor 891, a Grudge, to 860) and the Hollow Spire
   (Floor 851, a risk: Floor 810 reads `shortcutTaken`). Cookbook "A shortcut".
+- **Secret floors and gauntlets** (Docs/Story.md "Secret floors and gauntlets", LevelDesign.md section 9, cookbook "A secret floor"): eight side rooms off the Heat Stairs
+  (`levels/Secret1-6.json`, `Gauntlet1-2.json`), each behind a door in the wall on a host floor (910-903): an `offerShortcut` whose title begins *A door in the wall* with a cost on the card, then a room that pays a
+  unique reward (a lore flag, the Slag Ladle, the hidden Grudge Held Breath (`weight` 0), diamonds, a health and rewind refill) or chains 4-5 waves with `addRewind` between them. The room leads on to the host's next level, so
+  nothing on the route is skipped; it sits on the floor its host ends on, so no Waystone lights. **Written by `Tools/Levels/side_floors.py`** (`--check` runs with no Unity): add a row there, never hand-edit the
+  rooms or the `SIDE DOOR` rules. The bot opens doors only with `PlaytestBot.takeSideDoors`; the all-levels runs skip side floors (`IsSideFloor`). Playtests `secret-floors`, `gauntlets`.
 - **Waystones and runs** (Docs/Story.md): a death on a floor stage ends the run: the death screen, then the Shaft drops the
   marker back to the highest Waystone (the Landing, Floor 1,000, then each Circle's top once its Warden is beaten) and the
   run restarts there; Grudges reset, diamonds and Yooba's goods stay. Main menu: Continue (the run) / New Run (the

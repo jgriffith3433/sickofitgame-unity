@@ -396,6 +396,165 @@
             ]
           }
         ]
+      },
+      {
+        "name": "SIDE DOOR: The Tally Closet",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            22.4,
+            3.7
+          ],
+          "size": [
+            2.8,
+            2.6
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.3
+              },
+              {
+                "type": "showText",
+                "text": "That wall has a seam. Walls shouldn't have seams.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "offerShortcut",
+                "id": "tallyCloset",
+                "prompt": "A door in the wall: a closet",
+                "title": "Open the closet",
+                "description": "A seam in the stone, hand-sized. Hell won't say what's behind it.",
+                "stayTitle": "Leave it",
+                "stayDescription": "Keep climbing. Pick a Grudge at the top.",
+                "toFloor": 905,
+                "nextLevel": 89,
+                "color": "#FFB84D",
+                "costGrudges": 0,
+                "costDiamonds": 5,
+                "costText": "Costs {0} diamonds",
+                "cantPayText": "NOT ENOUGH DIAMONDS"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SIDE DOOR: The Tally Closet, taken",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "tallyCloset",
+          "taken": true
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "lockInput"
+              },
+              {
+                "type": "lockRewind"
+              },
+              {
+                "type": "playerInvincible",
+                "seconds": 30.0
+              },
+              {
+                "type": "showText",
+                "text": "Five diamonds. For a closet. Sure.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "A SECRET DOOR?! HELL HAS BEEN KEEPING SECRETS!",
+                "duration": 3.0,
+                "style": "Banner",
+                "color": "#FFB84D"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "fade",
+                "to": "Black",
+                "duration": 0.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.18,
+                "duration": 0.8
+              },
+              {
+                "type": "setFloor",
+                "floor": 905,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "fade",
+                "to": "Clear",
+                "duration": 0.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SIDE DOOR: The Tally Closet, left",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "tallyCloset",
+          "taken": false
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "showText",
+            "text": "Nope. Nothing good is behind a seam.",
+            "duration": 2.4,
+            "style": "Subtitle"
+          }
+        ]
       }
     ],
     "phases": [

@@ -408,6 +408,165 @@
             ]
           }
         ]
+      },
+      {
+        "name": "SIDE DOOR: The Held Breath",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            5.4,
+            6.7
+          ],
+          "size": [
+            2.8,
+            2.6
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.3
+              },
+              {
+                "type": "showText",
+                "text": "That vent's too wide to be a vent.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "offerShortcut",
+                "id": "heldBreath",
+                "prompt": "A door in the wall: the steam room",
+                "title": "Go in holding your breath",
+                "description": "A steam vent as wide as a door. Hell won't say what's in it.",
+                "stayTitle": "Leave it",
+                "stayDescription": "Keep climbing. Pick a Grudge at the top.",
+                "toFloor": 908,
+                "nextLevel": 91,
+                "color": "#FFB84D",
+                "costGrudges": 0,
+                "costDiamonds": 15,
+                "costText": "Costs {0} diamonds",
+                "cantPayText": "NOT ENOUGH DIAMONDS"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SIDE DOOR: The Held Breath, taken",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "heldBreath",
+          "taken": true
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "lockInput"
+              },
+              {
+                "type": "lockRewind"
+              },
+              {
+                "type": "playerInvincible",
+                "seconds": 30.0
+              },
+              {
+                "type": "showText",
+                "text": "Deep breath. Fifteen diamonds' worth.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "INTO THE STEAM?! HE'S HOLDING HIS BREATH FOR A LIVING!",
+                "duration": 3.0,
+                "style": "Banner",
+                "color": "#FFB84D"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "fade",
+                "to": "Black",
+                "duration": 0.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.18,
+                "duration": 0.8
+              },
+              {
+                "type": "setFloor",
+                "floor": 908,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "fade",
+                "to": "Clear",
+                "duration": 0.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SIDE DOOR: The Held Breath, left",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "heldBreath",
+          "taken": false
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "showText",
+            "text": "No. I like breathing.",
+            "duration": 2.4,
+            "style": "Subtitle"
+          }
+        ]
       }
     ],
     "phases": [

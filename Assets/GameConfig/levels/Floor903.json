@@ -406,6 +406,164 @@
             ]
           }
         ]
+      },
+      {
+        "name": "SIDE DOOR: The Guest Book",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            10.8,
+            11.8
+          ],
+          "size": [
+            2.8,
+            2.6
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.3
+              },
+              {
+                "type": "showText",
+                "text": "A book on a stand. In a gap. Waiting.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "offerShortcut",
+                "id": "guestBook",
+                "prompt": "A door in the wall: a book on a stand",
+                "title": "Sign the book",
+                "description": "A book on a stand in a gap in the wall. It's open. It's waiting.",
+                "stayTitle": "Leave it",
+                "stayDescription": "Keep climbing. Pick a Grudge at the top.",
+                "toFloor": 902,
+                "nextLevel": 94,
+                "color": "#FFB84D",
+                "costGrudges": 1,
+                "costText": "Costs a Grudge: {0}",
+                "cantPayText": "NO GRUDGE TO GIVE"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SIDE DOOR: The Guest Book, taken",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "guestBook",
+          "taken": true
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "lockInput"
+              },
+              {
+                "type": "lockRewind"
+              },
+              {
+                "type": "playerInvincible",
+                "seconds": 30.0
+              },
+              {
+                "type": "showText",
+                "text": "Fine. One less thing to hate.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "HE'S SIGNING THE KING'S GUEST BOOK! THE KING'S GLOW BRIGHTENS!",
+                "duration": 3.0,
+                "style": "Banner",
+                "color": "#FFB84D"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.8
+              },
+              {
+                "type": "fade",
+                "to": "Black",
+                "duration": 0.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.18,
+                "duration": 0.8
+              },
+              {
+                "type": "setFloor",
+                "floor": 902,
+                "skipMilestones": true
+              },
+              {
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "fade",
+                "to": "Clear",
+                "duration": 0.8
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SIDE DOOR: The Guest Book, left",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "guestBook",
+          "taken": false
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "showText",
+            "text": "Not signing anything.",
+            "duration": 2.4,
+            "style": "Subtitle"
+          }
+        ]
       }
     ],
     "phases": [
