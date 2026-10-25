@@ -65,6 +65,18 @@ namespace SickOfIt.Playtest
             {
                 yield return ToMainMenu();
                 if (Run.Done) yield break;
+                yield return HeroClipsSteps();
+                if (Run.Done) yield break;
+                Run.Metric("heroClips.passed", clipsPassed);
+                Run.Metric("heroClips.failed", clipsFailed);
+                input.ReleaseAll();
+                Run.Progress(1f);
+                End(clipsFailed == 0 ? PlaytestOutcome.Won : PlaytestOutcome.Done);
+            }
+
+            /// <summary>The hurt, death and victory beats (also played by <c>hero-anim</c>).</summary>
+            IEnumerator HeroClipsSteps()
+            {
                 var deaths = new List<string>();
                 for (int i = 1; i <= 4 && !Run.Done; i++)
                 {
@@ -145,11 +157,6 @@ namespace SickOfIt.Playtest
                 });
                 if (Run.Done) yield break;
                 ClipCheck("the floor clear: Victory", victory, victory ? $"Victory on screen at frame {victoryFrame}" : $"no Victory clip when the floor was cleared ({lastOutcome})");
-                Run.Metric("heroClips.passed", clipsPassed);
-                Run.Metric("heroClips.failed", clipsFailed);
-                input.ReleaseAll();
-                Run.Progress(1f);
-                End(clipsFailed == 0 ? PlaytestOutcome.Won : PlaytestOutcome.Done);
             }
         }
     }
