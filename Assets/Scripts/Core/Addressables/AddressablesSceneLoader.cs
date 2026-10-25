@@ -33,6 +33,11 @@ namespace SickOfIt.Core.Addressables
         private GameObject currentLoadingScreen;
         private bool isLoading = false;
 
+        // Requests that arrived while a load ran (a retry pressed during the death scene's load, a runner's load
+        // request): only the newest one is played once the load ends, and every callback is called then.
+        private string pendingSceneName;
+        private readonly List<System.Action> pendingCallbacks = new List<System.Action>();
+
         // Base scenes that should be unloaded when entering gameplay
         private static readonly string[] BASE_SCENES = { "MainMenu", "LevelSelection", "VideoSelection" };
 
@@ -112,8 +117,10 @@ namespace SickOfIt.Core.Addressables
         {
             if (isLoading)
             {
-                Debug.LogWarning($"Already loading a scene. Rejecting request for: {sceneName}");
-                onComplete?.Invoke();
+                // Rejecting it left the death screen up for good (the reload after a death was dropped): queue it.
+                Debug.LogWarning($"Already loading a scene. Queued request for: {sceneName}");
+                pendingSceneName = sceneName;
+                if (onComplete != null) pendingCallbacks.Add(onComplete);
                 return;
             }
 
@@ -313,7 +320,22 @@ namespace SickOfIt.Core.Addressables
             {
                 // Always reset the loading flag, even if an exception occurs
                 isLoading = false;
+                PlayPendingRequest();
             }
+        }
+
+        private void PlayPendingRequest()
+        {
+            if (pendingSceneName == null) return;
+
+            string next = pendingSceneName;
+            pendingSceneName = null;
+            var callbacks = pendingCallbacks.ToArray();
+            pendingCallbacks.Clear();
+            StartCoroutine(LoadSceneAsync(next, true, () =>
+            {
+                foreach (var callback in callbacks) callback?.Invoke();
+            }));
         }
 
         private IEnumerator UnloadSceneAsync(string sceneName)
