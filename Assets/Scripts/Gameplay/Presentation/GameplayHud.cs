@@ -115,6 +115,7 @@ namespace SickOfIt.Gameplay
             BuildRewind();
             BuildWeapon();
             BuildDash();
+            BuildTouchPad();
             BuildStyle();
 
             var place = Landscape.objective;
@@ -186,6 +187,9 @@ namespace SickOfIt.Gameplay
                 rewindHint = Or(layout.rewindHint, fallback.rewindHint),
                 weapon = Or(layout.weapon, fallback.weapon),
                 dash = Or(layout.dash, fallback.dash),
+                moveLeft = Or(layout.moveLeft, fallback.moveLeft),
+                moveRight = Or(layout.moveRight, fallback.moveRight),
+                jump = Or(layout.jump, fallback.jump),
                 progressBar = Or(layout.progressBar, fallback.progressBar),
             };
         }
@@ -698,6 +702,7 @@ namespace SickOfIt.Gameplay
             UpdateRewind();
             UpdateWeapon();
             UpdateDash();
+            UpdateTouchPad();
             UpdateStyle();
             UpdateScreens();
             UpdatePickerKeys();

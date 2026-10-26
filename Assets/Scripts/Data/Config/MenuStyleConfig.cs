@@ -307,6 +307,12 @@ namespace SickOfIt.Data.Config
         public MenuPlacement weapon = new MenuPlacement();
         [Tooltip("The dash button (touch): shown once the dash is his; a tap dashes the way he faces or moves.")]
         public MenuPlacement dash = new MenuPlacement();
+        [Tooltip("The touch move pad's left button (touch screens only).")]
+        public MenuPlacement moveLeft = new MenuPlacement();
+        [Tooltip("The touch move pad's right button (touch screens only).")]
+        public MenuPlacement moveRight = new MenuPlacement();
+        [Tooltip("The touch jump button (touch screens only).")]
+        public MenuPlacement jump = new MenuPlacement();
 
         /// <summary>The desktop/landscape HUD, as it always looked (1920x1080 space).</summary>
         public static MenuHudLayout Landscape() => new MenuHudLayout
@@ -325,6 +331,9 @@ namespace SickOfIt.Data.Config
             progressBar = MenuPlacement.At(0.5f, 0f, 0f, 42f, 1500f, 30f),
             weapon = MenuPlacement.At(1f, 1f, -190f, -400f, 340f, 104f),
             dash = MenuPlacement.At(1f, 1f, -190f, -516f, 340f, 104f),
+            moveLeft = MenuPlacement.At(0f, 0f, 110f, 170f, 170f, 170f),
+            moveRight = MenuPlacement.At(0f, 0f, 310f, 170f, 170f, 170f),
+            jump = MenuPlacement.At(0f, 0f, 210f, 350f, 170f, 120f),
         };
 
         /// <summary>
@@ -348,6 +357,9 @@ namespace SickOfIt.Data.Config
             progressBar = MenuPlacement.At(0.5f, 0f, 0f, 320f, 1000f, 30f),
             weapon = MenuPlacement.At(1f, 0f, -450f, 160f, 380f, 150f),
             dash = MenuPlacement.At(1f, 0f, -170f, 380f, 280f, 150f),
+            moveLeft = MenuPlacement.At(0f, 0f, 130f, 160f, 200f, 200f),
+            moveRight = MenuPlacement.At(0f, 0f, 350f, 160f, 200f, 200f),
+            jump = MenuPlacement.At(0f, 0f, 240f, 400f, 200f, 130f),
         };
     }
 
