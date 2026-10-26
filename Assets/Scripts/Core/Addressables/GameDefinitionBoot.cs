@@ -16,7 +16,7 @@ namespace SickOfIt.Core.Addressables
     /// </summary>
     public sealed class GameDefinitionBoot : MonoBehaviour
     {
-        const int Tries = 3;
+        const int QuietTries = 3;
         const float RetrySeconds = 2f;
 
         static AsyncOperationHandle<GameDefinition> handle;
@@ -47,7 +47,9 @@ namespace SickOfIt.Core.Addressables
 
         IEnumerator Start()
         {
-            for (int attempt = 1; attempt <= Tries; attempt++)
+            // Never gives up: a CDN's 503 or a dropped connection passes, and until the definition arrives nothing else
+            // (the menu, the playtest bot registering) can start, so a stop here looks like a game that never boots.
+            for (int attempt = 1; ; attempt++)
             {
                 failure = null;
                 handle = AddressablesAPI.LoadAssetAsync<GameDefinition>(GameDefinition.Address);
@@ -72,11 +74,12 @@ namespace SickOfIt.Core.Addressables
                     yield break;
                 }
 
-                Debug.LogError($"[GameDefinitionBoot] Couldn't load the game data (try {attempt} of {Tries}): {handle.OperationException?.Message}");
+                Debug.LogError($"[GameDefinitionBoot] Couldn't load the game data (try {attempt}): {handle.OperationException?.Message}");
                 if (handle.IsValid())
                     AddressablesAPI.Release(handle);
-                failure = "Couldn't load the game. Check the connection and reload the page.";
-                yield return new WaitForSecondsRealtime(RetrySeconds);
+                if (attempt >= QuietTries)
+                    failure = "Couldn't load the game yet. Check the connection; still trying.";
+                yield return new WaitForSecondsRealtime(Mathf.Min(RetrySeconds * attempt, 15f));
             }
         }
 
