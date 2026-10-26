@@ -114,6 +114,9 @@ namespace SickOfIt.Core.Flow
 
         IEnumerator PrepareThenLoad(string sceneName, (string owner, string[] scopes) first, (string owner, string[] scopes) second, string[] release)
         {
+            // The screen goes black while the assets come in, rather than the last screen standing there unanswering.
+            if (!SickOfIt.Core.UI.Menus.ScreenTransition.Covered)
+                SickOfIt.Core.UI.Menus.ScreenTransition.Cover();
             if (first.owner != null)
                 yield return GameAssets.Acquire(first.owner, first.scopes);
             if (second.owner != null)

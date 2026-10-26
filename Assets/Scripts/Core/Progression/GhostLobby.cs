@@ -14,6 +14,7 @@ namespace SickOfIt.Core.Progression
     /// or Fall is read from how it moves, from player.json's own sheets. Presentation only: ghosts have no colliders,
     /// never touch the simulation and ignore rewind (they are other people, now). WebGL builds only; `?ghosts=0` turns
     /// them off. Live (sickofitgame.com) shares the room "lobby"; beta, previews and playtests the free test room "t-lobby".
+    /// A page served from localhost (Studio's playtests) joins nothing unless it asks with `?ghosts=1`.
     /// </summary>
     public class GhostLobby : MonoBehaviour
     {
@@ -55,7 +56,9 @@ namespace SickOfIt.Core.Progression
             if (Application.platform != RuntimePlatform.WebGLPlayer || instance != null)
                 return;
             string url = Application.absoluteURL ?? "";
-            if (url.Contains("ghosts=0"))
+            // Studio's playtests serve the build from localhost, which the service refuses (anyone can claim to be it).
+            bool local = url.StartsWith("http://localhost", System.StringComparison.Ordinal) || url.StartsWith("http://127.0.0.1", System.StringComparison.Ordinal);
+            if (url.Contains("ghosts=0") || (local && !url.Contains("ghosts=1")))
                 return;
             var go = new GameObject("GhostLobby");
             DontDestroyOnLoad(go);
@@ -80,7 +83,8 @@ namespace SickOfIt.Core.Progression
                 }
                 else
                 {
-                    retryAt = Time.unscaledTime + 30f;
+                    // A refused ticket won't change soon: a page the service doesn't know waits five minutes.
+                    retryAt = Time.unscaledTime + (detail != null && detail.Contains("403") ? 300f : 30f);
                     Debug.LogWarning("[GhostLobby] " + code + ": " + detail);
                 }
             };
