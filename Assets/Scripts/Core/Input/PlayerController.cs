@@ -759,6 +759,13 @@ namespace SickOfIt.Core.Input
                 }
             }
             
+            // The HUD's touch pad, when nothing else is steering.
+            if (Mathf.Abs(TouchMove) > 0f && moveInput.magnitude < inputDeadzone)
+            {
+                moveInput = new Vector2(TouchMove, 0f);
+                usingMobileInput = true;
+            }
+
             // Store whether we're using mobile input for platform threshold adjustment
             isUsingMobileInput = usingMobileInput;
         }
@@ -1470,6 +1477,12 @@ namespace SickOfIt.Core.Input
 
         /// <summary>Asks for a dash on the next frame (the HUD's touch button).</summary>
         public void RequestDash() => dashRequested = true;
+
+        /// <summary>The on-screen move pad's direction (-1, 0, 1), held by the HUD's touch buttons.</summary>
+        public float TouchMove { get; set; }
+
+        /// <summary>Asks for a jump on the next frame (the HUD's touch button).</summary>
+        public void RequestJump() => jumpRequested = true;
 
         private void ResolveDashKeys()
         {
