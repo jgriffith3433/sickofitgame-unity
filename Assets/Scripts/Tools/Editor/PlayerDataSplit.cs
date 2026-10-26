@@ -270,6 +270,9 @@ namespace SickOfIt.Tools.Editor
         /// <summary>A remote group like the split's others (PlayerDataManifest's per-folder groups).</summary>
         internal static AddressableAssetGroup NewGroup(AddressableAssetSettings settings, string name, AddressableAssetGroup template) => CreateGroup(settings, name, template);
 
+        /// <summary>Tries after the first for each remote bundle download (the catalog bakes it into every bundle's options).</summary>
+        const int BundleRetries = 3;
+
         static AddressableAssetGroup CreateGroup(AddressableAssetSettings settings, string name, AddressableAssetGroup template)
         {
             var group = template != null
@@ -278,6 +281,7 @@ namespace SickOfIt.Tools.Editor
             var schema = group.GetSchema<BundledAssetGroupSchema>();
             schema.BundleMode = BundledAssetGroupSchema.BundlePackingMode.PackTogether;
             schema.IncludeInBuild = true;
+            schema.RetryCount = BundleRetries; // a flaky CDN answer (503) is retried by the bundle provider, not a missing sprite
             if (template == null)
             {
                 schema.BuildPath.SetVariableByName(settings, AddressableAssetSettings.kRemoteBuildPath);
