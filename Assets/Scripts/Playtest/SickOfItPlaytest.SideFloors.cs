@@ -194,6 +194,9 @@ namespace SickOfIt.Playtest
                     for (int i = 0; i < rooms.Count; i++)
                     {
                         var room = rooms[i];
+                        // A room with no progress for minutes ended as "stalled" (its stuck event names the place): the run ends here, stuck.
+                        if (lastOutcome == "stalled")
+                            break;
                         int host = LevelNumberByName(room.Host), side = LevelNumberByName(room.Side);
                         SideCheck($"{room.Key} levels", host > 0 && side > 0 && content != null && content.Upgrades != null,
                             $"{room.Host} is level {host}, {room.Side} is level {side}");
@@ -337,6 +340,11 @@ namespace SickOfIt.Playtest
                 Run.Metric("side.passed", sidePassed);
                 Run.Metric("side.failed", sideFailed);
                 Run.Progress(1f);
+                if (lastOutcome == "stalled")
+                {
+                    End(PlaytestOutcome.Stuck);
+                    yield break;
+                }
                 End(sideFailed > 0 ? PlaytestOutcome.Done : PlaytestOutcome.Won);
             }
         }
