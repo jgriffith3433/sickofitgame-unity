@@ -60,6 +60,7 @@ namespace SickOfIt.Gameplay
             this.world = world;
             this.controller = controller;
             Restore();
+            WantSheets(owned, true);
         }
 
         // ─── Reading ─────────────────────────────────────────────────
@@ -250,6 +251,7 @@ namespace SickOfIt.Gameplay
             {
                 ammo[index] = Mathf.Min(capacity, ammo[index] + (rounds > 0 ? rounds : capacity));
             }
+            WantSheets(new[] { id }, false);
             world.Telemetry.Record("weaponGiven", id, owned.Count, equip ? "equip" : "");
             if (announce && world.Player != null)
                 world.Effects.PopText(world.Player.Position + Vector2.up * 0.6f, def.displayName.ToUpperInvariant() + "!", def.color, 1.2f);
@@ -438,6 +440,24 @@ namespace SickOfIt.Gameplay
             string equipped = WeaponProgress.Equipped();
             current = !string.IsNullOrEmpty(equipped) && owned.Contains(equipped) ? equipped : owned[0];
             MarkStored();
+        }
+
+        /// <summary>
+        /// Presentation only: in a player build the found weapons' grip sheets aren't loaded at boot (PlayerSheets); start loading
+        /// those of 'ids'. A new level ('releaseOthers') also lets go of the sheets of weapons he no longer holds.
+        /// </summary>
+        void WantSheets(IEnumerable<string> ids, bool releaseOthers)
+        {
+            var states = new List<string>();
+            foreach (string id in ids)
+            {
+                if (!world.Content.Weapons.TryGetValue(id, out var def) || def.hands.Built(def) is not HeroHands h)
+                    continue;
+                states.Add(h.idle); states.Add(h.run); states.Add(h.jump); states.Add(h.fall); states.Add(h.land);
+                states.Add(h.runAttack); states.Add(h.airAttack); states.Add(h.equip);
+                states.AddRange(h.attack);
+            }
+            SickOfIt.Core.Addressables.PlayerSheets.Want(states, releaseOthers);
         }
 
         /// <summary>Puts every weapon a pickup unlocked for good into his hands (full ammo), except the ones a scene took this run.</summary>

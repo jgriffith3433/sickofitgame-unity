@@ -11,7 +11,8 @@ namespace SickOfIt.Core.Input
     /// generated into Character.prefab's controller). The Animator is paused while it plays and picks up again,
     /// at its default state, as soon as the next real state is asked for (<see cref="Stop"/>).
     /// Pure presentation: it only changes the sprite on screen. Frames come from the asset registry
-    /// (<see cref="GameDefinition.SpritesOf"/>), which holds every sheet the config references.
+    /// (<see cref="GameDefinition.SpritesOf"/>), which holds every sheet the config references, or, in a player build, a found
+    /// weapon's grip sheet loaded on demand (<see cref="SickOfIt.Core.Addressables.PlayerSheets"/>; false until it has loaded).
     /// </summary>
     public class PlayerSceneClip : MonoBehaviour
     {
@@ -35,10 +36,9 @@ namespace SickOfIt.Core.Input
         public bool Play(Animator source, string state)
         {
             var config = FindState(state);
-            if (config == null || config.spriteSheet == null || source == null)
+            if (config == null || source == null)
                 return false;
-            var gd = GameDefinition.Instance;
-            var sprites = gd != null ? Filter(gd.SpritesOf(config.spriteSheet), config.spriteNameFilter) : new List<Sprite>();
+            var sprites = Filter(SickOfIt.Core.Addressables.PlayerSheets.Of(config), config.spriteNameFilter);
             var selected = config.SelectFrames(sprites);
             if (selected.Count == 0)
                 return false;
