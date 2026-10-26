@@ -158,6 +158,7 @@ namespace SickOfIt.Playtest
                         continue;
 
                     CircleAmbience.Enabled = true;
+                    CircleAmbience.Weather = true; // off for players; this scenario checks the bits
                     try
                     {
                         yield return PlayLevel(level, 0f, during: now =>
@@ -217,6 +218,7 @@ namespace SickOfIt.Playtest
                     finally
                     {
                         CircleAmbience.Enabled = true;
+                        CircleAmbience.Weather = false;
                         input.ReleaseAll();
                     }
                     if (Run.Done) yield break;
