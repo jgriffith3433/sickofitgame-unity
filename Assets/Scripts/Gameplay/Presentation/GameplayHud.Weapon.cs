@@ -16,6 +16,10 @@ namespace SickOfIt.Gameplay
     {
         MenuButton weaponButton;
         RectTransform weaponRoot;
+        Image weaponIcon;
+
+        /// <summary>The weapon icon the HUD chip shows now (content/weapons "icon"), or null.</summary>
+        public Sprite WeaponIcon => weaponIcon != null && weaponIcon.enabled ? weaponIcon.sprite : null;
         string shownWeapon = "", shownWeaponId = "";
         int shownAmmo = -2, shownHeld = -1;
         bool shownWeaponInteractable;
@@ -86,6 +90,17 @@ namespace SickOfIt.Gameplay
             // Out of keyboard/gamepad navigation, like the rewind button: arrow keys never select it mid-fight.
             weaponButton.navigation = new Navigation { mode = Navigation.Mode.None };
             weaponRoot = (RectTransform)weaponButton.transform.parent;
+            // The weapon's painted icon at the chip's left (its pickup art); the name sits beside it.
+            var iconRect = MenuGraphics.NewRect("Icon", weaponButton.transform);
+            iconRect.anchorMin = new Vector2(0f, 0.08f);
+            iconRect.anchorMax = new Vector2(0f, 0.92f);
+            iconRect.pivot = new Vector2(0f, 0.5f);
+            iconRect.anchoredPosition = new Vector2(8f, 0f);
+            iconRect.sizeDelta = new Vector2(place.size.y * 0.84f, 0f);
+            weaponIcon = iconRect.gameObject.AddComponent<Image>();
+            weaponIcon.preserveAspect = true;
+            weaponIcon.raycastTarget = false;
+            weaponIcon.enabled = false;
             weaponRoot.gameObject.SetActive(false);
         }
 
@@ -140,6 +155,10 @@ namespace SickOfIt.Gameplay
             weaponButton.Label.fontSizeMin = 10f;
             weaponButton.Label.fontSizeMax = 26f;
             weaponButton.Label.color = Color.Lerp(def.color, Color.white, 0.35f);
+            weaponIcon.sprite = def.icon;
+            weaponIcon.enabled = def.icon != null;
+            var labelRect = weaponButton.Label.rectTransform;
+            labelRect.offsetMin = new Vector2(def.icon != null ? Landscape.weapon.size.y * 0.84f + 8f : 0f, labelRect.offsetMin.y);
         }
 
         /// <summary>The new weapon's name rises into the chip from below with a punch of size and a flash; presentation only.</summary>

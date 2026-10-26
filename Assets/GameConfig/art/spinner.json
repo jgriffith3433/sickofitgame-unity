@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "spinner",
+  "name": "Spinning lurker",
+  "description": "a crouching pale blue-grey cave hunter with long thin arms, a spiky spine of ice-blue crystals and glowing ice-blue eyes",
+  "height": 0.75,
+  "poses": {
+    "stand": "crouching low on long arms, crystal spines raised",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes and shifts its weight in place, its glow pulsing slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "spins round on the spot like a top, flinging ice-blue crystal shards outward, then crouches again",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

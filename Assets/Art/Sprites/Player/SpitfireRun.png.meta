@@ -1,0 +1,1740 @@
+fileFormatVersion: 2
+guid: a146daf0d2d7484d9d8768f3899eba64
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SpitfireRun_0000
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e17782a237501aa00800000000000000
+      internalID: 765899403816367902
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0001
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a85dd6f660d9a070800000000000000
+      internalID: 8118248943958972585
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0002
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a04de2f083ec70d0800000000000000
+      internalID: -3423611473737465693
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0003
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbf4a5880392eb4e0800000000000000
+      internalID: -1964087099064168516
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0004
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bba22b213b6402330800000000000000
+      internalID: 3684022230115822267
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0005
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc65cbd50a70b3290800000000000000
+      internalID: -7909719935197358387
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0006
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 837432e35b28b13e0800000000000000
+      internalID: -2081926687785531592
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0007
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96f35f8a9907c5890800000000000000
+      internalID: -7467970276820172951
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0008
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7595c406f22353360800000000000000
+      internalID: 7148675162580998487
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0009
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 682ecaaaaf52655d0800000000000000
+      internalID: -3074227937098276218
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0010
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 599701c349927fc10800000000000000
+      internalID: 2087182668949125525
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0011
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fe0d90d2099c3a80800000000000000
+      internalID: -8485739360503918859
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0012
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e509a1b4ffad00e0800000000000000
+      internalID: -2301990369028930077
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0013
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e660f10f78f5f4d0800000000000000
+      internalID: -3101299543997651223
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0014
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7edc99d4d1864460800000000000000
+      internalID: 7225605403346525823
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0015
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbb9b79484188e800800000000000000
+      internalID: 641905094370761663
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0016
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ae57b6b5f859c7d0800000000000000
+      internalID: -2897687072880501081
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0017
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e025fcd728746370800000000000000
+      internalID: 8314902924638888168
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0018
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b45bd8577e7d3e2e0800000000000000
+      internalID: -2097595612314880693
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0019
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b495d6ae0f29d4380800000000000000
+      internalID: -8985364118111430325
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0020
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2dfffcb83626a85c0800000000000000
+      internalID: -4212446321764728878
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0021
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93c215b6e794dc9c0800000000000000
+      internalID: -3905384494545163207
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0022
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf84595b16d00e120800000000000000
+      internalID: 2440965711344257276
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0023
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06873f9a1480dee70800000000000000
+      internalID: 9145975496376547424
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0024
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f8f57128744d6110800000000000000
+      internalID: 1255735153854380277
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0025
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 184b95095266c4110800000000000000
+      internalID: 1246483508396405889
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0026
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5458830cbe2cfa630800000000000000
+      internalID: 3940582516770506053
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0027
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51c0605843c120ac0800000000000000
+      internalID: -3890516116199044075
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0028
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d1787002feeb2fd0800000000000000
+      internalID: -2365534456095673899
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0029
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5facd4099e8cae720800000000000000
+      internalID: 2876332217503435509
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0030
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11fa3949baaf2c980800000000000000
+      internalID: -8519971930192498927
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0031
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd44982af81706340800000000000000
+      internalID: 4855005260026561756
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0032
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42b36b8c14f5b48a0800000000000000
+      internalID: -6319852915939460316
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0033
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a7bbf665b0b0f120800000000000000
+      internalID: 2445648890825521057
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0034
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22531907eca7c2040800000000000000
+      internalID: 4624205944473072930
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0035
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be1476ba712a21ef0800000000000000
+      internalID: -138870415951445525
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0036
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e111536aaa3df6310800000000000000
+      internalID: 1400570739021910302
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0037
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30f67209dedf95830800000000000000
+      internalID: 4060555735818792707
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0038
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b936fe8228393e30800000000000000
+      internalID: 4483676625102584246
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0039
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cfd2cc13d6a90220800000000000000
+      internalID: 2452674897730789313
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0040
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2bd7f2cae50791e0800000000000000
+      internalID: -2191276187840947412
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0041
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4ea607d1503f02a0800000000000000
+      internalID: -6769138586856542645
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0042
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 327cf626120d96e90800000000000000
+      internalID: -7031860501358328029
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0043
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e27fbcbac2dd2fa30800000000000000
+      internalID: 4247700582494369582
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0044
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e1138fcf2b6f3bd0800000000000000
+      internalID: -2648280202781453849
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0045
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b9d07e44d8a7db20800000000000000
+      internalID: 3159179293426244020
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0046
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83f5879c99f19ae20800000000000000
+      internalID: 3362253342179352376
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0047
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee9852589c16ff010800000000000000
+      internalID: 1224805141818214894
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0048
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad4efe3e9f1c14960800000000000000
+      internalID: 7584556526483793114
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0049
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef6ddd3b97cb95880800000000000000
+      internalID: -8621652780729379074
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0050
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85ddd0363bae08560800000000000000
+      internalID: 7314103851031584088
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0051
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a6e74349378a32b0800000000000000
+      internalID: -5604018106297489757
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0052
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7732347fb5917a50800000000000000
+      internalID: 6517154785302558591
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0053
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4a890ea44c170430800000000000000
+      internalID: 3748996296112441932
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0054
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35c0b2fcb319f2ec0800000000000000
+      internalID: -3589490691926193069
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0055
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed01d8e9268af5e90800000000000000
+      internalID: -7034718951409119010
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0056
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f155a4171bd21ae0800000000000000
+      internalID: -1579959627076513295
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0057
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56296e84b17c4b8e0800000000000000
+      internalID: -1678497841101237659
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0058
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6f818334342327e0800000000000000
+      internalID: -1791548420142297235
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0059
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49af798e7601c6830800000000000000
+      internalID: 4065642602078665364
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0060
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85069c01a2b686310800000000000000
+      internalID: 1398485512712970328
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0061
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e81680e98719c990800000000000000
+      internalID: -7365329834642892576
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0062
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39ef319a21652ee30800000000000000
+      internalID: 4531278813234200211
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0063
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbdf2af014f9f1d20800000000000000
+      internalID: 3251492557768818107
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0064
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f24789b972c5ce30800000000000000
+      internalID: 4523235228823012083
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0065
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c70c6fb25c0ba3580800000000000000
+      internalID: -8846564157123280772
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0066
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dca705b1b39beae40800000000000000
+      internalID: 5669672644418501325
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0067
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 0
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81eec65c5deff0010800000000000000
+      internalID: 1157423823351246360
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0068
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 0
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45245caefe2784ef0800000000000000
+      internalID: -123722614991142316
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpitfireRun_0069
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 0
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cfba346fdcaa8640800000000000000
+      internalID: 5083065204900282312
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SpitfireRun_0000: 765899403816367902
+      SpitfireRun_0001: 8118248943958972585
+      SpitfireRun_0002: -3423611473737465693
+      SpitfireRun_0003: -1964087099064168516
+      SpitfireRun_0004: 3684022230115822267
+      SpitfireRun_0005: -7909719935197358387
+      SpitfireRun_0006: -2081926687785531592
+      SpitfireRun_0007: -7467970276820172951
+      SpitfireRun_0008: 7148675162580998487
+      SpitfireRun_0009: -3074227937098276218
+      SpitfireRun_0010: 2087182668949125525
+      SpitfireRun_0011: -8485739360503918859
+      SpitfireRun_0012: -2301990369028930077
+      SpitfireRun_0013: -3101299543997651223
+      SpitfireRun_0014: 7225605403346525823
+      SpitfireRun_0015: 641905094370761663
+      SpitfireRun_0016: -2897687072880501081
+      SpitfireRun_0017: 8314902924638888168
+      SpitfireRun_0018: -2097595612314880693
+      SpitfireRun_0019: -8985364118111430325
+      SpitfireRun_0020: -4212446321764728878
+      SpitfireRun_0021: -3905384494545163207
+      SpitfireRun_0022: 2440965711344257276
+      SpitfireRun_0023: 9145975496376547424
+      SpitfireRun_0024: 1255735153854380277
+      SpitfireRun_0025: 1246483508396405889
+      SpitfireRun_0026: 3940582516770506053
+      SpitfireRun_0027: -3890516116199044075
+      SpitfireRun_0028: -2365534456095673899
+      SpitfireRun_0029: 2876332217503435509
+      SpitfireRun_0030: -8519971930192498927
+      SpitfireRun_0031: 4855005260026561756
+      SpitfireRun_0032: -6319852915939460316
+      SpitfireRun_0033: 2445648890825521057
+      SpitfireRun_0034: 4624205944473072930
+      SpitfireRun_0035: -138870415951445525
+      SpitfireRun_0036: 1400570739021910302
+      SpitfireRun_0037: 4060555735818792707
+      SpitfireRun_0038: 4483676625102584246
+      SpitfireRun_0039: 2452674897730789313
+      SpitfireRun_0040: -2191276187840947412
+      SpitfireRun_0041: -6769138586856542645
+      SpitfireRun_0042: -7031860501358328029
+      SpitfireRun_0043: 4247700582494369582
+      SpitfireRun_0044: -2648280202781453849
+      SpitfireRun_0045: 3159179293426244020
+      SpitfireRun_0046: 3362253342179352376
+      SpitfireRun_0047: 1224805141818214894
+      SpitfireRun_0048: 7584556526483793114
+      SpitfireRun_0049: -8621652780729379074
+      SpitfireRun_0050: 7314103851031584088
+      SpitfireRun_0051: -5604018106297489757
+      SpitfireRun_0052: 6517154785302558591
+      SpitfireRun_0053: 3748996296112441932
+      SpitfireRun_0054: -3589490691926193069
+      SpitfireRun_0055: -7034718951409119010
+      SpitfireRun_0056: -1579959627076513295
+      SpitfireRun_0057: -1678497841101237659
+      SpitfireRun_0058: -1791548420142297235
+      SpitfireRun_0059: 4065642602078665364
+      SpitfireRun_0060: 1398485512712970328
+      SpitfireRun_0061: -7365329834642892576
+      SpitfireRun_0062: 4531278813234200211
+      SpitfireRun_0063: 3251492557768818107
+      SpitfireRun_0064: 4523235228823012083
+      SpitfireRun_0065: -8846564157123280772
+      SpitfireRun_0066: 5669672644418501325
+      SpitfireRun_0067: 1157423823351246360
+      SpitfireRun_0068: -123722614991142316
+      SpitfireRun_0069: 5083065204900282312
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

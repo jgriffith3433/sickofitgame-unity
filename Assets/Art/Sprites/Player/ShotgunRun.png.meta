@@ -1,0 +1,1740 @@
+fileFormatVersion: 2
+guid: 987b79ad57a8462d86d44568f58da126
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ShotgunRun_0000
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: deaeff1e2a4336b40800000000000000
+      internalID: 5432243449719941869
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0001
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 312157b9d25d7acf0800000000000000
+      internalID: -240989663182646765
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0002
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51f32a9e87076ef50800000000000000
+      internalID: 6910334342864715541
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0003
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3d210e5e880a57e0800000000000000
+      internalID: -1776097695488725698
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0004
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be35ef2e874ee2980800000000000000
+      internalID: -8561654633729207317
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0005
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 3740
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0546b85349fb2b760800000000000000
+      internalID: 7472245375035466832
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0006
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8eaf03ac7a02efb0800000000000000
+      internalID: -4620118737300771187
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0007
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bf25594fdd5cf720800000000000000
+      internalID: 2881281075199684532
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0008
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb2362b690fe909f0800000000000000
+      internalID: -501607059743690049
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0009
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a535e69d93c22b60800000000000000
+      internalID: 7719947792875337126
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0010
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6866c816c362fee0800000000000000
+      internalID: -1228810045848393621
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0011
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 3400
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c5ed540d0a92b070800000000000000
+      internalID: 8120722458800940489
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0012
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30b52407d7178ed40800000000000000
+      internalID: 5613861719085570819
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0013
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5175a8d5189e87e50800000000000000
+      internalID: 6807447578599905045
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0014
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a58ee8398cb90a70800000000000000
+      internalID: 8793767044969301412
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0015
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63b2193c93ae48060800000000000000
+      internalID: 6954941258381994806
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0016
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cff4f812ea65cbf0800000000000000
+      internalID: -304719880463777848
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0017
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 3060
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4877bc5812018b20800000000000000
+      internalID: 3134789119284574285
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0018
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd7d358e6bedb6e80800000000000000
+      internalID: -8184203020652521508
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0019
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f8bb5604e9f59490800000000000000
+      internalID: -7740005626811795213
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0020
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59db2616a8e852970800000000000000
+      internalID: 8729540177718066581
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0021
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afd77b06c6c50ab30800000000000000
+      internalID: 4296535665060314618
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0022
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ade42534a03ad4d80800000000000000
+      internalID: -8264770476680524070
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0023
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 2720
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2e1348731f6efb50800000000000000
+      internalID: 6628857830948675114
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0024
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8914e5b166bd8a8a0800000000000000
+      internalID: -6293539247657959016
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0025
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72f5ebe4022acb5d0800000000000000
+      internalID: -3045380988365545689
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0026
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbc083fa4e1012d50800000000000000
+      internalID: 6710647001462607035
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0027
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9dc4f1cf1a0f05a0800000000000000
+      internalID: -6553007801286472293
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0028
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d98c3e261e7c95120800000000000000
+      internalID: 2403171647019534493
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0029
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 2380
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12487114a53406f70800000000000000
+      internalID: 9178410095499248673
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0030
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dafd2819598e6250800000000000000
+      internalID: 5939835974299024081
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0031
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e8c602aa29fb13a0800000000000000
+      internalID: -6693482459653814045
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0032
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d75a76440192ea6b0800000000000000
+      internalID: -5283240163015154307
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0033
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbac54b62d9ca69e0800000000000000
+      internalID: -1627266409760961857
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0034
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 980c99a1cb92498e0800000000000000
+      internalID: -1687678072480218999
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0035
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 2040
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 501bc29bf9d507bd0800000000000000
+      internalID: -2634502841423843067
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0036
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d83f06626dfe9fd30800000000000000
+      internalID: 4465864208560485261
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0037
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b90fab06239cae00800000000000000
+      internalID: 1057381804139284916
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0038
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f94172a536e77300800000000000000
+      internalID: 249921422375340534
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0039
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8caac06cf6a94df0800000000000000
+      internalID: -195441505928041330
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0040
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c54442d74752e92a0800000000000000
+      internalID: -6728899610998979492
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0041
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 1700
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce0e65072134eb220800000000000000
+      internalID: 2503512189337788652
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0042
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1761bf2102fd71960800000000000000
+      internalID: 7572766627297171057
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0043
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33ddf737584b3d9c0800000000000000
+      internalID: -3903577966738678477
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0044
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e11d4188433a0b20800000000000000
+      internalID: 3101347679897981413
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0045
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96316cc51caec1cc0800000000000000
+      internalID: -3738855474418281623
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0046
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd0be93f508c52a40800000000000000
+      internalID: 5342896460832616671
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0047
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 1360
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 069fac95a0fd422c0800000000000000
+      internalID: -4457192495640807072
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0048
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0af90ae5bc9b48c70800000000000000
+      internalID: 8972500640745955232
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0049
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d12c36cf19ba43bb0800000000000000
+      internalID: -4957148646335069667
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0050
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8667f4753c9aad6e0800000000000000
+      internalID: -1811949243614661016
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0051
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b053f52f7a7d1c500800000000000000
+      internalID: 414849757020632331
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0052
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 139bbf2273ff98e10800000000000000
+      internalID: 2200570505222404401
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0053
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 1020
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1456c1edc1dbd36a0800000000000000
+      internalID: -6467805558151027391
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0054
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd6b37b7b42f813b0800000000000000
+      internalID: -5541412935471745316
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0055
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c1011af665cfc4b0800000000000000
+      internalID: -5417894780630662716
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0056
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07139b5613f6954c0800000000000000
+      internalID: -4298282111397711504
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0057
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7053c06a9549409e0800000000000000
+      internalID: -1656035650206681849
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0058
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd57c794c7ec5fab0800000000000000
+      internalID: -4974843180156684837
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0059
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef7b3dee7ba3c8930800000000000000
+      internalID: 4146753918561662974
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0060
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98f02fcd1d3c63180800000000000000
+      internalID: -9135899487952040055
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0061
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db76e40aeba672e20800000000000000
+      internalID: 3325744216802224061
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0062
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5882a7e7bc9914e0800000000000000
+      internalID: -2010403444965078945
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0063
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da289ab09f1964ec0800000000000000
+      internalID: -3583015954698108243
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0064
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5209e7366ecbd4a10800000000000000
+      internalID: 1895378715890585637
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0065
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 776afd17526f69e80800000000000000
+      internalID: -8172073833132480905
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0066
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8cded2a219ca7850800000000000000
+      internalID: 6375629304375467149
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0067
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 0
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f38e640d9862568b0800000000000000
+      internalID: -5159675424736352193
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0068
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 0
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b50b50aedf57f1560800000000000000
+      internalID: 7286672455522168923
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShotgunRun_0069
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 0
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3dfb7cb1195edf20800000000000000
+      internalID: 3449292297323937087
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ShotgunRun_0000: 5432243449719941869
+      ShotgunRun_0001: -240989663182646765
+      ShotgunRun_0002: 6910334342864715541
+      ShotgunRun_0003: -1776097695488725698
+      ShotgunRun_0004: -8561654633729207317
+      ShotgunRun_0005: 7472245375035466832
+      ShotgunRun_0006: -4620118737300771187
+      ShotgunRun_0007: 2881281075199684532
+      ShotgunRun_0008: -501607059743690049
+      ShotgunRun_0009: 7719947792875337126
+      ShotgunRun_0010: -1228810045848393621
+      ShotgunRun_0011: 8120722458800940489
+      ShotgunRun_0012: 5613861719085570819
+      ShotgunRun_0013: 6807447578599905045
+      ShotgunRun_0014: 8793767044969301412
+      ShotgunRun_0015: 6954941258381994806
+      ShotgunRun_0016: -304719880463777848
+      ShotgunRun_0017: 3134789119284574285
+      ShotgunRun_0018: -8184203020652521508
+      ShotgunRun_0019: -7740005626811795213
+      ShotgunRun_0020: 8729540177718066581
+      ShotgunRun_0021: 4296535665060314618
+      ShotgunRun_0022: -8264770476680524070
+      ShotgunRun_0023: 6628857830948675114
+      ShotgunRun_0024: -6293539247657959016
+      ShotgunRun_0025: -3045380988365545689
+      ShotgunRun_0026: 6710647001462607035
+      ShotgunRun_0027: -6553007801286472293
+      ShotgunRun_0028: 2403171647019534493
+      ShotgunRun_0029: 9178410095499248673
+      ShotgunRun_0030: 5939835974299024081
+      ShotgunRun_0031: -6693482459653814045
+      ShotgunRun_0032: -5283240163015154307
+      ShotgunRun_0033: -1627266409760961857
+      ShotgunRun_0034: -1687678072480218999
+      ShotgunRun_0035: -2634502841423843067
+      ShotgunRun_0036: 4465864208560485261
+      ShotgunRun_0037: 1057381804139284916
+      ShotgunRun_0038: 249921422375340534
+      ShotgunRun_0039: -195441505928041330
+      ShotgunRun_0040: -6728899610998979492
+      ShotgunRun_0041: 2503512189337788652
+      ShotgunRun_0042: 7572766627297171057
+      ShotgunRun_0043: -3903577966738678477
+      ShotgunRun_0044: 3101347679897981413
+      ShotgunRun_0045: -3738855474418281623
+      ShotgunRun_0046: 5342896460832616671
+      ShotgunRun_0047: -4457192495640807072
+      ShotgunRun_0048: 8972500640745955232
+      ShotgunRun_0049: -4957148646335069667
+      ShotgunRun_0050: -1811949243614661016
+      ShotgunRun_0051: 414849757020632331
+      ShotgunRun_0052: 2200570505222404401
+      ShotgunRun_0053: -6467805558151027391
+      ShotgunRun_0054: -5541412935471745316
+      ShotgunRun_0055: -5417894780630662716
+      ShotgunRun_0056: -4298282111397711504
+      ShotgunRun_0057: -1656035650206681849
+      ShotgunRun_0058: -4974843180156684837
+      ShotgunRun_0059: 4146753918561662974
+      ShotgunRun_0060: -9135899487952040055
+      ShotgunRun_0061: 3325744216802224061
+      ShotgunRun_0062: -2010403444965078945
+      ShotgunRun_0063: -3583015954698108243
+      ShotgunRun_0064: 1895378715890585637
+      ShotgunRun_0065: -8172073833132480905
+      ShotgunRun_0066: 6375629304375467149
+      ShotgunRun_0067: -5159675424736352193
+      ShotgunRun_0068: 7286672455522168923
+      ShotgunRun_0069: 3449292297323937087
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

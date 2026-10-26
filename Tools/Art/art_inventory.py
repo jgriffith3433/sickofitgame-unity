@@ -218,10 +218,44 @@ def main():
         ui_rows.append((f"good {u.get('id')}", "ok" if u.get("iconArt") else ("PLACEHOLDER" if u.get("icon") else "ok (no badge)"),
                         u.get("iconArt") or (f'letter "{u.get("icon")}"' if u.get("icon") else "no badge")))
 
+    # Circle scenery: props along a travel stage, ambience depth rows and far-off life (a built-in shape without a sprite).
+    scenery_rows = []
+    for c in sorted(circles):
+        cd = json.loads(circles[c])
+        groups = [("prop", cd.get("props") or []), ("depth", (cd.get("ambience") or {}).get("depth") or []),
+                  ("life", (cd.get("ambience") or {}).get("life") or [])]
+        for kind, items in groups:
+            for it in items:
+                spr = it.get("sprite")
+                scenery_rows.append((f"{c} {kind} '{it.get('name', '')}'", "ok" if spr else "PLACEHOLDER", spr or f"built-in {it.get('shape', '')} shape"))
+
+    # Weapons beyond the grip: the HUD chip's icon and a melee weapon's swing.
+    for f in sorted(glob.glob(os.path.join(CFG, "content", "weapons", "*.json"))):
+        w = load(f)
+        wid = os.path.basename(f)[:-5]
+        weapon_rows.append((f"{wid} HUD icon", "ok" if w.get("icon") else "PLACEHOLDER", w.get("icon") or "the chip shows only its name"))
+        if w.get("kind") == "Melee":
+            sw = (w.get("melee") or {}).get("swingArt")
+            weapon_rows.append((f"{wid} swing", "ok" if sw else "PLACEHOLDER", sw or "a drawn crescent and disc (MeleeSwingFx)"))
+
+    # Scenes, menus and the title: every picture and baked video a config names must exist.
+    scene_rows = []
+    for pat, kind in (("deaths/*.json", "death scene"), ("videos/*.json", "story video"), ("ui/*.json", "menu"), ("levels/*.json", "level backdrop")):
+        for f in sorted(glob.glob(os.path.join(CFG, pat))):
+            t = open(f, encoding="utf-8").read()
+            refs = sorted(set(re.findall(r'"((?:Videos|Images|Art|Textures)/[^"#]+?\.(?:png|jpg|asset|mp4))', t)))
+            if not refs:
+                continue
+            missing = [r for r in refs if not os.path.exists(os.path.join(ASSETS, r))]
+            scene_rows.append((f"{kind} {os.path.basename(f)[:-5]}", "ok" if not missing else "MISSING", ", ".join(missing) if missing else f"{len(refs)} pictures/videos"))
+    scene_rows = [r for r in scene_rows if r[1] != "ok"] + [r for r in scene_rows if r[1] == "ok"][:0] or scene_rows
+
     bad_ent = [r for r in rows if r[2] in ("PLACEHOLDER", "STAND-IN")]
     bad_hero = [r for r in hero_rows if r[2] != "ok"]
     bad_wpn = [r for r in weapon_rows if r[1] != "ok"]
     bad_circle = [r for r in circle_rows if r[1] != "ok"]
+    bad_scenery = [r for r in scenery_rows if r[1] != "ok"]
+    bad_scene = [r for r in scene_rows if r[1] != "ok"]
     bad_ui = [r for r in ui_rows if r[1] == "PLACEHOLDER"]
     lines = ["# Art inventory", "",
              "Every visible thing in the game and whether it has real art. **Written by `python Tools/Art/art_inventory.py`** (no Unity,",
@@ -234,6 +268,8 @@ def main():
              f"| Hero clips (art/hero.json) | {sum(1 for r in hero_rows if r[2] == 'ok')} | {len(bad_hero)} |",
              f"| Weapon grips | {sum(1 for r in weapon_rows if r[1] == 'ok')} | {len(bad_wpn)} |",
              f"| Circle backdrops | {len(circle_rows) - len(bad_circle)} | {len(bad_circle)} |",
+             f"| Circle scenery (props, depth rows, far-off life) | {len(scenery_rows) - len(bad_scenery)} | {len(bad_scenery)} |",
+             f"| Story videos, death scenes, menus, level backdrops (files exist) | {len(scene_rows) - len(bad_scene)} | {len(bad_scene)} |",
              f"| Card icons (Grudges, Yooba's goods) | {len(ui_rows) - len(bad_ui)} | {len(bad_ui)} |", ""]
     if os.path.exists(OUT):
         old = open(OUT, encoding="utf-8").read()
@@ -241,7 +277,7 @@ def main():
         if m:
             lines += ["## Before this pass", m.group(1).rstrip(), ""]
     lines += ["## Still to do", ""]
-    if not (bad_ent or bad_hero or bad_wpn or bad_circle or bad_ui):
+    if not (bad_ent or bad_hero or bad_wpn or bad_circle or bad_ui or bad_scenery or bad_scene):
         lines += ["Nothing: every row below has real art.", ""]
     for r in bad_ent:
         lines.append(f"- entity `{r[0]}`: {r[2]}, {r[3]}")
@@ -253,6 +289,10 @@ def main():
         lines.append(f"- Circle `{r[0]}`: wears another Circle's backdrop ({r[2]})")
     for r in bad_ui:
         lines.append(f"- {r[0]}: card icon is a {r[2]}")
+    for r in bad_scenery:
+        lines.append(f"- scenery {r[0]}: {r[2]}")
+    for r in bad_scene:
+        lines.append(f"- {r[0]}: missing {r[2]}")
     lines += ["", "## The hero", "", "| State | hero.json clip | Status | Sheet |", "|---|---|---|---|"]
     lines += [f"| {r[0]} | {r[1]} | {r[2]} | {r[3]} |" for r in sorted(hero_rows)]
     lines += ["", "Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing in PlayerController grabs a ledge).", "",
@@ -260,6 +300,17 @@ def main():
     lines += [f"| {r[0]} | {r[1]} | {r[2]} |" for r in weapon_rows]
     lines += ["", "## Circles (backdrop layers and far art)", "", "| Circle | Status | Its art |", "|---|---|---|"]
     lines += [f"| {r[0]} | {r[1]} | {r[2]} |" for r in circle_rows]
+    lines += ["", "## Circle scenery", "", "| Entry | Status | Art |", "|---|---|---|"]
+    lines += [f"| {r[0]} | {r[1]} | {r[2]} |" for r in scenery_rows]
+    lines += ["", "## Story videos, death scenes, menus and level backdrops", "", "| Config | Status | Pictures |", "|---|---|---|"]
+    lines += [f"| {r[0]} | {r[1]} | {r[2]} |" for r in scene_rows]
+    lines += ["", "## Drawn in code on purpose (not art to make)", "",
+              "- The aim crosshair (AimCursor) and the aim guide's laser line (AimGuide): UI drawn in theme.json colours.",
+              "- Accessibility outlines and the hitbox dot (AccessibilityVisuals): readability aids, off by default.",
+              "- Hit sparks, dust, flashes and glows (Core/Fx, Glow) and weather bits (AmbienceSprites weather): soft particles tinted per Circle.",
+              "- Menu panels, buttons and chips (MenuGraphics): theme.json shapes around painted icons and pictures.",
+              "- Ladders without art, anchors' rings (FloorKit) and a weapon swing without swingArt: fallbacks only; every ladder and melee weapon in the game names its art.",
+              "- `Images/` legacy sheets still used untinted by their own creature: the Fireball (embers), the Diamond, the Drooler (fighter), the Lurker (sentinel), the old shooter (Demon2, a base no level spawns) and the title screen's house.", ""]
     lines += ["", "## Card icons", "", "| Card | Status | Icon |", "|---|---|---|"]
     lines += [f"| {r[0]} | {r[1]} | {r[2]} |" for r in ui_rows]
     lines += ["", "## Entities in use", "", "| Entity | Team | Status | How it is drawn | Art spec |", "|---|---|---|---|---|"]
@@ -269,8 +320,8 @@ def main():
     lines += [f"| {r[0]} | {r[2]} | {r[3]} |" for r in rows if r[2].startswith(("retired", "ok (unused)", "base only", "ok (base only)"))]
     with open(OUT, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(lines) + "\n")
-    total_bad = len(bad_ent) + len(bad_hero) + len(bad_wpn) + len(bad_circle) + len(bad_ui)
-    print(f"{OUT}: entities {len(rows) - len(bad_ent)} ok / {len(bad_ent)} to do; hero {len(hero_rows) - len(bad_hero)} / {len(bad_hero)}; weapons {len(weapon_rows) - len(bad_wpn)} / {len(bad_wpn)}; circles {len(bad_circle)} to do; icons {len(bad_ui)} to do")
+    total_bad = len(bad_ent) + len(bad_hero) + len(bad_wpn) + len(bad_circle) + len(bad_ui) + len(bad_scenery) + len(bad_scene)
+    print(f"{OUT}: entities {len(rows) - len(bad_ent)} ok / {len(bad_ent)} to do; hero {len(hero_rows) - len(bad_hero)} / {len(bad_hero)}; weapons {len(weapon_rows) - len(bad_wpn)} / {len(bad_wpn)}; circles {len(bad_circle)} to do; icons {len(bad_ui)} to do; scenery {len(bad_scenery)} to do; scenes {len(bad_scene)} missing")
     if check and total_bad:
         sys.exit(1)
 

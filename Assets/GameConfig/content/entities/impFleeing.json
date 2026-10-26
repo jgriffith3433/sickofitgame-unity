@@ -7,10 +7,7 @@
   "team": "Neutral",
   "health": 0,
   "shootable": false,
-  "tags": [
-    "imp",
-    "impFleeing"
-  ],
+  "tags": ["imp", "impFleeing"],
   "body": {
     "radius": 1,
     "solid": false
@@ -28,10 +25,7 @@
     {
       "type": "move",
       "speed": 2.4,
-      "direction": [
-        0.35,
-        1
-      ],
+      "direction": [0.35, 1],
       "homing": 0,
       "acceleration": 0.8
     },

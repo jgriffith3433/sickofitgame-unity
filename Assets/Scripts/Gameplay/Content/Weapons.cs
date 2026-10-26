@@ -20,6 +20,7 @@ namespace SickOfIt.Gameplay.Content
         [Required, Doc("Shown on the HUD (the HUD writes it in capitals).")] public string displayName = "";
         [Doc("One line for the cookbook and the editor.")] public string description = "";
         [Doc("HUD button and swing color.")] public Color color = new Color(1f, 0.55f, 0.2f, 1f);
+        [Doc("Its icon on the HUD's weapon chip (its pickup's art).")] public Sprite icon;
         [Doc("Fires a projectile, or swings a melee hit box.")] public WeaponKind kind = WeaponKind.Projectile;
         [Doc("Seconds between shots (a projectile weapon; attack speed upgrades shorten it). A melee weapon uses its combo steps' times.")]
         public float cooldown = 0.3f;
@@ -34,41 +35,56 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Banner shown the first time he finds it (capitals; empty = 'NEW WEAPON: <name>').")] public string banner = "";
         [Doc("The hero's subtitle for that first find (empty = none).")] public string heroText = "";
         [SoundRef, Doc("The hero's voice line for that first find (audio.json).")] public string heroLine = "";
-        [Doc("How it looks in his hands: a prop of coloured blocks drawn over his Fire pose, and the flash of a shot or swing. The hero's sheets stay one set; each weapon is this overlay.")]
-        public WeaponLookDef look = new WeaponLookDef();
+        [Doc("How he holds it: the player.json states he plays with it in his hands (its grip's own animation set, art/hero.json). Every weapon has real sheets of its own; nothing is drawn over them.")]
+        public WeaponHandsDef hands = new WeaponHandsDef();
     }
 
     [Serializable]
-    [Doc("A weapon's look in the hero's hands (a stand-in prop made of coloured blocks until real art replaces it). Positions are in aim space: x along the aim from the shoulder, y across it, in world units (the hero is 0.85 tall).")]
-    public class WeaponLookDef
+    [Doc("A weapon's grip: which player.json state the hero plays for each move while he holds it. A name left empty is 'prefix' + the move " +
+         "(ShotgunIdle, ShotgunRun, ShotgunJump, ShotgunFall, ShotgunLand, ShotgunAttack (a melee combo: ShotgunAttack1, 2, 3 ...), ShotgunRunAttack, " +
+         "ShotgunAirAttack) and 'equip' is 'Equip' + prefix. 'animator': the hero's Animator plays idle, run, jump, fall and the standing attack itself " +
+         "(the rocket launcher, his own gun): only land, the running and air attacks and the equip clip are played over it.")]
+    public class WeaponHandsDef
     {
-        [Doc("The prop's blocks, drawn in order. Empty = nothing is drawn over the sheet.")] public List<WeaponLookPartDef> parts = new List<WeaponLookPartDef>();
-        [Doc("Shoulder, from his feet (x mirrors with his facing).")] public Vector2 shoulder = new Vector2(0.02f, 0.22f);
-        [Doc("Where a shot leaves or a swing lands (the flash).")] public Vector2 muzzle = new Vector2(0.45f, 0f);
-        [Doc("Color of the flash on each shot or swing.")] public Color flash = new Color(1f, 0.85f, 0.45f, 1f);
-        [Doc("Size of the flash.")] public Vector2 flashSize = new Vector2(0.18f, 0.18f);
-        [Doc("How far the prop kicks back (a gun) or lunges forward (a swing) when used.")] public float kick = 0.08f;
+        [Doc("The grip's state prefix (Shotgun, Whip, ...). Empty with every name empty = the weapon has no grip of its own.")] public string prefix = "";
+        public string idle = "";
+        [Doc("Walking or running on the ground.")] public string run = "";
+        [Doc("Rising in the air.")] public string jump = "";
+        [Doc("Falling.")] public string fall = "";
+        [Doc("A short clip as he lands standing.")] public string land = "";
+        [Doc("Standing attack: one state for a gun (looped while he fires), one per combo step for a melee weapon.")] public List<string> attack = new List<string>();
+        [Doc("Attacking while running on the ground.")] public string runAttack = "";
+        [Doc("Attacking in the air.")] public string airAttack = "";
+        [Doc("Played when he takes it out (switching to it).")] public string equip = "";
+        [Doc("The hero's Animator draws idle, run, jump, fall and the standing attack (the launcher).")] public bool animator;
 
-        [NonSerialized] HeldLook built;
-        public HeldLook Built()
+        [NonSerialized] HeroHands built;
+
+        public HeroHands Built(WeaponDef weapon)
         {
             if (built != null)
                 return built;
-            built = new HeldLook { shoulder = shoulder, muzzle = muzzle, flash = flash, flashSize = flashSize, kick = kick, parts = new HeldPart[parts.Count] };
-            for (int i = 0; i < parts.Count; i++)
-                built.parts[i] = new HeldPart { offset = parts[i].offset, size = parts[i].size, angle = parts[i].angle, color = parts[i].color };
+            if (string.IsNullOrEmpty(prefix) && string.IsNullOrEmpty(idle))
+                return null;
+            string Name(string own, string move) => !string.IsNullOrEmpty(own) ? own : prefix + move;
+            var steps = new List<string>(attack);
+            int combo = weapon != null && weapon.kind == WeaponKind.Melee ? Mathf.Max(1, weapon.melee.steps.Count) : 1;
+            if (steps.Count == 0)
+            {
+                if (combo == 1)
+                    steps.Add(prefix + "Attack");
+                else
+                    for (int i = 1; i <= combo; i++)
+                        steps.Add(prefix + "Attack" + i);
+            }
+            built = new HeroHands
+            {
+                idle = Name(idle, "Idle"), run = Name(run, "Run"), jump = Name(jump, "Jump"), fall = Name(fall, "Fall"), land = Name(land, "Land"),
+                attack = steps.ToArray(), runAttack = Name(runAttack, "RunAttack"), airAttack = Name(airAttack, "AirAttack"),
+                equip = !string.IsNullOrEmpty(equip) ? equip : "Equip" + prefix, animator = animator,
+            };
             return built;
         }
-    }
-
-    [Serializable]
-    [Doc("One coloured block of a held weapon's prop.")]
-    public class WeaponLookPartDef
-    {
-        [Doc("Centre, in aim space.")] public Vector2 offset;
-        [Doc("Length along the aim and thickness.")] public Vector2 size = new Vector2(0.2f, 0.1f);
-        [Doc("Degrees turned from the aim.")] public float angle;
-        [Doc("The block's color.")] public Color color = Color.white;
     }
 
     public enum WeaponKind
@@ -121,6 +137,8 @@ namespace SickOfIt.Gameplay.Content
         public float comboWindow = 0.45f;
         [Doc("The combo, in order. At least one step.")] public List<MeleeStepDef> steps = new List<MeleeStepDef>();
         [Doc("Height of the hit box (world units); its length is the step's reach.")] public float height = 1.1f;
+        [Doc("The swing's swoosh (a white crescent facing right, 1 unit from its centre to its outer edge; tinted with the weapon's color). Empty = the drawn crescent.")]
+        public UnityEngine.Sprite swingArt;
     }
 
     [Serializable]

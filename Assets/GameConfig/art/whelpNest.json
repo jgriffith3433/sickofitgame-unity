@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "whelpNest",
+  "name": "Whelp nest",
+  "description": "a crack in the ground: a low flat mound of black basalt rock split by a wide crack that glows bright orange inside like a furnace, rough rock lips around it, smoke rising, a small whelp's claw poking out of the crack",
+  "height": 0.4,
+  "poses": {
+    "stand": "a wide glowing crack in a low flat mound of black rock on the ground",
+    "struck": "jolted, chips of rock and sparks flying off it, the glow inside flaring",
+    "dead": "the crack collapsing shut into cold grey rubble"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "the crack pulses with orange light and smoke puffs out of it",
+      "seconds": 2
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, chips of rock and sparks fly off it and the glow inside flares, then it settles",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "style": "Painterly digital painting in the style of dark fantasy video game art: soft visible brush strokes, rich shading, gritty and detailed, warm hellfire rim light, high resolution and smooth (not pixel art, not a cartoon).",
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, centered in the frame with lots of empty space around it, the whole thing visible. {style} {background}",
+    "pose": "Image 1 is {description}. Show this exact same object, the same design, {action}. Keep its shape, colors, size and position in the frame and the painterly art style of image 1. {background}"
+  }
+}

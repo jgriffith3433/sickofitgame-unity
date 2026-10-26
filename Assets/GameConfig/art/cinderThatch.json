@@ -1,29 +1,45 @@
 {
   "schemaVersion": 1,
   "entity": "cinderThatch",
-  "name": "ThatchCinder",
-  "description": "a living clump of burning straw thatch torn off a village roof: a round tangled ball of golden straw stalks wrapped in orange flames, glowing hot embers deep inside, two bright black beady eyes and a scowling mouth peering out of the straw, wisps of smoke and loose burning stalks trailing behind it",
+  "name": "Thatch cinder",
+  "description": "a floating round ball of tangled golden straw thatch on fire, flames licking off its top, with a mischievous face (two beady black eyes and a grin) glowing in the middle of the burning straw, smoke and sparks drifting off it",
   "height": 0.5,
   "poses": {
-    "stand": "floating in the air, flames licking up off the straw",
-    "popped": "bursting apart into loose burning stalks, two bright sparks shooting out of the middle and a puff of smoke"
+    "stand": "floating in the air, burning, the straw crackling with flames",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "bursting apart into a scatter of burning straw and sparks"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "floats in place, its straw bristling and its flames flickering, blinking its eyes",
-      "seconds": 1.5
+      "action": "floats, bobbing, the straw crackling and flames flickering",
+      "seconds": 2
     },
     "move": {
       "from": "stand",
-      "action": "leans forward and drifts toward the right, its flames and loose stalks streaming backward, staying in the same spot in the frame",
-      "seconds": 1.5
+      "action": "drifts forward to the right, flames streaming back, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
     },
     "die": {
-      "from": "stand",
-      "to": "popped",
-      "action": "swells and bursts apart into burning stalks, two bright sparks flying out of it",
-      "seconds": 1
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
     }
-  }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, small and centered in the frame with lots of empty space around it. It is a ball of fire that floats in the air by itself. {style} {background}",
+    "pose": "Image 1 is {description}. Show this exact same object, the same design, {action}. Keep its shape, colors, size and position in the frame and the painterly art style of image 1. {background}"
+  },
+  "style": "Painterly digital painting in the style of dark fantasy video game art: soft visible brush strokes, rich shading, gritty and detailed, warm hellfire rim light, high resolution and smooth (not pixel art, not a cartoon)."
 }

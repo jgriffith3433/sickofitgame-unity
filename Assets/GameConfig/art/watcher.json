@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "entity": "watcher",
   "name": "Watcher",
-  "description": "a floating eye of the Rune Bridges: a big round pale grey stone eyeball with a single glowing cyan iris and pupil, a heavy carved stone eyelid, a ring of small floating rune stones orbiting it, a faint cyan glow",
+  "description": "a floating stone eyeball: a big round pale grey stone eyeball floating in the air by itself, a single glowing cyan iris and pupil, a heavy carved stone eyelid over its top half, a ring of small floating rune stones orbiting it, a faint cyan glow",
   "height": 0.55,
   "poses": {
     "stand": "floating in the air, the stone lid open, the cyan eye staring to the right",
@@ -24,7 +24,7 @@
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "action": "is struck, the eye jolts back and squints, cracks of cyan light flash on the stone, then it steadies",
       "seconds": 1
     },
     "die": {
@@ -38,5 +38,10 @@
     "stand": 3,
     "pose": 2,
     "clip": 1
+  },
+  "style": "Painterly digital painting in the style of dark fantasy video game art: soft visible brush strokes, rich shading, gritty and detailed, warm hellfire rim light, high resolution and smooth (not pixel art, not a cartoon).",
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, centered in the frame with lots of empty space around it, the whole thing visible. {style} {background}",
+    "pose": "Image 1 is {description}. Show this exact same object, the same design, {action}. Keep its shape, colors, size and position in the frame and the painterly art style of image 1. {background}"
   }
 }

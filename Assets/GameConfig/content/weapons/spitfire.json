@@ -3,6 +3,7 @@
   "displayName": "Spitfire",
   "description": "A newt the imps used to light their lamps: squeeze it and it spits embers, fast. 48 rounds that come back by themselves, a shot every 0.085 s, and nothing like the launcher's punch.",
   "color": "#FF5A36",
+  "icon": "Art/Enemies/SpitfirePickup/SpitfirePickup_idle.png#idle_00",
   "kind": "Projectile",
   "cooldown": 0.085,
   "switchDelay": 0.12,
@@ -33,87 +34,7 @@
   "pickup": "spitfirePickup",
   "heroText": "I'm holding a lizard. The lizard is the weapon.",
   "heroLine": "vo_wpn_spitfire",
-  "look": {
-    "parts": [
-      {
-        "offset": [
-          0.16,
-          0.0
-        ],
-        "size": [
-          0.34,
-          0.11
-        ],
-        "color": "#E8602C"
-      },
-      {
-        "offset": [
-          0.38,
-          0.01
-        ],
-        "size": [
-          0.15,
-          0.14
-        ],
-        "color": "#FF8A3D"
-      },
-      {
-        "offset": [
-          0.44,
-          0.05
-        ],
-        "size": [
-          0.04,
-          0.04
-        ],
-        "color": "#FFF1A8"
-      },
-      {
-        "offset": [
-          -0.06,
-          -0.02
-        ],
-        "size": [
-          0.2,
-          0.05
-        ],
-        "color": "#B8421C",
-        "angle": -18
-      },
-      {
-        "offset": [
-          0.18,
-          -0.07
-        ],
-        "size": [
-          0.05,
-          0.07
-        ],
-        "color": "#B8421C",
-        "angle": 20
-      },
-      {
-        "offset": [
-          0.3,
-          -0.07
-        ],
-        "size": [
-          0.05,
-          0.07
-        ],
-        "color": "#B8421C",
-        "angle": -20
-      }
-    ],
-    "muzzle": [
-      0.54,
-      0.01
-    ],
-    "flash": "#FF5A36",
-    "flashSize": [
-      0.12,
-      0.1
-    ],
-    "kick": 0.04
+  "hands": {
+    "prefix": "Spitfire"
   }
 }

@@ -453,7 +453,8 @@ namespace SickOfIt.Gameplay
 
         void Appear(AmbientLifeDef def, float halfW, float halfH)
         {
-            int members = def.behavior == LifeBehavior.Chase ? 2 : 1;
+            // A Chase is two shapes, the second a stride behind; a painted chase sprite already holds both, so it is one.
+            int members = def.behavior == LifeBehavior.Chase && def.sprite == null ? 2 : 1;
             var free = freeActors;
             int found = 0;
             for (int i = 0; i < actors.Length && found < members; i++)
@@ -467,7 +468,7 @@ namespace SickOfIt.Gameplay
             float dir = random.NextDouble() < 0.5 ? -1f : 1f;
             float frac = Mathf.Lerp(def.height.x, def.height.y, (float)random.NextDouble());
             float y = Mathf.Lerp(-halfH, halfH, Mathf.Clamp01(frac));
-            float gap = def.behavior == LifeBehavior.Chase ? Mathf.Max(2f, def.size * 5f) : 0f;
+            float gap = members > 1 ? Mathf.Max(2f, def.size * 5f) : 0f;
             float travel = halfW * 2f + def.size * 4f + gap + 4f;
             var sprite = def.sprite != null ? def.sprite : AmbienceSprites.Life(def.shape);
             for (int m = 0; m < members; m++)

@@ -154,10 +154,10 @@
       "interval": 2.4,
       "initialDelay": 1.8,
       "damage": 1,
-      "burst": 2,
-      "burstInterval": 0.3,
       "animTrigger": "IsAttacking",
-      "fireOnEvent": "FireProjectile"
+      "fireOnEvent": "FireProjectile",
+      "burst": 2,
+      "burstInterval": 0.3
     }
   ],
   "sounds": {

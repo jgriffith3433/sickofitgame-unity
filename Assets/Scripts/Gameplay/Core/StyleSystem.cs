@@ -171,6 +171,7 @@ namespace SickOfIt.Gameplay
                 world.SetCounter(BestStreakCounter, streak);
 
             SickOfIt.Core.Fx.Fx.Spark(shot.Position, tierColorOrWhite(), 0.35f);
+            world.PlayerController?.NoteGraze();
             Sfx.Play(cfg.grazeSound, 1f, 1f + 0.05f * Mathf.Min(streak, 10));
             world.Hud?.StylePunch();
             world.Telemetry.Record("graze", shot.DefId, streak, $"gap {gap:0.00} meter {meter:0} count {count}");

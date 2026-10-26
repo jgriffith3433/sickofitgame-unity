@@ -64,7 +64,7 @@ ENTITIES['afterimage'] = {
     'visual': {'scale': 0.15, 'color': '#D8E8FF', 'fxColor': '#BFEFFF', 'placeholderColor': '#D8E8FF'},
     'loot': {'chance': 0.3, 'count': 1, 'value': 1},
     'abilities': [{'type': 'contactDamage', 'damage': 1, 'dieOnHit': True},
-                  {'type': 'chase', 'speed': 1.5, 'stopDistance': 0.0, 'face': True},
+                  {'type': 'chase', 'speed': 1.5, 'stopDistance': 0.0, 'face': True, 'animBool': 'IsMoving'},
                   {'type': 'lifetime', 'seconds': 22}],
     'onDeath': [],
 }
@@ -89,7 +89,7 @@ ENTITIES['sleepwalker'] = {
     'visual': {'scale': 0.18, 'color': '#B9C9E8', 'fxColor': '#8FE3FF', 'placeholderColor': '#B9C9E8'},
     'loot': {'chance': 0.4, 'count': 1, 'value': 1},
     'abilities': [{'type': 'contactDamage', 'damage': 1},
-                  {'type': 'patrol', 'speed': 0.7, 'distance': 4.0, 'pause': 0.0},
+                  {'type': 'patrol', 'speed': 0.7, 'distance': 4.0, 'pause': 0.0, 'animBool': 'IsMoving'},
                   {'type': 'lifetime', 'seconds': 40}],
     'states': [
         {'name': 'asleep', 'transitions': [{'to': 'woken', 'when': {'type': 'healthBelow', 'fraction': 0.99}}]},
@@ -109,7 +109,7 @@ ENTITIES['lanternfly'] = {
     'visual': {'scale': 0.1, 'color': '#7FD8FF', 'fxColor': '#7FD8FF', 'placeholderColor': '#7FD8FF'},
     'loot': {'chance': 0.0, 'count': 0, 'value': 0},
     'abilities': [{'type': 'contactDamage', 'damage': 1, 'dieOnHit': True},
-                  {'type': 'chase', 'speed': 1.15, 'stopDistance': 0.0, 'face': True},
+                  {'type': 'chase', 'speed': 1.15, 'stopDistance': 0.0, 'face': True, 'animBool': 'IsMoving'},
                   {'type': 'lifetime', 'seconds': 16}],
     'onDeath': [],
 }

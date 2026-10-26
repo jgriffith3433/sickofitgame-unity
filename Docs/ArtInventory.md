@@ -9,10 +9,12 @@ How art is made: Docs/ArtPipeline.md (creatures `node Tools/Art/art.mjs <id>`, t
 
 | | ok | placeholder / stand-in |
 |---|---|---|
-| Entities in use | 417 | 11 |
+| Entities in use | 428 | 0 |
 | Hero clips (art/hero.json) | 6 | 84 |
-| Weapon grips | 0 | 8 |
+| Weapon grips | 10 | 8 |
 | Circle backdrops | 3 | 0 |
+| Circle scenery (props, depth rows, far-off life) | 26 | 0 |
+| Story videos, death scenes, menus, level backdrops (files exist) | 163 | 0 |
 | Card icons (Grudges, Yooba's goods) | 53 | 0 |
 
 ## Before this pass
@@ -238,17 +240,6 @@ On beta at 4bf1506c (2026-10-25), before the full art pass: **179 entities in us
 
 ## Still to do
 
-- entity `afterimage`: STAND-IN, wears chaser's art tinted #D8E8FF
-- entity `bridgeWraith`: PLACEHOLDER, drawn as a labeled circle
-- entity `drone`: STAND-IN, wears shooter's art tinted #9FFFE0
-- entity `gunner`: STAND-IN, wears shooter's art tinted #FFD27A
-- entity `haloImp`: STAND-IN, wears imp's art tinted #FFD27A
-- entity `quickfireImp`: STAND-IN, wears imp's art tinted #FF9A5A
-- entity `ricochetImp`: STAND-IN, wears imp's art tinted #FFC890
-- entity `sfNeedle`: STAND-IN, its own animator plays Climb tinted #D8C8D0
-- entity `spinner`: STAND-IN, wears sentinel's art tinted #7FD8FF
-- entity `sprayer`: STAND-IN, wears shooter's art tinted #D69CFF
-- entity `whelpNest`: PLACEHOLDER, drawn as a coloured box
 - hero `Land` (land): MISSING, plays -
 - hero `AirFire` (airFire): MISSING, plays -
 - hero `RunFire` (runFire): STAND-IN, plays Walk.png
@@ -451,14 +442,233 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | shotgun | STAND-IN | 9 states; without a sheet of their own: ShotgunIdle, ShotgunRun, ShotgunJump, ShotgunFall, ShotgunLand, ShotgunRunAttack, ShotgunAirAttack, EquipShotgun, ShotgunAttack |
 | slagLadle | STAND-IN | 9 states; without a sheet of their own: LadleIdle, LadleRun, LadleJump, LadleFall, LadleLand, LadleRunAttack, LadleAirAttack, EquipLadle, LadleAttack |
 | spitfire | STAND-IN | 9 states; without a sheet of their own: SpitfireIdle, SpitfireRun, SpitfireJump, SpitfireFall, SpitfireLand, SpitfireRunAttack, SpitfireAirAttack, EquipSpitfire, SpitfireAttack |
+| boomerangHalo HUD icon | ok | Art/Enemies/BoomerangHaloPickup/BoomerangHaloPickup_idle.png#idle_00 |
+| chainWhip HUD icon | ok | Art/Enemies/ChainWhipPickup/ChainWhipPickup_idle.png#idle_00 |
+| chainWhip swing | ok | Art/Effects/Swoosh/Swoosh_arc.png#arc_00 |
+| fists HUD icon | ok | Art/Icons/Icon_fists.png#fists_00 |
+| fists swing | ok | Art/Effects/Swoosh/Swoosh_arc.png#arc_00 |
+| ricochetPistol HUD icon | ok | Art/Enemies/RicochetPistolPickup/RicochetPistolPickup_idle.png#idle_00 |
+| rocketLauncher HUD icon | ok | Art/Enemies/RocketLauncherPickup/RocketLauncherPickup_idle.png#idle_00 |
+| shotgun HUD icon | ok | Art/Enemies/ShotgunPickup/ShotgunPickup_idle.png#idle_00 |
+| slagLadle HUD icon | ok | Art/Enemies/SlagLadlePickup/SlagLadlePickup_idle.png#idle_00 |
+| spitfire HUD icon | ok | Art/Enemies/SpitfirePickup/SpitfirePickup_idle.png#idle_00 |
 
 ## Circles (backdrop layers and far art)
 
 | Circle | Status | Its art |
 |---|---|---|
-| crackedRoad | ok | Rift_loop.png, RoadIsland_still.png, RoadSpires_still.png |
-| emberWastes | ok | FarSea_loop.png, Island_still.png, Spires_still.png |
-| runeBridges | ok | RuneArches_still.png, RuneIsland_still.png, RuneVoid_loop.png |
+| crackedRoad | ok | Rift_loop.png, RoadIsland_still.png, RoadSpires_still.png, Scenery_crBlackSpires.png, Scenery_crChase.png, Scenery_crCracks.png, Scenery_crDemon.png, Scenery_crFarSide.png, Scenery_crSeams.png, Scenery_crShardWings.png, Scenery_crShards.png, Scenery_crSpires.png |
+| emberWastes | ok | FarSea_loop.png, Island_still.png, Scenery_ewBats.png, Scenery_ewChase.png, Scenery_ewCracks.png, Scenery_ewImps.png, Scenery_ewMidSpires.png, Scenery_ewRidges.png, Scenery_ewRocks.png, Scenery_ewSpikes.png, Scenery_ewSpires.png, Spires_still.png |
+| runeBridges | ok | RuneArches_still.png, RuneIsland_still.png, RuneVoid_loop.png, Scenery_rbArches.png, Scenery_rbChase.png, Scenery_rbDust.png, Scenery_rbFarBridge.png, Scenery_rbHalos.png, Scenery_rbStalactites.png, Scenery_rbStatue.png, Scenery_rbWatchers.png |
+
+## Circle scenery
+
+| Entry | Status | Art |
+|---|---|---|
+| crackedRoad prop 'black spires' | ok | Art/Scenery/Scenery_crSpires.png#crSpires_00 |
+| crackedRoad prop 'spire seams' | ok | Art/Scenery/Scenery_crSeams.png#crSeams_00 |
+| crackedRoad prop 'road cracks' | ok | Art/Scenery/Scenery_crCracks.png#crCracks_00 |
+| crackedRoad prop 'foreground shards' | ok | Art/Scenery/Scenery_crShards.png#crShards_00 |
+| crackedRoad depth 'the far side of the Rift' | ok | Art/Scenery/Scenery_crFarSide.png#crFarSide_00 |
+| crackedRoad depth 'black spires' | ok | Art/Scenery/Scenery_crBlackSpires.png#crBlackSpires_00 |
+| crackedRoad life 'shard-wings over the Rift' | ok | Art/Scenery/Scenery_crShardWings.png#crShardWings_00 |
+| crackedRoad life 'a demon on the far road' | ok | Art/Scenery/Scenery_crDemon.png#crDemon_00 |
+| crackedRoad life 'a whelp and the demon after it' | ok | Art/Scenery/Scenery_crChase.png#crChase_00 |
+| emberWastes prop 'far spires' | ok | Art/Scenery/Scenery_ewSpires.png#ewSpires_00 |
+| emberWastes prop 'slag rocks' | ok | Art/Scenery/Scenery_ewRocks.png#ewRocks_00 |
+| emberWastes prop 'lava cracks' | ok | Art/Scenery/Scenery_ewCracks.png#ewCracks_00 |
+| emberWastes prop 'foreground spikes' | ok | Art/Scenery/Scenery_ewSpikes.png#ewSpikes_00 |
+| emberWastes depth 'far slag ridges' | ok | Art/Scenery/Scenery_ewRidges.png#ewRidges_00 |
+| emberWastes depth 'middle spires' | ok | Art/Scenery/Scenery_ewMidSpires.png#ewMidSpires_00 |
+| emberWastes life 'cinder bats' | ok | Art/Scenery/Scenery_ewBats.png#ewBats_00 |
+| emberWastes life 'imps on the far ridge' | ok | Art/Scenery/Scenery_ewImps.png#ewImps_00 |
+| emberWastes life 'a soul and what chases it' | ok | Art/Scenery/Scenery_ewChase.png#ewChase_00 |
+| runeBridges prop 'far arches' | ok | Art/Scenery/Scenery_rbArches.png#rbArches_00 |
+| runeBridges prop 'rune halos' | ok | Art/Scenery/Scenery_rbHalos.png#rbHalos_00 |
+| runeBridges prop 'rune dust' | ok | Art/Scenery/Scenery_rbDust.png#rbDust_00 |
+| runeBridges depth 'far arches' | ok | Art/Scenery/Scenery_rbFarBridge.png#rbFarBridge_00 |
+| runeBridges depth 'hanging stalactites' | ok | Art/Scenery/Scenery_rbStalactites.png#rbStalactites_00 |
+| runeBridges life 'watchers drifting in the void' | ok | Art/Scenery/Scenery_rbWatchers.png#rbWatchers_00 |
+| runeBridges life 'a statue walking a far bridge' | ok | Art/Scenery/Scenery_rbStatue.png#rbStatue_00 |
+| runeBridges life 'a wisp and the hound after it' | ok | Art/Scenery/Scenery_rbChase.png#rbChase_00 |
+
+## Story videos, death scenes, menus and level backdrops
+
+| Config | Status | Pictures |
+|---|---|---|
+| death scene Death1 | ok | 1 pictures/videos |
+| death scene Death2 | ok | 1 pictures/videos |
+| death scene Death3 | ok | 1 pictures/videos |
+| story video Video1 | ok | 2 pictures/videos |
+| story video Video2 | ok | 3 pictures/videos |
+| story video Video3 | ok | 2 pictures/videos |
+| story video Video4 | ok | 1 pictures/videos |
+| menu codex | ok | 1 pictures/videos |
+| menu levelSelection | ok | 1 pictures/videos |
+| menu mainMenu | ok | 3 pictures/videos |
+| menu shaft | ok | 22 pictures/videos |
+| menu upgradeShop | ok | 1 pictures/videos |
+| menu videoSelection | ok | 1 pictures/videos |
+| menu yooba | ok | 4 pictures/videos |
+| level backdrop ArcadeCrossfire | ok | 3 pictures/videos |
+| level backdrop ArcadeEverything | ok | 1 pictures/videos |
+| level backdrop ArcadeFireRain | ok | 3 pictures/videos |
+| level backdrop ArcadeSpinCycle | ok | 3 pictures/videos |
+| level backdrop DailyFloor | ok | 2 pictures/videos |
+| level backdrop EndlessFloor | ok | 2 pictures/videos |
+| level backdrop Floor1000 | ok | 1 pictures/videos |
+| level backdrop Floor701 | ok | 1 pictures/videos |
+| level backdrop Floor702 | ok | 1 pictures/videos |
+| level backdrop Floor703 | ok | 1 pictures/videos |
+| level backdrop Floor704 | ok | 1 pictures/videos |
+| level backdrop Floor705 | ok | 1 pictures/videos |
+| level backdrop Floor706 | ok | 1 pictures/videos |
+| level backdrop Floor707 | ok | 1 pictures/videos |
+| level backdrop Floor708 | ok | 1 pictures/videos |
+| level backdrop Floor709 | ok | 1 pictures/videos |
+| level backdrop Floor710 | ok | 1 pictures/videos |
+| level backdrop Floor711 | ok | 1 pictures/videos |
+| level backdrop Floor712 | ok | 1 pictures/videos |
+| level backdrop Floor713 | ok | 1 pictures/videos |
+| level backdrop Floor714 | ok | 1 pictures/videos |
+| level backdrop Floor715 | ok | 1 pictures/videos |
+| level backdrop Floor716 | ok | 1 pictures/videos |
+| level backdrop Floor717 | ok | 1 pictures/videos |
+| level backdrop Floor718 | ok | 1 pictures/videos |
+| level backdrop Floor719 | ok | 1 pictures/videos |
+| level backdrop Floor720 | ok | 1 pictures/videos |
+| level backdrop Floor721 | ok | 1 pictures/videos |
+| level backdrop Floor722 | ok | 1 pictures/videos |
+| level backdrop Floor723 | ok | 1 pictures/videos |
+| level backdrop Floor724 | ok | 1 pictures/videos |
+| level backdrop Floor725 | ok | 1 pictures/videos |
+| level backdrop Floor726 | ok | 1 pictures/videos |
+| level backdrop Floor727 | ok | 1 pictures/videos |
+| level backdrop Floor728 | ok | 1 pictures/videos |
+| level backdrop Floor729 | ok | 1 pictures/videos |
+| level backdrop Floor730 | ok | 1 pictures/videos |
+| level backdrop Floor731 | ok | 1 pictures/videos |
+| level backdrop Floor732 | ok | 1 pictures/videos |
+| level backdrop Floor733 | ok | 1 pictures/videos |
+| level backdrop Floor734 | ok | 1 pictures/videos |
+| level backdrop Floor735 | ok | 1 pictures/videos |
+| level backdrop Floor736 | ok | 1 pictures/videos |
+| level backdrop Floor737 | ok | 1 pictures/videos |
+| level backdrop Floor738 | ok | 1 pictures/videos |
+| level backdrop Floor739 | ok | 1 pictures/videos |
+| level backdrop Floor740 | ok | 1 pictures/videos |
+| level backdrop Floor741 | ok | 1 pictures/videos |
+| level backdrop Floor742 | ok | 1 pictures/videos |
+| level backdrop Floor743 | ok | 1 pictures/videos |
+| level backdrop Floor744 | ok | 1 pictures/videos |
+| level backdrop Floor745 | ok | 1 pictures/videos |
+| level backdrop Floor746 | ok | 1 pictures/videos |
+| level backdrop Floor747 | ok | 1 pictures/videos |
+| level backdrop Floor748 | ok | 1 pictures/videos |
+| level backdrop Floor749 | ok | 1 pictures/videos |
+| level backdrop Floor750 | ok | 1 pictures/videos |
+| level backdrop Floor751 | ok | 1 pictures/videos |
+| level backdrop Floor792 | ok | 1 pictures/videos |
+| level backdrop Floor793 | ok | 1 pictures/videos |
+| level backdrop Floor794 | ok | 1 pictures/videos |
+| level backdrop Floor795 | ok | 1 pictures/videos |
+| level backdrop Floor796 | ok | 1 pictures/videos |
+| level backdrop Floor797 | ok | 1 pictures/videos |
+| level backdrop Floor798 | ok | 1 pictures/videos |
+| level backdrop Floor799 | ok | 1 pictures/videos |
+| level backdrop Floor800 | ok | 1 pictures/videos |
+| level backdrop Floor801 | ok | 2 pictures/videos |
+| level backdrop Floor802 | ok | 1 pictures/videos |
+| level backdrop Floor803 | ok | 1 pictures/videos |
+| level backdrop Floor804 | ok | 1 pictures/videos |
+| level backdrop Floor805 | ok | 1 pictures/videos |
+| level backdrop Floor806 | ok | 1 pictures/videos |
+| level backdrop Floor807 | ok | 1 pictures/videos |
+| level backdrop Floor808 | ok | 1 pictures/videos |
+| level backdrop Floor809 | ok | 1 pictures/videos |
+| level backdrop Floor810 | ok | 1 pictures/videos |
+| level backdrop Floor851 | ok | 1 pictures/videos |
+| level backdrop Floor852 | ok | 1 pictures/videos |
+| level backdrop Floor853 | ok | 1 pictures/videos |
+| level backdrop Floor854 | ok | 1 pictures/videos |
+| level backdrop Floor855 | ok | 1 pictures/videos |
+| level backdrop Floor856 | ok | 1 pictures/videos |
+| level backdrop Floor857 | ok | 1 pictures/videos |
+| level backdrop Floor858 | ok | 1 pictures/videos |
+| level backdrop Floor859 | ok | 1 pictures/videos |
+| level backdrop Floor860 | ok | 1 pictures/videos |
+| level backdrop Floor891 | ok | 1 pictures/videos |
+| level backdrop Floor892 | ok | 1 pictures/videos |
+| level backdrop Floor893 | ok | 1 pictures/videos |
+| level backdrop Floor894 | ok | 1 pictures/videos |
+| level backdrop Floor895 | ok | 1 pictures/videos |
+| level backdrop Floor896 | ok | 1 pictures/videos |
+| level backdrop Floor897 | ok | 1 pictures/videos |
+| level backdrop Floor898 | ok | 1 pictures/videos |
+| level backdrop Floor899 | ok | 1 pictures/videos |
+| level backdrop Floor900 | ok | 1 pictures/videos |
+| level backdrop Floor901 | ok | 2 pictures/videos |
+| level backdrop Floor902 | ok | 1 pictures/videos |
+| level backdrop Floor903 | ok | 1 pictures/videos |
+| level backdrop Floor904 | ok | 1 pictures/videos |
+| level backdrop Floor905 | ok | 1 pictures/videos |
+| level backdrop Floor906 | ok | 1 pictures/videos |
+| level backdrop Floor907 | ok | 1 pictures/videos |
+| level backdrop Floor908 | ok | 1 pictures/videos |
+| level backdrop Floor909 | ok | 1 pictures/videos |
+| level backdrop Floor910 | ok | 1 pictures/videos |
+| level backdrop Floor951 | ok | 1 pictures/videos |
+| level backdrop Floor952 | ok | 1 pictures/videos |
+| level backdrop Floor953 | ok | 1 pictures/videos |
+| level backdrop Floor954 | ok | 1 pictures/videos |
+| level backdrop Floor955 | ok | 1 pictures/videos |
+| level backdrop Floor956 | ok | 1 pictures/videos |
+| level backdrop Floor957 | ok | 1 pictures/videos |
+| level backdrop Floor958 | ok | 1 pictures/videos |
+| level backdrop Floor959 | ok | 1 pictures/videos |
+| level backdrop Floor960 | ok | 1 pictures/videos |
+| level backdrop Floor991 | ok | 1 pictures/videos |
+| level backdrop Floor992 | ok | 1 pictures/videos |
+| level backdrop Floor993 | ok | 1 pictures/videos |
+| level backdrop Floor994 | ok | 1 pictures/videos |
+| level backdrop Floor995 | ok | 1 pictures/videos |
+| level backdrop Floor996 | ok | 1 pictures/videos |
+| level backdrop Floor997 | ok | 1 pictures/videos |
+| level backdrop Floor998 | ok | 1 pictures/videos |
+| level backdrop Floor999 | ok | 1 pictures/videos |
+| level backdrop Gauntlet1 | ok | 2 pictures/videos |
+| level backdrop Gauntlet2 | ok | 2 pictures/videos |
+| level backdrop Level1 | ok | 5 pictures/videos |
+| level backdrop Level10 | ok | 1 pictures/videos |
+| level backdrop Level13 | ok | 1 pictures/videos |
+| level backdrop Level14 | ok | 1 pictures/videos |
+| level backdrop Level15 | ok | 1 pictures/videos |
+| level backdrop Level16 | ok | 1 pictures/videos |
+| level backdrop Level17 | ok | 1 pictures/videos |
+| level backdrop Level18 | ok | 1 pictures/videos |
+| level backdrop Level3 | ok | 1 pictures/videos |
+| level backdrop Level4 | ok | 1 pictures/videos |
+| level backdrop Level5 | ok | 1 pictures/videos |
+| level backdrop Level6 | ok | 1 pictures/videos |
+| level backdrop Level7 | ok | 1 pictures/videos |
+| level backdrop Level8 | ok | 1 pictures/videos |
+| level backdrop Level9 | ok | 1 pictures/videos |
+| level backdrop Secret1 | ok | 2 pictures/videos |
+| level backdrop Secret2 | ok | 2 pictures/videos |
+| level backdrop Secret3 | ok | 2 pictures/videos |
+| level backdrop Secret4 | ok | 2 pictures/videos |
+| level backdrop Secret5 | ok | 2 pictures/videos |
+| level backdrop Secret6 | ok | 2 pictures/videos |
+
+## Drawn in code on purpose (not art to make)
+
+- The aim crosshair (AimCursor) and the aim guide's laser line (AimGuide): UI drawn in theme.json colours.
+- Accessibility outlines and the hitbox dot (AccessibilityVisuals): readability aids, off by default.
+- Hit sparks, dust, flashes and glows (Core/Fx, Glow) and weather bits (AmbienceSprites weather): soft particles tinted per Circle.
+- Menu panels, buttons and chips (MenuGraphics): theme.json shapes around painted icons and pictures.
+- Ladders without art, anchors' rings (FloorKit) and a weapon swing without swingArt: fallbacks only; every ladder and melee weapon in the game names its art.
+- `Images/` legacy sheets still used untinted by their own creature: the Fireball (embers), the Diamond, the Drooler (fighter), the Lurker (sentinel), the old shooter (Demon2, a base no level spawns) and the title screen's house.
+
 
 ## Card icons
 
@@ -522,7 +732,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 
 | Entity | Team | Status | How it is drawn | Art spec |
 |---|---|---|---|---|
-| afterimage | Enemy | STAND-IN | wears chaser's art tinted #D8E8FF | afterimage |
+| afterimage | Enemy | ok | generated: Art/Enemies/Afterimage | afterimage |
 | alphaHound | Enemy | ok | generated: Art/Enemies/AlphaHound | alphaHound |
 | baronSpillway | Enemy | ok | generated: Art/Enemies/BaronSpillway | baronSpillway |
 | bastionBrute | Enemy | ok | generated: Art/Enemies/BastionBrute | bastionBrute |
@@ -539,7 +749,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | brWarnLamp | Neutral | ok | mkWarnHand's effect sheet (made to be tinted), in #BFEFFF |  |
 | brWarnRune | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #BFEFFF |  |
 | brWarnWall | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #8FE3FF |  |
-| bridgeWraith | Enemy | PLACEHOLDER | drawn as a labeled circle | bridgeWraith |
+| bridgeWraith | Enemy | ok | generated: Art/Enemies/BridgeWraith | bridgeWraith |
 | brimstoneBreath | Enemy | ok | the same creature as fireball (its art, untinted) |  |
 | brimstoneDemon | Enemy | ok | generated: Art/Enemies/BrimstoneDemon | brimstoneDemon |
 | brimstoneLump | Enemy | ok | the same creature as slag (its art, untinted) |  |
@@ -601,7 +811,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | demonWhelp | Enemy | ok | generated: Art/Enemies/DemonWhelp | demonWhelp |
 | diamond | Neutral | ok | painted: Images |  |
 | diamondGlint | Neutral | ok | the same creature as diamond (its art, untinted) |  |
-| drone | Enemy | STAND-IN | wears shooter's art tinted #9FFFE0 | drone |
+| drone | Enemy | ok | generated: Art/Enemies/Drone | drone |
 | emberMine | Enemy | ok | generated: Art/Enemies/EmberMine | emberMine |
 | fireball | Enemy | ok | painted: Images |  |
 | floeRaft | Neutral | ok | the same creature as debrisRaft (its art, untinted) |  |
@@ -734,9 +944,9 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | grappleHook | Neutral | ok | invisible body; the grappleAnchor ability paints the anchor (art/props, AnchorRing) |  |
 | grappleRing | Neutral | ok | invisible body; the grappleAnchor ability paints the anchor (art/props, AnchorRing) |  |
 | gravityPad | Neutral | ok | generated: Art/Effects/Gravity |  |
-| gunner | Enemy | STAND-IN | wears shooter's art tinted #FFD27A | gunner |
+| gunner | Enemy | ok | generated: Art/Enemies/Gunner | gunner |
 | haloEmber | Enemy | ok | generated: Art/Effects/Ember |  |
-| haloImp | Enemy | STAND-IN | wears imp's art tinted #FFD27A | haloImp |
+| haloImp | Enemy | ok | generated: Art/Enemies/HaloImp | haloImp |
 | haloShot | Player | ok | generated: Art/Enemies/HaloShot | haloShot |
 | hawkerSoul | Neutral | ok | generated: Art/Enemies/HawkerSoul | hawkerSoul |
 | heatUpdraft | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
@@ -850,14 +1060,14 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | projectileEnemy | Enemy | ok | painted: Images |  |
 | projectileLaser | Enemy | ok | painted: Images |  |
 | pyreCaller | Enemy | ok | generated: Art/Enemies/PyreCaller | pyreCaller |
-| quickfireImp | Enemy | STAND-IN | wears imp's art tinted #FF9A5A | quickfireImp |
+| quickfireImp | Enemy | ok | generated: Art/Enemies/QuickfireImp | quickfireImp |
 | rbHit | Enemy | ok | the same creature as fmLash (its art, untinted) |  |
 | rbSpotHit | Enemy | ok | the same creature as fmLash (its art, untinted) |  |
 | rbWarnLine | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FFB060 |  |
 | rbWarnSpot | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FFE08A |  |
 | rewindOrb | Neutral | ok | generated: Art/Effects/RewindOrb |  |
 | ricochetEmber | Enemy | ok | generated: Art/Effects/Ember |  |
-| ricochetImp | Enemy | STAND-IN | wears imp's art tinted #FFC890 | ricochetImp |
+| ricochetImp | Enemy | ok | generated: Art/Enemies/RicochetImp | ricochetImp |
 | ricochetPistolPickup | Neutral | ok | generated: Art/Enemies/RicochetPistolPickup | ricochetPistolPickup |
 | ricochetShot | Player | ok | generated: Art/Enemies/RicochetShot | ricochetShot |
 | riftBomb | Enemy | ok | generated: Art/Enemies/RiftBomb | riftBomb |
@@ -888,7 +1098,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | seesawSlab | Neutral | ok | generated: Art/Climb |  |
 | seesawSlabB | Neutral | ok | the same creature as seesawSlab (its art, untinted) |  |
 | settleSlab | Neutral | ok | generated: Art/Climb |  |
-| sfNeedle | Enemy | STAND-IN | its own animator plays Climb tinted #D8C8D0 | sfNeedle |
+| sfNeedle | Enemy | ok | generated: Art/Climb, Art/Enemies/SfNeedle | sfNeedle |
 | sfSpear | Enemy | ok | generated: Art/Enemies/SfSpear | sfSpear |
 | sfWarnField | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FFF0C0 |  |
 | sfWarnHand | Neutral | ok | mkWarnHand's effect sheet (made to be tinted), in #FFB070 |  |
@@ -913,13 +1123,13 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | slamShockwave | Enemy | ok | the same creature as lavaWave (its art, untinted) |  |
 | sleepwalker | Enemy | ok | generated: Art/Enemies/Sleepwalker | sleepwalker |
 | sparedWhelp | Neutral | ok | generated: Art/Enemies/SparedWhelp | sparedWhelp |
-| spinner | Enemy | STAND-IN | wears sentinel's art tinted #7FD8FF | spinner |
+| spinner | Enemy | ok | generated: Art/Enemies/Spinner | spinner |
 | spireFiend | Enemy | ok | generated: Art/Enemies/SpireFiend | spireFiend |
 | spireShard | Neutral | ok | slagDrip's effect sheet (made to be tinted), in #FFB070 |  |
 | spireShardBig | Neutral | ok | slagDrip's effect sheet (made to be tinted), in #FFB070 |  |
 | spitfirePickup | Neutral | ok | generated: Art/Enemies/SpitfirePickup | spitfirePickup |
 | splitSlab | Neutral | ok | generated: Art/Climb |  |
-| sprayer | Enemy | STAND-IN | wears shooter's art tinted #D69CFF | sprayer |
+| sprayer | Enemy | ok | generated: Art/Enemies/Sprayer | sprayer |
 | swHit | Enemy | ok | the same creature as fmLash (its art, untinted) |  |
 | swWarn | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #E0D8F0 |  |
 | swingChain | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
@@ -939,7 +1149,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | watcherPatrol | Enemy | ok | generated: Art/Enemies/Watcher |  |
 | waystoneGlow | Neutral | ok | generated: Art/Effects/Warn |  |
 | whelpDiamond | Enemy | ok | the same creature as demonWhelp (its art, untinted) |  |
-| whelpNest | Enemy | PLACEHOLDER | drawn as a coloured box | whelpNest |
+| whelpNest | Enemy | ok | generated: Art/Enemies/WhelpNest | whelpNest |
 | whirlEmber | Enemy | ok | generated: Art/Effects/Ember |  |
 | whirlImp | Enemy | ok | generated: Art/Enemies/WhirlImp | whirlImp |
 | wick | Neutral | ok | generated: Art/Enemies/Wick | wick |

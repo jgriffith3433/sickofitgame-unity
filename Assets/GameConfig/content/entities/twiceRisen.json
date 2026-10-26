@@ -11,7 +11,11 @@
   ],
   "extends": "risenDemon",
   "health": 6,
-  "tags": ["elite", "risenDemon", "twiceRisen"],
+  "tags": [
+    "elite",
+    "risenDemon",
+    "twiceRisen"
+  ],
   "visual": {
     "scale": 0.312,
     "fxColor": "#FFA05A",
@@ -175,11 +179,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -215,7 +224,10 @@
       },
       "speed": 4,
       "aim": "Player",
-      "muzzle": [0.22, 0.12],
+      "muzzle": [
+        0.22,
+        0.12
+      ],
       "interval": 2.8,
       "initialDelay": 2,
       "range": 3.6,
@@ -227,7 +239,7 @@
       "type": "revive",
       "times": 2,
       "healthPercent": 50,
-      "downSeconds": 2,
+      "downSeconds": 2.0,
       "effect": "downed",
       "riseSound": "risenDemon_rise"
     }

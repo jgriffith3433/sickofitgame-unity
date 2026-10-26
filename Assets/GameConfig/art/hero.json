@@ -1,319 +1,1371 @@
 {
   "schemaVersion": 1,
+  "kind": "hero",
   "entity": "player",
   "name": "Hero",
-  "description": "the hero: an armoured knight in battered dark iron plate with brass trim, cracked here and there with glowing orange seams, a plain closed helm with a crest and two glowing orange eye slits, tattered maroon cloth hanging from the belt, heavy gauntlets and greaves, carrying a huge rocket launcher on his shoulder whose glowing orange chambers light the armour; broad, tired, unimpressed posture; exactly the look of his existing Idle sprite (the source videos in SickOfItGamePlayer)",
+  "description": "the hero: an armoured knight in battered dark bronze plate armour with brass trim, a closed helm with two glowing orange eye slits, tattered maroon cloth hanging from the belt, heavy gauntlets and greaves; broad, tired, unimpressed posture; his gun from the start is a huge rocket launcher with glowing orange chambers; exactly the look of his existing Idle sprite (SickOfItGamePlayer/Idle)",
   "height": 0.85,
-  "reference": "Art/Sprites/Player/Idle.png",
+  "reference": "player:Idle",
   "pixels": 340,
   "cellSize": [
     604,
     340
   ],
-  "notes": "Hero clips for Docs/ArtPipeline.md, 'Hero clips'. The hero is the ARMOURED KNIGHT with the glowing launcher (Idle.mp4 in SickOfItGamePlayer), never a man in a jacket or coat. Cells are 604x340, centre pivot, 100 pixels per unit (Unity spriteScale 0.25), exactly the existing hero sheets, so he never changes size; every pose starts from the Idle reference ('referenceIdle': true, node Tools/Art/art.mjs hero --hero-ref idle). 'wired' per clip says what player.json does today: 'own' = its state plays its own sheet; 'standIn' = the state exists but plays another sheet (see 'standIn'); false = no state in player.json yet (make the sheet, add the state: PlayerSceneClip falls back to the state's sheet). Tools/Art/art.mjs hero --check keeps this honest against player.json. Only the three climb clips have been generated; the rest wait on GPU approval.",
+  "notes": "Hero clips (Docs/ArtPipeline.md, 'Hero clips'). The hero is the ARMOURED KNIGHT (SickOfItGamePlayer/Idle), never a man in a jacket. Every grip (content/weapons hands) has its own set: a carry pose made from Idle's first frame with the weapon's concept (pose weapon<Grip>, image.generate) as image 2, then Idle/Run/Jump/Fall/Attack copied from his launcher videos' motion (video.animate, 'motion': 'player:<State>'), so every set has the launcher's timing, size and ground line; the rest are first-last-frame clips (video.i2v). Shared moves (dash, walls, the hook, graze, hurt, deaths, victory, ladders) show him with empty hands, one look for every grip. 1280x720 frames baked to 604x340 cells at 100 PPU (Idle's size). 'wired' says what player.json does: 'own', 'standIn' or false. Ledge grab/climb: no such mechanic in the game yet.",
+  "takes": {
+    "stand": 1,
+    "pose": 3,
+    "clip": 1
+  },
   "poses": {
-    "stand": "standing relaxed in his armour, launcher on his shoulder, bored under the helm",
-    "punchWind": "leaning back with his right armoured fist cocked behind him, launcher slung on his back, glowing eyes narrowed",
-    "punchHit": "lunging forward, right gauntlet fully extended, body low and twisted into the punch, armour seams flaring",
-    "punchHook": "left gauntlet swinging round in a wide hook, shoulders turned",
-    "punchUpper": "rising on his toes with a gauntlet driving upward in an uppercut",
-    "unarmedStand": "standing relaxed in his armour with empty open gauntlets, the launcher slung on his back, bored under the helm",
-    "launcherHeld": "holding the rocket launcher on his shoulder, ready to fire",
-    "launcherGone": "armoured hands empty and open at his sides, helm tilted down to stare flatly at them",
-    "dashLean": "leaning hard forward mid-sprint in his armour, one leg stretched back, maroon cloth streaming behind",
-    "runFire": "mid-stride running, launcher on his shoulder aimed forward and firing, muzzle glowing, cloth streaming behind",
-    "wallCling": "pressed against a wall on his right, one gauntlet and boot on it, helm turned back over his shoulder",
-    "wallKick": "kicking off the wall, armoured body arched out and up, arms spread",
-    "grappleAim": "arm thrown forward and up, gauntlet holding a hook on a rope, other hand bracing",
-    "grappleHang": "hanging by one gauntlet from a rope above him, legs swinging, bored",
-    "ledgeHang": "hanging by both gauntlets from a ledge, greaves dangling, armour creaking",
-    "ledgePull": "hauling his armoured self up over a ledge, one knee on top",
-    "grazeSpin": "twisting out of the way, helm tilted smugly, a tiny spark trailing his pauldron",
-    "victoryPose": "arms crossed, launcher on his shoulder, the smallest nod of the helm",
-    "deathFlat": "flat on his back in his armour, eye slits dim, arms out, smoking",
-    "climbHang": "side view, one gauntlet raised gripping, the other low, one knee lifted high, launcher slung across his back, leaning in; no ladder drawn (the game draws it)"
+    "stand": "standing with the rocket launcher on his shoulder, bored under the helm (Idle's first frame)",
+    "unarmed": {
+      "from": "stand",
+      "action": "standing with empty hands, nothing on his shoulder or back",
+      "prompt": "Image 1 is an armoured knight carrying a rocket launcher on his shoulder. Remove the rocket launcher completely: nothing on his shoulder or back, both armoured gauntlets empty, hanging relaxed at his sides with the fists loosely closed. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "launcherLand": {
+      "from": "stand",
+      "action": "landing from a fall in a deep crouch, knees bent hard, the launcher still on his shoulder",
+      "prompt": "Image 1 is an armoured knight carrying a rocket launcher on his shoulder. Show the exact same knight landing from a fall in a deep crouch, knees bent hard, one hand braced, the launcher still on his shoulder. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "launcherAir": {
+      "from": "stand",
+      "action": "in mid-air with his knees tucked up, firing the launcher toward the left",
+      "prompt": "Image 1 is an armoured knight carrying a rocket launcher on his shoulder. Show the exact same knight in mid-air with his knees tucked up under him, the rocket launcher levelled on his shoulder pointing to the left, a burst of flame at its muzzle. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "weaponShotgun": {
+      "canvas": "00ff00",
+      "action": "the shotgun alone",
+      "prompt": "Paint a short heavy shotgun forged from a slag barrel: a thick dark iron barrel with glowing orange cracks, a stubby wooden stock bound with riveted iron bands, seen from the side, pointing right. Dark fantasy video game weapon art: painterly, detailed, gritty, warm rim light from hellfire, readable silhouette. A single object alone, centered, the whole thing visible, plenty of empty space around it. Plain flat pure green background (#00ff00), no floor, no shadow, no hands."
+    },
+    "carryShotgun": {
+      "from": "stand",
+      "action": "holding the shotgun the way he held the launcher",
+      "prompt": "Image 1 is an armoured knight carrying a rocket launcher on his shoulder. Image 2 is a shotgun. Remove the rocket launcher completely and put the shotgun from image 2 in its place: the same raised hand holds the shotgun resting on his shoulder, the barrel pointing out to the left side of the picture the way the launcher pointed, the wooden stock behind his shoulder. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting.",
+      "refs": [
+        "weaponShotgun"
+      ]
+    },
+    "landShotgun": {
+      "from": "carryShotgun",
+      "action": "landing in a deep crouch, holding a shotgun",
+      "prompt": "Image 1 is an armoured knight holding a shotgun. Show the exact same knight landing from a fall in a deep crouch, knees bent hard, still holding a shotgun the same way. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "airShotgun": {
+      "from": "carryShotgun",
+      "action": "in mid-air with his knees tucked, holding a shotgun",
+      "prompt": "Image 1 is an armoured knight holding a shotgun. Show the exact same knight in mid-air with his knees tucked up under him, still holding a shotgun. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "weaponSpitfire": {
+      "canvas": "00ff00",
+      "action": "the fire newt alone",
+      "prompt": "Paint a live fire newt: a small chubby orange salamander lizard with glowing ember-red spots and a glowing mouth, a worn leather strap buckled round its belly as a handle, seen from the side facing right, grumpy. Dark fantasy video game weapon art: painterly, detailed, gritty, warm rim light from hellfire, readable silhouette. A single object alone, centered, the whole thing visible, plenty of empty space around it. Plain flat pure green background (#00ff00), no floor, no shadow, no hands."
+    },
+    "carrySpitfire": {
+      "from": "stand",
+      "action": "holding the fire newt the way he held the launcher",
+      "prompt": "Image 1 is an armoured knight carrying a rocket launcher on his shoulder. Image 2 is a fire newt lizard. Remove the rocket launcher completely: the same raised hand now holds the orange fire newt from image 2 up beside his shoulder by the leather strap round its belly, its glowing mouth pointing to the left side of the picture. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting.",
+      "refs": [
+        "weaponSpitfire"
+      ]
+    },
+    "landSpitfire": {
+      "from": "carrySpitfire",
+      "action": "landing in a deep crouch, holding a fire newt",
+      "prompt": "Image 1 is an armoured knight holding a fire newt. Show the exact same knight landing from a fall in a deep crouch, knees bent hard, still holding a fire newt the same way. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "airSpitfire": {
+      "from": "carrySpitfire",
+      "action": "in mid-air with his knees tucked, holding a fire newt",
+      "prompt": "Image 1 is an armoured knight holding a fire newt. Show the exact same knight in mid-air with his knees tucked up under him, still holding a fire newt. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "weaponPistol": {
+      "canvas": "00ff00",
+      "action": "the pistol alone",
+      "prompt": "Paint a pale steel pistol built by someone who hates straight lines: a long bent barrel, angular plates, a bright glowing blue crystal eye set in the muzzle and another in the side, seen from the side pointing right. Dark fantasy video game weapon art: painterly, detailed, gritty, warm rim light from hellfire, readable silhouette. A single object alone, centered, the whole thing visible, plenty of empty space around it. Plain flat pure green background (#00ff00), no floor, no shadow, no hands."
+    },
+    "carryPistol": {
+      "from": "stand",
+      "action": "holding the pistol the way he held the launcher",
+      "prompt": "Image 1 is an armoured knight carrying a rocket launcher on his shoulder. Image 2 is a pale steel pistol. Remove the rocket launcher completely: the same raised hand now holds the pistol from image 2 up beside his shoulder, muzzle pointing up and a little to the left, ready. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting.",
+      "refs": [
+        "weaponPistol"
+      ]
+    },
+    "landPistol": {
+      "from": "carryPistol",
+      "action": "landing in a deep crouch, holding a pistol",
+      "prompt": "Image 1 is an armoured knight holding a pistol. Show the exact same knight landing from a fall in a deep crouch, knees bent hard, still holding a pistol the same way. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "airPistol": {
+      "from": "carryPistol",
+      "action": "in mid-air with his knees tucked, holding a pistol",
+      "prompt": "Image 1 is an armoured knight holding a pistol. Show the exact same knight in mid-air with his knees tucked up under him, still holding a pistol. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "weaponLadle": {
+      "canvas": "00ff00",
+      "action": "the slag ladle alone",
+      "prompt": "Paint a long iron foundry ladle: a deep round iron bowl brimming with glowing molten orange slag, a long iron handle wrapped in scorched rags, seen from the side, bowl to the right. Dark fantasy video game weapon art: painterly, detailed, gritty, warm rim light from hellfire, readable silhouette. A single object alone, centered, the whole thing visible, plenty of empty space around it. Plain flat pure green background (#00ff00), no floor, no shadow, no hands."
+    },
+    "carryLadle": {
+      "from": "stand",
+      "action": "holding the slag ladle the way he held the launcher",
+      "prompt": "Image 1 is an armoured knight carrying a rocket launcher on his shoulder. Image 2 is a long iron ladle full of glowing slag. Remove the rocket launcher completely: the same raised hand now holds the long ladle from image 2 resting on his shoulder, the bowl of glowing slag out on the left side of the picture where the launcher's muzzle was. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting.",
+      "refs": [
+        "weaponLadle"
+      ]
+    },
+    "landLadle": {
+      "from": "carryLadle",
+      "action": "landing in a deep crouch, holding a slag ladle",
+      "prompt": "Image 1 is an armoured knight holding a slag ladle. Show the exact same knight landing from a fall in a deep crouch, knees bent hard, still holding a slag ladle the same way. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "airLadle": {
+      "from": "carryLadle",
+      "action": "in mid-air with his knees tucked, holding a slag ladle",
+      "prompt": "Image 1 is an armoured knight holding a slag ladle. Show the exact same knight in mid-air with his knees tucked up under him, still holding a slag ladle. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "weaponHalo": {
+      "canvas": "00ff00",
+      "action": "the golden halo alone",
+      "prompt": "Paint a thick heavy golden halo ring, glowing warm gold light, dented and chipped from a long fall, a few tiny sparks, seen at a slight angle. Dark fantasy video game weapon art: painterly, detailed, gritty, warm rim light from hellfire, readable silhouette. A single object alone, centered, the whole thing visible, plenty of empty space around it. Plain flat pure green background (#00ff00), no floor, no shadow, no hands."
+    },
+    "carryHalo": {
+      "from": "stand",
+      "action": "holding the golden halo the way he held the launcher",
+      "prompt": "Image 1 is an armoured knight carrying a rocket launcher on his shoulder. Image 2 is a golden halo ring. Remove the rocket launcher completely: the same raised hand now holds the golden halo from image 2 up beside his shoulder like a discus ready to throw, its warm gold glow lighting his armour. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting.",
+      "refs": [
+        "weaponHalo"
+      ]
+    },
+    "landHalo": {
+      "from": "carryHalo",
+      "action": "landing in a deep crouch, holding a golden halo",
+      "prompt": "Image 1 is an armoured knight holding a golden halo. Show the exact same knight landing from a fall in a deep crouch, knees bent hard, still holding a golden halo the same way. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "airHalo": {
+      "from": "carryHalo",
+      "action": "in mid-air with his knees tucked, holding a golden halo",
+      "prompt": "Image 1 is an armoured knight holding a golden halo. Show the exact same knight in mid-air with his knees tucked up under him, still holding a golden halo. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "throwHalo": {
+      "from": "carryHalo",
+      "action": "his arm swung out toward the left, the golden halo just leaving his hand",
+      "prompt": "Image 1 is an armoured knight holding a golden halo. Show the exact same knight with his throwing arm swung out toward the left, the golden halo just leaving his open hand and flying away to the left, a gold trail. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "weaponWhip": {
+      "canvas": "00ff00",
+      "action": "the chain whip alone",
+      "prompt": "Paint a chain whip: a short wooden grip wrapped in black leather with an iron pommel, a long length of heavy dark iron chain links ending in a hooked iron barb, laid out in a loose S curve. Dark fantasy video game weapon art: painterly, detailed, gritty, warm rim light from hellfire, readable silhouette. A single object alone, centered, the whole thing visible, plenty of empty space around it. Plain flat pure green background (#00ff00), no floor, no shadow, no hands."
+    },
+    "carryWhip": {
+      "from": "stand",
+      "action": "holding the chain whip the way he held the launcher",
+      "prompt": "Image 1 is an armoured knight carrying a rocket launcher on his shoulder. Image 2 is a chain whip. Remove the rocket launcher completely: the same raised hand now holds the wooden handle of the chain whip from image 2 up beside his shoulder, the heavy iron chain hanging down over his arm and dangling to the ground on the left side of the picture. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting.",
+      "refs": [
+        "weaponWhip"
+      ]
+    },
+    "landWhip": {
+      "from": "carryWhip",
+      "action": "landing in a deep crouch, holding a chain whip",
+      "prompt": "Image 1 is an armoured knight holding a chain whip. Show the exact same knight landing from a fall in a deep crouch, knees bent hard, still holding a chain whip the same way. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "airWhip": {
+      "from": "carryWhip",
+      "action": "in mid-air with his knees tucked, holding a chain whip",
+      "prompt": "Image 1 is an armoured knight holding a chain whip. Show the exact same knight in mid-air with his knees tucked up under him, still holding a chain whip. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "lashWhip": {
+      "from": "carryWhip",
+      "action": "lashing the chain whip out toward the left, the heavy chain stretched out long in a straight line to the left",
+      "prompt": "Image 1 is an armoured knight holding a chain whip. Show the exact same knight lashing the chain whip out toward the left, the heavy chain stretched out long in a straight line to the left. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "snapWhip": {
+      "from": "carryWhip",
+      "action": "snapping the chain whip back up over his head, the chain looping in a wide arc above him",
+      "prompt": "Image 1 is an armoured knight holding a chain whip. Show the exact same knight snapping the chain whip back up over his head, the chain looping in a wide arc above him. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "crackWhip": {
+      "from": "carryWhip",
+      "action": "cracking the chain whip down hard toward the left with both hands, the chain whipping out in a long straight line, sparks at its barbed tip",
+      "prompt": "Image 1 is an armoured knight holding a chain whip. Show the exact same knight cracking the chain whip down hard toward the left with both hands, the chain whipping out in a long straight line, sparks at its barbed tip. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "runLash": {
+      "from": "carryWhip",
+      "action": "mid-stride, lashing the chain whip out toward the left",
+      "prompt": "Image 1 is an armoured knight holding a chain whip. Show the exact same knight mid-stride, lashing the chain whip out toward the left, the chain stretched out long in a line. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "airLash": {
+      "from": "airWhip",
+      "action": "in mid-air, knees tucked, lashing the chain whip out toward the left",
+      "prompt": "Image 1 is an armoured knight in mid-air holding a chain whip. Show the exact same knight in mid-air with his knees tucked, lashing the chain whip out toward the left, the chain stretched out long. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "carryUnarmed": {
+      "from": "stand",
+      "action": "empty fists up in a boxer's guard",
+      "prompt": "Image 1 is an armoured knight carrying a rocket launcher on his shoulder. Remove the rocket launcher completely: the same raised hand is now an empty armoured fist held up beside his shoulder in a boxer's guard, the other hand a fist at his hip. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "landUnarmed": {
+      "from": "carryUnarmed",
+      "action": "landing in a deep crouch, with his empty armoured fists up",
+      "prompt": "Image 1 is an armoured knight with his empty armoured fists up. Show the exact same knight landing from a fall in a deep crouch, knees bent hard, still with his empty armoured fists up the same way. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "airUnarmed": {
+      "from": "carryUnarmed",
+      "action": "in mid-air with his knees tucked, with his empty armoured fists up",
+      "prompt": "Image 1 is an armoured knight with his empty armoured fists up. Show the exact same knight in mid-air with his knees tucked up under him, still with his empty armoured fists up. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "jabFists": {
+      "from": "carryUnarmed",
+      "action": "throwing a quick straight jab toward the left side of the picture, his lead arm fully extended",
+      "prompt": "Image 1 is an armoured knight with his empty armoured fists up. Show the exact same knight throwing a quick straight jab toward the left side of the picture, his lead arm fully extended. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "crossFists": {
+      "from": "carryUnarmed",
+      "action": "throwing a hard cross with his other fist toward the left, shoulders turned into it",
+      "prompt": "Image 1 is an armoured knight with his empty armoured fists up. Show the exact same knight throwing a hard cross with his other fist toward the left, shoulders turned into it. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "hookFists": {
+      "from": "carryUnarmed",
+      "action": "swinging a big wide round punch with his bare gauntleted fist toward the left, his whole body twisted into the blow, armour seams flaring",
+      "prompt": "Image 1 is an armoured knight with his empty armoured fists up. Show the exact same knight swinging a big wide round punch with his bare gauntleted fist toward the left, his whole body twisted into the blow, armour seams flaring. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "runPunch": {
+      "from": "carryUnarmed",
+      "action": "mid-stride, lunging forward to the left with a straight punch",
+      "prompt": "Image 1 is an armoured knight with his empty armoured fists up. Show the exact same knight mid-stride, lunging forward to the left with a straight punch, his rear leg pushing off. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "airPunch": {
+      "from": "airUnarmed",
+      "action": "in mid-air, knees tucked, swinging a punch toward the left",
+      "prompt": "Image 1 is an armoured knight in mid-air with his fists up. Show the exact same knight in mid-air with his knees tucked, swinging a big punch toward the left. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "dashLean": {
+      "from": "unarmed",
+      "action": "leaning hard forward mid-sprint toward the left, one leg stretched back, the maroon cloth streaming behind",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight leaning hard forward mid-sprint toward the left, one leg stretched back, the maroon cloth streaming behind. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "wallCling": {
+      "from": "unarmed",
+      "action": "pressed flat against an invisible wall on the left side of the picture (the wall itself is not drawn), one gauntlet and one boot flat against it, his helm turned back over his shoulder",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight pressed flat against an invisible wall on the left side of the picture (the wall itself is not drawn), one gauntlet and one boot flat against it, his helm turned back over his shoulder. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "wallKick": {
+      "from": "unarmed",
+      "action": "kicking off an invisible wall (not drawn) with one boot, his armoured body arched out and up toward the right, arms spread",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight kicking off an invisible wall (not drawn) with one boot, his armoured body arched out and up toward the right, arms spread. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "grappleAim": {
+      "from": "unarmed",
+      "action": "throwing his arm forward and up toward the upper left, a hook on a rope flying from his gauntlet",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight throwing his arm forward and up toward the upper left, a hook on a rope flying from his gauntlet. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "grappleHang": {
+      "from": "unarmed",
+      "action": "hanging by one gauntlet from a rope rising above him, his legs swinging, bored",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight hanging by one gauntlet from a rope rising above him, his legs swinging, bored. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "grazeSpin": {
+      "from": "unarmed",
+      "action": "twisting smugly aside, helm tilted, as if something just missed him by an inch",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight twisting smugly aside, helm tilted, as if something just missed him by an inch. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "hurtRecoil": {
+      "from": "unarmed",
+      "action": "jolted backward by a hit, helm snapped back, arms flung up, sparks bursting off his breastplate",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight jolted backward by a hit, helm snapped back, arms flung up, sparks bursting off his breastplate. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "deathBurnt": {
+      "from": "unarmed",
+      "action": "lying flat on his back, his armour scorched black and smoking, a puff of grey smoke rising",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight lying flat on his back, his armour scorched black and smoking, a puff of grey smoke rising. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "deathSquashed": {
+      "from": "unarmed",
+      "action": "squashed flat on the ground under his own armour, only his helm and gauntlets sticking out",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight squashed flat on the ground under his own armour, only his helm and gauntlets sticking out. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "launchedSpin": {
+      "from": "unarmed",
+      "action": "launched up into the air spinning, one gauntlet raised in a small wave goodbye",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight launched up into the air spinning, one gauntlet raised in a small wave goodbye. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "shrugLying": {
+      "from": "unarmed",
+      "action": "lying down on his side on the ground, propped on one elbow, giving up, a small shrug",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight lying down on his side on the ground, propped on one elbow, giving up, a small shrug. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    },
+    "victoryPose": {
+      "from": "unarmed",
+      "action": "standing with his arms crossed, a small tired nod of the helm, one gauntlet raised in the smallest fist pump",
+      "prompt": "Image 1 is an armoured knight with empty hands. Show the exact same knight standing with his arms crossed, a small tired nod of the helm, one gauntlet raised in the smallest fist pump. His hands hold nothing: no sword, no axe, no spear, no weapon of any kind. Nothing else in the picture: no wall, no floor, no ground, no props. Keep the knight exactly the same as image 1: the same battered bronze plate armour, helm with glowing orange eye slits, tattered maroon cloth, the same view angle, the same size and the same position in the frame, feet on the same ground line. The whole body and the whole weapon visible. Plain flat pure black background (#000000), no floor, no shadow, no scenery, even lighting."
+    }
   },
   "clips": {
-    "unarmedIdle": {
-      "from": "unarmedStand",
-      "action": "stands with empty gauntlets, shifts his weight and sighs under the helm, launcher slung on his back",
-      "seconds": 1.2,
-      "state": "UnarmedIdle",
-      "loop": true,
-      "wired": "standIn",
-      "standIn": "Idle.png"
-    },
-    "unarmedWalk": {
-      "from": "unarmedStand",
-      "action": "walks in his armour with empty swinging gauntlets, launcher slung on his back, cloth swaying",
-      "seconds": 1,
-      "state": "UnarmedWalk",
-      "loop": true,
-      "wired": "standIn",
-      "standIn": "Walk.png"
-    },
-    "unarmedJump": {
-      "from": "unarmedStand",
-      "action": "jumps up in his armour, empty gauntlets thrown up, launcher slung on his back",
-      "seconds": 0.5,
-      "state": "UnarmedJump",
-      "loop": false,
-      "wired": "standIn",
-      "standIn": "Jump.png"
-    },
-    "unarmedFall": {
-      "from": "unarmedStand",
-      "action": "falls in his armour, empty gauntlets flailing, launcher slung on his back, cloth streaming up",
+    "land": {
+      "from": "launcherLand",
+      "action": "straightens up out of the landing crouch, the launcher settling on his shoulder",
       "seconds": 0.6,
-      "state": "UnarmedFall",
+      "state": "Land",
+      "loop": false,
+      "wired": "own",
+      "to": "stand",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "airFire": {
+      "from": "launcherAir",
+      "action": "hangs in the air with his knees tucked, firing the launcher toward the left again and again, flame and smoke bursting from its muzzle",
+      "seconds": 1.0,
+      "state": "AirFire",
       "loop": true,
-      "wired": "standIn",
-      "standIn": "Fall.png"
-    },
-    "punch1": {
-      "from": "unarmedStand",
-      "action": "throws a quick right jab with his gauntlet, then shakes out his hand",
-      "seconds": 0.6,
-      "to": "stand",
-      "state": "Punch1",
-      "loop": false,
-      "wired": "standIn",
-      "standIn": "Fire.png"
-    },
-    "punch2": {
-      "from": "punchWind",
-      "action": "swings a wide left hook, grunting",
-      "seconds": 0.7,
-      "to": "stand",
-      "state": "Punch2",
-      "loop": false,
-      "wired": "standIn",
-      "standIn": "Fire.png"
-    },
-    "punch3": {
-      "from": "punchWind",
-      "action": "rises on his toes into a big finishing uppercut",
-      "seconds": 0.8,
-      "to": "stand",
-      "state": "Punch3",
-      "loop": false,
-      "wired": "standIn",
-      "standIn": "Fire.png"
-    },
-    "launcherAway": {
-      "from": "launcherHeld",
-      "action": "the launcher is yanked from his shoulder out of frame; he looks at his empty hands, unimpressed",
-      "seconds": 1.5,
-      "to": "launcherGone",
-      "state": "LauncherTaken",
-      "loop": false,
-      "wired": "standIn",
-      "standIn": "Grabbed.png"
-    },
-    "equipLauncher": {
-      "from": "launcherGone",
-      "action": "swings the rocket launcher up onto his shoulder and checks it",
-      "seconds": 1,
-      "to": "launcherHeld",
-      "state": "EquipLauncher",
-      "loop": false,
-      "wired": "standIn",
-      "standIn": "Curious.png"
-    },
-    "equipFists": {
-      "from": "stand",
-      "action": "slings the launcher on his back and cracks his gauntleted knuckles",
-      "seconds": 1,
-      "to": "punchWind",
-      "state": "EquipFists",
-      "loop": false,
-      "wired": "standIn",
-      "standIn": "Shout.png"
-    },
-    "dash": {
-      "from": "stand",
-      "action": "bursts into a low forward dash in his armour, cloth streaming behind",
-      "seconds": 0.5,
-      "to": "dashLean",
-      "state": "Dash",
-      "loop": false,
-      "wired": "standIn",
-      "standIn": "Walk.png"
+      "wired": "own",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "runFire": {
-      "from": "runFire",
-      "action": "runs in his armour with the launcher on his shoulder, firing it forward as he goes",
-      "seconds": 1,
+      "from": "stand",
+      "action": "walks steadily in place, the rocket launcher on his shoulder firing toward the left as he goes, flame bursting from its muzzle with each shot",
+      "seconds": 1.0,
       "state": "RunFire",
       "loop": true,
-      "wired": "standIn",
-      "standIn": "Walk.png"
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "equipLauncher": {
+      "from": "unarmed",
+      "action": "reaches back, swings the rocket launcher up onto his shoulder and checks it",
+      "seconds": 1.0,
+      "state": "EquipLauncher",
+      "loop": false,
+      "wired": "own",
+      "to": "stand",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "launcherAway": {
+      "from": "stand",
+      "action": "the rocket launcher is yanked off his shoulder out of the picture to the left; he looks down at his empty hands, unimpressed",
+      "seconds": 1.5,
+      "state": "LauncherTaken",
+      "loop": false,
+      "wired": "own",
+      "to": "unarmed",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "shotgunIdle": {
+      "from": "carryShotgun",
+      "action": "stands bored, shifting his weight, holding a shotgun",
+      "seconds": 1.0,
+      "state": "ShotgunIdle",
+      "loop": true,
+      "wired": "own",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "shotgunRun": {
+      "from": "carryShotgun",
+      "action": "walks steadily in place, holding a shotgun",
+      "seconds": 1.0,
+      "state": "ShotgunRun",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "shotgunJump": {
+      "from": "carryShotgun",
+      "action": "jumps up high and lands, holding a shotgun",
+      "seconds": 1.0,
+      "state": "ShotgunJump",
+      "loop": false,
+      "wired": "own",
+      "motion": "player:Jump",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "shotgunFall": {
+      "from": "carryShotgun",
+      "action": "falls through the air flailing, holding a shotgun",
+      "seconds": 1.0,
+      "state": "ShotgunFall",
+      "loop": true,
+      "wired": "own",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "shotgunLand": {
+      "from": "landShotgun",
+      "action": "straightens up out of the landing crouch, holding a shotgun",
+      "seconds": 0.6,
+      "state": "ShotgunLand",
+      "loop": false,
+      "wired": "own",
+      "to": "carryShotgun",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "shotgunEquip": {
+      "from": "unarmed",
+      "action": "reaches back and pulls out the shotgun, checks it and takes it up the way he carries it",
+      "seconds": 1.0,
+      "state": "EquipShotgun",
+      "loop": false,
+      "wired": "own",
+      "to": "carryShotgun",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "shotgunAttack": {
+      "from": "carryShotgun",
+      "action": "fires the shotgun from his shoulder toward the left, a big blast of orange flame and sparks from the barrel, the recoil rocking him back",
+      "seconds": 1.0,
+      "state": "ShotgunAttack",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Fire",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "shotgunRunAttack": {
+      "from": "carryShotgun",
+      "action": "walks steadily in place and fires the shotgun from his shoulder toward the left, a big blast of orange flame and sparks from the barrel, the recoil rocking him back",
+      "seconds": 1.0,
+      "state": "ShotgunRunAttack",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "shotgunAirAttack": {
+      "from": "airShotgun",
+      "action": "hangs in the air with his knees tucked and fires the shotgun from his shoulder toward the left, a big blast of orange flame and sparks from the barrel, the recoil rocking him back",
+      "seconds": 1.0,
+      "state": "ShotgunAirAttack",
+      "loop": true,
+      "wired": "own",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "spitfireIdle": {
+      "from": "carrySpitfire",
+      "action": "stands bored, shifting his weight, holding a fire newt",
+      "seconds": 1.0,
+      "state": "SpitfireIdle",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Idle",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "spitfireRun": {
+      "from": "carrySpitfire",
+      "action": "walks steadily in place, holding a fire newt",
+      "seconds": 1.0,
+      "state": "SpitfireRun",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "spitfireJump": {
+      "from": "carrySpitfire",
+      "action": "jumps up high and lands, holding a fire newt",
+      "seconds": 1.0,
+      "state": "SpitfireJump",
+      "loop": false,
+      "wired": "own",
+      "motion": "player:Jump",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "spitfireFall": {
+      "from": "carrySpitfire",
+      "action": "falls through the air flailing, holding a fire newt",
+      "seconds": 1.0,
+      "state": "SpitfireFall",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Fall",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "spitfireLand": {
+      "from": "landSpitfire",
+      "action": "straightens up out of the landing crouch, holding a fire newt",
+      "seconds": 0.6,
+      "state": "SpitfireLand",
+      "loop": false,
+      "wired": "own",
+      "to": "carrySpitfire",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "spitfireEquip": {
+      "from": "unarmed",
+      "action": "reaches back and pulls out the fire newt, checks it and takes it up the way he carries it",
+      "seconds": 1.0,
+      "state": "EquipSpitfire",
+      "loop": false,
+      "wired": "own",
+      "to": "carrySpitfire",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "spitfireAttack": {
+      "from": "carrySpitfire",
+      "action": "squeezes the fire newt and it spits a fast stream of glowing embers toward the left",
+      "seconds": 1.0,
+      "state": "SpitfireAttack",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Fire",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "spitfireRunAttack": {
+      "from": "carrySpitfire",
+      "action": "walks steadily in place and squeezes the fire newt and it spits a fast stream of glowing embers toward the left",
+      "seconds": 1.0,
+      "state": "SpitfireRunAttack",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "spitfireAirAttack": {
+      "from": "airSpitfire",
+      "action": "hangs in the air with his knees tucked and squeezes the fire newt and it spits a fast stream of glowing embers toward the left",
+      "seconds": 1.0,
+      "state": "SpitfireAirAttack",
+      "loop": true,
+      "wired": "own",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "ricochetPistolIdle": {
+      "from": "carryPistol",
+      "action": "stands bored, shifting his weight, holding a pistol",
+      "seconds": 1.0,
+      "state": "PistolIdle",
+      "loop": true,
+      "wired": "own",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "ricochetPistolRun": {
+      "from": "carryPistol",
+      "action": "walks steadily in place, holding a pistol",
+      "seconds": 1.0,
+      "state": "PistolRun",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "ricochetPistolJump": {
+      "from": "carryPistol",
+      "action": "jumps up high and lands, holding a pistol",
+      "seconds": 1.0,
+      "state": "PistolJump",
+      "loop": false,
+      "wired": "own",
+      "motion": "player:Jump",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "ricochetPistolFall": {
+      "from": "carryPistol",
+      "action": "falls through the air flailing, holding a pistol",
+      "seconds": 1.0,
+      "state": "PistolFall",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Fall",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "ricochetPistolLand": {
+      "from": "landPistol",
+      "action": "straightens up out of the landing crouch, holding a pistol",
+      "seconds": 0.6,
+      "state": "PistolLand",
+      "loop": false,
+      "wired": "own",
+      "to": "carryPistol",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "ricochetPistolEquip": {
+      "from": "unarmed",
+      "action": "reaches back and pulls out the pistol, checks it and takes it up the way he carries it",
+      "seconds": 1.0,
+      "state": "EquipPistol",
+      "loop": false,
+      "wired": "own",
+      "to": "carryPistol",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "ricochetPistolAttack": {
+      "from": "carryPistol",
+      "action": "levels the pale pistol toward the left and fires it, a flash of blue light at the muzzle, the recoil kicking his hand up",
+      "seconds": 1.0,
+      "state": "PistolAttack",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Fire",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "ricochetPistolRunAttack": {
+      "from": "carryPistol",
+      "action": "walks steadily in place and levels the pale pistol toward the left and fires it, a flash of blue light at the muzzle, the recoil kicking his hand up",
+      "seconds": 1.0,
+      "state": "PistolRunAttack",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "ricochetPistolAirAttack": {
+      "from": "airPistol",
+      "action": "hangs in the air with his knees tucked and levels the pale pistol toward the left and fires it, a flash of blue light at the muzzle, the recoil kicking his hand up",
+      "seconds": 1.0,
+      "state": "PistolAirAttack",
+      "loop": true,
+      "wired": "own",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "slagLadleIdle": {
+      "from": "carryLadle",
+      "action": "stands bored, shifting his weight, holding a slag ladle",
+      "seconds": 1.0,
+      "state": "LadleIdle",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Idle",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "slagLadleRun": {
+      "from": "carryLadle",
+      "action": "walks steadily in place, holding a slag ladle",
+      "seconds": 1.0,
+      "state": "LadleRun",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "slagLadleJump": {
+      "from": "carryLadle",
+      "action": "jumps up high and lands, holding a slag ladle",
+      "seconds": 1.0,
+      "state": "LadleJump",
+      "loop": false,
+      "wired": "own",
+      "motion": "player:Jump",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "slagLadleFall": {
+      "from": "carryLadle",
+      "action": "falls through the air flailing, holding a slag ladle",
+      "seconds": 1.0,
+      "state": "LadleFall",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Fall",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "slagLadleLand": {
+      "from": "landLadle",
+      "action": "straightens up out of the landing crouch, holding a slag ladle",
+      "seconds": 0.6,
+      "state": "LadleLand",
+      "loop": false,
+      "wired": "own",
+      "to": "carryLadle",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "slagLadleEquip": {
+      "from": "unarmed",
+      "action": "reaches back and pulls out the slag ladle, checks it and takes it up the way he carries it",
+      "seconds": 1.0,
+      "state": "EquipLadle",
+      "loop": false,
+      "wired": "own",
+      "to": "carryLadle",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "slagLadleAttack": {
+      "from": "carryLadle",
+      "action": "swings the ladle forward toward the left and flings a glob of glowing molten slag out of its bowl, then hauls it back onto his shoulder",
+      "seconds": 1.0,
+      "state": "LadleAttack",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Fire",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "slagLadleRunAttack": {
+      "from": "carryLadle",
+      "action": "walks steadily in place and swings the ladle forward toward the left and flings a glob of glowing molten slag out of its bowl, then hauls it back onto his shoulder",
+      "seconds": 1.0,
+      "state": "LadleRunAttack",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "slagLadleAirAttack": {
+      "from": "airLadle",
+      "action": "hangs in the air with his knees tucked and swings the ladle forward toward the left and flings a glob of glowing molten slag out of its bowl, then hauls it back onto his shoulder",
+      "seconds": 1.0,
+      "state": "LadleAirAttack",
+      "loop": true,
+      "wired": "own",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "boomerangHaloIdle": {
+      "from": "carryHalo",
+      "action": "stands bored, shifting his weight, holding a golden halo",
+      "seconds": 1.0,
+      "state": "HaloIdle",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Idle",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "boomerangHaloRun": {
+      "from": "carryHalo",
+      "action": "walks steadily in place, holding a golden halo",
+      "seconds": 1.0,
+      "state": "HaloRun",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "boomerangHaloJump": {
+      "from": "carryHalo",
+      "action": "jumps up high and lands, holding a golden halo",
+      "seconds": 1.0,
+      "state": "HaloJump",
+      "loop": false,
+      "wired": "own",
+      "motion": "player:Jump",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "boomerangHaloFall": {
+      "from": "carryHalo",
+      "action": "falls through the air flailing, holding a golden halo",
+      "seconds": 1.0,
+      "state": "HaloFall",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Fall",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "boomerangHaloLand": {
+      "from": "landHalo",
+      "action": "straightens up out of the landing crouch, holding a golden halo",
+      "seconds": 0.6,
+      "state": "HaloLand",
+      "loop": false,
+      "wired": "own",
+      "to": "carryHalo",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "boomerangHaloEquip": {
+      "from": "unarmed",
+      "action": "reaches back and pulls out the golden halo, checks it and takes it up the way he carries it",
+      "seconds": 1.0,
+      "state": "EquipHalo",
+      "loop": false,
+      "wired": "own",
+      "to": "carryHalo",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "boomerangHaloAttack": {
+      "from": "carryHalo",
+      "action": "throws the golden halo toward the left like a discus, a gold trail behind it, and catches it again as it comes spinning back",
+      "seconds": 0.75,
+      "state": "HaloAttack",
+      "loop": true,
+      "wired": "own",
+      "to": "carryHalo",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "boomerangHaloRunAttack": {
+      "from": "carryHalo",
+      "action": "walks steadily in place and throws the golden halo toward the left like a discus, a gold trail behind it, and catches it again as it comes spinning back",
+      "seconds": 1.0,
+      "state": "HaloRunAttack",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "boomerangHaloAirAttack": {
+      "from": "airHalo",
+      "action": "hangs in the air with his knees tucked and throws the golden halo toward the left like a discus, a gold trail behind it, and catches it again as it comes spinning back",
+      "seconds": 0.75,
+      "state": "HaloAirAttack",
+      "loop": true,
+      "wired": "own",
+      "to": "airHalo",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "chainWhipIdle": {
+      "from": "carryWhip",
+      "action": "stands bored, shifting his weight, holding a chain whip",
+      "seconds": 1.0,
+      "state": "WhipIdle",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Idle",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "chainWhipRun": {
+      "from": "carryWhip",
+      "action": "walks steadily in place, holding a chain whip",
+      "seconds": 1.0,
+      "state": "WhipRun",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "chainWhipJump": {
+      "from": "carryWhip",
+      "action": "jumps up high and lands, holding a chain whip",
+      "seconds": 1.0,
+      "state": "WhipJump",
+      "loop": false,
+      "wired": "own",
+      "motion": "player:Jump",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "chainWhipFall": {
+      "from": "carryWhip",
+      "action": "falls through the air flailing, holding a chain whip",
+      "seconds": 1.0,
+      "state": "WhipFall",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Fall",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion"
+    },
+    "chainWhipLand": {
+      "from": "landWhip",
+      "action": "straightens up out of the landing crouch, holding a chain whip",
+      "seconds": 0.6,
+      "state": "WhipLand",
+      "loop": false,
+      "wired": "own",
+      "to": "carryWhip",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "chainWhipEquip": {
+      "from": "unarmed",
+      "action": "reaches back and pulls out the chain whip, checks it and takes it up the way he carries it",
+      "seconds": 1.0,
+      "state": "EquipWhip",
+      "loop": false,
+      "wired": "own",
+      "to": "carryWhip",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "whipLash": {
+      "from": "carryWhip",
+      "action": "lashes the chain whip out toward the left, the heavy chain stretched out long in a straight line to the left",
+      "seconds": 0.7,
+      "state": "WhipLash",
+      "loop": false,
+      "wired": "own",
+      "to": "lashWhip",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "whipSnap": {
+      "from": "carryWhip",
+      "action": "snaps the chain whip back up over his head, the chain looping in a wide arc above him",
+      "seconds": 0.7,
+      "state": "WhipSnap",
+      "loop": false,
+      "wired": "own",
+      "to": "snapWhip",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "whipCrack": {
+      "from": "carryWhip",
+      "action": "cracks the chain whip down hard toward the left with both hands, the chain whipping out in a long straight line, sparks at its barbed tip",
+      "seconds": 0.7,
+      "state": "WhipCrack",
+      "loop": false,
+      "wired": "own",
+      "to": "crackWhip",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "whipRunAttack": {
+      "from": "carryWhip",
+      "action": "steps forward and lashes the chain whip out toward the left",
+      "seconds": 0.7,
+      "state": "WhipRunAttack",
+      "loop": false,
+      "wired": "own",
+      "to": "runLash",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "whipAirAttack": {
+      "from": "airWhip",
+      "action": "lashes the chain whip out toward the left in mid-air",
+      "seconds": 0.7,
+      "state": "WhipAirAttack",
+      "loop": false,
+      "wired": "own",
+      "to": "airLash",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "fistsIdle": {
+      "from": "carryUnarmed",
+      "action": "stands bored, shifting his weight, with his empty armoured fists up",
+      "seconds": 1.0,
+      "state": "UnarmedIdle",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Idle",
+      "fps": 12,
+      "playFps": 12,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion, rocket launcher, gun, pistol, any weapon in his hands, projectile, missile, rocket"
+    },
+    "fistsRun": {
+      "from": "carryUnarmed",
+      "action": "walks steadily in place, fists up, with his empty armoured fists up",
+      "seconds": 1.0,
+      "state": "UnarmedWalk",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Walk",
+      "fps": 12,
+      "playFps": 12,
+      "motionVia": "pose",
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion, rocket launcher, gun, pistol, any weapon in his hands, projectile, missile, rocket"
+    },
+    "fistsJump": {
+      "from": "carryUnarmed",
+      "action": "jumps up high and lands, with his empty armoured fists up",
+      "seconds": 1.0,
+      "state": "UnarmedJump",
+      "loop": false,
+      "wired": "own",
+      "motion": "player:Jump",
+      "fps": 12,
+      "playFps": 12,
+      "motionVia": "pose",
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion, rocket launcher, gun, pistol, any weapon in his hands, projectile, missile, rocket"
+    },
+    "fistsFall": {
+      "from": "carryUnarmed",
+      "action": "falls through the air flailing, with his empty armoured fists up",
+      "seconds": 1.0,
+      "state": "UnarmedFall",
+      "loop": true,
+      "wired": "own",
+      "motion": "player:Fall",
+      "fps": 12,
+      "playFps": 12,
+      "motionVia": "pose",
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion, rocket launcher, gun, pistol, any weapon in his hands, projectile, missile, rocket"
+    },
+    "fistsLand": {
+      "from": "landUnarmed",
+      "action": "straightens up out of the landing crouch, with his empty armoured fists up",
+      "seconds": 0.6,
+      "state": "UnarmedLand",
+      "loop": false,
+      "wired": "own",
+      "to": "carryUnarmed",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "fistsEquip": {
+      "from": "unarmed",
+      "action": "cracks his gauntleted knuckles and raises his fists into a guard",
+      "seconds": 1.0,
+      "state": "EquipFists",
+      "loop": false,
+      "wired": "own",
+      "to": "carryUnarmed",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "punch1": {
+      "from": "carryUnarmed",
+      "action": "throws a quick straight jab toward the left side of the picture, his lead arm fully extended",
+      "seconds": 0.6,
+      "state": "Punch1",
+      "loop": false,
+      "wired": "own",
+      "to": "jabFists",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "punch2": {
+      "from": "carryUnarmed",
+      "action": "throws a hard cross with his other fist toward the left, shoulders turned into it",
+      "seconds": 0.6,
+      "state": "Punch2",
+      "loop": false,
+      "wired": "own",
+      "to": "crossFists",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "punch3": {
+      "from": "carryUnarmed",
+      "action": "swings a big wide round punch with his bare gauntleted fist toward the left, his whole body twisted into the blow, armour seams flaring",
+      "seconds": 0.6,
+      "state": "Punch3",
+      "loop": false,
+      "wired": "own",
+      "to": "hookFists",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "fistsRunAttack": {
+      "from": "carryUnarmed",
+      "action": "lunges forward a step and throws a straight punch toward the left",
+      "seconds": 0.6,
+      "state": "UnarmedRunAttack",
+      "loop": false,
+      "wired": "own",
+      "to": "runPunch",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "fistsAirAttack": {
+      "from": "airUnarmed",
+      "action": "swings a big punch toward the left in mid-air",
+      "seconds": 0.6,
+      "state": "UnarmedAirAttack",
+      "loop": false,
+      "wired": "own",
+      "to": "airPunch",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "dash": {
+      "from": "unarmed",
+      "action": "bursts into a low fast dash toward the left, the maroon cloth streaming behind",
+      "seconds": 0.5,
+      "state": "Dash",
+      "loop": false,
+      "wired": "own",
+      "to": "dashLean",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "wallSlide": {
       "from": "wallCling",
-      "action": "slides slowly down the wall, scowling",
-      "seconds": 1,
+      "action": "slides slowly down the wall, gauntlet scraping, sparks under his boot",
+      "seconds": 1.0,
       "state": "WallSlide",
       "loop": true,
-      "wired": "standIn",
-      "standIn": "Grabbed.png"
+      "wired": "own",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "wallJump": {
       "from": "wallCling",
-      "action": "kicks off the wall and launches up and away",
+      "action": "kicks off the wall and springs up and away from it",
       "seconds": 0.6,
-      "to": "wallKick",
       "state": "WallJump",
       "loop": false,
-      "wired": "standIn",
-      "standIn": "Jump.png"
+      "wired": "own",
+      "to": "wallKick",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "grappleThrow": {
-      "from": "stand",
-      "action": "throws the hook up and forward on a rope",
-      "seconds": 0.7,
-      "to": "grappleAim",
+      "from": "unarmed",
+      "action": "throws the hook on its rope up toward the upper left",
+      "seconds": 0.5,
       "state": "GrappleThrow",
       "loop": false,
-      "wired": false
+      "wired": "own",
+      "to": "grappleAim",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "grappleSwing": {
       "from": "grappleHang",
-      "action": "swings back and forth hanging from the rope",
+      "action": "swings on the rope, legs swinging, bored",
       "seconds": 1.2,
       "state": "GrappleSwing",
       "loop": true,
-      "wired": false
-    },
-    "ledgeGrab": {
-      "from": "wallKick",
-      "action": "snatches a ledge with both hands and dangles",
-      "seconds": 0.6,
-      "to": "ledgeHang",
-      "state": "LedgeGrab",
-      "loop": false,
-      "wired": false
-    },
-    "ledgeClimb": {
-      "from": "ledgeHang",
-      "action": "hauls himself up and over the ledge",
-      "seconds": 0.9,
-      "to": "stand",
-      "state": "LedgeClimb",
-      "loop": false,
-      "wired": false
+      "wired": "own",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "graze": {
-      "from": "stand",
-      "action": "twists aside as a shot whistles past, helm tilted smugly",
+      "from": "unarmed",
+      "action": "twists smugly aside as something just misses him, then settles",
       "seconds": 0.6,
-      "to": "grazeSpin",
       "state": "Graze",
       "loop": false,
-      "wired": false
+      "wired": "own",
+      "to": "grazeSpin",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "hurt": {
-      "from": "stand",
-      "action": "is struck, flinches back with his helm snapping to one side, armour seams flaring, then rights himself with a flat look",
-      "seconds": 0.4,
-      "to": "stand",
+      "from": "unarmed",
+      "action": "is hit, jolts backward with sparks bursting off his breastplate, then braces",
+      "seconds": 0.6,
       "state": "Hurt",
       "loop": false,
-      "wired": "standIn",
-      "standIn": "Grabbed.png"
-    },
-    "victory": {
-      "from": "stand",
-      "action": "nods once, looks at the camera, flatly says 'fine' with a tiny gauntlet pump",
-      "seconds": 1.5,
-      "to": "victoryPose",
-      "state": "Victory",
-      "loop": false,
-      "wired": "standIn",
-      "standIn": "Shout.png"
+      "wired": "own",
+      "to": "hurtRecoil",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "deathBurn": {
-      "from": "stand",
-      "action": "is hit, armour seams light up like a firework, goes skeletal for a flash and collapses in a puff of smoke",
-      "seconds": 1.4,
-      "to": "deathFlat",
+      "from": "unarmed",
+      "action": "lights up like a firework, a burst of flame and smoke, and falls flat on his back, smoking",
+      "seconds": 1.5,
       "state": "DeathBurn",
       "loop": false,
-      "wired": "standIn",
-      "standIn": "Fall.png"
+      "wired": "own",
+      "to": "deathBurnt",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "deathSquash": {
-      "from": "stand",
-      "action": "looks up, sighs, and is flattened into a thin pancake which peels off the ground",
-      "seconds": 1.4,
-      "to": "deathFlat",
+      "from": "unarmed",
+      "action": "looks up, sighs, and is flattened by something heavy from above",
+      "seconds": 1.25,
       "state": "DeathSquash",
       "loop": false,
-      "wired": "standIn",
-      "standIn": "Grabbed.png"
+      "wired": "own",
+      "to": "deathSquashed",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "deathSpin": {
-      "from": "stand",
-      "action": "is launched spinning into the air, waving goodbye at the top",
-      "seconds": 1.4,
-      "to": "deathFlat",
+      "from": "unarmed",
+      "action": "is launched spinning up into the air and waves goodbye at the top",
+      "seconds": 1.5,
       "state": "DeathSpin",
       "loop": false,
-      "wired": "standIn",
-      "standIn": "Jump.png"
+      "wired": "own",
+      "to": "launchedSpin",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "deathShrug": {
-      "from": "stand",
-      "action": "shrugs, says nothing, and lies down on the ground to quit",
-      "seconds": 1.4,
-      "to": "deathFlat",
+      "from": "unarmed",
+      "action": "shrugs, lies down on his side and gives up",
+      "seconds": 1.5,
       "state": "DeathShrug",
       "loop": false,
-      "wired": "standIn",
-      "standIn": "Shout.png"
+      "wired": "own",
+      "to": "shrugLying",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
+    },
+    "victory": {
+      "from": "unarmed",
+      "action": "crosses his arms, nods once and gives the smallest fist pump: fine",
+      "seconds": 1.25,
+      "state": "Victory",
+      "loop": false,
+      "wired": "own",
+      "to": "victoryPose",
+      "fps": 16,
+      "playFps": 16,
+      "negative": "extra weapons, two weapons, rocket launcher on his back"
     },
     "climbUp": {
-      "from": "climbHang",
-      "action": "climbs hand over hand in his armour, alternating arms and knees, going up",
-      "seconds": 2,
+      "from": "unarmed",
+      "action": "climbs a ladder hand over hand, no ladder drawn",
+      "seconds": 1.0,
       "state": "Climb",
       "loop": true,
-      "wired": "own"
+      "wired": "own",
+      "motion": "player:Climb",
+      "fps": 12,
+      "playFps": 12,
+      "motionFrames": 53,
+      "motionVia": "pose",
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion, rocket launcher, gun, pistol, any weapon in his hands, projectile, missile, rocket"
     },
     "climbIdle": {
-      "from": "climbHang",
-      "action": "hangs still on the rungs, breathing, one bored glance of the glowing eyes",
-      "seconds": 2,
+      "from": "unarmed",
+      "action": "hangs on a ladder, breathing, no ladder drawn",
+      "seconds": 1.0,
       "state": "ClimbIdle",
       "loop": true,
-      "wired": "own"
+      "wired": "own",
+      "motion": "player:ClimbIdle",
+      "fps": 12,
+      "playFps": 12,
+      "motionFrames": 49,
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion, rocket launcher, gun, pistol, any weapon in his hands, projectile, missile, rocket"
     },
     "climbDown": {
-      "from": "climbHang",
-      "action": "climbs down hand under hand, going down",
-      "seconds": 2,
+      "from": "unarmed",
+      "action": "climbs down a ladder hand under hand, no ladder drawn",
+      "seconds": 1.0,
       "state": "ClimbDown",
       "loop": true,
-      "wired": "own"
+      "wired": "own",
+      "motion": "player:ClimbDown",
+      "fps": 12,
+      "playFps": 12,
+      "motionFrames": 33,
+      "motionVia": "pose",
+      "negative": "extra weapons, two weapons, rocket launcher on his back, muzzle flash, fire from the weapon, flames from the barrel, shooting, explosion, rocket launcher, gun, pistol, any weapon in his hands, projectile, missile, rocket"
+    },
+    "curious": {
+      "video": "player:Curious",
+      "state": "Curious",
+      "wired": "own",
+      "loop": true,
+      "action": "made before (Level 1's portal scene)"
+    },
+    "shout": {
+      "video": "player:Shout",
+      "state": "Shout",
+      "wired": "own",
+      "loop": false,
+      "action": "made before (Level 1's portal scene)"
+    },
+    "grabbed": {
+      "video": "player:Grabbed",
+      "state": "Grabbed",
+      "wired": "own",
+      "loop": true,
+      "action": "made before (Level 1's portal scene)"
     }
-  },
-  "takes": {
-    "pose": 3,
-    "clip": 3
-  },
-  "kind": "hero",
-  "referenceIdle": true,
-  "bake": {
-    "cell": [
-      604,
-      340
-    ],
-    "pixelsPerUnit": 100,
-    "pivot": [
-      0.5,
-      0.5
-    ],
-    "folder": "Art/Sprites/Player",
-    "playerJson": "player.json"
   }
 }

@@ -11,7 +11,11 @@
   ],
   "extends": "bounceLobber",
   "health": 5,
-  "tags": ["bounceLobber", "elite", "tripleLobber"],
+  "tags": [
+    "bounceLobber",
+    "elite",
+    "tripleLobber"
+  ],
   "visual": {
     "scale": 0.35,
     "fxColor": "#FFD27A",
@@ -111,11 +115,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -138,18 +147,21 @@
       "projectile": "bounceLump",
       "speed": 3.6,
       "aim": "Player",
-      "muzzle": [0.2, 0.3],
-      "interval": 4,
+      "muzzle": [
+        0.2,
+        0.3
+      ],
+      "interval": 4.0,
       "initialDelay": 1.6,
       "range": 10,
       "damage": 1,
+      "animTrigger": "IsAttacking",
+      "fireOnEvent": "FireProjectile",
       "pattern": {
         "type": "spread",
         "count": 3,
         "angle": 18
-      },
-      "animTrigger": "IsAttacking",
-      "fireOnEvent": "FireProjectile"
+      }
     }
   ],
   "moveSpeed": 0,

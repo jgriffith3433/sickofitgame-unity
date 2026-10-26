@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "entity": "drone",
+  "name": "Soot lantern",
+  "description": "a flying iron lantern: a small soot-black iron lantern cage with a pointed cap, a pair of small leathery bat wings on its sides, one glowing ember eye behind its grille, short chains dangling below it; it floats in the air by itself",
+  "height": 0.55,
+  "poses": {
+    "stand": "hovering on its little bat wings, the ember eye glowing",
+    "struck": "jolted sideways, its grille rattling, sparks flying off the iron",
+    "dead": "bursting apart into soot, iron scraps and embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers, wings flapping, swaying on its chains, the eye flickering",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "its grille flares and it spits an ember forward to the right",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jolts sideways and rattles on its chains, sparks fly off the iron, then it steadies",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "style": "Painterly digital painting in the style of dark fantasy video game art: soft visible brush strokes, rich shading, gritty and detailed, warm hellfire rim light, high resolution and smooth (not pixel art, not a cartoon).",
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, centered in the frame with lots of empty space around it, the whole thing visible. {style} {background}",
+    "pose": "Image 1 is {description}. Show this exact same object, the same design, {action}. Keep its shape, colors, size and position in the frame and the painterly art style of image 1. {background}"
+  }
+}

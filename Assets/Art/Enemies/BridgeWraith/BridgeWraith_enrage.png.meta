@@ -1,0 +1,567 @@
+fileFormatVersion: 2
+guid: 6a19bf8d12f831544ba54c701dbae40b
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 108.333336
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: enrage_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 532
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30c36b11f2a1fa690800000000000000
+      internalID: -7588818057633055741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_01
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 532
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1396e11d6a1a5afd0800000000000000
+      internalID: -2331279494249289423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_02
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 532
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d940e6f8c01720960800000000000000
+      internalID: 7566734622695752861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_03
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 532
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45c3674d513470410800000000000000
+      internalID: 1443195966633426004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_04
+      rect:
+        serializedVersion: 2
+        x: 1008
+        y: 532
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95317aebc6e98c090800000000000000
+      internalID: -8013981347013520551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_05
+      rect:
+        serializedVersion: 2
+        x: 1260
+        y: 532
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 521ed2f037b4da280800000000000000
+      internalID: -9030478720259989211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_06
+      rect:
+        serializedVersion: 2
+        x: 1512
+        y: 532
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b27e2dd41ff23580800000000000000
+      internalID: -8848729852754365773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_07
+      rect:
+        serializedVersion: 2
+        x: 1764
+        y: 532
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5300d0c0042a049c0800000000000000
+      internalID: -3944974877612769227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_08
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 266
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26a84aff3d2fd87c0800000000000000
+      internalID: -4067327896104695198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_09
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 266
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0220a3255dc3c7170800000000000000
+      internalID: 8177477910303212064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_10
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 266
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 320845768176c4980800000000000000
+      internalID: -8553348237772947421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_11
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 266
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f772730542163b2f0800000000000000
+      internalID: -958315487107274881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_12
+      rect:
+        serializedVersion: 2
+        x: 1008
+        y: 266
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9bf9bb42aea1a990800000000000000
+      internalID: -7376422702577747043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_13
+      rect:
+        serializedVersion: 2
+        x: 1260
+        y: 266
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9108bdbc4587e26b0800000000000000
+      internalID: -5319181804285231079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_14
+      rect:
+        serializedVersion: 2
+        x: 1512
+        y: 266
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e09a6c754c1658e0800000000000000
+      internalID: -1705144324147474206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_15
+      rect:
+        serializedVersion: 2
+        x: 1764
+        y: 266
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a75c12a70020e570800000000000000
+      internalID: 8493824114377381799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df30306e09ea1a970800000000000000
+      internalID: 8764478287197176829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_17
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 0
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3a3c8efd58590b90800000000000000
+      internalID: -7275186562314520005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enrage_18
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 0
+        width: 252
+        height: 266
+      alignment: 9
+      pivot: {x: 0.64484125, y: 0.50028193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f88b84b748e9cb010800000000000000
+      internalID: 1206013092069685391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      enrage_00: -7588818057633055741
+      enrage_01: -2331279494249289423
+      enrage_02: 7566734622695752861
+      enrage_03: 1443195966633426004
+      enrage_04: -8013981347013520551
+      enrage_05: -9030478720259989211
+      enrage_06: -8848729852754365773
+      enrage_07: -3944974877612769227
+      enrage_08: -4067327896104695198
+      enrage_09: 8177477910303212064
+      enrage_10: -8553348237772947421
+      enrage_11: -958315487107274881
+      enrage_12: -7376422702577747043
+      enrage_13: -5319181804285231079
+      enrage_14: -1705144324147474206
+      enrage_15: 8493824114377381799
+      enrage_16: 8764478287197176829
+      enrage_17: -7275186562314520005
+      enrage_18: 1206013092069685391
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -6,9 +6,10 @@ using SickOfIt.Gameplay.Content;
 namespace SickOfIt.Gameplay
 {
     /// <summary>
-    /// The visible swing of a melee weapon (fists): a crescent sweeping in front of the hero and a fist flying along its
-    /// arc, drawn from the weapons' saved swing timers and the game clock, so a rewind plays a punch backward. It needs
-    /// no art: both pieces are made at runtime, tinted with the weapon's color. Presentation only.
+    /// The visible swing of a melee weapon: the weapon's painted swoosh (melee.swingArt, Tools/Art/fx/swoosh.json) sweeping in front
+    /// of the hero, tinted with the weapon's color, drawn from the weapons' saved swing timers and the game clock, so a rewind plays
+    /// a punch backward. The fist or the whip itself is in the hero's own attack clips (his grip's Punch/Whip states). A weapon
+    /// without swing art falls back to a crescent made at runtime. Presentation only.
     /// </summary>
     public sealed class MeleeSwingFx : MonoBehaviour
     {
@@ -84,6 +85,7 @@ namespace SickOfIt.Gameplay
             PeakAlpha = Mathf.Max(PeakAlpha, alpha);
 
             var color = def.color;
+            arcRenderer.sprite = def.melee.swingArt != null ? def.melee.swingArt : Crescent;
             var t = arcRenderer.transform;
             t.position = new Vector3(origin.x, origin.y, z);
             t.rotation = Quaternion.Euler(0f, 0f, baseAngle);
@@ -102,7 +104,8 @@ namespace SickOfIt.Gameplay
             var fistColor = Color.Lerp(color, Color.white, 0.55f);
             fistColor.a = Mathf.Clamp01(alpha * 1.2f);
             fistRenderer.color = fistColor;
-            fistRenderer.enabled = true;
+            // The flying disc only stands in when there is no painted swing: the hero's own clip shows the blow.
+            fistRenderer.enabled = def.melee.swingArt == null;
             Visible = true;
         }
 

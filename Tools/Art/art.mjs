@@ -67,11 +67,15 @@ const PYTHON = process.env.SOI_ART_PYTHON
   ?? [path.join(DOD, '.venv', 'Scripts', 'python.exe'), path.join(DOD, '.venv', 'bin', 'python')].find((p) => fs.existsSync(p))
   ?? (process.platform === 'win32' ? 'python' : 'python3');
 
+// J (2026-10-25): one take of every pose and clip; a spec's "takes" is capped at this unless --takes N asks for more.
+// Judge the single take and remake (--redo) only one that is clearly wrong. SOI_ART_TAKES raises the cap.
+const TAKES_CAP = Math.max(1, Number(process.env.SOI_ART_TAKES) || 1);
+
 /** What a spec leaves out. Assets/GameConfig/art/_defaults.json overrides these for every enemy. */
 const DEFAULTS = {
   style: 'Dark fantasy video game character art: painterly, detailed, gritty, warm rim light from hellfire, readable silhouette.',
   background: 'Plain flat pure green background (#00ff00), no floor, no shadow, no scenery, even studio lighting.',
-  takes: { stand: 3, pose: 2, clip: 1 },
+  takes: { stand: 1, pose: 1, clip: 1 },
   frameSize: 640,
   frameFill: 0.62,
   fps: 12,
@@ -268,7 +272,7 @@ function keys(spec, P) {
     if (c.video) continue;
     const from = c.from ?? 'stand';
     const to = c.to ?? from;
-    k[`clip:${name}`] = sha({ from: poseKey(k, from), to: poseKey(k, to), p: clipPrompt(spec, name, c), s: c.seconds ?? 2, n: spec.frameSize, f: spec.frameFill, ...(c.motion ? { m: c.motion, mf: c.motionFrames ?? null } : {}) });
+    k[`clip:${name}`] = sha({ from: poseKey(k, from), to: poseKey(k, to), p: clipPrompt(spec, name, c), s: c.seconds ?? 2, n: spec.frameSize, f: spec.frameFill, ...(c.motion ? { m: c.motion, mf: c.motionFrames ?? null } : {}), ...(c.motionVia ? { via: c.motionVia } : {}) });
   }
   return k;
 }
@@ -358,7 +362,7 @@ async function takes(tool, { label, n, seeds, key, inputs, params, labels, file 
   const out = [];
   for (const r of results) {
     if (r.status === 'rejected') { log(`  ${label}: ${r.reason.message}`); continue; }
-    const o = r.value.outputs?.[0];
+    const o = r.value.outputs?.find((x) => !/comparison/i.test(x.title ?? '')) ?? r.value.outputs?.[0]; // video.motion also returns a side-by-side
     if (!o) { log(`  ${label}: job ${r.value.id} saved nothing`); continue; }
     const dest = file(o.seed);
     await gen.download(o.asset, dest);
@@ -392,7 +396,7 @@ async function makePose(spec, P, pose, key, opts) {
     const air = /air|fly|hover|float|leap|jump/i.test(`${spec.poses[pose]} ${spec.poses.stand}`);
     prompt = fill(spec.posePrompt[pose] ?? spec.prompts.pose, { action: spec.poses[pose], background: spec.background, ground: air ? '' : ', feet on the same ground line as image 1', description: spec.description, style: spec.style });
   }
-  const n = opts.takes ?? (pose === 'stand' ? spec.takes.stand : spec.takes.pose);
+  const n = opts.takes ?? Math.min(pose === 'stand' ? spec.takes.stand : spec.takes.pose, TAKES_CAP);
   const seeds = Array.from({ length: n }, (_, i) => seedFor(opts, i, key, opts.redo.has(pose)));
   fs.mkdirSync(P.poseTakes, { recursive: true });
   const tool = spec.poseTool[pose] ?? 'image.edit';
@@ -478,7 +482,7 @@ async function makeClip(spec, P, name, key, opts) {
   const negative = [spec.negative, clip.negative].filter(Boolean).join(', ');
   const [vw, vh] = spec.hero ? HERO_BAKE.video : [spec.frameSize, spec.frameSize];
   const params = { prompt, negative, width: vw, height: vh, frames, fps: WAN_FPS, ...(await clipSettings(name, clip.settings)) };
-  const n = opts.takes ?? spec.takes.clip;
+  const n = opts.takes ?? Math.min(spec.takes.clip, TAKES_CAP);
   const seeds = Array.from({ length: n }, (_, i) => seedFor(opts, i, key, opts.redo.has(name)));
   fs.mkdirSync(P.clipTakes, { recursive: true });
   if (clip.motion) return makeMotionClip(spec, P, name, key, { prompt, negative, vw, vh, n, seeds, from });
@@ -508,6 +512,7 @@ async function makeMotionClip(spec, P, name, key, { prompt, negative, vw, vh, n,
   }
   const have = await framesOf(fitted);
   const frames = Math.max(5, Math.floor(((clip.motionFrames ?? have) - 1) / 4) * 4 + 1);
+  if (clip.motionVia === 'pose') return makePoseMotionClip(spec, P, name, key, { prompt, negative, vw, vh, n, seeds, from, fitted, frames });
   const params = { prompt, negative, width: vw, height: vh, frames, fps: WAN_FPS };
   const made = await takes('video.animate', {
     label: `${name} (${frames} frames, ${clip.motion})`, n, seeds, key: `${spec.id}:${name}:${key}`,
@@ -515,6 +520,39 @@ async function makeMotionClip(spec, P, name, key, { prompt, negative, vw, vh, n,
     labels: { entity: spec.entity, clip: name }, file: (seed) => path.join(P.clipTakes, `${name}-${seed}.mp4`),
   });
   for (const m of made) writeJson(P.recipe(m.file), { key, clip: name, from, motion: clip.motion, seed: m.seed, prompt, negative, tool: 'video.animate', settings: params, job: m.job, asset: m.asset, frames, fps: WAN_FPS, made: new Date().toISOString() });
+  chooseClip(P, name, made[0].file);
+}
+
+/**
+ * "motionVia": "pose": the motion as pose maps (video.pose, no pixels of whoever performed it), performed by the pose
+ * with video.motion (Wan Animate 2). Wan Animate on the raw video copies what the performer holds (the hero's launcher
+ * into his bare-handed clips). video.motion makes 480x848: the start pose goes in as the middle of its frame and each
+ * take comes back into the same place of a vw x vh frame, so the figure keeps the size of every other clip.
+ */
+async function makePoseMotionClip(spec, P, name, key, { prompt, negative, vw, vh, n, seeds, from, fitted, frames }) {
+  const clip = spec.clips[name];
+  const [mw, mh] = [480, 848];
+  const cw = Math.round((vh * mw) / mh / 2) * 2; // the middle of the vw x vh frame that maps onto mw x mh
+  const pose = fitted.replace(/\.mp4$/, '-pose.mp4');
+  if (!fs.existsSync(pose)) {
+    const job = await gen.run('video.pose', { inputs: { video: fitted }, labels: { entity: spec.entity, motion: clip.motion } });
+    await gen.download(job.outputs[0].asset, pose);
+  }
+  const ref = path.join(P.work, 'motion', `ref-${from}-${mw}x${mh}.png`);
+  await run('ffmpeg', ['-v', 'error', '-y', '-i', P.pose(from), '-vf', `crop=${cw}:${vh}:(iw-${cw})/2:0,scale=${mw}:${mh}`, ref], { quiet: true });
+  const count = Math.min(frames, 81);
+  const params = { prompt: `${prompt} Plain flat pure black background.`, frames: count };
+  const made = await takes('video.motion', {
+    label: `${name} (${count} frames, ${clip.motion} as pose maps)`, n, seeds, key: `${spec.id}:${name}:${key}:pose`,
+    inputs: { image: ref, video: pose }, params, labels: { entity: spec.entity, clip: name },
+    file: (seed) => path.join(P.clipTakes, `${name}-${seed}.raw.mp4`),
+  });
+  for (const m of made) {
+    const out = m.file.replace(/\.raw\.mp4$/, '.mp4');
+    await run('ffmpeg', ['-v', 'error', '-y', '-i', m.file, '-vf', `scale=${cw}:${vh},pad=${vw}:${vh}:(ow-iw)/2:0:black,fps=${WAN_FPS}`, '-an', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '14', out], { quiet: true });
+    m.file = out;
+    writeJson(P.recipe(out), { key, clip: name, from, motion: clip.motion, motionVia: 'pose', seed: m.seed, prompt: params.prompt, negative, tool: 'video.motion', settings: params, job: m.job, asset: m.asset, frames: count, fps: WAN_FPS, made: new Date().toISOString() });
+  }
   chooseClip(P, name, made[0].file);
 }
 
@@ -550,8 +588,12 @@ function resolvedEntity(id, seen = new Set()) {
 function wiring(spec, entity) {
   const abilities = [...(entity.abilities ?? []), ...(entity.states ?? []).flatMap((st) => st.abilities ?? [])];
   const attacker = abilities.find((a) => a.animTrigger || a.fireOnEvent || a.hitEvent);
-  const mover = abilities.find((a) => a.animBool && ['chase', 'patrol', 'flee', 'wander', 'orbit', 'hover'].includes(a.type)) ?? abilities.find((a) => a.animBool);
+  const moves = ['chase', 'patrol', 'flee', 'wander', 'orbit', 'hover'];
+  const mover = abilities.find((a) => a.animBool && moves.includes(a.type)) ?? abilities.find((a) => a.animBool && !a.windupBool && a.type !== 'laserSweep');
+  // An attack held by a bool (a charge's windup, a laser warning and sweeping) instead of pulsed by a trigger.
+  const holder = abilities.find((a) => a.windupBool) ?? abilities.find((a) => a.animBool && !moves.includes(a.type) && a !== mover);
   return {
+    attackBool: spec.animator?.attackBool ?? (!attacker?.animTrigger && holder ? holder.windupBool || holder.animBool : null),
     attackParam: spec.animator?.attackParam ?? attacker?.animTrigger ?? 'Attack',
     attackEvent: spec.animator?.attackEvent ?? attacker?.fireOnEvent ?? attacker?.hitEvent ?? null,
     moveParam: spec.animator?.moveParam ?? mover?.animBool ?? 'IsMoving',
@@ -597,7 +639,11 @@ function animatorFor(spec, built, w) {
     t('Idle', 'Move', { conditions: [cond(w.moveParam, 'If')] });
     t('Move', 'Idle', { conditions: [cond(w.moveParam, 'IfNot')] });
   }
-  if (has('attack')) {
+  if (has('attack') && w.attackBool) {
+    params.push({ name: w.attackBool, type: 'Bool', defaultValue: 0 });
+    for (const s of calm) t(s, 'Attack', { conditions: [cond(w.attackBool, 'If')] });
+    t('Attack', 'Idle', { conditions: [cond(w.attackBool, 'IfNot')] });
+  } else if (has('attack')) {
     params.push({ name: w.attackParam, type: 'Trigger', defaultValue: 0 });
     for (const s of calm) t(s, 'Attack', { conditions: [cond(w.attackParam, 'If')] });
     t('Attack', 'Idle', { hasExitTime: true, exitTime: 1 });
@@ -757,6 +803,7 @@ function checkHero(spec) {
 /** Bakes every clip that has a video to Assets/Art/Sprites/Player/<State>.png, then adds or points its player.json state. */
 async function buildHero(spec, P, opts) {
   const baked = [];
+  const jobs = [];
   for (const [name, c] of Object.entries(spec.clips)) {
     const video = c.video ? resolveAsset(c.video) : P.clip(name);
     if (!fs.existsSync(video)) { log(`  ${name}: no clip yet, skipped`); continue; }
@@ -764,9 +811,26 @@ async function buildHero(spec, P, opts) {
     const args = [PLAYER_SHEET_PY, video, c.state, HERO_SHEETS, '--fps', String(fps), '--cell', spec.bake.cell.join('x'), '--ppu', String(spec.bake.ppu)];
     if (c.start) args.push('--start', String(c.start));
     if (c.end) args.push('--end', String(c.end));
-    log((await run(PYTHON, args)).trim());
     baked.push({ state: c.state, fps: c.playFps ?? 12, loop: c.loop ?? false, sheet: `Art/Sprites/Player/${c.state}.png`, wired: c.wired });
+    // A sheet newer than its clip, baked with the same settings, is up to date (a bake is ~2 minutes a state).
+    const sheet = path.join(HERO_SHEETS, `${c.state}.png`);
+    const stamp = path.join(P.work, 'bake', `${c.state}.json`);
+    const settings = JSON.stringify(args.slice(2));
+    const fresh = fs.existsSync(sheet) && fs.statSync(sheet).mtimeMs > fs.statSync(video).mtimeMs
+      && (!fs.existsSync(stamp) || readJson(stamp, {}).settings === settings);
+    if (fresh && !opts.redo.has(name)) { log(`  ${c.state}: sheet up to date`); continue; }
+    jobs.push({ args, stamp, settings });
   }
+  // SOI_BAKE_PARALLEL states at a time (default 3).
+  const parallel = Math.max(1, Number(process.env.SOI_BAKE_PARALLEL ?? 3));
+  const worker = async () => {
+    for (let j = jobs.shift(); j; j = jobs.shift()) {
+      log((await run(PYTHON, j.args)).trim());
+      fs.mkdirSync(path.dirname(j.stamp), { recursive: true });
+      writeJson(j.stamp, { settings: j.settings, baked: new Date().toISOString() });
+    }
+  };
+  await Promise.all(Array.from({ length: parallel }, worker));
   if (!baked.length) return log('no hero clip to bake yet');
   wirePlayerStates(baked);
   log('hero.json: set "wired" to "own" on the clips just baked (node Tools/Art/art.mjs hero --check says what disagrees)');
@@ -832,13 +896,15 @@ function parseArgs(argv) {
  * run, "import" brings the takes this run made into the library so they can be reviewed and picked there. A Gen that
  * isn't answering doesn't stop the art: the step is skipped with a note.
  */
-async function librarySync(direction, spec) {
+async function librarySync(direction, spec, made = new Set()) {
   const file = path.join(REPO, 'hawkes.library.json');
   if (!fs.existsSync(file) || process.env.SOI_LIBRARY === 'off') return;
   try {
     const m = { ...loadMapping(file), root: workRoot() };
     const g = new HawkesGen({ project: PROJECT });
-    const r = direction === 'export' ? await exportFolders(g, m, { only: spec.id }) : await importFolders(g, m, { only: spec.id });
+    // The poses and clips this run made or picked win over the library's current (adopt): otherwise the next run's
+    // export writes the library's older pick back over them, and a --redo or --pick never sticks.
+    const r = direction === 'export' ? await exportFolders(g, m, { only: spec.id }) : await importFolders(g, m, { only: spec.id, adopt: [...made] });
     if (direction === 'import') {
       // What the library's own "Make takes" uses (the enemy kind in hawkesgen/presets/sickofit.json): the look, and
       // each pose's and clip's action, with a clip's from and to poses.
@@ -873,8 +939,10 @@ async function make(id, opts) {
   log(`${spec.name} (${spec.entity}) -> work folder ${P.work}`);
   await librarySync('export', spec);
 
+  const made = new Set(); // the library slots this run made or picked: pose/<name>, clip/<name>
   for (const p of opts.pick) {
     const [what, seed] = p.split('=');
+    made.add(`${spec.poses[what] ? 'pose' : 'clip'}/${slugOf(what)}`);
     if (spec.poses[what]) choosePose(P, what, path.join(P.poseTakes, `${what}-${seed}.png`));
     else if (spec.clips[what]) chooseClip(P, what, path.join(P.clipTakes, `${what}-${seed}.mp4`));
     else throw new Error(`--pick ${p}: no pose or clip "${what}"`);
@@ -885,6 +953,7 @@ async function make(id, opts) {
     if (opts.redo.has('stand') || !upToDate(P.pose('stand'), k.stand)) {
       log('stand: making the standing side view');
       await makePose(spec, P, 'stand', k.stand, opts);
+      made.add('pose/stand');
     }
     // The poses the clips start and end on, and the poses those are made from or shown with (bases and refs).
     const needed = new Set(Object.values(spec.clips).filter((c) => !c.video).flatMap((c) => [c.from ?? 'stand', c.to ?? c.from ?? 'stand']));
@@ -902,11 +971,15 @@ async function make(id, opts) {
       await Promise.all(wave.map(async (pose) => {
         log(`pose ${pose}: ${spec.poses[pose]}`);
         await makePose(spec, P, pose, k[`pose:${pose}`], opts);
+        made.add(`pose/${slugOf(pose)}`);
         pending.delete(pose);
       }));
     }
     if (!spec.hero) await frameAll(spec, P);
-    if (opts.posesOnly) return log('poses made (--poses-only): pick takes with --pick, then run again for the clips');
+    if (opts.posesOnly) {
+      await librarySync('import', spec, made);
+      return log('poses made (--poses-only): pick takes with --pick, then run again for the clips');
+    }
     k = keys(spec, P);
     const clipsTodo = [];
     for (const [name, c] of Object.entries(spec.clips)) {
@@ -921,16 +994,19 @@ async function make(id, opts) {
     const worker = async () => {
       for (let name = clipsTodo.shift(); name; name = clipsTodo.shift()) {
         log(`clip ${name}: ${spec.clips[name].action}`);
-        try { await makeClip(spec, P, name, k[`clip:${name}`], opts); } catch (e) { failed.push(name); log(`  ${name} failed: ${e.message}`); }
+        try { await makeClip(spec, P, name, k[`clip:${name}`], opts); made.add(`clip/${slugOf(name)}`); } catch (e) { failed.push(name); log(`  ${name} failed: ${e.message}`); }
       }
     };
     await Promise.all(Array.from({ length: parallel }, worker));
-    if (failed.length) throw new Error(`clips failed: ${failed.join(', ')} (run again to retry them)`);
+    if (failed.length) {
+      await librarySync('import', spec, made);
+      throw new Error(`clips failed: ${failed.join(', ')} (run again to retry them)`);
+    }
   } else if (fs.existsSync(P.pose('stand')) && !spec.hero) {
     await frameAll(spec, P);
   }
 
-  await librarySync('import', spec);
+  await librarySync('import', spec, made);
   if (spec.hero) return buildHero(spec, P, opts);
   const { built, visualScale } = await build(spec, P);
   const notes = apply(spec, built, visualScale);

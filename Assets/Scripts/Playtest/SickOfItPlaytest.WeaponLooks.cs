@@ -13,10 +13,10 @@ namespace SickOfIt.Playtest
     public static partial class SickOfItPlaytest
     {
         /// <summary>
-        /// Weapon swaps and looks (art/hero.json launcherAway / equipLauncher / equipFists; weapon JSON <c>look</c>): on the bench
-        /// <c>weaponLooks</c> (Level 1's stage, setup shortcut) the bot cycles the weapons with Q and fires each through real input. Switching to the fists must
-        /// play EquipFists, the launcher leaving his hands LauncherTaken, and the launcher coming back EquipLauncher (the clip on screen, the prop hidden
-        /// meanwhile); each of the seven weapons and the fists must show a prop of its own while held and a flash when fired (signatures all different).
+        /// Weapon grips and swaps (content/weapons <c>hands</c>, art/hero.json): on the bench <c>weaponLooks</c> (Level 1's stage, setup shortcut)
+        /// the bot cycles the weapons with Q and fires each through real input. Every weapon has its own animation set: switching to it plays its
+        /// equip clip, standing he shows its idle sheet, firing or swinging its attack sheet (each a frame of that weapon's own state, never another
+        /// weapon's sheet and never a drawn prop), and the launcher leaving and coming back play LauncherTaken and EquipLauncher.
         /// </summary>
         public const string WeaponLooksId = "weapon-looks";
         public const string WeaponLooksScene = "weaponLooks";
@@ -80,27 +80,22 @@ namespace SickOfIt.Playtest
                 End(looksFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
             }
 
-            /// <summary>Samples every frame until the hero's sprite is the swap clip 'state' (true) or the time runs out.</summary>
-            IEnumerator LooksWaitClip(string state, float seconds, System.Action<bool, bool> result)
+            /// <summary>Samples every frame until the hero's sprite is a frame of one of 'states' (true) or the time runs out.</summary>
+            IEnumerator LooksWaitState(string[] states, float seconds, System.Action<bool, string> result)
             {
                 var pc = GameplayWorld.Instance.PlayerController;
-                var prop = HeldWeaponProp.For(pc);
-                bool seen = false, propHidden = false;
+                string seen = null;
                 float until = Time.realtimeSinceStartup + seconds;
-                while (!Run.Done && Time.realtimeSinceStartup < until && !seen)
+                while (!Run.Done && Time.realtimeSinceStartup < until && seen == null)
                 {
-                    if (HeroClipOnScreen(out _) == state && pc.SwapPose == state)
-                        seen = true;
-                    else
+                    foreach (var s in states)
+                        if (!string.IsNullOrEmpty(s) && pc.ShowsState(s, out _))
+                            seen = s;
+                    if (seen == null)
                         yield return null;
                 }
-                if (seen)
-                {
-                    yield return null; // the prop hides in LateUpdate, after the clip starts
-                    yield return null;
-                    propHidden = prop == null || prop.Shown == null;
-                }
-                result(seen, propHidden);
+                pc.ShowsState("", out string sprite);
+                result(seen != null, seen ?? sprite ?? "none");
             }
 
             IEnumerator WeaponLooksSteps()
@@ -108,35 +103,31 @@ namespace SickOfIt.Playtest
                 var world = GameplayWorld.Instance;
                 var weapons = world.Weapons;
                 var pc = world.PlayerController;
-                var prop = HeldWeaponProp.For(pc);
                 yield return WaitReal(0.6f);
-                LooksCheck("prop component on the hero", prop != null, prop != null ? "HeldWeaponProp present" : "missing");
-                if (prop == null)
-                    yield break;
-                var signatures = new Dictionary<string, string>();
                 yield return Run.Until(() => pc.IsGrounded, 6f, "the hero on the ground");
+                var sheets = new Dictionary<string, string>();
 
-                // Each weapon: take it up with Q (real input), then fire it and watch the prop's flash.
+                // Each weapon: its idle sheet standing, then its attack sheet while firing (real input), each its own state.
                 IEnumerator ShowWeapon(string id)
                 {
-                    yield return WaitReal(0.7f);
-                    string held = prop.Shown;
-                    string sig = prop.Signature;
-                    int usesBefore = prop.Uses;
-                    bool flash = false;
-                    input.SetAim(new Vector2(1f, 0f));
-                    float until = Time.realtimeSinceStartup + 1.4f;
-                    while (!Run.Done && Time.realtimeSinceStartup < until)
-                    {
-                        if (prop.FlashOn)
-                            flash = true;
-                        yield return null;
-                    }
+                    var hands = pc.CurrentHands;
+                    LooksCheck($"{id} has a grip", hands != null, hands != null ? $"idle {hands.idle}, attack {string.Join("/", hands.attack)}" : "no hands in its JSON");
+                    if (hands == null)
+                        yield break;
+                    yield return WaitReal(0.6f);
+                    string idleState = hands.animator ? "Idle" : hands.idle;
+                    bool idleSeen = false; string idleSprite = null;
+                    yield return LooksWaitState(new[] { idleState }, 2.5f, (s, sprite) => { idleSeen = s; idleSprite = sprite; });
+                    LooksCheck($"{id} standing shows {idleState}", idleSeen, $"sprite {idleSprite}");
+                    input.SetAim(new Vector2(-1f, 0f));
+                    var attackStates = hands.animator ? new[] { "Fire" } : hands.attack;
+                    bool attackSeen = false; string attackSprite = null;
+                    yield return LooksWaitState(attackStates, 2.5f, (s, sprite) => { attackSeen = s; attackSprite = sprite; });
                     input.SetAim(Vector2.zero);
-                    bool fired = prop.Uses > usesBefore;
-                    signatures[id] = sig;
-                    Run.Event("weapon-look", $"{id}: prop shown for {held ?? "none"}, fired {prop.Uses - usesBefore} times, flash seen {flash}, look {sig}");
-                    LooksCheck($"{id} held and fired", held == id && sig != null && fired && flash, $"shown {held ?? "none"}, uses +{prop.Uses - usesBefore}, flash {flash}");
+                    LooksCheck($"{id} attacking shows its attack", attackSeen, $"sprite {attackSprite} (wanted {string.Join("/", attackStates)})");
+                    sheets[id] = idleState;
+                    Run.Event("weapon-look", $"{id}: idle {idleState} seen {idleSeen}, attack seen {attackSeen} ({attackSprite})");
+                    yield return WaitReal(0.5f);
                 }
 
                 yield return ShowWeapon(PlayerWeapons.Launcher);
@@ -150,53 +141,38 @@ namespace SickOfIt.Playtest
                         yield break;
                     yield return Tap(Key.Q);
                     yield return Run.Until(() => weapons.CurrentId == id, 4f, "Q to equip " + id);
-                    if (id == "fists")
-                    {
-                        bool seen = false, hidden = false;
-                        yield return LooksWaitClip("EquipFists", 1.2f, (s, h) => { seen = s; hidden = h; });
-                        Run.Event("weapon-swap", $"EquipFists on screen: {seen}");
-                        LooksCheck("swap: fists equipping", seen && hidden, $"EquipFists on screen {seen}, prop hidden meanwhile {hidden}");
-                        yield return WaitReal(1.2f);
-                    }
-                    else
-                    {
-                        LooksCheck($"swap: {id} has no swap clip", pc.SwapPose == null, $"swap pose {pc.SwapPose ?? "none"}");
-                    }
+                    string equip = pc.CurrentHands?.equip;
+                    bool seen = false; string sprite = null;
+                    yield return LooksWaitState(new[] { equip }, 1.2f, (s, sp) => { seen = s; sprite = sp; });
+                    LooksCheck($"swap: {id} equip clip", seen && pc.SwapPose == equip, $"{equip} on screen {seen} (sprite {sprite}), swap pose {pc.SwapPose ?? "none"}");
+                    yield return WaitReal(1.2f);
                     yield return ShowWeapon(id);
                 }
 
-                // Different looks: every weapon's prop has its own shape and colours.
-                var seenSigs = new HashSet<string>();
-                bool allDistinct = true;
-                foreach (var kv in signatures)
-                    if (string.IsNullOrEmpty(kv.Value) || !seenSigs.Add(kv.Value))
-                        allDistinct = false;
-                LooksCheck("eight different looks", allDistinct && signatures.Count == 8, $"{seenSigs.Count} distinct looks of {signatures.Count} weapons");
+                var distinct = new HashSet<string>(sheets.Values);
+                LooksCheck("eight grips, eight idle sheets", distinct.Count == 8 && sheets.Count == 8, $"{distinct.Count} distinct idle states of {sheets.Count} weapons");
 
                 // The launcher returning to his shoulder (cycling back to it).
                 yield return Tap(Key.Q);
                 yield return Run.Until(() => weapons.CurrentId == PlayerWeapons.Launcher, 4f, "Q back to the launcher");
-                bool back = false, backHidden = false;
-                yield return LooksWaitClip("EquipLauncher", 1.2f, (s, h) => { back = s; backHidden = h; });
-                Run.Event("weapon-swap", $"EquipLauncher on screen: {back}");
-                LooksCheck("swap: launcher returning", back && backHidden, $"EquipLauncher on screen {back}, prop hidden meanwhile {backHidden}");
+                bool back = false; string backSprite = null;
+                yield return LooksWaitState(new[] { "EquipLauncher" }, 1.2f, (s, sp) => { back = s; backSprite = sp; });
+                LooksCheck("swap: launcher returning", back, $"EquipLauncher on screen {back} (sprite {backSprite})");
                 yield return WaitReal(1.2f);
 
                 // The launcher leaving him (Floor 998's theft): taken from his hands while he holds it.
                 world.Emit("look:take");
-                bool gone = false, goneHidden = false;
-                yield return LooksWaitClip("LauncherTaken", 1.5f, (s, h) => { gone = s; goneHidden = h; });
-                Run.Event("weapon-swap", $"LauncherTaken on screen: {gone}");
-                LooksCheck("swap: launcher leaving", gone && goneHidden && !weapons.Has(PlayerWeapons.Launcher), $"LauncherTaken on screen {gone}, prop hidden meanwhile {goneHidden}, launcher held {weapons.Has(PlayerWeapons.Launcher)}");
+                bool gone = false; string goneSprite = null;
+                yield return LooksWaitState(new[] { "LauncherTaken" }, 1.5f, (s, sp) => { gone = s; goneSprite = sp; });
+                LooksCheck("swap: launcher leaving", gone && !weapons.Has(PlayerWeapons.Launcher), $"LauncherTaken on screen {gone} (sprite {goneSprite}), launcher held {weapons.Has(PlayerWeapons.Launcher)}");
                 yield return WaitReal(1.8f);
 
                 world.Emit("look:return");
-                bool returned = false, returnedHidden = false;
-                yield return LooksWaitClip("EquipLauncher", 1.5f, (s, h) => { returned = s; returnedHidden = h; });
-                LooksCheck("swap: launcher back after the theft", returned && returnedHidden && weapons.CurrentId == PlayerWeapons.Launcher, $"EquipLauncher on screen {returned}, equipped {weapons.CurrentId}");
+                bool returned = false; string retSprite = null;
+                yield return LooksWaitState(new[] { "EquipLauncher" }, 1.5f, (s, sp) => { returned = s; retSprite = sp; });
+                LooksCheck("swap: launcher back after the theft", returned && weapons.CurrentId == PlayerWeapons.Launcher, $"EquipLauncher on screen {returned} (sprite {retSprite}), equipped {weapons.CurrentId}");
                 Run.Metric("weaponLooks.swaps", pc.SwapsPlayed);
                 yield return WaitReal(1.2f);
-                LooksCheck("prop back after the swap", prop.Shown == PlayerWeapons.Launcher, $"prop shows {prop.Shown ?? "none"}");
             }
         }
     }

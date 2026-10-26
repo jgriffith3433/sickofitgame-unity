@@ -23,6 +23,7 @@
     "color": "#BFEFFF",
     "fxColor": "#8FE3FF",
     "placeholderColor": "#8FE3FF",
+    "placeholderShape": "Box",
     "placeholderLabel": false,
     "sortingOrder": 4,
     "hurtFlash": false,

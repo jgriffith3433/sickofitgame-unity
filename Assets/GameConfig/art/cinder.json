@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "entity": "cinder",
   "name": "Cinder",
-  "description": "a living spark from a burning village: a small teardrop-shaped flame with a hot white-yellow core and orange-red edges, two bright black beady eyes and a mischievous grin, a thin trail of smoke and sparks behind it",
+  "description": "a will-o'-the-wisp: a single floating fireball shaped like a teardrop, the size of a fist, white-yellow hot core and orange-red flickering edges, with a cute mischievous face painted inside the flame (two beady black eyes and a grin), a wisp of smoke and a few sparks trailing behind it",
   "height": 0.35,
   "poses": {
     "stand": "floating in the air, its flame tip flickering upward",
@@ -25,5 +25,10 @@
       "action": "puffs up and pops into a burst of sparks and smoke",
       "seconds": 1
     }
-  }
+  },
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, small and centered in the frame with lots of empty space around it. It is a ball of fire that floats in the air by itself. {style} {background}",
+    "pose": "Image 1 is {description}. Show this exact same object, the same design, {action}. Keep its shape, colors, size and position in the frame and the painterly art style of image 1. {background}"
+  },
+  "style": "Painterly digital painting in the style of dark fantasy video game art: soft visible brush strokes, rich shading, gritty and detailed, warm hellfire rim light, high resolution and smooth (not pixel art, not a cartoon)."
 }

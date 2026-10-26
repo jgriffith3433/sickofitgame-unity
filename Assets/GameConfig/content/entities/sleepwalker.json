@@ -11,14 +11,16 @@
     }
   ],
   "health": 4,
-  "moveSpeed": 0,
-  "activationRange": 14,
-  "tags": ["sleepwalker"],
+  "moveSpeed": 0.0,
+  "activationRange": 14.0,
+  "tags": [
+    "sleepwalker"
+  ],
   "body": {
     "shape": "Circle",
     "radius": 0.5,
     "solid": false,
-    "gravity": 0
+    "gravity": 0.0
   },
   "visual": {
     "scale": 0.18,
@@ -145,8 +147,8 @@
     {
       "type": "patrol",
       "speed": 0.7,
-      "distance": 4,
-      "pause": 0,
+      "distance": 4.0,
+      "pause": 0.0,
       "animBool": "IsMoving"
     },
     {

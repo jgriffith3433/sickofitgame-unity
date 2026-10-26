@@ -7,7 +7,7 @@
   "body": {
     "shape": "Box",
     "size": [1.6, 3.4],
-    "offset": [0.0, 1.7],
+    "offset": [0, 1.7],
     "solid": false
   },
   "healthBar": {
@@ -16,14 +16,28 @@
   "visual": {
     "scale": 0.42,
     "sprite": "Art/Climb/RoadSpires_still.png#still_00",
-    "color": "#D8C8D0",
     "fxColor": "#FF9A3A",
     "placeholderColor": "#2B2233",
     "placeholderShape": "Box",
     "placeholderLabel": false,
     "sortingOrder": 4,
     "hurtFlash": false,
-    "deathPop": false
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/SfNeedle/SfNeedle_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "abilities": [
     {

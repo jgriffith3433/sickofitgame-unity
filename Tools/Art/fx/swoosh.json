@@ -1,0 +1,38 @@
+{
+ "about": "A melee swing's swoosh (MeleeSwingFx, content/weapons melee.swingArt): a white crescent of motion facing right, centred on the hero, tinted with the weapon's colour. Replaces the drawn crescent and flying disc.",
+ "out": "Assets/Art/Effects/Swoosh",
+ "name": "Swoosh",
+ "key": "black",
+ "tintable": true,
+ "size": [
+  512,
+  512
+ ],
+ "pivot": [
+  256,
+  256
+ ],
+ "crop": [
+  0,
+  0,
+  512,
+  512
+ ],
+ "worldWidth": 2.0,
+ "widthPixels": 512,
+ "scale": 0.5,
+ "clips": {
+  "arc": {
+   "image": "arc.png"
+  }
+ },
+ "gen": {
+  "arc.png": {
+   "size": [
+    512,
+    512
+   ],
+   "prompt": "Paint a single bright white motion swoosh of a fast swing: a thick crescent arc of white light curving around the right half of a circle centered in the picture, its outer edge touching the right edge of the picture, thick in the middle and tapering to thin wisps at its top and bottom tips, a few speed streaks and sparks. Pure light on a plain flat pure black background (#000000), nothing else. Video game effect art."
+  }
+ }
+}

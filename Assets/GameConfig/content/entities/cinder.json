@@ -4,7 +4,11 @@
   "hint": "Drifts at you and pops. Shoot it early.",
   "note": "A spark with a grudge.",
   "hintVoice": "vo_hero_hint_cinder",
-  "onSpawn": [{ "type": "hintOnce" }],
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
   "extends": "chaser",
   "health": 1,
   "moveSpeed": 1.4,
@@ -15,19 +19,68 @@
   "visual": {
     "scale": 0.12,
     "animator": {
-      "parameters": [],
-      "states": [
+      "parameters": [
         {
-          "stateName": "Burn",
-          "spriteSheet": "Images/Fireball.png",
-          "fps": 12,
-          "loop": true
+          "name": "IsMoving",
+          "type": "Bool",
+          "defaultValue": 0
         }
       ],
-      "transitions": [],
-      "defaultStateName": "Burn"
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/Cinder/Cinder_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Move",
+          "spriteSheet": "Art/Enemies/Cinder/Cinder_move.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/Cinder/Cinder_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Move",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        }
+      ],
+      "defaultStateName": "Idle"
     },
-    "fxColor": "#FF8A3D"
+    "fxColor": "#FF8A3D",
+    "facesLeft": false
   },
   "loot": {
     "chance": 0.15,
@@ -42,10 +95,14 @@
     },
     {
       "type": "chase",
-      "stopDistance": 0.0,
-      "face": true
+      "stopDistance": 0,
+      "face": true,
+      "animBool": "IsMoving"
     }
   ],
   "onDeath": [],
-  "sounds": { "hurtSound": "cinder_hurt", "deathSound": "cinder_die" }
+  "sounds": {
+    "hurtSound": "cinder_hurt",
+    "deathSound": "cinder_die"
+  }
 }

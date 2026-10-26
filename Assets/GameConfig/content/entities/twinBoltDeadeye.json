@@ -11,7 +11,12 @@
   ],
   "extends": "deadeyeImp",
   "health": 4,
-  "tags": ["deadeyeImp", "elite", "imp", "twinBoltDeadeye"],
+  "tags": [
+    "deadeyeImp",
+    "elite",
+    "imp",
+    "twinBoltDeadeye"
+  ],
   "visual": {
     "scale": 0.36,
     "fxColor": "#BFE8FF",
@@ -111,11 +116,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -138,8 +148,11 @@
       "projectile": "deadeyeBolt",
       "speed": 9.5,
       "aim": "Predictive",
-      "muzzle": [0.09, 0.09375],
-      "interval": 5,
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
+      "interval": 5.0,
       "initialDelay": 2.2,
       "range": 11,
       "animTrigger": "IsAttacking",

@@ -20,8 +20,8 @@
           "defaultValue": 0
         },
         {
-          "name": "Attack",
-          "type": "Trigger",
+          "name": "IsAttacking",
+          "type": "Bool",
           "defaultValue": 0
         },
         {
@@ -101,7 +101,7 @@
           "exitTime": 1,
           "conditions": [
             {
-              "parameterName": "Attack",
+              "parameterName": "IsAttacking",
               "mode": "If",
               "threshold": 0
             }
@@ -114,7 +114,7 @@
           "exitTime": 1,
           "conditions": [
             {
-              "parameterName": "Attack",
+              "parameterName": "IsAttacking",
               "mode": "If",
               "threshold": 0
             }
@@ -123,9 +123,15 @@
         {
           "fromState": "Attack",
           "toState": "Idle",
-          "hasExitTime": true,
+          "hasExitTime": false,
           "exitTime": 1,
-          "conditions": []
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
         },
         {
           "fromState": "Idle",

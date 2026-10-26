@@ -4,26 +4,25 @@
   "hint": "Spits whelps until shot shut.",
   "note": "Makes more of them. Of course it does.",
   "hintVoice": "vo_hero_hint_whelpNest",
-  "onSpawn": [{ "type": "hintOnce" }],
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
   "team": "Enemy",
   "health": 3,
   "shootable": true,
   "moveSpeed": 0,
-  "activationRange": 9.0,
-  "tags": [
-    "whelpNest"
-  ],
+  "activationRange": 9,
+  "tags": ["whelpNest"],
   "body": {
     "shape": "Box",
-    "size": [
-      0.9,
-      0.35
-    ],
+    "size": [0.9, 0.35],
     "solid": false,
-    "gravity": 0.0
+    "gravity": 0
   },
   "visual": {
-    "scale": 1.0,
+    "scale": 1,
     "placeholderColor": "#FF6A1F",
     "placeholderShape": "Box",
     "placeholderLabel": false,
@@ -31,7 +30,63 @@
     "sortingOrder": 1,
     "hurtFlash": true,
     "deathPop": true,
-    "fxColor": "#FF6A1F"
+    "fxColor": "#FF6A1F",
+    "animator": {
+      "parameters": [
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/WhelpNest/WhelpNest_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/WhelpNest/WhelpNest_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/WhelpNest/WhelpNest_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": true
@@ -48,11 +103,11 @@
       "interval": 4.5,
       "initialDelay": 1.2,
       "maxAlive": 1,
-      "offset": [
-        0.0,
-        0.35
-      ]
+      "offset": [0, 0.35]
     }
   ],
-  "sounds": { "hurtSound": "whelpNest_hurt", "deathSound": "whelpNest_die" }
+  "sounds": {
+    "hurtSound": "whelpNest_hurt",
+    "deathSound": "whelpNest_die"
+  }
 }

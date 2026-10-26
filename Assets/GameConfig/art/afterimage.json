@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "entity": "afterimage",
+  "name": "Afterimage",
+  "description": "a pale see-through ghostly copy of an armoured knight in plate armour with a closed helm, glowing faint blue-white, wisps of mist trailing off it, empty hands",
+  "height": 0.85,
+  "poses": {
+    "stand": "walking upright, empty hands",
+    "struck": "flickering and breaking up",
+    "dead": "fading apart into blue-white mist"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "stands, flickering faintly, mist curling off it",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "walks steadily forward, a faint blue-white trail behind it, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "reference": "C:/Projects/SickOfItGameEnemies/Generated/hero/poses/unarmed.png",
+  "keepTint": true
+}

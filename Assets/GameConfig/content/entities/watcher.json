@@ -13,9 +13,7 @@
   "health": 6,
   "moveSpeed": 0,
   "activationRange": 14,
-  "tags": [
-    "watcher"
-  ],
+  "tags": ["watcher"],
   "body": {
     "radius": 2.6
   },

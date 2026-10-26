@@ -3,6 +3,7 @@
   "displayName": "Chain-Whip",
   "description": "The Foreman's own whip. A melee combo with three times the reach of fists: lash, snap, then a crack for double damage. Thin and long, so it hits what is in a line and not what is above him.",
   "color": "#C9B8A6",
+  "icon": "Art/Enemies/ChainWhipPickup/ChainWhipPickup_idle.png#idle_00",
   "kind": "Melee",
   "switchDelay": 0.2,
   "aimGuide": {
@@ -46,7 +47,8 @@
         "arc": 30.0,
         "size": 1.9
       }
-    ]
+    ],
+    "swingArt": "Art/Effects/Swoosh/Swoosh_arc.png#arc_00"
   },
   "sounds": {
     "empty": "wpn_empty_chainWhip",
@@ -57,89 +59,12 @@
   "pickup": "chainWhipPickup",
   "heroText": "He won't be needing this. Finally, something with reach.",
   "heroLine": "vo_wpn_whip",
-  "look": {
-    "parts": [
-      {
-        "offset": [
-          0.06,
-          0.0
-        ],
-        "size": [
-          0.18,
-          0.08
-        ],
-        "color": "#6B4A2B"
-      },
-      {
-        "offset": [
-          0.2,
-          0.04
-        ],
-        "size": [
-          0.07,
-          0.07
-        ],
-        "color": "#9AA0A6",
-        "angle": 45
-      },
-      {
-        "offset": [
-          0.29,
-          -0.01
-        ],
-        "size": [
-          0.07,
-          0.07
-        ],
-        "color": "#9AA0A6",
-        "angle": 45
-      },
-      {
-        "offset": [
-          0.38,
-          0.05
-        ],
-        "size": [
-          0.07,
-          0.07
-        ],
-        "color": "#9AA0A6",
-        "angle": 45
-      },
-      {
-        "offset": [
-          0.47,
-          0.0
-        ],
-        "size": [
-          0.07,
-          0.07
-        ],
-        "color": "#9AA0A6",
-        "angle": 45
-      },
-      {
-        "offset": [
-          0.57,
-          0.06
-        ],
-        "size": [
-          0.13,
-          0.12
-        ],
-        "color": "#D8DDE2",
-        "angle": 45
-      }
-    ],
-    "muzzle": [
-      0.66,
-      0.06
-    ],
-    "flash": "#E8EEF2",
-    "flashSize": [
-      0.22,
-      0.08
-    ],
-    "kick": 0.12
+  "hands": {
+    "prefix": "Whip",
+    "attack": [
+      "WhipLash",
+      "WhipSnap",
+      "WhipCrack"
+    ]
   }
 }

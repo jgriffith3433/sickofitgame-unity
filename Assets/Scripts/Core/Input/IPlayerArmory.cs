@@ -31,8 +31,18 @@ namespace SickOfIt.Core.Input
         public int pellets;
         /// <summary>Degrees between neighbouring pellets.</summary>
         public float pelletSpread;
-        /// <summary>How the weapon looks in his hands (the prop over the Fire pose); null = nothing drawn.</summary>
-        public HeldLook look;
+        /// <summary>The player.json states he plays holding it (its grip); null = the Animator's own states.</summary>
+        public HeroHands hands;
+    }
+
+    /// <summary>A weapon's grip: the player.json state for each move while he holds it (content/weapons <c>hands</c>).</summary>
+    public sealed class HeroHands
+    {
+        public string idle, run, jump, fall, land, runAttack, airAttack, equip;
+        /// <summary>The standing attack: one state for a gun, one per combo step for a melee weapon.</summary>
+        public string[] attack = new string[0];
+        /// <summary>The Animator draws idle, run, jump, fall and the standing attack (the launcher); the rest are played over it.</summary>
+        public bool animator;
     }
 
     /// <summary>

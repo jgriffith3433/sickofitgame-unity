@@ -129,7 +129,7 @@ namespace SickOfIt.Gameplay
                 useSound = def.sounds.use,
                 aimGuide = def.aimGuide.show,
                 aimGuideLength = def.aimGuide.length,
-                look = def.look.Built(),
+                hands = def.hands.Built(def),
             };
             return true;
         }

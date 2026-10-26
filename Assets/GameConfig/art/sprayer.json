@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "sprayer",
+  "name": "Ember toad",
+  "description": "a fat warty toad of the Ember Wastes, red-black skin with glowing orange pustules, a wide mouth full of embers, stubby legs",
+  "height": 0.6,
+  "poses": {
+    "stand": "squatting on its stubby legs, mouth closed, pustules glowing",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "squats, its throat pulsing in and out, pustules glowing",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "puffs up and sprays a fan of embers forward to the right from its wide mouth",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

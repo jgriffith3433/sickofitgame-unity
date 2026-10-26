@@ -22,10 +22,142 @@
   },
   "visual": {
     "scale": 1,
-    "color": "#9FB4D8",
     "fxColor": "#8FE3FF",
     "placeholderSize": 2.2,
-    "deathFade": 1.4
+    "deathFade": 1.4,
+    "animator": {
+      "parameters": [
+        {
+          "name": "Enraged",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "Lantern",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/BridgeWraith/BridgeWraith_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/BridgeWraith/BridgeWraith_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/BridgeWraith/BridgeWraith_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Rise",
+          "spriteSheet": "Art/Enemies/BridgeWraith/BridgeWraith_rise.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Lantern",
+          "spriteSheet": "Art/Enemies/BridgeWraith/BridgeWraith_lantern.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 10,
+              "functionName": "lantern"
+            }
+          ]
+        },
+        {
+          "stateName": "Enrage",
+          "spriteSheet": "Art/Enemies/BridgeWraith/BridgeWraith_enrage.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "IdleEnraged",
+          "spriteSheet": "Art/Enemies/BridgeWraith/BridgeWraith_idleEnraged.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Rise",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Lantern",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Lantern",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Lantern",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Enrage",
+          "toState": "IdleEnraged",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "healthBar": {
     "show": false

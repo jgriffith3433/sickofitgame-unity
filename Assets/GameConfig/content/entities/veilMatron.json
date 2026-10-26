@@ -11,7 +11,11 @@
   ],
   "extends": "veilDemon",
   "health": 8,
-  "tags": ["elite", "veilDemon", "veilMatron"],
+  "tags": [
+    "elite",
+    "veilDemon",
+    "veilMatron"
+  ],
   "visual": {
     "scale": 0.325,
     "fxColor": "#C8A8FF",
@@ -175,11 +179,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -206,7 +215,7 @@
       "arc": 120,
       "blockSound": "chain_cut",
       "color": "#B08AFF",
-      "leak": 0
+      "leak": 0.0
     },
     {
       "type": "teleport",
@@ -224,7 +233,10 @@
       "projectile": "veilEmber",
       "speed": 3.2,
       "aim": "Facing",
-      "muzzle": [0.3, 0.1],
+      "muzzle": [
+        0.3,
+        0.1
+      ],
       "interval": 2.8,
       "initialDelay": 2,
       "range": 8,
@@ -234,7 +246,7 @@
     },
     {
       "type": "aura",
-      "radius": 1,
+      "radius": 1.0,
       "damagePerTick": 1,
       "interval": 1.5
     }

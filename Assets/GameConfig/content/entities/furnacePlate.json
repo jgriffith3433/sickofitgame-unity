@@ -11,7 +11,11 @@
   ],
   "extends": "plateDemon",
   "health": 10,
-  "tags": ["elite", "furnacePlate", "plateDemon"],
+  "tags": [
+    "elite",
+    "furnacePlate",
+    "plateDemon"
+  ],
   "visual": {
     "scale": 0.312,
     "fxColor": "#FF8A3A",
@@ -175,11 +179,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -206,7 +215,7 @@
       "arc": 150,
       "blockSound": "chain_cut",
       "color": "#C8C0E0",
-      "leak": 0
+      "leak": 0.0
     },
     {
       "type": "shoot",
@@ -218,7 +227,10 @@
       },
       "speed": 3.4,
       "aim": "Player",
-      "muzzle": [0.3, 0.1],
+      "muzzle": [
+        0.3,
+        0.1
+      ],
       "interval": 2.6,
       "initialDelay": 1.8,
       "range": 8.5,

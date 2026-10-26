@@ -1,0 +1,567 @@
+fileFormatVersion: 2
+guid: d7a77fdec647d124ca4cb8d918f20c7c
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 108.333336
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: lantern_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 550
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d024f163837d18010800000000000000
+      internalID: 1189468413028680205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_01
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 550
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 215f545a5e809f550800000000000000
+      internalID: 6194992544838186258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_02
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 550
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cab1ad1f1bad6f140800000000000000
+      internalID: 4753226914537806764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_03
+      rect:
+        serializedVersion: 2
+        x: 693
+        y: 550
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 022dafb47c28aedd0800000000000000
+      internalID: -2456006854292352480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_04
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 550
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80fbf6cc13b373fc0800000000000000
+      internalID: -3515275899070071032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_05
+      rect:
+        serializedVersion: 2
+        x: 1155
+        y: 550
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 034ea81feec1e0c00800000000000000
+      internalID: 868663590709290032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_06
+      rect:
+        serializedVersion: 2
+        x: 1386
+        y: 550
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baa9f030c8a659210800000000000000
+      internalID: 1339093613791910571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_07
+      rect:
+        serializedVersion: 2
+        x: 1617
+        y: 550
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13aef4e68cc107170800000000000000
+      internalID: 8174064970847218225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_08
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 275
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bf0511c83031c9b0800000000000000
+      internalID: -5061711485872042061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_09
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 275
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa06a33f6d8a7c7d0800000000000000
+      internalID: -2898162194032467793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_10
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 275
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f22a2458338a1c8b0800000000000000
+      internalID: -5133637160993119697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_11
+      rect:
+        serializedVersion: 2
+        x: 693
+        y: 275
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bd4a458927ee2840800000000000000
+      internalID: 5201348785175416249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_12
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 275
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b587a48c29248f400800000000000000
+      internalID: 358109368568936539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_13
+      rect:
+        serializedVersion: 2
+        x: 1155
+        y: 275
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9a1c163d786ad400800000000000000
+      internalID: 349706808062646942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_14
+      rect:
+        serializedVersion: 2
+        x: 1386
+        y: 275
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b35479cab35aa860800000000000000
+      internalID: 7541932587694183345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_15
+      rect:
+        serializedVersion: 2
+        x: 1617
+        y: 275
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbb7a8ea452cccb50800000000000000
+      internalID: 6614875621661768636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbb85627782497cf0800000000000000
+      internalID: -254098754462446659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_17
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 0
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b5e8860ba83ecef0800000000000000
+      internalID: -86069035673262672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lantern_18
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 0
+        width: 231
+        height: 275
+      alignment: 9
+      pivot: {x: 0.6331169, y: 0.48709092}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33c3de9cd0cd501a0800000000000000
+      internalID: -6843822106939147213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      lantern_00: 1189468413028680205
+      lantern_01: 6194992544838186258
+      lantern_02: 4753226914537806764
+      lantern_03: -2456006854292352480
+      lantern_04: -3515275899070071032
+      lantern_05: 868663590709290032
+      lantern_06: 1339093613791910571
+      lantern_07: 8174064970847218225
+      lantern_08: -5061711485872042061
+      lantern_09: -2898162194032467793
+      lantern_10: -5133637160993119697
+      lantern_11: 5201348785175416249
+      lantern_12: 358109368568936539
+      lantern_13: 349706808062646942
+      lantern_14: 7541932587694183345
+      lantern_15: 6614875621661768636
+      lantern_16: -254098754462446659
+      lantern_17: -86069035673262672
+      lantern_18: -6843822106939147213
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

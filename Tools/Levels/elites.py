@@ -89,7 +89,8 @@ def m_ironhide(d):
     p = ab(d, "patrol")
     p.update(speed=1.2, distance=3.0)
     d["abilities"].append({"type": "shoot", "projectile": "projectileEnemy", "speed": 3.0, "aim": "Player", "muzzle": [0.09, 0.09375],
-                           "interval": 3.6, "initialDelay": 2.2, "damage": 1})
+                           "interval": 3.6, "initialDelay": 2.2, "damage": 1,
+                           "animTrigger": "IsAttacking", "fireOnEvent": "FireProjectile"})
 
 
 def m_alpha(d):
@@ -108,6 +109,7 @@ def m_twinlens(d):
     first["interval"] = 7.0
     second = copy.deepcopy(first)
     second.update(sweepDegrees=-70, initialDelay=4.8)
+    second.pop("animBool", None)  # the first beam drives the attack pose; two setting it each tick would fight
     d["abilities"].append(second)
 
 

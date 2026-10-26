@@ -92,6 +92,7 @@ namespace SickOfIt.Gameplay
             if (controller == null || player == null || cfg == null || dt <= 0f)
                 return;
             bool press = controller.ConsumeGrappleRequest();
+            controller.GrappleAttached = attached; // his GrappleThrow/GrappleSwing clips (presentation)
 
             if (!player.IsAlive || controller.Suspended || controller.InputLocked)
             {

@@ -1,5 +1,5 @@
 {
- "about": "Card icons: the Grudges (content/upgrades iconArt) and Yooba's goods (player.json availableUpgrades iconArt), shown in the card's corner instead of a letter.",
+ "about": "Card icons: the Grudges (content/upgrades iconArt) and Yooba's goods (player.json availableUpgrades iconArt), shown in the card's corner instead of a letter. Also the fists' icon on the HUD weapon chip (content/weapons/fists.json icon).",
  "out": "Assets/Art/Icons",
  "name": "Icon",
  "key": "magenta",
@@ -113,6 +113,9 @@
   },
   "spareGasp": {
    "image": "spareGasp.png"
+  },
+  "fists": {
+   "image": "fists.png"
   }
  },
  "gen": {
@@ -270,6 +273,11 @@
    "canvas": "ff00ff",
    "takes": 1,
    "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin rim of glistening green slime, and on it, large and centered, a small glass jar holding a single breath like a white wisp and a heart. Dark fantasy video game UI icon, painterly, bold readable silhouette, a friendly green slime glow. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
+  },
+  "fists.png": {
+   "canvas": "ff00ff",
+   "takes": 1,
+   "prompt": "Paint a round game icon medallion: a dark charcoal disc with a thin cracked ember-red rim, and on it, large and centered, a clenched battered bronze armoured gauntlet fist seen from the side, knuckles forward. Dark fantasy video game UI icon, painterly, bold readable silhouette, warm hellfire rim light. The round medallion fills most of the picture. Plain flat pure magenta background (#ff00ff) outside the disc."
   }
  }
 }

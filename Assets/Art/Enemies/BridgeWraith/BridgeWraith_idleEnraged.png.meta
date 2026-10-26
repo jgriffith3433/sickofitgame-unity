@@ -1,0 +1,682 @@
+fileFormatVersion: 2
+guid: 8af6e50f898251d4b9df6706706c68ef
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 108.333336
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: idleEnraged_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 792
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 738acfc0c9049a200800000000000000
+      internalID: 191755498116917303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_01
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 792
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69163908592d233c0800000000000000
+      internalID: -4381207947928968810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_02
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 792
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0e14e7e1e9dd0a80800000000000000
+      internalID: -8498897357496902129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_03
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 792
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e25dd0ebaa62b0d10800000000000000
+      internalID: 2092808966618600750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_04
+      rect:
+        serializedVersion: 2
+        x: 1032
+        y: 792
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5be7ec7ede07cf30800000000000000
+      internalID: 4595658293495982940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_05
+      rect:
+        serializedVersion: 2
+        x: 1290
+        y: 792
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62107f5ac7c1b93a0800000000000000
+      internalID: -6657696302451195610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_06
+      rect:
+        serializedVersion: 2
+        x: 1548
+        y: 792
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5dc76a0fa42f5200800000000000000
+      internalID: 170895645075819871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_07
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 528
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2854a7ce9109511b0800000000000000
+      internalID: -5686480513469364862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_08
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 528
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92afb0cdf160cddf0800000000000000
+      internalID: -154241553331914199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_09
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 528
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d75e4ef692216aef0800000000000000
+      internalID: -97370372761655939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_10
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 528
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2087e427f51788fe0800000000000000
+      internalID: -1186573847058548734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_11
+      rect:
+        serializedVersion: 2
+        x: 1032
+        y: 528
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afb1c168cbf9e1100800000000000000
+      internalID: 80677475391904762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_12
+      rect:
+        serializedVersion: 2
+        x: 1290
+        y: 528
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a088eb4abd3639b90800000000000000
+      internalID: -7236330381241317366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_13
+      rect:
+        serializedVersion: 2
+        x: 1548
+        y: 528
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65862b93ca44dedd0800000000000000
+      internalID: -2455230715353995178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 264
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9e3a7151838319c0800000000000000
+      internalID: -3957675056087548262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_15
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 264
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4221ce3bedefe250800000000000000
+      internalID: 5976256825169879630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_16
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 264
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 794735c53df59ebe0800000000000000
+      internalID: -1447520443831192425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_17
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 264
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f520cf0a74102a590800000000000000
+      internalID: -7664562208675986849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_18
+      rect:
+        serializedVersion: 2
+        x: 1032
+        y: 264
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caabc1c377e9507d0800000000000000
+      internalID: -2952779745724679508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_19
+      rect:
+        serializedVersion: 2
+        x: 1290
+        y: 264
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d1e35aabdf7d1820800000000000000
+      internalID: 2890607117273915865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_20
+      rect:
+        serializedVersion: 2
+        x: 1548
+        y: 264
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7778f251d4707b20800000000000000
+      internalID: 3130130183411496831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54c3b10a1eff33e20800000000000000
+      internalID: 3329285894075792453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_22
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 0
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eb2dda4e2010ffa0800000000000000
+      internalID: -5769093331651056665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: idleEnraged_23
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 0
+        width: 258
+        height: 264
+      alignment: 9
+      pivot: {x: 0.62984496, y: 0.49957386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d70dda3762cb4f750800000000000000
+      internalID: 6337897448952680573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      idleEnraged_00: 191755498116917303
+      idleEnraged_01: -4381207947928968810
+      idleEnraged_02: -8498897357496902129
+      idleEnraged_03: 2092808966618600750
+      idleEnraged_04: 4595658293495982940
+      idleEnraged_05: -6657696302451195610
+      idleEnraged_06: 170895645075819871
+      idleEnraged_07: -5686480513469364862
+      idleEnraged_08: -154241553331914199
+      idleEnraged_09: -97370372761655939
+      idleEnraged_10: -1186573847058548734
+      idleEnraged_11: 80677475391904762
+      idleEnraged_12: -7236330381241317366
+      idleEnraged_13: -2455230715353995178
+      idleEnraged_14: -3957675056087548262
+      idleEnraged_15: 5976256825169879630
+      idleEnraged_16: -1447520443831192425
+      idleEnraged_17: -7664562208675986849
+      idleEnraged_18: -2952779745724679508
+      idleEnraged_19: 2890607117273915865
+      idleEnraged_20: 3130130183411496831
+      idleEnraged_21: 3329285894075792453
+      idleEnraged_22: -5769093331651056665
+      idleEnraged_23: 6337897448952680573
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -18,9 +18,10 @@
     "depth": [
       {
         "name": "far arches",
+        "sprite": "Art/Scenery/Scenery_rbFarBridge.png#rbFarBridge_00",
         "shape": "Block",
-        "color": "#1C28548C",
-        "size": [0.5, 3.0],
+        "color": "#BBBECC8C",
+        "size": [4.04, 4.04],
         "sizeVariation": 0.5,
         "parallax": [0.9, 0.9],
         "spacing": [3.2, 0.0],
@@ -30,9 +31,10 @@
       },
       {
         "name": "hanging stalactites",
+        "sprite": "Art/Scenery/Scenery_rbStalactites.png#rbStalactites_00",
         "shape": "Spire",
-        "color": "#141C3C99",
-        "size": [1.1, 2.8],
+        "color": "#B8BBC499",
+        "size": [3.37, 3.37],
         "sizeVariation": 0.4,
         "parallax": [0.7, 0.7],
         "spacing": [3.8, 0.0],
@@ -80,10 +82,11 @@
     "life": [
       {
         "name": "watchers drifting in the void",
+        "sprite": "Art/Scenery/Scenery_rbWatchers.png#rbWatchers_00",
         "behavior": "Flyer",
         "shape": "Wisp",
-        "color": "#8FE3FF99",
-        "size": 0.6,
+        "color": "#DDF7FF99",
+        "size": 0.98,
         "speed": 1.0,
         "height": [0.5, 0.9],
         "interval": [8.0, 15.0],
@@ -91,10 +94,11 @@
       },
       {
         "name": "a statue walking a far bridge",
+        "sprite": "Art/Scenery/Scenery_rbStatue.png#rbStatue_00",
         "behavior": "Walker",
         "shape": "Horned",
-        "color": "#1C2A54A0",
-        "size": 1.0,
+        "color": "#BBBFCCA0",
+        "size": 0.7,
         "speed": 0.5,
         "height": [0.1, 0.18],
         "interval": [14.0, 24.0],
@@ -102,10 +106,11 @@
       },
       {
         "name": "a wisp and the hound after it",
+        "sprite": "Art/Scenery/Scenery_rbChase.png#rbChase_00",
         "behavior": "Chase",
         "shape": "Wisp",
-        "color": "#6FD8FFB3",
-        "size": 0.4,
+        "color": "#D4F3FFB3",
+        "size": 1.39,
         "speed": 2.2,
         "height": [0.16, 0.3],
         "interval": [20.0, 32.0],
@@ -133,12 +138,10 @@
   "props": [
     {
       "name": "far arches",
+      "sprite": "Art/Scenery/Scenery_rbArches.png#rbArches_00",
       "shape": "Spire",
-      "color": "#1A2448D9",
-      "size": [
-        1.2,
-        3.6
-      ],
+      "color": "#FFFFFFD9",
+      "size": [10.02, 10.02],
       "sizeVariation": 0.35,
       "across": -2.5,
       "parallax": 0.8,
@@ -149,12 +152,10 @@
     },
     {
       "name": "rune halos",
+      "sprite": "Art/Scenery/Scenery_rbHalos.png#rbHalos_00",
       "shape": "Glow",
-      "color": "#6FD8FF70",
-      "size": [
-        0.9,
-        0.9
-      ],
+      "color": "#FFFFFF70",
+      "size": [0.99, 0.99],
       "sizeVariation": 0.4,
       "across": -1.2,
       "parallax": 0.6,
@@ -165,12 +166,10 @@
     },
     {
       "name": "rune dust",
+      "sprite": "Art/Scenery/Scenery_rbDust.png#rbDust_00",
       "shape": "Glow",
-      "color": "#BFEFFF50",
-      "size": [
-        0.12,
-        0.12
-      ],
+      "color": "#FFFFFF50",
+      "size": [0.14, 0.14],
       "sizeVariation": 0.6,
       "across": 0.5,
       "parallax": 0.3,

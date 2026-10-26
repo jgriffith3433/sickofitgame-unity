@@ -1,0 +1,240 @@
+{
+ "about": "The Circles' scenery (content/circles props, ambience depth and life): painted sprites instead of the built-in shapes (StageTrack.PropShapes, AmbienceSprites). One sprite per entry; the size comes from the entry.",
+ "out": "Assets/Art/Scenery",
+ "name": "Scenery",
+ "key": "magenta",
+ "size": [
+  512,
+  512
+ ],
+ "pivot": [
+  256,
+  500
+ ],
+ "crop": [
+  0,
+  0,
+  512,
+  512
+ ],
+ "worldWidth": 2,
+ "widthPixels": 512,
+ "scale": 0.5,
+ "clips": {
+  "ewSpires": {
+   "image": "ewSpires.png"
+  },
+  "ewRocks": {
+   "image": "ewRocks.png"
+  },
+  "ewCracks": {
+   "image": "ewCracks.png",
+   "key": "black"
+  },
+  "ewSpikes": {
+   "image": "ewSpikes.png"
+  },
+  "ewRidges": {
+   "image": "ewRidges.png"
+  },
+  "ewMidSpires": {
+   "image": "ewMidSpires.png"
+  },
+  "ewBats": {
+   "image": "ewBats.png"
+  },
+  "ewImps": {
+   "image": "ewImps.png"
+  },
+  "ewChase": {
+   "image": "ewChase.png"
+  },
+  "crSpires": {
+   "image": "crSpires.png"
+  },
+  "crSeams": {
+   "image": "crSeams.png",
+   "key": "black"
+  },
+  "crCracks": {
+   "image": "crCracks.png",
+   "key": "black"
+  },
+  "crShards": {
+   "image": "crShards.png"
+  },
+  "crFarSide": {
+   "image": "crFarSide.png"
+  },
+  "crBlackSpires": {
+   "image": "crBlackSpires.png"
+  },
+  "crShardWings": {
+   "image": "crShardWings.png"
+  },
+  "crDemon": {
+   "image": "crDemon.png"
+  },
+  "crChase": {
+   "image": "crChase.png"
+  },
+  "rbArches": {
+   "image": "rbArches.png"
+  },
+  "rbHalos": {
+   "image": "rbHalos.png",
+   "key": "black"
+  },
+  "rbDust": {
+   "image": "rbDust.png",
+   "key": "black"
+  },
+  "rbFarBridge": {
+   "image": "rbFarBridge.png"
+  },
+  "rbStalactites": {
+   "image": "rbStalactites.png"
+  },
+  "rbWatchers": {
+   "image": "rbWatchers.png"
+  },
+  "rbStatue": {
+   "image": "rbStatue.png"
+  },
+  "rbChase": {
+   "image": "rbChase.png"
+  }
+ },
+ "gen": {
+  "ewSpires.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a single cluster of tall jagged spires of black basalt and cooled slag, faint orange lava light along their edges. Seen from the side, centered, the whole thing visible, with plenty of empty background around it on every side. Painterly dark fantasy matte painting: soft brush strokes, detailed, gritty, hazy with distance. Only this one piece of scenery: no figures, no people, no creatures, no ground, no sky. Plain flat pure magenta background (#ff00ff) all around it."
+  },
+  "ewRocks.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a low lumpy pile of black cooled slag boulders seen from the side, thin glowing orange cracks. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "ewCracks.png": {
+   "canvas": "000000",
+   "takes": 2,
+   "prompt": "Paint a flat wide crack in black ground glowing with molten orange lava, seen from the side at ground level, a little heat shimmer. Pure light on a plain flat pure black background (#000000), nothing else. Dark fantasy video game effect art, painterly."
+  },
+  "ewSpikes.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint one huge jagged spike of black basalt rock pointing up, close to the camera, rough and dark with a faint orange rim light. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "ewRidges.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a single low wide black slag hill, a faint orange glow along its top. Seen from the side, centered, the whole thing visible, with plenty of empty background around it on every side. Painterly dark fantasy matte painting: soft brush strokes, detailed, gritty, hazy with distance. Only this one piece of scenery: no figures, no people, no creatures, no ground, no sky. Plain flat pure magenta background (#ff00ff) all around it."
+  },
+  "ewMidSpires.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a cluster of three thin black rock spires of different heights seen from the side, lava glow at their feet. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "ewBats.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a small bat made of ember and soot flying, wings spread, glowing orange edges, seen from the side. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "ewImps.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a tiny far-off silhouette of a flying hell imp with bat wings carrying a sack, dark red, seen from the side. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "ewChase.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a tiny far-off silhouette of a ragged fleeing damned soul running, a small imp swooping after it, seen from the side. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "crSpires.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint tall black basalt spires seen from the side with thin molten orange seams glowing up them. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "crSeams.png": {
+   "canvas": "000000",
+   "takes": 2,
+   "prompt": "Paint a thin vertical seam of molten orange light glowing in a crack, wisps of heat. Pure light on a plain flat pure black background (#000000), nothing else. Dark fantasy video game effect art, painterly."
+  },
+  "crCracks.png": {
+   "canvas": "000000",
+   "takes": 2,
+   "prompt": "Paint a flat jagged crack in a dark stone road glowing with orange magma from below, seen from the side at ground level. Pure light on a plain flat pure black background (#000000), nothing else. Dark fantasy video game effect art, painterly."
+  },
+  "crShards.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint one big jagged shard of black basalt standing up close to the camera, sharp edges, faint orange seam. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "crFarSide.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a single big black rock mesa with steep cliff sides, magma glow lighting its base from below. Seen from the side, centered, the whole thing visible, with plenty of empty background around it on every side. Painterly dark fantasy matte painting: soft brush strokes, detailed, gritty, hazy with distance. Only this one piece of scenery: no figures, no people, no creatures, no ground, no sky. Plain flat pure magenta background (#ff00ff) all around it."
+  },
+  "crBlackSpires.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a single cluster of three tall thin black needle spires of rock, faint orange seams in them. Seen from the side, centered, the whole thing visible, with plenty of empty background around it on every side. Painterly dark fantasy matte painting: soft brush strokes, detailed, gritty, hazy with distance. Only this one piece of scenery: no figures, no people, no creatures, no ground, no sky. Plain flat pure magenta background (#ff00ff) all around it."
+  },
+  "crShardWings.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a small flying creature with wings made of black rock shards, glowing orange cracks, seen from the side. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "crDemon.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint the dark silhouette of a hunched horned brimstone demon walking to the right, seen from the side, dark basalt skin with faint orange seams, painted small and far away. Painterly dark fantasy art: soft brush strokes, gritty, hazy. Only the demon, standing on nothing, no ground, no road, no text. Plain flat pure magenta background (#ff00ff) all around it."
+  },
+  "crChase.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a far-off silhouette of a small horned whelp running with a big horned demon chasing it, dark with faint orange seams, seen from the side. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "rbArches.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a single broken stone arch of a ruined bridge, pale violet-grey stone, small cyan runes glowing on it. Seen from the side, centered, the whole thing visible, with plenty of empty background around it on every side. Painterly dark fantasy matte painting: soft brush strokes, detailed, gritty, hazy with distance. Only this one piece of scenery: no figures, no people, no creatures, no ground, no sky. Plain flat pure magenta background (#ff00ff) all around it."
+  },
+  "rbHalos.png": {
+   "canvas": "000000",
+   "takes": 2,
+   "prompt": "Paint a soft round halo of pale cyan light around a small glowing carved rune. Pure light on a plain flat pure black background (#000000), nothing else. Dark fantasy video game effect art, painterly."
+  },
+  "rbDust.png": {
+   "canvas": "000000",
+   "takes": 2,
+   "prompt": "Paint a drifting cloud of tiny glowing cyan rune dust specks. Pure light on a plain flat pure black background (#000000), nothing else. Dark fantasy video game effect art, painterly."
+  },
+  "rbFarBridge.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a single tall stone bridge arch standing on two pillars, pale violet-grey stone, misty. Seen from the side, centered, the whole thing visible, with plenty of empty background around it on every side. Painterly dark fantasy matte painting: soft brush strokes, detailed, gritty, hazy with distance. Only this one piece of scenery: no figures, no people, no creatures, no ground, no sky. Plain flat pure magenta background (#ff00ff) all around it."
+  },
+  "rbStalactites.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a cluster of long pale grey stone stalactites hanging down, carved with faint cyan runes, seen from the side, pointing down. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "rbWatchers.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a floating stone eyeball with a glowing cyan iris drifting in the void, small and far away. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  },
+  "rbStatue.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a stone statue of a hound walking to the right, seen from the side, pale grey stone with a glowing cyan rune on its collar, on a small square stone plinth. Painterly dark fantasy art: soft brush strokes, gritty, hazy. Only the statue, no text, no letters. Plain flat pure magenta background (#ff00ff) all around it."
+  },
+  "rbChase.png": {
+   "canvas": "ff00ff",
+   "takes": 2,
+   "prompt": "Paint a far-off small pale cyan wisp of light fleeing with a stone rune hound running after it, seen from the side. Dark fantasy side-scrolling video game background art: painterly, detailed, gritty. One object alone, centered, the whole thing visible, empty space around it. Plain flat pure magenta background (#ff00ff), no floor line, no scenery behind it."
+  }
+ }
+}

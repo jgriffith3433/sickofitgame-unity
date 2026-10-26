@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "entity": "cinderSpark",
+  "name": "Spark",
+  "description": "a will-o'-the-wisp: one tiny floating ball of bright yellow-white fire, with two black dot eyes and an angry little mouth inside the flame, a few sparks trailing behind it",
+  "height": 0.25,
+  "poses": {
+    "stand": "darting through the air, flame streaming back",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "fizzling out into a puff of smoke"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "flickers in place, angry",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "zips forward to the right, flame streaming back, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, small and centered in the frame with lots of empty space around it. It is a ball of fire that floats in the air by itself. {style} {background}",
+    "pose": "Image 1 is {description}. Show this exact same object, the same design, {action}. Keep its shape, colors, size and position in the frame and the painterly art style of image 1. {background}"
+  },
+  "style": "Painterly digital painting in the style of dark fantasy video game art: soft visible brush strokes, rich shading, gritty and detailed, warm hellfire rim light, high resolution and smooth (not pixel art, not a cartoon)."
+}

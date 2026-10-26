@@ -47,14 +47,16 @@ async function blank(file, size, hex) {
 async function main() {
   const args = process.argv.slice(2);
   const jobFile = path.resolve(args[0] ?? '');
-  if (!fs.existsSync(jobFile)) throw new Error('Usage: node Tools/Art/fx_make.mjs Tools/Art/fx/<job>.json [--redo a,b] [--pick a=seed] [--no-bake]');
+  if (!fs.existsSync(jobFile)) throw new Error('Usage: node Tools/Art/fx_make.mjs Tools/Art/fx/<job>.json [--redo a,b] [--pick a=seed] [--no-bake] [--takes N]');
   const redo = new Set();
   const picks = [];
   let bake = true;
+  let takesFlag = null;
   for (let i = 1; i < args.length; i++) {
     if (args[i] === '--redo') args[++i].split(',').forEach((x) => redo.add(x));
     else if (args[i] === '--pick') picks.push(args[++i]);
     else if (args[i] === '--no-bake') bake = false;
+    else if (args[i] === '--takes') takesFlag = Number(args[++i]);
   }
   const job = JSON.parse(fs.readFileSync(jobFile, 'utf8'));
   const name = path.basename(jobFile, '.json');
@@ -78,7 +80,7 @@ async function main() {
     if (current && !redo.has(base)) return;
     const canvas = path.join(src, '_takes', `canvas-${g.canvas ?? '000000'}-${size.join('x')}.png`);
     await blank(canvas, size, g.canvas ?? '000000');
-    const n = g.takes ?? 3;
+    const n = takesFlag ?? Math.min(g.takes ?? 1, Math.max(1, Number(process.env.SOI_ART_TAKES) || 1)); // one take unless asked
     const seeds = Array.from({ length: n }, (_, i) => (redo.has(base) ? crypto.randomInt(1, 2 ** 31) : (parseInt(sha(`${key}:${i}`).slice(0, 8), 16) % (2 ** 31 - 1)) + 1));
     log(`${still}: ${n} takes`);
     const jobs = await gen.submitMany(seeds.map((seed) => ({

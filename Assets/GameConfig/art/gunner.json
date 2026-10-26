@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "entity": "gunner",
+  "name": "Brimstone gunner",
+  "description": "a squat horned brimstone demon of the Cracked Road, cracked black basalt with glowing orange seams, one arm ending in a stubby cannon of black iron glowing at its muzzle",
+  "height": 0.85,
+  "poses": {
+    "stand": "standing squat, the cannon arm raised forward",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "breathes and shifts its weight in place, its glow pulsing slowly",
+      "seconds": 2
+    },
+    "attack": {
+      "from": "stand",
+      "action": "braces and fires the cannon arm forward to the right, a burst of flame from its muzzle, the recoil rocking it back",
+      "seconds": 1.5
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

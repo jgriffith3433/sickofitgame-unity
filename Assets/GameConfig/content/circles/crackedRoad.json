@@ -18,9 +18,10 @@
     "depth": [
       {
         "name": "the far side of the Rift",
+        "sprite": "Art/Scenery/Scenery_crFarSide.png#crFarSide_00",
         "shape": "Rock",
-        "color": "#0E0A10A0",
-        "size": [3.8, 1.8],
+        "color": "#B7B6B7A0",
+        "size": [2.62, 2.62],
         "sizeVariation": 0.4,
         "parallax": [0.9, 0.9],
         "spacing": [5.0, 0.0],
@@ -30,9 +31,10 @@
       },
       {
         "name": "black spires",
+        "sprite": "Art/Scenery/Scenery_crBlackSpires.png#crBlackSpires_00",
         "shape": "Spire",
-        "color": "#08060AB0",
-        "size": [1.2, 4.4],
+        "color": "#B5B4B6B0",
+        "size": [5.81, 5.81],
         "sizeVariation": 0.4,
         "parallax": [0.72, 0.72],
         "spacing": [3.6, 6.5],
@@ -79,10 +81,11 @@
     "life": [
       {
         "name": "shard-wings over the Rift",
+        "sprite": "Art/Scenery/Scenery_crShardWings.png#crShardWings_00",
         "behavior": "Flyer",
         "shape": "Wing",
-        "color": "#0C080EB3",
-        "size": 0.7,
+        "color": "#B6B5B7B3",
+        "size": 0.54,
         "speed": 1.6,
         "height": [0.5, 0.88],
         "interval": [8.0, 14.0],
@@ -90,10 +93,11 @@
       },
       {
         "name": "a demon on the far road",
+        "sprite": "Art/Scenery/Scenery_crDemon.png#crDemon_00",
         "behavior": "Walker",
         "shape": "Horned",
-        "color": "#0A060C99",
-        "size": 1.2,
+        "color": "#B6B4B699",
+        "size": 1.06,
         "speed": 0.6,
         "height": [0.12, 0.2],
         "interval": [14.0, 24.0],
@@ -101,10 +105,11 @@
       },
       {
         "name": "a whelp and the demon after it",
+        "sprite": "Art/Scenery/Scenery_crChase.png#crChase_00",
         "behavior": "Chase",
         "shape": "Horned",
-        "color": "#0A060C99",
-        "size": 0.55,
+        "color": "#B6B4B699",
+        "size": 1.05,
         "speed": 2.4,
         "height": [0.14, 0.24],
         "interval": [20.0, 32.0],
@@ -132,12 +137,10 @@
   "props": [
     {
       "name": "black spires",
+      "sprite": "Art/Scenery/Scenery_crSpires.png#crSpires_00",
       "shape": "Spire",
-      "color": "#0A080CD9",
-      "size": [
-        1.0,
-        3.8
-      ],
+      "color": "#FFFFFFD9",
+      "size": [4.46, 4.46],
       "sizeVariation": 0.35,
       "across": -2.5,
       "parallax": 0.75,
@@ -148,12 +151,10 @@
     },
     {
       "name": "spire seams",
+      "sprite": "Art/Scenery/Scenery_crSeams.png#crSeams_00",
       "shape": "Glow",
-      "color": "#FF7A1A80",
-      "size": [
-        0.18,
-        2.2
-      ],
+      "color": "#FFFFFF80",
+      "size": [0.94, 2.2],
       "sizeVariation": 0.4,
       "across": -2.5,
       "parallax": 0.75,
@@ -164,12 +165,10 @@
     },
     {
       "name": "road cracks",
+      "sprite": "Art/Scenery/Scenery_crCracks.png#crCracks_00",
       "shape": "Glow",
-      "color": "#FF6A1AB3",
-      "size": [
-        2.2,
-        0.25
-      ],
+      "color": "#FFFFFFB3",
+      "size": [2.2, 0.32],
       "sizeVariation": 0.4,
       "across": -2.78,
       "parallax": 0.0,
@@ -180,12 +179,10 @@
     },
     {
       "name": "foreground shards",
+      "sprite": "Art/Scenery/Scenery_crShards.png#crShards_00",
       "shape": "Spire",
-      "color": "#030204",
-      "size": [
-        0.5,
-        1.4
-      ],
+      "color": "#FFFFFFFF",
+      "size": [1.55, 1.55],
       "sizeVariation": 0.3,
       "across": -3.0,
       "parallax": -0.4,
