@@ -85,6 +85,9 @@ namespace SickOfIt.Core.Progression
 
         #region Public API
 
+        /// <summary>The level playing now (presentation that follows the level, such as the ghost lobby).</summary>
+        public static LevelRuntime Current { get; private set; }
+
         public int LevelNumber => levelNumber;
         public LevelConfig Config => config;
         public void SetLevelNumber(int number) => levelNumber = number;
@@ -103,6 +106,7 @@ namespace SickOfIt.Core.Progression
 
         private void Start()
         {
+            Current = this;
             // Read level number from PlayerPrefs (set by SceneTransitionManager.LoadLevel)
             if (PlayerPrefs.HasKey("CurrentLevelNumber"))
                 levelNumber = PlayerPrefs.GetInt("CurrentLevelNumber", levelNumber);
@@ -221,6 +225,8 @@ namespace SickOfIt.Core.Progression
 
         private void OnDisable()
         {
+            if (Current == this)
+                Current = null;
             GameContent.Changed -= OnContentChanged;
             if (playerHealth != null)
                 playerHealth.DeathStood -= OnDeathStood;

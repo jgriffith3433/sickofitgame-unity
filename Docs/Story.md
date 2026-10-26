@@ -2535,3 +2535,11 @@ The hero is on screen when Hell hits him, kills him and when a floor falls. A hi
 one per death: `DeathBurn` (lit up like a firework, a puff of smoke), `DeathSquash` (looks up, sighs, flattened), `DeathSpin` (launched, waves goodbye at the top) and `DeathShrug` (shrugs and lies down to quit).
 The death scene (the baked video) shows the same death over it. Clearing a floor plays `Victory`: a nod and the smallest gauntlet pump, a flat "fine". All deadpan; specs in `Assets/GameConfig/art/hero.json`.
 All of them are generated clips of his own (`art/hero.json`).
+
+## Other climbers: the ghosts (built 2026-10-26)
+
+Hell is repetition, and the hero is not the only one stuck in it. Everyone else playing Sick Of It right now climbs the same floor beside him as a
+faint, pale ghost of the hero: running, jumping and falling through their own attempt. They cannot touch him, help him or hurt him; a rewind
+turns back his own time, never theirs (they are other people, now). A floor with ghosts on it is a crowd of nobodies all sick of the same thing.
+In the game: `Core/Progression/GhostLobby.cs` on Hawkes Net (one room for everyone, `lobby` on sickofitgame.com, `t-lobby` on beta and in playtests),
+WebGL only, `?ghosts=0` turns it off. Presentation only, never the simulation.

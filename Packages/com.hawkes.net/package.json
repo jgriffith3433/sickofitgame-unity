@@ -1,0 +1,8 @@
+{
+  "name": "com.hawkes.net",
+  "version": "0.1.0",
+  "displayName": "Hawkes Net",
+  "description": "Hawkes Net multiplayer for Unity WebGL games (Hawkes Gen docs/net.md): HawkesNet.Join(room, options) gives a room with Send/On (messages once and in order, or newest-wins), Pose/Poses (avatars), peers, the host and the transport. Peer to peer for small rooms, the relay for big ones, moved between them without reconnecting. Runs the web SDK (hawkes-net.mjs) in the page through a jslib bridge; in the Editor and outside WebGL, Join reports that it needs a WebGL build.",
+  "unity": "2021.3",
+  "author": { "name": "Hawkes Gen" }
+}

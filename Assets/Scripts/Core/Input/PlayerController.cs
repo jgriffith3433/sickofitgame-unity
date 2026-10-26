@@ -564,8 +564,17 @@ namespace SickOfIt.Core.Input
                 lookAction.action.Enable();
         }
         
+        /// <summary>The hero on screen (the last one enabled), for presentation that follows him (the ghost lobby).</summary>
+        public static PlayerController Active { get; private set; }
+
+        /// <summary>The renderer his sheets draw on.</summary>
+        public SpriteRenderer HeroRenderer => heroRenderer != null || animator == null ? heroRenderer
+            : heroRenderer = animator.TryGetComponent(out SpriteRenderer r) ? r : animator.GetComponentInChildren<SpriteRenderer>();
+        private SpriteRenderer heroRenderer;
+
         private void OnEnable()
         {
+            Active = this;
             // Re-enable input actions every time we come back on.
             if (moveAction?.action != null) moveAction.action.Enable();
             if (jumpAction?.action != null) jumpAction.action.Enable();
@@ -632,6 +641,8 @@ namespace SickOfIt.Core.Input
         
         private void OnDisable()
         {
+            if (Active == this)
+                Active = null;
             // NOTE: Do NOT call Disable() on InputActionReferences here.
             // InputActionReference shares the same underlying InputAction across
             // all prefab instances.
