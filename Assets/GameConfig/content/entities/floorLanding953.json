@@ -1,6 +1,9 @@
 {
   "schemaVersion": 1,
   "extends": "floorLanding",
+  "tags": [
+    "foothold"
+  ],
   "abilities": [
     {
       "type": "carved",

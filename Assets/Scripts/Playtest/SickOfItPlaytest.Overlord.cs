@@ -84,6 +84,9 @@ namespace SickOfIt.Playtest
                 {
                     for (int i = 0; i < OverlordScenes.Length && !Run.Done; i++)
                     {
+                        // A floor with no progress for minutes ended as "stalled" (its stuck event names the place): the run ends here, stuck.
+                        if (lastOutcome == "stalled")
+                            break;
                         var (floor, kind, proof) = OverlordScenes[i];
                         int n = LevelNumberOf("Floor" + floor);
                         if (n == 0)
@@ -122,6 +125,11 @@ namespace SickOfIt.Playtest
                             floors++;
                     Run.Metric("overlord.floors", floors);
                     OverlordCheck("eight appearances on distinct floors", floors >= 8, $"{floors} of {OverlordScenes.Length} scenes played to the end");
+                    if (lastOutcome == "stalled" && !Run.Done)
+                    {
+                        Run.Progress(1f);
+                        End(PlaytestOutcome.Stuck);
+                    }
                 }
                 finally
                 {
