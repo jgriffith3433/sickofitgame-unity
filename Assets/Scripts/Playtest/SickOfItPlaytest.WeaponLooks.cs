@@ -135,6 +135,24 @@ namespace SickOfIt.Playtest
                 yield return Run.Until(() => weapons.Has("slagLadle") && weapons.Has("fists"), 6f, "the weapons given");
 
                 string[] order = { "fists", "spitfire", "ricochetPistol", "chainWhip", "shotgun", "boomerangHalo", "slagLadle" };
+
+                // The found weapons' grip sheets aren't loaded at boot (beta v246's out-of-memory abort, "Halting program."):
+                // they come in once the weapons are in his hands (LazySheets).
+                var lazyIdles = new List<string>();
+                foreach (string id in order)
+                {
+                    var hands = GameContent.Current.Weapons.TryGetValue(id, out var def) ? def.hands.Built(def) : null;
+                    string sheet = hands != null ? SickOfIt.Core.Addressables.LazySheets.SheetOf(hands.idle) : null;
+                    if (sheet != null)
+                        lazyIdles.Add(sheet);
+                }
+                float askedAt = Time.realtimeSinceStartup;
+                while (!Run.Done && Time.realtimeSinceStartup - askedAt < 20f && lazyIdles.Exists(SickOfIt.Core.Addressables.LazySheets.Loading))
+                    yield return null;
+                int loadedIdles = lazyIdles.FindAll(s => SickOfIt.Core.Addressables.LazySheets.Sprites(s) != null).Count;
+                LooksCheck("grip sheets loaded on demand, not at boot", lazyIdles.Count > 0 && loadedIdles == lazyIdles.Count,
+                    $"{loadedIdles} of {lazyIdles.Count} found weapons' idle sheets in {Time.realtimeSinceStartup - askedAt:0.0} s");
+
                 foreach (string id in order)
                 {
                     if (Run.Done)

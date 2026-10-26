@@ -96,10 +96,51 @@ namespace SickOfIt.Tools.Editor
                 EditorUtility.UnloadUnusedAssetsImmediate();
             }
 
+            int lazy = AddLazySheets(settings, template, log);
+            if (lazy > 0)
+                groups++;
+
             WriteBootScene();
             EditorUtility.SetDirty(settings);
             AssetDatabase.SaveAssets();
             log($"  Player data split: GameDefinition and {assets} assets it uses ({total / (1024 * 1024)} MB in memory) in {groups} Addressables groups ({GroupPrefix}*), Boot scene {BootScenePath}.");
+        }
+
+        /// <summary>
+        /// The player.json states with a lazySheet (the weapon grips) aren't GameDefinition's dependencies, so the boot
+        /// doesn't load them; each is made addressable at its lazySheet path, one bundle a sheet, for LazySheets to load
+        /// when a weapon is in his hands.
+        /// </summary>
+        static int AddLazySheets(AddressableAssetSettings settings, AddressableAssetGroup template, Action<string> log)
+        {
+            var definition = AssetDatabase.LoadAssetAtPath<GameDefinition>(BuildPath);
+            var states = definition != null && definition.player != null && definition.player.animationConfig != null ? definition.player.animationConfig.states : null;
+            var paths = new SortedSet<string>(StringComparer.Ordinal);
+            if (states != null)
+            {
+                foreach (var state in states)
+                {
+                    if (state != null && state.spriteSheet == null && !string.IsNullOrEmpty(state.lazySheet))
+                        paths.Add(state.lazySheet);
+                }
+            }
+            if (paths.Count == 0)
+                return 0;
+
+            var group = CreateGroup(settings, GroupPrefix + "LazySheets", template);
+            group.GetSchema<BundledAssetGroupSchema>().BundleMode = BundledAssetGroupSchema.BundlePackingMode.PackSeparately;
+            int added = 0;
+            foreach (string address in paths)
+            {
+                string guid = AssetDatabase.AssetPathToGUID("Assets/" + address);
+                if (string.IsNullOrEmpty(guid))
+                    throw new Exception($"player.json's lazySheet {address} is not in the project.");
+                var entry = settings.CreateOrMoveEntry(guid, group);
+                entry.SetAddress(address);
+                added++;
+            }
+            log($"  Player data split: {added} weapon-grip sheets loaded on demand (lazySheet), out of the boot's load, in {group.Name}.");
+            return added;
         }
 
         public static void End(Action<string> log)

@@ -345,7 +345,12 @@ instead of generated again. Batch mode fails with "another Unity instance is run
   it addressable (`GameDefinition`) with its dependencies in remote `PlayerData_<folder>` groups (each under 40 MB) and
   puts a generated Boot scene first, where `GameDefinitionBoot` loads it (progress bar) and opens the main menu; after
   the build everything is put back, so the editor and tests still read Resources. Startup code that needs the definition
-  before the main menu uses `GameDefinition.WhenReady`. Step 6b (`BuildOutputGuard`) lists the largest files of
+  before the main menu uses `GameDefinition.WhenReady`. The boot loads everything GameDefinition references at once, and
+  the art pass's grip sheets ran the WebGL heap out (beta v246, `abort("OOM")`, "Halting program."): the found weapons'
+  grip states (Shotgun*, Whip*, Spitfire*, Halo*, Pistol*, Ladle* and their Equip*) have `"spriteSheet": null` and a
+  `lazySheet` path instead, which PlayerDataSplit makes addressable (`PlayerData_LazySheets`, a bundle each) and
+  `Core/Addressables/LazySheets.cs` loads while the weapon is held (PlayerWeapons) and releases after; until one is in,
+  the hero keeps his pose (`PlayerSceneClip.Play` is false). Big new sheets that aren't needed at boot go the same way. Step 6b (`BuildOutputGuard`) lists the largest files of
   Game/v<n> and fails the deploy on any over 95 MB. Content needs nothing new: new art reaches the bundles by itself.
 - **Tests:** `-runTests -testPlatform EditMode` and `-runTests -testPlatform PlayMode` (add `-testResults <file>`).
 - **Playtest every level with a bot** (real Level scene, ~1 min per level; omit `-nographics`):

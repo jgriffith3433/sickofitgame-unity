@@ -77,6 +77,8 @@ namespace SickOfIt.Playtest
                 {
                     if (s != null && s.stateName == state && s.spriteSheet != null)
                         return s.spriteSheet.name;
+                    if (s != null && s.stateName == state && !string.IsNullOrEmpty(s.lazySheet))
+                        return System.IO.Path.GetFileNameWithoutExtension(s.lazySheet); // a weapon grip loaded on demand
                 }
                 return null;
             }

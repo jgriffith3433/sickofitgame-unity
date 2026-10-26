@@ -1708,30 +1708,50 @@ namespace SickOfIt.Core.Input
             {
                 string from = seenWeapon;
                 bool hadLauncher = seenLauncher;
-                seenWeapon = id;
-                seenLauncher = hasLauncher;
-                bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
                 string clip = null;
                 if (hadLauncher && !hasLauncher)
                     clip = "LauncherTaken";
                 else if (id != from)
                     clip = CurrentHands?.equip;
-                if (clip != null && !rewinding && !IsClimbing && heroClip == null && PlayAnimatorState(clip))
+                // A grip sheet loaded on demand (LazySheets) may still be on its way: the swap waits up to a second for it.
+                bool wait = false;
+                if (clip != null && PlayerSceneClip.Waiting(clip))
                 {
-                    swapPose = clip;
-                    swapUntil = Time.time + SwapSeconds(clip);
-                    movePose = null;
-                    gripPose = null;
-                    gripSwingStart = -1f;
-                    runFirePlaying = false;
-                    SwapsPlayed++;
-                    LastSwap = clip;
-                    if (TryGetComponent(out PlayerSceneClip playing))
-                        playing.FitTo(SwapSeconds(clip));
+                    if (swapWaitSince < 0f)
+                        swapWaitSince = Time.time;
+                    wait = Time.time - swapWaitSince < SwapWaitSeconds;
                 }
+                if (!wait)
+                    StartSwap(id, hasLauncher, clip);
             }
+            else
+                swapWaitSince = -1f;
             if (swapPose != null && (Time.time >= swapUntil || heroClip != null || IsClimbing))
                 CancelSwap();
+        }
+
+        private const float SwapWaitSeconds = 1f;
+        private float swapWaitSince = -1f;
+
+        private void StartSwap(string id, bool hasLauncher, string clip)
+        {
+            swapWaitSince = -1f;
+            seenWeapon = id;
+            seenLauncher = hasLauncher;
+            bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
+            if (clip != null && !rewinding && !IsClimbing && heroClip == null && PlayAnimatorState(clip))
+            {
+                swapPose = clip;
+                swapUntil = Time.time + SwapSeconds(clip);
+                movePose = null;
+                gripPose = null;
+                gripSwingStart = -1f;
+                runFirePlaying = false;
+                SwapsPlayed++;
+                LastSwap = clip;
+                if (TryGetComponent(out PlayerSceneClip playing))
+                    playing.FitTo(SwapSeconds(clip));
+            }
         }
 
         private void CancelSwap()

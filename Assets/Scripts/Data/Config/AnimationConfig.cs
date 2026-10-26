@@ -68,6 +68,8 @@ namespace SickOfIt.Data.Config
         [Header("Sprite Source")]
         [Tooltip("Sprite sheet to slice for this state. If null, uses the parent config's spriteSheet.")]
         public Texture2D spriteSheet;
+        [Tooltip("A sheet loaded on demand instead (path under Assets/, with spriteSheet null): kept out of the boot's load. Player states only (LazySheets: the weapon-grip sheets).")]
+        public string lazySheet = "";
         [Tooltip("If the sheet has multiple rows, which sprites to use (by name prefix). Leave empty to use all.")]
         public string spriteNameFilter;
         [Tooltip("Skip this many frames (after the name filter), e.g. to play only part of a long sheet.")]

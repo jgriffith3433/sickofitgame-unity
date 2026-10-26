@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using SickOfIt.Core.Addressables;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 
@@ -11,7 +12,8 @@ namespace SickOfIt.Core.Input
     /// generated into Character.prefab's controller). The Animator is paused while it plays and picks up again,
     /// at its default state, as soon as the next real state is asked for (<see cref="Stop"/>).
     /// Pure presentation: it only changes the sprite on screen. Frames come from the asset registry
-    /// (<see cref="GameDefinition.SpritesOf"/>), which holds every sheet the config references.
+    /// (<see cref="GameDefinition.SpritesOf"/>), which holds every sheet the config references; a state with a lazySheet
+    /// (the weapon grips) gets its frames from <see cref="LazySheets"/> once that sheet has loaded.
     /// </summary>
     public class PlayerSceneClip : MonoBehaviour
     {
@@ -35,10 +37,22 @@ namespace SickOfIt.Core.Input
         public bool Play(Animator source, string state)
         {
             var config = FindState(state);
-            if (config == null || config.spriteSheet == null || source == null)
+            if (config == null || source == null)
                 return false;
-            var gd = GameDefinition.Instance;
-            var sprites = gd != null ? Filter(gd.SpritesOf(config.spriteSheet), config.spriteNameFilter) : new List<Sprite>();
+            Sprite[] sheet;
+            if (config.spriteSheet != null)
+            {
+                var gd = GameDefinition.Instance;
+                sheet = gd != null ? gd.SpritesOf(config.spriteSheet) : System.Array.Empty<Sprite>();
+            }
+            else
+            {
+                // A weapon-grip sheet loaded on demand: null until it is in, and the caller keeps the pose he has.
+                sheet = LazySheets.Sprites(config.lazySheet);
+                if (sheet == null)
+                    return false;
+            }
+            var sprites = Filter(sheet, config.spriteNameFilter);
             var selected = config.SelectFrames(sprites);
             if (selected.Count == 0)
                 return false;
@@ -59,6 +73,9 @@ namespace SickOfIt.Core.Input
             Show();
             return true;
         }
+
+        /// <summary>True while the state's sheet is loaded on demand and still on its way (<see cref="LazySheets"/>).</summary>
+        public static bool Waiting(string state) => LazySheets.Loading(LazySheets.SheetOf(state));
 
         /// <summary>Stretches the playing one-shot clip over 'seconds' (a punch over its swing, so the hit falls mid-clip).</summary>
         public void FitTo(float seconds)

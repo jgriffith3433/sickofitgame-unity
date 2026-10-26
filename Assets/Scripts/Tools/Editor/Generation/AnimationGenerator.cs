@@ -60,6 +60,8 @@ namespace SickOfIt.Tools.Editor.Generation
             foreach (var stateConfig in config.states)
             {
                 if (string.IsNullOrEmpty(stateConfig.stateName)) continue;
+                // Loaded on demand (LazySheets, PlayerSceneClip plays it): a clip here would put its sheet back in the boot's load.
+                if (stateConfig.spriteSheet == null && !string.IsNullOrEmpty(stateConfig.lazySheet)) continue;
 
                 var spriteSheet = stateConfig.spriteSheet != null ? stateConfig.spriteSheet : fallbackSpriteSheet;
                 int fps = stateConfig.fps > 0 ? stateConfig.fps : fallbackFps;

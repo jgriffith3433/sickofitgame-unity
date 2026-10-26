@@ -158,6 +158,9 @@ def main():
     hero = specs.get("hero") or {}
     player = load(os.path.join(CFG, "player.json"))
     pstates = {s["stateName"]: s for s in player.get("animationConfig", {}).get("states", [])}
+    # A weapon grip's sheet is loaded on demand: "lazySheet" instead of "spriteSheet" (LazySheets.cs).
+    for s in pstates.values():
+        s["spriteSheet"] = s.get("spriteSheet") or s.get("lazySheet") or ""
     hero_rows = []
     for name, c in (hero.get("clips") or {}).items():
         st = c.get("state")

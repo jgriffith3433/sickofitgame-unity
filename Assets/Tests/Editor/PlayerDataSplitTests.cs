@@ -44,6 +44,27 @@ namespace SickOfIt.Tests.Editor
         }
 
         [Test]
+        public void WeaponGripSheetsAreLoadedOnDemandNotAtBoot()
+        {
+            var definition = GameDefinition.Instance;
+            Assert.IsNotNull(definition, "the editor loads it from Resources");
+            var dependencies = new System.Collections.Generic.HashSet<string>(UnityEditor.AssetDatabase.GetDependencies(PlayerDataSplit.ResourcesPath, true));
+            int lazy = 0;
+            foreach (var state in definition.player.animationConfig.states)
+            {
+                if (state == null || state.spriteSheet != null || string.IsNullOrEmpty(state.lazySheet))
+                    continue;
+                lazy++;
+                Assert.IsFalse(dependencies.Contains("Assets/" + state.lazySheet), $"{state.stateName}: {state.lazySheet} is still loaded with GameDefinition at boot");
+                var sprites = SickOfIt.Core.Addressables.LazySheets.Sprites(state.lazySheet);
+                Assert.IsNotNull(sprites, $"{state.stateName}: {state.lazySheet} has no sprites");
+                Assert.Greater(sprites.Length, 0, $"{state.stateName}: {state.lazySheet} has no sprites");
+            }
+            Assert.Greater(lazy, 0, "the weapon grips (Shotgun*, Whip*, ...) load on demand (player.json lazySheet)");
+            Assert.IsNull(SickOfIt.Core.Addressables.LazySheets.SheetOf("Idle"), "the hero's own Idle stays loaded at boot");
+        }
+
+        [Test]
         public void TheSizeCheckFailsOnAFileGitHubWouldRefuse()
         {
             string folder = Path.Combine(Path.GetTempPath(), "soi-guard-" + Guid.NewGuid().ToString("N"));

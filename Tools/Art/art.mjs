@@ -780,7 +780,7 @@ const playerStates = () => new Map((readJson(PLAYER_JSON, {}).animationConfig?.s
 function checkHero(spec) {
   const problems = [];
   const states = playerStates();
-  const sheetOf = (s) => s.spriteSheet.split('/').pop();
+  const sheetOf = (s) => (s.spriteSheet ?? s.lazySheet ?? '').split('/').pop(); // a weapon grip's is loaded on demand (lazySheet)
   for (const [name, c] of Object.entries(spec.clips)) {
     const st = states.get(c.state);
     const own = `${c.state}.png`;
@@ -843,6 +843,9 @@ function wirePlayerStates(baked) {
   for (const b of baked) {
     const re = new RegExp(`("stateName": "${b.state}",\\s*"spriteSheet": )"[^"]*"`);
     if (re.test(text)) { text = text.replace(re, `$1"${b.sheet}"`); log(`  player.json: ${b.state} now plays ${b.sheet}`); continue; }
+    // A weapon grip loaded on demand (LazySheets.cs): "spriteSheet": null, then its "lazySheet".
+    const lazy = new RegExp(`("stateName": "${b.state}",\\s*"spriteSheet": null,\\s*"lazySheet": )"[^"]*"`);
+    if (lazy.test(text)) { text = text.replace(lazy, `$1"${b.sheet}"`); log(`  player.json: ${b.state} now plays ${b.sheet} (on demand)`); continue; }
     const block = `,\n      {\n        "stateName": "${b.state}",\n        "spriteSheet": "${b.sheet}",\n        "spriteNameFilter": "",\n        "firstFrame": 0,\n        "frameCount": 0,\n        "fps": ${b.fps},\n        "loop": ${b.loop},\n        "events": [],\n        "speed": 1.0\n      }`;
     const at = text.indexOf('\n    ],\n    "transitions"');
     if (at < 0) throw new Error('player.json: cannot find the end of animationConfig.states');

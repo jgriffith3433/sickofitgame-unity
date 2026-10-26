@@ -398,7 +398,8 @@
       },
       {
         "stateName": "ShotgunIdle",
-        "spriteSheet": "Art/Sprites/Player/ShotgunIdle.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/ShotgunIdle.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -409,7 +410,8 @@
       },
       {
         "stateName": "ShotgunRun",
-        "spriteSheet": "Art/Sprites/Player/ShotgunRun.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/ShotgunRun.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -420,7 +422,8 @@
       },
       {
         "stateName": "ShotgunJump",
-        "spriteSheet": "Art/Sprites/Player/ShotgunJump.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/ShotgunJump.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -431,7 +434,8 @@
       },
       {
         "stateName": "ShotgunFall",
-        "spriteSheet": "Art/Sprites/Player/ShotgunFall.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/ShotgunFall.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -442,7 +446,8 @@
       },
       {
         "stateName": "ShotgunLand",
-        "spriteSheet": "Art/Sprites/Player/ShotgunLand.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/ShotgunLand.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -453,7 +458,8 @@
       },
       {
         "stateName": "EquipShotgun",
-        "spriteSheet": "Art/Sprites/Player/EquipShotgun.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/EquipShotgun.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -464,7 +470,8 @@
       },
       {
         "stateName": "ShotgunAttack",
-        "spriteSheet": "Art/Sprites/Player/ShotgunAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/ShotgunAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -475,7 +482,8 @@
       },
       {
         "stateName": "ShotgunRunAttack",
-        "spriteSheet": "Art/Sprites/Player/ShotgunRunAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/ShotgunRunAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -486,7 +494,8 @@
       },
       {
         "stateName": "ShotgunAirAttack",
-        "spriteSheet": "Art/Sprites/Player/ShotgunAirAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/ShotgunAirAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -497,7 +506,8 @@
       },
       {
         "stateName": "SpitfireIdle",
-        "spriteSheet": "Art/Sprites/Player/SpitfireIdle.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/SpitfireIdle.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -508,7 +518,8 @@
       },
       {
         "stateName": "SpitfireRun",
-        "spriteSheet": "Art/Sprites/Player/SpitfireRun.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/SpitfireRun.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -519,7 +530,8 @@
       },
       {
         "stateName": "SpitfireJump",
-        "spriteSheet": "Art/Sprites/Player/SpitfireJump.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/SpitfireJump.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -530,7 +542,8 @@
       },
       {
         "stateName": "SpitfireFall",
-        "spriteSheet": "Art/Sprites/Player/SpitfireFall.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/SpitfireFall.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -541,7 +554,8 @@
       },
       {
         "stateName": "SpitfireLand",
-        "spriteSheet": "Art/Sprites/Player/SpitfireLand.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/SpitfireLand.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -552,7 +566,8 @@
       },
       {
         "stateName": "EquipSpitfire",
-        "spriteSheet": "Art/Sprites/Player/EquipSpitfire.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/EquipSpitfire.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -563,7 +578,8 @@
       },
       {
         "stateName": "SpitfireAttack",
-        "spriteSheet": "Art/Sprites/Player/SpitfireAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/SpitfireAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -574,7 +590,8 @@
       },
       {
         "stateName": "SpitfireRunAttack",
-        "spriteSheet": "Art/Sprites/Player/SpitfireRunAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/SpitfireRunAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -585,7 +602,8 @@
       },
       {
         "stateName": "SpitfireAirAttack",
-        "spriteSheet": "Art/Sprites/Player/SpitfireAirAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/SpitfireAirAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -596,7 +614,8 @@
       },
       {
         "stateName": "PistolIdle",
-        "spriteSheet": "Art/Sprites/Player/PistolIdle.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/PistolIdle.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -607,7 +626,8 @@
       },
       {
         "stateName": "PistolRun",
-        "spriteSheet": "Art/Sprites/Player/PistolRun.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/PistolRun.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -618,7 +638,8 @@
       },
       {
         "stateName": "PistolJump",
-        "spriteSheet": "Art/Sprites/Player/PistolJump.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/PistolJump.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -629,7 +650,8 @@
       },
       {
         "stateName": "PistolFall",
-        "spriteSheet": "Art/Sprites/Player/PistolFall.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/PistolFall.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -640,7 +662,8 @@
       },
       {
         "stateName": "PistolLand",
-        "spriteSheet": "Art/Sprites/Player/PistolLand.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/PistolLand.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -651,7 +674,8 @@
       },
       {
         "stateName": "EquipPistol",
-        "spriteSheet": "Art/Sprites/Player/EquipPistol.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/EquipPistol.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -662,7 +686,8 @@
       },
       {
         "stateName": "PistolAttack",
-        "spriteSheet": "Art/Sprites/Player/PistolAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/PistolAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -673,7 +698,8 @@
       },
       {
         "stateName": "PistolRunAttack",
-        "spriteSheet": "Art/Sprites/Player/PistolRunAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/PistolRunAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -684,7 +710,8 @@
       },
       {
         "stateName": "PistolAirAttack",
-        "spriteSheet": "Art/Sprites/Player/PistolAirAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/PistolAirAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -695,7 +722,8 @@
       },
       {
         "stateName": "LadleIdle",
-        "spriteSheet": "Art/Sprites/Player/LadleIdle.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/LadleIdle.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -706,7 +734,8 @@
       },
       {
         "stateName": "LadleRun",
-        "spriteSheet": "Art/Sprites/Player/LadleRun.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/LadleRun.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -717,7 +746,8 @@
       },
       {
         "stateName": "LadleJump",
-        "spriteSheet": "Art/Sprites/Player/LadleJump.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/LadleJump.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -728,7 +758,8 @@
       },
       {
         "stateName": "LadleFall",
-        "spriteSheet": "Art/Sprites/Player/LadleFall.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/LadleFall.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -739,7 +770,8 @@
       },
       {
         "stateName": "LadleLand",
-        "spriteSheet": "Art/Sprites/Player/LadleLand.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/LadleLand.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -750,7 +782,8 @@
       },
       {
         "stateName": "EquipLadle",
-        "spriteSheet": "Art/Sprites/Player/EquipLadle.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/EquipLadle.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -761,7 +794,8 @@
       },
       {
         "stateName": "LadleAttack",
-        "spriteSheet": "Art/Sprites/Player/LadleAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/LadleAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -772,7 +806,8 @@
       },
       {
         "stateName": "LadleRunAttack",
-        "spriteSheet": "Art/Sprites/Player/LadleRunAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/LadleRunAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -783,7 +818,8 @@
       },
       {
         "stateName": "LadleAirAttack",
-        "spriteSheet": "Art/Sprites/Player/LadleAirAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/LadleAirAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -794,7 +830,8 @@
       },
       {
         "stateName": "HaloIdle",
-        "spriteSheet": "Art/Sprites/Player/HaloIdle.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/HaloIdle.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -805,7 +842,8 @@
       },
       {
         "stateName": "HaloRun",
-        "spriteSheet": "Art/Sprites/Player/HaloRun.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/HaloRun.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -816,7 +854,8 @@
       },
       {
         "stateName": "HaloJump",
-        "spriteSheet": "Art/Sprites/Player/HaloJump.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/HaloJump.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -827,7 +866,8 @@
       },
       {
         "stateName": "HaloFall",
-        "spriteSheet": "Art/Sprites/Player/HaloFall.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/HaloFall.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -838,7 +878,8 @@
       },
       {
         "stateName": "HaloLand",
-        "spriteSheet": "Art/Sprites/Player/HaloLand.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/HaloLand.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -849,7 +890,8 @@
       },
       {
         "stateName": "EquipHalo",
-        "spriteSheet": "Art/Sprites/Player/EquipHalo.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/EquipHalo.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -860,7 +902,8 @@
       },
       {
         "stateName": "HaloAttack",
-        "spriteSheet": "Art/Sprites/Player/HaloAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/HaloAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -871,7 +914,8 @@
       },
       {
         "stateName": "HaloRunAttack",
-        "spriteSheet": "Art/Sprites/Player/HaloRunAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/HaloRunAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -882,7 +926,8 @@
       },
       {
         "stateName": "HaloAirAttack",
-        "spriteSheet": "Art/Sprites/Player/HaloAirAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/HaloAirAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -893,7 +938,8 @@
       },
       {
         "stateName": "WhipIdle",
-        "spriteSheet": "Art/Sprites/Player/WhipIdle.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/WhipIdle.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -904,7 +950,8 @@
       },
       {
         "stateName": "WhipRun",
-        "spriteSheet": "Art/Sprites/Player/WhipRun.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/WhipRun.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -915,7 +962,8 @@
       },
       {
         "stateName": "WhipJump",
-        "spriteSheet": "Art/Sprites/Player/WhipJump.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/WhipJump.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -926,7 +974,8 @@
       },
       {
         "stateName": "WhipFall",
-        "spriteSheet": "Art/Sprites/Player/WhipFall.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/WhipFall.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -937,7 +986,8 @@
       },
       {
         "stateName": "WhipLand",
-        "spriteSheet": "Art/Sprites/Player/WhipLand.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/WhipLand.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -948,7 +998,8 @@
       },
       {
         "stateName": "EquipWhip",
-        "spriteSheet": "Art/Sprites/Player/EquipWhip.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/EquipWhip.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -959,7 +1010,8 @@
       },
       {
         "stateName": "WhipLash",
-        "spriteSheet": "Art/Sprites/Player/WhipLash.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/WhipLash.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -970,7 +1022,8 @@
       },
       {
         "stateName": "WhipSnap",
-        "spriteSheet": "Art/Sprites/Player/WhipSnap.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/WhipSnap.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -981,7 +1034,8 @@
       },
       {
         "stateName": "WhipCrack",
-        "spriteSheet": "Art/Sprites/Player/WhipCrack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/WhipCrack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -992,7 +1046,8 @@
       },
       {
         "stateName": "WhipRunAttack",
-        "spriteSheet": "Art/Sprites/Player/WhipRunAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/WhipRunAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
@@ -1003,7 +1058,8 @@
       },
       {
         "stateName": "WhipAirAttack",
-        "spriteSheet": "Art/Sprites/Player/WhipAirAttack.png",
+        "spriteSheet": null,
+        "lazySheet": "Art/Sprites/Player/WhipAirAttack.png",
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,

@@ -370,6 +370,40 @@ namespace SickOfIt.Gameplay
             }
             if (storeDirty)
                 Store(true);
+            KeepGripSheets();
+        }
+
+        // Presentation only: the grip sheets loaded on demand (LazySheets) follow what he holds; this never changes the simulation.
+        readonly List<string> sheetsHeldFor = new List<string>();
+        readonly List<string> gripStates = new List<string>();
+
+        void KeepGripSheets()
+        {
+            bool same = sheetsHeldFor.Count == owned.Count;
+            for (int i = 0; same && i < owned.Count; i++)
+                same = sheetsHeldFor[i] == owned[i];
+            if (same)
+                return;
+            sheetsHeldFor.Clear();
+            sheetsHeldFor.AddRange(owned);
+            gripStates.Clear();
+            foreach (string id in owned)
+            {
+                var hands = world.Content.Weapons.TryGetValue(id, out var def) && def.hands != null ? def.hands.Built(def) : null;
+                if (hands == null)
+                    continue;
+                gripStates.Add(hands.idle);
+                gripStates.Add(hands.run);
+                gripStates.Add(hands.jump);
+                gripStates.Add(hands.fall);
+                gripStates.Add(hands.land);
+                gripStates.Add(hands.runAttack);
+                gripStates.Add(hands.airAttack);
+                gripStates.Add(hands.equip);
+                if (hands.attack != null)
+                    gripStates.AddRange(hands.attack);
+            }
+            SickOfIt.Core.Addressables.LazySheets.KeepStates(gripStates);
         }
 
         /// <summary>The swing lands: every living enemy in the hit box in front of him takes the step's damage.</summary>
