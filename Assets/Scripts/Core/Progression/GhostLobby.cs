@@ -13,8 +13,9 @@ namespace SickOfIt.Core.Progression
     /// way he faces (a pose; the floor rides in z, so the relay sends other floors rarely); each ghost's Idle, Walk, Jump
     /// or Fall is read from how it moves, from player.json's own sheets. Presentation only: ghosts have no colliders,
     /// never touch the simulation and ignore rewind (they are other people, now). WebGL builds only; `?ghosts=0` turns
-    /// them off. Live (sickofitgame.com) shares the room "lobby"; beta, previews and playtests the free test room "t-lobby".
-    /// A page served from localhost (Studio's playtests) joins nothing unless it asks with `?ghosts=1`.
+    /// them off. The room is Hawkes Net's standard shared room (HawkesNetLobby, Gen docs/net.md "Unity: the standard layer"):
+    /// "lobby" on sickofitgame.com, "t-lobby" anywhere else (beta, previews, localhost), "t-&lt;id&gt;/lobby" in a two-player
+    /// playtest (?room=), "lobby.2"... when one is full; it joins again by itself when lost or refused.
     /// </summary>
     public class GhostLobby : MonoBehaviour
     {
@@ -26,8 +27,8 @@ namespace SickOfIt.Core.Progression
 
         /// <summary>Ghosts on your floor now.</summary>
         public static int Count { get; private set; }
-        /// <summary>The room's status ("connecting", "online", ...), or "off".</summary>
-        public static string Status => instance != null && instance.room != null ? instance.room.Status : "off";
+        /// <summary>The lobby's status ("connecting", "online", "offline", "full"...), or "off".</summary>
+        public static string Status => instance != null ? instance.lobby.Status : "off";
 
         static GhostLobby instance;
 
@@ -41,11 +42,8 @@ namespace SickOfIt.Core.Progression
             public string state;
         }
 
-        HawkesNetRoom room;
-        string roomBase;
-        int shard = 1;
-        float joinedAt;
-        float retryAt;
+        HawkesNetLobby lobby;
+        HawkesNetRoom room => lobby.Room;
         readonly Dictionary<string, Ghost> ghosts = new Dictionary<string, Ghost>();
         readonly List<string> drop = new List<string>();
         Dictionary<string, (List<Sprite> frames, float fps)> clips;
@@ -55,56 +53,26 @@ namespace SickOfIt.Core.Progression
         {
             if (Application.platform != RuntimePlatform.WebGLPlayer || instance != null)
                 return;
-            string url = Application.absoluteURL ?? "";
-            // Studio's playtests serve the build from localhost, which the service refuses (anyone can claim to be it).
-            bool local = url.StartsWith("http://localhost", System.StringComparison.Ordinal) || url.StartsWith("http://127.0.0.1", System.StringComparison.Ordinal);
-            if (url.Contains("ghosts=0") || (local && !url.Contains("ghosts=1")))
+            if (HawkesNetLobby.Query("ghosts") == "0")
                 return;
             var go = new GameObject("GhostLobby");
             DontDestroyOnLoad(go);
             instance = go.AddComponent<GhostLobby>();
-            bool live = url.StartsWith("https://sickofitgame.com/") || url.StartsWith("https://www.sickofitgame.com/");
-            instance.roomBase = live && !url.Contains("playtest") ? "lobby" : "t-lobby";
-        }
-
-        void Join()
-        {
-            string name = shard == 1 ? roomBase : roomBase + "-" + shard;
-            var r = HawkesNet.Join(name, new HawkesNetOptions { project = Project, name = "ghost", transport = "auto", log = false });
-            r.OnProblem += (code, detail) =>
-            {
-                if (r != room || r.Ready)
-                    return;
-                // A full room: the next one along, at once. Anything else: try again in a while.
-                if (code == "full" || code == "capped")
-                {
-                    shard++;
-                    retryAt = Time.unscaledTime + 1f;
-                }
-                else
-                {
-                    // A refused ticket won't change soon: a page the service doesn't know waits five minutes.
-                    retryAt = Time.unscaledTime + (detail != null && detail.Contains("403") ? 300f : 30f);
-                    Debug.LogWarning("[GhostLobby] " + code + ": " + detail);
-                }
-            };
-            room = r;
-            joinedAt = Time.unscaledTime;
+            // A playtest on the live site still plays apart from the players (the test rooms).
+            var hosts = HawkesNetLobby.Query("playtest").Length > 0 ? new string[0] : new[] { "sickofitgame.com", "www.sickofitgame.com" };
+            instance.lobby = new HawkesNetLobby(new HawkesNetOptions { project = Project, name = "ghost", transport = "auto", log = false }, hosts);
+            instance.lobby.Join("lobby");
         }
 
         void Update()
         {
-            float now = Time.unscaledTime;
-            if (room == null || (room.Status == "closed" && now >= retryAt && now >= joinedAt + 10f))
-                Join();
-
             var level = LevelRuntime.Current;
             var hero = PlayerController.Active;
             var heroSprite = hero != null ? hero.HeroRenderer : null;
             bool playing = level != null && heroSprite != null && heroSprite.enabled && heroSprite.gameObject.activeInHierarchy;
             int floor = playing ? level.LevelNumber : 0;
 
-            if (room.Ready)
+            if (lobby.Ready)
             {
                 if (playing)
                 {
@@ -123,7 +91,7 @@ namespace SickOfIt.Core.Progression
         {
             int count = 0;
             float dt = Mathf.Max(Time.unscaledDeltaTime, 0.0001f);
-            if (floor > 0 && room.Ready)
+            if (floor > 0 && lobby.Ready)
             {
                 foreach (var kv in room.Poses)
                 {
@@ -243,7 +211,7 @@ namespace SickOfIt.Core.Progression
         {
             if (instance == this)
                 instance = null;
-            room?.Leave();
+            lobby?.Leave();
         }
     }
 }

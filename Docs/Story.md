@@ -2541,5 +2541,5 @@ All of them are generated clips of his own (`art/hero.json`).
 Hell is repetition, and the hero is not the only one stuck in it. Everyone else playing Sick Of It right now climbs the same floor beside him as a
 faint, pale ghost of the hero: running, jumping and falling through their own attempt. They cannot touch him, help him or hurt him; a rewind
 turns back his own time, never theirs (they are other people, now). A floor with ghosts on it is a crowd of nobodies all sick of the same thing.
-In the game: `Core/Progression/GhostLobby.cs` on Hawkes Net (one room for everyone, `lobby` on sickofitgame.com, `t-lobby` on beta and in playtests),
+In the game: `Core/Progression/GhostLobby.cs` on Hawkes Net (one room for everyone, `lobby` on sickofitgame.com, `t-lobby` on beta and in playtests, through Hawkes Net's standard `HawkesNetLobby`),
 WebGL only, `?ghosts=0` turns it off. Presentation only, never the simulation.
