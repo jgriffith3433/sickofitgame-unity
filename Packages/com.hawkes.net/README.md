@@ -1,7 +1,22 @@
 # Hawkes Net for Unity WebGL
 
-Multiplayer for Unity WebGL games on Hawkes Net (Hawkes Gen `docs/net.md`): peer to peer while a room is small, the
-relay when it grows, moved between them without anyone reconnecting. Three layers; most games use the second or third.
+Multiplayer for Unity WebGL games on Hawkes Net (https://net.hawkesgen.com): peer to peer while a room is small, the
+relay when it grows, moved between them without anyone reconnecting. Three layers; most games use the first or second.
+
+## Your own game: getting in
+
+1. Sign in on **https://net.hawkesgen.com** with a hawkesgen.com account (free) and make a **project**: its id is what
+   your game passes as `project`. Its page shows players online, rooms and who is in them, tickets and usage, live.
+2. **No server** (most WebGL games: a static page, itch.io): list where the game is served under the project's Settings
+   (`https://mygame.com`, `https://mygame.itch.io`; a paid account). Pages there join with no key, and your own machine
+   (`http://localhost`) always may, in test rooms (`t-...`): Build And Run and play, on any account.
+   **A server** (your logins, matchmaking): set `ticketUrl` to your route instead (section 3).
+3. Put your sites' host names in the lobby's `liveHosts` (below): there your players share the live rooms; anywhere else
+   (a beta copy, localhost) the rooms are test rooms, free and apart from them.
+4. Try it: Package Manager > Hawkes Net > Samples > **Avatars** (one script on an empty GameObject: a capsule you walk
+   with WASD and everyone else's). Build for WebGL and open two tabs.
+
+Every room runs on the relay. Peer to peer is a project setting (off by default) for a game that asks for `transport = "auto"`.
 
 ## 1. Shared rooms: `HawkesNetLobby` (the standard way)
 
@@ -45,6 +60,26 @@ A component: set `Project`, `Area`, `LiveHosts`, `Local` (your player) and `Remo
 sends your pose, and keeps one prefab per other player, moved smoothly a little behind their own clock (`Delay`).
 `Extra` rides with your pose; read `Remotes[id].Extra` on the others.
 
+## In the background
+
+Players hide tabs, minimise and cover windows all the time, and the browser stops a Unity game there. Hawkes Net keeps
+the room going (its web SDK's sends run on a clock browsers don't slow), shows the player as away to the others, and a
+host whose page is away hands the room to a present player, so whatever the host simulates keeps moving:
+
+```csharp
+lobby.PeerAway += (id, away) => avatars[id].SetDimmed(away);   // or room.OnPeerAway / room.Away
+room.OnHost += id => Debug.Log($"host {id} ({room.HostReason})"); // "host away" when handed over
+```
+
+A game that must keep running while hidden (a turn timer, a fight, a host's simulation others wait on):
+
+```csharp
+HawkesNet.RunInBackground = true; // also sets Application.runInBackground
+```
+
+Unity's main loop then runs about 60 times a second from Hawkes Net's background clock until the page is seen again.
+Presence games usually leave it off: the player is shown as away and the host role moves on.
+
 ## 3. The room: `HawkesNet.Join`
 
 ```csharp
@@ -71,5 +106,5 @@ room.OnPose += (id, pose) => MoveAvatar(id, pose.position, pose.yaw);   // or re
 - WebGL builds only: the web SDK runs in the page (loaded from `https://net.hawkesgen.com/sdk/hawkes-net@1.mjs`). In the
   Editor `Join` reports the problem `webgl-only` (a lobby's status is then `offline`): keep an Editor stand-in of your own.
 - Events come on the main thread. Changed poses are read once a frame.
-- Install: by path in `Packages/manifest.json`, or embed a copy in the game's `Packages/` (what a game built on the cloud
-  build server does: Sick Of It, Yooba Land). Copy it again when this one changes.
+- Install: download it from net.hawkesgen.com (`/sdk/com.hawkes.net.tgz`) and Package Manager > Add package from tarball, or
+  a copy in your game's `Packages/` (a build machine that can't see this folder). `CHANGELOG.md` says what changed.

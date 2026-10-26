@@ -34,6 +34,9 @@ namespace SickOfIt.Core.Progression
         const float MenuSpreadMin = 0.9f, MenuSpreadRange = 3.4f, MenuEdge = 0.5f;
         static readonly string[] States = { "Idle", "Walk", "Jump", "Fall" };
         static readonly Color Tint = new Color(0.72f, 0.88f, 1f, 0.4f);
+        /// <summary>A player whose page is in the background (Hawkes Net's away: a hidden tab, a minimised window) is
+        /// fainter still until they're back; their ghost stands where they left it.</summary>
+        static readonly Color AwayTint = new Color(0.72f, 0.88f, 1f, 0.15f);
 
         /// <summary>Ghosts drawn now (on your floor, or on the menu's meadow).</summary>
         public static int Count { get; private set; }
@@ -149,7 +152,7 @@ namespace SickOfIt.Core.Progression
                     g.shown = (target - g.shown).sqrMagnitude > SnapDistance * SnapDistance ? target : Vector3.Lerp(g.shown, target, 1f - Mathf.Exp(-14f * dt));
                     g.velocity = Vector3.Lerp(g.velocity, (g.shown - before) / dt, 0.25f);
                     Draw(g, hero, Mathf.Abs(Mathf.DeltaAngle(pose.yaw, 0f)) < 90f, dt);
-                    g.sr.color = Tint;
+                    g.sr.color = room.Away.Contains(kv.Key) ? AwayTint : Tint;
                     g.sr.sortingLayerID = hero.sortingLayerID;
                     g.sr.sortingOrder = hero.sortingOrder - 1;
                     g.go.name = "Ghost " + kv.Key;

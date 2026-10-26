@@ -12,7 +12,7 @@ mergeInto(LibraryManager.library, {
       x.h = handle; x.e = e;
       try { SendMessage(receiver, 'OnNet', JSON.stringify(x)); } catch (err) {}
     };
-    var who = function (p) { return p ? { peer: p.id || '', name: p.name || '', ord: p.ord || 0 } : { peer: '', name: '', ord: 0 }; };
+    var who = function (p) { return p ? { peer: p.id || '', name: p.name || '', ord: p.ord || 0, away: !!p.away } : { peer: '', name: '', ord: 0, away: false }; };
     // poses: peer -> { p, y, at, e (the extra values as JSON) }; changed: the peers whose pose changed since the last read.
     var slot = S.rooms[handle] = { net: null, poses: {}, changed: {}, dirty: false, gone: false, extraKeys: [] };
     var sdk = o.sdkUrl || 'https://net.hawkesgen.com/sdk/hawkes-net@1.mjs';
@@ -57,6 +57,9 @@ mergeInto(LibraryManager.library, {
       net.when('peer:join', function (p) { tell('join', who(p)); });
       net.when('peer:leave', function (x) { delete slot.poses[x.peer.id]; delete slot.changed[x.peer.id]; tell('leave', { peer: x.peer.id, name: x.peer.name || '', reason: x.reason || '' }); });
       net.when('host', function (x) { tell('host', { peer: x.host || '', reason: x.reason || '' }); });
+      // A player's page in the background (Hawkes Gen docs/net.md "In the background"), and this page's own.
+      net.when('peer:away', function (x) { tell('away', { peer: x.peer.id, name: x.peer.name || '', away: !!x.away }); });
+      net.when('away', function (x) { tell('selfaway', { away: !!x.away }); });
       net.when('transport', function (x) { tell('transport', { transport: x.to, reason: x.why || '' }); });
       net.when('status', function (x) { tell('status', { status: x.status, transport: x.transport }); });
       net.when('problem', function (x) { tell('problem', { reason: x.code, data: String(x.detail || '') }); });
@@ -139,6 +142,39 @@ mergeInto(LibraryManager.library, {
   HawkesNet_Migrate: function (handle) {
     var slot = (window.__hawkesNet || { rooms: {} }).rooms[handle];
     if (slot && slot.net) try { slot.net.migrate('game asked'); } catch (e) {}
+  },
+
+  HawkesNet_SetAway: function (handle, on) {
+    var slot = (window.__hawkesNet || { rooms: {} }).rooms[handle];
+    if (slot && slot.net) try { slot.net.setAway(!!on); } catch (e) {}
+  },
+
+  // Keeps Unity running while the page is in the background (no animation frames: a hidden tab, a minimised or covered
+  // window): the SDK's background() runs one iteration of Unity's main loop about 60 times a second until frames come
+  // back (Hawkes Gen docs/net.md "In the background"). Returns 1 when Unity's main loop was found.
+  HawkesNet_RunInBackground__deps: ['$Browser'],
+  HawkesNet_RunInBackground: function (on, sdkPtr) {
+    var S = window.__hawkesNet = window.__hawkesNet || { rooms: {} };
+    S.bgWanted = !!on;
+    if (S.bgStop) { try { S.bgStop(); } catch (e) {} S.bgStop = null; }
+    if (!on) return 1;
+    // Unity's loop (Emscripten's): MainLoop in newer Emscripten, Browser.mainLoop before.
+    var loop = (typeof MainLoop !== 'undefined' && MainLoop && MainLoop.func) ? MainLoop : (Browser && Browser.mainLoop);
+    if (!loop || !loop.func) { console.warn('[HawkesNet] RunInBackground: Unity\'s main loop was not found; the game pauses in the background'); return 0; }
+    var step = function () {
+      var l = (typeof MainLoop !== 'undefined' && MainLoop && MainLoop.func) ? MainLoop : Browser.mainLoop;
+      if (!l || !l.func) return;
+      try { if (l.runIter) l.runIter(l.func); else l.func(); }
+      catch (e) { if (e !== 'unwind' && !(e && e.name === 'ExitStatus')) console.error('[HawkesNet] background step:', e); }
+    };
+    var sdk = UTF8ToString(sdkPtr) || 'https://net.hawkesgen.com/sdk/hawkes-net@1.mjs';
+    var load;
+    try { load = (new Function('u', 'return import(u)'))(sdk); } catch (e) { load = Promise.reject(e); }
+    load.then(function (m) {
+      if (!S.bgWanted || S.bgStop) return;
+      S.bgStop = m.background(step);
+    }).catch(function (e) { console.warn('[HawkesNet] RunInBackground: the SDK did not load (' + ((e && e.message) || e) + ')'); });
+    return 1;
   },
 
   HawkesNet_Leave: function (handle) {

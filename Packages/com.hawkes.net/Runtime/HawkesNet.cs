@@ -20,8 +20,9 @@ namespace Hawkes
         /// <summary>A Hawkes Net project that hands out tickets to pages on its own sites (no key).</summary>
         public string project = "";
         public string name = "";
-        /// <summary>"auto" (peer to peer while small, then the relay), "p2p" or "relay".</summary>
-        public string transport = "auto";
+        /// <summary>"relay" (the default), or "auto" (peer to peer while small, then the relay) where the project allows
+        /// peer to peer (a setting on net.hawkesgen.com, off by default).</summary>
+        public string transport = "relay";
         /// <summary>"player" or "spectator".</summary>
         public string role = "player";
         /// <summary>The Hawkes Net service, when not https://net.hawkesgen.com.</summary>
@@ -72,14 +73,25 @@ namespace Hawkes
         public readonly Dictionary<string, int> PeerOrder = new Dictionary<string, int>();
         /// <summary>Everyone else's newest avatar pose.</summary>
         public readonly Dictionary<string, HawkesNetPose> Poses = new Dictionary<string, HawkesNetPose>();
+        /// <summary>The peers whose page is in the background (a hidden tab, a minimised or covered window).</summary>
+        public readonly HashSet<string> Away = new HashSet<string>();
+        /// <summary>This game's own page is in the background and the room knows it.</summary>
+        public bool IsAway { get; internal set; }
 
         public event Action<HawkesNetRoom> OnReady;
         /// <summary>A peer arrived (id, name).</summary>
         public event Action<string, string> OnPeerJoin;
         /// <summary>A peer left (id, reason).</summary>
         public event Action<string, string> OnPeerLeave;
-        /// <summary>The host changed (new host id).</summary>
+        /// <summary>The host changed (new host id). A host whose page goes into the background hands the room to a present
+        /// player (HostReason "host away").</summary>
         public event Action<string> OnHost;
+        /// <summary>Why the host last changed: "first", "host left" or "host away".</summary>
+        public string HostReason { get; internal set; } = "";
+        /// <summary>A peer's page went into the background or came back (id, away).</summary>
+        public event Action<string, bool> OnPeerAway;
+        /// <summary>This page went into the background (after 2 s) or came back.</summary>
+        public event Action<bool> OnAway;
         /// <summary>The room moved between peer to peer and the relay (new transport, why). Nothing to do: it is told.</summary>
         public event Action<string, string> OnTransport;
         /// <summary>The connection's status changed ("online", "reconnecting", "closed").</summary>
@@ -139,6 +151,10 @@ namespace Hawkes
         /// <summary>Ask the room to move to the relay now.</summary>
         public void Migrate() => HawkesNet.Migrate(handle);
 
+        /// <summary>Say you're away (or back) now: a game paused in its own menu. The page's own state (in the background
+        /// or not) takes over again the next time it changes.</summary>
+        public void SetAway(bool away) => HawkesNet.SetAway(handle, away);
+
         public void Leave() => HawkesNet.Leave(this);
 
         internal void Dispatch(HawkesNet.Event e)
@@ -147,7 +163,7 @@ namespace Hawkes
             {
                 case "ready":
                     Id = e.peer; Order = e.ord; Transport = e.transport; Host = e.host; Ready = true; Status = "online";
-                    foreach (var p in HawkesNet.ParsePeers(e.data)) { Peers[p.peer] = p.name; PeerOrder[p.peer] = p.ord; }
+                    foreach (var p in HawkesNet.ParsePeers(e.data)) { Peers[p.peer] = p.name; PeerOrder[p.peer] = p.ord; if (p.away) Away.Add(p.peer); else Away.Remove(p.peer); }
                     OnReady?.Invoke(this);
                     break;
                 case "join":
@@ -156,12 +172,21 @@ namespace Hawkes
                     OnPeerJoin?.Invoke(e.peer, e.name);
                     break;
                 case "leave":
-                    Peers.Remove(e.peer); PeerOrder.Remove(e.peer); Poses.Remove(e.peer);
+                    Peers.Remove(e.peer); PeerOrder.Remove(e.peer); Poses.Remove(e.peer); Away.Remove(e.peer);
                     OnPeerLeave?.Invoke(e.peer, e.reason);
                     break;
                 case "host":
                     Host = e.peer;
+                    HostReason = e.reason;
                     OnHost?.Invoke(e.peer);
+                    break;
+                case "away":
+                    if (e.away) Away.Add(e.peer); else Away.Remove(e.peer);
+                    OnPeerAway?.Invoke(e.peer, e.away);
+                    break;
+                case "selfaway":
+                    IsAway = e.away;
+                    OnAway?.Invoke(e.away);
                     break;
                 case "transport":
                     Transport = e.transport;
@@ -225,6 +250,8 @@ namespace Hawkes
         [DllImport("__Internal")] static extern void HawkesNet_Migrate(int handle);
         [DllImport("__Internal")] static extern void HawkesNet_Leave(int handle);
         [DllImport("__Internal")] static extern void HawkesNet_Count(int id, string endpoint, string project, string rooms, string receiver);
+        [DllImport("__Internal")] static extern void HawkesNet_SetAway(int handle, bool on);
+        [DllImport("__Internal")] static extern int HawkesNet_RunInBackground(bool on, string sdkUrl);
         /// <summary>A WebGL build: the page's SDK carries the rooms. Elsewhere (the Editor, tests) nothing is sent.</summary>
         public static readonly bool Live = true;
 #else
@@ -237,6 +264,8 @@ namespace Hawkes
         static void HawkesNet_Migrate(int handle) { }
         static void HawkesNet_Leave(int handle) { }
         static void HawkesNet_Count(int id, string endpoint, string project, string rooms, string receiver) { }
+        static void HawkesNet_SetAway(int handle, bool on) { }
+        static int HawkesNet_RunInBackground(bool on, string sdkUrl) => 0;
         public static readonly bool Live = false;
 #endif
 
@@ -245,6 +274,28 @@ namespace Hawkes
         static readonly Dictionary<int, Action<bool, Dictionary<string, int>>> counts = new Dictionary<int, Action<bool, Dictionary<string, int>>>();
         static int next;
         static Receiver receiver;
+
+        static bool runInBackground;
+        /// <summary>
+        /// Keep the game running while its page is in the background (a hidden tab, a minimised or covered window: the
+        /// browser stops Unity's frames there). On, Unity's main loop runs about 60 times a second from Hawkes Net's
+        /// background clock until frames come back, so Update keeps going: a host's simulation, a turn timer, a fight. Off
+        /// (the default) the game pauses in the background and the room marks the player away (Away, OnPeerAway), and an
+        /// away host hands the room to a present player. It also sets Application.runInBackground, so Unity itself doesn't
+        /// pause when the page loses focus. WebGL builds only. Hawkes Gen docs/net.md "In the background".
+        /// </summary>
+        public static bool RunInBackground
+        {
+            get => runInBackground;
+            set
+            {
+                runInBackground = value;
+                Application.runInBackground = value;
+                if (Live && HawkesNet_RunInBackground(value, SdkUrl) == 0 && value) Debug.LogWarning("[HawkesNet] RunInBackground: Unity's main loop was not found in this build; the game pauses in the background");
+            }
+        }
+        /// <summary>Where the web SDK loads from (RunInBackground; a room's own sdkUrl is in its options).</summary>
+        public static string SdkUrl = "https://net.hawkesgen.com/sdk/hawkes-net@1.mjs";
 
         /// <summary>Milliseconds since 1970 on this machine's clock (a room's Now is the shared one).</summary>
         public static double UnixMs() => (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
@@ -284,6 +335,7 @@ namespace Hawkes
         internal static void Pose(int h, Vector3 p, float yaw, string extra) { if (Live) HawkesNet_Pose(h, p.x, p.y, p.z, yaw * Mathf.Deg2Rad, extra ?? ""); } // radians on the wire
         internal static double Now(int h) => HawkesNet_Now(h);
         internal static void Migrate(int h) { if (Live) HawkesNet_Migrate(h); }
+        internal static void SetAway(int h, bool away) { if (Live) HawkesNet_SetAway(h, away); }
         internal static void Leave(HawkesNetRoom r)
         {
             rooms.Remove(r.handle);
@@ -307,11 +359,11 @@ namespace Hawkes
         {
             public int h;
             public string e = "", kind = "", data = "", peer = "", name = "", reason = "", transport = "", host = "", status = "";
-            public bool reliable, text;
+            public bool reliable, text, away;
             public int ord;
         }
 
-        [Serializable] internal class PeerInfo { public string peer = "", name = ""; public int ord; }
+        [Serializable] internal class PeerInfo { public string peer = "", name = ""; public int ord; public bool away; }
         [Serializable] class PeerList { public PeerInfo[] items; }
         [Serializable] internal class PoseItem { public string id = "", e = ""; public float x, y, z, r; public double at; }
         [Serializable] internal class PoseList { public PoseItem[] items; }

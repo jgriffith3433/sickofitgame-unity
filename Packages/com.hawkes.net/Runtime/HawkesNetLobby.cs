@@ -46,6 +46,8 @@ namespace Hawkes
         public event Action<string, string> PeerJoined;
         public event Action<string, string> PeerLeft;
         public event Action<string> HostChanged;
+        /// <summary>A peer's page went into the background or came back (id, away): show them as away.</summary>
+        public event Action<string, bool> PeerAway;
         public event Action<string, string, string> Message;
         public event Action<string, HawkesNetPose> PoseChanged;
         public event Action<string> StatusChanged;
@@ -150,6 +152,7 @@ namespace Hawkes
             room.OnPeerJoin += (id, name) => { if (room == Room) PeerJoined?.Invoke(id, name); };
             room.OnPeerLeave += (id, why) => { if (room == Room) PeerLeft?.Invoke(id, why); };
             room.OnHost += id => { if (room == Room) HostChanged?.Invoke(id); };
+            room.OnPeerAway += (id, away) => { if (room == Room) PeerAway?.Invoke(id, away); };
             room.OnMessage += (kind, data, from) => { if (room == Room) Message?.Invoke(kind, data, from); };
             room.OnPose += (id, pose) => { if (room == Room) PoseChanged?.Invoke(id, pose); };
             room.OnStatus += s =>
