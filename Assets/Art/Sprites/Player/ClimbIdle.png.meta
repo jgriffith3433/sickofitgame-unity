@@ -114,7 +114,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1360
+        y: 2040
         width: 604
         height: 340
       alignment: 0
@@ -136,7 +136,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 1360
+        y: 2040
         width: 604
         height: 340
       alignment: 0
@@ -158,7 +158,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 1360
+        y: 2040
         width: 604
         height: 340
       alignment: 0
@@ -180,7 +180,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 1360
+        y: 2040
         width: 604
         height: 340
       alignment: 0
@@ -202,7 +202,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 1360
+        y: 2040
         width: 604
         height: 340
       alignment: 0
@@ -224,7 +224,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3020
-        y: 1360
+        y: 2040
         width: 604
         height: 340
       alignment: 0
@@ -246,7 +246,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1020
+        y: 1700
         width: 604
         height: 340
       alignment: 0
@@ -268,7 +268,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 1020
+        y: 1700
         width: 604
         height: 340
       alignment: 0
@@ -290,7 +290,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 1020
+        y: 1700
         width: 604
         height: 340
       alignment: 0
@@ -312,7 +312,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 1020
+        y: 1700
         width: 604
         height: 340
       alignment: 0
@@ -334,7 +334,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 1020
+        y: 1700
         width: 604
         height: 340
       alignment: 0
@@ -356,7 +356,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3020
-        y: 1020
+        y: 1700
         width: 604
         height: 340
       alignment: 0
@@ -378,7 +378,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 680
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -400,7 +400,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 680
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -422,7 +422,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 680
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -444,7 +444,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 680
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -466,7 +466,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 680
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -488,7 +488,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3020
-        y: 680
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -510,7 +510,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 340
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -532,7 +532,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 340
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -554,7 +554,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 340
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -576,7 +576,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 340
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -598,7 +598,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 340
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -620,7 +620,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3020
-        y: 340
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -642,7 +642,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -655,6 +655,270 @@ TextureImporter:
       bones: []
       spriteID: c05556e3ee57d8840800000000000000
       internalID: 5227964408556508428
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0025
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55746b73c9ebe33a0800000000000000
+      internalID: -6683695218812369067
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0026
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cfd21412336c3a90800000000000000
+      internalID: -7332877026529714238
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0027
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58d712e44c8d38df0800000000000000
+      internalID: -179061222528680571
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0028
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e32afa07e9ed242f0800000000000000
+      internalID: -989984195991330242
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0029
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 680
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8ba6a1c7ad58e210800000000000000
+      internalID: 1362441862369422222
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0030
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b23e55832e2f51190800000000000000
+      internalID: -7992214910277393621
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0031
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 836847166294db290800000000000000
+      internalID: -7873056144381147592
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0032
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f7c3b273995772b0800000000000000
+      internalID: -5586898322910361615
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0033
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3c16c9426a95f5e0800000000000000
+      internalID: -1876423922794750918
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0034
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c07c110ac595fde10800000000000000
+      internalID: 2224594995301697292
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0035
+      rect:
+        serializedVersion: 2
+        x: 3020
+        y: 340
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24020e0981755ad90800000000000000
+      internalID: -7087162675576168382
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClimbIdle_0036
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 604
+        height: 340
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c282cd7995ee75460800000000000000
+      internalID: 7230509795333908524
       vertices: []
       indices:
       edges: []
@@ -698,6 +962,18 @@ TextureImporter:
       ClimbIdle_0022: -700433763745610039
       ClimbIdle_0023: 4241028972573083252
       ClimbIdle_0024: 5227964408556508428
+      ClimbIdle_0025: -6683695218812369067
+      ClimbIdle_0026: -7332877026529714238
+      ClimbIdle_0027: -179061222528680571
+      ClimbIdle_0028: -989984195991330242
+      ClimbIdle_0029: 1362441862369422222
+      ClimbIdle_0030: -7992214910277393621
+      ClimbIdle_0031: -7873056144381147592
+      ClimbIdle_0032: -5586898322910361615
+      ClimbIdle_0033: -1876423922794750918
+      ClimbIdle_0034: 2224594995301697292
+      ClimbIdle_0035: -7087162675576168382
+      ClimbIdle_0036: 7230509795333908524
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

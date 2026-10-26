@@ -114,7 +114,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1700
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -136,7 +136,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 1700
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -158,7 +158,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 1700
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -180,7 +180,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 1700
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -202,7 +202,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 1700
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -224,7 +224,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3020
-        y: 1700
+        y: 1360
         width: 604
         height: 340
       alignment: 0
@@ -246,7 +246,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1360
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -268,7 +268,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 1360
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -290,7 +290,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 1360
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -312,7 +312,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 1360
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -334,7 +334,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 1360
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -356,7 +356,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3020
-        y: 1360
+        y: 1020
         width: 604
         height: 340
       alignment: 0
@@ -378,7 +378,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -400,7 +400,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -422,7 +422,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -444,7 +444,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -466,7 +466,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -488,7 +488,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3020
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -510,7 +510,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -532,7 +532,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -554,7 +554,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -576,7 +576,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -598,7 +598,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -620,7 +620,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3020
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -642,7 +642,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 340
+        y: 0
         width: 604
         height: 340
       alignment: 0
@@ -655,182 +655,6 @@ TextureImporter:
       bones: []
       spriteID: 5fabaf22bc27f7e20800000000000000
       internalID: 3350522864577723125
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ClimbDown_0025
-      rect:
-        serializedVersion: 2
-        x: 604
-        y: 340
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 83124c57c58af71d0800000000000000
-      internalID: -3350774482674114248
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ClimbDown_0026
-      rect:
-        serializedVersion: 2
-        x: 1208
-        y: 340
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 37467333ffb6a0c00800000000000000
-      internalID: 867624622042342515
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ClimbDown_0027
-      rect:
-        serializedVersion: 2
-        x: 1812
-        y: 340
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 921aaacb6e3b03ed0800000000000000
-      internalID: -2436249594818289367
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ClimbDown_0028
-      rect:
-        serializedVersion: 2
-        x: 2416
-        y: 340
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7c23c2d98b89aaaa0800000000000000
-      internalID: -6148934422542667065
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ClimbDown_0029
-      rect:
-        serializedVersion: 2
-        x: 3020
-        y: 340
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 64850a408ececb390800000000000000
-      internalID: -7801099973258356666
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ClimbDown_0030
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c0c8f988f7106ee30800000000000000
-      internalID: 4532311722259614732
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ClimbDown_0031
-      rect:
-        serializedVersion: 2
-        x: 604
-        y: 0
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4423c0d7e0f319f40800000000000000
-      internalID: 5733433132079395396
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ClimbDown_0032
-      rect:
-        serializedVersion: 2
-        x: 1208
-        y: 0
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: de640e2e988f103f0800000000000000
-      internalID: -936193976415795475
       vertices: []
       indices:
       edges: []
@@ -874,14 +698,6 @@ TextureImporter:
       ClimbDown_0022: 5038115276410113657
       ClimbDown_0023: -3836727682572383012
       ClimbDown_0024: 3350522864577723125
-      ClimbDown_0025: -3350774482674114248
-      ClimbDown_0026: 867624622042342515
-      ClimbDown_0027: -2436249594818289367
-      ClimbDown_0028: -6148934422542667065
-      ClimbDown_0029: -7801099973258356666
-      ClimbDown_0030: 4532311722259614732
-      ClimbDown_0031: 5733433132079395396
-      ClimbDown_0032: -936193976415795475
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
