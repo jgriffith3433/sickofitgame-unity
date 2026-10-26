@@ -71,6 +71,9 @@ namespace SickOfIt.Core.Progression
                 MenuGraphics.Fill(jar.rectTransform);
                 var text = MenuGraphics.Text(holder, "Label", ware.label, menu.Theme.caption, menu.Font, 17f);
                 text.alignment = TextAlignmentOptions.Center;
+                text.enableAutoSizing = true;
+                text.fontSizeMin = 9f;
+                text.fontSizeMax = 17f;
                 text.enableVertexGradient = false;
                 text.color = new Color(0.1f, 0.07f, 0.05f, 1f);
                 shelf.slots.Add(new Slot { ware = ware, jar = jar, label = text });
