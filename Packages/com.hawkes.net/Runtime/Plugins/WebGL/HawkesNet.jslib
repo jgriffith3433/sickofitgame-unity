@@ -28,7 +28,10 @@ mergeInto(LibraryManager.library, {
       };
     }
     // import() through Function: some Unity versions' build step can't parse a dynamic import in a jslib.
-    (new Function('u', 'return import(u)'))(sdk).then(function (m) { return m.join(room, opts); }).then(function (net) {
+    // (A page whose policy forbids it would throw here, outside any promise: caught, it is just a failed join.)
+    var load;
+    try { load = (new Function('u', 'return import(u)'))(sdk); } catch (e) { load = Promise.reject(e); }
+    load.then(function (m) { return m.join(room, opts); }).then(function (net) {
       if (slot.gone) { net.leave(); return; }
       slot.net = net;
       net.on('*', function (data, from, meta) {
