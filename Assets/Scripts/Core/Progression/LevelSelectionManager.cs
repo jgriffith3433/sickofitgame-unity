@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
@@ -8,7 +11,9 @@ namespace SickOfIt.Core.Progression
 {
     /// <summary>
     /// Manages the Level Selection scene: a card per level (thumbnail, name, locked/cleared state and the health
-    /// the hero finished it with), built at runtime from levelSelectionConfig.layout and ui/theme.json.
+    /// the hero finished it with), built at runtime from levelSelectionConfig.layout and ui/theme.json. Pages like the
+    /// Codex: as many cards as the list holds without scrolling, previous / page / next under it (arrow keys too), opening
+    /// on the page with the furthest level reached. Every card is built (hidden off its page), so the order is all there.
     /// </summary>
     public class LevelSelectionManager : MonoBehaviour
     {
@@ -17,6 +22,13 @@ namespace SickOfIt.Core.Progression
 
         private MenuCanvas menu;
         private bool leaving;
+
+        private readonly List<GameObject> cards = new List<GameObject>();
+        private SelectionSceneConfig config;
+        private int page, perPage;
+        private bool lastPortrait;
+        private MenuButton previous, next;
+        private TextMeshProUGUI pageText;
 
         private void Start()
         {
@@ -28,7 +40,7 @@ namespace SickOfIt.Core.Progression
                 return;
             }
 
-            var config = gd.levelSelectionConfig ?? new SelectionSceneConfig();
+            config = gd.levelSelectionConfig ?? new SelectionSceneConfig();
             menu = MenuCanvas.Create("LevelSelectUI", gd.menuTheme, config.layout, gameObject);
             var list = menu.AddList(config.layout.list, menu.Theme.card.size);
 
@@ -55,8 +67,14 @@ namespace SickOfIt.Core.Progression
                     StatusColor = completed ? menu.Theme.positive : menu.Theme.accent,
                     LockedStamp = unlocked ? null : config.lockedText,
                 };
-                MenuCard.Add(menu, list, data, () => OnLevelClicked(levelNumber));
+                var card = MenuCard.Add(menu, list, data, () => OnLevelClicked(levelNumber));
+                cards.Add(card.Button.transform.parent.gameObject);
             }
+            BuildPager(gd);
+            lastPortrait = MenuScreen.Portrait;
+            perPage = PerPage();
+            page = Mathf.Max(0, Mathf.Min(highestReached, cards.Count) - 1) / perPage;
+            ShowPage();
 
             if (config.showCumulativeHealth)
             {
@@ -65,6 +83,94 @@ namespace SickOfIt.Core.Progression
                 menu.AddChip(string.Format(menu.Theme.healthFormat, health, maxHealth));
             }
             menu.AddBackButton(OnBackClicked);
+        }
+
+        // ─── Pages ────────────────────────────────────────────────────
+
+        /// <summary>The cards the list shows at once on this screen shape: its columns times the rows that fit.</summary>
+        int PerPage()
+        {
+            var list = config.layout.list;
+            bool portrait = MenuScreen.Portrait && list.portrait != null && list.portrait.use;
+            Vector2 size = portrait ? list.portrait.size : list.size;
+            Vector2 item = portrait ? list.portrait.itemSize : list.itemSize;
+            Vector2 spacing = portrait ? list.portrait.spacing : list.spacing;
+            int columns = portrait ? list.portrait.columns : list.columns;
+            if (item.x <= 0f || item.y <= 0f)
+                item = menu.Theme.card.size;
+            if (columns <= 0)
+                columns = Mathf.Max(1, Mathf.FloorToInt((size.x + spacing.x) / (item.x + spacing.x)));
+            int rows = Mathf.Max(1, Mathf.FloorToInt((size.y + spacing.y) / (item.y + spacing.y)));
+            return Mathf.Max(1, columns * rows);
+        }
+
+        /// <summary>Previous, "PAGE n OF m" and next under the list, in the Codex's buttons and words.</summary>
+        void BuildPager(GameDefinition gd)
+        {
+            var codex = gd.codex ?? new CodexConfig();
+            var style = menu.Theme.smallButton.Clone();
+            style.size = new Vector2(110f, 70f);
+            float y = 120f, portraitY = 230f;
+            previous = menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(-300f, y), codex.previous, style, () => Turn(-1), null,
+                new MenuPlacement { use = true, anchor = new Vector2(0.5f, 0f), offset = new Vector2(-300f, portraitY) });
+            next = menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(300f, y), codex.next, style, () => Turn(1), null,
+                new MenuPlacement { use = true, anchor = new Vector2(0.5f, 0f), offset = new Vector2(300f, portraitY) });
+            var slot = MenuGraphics.NewRect("Page", menu.Root);
+            var size = new Vector2(420f, 70f);
+            MenuGraphics.Place(slot, new Vector2(0.5f, 0f), new Vector2(0f, y), size);
+            MenuResponsive.Track(slot, MenuResponsive.From(new Vector2(0.5f, 0f), new Vector2(0f, y), size),
+                new MenuPlacement { use = true, anchor = new Vector2(0.5f, 0f), offset = new Vector2(0f, portraitY), size = size },
+                MenuElementKind.Panel, menu.Responsive);
+            pageText = MenuGraphics.Text(slot, "Text", "", menu.Theme.heading, menu.Font, 32f);
+        }
+
+        void Turn(int step)
+        {
+            int pages = Pages();
+            if (pages <= 1)
+                return;
+            page = Mathf.Clamp(page + step, 0, pages - 1);
+            ShowPage();
+        }
+
+        int Pages() => Mathf.Max(1, Mathf.CeilToInt(cards.Count / (float)perPage));
+
+        void ShowPage()
+        {
+            int pages = Pages();
+            page = Mathf.Clamp(page, 0, pages - 1);
+            for (int i = 0; i < cards.Count; i++)
+            {
+                if (cards[i] != null)
+                    cards[i].SetActive(i / perPage == page);
+            }
+            MenuGraphics.SetText(pageText, string.Format(config.pageFormat, page + 1, pages));
+            if (previous != null) previous.interactable = page > 0;
+            if (next != null) next.interactable = page < pages - 1;
+            bool paged = pages > 1;
+            if (previous != null) previous.gameObject.SetActive(paged);
+            if (next != null) next.gameObject.SetActive(paged);
+            if (pageText != null) pageText.gameObject.SetActive(paged);
+        }
+
+        private void Update()
+        {
+            if (menu == null || cards.Count == 0 || leaving)
+                return;
+            // A phone turned round holds a different number of cards: keep the first card shown on screen.
+            if (MenuScreen.Portrait != lastPortrait)
+            {
+                lastPortrait = MenuScreen.Portrait;
+                int first = page * perPage;
+                perPage = PerPage();
+                page = first / perPage;
+                ShowPage();
+            }
+            var keys = Keyboard.current;
+            if (keys != null && (keys.leftArrowKey.wasPressedThisFrame || keys.pageUpKey.wasPressedThisFrame))
+                Turn(-1);
+            else if (keys != null && (keys.rightArrowKey.wasPressedThisFrame || keys.pageDownKey.wasPressedThisFrame))
+                Turn(1);
         }
 
         /// <summary>Health as hearts, lost ones faded (falls back to "♥ 3/5" for big totals).</summary>

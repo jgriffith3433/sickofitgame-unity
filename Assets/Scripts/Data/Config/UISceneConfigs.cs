@@ -117,6 +117,8 @@ namespace SickOfIt.Data.Config
         public string playText = "PLAY";
         public string lockedText = "LOCKED";
         public string clearedText = "CLEARED";
+        [Tooltip("The page counter under the cards (level select). {0} = this page, {1} = how many.")]
+        public string pageFormat = "PAGE {0} OF {1}";
     }
 
     /// <summary>

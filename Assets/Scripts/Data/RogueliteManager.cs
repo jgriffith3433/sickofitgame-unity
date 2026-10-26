@@ -314,6 +314,7 @@ namespace SickOfIt.Data
         {
             PlayerPrefs.SetInt(KEY_PLAYER_POINTS, amount);
             PlayerPrefs.Save();
+            OnPointsChanged?.Invoke(amount);
         }
 
         // =========================================================================

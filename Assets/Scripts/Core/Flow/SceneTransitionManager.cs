@@ -114,13 +114,15 @@ namespace SickOfIt.Core.Flow
 
         IEnumerator PrepareThenLoad(string sceneName, (string owner, string[] scopes) first, (string owner, string[] scopes) second, string[] release)
         {
-            // The screen goes black while the assets come in, rather than the last screen standing there unanswering.
-            if (!SickOfIt.Core.UI.Menus.ScreenTransition.Covered)
-                SickOfIt.Core.UI.Menus.ScreenTransition.Cover();
+            // The screen goes black while the assets come in, with a bar: the first owner's share is the first half
+            // (the hero, usually in already), the second's the rest.
+            bool both = first.owner != null && second.owner != null;
+            SickOfIt.Core.UI.Menus.ScreenTransition.Loading(0f);
             if (first.owner != null)
-                yield return GameAssets.Acquire(first.owner, first.scopes);
+                yield return GameAssets.Acquire(first.owner, first.scopes, p => SickOfIt.Core.UI.Menus.ScreenTransition.Loading(both ? p * 0.3f : p));
             if (second.owner != null)
-                yield return GameAssets.Acquire(second.owner, second.scopes);
+                yield return GameAssets.Acquire(second.owner, second.scopes, p => SickOfIt.Core.UI.Menus.ScreenTransition.Loading(both ? 0.3f + p * 0.7f : p));
+            SickOfIt.Core.UI.Menus.ScreenTransition.Loading(1f);
             foreach (string owner in release)
                 GameAssets.Release(owner);
             AddressablesSceneLoader.Instance.LoadScene(sceneName);

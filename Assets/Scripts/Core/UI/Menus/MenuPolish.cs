@@ -238,11 +238,16 @@ namespace SickOfIt.Core.UI.Menus
         public static int Reveals { get; private set; }
         public static string LastLabel { get; private set; } = "";
 
-        Image cover, band;
-        TextMeshProUGUI label;
-        CanvasGroup labelGroup;
+        Image cover, band, barFill;
+        TextMeshProUGUI label, loadingText;
+        CanvasGroup labelGroup, loadingGroup;
         float alpha, from, target, startAt, duration = 0.01f;
         float bandAt = -99f;
+        // Assets coming in behind the cover (GameAssets): a bar and a percentage, and the cover stays shut while they move.
+        float loadingAt = -99f, loadingShown, loadingProgress;
+
+        /// <summary>The last loading progress shown (0..1; the playtest reads it).</summary>
+        public static float LoadingProgress => instance != null ? instance.loadingProgress : 0f;
 
         static ScreenTransition Instance()
         {
@@ -283,6 +288,43 @@ namespace SickOfIt.Core.UI.Menus
             label.fontStyle = FontStyles.Bold;
             label.color = new Color(1f, 0.93f, 0.8f, 1f);
             label.raycastTarget = false;
+
+            var loading = MenuGraphics.NewRect("Loading", transform);
+            MenuGraphics.Place(loading, new Vector2(0.5f, 0.5f), new Vector2(0f, -150f), new Vector2(640f, 80f));
+            loadingGroup = loading.gameObject.AddComponent<CanvasGroup>();
+            loadingGroup.alpha = 0f;
+            loadingGroup.blocksRaycasts = false;
+            var track = MenuGraphics.NewImage(loading, "Track", new Color(1f, 0.93f, 0.8f, 0.18f));
+            track.raycastTarget = false;
+            MenuGraphics.Place(track.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, -8f), new Vector2(640f, 12f));
+            barFill = MenuGraphics.NewImage(track.rectTransform, "Fill", new Color(1f, 0.5f, 0.15f, 1f));
+            barFill.raycastTarget = false;
+            var fill = barFill.rectTransform;
+            fill.anchorMin = Vector2.zero;
+            fill.anchorMax = new Vector2(0f, 1f);
+            fill.offsetMin = fill.offsetMax = Vector2.zero;
+            loadingText = new GameObject("Text", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            loadingText.transform.SetParent(loading, false);
+            MenuGraphics.Place(loadingText.rectTransform, new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(640f, 44f));
+            loadingText.alignment = TextAlignmentOptions.Midline;
+            loadingText.fontSize = 34f;
+            loadingText.fontStyle = FontStyles.Bold;
+            loadingText.color = new Color(1f, 0.93f, 0.8f, 0.85f);
+            loadingText.raycastTarget = false;
+        }
+
+        /// <summary>
+        /// Something is loading behind the cover (a floor's art and sound: GameAssets): closes the cover if it is open and
+        /// shows a bar at <paramref name="progress"/> (0..1) with the percentage. Call it while loading; the bar goes once
+        /// the calls stop, and the cover doesn't open by itself while they come.
+        /// </summary>
+        public static void Loading(float progress)
+        {
+            var t = Instance();
+            if (t.target < 0.5f)
+                Cover();
+            t.loadingAt = Time.unscaledTime;
+            t.loadingProgress = Mathf.Clamp01(progress);
         }
 
         /// <summary>Closes the cover over 'seconds' (black, with 'text' in the middle if given) and keeps it closed until <see cref="Reveal"/>.</summary>
@@ -326,13 +368,22 @@ namespace SickOfIt.Core.UI.Menus
         {
             float now = Time.unscaledTime;
             // Never leave the player on black: a scene that never opened the cover gets it opened.
-            if (target > 0.5f && now - startAt > 8f)
+            bool loading = now - loadingAt < 0.75f;
+            if (target > 0.5f && now - Mathf.Max(startAt, loadingAt) > 8f && !loading)
                 Go(0f, RevealSeconds);
             float t = Mathf.Clamp01((now - startAt) / duration);
             alpha = Mathf.Lerp(from, target, t * t * (3f - 2f * t));
             cover.color = new Color(0.04f, 0.02f, 0.05f, alpha);
             // The label shows while the screen is mostly black, and goes with it.
             labelGroup.alpha = Mathf.Clamp01((alpha - 0.5f) * 2f);
+            // The bar eases toward the progress (bundles arrive in steps) and fades in after a moment (a quick load shows none).
+            loadingShown = Mathf.MoveTowards(loadingShown, loadingProgress, Time.unscaledDeltaTime * 1.5f);
+            barFill.rectTransform.anchorMax = new Vector2(loadingShown, 1f);
+            loadingText.text = $"LOADING  {Mathf.RoundToInt(loadingShown * 100f)}%";
+            float wantLoading = loading && now - startAt > 0.3f ? labelGroup.alpha : 0f;
+            loadingGroup.alpha = Mathf.MoveTowards(loadingGroup.alpha, wantLoading, Time.unscaledDeltaTime * 4f);
+            if (!loading && loadingGroup.alpha <= 0f)
+                loadingShown = loadingProgress = 0f;
 
             float age = now - bandAt;
             const float sweepSeconds = 0.5f;
