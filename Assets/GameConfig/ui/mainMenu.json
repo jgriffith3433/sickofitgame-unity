@@ -181,7 +181,8 @@
     "settings": "Settings",
     "quit": "Rage Quit",
     "rageQuitAgain": "Rage Quit Again",
-    "browserQuitHint": "Browsers won't let us close the tab. Do it yourself. We'll wait."
+    "browserQuitHint": "Browsers won't let us close the tab. Do it yourself. We'll wait.",
+    "climbingNow": "{0} climbing right now"
   },
   "showBundleDownloadUI": true,
   "idleHouseSprite": null,

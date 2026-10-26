@@ -2543,3 +2543,9 @@ faint, pale ghost of the hero: running, jumping and falling through their own at
 turns back his own time, never theirs (they are other people, now). A floor with ghosts on it is a crowd of nobodies all sick of the same thing.
 In the game: `Core/Progression/GhostLobby.cs` on Hawkes Net (one room for everyone, `lobby` on sickofitgame.com, `t-lobby` on beta and in playtests, through Hawkes Net's standard `HawkesNetLobby`),
 WebGL only, `?ghosts=0` turns it off. Presentation only, never the simulation.
+
+The main menu is already haunted. Before he climbs, the hero stands in the meadow by his house with everyone else who is on the menu right
+now: their ghosts idle and wander the same meadow (wherever their own hero walks, spread along the grass so a crowd of idlers doesn't stand in
+one spot), and a chip in the corner counts the ones already climbing ("12 climbing right now"). Nobody is ever alone in being sick of it.
+In the game: the menu is its own band in the same room (z 0; a level is its number x 1000, nowhere -1000), `GhostLobby.MenuOpen` while
+`MainMenuManager` is up, the chip's words in mainMenu.json `labels.climbingNow`.

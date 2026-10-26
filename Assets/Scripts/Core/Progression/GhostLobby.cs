@@ -16,17 +16,35 @@ namespace SickOfIt.Core.Progression
     /// them off. The room is Hawkes Net's standard shared room (HawkesNetLobby, Gen docs/net.md "Unity: the standard layer"):
     /// "lobby" on sickofitgame.com, "t-lobby" anywhere else (beta, previews, localhost), "t-&lt;id&gt;/lobby" in a two-player
     /// playtest (?room=), "lobby.2"... when one is full; it joins again by itself when lost or refused.
+    /// The main menu is a band of its own (z = 0; a level is its number x 1000, nowhere is -1000): the menu's hero sends his
+    /// meadow pose there, so everyone on the menu sees the others' ghosts wandering the meadow (each spread along it by a
+    /// stable offset from its id, so idle ones don't all stand inside the hero), and the menu counts who is climbing.
     /// </summary>
     public class GhostLobby : MonoBehaviour
     {
         const string Project = "sickofit";
         const float FloorSpacing = 1000f;
         const float SnapDistance = 6f;
+        /// <summary>The z band of the main menu (z / FloorSpacing): 0. A level is its number (1 and up); -1 (z = -1000) is
+        /// nowhere (between screens, other menus, and what older clients send off a level), never drawn.</summary>
+        const int MenuBand = 0;
+        const int Nowhere = -1;
+        /// <summary>Menu ghosts stand this far right of where the other hero really is, picked by id (0.9 to 4.3), so the
+        /// ghosts of players idling at the menu's spawn spread over the meadow instead of standing inside the hero.</summary>
+        const float MenuSpreadMin = 0.9f, MenuSpreadRange = 3.4f, MenuEdge = 0.5f;
         static readonly string[] States = { "Idle", "Walk", "Jump", "Fall" };
         static readonly Color Tint = new Color(0.72f, 0.88f, 1f, 0.4f);
 
-        /// <summary>Ghosts on your floor now.</summary>
+        /// <summary>Ghosts drawn now (on your floor, or on the menu's meadow).</summary>
         public static int Count { get; private set; }
+        /// <summary>Other players on a level now (any floor), for the menu's "climbing now" chip.</summary>
+        public static int Climbing { get; private set; }
+        /// <summary>Other players on the main menu now.</summary>
+        public static int OnMenu { get; private set; }
+        /// <summary>In the lobby's room now (WebGL, not turned off).</summary>
+        public static bool Online => instance != null && instance.lobby != null && instance.lobby.Ready;
+        /// <summary>Set by MainMenuManager while the main menu is up: its hero sends the menu band.</summary>
+        public static bool MenuOpen { get; set; }
         /// <summary>The lobby's status ("connecting", "online", "offline", "full"...), or "off".</summary>
         public static string Status => instance != null ? instance.lobby.Status : "off";
 
@@ -69,36 +87,57 @@ namespace SickOfIt.Core.Progression
             var level = LevelRuntime.Current;
             var hero = PlayerController.Active;
             var heroSprite = hero != null ? hero.HeroRenderer : null;
-            bool playing = level != null && heroSprite != null && heroSprite.enabled && heroSprite.gameObject.activeInHierarchy;
-            int floor = playing ? level.LevelNumber : 0;
+            bool heroShown = heroSprite != null && heroSprite.enabled && heroSprite.gameObject.activeInHierarchy;
+            bool playing = level != null && heroShown;
+            // A level is its number; the main menu (with its hero up) is the menu band; anything else is nowhere.
+            int band = playing ? (level.LevelNumber >= 1 ? level.LevelNumber : Nowhere)
+                : MenuOpen && level == null && heroShown ? MenuBand : Nowhere;
 
             if (lobby.Ready)
             {
-                if (playing)
+                if (band != Nowhere)
                 {
                     var p = heroSprite.transform.position;
-                    room.Pose(new Vector3(p.x, p.y, floor * FloorSpacing), hero.FacingRight ? 0f : 180f);
+                    room.Pose(new Vector3(p.x, p.y, band * FloorSpacing), hero.FacingRight ? 0f : 180f);
                 }
                 else
                 {
                     room.Pose(new Vector3(0f, 0f, -FloorSpacing), 0f);
                 }
             }
-            Show(playing ? floor : 0, heroSprite);
+            Show(band, heroSprite);
         }
 
-        void Show(int floor, SpriteRenderer hero)
+        static int BandOf(HawkesNetPose pose) => Mathf.RoundToInt(pose.position.z / FloorSpacing);
+
+        void Show(int band, SpriteRenderer hero)
         {
-            int count = 0;
+            int count = 0, climbing = 0, onMenu = 0;
             float dt = Mathf.Max(Time.unscaledDeltaTime, 0.0001f);
-            if (floor > 0 && lobby.Ready)
+            if (lobby.Ready)
             {
                 foreach (var kv in room.Poses)
                 {
+                    if (!room.Peers.ContainsKey(kv.Key))
+                        continue;
+                    int b = BandOf(kv.Value);
+                    if (b >= 1)
+                        climbing++;
+                    else if (b == MenuBand)
+                        onMenu++;
+                }
+            }
+            if (band != Nowhere && hero != null && lobby.Ready)
+            {
+                var cam = band == MenuBand ? Camera.main : null;
+                foreach (var kv in room.Poses)
+                {
                     var pose = kv.Value;
-                    if (Mathf.RoundToInt(pose.position.z / FloorSpacing) != floor)
+                    if (BandOf(pose) != band)
                         continue;
                     var target = new Vector3(pose.position.x, pose.position.y, hero.transform.position.z);
+                    if (band == MenuBand)
+                        target.x = OnMeadow(target.x + MenuSpreadMin + MenuSpreadRange * Spread(kv.Key), cam);
                     if (!ghosts.TryGetValue(kv.Key, out var g) || g.go == null)
                         ghosts[kv.Key] = g = Make(target);
                     if (!g.go.activeSelf)
@@ -127,7 +166,7 @@ namespace SickOfIt.Core.Progression
                     drop.Add(kv.Key);
                     continue;
                 }
-                bool here = floor > 0 && room.Poses.TryGetValue(kv.Key, out var pose) && Mathf.RoundToInt(pose.position.z / FloorSpacing) == floor;
+                bool here = band != Nowhere && hero != null && room.Poses.TryGetValue(kv.Key, out var pose) && BandOf(pose) == band;
                 if (!here && g.go.activeSelf)
                     g.go.SetActive(false);
             }
@@ -138,6 +177,27 @@ namespace SickOfIt.Core.Progression
                 ghosts.Remove(id);
             }
             Count = count;
+            Climbing = climbing;
+            OnMenu = onMenu;
+        }
+
+        /// <summary>0..1, the same for an id every frame (FNV-1a), so a menu ghost keeps its place on the meadow.</summary>
+        static float Spread(string id)
+        {
+            uint h = 2166136261;
+            foreach (char c in id)
+                h = (h ^ c) * 16777619;
+            return (h % 1000) / 999f;
+        }
+
+        /// <summary>Keeps a menu ghost's x inside the camera's view (the menu's width differs per screen).</summary>
+        static float OnMeadow(float x, Camera cam)
+        {
+            if (cam == null || !cam.orthographic)
+                return x;
+            float half = cam.orthographicSize * cam.aspect;
+            float left = cam.transform.position.x - half + MenuEdge, right = cam.transform.position.x + half - MenuEdge;
+            return right > left ? Mathf.Clamp(x, left, right) : x;
         }
 
         Ghost Make(Vector3 at)

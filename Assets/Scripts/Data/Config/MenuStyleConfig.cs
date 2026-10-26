@@ -631,5 +631,7 @@ namespace SickOfIt.Data.Config
         public string rageQuitAgain = "Rage Quit Again";
         [Tooltip("Shown when quitting can't close a browser tab.")]
         public string browserQuitHint = "Browsers won't let us close the tab. Do it yourself. We'll wait.";
+        [Tooltip("The stats chip counting other players on a level now (the ghost lobby; hidden at 0 and offline). {0} = how many.")]
+        public string climbingNow = "{0} climbing right now";
     }
 }
