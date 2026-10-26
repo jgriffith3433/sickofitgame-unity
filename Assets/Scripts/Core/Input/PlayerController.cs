@@ -1681,6 +1681,10 @@ namespace SickOfIt.Core.Input
         private float swapUntil;
         private string seenWeapon;
         private bool seenLauncher = true;
+        // A found weapon's sheets load on demand in a player build (PlayerSheets): its equip clip waits for them a moment.
+        private string pendingSwap;
+        private float pendingSwapUntil;
+        private const float SwapWaitSeconds = 0.75f;
 
         /// <summary>The swap clip playing now (LauncherTaken, Equip*) or null; a playtest reads it.</summary>
         public string SwapPose => swapPose;
@@ -1716,8 +1720,17 @@ namespace SickOfIt.Core.Input
                     clip = "LauncherTaken";
                 else if (id != from)
                     clip = CurrentHands?.equip;
-                if (clip != null && !rewinding && !IsClimbing && heroClip == null && PlayAnimatorState(clip))
+                pendingSwap = clip != null && !rewinding ? clip : null;
+                pendingSwapUntil = Time.time + SwapWaitSeconds;
+            }
+            if (pendingSwap != null)
+            {
+                string clip = pendingSwap;
+                if (Time.time > pendingSwapUntil || IsClimbing || heroClip != null || (GameClock.Instance != null && GameClock.Instance.IsRewinding))
+                    pendingSwap = null;
+                else if (PlayAnimatorState(clip))
                 {
+                    pendingSwap = null;
                     swapPose = clip;
                     swapUntil = Time.time + SwapSeconds(clip);
                     movePose = null;
@@ -1736,6 +1749,7 @@ namespace SickOfIt.Core.Input
 
         private void CancelSwap()
         {
+            pendingSwap = null;
             if (swapPose == null)
                 return;
             swapPose = null;

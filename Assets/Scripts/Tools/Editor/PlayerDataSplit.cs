@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SickOfIt.Core.Addressables;
 using SickOfIt.Data;
+using SickOfIt.Gameplay;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
@@ -21,6 +23,8 @@ namespace SickOfIt.Tools.Editor
     /// groups by folder (each kept under <see cref="GroupBudgetBytes"/>) and writes a Boot scene that loads it at
     /// startup (GameDefinitionBoot); <see cref="End"/> puts everything back, so the editor, tests and the committed
     /// project never see the change. <see cref="Recover"/> undoes a split a crashed build left behind.
+    /// The found weapons' grip sheets don't ride with GameDefinition at all (<see cref="SplitGripSheets"/>): loaded with it,
+    /// every sheet of the art pass at once ran the WebGL page out of memory at boot (v246). They load on demand (PlayerSheets).
     /// </summary>
     public static class PlayerDataSplit
     {
@@ -29,6 +33,7 @@ namespace SickOfIt.Tools.Editor
         public const string BuildPath = BuildFolder + "/GameDefinition.asset";
         public const string BootScenePath = BuildFolder + "/Boot.unity";
         public const string GroupPrefix = "PlayerData_";
+        public const string GripGroup = GroupPrefix + "HeroGrips";
 
         /// <summary>Estimated in-memory size per group; its bundle comes out at or under this (LZ4).</summary>
         public const long GroupBudgetBytes = 40L * 1024 * 1024;
@@ -96,6 +101,9 @@ namespace SickOfIt.Tools.Editor
                 EditorUtility.UnloadUnusedAssetsImmediate();
             }
 
+            int grips = SplitGripSheets(settings, template, out long gripBytes);
+            log($"  On demand: {grips} found-weapon grip sheets ({gripBytes / (1024 * 1024)} MB in memory) left out of GameDefinition, one bundle each in {GripGroup}.");
+
             WriteBootScene();
             EditorUtility.SetDirty(settings);
             AssetDatabase.SaveAssets();
@@ -104,6 +112,19 @@ namespace SickOfIt.Tools.Editor
 
         public static void End(Action<string> log)
         {
+            // The split's copy had its grip sheets taken out (SplitGripSheets): import the JSON over it before it goes back.
+            if (File.Exists(BuildPath))
+            {
+                try
+                {
+                    if (!GameConfig.GameConfigSync.ImportNow("putting the player data split back").Success)
+                        log?.Invoke($"  WARNING: the game config didn't import after the split; {ResourcesPath} may lack the grip sheets until the next import.");
+                }
+                catch (Exception e)
+                {
+                    log?.Invoke($"  WARNING: re-importing the game config after the split failed ({e.Message}); the next import restores it.");
+                }
+            }
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings != null)
             {
@@ -134,6 +155,67 @@ namespace SickOfIt.Tools.Editor
             if (File.Exists(BuildPath) && File.Exists(ResourcesPath))
                 AssetDatabase.DeleteAsset(BuildPath); // the checkout's copy in Resources is the real one
             End(log);
+        }
+
+        /// <summary>
+        /// The found weapons' grip states (a weapon with a pickup that isn't the launcher: ShotgunIdle, WhipLash, EquipHalo, ...):
+        /// their sheets come out of the split's GameDefinition (state sheet and asset registry) and become addressable as
+        /// PlayerSheets.Address(state), one bundle each, so the player loads them when he gets the weapon. A sheet another state or
+        /// weapon also uses stays. Only the build's copy changes; <see cref="End"/> imports the JSON back over it.
+        /// </summary>
+        static int SplitGripSheets(AddressableAssetSettings settings, AddressableAssetGroup template, out long bytes)
+        {
+            bytes = 0;
+            var definition = AssetDatabase.LoadAssetAtPath<GameDefinition>(BuildPath);
+            var states = definition != null && definition.player != null && definition.player.animationConfig != null ? definition.player.animationConfig.states : null;
+            if (states == null)
+                return 0;
+
+            var onDemand = new HashSet<string>(StringComparer.Ordinal);
+            var kept = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var weapon in GameContent.FromDefinition(definition).Weapons.Values)
+            {
+                var hands = weapon.hands.Built(weapon);
+                if (hands == null)
+                    continue;
+                var names = new List<string> { hands.idle, hands.run, hands.jump, hands.fall, hands.land, hands.runAttack, hands.airAttack, hands.equip };
+                names.AddRange(hands.attack);
+                bool found = !string.IsNullOrEmpty(weapon.pickup) && !hands.animator && weapon.id != PlayerWeapons.Launcher;
+                (found ? onDemand : kept).UnionWith(names.Where(n => !string.IsNullOrEmpty(n)));
+            }
+            onDemand.ExceptWith(kept);
+
+            var users = new Dictionary<Texture2D, int>();
+            foreach (var state in states)
+            {
+                if (state != null && state.spriteSheet != null)
+                    users[state.spriteSheet] = users.TryGetValue(state.spriteSheet, out int n) ? n + 1 : 1;
+            }
+
+            AddressableAssetGroup group = null;
+            var taken = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var state in states)
+            {
+                if (state == null || state.spriteSheet == null || !onDemand.Contains(state.stateName) || users[state.spriteSheet] != 1)
+                    continue;
+                string path = AssetDatabase.GetAssetPath(state.spriteSheet);
+                if (string.IsNullOrEmpty(path))
+                    continue;
+                if (group == null)
+                {
+                    group = CreateGroup(settings, GripGroup, template);
+                    group.GetSchema<BundledAssetGroupSchema>().BundleMode = BundledAssetGroupSchema.BundlePackingMode.PackSeparately;
+                }
+                bytes += EstimateBytes(path);
+                settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(path), group).SetAddress(PlayerSheets.Address(state.stateName));
+                state.spriteSheet = null;
+                taken.Add(path);
+            }
+            if (taken.Count == 0)
+                return 0;
+            definition.assetRegistry.RemoveAll(e => e != null && e.asset != null && taken.Contains(AssetDatabase.GetAssetPath(e.asset)));
+            EditorUtility.SetDirty(definition);
+            return taken.Count;
         }
 
         static bool Movable(AddressableAssetSettings settings, string path)

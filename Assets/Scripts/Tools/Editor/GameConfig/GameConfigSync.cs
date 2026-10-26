@@ -341,7 +341,8 @@ namespace SickOfIt.Tools.Editor.GameConfig
     {
         static string[] OnWillSaveAssets(string[] paths)
         {
-            if (Array.IndexOf(paths, GameConfigSync.DefinitionPath) >= 0)
+            // During a deploy's split GameDefinition is the build's copy (grip sheets taken out): never export it over the JSON.
+            if (!PlayerDataSplit.Active && Array.IndexOf(paths, GameConfigSync.DefinitionPath) >= 0)
                 GameConfigSync.ExportOnSave();
             return paths;
         }
