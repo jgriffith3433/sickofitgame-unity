@@ -48,8 +48,8 @@ def keep_art(full, data):
     except (OSError, ValueError):
         return data
     old_visual = old.get("visual") or {}
-    if not generated_animator(old_visual):
-        return data
+    if not generated_animator(old_visual) or generated_animator(data.get("visual")):
+        return data  # nothing generated to keep, or the writer names generated art itself
     visual = dict(data.get("visual") or {})
     visual["animator"] = old_visual["animator"]
     if "facesLeft" in old_visual:

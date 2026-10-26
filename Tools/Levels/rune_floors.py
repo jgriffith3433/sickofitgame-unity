@@ -75,10 +75,10 @@ ENTITIES = {
 # The Watcher: a floating eye that guards a bridge. Lid shut (shots are blocked from every side), it counts; lid open it fires
 # a slow aimed fan and can be shot. "Shoot as it opens."
 WATCHER_STATES = [
-    {'name': 'shut', 'animation': '',
+    {'name': 'shut', 'animation': 'Idle',  # lid shut (art/watcher.json idle)
      'abilities': [{'type': 'frontShield', 'arc': 180, 'blockSound': 'chain_cut', 'color': '#BFEFFF'}],
      'transitions': [{'to': 'open', 'when': {'type': 'after', 'seconds': 2.6}}]},
-    {'name': 'open',
+    {'name': 'open', 'animation': 'Attack',  # lid open, firing
      'abilities': [{'type': 'shoot', 'projectile': 'runeBolt', 'pattern': {'type': 'spread', 'count': 3, 'angle': 30},
                     'speed': 2.9, 'aim': 'Player', 'interval': 1.4, 'initialDelay': 0.5, 'damage': 1}],
      'transitions': [{'to': 'shut', 'when': {'type': 'after', 'seconds': 2.2}}]},

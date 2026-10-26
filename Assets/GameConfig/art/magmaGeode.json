@@ -2,38 +2,43 @@
   "schemaVersion": 1,
   "entity": "magmaGeode",
   "name": "Magma geode",
-  "description": "a lump of black cooled slag with a lava core, split by glowing orange cracks, like a cracked geode, floating and slowly rotating",
+  "description": "a floating round lump of cooled black slag rock with a cracked shell, molten orange lava core glowing out through the cracks, two small angry glowing eyes in a crack, wisps of smoke",
   "height": 0.5,
   "poses": {
-    "stand": "a rough round lump of dark cooled slag the size of a head, hovering, split by glowing orange cracks with a white-hot lava core showing through, small floating pieces of slag orbiting it",
-    "struck": "just hit and cracking: the lump split by wide bright cracks, the core blazing, pieces flying off",
-    "dead": "burst into two small glowing shards of slag flying apart"
+    "stand": "floating in the air, cracks glowing",
+    "struck": "cracking open, lava light blazing out of the split",
+    "dead": "split clean in two halves with molten light bursting out between them"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "drifts in place, rotating slowly, the cracks pulsing orange",
+      "action": "floats, bobbing slowly, its cracks pulsing with lava light",
       "seconds": 2
     },
-    "attack": {
+    "move": {
       "from": "stand",
-      "action": "swells with light and pulses",
-      "seconds": 1.0
+      "action": "drifts forward to the right, rolling slowly in the air, staying in the same spot in the frame",
+      "seconds": 1.25
     },
     "hurt": {
       "from": "stand",
-      "action": "is struck, wobbles, a crack spreading",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
       "seconds": 1
     },
     "die": {
       "from": "struck",
       "to": "dead",
-      "action": "cracks across, swells white-hot and bursts open into two small glowing shards",
+      "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, centered in the frame with plenty of empty space around it, the whole thing visible. One thing alone, nothing else: no body, no arms, no legs, no person. {style} {background}",
+    "pose": "Image 1 is this thing. Show the exact same thing {action}. Keep everything about it the same as image 1: shape, colors, size and position in the frame and art style. {background}"
   }
 }

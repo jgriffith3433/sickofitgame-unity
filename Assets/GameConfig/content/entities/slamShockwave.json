@@ -3,12 +3,14 @@
   "extends": "lavaWave",
   "body": {
     "shape": "Box",
-    "size": [1.4, 0.8],
+    "size": [
+      1.4,
+      0.8
+    ],
     "solid": false
   },
   "visual": {
     "scale": 0.14,
-    "color": "#FFB050",
     "sortingOrder": 4,
     "hurtFlash": false,
     "fxColor": "#FF8A2A"

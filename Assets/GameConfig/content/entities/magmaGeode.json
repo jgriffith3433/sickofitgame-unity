@@ -12,14 +12,117 @@
   "extends": "cinder",
   "health": 3,
   "moveSpeed": 0.9,
-  "tags": [
-    "cinder",
-    "magmaGeode"
-  ],
+  "tags": ["cinder", "magmaGeode"],
   "visual": {
     "scale": 0.2,
-    "color": "#B04A2A",
-    "fxColor": "#FF6A1F"
+    "fxColor": "#FF6A1F",
+    "animator": {
+      "parameters": [
+        {
+          "name": "IsMoving",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/MagmaGeode/MagmaGeode_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Move",
+          "spriteSheet": "Art/Enemies/MagmaGeode/MagmaGeode_move.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/MagmaGeode/MagmaGeode_hurt.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Die",
+          "spriteSheet": "Art/Enemies/MagmaGeode/MagmaGeode_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Move",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsMoving",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
   },
   "loot": {
     "chance": 0.3,
@@ -34,8 +137,9 @@
     },
     {
       "type": "chase",
-      "stopDistance": 0.0,
-      "face": true
+      "stopDistance": 0,
+      "face": true,
+      "animBool": "IsMoving"
     }
   ],
   "onDeath": [
@@ -43,20 +147,14 @@
       "type": "spawn",
       "entity": "geodeBit",
       "anchor": "Self",
-      "at": [
-        -0.3,
-        0.15
-      ],
+      "at": [-0.3, 0.15],
       "facePlayer": false
     },
     {
       "type": "spawn",
       "entity": "geodeBit",
       "anchor": "Self",
-      "at": [
-        0.3,
-        0.15
-      ],
+      "at": [0.3, 0.15],
       "facePlayer": false
     },
     {

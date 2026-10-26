@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "entity": "geodeBit",
+  "name": "Geode bit",
+  "description": "a small floating half of a broken black slag geode, jagged edge glowing with molten orange lava, one small furious glowing eye",
+  "height": 0.3,
+  "poses": {
+    "stand": "floating in the air, the glowing broken edge facing forward",
+    "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
+    "dead": "breaking apart in a burst of black soot, grey ash and orange embers"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers twitchily, its broken edge glowing",
+      "seconds": 2
+    },
+    "move": {
+      "from": "stand",
+      "action": "darts forward to the right, trailing sparks, staying in the same spot in the frame",
+      "seconds": 1.25
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks backward with a pained grimace, then recovers",
+      "seconds": 1
+    },
+    "die": {
+      "from": "struck",
+      "to": "dead",
+      "action": "flares bright and breaks apart into soot, ash and embers",
+      "seconds": 1.25
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "prompts": {
+    "standFromText": "Paint {description}. Seen from the side, centered in the frame with plenty of empty space around it, the whole thing visible. One thing alone, nothing else: no body, no arms, no legs, no person. {style} {background}",
+    "pose": "Image 1 is this thing. Show the exact same thing {action}. Keep everything about it the same as image 1: shape, colors, size and position in the frame and art style. {background}"
+  }
+}

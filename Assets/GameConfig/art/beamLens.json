@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "entity": "beamLens",
+  "name": "The Overlord's lens",
+  "description": "an object, not a creature: a single jagged shard of thick red lens glass the size of a shield, propped upright on a small heap of black rubble, glowing deep red from inside with cracks of light in it; clear empty glass, no figure, no face, no person inside it",
+  "height": 0.6,
+  "poses": {
+    "stand": "standing upright on its rubble, glowing dull red"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "pulses with a dull red glow, light shifting inside the glass",
+      "seconds": 2
+    }
+  },
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}

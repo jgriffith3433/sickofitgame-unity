@@ -9,7 +9,7 @@ How art is made: Docs/ArtPipeline.md (creatures `node Tools/Art/art.mjs <id>`, t
 
 | | ok | placeholder / stand-in |
 |---|---|---|
-| Entities in use | 405 | 23 |
+| Entities in use | 417 | 11 |
 | Hero clips (art/hero.json) | 6 | 84 |
 | Weapon grips | 0 | 8 |
 | Circle backdrops | 3 | 0 |
@@ -240,26 +240,14 @@ On beta at 4bf1506c (2026-10-25), before the full art pass: **179 entities in us
 
 - entity `afterimage`: STAND-IN, wears chaser's art tinted #D8E8FF
 - entity `bridgeWraith`: PLACEHOLDER, drawn as a labeled circle
-- entity `brimstoneLump`: STAND-IN, wears slag's art tinted #E0602A
 - entity `drone`: STAND-IN, wears shooter's art tinted #9FFFE0
 - entity `gunner`: STAND-IN, wears shooter's art tinted #FFD27A
 - entity `haloImp`: STAND-IN, wears imp's art tinted #FFD27A
-- entity `lavaFlood`: STAND-IN, wears lavaWave's art tinted #FF5A1A
-- entity `overlordFar806`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
-- entity `overlordFar857`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
-- entity `overlordFar896`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
-- entity `overlordFar906`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
-- entity `overlordFar953`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
-- entity `overlordFar958`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
-- entity `overlordFar994`: STAND-IN, its own animator plays MagmaKing tinted #3B2F46
 - entity `quickfireImp`: STAND-IN, wears imp's art tinted #FF9A5A
 - entity `ricochetImp`: STAND-IN, wears imp's art tinted #FFC890
 - entity `sfNeedle`: STAND-IN, its own animator plays Climb tinted #D8C8D0
-- entity `shardBig`: STAND-IN, wears shard's art tinted #5A4A66
-- entity `slamShockwave`: STAND-IN, wears lavaWave's art tinted #FFB050
 - entity `spinner`: STAND-IN, wears sentinel's art tinted #7FD8FF
 - entity `sprayer`: STAND-IN, wears shooter's art tinted #D69CFF
-- entity `watcherPatrol`: STAND-IN, its own animator plays Images tinted #CFF4FF
 - entity `whelpNest`: PLACEHOLDER, drawn as a coloured box
 - hero `Land` (land): MISSING, plays -
 - hero `AirFire` (airFire): MISSING, plays -
@@ -554,7 +542,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | bridgeWraith | Enemy | PLACEHOLDER | drawn as a labeled circle | bridgeWraith |
 | brimstoneBreath | Enemy | ok | the same creature as fireball (its art, untinted) |  |
 | brimstoneDemon | Enemy | ok | generated: Art/Enemies/BrimstoneDemon | brimstoneDemon |
-| brimstoneLump | Enemy | STAND-IN | wears slag's art tinted #E0602A |  |
+| brimstoneLump | Enemy | ok | the same creature as slag (its art, untinted) |  |
 | brimstoneVent | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | brimstoneVentB | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | brimstoneVentC | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
@@ -790,7 +778,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | lavaFall955b | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaFall955c | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaFallScenery | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
-| lavaFlood | Enemy | STAND-IN | wears lavaWave's art tinted #FF5A1A |  |
+| lavaFlood | Enemy | ok | the same creature as lavaWave (its art, untinted) |  |
 | lavaGeyser | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaGeyserB | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
 | lavaGeyserC | Neutral | ok | painted by its ability from a sheet (FloorKit art) |  |
@@ -839,13 +827,13 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | overlordBeam | Neutral | ok | generated: Art/Effects/Beam |  |
 | overlordBeamGlow | Neutral | ok | generated: Art/Effects/Beam |  |
 | overlordBeamImpact | Neutral | ok | generated: Art/Effects/Beam |  |
-| overlordFar806 | Neutral | STAND-IN | its own animator plays MagmaKing tinted #3B2F46 |  |
-| overlordFar857 | Neutral | STAND-IN | its own animator plays MagmaKing tinted #3B2F46 |  |
-| overlordFar896 | Neutral | STAND-IN | its own animator plays MagmaKing tinted #3B2F46 |  |
-| overlordFar906 | Neutral | STAND-IN | its own animator plays MagmaKing tinted #3B2F46 |  |
-| overlordFar953 | Neutral | STAND-IN | its own animator plays MagmaKing tinted #3B2F46 |  |
-| overlordFar958 | Neutral | STAND-IN | its own animator plays MagmaKing tinted #3B2F46 |  |
-| overlordFar994 | Neutral | STAND-IN | its own animator plays MagmaKing tinted #3B2F46 |  |
+| overlordFar806 | Neutral | ok | generated: Art/Enemies/OverlordFar |  |
+| overlordFar857 | Neutral | ok | generated: Art/Enemies/OverlordFar |  |
+| overlordFar896 | Neutral | ok | generated: Art/Enemies/OverlordFar |  |
+| overlordFar906 | Neutral | ok | generated: Art/Enemies/OverlordFar |  |
+| overlordFar953 | Neutral | ok | generated: Art/Enemies/OverlordFar |  |
+| overlordFar958 | Neutral | ok | generated: Art/Enemies/OverlordFar |  |
+| overlordFar994 | Neutral | ok | generated: Art/Enemies/OverlordFar |  |
 | overlordFar997 | Neutral | ok | generated: Art/Enemies/OverlordFar | overlordFar |
 | overlordLift958 | Neutral | ok | generated: Art/Climb |  |
 | phaseRaider | Enemy | ok | generated: Art/Enemies/PhaseRaider | phaseRaider |
@@ -908,7 +896,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | sfWarnSpot | Neutral | ok | fmWarnWhip's effect sheet (made to be tinted), in #FFD08A |  |
 | sfWhelp | Enemy | ok | the same creature as demonWhelp (its art, untinted) |  |
 | shard | Enemy | ok | generated: Art/Enemies/Shard | shard |
-| shardBig | Enemy | STAND-IN | wears shard's art tinted #5A4A66 |  |
+| shardBig | Enemy | ok | the same creature as shard (its art, untinted) |  |
 | shardwright | Enemy | ok | generated: Art/Enemies/Shardwright | shardwright |
 | shooter | Enemy | ok | painted: Images |  |
 | shotgunPickup | Neutral | ok | generated: Art/Enemies/ShotgunPickup | shotgunPickup |
@@ -922,7 +910,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | slagHound | Enemy | ok | generated: Art/Enemies/SlagHound | slagHound |
 | slagLadlePickup | Neutral | ok | generated: Art/Enemies/SlagLadlePickup | slagLadlePickup |
 | slagTortoise | Enemy | ok | generated: Art/Enemies/SlagTortoise | slagTortoise |
-| slamShockwave | Enemy | STAND-IN | wears lavaWave's art tinted #FFB050 |  |
+| slamShockwave | Enemy | ok | the same creature as lavaWave (its art, untinted) |  |
 | sleepwalker | Enemy | ok | generated: Art/Enemies/Sleepwalker | sleepwalker |
 | sparedWhelp | Neutral | ok | generated: Art/Enemies/SparedWhelp | sparedWhelp |
 | spinner | Enemy | STAND-IN | wears sentinel's art tinted #7FD8FF | spinner |
@@ -948,7 +936,7 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 | veilMatron | Enemy | ok | generated: Art/Enemies/VeilMatron | veilMatron |
 | wallSlab | Neutral | ok | generated: Art/Effects/KitWall |  |
 | watcher | Enemy | ok | generated: Art/Enemies/Watcher | watcher |
-| watcherPatrol | Enemy | STAND-IN | its own animator plays Images tinted #CFF4FF |  |
+| watcherPatrol | Enemy | ok | generated: Art/Enemies/Watcher |  |
 | waystoneGlow | Neutral | ok | generated: Art/Effects/Warn |  |
 | whelpDiamond | Enemy | ok | the same creature as demonWhelp (its art, untinted) |  |
 | whelpNest | Enemy | PLACEHOLDER | drawn as a coloured box | whelpNest |
