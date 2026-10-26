@@ -57,6 +57,7 @@ namespace SickOfIt.Core.Addressables
             public AsyncOperationHandle<AudioClip> clip;
             public int refs;
             public bool done;
+            public bool wantTexture, wantSprites, wantClip;
             public Sprite[] sorted;
         }
 
@@ -347,26 +348,58 @@ namespace SickOfIt.Core.Addressables
                     sprites = true;
                 }
             }
-            if (texture)
-                load.texture = AddressablesAPI.LoadAssetAsync<Texture2D>(address);
-            if (sprites)
-                load.sprites = AddressablesAPI.LoadAssetAsync<IList<Sprite>>(address);
-            if (clip)
-                load.clip = AddressablesAPI.LoadAssetAsync<AudioClip>(address);
+            load.wantTexture = texture;
+            load.wantSprites = sprites;
+            load.wantClip = clip;
+            Begin(load);
             Runner.Get().StartCoroutine(Finish(load));
             return load;
         }
 
+        static void Begin(Load load)
+        {
+            if (load.wantTexture)
+                load.texture = AddressablesAPI.LoadAssetAsync<Texture2D>(load.address);
+            if (load.wantSprites)
+                load.sprites = AddressablesAPI.LoadAssetAsync<IList<Sprite>>(load.address);
+            if (load.wantClip)
+                load.clip = AddressablesAPI.LoadAssetAsync<AudioClip>(load.address);
+        }
+
+        static bool Failed(Load load) =>
+            (load.texture.IsValid() && (load.texture.Status != AsyncOperationStatus.Succeeded || load.texture.Result == null))
+            || (load.sprites.IsValid() && (load.sprites.Status != AsyncOperationStatus.Succeeded || load.sprites.Result == null))
+            || (load.clip.IsValid() && (load.clip.Status != AsyncOperationStatus.Succeeded || load.clip.Result == null));
+
+        /// <summary>Extra tries for a bundle that failed to download (a CDN's 503), spaced out; Addressables retries first (BundledAssetGroupSchema.RetryCount).</summary>
+        const int LoadRetries = 2;
+
         static IEnumerator Finish(Load load)
         {
-            if (load.texture.IsValid())
-                yield return load.texture;
-            if (load.sprites.IsValid())
-                yield return load.sprites;
-            if (load.clip.IsValid())
-                yield return load.clip;
-            if (!loads.TryGetValue(load.address, out var current) || current != load)
-                yield break; // released while loading (Unretain let the handles go)
+            for (int attempt = 0; ; attempt++)
+            {
+                if (load.texture.IsValid())
+                    yield return load.texture;
+                if (load.sprites.IsValid())
+                    yield return load.sprites;
+                if (load.clip.IsValid())
+                    yield return load.clip;
+                if (!loads.TryGetValue(load.address, out var current) || current != load)
+                    yield break; // released while loading (Unretain let the handles go)
+                if (attempt >= LoadRetries || !Failed(load))
+                    break;
+                Debug.LogWarning($"[GameAssets] {load.address} failed ({Failure(load)}); trying again ({attempt + 1} of {LoadRetries})");
+                if (load.texture.IsValid())
+                    AddressablesAPI.Release(load.texture);
+                if (load.sprites.IsValid())
+                    AddressablesAPI.Release(load.sprites);
+                if (load.clip.IsValid())
+                    AddressablesAPI.Release(load.clip);
+                yield return new WaitForSecondsRealtime(1.5f * (attempt + 1));
+                if (!loads.TryGetValue(load.address, out current) || current != load)
+                    yield break; // released during the wait: its handles are already let go
+                Begin(load);
+            }
             load.done = true;
 
             if (load.sprites.IsValid() && load.sprites.Status == AsyncOperationStatus.Succeeded && load.sprites.Result != null)
