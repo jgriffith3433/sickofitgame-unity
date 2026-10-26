@@ -14,6 +14,7 @@ namespace SickOfIt.Core.Progression
         MobileControllerFramework.Button skip;
         Vector2Int screen;
         Vector2 rewindSize, skipSize;
+        float scale;
 
         public static void Apply(GameObject host, MobileControllerFramework.Button rewind, MobileControllerFramework.Button skip)
         {
@@ -28,8 +29,13 @@ namespace SickOfIt.Core.Progression
 
         void LateUpdate()
         {
-            if (screen.x == Screen.width && screen.y == Screen.height) return;
+            // The canvas scaler settles after the first frame (or a resize), so its scale is part of "changed" too:
+            // sizing against a stale scale left the button at ~40 px on a phone.
+            var scaler = rewind.GetComponentInParent<Canvas>();
+            float currentScale = scaler != null ? scaler.rootCanvas.scaleFactor : 1f;
+            if (screen.x == Screen.width && screen.y == Screen.height && Mathf.Approximately(scale, currentScale)) return;
             screen = new Vector2Int(Screen.width, Screen.height);
+            scale = currentScale;
             if (screen.x <= 0 || screen.y <= 0) return;
 
             var rewindRect = (RectTransform)rewind.transform;
