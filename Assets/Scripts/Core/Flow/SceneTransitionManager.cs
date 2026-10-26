@@ -54,8 +54,17 @@ namespace SickOfIt.Core.Flow
 
         public void LoadMainMenu()
         {
+            // Back at the menu nothing of a level, video or death is needed (GameAssets keeps only "core").
+            ReleaseAll();
             // Always load MainMenu normally (not via Addressables) as it's part of the base build
             SceneManager.LoadScene(MAIN_MENU_SCENE);
+        }
+
+        /// <summary>Lets go of every level, hero, video, death and screen asset (the main menu).</summary>
+        public static void ReleaseAll()
+        {
+            foreach (string owner in new[] { "level", "hero", "video", "death", "screen:shaft", "screen:yooba", "screen:codex" })
+                GameAssets.Release(owner);
         }
 
         public void LoadLevel(int levelNumber)
@@ -74,12 +83,44 @@ namespace SickOfIt.Core.Flow
 
             if (useAddressables)
             {
-                AddressablesSceneLoader.Instance.LoadScene(sceneName);
+                // The level's art and sound (and the hero's) first; a video's or death's go once they are in.
+                var level = GameDefinition.Instance != null ? GameDefinition.Instance.GetLevel(levelNumber) : null;
+                var wanted = new System.Collections.Generic.List<string>();
+                if (level != null)
+                    wanted.Add(GameAssets.Level(level.levelName));
+                if (!string.IsNullOrEmpty(GameAssets.PendingLevelScene))
+                    wanted.Add(GameAssets.Scene(GameAssets.PendingLevelScene));
+                Prepared(sceneName, ("hero", new[] { GameAssets.Hero }), ("level", wanted.ToArray()), new[] { "video", "death" });
             }
             else
             {
                 SceneManager.LoadScene(sceneName);
             }
+        }
+
+        /// <summary>
+        /// Loads an Addressables scene once its assets are in (GameAssets): each (owner, scopes) acquired, then the owners in
+        /// <paramref name="release"/> let go. A build without managed assets loads it at once.
+        /// </summary>
+        void Prepared(string sceneName, (string owner, string[] scopes) first, (string owner, string[] scopes) second, string[] release)
+        {
+            if (!GameAssets.Managed)
+            {
+                AddressablesSceneLoader.Instance.LoadScene(sceneName);
+                return;
+            }
+            StartCoroutine(PrepareThenLoad(sceneName, first, second, release));
+        }
+
+        IEnumerator PrepareThenLoad(string sceneName, (string owner, string[] scopes) first, (string owner, string[] scopes) second, string[] release)
+        {
+            if (first.owner != null)
+                yield return GameAssets.Acquire(first.owner, first.scopes);
+            if (second.owner != null)
+                yield return GameAssets.Acquire(second.owner, second.scopes);
+            foreach (string owner in release)
+                GameAssets.Release(owner);
+            AddressablesSceneLoader.Instance.LoadScene(sceneName);
         }
 
         public void LoadLevelSelection()
@@ -116,7 +157,9 @@ namespace SickOfIt.Core.Flow
 
             if (useAddressables)
             {
-                AddressablesSceneLoader.Instance.LoadScene(sceneName);
+                // The video's own; the level and death before it go (the hero stays for the next level).
+                var video = GameDefinition.Instance != null ? GameDefinition.Instance.GetVideo(videoNumber) : null;
+                Prepared(sceneName, ("video", video != null ? new[] { GameAssets.Video(video.videoName) } : new string[0]), (null, null), new[] { "level", "death" });
             }
             else
             {
@@ -140,7 +183,8 @@ namespace SickOfIt.Core.Flow
 
             if (useAddressables)
             {
-                AddressablesSceneLoader.Instance.LoadScene(sceneName);
+                // The death's own; the level stays (the Shaft and the next try come after).
+                Prepared(sceneName, ("death", new[] { GameAssets.Death(deathSceneName) }), (null, null), new string[0]);
             }
             else
             {

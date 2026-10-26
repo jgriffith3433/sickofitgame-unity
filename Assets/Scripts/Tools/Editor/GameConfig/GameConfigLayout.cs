@@ -76,6 +76,9 @@ namespace SickOfIt.Tools.Editor.GameConfig
         /// <summary>Built by the importer from the content; never written to JSON.</summary>
         public const string RegistryField = "assetRegistry";
 
+        /// <summary>Written only into a player build's copy (PlayerDataSplit: what loads when); never written to JSON.</summary>
+        public const string ManifestField = "assetManifest";
+
         public static SplitFile FileForField(string field) => Files.FirstOrDefault(f => f.Field == field);
         public static Collection CollectionForField(string field) => Collections.FirstOrDefault(c => c.Field == field);
 
@@ -92,6 +95,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
             names.UnionWith(Collections.Select(c => c.Field));
             names.Add(ContentField);
             names.Add(RegistryField);
+            names.Add(ManifestField);
             return names;
         }
 

@@ -310,11 +310,18 @@ namespace SickOfIt.Gameplay
     }
 
     /// <summary>Resolves asset ids at runtime from GameDefinition's asset registry.</summary>
-    public sealed class RegistryAssetResolver : IAssetIdResolver, ISpriteSheetSource
+    public sealed class RegistryAssetResolver : IDeferredAssetResolver, ISpriteSheetSource
     {
         readonly Dictionary<string, AssetRegistryEntry> byId = new Dictionary<string, AssetRegistryEntry>(StringComparer.Ordinal);
         readonly Dictionary<UnityEngine.Object, string> idOf = new Dictionary<UnityEngine.Object, string>();
         readonly Dictionary<Texture2D, Sprite[]> sheets = new Dictionary<Texture2D, Sprite[]>();
+        readonly List<AssetRegistryEntry> list = new List<AssetRegistryEntry>();
+
+        // A player build (GameAssets.Managed): every reference parsed content makes to the registry, by registry id, so it
+        // is filled in when the asset loads and emptied when it is released. Only the newest resolver (the content in use) listens.
+        readonly Dictionary<string, List<(string id, Type type, Action<UnityEngine.Object> assign)>> bound
+            = new Dictionary<string, List<(string, Type, Action<UnityEngine.Object>)>>(StringComparer.Ordinal);
+        static RegistryAssetResolver listening;
 
         public RegistryAssetResolver(IEnumerable<AssetRegistryEntry> entries)
         {
@@ -322,14 +329,70 @@ namespace SickOfIt.Gameplay
                 return;
             foreach (var entry in entries)
             {
+                list.Add(entry);
                 if (entry == null || string.IsNullOrEmpty(entry.id))
                     continue;
                 byId[entry.id] = entry;
-                if (entry.asset != null)
-                    idOf[entry.asset] = entry.id;
-                if (entry.asset is Texture2D texture)
-                    sheets[texture] = entry.sprites ?? Array.Empty<Sprite>();
+                Index(entry);
             }
+            if (SickOfIt.Core.Addressables.GameAssets.Managed)
+            {
+                if (listening == null)
+                {
+                    SickOfIt.Core.Addressables.GameAssets.EntryApplied += path => listening?.Changed(path);
+                    SickOfIt.Core.Addressables.GameAssets.EntryCleared += path => listening?.Changed(path);
+                }
+                listening = this;
+            }
+        }
+
+        void Index(AssetRegistryEntry entry)
+        {
+            if (entry.asset != null)
+                idOf[entry.asset] = entry.id;
+            if (entry.asset is Texture2D texture)
+                sheets[texture] = entry.sprites ?? Array.Empty<Sprite>();
+        }
+
+        const string RegistryPath = "assetRegistry.Array.data[";
+
+        // A registry entry was loaded or released (GameAssets): re-resolve everything bound to it.
+        void Changed(string path)
+        {
+            if (!path.StartsWith(RegistryPath, StringComparison.Ordinal))
+                return;
+            int end = path.IndexOf(']', RegistryPath.Length);
+            if (end < 0 || !int.TryParse(path.Substring(RegistryPath.Length, end - RegistryPath.Length), out int index) || index >= list.Count)
+                return;
+            var entry = list[index];
+            if (entry == null || string.IsNullOrEmpty(entry.id))
+                return;
+            Index(entry);
+            if (!bound.TryGetValue(entry.id, out var bindings))
+                return;
+            foreach (var (id, type, assign) in bindings)
+                assign(entry.asset != null ? Resolve(id, type, out _) : null);
+        }
+
+        public bool Defers(string id, Type fieldType)
+        {
+            return SickOfIt.Core.Addressables.GameAssets.Managed && byId.ContainsKey(PathOf(id));
+        }
+
+        public void Bind(string id, Type fieldType, Action<UnityEngine.Object> assign)
+        {
+            string pathId = PathOf(id);
+            if (!bound.TryGetValue(pathId, out var bindings))
+                bound[pathId] = bindings = new List<(string, Type, Action<UnityEngine.Object>)>();
+            bindings.Add((id, fieldType, assign));
+            if (byId.TryGetValue(pathId, out var entry) && entry.asset != null)
+                assign(Resolve(id, fieldType, out _));
+        }
+
+        static string PathOf(string id)
+        {
+            int hash = id.IndexOf('#');
+            return hash >= 0 ? id.Substring(0, hash) : id;
         }
 
         public string GetId(UnityEngine.Object asset, Type fieldType, out string error)
@@ -385,7 +448,12 @@ namespace SickOfIt.Gameplay
 
         public Sprite[] GetSprites(Texture2D sheet)
         {
-            return sheet != null && sheets.TryGetValue(sheet, out var sprites) ? sprites : Array.Empty<Sprite>();
+            if (sheet == null)
+                return Array.Empty<Sprite>();
+            if (sheets.TryGetValue(sheet, out var sprites) && sprites.Length > 0)
+                return sprites;
+            // A sheet loaded on demand (GameAssets) that isn't a registry entry of its own.
+            return GameDefinition.LoadedSprites?.Invoke(sheet) ?? Array.Empty<Sprite>();
         }
     }
 }

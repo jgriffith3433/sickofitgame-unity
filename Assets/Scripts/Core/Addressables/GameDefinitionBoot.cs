@@ -59,8 +59,11 @@ namespace SickOfIt.Core.Addressables
 
                 if (handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
                 {
-                    // Never released: the game reads it, and everything it references, until the page closes.
+                    // Never released: the game reads it until the page closes. Its art and sound are not in it: only what
+                    // every screen uses ("core") loads now; the rest when a level, video or screen needs it (GameAssets).
                     Debug.Log($"[GameDefinitionBoot] Game data loaded from its bundles (try {attempt}).");
+                    GameAssets.Init(handle.Result);
+                    yield return GameAssets.Acquire(GameAssets.Core, new[] { GameAssets.Core }, p => progress = p);
                     GameDefinition.Provide(handle.Result);
                     int next = SceneManager.GetActiveScene().buildIndex + 1;
                     if (next < SceneManager.sceneCountInBuildSettings)

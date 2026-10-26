@@ -25,6 +25,9 @@ namespace SickOfIt.Tools.Editor
     /// project never see the change. <see cref="Recover"/> undoes a split a crashed build left behind.
     /// The found weapons' grip sheets don't ride with GameDefinition at all (<see cref="SplitGripSheets"/>): loaded with it,
     /// every sheet of the art pass at once ran the WebGL page out of memory at boot (v246). They load on demand (PlayerSheets).
+    /// Nor does any other art or sound (<see cref="PlayerDataManifest"/>): each is its own bundle, loaded when a level, video,
+    /// screen or sound needs it (GameAssets); only "core" loads at boot. <see cref="End"/> puts the original asset back byte
+    /// for byte.
     /// </summary>
     public static class PlayerDataSplit
     {
@@ -34,6 +37,10 @@ namespace SickOfIt.Tools.Editor
         public const string BootScenePath = BuildFolder + "/Boot.unity";
         public const string GroupPrefix = "PlayerData_";
         public const string GripGroup = GroupPrefix + "HeroGrips";
+        public const string ManifestFieldName = "assetManifest";
+
+        // The definition as it was before the split emptied its references (restored by End).
+        static string BackupPath => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp", "GameDefinition.beforeSplit.asset");
 
         /// <summary>Estimated in-memory size per group; its bundle comes out at or under this (LZ4).</summary>
         public const long GroupBudgetBytes = 40L * 1024 * 1024;
@@ -57,11 +64,20 @@ namespace SickOfIt.Tools.Editor
             string moved = AssetDatabase.MoveAsset(ResourcesPath, EnsureFolder());
             if (!string.IsNullOrEmpty(moved))
                 throw new Exception($"Couldn't move {ResourcesPath} out of Resources: {moved}");
+            AssetDatabase.SaveAssets();
+            Directory.CreateDirectory(Path.GetDirectoryName(BackupPath));
+            File.Copy(BuildPath, BackupPath, true);
 
             var template = RemoteTemplate(settings);
             var definitionGroup = CreateGroup(settings, GroupPrefix + "GameDefinition", template);
             var entry = settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(BuildPath), definitionGroup);
             entry.SetAddress(GameDefinition.Address);
+
+            // Before the dependencies are sorted (and the grips first: they take entries out of the asset registry, whose
+            // indexes the manifest records), so what goes on demand never rides with GameDefinition.
+            int grips = SplitGripSheets(settings, template, out long gripBytes);
+            log($"  On demand: {grips} found-weapon grip sheets ({gripBytes / (1024 * 1024)} MB in memory) left out of GameDefinition, one bundle each in {GripGroup}.");
+            PlayerDataManifest.Write(settings, template, log);
 
             var byFolder = new SortedDictionary<string, List<string>>(StringComparer.Ordinal);
             foreach (string path in AssetDatabase.GetDependencies(BuildPath, true))
@@ -101,9 +117,6 @@ namespace SickOfIt.Tools.Editor
                 EditorUtility.UnloadUnusedAssetsImmediate();
             }
 
-            int grips = SplitGripSheets(settings, template, out long gripBytes);
-            log($"  On demand: {grips} found-weapon grip sheets ({gripBytes / (1024 * 1024)} MB in memory) left out of GameDefinition, one bundle each in {GripGroup}.");
-
             WriteBootScene();
             EditorUtility.SetDirty(settings);
             AssetDatabase.SaveAssets();
@@ -112,8 +125,16 @@ namespace SickOfIt.Tools.Editor
 
         public static void End(Action<string> log)
         {
-            // The split's copy had its grip sheets taken out (SplitGripSheets): import the JSON over it before it goes back.
-            if (File.Exists(BuildPath))
+            // The split's copy had its references emptied (SplitGripSheets, PlayerDataManifest): the original goes back byte
+            // for byte (same GUID: its .meta never changed); without the copy, the JSON is imported over it.
+            if (File.Exists(BuildPath) && File.Exists(BackupPath))
+            {
+                File.Copy(BackupPath, BuildPath, true);
+                File.Delete(BackupPath);
+                AssetDatabase.ImportAsset(BuildPath, ImportAssetOptions.ForceUpdate);
+                log?.Invoke("  GameDefinition restored from its copy before the split.");
+            }
+            else if (File.Exists(BuildPath))
             {
                 try
                 {
@@ -243,6 +264,9 @@ namespace SickOfIt.Tools.Editor
             return settings.groups.FirstOrDefault(g => g != null && g.Name.StartsWith("Level", StringComparison.Ordinal) && g.HasSchema<BundledAssetGroupSchema>()
                 && g.GetSchema<BundledAssetGroupSchema>().LoadPath.GetName(settings) == AddressableAssetSettings.kRemoteLoadPath);
         }
+
+        /// <summary>A remote group like the split's others (PlayerDataManifest's per-folder groups).</summary>
+        internal static AddressableAssetGroup NewGroup(AddressableAssetSettings settings, string name, AddressableAssetGroup template) => CreateGroup(settings, name, template);
 
         static AddressableAssetGroup CreateGroup(AddressableAssetSettings settings, string name, AddressableAssetGroup template)
         {

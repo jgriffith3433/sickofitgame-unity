@@ -62,6 +62,19 @@ namespace SickOfIt.Core.Audio
             }
             if (sound.clip == null)
             {
+                // A player build loads a clip no level or screen holds on its first play (GameAssets): an effect plays if
+                // it arrives within a moment, a spoken line always.
+                string scope = SickOfIt.Core.Addressables.GameAssets.Sound(id);
+                if (SickOfIt.Core.Addressables.GameAssets.Knows(scope))
+                {
+                    float asked = Time.unscaledTime;
+                    SickOfIt.Core.Addressables.GameAssets.Request(scope, () =>
+                    {
+                        if (sound.clip != null && (sound.kind == SoundKind.Voice || Time.unscaledTime - asked < 0.4f))
+                            Play(id, volume, pitch);
+                    });
+                    return;
+                }
                 WarnOnce(id, $"[Sfx] Sound \"{id}\" has no clip yet. Generate it: SickOfIt > Audio > Sound Generator.");
                 return;
             }
@@ -109,6 +122,17 @@ namespace SickOfIt.Core.Audio
             }
             if (sound.clip == null)
             {
+                // Not loaded yet (a player build, GameAssets): the loop starts when its clip is in, if the source still wants it.
+                string scope = SickOfIt.Core.Addressables.GameAssets.Sound(id);
+                if (SickOfIt.Core.Addressables.GameAssets.Knows(scope))
+                {
+                    SickOfIt.Core.Addressables.GameAssets.Request(scope, () =>
+                    {
+                        if (source != null && source.isActiveAndEnabled && !source.isPlaying && sound.clip != null)
+                            PlayLoop(source, id, volume);
+                    });
+                    return true;
+                }
                 WarnOnce(id, $"[Sfx] Sound \"{id}\" has no clip yet. Generate it: SickOfIt > Audio > Sound Generator.");
                 return false;
             }
@@ -143,7 +167,9 @@ namespace SickOfIt.Core.Audio
         public static bool Has(string id)
         {
             _ = Config;
-            return !string.IsNullOrEmpty(id) && byId.TryGetValue(id, out var sound) && sound.clip != null;
+            // In a player build a clip that isn't loaded yet still exists (GameAssets loads it on its first play).
+            return !string.IsNullOrEmpty(id) && byId.TryGetValue(id, out var sound)
+                && (sound.clip != null || SickOfIt.Core.Addressables.GameAssets.Knows(SickOfIt.Core.Addressables.GameAssets.Sound(id)));
         }
 
         static int CountPlaying(string id)

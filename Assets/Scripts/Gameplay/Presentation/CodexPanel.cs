@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using SickOfIt.Core.Addressables;
 using SickOfIt.Core.Audio;
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
@@ -279,6 +281,11 @@ namespace SickOfIt.Gameplay
 
         public static bool IsOpen => Current != null && Current.Root != null;
 
+        const string CodexOwner = "screen:codex";
+
+        /// <summary>The art one Codex row shows (an entity's default picture, a weapon's pickup), as the build lists it.</summary>
+        public static string CodexScope(string id) => "codex/" + id;
+
         public static CodexView Show(MenuCanvas menu, Action onClosed)
         {
             var gd = GameDefinition.Instance;
@@ -422,6 +429,33 @@ namespace SickOfIt.Gameplay
                 }
                 if (view.Previous != null) view.Previous.interactable = view.Page > 0;
                 if (view.Next != null) view.Next.interactable = view.Page < view.Pages - 1;
+                LoadPageArt(first);
+            }
+
+            // A player build loads creature art with its floors (GameAssets): this page's pictures load here, then the
+            // page is drawn again; the page before's are released once these are in.
+            void LoadPageArt(int first)
+            {
+                if (!GameAssets.Managed || entries == null || overlay.Root == null)
+                    return;
+                var wanted = new List<string>();
+                for (int i = first; i < first + view.RowsPerPage && i < entries.Count; i++)
+                {
+                    if (!entries[i].IsAchievement && GameAssets.Knows(CodexScope(entries[i].Id)))
+                        wanted.Add(CodexScope(entries[i].Id));
+                }
+                if (wanted.TrueForAll(GameAssets.IsLoaded))
+                    return;
+                int page = view.Page;
+                var shownTab = tab;
+                overlay.Root.GetComponent<CodexShapeWatch>()?.StartCoroutine(Load());
+
+                IEnumerator Load()
+                {
+                    yield return GameAssets.Acquire(CodexOwner, wanted);
+                    if (overlay.Root != null && view.Page == page && tab == shownTab)
+                        Refresh();
+                }
             }
 
             void Select(CodexTab picked)
@@ -451,6 +485,7 @@ namespace SickOfIt.Gameplay
                 if (overlay.Root == null)
                     return;
                 Sfx.Play(Sfx.Events.uiBack);
+                GameAssets.Release(CodexOwner);
                 menu.Back = previousBack;
                 if (Current == view)
                     Current = null;

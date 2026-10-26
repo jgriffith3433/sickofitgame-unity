@@ -41,7 +41,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
                     continue;
                 }
 
-                if (field.Name == GameConfigLayout.RegistryField)
+                if (field.Name == GameConfigLayout.RegistryField || field.Name == GameConfigLayout.ManifestField)
                     continue;
                 if (field.Name == GameConfigLayout.ContentField)
                 {

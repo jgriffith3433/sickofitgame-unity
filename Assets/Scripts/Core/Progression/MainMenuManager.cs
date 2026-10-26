@@ -52,6 +52,8 @@ namespace SickOfIt.Core.Progression
             AnalyticsManager.SetContext(new System.Collections.Generic.Dictionary<string, object>
                 { { "level", null }, { "level_name", null }, { "floor", null }, { "phase", null }, { "boss", null }, { "video", null } });
             GameProgressManager.Instance.InitializeNewPlayer();
+            // However the player came back, nothing of a level, video or screen stays loaded (GameAssets).
+            SceneTransitionManager.ReleaseAll();
 
             if (explodeRoot != null)
                 explodeRoot.SetActive(false);

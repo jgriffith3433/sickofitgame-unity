@@ -301,6 +301,77 @@ namespace SickOfIt.Tests.Editor
             Assert.That(issues, Is.Empty);
         }
 
+        /// <summary>Ids starting "later/" are known but not loaded (a player build's on-demand art: GameAssets).</summary>
+        sealed class DeferredAssets : IDeferredAssetResolver
+        {
+            public readonly Dictionary<string, List<Action<Object>>> Bound = new Dictionary<string, List<Action<Object>>>();
+
+            public bool Defers(string id, Type fieldType) => id.StartsWith("later/", StringComparison.Ordinal);
+
+            public void Bind(string id, Type fieldType, Action<Object> assign)
+            {
+                if (!Bound.TryGetValue(id, out var list))
+                    Bound[id] = list = new List<Action<Object>>();
+                list.Add(assign);
+            }
+
+            public void Load(string id, Object asset)
+            {
+                foreach (var assign in Bound[id])
+                    assign(asset);
+            }
+
+            public string GetId(Object asset, Type fieldType, out string error) { error = null; return asset.name; }
+            public Object Resolve(string id, Type fieldType, out string error) { error = $"No asset \"{id}\"."; return null; }
+            public string DescribeMissing(Object missing) => "a missing asset";
+        }
+
+        [Serializable]
+        public class Holder
+        {
+            public Texture2D one;
+            public List<Texture2D> list = new List<Texture2D>();
+            public Texture2D[] array = new Texture2D[0];
+            public Inner inner = new Inner();
+        }
+
+        [Test]
+        public void DeferredAssetsReadEmptyThenFillAndEmptyInPlace()
+        {
+            var assets = new DeferredAssets();
+            var holder = new Holder();
+            var issues = Populate("{ \"one\": \"later/a\", \"list\": [\"later/a\", \"later/b\"], \"array\": [\"later/b\"], \"inner\": { \"count\": 4 } }",
+                holder, new UnityJsonSerializer(assets));
+
+            Assert.That(issues, Is.Empty, "a deferred id is no error");
+            Assert.That(holder.one, Is.Null);
+            Assert.That(holder.list, Has.Count.EqualTo(2), "the list keeps its places");
+            Assert.That(holder.inner.count, Is.EqualTo(4), "a nested object after a deferred id still reads");
+            Assert.That(assets.Bound["later/a"], Has.Count.EqualTo(2));
+            Assert.That(assets.Bound["later/b"], Has.Count.EqualTo(2));
+
+            var a = new Texture2D(1, 1) { name = "a" };
+            var b = new Texture2D(1, 1) { name = "b" };
+            try
+            {
+                assets.Load("later/a", a);
+                assets.Load("later/b", b);
+                Assert.That(holder.one, Is.SameAs(a));
+                Assert.That(holder.list, Is.EqualTo(new[] { a, b }));
+                Assert.That(holder.array, Is.EqualTo(new[] { b }));
+
+                assets.Load("later/a", null);
+                Assert.That(holder.one, Is.Null, "released");
+                Assert.That(holder.list[0], Is.Null);
+                Assert.That(holder.list[1], Is.SameAs(b));
+            }
+            finally
+            {
+                Object.DestroyImmediate(a);
+                Object.DestroyImmediate(b);
+            }
+        }
+
         [Test]
         public void FormattingIsCompactAndDeterministic()
         {

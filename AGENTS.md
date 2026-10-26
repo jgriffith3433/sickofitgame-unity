@@ -348,6 +348,22 @@ instead of generated again. Batch mode fails with "another Unity instance is run
   the build everything is put back, so the editor and tests still read Resources. Startup code that needs the definition
   before the main menu uses `GameDefinition.WhenReady`. Step 6b (`BuildOutputGuard`) lists the largest files of
   Game/v<n> and fails the deploy on any over 95 MB. Content needs nothing new: new art reaches the bundles by itself.
+- **Art and sound load on demand** (iOS Safari kills a page that holds the whole game; v246 ran out of memory at boot). A deploy's
+  player build carries no art or sound in GameDefinition: `Tools/Editor/PlayerDataManifest.cs` (run by PlayerDataSplit.Begin) empties
+  every Texture2D, Sprite and AudioClip reference of the split's copy, makes each asset its own bundle (`PlayerData_Assets_<folder>`,
+  address = its project path) and writes `GameDefinition.assetManifest`: where each reference was and its scope. `core` (menus, theme,
+  Shaft, Yooba, thumbnails, the sounds of audio.json's `events`) loads at boot; `hero` (player.json's states) and `level/<name>` before a
+  level (SceneTransitionManager.LoadLevel; a level includes every registry asset and sound its script names, directly or through the
+  content it reaches: entity ids, `extends`, loot, sequences, its Circle, every weapon, and the global configs), `scene/<id>` with
+  LevelRuntime.PendingScene, `video/<name>` and `death/<name>` before theirs, `codex/<id>` per Codex page, and any other sound on its
+  first play (`Sfx` asks GameAssets; an effect plays if it arrives within 0.4 s, a voice always; 48 kept, least recently used dropped).
+  `Core/Addressables/GameAssets.cs` loads a scope's bundles, writes the references back into GameDefinition (so readers don't change)
+  and releases them when the owner moves on (a level's go when a video loads, everything but `core` at the main menu); parsed content
+  gets its registry art through `IDeferredAssetResolver` bindings (filled when loaded, emptied when released). The editor and tests
+  never have a manifest (`GameAssets.Managed` is false), and PlayerDataSplit.End restores the original asset byte for byte. A new
+  system that reads art outside a level, video, death or the Codex either lives in `core` (a field outside levels/videos/deaths/
+  player states/sounds/registry) or acquires its scope with `GameAssets.Acquire(owner, scopes)`; the log says `[GameAssets] <owner>: N
+  bundles in s` per load. Art a level spawns but its data never names (a C# literal id) won't be loaded: name it in the level or a global config.
 - **Tests:** `-runTests -testPlatform EditMode` and `-runTests -testPlatform PlayMode` (add `-testResults <file>`).
 - **Playtest every level with a bot** (real Level scene, ~1 min per level; omit `-nographics`):
   `-runTests -testPlatform PlayMode -testCategory Playtest -testResults Logs/Playtest/results.xml`, then read

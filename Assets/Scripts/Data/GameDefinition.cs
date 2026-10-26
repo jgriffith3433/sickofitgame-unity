@@ -131,6 +131,12 @@ namespace SickOfIt.Data
         [Tooltip("Assets used by gameplay content, by id. Built by the config importer — DO NOT EDIT.")]
         public List<AssetRegistryEntry> assetRegistry = new List<AssetRegistryEntry>();
 
+        [Tooltip("A player build's list of the art and sound taken out of this definition and what loads each (PlayerDataSplit, GameAssets). Empty in the editor.")]
+        [HideInInspector] public string assetManifest = "";
+
+        /// <summary>A player build whose art and sound load on demand (GameAssets) instead of with the definition.</summary>
+        public bool ManagedAssets => !string.IsNullOrEmpty(assetManifest);
+
         [Header("Generated Prefab References (set by generators — DO NOT EDIT)")]
         [Tooltip("Set by PickupPrefabGenerator")]
         public GameObject pickupPrefab;
@@ -335,8 +341,13 @@ namespace SickOfIt.Data
                         return entry.sprites;
                 }
             }
-            return System.Array.Empty<Sprite>();
+            // A player build loads sheets on demand (GameAssets); it knows the sprites of every sheet it loaded.
+            var loaded = sheet != null ? LoadedSprites?.Invoke(sheet) : null;
+            return loaded ?? System.Array.Empty<Sprite>();
         }
+
+        /// <summary>The sprites of a sheet loaded on demand (set by GameAssets in a player build), or null.</summary>
+        public static System.Func<Texture2D, Sprite[]> LoadedSprites;
 
         /// <summary>
         /// Find a projectile config by its ID string (e.g. "Player", "Enemy", "Laser").

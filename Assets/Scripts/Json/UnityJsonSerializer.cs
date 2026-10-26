@@ -38,6 +38,10 @@ namespace SickOfIt.Json
 
         readonly IAssetIdResolver assets;
 
+        // An asset id the resolver defers (IDeferredAssetResolver): set by TryReadAsset, taken by whoever stores the value.
+        string deferredId;
+        Type deferredType;
+
         /// <summary>
         /// Called for each [RawJson] field read from JSON, with the field's JSON value (line numbers intact),
         /// so a caller can check the embedded content at import time.
@@ -374,10 +378,20 @@ namespace SickOfIt.Json
                 }
 
                 object current = field.GetValue(target);
+                deferredId = null;
                 if (TryRead(property.Value, field.FieldType, current, issues, file, fieldPath, out object value))
+                {
                     field.SetValue(target, value);
+                    if (deferredId != null)
+                    {
+                        var into = field;
+                        var owner = target;
+                        ((IDeferredAssetResolver)assets).Bind(deferredId, deferredType, asset => into.SetValue(owner, asset));
+                    }
+                }
                 else
                     ok = false;
+                deferredId = null;
             }
             return ok;
         }
@@ -390,31 +404,43 @@ namespace SickOfIt.Json
 
             var array = (JArray)token;
             var items = new List<object>(array.Count);
+            List<(int index, string id, Type type)> deferred = null;
             bool ok = true;
             for (int i = 0; i < array.Count; i++)
             {
+                deferredId = null;
                 if (TryRead(array[i], element, null, issues, file, $"{path}[{i}]", out object item))
+                {
                     items.Add(item);
+                    if (deferredId != null)
+                        (deferred ??= new List<(int, string, Type)>()).Add((items.Count - 1, deferredId, deferredType));
+                }
                 else
                     ok = false;
+                deferredId = null;
             }
             if (!ok)
                 return false;
 
+            IList created;
             if (type.IsArray)
             {
-                var created = Array.CreateInstance(element, items.Count);
+                created = Array.CreateInstance(element, items.Count);
                 for (int i = 0; i < items.Count; i++)
-                    created.SetValue(items[i], i);
-                result = created;
+                    created[i] = items[i];
             }
             else
             {
-                var list = (IList)Activator.CreateInstance(type);
+                created = (IList)Activator.CreateInstance(type);
                 foreach (var item in items)
-                    list.Add(item);
-                result = list;
+                    created.Add(item);
             }
+            if (deferred != null)
+            {
+                foreach (var (index, id, deferredAs) in deferred)
+                    ((IDeferredAssetResolver)assets).Bind(id, deferredAs, asset => created[index] = asset);
+            }
+            result = created;
             return true;
         }
 
@@ -473,6 +499,13 @@ namespace SickOfIt.Json
             if (id.Length == 0)
                 return true;
 
+            if (assets is IDeferredAssetResolver deferring && deferring.Defers(id, type))
+            {
+                // Filled in when its asset is loaded (the caller that stores the value binds it).
+                deferredId = id;
+                deferredType = type;
+                return true;
+            }
             var asset = assets.Resolve(id, type, out string error);
             if (asset == null)
                 return Fail(issues, file, path, token, error);

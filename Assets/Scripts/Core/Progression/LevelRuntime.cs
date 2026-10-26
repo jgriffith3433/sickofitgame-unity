@@ -73,7 +73,12 @@ namespace SickOfIt.Core.Progression
         /// supplies the backdrop, music, ground and hero; the scene supplies everything that happens. Read once when
         /// the level starts, then cleared (the playtest's "cutscene" scenario sets it).
         /// </summary>
-        public static string PendingScene;
+        public static string PendingScene
+        {
+            get => SickOfIt.Core.Addressables.GameAssets.PendingLevelScene;
+            // (GameAssets loads the scene's art with the level: SceneTransitionManager.LoadLevel.)
+            set => SickOfIt.Core.Addressables.GameAssets.PendingLevelScene = value;
+        }
 
         /// <summary>The scene playing instead of the level's script, or "" for the level itself.</summary>
         public string SceneId { get; private set; } = "";
