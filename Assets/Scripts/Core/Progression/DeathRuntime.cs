@@ -59,7 +59,6 @@ namespace SickOfIt.Core.Progression
         public ShaftStop RunStop => runStop;
 
         private TMPro.TextMeshProUGUI titleText;
-        private TMPro.TextMeshProUGUI gloatText;
 
         /// <summary>Which gloat comes next (they are said in turn, one per death).</summary>
         private const string GloatTurnKey = "Death_GloatTurn";
@@ -145,7 +144,7 @@ namespace SickOfIt.Core.Progression
             BuildWords(menu);
         }
 
-        /// <summary>"YOU OBVIOUSLY DIED" at the top, and under it the announcer's gloat once the animation starts.</summary>
+        /// <summary>"YOU OBVIOUSLY DIED" at the top; the announcer's gloat is heard, not written (the screen was too busy, J 2026-10-26).</summary>
         private void BuildWords(SickOfIt.Core.UI.Menus.MenuCanvas menu)
         {
             var theme = menu.Theme;
@@ -153,9 +152,6 @@ namespace SickOfIt.Core.Progression
             titleText = AddLine(menu, "Title", title, theme.title, 130f,
                 MenuPlacement.At(0.5f, 0.87f, 0f, 0f, 1500f, 170f), MenuPlacement.At(0.5f, 1f, 0f, -270f, 1000f, 150f), menu.TitleFont,
                 new SickOfIt.Data.Config.MenuMotion { type = SickOfIt.Data.Config.MenuMotionType.Jitter, amount = 5f, speed = 1f }, -3f);
-            gloatText = AddLine(menu, "Gloat", "", theme.subtitle, 46f,
-                MenuPlacement.At(0.5f, 0.75f, 0f, 0f, 1500f, 80f), MenuPlacement.At(0.5f, 1f, 0f, -390f, 1000f, 90f), null, null, 0f);
-            gloatText.transform.parent.gameObject.SetActive(false);
 
             if (config != null && config.gloats != null && config.gloats.Count > 0)
             {
@@ -183,10 +179,8 @@ namespace SickOfIt.Core.Progression
         /// <summary>The announcer gloats as the animation starts (over its soundtrack; Sfx plays outside the scene's clock).</summary>
         private void PlayGloat()
         {
-            if (gloat == null || gloatText == null)
+            if (gloat == null)
                 return;
-            gloatText.transform.parent.gameObject.SetActive(!string.IsNullOrEmpty(gloat.text));
-            SickOfIt.Core.UI.Menus.MenuGraphics.SetText(gloatText, gloat.text ?? "");
             if (!string.IsNullOrEmpty(gloat.sound))
                 SickOfIt.Core.Audio.Sfx.Play(gloat.sound);
         }

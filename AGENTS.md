@@ -356,7 +356,12 @@ instead of generated again. Batch mode fails with "another Unity instance is run
   level (SceneTransitionManager.LoadLevel; a level includes every registry asset and sound its script names, directly or through the
   content it reaches: entity ids, `extends`, loot, sequences, its Circle, every weapon, and the global configs), `scene/<id>` with
   LevelRuntime.PendingScene, `video/<name>` and `death/<name>` before theirs, `codex/<id>` per Codex page, and any other sound on its
-  first play (`Sfx` asks GameAssets; an effect plays if it arrives within 0.4 s, a voice always; 48 kept, least recently used dropped).
+  first play (`Sfx` asks GameAssets; an effect plays if it arrives within 0.4 s, a voice always; 48 kept and 40 MB of decoded audio,
+  least recently used dropped). Spoken lines never preload (a level's closure has its effects only). An owner's old scopes are
+  released *before* its new ones load (never two floors at once; the WebGL heap only grows, so the peak is what kills a phone).
+  Long clips (music, soundtracks) are `loadType: 1` (Compressed In Memory: an <audio> element, not decoded): a "Decompress On
+  Load" clip costs ~20x its mp3 in the browser. `[Memory] ...` lines (Core/Addressables/MemoryReport.cs, Plugins/WebGL/SickOfItMemory.jslib)
+  give the heap, JS heap, textures, bundles and decoded audio after every scene and load; `?dev=1` shows them on screen.
   `Core/Addressables/GameAssets.cs` loads a scope's bundles, writes the references back into GameDefinition (so readers don't change)
   and releases them when the owner moves on (a level's go when a video loads, everything but `core` at the main menu); parsed content
   gets its registry art through `IDeferredAssetResolver` bindings (filled when loaded, emptied when released). The editor and tests

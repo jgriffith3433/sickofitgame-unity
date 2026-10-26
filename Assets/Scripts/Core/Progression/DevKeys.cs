@@ -7,12 +7,14 @@ namespace SickOfIt.Core.Progression
     /// <summary>
     /// Developer keys, only with <c>dev=1</c> in the page's URL (and in the editor): + gives 10 diamonds, - takes 10 away
     /// (hold Ctrl for 100). Straight into the save (RogueliteManager.SetPoints: no achievement counts), shown for a moment
-    /// in the corner. Never on for players.
+    /// in the corner. Also the memory line (MemoryReport) along the bottom, once a second. Never on for players.
     /// </summary>
     public sealed class DevKeys : MonoBehaviour
     {
         string shown = "";
         float shownUntil;
+        string memory = "";
+        float memoryAt = -99f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Boot()
@@ -64,11 +66,19 @@ namespace SickOfIt.Core.Progression
 
         void OnGUI()
         {
+            if (Time.unscaledTime - memoryAt > 1f)
+            {
+                memory = SickOfIt.Core.Addressables.MemoryReport.Line();
+                memoryAt = Time.unscaledTime;
+            }
+            var small = new GUIStyle(GUI.skin.box) { fontSize = Mathf.RoundToInt(Mathf.Max(12f, Screen.height * 0.018f)), alignment = TextAnchor.MiddleLeft, wordWrap = true };
+            small.normal.textColor = Color.white;
+            GUI.Box(new Rect(8f, Screen.height - 34f, Mathf.Min(Screen.width - 16f, 900f), 28f), memory, small);
             if (Time.unscaledTime > shownUntil)
                 return;
             var style = new GUIStyle(GUI.skin.box) { fontSize = Mathf.RoundToInt(Mathf.Max(16f, Screen.height * 0.028f)), alignment = TextAnchor.MiddleCenter };
             style.normal.textColor = Color.white;
-            GUI.Box(new Rect(Screen.width - 360f, Screen.height - 70f, 340f, 50f), shown, style);
+            GUI.Box(new Rect(Screen.width - 360f, Screen.height - 96f, 340f, 50f), shown, style);
         }
     }
 }

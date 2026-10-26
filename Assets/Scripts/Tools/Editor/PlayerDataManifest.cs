@@ -231,7 +231,9 @@ namespace SickOfIt.Tools.Editor
                 list.Add(files.Count - 1);
             }
             var registry = new HashSet<string>(definition.assetRegistry.Where(e => e != null && !string.IsNullOrEmpty(e.id)).Select(e => e.id), StringComparer.Ordinal);
-            var sounds = new HashSet<string>(definition.audio.sounds.Where(s => s != null && !string.IsNullOrEmpty(s.id)).Select(s => s.id), StringComparer.Ordinal);
+            // Effects load with the level (they must play on the frame); spoken lines are many and long once decoded, so
+            // they load on their first play (Sfx asks GameAssets) and the least recently used go past the budget.
+            var sounds = new HashSet<string>(definition.audio.sounds.Where(s => s != null && !string.IsNullOrEmpty(s.id) && s.kind != SoundKind.Voice).Select(s => s.id), StringComparer.Ordinal);
             var weapons = Enumerable.Range(0, files.Count).Where(i => files[i].folder == "weapons").ToList();
             // What the game's own systems spawn in any level (the hero's settings, pickups, rewind orbs, style, replay modes).
             var global = new List<string>();

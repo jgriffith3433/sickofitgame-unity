@@ -32,8 +32,10 @@ namespace SickOfIt.Core.Addressables
         public static string Sound(string id) => "sound/" + id;
         public static string RegistryAsset(string id) => "asset/" + id;
 
-        /// <summary>On-demand scopes kept at once (each a sound or one piece of art).</summary>
+        /// <summary>On-demand scopes kept at once (each a sound or one piece of art)...</summary>
         public const int DemandCap = 48;
+        /// <summary>...and the memory they may take (a decoded clip is its samples x channels x 4 bytes in the browser).</summary>
+        public const long DemandBudgetBytes = 40L * 1024 * 1024;
         const string DemandOwner = "demand";
 
         /// <summary>A player build whose art and sound load here.</summary>
@@ -114,8 +116,9 @@ namespace SickOfIt.Core.Addressables
         }
 
         /// <summary>
-        /// Gives <paramref name="owner"/> exactly these scopes: loads what is missing, waits for it, then releases what the
-        /// owner held before and no longer needs. <paramref name="progress"/> gets 0..1.
+        /// Gives <paramref name="owner"/> exactly these scopes: first lets go of what the owner held and no longer needs
+        /// (a phone's browser must never hold two floors at once; what both need stays), then loads what is missing and
+        /// waits for it. <paramref name="progress"/> gets 0..1.
         /// </summary>
         public static IEnumerator Acquire(string owner, IEnumerable<string> wanted, Action<float> progress = null)
         {
@@ -123,6 +126,14 @@ namespace SickOfIt.Core.Addressables
                 yield break;
             var next = AddressesOf(wanted);
             owners.TryGetValue(owner, out var before);
+            if (before != null)
+            {
+                foreach (string address in before)
+                {
+                    if (!next.Contains(address))
+                        Unretain(address);
+                }
+            }
             var added = new List<Load>();
             foreach (string address in next)
             {
@@ -146,16 +157,11 @@ namespace SickOfIt.Core.Addressables
                     break;
                 yield return null;
             }
-            if (before != null)
-            {
-                foreach (string address in before)
-                {
-                    if (!next.Contains(address))
-                        Unretain(address);
-                }
-            }
             if (added.Count > 0)
+            {
                 Debug.Log($"[GameAssets] {owner}: {added.Count} bundles in {Time.realtimeSinceStartup - started:0.0} s ({Describe()}).");
+                MemoryReport.Log("after loading " + owner);
+            }
         }
 
         /// <summary>Drops everything <paramref name="owner"/> holds.</summary>
@@ -211,11 +217,12 @@ namespace SickOfIt.Core.Addressables
                 demandWaiting.Remove(scope);
                 ready?.Invoke();
             }
+            TrimDemand(); // (its decoded size is known now)
         }
 
         static void TrimDemand()
         {
-            while (demandUsed.Count > DemandCap)
+            while (demandUsed.Count > DemandCap || DemandBytes() > DemandBudgetBytes)
             {
                 string oldest = null;
                 float at = float.MaxValue;
@@ -231,6 +238,44 @@ namespace SickOfIt.Core.Addressables
                     return;
                 demandUsed.Remove(oldest);
                 Release(DemandOwner + ":" + oldest);
+            }
+        }
+
+        // What the on-demand scopes hold now (decoded audio; art counts nothing here, it is small next to it).
+        static long DemandBytes()
+        {
+            long total = 0;
+            foreach (string scope in demandUsed.Keys)
+            {
+                if (!owners.TryGetValue(DemandOwner + ":" + scope, out var held))
+                    continue;
+                foreach (string address in held)
+                {
+                    if (loads.TryGetValue(address, out var load))
+                        total += Bytes(load);
+                }
+            }
+            return total;
+        }
+
+        /// <summary>A loaded clip's decoded size in the browser (a clip played compressed costs next to nothing).</summary>
+        static long Bytes(Load load)
+        {
+            if (!load.done || !load.clip.IsValid() || load.clip.Status != AsyncOperationStatus.Succeeded || load.clip.Result == null)
+                return 0;
+            var clip = load.clip.Result;
+            return clip.loadType == AudioClipLoadType.DecompressOnLoad ? (long)clip.samples * clip.channels * 4 : 0;
+        }
+
+        /// <summary>Decoded audio held now, all owners (for the memory readout).</summary>
+        public static long AudioBytes
+        {
+            get
+            {
+                long total = 0;
+                foreach (var load in loads.Values)
+                    total += Bytes(load);
+                return total;
             }
         }
 
