@@ -27,6 +27,8 @@ namespace SickOfIt.Gameplay
         public static float Quality = Application.isMobilePlatform ? 0.5f : 1f;
         /// <summary>Everything off (the playtest's baseline frame time).</summary>
         public static bool Enabled = true;
+        /// <summary>The weather bits (ash, sparks, cinders): off for players (J, 2026-10-26: far too many particles); the ambience playtest turns them on to check them.</summary>
+        public static bool Weather = false;
 
         sealed class Bit
         {
@@ -314,7 +316,7 @@ namespace SickOfIt.Gameplay
             activeByKind.Clear();
             foreach (var bit in bits)
             {
-                bool on = FloorOpen(bit.Def.fromFloor, floor) && bit.Rank < Mathf.CeilToInt(bit.Def.count * Mathf.Clamp01(Quality));
+                bool on = Weather && FloorOpen(bit.Def.fromFloor, floor) && bit.Rank < Mathf.CeilToInt(bit.Def.count * Mathf.Clamp01(Quality));
                 if (on != bit.Active)
                 {
                     bit.Active = on;
