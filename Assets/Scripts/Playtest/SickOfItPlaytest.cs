@@ -9628,7 +9628,8 @@ namespace SickOfIt.Playtest
                         ScanPlaceholders(world);
                         Run.Note($"level {n} {world.Director?.PhaseName} t={now:0}");
                     }
-                    float progress = Mathf.Lerp(progressFrom, progressTo, Mathf.Clamp01(now / limit));
+                    // Progress only goes forward: a retried level (or one that restarts after a death) must not pull the bar back.
+                    float progress = Mathf.Max(lastProgressSent, Mathf.Lerp(progressFrom, progressTo, Mathf.Clamp01(now / limit)));
                     // The package ends the whole run as stuck after 60 s with no Progress, Event or Add. A run of many levels
                     // (all-levels: 79) moves the bar less than 0.01 per level, so a quiet floor went silent for a minute and beta's
                     // all-levels run died on Level 5. While the game clock moves, the bot is playing: report it every 5 s. A clock
