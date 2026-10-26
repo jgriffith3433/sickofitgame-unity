@@ -11,7 +11,11 @@
   ],
   "extends": "slagHound",
   "health": 6,
-  "tags": ["alphaHound", "elite", "slagHound"],
+  "tags": [
+    "alphaHound",
+    "elite",
+    "slagHound"
+  ],
   "visual": {
     "scale": 0.286,
     "fxColor": "#FF8A3A",
@@ -176,11 +180,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -224,7 +233,10 @@
       "entity": "cinder",
       "anchor": "Self",
       "count": 3,
-      "spacing": [0.5, 0],
+      "spacing": [
+        0.5,
+        0.0
+      ],
       "facePlayer": false
     }
   ],

@@ -6,13 +6,15 @@
   "note": "A bug with a lantern. Of course there is.",
   "health": 1,
   "moveSpeed": 1.15,
-  "activationRange": 14,
-  "tags": ["lanternfly"],
+  "activationRange": 14.0,
+  "tags": [
+    "lanternfly"
+  ],
   "body": {
     "shape": "Circle",
     "radius": 0.3,
     "solid": false,
-    "gravity": 0
+    "gravity": 0.0
   },
   "visual": {
     "scale": 0.1,
@@ -127,7 +129,7 @@
     "facesLeft": false
   },
   "loot": {
-    "chance": 0,
+    "chance": 0.0,
     "count": 0,
     "value": 0
   },
@@ -140,7 +142,7 @@
     {
       "type": "chase",
       "speed": 1.15,
-      "stopDistance": 0,
+      "stopDistance": 0.0,
       "face": true,
       "animBool": "IsMoving"
     },

@@ -115,10 +115,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -135,12 +135,12 @@ TextureImporter:
       name: move_01
       rect:
         serializedVersion: 2
-        x: 51
+        x: 75
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -157,12 +157,12 @@ TextureImporter:
       name: move_02
       rect:
         serializedVersion: 2
-        x: 102
+        x: 150
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -179,12 +179,12 @@ TextureImporter:
       name: move_03
       rect:
         serializedVersion: 2
-        x: 153
+        x: 225
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -201,12 +201,12 @@ TextureImporter:
       name: move_04
       rect:
         serializedVersion: 2
-        x: 204
+        x: 300
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -223,12 +223,12 @@ TextureImporter:
       name: move_05
       rect:
         serializedVersion: 2
-        x: 255
+        x: 375
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -245,12 +245,12 @@ TextureImporter:
       name: move_06
       rect:
         serializedVersion: 2
-        x: 306
+        x: 450
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -267,12 +267,12 @@ TextureImporter:
       name: move_07
       rect:
         serializedVersion: 2
-        x: 357
+        x: 525
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -289,12 +289,12 @@ TextureImporter:
       name: move_08
       rect:
         serializedVersion: 2
-        x: 408
+        x: 600
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -311,12 +311,12 @@ TextureImporter:
       name: move_09
       rect:
         serializedVersion: 2
-        x: 459
+        x: 675
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -333,12 +333,12 @@ TextureImporter:
       name: move_10
       rect:
         serializedVersion: 2
-        x: 510
+        x: 750
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -355,12 +355,12 @@ TextureImporter:
       name: move_11
       rect:
         serializedVersion: 2
-        x: 561
+        x: 825
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -377,12 +377,12 @@ TextureImporter:
       name: move_12
       rect:
         serializedVersion: 2
-        x: 612
+        x: 900
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -399,12 +399,12 @@ TextureImporter:
       name: move_13
       rect:
         serializedVersion: 2
-        x: 663
+        x: 975
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -421,12 +421,12 @@ TextureImporter:
       name: move_14
       rect:
         serializedVersion: 2
-        x: 714
+        x: 1050
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -443,12 +443,12 @@ TextureImporter:
       name: move_15
       rect:
         serializedVersion: 2
-        x: 765
+        x: 1125
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -465,12 +465,12 @@ TextureImporter:
       name: move_16
       rect:
         serializedVersion: 2
-        x: 816
+        x: 1200
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -487,12 +487,12 @@ TextureImporter:
       name: move_17
       rect:
         serializedVersion: 2
-        x: 867
+        x: 1275
         y: 0
-        width: 51
-        height: 106
+        width: 75
+        height: 102
       alignment: 9
-      pivot: {x: 0.5908049, y: 0.470633}
+      pivot: {x: 0.38198924, y: 0.4886148}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []

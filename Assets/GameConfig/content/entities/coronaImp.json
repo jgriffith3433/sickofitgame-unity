@@ -11,7 +11,12 @@
   ],
   "extends": "haloImp",
   "health": 5,
-  "tags": ["coronaImp", "elite", "haloImp", "imp"],
+  "tags": [
+    "coronaImp",
+    "elite",
+    "haloImp",
+    "imp"
+  ],
   "visual": {
     "scale": 0.375,
     "fxColor": "#FFF2B0",
@@ -111,11 +116,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -143,7 +153,10 @@
       },
       "speed": 1.9,
       "aim": "Player",
-      "muzzle": [0.09, 0.09375],
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
       "interval": 3.8,
       "initialDelay": 1.6,
       "animTrigger": "IsAttacking",

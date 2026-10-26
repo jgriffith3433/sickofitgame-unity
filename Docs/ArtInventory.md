@@ -10,8 +10,8 @@ How art is made: Docs/ArtPipeline.md (creatures `node Tools/Art/art.mjs <id>`, t
 | | ok | placeholder / stand-in |
 |---|---|---|
 | Entities in use | 428 | 0 |
-| Hero clips (art/hero.json) | 6 | 84 |
-| Weapon grips | 10 | 8 |
+| Hero clips (art/hero.json) | 90 | 0 |
+| Weapon grips | 18 | 0 |
 | Circle backdrops | 3 | 0 |
 | Circle scenery (props, depth rows, far-off life) | 26 | 0 |
 | Story videos, death scenes, menus, level backdrops (files exist) | 163 | 0 |
@@ -240,193 +240,103 @@ On beta at 4bf1506c (2026-10-25), before the full art pass: **179 entities in us
 
 ## Still to do
 
-- hero `Land` (land): MISSING, plays -
-- hero `AirFire` (airFire): MISSING, plays -
-- hero `RunFire` (runFire): STAND-IN, plays Walk.png
-- hero `EquipLauncher` (equipLauncher): STAND-IN, plays Curious.png
-- hero `LauncherTaken` (launcherAway): STAND-IN, plays Grabbed.png
-- hero `ShotgunIdle` (shotgunIdle): MISSING, plays -
-- hero `ShotgunRun` (shotgunRun): MISSING, plays -
-- hero `ShotgunJump` (shotgunJump): MISSING, plays -
-- hero `ShotgunFall` (shotgunFall): MISSING, plays -
-- hero `ShotgunLand` (shotgunLand): MISSING, plays -
-- hero `EquipShotgun` (shotgunEquip): MISSING, plays -
-- hero `ShotgunAttack` (shotgunAttack): MISSING, plays -
-- hero `ShotgunRunAttack` (shotgunRunAttack): MISSING, plays -
-- hero `ShotgunAirAttack` (shotgunAirAttack): MISSING, plays -
-- hero `SpitfireIdle` (spitfireIdle): MISSING, plays -
-- hero `SpitfireRun` (spitfireRun): MISSING, plays -
-- hero `SpitfireJump` (spitfireJump): MISSING, plays -
-- hero `SpitfireFall` (spitfireFall): MISSING, plays -
-- hero `SpitfireLand` (spitfireLand): MISSING, plays -
-- hero `EquipSpitfire` (spitfireEquip): MISSING, plays -
-- hero `SpitfireAttack` (spitfireAttack): MISSING, plays -
-- hero `SpitfireRunAttack` (spitfireRunAttack): MISSING, plays -
-- hero `SpitfireAirAttack` (spitfireAirAttack): MISSING, plays -
-- hero `PistolIdle` (ricochetPistolIdle): MISSING, plays -
-- hero `PistolRun` (ricochetPistolRun): MISSING, plays -
-- hero `PistolJump` (ricochetPistolJump): MISSING, plays -
-- hero `PistolFall` (ricochetPistolFall): MISSING, plays -
-- hero `PistolLand` (ricochetPistolLand): MISSING, plays -
-- hero `EquipPistol` (ricochetPistolEquip): MISSING, plays -
-- hero `PistolAttack` (ricochetPistolAttack): MISSING, plays -
-- hero `PistolRunAttack` (ricochetPistolRunAttack): MISSING, plays -
-- hero `PistolAirAttack` (ricochetPistolAirAttack): MISSING, plays -
-- hero `LadleIdle` (slagLadleIdle): MISSING, plays -
-- hero `LadleRun` (slagLadleRun): MISSING, plays -
-- hero `LadleJump` (slagLadleJump): MISSING, plays -
-- hero `LadleFall` (slagLadleFall): MISSING, plays -
-- hero `LadleLand` (slagLadleLand): MISSING, plays -
-- hero `EquipLadle` (slagLadleEquip): MISSING, plays -
-- hero `LadleAttack` (slagLadleAttack): MISSING, plays -
-- hero `LadleRunAttack` (slagLadleRunAttack): MISSING, plays -
-- hero `LadleAirAttack` (slagLadleAirAttack): MISSING, plays -
-- hero `HaloIdle` (boomerangHaloIdle): MISSING, plays -
-- hero `HaloRun` (boomerangHaloRun): MISSING, plays -
-- hero `HaloJump` (boomerangHaloJump): MISSING, plays -
-- hero `HaloFall` (boomerangHaloFall): MISSING, plays -
-- hero `HaloLand` (boomerangHaloLand): MISSING, plays -
-- hero `EquipHalo` (boomerangHaloEquip): MISSING, plays -
-- hero `HaloAttack` (boomerangHaloAttack): MISSING, plays -
-- hero `HaloRunAttack` (boomerangHaloRunAttack): MISSING, plays -
-- hero `HaloAirAttack` (boomerangHaloAirAttack): MISSING, plays -
-- hero `WhipIdle` (chainWhipIdle): MISSING, plays -
-- hero `WhipRun` (chainWhipRun): MISSING, plays -
-- hero `WhipJump` (chainWhipJump): MISSING, plays -
-- hero `WhipFall` (chainWhipFall): MISSING, plays -
-- hero `WhipLand` (chainWhipLand): MISSING, plays -
-- hero `EquipWhip` (chainWhipEquip): MISSING, plays -
-- hero `WhipLash` (whipLash): MISSING, plays -
-- hero `WhipSnap` (whipSnap): MISSING, plays -
-- hero `WhipCrack` (whipCrack): MISSING, plays -
-- hero `WhipRunAttack` (whipRunAttack): MISSING, plays -
-- hero `WhipAirAttack` (whipAirAttack): MISSING, plays -
-- hero `UnarmedIdle` (fistsIdle): STAND-IN, plays Idle.png
-- hero `UnarmedWalk` (fistsRun): STAND-IN, plays Walk.png
-- hero `UnarmedJump` (fistsJump): STAND-IN, plays Jump.png
-- hero `UnarmedFall` (fistsFall): STAND-IN, plays Fall.png
-- hero `UnarmedLand` (fistsLand): MISSING, plays -
-- hero `EquipFists` (fistsEquip): STAND-IN, plays Shout.png
-- hero `Punch1` (punch1): STAND-IN, plays Fire.png
-- hero `Punch2` (punch2): STAND-IN, plays Fire.png
-- hero `Punch3` (punch3): STAND-IN, plays Fire.png
-- hero `UnarmedRunAttack` (fistsRunAttack): MISSING, plays -
-- hero `UnarmedAirAttack` (fistsAirAttack): MISSING, plays -
-- hero `Dash` (dash): STAND-IN, plays Walk.png
-- hero `WallSlide` (wallSlide): STAND-IN, plays Grabbed.png
-- hero `WallJump` (wallJump): STAND-IN, plays Jump.png
-- hero `GrappleThrow` (grappleThrow): MISSING, plays -
-- hero `GrappleSwing` (grappleSwing): MISSING, plays -
-- hero `Graze` (graze): MISSING, plays -
-- hero `Hurt` (hurt): STAND-IN, plays Grabbed.png
-- hero `DeathBurn` (deathBurn): STAND-IN, plays Fall.png
-- hero `DeathSquash` (deathSquash): STAND-IN, plays Grabbed.png
-- hero `DeathSpin` (deathSpin): STAND-IN, plays Jump.png
-- hero `DeathShrug` (deathShrug): STAND-IN, plays Shout.png
-- hero `Victory` (victory): STAND-IN, plays Shout.png
-- weapon `boomerangHalo`: 9 states; without a sheet of their own: HaloIdle, HaloRun, HaloJump, HaloFall, HaloLand, HaloRunAttack, HaloAirAttack, EquipHalo, HaloAttack
-- weapon `chainWhip`: 11 states; without a sheet of their own: WhipIdle, WhipRun, WhipJump, WhipFall, WhipLand, WhipRunAttack, WhipAirAttack, EquipWhip, WhipLash, WhipSnap, WhipCrack
-- weapon `fists`: 11 states; without a sheet of their own: UnarmedIdle, UnarmedWalk, UnarmedJump, UnarmedFall, UnarmedLand, UnarmedRunAttack, UnarmedAirAttack, EquipFists, Punch1, Punch2, Punch3
-- weapon `ricochetPistol`: 9 states; without a sheet of their own: PistolIdle, PistolRun, PistolJump, PistolFall, PistolLand, PistolRunAttack, PistolAirAttack, EquipPistol, PistolAttack
-- weapon `rocketLauncher`: 9 states; without a sheet of their own: Land, RunFire, AirFire, EquipLauncher
-- weapon `shotgun`: 9 states; without a sheet of their own: ShotgunIdle, ShotgunRun, ShotgunJump, ShotgunFall, ShotgunLand, ShotgunRunAttack, ShotgunAirAttack, EquipShotgun, ShotgunAttack
-- weapon `slagLadle`: 9 states; without a sheet of their own: LadleIdle, LadleRun, LadleJump, LadleFall, LadleLand, LadleRunAttack, LadleAirAttack, EquipLadle, LadleAttack
-- weapon `spitfire`: 9 states; without a sheet of their own: SpitfireIdle, SpitfireRun, SpitfireJump, SpitfireFall, SpitfireLand, SpitfireRunAttack, SpitfireAirAttack, EquipSpitfire, SpitfireAttack
+Nothing: every row below has real art.
+
 
 ## The hero
 
 | State | hero.json clip | Status | Sheet |
 |---|---|---|---|
-| AirFire | airFire | MISSING | - |
+| AirFire | airFire | ok | AirFire.png |
 | Climb | climbUp | ok | Climb.png |
 | ClimbDown | climbDown | ok | ClimbDown.png |
 | ClimbIdle | climbIdle | ok | ClimbIdle.png |
 | Curious | curious | ok | Curious.png |
-| Dash | dash | STAND-IN | Walk.png |
-| DeathBurn | deathBurn | STAND-IN | Fall.png |
-| DeathShrug | deathShrug | STAND-IN | Shout.png |
-| DeathSpin | deathSpin | STAND-IN | Jump.png |
-| DeathSquash | deathSquash | STAND-IN | Grabbed.png |
-| EquipFists | fistsEquip | STAND-IN | Shout.png |
-| EquipHalo | boomerangHaloEquip | MISSING | - |
-| EquipLadle | slagLadleEquip | MISSING | - |
-| EquipLauncher | equipLauncher | STAND-IN | Curious.png |
-| EquipPistol | ricochetPistolEquip | MISSING | - |
-| EquipShotgun | shotgunEquip | MISSING | - |
-| EquipSpitfire | spitfireEquip | MISSING | - |
-| EquipWhip | chainWhipEquip | MISSING | - |
+| Dash | dash | ok | Dash.png |
+| DeathBurn | deathBurn | ok | DeathBurn.png |
+| DeathShrug | deathShrug | ok | DeathShrug.png |
+| DeathSpin | deathSpin | ok | DeathSpin.png |
+| DeathSquash | deathSquash | ok | DeathSquash.png |
+| EquipFists | fistsEquip | ok | EquipFists.png |
+| EquipHalo | boomerangHaloEquip | ok | EquipHalo.png |
+| EquipLadle | slagLadleEquip | ok | EquipLadle.png |
+| EquipLauncher | equipLauncher | ok | EquipLauncher.png |
+| EquipPistol | ricochetPistolEquip | ok | EquipPistol.png |
+| EquipShotgun | shotgunEquip | ok | EquipShotgun.png |
+| EquipSpitfire | spitfireEquip | ok | EquipSpitfire.png |
+| EquipWhip | chainWhipEquip | ok | EquipWhip.png |
 | Grabbed | grabbed | ok | Grabbed.png |
-| GrappleSwing | grappleSwing | MISSING | - |
-| GrappleThrow | grappleThrow | MISSING | - |
-| Graze | graze | MISSING | - |
-| HaloAirAttack | boomerangHaloAirAttack | MISSING | - |
-| HaloAttack | boomerangHaloAttack | MISSING | - |
-| HaloFall | boomerangHaloFall | MISSING | - |
-| HaloIdle | boomerangHaloIdle | MISSING | - |
-| HaloJump | boomerangHaloJump | MISSING | - |
-| HaloLand | boomerangHaloLand | MISSING | - |
-| HaloRun | boomerangHaloRun | MISSING | - |
-| HaloRunAttack | boomerangHaloRunAttack | MISSING | - |
-| Hurt | hurt | STAND-IN | Grabbed.png |
-| LadleAirAttack | slagLadleAirAttack | MISSING | - |
-| LadleAttack | slagLadleAttack | MISSING | - |
-| LadleFall | slagLadleFall | MISSING | - |
-| LadleIdle | slagLadleIdle | MISSING | - |
-| LadleJump | slagLadleJump | MISSING | - |
-| LadleLand | slagLadleLand | MISSING | - |
-| LadleRun | slagLadleRun | MISSING | - |
-| LadleRunAttack | slagLadleRunAttack | MISSING | - |
-| Land | land | MISSING | - |
-| LauncherTaken | launcherAway | STAND-IN | Grabbed.png |
-| PistolAirAttack | ricochetPistolAirAttack | MISSING | - |
-| PistolAttack | ricochetPistolAttack | MISSING | - |
-| PistolFall | ricochetPistolFall | MISSING | - |
-| PistolIdle | ricochetPistolIdle | MISSING | - |
-| PistolJump | ricochetPistolJump | MISSING | - |
-| PistolLand | ricochetPistolLand | MISSING | - |
-| PistolRun | ricochetPistolRun | MISSING | - |
-| PistolRunAttack | ricochetPistolRunAttack | MISSING | - |
-| Punch1 | punch1 | STAND-IN | Fire.png |
-| Punch2 | punch2 | STAND-IN | Fire.png |
-| Punch3 | punch3 | STAND-IN | Fire.png |
-| RunFire | runFire | STAND-IN | Walk.png |
-| ShotgunAirAttack | shotgunAirAttack | MISSING | - |
-| ShotgunAttack | shotgunAttack | MISSING | - |
-| ShotgunFall | shotgunFall | MISSING | - |
-| ShotgunIdle | shotgunIdle | MISSING | - |
-| ShotgunJump | shotgunJump | MISSING | - |
-| ShotgunLand | shotgunLand | MISSING | - |
-| ShotgunRun | shotgunRun | MISSING | - |
-| ShotgunRunAttack | shotgunRunAttack | MISSING | - |
+| GrappleSwing | grappleSwing | ok | GrappleSwing.png |
+| GrappleThrow | grappleThrow | ok | GrappleThrow.png |
+| Graze | graze | ok | Graze.png |
+| HaloAirAttack | boomerangHaloAirAttack | ok | HaloAirAttack.png |
+| HaloAttack | boomerangHaloAttack | ok | HaloAttack.png |
+| HaloFall | boomerangHaloFall | ok | HaloFall.png |
+| HaloIdle | boomerangHaloIdle | ok | HaloIdle.png |
+| HaloJump | boomerangHaloJump | ok | HaloJump.png |
+| HaloLand | boomerangHaloLand | ok | HaloLand.png |
+| HaloRun | boomerangHaloRun | ok | HaloRun.png |
+| HaloRunAttack | boomerangHaloRunAttack | ok | HaloRunAttack.png |
+| Hurt | hurt | ok | Hurt.png |
+| LadleAirAttack | slagLadleAirAttack | ok | LadleAirAttack.png |
+| LadleAttack | slagLadleAttack | ok | LadleAttack.png |
+| LadleFall | slagLadleFall | ok | LadleFall.png |
+| LadleIdle | slagLadleIdle | ok | LadleIdle.png |
+| LadleJump | slagLadleJump | ok | LadleJump.png |
+| LadleLand | slagLadleLand | ok | LadleLand.png |
+| LadleRun | slagLadleRun | ok | LadleRun.png |
+| LadleRunAttack | slagLadleRunAttack | ok | LadleRunAttack.png |
+| Land | land | ok | Land.png |
+| LauncherTaken | launcherAway | ok | LauncherTaken.png |
+| PistolAirAttack | ricochetPistolAirAttack | ok | PistolAirAttack.png |
+| PistolAttack | ricochetPistolAttack | ok | PistolAttack.png |
+| PistolFall | ricochetPistolFall | ok | PistolFall.png |
+| PistolIdle | ricochetPistolIdle | ok | PistolIdle.png |
+| PistolJump | ricochetPistolJump | ok | PistolJump.png |
+| PistolLand | ricochetPistolLand | ok | PistolLand.png |
+| PistolRun | ricochetPistolRun | ok | PistolRun.png |
+| PistolRunAttack | ricochetPistolRunAttack | ok | PistolRunAttack.png |
+| Punch1 | punch1 | ok | Punch1.png |
+| Punch2 | punch2 | ok | Punch2.png |
+| Punch3 | punch3 | ok | Punch3.png |
+| RunFire | runFire | ok | RunFire.png |
+| ShotgunAirAttack | shotgunAirAttack | ok | ShotgunAirAttack.png |
+| ShotgunAttack | shotgunAttack | ok | ShotgunAttack.png |
+| ShotgunFall | shotgunFall | ok | ShotgunFall.png |
+| ShotgunIdle | shotgunIdle | ok | ShotgunIdle.png |
+| ShotgunJump | shotgunJump | ok | ShotgunJump.png |
+| ShotgunLand | shotgunLand | ok | ShotgunLand.png |
+| ShotgunRun | shotgunRun | ok | ShotgunRun.png |
+| ShotgunRunAttack | shotgunRunAttack | ok | ShotgunRunAttack.png |
 | Shout | shout | ok | Shout.png |
-| SpitfireAirAttack | spitfireAirAttack | MISSING | - |
-| SpitfireAttack | spitfireAttack | MISSING | - |
-| SpitfireFall | spitfireFall | MISSING | - |
-| SpitfireIdle | spitfireIdle | MISSING | - |
-| SpitfireJump | spitfireJump | MISSING | - |
-| SpitfireLand | spitfireLand | MISSING | - |
-| SpitfireRun | spitfireRun | MISSING | - |
-| SpitfireRunAttack | spitfireRunAttack | MISSING | - |
-| UnarmedAirAttack | fistsAirAttack | MISSING | - |
-| UnarmedFall | fistsFall | STAND-IN | Fall.png |
-| UnarmedIdle | fistsIdle | STAND-IN | Idle.png |
-| UnarmedJump | fistsJump | STAND-IN | Jump.png |
-| UnarmedLand | fistsLand | MISSING | - |
-| UnarmedRunAttack | fistsRunAttack | MISSING | - |
-| UnarmedWalk | fistsRun | STAND-IN | Walk.png |
-| Victory | victory | STAND-IN | Shout.png |
-| WallJump | wallJump | STAND-IN | Jump.png |
-| WallSlide | wallSlide | STAND-IN | Grabbed.png |
-| WhipAirAttack | whipAirAttack | MISSING | - |
-| WhipCrack | whipCrack | MISSING | - |
-| WhipFall | chainWhipFall | MISSING | - |
-| WhipIdle | chainWhipIdle | MISSING | - |
-| WhipJump | chainWhipJump | MISSING | - |
-| WhipLand | chainWhipLand | MISSING | - |
-| WhipLash | whipLash | MISSING | - |
-| WhipRun | chainWhipRun | MISSING | - |
-| WhipRunAttack | whipRunAttack | MISSING | - |
-| WhipSnap | whipSnap | MISSING | - |
+| SpitfireAirAttack | spitfireAirAttack | ok | SpitfireAirAttack.png |
+| SpitfireAttack | spitfireAttack | ok | SpitfireAttack.png |
+| SpitfireFall | spitfireFall | ok | SpitfireFall.png |
+| SpitfireIdle | spitfireIdle | ok | SpitfireIdle.png |
+| SpitfireJump | spitfireJump | ok | SpitfireJump.png |
+| SpitfireLand | spitfireLand | ok | SpitfireLand.png |
+| SpitfireRun | spitfireRun | ok | SpitfireRun.png |
+| SpitfireRunAttack | spitfireRunAttack | ok | SpitfireRunAttack.png |
+| UnarmedAirAttack | fistsAirAttack | ok | UnarmedAirAttack.png |
+| UnarmedFall | fistsFall | ok | UnarmedFall.png |
+| UnarmedIdle | fistsIdle | ok | UnarmedIdle.png |
+| UnarmedJump | fistsJump | ok | UnarmedJump.png |
+| UnarmedLand | fistsLand | ok | UnarmedLand.png |
+| UnarmedRunAttack | fistsRunAttack | ok | UnarmedRunAttack.png |
+| UnarmedWalk | fistsRun | ok | UnarmedWalk.png |
+| Victory | victory | ok | Victory.png |
+| WallJump | wallJump | ok | WallJump.png |
+| WallSlide | wallSlide | ok | WallSlide.png |
+| WhipAirAttack | whipAirAttack | ok | WhipAirAttack.png |
+| WhipCrack | whipCrack | ok | WhipCrack.png |
+| WhipFall | chainWhipFall | ok | WhipFall.png |
+| WhipIdle | chainWhipIdle | ok | WhipIdle.png |
+| WhipJump | chainWhipJump | ok | WhipJump.png |
+| WhipLand | chainWhipLand | ok | WhipLand.png |
+| WhipLash | whipLash | ok | WhipLash.png |
+| WhipRun | chainWhipRun | ok | WhipRun.png |
+| WhipRunAttack | whipRunAttack | ok | WhipRunAttack.png |
+| WhipSnap | whipSnap | ok | WhipSnap.png |
 
 Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing in PlayerController grabs a ledge).
 
@@ -434,14 +344,14 @@ Ledge grab and ledge climb have no clip: the game has no ledge mechanic (nothing
 
 | Weapon | Status | States |
 |---|---|---|
-| boomerangHalo | STAND-IN | 9 states; without a sheet of their own: HaloIdle, HaloRun, HaloJump, HaloFall, HaloLand, HaloRunAttack, HaloAirAttack, EquipHalo, HaloAttack |
-| chainWhip | STAND-IN | 11 states; without a sheet of their own: WhipIdle, WhipRun, WhipJump, WhipFall, WhipLand, WhipRunAttack, WhipAirAttack, EquipWhip, WhipLash, WhipSnap, WhipCrack |
-| fists | STAND-IN | 11 states; without a sheet of their own: UnarmedIdle, UnarmedWalk, UnarmedJump, UnarmedFall, UnarmedLand, UnarmedRunAttack, UnarmedAirAttack, EquipFists, Punch1, Punch2, Punch3 |
-| ricochetPistol | STAND-IN | 9 states; without a sheet of their own: PistolIdle, PistolRun, PistolJump, PistolFall, PistolLand, PistolRunAttack, PistolAirAttack, EquipPistol, PistolAttack |
-| rocketLauncher | STAND-IN | 9 states; without a sheet of their own: Land, RunFire, AirFire, EquipLauncher |
-| shotgun | STAND-IN | 9 states; without a sheet of their own: ShotgunIdle, ShotgunRun, ShotgunJump, ShotgunFall, ShotgunLand, ShotgunRunAttack, ShotgunAirAttack, EquipShotgun, ShotgunAttack |
-| slagLadle | STAND-IN | 9 states; without a sheet of their own: LadleIdle, LadleRun, LadleJump, LadleFall, LadleLand, LadleRunAttack, LadleAirAttack, EquipLadle, LadleAttack |
-| spitfire | STAND-IN | 9 states; without a sheet of their own: SpitfireIdle, SpitfireRun, SpitfireJump, SpitfireFall, SpitfireLand, SpitfireRunAttack, SpitfireAirAttack, EquipSpitfire, SpitfireAttack |
+| boomerangHalo | ok | 9 states, each its own sheet |
+| chainWhip | ok | 11 states, each its own sheet |
+| fists | ok | 11 states, each its own sheet |
+| ricochetPistol | ok | 9 states, each its own sheet |
+| rocketLauncher | ok | 9 states, each its own sheet |
+| shotgun | ok | 9 states, each its own sheet |
+| slagLadle | ok | 9 states, each its own sheet |
+| spitfire | ok | 9 states, each its own sheet |
 | boomerangHalo HUD icon | ok | Art/Enemies/BoomerangHaloPickup/BoomerangHaloPickup_idle.png#idle_00 |
 | chainWhip HUD icon | ok | Art/Enemies/ChainWhipPickup/ChainWhipPickup_idle.png#idle_00 |
 | chainWhip swing | ok | Art/Effects/Swoosh/Swoosh_arc.png#arc_00 |

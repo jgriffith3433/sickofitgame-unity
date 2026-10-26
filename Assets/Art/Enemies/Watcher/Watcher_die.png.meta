@@ -114,11 +114,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 91
-        height: 157
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -135,12 +135,12 @@ TextureImporter:
       name: die_01
       rect:
         serializedVersion: 2
-        x: 91
-        y: 0
-        width: 91
-        height: 157
+        x: 164
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -157,12 +157,12 @@ TextureImporter:
       name: die_02
       rect:
         serializedVersion: 2
-        x: 182
-        y: 0
-        width: 91
-        height: 157
+        x: 328
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -179,12 +179,12 @@ TextureImporter:
       name: die_03
       rect:
         serializedVersion: 2
-        x: 273
-        y: 0
-        width: 91
-        height: 157
+        x: 492
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -201,12 +201,12 @@ TextureImporter:
       name: die_04
       rect:
         serializedVersion: 2
-        x: 364
-        y: 0
-        width: 91
-        height: 157
+        x: 656
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -223,12 +223,12 @@ TextureImporter:
       name: die_05
       rect:
         serializedVersion: 2
-        x: 455
-        y: 0
-        width: 91
-        height: 157
+        x: 820
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -245,12 +245,12 @@ TextureImporter:
       name: die_06
       rect:
         serializedVersion: 2
-        x: 546
-        y: 0
-        width: 91
-        height: 157
+        x: 984
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -267,12 +267,12 @@ TextureImporter:
       name: die_07
       rect:
         serializedVersion: 2
-        x: 637
-        y: 0
-        width: 91
-        height: 157
+        x: 1148
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -289,12 +289,12 @@ TextureImporter:
       name: die_08
       rect:
         serializedVersion: 2
-        x: 728
-        y: 0
-        width: 91
-        height: 157
+        x: 1312
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -311,12 +311,12 @@ TextureImporter:
       name: die_09
       rect:
         serializedVersion: 2
-        x: 819
-        y: 0
-        width: 91
-        height: 157
+        x: 1476
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -333,12 +333,12 @@ TextureImporter:
       name: die_10
       rect:
         serializedVersion: 2
-        x: 910
-        y: 0
-        width: 91
-        height: 157
+        x: 1640
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -355,12 +355,12 @@ TextureImporter:
       name: die_11
       rect:
         serializedVersion: 2
-        x: 1001
-        y: 0
-        width: 91
-        height: 157
+        x: 1804
+        y: 141
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -377,12 +377,12 @@ TextureImporter:
       name: die_12
       rect:
         serializedVersion: 2
-        x: 1092
+        x: 0
         y: 0
-        width: 91
-        height: 157
+        width: 164
+        height: 141
       alignment: 9
-      pivot: {x: 0.6056141, y: 0.5001605}
+      pivot: {x: 0.41176978, y: 0.4186685}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -391,6 +391,72 @@ TextureImporter:
       bones: []
       spriteID: 41e26bdb2eb758530800000000000000
       internalID: 3856624869688356372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: die_13
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 0
+        width: 164
+        height: 141
+      alignment: 9
+      pivot: {x: 0.41176978, y: 0.4186685}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecb7bcbba45d7ad10800000000000000
+      internalID: 2136911065165560782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: die_14
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 0
+        width: 164
+        height: 141
+      alignment: 9
+      pivot: {x: 0.41176978, y: 0.4186685}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfcfc5aebb66b7ac0800000000000000
+      internalID: -3856375698635817731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: die_15
+      rect:
+        serializedVersion: 2
+        x: 492
+        y: 0
+        width: 164
+        height: 141
+      alignment: 9
+      pivot: {x: 0.41176978, y: 0.4186685}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2661058e7efa4180800000000000000
+      internalID: -9130205475189463508
       vertices: []
       indices: 
       edges: []

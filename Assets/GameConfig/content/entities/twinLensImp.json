@@ -11,7 +11,12 @@
   ],
   "extends": "lensImp",
   "health": 5,
-  "tags": ["elite", "imp", "lensImp", "twinLensImp"],
+  "tags": [
+    "elite",
+    "imp",
+    "lensImp",
+    "twinLensImp"
+  ],
   "visual": {
     "scale": 0.36,
     "fxColor": "#FF4A4A",
@@ -112,11 +117,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -137,7 +147,7 @@
     {
       "type": "laserSweep",
       "damage": 1,
-      "interval": 7,
+      "interval": 7.0,
       "initialDelay": 1.6,
       "warning": 1.2,
       "sweepTime": 1.6,
@@ -152,7 +162,7 @@
     {
       "type": "laserSweep",
       "damage": 1,
-      "interval": 7,
+      "interval": 7.0,
       "initialDelay": 4.8,
       "warning": 1.2,
       "sweepTime": 1.6,

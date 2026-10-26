@@ -5,7 +5,9 @@
   "hint": "Asleep until you come near. Crouches, then lunges. Sidestep.",
   "note": "A statue with opinions. Wakes up when I get close. Rude.",
   "hintVoice": "vo_hero_hint_runeHound",
-  "tags": ["runeHound"],
+  "tags": [
+    "runeHound"
+  ],
   "activationRange": 6.5,
   "health": 4,
   "visual": {

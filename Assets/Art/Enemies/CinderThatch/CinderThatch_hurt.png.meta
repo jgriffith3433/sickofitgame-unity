@@ -115,10 +115,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -135,12 +135,12 @@ TextureImporter:
       name: hurt_01
       rect:
         serializedVersion: 2
-        x: 99
+        x: 125
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -157,12 +157,12 @@ TextureImporter:
       name: hurt_02
       rect:
         serializedVersion: 2
-        x: 198
+        x: 250
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -179,12 +179,12 @@ TextureImporter:
       name: hurt_03
       rect:
         serializedVersion: 2
-        x: 297
+        x: 375
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -201,12 +201,12 @@ TextureImporter:
       name: hurt_04
       rect:
         serializedVersion: 2
-        x: 396
+        x: 500
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -223,12 +223,12 @@ TextureImporter:
       name: hurt_05
       rect:
         serializedVersion: 2
-        x: 495
+        x: 625
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -245,12 +245,12 @@ TextureImporter:
       name: hurt_06
       rect:
         serializedVersion: 2
-        x: 594
+        x: 750
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -267,12 +267,12 @@ TextureImporter:
       name: hurt_07
       rect:
         serializedVersion: 2
-        x: 693
+        x: 875
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -289,12 +289,12 @@ TextureImporter:
       name: hurt_08
       rect:
         serializedVersion: 2
-        x: 792
+        x: 1000
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -311,12 +311,12 @@ TextureImporter:
       name: hurt_09
       rect:
         serializedVersion: 2
-        x: 891
+        x: 1125
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -333,12 +333,12 @@ TextureImporter:
       name: hurt_10
       rect:
         serializedVersion: 2
-        x: 990
+        x: 1250
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -355,12 +355,12 @@ TextureImporter:
       name: hurt_11
       rect:
         serializedVersion: 2
-        x: 1089
+        x: 1375
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -377,12 +377,12 @@ TextureImporter:
       name: hurt_12
       rect:
         serializedVersion: 2
-        x: 1188
+        x: 1500
         y: 0
-        width: 99
-        height: 147
+        width: 125
+        height: 202
       alignment: 9
-      pivot: {x: 0.684262, y: 0.48348695}
+      pivot: {x: 0.47701612, y: 0.3498982}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []

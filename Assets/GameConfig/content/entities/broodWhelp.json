@@ -11,7 +11,11 @@
   ],
   "extends": "demonWhelp",
   "health": 4,
-  "tags": ["broodWhelp", "demonWhelp", "elite"],
+  "tags": [
+    "broodWhelp",
+    "demonWhelp",
+    "elite"
+  ],
   "visual": {
     "scale": 0.285,
     "fxColor": "#FF8A3A",
@@ -125,11 +129,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -163,7 +172,10 @@
       "entity": "demonWhelp",
       "anchor": "Self",
       "count": 2,
-      "spacing": [0.7, 0],
+      "spacing": [
+        0.7,
+        0.0
+      ],
       "facePlayer": false
     }
   ],

@@ -118,10 +118,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -138,12 +138,12 @@ TextureImporter:
       name: move_01
       rect:
         serializedVersion: 2
-        x: 55
+        x: 110
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -160,12 +160,12 @@ TextureImporter:
       name: move_02
       rect:
         serializedVersion: 2
-        x: 110
+        x: 220
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -182,12 +182,12 @@ TextureImporter:
       name: move_03
       rect:
         serializedVersion: 2
-        x: 165
+        x: 330
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -204,12 +204,12 @@ TextureImporter:
       name: move_04
       rect:
         serializedVersion: 2
-        x: 220
+        x: 440
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -226,12 +226,12 @@ TextureImporter:
       name: move_05
       rect:
         serializedVersion: 2
-        x: 275
+        x: 550
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -248,12 +248,12 @@ TextureImporter:
       name: move_06
       rect:
         serializedVersion: 2
-        x: 330
+        x: 660
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -270,12 +270,12 @@ TextureImporter:
       name: move_07
       rect:
         serializedVersion: 2
-        x: 385
+        x: 770
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -292,12 +292,12 @@ TextureImporter:
       name: move_08
       rect:
         serializedVersion: 2
-        x: 440
+        x: 880
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -314,12 +314,12 @@ TextureImporter:
       name: move_09
       rect:
         serializedVersion: 2
-        x: 495
+        x: 990
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -336,12 +336,12 @@ TextureImporter:
       name: move_10
       rect:
         serializedVersion: 2
-        x: 550
+        x: 1100
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -358,12 +358,12 @@ TextureImporter:
       name: move_11
       rect:
         serializedVersion: 2
-        x: 605
+        x: 1210
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -380,12 +380,12 @@ TextureImporter:
       name: move_12
       rect:
         serializedVersion: 2
-        x: 660
+        x: 1320
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -402,12 +402,12 @@ TextureImporter:
       name: move_13
       rect:
         serializedVersion: 2
-        x: 715
+        x: 1430
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -424,12 +424,12 @@ TextureImporter:
       name: move_14
       rect:
         serializedVersion: 2
-        x: 770
+        x: 1540
         y: 0
-        width: 55
-        height: 100
+        width: 110
+        height: 99
       alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
+      pivot: {x: 0.29912025, y: 0.48875856}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -438,28 +438,6 @@ TextureImporter:
       bones: []
       spriteID: 1ee65f4b7787049a0800000000000000
       internalID: -6250863827257823519
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: move_15
-      rect:
-        serializedVersion: 2
-        x: 825
-        y: 0
-        width: 55
-        height: 100
-      alignment: 9
-      pivot: {x: 0.40469208, y: 0.48661292}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c1716cb97cfe10750800000000000000
-      internalID: 6269555796867421980
       vertices: []
       indices: 
       edges: []

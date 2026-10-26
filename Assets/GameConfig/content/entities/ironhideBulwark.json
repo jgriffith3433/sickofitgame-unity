@@ -11,7 +11,12 @@
   ],
   "extends": "bulwarkImp",
   "health": 9,
-  "tags": ["bulwarkImp", "elite", "imp", "ironhideBulwark"],
+  "tags": [
+    "bulwarkImp",
+    "elite",
+    "imp",
+    "ironhideBulwark"
+  ],
   "visual": {
     "scale": 0.413,
     "fxColor": "#8FD0FF",
@@ -175,11 +180,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -197,7 +207,7 @@
     {
       "type": "patrol",
       "speed": 1.2,
-      "distance": 3,
+      "distance": 3.0,
       "pause": 0.9,
       "animBool": "IsMoving"
     },
@@ -206,14 +216,17 @@
       "arc": 150,
       "blockSound": "chain_cut",
       "color": "#8FD0FF",
-      "leak": 0
+      "leak": 0.0
     },
     {
       "type": "shoot",
       "projectile": "projectileEnemy",
-      "speed": 3,
+      "speed": 3.0,
       "aim": "Player",
-      "muzzle": [0.09, 0.09375],
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
       "interval": 3.6,
       "initialDelay": 2.2,
       "damage": 1,

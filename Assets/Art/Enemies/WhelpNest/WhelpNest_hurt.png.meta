@@ -1,7 +1,19 @@
 fileFormatVersion: 2
 guid: effc23dc1328b714cbb489fbc801ac2c
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: 945626688557137087
+    second: hurt_09
+  - first:
+      213: -6682746973951778192
+    second: hurt_10
+  - first:
+      213: -5109314157466476397
+    second: hurt_11
+  - first:
+      213: -2620978008787342013
+    second: hurt_12
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -114,11 +126,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 52
-        height: 122
+        y: 111
+        width: 169
+        height: 111
       alignment: 9
-      pivot: {x: 0.49937966, y: 0.46047065}
+      pivot: {x: 0.3433019, y: 0.4914915}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -135,12 +147,12 @@ TextureImporter:
       name: hurt_01
       rect:
         serializedVersion: 2
-        x: 52
-        y: 0
-        width: 52
-        height: 122
+        x: 169
+        y: 111
+        width: 169
+        height: 111
       alignment: 9
-      pivot: {x: 0.49937966, y: 0.46047065}
+      pivot: {x: 0.3433019, y: 0.4914915}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -157,12 +169,12 @@ TextureImporter:
       name: hurt_02
       rect:
         serializedVersion: 2
-        x: 104
-        y: 0
-        width: 52
-        height: 122
+        x: 338
+        y: 111
+        width: 169
+        height: 111
       alignment: 9
-      pivot: {x: 0.49937966, y: 0.46047065}
+      pivot: {x: 0.3433019, y: 0.4914915}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -179,12 +191,12 @@ TextureImporter:
       name: hurt_03
       rect:
         serializedVersion: 2
-        x: 156
-        y: 0
-        width: 52
-        height: 122
+        x: 507
+        y: 111
+        width: 169
+        height: 111
       alignment: 9
-      pivot: {x: 0.49937966, y: 0.46047065}
+      pivot: {x: 0.3433019, y: 0.4914915}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -201,12 +213,12 @@ TextureImporter:
       name: hurt_04
       rect:
         serializedVersion: 2
-        x: 208
-        y: 0
-        width: 52
-        height: 122
+        x: 676
+        y: 111
+        width: 169
+        height: 111
       alignment: 9
-      pivot: {x: 0.49937966, y: 0.46047065}
+      pivot: {x: 0.3433019, y: 0.4914915}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -223,12 +235,12 @@ TextureImporter:
       name: hurt_05
       rect:
         serializedVersion: 2
-        x: 260
-        y: 0
-        width: 52
-        height: 122
+        x: 845
+        y: 111
+        width: 169
+        height: 111
       alignment: 9
-      pivot: {x: 0.49937966, y: 0.46047065}
+      pivot: {x: 0.3433019, y: 0.4914915}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -245,12 +257,12 @@ TextureImporter:
       name: hurt_06
       rect:
         serializedVersion: 2
-        x: 312
-        y: 0
-        width: 52
-        height: 122
+        x: 1014
+        y: 111
+        width: 169
+        height: 111
       alignment: 9
-      pivot: {x: 0.49937966, y: 0.46047065}
+      pivot: {x: 0.3433019, y: 0.4914915}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -267,12 +279,12 @@ TextureImporter:
       name: hurt_07
       rect:
         serializedVersion: 2
-        x: 364
-        y: 0
-        width: 52
-        height: 122
+        x: 1183
+        y: 111
+        width: 169
+        height: 111
       alignment: 9
-      pivot: {x: 0.49937966, y: 0.46047065}
+      pivot: {x: 0.3433019, y: 0.4914915}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -289,12 +301,12 @@ TextureImporter:
       name: hurt_08
       rect:
         serializedVersion: 2
-        x: 416
-        y: 0
-        width: 52
-        height: 122
+        x: 1352
+        y: 111
+        width: 169
+        height: 111
       alignment: 9
-      pivot: {x: 0.49937966, y: 0.46047065}
+      pivot: {x: 0.3433019, y: 0.4914915}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -303,6 +315,94 @@ TextureImporter:
       bones: []
       spriteID: e03a8901edbbd95d0800000000000000
       internalID: -3054078409851755762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurt_09
+      rect:
+        serializedVersion: 2
+        x: 1521
+        y: 111
+        width: 169
+        height: 111
+      alignment: 9
+      pivot: {x: 0.3433019, y: 0.4914915}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbcb39d867a8f1d00800000000000000
+      internalID: 945626688557137087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurt_10
+      rect:
+        serializedVersion: 2
+        x: 1690
+        y: 111
+        width: 169
+        height: 111
+      alignment: 9
+      pivot: {x: 0.3433019, y: 0.4914915}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 072a9cda80d1243a0800000000000000
+      internalID: -6682746973951778192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurt_11
+      rect:
+        serializedVersion: 2
+        x: 1859
+        y: 111
+        width: 169
+        height: 111
+      alignment: 9
+      pivot: {x: 0.3433019, y: 0.4914915}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 390265618d11819b0800000000000000
+      internalID: -5109314157466476397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hurt_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 169
+        height: 111
+      alignment: 9
+      pivot: {x: 0.3433019, y: 0.4914915}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34dae16336a60abd0800000000000000
+      internalID: -2620978008787342013
       vertices: []
       indices: 
       edges: []
@@ -330,6 +430,10 @@ TextureImporter:
       hurt_06: 3574599318348286972
       hurt_07: -2572463205412052872
       hurt_08: -3054078409851755762
+      hurt_09: 945626688557137087
+      hurt_10: -6682746973951778192
+      hurt_11: -5109314157466476397
+      hurt_12: -2620978008787342013
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

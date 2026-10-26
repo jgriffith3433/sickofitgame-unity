@@ -11,7 +11,12 @@
   ],
   "extends": "blinkImp",
   "health": 5,
-  "tags": ["blinkImp", "elite", "imp", "phaseRaider"],
+  "tags": [
+    "blinkImp",
+    "elite",
+    "imp",
+    "phaseRaider"
+  ],
   "visual": {
     "scale": 0.36,
     "fxColor": "#C58BFF",
@@ -111,11 +116,16 @@
   },
   "healthBar": {
     "show": true,
-    "color": [1, 0.82, 0.3, 1],
+    "color": [
+      1.0,
+      0.82,
+      0.3,
+      1.0
+    ],
     "width": 0.6
   },
   "loot": {
-    "chance": 1,
+    "chance": 1.0,
     "count": 2,
     "value": 1
   },
@@ -136,8 +146,8 @@
     {
       "type": "teleport",
       "to": "NearPlayer",
-      "distance": 3,
-      "interval": 2,
+      "distance": 3.0,
+      "interval": 2.0,
       "initialDelay": 0.8,
       "telegraph": 0.7,
       "marker": "blinkMark",
@@ -150,7 +160,10 @@
       "projectile": "projectileEnemy",
       "speed": 3.8,
       "aim": "Player",
-      "muzzle": [0.09, 0.09375],
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
       "interval": 2.4,
       "initialDelay": 1.8,
       "damage": 1,
