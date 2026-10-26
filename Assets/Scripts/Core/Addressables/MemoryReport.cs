@@ -42,7 +42,36 @@ namespace SickOfIt.Core.Addressables
                    $"bundles {bundles} (art+sound {GameAssets.LoadedCount}, audio {GameAssets.AudioBytes / Mb:0} MB)";
         }
 
-        public static void Log(string when) => Debug.Log($"[Memory] {when}: {Line()}");
+        public static void Log(string when)
+        {
+            Debug.Log($"[Memory] {when}: {Line()}");
+            // With dev=1 (or a playtest), what holds the texture memory: the largest textures by name, so a log shows what a
+            // scene kept that it shouldn't.
+            string url = Application.absoluteURL ?? "";
+            if (System.Text.RegularExpressions.Regex.IsMatch(url, @"[?&](dev=1|playtest=)"))
+                Debug.Log($"[Memory] {when}, largest textures: {LargestTextures(12)}");
+        }
+
+        /// <summary>The <paramref name="count"/> largest loaded textures (first mip's size), "name WxH format MB" each.</summary>
+        public static string LargestTextures(int count)
+        {
+            var textures = Resources.FindObjectsOfTypeAll<Texture2D>();
+            var sized = new System.Collections.Generic.List<(long bytes, Texture2D texture)>(textures.Length);
+            long total = 0;
+            foreach (var t in textures)
+            {
+                if (t == null)
+                    continue;
+                long bytes = (long)UnityEngine.Experimental.Rendering.GraphicsFormatUtility.ComputeMipmapSize(t.width, t.height, t.graphicsFormat);
+                total += bytes;
+                sized.Add((bytes, t));
+            }
+            sized.Sort((a, b) => b.bytes.CompareTo(a.bytes));
+            var parts = new System.Collections.Generic.List<string>();
+            for (int i = 0; i < sized.Count && i < count; i++)
+                parts.Add($"{sized[i].texture.name} {sized[i].texture.width}x{sized[i].texture.height} {sized[i].texture.format} {sized[i].bytes / Mb:0.0}");
+            return $"{sized.Count} textures, {total / Mb:0} MB: " + string.Join("; ", parts);
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Watch()

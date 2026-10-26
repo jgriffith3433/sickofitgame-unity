@@ -179,7 +179,7 @@ namespace SickOfIt.Tools.Editor
         }
 
         /// <summary>
-        /// The found weapons' grip states (a weapon with a pickup that isn't the launcher: ShotgunIdle, WhipLash, EquipHalo, ...):
+        /// The weapons' grip states (every weapon but the launcher: ShotgunIdle, WhipLash, EquipHalo, Punch1, ...):
         /// their sheets come out of the split's GameDefinition (state sheet and asset registry) and become addressable as
         /// PlayerSheets.Address(state), one bundle each, so the player loads them when he gets the weapon. A sheet another state or
         /// weapon also uses stays. Only the build's copy changes; <see cref="End"/> imports the JSON back over it.
@@ -201,7 +201,9 @@ namespace SickOfIt.Tools.Editor
                     continue;
                 var names = new List<string> { hands.idle, hands.run, hands.jump, hands.fall, hands.land, hands.runAttack, hands.airAttack, hands.equip };
                 names.AddRange(hands.attack);
-                bool found = !string.IsNullOrEmpty(weapon.pickup) && !hands.animator && weapon.id != PlayerWeapons.Launcher;
+                // Every weapon but the launcher (his own gun, drawn by the Animator): the found ones and the fists, which only
+                // a few floors hand him (PlayerWeapons.WantSheets loads a held weapon's grips when the level starts).
+                bool found = !hands.animator && weapon.id != PlayerWeapons.Launcher;
                 (found ? onDemand : kept).UnionWith(names.Where(n => !string.IsNullOrEmpty(n)));
             }
             onDemand.ExceptWith(kept);

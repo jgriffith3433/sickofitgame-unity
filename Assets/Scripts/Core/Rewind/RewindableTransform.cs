@@ -43,8 +43,22 @@ namespace SickOfIt.Core.Rewind
                 time = Mathf.Lerp(a.time, b.time, t),
                 localPosition = Vector3.Lerp(a.localPosition, b.localPosition, t),
                 localRotation = Quaternion.Slerp(a.localRotation, b.localRotation, t),
-                localScale = Vector3.Lerp(a.localScale, b.localScale, t)
+                localScale = LerpScale(a.localScale, b.localScale, t)
             };
+        }
+
+        /// <summary>
+        /// Scale between two snapshots, except an axis that changed sign (a sprite flipped to face the other way): it snaps
+        /// to the nearer snapshot. Lerping 1 to -1 passed through 0: rewinding over a turn drew the hero paper-thin or not at
+        /// all, and a rewind that stopped there left him that way (his turns keep |scale|).
+        /// </summary>
+        static Vector3 LerpScale(Vector3 a, Vector3 b, float t)
+        {
+            var near = t < 0.5f ? a : b;
+            return new Vector3(
+                a.x * b.x < 0f ? near.x : Mathf.Lerp(a.x, b.x, t),
+                a.y * b.y < 0f ? near.y : Mathf.Lerp(a.y, b.y, t),
+                a.z * b.z < 0f ? near.z : Mathf.Lerp(a.z, b.z, t));
         }
     }
 }

@@ -171,12 +171,18 @@ namespace SickOfIt.Tools.Editor
             return existing == null || existing.parentGroup.Name.StartsWith(GroupPrefix, StringComparison.Ordinal);
         }
 
+        /// <summary>What every level and scene plays with besides its own content (the old enemy and projectile configs).</summary>
+        const string Play = "play";
+
         static string ScopeOf(string path, GameDefinition definition, HashSet<string> eventSounds)
         {
             if (path.EndsWith(".thumbnail", StringComparison.Ordinal))
                 return "core"; // the level and video select cards
             if (path.StartsWith("player.animationConfig.states.Array.data[", StringComparison.Ordinal))
                 return "hero";
+            // The old enemy and projectile configs (the levels without a script, the hero's rocket) only ever play in a level.
+            if (path.StartsWith("enemyTypes.", StringComparison.Ordinal) || path.StartsWith("projectileConfigs.", StringComparison.Ordinal))
+                return Play;
             var match = Indexed.Match(path);
             if (!match.Success)
                 return "core";
@@ -235,22 +241,48 @@ namespace SickOfIt.Tools.Editor
             // they load on their first play (Sfx asks GameAssets) and the least recently used go past the budget.
             var sounds = new HashSet<string>(definition.audio.sounds.Where(s => s != null && !string.IsNullOrEmpty(s.id) && s.kind != SoundKind.Voice).Select(s => s.id), StringComparer.Ordinal);
             var weapons = Enumerable.Range(0, files.Count).Where(i => files[i].folder == "weapons").ToList();
-            // What the game's own systems spawn in any level (the hero's settings, pickups, rewind orbs, style, replay modes).
+            // What the game's own systems spawn in any level (the hero's settings, pickups, rewind orbs, style). Not feel (its glow
+            // rules only name the entities that glow: the Magma King and the lava pulled the whole of his fight into every level,
+            // 187 bundles for the prologue) nor replay (the Daily's modifiers name upgrades, whose icons are in "core").
             var global = new List<string>();
-            foreach (object part in new object[] { definition.player, definition.pickupConfig, definition.rewindBudget, definition.style, definition.feel, definition.replay, definition.presentation })
+            foreach (object part in new object[] { definition.player, definition.pickupConfig, definition.rewindBudget, definition.style, definition.presentation })
             {
                 if (part != null)
                     global.AddRange(Strings(JToken.Parse(JsonUtility.ToJson(part))));
             }
 
-            void Reach(HashSet<string> include, IEnumerable<string> seeds, IEnumerable<int> alsoFiles)
+            // A Circle's enemy table is the generator's (LevelDirector.Generator: an entry spawns on floors at or below its
+            // fromFloor): a level reaches only the entries that can appear on its floors, not the whole Circle's bestiary.
+            var circleEnemies = new Dictionary<int, List<(int fromFloor, List<string> strings)>>();
+            for (int i = 0; i < files.Count; i++)
+            {
+                if (files[i].folder != "circles" || !(files[i].json is JObject circle) || !(circle["enemies"] is JArray table))
+                    continue;
+                var rest = (JObject)circle.DeepClone();
+                rest.Remove("enemies");
+                files[i] = (files[i].id, files[i].folder, files[i].json, Strings(rest));
+                circleEnemies[i] = table.Select(e => ((int?)e["fromFloor"] ?? 0, Strings(e))).ToList();
+            }
+
+            void Reach(HashSet<string> include, IEnumerable<string> seeds, IEnumerable<int> alsoFiles, int lowestFloor = 0)
             {
                 var seen = new HashSet<int>();
                 var queue = new Queue<string>(seeds);
+                void Enter(int index)
+                {
+                    foreach (string s in files[index].strings) queue.Enqueue(s);
+                    if (!circleEnemies.TryGetValue(index, out var table))
+                        return;
+                    foreach (var (fromFloor, strings) in table)
+                    {
+                        if (lowestFloor <= 0 || fromFloor <= 0 || lowestFloor <= fromFloor)
+                            foreach (string s in strings) queue.Enqueue(s);
+                    }
+                }
                 foreach (int index in alsoFiles)
                 {
                     if (seen.Add(index))
-                        foreach (string s in files[index].strings) queue.Enqueue(s);
+                        Enter(index);
                 }
                 while (queue.Count > 0)
                 {
@@ -266,7 +298,7 @@ namespace SickOfIt.Tools.Editor
                         foreach (int index in reached)
                         {
                             if (seen.Add(index))
-                                foreach (string t in files[index].strings) queue.Enqueue(t);
+                                Enter(index);
                         }
                     }
                 }
@@ -276,21 +308,34 @@ namespace SickOfIt.Tools.Editor
             {
                 var include = includeOf("level/" + level.levelName);
                 include.Add("hero");
+                include.Add(Play);
                 var seeds = new List<string>();
+                int lowest = 0;
                 if (level.HasScript)
                 {
                     var script = JsonText.Parse(level.script, level.levelName, issues);
                     if (script != null)
+                    {
                         seeds.AddRange(Strings(script));
+                        // The lowest floor the stage reaches (its floors run from start down to end); 0 = unknown, every entry.
+                        int start = (int?)script["floors"]?["start"] ?? 0, end = (int?)script["floors"]?["end"] ?? 0;
+                        lowest = start > 0 && end > 0 ? Math.Min(start, end) : 0;
+                        // A generated or endless floor rolls the table as it climbs: everything.
+                        if (script["generateFloors"] != null || script["replay"] != null)
+                            lowest = 0;
+                    }
                 }
                 seeds.AddRange(Strings(JToken.Parse(JsonUtility.ToJson(level))));
                 seeds.AddRange(global);
-                Reach(include, seeds, weapons);
+                Reach(include, seeds, weapons, lowest);
             }
             for (int i = 0; i < files.Count; i++)
             {
                 if (files[i].folder == "scenes")
+                {
+                    includeOf("scene/" + files[i].id).Add(Play);
                     Reach(includeOf("scene/" + files[i].id), files[i].strings.Concat(global), weapons);
+                }
             }
 
             // One Codex row: an entity's picture (its default state's sheet, or its still sprite; else its base's), a weapon's pickup.

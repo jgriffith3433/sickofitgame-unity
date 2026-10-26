@@ -339,7 +339,7 @@ namespace SickOfIt.Core.Input
                 return;
             if (use2DFlip)
             {
-                Vector3 scale = graphicsTransform.localScale;
+                Vector3 scale = KeptSize(graphicsTransform.localScale);
                 scale.x = right ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
                 graphicsTransform.localScale = scale;
             }
@@ -521,6 +521,7 @@ namespace SickOfIt.Core.Input
                 if (graphicsTransform != null)
                 {
                     Vector3 scale = graphicsTransform.localScale;
+                    graphicsSize = new Vector2(Mathf.Abs(scale.x), Mathf.Abs(scale.y));
                     scale.x = -Mathf.Abs(scale.x);
                     scale.y = Mathf.Abs(scale.y) * gravitySign;
                     graphicsTransform.localScale = scale;
@@ -1155,6 +1156,19 @@ namespace SickOfIt.Core.Input
                 rotationSpeed * (GameClock.Instance != null ? GameClock.Instance.DeltaTime : Time.deltaTime));
         }
         
+        // The graphics' own size (|scale| at start). Turning keeps |scale.x|, so a scale a rewind left too small (lerping
+        // a turn through 0 drew him paper-thin or not at all, and kept him that way) would stay: KeptSize puts it back.
+        private Vector2 graphicsSize;
+
+        private Vector3 KeptSize(Vector3 scale)
+        {
+            if (graphicsSize.x > 0f && Mathf.Abs(scale.x) < graphicsSize.x * 0.6f)
+                scale.x = (scale.x < 0f ? -1f : 1f) * graphicsSize.x;
+            if (graphicsSize.y > 0f && Mathf.Abs(scale.y) < graphicsSize.y * 0.6f)
+                scale.y = (scale.y < 0f ? -1f : 1f) * graphicsSize.y;
+            return scale;
+        }
+
         private void ApplyRotation()
         {
             if (use2DFlip)
@@ -1162,7 +1176,7 @@ namespace SickOfIt.Core.Input
                 // 2D mode: flip sprite using localScale.x
                 if (graphicsTransform != null)
                 {
-                    Vector3 scale = graphicsTransform.localScale;
+                    Vector3 scale = KeptSize(graphicsTransform.localScale);
                     if (isFiring && Mathf.Abs(fireDirection.x) > inputDeadzone)
                     {
                         scale.x = fireDirection.x > 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);

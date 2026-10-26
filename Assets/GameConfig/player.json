@@ -1243,7 +1243,7 @@
   },
   "colliderRadius": 0.3,
   "hasInvincibilityFrames": true,
-  "invincibilityDuration": 1.0,
+  "invincibilityDuration": 5.0,
   "dropThroughForce": 5.0,
   "dropThroughThreshold": -0.75,
   "dropThroughMaxAngle": 30.0,

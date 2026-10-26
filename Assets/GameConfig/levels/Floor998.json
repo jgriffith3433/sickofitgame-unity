@@ -1254,7 +1254,7 @@
             "name": "hay: cinders trickle",
             "when": {
               "type": "every",
-              "seconds": 7.0,
+              "seconds": 14.0,
               "startAfter": 2.0,
               "maxTimes": 0
             },
@@ -1262,7 +1262,7 @@
               {
                 "type": "spawnWave",
                 "entity": "cinder",
-                "count": 2,
+                "count": 1,
                 "interval": 0.8,
                 "anchor": "Camera",
                 "areaCenter": [
@@ -1304,9 +1304,9 @@
               "count": 1
             },
             "speed": 3.2,
-            "interval": 1.2,
+            "interval": 4.0,
             "initialDelay": 1.5,
-            "rampPerSecond": 0.012
+            "rampPerSecond": 0.0
           }
         ],
         "rules": [
@@ -1314,7 +1314,7 @@
             "name": "rain: cinders between the drops",
             "when": {
               "type": "every",
-              "seconds": 9.0,
+              "seconds": 18.0,
               "startAfter": 3.0,
               "maxTimes": 0
             },
@@ -1322,7 +1322,7 @@
               {
                 "type": "spawnWave",
                 "entity": "cinder",
-                "count": 2,
+                "count": 1,
                 "interval": 0.8,
                 "anchor": "Camera",
                 "areaCenter": [
@@ -1364,9 +1364,9 @@
               "count": 1
             },
             "speed": 3.2,
-            "interval": 1.6,
+            "interval": 4.0,
             "initialDelay": 1.5,
-            "rampPerSecond": 0.01
+            "rampPerSecond": 0.0
           },
           {
             "type": "startHazard",
@@ -1374,7 +1374,7 @@
             "projectile": "fireball",
             "pattern": {
               "type": "spread",
-              "count": 3,
+              "count": 1,
               "angle": 34
             },
             "aim": "Player",
@@ -1384,45 +1384,16 @@
             ],
             "anchor": "Camera",
             "speed": 3.0,
-            "interval": 2.6,
+            "interval": 6.0,
             "initialDelay": 2.0
           }
         ],
         "rules": [
           {
-            "name": "sparks: the swarm rises",
-            "when": {
-              "type": "every",
-              "seconds": 6.0,
-              "startAfter": 3.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 5,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
             "name": "sparks: cinders",
             "when": {
               "type": "every",
-              "seconds": 8.0,
+              "seconds": 16.0,
               "startAfter": 4.0,
               "maxTimes": 0
             },
@@ -1430,7 +1401,7 @@
               {
                 "type": "spawnWave",
                 "entity": "cinder",
-                "count": 2,
+                "count": 1,
                 "interval": 0.8,
                 "anchor": "Camera",
                 "areaCenter": [
@@ -1451,7 +1422,7 @@
             "name": "sparks: a brute for the fists",
             "when": {
               "type": "every",
-              "seconds": 15.0,
+              "seconds": 26.25,
               "startAfter": 6.0,
               "maxTimes": 0
             },
@@ -1498,12 +1469,12 @@
             "projectile": "fireball",
             "pattern": {
               "type": "rain",
-              "count": 2
+              "count": 1
             },
             "speed": 3.2,
-            "interval": 1.6,
+            "interval": 4.0,
             "initialDelay": 2.0,
-            "rampPerSecond": 0.01
+            "rampPerSecond": 0.0
           }
         ],
         "rules": [
@@ -1511,7 +1482,7 @@
             "name": "jam: cinders",
             "when": {
               "type": "every",
-              "seconds": 6.0,
+              "seconds": 12.0,
               "startAfter": 3.0,
               "maxTimes": 0
             },
@@ -1519,7 +1490,7 @@
               {
                 "type": "spawnWave",
                 "entity": "cinder",
-                "count": 2,
+                "count": 1,
                 "interval": 0.8,
                 "anchor": "Camera",
                 "areaCenter": [
@@ -1537,39 +1508,10 @@
             ]
           },
           {
-            "name": "jam: sparks",
-            "when": {
-              "type": "every",
-              "seconds": 10.0,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
             "name": "jam: a brute for the fists",
             "when": {
               "type": "every",
-              "seconds": 16.0,
+              "seconds": 28.0,
               "startAfter": 6.0,
               "maxTimes": 0
             },
@@ -1616,12 +1558,12 @@
             "projectile": "fireball",
             "pattern": {
               "type": "rain",
-              "count": 2
+              "count": 1
             },
             "speed": 3.2,
-            "interval": 1.2,
+            "interval": 4.0,
             "initialDelay": 1.5,
-            "rampPerSecond": 0.02
+            "rampPerSecond": 0.0
           },
           {
             "type": "startHazard",
@@ -1629,7 +1571,7 @@
             "projectile": "fireball",
             "pattern": {
               "type": "spread",
-              "count": 4,
+              "count": 1,
               "angle": 40
             },
             "aim": "Player",
@@ -1639,7 +1581,7 @@
             ],
             "anchor": "Camera",
             "speed": 3.2,
-            "interval": 2.2,
+            "interval": 6.0,
             "initialDelay": 2.0
           }
         ],
@@ -1648,7 +1590,7 @@
             "name": "spire: cinders",
             "when": {
               "type": "every",
-              "seconds": 5.0,
+              "seconds": 10.0,
               "startAfter": 2.0,
               "maxTimes": 0
             },
@@ -1656,7 +1598,7 @@
               {
                 "type": "spawnWave",
                 "entity": "cinder",
-                "count": 3,
+                "count": 1,
                 "interval": 0.8,
                 "anchor": "Camera",
                 "areaCenter": [
@@ -1674,39 +1616,10 @@
             ]
           },
           {
-            "name": "spire: sparks",
-            "when": {
-              "type": "every",
-              "seconds": 8.0,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 5,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
             "name": "spire: a brute for the fists",
             "when": {
               "type": "every",
-              "seconds": 12.0,
+              "seconds": 24.0,
               "startAfter": 5.0,
               "maxTimes": 0
             },

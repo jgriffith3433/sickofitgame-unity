@@ -18,6 +18,9 @@ namespace SickOfIt.Tools.Editor
     /// </summary>
     public static class AddressablesTextureVariants
     {
+        /// <summary>The largest side of any texture in the phones' (ASTC) content; desktop keeps each texture's own size.</summary>
+        public const int PhoneMaxTextureSize = 2048;
+
         /// <summary>Batch mode: -executeMethod SickOfIt.Tools.Editor.AddressablesTextureVariants.BuildFromCommandLine</summary>
         public static void BuildFromCommandLine()
         {
@@ -47,8 +50,19 @@ namespace SickOfIt.Tools.Editor
                 DeleteFolder(remote);
                 DeleteFolder(mobile);
 
-                log("Building ASTC Addressables (phones)...");
-                BuildPass(settings, WebGLTextureSubtarget.ASTC);
+                // Phones also get every texture at most PhoneMaxTextureSize: the hero's 3624x4080 sheets were 6 MB each
+                // as ASTC (and the same again as bundle data in the WebGL heap), and iOS Safari reloads the page past its limit.
+                log($"Building ASTC Addressables (phones, textures at most {PhoneMaxTextureSize})...");
+                EditorUserBuildSettings.overrideMaxTextureSize = PhoneMaxTextureSize;
+                try
+                {
+                    BuildPass(settings, WebGLTextureSubtarget.ASTC);
+                }
+                finally
+                {
+                    EditorUserBuildSettings.overrideMaxTextureSize = 0;
+                    AssetDatabase.Refresh();
+                }
                 Directory.Move(remote, mobile);
                 CopyBundles(LocalBuildPath(settings), Path.Combine(mobile, TextureVariantRedirect.LocalSubfolder));
                 log("  " + mobile + ": " + FolderMegabytes(mobile) + " MB");
@@ -86,10 +100,8 @@ namespace SickOfIt.Tools.Editor
         static void BuildPass(AddressableAssetSettings settings, WebGLTextureSubtarget subtarget)
         {
             if (EditorUserBuildSettings.webGLBuildSubtarget != subtarget)
-            {
                 EditorUserBuildSettings.webGLBuildSubtarget = subtarget;
-                AssetDatabase.Refresh();
-            }
+            AssetDatabase.Refresh(); // (the subtarget or the size override changed: textures import again, or come from the import cache)
 
             AddressableAssetSettings.CleanPlayerContent(settings.ActivePlayerDataBuilder);
             AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);

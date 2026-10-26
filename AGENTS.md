@@ -369,6 +369,13 @@ instead of generated again. Batch mode fails with "another Unity instance is run
   system that reads art outside a level, video, death or the Codex either lives in `core` (a field outside levels/videos/deaths/
   player states/sounds/registry) or acquires its scope with `GameAssets.Acquire(owner, scopes)`; the log says `[GameAssets] <owner>: N
   bundles in s` per load. Art a level spawns but its data never names (a C# literal id) won't be loaded: name it in the level or a global config.
+  Keep a level's closure tight (2026-10-26: the prologue loaded 187 bundles, ~340 MB of textures, and iOS reloaded the page): feel's glow
+  rules and replay's modifiers are not seeds (they only *name* entities and upgrades), a Circle's enemy table reaches only the entries
+  that can spawn on the level's floors (`fromFloor` against its `floors`; generated and replay floors take all), the old `enemyTypes`/
+  `projectileConfigs` art is scope `play` (every level and scene), and every weapon's grips but the launcher's load with the weapon
+  (`PlayerSheets`, fists too). Phones' (ASTC) content is imported at most 2048 px (`AddressablesTextureVariants.PhoneMaxTextureSize`:
+  the hero's 3624x4080 sheets were 6 MB each), phones never pre-cache bundles at the main menu (`BundleDownloadManager`: in WebGL a
+  downloaded bundle sits in the heap), and a texture the game uses is never imported uncompressed. `?dev=1` logs the largest textures by name after every load.
 - **Tests:** `-runTests -testPlatform EditMode` and `-runTests -testPlatform PlayMode` (add `-testResults <file>`).
 - **Playtest every level with a bot** (real Level scene, ~1 min per level; omit `-nographics`):
   `-runTests -testPlatform PlayMode -testCategory Playtest -testResults Logs/Playtest/results.xml`, then read

@@ -45,7 +45,7 @@ namespace SickOfIt.Core.Progression
 
         [Tooltip("Cap on the combined size (MB) of bundles in flight at once. Bounds peak WebGL heap " +
                  "usage during pre-caching. A single bundle larger than this still downloads alone. 0 = no cap.")]
-        [SerializeField] private int maxInFlightMegabytes = 256;
+        [SerializeField] private int maxInFlightMegabytes = 64;
 
         [Tooltip("Concurrent downloads on Android and iOS. Native players are not limited to a browser's " +
                  "6 connections per host, and these downloads only fill the cache — they are not decompressed into memory.")]
@@ -391,6 +391,17 @@ namespace SickOfIt.Core.Progression
             isDownloading = true;
             currentLabel = "Verifying cache...";
             UpdateStatus();
+
+            // On a phone nothing is fetched ahead. In WebGL a "downloaded" bundle is loaded into the heap (there is no
+            // disk cache to put it in), and the heap never shrinks: pre-caching Video1, Video2 and Level 1's backgrounds
+            // at the main menu raised the page's peak memory before the game even started, and iOS Safari reloads the
+            // page past its limit. Each bundle comes in when its scene needs it, from the browser's cache after the first time.
+            if (TextureVariantRedirect.UsingMobileVariant)
+            {
+                Log("Phone (ASTC content): no pre-caching.");
+                FinishDownload(failed: 0);
+                yield break;
+            }
 
             var ops = AddressablesOperationManager.Instance;
 

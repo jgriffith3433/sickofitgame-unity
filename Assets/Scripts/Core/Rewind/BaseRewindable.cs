@@ -136,6 +136,14 @@ namespace SickOfIt.Core.Rewind
             float earliestTime = GetSnapshotTime(history.Oldest);
             if (time < earliestTime)
             {
+                // It existed then, but the ring buffer has dropped its oldest snapshots (a minute of play): hold the
+                // oldest one kept. Treated as "not born yet", the hero's graphics were switched off and stayed off while
+                // his body still took hits.
+                if (hasBirth && time >= BornAt - 0.0001f)
+                {
+                    ApplyAt(0);
+                    return;
+                }
                 appliedIndex = -1;
                 ApplyPreExistenceDefault();
                 return;
