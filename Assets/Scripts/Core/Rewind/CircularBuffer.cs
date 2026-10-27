@@ -3,12 +3,13 @@ using System;
 namespace SickOfIt.Core.Rewind
 {
     /// <summary>
-    /// Generic ring buffer with fixed capacity. Oldest entries are overwritten when full.
-    /// Pure C#, no Unity dependencies.
+    /// Generic ring buffer with a capacity limit. Oldest entries are overwritten when full.
+    /// The backing array starts empty and grows by doubling up to the capacity, so an object
+    /// that lives a few seconds never pays for a full window. Pure C#, no Unity dependencies.
     /// </summary>
     public class CircularBuffer<T>
     {
-        private readonly T[] buffer;
+        private T[] buffer = Array.Empty<T>();
         private int head;   // Next write position
         private int count;
 
@@ -19,7 +20,6 @@ namespace SickOfIt.Core.Rewind
         {
             if (capacity <= 0) throw new ArgumentException("Capacity must be > 0", nameof(capacity));
             Capacity = capacity;
-            buffer = new T[capacity];
         }
 
         /// <summary>
@@ -27,10 +27,23 @@ namespace SickOfIt.Core.Rewind
         /// </summary>
         public void Add(T item)
         {
+            if (count == buffer.Length && buffer.Length < Capacity)
+                Grow();
             buffer[head] = item;
-            head = (head + 1) % Capacity;
+            head = (head + 1) % buffer.Length;
             if (count < Capacity)
                 count++;
+        }
+
+        // Only called when the array is full and not yet at the capacity: copies the entries in order.
+        private void Grow()
+        {
+            int size = Math.Min(Capacity, Math.Max(8, buffer.Length * 2));
+            var bigger = new T[size];
+            for (int i = 0; i < count; i++)
+                bigger[i] = buffer[(head - count + i + buffer.Length) % buffer.Length];
+            buffer = bigger;
+            head = count % size;
         }
 
         /// <summary>
@@ -42,7 +55,7 @@ namespace SickOfIt.Core.Rewind
             {
                 if (index < 0 || index >= count)
                     throw new IndexOutOfRangeException($"Index {index} out of range [0, {count})");
-                int actualIndex = (head - count + index + Capacity) % Capacity;
+                int actualIndex = (head - count + index + buffer.Length) % buffer.Length;
                 return buffer[actualIndex];
             }
         }
@@ -55,7 +68,7 @@ namespace SickOfIt.Core.Rewind
             get
             {
                 if (count == 0) throw new InvalidOperationException("Buffer is empty");
-                return buffer[(head - 1 + Capacity) % Capacity];
+                return buffer[(head - 1 + buffer.Length) % buffer.Length];
             }
         }
 
@@ -90,7 +103,7 @@ namespace SickOfIt.Core.Rewind
                 return;
             }
             // Move head back to just after the kept entries
-            head = (head - count + keepCount + Capacity) % Capacity;
+            head = (head - count + keepCount + buffer.Length) % buffer.Length;
             count = keepCount;
         }
 

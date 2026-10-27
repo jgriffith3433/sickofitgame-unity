@@ -839,6 +839,10 @@ namespace SickOfIt.Playtest
                 "playing and while rewinding, the timeline's own work, how many rewindables and how long their history, and the game time the clock takes on " +
                 "the frames right after a rewind (clamped, so lag can't kill the hero). Checks: rewinding averages no worse than 1.5x normal play (or +5 ms), " +
                 "no rewind frame over 100 ms, the post-rewind step clamped. rewind-perf and check events, rewindPerf.* metrics", 240, "level"));
+            list.Add(new PlaytestScenario(RewindPerfSlowId, $"Rewind on a slow device: rewind-perf ({RewindPerfLevel}) with every frame held to {SlowCpuFactor:0}x its own work " +
+                "(a spin standing in for the browser's CPU throttle). Rewinding must average no more than 1.5x a playing frame, the timeline must allocate nothing while rewinding " +
+                "(RewindPerf's allocation counters), and after each rewind the hero and the entities still alive stand where they stood at that game time. The record interval in use is " +
+                "reported (10 Hz on a slow device). rewind-perf and check events, rewindPerf.* and frameTime.throttled.* metrics", 480, "level"));
             list.Add(new PlaytestScenario(AimGuideScenario, $"The aim guide (player.json aimGuide): level {AimGuideLevel} (the Meadow, loaded directly, a setup " +
                 "shortcut) played by the bot through real input; every volley logs the guide's line directions on the frame it fired and the shots' flight " +
                 "directions read back from the projectiles, and they must match (aim events for the first volleys of each part and any mismatch, a check per part). Then the gamepad stick held: one " +
@@ -1382,6 +1386,8 @@ namespace SickOfIt.Playtest
                 yield return session.RestartRun();
             else if (id == RewindPerfId)
                 yield return session.RewindPerfRun();
+            else if (id == RewindPerfSlowId)
+                yield return session.RewindPerfRun(cpuFactor: SlowCpuFactor);
             else if (id == DailyId)
             {
                 yield return session.RewindPerfRun(finish: false);
@@ -1572,6 +1578,7 @@ namespace SickOfIt.Playtest
                 ShaftScreen.Reported -= OnShaft;
                 YoobaPortrait.Reported -= OnYooba;
                 RewindPerf.Reported -= OnRewindPerf;
+                StopRewindThrottle();
                 if (bot != null)
                     Object.Destroy(bot);
                 input.Dispose();
@@ -3857,13 +3864,15 @@ namespace SickOfIt.Playtest
 
             void OnRewindPerf(string line) => Run.Event("rewind-perf", line);
 
-            public IEnumerator RewindPerfRun(bool finish = true)
+            public IEnumerator RewindPerfRun(bool finish = true, float cpuFactor = 1f)
             {
+                StartRewindThrottle(cpuFactor);
                 var definition = GameDefinition.Instance;
                 int n = definition.levels.FindIndex(l => l != null && l.levelName == RewindPerfLevel) + 1;
                 if (n <= 0)
                 {
                     Run.Problem(PlaytestSeverity.Bug, $"rewind-perf: no level \"{RewindPerfLevel}\" in game.json");
+                    StopRewindThrottle();
                     End(PlaytestOutcome.Error);
                     yield break;
                 }
@@ -3885,6 +3894,7 @@ namespace SickOfIt.Playtest
                             bot.useRewind = false;
                         if (world != null && world.Live.Count > peakLive)
                             peakLive = world.Live.Count;
+                        SampleRewindPlaces(world);
                         if (holding)
                             return null;
                         // Measure from 3 s in: the level's own loading frames aren't play.
@@ -3909,14 +3919,16 @@ namespace SickOfIt.Playtest
                 var forward = RewindPerf.Forward;
                 var rewinding = RewindPerf.Rewinding;
                 var after = RewindPerf.AfterRewind;
+                StopRewindThrottle();
                 ReportRewindPerf();
+                CheckRewindPerfSlow(forward, rewinding);
                 Run.Metric("rewindPerf.peakEntities", peakLive);
                 Run.Event("rewind-perf", $"up to {peakLive} live entities");
 
                 RewindPerfCheck("rewinds", rewinds >= RewindPerfRewinds, $"{rewinds} of {RewindPerfRewinds} rewinds held on level {n}");
                 if (rewinding.Frames > 0 && forward.Frames > 0)
                 {
-                    double allowed = Math.Max(forward.AverageMs * 1.5, forward.AverageMs + 5.0);
+                    double allowed = cpuFactor > 1f ? forward.AverageMs * 1.5 : Math.Max(forward.AverageMs * 1.5, forward.AverageMs + 5.0);
                     RewindPerfCheck("smooth", rewinding.AverageMs <= allowed,
                         $"rewinding averages {rewinding.AverageMs:0.0} ms a frame, playing {forward.AverageMs:0.0} ms (allowed {allowed:0.0})");
                     RewindPerfCheck("no spikes", rewinding.WorstMs <= 100.0,
@@ -3960,6 +3972,8 @@ namespace SickOfIt.Playtest
                 float back = before - (GameClock.Instance != null ? GameClock.Instance.Time : 0f);
                 Run.Event("rewind", $"held R {RewindPerfHold:0.0} s: {back:0.0} s of game time back, {(world != null ? world.Live.Count : 0)} live entities" +
                                     (back < 0.5f ? " (no rewind: locked by the scene or refused; tried again later)" : ""));
+                if (back >= 0.5f)
+                    CheckRewindPlaces(world, RewindPerf.Rewinds);
                 done(back >= 0.5f);
             }
 

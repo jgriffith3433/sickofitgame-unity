@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using SickOfIt.Core;
 using SickOfIt.Data;
 using SickOfIt.Gameplay.Content;
 
@@ -262,6 +263,11 @@ namespace SickOfIt.Gameplay
                 return;
             }
             SetDepthVisible(true);
+
+            // Weather and far-off life hold still while time runs backward: they are only atmosphere, and the
+            // frame is better spent on the rewind.
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return;
 
             clock += Time.deltaTime;
             if (clock >= gateAt)
