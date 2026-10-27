@@ -880,9 +880,14 @@ namespace SickOfIt.Gameplay
             UpdateFloor();
             float length = Mathf.Max(1f, world.LevelLength);
             float floorProgress = world.Stage != null ? world.Stage.FloorProgress : -1f;
-            float progress = floorProgress >= 0f ? floorProgress : Mathf.Clamp01(world.Now / length);
+            // A one-floor Travel stage with a path is a place, not a time: the bar is how far along the path the camera is.
+            float pathProgress = floorProgress < 0f && world.Effects != null ? world.Effects.PathProgress : -1f;
+            float progress = floorProgress >= 0f ? floorProgress
+                : pathProgress >= 0f ? pathProgress : Mathf.Clamp01(world.Now / length);
             if (world.Director != null && !world.Director.Completed)
                 progress = Mathf.Min(progress, 0.995f);
+            else if (world.Director != null)
+                progress = 1f;
             playedFill.anchorMax = new Vector2(progress, 1f);
             playedFill.gameObject.SetActive(progress > 0.01f);
             playhead.anchorMin = playhead.anchorMax = new Vector2(progress, 0.5f);
@@ -896,7 +901,7 @@ namespace SickOfIt.Gameplay
                 return;
             }
             // The tail is how far back the juice reaches. On a floor stage, time becomes distance at the average pace so far.
-            float tail = floorProgress >= 0f
+            float tail = floorProgress >= 0f || pathProgress >= 0f
                 ? progress * Mathf.Clamp01(budget.Juice / Mathf.Max(1f, world.Now))
                 : Mathf.Min(progress, budget.Juice / length);
             rewindTail.anchorMin = new Vector2(progress - tail, 0f);

@@ -78,6 +78,16 @@ namespace SickOfIt.Gameplay
         public float TravelDistance => Mode != CameraMode.Travel ? 0f
             : HasPath ? pathDistance : Mathf.Max(0f, Vector2.Dot(cameraBase - travelOrigin, TravelAxis));
 
+        /// <summary>The path's total length: the sections' lengths end to end (0 without a path). Same units as TravelDistance.</summary>
+        public float TotalPathLength => HasPath ? sectionAt[path.Count - 1] + path[path.Count - 1].Length : 0f;
+
+        /// <summary>How far along a path the camera is, 0..1 (-1 without a path). Derived from live state: nothing saved.</summary>
+        public float PathProgress => PathFraction(TravelDistance, TotalPathLength);
+
+        /// <summary>distance / total, clamped to 0..1; -1 when there is no path to measure.</summary>
+        public static float PathFraction(float distance, float total) =>
+            total <= 0.0001f ? -1f : Mathf.Clamp01(distance / total);
+
         /// <summary>Travel stages: the camera doesn't move forward (lockTravel / unlockTravel).</summary>
         public bool TravelLocked
         {
