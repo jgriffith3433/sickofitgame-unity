@@ -189,6 +189,11 @@ namespace SickOfIt.Core.UI.Menus
 
         float NextDelay(MenuEntrance entrance) => entrance == null ? 0f : entrance.delay + entranceIndex++ * entrance.stagger;
 
+        /// <summary>While set, buttons and motions built with the theme's entrance use this one instead (a panel whose controls must be there at once).</summary>
+        public MenuEntrance EntranceOverride;
+
+        MenuEntrance ThemeEntrance => EntranceOverride ?? Theme.entrance;
+
         public MenuTextStyle StyleNamed(string name)
         {
             switch ((name ?? "").ToLowerInvariant())
@@ -393,7 +398,7 @@ namespace SickOfIt.Core.UI.Menus
             // A list sizes its own items; a button in any other group (a settings row) keeps the touch size itself.
             if (marker == null)
                 MenuResponsive.TrackInGroup(slot, element, size, MenuElementKind.Button, Responsive);
-            return Finish(MenuButton.Create(slot, style, text, Font, Theme.entrance, NextDelay(Theme.entrance), buttons.Count, Sounds), onClick);
+            return Finish(MenuButton.Create(slot, style, text, Font, ThemeEntrance, NextDelay(ThemeEntrance), buttons.Count, Sounds), onClick);
         }
 
         /// <summary>
@@ -406,7 +411,7 @@ namespace SickOfIt.Core.UI.Menus
             var slot = MenuGraphics.NewRect("Button", parent != null ? parent : Root);
             MenuGraphics.Place(slot, anchor, offset, style.size);
             MenuResponsive.Track(slot, MenuResponsive.From(anchor, offset, style.size), portrait, MenuElementKind.Button, Responsive);
-            return Finish(MenuButton.Create(slot, style, text, Font, Theme.entrance, NextDelay(Theme.entrance), buttons.Count, Sounds), onClick);
+            return Finish(MenuButton.Create(slot, style, text, Font, ThemeEntrance, NextDelay(ThemeEntrance), buttons.Count, Sounds), onClick);
         }
 
         public MenuButton AddBackButton(Action onClick)
