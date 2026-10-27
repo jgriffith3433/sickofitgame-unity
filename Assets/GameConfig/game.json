@@ -175,6 +175,22 @@
       "ngPlusLabel": "You are on cycle {0}."
     }
   },
+  "incomingWarnings": {
+    "enabled": true,
+    "lookaheadSeconds": 1.5,
+    "maxMarkers": 4,
+    "mergeFraction": 0.3,
+    "farAlpha": 0.25,
+    "nearAlpha": 0.7,
+    "nearSeconds": 0.3,
+    "fadeInSeconds": 0.25,
+    "fadeOutSeconds": 0.12,
+    "depth": 0.035,
+    "length": 0.08,
+    "inset": 0.008,
+    "shotColor": "#FF8F3D",
+    "creatureColor": "#DB6B9E"
+  },
   "style": {
     "enabled": true,
     "grazeDistance": 0.35,
