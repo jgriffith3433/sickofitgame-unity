@@ -42,6 +42,9 @@ namespace SickOfIt.Data
         public static bool HitboxDot { get => Get("HitboxDot", 0f) > 0.5f; set => Set("HitboxDot", value ? 1f : 0f); }
         public static bool AimAssist { get => Get("AimAssist", 0f) > 0.5f; set => Set("AimAssist", value ? 1f : 0f); }
         public static bool Hints { get => Get("Hints", 1f) > 0.5f; set => Set("Hints", value ? 1f : 0f); }
+        // The ◄ ► JUMP buttons (settings > Accessibility). Off by default, phones too: the game is played by tapping and
+        // dragging (J, 2026-10-26: "We don't use buttons for left right and jump").
+        public static bool TouchButtons { get => Get("TouchButtons", 0f) > 0.5f; set => Set("TouchButtons", value ? 1f : 0f); }
 
         /// <summary>The saved hawkes.sound value, as JSON (what the settings and the playtest read back).</summary>
         public static string SoundJson => PlayerPrefs.GetString(SoundKey, "");

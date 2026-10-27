@@ -485,6 +485,7 @@ namespace SickOfIt.Data.Config
         public string reducedShake = "Reduced Shake";
         public string hitboxDot = "Hitbox Dot";
         public string aimAssist = "Aim Assist";
+        public string touchButtons = "Touch Buttons";
         public string difficultyTitle = "Pick Your Hell";
         public string difficultyBack = "Back";
         public string on = "On";

@@ -119,6 +119,7 @@ namespace SickOfIt.Core.UI.Menus
             ToggleRow(menu, rows, texts.reducedShake, texts, toggle, () => GameSettings.ReducedShake, v => GameSettings.ReducedShake = v);
             ToggleRow(menu, rows, texts.hitboxDot, texts, toggle, () => GameSettings.HitboxDot, v => GameSettings.HitboxDot = v);
             ToggleRow(menu, rows, texts.aimAssist, texts, toggle, () => GameSettings.AimAssist, v => GameSettings.AimAssist = v);
+            ToggleRow(menu, rows, texts.touchButtons, texts, toggle, () => GameSettings.TouchButtons, v => GameSettings.TouchButtons = v);
 
             void Close()
             {

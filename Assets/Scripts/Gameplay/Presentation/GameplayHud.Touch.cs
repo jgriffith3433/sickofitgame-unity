@@ -1,15 +1,17 @@
 using UnityEngine;
 using TMPro;
 using SickOfIt.Core.UI.Menus;
+using SickOfIt.Data;
 using SickOfIt.Data.Config;
 
 namespace SickOfIt.Gameplay
 {
     /// <summary>
-    /// The touch move pad (touch screens only): left and right buttons held by the left thumb and a jump button above them,
-    /// bottom-left, clear of the rewind and dash buttons on the right. They steer the hero through
-    /// <c>PlayerController.TouchMove</c>/<c>RequestJump</c>, the same path the keys take. A short hint names them on the first
-    /// few levels. Presentation only.
+    /// The touch move pad: left and right buttons held by the left thumb and a jump button above them, bottom-left, clear
+    /// of the rewind and dash buttons on the right. Off unless Settings > Accessibility > Touch Buttons is on
+    /// (<see cref="GameSettings.TouchButtons"/>), on phones too: the game is played by tapping and dragging. They steer the
+    /// hero through <c>PlayerController.TouchMove</c>/<c>RequestJump</c>, the same path the keys take. A short hint names
+    /// them on the first few levels they show. Presentation only.
     /// </summary>
     public sealed partial class GameplayHud
     {
@@ -24,8 +26,6 @@ namespace SickOfIt.Gameplay
         bool touchHintOn;
         int touchLeftHeld, touchRightHeld;
 
-        /// <summary>A touch screen: a phone's platform, or any device that reports one (a browser's phone emulation).</summary>
-        static bool HasTouchScreen => Application.isMobilePlatform || UnityEngine.InputSystem.Touchscreen.current != null;
 
         /// <summary>The move pad is on screen (the playtest checks it on a phone).</summary>
         public bool TouchPadShown => touchLeftRoot != null && touchLeftRoot.gameObject.activeInHierarchy;
@@ -91,7 +91,7 @@ namespace SickOfIt.Gameplay
                 MenuPlacement.At(0f, 0f, 540f, 560f, 1000f, 60f), MenuElementKind.Text, menu.Responsive);
             touchBuiltAt = Time.unscaledTime;
             touchHintOn = seen < TouchHintLevels;
-            if (touchHintOn && HasTouchScreen)
+            if (touchHintOn && GameSettings.TouchButtons)
                 PlayerPrefs.SetInt(TouchHintKey, seen + 1);
         }
 
@@ -108,7 +108,7 @@ namespace SickOfIt.Gameplay
             if (touchLeft == null)
                 return;
             var controller = world.PlayerController;
-            bool show = HasTouchScreen && controller != null && !controller.Suspended && !controller.InputLocked && !Paused && !Blocked;
+            bool show = GameSettings.TouchButtons && controller != null && !controller.Suspended && !controller.InputLocked && !Paused && !Blocked;
             if (touchLeftRoot.gameObject.activeSelf != show)
             {
                 touchLeftRoot.gameObject.SetActive(show);
