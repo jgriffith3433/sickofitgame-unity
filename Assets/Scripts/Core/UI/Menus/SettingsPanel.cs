@@ -16,7 +16,17 @@ namespace SickOfIt.Core.UI.Menus
     {
         const float Step = 0.1f;
 
+        /// <summary>A short, unstaggered pop: every row's controls are on screen almost at once.</summary>
+        static readonly MenuEntrance QuickEntrance = new MenuEntrance { type = MenuEntranceType.Fade, duration = 0.15f, delay = 0f, stagger = 0f };
+
         public static GameObject Show(MenuCanvas menu, Action onClosed)
+        {
+            menu.EntranceOverride = QuickEntrance;
+            try { return BuildSettings(menu, onClosed); }
+            finally { menu.EntranceOverride = null; }
+        }
+
+        static GameObject BuildSettings(MenuCanvas menu, Action onClosed)
         {
             var theme = menu.Theme;
             var texts = theme.texts ?? new MenuTexts();
@@ -28,7 +38,7 @@ namespace SickOfIt.Core.UI.Menus
             var panel = MenuGraphics.NewRect("Panel", inner);
             MenuGraphics.Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(980f, 880f));
             MenuGraphics.Surface(panel, theme.card.surface);
-            menu.AddMotion(panel.gameObject, null, theme.entrance, 1.5f);
+            menu.AddMotion(panel.gameObject, null, menu.EntranceOverride ?? theme.entrance, 0f);
             // Portrait: a taller panel, so the rows can grow to the touch size without squeezing.
             MenuResponsive.Track(panel, MenuPlacement.At(0.5f, 0.5f, 0f, -10f, 980f, 880f), menu.Responsive.screens?.settingsPanel,
                 MenuElementKind.Container, menu.Responsive);
@@ -85,6 +95,13 @@ namespace SickOfIt.Core.UI.Menus
         /// <summary>Settings > Accessibility: the toggles that make Hell easier to read and gentler on the eyes. Saved at once (<see cref="GameSettings"/>).</summary>
         public static GameObject ShowAccessibility(MenuCanvas menu)
         {
+            menu.EntranceOverride = QuickEntrance;
+            try { return BuildAccessibility(menu); }
+            finally { menu.EntranceOverride = null; }
+        }
+
+        static GameObject BuildAccessibility(MenuCanvas menu)
+        {
             var theme = menu.Theme;
             var texts = theme.texts ?? new MenuTexts();
             var previousBack = menu.Back;
@@ -93,7 +110,7 @@ namespace SickOfIt.Core.UI.Menus
             var panel = MenuGraphics.NewRect("Panel", overlay.Inner);
             MenuGraphics.Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(980f, 880f));
             MenuGraphics.Surface(panel, theme.card.surface);
-            menu.AddMotion(panel.gameObject, null, theme.entrance, 1.5f);
+            menu.AddMotion(panel.gameObject, null, menu.EntranceOverride ?? theme.entrance, 0f);
             MenuResponsive.Track(panel, MenuPlacement.At(0.5f, 0.5f, 0f, -10f, 980f, 880f), menu.Responsive.screens?.settingsPanel,
                 MenuElementKind.Container, menu.Responsive);
             menu.AddText(panel, "Title", texts.accessibilityTitle, theme.title, new Vector2(0.5f, 1f), new Vector2(0f, -78f),
@@ -148,7 +165,7 @@ namespace SickOfIt.Core.UI.Menus
             var panel = MenuGraphics.NewRect("Panel", overlay.Inner);
             MenuGraphics.Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(980f, 880f));
             MenuGraphics.Surface(panel, theme.card.surface);
-            menu.AddMotion(panel.gameObject, null, theme.entrance, 1.5f);
+            menu.AddMotion(panel.gameObject, null, menu.EntranceOverride ?? theme.entrance, 0f);
             MenuResponsive.Track(panel, MenuPlacement.At(0.5f, 0.5f, 0f, -10f, 980f, 880f), menu.Responsive.screens?.settingsPanel,
                 MenuElementKind.Container, menu.Responsive);
             menu.AddText(panel, "Title", texts.difficultyTitle, theme.title, new Vector2(0.5f, 1f), new Vector2(0f, -78f),
