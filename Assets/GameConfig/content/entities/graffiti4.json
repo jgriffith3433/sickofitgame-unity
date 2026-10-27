@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "extends": "loopCarving",
+  "abilities": [
+    {
+      "type": "carved",
+      "text": "THE LAVA IS",
+      "words": "NOT A SHORTCUT.",
+      "color": "#E0A060",
+      "size": 0.26,
+      "above": 0.95,
+      "onFace": false
+    }
+  ]
+}

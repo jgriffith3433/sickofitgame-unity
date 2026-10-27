@@ -407,7 +407,7 @@ def build(n, report):
 
 
 def main(argv):
-    wanted = [int(a) for a in argv] or ORDER
+    wanted = [n for n in ([int(a) for a in argv] or ORDER) if n not in lf.STOP_FLOORS]   # stop floors: stop_floors.py
     report = []
     for n in wanted:
         d = build(n, report)

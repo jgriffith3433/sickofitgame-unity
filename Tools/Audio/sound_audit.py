@@ -44,6 +44,9 @@ def refs_in(o, f, out, key=''):
 def audit():
     audio = json.load(open(os.path.join(CONFIG, 'audio.json'), encoding='utf-8'))
     sounds = {s['id']: s for s in audio['sounds']}
+    # Lines with a prompt whose clip is not made yet (no voice budget): Tools/Audio/pending_clips.json. They are reported, not failed.
+    pending_file = os.path.join(ROOT, 'Tools/Audio/pending_clips.json')
+    pending = set(json.load(open(pending_file, encoding='utf-8'))['ids']) if os.path.exists(pending_file) else set()
     voices = {v['name'] for v in audio['voices']}
     refs = {}
     for v in audio['events'].values():
@@ -62,7 +65,8 @@ def audit():
         clip = s.get('clip')
         if not clip or not os.path.exists(os.path.join(ROOT, 'Assets', clip)):
             missing.append(s)
-            problems.append(('no-clip', sid, 'no clip' if not clip else f'clip file missing: {clip}'))
+            if sid not in pending:
+                problems.append(('no-clip', sid, 'no clip' if not clip else f'clip file missing: {clip}'))
         if not s.get('prompt') and not clip:
             problems.append(('no-prompt', sid, 'neither a prompt nor a clip'))
         if s['kind'] == 'Voice' and s.get('voice') and s['voice'] not in voices:

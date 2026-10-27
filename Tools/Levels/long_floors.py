@@ -726,8 +726,11 @@ def build(n, report):
     return d
 
 
+STOP_FLOORS = {957, 959, 897, 893}     # written by stop_floors.py (nothing attacks there): never rewritten here; ORDER keeps them so the tiers don't shift
+
+
 def main(argv):
-    wanted = [int(a) for a in argv] or ORDER
+    wanted = [n for n in ([int(a) for a in argv] or ORDER) if n not in STOP_FLOORS]
     report = []
     make_pairs()
     for n in wanted:

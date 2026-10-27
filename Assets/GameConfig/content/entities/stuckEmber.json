@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "extends": "projectileEnemy",
+  "abilities": [
+    {
+      "type": "projectile",
+      "damage": 1,
+      "hitSound": null
+    },
+    {
+      "type": "lifetime",
+      "seconds": 0.8
+    }
+  ]
+}

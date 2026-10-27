@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "levelName": "Floor959",
-  "displayName": "Floor 959: The Rest of the Village",
+  "displayName": "Floor 959: Hell's Graffiti",
   "levelNumber": 13,
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 273,
+  "duration": 240.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 14,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 959,
-    "length": 195,
+    "length": 60,
     "floors": {
       "start": 959,
       "end": 958,
@@ -38,7 +38,7 @@
       "holdForPushes": false,
       "path": [
         {
-          "name": "bank",
+          "name": "ledges",
           "direction": "Up",
           "length": 1.45,
           "turn": 2.0,
@@ -64,7 +64,7 @@
               ]
             },
             {
-              "entity": "sinkingStone",
+              "entity": "ledge",
               "at": [
                 -1.2,
                 -1.15
@@ -88,70 +88,23 @@
           ]
         },
         {
-          "name": "river",
+          "name": "step",
+          "direction": "Up",
+          "length": 1.5,
+          "turn": 2.0,
+          "spawns": []
+        },
+        {
+          "name": "stop",
           "direction": "Right",
-          "length": 9.8,
+          "length": 16.2,
           "turn": 2.0,
           "spawns": [
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                -1.0,
-                -0.45
-              ],
-              "id": "roofRaft"
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                3.6,
-                -0.45
-              ],
-              "id": "cartRaft"
-            },
-            {
-              "entity": "debrisRaftHay",
-              "at": [
-                8.0,
-                -0.45
-              ],
-              "id": "hayRaft"
-            },
             {
               "entity": "ledge",
               "at": [
-                11.4,
-                -0.05
-              ],
-              "id": "stepFoot",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "cinder",
-              "at": [
-                5.4,
-                2.55
-              ],
-              "id": "riverCinder",
-              "onEnter": true
-            }
-          ],
-          "autoSpeed": 0.9
-        },
-        {
-          "name": "steps",
-          "direction": "Up",
-          "length": 3.7,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                9.0,
-                1.25
+                -2.4,
+                1.65
               ],
               "scale": [
                 0.9,
@@ -159,10 +112,10 @@
               ]
             },
             {
-              "entity": "sinkingStone",
+              "entity": "graffiti1",
               "at": [
-                11.4,
-                2.55
+                -0.5999999999999999,
+                1.65
               ],
               "scale": [
                 0.9,
@@ -172,165 +125,66 @@
             {
               "entity": "ledge",
               "at": [
-                9.0,
-                3.85
+                1.2000000000000002,
+                1.65
               ],
               "scale": [
-                1.0,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "cinder",
+              "entity": "graffiti2",
               "at": [
-                12.8,
-                4.45
+                3.0000000000000004,
+                1.65
               ],
-              "id": "stepCinder",
-              "onEnter": true
-            }
-          ]
-        },
-        {
-          "name": "signRide",
-          "direction": "Left",
-          "length": 7.8,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "debrisRaftSignBack",
-              "at": [
-                6.2,
-                3.45
-              ],
-              "id": "signRaft",
               "scale": [
-                1.2,
-                1
-              ],
-              "facing": 1.0
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.4,
-                4.05
-              ],
-              "id": "farBank",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "diamondGlint",
-              "at": [
-                3.0,
-                5.45
-              ],
-              "id": "glint"
-            }
-          ],
-          "autoSpeed": 0.8
-        },
-        {
-          "name": "riser",
-          "direction": "Up",
-          "length": 5.6,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                -0.0
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
+                0.9,
                 1
               ]
             },
             {
               "entity": "ledge",
               "at": [
-                -2.4,
-                1.1
+                4.800000000000001,
+                1.65
               ],
-              "anchor": "Section",
               "scale": [
-                1.2,
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "graffiti3",
+              "at": [
+                6.6,
+                1.65
+              ],
+              "scale": [
+                0.9,
                 1
               ]
             },
             {
               "entity": "ledge",
               "at": [
-                0.0,
-                2.2
+                8.4,
+                1.65
               ],
-              "anchor": "Section",
               "scale": [
-                1.2,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "graffiti4",
               "at": [
-                -2.4,
-                3.3
+                10.2,
+                1.65
               ],
-              "anchor": "Section",
               "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                4.4
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "riverReturns",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.8,
-          "spawns": [
-            {
-              "entity": "debrisRaft",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftHay",
-              "at": [
-                8.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
+                0.9,
                 1
               ]
             },
@@ -338,418 +192,71 @@
               "entity": "ledge",
               "at": [
                 12.0,
-                -1.2
+                1.65
               ],
-              "anchor": "Section",
               "scale": [
-                1.2,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "debrisRaftRoof",
+              "entity": "graffiti5",
               "at": [
-                16.0,
-                -1.2
+                13.799999999999999,
+                1.65
               ],
-              "anchor": "Section",
               "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftHay",
-              "at": [
-                24.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
+                0.9,
                 1
               ]
             },
             {
               "entity": "ledge",
               "at": [
-                28.0,
-                -1.2
+                15.6,
+                1.65
               ],
-              "anchor": "Section",
               "scale": [
-                1.2,
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "graffiti6",
+              "at": [
+                17.400000000000002,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                19.200000000000003,
+                1.65
+              ],
+              "scale": [
+                0.9,
                 1
               ]
             }
           ]
         },
         {
-          "name": "roofHopping",
+          "name": "landing",
           "direction": "Right",
-          "length": 28.0,
+          "length": 5.0,
           "turn": 2.0,
-          "autoSpeed": 0.8,
           "spawns": [
-            {
-              "entity": "debrisRaft",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftHay",
-              "at": [
-                8.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                16.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftHay",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "theBank",
-          "direction": "Up",
-          "length": 8.0,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                -2.4,
-                0.133
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                1.467
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                -2.4,
-                2.8
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                4.133
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                -2.4,
-                5.467
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                6.8
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "signComesBack",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.8,
-          "spawns": [
-            {
-              "entity": "debrisRaft",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftHay",
-              "at": [
-                8.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                12.0,
-                -0.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                16.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftHay",
-              "at": [
-                24.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "stillFloating",
-          "direction": "Right",
-          "length": 30.0,
-          "turn": 2.0,
-          "autoSpeed": 0.8,
-          "spawns": [
-            {
-              "entity": "debrisRaft",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftHay",
-              "at": [
-                8.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                16.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
             {
               "entity": "floorLanding959",
               "at": [
-                29.4,
-                -0.4
+                23.1,
+                3.05
               ],
-              "anchor": "Section",
               "id": "landing"
             }
           ]
@@ -774,16 +281,82 @@
         "value": 0.0
       },
       {
-        "name": "heat",
+        "name": "restOver",
         "value": 0.0
       }
     ],
     "rules": [
       {
-        "name": "on the roof",
+        "name": "stop floor: the quiet, Floor 959",
         "when": {
           "type": "sectionReached",
-          "section": "river"
+          "section": "stop"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 20.0
+              },
+              {
+                "type": "setCounter",
+                "name": "restOver",
+                "value": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:calm"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "stop floor: not yet, Floor 959",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "restOver",
+              "atLeast": 0.0,
+              "below": 1.0
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "I'm not in a hurry.",
+                "duration": 2.2,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "graffiti: first look",
+        "when": {
+          "type": "sectionReached",
+          "section": "stop"
         },
         "maxTimes": 1,
         "do": [
@@ -792,82 +365,249 @@
             "steps": [
               {
                 "type": "wait",
-                "seconds": 2.5
+                "seconds": 1.6
               },
               {
                 "type": "showText",
-                "text": "I used to sit under this.",
-                "duration": 2.65,
-                "style": "Subtitle",
-                "sound": "vo_f959_roof"
+                "text": "Somebody had time.",
+                "duration": 2.4,
+                "style": "Subtitle"
               }
             ]
           }
         ]
       },
       {
-        "name": "the sign comes back",
+        "name": "graffiti 1",
         "when": {
-          "type": "sectionReached",
-          "section": "signRide"
+          "type": "playerInZone",
+          "center": [
+            -0.5999999999999999,
+            2.65
+          ],
+          "size": [
+            3.0,
+            2.2
+          ],
+          "anchor": "World"
         },
         "maxTimes": 1,
         "do": [
           {
             "type": "runSequence",
             "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:discovery"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:read1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "graffiti 2",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            3.0000000000000004,
+            2.65
+          ],
+          "size": [
+            3.0,
+            2.2
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:read2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "graffiti 3",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            6.6,
+            2.65
+          ],
+          "size": [
+            3.0,
+            2.2
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:read3"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.6
+              },
+              {
+                "type": "showText",
+                "text": "Everyone says one.",
+                "duration": 2.4,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "graffiti 4",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            10.2,
+            2.65
+          ],
+          "size": [
+            3.0,
+            2.2
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:read4"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "graffiti 5",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            13.799999999999999,
+            2.65
+          ],
+          "size": [
+            3.0,
+            2.2
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:read5"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "graffiti 6",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            17.400000000000002,
+            2.65
+          ],
+          "size": [
+            3.0,
+            2.2
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:read6"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.6
+              },
+              {
+                "type": "showText",
+                "text": "Rook.",
+                "duration": 1.8,
+                "style": "Subtitle"
+              },
               {
                 "type": "wait",
                 "seconds": 1.2
               },
               {
-                "type": "showText",
-                "text": "Welcome to. Yeah. Thanks.",
-                "duration": 2.65,
-                "style": "Subtitle",
-                "sound": "vo_f959_sign"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "the steps: a near miss",
-        "when": {
-          "type": "sectionReached",
-          "section": "steps"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "runSequence",
-            "steps": [
-              {
-                "type": "wait",
-                "seconds": 3.0
+                "type": "spawn",
+                "entity": "diamond",
+                "anchor": "World",
+                "at": [
+                  17.400000000000002,
+                  3.25
+                ],
+                "facePlayer": false
               },
               {
-                "type": "slowMotion",
-                "scale": 0.35,
-                "duration": 0.4
+                "type": "emit",
+                "signal": "stop:graffiti:diamond"
               }
             ]
           }
         ]
       },
       {
-        "name": "the landing",
+        "name": "the landing, Floor 959",
         "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "restOver",
+              "atLeast": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
           {
             "type": "runSequence",
             "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:done"
+              },
               {
                 "type": "setFloor",
                 "floor": 958,
@@ -880,10 +620,9 @@
               },
               {
                 "type": "showText",
-                "text": "THE VILLAGE: STILL FLOATING",
+                "text": "HELL'S GRAFFITI: READ",
                 "duration": 2.4,
                 "style": "Banner",
-                "sound": "vo_f959_clear",
                 "color": "#FFD27A"
               },
               {
@@ -897,254 +636,9 @@
               {
                 "type": "setCounter",
                 "name": "cleared",
-                "value": 1
+                "value": 1.0
               }
             ]
-          }
-        ]
-      },
-      {
-        "name": "to riverReturns",
-        "when": {
-          "type": "sectionReached",
-          "section": "riverReturns"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "goToPhase",
-            "phase": "riverReturns"
-          }
-        ]
-      },
-      {
-        "name": "to roofHopping",
-        "when": {
-          "type": "sectionReached",
-          "section": "roofHopping"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc0"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "roofHopping"
-          }
-        ]
-      },
-      {
-        "name": "to theBank",
-        "when": {
-          "type": "sectionReached",
-          "section": "theBank"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc1"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "theBank"
-          }
-        ]
-      },
-      {
-        "name": "to signComesBack",
-        "when": {
-          "type": "sectionReached",
-          "section": "signComesBack"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc2"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "signComesBack"
-          }
-        ]
-      },
-      {
-        "name": "to stillFloating",
-        "when": {
-          "type": "sectionReached",
-          "section": "stillFloating"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc3"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "stillFloating"
-          }
-        ]
-      },
-      {
-        "name": "the opening's lava stops",
-        "when": {
-          "type": "sectionReached",
-          "section": "riser"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "lavaSpeed",
-            "value": 0.0
-          }
-        ]
-      },
-      {
-        "name": "heat: the floor gets hotter",
-        "when": {
-          "type": "every",
-          "seconds": 12.0,
-          "startAfter": 25.0,
-          "maxTimes": 12
-        },
-        "do": [
-          {
-            "type": "addCounter",
-            "name": "heat",
-            "amount": 1.0
-          }
-        ]
-      },
-      {
-        "name": "heat 3: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 3.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 5: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 5.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 7: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 7.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 9: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 9.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 11: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 11.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
           }
         ]
       }
@@ -1158,552 +652,10 @@
             "steps": [
               {
                 "type": "showText",
-                "text": "FLOOR 959: THE REST OF THE VILLAGE",
+                "text": "FLOOR 959: HELL'S GRAFFITI",
                 "duration": 2.6,
                 "style": "Banner",
-                "sound": "vo_f959_title",
                 "color": "#FFD27A"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "riverReturns",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:riverReturns"
-          },
-          {
-            "type": "showText",
-            "text": "THE RIVER RETURNS!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 1
-            },
-            "speed": 3.2,
-            "interval": 1.77,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "riverReturns: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 7.86,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "roofHopping",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:roofHopping"
-          },
-          {
-            "type": "showText",
-            "text": "ROOF HOPPING!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 1
-            },
-            "speed": 3.2,
-            "interval": 1.61,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "roofHopping: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 7.29,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "roofHopping: a brute for the fists",
-            "when": {
-              "type": "every",
-              "seconds": 17.09,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "theBank",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:theBank"
-          },
-          {
-            "type": "showText",
-            "text": "THE BANK!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 1
-            },
-            "speed": 3.2,
-            "interval": 1.45,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "theBank: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 6.72,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "theBank: a brute for the fists",
-            "when": {
-              "type": "every",
-              "seconds": 15.78,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "theBank: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 8.74,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "signComesBack",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:signComesBack"
-          },
-          {
-            "type": "showText",
-            "text": "THE SIGN COMES BACK!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.28,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 3,
-              "angle": 34
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 2.58,
-            "initialDelay": 2.0
-          }
-        ],
-        "rules": [
-          {
-            "name": "signComesBack: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 6.15,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "signComesBack: a brute for the fists",
-            "when": {
-              "type": "every",
-              "seconds": 14.48,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "signComesBack: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 7.92,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 5,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "stillFloating",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:stillFloating"
-          },
-          {
-            "type": "showText",
-            "text": "STILL FLOATING!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.12,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 4,
-              "angle": 40
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 2.33,
-            "initialDelay": 2.0
-          }
-        ],
-        "rules": [
-          {
-            "name": "stillFloating: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.57,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "stillFloating: a brute for the fists",
-            "when": {
-              "type": "every",
-              "seconds": 13.17,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "stillFloating: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 7.11,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 5,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
               }
             ]
           }
