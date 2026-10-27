@@ -2,6 +2,7 @@ using System.Collections;
 using System.Linq;
 using Hawkes.Playtest;
 using UnityEngine;
+using SickOfIt.Core.Progression;
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
 using SickOfIt.Gameplay;
