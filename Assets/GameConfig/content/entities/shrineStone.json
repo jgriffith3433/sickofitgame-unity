@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "shrine"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      0.9,
+      1.1
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#9CE8D8D0",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": -1,
+    "hurtFlash": false,
+    "deathPop": false,
+    "color": "#FFFFFF",
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "carved",
+      "text": "REST.",
+      "words": "OR PAY.",
+      "color": "#BFEFE8",
+      "size": 0.26,
+      "above": 1.0,
+      "onFace": false
+    }
+  ]
+}

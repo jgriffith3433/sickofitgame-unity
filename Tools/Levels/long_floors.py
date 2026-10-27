@@ -726,7 +726,7 @@ def build(n, report):
     return d
 
 
-STOP_FLOORS = {957, 959, 897, 893}     # written by stop_floors.py (nothing attacks there): never rewritten here; ORDER keeps them so the tiers don't shift
+STOP_FLOORS = {957, 959, 897, 893, 952, 856, 853, 809}     # written by stop_floors.py (nothing attacks there): never rewritten here; ORDER keeps them so the tiers don't shift
 
 
 def main(argv):

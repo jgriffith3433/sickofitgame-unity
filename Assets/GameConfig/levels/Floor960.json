@@ -434,6 +434,14 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                10.8,
+                -0.2
+              ],
+              "id": "find_glint0"
             }
           ]
         },
@@ -778,6 +786,14 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                18.0,
+                -0.2
+              ],
+              "id": "find_glint1"
             }
           ]
         },

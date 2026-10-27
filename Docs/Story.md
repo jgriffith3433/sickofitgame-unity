@@ -2337,21 +2337,32 @@ damned soul's sheet tinted in their colour and the bystanders the damned soul's 
 
 ## Stop floors
 
-Hell never lets up, so the four times it does are remembered. A **stop floor** (2026-10-27) is a floor where nothing attacks: the lava sea sits still below, no hazard is
+Hell never lets up, so the times it does are remembered. A **stop floor** (2026-10-27) is a floor where nothing attacks: the lava sea sits still below, no hazard is
 started, no enemy can reach the ledge, and the hero has about **20 seconds** of quiet with one thing to find (a scene, a soul, a carving or a climber), a heal where it fits, and
-nothing to learn. The landing waits for the quiet to run out (the hero says so if he is early). It still ends with the floor's Grudge pick. They take the place of four long floors
-(same numbers, same level slots), one new idea each, and Circle X and Circle IX get two apiece:
+nothing to learn. The landing waits for the quiet to run out (the hero says so if he is early). It still ends with the floor's Grudge pick. They take the place of long floors
+(same numbers, same level slots), one new idea each. The trial was four floors; the rest followed the same day (J: "every fourth floor of Circle X and IX"), eight in all:
 
 | Floor | Name | Circle | The discovery | Quiet |
 |---|---|---|---|---|
-| 957 | **The Hot Bath** | X | A spring that cooled in the first century. Three damned souls soak in it and are nice about it. One tells the hero to sit in it; it heals a heart. *"It's the one thing down here that isn't trying to burn you."* They have not told the Overlord. | no hazard, no enemy |
 | 959 | **Hell's Graffiti** | X | Six carvings from earlier climbers, one deadpan line each, the last signed by Rook (*"ROOK WAS HERE. SECOND."*). A diamond lies under it. | no hazard, no enemy |
+| 957 | **The Hot Bath** | X | A spring that cooled in the first century. Three damned souls soak in it and are nice about it. One tells the hero to sit in it; it heals a heart. *"It's the one thing down here that isn't trying to burn you."* They have not told the Overlord. | no hazard, no enemy |
+| 952 | **The Waystone Shrine** | X | A stone by the road with a keeper soul (*"Kneel. Resting is free. ...Mending costs."*). A card: **rest** (a heart, keeps every Grudge) or **fill every heart** for a Grudge (`offerShortcut` with `costGrudges` 1; with none to give the card says so and he can only rest). Paying skips the floor's Grudge pick: the shrine already took one. Sits just under the Pile Keeper's mound, which is why it is there. | no hazard, no enemy |
 | 897 | **Rook's Camp** | IX | Rook got here first and lit a fire out of fire. His camp is on a ledge under the road: *drop down and sit* (a heart, and Rook counts it as a win) or *walk on* (two diamonds, and Rook says he is right behind). The hero's reply is where he stands. Sets `rook.camp`. | no hazard, no enemy |
 | 893 | **The Stuck Imp** | IX | An imp on a ledge below keeps lobbing the same ember in the same direction. It fizzles over the lava short of everything, every 3.2 s, forever. Rewind and it throws the same throw: the hero notices. The ember can't reach the ledge (it dies after 0.8 s, 2.4 units out); the imp can't be hurt and drops nothing. | one harmless ember a few seconds, nowhere near him |
+| 856 | **The Sleeping Demon** | IX | A demon asleep on a ledge under the road, snoring in time with the lava. **Stealth:** it stays asleep unless a shot of the hero's passes within 3 units of it or he lands on its back; then it wakes (*"Mmh. ...Mm?"*), shows a `!`, and 1.4 s later fires slow spreads of three for 8 s before it lies back down. Walk past without waking it and three diamonds lie on the road beyond (`QUIET`). The demon is Neutral and cannot be shot, so a bot that shoots whatever is hostile walks by it. | asleep: none; woken: a telegraphed volley |
+| 853 | **The Damned Parade** | IX | Souls repeat a village fair on the road: a hawker at a stall (*"Step right up! ...Step right up!"*) and three walkers who go to the far end and back. The loop is exactly the same every time (the hero says so). **On the third loop one turns to watch the hero** (*"...You're not in the line."* / *"I'm leaving."* / *"That's what the last one said."*) and gives him a rewind orb. Done with `walkEntityTo`, `faceEntity` and a long sequence (a rewind replays it). | no hazard, no enemy |
+| 809 | **The Loop Room** | IX | The road dips four ledges into a room (a carved *THE LOOP ROOM. JUMP. REWIND.*) with a soul in it who says *"Jump. Then rewind. ...I'll do it for you."* A jump in the room sets the permanent flag `loopRoom.jumped`; a rewind while he is in the room afterwards makes a pale **echo** (`echoSoul`, a `mover` hop) jump where he stands, a diamond falls and the hero says *"It jumps worse than me."* (`heroRewound` + `heroState`.) | no hazard, no enemy |
 
 Lines are short and the hero's are one-liners. Souls are never the joke's target and nobody mentions work. The floors are written by `Tools/Levels/stop_floors.py`; the long-floor
-generators (`long_floors.py`, `cracked_floors.py`) skip these four. Their lines are audio.json prompts without clips yet (priced, not made: `Tools/Audio/pending_clips.json`), so they
-play as subtitles until the clips exist (`stop_floors.py --wire` then adds their `sound` fields). The spring and the camp fire are tinted placeholder boxes (art: two backdrop-style props, ~$0.20 of GPU, not approved); the stuck imp wears the imp's sheet. Playtest `stop-floors`.
+generators (`long_floors.py`, `cracked_floors.py`) skip them (`STOP_FLOORS`). Their lines are audio.json prompts without clips yet (priced, not made: `Tools/Audio/pending_clips.json`), so they
+play as subtitles until the clips exist (`stop_floors.py --wire` then adds their `sound` fields). The spring, the camp fire, the shrine stone, the fair stall and the loop sign are tinted placeholder boxes; the stuck imp and the sleeping demon wear the imp's sheet; every soul wears the damned soul's. Playtest `stop-floors` (all eight).
+
+**Where the stop floors are, and are not.** Every fourth floor of the authored stretches where a floor can give way: Circle X 959, 957, 952; Circle IX 897, 893, 856, 853, 809. The
+opening floors (1000-991: the tutorial, the launcher's theft, the weapons found, the lost things), Floors 910-902 (the side doors, the mid-boss and the Door) and the floors that carry a
+Climber's scene, an Overlord glimpse, an elite or a weapon pickup are not replaced: those scenes live in the floor's own script. Circle VIII (the Rune Bridges, 800-701) has none yet.
+
+**Small finds on the long floors** (`Tools/Levels/ambient_finds.py`, run after the floor writers): each long floor of Circles X and IX gets two **diamond glints** (`diamondGlint`, one diamond) and,
+when it has no damned soul yet, one **soul** hovering over a ledge of its own route (a soul within 1.6 units pays a rewind orb). Spawns carry the id prefix `find_`.
 
 ## Rules for levels
 

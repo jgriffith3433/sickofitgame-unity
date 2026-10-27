@@ -1111,6 +1111,22 @@
               "tags": [
                 "pc4"
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                16.0,
+                0.4
+              ],
+              "id": "find_glint0"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                24.0,
+                0.4
+              ],
+              "id": "find_glint1"
             }
           ]
         }

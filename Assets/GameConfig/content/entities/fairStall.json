@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "fair"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      1.6,
+      0.9
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#E0A060C8",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": -1,
+    "hurtFlash": false,
+    "deathPop": false,
+    "color": "#FFFFFF",
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "carved",
+      "text": "FAIR.",
+      "words": "AGAIN.",
+      "color": "#E0A060",
+      "size": 0.26,
+      "above": 0.95,
+      "onFace": false
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "loopRoom"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      0.6,
+      0.6
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#BFE8FF90",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": -1,
+    "hurtFlash": false,
+    "deathPop": false,
+    "color": "#FFFFFF",
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "carved",
+      "text": "THE LOOP ROOM.",
+      "words": "JUMP. REWIND.",
+      "color": "#BFE8FF",
+      "size": 0.26,
+      "above": 1.0,
+      "onFace": false
+    }
+  ]
+}

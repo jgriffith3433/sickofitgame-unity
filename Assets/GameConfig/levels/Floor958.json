@@ -225,6 +225,14 @@
                 7.15
               ],
               "id": "roofSoul"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                14.2,
+                7.25
+              ],
+              "id": "find_glint0"
             }
           ],
           "lead": 0.4
@@ -389,6 +397,14 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                24.0,
+                -0.2
+              ],
+              "id": "find_glint1"
             }
           ]
         },

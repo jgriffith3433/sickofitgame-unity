@@ -356,6 +356,14 @@
                 3.7
               ],
               "id": "lostThing"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                36.4,
+                6.6
+              ],
+              "id": "find_glint0"
             }
           ]
         },
@@ -1027,6 +1035,14 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                -2.4,
+                6.47
+              ],
+              "id": "find_glint1"
             }
           ]
         },

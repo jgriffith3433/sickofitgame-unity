@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-Stop floors (Docs/Story.md "Stop floors"): four floors where nothing attacks and the hero has ~20 s of quiet with one thing to find.
+Stop floors (Docs/Story.md "Stop floors"): eight floors where nothing attacks and the hero has ~20 s of quiet with one thing to find.
 
   957 The Hot Bath     (Circle X)  a cooled spring, damned souls soaking, a soul's line, a heal
   959 Hell's Graffiti  (Circle X)  six carvings from earlier climbers, the last signed by Rook
   897 Rook's Camp      (Circle IX) Rook waits; the hero's reply is where he stands (sit = heal, walk on = diamonds)
   893 The Stuck Imp    (Circle IX) an imp repeats the same failed ember throw; funny on a rewind
+  952 The Waystone Shrine (Circle X) a stone that mends: rest for a heart, or fill every heart for a Grudge (offerShortcut)
+  856 The Sleeping Demon (Circle IX) stealth: a demon asleep under the road; a shot passing or a landing on it wakes it; tiptoe past for diamonds
+  853 The Damned Parade (Circle IX) souls repeat a village fair; on the third loop one turns to watch the hero
+  809 The Loop Room    (Circle IX) the road dips through a room; a soul there replays your last jump after a rewind
 
-They take the place of four long floors in their slots (same file, same level number, same nextLevelNumber), so the numbering does not shift.
+They take the place of eight long floors in their slots (same file, same level number, same nextLevelNumber), so the numbering does not shift.
 long_floors.py and cracked_floors.py skip them (STOP_FLOORS there). Writes the levels, their landings' carved words, the content they use and
 audio.json prompts for the lines. The clips are not made (no voice budget yet): ids in Tools/Audio/pending_clips.json, and the showTexts carry no
 `sound` until WIRE_SOUNDS is True (run `python3 Tools/Levels/stop_floors.py --wire` after the clips exist).
@@ -39,6 +43,16 @@ SOUNDS = []                  # (id, speaker, prompt)
 def load(path):
     with open(path, encoding='utf-8') as f:
         return json.load(f)
+
+
+def rounded(o):
+    if isinstance(o, float):
+        return round(o, 3)
+    if isinstance(o, list):
+        return [rounded(v) for v in o]
+    if isinstance(o, dict):
+        return {k: rounded(v) for k, v in o.items()}
+    return o
 
 
 def dump(path, data):
@@ -91,7 +105,7 @@ def section(name):
 
 
 def zone(cx, cy, w, h):
-    return {'type': 'playerInZone', 'center': [cx, cy], 'size': [w, h], 'anchor': 'World'}
+    return {'type': 'playerInZone', 'center': [round(cx, 2), round(cy, 2)], 'size': [round(w, 2), round(h, 2)], 'anchor': 'World'}
 
 
 def counter(name, at_least=1.0, below=None):
@@ -106,7 +120,7 @@ def all_of(*ts):
 
 
 def spawn(entity, at, sid=None, **kw):
-    s = {'type': 'spawn', 'entity': entity, 'anchor': 'World', 'at': list(at), 'facePlayer': False}
+    s = {'type': 'spawn', 'entity': entity, 'anchor': 'World', 'at': [round(v, 2) for v in at], 'facePlayer': False}
     if sid:
         s['id'] = sid
     s.update(kw)
@@ -115,7 +129,7 @@ def spawn(entity, at, sid=None, **kw):
 
 # ------------------------------------------------------------------------------------------------ the shared shape
 def ledge(at, sc=0.9, **kw):
-    s = {'entity': kw.pop('entity', 'ledge'), 'at': list(at), 'scale': [sc, 1]}
+    s = {'entity': kw.pop('entity', 'ledge'), 'at': [round(v, 2) for v in at], 'scale': [sc, 1]}
     s.update(kw)
     return s
 
@@ -156,12 +170,19 @@ def build_floor(spec):
         rule(f'stop floor: not yet, Floor {floor}', all_of({'type': 'playerOn', 'target': {'id': 'landing'}}, counter('restOver', 0.0, 1.0)),
              seq(say(floor, 'early', 'hero', "I'm not in a hurry.", '[flat] I\'m not in a hurry.', 2.2))),
     ] + spec['rules'] + [
-        rule(f'the landing, Floor {floor}', all_of({'type': 'playerOn', 'target': {'id': 'landing'}}, counter('restOver')),
-             seq(emit(f'stop:{key}:done'), {'type': 'setFloor', 'floor': nxt, 'skipMilestones': True},
-                 {'type': 'setCounter', 'name': 'lavaSpeed', 'value': 0.0},
-                 clear, wait(2.6), {'type': 'offerUpgrades', 'title': 'Pick a grudge'},
-                 {'type': 'setCounter', 'name': 'cleared', 'value': 1.0})),
     ]
+    guard = spec.get('noPickWhen')       # a trigger that skips the Grudge pick (the shrine's fill paid a Grudge already)
+    on_landing = all_of({'type': 'playerOn', 'target': {'id': 'landing'}}, counter('restOver'))
+    land_steps = [emit(f'stop:{key}:done'), {'type': 'setFloor', 'floor': nxt, 'skipMilestones': True},
+                  {'type': 'setCounter', 'name': 'lavaSpeed', 'value': 0.0}, clear, wait(2.6)]
+    done_steps = [{'type': 'setCounter', 'name': 'cleared', 'value': 1.0}]
+    if guard:
+        rules.append(rule(f'the landing, Floor {floor}', all_of(on_landing, {'type': 'not', 'trigger': guard}),
+                          seq(*land_steps, {'type': 'offerUpgrades', 'title': 'Pick a grudge'}, *done_steps)))
+        rules.append(rule(f'the landing, Floor {floor}, no pick', all_of(on_landing, guard), seq(*land_steps, *done_steps)))
+    else:
+        rules.append(rule(f'the landing, Floor {floor}', on_landing,
+                          seq(*land_steps, {'type': 'offerUpgrades', 'title': 'Pick a grudge'}, *done_steps)))
     d['displayName'] = f'Floor {floor}: {spec["name"]}'
     d['duration'] = 240.0
     d['script'] = {
@@ -173,6 +194,7 @@ def build_floor(spec):
         'rules': rules,
         'phases': [{'name': 'ledge', 'onEnter': [seq(title)]}],
     }
+    d['script'] = rounded(d['script'])
     dump(path_file, d)
     # the landing's carved words
     lf = os.path.join(ENT, f'floorLanding{floor}.json')
@@ -324,6 +346,157 @@ def stuck_imp():
                 clearPrompt='[shouting] The Stuck Imp... STILL SHORT!')
 
 
+# ------------------------------------------------------------------------------------------------ 952 The Waystone Shrine
+def next_level(floor):
+    return load(os.path.join(LEV, f'Floor{floor}.json'))['nextLevelNumber']
+
+
+def shrine():
+    f = 952
+    walk = walkway(-2.4, 8)
+    stone_x = -2.4 + 4 * STEP
+    props = [{'entity': 'shrineStone', 'at': [stone_x, 1.98], 'id': 'shrineStone'},
+             {'entity': 'damnedSoul', 'at': [stone_x + 1.6, 2.5], 'id': 'keeper'}]
+    z = zone(stone_x, 2.3, 3.6, 2.6)
+    offer = {'type': 'offerShortcut', 'id': 'waystoneShrine', 'prompt': 'The Waystone Shrine', 'title': 'Fill every heart',
+             'description': 'Kneel at the stone and it mends all of you. It keeps a Grudge for the trouble.',
+             'stayTitle': 'Just rest', 'stayDescription': 'A heart, and a minute of quiet. You keep your Grudges.',
+             'costGrudges': 1, 'costText': 'Costs a Grudge: {0}', 'cantPayText': 'NO GRUDGE TO GIVE',
+             'toFloor': f - 1, 'nextLevel': next_level(f), 'color': '#9CE8D8'}
+    taken = {'type': 'shortcutChosen', 'shortcut': 'waystoneShrine', 'taken': True}
+    left = {'type': 'shortcutChosen', 'shortcut': 'waystoneShrine', 'taken': False}
+    rules = [
+        rule('the shrine: first look', section('stop'), seq(wait(1.8), say(f, 'stone', 'hero', 'A shrine. In Hell. Sure.', '[flat] A shrine. [beat] In Hell. [beat] Sure.', 2.6))),
+        rule('the shrine: the keeper offers', z,
+             seq(emit('stop:shrine:discovery'), wait(0.5),
+                 say(f, 'kneel', 'soul', "Kneel. Resting is free. ...Mending costs.", "[whispering] Kneel. [beat] Resting is free. [pause] Mending costs.", 4.0, SOUL),
+                 wait(4.3), offer)),
+        rule('the shrine: rest', left,
+             seq({'type': 'heal', 'target': {'player': True}, 'amount': 1},
+                 {'type': 'popText', 'text': '+1 heart', 'color': '#7FE0D0', 'at': [round(stone_x, 2), 3.4]},
+                 emit('stop:shrine:rest'),
+                 say(f, 'rest', 'hero', 'A minute of nothing. Fine.', '[sighs] A minute of nothing. [beat] Fine.', 2.6))),
+        rule('the shrine: fill', taken,
+             seq({'type': 'heal', 'target': {'player': True}, 'amount': 99},
+                 {'type': 'popText', 'text': 'EVERY HEART', 'color': '#9CE8D8', 'at': [round(stone_x, 2), 3.4]},
+                 emit('stop:shrine:filled'),
+                 say(f, 'whole', 'soul', "All of you. Back. ...Hell keeps the receipt.", "[whispering] All of you. [beat] Back. [pause] Hell keeps the receipt.", 4.0, SOUL),
+                 wait(4.3),
+                 say(f, 'new', 'hero', 'Good as new. Worse, but new.', '[deadpan] Good as new. [beat] Worse, but new.', 2.8))),
+    ]
+    return dict(floor=f, key='shrine', name='The Waystone Shrine', circle='emberWastes', walk=walk, props=props, rules=rules, noPickWhen=taken,
+                titlePrompt='[shouting] Floor nine fifty-two! [pause] The Waystone Shrine!', clear='THE WAYSTONE SHRINE: KNELT',
+                clearPrompt='[shouting] The Waystone Shrine... KNELT!')
+
+
+# ------------------------------------------------------------------------------------------------ 856 The Sleeping Demon
+def sleeping_demon():
+    f = 856
+    walk = walkway(-2.4, 10)
+    demon_x = -2.4 + 4 * STEP
+    props = [
+        {'entity': 'ledge', 'at': [demon_x, 0.05], 'id': 'demonLedge', 'scale': [2.0, 1]},
+        {'entity': 'sleepingDemon', 'at': [demon_x, 0.62], 'id': 'demon'},
+    ]
+    near = zone(demon_x, 2.3, 5.4, 2.6)
+    under = zone(demon_x, 0.95, 2.0, 1.0)             # his back: the ledge top, where a drop from the road lands
+    past_x = demon_x + 4.0
+    past = zone(past_x, 2.3, 2.4, 2.6)
+    quiet = all_of(counter('demonEver', 0.0, 1.0), counter('demonShot', 0.0, 1.0))
+    rules = [
+        rule('demon: first look', section('stop'), seq(wait(1.6), say(f, 'big', 'hero', 'Big. Asleep. Keep it that way.', '[low, flat] Big. [beat] Asleep. [beat] Keep it that way.', 3.0))),
+        rule('demon: asleep', near,
+             seq(emit('stop:sleepingDemon:discovery'), {'type': 'popText', 'text': 'zzz', 'color': '#B9C4D0', 'at': [round(demon_x, 2), 1.5]}, wait(0.8),
+                 say(f, 'snore', 'hero', 'It snores in time with the lava.', '[whispering, amused] It snores in time with the lava.', 3.2))),
+        rule('demon: landed on', under, seq({'type': 'setCounter', 'name': 'demonLanded', 'value': 1.0}, {'type': 'setCounter', 'name': 'demonEver', 'value': 1.0},
+                                            emit('stop:sleepingDemon:landed'))),
+        rule('demon: a shot passed', {'type': 'witness', 'what': 'ShotPassed', 'within': 3.0, 'watcher': 'demon'},
+             seq({'type': 'setCounter', 'name': 'demonShot', 'value': 1.0}, emit('stop:sleepingDemon:shot'))),
+        rule('demon: tiptoed past', all_of(past, quiet),
+             seq(emit('stop:sleepingDemon:stealth'), wait(0.4),
+                 say(f, 'past', 'hero', "Didn't even breathe.", "[whispering, pleased] Didn't even breathe.", 2.4),
+                 spawn('diamond', (past_x - 0.5, WALK_Y + 1.5)), spawn('diamond', (past_x + 0.1, WALK_Y + 1.5)), spawn('diamond', (past_x + 0.7, WALK_Y + 1.5)),
+                 {'type': 'popText', 'text': 'QUIET', 'color': GOLD, 'at': [round(past_x, 2), 3.6]})),
+        rule('demon: woken', {'type': 'signal', 'name': 'stop:sleepingDemon:woken'},
+             seq(wait(0.6), say(f, 'mine', 'hero', "Well. That one's on me.", "[sighs] Well. [beat] That one's on me.", 2.6))),
+    ]
+    return dict(floor=f, key='sleepingDemon', name='The Sleeping Demon', circle='crackedRoad', walk=walk, props=props, rules=rules,
+                counters=[{'name': 'demonLanded', 'value': 0.0}, {'name': 'demonEver', 'value': 0.0}, {'name': 'demonShot', 'value': 0.0}],
+                titlePrompt='[shouting] Floor eight fifty-six! [pause] The Sleeping Demon!', clear='THE SLEEPING DEMON: STILL ASLEEP',
+                clearPrompt='[shouting] The Sleeping Demon... STILL ASLEEP!')
+
+
+# ------------------------------------------------------------------------------------------------ 853 The Damned Parade
+FAIR_LEFT = [5.0, 5.6, 6.2]          # where the three walkers start and come back to
+FAIR_RIGHT = [9.2, 8.6, 8.0]
+
+
+def parade():
+    f = 853
+    walk = walkway(-2.4, 10)
+    stall_x = 1.4
+    soul_y = WALK_Y + 0.55
+    props = [{'entity': 'fairStall', 'at': [stall_x, WALK_Y + 0.33], 'id': 'stall'},
+             {'entity': 'paradeSoul', 'at': [stall_x + 1.1, soul_y], 'id': 'hawk'}]
+    for i, x in enumerate(FAIR_LEFT):
+        props.append({'entity': 'paradeSoul', 'at': [x, soul_y], 'id': f'walker{i}'})
+
+    def go(side, speed=1.7):
+        return [{'type': 'walkEntityTo', 'target': f'walker{i}', 'anchor': 'World', 'x': (FAIR_RIGHT if side == 'right' else FAIR_LEFT)[i], 'speed': speed} for i in range(3)]
+
+    pitch = lambda n: say(f, f'pitch{n}', 'soul', 'Step right up! ...Step right up!', '[loudly, sing-song, flat on the repeat] Step right up! [pause, flatter] Step right up!', 1.9, SOUL)
+    steps = [wait(1.0)]
+    for loop in (1, 2):
+        steps += go('right') + [wait(2.6), pitch(loop)] + go('left') + [wait(2.6)]
+    steps += go('right') + [wait(2.4), pitch(3)]
+    steps += [{'type': 'faceEntity', 'target': 'walker1', 'toward': 'player'}, wait(0.9), emit('stop:parade:discovery'),
+              say(f, 'line', 'soul', "...You're not in the line.", "[quietly, surprised] You're not in the line.", 2.6, SOUL), wait(2.9),
+              say(f, 'leaving', 'hero', "I'm leaving.", "[flat] I'm leaving.", 1.8), wait(2.1),
+              say(f, 'last', 'soul', "That's what the last one said.", "[whispering] That's what the last one said.", 3.0, SOUL), wait(2.6),
+              {'type': 'spawn', 'entity': 'rewindOrb', 'anchor': 'Player', 'at': [0.8, 0.9], 'facePlayer': False}, emit('stop:parade:gift')]
+    steps += go('left')
+    rules = [
+        rule('parade: first look', section('stop'), seq(wait(2.0), say(f, 'fair', 'hero', 'A fair. Down here.', '[flat] A fair. [beat] Down here.', 2.4))),
+        rule('parade: the fair, three times', section('stop'), seq(*steps)),
+        rule('parade: the same line', zone(stall_x + 3.0, 2.3, 4.0, 2.6),
+             seq(emit('stop:parade:seen'), wait(1.2), say(f, 'again', 'hero', 'Same as last time. Exactly.', '[deadpan] Same as last time. [beat] Exactly.', 2.8))),
+    ]
+    return dict(floor=f, key='parade', name='The Damned Parade', circle='crackedRoad', walk=walk, props=props, rules=rules,
+                titlePrompt='[shouting] Floor eight fifty-three! [pause] The Damned Parade!', clear='THE DAMNED PARADE: WATCHED',
+                clearPrompt='[shouting] The Damned Parade... WATCHED!')
+
+
+# ------------------------------------------------------------------------------------------------ 809 The Loop Room
+def loop_room():
+    f = 809
+    low = WALK_Y - 1.3
+    xs = [-2.4 + i * STEP for i in range(10)]
+    walk = [ledge((x, WALK_Y if i < 3 or i > 6 else low)) for i, x in enumerate(xs)]
+    room_l, room_r = xs[3] - 0.9, xs[6] + 0.9
+    room_x, room_w = (room_l + room_r) / 2, room_r - room_l
+    props = [{'entity': 'loopSign', 'at': [room_x, low + 0.33], 'id': 'sign'},
+             {'entity': 'paradeSoul', 'at': [room_x + 1.0, low + 0.55], 'id': 'roomSoul'}]
+    in_room = zone(room_x, low + 1.6, room_w, 3.6)
+    in_air = zone(room_x, low + 2.2, room_w, 1.6)         # above where he stands: he jumped
+    echo = all_of({'type': 'heroRewound', 'within': 3.0}, in_room, {'type': 'heroState', 'requires': ['flag:loopRoom.jumped']})
+    rules = [
+        rule('room: first look', section('stop'), seq(wait(1.6), say(f, 'dip', 'hero', 'The road goes down. Of course it does.', '[flat] The road goes down. [beat] Of course it does.', 3.0))),
+        rule('room: the soul', in_room,
+             seq(emit('stop:loopRoom:discovery'), wait(0.4),
+                 say(f, 'room', 'soul', "Jump. Then rewind. ...I'll do it for you.", "[whispering] Jump. [beat] Then rewind. [pause] I'll do it for you.", 4.0, SOUL))),
+        rule('room: he jumped', in_air, seq({'type': 'setFlag', 'flag': 'loopRoom.jumped'}, emit('stop:loopRoom:jumped'))),
+        rule('room: the echo', echo,
+             seq({'type': 'spawn', 'entity': 'echoSoul', 'anchor': 'Player', 'at': [0.0, -0.2], 'facePlayer': False, 'id': 'echo'},
+                 emit('stop:loopRoom:echo'), wait(1.4),
+                 say(f, 'got', 'soul', "I've got that one.", "[pleased, whispering] I've got that one.", 2.2, SOUL), wait(2.4),
+                 say(f, 'worse', 'hero', 'It jumps worse than me.', '[deadpan] It jumps worse than me.', 2.4),
+                 spawn('diamond', (room_x, low + 1.4))), max_times=3),
+    ]
+    return dict(floor=f, key='loopRoom', name='The Loop Room', circle='crackedRoad', walk=walk, props=props, rules=rules,
+                titlePrompt='[shouting] Floor eight oh nine! [pause] The Loop Room!', clear='THE LOOP ROOM: AGAIN',
+                clearPrompt='[shouting] The Loop Room... AGAIN!')
+
+
 # ------------------------------------------------------------------------------------------------ content
 def entity(name, body):
     dump(os.path.join(ENT, name + '.json'), {'schemaVersion': 1, **body})
@@ -363,6 +536,55 @@ def write_content():
                                        'fireOnEvent': 'FireProjectile', 'damage': 1}]})
 
 
+    # 952: the stone that mends
+    entity('shrineStone', {'team': 'Neutral', 'health': 0, 'shootable': False, 'tags': ['shrine'],
+                           'body': {'shape': 'Box', 'size': [0.9, 1.1], 'solid': False},
+                           'visual': {'scale': 1.0, 'placeholderColor': '#9CE8D8D0', 'placeholderShape': 'Box', 'placeholderLabel': False, 'layer': 'Player',
+                                      'sortingOrder': -1, 'hurtFlash': False, 'deathPop': False, 'color': '#FFFFFF', 'facesLeft': False},
+                           'healthBar': {'show': False},
+                           'abilities': [{'type': 'carved', 'text': 'REST.', 'words': 'OR PAY.', 'color': '#BFEFE8', 'size': 0.26, 'above': 1.0, 'onFace': False}]})
+    # 853 / 809: a damned soul that only stands and is walked by the floor's script (no hover, no orb of its own)
+    soul = load(os.path.join(ENT, 'damnedSoul.json'))
+    entity('paradeSoul', {'team': 'Neutral', 'health': 0, 'shootable': False, 'tags': ['damned', 'parade'], 'body': soul['body'], 'visual': soul['visual'],
+                          'healthBar': {'show': False}, 'abilities': [{'type': 'lifetime', 'seconds': 600}]})
+    echo_visual = json.loads(json.dumps(soul['visual']))
+    echo_visual['color'] = '#BFE8FFB0'
+    entity('echoSoul', {'team': 'Neutral', 'health': 0, 'shootable': False, 'tags': ['damned', 'echo'], 'body': soul['body'], 'visual': echo_visual,
+                        'healthBar': {'show': False},
+                        'abilities': [{'type': 'mover', 'waypoints': [[0.3, 1.0], [0.6, 1.45], [0.9, 1.0], [1.2, 0.0]], 'speed': 4.5, 'pause': 0.0, 'mode': 'PingPong'},
+                                      {'type': 'lifetime', 'seconds': 2.6}]})
+    entity('fairStall', {'team': 'Neutral', 'health': 0, 'shootable': False, 'tags': ['fair'],
+                         'body': {'shape': 'Box', 'size': [1.6, 0.9], 'solid': False},
+                         'visual': {'scale': 1.0, 'placeholderColor': '#E0A060C8', 'placeholderShape': 'Box', 'placeholderLabel': False, 'layer': 'Player',
+                                    'sortingOrder': -1, 'hurtFlash': False, 'deathPop': False, 'color': '#FFFFFF', 'facesLeft': False},
+                         'healthBar': {'show': False},
+                         'abilities': [{'type': 'carved', 'text': 'FAIR.', 'words': 'AGAIN.', 'color': '#E0A060', 'size': 0.26, 'above': 0.95, 'onFace': False}]})
+    entity('loopSign', {'team': 'Neutral', 'health': 0, 'shootable': False, 'tags': ['loopRoom'],
+                        'body': {'shape': 'Box', 'size': [0.6, 0.6], 'solid': False},
+                        'visual': {'scale': 1.0, 'placeholderColor': '#BFE8FF90', 'placeholderShape': 'Box', 'placeholderLabel': False, 'layer': 'Player',
+                                   'sortingOrder': -1, 'hurtFlash': False, 'deathPop': False, 'color': '#FFFFFF', 'facesLeft': False},
+                        'healthBar': {'show': False},
+                        'abilities': [{'type': 'carved', 'text': 'THE LOOP ROOM.', 'words': 'JUMP. REWIND.', 'color': '#BFE8FF', 'size': 0.26, 'above': 1.0, 'onFace': False}]})
+    # 856: a demon asleep. Neutral and not shootable (the bot and the hero's shots pass through); a shot passing near, or a landing on his back (the floor's
+    # counter), wakes him. Awake he gives a 1.4 s warning, fires slow spreads at the hero for 8 s, then lies back down.
+    entity('demonEmber', {'extends': 'projectileEnemy', 'abilities': [{'type': 'projectile', 'damage': 1, 'hitSound': None}, {'type': 'lifetime', 'seconds': 3.2}]})
+    entity('sleepingDemon', {
+        'extends': 'imp', 'displayName': 'Sleeping demon', 'team': 'Neutral', 'health': 0, 'shootable': False, 'onSpawn': [],
+        'hint': 'Asleep. A shot past it or a landing on it wakes it. Walk.', 'note': 'Do not shoot the sleeping demon. I will say it once more, quietly.',
+        'hintVoice': '', 'tags': ['sleepingDemon'], 'loot': {'chance': 0.0, 'count': 0, 'value': 0}, 'drops': [],
+        'abilities': [{'type': 'faceTarget'}],
+        'states': [
+            {'name': 'asleep', 'transitions': [{'to': 'awake', 'when': {'type': 'anyOf', 'triggers': [
+                {'type': 'witness', 'what': 'ShotPassed', 'within': 3.0}, {'type': 'counter', 'name': 'demonLanded', 'atLeast': 1.0}]}}]},
+            {'name': 'awake',
+             'onEnter': [{'type': 'setCounter', 'name': 'demonLanded', 'value': 0.0}, {'type': 'emit', 'signal': 'stop:sleepingDemon:woken'},
+                         {'type': 'popText', 'text': '!', 'color': '#FF8A3D', 'at': [0.0, 1.2], 'anchor': 'Self', 'size': 1.4},
+                         {'type': 'showText', 'text': 'Mmh. ...Mm?', 'duration': 1.6, 'style': 'Subtitle', 'color': '#FF9A5C'}],
+             'abilities': [{'type': 'shoot', 'projectile': 'demonEmber', 'pattern': {'type': 'spread', 'count': 3, 'angle': 50}, 'speed': 2.6, 'aim': 'Player',
+                            'interval': 2.2, 'initialDelay': 1.4, 'damage': 1}],
+             'transitions': [{'to': 'asleep', 'when': {'type': 'after', 'seconds': 8.0}}]}]})
+
+
 def write_audio():
     audio = load(AUDIO)
     have = {s['id']: s for s in audio['sounds']}
@@ -388,7 +610,7 @@ def write_audio():
         f.write('\n')
 
 
-FLOORS = [hot_bath, graffiti, camp, stuck_imp]
+FLOORS = [hot_bath, graffiti, camp, stuck_imp, shrine, sleeping_demon, parade, loop_room]
 
 
 def main():
@@ -396,7 +618,7 @@ def main():
     for make in FLOORS:
         build_floor(make())
     write_audio()
-    print('wrote stop floors 957, 959, 897, 893;', len(SOUNDS), 'line prompts')
+    print('wrote stop floors', ', '.join(str(m()['floor']) for m in FLOORS), ';', len(SOUNDS), 'line prompts')
 
 
 def check():

@@ -92,7 +92,7 @@ FLOORS = {
   993: ["hawkerSoul", "hecklerSoul"], 992: ["hidingSoul"], 960: ["giverSoul", "cheerSoul"], 958: ["hecklerSoul"],
   955: ["hawkerSoul"], 953: ["cheerSoul", "hidingSoul"], 910: ["hecklerSoul"], 908: ["giverSoul"], 905: ["hawkerSoul", "cheerSoul"],
   904: ["hidingSoul"], 900: ["hecklerSoul", "giverSoul"], 896: ["cheerSoul"], 894: ["hawkerSoul"], 860: ["hidingSoul", "hecklerSoul"],
-  856: ["giverSoul"], 854: ["cheerSoul", "hawkerSoul"],
+  854: ["cheerSoul", "hawkerSoul"],
 }
 
 def write(path, data):

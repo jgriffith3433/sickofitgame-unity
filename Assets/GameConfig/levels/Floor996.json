@@ -825,6 +825,22 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                0.0,
+                2.47
+              ],
+              "id": "find_glint0"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                0.0,
+                7.8
+              ],
+              "id": "find_glint1"
             }
           ]
         },

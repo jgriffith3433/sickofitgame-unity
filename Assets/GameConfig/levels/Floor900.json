@@ -142,6 +142,14 @@
                 9.0,
                 4.6
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                6.8,
+                3.55
+              ],
+              "id": "find_glint0"
             }
           ]
         },
@@ -457,6 +465,14 @@
               "tags": [
                 "pc1"
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                0.0,
+                7.8
+              ],
+              "id": "find_glint1"
             }
           ]
         },
