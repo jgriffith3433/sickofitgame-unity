@@ -92,6 +92,8 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Replay modes: past the ramp, every push is this much 'heat' harder (0 = no more): +1 enemy per push per 1.0, +0.5 alive at once, " +
              "+8% health... (see LevelDirector.Generator). Endless Floor never stops getting worse.")] public float escalation;
         [Doc("Replay modes: each generated enemy comes from a random side of the camera instead of always from ahead.")] public bool bothSides;
+        [Doc("Each generated enemy appears this far outside the view edge it comes from, so it is never visible when it spawns (fliers from the side, walkers dropping in from above, always inside the Travel barriers). 0 = inside the Circle's spawn area.")]
+        public float edgeMargin = ViewEdge.DefaultMargin;
 
         public override void Run(ActionContext context) => context.Director.StartGenerator(this, context);
     }

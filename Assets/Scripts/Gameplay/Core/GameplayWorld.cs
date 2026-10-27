@@ -434,11 +434,15 @@ namespace SickOfIt.Gameplay
             AddCounter("spawned", 1f);
             AddCounter("spawned:" + def.id, 1f);
             Telemetry.Record("spawn", def.id, serial);
+            Spawned?.Invoke(entity, position, View);
             // The Codex counts each creature once, even when a rewind plays its spawn again (not in a scene).
             if (def.team == Team.Enemy && !string.IsNullOrEmpty(def.displayName) && string.IsNullOrEmpty(SceneId) && TryGrantOnce("codexMet:" + serial))
                 SickOfIt.Data.CodexProgress.Meet(def.displayName);
             return entity;
         }
+
+        /// <summary>Raised for every spawn with where it was put and the view at that moment (the playtest checks nothing appears on screen).</summary>
+        public static event System.Action<Entity, Vector2, Rect> Spawned;
 
         ObjectPool PoolFor(EntityDef def)
         {

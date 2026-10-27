@@ -36,6 +36,8 @@ namespace SickOfIt.Gameplay.Content
         public int VolleyIndex;
         /// <summary>The visible world area.</summary>
         public Rect View;
+        /// <summary>How far a shot can fly before it expires (speed x lifetime); 0 = unknown, not a hostile shot, or it needs to be seen where it starts.</summary>
+        public float Reach;
         public IRandomSource Random;
     }
 
@@ -156,13 +158,19 @@ namespace SickOfIt.Gameplay.Content
         public int count = 1;
         [Doc("0 = the whole screen width.")] public float width;
         [Doc("Random tilt, degrees either side of straight down.")] public float angleJitter = 5f;
-        [Doc("Start this far below the top edge of the screen.")] public float topInset = 0.2f;
+        [Doc("Start this far below the top edge of the screen. Only used when 'edgeMargin' is 0.")] public float topInset = 0.2f;
+        [Doc("Start this far ABOVE the top edge of the view, so a shot is never visible when it appears (5 gives about 1.5 s of warning at speed 3.2); shortened so the shot (speed x lifetime) still reaches the view, and unused for non-hostile or speed-0 markers. 0 = start inside the view, 'topInset' below its top edge.")]
+        public float edgeMargin = ViewEdge.DefaultMargin;
 
         public override void Emit(EmitInput input, List<Shot> shots)
         {
             float left = width > 0f ? input.Origin.x - width * 0.5f : input.View.xMin;
             float right = width > 0f ? input.Origin.x + width * 0.5f : input.View.xMax;
-            float y = input.View.yMax - topInset;
+            // Above the view, but never so far that the shot expires before it gets in (and then a full second of fall is visible).
+            float margin = edgeMargin;
+            if (margin > 0f && input.Reach > 0f)
+                margin = Mathf.Min(margin, input.Reach - input.View.height - 1f);
+            float y = edgeMargin > 0f && margin > 0f && input.Reach > 0f ? input.View.yMax + margin : input.View.yMax - topInset;
             for (int i = 0; i < count; i++)
             {
                 float x = input.Random.Range(left, right);

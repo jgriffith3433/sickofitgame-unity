@@ -1059,3 +1059,13 @@ countdown (`player.json` `deathRewindWindow`). Every on-screen word is in `ui/th
 - Bot playtest of every level: `-runTests -testPlatform PlayMode -testCategory Playtest` (see AGENTS.md), then read
   `Logs/Playtest/report.md` and the per-level `*.summary.json` (kills, damage taken by source, outcome).
 - Rewind is automatic for everything here: content can't break it.
+
+## Spawning off screen ("rain that is already falling when you see it", "enemies walk in, they don't pop in")
+
+Hell may show up late but never out of nowhere: a hazard or enemy that appears inside the view is a cheap trick. The option is "view edge plus margin" (`ViewEdge` in `Content/Common.cs`, built on `GameplayWorld.View`, so it holds in landscape and portrait):
+
+- `rain` pattern: `edgeMargin` (default 5) starts each shot that far ABOVE the top of the view; at speed 3.2 that is ~1.5 s of warning. `0` = the old `topInset` inside the view. The margin shrinks by itself so the shot (speed x `lifetime`) still arrives; a Neutral marker or a speed-0 drop (Slag Fall's warning glows) keeps the old start so its warning is seen.
+- `spawnWave`: `edgeMargin` (default 0 = where `areaCenter`/`points` say). Above 0 it pushes each spawn out past the view edge nearest its spot: kinematic fliers enter from the side, everything else (walkers) drops in from above, with x kept inside the view so the Travel/Scroll edge barriers (0.5 outside the view's sides) never trap it.
+- `generateFloors`: `edgeMargin` (default 5) does the same for every generated enemy, whatever the Circle table's `areaCenter` says (a 3.8 spot is inside a landscape view and beyond the barriers in portrait).
+
+Floor 998's cinder waves use `edgeMargin: 5`. Playtest `spawn-edge` (Floor 998 and Level 13; run it on a landscape and a portrait device).
