@@ -79,7 +79,7 @@
             {
               "entity": "wreckCart",
               "at": [
-                2.7,
+                2.4,
                 -1.2
               ],
               "scale": [
@@ -1544,6 +1544,33 @@
           {
             "type": "emit",
             "signal": "setpiece:spire"
+          },
+          {
+            "type": "heal",
+            "target": {
+              "player": true
+            },
+            "amount": 5
+          },
+          {
+            "type": "addRewind",
+            "seconds": 10.0,
+            "text": "+{0}s REWIND"
+          },
+          {
+            "type": "popText",
+            "text": "+hearts",
+            "color": [
+              1.0,
+              0.45,
+              0.5,
+              1.0
+            ],
+            "at": [
+              0.0,
+              1.2
+            ],
+            "anchor": "Player"
           },
           {
             "type": "showText",
