@@ -69,7 +69,12 @@ namespace SickOfIt.Core.Progression
                 };
                 var card = MenuCard.Add(menu, list, data, () => OnLevelClicked(levelNumber));
                 cards.Add(card.Button.transform.parent.gameObject);
+                // Cards past the first page are built hidden: their entrance stagger must not climb with them, or the
+                // pager and Back (built last) would wait seconds to appear, and a card paged to would still be invisible.
+                if (cards.Count >= PerPage())
+                    menu.ResetEntranceCascade();
             }
+            menu.ResetEntranceCascade();
             BuildPager(gd);
             lastPortrait = MenuScreen.Portrait;
             perPage = PerPage();
