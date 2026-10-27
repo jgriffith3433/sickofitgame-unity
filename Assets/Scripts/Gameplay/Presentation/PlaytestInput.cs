@@ -18,6 +18,8 @@ namespace SickOfIt.Gameplay
         Keyboard keyboard;
         Gamepad gamepad;
         Mouse mouse;
+        Touchscreen touchscreen;
+        int touchId;
         readonly HashSet<Key> held = new HashSet<Key>();
         Vector2 leftStick;
         Vector2 rightStick;
@@ -32,6 +34,7 @@ namespace SickOfIt.Gameplay
                 keyboard = InputSystem.AddDevice<Keyboard>("HawkesPlaytestKeyboard"),
                 gamepad = InputSystem.AddDevice<Gamepad>("HawkesPlaytestGamepad"),
                 mouse = InputSystem.AddDevice<Mouse>("HawkesPlaytestMouse"),
+                touchscreen = InputSystem.AddDevice<Touchscreen>("HawkesPlaytestTouchscreen"),
             };
             Current = input;
             return input;
@@ -114,6 +117,24 @@ namespace SickOfIt.Gameplay
         }
 
         /// <summary>Lets go of everything.</summary>
+        /// <summary>A finger goes down at a screen point (a touchscreen state event; EnhancedTouch's onFingerDown sees it). Returns its id for <see cref="TouchUp"/>.</summary>
+        public int TouchDown(Vector2 screenPosition)
+        {
+            if (touchscreen == null || !touchscreen.added)
+                return 0;
+            int id = ++touchId;
+            InputSystem.QueueStateEvent(touchscreen, new TouchState { touchId = id, phase = UnityEngine.InputSystem.TouchPhase.Began, position = screenPosition, pressure = 1f });
+            return id;
+        }
+
+        /// <summary>The finger <paramref name="id"/> lifts.</summary>
+        public void TouchUp(int id, Vector2 screenPosition)
+        {
+            if (touchscreen == null || !touchscreen.added || id == 0)
+                return;
+            InputSystem.QueueStateEvent(touchscreen, new TouchState { touchId = id, phase = UnityEngine.InputSystem.TouchPhase.Ended, position = screenPosition });
+        }
+
         public void ReleaseAll()
         {
             if (!Alive)
@@ -131,6 +152,8 @@ namespace SickOfIt.Gameplay
             if (keyboard != null && keyboard.added) InputSystem.RemoveDevice(keyboard);
             if (gamepad != null && gamepad.added) InputSystem.RemoveDevice(gamepad);
             if (mouse != null && mouse.added) InputSystem.RemoveDevice(mouse);
+            if (touchscreen != null && touchscreen.added) InputSystem.RemoveDevice(touchscreen);
+            touchscreen = null;
             keyboard = null;
             gamepad = null;
             mouse = null;
