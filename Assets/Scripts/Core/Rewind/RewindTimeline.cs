@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,10 +29,26 @@ namespace SickOfIt.Core.Rewind
 
         public float MaxHistorySeconds => maxHistorySeconds;
 
+        /// <summary>Seconds between records right now: the scene's setting, or <see cref="LowEndInterval"/> on a slow device.</summary>
+        public float EffectiveRecordInterval => lowEnd ? Mathf.Max(recordInterval, LowEndInterval) : recordInterval;
+        public bool LowEnd => lowEnd;
+
+        /// <summary>10 Hz: the restore lerps between snapshots, so half as many records look the same.</summary>
+        public const float LowEndInterval = 0.1f;
+        // Smoothed frame time (real seconds) that switches the slow-device interval on and off, with a gap so it can't flicker.
+        private const float SlowFrame = 0.030f, FastFrame = 0.022f;
+
+        /// <summary>Playtest only: null decides by device and frame time, true/false forces the interval.</summary>
+        public static bool? ForceLowEnd;
+
+        private bool lowEnd;
+        private float smoothFrame;
+
         private readonly List<IRewindable> rewindables = new List<IRewindable>();
         // The GameObject of each rewindable (same index), so the restore loop never casts or asks Unity for it.
         private readonly List<GameObject> objects = new List<GameObject>();
-        private readonly HashSet<IRewindable> registered = new HashSet<IRewindable>();
+        // Where each rewindable sits in the two lists above, so Unregister is a swap-remove instead of a search.
+        private readonly Dictionary<IRewindable, int> registered = new Dictionary<IRewindable, int>();
         private readonly List<ObjectPool> trackedPools = new List<ObjectPool>();
         private float lastRecordTime;
         private bool subscribedToGameClock;
@@ -41,6 +58,7 @@ namespace SickOfIt.Core.Rewind
         private bool measuredRewinding;
         private float measuredStep;
         private double measuredWork;
+        private long measuredWorkAlloc, frameStartHeap;
         private float lastTickTime;
 
         // ─── Singleton lifecycle ──────────────────────────────────────
@@ -48,6 +66,28 @@ namespace SickOfIt.Core.Rewind
         private void Awake()
         {
             _instance = this;
+            lowEnd = ForceLowEnd ?? SlowDevice();
+        }
+
+        private static bool SlowDevice()
+        {
+            return Application.isMobilePlatform || SystemInfo.processorCount <= 2 || SystemInfo.systemMemorySize <= 2048;
+        }
+
+        // Forward frames only: a device that can't keep up records less often, whatever it is.
+        private void WatchFrameTime()
+        {
+            if (ForceLowEnd.HasValue)
+            {
+                lowEnd = ForceLowEnd.Value;
+                return;
+            }
+            float frame = Mathf.Min(Time.unscaledDeltaTime, 0.25f);
+            smoothFrame = smoothFrame <= 0f ? frame : Mathf.Lerp(smoothFrame, frame, 0.05f);
+            if (!lowEnd && smoothFrame > SlowFrame)
+                lowEnd = true;
+            else if (lowEnd && smoothFrame < FastFrame && !SlowDevice())
+                lowEnd = false;
         }
 
         private void OnDestroy()
@@ -62,21 +102,29 @@ namespace SickOfIt.Core.Rewind
 
         public void Register(IRewindable r)
         {
-            if (r == null || !registered.Add(r))
+            if (r == null || registered.ContainsKey(r))
                 return;
+            registered.Add(r, rewindables.Count);
             rewindables.Add(r);
             objects.Add(r is Component c ? c.gameObject : null);
         }
 
         public void Unregister(IRewindable r)
         {
-            if (r == null || !registered.Remove(r))
+            if (r == null || !registered.TryGetValue(r, out int i))
                 return;
-            int i = rewindables.IndexOf(r);
-            if (i < 0)
-                return;
-            rewindables.RemoveAt(i);
-            objects.RemoveAt(i);
+            registered.Remove(r);
+            int last = rewindables.Count - 1;
+            if (i != last)
+            {
+                // The last one takes the freed place (order within a restore phase doesn't matter).
+                var moved = rewindables[last];
+                rewindables[i] = moved;
+                objects[i] = objects[last];
+                registered[moved] = i;
+            }
+            rewindables.RemoveAt(last);
+            objects.RemoveAt(last);
         }
 
         public void RegisterPool(ObjectPool pool)
@@ -120,11 +168,15 @@ namespace SickOfIt.Core.Rewind
         private void OnClockTick(float time)
         {
             // This tick starts a new frame: the last one is over (Time.unscaledDeltaTime is its length).
+            long heapNow = RewindPerf.Heap();
             if (measuring)
-                RewindPerf.AddFrame(Time.unscaledDeltaTime, measuredRewinding, measuredStep, measuredWork);
+                RewindPerf.AddFrame(Time.unscaledDeltaTime, measuredRewinding, measuredStep, measuredWork,
+                    measuredWorkAlloc, Math.Max(0L, heapNow - frameStartHeap));
             long start = RewindPerf.Now();
+            frameStartHeap = heapNow;
             measuring = true;
             measuredWork = 0;
+            measuredWorkAlloc = 0;
             measuredRewinding = GameClock.Instance.IsRewinding;
             measuredStep = Mathf.Abs(time - lastTickTime);
             lastTickTime = time;
@@ -137,14 +189,16 @@ namespace SickOfIt.Core.Rewind
             {
                 // Objects rewound to before they existed come back when time reaches their birth.
                 CatchUpAll(time);
+                WatchFrameTime();
 
-                if (time - lastRecordTime >= recordInterval)
+                if (time - lastRecordTime >= EffectiveRecordInterval)
                 {
                     RecordAll(time);
                     lastRecordTime = time;
                 }
             }
             measuredWork += RewindPerf.MillisecondsSince(start);
+            measuredWorkAlloc += Math.Max(0L, RewindPerf.Heap() - heapNow);
         }
 
         private void OnRewindStarted()

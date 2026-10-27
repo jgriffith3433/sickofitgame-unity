@@ -314,16 +314,20 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
 
         private void Update()
         {
-            RetryStalledChunks();
+            bool rewinding = useGameClock && GameClock.Instance != null && GameClock.Instance.IsRewinding;
+            // No chunk loading while rewinding: the ones behind the playhead were asked for when it started.
+            if (!rewinding)
+                RetryStalledChunks();
             if (!initialized || !isReady) return;
 
-            bool rewinding = useGameClock && GameClock.Instance != null && GameClock.Instance.IsRewinding;
             if (rewinding && !wasRewinding && data != null)
             {
                 int chunk = data.GetChunkIndexForFrame(currentFrameIndex);
                 if (chunk >= 0)
                     EnsureChunksAround(chunk);
             }
+            if (wasRewinding && !rewinding && lastChunkIdx >= 0)
+                EnsureChunksAround(lastChunkIdx); // the window the rewind held still slides again
             wasRewinding = rewinding;
 
             if (useGameClock && GameClock.Instance != null)
@@ -391,8 +395,11 @@ namespace SickOfIt.VideoFrameExtractor.Runtime
             // Sliding window — only when chunk changes
             if (chunkIdx != lastChunkIdx)
             {
+                // A rewind doesn't load or drop chunks mid-way (a chunk not here yet is loaded when it stops).
+                bool holdWindow = useGameClock && GameClock.Instance != null && GameClock.Instance.IsRewinding && chunkTextures.ContainsKey(chunkIdx);
                 lastChunkIdx = chunkIdx;
-                EnsureChunksAround(chunkIdx);
+                if (!holdWindow)
+                    EnsureChunksAround(chunkIdx);
             }
 
             // Render from loaded chunk

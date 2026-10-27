@@ -12,7 +12,9 @@ namespace SickOfIt.Core
         [SerializeField] private AudioSource audioSource;
 
         private float savedPitch = 1f;
-        private float nextScrubTime;
+        private float savedVolume = 1f;
+        private float fadeStartedAt;
+        private const float FadeSeconds = 0.25f;
 
         public struct AudioSnapshot
         {
@@ -48,6 +50,13 @@ namespace SickOfIt.Core
             if (GameClock.Instance == null || !GameClock.Instance.IsRewinding) return;
             if (!snapshot.isPlaying) return;
 
+            bool canReverse = audioSource.clip.loadType == AudioClipLoadType.DecompressOnLoad;
+            if (!canReverse)
+            {
+                FadeOutCompressed();
+                return;
+            }
+
             if (!audioSource.isPlaying)
                 audioSource.Play();
 
@@ -55,28 +64,30 @@ namespace SickOfIt.Core
             if (length <= 0.05f) return;
 
             float target = Mathf.Clamp(snapshot.playbackTime, 0f, length - 0.01f);
-            bool canReverse = audioSource.clip.loadType == AudioClipLoadType.DecompressOnLoad;
             float speed = Mathf.Max(0.01f, Mathf.Abs(GameClock.Instance.TimeScale));
 
-            if (canReverse)
-            {
-                // Decompressed clips can actually play backward.
-                audioSource.pitch = -speed;
-                float drift = Mathf.Abs(audioSource.time - target);
-                if (audioSource.loop)
-                    drift = Mathf.Min(drift, length - drift);
-                if (drift > 0.15f)
-                    audioSource.time = target;
-                return;
-            }
-
-            // Compressed clips ignore a negative pitch, so step the playhead
-            // backward and let each step be heard.
-            audioSource.pitch = savedPitch > 0.01f ? savedPitch : 1f;
-            if (Time.unscaledTime < nextScrubTime) return;
-            nextScrubTime = Time.unscaledTime + 0.05f;
-            audioSource.time = target;
+            // Decompressed clips can actually play backward.
+            audioSource.pitch = -speed;
+            float drift = Mathf.Abs(audioSource.time - target);
+            if (audioSource.loop)
+                drift = Mathf.Min(drift, length - drift);
+            if (drift > 0.15f)
+                audioSource.time = target;
         }
+
+        // Compressed clips ignore a negative pitch, and seeking one every few frames makes the browser or phone
+        // decode from the start of a block each time. Fade it out instead (no seeks at all) and put it back at
+        // the right place once, when the rewind stops.
+        private void FadeOutCompressed()
+        {
+            float k = Mathf.Clamp01((Time.unscaledTime - fadeStartedAt) / FadeSeconds);
+            audioSource.volume = Mathf.Lerp(savedVolume, 0f, k);
+            if (k >= 1f && audioSource.isPlaying)
+                audioSource.Pause();
+        }
+
+        private bool IsCompressed => audioSource != null && audioSource.clip != null &&
+                                     audioSource.clip.loadType != AudioClipLoadType.DecompressOnLoad;
 
         protected override float GetSnapshotTime(AudioSnapshot snapshot) => snapshot.time;
 
@@ -86,15 +97,24 @@ namespace SickOfIt.Core
             if (audioSource == null) return;
 
             savedPitch = audioSource.pitch > 0.01f ? audioSource.pitch : 1f;
-            nextScrubTime = 0f;
-            if (!audioSource.isPlaying && audioSource.clip != null)
+            savedVolume = audioSource.volume;
+            fadeStartedAt = Time.unscaledTime;
+            if (!IsCompressed && !audioSource.isPlaying && audioSource.clip != null)
                 audioSource.Play();
         }
 
         public override void OnRewindStop()
         {
             if (audioSource != null)
+            {
                 audioSource.pitch = savedPitch > 0.01f ? savedPitch : 1f;
+                if (IsCompressed)
+                {
+                    // Faded out for the rewind: back to its volume, playing again (the position is set below).
+                    audioSource.volume = savedVolume;
+                    audioSource.UnPause();
+                }
+            }
 
             base.OnRewindStop();
 
