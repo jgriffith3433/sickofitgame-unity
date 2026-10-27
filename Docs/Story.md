@@ -1873,6 +1873,17 @@ Hell loves a show, and the announcer's cabinet is the show's frame: nothing on s
 - **Between floors**: each new floor sweeps a band of lava light up the screen; a floor stage's results close on a black cover with the floor's number, and the next scene opens it (`ScreenTransition`; it never holds the player on black for more than 8 s).
 - **Fit**: placed through `MenuCanvas`/`MenuResponsive`, so it holds at 1920x1080 and 1080x1920, inside the safe area (playtest `ui-polish`).
 
+## Incoming warnings (Hell gives you a heads-up, quietly)
+
+Hell shows up late but never out of nowhere (hazards and enemies start just off screen), and the cabinet does the decent thing: when a fireball or a creature
+is about to come in, a faint tick glows on the edge where it will cross, about a second and a half ahead. It is not a siren. No sound, no flash, no
+shake, no words: the hero is sick of it, not blind to it (2026-10-27; playtest `incoming-warnings`).
+
+- A marker is a soft, see-through tick just inside the edge at the crossing point, orange for a shot, rose for a creature, from 25% opacity at 1.5 s out to 70% at 0.3 s, a touch deeper as it nears. It fades in over a quarter-second and out in a tenth the moment the thing is in view.
+- Only hostile things that will really come in get one (position and velocity, worked out fresh every frame): never what moves away, passes beside the view, stands still, is a prop, a pickup or Neutral. A crowd shares a marker (Floor 998's rain is one soft band across the top, not a wall of arrows); at most four show, soonest arrival first.
+- A rewind clears them while it runs and they come back from the replayed floor; a pause freezes them. Nothing is saved.
+- Data: `game.json` `incomingWarnings` (lookahead, cap, merge, opacities, size, tints). The player's switch is **Settings > Accessibility > Incoming warnings** (on by default). Code: `IncomingSet` (the maths) and `GameplayHud.Incoming.cs` (a pool of Images behind the HUD's widgets, nudged off any button).
+
 ## The feel of a hit (Hell's cabinet hits back)
 
 Hell is an arcade cabinet, and a cabinet sells every blow: the world stops for a beat when something lands hard, monsters

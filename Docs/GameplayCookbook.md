@@ -1069,3 +1069,5 @@ Hell may show up late but never out of nowhere: a hazard or enemy that appears i
 - `generateFloors`: `edgeMargin` (default 5) does the same for every generated enemy, whatever the Circle table's `areaCenter` says (a 3.8 spot is inside a landscape view and beyond the barriers in portrait).
 
 Floor 998's cinder waves use `edgeMargin: 5`. Playtest `spawn-edge` (Floor 998 and Level 13; run it on a landscape and a portrait device).
+
+**Incoming warnings.** Because things start off screen, a quiet tick at the edge says where the next one comes in (`game.json` `incomingWarnings`: `lookaheadSeconds` 1.5, `maxMarkers` 4, `mergeFraction`, opacities, size, tints; the player's switch is Settings > Accessibility). Any Enemy-team entity with a `projectile`, `contactDamage`, `shoot` or `laserSweep` ability and a moving body gets one; give a new hazard one of those and it is warned about by itself. Things that move by a script rather than a body velocity (`mover`, `screenAnchor`) are not predicted. Playtest `incoming-warnings` (landscape and portrait); tests `IncomingWarningsTests`.

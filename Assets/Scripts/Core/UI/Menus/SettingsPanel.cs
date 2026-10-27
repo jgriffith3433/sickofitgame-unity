@@ -108,10 +108,10 @@ namespace SickOfIt.Core.UI.Menus
 
             var overlay = Overlay.Create(menu, "Accessibility", 0.8f);
             var panel = MenuGraphics.NewRect("Panel", overlay.Inner);
-            MenuGraphics.Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(980f, 880f));
+            MenuGraphics.Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(980f, 960f));
             MenuGraphics.Surface(panel, theme.card.surface);
             menu.AddMotion(panel.gameObject, null, menu.EntranceOverride ?? theme.entrance, 0f);
-            MenuResponsive.Track(panel, MenuPlacement.At(0.5f, 0.5f, 0f, -10f, 980f, 880f), menu.Responsive.screens?.settingsPanel,
+            MenuResponsive.Track(panel, MenuPlacement.At(0.5f, 0.5f, 0f, -10f, 980f, 960f), menu.Responsive.screens?.settingsPanel,
                 MenuElementKind.Container, menu.Responsive);
             menu.AddText(panel, "Title", texts.accessibilityTitle, theme.title, new Vector2(0.5f, 1f), new Vector2(0f, -78f),
                 new Vector2(900f, 130f), out _, Mathf.Min(theme.title.fontSize, 96f), menu.TitleFont, null, null, -2f);
@@ -136,6 +136,7 @@ namespace SickOfIt.Core.UI.Menus
             ToggleRow(menu, rows, texts.reducedShake, texts, toggle, () => GameSettings.ReducedShake, v => GameSettings.ReducedShake = v);
             ToggleRow(menu, rows, texts.hitboxDot, texts, toggle, () => GameSettings.HitboxDot, v => GameSettings.HitboxDot = v);
             ToggleRow(menu, rows, texts.aimAssist, texts, toggle, () => GameSettings.AimAssist, v => GameSettings.AimAssist = v);
+            ToggleRow(menu, rows, texts.incomingWarnings, texts, toggle, () => GameSettings.IncomingWarnings, v => GameSettings.IncomingWarnings = v);
             ToggleRow(menu, rows, texts.touchButtons, texts, toggle, () => GameSettings.TouchButtons, v => GameSettings.TouchButtons = v);
 
             void Close()

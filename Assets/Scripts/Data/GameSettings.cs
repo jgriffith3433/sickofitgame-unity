@@ -40,6 +40,8 @@ namespace SickOfIt.Data
         public static bool ReducedFlash { get => Get("ReducedFlash", 0f) > 0.5f; set => Set("ReducedFlash", value ? 1f : 0f); }
         public static bool ReducedShake { get => Get("ReducedShake", 0f) > 0.5f; set => Set("ReducedShake", value ? 1f : 0f); }
         public static bool HitboxDot { get => Get("HitboxDot", 0f) > 0.5f; set => Set("HitboxDot", value ? 1f : 0f); }
+        // On by default: a quiet tick at the edge where something is about to come in (game.json incomingWarnings).
+        public static bool IncomingWarnings { get => Get("IncomingWarnings", 1f) > 0.5f; set => Set("IncomingWarnings", value ? 1f : 0f); }
         public static bool AimAssist { get => Get("AimAssist", 0f) > 0.5f; set => Set("AimAssist", value ? 1f : 0f); }
         public static bool Hints { get => Get("Hints", 1f) > 0.5f; set => Set("Hints", value ? 1f : 0f); }
         // The ◄ ► JUMP buttons (settings > Accessibility). Off by default, phones too: the game is played by tapping and

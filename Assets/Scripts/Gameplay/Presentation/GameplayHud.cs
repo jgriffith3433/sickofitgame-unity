@@ -117,6 +117,7 @@ namespace SickOfIt.Gameplay
             BuildDash();
             BuildTouchPad();
             BuildStyle();
+            BuildIncoming();
 
             var place = Landscape.objective;
             objective = menu.AddText(menu.Root, "Objective", "", theme.caption, place.anchor, place.offset,
@@ -704,6 +705,7 @@ namespace SickOfIt.Gameplay
             UpdateDash();
             UpdateTouchPad();
             UpdateStyle();
+            UpdateIncoming();
             UpdateScreens();
             UpdatePickerKeys();
             UpdateCursor();
