@@ -28,6 +28,8 @@ namespace SickOfIt.Core.UI.Menus
         /// <summary>Seconds since the value last dropped (for shake effects); large when it hasn't.</summary>
         public float SinceHit => Time.unscaledTime - hitAt;
         public bool IsLow { get; private set; }
+        /// <summary>True while drawn as one segment per point (up to MaxSegments); a bigger maximum is one smooth bar.</summary>
+        public bool Segmented => segmentsRoot != null;
 
         RectTransform segmentsRoot;
         readonly List<Segment> segments = new List<Segment>();

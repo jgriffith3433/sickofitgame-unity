@@ -1394,7 +1394,7 @@ is proud of). His voice is `yooba` (designed for him: fast, wet, gurgling, a bit
 
   | Goods | Effect | What it is |
   |---|---|---|
-  | Goo Plaster | +1 max health | a dab of Yooba over the dents |
+  | Goo Plaster | +2 max health per level, 10 levels (5 hearts grow to 25) | a dab of Yooba over the dents, ten times |
   | Bouncy Soles | an extra jump in the air | slime in the boots |
   | Slick Heels | runs 8% faster | slime on the heels |
   | Licked Trigger | fires 10% faster | he licked it |
@@ -1437,30 +1437,41 @@ is proud of). His voice is `yooba` (designed for him: fast, wet, gurgling, a bit
   has what Yooba wants to see (a weapon unlocked, a story flag, another good bought to a level, a Grudge held, a level
   cleared) it is *not on the counter at all*, not greyed out: Yooba doesn't show off what you can't use. The moment it
   is met, the card appears. A hero who already owns a good always sees it (an older save loses nothing).
-- **Yooba's prices** (2026-10-25). Hell is repetition, and so is saving up: the shop now takes about **three times as
-  many floors** to empty as it did (diamond drops are unchanged; the prices went up). To buy every level of every good
-  used to take **655** diamonds; now it takes **1,705**, or **1,970** with *Double-Dipped Shots* (**2,435** with the weapon goods below: Slimed Knuckles 60+120, Stretchy Wraps 45+90, Keep Weapons 150). About 2.6x the old
-  prices on the old goods; with the new good on the counter, 3.0x the old total.
+- **Yooba's prices** (2026-10-27, J: "make the upgrades so they don't cost as much diamonds ... cap higher"). **This supersedes the 2026-10-25 price rise** (2.6x the old
+  prices on the older goods, 3.0x with the gated good: 1,705 diamonds for the older counter, 3,565 with the weapon goods, Slimed Lining and rewind goods). Hell is repetition, and so is saving up, but not *that* much of it: **a
+  Circle of climbing should buy something that matters.** The older goods now cost about half per level and reach further.
+  Measured first (no playtest report was at hand, so from the loot tables: `loot` chance x count x value per kill, ~40 kills on a five-minute floor, a Circle's ~30 played
+  floors): **Circle X pays about 15 diamonds a floor, ~450 a Circle** (imps 0.15-0.6 a kill, the sack imps 2); **Circle IX about 25 a floor, ~600-750** (the Road's wraiths 3, bastion brutes 1.6). The real numbers are the
+  playtest's `level<n>.diamonds`, in the `all-levels` balance report; read those and adjust the table below. Enemy `loot` is untouched.
+  - **Goo Plaster is the headline: +2 max health a level, 10 levels, 10 diamonds rising ~1.3x a level, 433 in all: one Circle of climbing buys the whole line, and the hero goes from 5 hearts to 25.** It stops at 25
+    on purpose. J's example was 100 HP, but every hit costs one heart; 100 would need hits that scale with it. The health bar draws segments up to 12 (`hud.maxSegments`) and a smooth bar with the "25/25" count beyond that,
+    so 25 stays readable in landscape (440 wide) and portrait (330 wide).
+  - The other older goods got 4-5 levels where they had 2-3 (rewind goods stay at their cap: the history holds 30 s), at roughly half the old price per level. Yooba's 21 later goods (the ones with a card tag) are
+    untouched, on their own curve below.
 
-  | Goods | Levels | Old prices | New prices | Old total | New total |
-  |---|---|---|---|---|---|
-  | Goo Plaster | 5 | 10, 20, 35, 55, 80 | 25, 55, 90, 145, 210 | 200 | 525 |
-  | Bouncy Soles | 2 | 15, 35 | 40, 90 | 50 | 130 |
-  | Slick Heels | 3 | 12, 25, 40 | 30, 65, 105 | 77 | 200 |
-  | Licked Trigger | 3 | 15, 30, 50 | 40, 80, 130 | 95 | 250 |
-  | Tummy-Dipped Shots | 3 | 20, 40, 70 | 50, 105, 180 | 130 | 335 |
-  | Loop Jar | 3 | 12, 25, 40 | 30, 65, 105 | 77 | 200 |
-  | Shiny Sniffer | 2 | 8, 18 | 20, 45 | 26 | 65 |
-  | Double-Dipped Shots *(gated)* | 2 | - | 100, 165 | - | 265 |
-  | **All** | | | | **655** | **1,705** (1,970 with the gated good) |
+  | Goods | Levels | Prices | Total |
+  |---|---|---|---|
+  | Goo Plaster | 10 (+2 hearts each) | 10, 13, 17, 22, 29, 38, 49, 64, 83, 108 | 433 |
+  | Bouncy Soles | 2 | 20, 45 | 65 |
+  | Slick Heels | 5 | 12, 20, 32, 48, 70 | 182 |
+  | Licked Trigger | 5 | 15, 25, 40, 60, 85 | 225 |
+  | Tummy-Dipped Shots | 5 | 20, 35, 55, 80, 115 | 305 |
+  | Loop Jar | 5 | 12, 20, 32, 45, 60 | 169 |
+  | Bottomless Jar *(gated)* | 2 | 70, 100 | 170 |
+  | Quick Unwind | 5 | 18, 30, 48, 70, 95 | 261 |
+  | Shiny Sniffer | 3 | 8, 18, 30 | 56 |
+  | Double-Dipped Shots *(gated)* | 4 | 35, 60, 90, 125 | 310 |
+  | Slimed Knuckles *(gated)* | 4 | 25, 45, 70, 100 | 240 |
+  | Stretchy Wraps *(gated)* | 4 | 18, 32, 50, 70 | 170 |
+  | Keep Weapons *(gated)* | 1 | 60 | 60 |
+  | Slimed Lining *(gated)* | 1 | 40 | 40 |
+  | **All older goods** | | | **2,686** (was 3,565); 1,696 without the gated ones |
 
-  How many floors that is depends on how many diamonds a floor pays; the playtest reports the diamonds each level paid
-  (`level<n>.diamonds`) and the shop's total (`shop.totalPrice`, `shop.basePrice`), so the ratio can be read off any
-  run. Enemy `loot` chances and values are left alone on purpose (the unit of the economy is the diamond; changing
-  both sides at once hides which one moved); to slow the shop further, raise prices, to speed it up, raise `loot`.
+  The playtest reports the diamonds each level paid (`level<n>.diamonds`) and the shop's total (`shop.totalPrice`, `shop.basePrice`); `shop-balance` buys the whole health line with real clicks.
+
 - **Yooba's new goods and the new Grudges** (2026-10-25; `Gameplay/Core/HeroPerks.cs`, `ShopEffect` Armor..LastGasp, `UpgradeDef.perksPerLevel`). More things a slime can make out of his stomach, 21 goods (7 of them gated) and 10 Grudges, all small
   effects with something to see: a *POP!*, *CLANK!*, *SLIPPED!*, *CRIT!*, *+1 BURP*, *BELCH!* or *LAST GASP!* floats over the hero. Totals are constant for a floor; what is spent (bubbles, bombs, gasps, plates) is saved state; every chance is a hash of the seed and the moment, so a rewind replays the same.
-  Prices follow the curve Goo Plaster set: the first level's price times 1, 2.2, 3.6, 5.8, 8.4, rounded to 5 (`ShopGoodsTests`). The new goods add **7,125** diamonds (10,690 for the whole counter; the older goods are 3,565, the Slimed Lining included).
+  Prices follow the curve Goo Plaster set: the first level's price times 1, 2.2, 3.6, 5.8, 8.4, rounded to 5 (`ShopGoodsTests`). The new goods add **7,125** diamonds (9,811 for the whole counter; the older goods are 2,686 since 2026-10-27, the Slimed Lining included).
 
   | Good (card tag) | Levels | Prices | What it does |
   |---|---|---|---|
