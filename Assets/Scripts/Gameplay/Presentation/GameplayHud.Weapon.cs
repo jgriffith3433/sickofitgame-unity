@@ -158,7 +158,23 @@ namespace SickOfIt.Gameplay
             weaponIcon.sprite = def.icon;
             weaponIcon.enabled = def.icon != null;
             var labelRect = weaponButton.Label.rectTransform;
-            labelRect.offsetMin = new Vector2(def.icon != null ? Landscape.weapon.size.y * 0.84f + 8f : 0f, labelRect.offsetMin.y);
+            var chip = ((RectTransform)weaponButton.transform).rect;
+            var iconRect = weaponIcon.rectTransform;
+            if (def.icon != null && chip.width < chip.height * 1.6f)
+            {
+                // A square chip (portrait): the icon on top, the name under it in words, never a letter stack beside it.
+                iconRect.anchorMin = new Vector2(0.5f, 0.42f);
+                iconRect.anchorMax = new Vector2(0.5f, 0.94f);
+                iconRect.pivot = new Vector2(0.5f, 0.5f);
+                iconRect.anchoredPosition = Vector2.zero;
+                iconRect.sizeDelta = new Vector2(chip.width * 0.6f, 0f);
+                labelRect.offsetMin = new Vector2(4f, 4f);
+                labelRect.offsetMax = new Vector2(-4f, -chip.height * 0.58f);
+                weaponButton.Label.fontSizeMin = 8f;
+                weaponButton.Label.fontSizeMax = 18f;
+            }
+            else
+                labelRect.offsetMin = new Vector2(def.icon != null ? Landscape.weapon.size.y * 0.84f + 8f : 0f, labelRect.offsetMin.y);
         }
 
         /// <summary>The new weapon's name rises into the chip from below with a punch of size and a flash; presentation only.</summary>
