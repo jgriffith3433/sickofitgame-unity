@@ -409,7 +409,7 @@
             {
               "type": "counter",
               "name": "spawned:stuckEmber",
-              "atLeast": 3.0
+              "atLeast": 1.0
             },
             {
               "type": "heroRewound",

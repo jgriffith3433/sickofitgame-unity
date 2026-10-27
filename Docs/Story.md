@@ -2331,7 +2331,7 @@ nothing to learn. The landing waits for the quiet to run out (the hero says so i
 
 Lines are short and the hero's are one-liners. Souls are never the joke's target and nobody mentions work. The floors are written by `Tools/Levels/stop_floors.py`; the long-floor
 generators (`long_floors.py`, `cracked_floors.py`) skip these four. Their lines are audio.json prompts without clips yet (priced, not made: `Tools/Audio/pending_clips.json`), so they
-play as subtitles until the clips exist; art is placeholders until the specs in `Assets/GameConfig/art/` are generated.
+play as subtitles until the clips exist (`stop_floors.py --wire` then adds their `sound` fields). The spring and the camp fire are tinted placeholder boxes (art: two backdrop-style props, ~$0.20 of GPU, not approved); the stuck imp wears the imp's sheet. Playtest `stop-floors`.
 
 ## Rules for levels
 

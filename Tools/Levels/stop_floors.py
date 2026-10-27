@@ -313,7 +313,7 @@ def stuck_imp():
              seq(say(f, 'same', 'hero', 'Same throw.', '[deadpan] Same throw.', 1.8))),
         rule('stuck imp: same miss', counter(thrown, 4.0),
              seq(say(f, 'miss', 'hero', 'Same miss.', '[deadpan] Same miss.', 1.8))),
-        rule('stuck imp: rewound, still short', all_of(counter(thrown, 3.0), {'type': 'heroRewound', 'within': 4.0}),
+        rule('stuck imp: rewound, still short', all_of(counter(thrown, 1.0), {'type': 'heroRewound', 'within': 4.0}),
              seq(wait(3.0), emit('stop:stuckImp:rewound'),
                  say(f, 'short', 'hero', 'Rewound it. Still short.', '[amused, deadpan] Rewound it. [beat] Still short.', 2.8)), max_times=2),
         rule('stuck imp: for the record', counter(thrown, 7.0),
