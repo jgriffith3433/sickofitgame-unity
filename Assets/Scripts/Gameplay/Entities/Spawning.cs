@@ -124,6 +124,19 @@ namespace SickOfIt.Gameplay
         /// <summary>A shot never leads further ahead than this many seconds of flight.</summary>
         public const float MaxLeadSeconds = 2f;
 
+        /// <summary>Speed x lifetime of a hostile projectile entity (no lifetime = far); 0 for anything else, so off-screen starts are only used where they are safe.</summary>
+        static float ShotReach(GameplayWorld world, string projectile, float speed)
+        {
+            if (speed <= 0.0001f || string.IsNullOrEmpty(projectile) || !world.Content.Entities.TryGetValue(projectile, out var def) || def.team != Team.Enemy)
+                return 0f;
+            foreach (var ability in def.abilities)
+            {
+                if (ability is LifetimeAbility life)
+                    return speed * life.seconds;
+            }
+            return 1000f;
+        }
+
         public static void Fire(GameplayWorld world, Entity owner, string projectile, Pattern pattern, Aim aim, Vector2 direction,
             Vector2 origin, float speed, int damage, int volleyIndex, IRandomSource random)
         {
@@ -138,6 +151,7 @@ namespace SickOfIt.Gameplay
                 Aim = AimDirection(world, owner, aim, direction, origin, random, speed * speedMultiplier),
                 VolleyIndex = volleyIndex,
                 View = world.View,
+                Reach = ShotReach(world, projectile, speed * speedMultiplier),
                 Random = random,
             };
 
