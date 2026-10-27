@@ -109,6 +109,18 @@ namespace SickOfIt.Combat.Health
         /// Set the level number and apply roguelite health values.
         /// Called by LevelRuntime during level initialisation.
         /// </summary>
+        static float returnInvincible;
+
+        /// <summary>A bought Return on the death screen leaves this many seconds of safety for the level it reloads (RunFlow sets it).</summary>
+        public static void GrantReturnInvincibility(float seconds) { returnInvincible = Mathf.Max(0f, seconds); }
+
+        static float TakeReturnInvincibility()
+        {
+            float seconds = returnInvincible;
+            returnInvincible = 0f;
+            return seconds;
+        }
+
         public void InitializeForLevel(int levelNumber)
         {
             currentLevelNumber = levelNumber;
@@ -119,7 +131,7 @@ namespace SickOfIt.Combat.Health
             currentHealth = Mathf.Clamp(
                 RogueliteManager.Instance.GetStartingHealthForLevel(currentLevelNumber),
                 0, maxHealth);
-            invincibilityTimer = SickOfIt.Core.Progression.RunFlow.TakeReturnInvincibility();
+            invincibilityTimer = TakeReturnInvincibility();
             deathUndoGraceTimer = 0f;
             onHealthChanged?.Invoke(currentHealth);
         }

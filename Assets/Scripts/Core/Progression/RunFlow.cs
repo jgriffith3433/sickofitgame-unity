@@ -200,20 +200,10 @@ namespace SickOfIt.Core.Progression
         /// </summary>
         public static void Returned(int level, int diamonds, int floor)
         {
-            returnInvincible = ReturnInvincibleSeconds();
+            SickOfIt.Combat.Health.PlayerHealth.GrantReturnInvincibility(ReturnInvincibleSeconds());
             WaystoneProgress.DiedOnFloor = 0;
             AnalyticsManager.Track("return_paid", new Dictionary<string, object> { { "level", level }, { "floor", floor }, { "diamonds", diamonds } });
             Debug.Log($"[Runs] Returned to level {level} (FLOOR {floor}) for {diamonds} diamonds: the run goes on");
-        }
-
-        static float returnInvincible;
-
-        /// <summary>The seconds of safety a bought Return gives the level it reloads (taken once, by the hero's health as the level starts).</summary>
-        public static float TakeReturnInvincibility()
-        {
-            float seconds = returnInvincible;
-            returnInvincible = 0f;
-            return seconds;
         }
 
         public static int ReturnCost()
