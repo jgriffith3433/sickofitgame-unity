@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 400.0,
+  "duration": 245,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 15,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 958,
-    "length": 285,
+    "length": 175,
     "floors": {
       "start": 958,
       "end": 957,
@@ -155,7 +155,6 @@
           "direction": "Up",
           "length": 5.12,
           "turn": 2.0,
-          "lead": 0.4,
           "spawns": [
             {
               "entity": "sinkingStone",
@@ -227,7 +226,8 @@
               ],
               "id": "roofSoul"
             }
-          ]
+          ],
+          "lead": 0.4
         },
         {
           "name": "riser",
@@ -763,10 +763,6 @@
         "value": 0.0
       },
       {
-        "name": "finale",
-        "value": 0.0
-      },
-      {
         "name": "ovlOn",
         "value": 0.0
       }
@@ -851,20 +847,10 @@
       {
         "name": "the landing",
         "when": {
-          "type": "allOf",
-          "triggers": [
-            {
-              "type": "playerOn",
-              "target": {
-                "id": "landing"
-              }
-            },
-            {
-              "type": "counter",
-              "name": "finale",
-              "atLeast": 1.0
-            }
-          ]
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
         },
         "maxTimes": 1,
         "do": [
@@ -1016,26 +1002,11 @@
         ]
       },
       {
-        "name": "the floor has had its minutes",
-        "when": {
-          "type": "atTime",
-          "seconds": 255.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "finale",
-            "value": 1.0
-          }
-        ]
-      },
-      {
         "name": "heat: the floor gets hotter",
         "when": {
           "type": "every",
-          "seconds": 20.0,
-          "startAfter": 40.0,
+          "seconds": 12.0,
+          "startAfter": 25.0,
           "maxTimes": 12
         },
         "do": [

@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 400.0,
+  "duration": 210,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 9,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 994,
-    "length": 285,
+    "length": 150,
     "floors": {
       "start": 994,
       "end": 993,
@@ -287,7 +287,7 @@
           "direction": "Right",
           "length": 28.8,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -430,7 +430,7 @@
           "direction": "Right",
           "length": 28.8,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -585,7 +585,7 @@
           "direction": "Right",
           "length": 30.0,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -702,10 +702,6 @@
         "value": 0.0
       },
       {
-        "name": "finale",
-        "value": 0.0
-      },
-      {
         "name": "ovlOn",
         "value": 0.0
       }
@@ -736,20 +732,10 @@
       {
         "name": "the landing",
         "when": {
-          "type": "allOf",
-          "triggers": [
-            {
-              "type": "playerOn",
-              "target": {
-                "id": "landing"
-              }
-            },
-            {
-              "type": "counter",
-              "name": "finale",
-              "atLeast": 1.0
-            }
-          ]
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
         },
         "maxTimes": 1,
         "do": [
@@ -979,26 +965,11 @@
         ]
       },
       {
-        "name": "the floor has had its minutes",
-        "when": {
-          "type": "atTime",
-          "seconds": 255.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "finale",
-            "value": 1.0
-          }
-        ]
-      },
-      {
         "name": "heat: the floor gets hotter",
         "when": {
           "type": "every",
-          "seconds": 20.0,
-          "startAfter": 40.0,
+          "seconds": 12.0,
+          "startAfter": 25.0,
           "maxTimes": 12
         },
         "do": [

@@ -473,6 +473,10 @@ namespace SickOfIt.Playtest
         /// LongFloorLength seconds. It runs 240-360 s, so all-levels gives it PathLongFloorSeconds and its pace row 6 minutes.</summary>
         const float LongFloorLength = 200f, PathLongFloorSeconds = 420f, LongFloorMin = 240f, LongFloorMax = 360f;
         const int LongFloorEnemies = 16, LongFloorMinPieces = 4;
+        const float MidFloorLength = 100f;
+        /// <summary>Floor 998's background boss (the ember rain's source) and the time a hero who just runs may take to its landing.</summary>
+        const string SpillBossId = "motherCinder";
+        const float SpillClearSeconds = 150f;
         /// <summary>The bar for Circle IX's long floors (their generator estimate opens at 4.5-7 and ends at 12-20, Circle X's at 1.4-5.4 and 12.7-13.8): the average density over a floor and the last piece's.</summary>
         const float CircleXAverageDensity = 5.5f, CircleXLastDensity = 8.5f;
 
@@ -1676,6 +1680,13 @@ namespace SickOfIt.Playtest
                         if (!stage.SpawnTimes.TryGetValue(e.Subject, out var times))
                             stage.SpawnTimes[e.Subject] = times = new List<float>();
                         times.Add(e.Time);
+                        if (e.Subject == SpillBossId && had == 0)
+                            Run.Event("boss", $"{level} at {e.Time:0.0} s: {SpillBossId} looms in the background (the ember rain's source)");
+                        else if (e.Subject == "fireball" && stage.Spawned.TryGetValue(SpillBossId, out _) && !stage.SpillRainSeen)
+                        {
+                            stage.SpillRainSeen = true;
+                            Run.Event("rain", $"{level} at {e.Time:0.0} s: the first fireball falls with {SpillBossId} on screen");
+                        }
                         foreach (var t in FloorBossTelegraphs)
                             if (e.Subject == t.attack)
                                 Run.Event("attack", $"{level} at {e.Time:0.0} s: {t.what} ({t.attack})");
@@ -1977,6 +1988,10 @@ namespace SickOfIt.Playtest
                 // ─── A long bullet-hell floor (script length >= LongFloorLength): its set pieces and how dense each one got ───
                 /// <summary>A long floor: 240-360 s, many enemies and shots, judged on its set pieces and a rising density.</summary>
                 public bool Long;
+                /// <summary>A floor that declares its own length (`script.length` 100-199: Floor 998 and the Circle X long floors, now ~150-195 s with the path as the clock): judged like a long floor on pace, enemies and breathers, but within its own length.</summary>
+                public bool Mid;
+                public bool SpillRainSeen;
+                public float Declared;
                 /// <summary>The set pieces in the order they began (script signals "setpiece:<name>"), when, and per piece: seconds
                 /// spent, hostile-seconds (enemies and shots alive, summed over time) and the most alive at once.</summary>
                 public readonly List<string> Pieces = new List<string>();
@@ -2130,6 +2145,8 @@ namespace SickOfIt.Playtest
                     Start = script.floors.start;
                     End = script.floors.end;
                     Long = script.length >= LongFloorLength;
+                    Declared = script.length;
+                    Mid = !Long && script.length >= MidFloorLength;
                     Sign = script.floors.sign ?? "";
                     Door = script.floors.door ?? "";
                     if (script.floors.repeat != null)
@@ -2601,15 +2618,15 @@ namespace SickOfIt.Playtest
                         : s.NewSerial < 0 ? $"the new enemy ({s.NewTypes[0]}) never appeared"
                         : $"the first {s.NewTypes[0]} arrived with {s.OthersAtNewSpawn} other enemies alive{(s.NewAlone ? " and stayed alone" : ", and another joined it")}");
                 // A Warden's arena is one fight with the boss alive throughout: its pauses are the phase changes (FinishArena).
-                if (s.Long)
+                if (s.Long || s.Mid)
                     check(prefix + "breather", true, $"a long bullet-hell floor is judged on its set pieces and rising density instead (longest quiet stretch {s.LongestQuiet:0.0} s)");
                 else if (!s.Arena)
                     check(prefix + "breather", s.LongestQuiet >= 3f || s.OneFloor && s.FirstHostileAt < 0f,
                         s.FirstHostileAt < 0f ? "nothing attacked on this floor (its lava and stones are the floor)"
                             : $"longest stretch with nothing attacking after the first push: {s.LongestQuiet:0.0} s (want 3+)");
                 // Docs/LevelDesign.md, "The pace": 3 on screen in Circle X, 4 in Circles IX-VIII.
-                int allowed = s.Long ? LongFloorEnemies : s.FloorBoss || s.Arena ? BossFightEnemies : s.Start > 0 && s.Start <= 900 ? 4 : 3;
-                check(prefix + "maxEnemies", s.MaxEnemies <= allowed, $"at most {s.MaxEnemies} enemies on screen at once ({(s.Long ? "a long bullet-hell floor" : s.FloorBoss || s.Arena ? "a boss fight: the boss and up to 8 minions" : allowed == 3 ? "Circle X" : "Circle IX")} allows {allowed})");
+                int allowed = s.Long || s.Mid ? LongFloorEnemies : s.FloorBoss || s.Arena ? BossFightEnemies : s.Start > 0 && s.Start <= 900 ? 4 : 3;
+                check(prefix + "maxEnemies", s.MaxEnemies <= allowed, $"at most {s.MaxEnemies} enemies on screen at once ({(s.Long || s.Mid ? "a long bullet-hell floor" : s.FloorBoss || s.Arena ? "a boss fight: the boss and up to 8 minions" : allowed == 3 ? "Circle X" : "Circle IX")} allows {allowed})");
                 if (s.Opening.Count > 0)
                 {
                     var late = s.Opening.FindAll(t => !s.ShownAt.TryGetValue(t, out float at) || s.FirstHostileAt >= 0f && at > s.FirstHostileAt);
@@ -2645,6 +2662,8 @@ namespace SickOfIt.Playtest
                         check(prefix + "length", s.Clock >= BossFightMin && s.Clock <= BossLevelMax, $"the floor boss cleared in {s.Clock:0} s of game time (the fight itself 120-240 s, the level with its intro and defeat {BossFightMin:0}-{BossLevelMax:0})");
                     else if (s.Long)
                         check(prefix + "length", s.Clock >= LongFloorMin && s.Clock <= LongFloorMax, $"a long bullet-hell floor cleared in {s.Clock:0} s of game time (target {LongFloorMin:0}-{LongFloorMax:0})");
+                    else if (s.Mid)
+                        check(prefix + "length", s.Clock >= 60f && s.Clock <= s.Declared * 1.1f, $"a floor that runs by its path cleared in {s.Clock:0} s of game time (its script says {s.Declared:0}; the camera is the clock, no timer holds the landing)");
                     else
                         check(prefix + "length", s.Clock >= 60f && s.Clock <= 120f, $"cleared in {s.Clock:0} s of game time (target 60-120)");
                     // A shortcut is paid with a Grudge instead of picking one.
@@ -2676,6 +2695,14 @@ namespace SickOfIt.Playtest
                     FinishLongFloor(s, completed);
                 if (s.OneFloor)
                     FinishFloorIdea(s, completed);
+                if (s.Spawned.ContainsKey(SpillBossId) || s.Start == 998)
+                {
+                    bool boss = s.Spawned.TryGetValue(SpillBossId, out int bosses) && bosses > 0;
+                    check(prefix + "background boss", boss, boss ? $"{SpillBossId} was on screen in the background" : $"{SpillBossId} never appeared");
+                    check(prefix + "boss rain", boss && s.SpillRainSeen, s.SpillRainSeen ? "fireballs rained while it hung over the floor" : "no fireball fell while the boss was on screen");
+                    if (completed)
+                        check(prefix + "landing time", s.Clock <= SpillClearSeconds, $"the landing reached in {s.Clock:0} s of game time with no timer holding it (want {SpillClearSeconds:0} or less)");
+                }
             }
 
             /// <summary>

@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 400.0,
+  "duration": 231,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 20,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 953,
-    "length": 285,
+    "length": 165,
     "floors": {
       "start": 953,
       "end": 952,
@@ -42,7 +42,6 @@
           "direction": "Up",
           "length": 1.45,
           "turn": 2.0,
-          "lead": 0.4,
           "spawns": [
             {
               "entity": "lavaSea",
@@ -94,7 +93,8 @@
               ],
               "id": "vent1"
             }
-          ]
+          ],
+          "lead": 0.4
         },
         {
           "name": "lap1run",
@@ -175,7 +175,6 @@
           "direction": "Up",
           "length": 4.9,
           "turn": 2.0,
-          "lead": 0.8,
           "spawns": [
             {
               "entity": "sinkingStone",
@@ -207,7 +206,8 @@
               ],
               "id": "vent2"
             }
-          ]
+          ],
+          "lead": 0.8
         },
         {
           "name": "lap2run",
@@ -330,7 +330,7 @@
           "direction": "Right",
           "length": 28.0,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -463,7 +463,7 @@
           "direction": "Right",
           "length": 28.0,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -694,7 +694,7 @@
           "direction": "Right",
           "length": 28.0,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -827,7 +827,7 @@
           "direction": "Right",
           "length": 30.0,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -960,10 +960,6 @@
         "value": 0.0
       },
       {
-        "name": "finale",
-        "value": 0.0
-      },
-      {
         "name": "ovlOn",
         "value": 0.0
       }
@@ -1021,20 +1017,10 @@
       {
         "name": "the landing",
         "when": {
-          "type": "allOf",
-          "triggers": [
-            {
-              "type": "playerOn",
-              "target": {
-                "id": "landing"
-              }
-            },
-            {
-              "type": "counter",
-              "name": "finale",
-              "atLeast": 1.0
-            }
-          ]
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
         },
         "maxTimes": 1,
         "do": [
@@ -1186,26 +1172,11 @@
         ]
       },
       {
-        "name": "the floor has had its minutes",
-        "when": {
-          "type": "atTime",
-          "seconds": 255.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "finale",
-            "value": 1.0
-          }
-        ]
-      },
-      {
         "name": "heat: the floor gets hotter",
         "when": {
           "type": "every",
-          "seconds": 20.0,
-          "startAfter": 40.0,
+          "seconds": 12.0,
+          "startAfter": 25.0,
           "maxTimes": 12
         },
         "do": [
