@@ -14,6 +14,8 @@ namespace SickOfIt.Core.Input
     /// Replaces TopDownController — same logic, GameClock-aware firing,
     /// and ProjectileLifetime on spawned projectiles.
     /// </summary>
+    // After the input listeners (GlobalTapJump, -100), before everything at the default order.
+    [DefaultExecutionOrder(-50)]
     [RequireComponent(typeof(CircleCollider2D))]
     [RequireComponent(typeof(Rigidbody2D))]
     public partial class PlayerController : MonoBehaviour
@@ -145,7 +147,8 @@ namespace SickOfIt.Core.Input
         // Jump
         private bool isGrounded;
         private int airJumpsRemaining;
-        private bool jumpRequested;
+        private JumpLatch jumpLatch;
+        private int fixedTick;
         
         // Firing — uses GameClock time instead of Time.time
         private Vector2 fireDirection;
@@ -593,6 +596,7 @@ namespace SickOfIt.Core.Input
             if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
             {
                 ClearDropThrough();
+                jumpLatch.Clear();
                 return;
             }
 
@@ -610,7 +614,6 @@ namespace SickOfIt.Core.Input
             HandlePlatformCollision();
             UpdateWall();
             HandleDash();
-            HandleJump();
             HandleWeaponSwitch();
             HandleFiring();
             UpdateRotationTarget();
@@ -625,8 +628,17 @@ namespace SickOfIt.Core.Input
         {
             // Don't apply movement during rewind
             if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+            {
+                jumpLatch.Clear();
                 return;
+            }
 
+            // The jump is decided once per fixed tick, before the movement it changes.
+            fixedTick++;
+            if (InputLocked || Suspended)
+                jumpLatch.Clear();
+            else
+                HandleJump();
             HandleMovement();
         }
         
@@ -670,7 +682,7 @@ namespace SickOfIt.Core.Input
 
             isGrounded = FindGround(boxCenter, boxSize, out groundCollider);
             if (isGrounded)
-                lastGroundedTime = Time.time;
+                lastGroundedTick = fixedTick;
 
             if (isGrounded && !wasGrounded)
             {
@@ -773,9 +785,7 @@ namespace SickOfIt.Core.Input
         private void ReadJumpInput()
         {
             if (jumpAction?.action != null && jumpAction.action.WasPressedThisFrame())
-            {
-                jumpRequested = true;
-            }
+                LatchJump();
         }
         
         private void ApplyInputOverrides()
@@ -783,14 +793,15 @@ namespace SickOfIt.Core.Input
             if (InputOverride != null)
             {
                 moveInput = InputOverride.Move;
-                jumpRequested = InputOverride.ConsumeJump();
+                if (InputOverride.ConsumeJump())
+                    LatchJump();
                 fireDirection = InputOverride.FireDirection;
                 isFiring = fireDirection.sqrMagnitude > inputDeadzone * inputDeadzone;
             }
             if (InputLocked || Suspended)
             {
                 moveInput = Vector2.zero;
-                jumpRequested = false;
+                jumpLatch.Clear();
                 fireDirection = Vector2.zero;
                 isFiring = false;
             }
@@ -801,9 +812,14 @@ namespace SickOfIt.Core.Input
         /// <summary>
         /// Called by GameInputManager when any input source requests a jump.
         /// </summary>
-        private void OnJumpRequested()
+        private void OnJumpRequested() => LatchJump();
+
+        /// <summary>Latch a press for the next fixed tick. Never during a rewind: a tap then must not jump when it ends.</summary>
+        private void LatchJump()
         {
-            jumpRequested = true;
+            if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
+                return;
+            jumpLatch.Press(fixedTick + 1);
         }
         
         private void ReadFireInput()
@@ -1211,20 +1227,16 @@ namespace SickOfIt.Core.Input
         
         private void HandleJump()
         {
-            if (jumpRequested)
-            {
-                jumpRequested = false;
-                lastJumpPressTime = Time.time;
-            }
-            // A press stays good for a moment (landing a hair late) ...
-            if (Time.time - lastJumpPressTime > JumpBufferSeconds) return;
+            // A press stays good for a few ticks (landing a hair late) ...
+            int buffer = Mathf.Max(1, Mathf.RoundToInt(JumpBufferSeconds / Time.fixedDeltaTime));
+            if (!jumpLatch.Pending(fixedTick, buffer)) return;
 
             if (held)
             {
                 // Jumping off a chain: let go with its swing plus a jump (off a ladder: out the way the stick points).
                 float jumpOffX = heldJumpOffX;
                 ReleaseHold();
-                lastJumpPressTime = float.NegativeInfinity;
+                jumpLatch.Consume();
                 jumpedOffHold = true;
                 swingMomentum = heldVelocity.x + jumpOffX;
                 isGrounded = false;
@@ -1235,34 +1247,37 @@ namespace SickOfIt.Core.Input
             if (TryWallKick())
                 return;
 
-            bool fresh = lastJumpPressTime == Time.time;
+            bool fresh = jumpLatch.Fresh(fixedTick);
             // ... and just after leaving a surface he can still jump off it (not while already rising).
-            bool coyote = Time.time - lastGroundedTime <= CoyoteSeconds && (rb == null || rb.linearVelocity.y * gravitySign <= 0.1f);
+            int coyoteTicks = Mathf.Max(1, Mathf.RoundToInt(CoyoteSeconds / Time.fixedDeltaTime));
+            bool coyote = fixedTick - lastGroundedTick <= coyoteTicks && (rb == null || rb.linearVelocity.y * gravitySign <= 0.1f);
             if (isGrounded || coyote)
             {
-                lastJumpPressTime = float.NegativeInfinity;
-                lastGroundedTime = float.NegativeInfinity;
+                jumpLatch.Consume();
+                lastGroundedTick = NoTick;
                 Jump();
                 airJumpsRemaining = maxAirJumps;
             }
             else if (fresh && airJumpsRemaining > 0)
             {
-                lastJumpPressTime = float.NegativeInfinity;
+                jumpLatch.Consume();
                 Jump();
                 airJumpsRemaining--;
             }
         }
 
+        // Buffer and coyote are defined in seconds at the 50 Hz step (6 ticks) and counted in fixed ticks.
         private const float CoyoteSeconds = 0.12f;
         private const float JumpBufferSeconds = 0.12f;
-        private float lastGroundedTime = float.NegativeInfinity;
-        private float lastJumpPressTime = float.NegativeInfinity;
+        private const int NoTick = int.MinValue / 2;
+        private int lastGroundedTick = NoTick;
         
         private void Jump()
         {
             if (rb == null) return;
             
             Vector2 velocity = rb.linearVelocity;
+            JumpsMade++;
             velocity.y = jumpForce * gravitySign;
             rb.linearVelocity = velocity;
             
@@ -1357,7 +1372,7 @@ namespace SickOfIt.Core.Input
             gravityBeforeHold = Mathf.Abs(gravityBeforeHold) * sign;
             // Standing on the old floor means nothing now: the next ground check looks the new way.
             isGrounded = false;
-            lastGroundedTime = float.NegativeInfinity;
+            lastGroundedTick = NoTick;
         }
 
         private void ResolveGrappleKeys()
@@ -1482,7 +1497,16 @@ namespace SickOfIt.Core.Input
         public float TouchMove { get; set; }
 
         /// <summary>Asks for a jump on the next frame (the HUD's touch button).</summary>
-        public void RequestJump() => jumpRequested = true;
+        public void RequestJump() => LatchJump();
+
+        /// <summary>Jump presses waiting for the next fixed tick (tests and the tap-jump playtest).</summary>
+        public int PendingJumps => jumpLatch.Count;
+
+        /// <summary>Fixed ticks run so far, the unit jump buffer and coyote count in.</summary>
+        public int FixedTick => fixedTick;
+
+        /// <summary>Jumps made (ground, coyote, air, off a hold, wall kick), counted for the tap-jump playtest.</summary>
+        public int JumpsMade { get; private set; }
 
         private void ResolveDashKeys()
         {
@@ -1622,7 +1646,7 @@ namespace SickOfIt.Core.Input
             if (onSide == 0)
                 return false;
             var kick = moves.wallJump;
-            lastJumpPressTime = float.NegativeInfinity;
+            jumpLatch.Consume();
             kickDir = -onSide;
             kickUntil = now + kick.kickLockSeconds;
             kickPoseUntil = now + 0.35f;
