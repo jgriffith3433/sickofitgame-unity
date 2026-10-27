@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "levelName": "Floor809",
-  "displayName": "Floor 809: Updraft Round the Spire",
+  "displayName": "Floor 809: The Loop Room",
   "levelNumber": 53,
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 400.0,
+  "duration": 240.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 54,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 809,
-    "length": 285,
+    "length": 60,
     "floors": {
       "start": 809,
       "end": 808,
@@ -38,9 +38,9 @@
       "holdForPushes": false,
       "path": [
         {
-          "name": "up",
+          "name": "ledges",
           "direction": "Up",
-          "length": 1.38,
+          "length": 1.45,
           "turn": 2.0,
           "spawns": [
             {
@@ -52,7 +52,7 @@
               "id": "lavaSea"
             },
             {
-              "entity": "roadSlab",
+              "entity": "ledge",
               "at": [
                 -3.6,
                 -2.45
@@ -64,860 +64,183 @@
               ]
             },
             {
-              "entity": "roadSlab",
+              "entity": "ledge",
               "at": [
-                -1.0,
+                -1.2,
                 -1.15
+              ],
+              "scale": [
+                0.9,
+                1
               ]
             },
             {
-              "entity": "splitSlab",
+              "entity": "ledge",
               "at": [
-                1.2,
+                -3.6,
                 0.15
               ],
-              "scale": [
-                0.9,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "columns",
-          "direction": "Right",
-          "length": 11.95,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                3.6,
-                0.15
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "heatUpdraft",
-              "at": [
-                4.9,
-                1.6
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                6.2,
-                0.15
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "heatUpdraft",
-              "at": [
-                7.5,
-                1.6
-              ]
-            },
-            {
-              "entity": "splitSlab",
-              "at": [
-                8.8,
-                0.15
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                11.0,
-                0.15
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                13.6,
-                2.8
-              ],
-              "scale": [
-                0.6,
-                1
-              ]
-            },
-            {
-              "entity": "demonLobber",
-              "at": [
-                13.6,
-                3.5
-              ],
-              "onEnter": true
-            }
-          ]
-        },
-        {
-          "name": "tall",
-          "direction": "Up",
-          "length": 3.92,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                13.2,
-                1.45
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "splitSlab",
-              "at": [
-                11.0,
-                2.75
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                13.2,
-                4.05
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                11.2,
-                5.35
-              ]
-            },
-            {
-              "entity": "heatUpdraftTall",
-              "at": [
-                9.4,
-                3.6
-              ]
-            },
-            {
-              "entity": "damnedSoul",
-              "at": [
-                11.4,
-                6.15
-              ],
-              "id": "soul809"
-            }
-          ]
-        },
-        {
-          "name": "riser",
-          "direction": "Up",
-          "length": 5.6,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                -2.4,
-                1.137
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                0.0,
-                2.225
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                -2.4,
-                3.312
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                0.0,
-                4.4
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "RoundTheSpire1",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "settleSlab",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                8.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneVentD",
-              "at": [
-                11.4,
-                -0.95
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                16.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "leadImp",
-              "at": [
-                20.0,
-                1.8
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc0"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                24.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "HotAirAgain2",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                8.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneVentD",
-              "at": [
-                11.4,
-                -0.95
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                16.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ricochetImp",
-              "at": [
-                20.0,
-                1.8
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc1"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "TheTallColumn3",
-          "direction": "Up",
-          "length": 8.0,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "ladder",
-              "at": [
-                0.3,
-                3.05
-              ],
-              "anchor": "Section",
               "scale": [
                 1.0,
-                8.0
-              ],
-              "id": "ladder809"
-            },
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "name": "step",
+          "direction": "Up",
+          "length": 1.5,
+          "turn": 2.0,
+          "spawns": []
+        },
+        {
+          "name": "stop",
+          "direction": "Right",
+          "length": 10.8,
+          "turn": 2.0,
+          "spawns": [
             {
-              "entity": "roadSlab",
+              "entity": "ledge",
               "at": [
-                0.0,
-                6.8
+                -2.4,
+                1.65
               ],
-              "anchor": "Section",
               "scale": [
-                1.2,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "leadImp",
+              "entity": "ledge",
               "at": [
-                -3.0,
-                3.5
+                -0.6,
+                1.65
               ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc2"
+              "scale": [
+                0.9,
+                1
               ]
             },
             {
-              "entity": "impGuard",
+              "entity": "ledge",
+              "at": [
+                1.2,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
               "at": [
                 3.0,
-                5.3
+                0.35
               ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc2"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "SpirallingUp4",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                8.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneDemon",
-              "at": [
-                8.0,
-                0.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneVentD",
-              "at": [
-                11.4,
-                -0.95
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                16.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                15.0,
-                -0.05
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                17.0,
-                -0.05
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "leadImp",
-              "at": [
-                20.0,
-                1.8
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadPerch",
-              "at": [
-                24.0,
-                2.1
-              ],
-              "anchor": "Section",
               "scale": [
                 0.9,
                 1
               ]
             },
             {
-              "entity": "demonLobber",
+              "entity": "ledge",
               "at": [
-                24.0,
-                2.8
+                4.8,
+                0.35
               ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "TheLongDraftUp5",
-          "direction": "Right",
-          "length": 30.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "settleSlab",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneVentB",
-              "at": [
-                3.4,
-                -0.95
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                8.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneDemon",
-              "at": [
-                8.0,
-                -0.5
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneVentD",
-              "at": [
-                11.4,
-                -0.95
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                16.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                15.0,
-                -0.05
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                17.0,
-                -0.05
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ricochetImp",
-              "at": [
-                20.0,
-                1.8
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                24.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadPerch",
-              "at": [
-                24.0,
-                1.5
-              ],
-              "anchor": "Section",
               "scale": [
                 0.9,
                 1
               ]
             },
             {
-              "entity": "demonLobber",
+              "entity": "ledge",
               "at": [
-                24.0,
-                2.2
+                6.6,
+                0.35
               ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
+              "scale": [
+                0.9,
+                1
               ]
             },
+            {
+              "entity": "ledge",
+              "at": [
+                8.4,
+                0.35
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                10.2,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                12.0,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                13.8,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "loopSign",
+              "at": [
+                5.7,
+                0.68
+              ],
+              "id": "sign"
+            },
+            {
+              "entity": "paradeSoul",
+              "at": [
+                6.7,
+                0.9
+              ],
+              "id": "roomSoul"
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
             {
               "entity": "floorLanding809",
               "at": [
-                29.4,
-                -0.4
+                17.7,
+                3.05
               ],
-              "id": "landing",
-              "anchor": "Section"
+              "id": "landing"
             }
           ]
         }
@@ -941,20 +264,16 @@
         "value": 0.0
       },
       {
-        "name": "heat",
-        "value": 0.0
-      },
-      {
-        "name": "finale",
+        "name": "restOver",
         "value": 0.0
       }
     ],
     "rules": [
       {
-        "name": "the columns",
+        "name": "stop floor: the quiet, Floor 809",
         "when": {
           "type": "sectionReached",
-          "section": "columns"
+          "section": "stop"
         },
         "maxTimes": 1,
         "do": [
@@ -962,42 +281,28 @@
             "type": "runSequence",
             "steps": [
               {
-                "type": "wait",
-                "seconds": 1.5
+                "type": "emit",
+                "signal": "stop:loopRoom:enter"
               },
               {
-                "type": "showText",
-                "text": "Hot air. Familiar.",
-                "duration": 2.5,
-                "style": "Subtitle",
-                "sound": "vo_f809_air"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "the tall column: push",
-        "when": {
-          "type": "sectionReached",
-          "section": "tall"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "runSequence",
-            "steps": [
+                "type": "wait",
+                "seconds": 20.0
+              },
               {
-                "type": "playMusic",
-                "clip": "Audio/Music/wastes_push.ogg",
-                "volume": 0.85
+                "type": "setCounter",
+                "name": "restOver",
+                "value": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "stop:loopRoom:calm"
               }
             ]
           }
         ]
       },
       {
-        "name": "the landing",
+        "name": "stop floor: not yet, Floor 809",
         "when": {
           "type": "allOf",
           "triggers": [
@@ -1009,7 +314,219 @@
             },
             {
               "type": "counter",
-              "name": "finale",
+              "name": "restOver",
+              "atLeast": 0.0,
+              "below": 1.0
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "I'm not in a hurry.",
+                "duration": 2.2,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "room: first look",
+        "when": {
+          "type": "sectionReached",
+          "section": "stop"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.6
+              },
+              {
+                "type": "showText",
+                "text": "The road goes down. Of course it does.",
+                "duration": 3.0,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "room: the soul",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            5.7,
+            1.95
+          ],
+          "size": [
+            7.2,
+            3.6
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:loopRoom:discovery"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.4
+              },
+              {
+                "type": "showText",
+                "text": "Soul: Jump. Then rewind. ...I'll do it for you.",
+                "duration": 4.0,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "room: he jumped",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            5.7,
+            2.55
+          ],
+          "size": [
+            7.2,
+            1.6
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "setFlag",
+                "flag": "loopRoom.jumped"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:loopRoom:jumped"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "room: the echo",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "heroRewound",
+              "within": 3.0
+            },
+            {
+              "type": "playerInZone",
+              "center": [
+                5.7,
+                1.95
+              ],
+              "size": [
+                7.2,
+                3.6
+              ],
+              "anchor": "World"
+            },
+            {
+              "type": "heroState",
+              "requires": [
+                "flag:loopRoom.jumped"
+              ]
+            }
+          ]
+        },
+        "maxTimes": 3,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "spawn",
+                "entity": "echoSoul",
+                "anchor": "Player",
+                "at": [
+                  0.0,
+                  -0.2
+                ],
+                "facePlayer": false,
+                "id": "echo"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:loopRoom:echo"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.4
+              },
+              {
+                "type": "showText",
+                "text": "Soul: I've got that one.",
+                "duration": 2.2,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "It jumps worse than me.",
+                "duration": 2.4,
+                "style": "Subtitle"
+              },
+              {
+                "type": "spawn",
+                "entity": "diamond",
+                "anchor": "World",
+                "at": [
+                  5.7,
+                  1.75
+                ],
+                "facePlayer": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing, Floor 809",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "restOver",
               "atLeast": 1.0
             }
           ]
@@ -1019,6 +536,10 @@
           {
             "type": "runSequence",
             "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:loopRoom:done"
+              },
               {
                 "type": "setFloor",
                 "floor": 808,
@@ -1030,16 +551,10 @@
                 "value": 0.0
               },
               {
-                "type": "playMusic",
-                "clip": "Audio/Music/wastes_loop.ogg",
-                "volume": 0.85
-              },
-              {
                 "type": "showText",
-                "text": "UPDRAFT: RIDDEN",
-                "duration": 2.3,
+                "text": "THE LOOP ROOM: AGAIN",
+                "duration": 2.4,
                 "style": "Banner",
-                "sound": "vo_f809_clear",
                 "color": "#FFD27A"
               },
               {
@@ -1053,269 +568,9 @@
               {
                 "type": "setCounter",
                 "name": "cleared",
-                "value": 1
+                "value": 1.0
               }
             ]
-          }
-        ]
-      },
-      {
-        "name": "to RoundTheSpire1",
-        "when": {
-          "type": "sectionReached",
-          "section": "RoundTheSpire1"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "goToPhase",
-            "phase": "RoundTheSpire1"
-          }
-        ]
-      },
-      {
-        "name": "to HotAirAgain2",
-        "when": {
-          "type": "sectionReached",
-          "section": "HotAirAgain2"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc0"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "HotAirAgain2"
-          }
-        ]
-      },
-      {
-        "name": "to TheTallColumn3",
-        "when": {
-          "type": "sectionReached",
-          "section": "TheTallColumn3"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc1"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "TheTallColumn3"
-          }
-        ]
-      },
-      {
-        "name": "to SpirallingUp4",
-        "when": {
-          "type": "sectionReached",
-          "section": "SpirallingUp4"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc2"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "SpirallingUp4"
-          }
-        ]
-      },
-      {
-        "name": "to TheLongDraftUp5",
-        "when": {
-          "type": "sectionReached",
-          "section": "TheLongDraftUp5"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc3"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "TheLongDraftUp5"
-          }
-        ]
-      },
-      {
-        "name": "the opening's rift stops",
-        "when": {
-          "type": "sectionReached",
-          "section": "riser"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "lavaSpeed",
-            "value": 0.0
-          }
-        ]
-      },
-      {
-        "name": "the floor has had its minutes",
-        "when": {
-          "type": "atTime",
-          "seconds": 255.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "finale",
-            "value": 1.0
-          }
-        ]
-      },
-      {
-        "name": "heat: the floor gets hotter",
-        "when": {
-          "type": "every",
-          "seconds": 20.0,
-          "startAfter": 40.0,
-          "maxTimes": 12
-        },
-        "do": [
-          {
-            "type": "addCounter",
-            "name": "heat",
-            "amount": 1.0
-          }
-        ]
-      },
-      {
-        "name": "heat 2: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 2.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 4: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 4.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 6: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 6.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 8: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 8.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 10: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 10.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
           }
         ]
       }
@@ -1329,527 +584,10 @@
             "steps": [
               {
                 "type": "showText",
-                "text": "FLOOR 809: UPDRAFT ROUND THE SPIRE",
-                "duration": 3.57,
+                "text": "FLOOR 809: THE LOOP ROOM",
+                "duration": 2.6,
                 "style": "Banner",
-                "sound": "vo_f809_title",
                 "color": "#FFD27A"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "RoundTheSpire1",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:RoundTheSpire1"
-          },
-          {
-            "type": "showText",
-            "text": "ROUND THE SPIRE!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.39,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "ROUND THE SPIRE!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 6.01,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "HotAirAgain2",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:HotAirAgain2"
-          },
-          {
-            "type": "showText",
-            "text": "HOT AIR AGAIN!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "playMusic",
-            "clip": "Audio/Music/wastes_push.ogg",
-            "volume": 0.85
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.29,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 4,
-              "angle": 40
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 3.22,
-            "initialDelay": 2.0
-          }
-        ],
-        "rules": [
-          {
-            "name": "HOT AIR AGAIN!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.65,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "TheTallColumn3",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:TheTallColumn3"
-          },
-          {
-            "type": "showText",
-            "text": "THE TALL COLUMN!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.2,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 4,
-              "angle": 40
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 3.06,
-            "initialDelay": 2.0
-          }
-        ],
-        "rules": [
-          {
-            "name": "THE TALL COLUMN!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.29,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "SpirallingUp4",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:SpirallingUp4"
-          },
-          {
-            "type": "showText",
-            "text": "SPIRALLING UP!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.1,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 4,
-              "angle": 40
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 2.89,
-            "initialDelay": 2.0
-          }
-        ],
-        "rules": [
-          {
-            "name": "SPIRALLING UP!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 4.94,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "SPIRALLING UP!: a mixed wave",
-            "when": {
-              "type": "every",
-              "seconds": 11.5,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "TheLongDraftUp5",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:TheLongDraftUp5"
-          },
-          {
-            "type": "showText",
-            "text": "THE LONG DRAFT UP!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "playMusic",
-            "clip": "Audio/Music/wastes_loop.ogg",
-            "volume": 0.85
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 3
-            },
-            "speed": 3.2,
-            "interval": 1.0,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 4,
-              "angle": 40
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 2.8,
-            "initialDelay": 2.0
-          }
-        ],
-        "rules": [
-          {
-            "name": "THE LONG DRAFT UP!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 4.58,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 4,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "THE LONG DRAFT UP!: a mixed wave",
-            "when": {
-              "type": "every",
-              "seconds": 10.9,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
               }
             ]
           }

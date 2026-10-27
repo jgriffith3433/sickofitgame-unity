@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "levelName": "Floor952",
-  "displayName": "Floor 952: The Sack Pile",
+  "displayName": "Floor 952: The Waystone Shrine",
   "levelNumber": 20,
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 266,
+  "duration": 240.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 21,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 952,
-    "length": 190,
+    "length": 60,
     "floors": {
       "start": 952,
       "end": 951,
@@ -38,9 +38,9 @@
       "holdForPushes": false,
       "path": [
         {
-          "name": "foot",
+          "name": "ledges",
           "direction": "Up",
-          "length": 0.6,
+          "length": 1.45,
           "turn": 2.0,
           "spawns": [
             {
@@ -67,7 +67,18 @@
               "entity": "ledge",
               "at": [
                 -1.2,
-                -0.95
+                -1.15
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                -3.6,
+                0.15
               ],
               "scale": [
                 1.0,
@@ -77,61 +88,59 @@
           ]
         },
         {
-          "name": "raft",
+          "name": "step",
+          "direction": "Up",
+          "length": 1.5,
+          "turn": 2.0,
+          "spawns": []
+        },
+        {
+          "name": "stop",
           "direction": "Right",
-          "length": 5.6,
+          "length": 7.2,
           "turn": 2.0,
           "spawns": [
             {
-              "entity": "debrisRaftRoof",
+              "entity": "ledge",
               "at": [
-                1.4,
-                -1.75
+                -2.4,
+                1.65
               ],
-              "id": "pileRaft"
+              "scale": [
+                0.9,
+                1
+              ]
             },
             {
               "entity": "ledge",
               "at": [
-                7.2,
-                -1.25
+                -0.6,
+                1.65
               ],
-              "id": "pileFoot",
               "scale": [
-                1.2,
-                1
-              ]
-            }
-          ],
-          "autoSpeed": 0.9
-        },
-        {
-          "name": "pileSide",
-          "direction": "Up",
-          "length": 3.65,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "counterweightAL",
-              "at": [
-                4.9,
-                -1.15
-              ],
-              "id": "cwAL",
-              "scale": [
-                0.8,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "counterweightAR",
+              "entity": "ledge",
               "at": [
-                2.7,
-                -0.55
+                1.2,
+                1.65
               ],
-              "id": "cwAR",
               "scale": [
-                0.8,
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                3.0,
+                1.65
+              ],
+              "scale": [
+                0.9,
                 1
               ]
             },
@@ -139,742 +148,77 @@
               "entity": "ledge",
               "at": [
                 4.8,
-                0.75
+                1.65
               ],
               "scale": [
-                1.0,
+                0.9,
                 1
               ]
-            },
-            {
-              "entity": "heatUpdraft",
-              "at": [
-                7.0,
-                2.05
-              ],
-              "id": "pileDraft"
             },
             {
               "entity": "ledge",
               "at": [
-                9.4,
-                3.35
+                6.6,
+                1.65
               ],
-              "id": "pileTop",
               "scale": [
-                1.6,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "imp",
+              "entity": "ledge",
               "at": [
-                3.2,
-                3.35
+                8.4,
+                1.65
               ],
-              "id": "sideImp",
-              "onEnter": true
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                10.2,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "shrineStone",
+              "at": [
+                4.8,
+                1.98
+              ],
+              "id": "shrineStone"
             },
             {
               "entity": "damnedSoul",
               "at": [
-                5.2,
-                1.35
+                6.4,
+                2.5
               ],
-              "id": "pileSoul"
+              "id": "keeper"
             }
           ]
         },
         {
-          "name": "line",
-          "direction": "Arena",
-          "length": 0.0,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "impGuardCount1",
-              "at": [
-                3.0,
-                5.55
-              ],
-              "id": "lineGuard1",
-              "onEnter": true,
-              "tags": [
-                "lineGuard"
-              ]
-            },
-            {
-              "entity": "impGuardCount2",
-              "at": [
-                4.2,
-                5.95
-              ],
-              "id": "lineGuard2",
-              "onEnter": true,
-              "tags": [
-                "lineGuard"
-              ]
-            },
-            {
-              "entity": "impGuardCount3",
-              "at": [
-                5.4,
-                5.55
-              ],
-              "id": "lineGuard3",
-              "onEnter": true,
-              "tags": [
-                "lineGuard"
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                4.2,
-                4.3
-              ],
-              "id": "linePerch",
-              "onEnter": true,
-              "scale": [
-                1.4,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "top",
-          "direction": "Up",
-          "length": 1.3,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                7.0,
-                4.65
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "riser",
-          "direction": "Up",
-          "length": 5.6,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                2.4,
-                0.425
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                1.75
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                2.4,
-                3.075
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                4.4
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "pilesEdge",
+          "name": "landing",
           "direction": "Right",
-          "length": 28.0,
+          "length": 5.0,
           "turn": 2.0,
-          "autoSpeed": 0.8,
           "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                8.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                16.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                24.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                14.0,
-                3.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc0"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "pileOn",
-          "direction": "Up",
-          "length": 8.0,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                -2.4,
-                0.133
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                1.467
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                -2.4,
-                2.8
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                4.133
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                -2.4,
-                5.467
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                6.8
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                0.0,
-                3.4
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc1"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "guardsCountUp",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.8,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                8.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                16.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                10.0,
-                3.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc2"
-              ]
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                20.0,
-                3.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc2"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "pileSpills",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.8,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                8.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                12.0,
-                -0.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                16.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                24.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                10.0,
-                3.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                20.0,
-                3.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "topOfThePile",
-          "direction": "Right",
-          "length": 30.0,
-          "turn": 2.0,
-          "autoSpeed": 0.8,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                8.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaftRoof",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                16.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "debrisRaft",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
             {
               "entity": "floorLanding952",
               "at": [
-                29.4,
-                -0.4
+                14.1,
+                3.05
               ],
-              "anchor": "Section",
               "id": "landing"
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                8.0,
-                3.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                16.0,
-                3.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                24.0,
-                3.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
             }
           ]
         }
@@ -898,49 +242,281 @@
         "value": 0.0
       },
       {
-        "name": "heat",
+        "name": "restOver",
         "value": 0.0
       }
     ],
     "rules": [
       {
-        "name": "the side of the pile: the lava rises",
+        "name": "stop floor: the quiet, Floor 952",
         "when": {
           "type": "sectionReached",
-          "section": "pileSide"
+          "section": "stop"
         },
         "maxTimes": 1,
         "do": [
           {
-            "type": "playMusic",
-            "clip": "Audio/Music/wastes_push.ogg",
-            "volume": 0.85
-          },
-          {
-            "type": "setCounter",
-            "name": "lavaMax",
-            "value": 0.65
-          },
-          {
-            "type": "setCounter",
-            "name": "lavaSpeed",
-            "value": 0.35
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:shrine:enter"
+              },
+              {
+                "type": "wait",
+                "seconds": 20.0
+              },
+              {
+                "type": "setCounter",
+                "name": "restOver",
+                "value": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "stop:shrine:calm"
+              }
+            ]
           }
         ]
       },
       {
-        "name": "the line is clear: the pile spills",
+        "name": "stop floor: not yet, Floor 952",
         "when": {
           "type": "allOf",
           "triggers": [
             {
-              "type": "sectionReached",
-              "section": "line"
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
             },
             {
-              "type": "allDead",
-              "target": {
-                "tag": "lineGuard"
+              "type": "counter",
+              "name": "restOver",
+              "atLeast": 0.0,
+              "below": 1.0
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "I'm not in a hurry.",
+                "duration": 2.2,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the shrine: first look",
+        "when": {
+          "type": "sectionReached",
+          "section": "stop"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.8
+              },
+              {
+                "type": "showText",
+                "text": "A shrine. In Hell. Sure.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the shrine: the keeper offers",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            4.8,
+            2.3
+          ],
+          "size": [
+            3.6,
+            2.6
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:shrine:discovery"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.5
+              },
+              {
+                "type": "showText",
+                "text": "Soul: Kneel. Resting is free. ...Mending costs.",
+                "duration": 4.0,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.3
+              },
+              {
+                "type": "offerShortcut",
+                "id": "waystoneShrine",
+                "prompt": "The Waystone Shrine",
+                "title": "Fill every heart",
+                "description": "Kneel at the stone and it mends all of you. It keeps a Grudge for the trouble.",
+                "stayTitle": "Just rest",
+                "stayDescription": "A heart, and a minute of quiet. You keep your Grudges.",
+                "costGrudges": 1,
+                "costText": "Costs a Grudge: {0}",
+                "cantPayText": "NO GRUDGE TO GIVE",
+                "toFloor": 951,
+                "nextLevel": 21,
+                "color": "#9CE8D8"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the shrine: rest",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "waystoneShrine",
+          "taken": false
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "heal",
+                "target": {
+                  "player": true
+                },
+                "amount": 1
+              },
+              {
+                "type": "popText",
+                "text": "+1 heart",
+                "color": "#7FE0D0",
+                "at": [
+                  4.8,
+                  3.4
+                ]
+              },
+              {
+                "type": "emit",
+                "signal": "stop:shrine:rest"
+              },
+              {
+                "type": "showText",
+                "text": "A minute of nothing. Fine.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the shrine: fill",
+        "when": {
+          "type": "shortcutChosen",
+          "shortcut": "waystoneShrine",
+          "taken": true
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "heal",
+                "target": {
+                  "player": true
+                },
+                "amount": 99
+              },
+              {
+                "type": "popText",
+                "text": "EVERY HEART",
+                "color": "#9CE8D8",
+                "at": [
+                  4.8,
+                  3.4
+                ]
+              },
+              {
+                "type": "emit",
+                "signal": "stop:shrine:filled"
+              },
+              {
+                "type": "showText",
+                "text": "Soul: All of you. Back. ...Hell keeps the receipt.",
+                "duration": 4.0,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.3
+              },
+              {
+                "type": "showText",
+                "text": "Good as new. Worse, but new.",
+                "duration": 2.8,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing, Floor 952",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "allOf",
+              "triggers": [
+                {
+                  "type": "playerOn",
+                  "target": {
+                    "id": "landing"
+                  }
+                },
+                {
+                  "type": "counter",
+                  "name": "restOver",
+                  "atLeast": 1.0
+                }
+              ]
+            },
+            {
+              "type": "not",
+              "trigger": {
+                "type": "shortcutChosen",
+                "shortcut": "waystoneShrine",
+                "taken": true
               }
             }
           ]
@@ -951,69 +527,9 @@
             "type": "runSequence",
             "steps": [
               {
-                "type": "wait",
-                "seconds": 0.5
+                "type": "emit",
+                "signal": "stop:shrine:done"
               },
-              {
-                "type": "cameraShake",
-                "intensity": 0.25,
-                "duration": 0.8
-              },
-              {
-                "type": "playSound",
-                "sound": "sack_spill"
-              },
-              {
-                "type": "slowMotion",
-                "scale": 0.35,
-                "duration": 0.6
-              },
-              {
-                "type": "spawn",
-                "entity": "diamond",
-                "anchor": "Camera",
-                "at": [
-                  -1.0,
-                  1.2
-                ],
-                "count": 8,
-                "spacing": [
-                  0.4,
-                  0.0
-                ],
-                "facePlayer": false
-              },
-              {
-                "type": "showText",
-                "text": "He keeps guards. So he's expecting someone.",
-                "duration": 3.55,
-                "style": "Subtitle",
-                "sound": "vo_pile_expecting"
-              },
-              {
-                "type": "wait",
-                "seconds": 1.0
-              },
-              {
-                "type": "nextSection"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "the landing",
-        "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "runSequence",
-            "steps": [
               {
                 "type": "setFloor",
                 "floor": 951,
@@ -1026,10 +542,9 @@
               },
               {
                 "type": "showText",
-                "text": "THE SACK PILE: SPILLED",
+                "text": "THE WAYSTONE SHRINE: KNELT",
                 "duration": 2.4,
                 "style": "Banner",
-                "sound": "vo_f952_clear",
                 "color": "#FFD27A"
               },
               {
@@ -1043,254 +558,76 @@
               {
                 "type": "setCounter",
                 "name": "cleared",
-                "value": 1
+                "value": 1.0
               }
             ]
           }
         ]
       },
       {
-        "name": "to pilesEdge",
+        "name": "the landing, Floor 952, no pick",
         "when": {
-          "type": "sectionReached",
-          "section": "pilesEdge"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "goToPhase",
-            "phase": "pilesEdge"
-          }
-        ]
-      },
-      {
-        "name": "to pileOn",
-        "when": {
-          "type": "sectionReached",
-          "section": "pileOn"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc0"
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "allOf",
+              "triggers": [
+                {
+                  "type": "playerOn",
+                  "target": {
+                    "id": "landing"
+                  }
+                },
+                {
+                  "type": "counter",
+                  "name": "restOver",
+                  "atLeast": 1.0
+                }
+              ]
+            },
+            {
+              "type": "shortcutChosen",
+              "shortcut": "waystoneShrine",
+              "taken": true
             }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "pileOn"
-          }
-        ]
-      },
-      {
-        "name": "to guardsCountUp",
-        "when": {
-          "type": "sectionReached",
-          "section": "guardsCountUp"
+          ]
         },
         "maxTimes": 1,
         "do": [
           {
-            "type": "despawn",
-            "target": {
-              "tag": "pc1"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "guardsCountUp"
-          }
-        ]
-      },
-      {
-        "name": "to pileSpills",
-        "when": {
-          "type": "sectionReached",
-          "section": "pileSpills"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc2"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "pileSpills"
-          }
-        ]
-      },
-      {
-        "name": "to topOfThePile",
-        "when": {
-          "type": "sectionReached",
-          "section": "topOfThePile"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc3"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "topOfThePile"
-          }
-        ]
-      },
-      {
-        "name": "the opening's lava stops",
-        "when": {
-          "type": "sectionReached",
-          "section": "riser"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "lavaSpeed",
-            "value": 0.0
-          }
-        ]
-      },
-      {
-        "name": "heat: the floor gets hotter",
-        "when": {
-          "type": "every",
-          "seconds": 12.0,
-          "startAfter": 25.0,
-          "maxTimes": 12
-        },
-        "do": [
-          {
-            "type": "addCounter",
-            "name": "heat",
-            "amount": 1.0
-          }
-        ]
-      },
-      {
-        "name": "heat 3: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 3.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
+            "type": "runSequence",
+            "steps": [
               {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 5: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 5.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
+                "type": "emit",
+                "signal": "stop:shrine:done"
+              },
               {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 7: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 7.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
+                "type": "setFloor",
+                "floor": 951,
+                "skipMilestones": true
+              },
               {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 9: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 9.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
+                "type": "setCounter",
+                "name": "lavaSpeed",
+                "value": 0.0
+              },
               {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 11: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 11.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
+                "type": "showText",
+                "text": "THE WAYSTONE SHRINE: KNELT",
+                "duration": 2.4,
+                "style": "Banner",
+                "color": "#FFD27A"
+              },
               {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "setCounter",
+                "name": "cleared",
+                "value": 1.0
               }
-            ],
-            "includeFuture": true
+            ]
           }
         ]
       }
@@ -1304,609 +641,10 @@
             "steps": [
               {
                 "type": "showText",
-                "text": "FLOOR 952: THE SACK PILE",
+                "text": "FLOOR 952: THE WAYSTONE SHRINE",
                 "duration": 2.6,
                 "style": "Banner",
-                "sound": "vo_f952_title",
                 "color": "#FFD27A"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "pilesEdge",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:pilesEdge"
-          },
-          {
-            "type": "showText",
-            "text": "THE PILE'S EDGE!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 3,
-              "angle": 34
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.0,
-            "interval": 3.12,
-            "initialDelay": 2.0
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 1
-            },
-            "speed": 3.2,
-            "interval": 1.65,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "pilesEdge: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 7.42,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "pileOn",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:pileOn"
-          },
-          {
-            "type": "showText",
-            "text": "PILE-ON!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 3,
-              "angle": 34
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.0,
-            "interval": 2.9,
-            "initialDelay": 2.0
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 1
-            },
-            "speed": 3.2,
-            "interval": 1.5,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "pileOn: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 6.91,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "pileOn: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 9.01,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "guardsCountUp",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:guardsCountUp"
-          },
-          {
-            "type": "showText",
-            "text": "GUARDS COUNT UP!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 3,
-              "angle": 34
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.0,
-            "interval": 2.68,
-            "initialDelay": 2.0
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 1
-            },
-            "speed": 3.2,
-            "interval": 1.36,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "guardsCountUp: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 6.39,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "guardsCountUp: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 8.28,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "guardsCountUp: a brute for the fists",
-            "when": {
-              "type": "every",
-              "seconds": 15.04,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "pileSpills",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:pileSpills"
-          },
-          {
-            "type": "showText",
-            "text": "THE PILE SPILLS!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 4,
-              "angle": 40
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 2.46,
-            "initialDelay": 2.0
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.21,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "pileSpills: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.88,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "pileSpills: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 7.54,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 5,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "pileSpills: a brute for the fists",
-            "when": {
-              "type": "every",
-              "seconds": 13.87,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "topOfThePile",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:topOfThePile"
-          },
-          {
-            "type": "showText",
-            "text": "THE TOP OF THE PILE!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 4,
-              "angle": 40
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 2.24,
-            "initialDelay": 2.0
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.06,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "topOfThePile: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.37,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "topOfThePile: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 6.81,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 5,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "topOfThePile: a brute for the fists",
-            "when": {
-              "type": "every",
-              "seconds": 12.7,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
               }
             ]
           }

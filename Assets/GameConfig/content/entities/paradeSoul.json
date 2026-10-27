@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "damned",
+    "parade"
+  ],
+  "body": {
+    "radius": 0.3,
+    "solid": false
+  },
+  "visual": {
+    "scale": 1,
+    "placeholderColor": "#A9B0B8A0",
+    "placeholderSize": 0.55,
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 1,
+    "hurtFlash": false,
+    "deathPop": false,
+    "color": "#D2DAE4B4",
+    "animator": {
+      "parameters": [
+        {
+          "name": "Hiccup",
+          "type": "Bool",
+          "defaultValue": 0
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/DamnedSoul/DamnedSoul_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Hiccup",
+          "spriteSheet": "Art/Enemies/DamnedSoul/DamnedSoul_hiccup.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [
+        {
+          "fromState": "Idle",
+          "toState": "Hiccup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hiccup",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hiccup",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        }
+      ],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 600
+    }
+  ]
+}

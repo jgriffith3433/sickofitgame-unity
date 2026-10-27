@@ -608,6 +608,22 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                4.0,
+                -0.2
+              ],
+              "id": "find_glint0"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                24.0,
+                0.4
+              ],
+              "id": "find_glint1"
             }
           ]
         },

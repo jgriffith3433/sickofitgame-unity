@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "extends": "imp",
+  "displayName": "Sleeping demon",
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "onSpawn": [],
+  "hint": "Asleep. A shot past it or a landing on it wakes it. Walk.",
+  "note": "Do not shoot the sleeping demon. I will say it once more, quietly.",
+  "hintVoice": "",
+  "tags": [
+    "sleepingDemon"
+  ],
+  "loot": {
+    "chance": 0.0,
+    "count": 0,
+    "value": 0
+  },
+  "drops": [],
+  "abilities": [
+    {
+      "type": "faceTarget"
+    }
+  ],
+  "states": [
+    {
+      "name": "asleep",
+      "transitions": [
+        {
+          "to": "awake",
+          "when": {
+            "type": "anyOf",
+            "triggers": [
+              {
+                "type": "witness",
+                "what": "ShotPassed",
+                "within": 3.0
+              },
+              {
+                "type": "counter",
+                "name": "demonLanded",
+                "atLeast": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "awake",
+      "onEnter": [
+        {
+          "type": "setCounter",
+          "name": "demonLanded",
+          "value": 0.0
+        },
+        {
+          "type": "emit",
+          "signal": "stop:sleepingDemon:woken"
+        },
+        {
+          "type": "popText",
+          "text": "!",
+          "color": "#FF8A3D",
+          "at": [
+            0.0,
+            1.2
+          ],
+          "anchor": "Self",
+          "size": 1.4
+        },
+        {
+          "type": "showText",
+          "text": "Mmh. ...Mm?",
+          "duration": 1.6,
+          "style": "Subtitle",
+          "color": "#FF9A5C"
+        }
+      ],
+      "abilities": [
+        {
+          "type": "shoot",
+          "projectile": "demonEmber",
+          "pattern": {
+            "type": "spread",
+            "count": 3,
+            "angle": 50
+          },
+          "speed": 2.6,
+          "aim": "Player",
+          "interval": 2.2,
+          "initialDelay": 1.4,
+          "damage": 1
+        }
+      ],
+      "transitions": [
+        {
+          "to": "asleep",
+          "when": {
+            "type": "after",
+            "seconds": 8.0
+          }
+        }
+      ]
+    }
+  ]
+}

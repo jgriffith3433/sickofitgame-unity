@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "levelName": "Floor853",
-  "displayName": "Floor 853: Dust",
+  "displayName": "Floor 853: The Damned Parade",
   "levelNumber": 49,
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 400.0,
+  "duration": 240.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 50,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 853,
-    "length": 285,
+    "length": 60,
     "floors": {
       "start": 853,
       "end": 852,
@@ -38,9 +38,9 @@
       "holdForPushes": false,
       "path": [
         {
-          "name": "up",
+          "name": "ledges",
           "direction": "Up",
-          "length": 1.38,
+          "length": 1.45,
           "turn": 2.0,
           "spawns": [
             {
@@ -52,7 +52,7 @@
               "id": "lavaSea"
             },
             {
-              "entity": "roadSlab",
+              "entity": "ledge",
               "at": [
                 -3.6,
                 -2.45
@@ -64,871 +64,207 @@
               ]
             },
             {
-              "entity": "roadSlab",
+              "entity": "ledge",
               "at": [
-                -1.0,
+                -1.2,
                 -1.15
+              ],
+              "scale": [
+                0.9,
+                1
               ]
             },
             {
-              "entity": "splitSlab",
+              "entity": "ledge",
               "at": [
-                1.2,
+                -3.6,
                 0.15
               ],
-              "scale": [
-                0.9,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "dust",
-          "direction": "Right",
-          "length": 13.45,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                3.6,
-                0.15
-              ]
-            },
-            {
-              "entity": "splitSlab",
-              "at": [
-                5.8,
-                0.15
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneVent",
-              "at": [
-                6.95,
-                0.15
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                8.1,
-                0.15
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                10.3,
-                0.15
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.5,
-                0.15
-              ],
-              "scale": [
-                1.1,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                11.2,
-                0.75
-              ],
-              "onEnter": true
-            },
-            {
-              "entity": "damnedSoul",
-              "at": [
-                12.8,
-                0.95
-              ],
-              "id": "soul853"
-            }
-          ]
-        },
-        {
-          "name": "slope",
-          "direction": "UpRight",
-          "length": 5.33,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "splitSlab",
-              "at": [
-                14.4,
-                1.4
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                16.1,
-                2.65
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                17.8,
-                3.9
-              ],
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                19.0,
-                4.5
-              ],
-              "onEnter": true
-            }
-          ]
-        },
-        {
-          "name": "riser",
-          "direction": "Up",
-          "length": 5.6,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                0.0,
-                -0.119
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                2.4,
-                1.011
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                0.0,
-                2.14
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                2.4,
-                3.27
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                0.0,
-                4.4
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "Dust1",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "settleSlab",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                8.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                11.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc0"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                16.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneVentB",
-              "at": [
-                19.4,
-                -0.95
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                24.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "ChokingRoad2",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                8.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                11.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc1"
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                16.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneVentB",
-              "at": [
-                19.4,
-                -0.95
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "ACoughOfEmbers3",
-          "direction": "Up",
-          "length": 8.0,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "ladder",
-              "at": [
-                0.3,
-                3.05
-              ],
-              "anchor": "Section",
               "scale": [
                 1.0,
-                8.0
-              ],
-              "id": "ladder853"
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                0.0,
-                6.8
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "imp",
-              "at": [
-                -3.0,
-                3.5
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc2"
-              ]
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                3.0,
-                5.3
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc2"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "TheDustStorm4",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                8.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneDemon",
-              "at": [
-                8.0,
-                0.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                11.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                13.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                16.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadPerch",
-              "at": [
-                16.0,
-                2.0
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "demonLobber",
-              "at": [
-                16.0,
-                2.7
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneVentB",
-              "at": [
-                19.4,
-                -0.95
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ricochetImp",
-              "at": [
-                24.0,
-                2.4
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
                 1
               ]
             }
           ]
         },
         {
-          "name": "ThroughTheHaze5",
-          "direction": "Right",
-          "length": 30.0,
+          "name": "step",
+          "direction": "Up",
+          "length": 1.5,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "spawns": []
+        },
+        {
+          "name": "stop",
+          "direction": "Right",
+          "length": 10.8,
+          "turn": 2.0,
           "spawns": [
             {
-              "entity": "settleSlab",
+              "entity": "ledge",
               "at": [
-                4.0,
-                -1.2
+                -2.4,
+                1.65
               ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                3.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                5.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                8.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneDemon",
-              "at": [
-                8.0,
-                -0.5
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                11.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                13.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                16.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadPerch",
-              "at": [
-                16.0,
-                1.5
-              ],
-              "anchor": "Section",
               "scale": [
                 0.9,
                 1
               ]
             },
             {
-              "entity": "demonLobber",
+              "entity": "ledge",
               "at": [
-                16.0,
+                -0.6,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                1.2,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                3.0,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                4.8,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                6.6,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                8.4,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                10.2,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                12.0,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                13.8,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "fairStall",
+              "at": [
+                1.4,
+                1.98
+              ],
+              "id": "stall"
+            },
+            {
+              "entity": "paradeSoul",
+              "at": [
+                2.5,
                 2.2
               ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
+              "id": "hawk"
             },
             {
-              "entity": "settleSlab",
+              "entity": "paradeSoul",
               "at": [
-                20.0,
-                -1.2
+                5.0,
+                2.2
               ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
+              "id": "walker0"
             },
             {
-              "entity": "brimstoneVentB",
+              "entity": "paradeSoul",
               "at": [
-                19.4,
-                -0.95
+                5.6,
+                2.2
               ],
-              "anchor": "Section"
+              "id": "walker1"
             },
             {
-              "entity": "roadSlab",
+              "entity": "paradeSoul",
               "at": [
-                24.0,
-                -1.2
+                6.2,
+                2.2
               ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "blinkImp",
-              "at": [
-                24.0,
-                1.8
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
+              "id": "walker2"
+            }
+          ]
+        },
+        {
+          "name": "landing",
+          "direction": "Right",
+          "length": 5.0,
+          "turn": 2.0,
+          "spawns": [
             {
               "entity": "floorLanding853",
               "at": [
-                29.4,
-                -0.4
+                17.7,
+                3.05
               ],
-              "id": "landing",
-              "anchor": "Section"
+              "id": "landing"
             }
           ]
         }
@@ -952,20 +288,16 @@
         "value": 0.0
       },
       {
-        "name": "heat",
-        "value": 0.0
-      },
-      {
-        "name": "finale",
+        "name": "restOver",
         "value": 0.0
       }
     ],
     "rules": [
       {
-        "name": "the dust",
+        "name": "stop floor: the quiet, Floor 853",
         "when": {
           "type": "sectionReached",
-          "section": "dust"
+          "section": "stop"
         },
         "maxTimes": 1,
         "do": [
@@ -973,147 +305,28 @@
             "type": "runSequence",
             "steps": [
               {
-                "type": "fade",
-                "to": "Black",
-                "duration": 0.6
+                "type": "emit",
+                "signal": "stop:parade:enter"
               },
               {
                 "type": "wait",
-                "seconds": 0.4
+                "seconds": 20.0
               },
               {
-                "type": "fade",
-                "to": "Clear",
-                "duration": 1.4
+                "type": "setCounter",
+                "name": "restOver",
+                "value": 1.0
               },
               {
-                "type": "showText",
-                "text": "Can't see a thing. Hell's improving.",
-                "duration": 3.7,
-                "style": "Subtitle",
-                "sound": "vo_f853_see"
-              },
-              {
-                "type": "wait",
-                "seconds": 1.0
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  0.6,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 2.0
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  2.2,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 2.0
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  -0.6,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 2.0
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  1.4,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 2.0
+                "type": "emit",
+                "signal": "stop:parade:calm"
               }
             ]
           }
         ]
       },
       {
-        "name": "the slope: push",
-        "when": {
-          "type": "sectionReached",
-          "section": "slope"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "runSequence",
-            "steps": [
-              {
-                "type": "playMusic",
-                "clip": "Audio/Music/wastes_push.ogg",
-                "volume": 0.85
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  1.0,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 2.0
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  2.4,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 2.0
-              },
-              {
-                "type": "spawn",
-                "entity": "spireShard",
-                "anchor": "Camera",
-                "at": [
-                  0.2,
-                  2.3
-                ]
-              },
-              {
-                "type": "wait",
-                "seconds": 2.0
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "the landing",
+        "name": "stop floor: not yet, Floor 853",
         "when": {
           "type": "allOf",
           "triggers": [
@@ -1125,7 +338,348 @@
             },
             {
               "type": "counter",
-              "name": "finale",
+              "name": "restOver",
+              "atLeast": 0.0,
+              "below": 1.0
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "I'm not in a hurry.",
+                "duration": 2.2,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "parade: first look",
+        "when": {
+          "type": "sectionReached",
+          "section": "stop"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 2.0
+              },
+              {
+                "type": "showText",
+                "text": "A fair. Down here.",
+                "duration": 2.4,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "parade: the fair, three times",
+        "when": {
+          "type": "sectionReached",
+          "section": "stop"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker0",
+                "anchor": "World",
+                "x": 9.2,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker1",
+                "anchor": "World",
+                "x": 8.6,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker2",
+                "anchor": "World",
+                "x": 8.0,
+                "speed": 1.7
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "showText",
+                "text": "Soul: Step right up! ...Step right up!",
+                "duration": 1.9,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker0",
+                "anchor": "World",
+                "x": 5.0,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker1",
+                "anchor": "World",
+                "x": 5.6,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker2",
+                "anchor": "World",
+                "x": 6.2,
+                "speed": 1.7
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker0",
+                "anchor": "World",
+                "x": 9.2,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker1",
+                "anchor": "World",
+                "x": 8.6,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker2",
+                "anchor": "World",
+                "x": 8.0,
+                "speed": 1.7
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "showText",
+                "text": "Soul: Step right up! ...Step right up!",
+                "duration": 1.9,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker0",
+                "anchor": "World",
+                "x": 5.0,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker1",
+                "anchor": "World",
+                "x": 5.6,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker2",
+                "anchor": "World",
+                "x": 6.2,
+                "speed": 1.7
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker0",
+                "anchor": "World",
+                "x": 9.2,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker1",
+                "anchor": "World",
+                "x": 8.6,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker2",
+                "anchor": "World",
+                "x": 8.0,
+                "speed": 1.7
+              },
+              {
+                "type": "wait",
+                "seconds": 2.4
+              },
+              {
+                "type": "showText",
+                "text": "Soul: Step right up! ...Step right up!",
+                "duration": 1.9,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "faceEntity",
+                "target": "walker1",
+                "toward": "player"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.9
+              },
+              {
+                "type": "emit",
+                "signal": "stop:parade:discovery"
+              },
+              {
+                "type": "showText",
+                "text": "Soul: ...You're not in the line.",
+                "duration": 2.6,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.9
+              },
+              {
+                "type": "showText",
+                "text": "I'm leaving.",
+                "duration": 1.8,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.1
+              },
+              {
+                "type": "showText",
+                "text": "Soul: That's what the last one said.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.6
+              },
+              {
+                "type": "spawn",
+                "entity": "rewindOrb",
+                "anchor": "Player",
+                "at": [
+                  0.8,
+                  0.9
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "stop:parade:gift"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker0",
+                "anchor": "World",
+                "x": 5.0,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker1",
+                "anchor": "World",
+                "x": 5.6,
+                "speed": 1.7
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "walker2",
+                "anchor": "World",
+                "x": 6.2,
+                "speed": 1.7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "parade: the same line",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            4.4,
+            2.3
+          ],
+          "size": [
+            4.0,
+            2.6
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:parade:seen"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
+                "type": "showText",
+                "text": "Same as last time. Exactly.",
+                "duration": 2.8,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing, Floor 853",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "restOver",
               "atLeast": 1.0
             }
           ]
@@ -1135,6 +689,10 @@
           {
             "type": "runSequence",
             "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:parade:done"
+              },
               {
                 "type": "setFloor",
                 "floor": 852,
@@ -1146,16 +704,10 @@
                 "value": 0.0
               },
               {
-                "type": "playMusic",
-                "clip": "Audio/Music/wastes_loop.ogg",
-                "volume": 0.85
-              },
-              {
                 "type": "showText",
-                "text": "DUST: SETTLED",
-                "duration": 2.17,
+                "text": "THE DAMNED PARADE: WATCHED",
+                "duration": 2.4,
                 "style": "Banner",
-                "sound": "vo_f853_clear",
                 "color": "#FFD27A"
               },
               {
@@ -1169,269 +721,9 @@
               {
                 "type": "setCounter",
                 "name": "cleared",
-                "value": 1
+                "value": 1.0
               }
             ]
-          }
-        ]
-      },
-      {
-        "name": "to Dust1",
-        "when": {
-          "type": "sectionReached",
-          "section": "Dust1"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "goToPhase",
-            "phase": "Dust1"
-          }
-        ]
-      },
-      {
-        "name": "to ChokingRoad2",
-        "when": {
-          "type": "sectionReached",
-          "section": "ChokingRoad2"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc0"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "ChokingRoad2"
-          }
-        ]
-      },
-      {
-        "name": "to ACoughOfEmbers3",
-        "when": {
-          "type": "sectionReached",
-          "section": "ACoughOfEmbers3"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc1"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "ACoughOfEmbers3"
-          }
-        ]
-      },
-      {
-        "name": "to TheDustStorm4",
-        "when": {
-          "type": "sectionReached",
-          "section": "TheDustStorm4"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc2"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "TheDustStorm4"
-          }
-        ]
-      },
-      {
-        "name": "to ThroughTheHaze5",
-        "when": {
-          "type": "sectionReached",
-          "section": "ThroughTheHaze5"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc3"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "ThroughTheHaze5"
-          }
-        ]
-      },
-      {
-        "name": "the opening's rift stops",
-        "when": {
-          "type": "sectionReached",
-          "section": "riser"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "lavaSpeed",
-            "value": 0.0
-          }
-        ]
-      },
-      {
-        "name": "the floor has had its minutes",
-        "when": {
-          "type": "atTime",
-          "seconds": 255.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "finale",
-            "value": 1.0
-          }
-        ]
-      },
-      {
-        "name": "heat: the floor gets hotter",
-        "when": {
-          "type": "every",
-          "seconds": 20.0,
-          "startAfter": 40.0,
-          "maxTimes": 12
-        },
-        "do": [
-          {
-            "type": "addCounter",
-            "name": "heat",
-            "amount": 1.0
-          }
-        ]
-      },
-      {
-        "name": "heat 2: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 2.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 4: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 4.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 6: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 6.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 8: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 8.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 10: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 10.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
           }
         ]
       }
@@ -1445,639 +737,10 @@
             "steps": [
               {
                 "type": "showText",
-                "text": "FLOOR 853: DUST",
-                "duration": 2.3,
+                "text": "FLOOR 853: THE DAMNED PARADE",
+                "duration": 2.6,
                 "style": "Banner",
-                "sound": "vo_f853_title",
                 "color": "#FFD27A"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Dust1",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:Dust1"
-          },
-          {
-            "type": "showText",
-            "text": "DUST!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.41,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "DUST!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 6.07,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "ChokingRoad2",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:ChokingRoad2"
-          },
-          {
-            "type": "showText",
-            "text": "CHOKING ROAD!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "playMusic",
-            "clip": "Audio/Music/wastes_push.ogg",
-            "volume": 0.85
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.31,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "CHOKING ROAD!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.71,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "CHOKING ROAD!: a mixed wave",
-            "when": {
-              "type": "every",
-              "seconds": 12.8,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 3,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "ACoughOfEmbers3",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:ACoughOfEmbers3"
-          },
-          {
-            "type": "showText",
-            "text": "A COUGH OF EMBERS!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.21,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "A COUGH OF EMBERS!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.35,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "A COUGH OF EMBERS!: a mixed wave",
-            "when": {
-              "type": "every",
-              "seconds": 12.2,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 3,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "TheDustStorm4",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:TheDustStorm4"
-          },
-          {
-            "type": "showText",
-            "text": "THE DUST STORM!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.11,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "THE DUST STORM!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.0,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "THE DUST STORM!: a mixed wave",
-            "when": {
-              "type": "every",
-              "seconds": 11.6,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 3,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "THE DUST STORM!: sparks from the Rift",
-            "when": {
-              "type": "every",
-              "seconds": 6.56,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 5,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "ThroughTheHaze5",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:ThroughTheHaze5"
-          },
-          {
-            "type": "showText",
-            "text": "THROUGH THE HAZE!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "playMusic",
-            "clip": "Audio/Music/wastes_loop.ogg",
-            "volume": 0.85
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 3
-            },
-            "speed": 3.2,
-            "interval": 1.01,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "THROUGH THE HAZE!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 4.64,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 4,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "THROUGH THE HAZE!: a mixed wave",
-            "when": {
-              "type": "every",
-              "seconds": 11.0,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "THROUGH THE HAZE!: sparks from the Rift",
-            "when": {
-              "type": "every",
-              "seconds": 6.07,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 6,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
               }
             ]
           }

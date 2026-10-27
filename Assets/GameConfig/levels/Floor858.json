@@ -191,6 +191,14 @@
               "id": "spireSurge",
               "onEnter": true,
               "facing": 1.0
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                16.0,
+                2.3
+              ],
+              "id": "find_glint0"
             }
           ],
           "autoSpeed": 1.15
@@ -230,6 +238,14 @@
                 3.4
               ],
               "id": "soul858"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                18.2,
+                3.6
+              ],
+              "id": "find_glint1"
             }
           ]
         },

@@ -289,6 +289,14 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                0.0,
+                4.88
+              ],
+              "id": "find_glint0"
             }
           ]
         },
@@ -488,6 +496,14 @@
               "tags": [
                 "pc1"
               ]
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                -2.4,
+                3.8
+              ],
+              "id": "find_glint1"
             }
           ]
         },
@@ -605,6 +621,14 @@
               "tags": [
                 "pc2"
               ]
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                24.0,
+                0.15
+              ],
+              "id": "find_soul0"
             }
           ]
         },

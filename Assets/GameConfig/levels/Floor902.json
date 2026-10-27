@@ -179,6 +179,22 @@
                 0.9
               ],
               "id": "terraceSoul"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                5.8,
+                1.25
+              ],
+              "id": "find_glint0"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                7.6,
+                1.25
+              ],
+              "id": "find_glint1"
             }
           ]
         },

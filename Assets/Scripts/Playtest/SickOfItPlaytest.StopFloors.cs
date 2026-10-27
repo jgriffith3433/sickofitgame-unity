@@ -11,15 +11,18 @@ namespace SickOfIt.Playtest
     public static partial class SickOfItPlaytest
     {
         /// <summary>
-        /// Stop floors (Docs/Story.md "Stop floors"): 957 The Hot Bath, 959 Hell's Graffiti, 897 Rook's Camp, 893 The Stuck Imp. Each is opened directly (a setup shortcut)
+        /// Stop floors (Docs/Story.md "Stop floors"): 957 The Hot Bath, 959 Hell's Graffiti, 952 The Waystone Shrine (Circle X), 897 Rook's Camp, 893 The Stuck Imp,
+        /// 856 The Sleeping Demon, 853 The Damned Parade, 809 The Loop Room (Circle IX). Each is opened directly (a setup shortcut)
         /// and played by the bot through real input until the floor's `stop:&lt;key&gt;:done` signal. Checked: the discovery signal, no damage to the hero between the
         /// floor's `enter` and `done`, the quiet lasting 20+ s (`calm` 20 s after `enter`), the lava never rising, and per floor its own beat (the bath's heal, six carvings
         /// read and the diamond under the last, Rook's question answered, the stuck imp's same throw before and after a rewind). Tools/Levels/stop_floors.py writes the floors.
         /// </summary>
         public const string StopFloorsId = "stop-floors";
-        const float StopFloorsSeconds = 480f;
+        const float StopFloorsSeconds = 960f;
 
-        static readonly (int floor, string key)[] StopFloorList = { (957, "hotBath"), (959, "graffiti"), (897, "camp"), (893, "stuckImp") };
+        static readonly (int floor, string key)[] StopFloorList = {
+            (957, "hotBath"), (959, "graffiti"), (952, "shrine"), (897, "camp"), (893, "stuckImp"), (856, "sleepingDemon"), (853, "parade"), (809, "loopRoom"),
+        };
 
         sealed partial class Session
         {
@@ -88,6 +91,13 @@ namespace SickOfIt.Playtest
                             Run.Event("stop-floor", $"rewind: hold R back past throw 2 (at {now:0.0} s)");
                             return HoldRewind(3.0f);
                         }
+                        // The loop room: once he has jumped in the room, hold R back a second and a half; the soul there should replay the jump.
+                        if (key == "loopRoom" && !stopRewound && StopSeen("stop:loopRoom:jumped") && now >= stopSignals["stop:loopRoom:jumped"] + 0.8f)
+                        {
+                            stopRewound = true;
+                            Run.Event("stop-floor", $"rewind: hold R back after the jump in the room (at {now:0.0} s)");
+                            return HoldRewind(1.5f);
+                        }
                         return null;
                     }, (float)index / total, (float)(index + 1) / total, 240f, waitOutDeath: true,
                        until: () => StopSeen(done) && (key != "stuckImp" || stopRewound));
@@ -118,6 +128,11 @@ namespace SickOfIt.Playtest
                         StopCheck($"{label} is quiet (no damage to the hero)", enter >= 0f && hits == 0, $"{hits} damage events between enter and the landing");
                         StopCheck($"{label} holds the hero for 20 s", StopSeen(p + "calm") && enter >= 0f && stopSignals[p + "calm"] - enter >= 19.5f,
                             StopSeen(p + "calm") ? $"calm {stopSignals[p + "calm"] - enter:0.0} s after enter" : "the quiet never ended");
+                        // Less platform-and-lava time: a stop floor is a fraction of a long floor (Circle X's run 150-195 s, Circle IX's more).
+                        float spent = enter >= 0f && end < float.MaxValue ? end - enter : -1f;
+                        Run.Metric($"stopFloors.floor{floor}.seconds", spent);
+                        Run.Event("stop-floor", $"floor {floor} took {spent:0.0} s from enter to the landing (a long floor takes 150+ s)");
+                        StopCheck($"{label} is short (under 100 s)", spent > 0f && spent <= 100f, $"{spent:0.0} s");
                         StopCheck($"{label} has no rising lava", stopLavaMax <= 0.001f, $"lavaSpeed peaked at {stopLavaMax:0.00}");
                         switch (key)
                         {
@@ -129,6 +144,23 @@ namespace SickOfIt.Playtest
                                 for (int c = 1; c <= 6; c++) if (StopSeen(p + "read" + c)) read++;
                                 StopCheck($"{label} reads every carving", read == 6, $"{read} of 6 carvings read");
                                 StopCheck($"{label} pays the last carving's diamond", StopSeen(p + "diamond"), "diamond under 'ROOK WAS HERE. SECOND.'");
+                                break;
+                            case "shrine":
+                                bool rested = StopSeen(p + "rest"), filled = StopSeen(p + "filled");
+                                StopCheck($"{label} the choice is made once and paid", rested ^ filled, rested ? "rested: a heart" : filled ? "filled: every heart for a Grudge" : "the card was never answered");
+                                break;
+                            case "sleepingDemon":
+                                bool woke = StopSeen(p + "woken");
+                                StopCheck($"{label} stays asleep when left alone", !woke && !StopSeen(p + "shot") && !StopSeen(p + "landed"), woke ? "it woke" : "no shot passed it and nobody landed on it");
+                                StopCheck($"{label} pays the tiptoe", StopSeen(p + "stealth"), "three diamonds past the demon");
+                                break;
+                            case "parade":
+                                StopCheck($"{label} one soul turns to watch on the third loop", StopSeen(p + "discovery"), StopSeen(p + "discovery") ? $"at {stopSignals[p + "discovery"]:0.0} s" : "the third loop never turned");
+                                StopCheck($"{label} the soul gives something back", StopSeen(p + "gift"), "a rewind orb");
+                                break;
+                            case "loopRoom":
+                                StopCheck($"{label} the soul replays the jump after a rewind", StopSeen(p + "jumped") && stopRewound && StopSeen(p + "echo"),
+                                    $"jumped {StopSeen(p + "jumped")}, rewound {stopRewound}, echo {StopSeen(p + "echo")}");
                                 break;
                             case "camp":
                                 bool sat = StopSeen(p + "reply:sit"), went = StopSeen(p + "reply:walkOn");
@@ -150,7 +182,7 @@ namespace SickOfIt.Playtest
                         if (done) cleared++;
                     }
                     Run.Metric("stopFloors.cleared", cleared);
-                    StopCheck("all four stop floors are played", cleared == StopFloorList.Length, $"{cleared} of {StopFloorList.Length}");
+                    StopCheck("all eight stop floors are played", cleared == StopFloorList.Length, $"{cleared} of {StopFloorList.Length}");
                 }
                 finally
                 {

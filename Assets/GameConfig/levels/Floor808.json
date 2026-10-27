@@ -866,6 +866,22 @@
               ],
               "id": "landing",
               "anchor": "Section"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                4.0,
+                -0.2
+              ],
+              "id": "find_glint0"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                12.0,
+                -0.2
+              ],
+              "id": "find_glint1"
             }
           ]
         }
