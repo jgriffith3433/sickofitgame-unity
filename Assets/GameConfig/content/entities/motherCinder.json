@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Mother Cinder",
+  "note": "She sends the embers down. The sparks are her children.",
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "backgroundBoss"
+  ],
+  "body": {
+    "radius": 0.3,
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.3,
+    "placeholderColor": "#FF6A1F",
+    "placeholderSize": 3.2,
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 4,
+    "hurtFlash": false,
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/Cinder/Cinder_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "screenAnchor",
+      "offset": [
+        5.0,
+        3.4
+      ],
+      "drift": [
+        -0.1,
+        0.0
+      ],
+      "driftAfter": 2.0
+    }
+  ]
+}

@@ -15,7 +15,10 @@ namespace SickOfIt.Core.Rewind
     public abstract class BaseRewindable<TSnapshot> : MonoBehaviour, IRewindable, IRewindHistory
         where TSnapshot : struct
     {
-        [SerializeField] private int bufferCapacity = 600; // 30s at 20Hz
+        [SerializeField] private int bufferCapacity = 600; // 30s at 20Hz: the most it will hold, not what it allocates up front
+
+        /// <summary>The most snapshots the history keeps (its array grows toward this as the object lives).</summary>
+        protected int BufferCapacity => Mathf.Max(1, bufferCapacity);
 
         protected CircularBuffer<TSnapshot> history;
 
@@ -51,7 +54,7 @@ namespace SickOfIt.Core.Rewind
 
         protected virtual void Awake()
         {
-            history = new CircularBuffer<TSnapshot>(bufferCapacity);
+            history = new CircularBuffer<TSnapshot>(BufferCapacity);
             if (RewindTimeline.Instance != null)
                 RewindTimeline.Instance.Register(this);
         }

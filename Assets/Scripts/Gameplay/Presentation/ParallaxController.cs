@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using SickOfIt.Core;
 
 namespace SickOfIt.Gameplay
 {
@@ -83,11 +84,23 @@ namespace SickOfIt.Gameplay
             return null;
         }
 
+        bool placed;
+        Vector2 lastCamPos;
+        int lastEntries;
+
         void LateUpdate()
         {
             if (cam == null)
                 return;
             Vector2 camPos = cam.transform.position;
+            // Rewinding, the layers are only placed when the camera has moved (it follows the rewound hero, and a layer
+            // must keep its factor to it, so it isn't frozen outright); still, they stay where they were.
+            bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
+            if (rewinding && placed && camPos == lastCamPos && entries.Count == lastEntries)
+                return;
+            placed = true;
+            lastCamPos = camPos;
+            lastEntries = entries.Count;
             for (int i = 0; i < entries.Count; i++)
             {
                 var e = entries[i];

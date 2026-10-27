@@ -6,7 +6,7 @@ id prefix "by_" and are replaced). Run it after long_floors.py / cracked_floors.
 
   python3 Tools/Levels/bystanders.py
 """
-import json, os
+import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from artkeep import guard  # noqa: E402  (generated art is kept: Tools/Levels/artkeep.py)
 

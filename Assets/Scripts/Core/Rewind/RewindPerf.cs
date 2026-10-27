@@ -19,13 +19,19 @@ namespace SickOfIt.Core.Rewind
             public double TotalMs, WorstMs;
             /// <summary>The timeline's own work in those frames (restore while rewinding, catch-up and record forward).</summary>
             public double WorkMs, WorstWorkMs;
+            /// <summary>Managed memory allocated: by the timeline's own work, and by the whole frame (the heap's growth, a collection counts as 0).</summary>
+            public long WorkAllocBytes, FrameAllocBytes;
+            public long WorstWorkAllocBytes;
 
             public double AverageMs => Frames > 0 ? TotalMs / Frames : 0;
             public double AverageWorkMs => Frames > 0 ? WorkMs / Frames : 0;
 
-            public void Add(double frameMs, double workMs)
+            public void Add(double frameMs, double workMs, long workAlloc = 0, long frameAlloc = 0)
             {
                 Frames++;
+                WorkAllocBytes += workAlloc;
+                FrameAllocBytes += frameAlloc;
+                if (workAlloc > WorstWorkAllocBytes) WorstWorkAllocBytes = workAlloc;
                 TotalMs += frameMs;
                 WorkMs += workMs;
                 if (frameMs > WorstMs) WorstMs = frameMs;
@@ -36,10 +42,15 @@ namespace SickOfIt.Core.Rewind
             {
                 Frames = 0;
                 TotalMs = WorstMs = WorkMs = WorstWorkMs = 0;
+                WorkAllocBytes = FrameAllocBytes = WorstWorkAllocBytes = 0;
             }
 
+            public double AverageWorkAllocBytes => Frames > 0 ? (double)WorkAllocBytes / Frames : 0;
+            public double AverageFrameAllocBytes => Frames > 0 ? (double)FrameAllocBytes / Frames : 0;
+
             public override string ToString() =>
-                Frames == 0 ? "no frames" : $"{Frames} frames, avg {AverageMs:0.0} ms (worst {WorstMs:0.0}), timeline work avg {AverageWorkMs:0.00} ms (worst {WorstWorkMs:0.00})";
+                Frames == 0 ? "no frames" : $"{Frames} frames, avg {AverageMs:0.0} ms (worst {WorstMs:0.0}), timeline work avg {AverageWorkMs:0.00} ms (worst {WorstWorkMs:0.00}), " +
+                                            $"allocated {WorkAllocBytes} B by the timeline, {FrameAllocBytes} B by the frames";
         }
 
         /// <summary>Frames while time runs forward (since the last <see cref="Reset"/>).</summary>
@@ -83,25 +94,28 @@ namespace SickOfIt.Core.Rewind
         }
 
         /// <summary>A timestamp for <see cref="MillisecondsSince"/>.</summary>
+        /// <summary>Managed heap in use (bytes); the difference of two reads is what was allocated between them.</summary>
+        internal static long Heap() => UnityEngine.Profiling.Profiler.GetMonoUsedSizeLong();
+
         internal static long Now() => Stopwatch.GetTimestamp();
 
         internal static double MillisecondsSince(long start) => (Stopwatch.GetTimestamp() - start) * 1000.0 / Stopwatch.Frequency;
 
         /// <summary>A finished frame: its real length, whether it rewound, the game time the clock moved and the timeline's work in it.</summary>
-        internal static void AddFrame(float frameSeconds, bool rewinding, float clockStep, double workMs)
+        internal static void AddFrame(float frameSeconds, bool rewinding, float clockStep, double workMs, long workAlloc = 0, long frameAlloc = 0)
         {
             double frameMs = frameSeconds * 1000.0;
             if (rewinding)
             {
-                Rewinding.Add(frameMs, workMs);
-                Current.Add(frameMs, workMs);
+                Rewinding.Add(frameMs, workMs, workAlloc, frameAlloc);
+                Current.Add(frameMs, workMs, workAlloc, frameAlloc);
                 return;
             }
             if (afterLeft > 0)
             {
                 afterLeft--;
-                AfterRewind.Add(frameMs, workMs);
-                CurrentAfter.Add(frameMs, workMs);
+                AfterRewind.Add(frameMs, workMs, workAlloc, frameAlloc);
+                CurrentAfter.Add(frameMs, workMs, workAlloc, frameAlloc);
                 if (clockStep > WorstStepAfterRewind)
                     WorstStepAfterRewind = clockStep;
                 if (afterLeft == 0)
@@ -112,7 +126,7 @@ namespace SickOfIt.Core.Rewind
                 }
                 return;
             }
-            Forward.Add(frameMs, workMs);
+            Forward.Add(frameMs, workMs, workAlloc, frameAlloc);
         }
 
         internal static void RewindStarted(float clockTime, int rewindables, int active, int longestHistory)

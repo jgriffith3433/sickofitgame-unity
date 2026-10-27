@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 400.0,
+  "duration": 210.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 5,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 998,
-    "length": 280,
+    "length": 150,
     "floors": {
       "start": 998,
       "end": 997,
@@ -111,7 +111,7 @@
               ]
             }
           ],
-          "autoSpeed": 0.6
+          "autoSpeed": 0.95
         },
         {
           "name": "procession",
@@ -184,12 +184,12 @@
               ]
             }
           ],
-          "autoSpeed": 0.6
+          "autoSpeed": 0.95
         },
         {
           "name": "hayfield",
           "direction": "Right",
-          "length": 28.0,
+          "length": 19.0,
           "turn": 2.0,
           "spawns": [
             {
@@ -226,7 +226,7 @@
               ]
             },
             {
-              "entity": "wreckCart",
+              "entity": "wreckHay",
               "at": [
                 35.7,
                 -1.2
@@ -237,13 +237,13 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "wreckRoof",
               "at": [
                 38.7,
                 -1.2
               ],
               "scale": [
-                1.2,
+                1.0,
                 1
               ]
             },
@@ -257,9 +257,18 @@
                 1.0,
                 1
               ]
-            },
+            }
+          ],
+          "autoSpeed": 0.95
+        },
+        {
+          "name": "emberfall",
+          "direction": "Right",
+          "length": 21.0,
+          "turn": 2.0,
+          "spawns": [
             {
-              "entity": "wreckHay",
+              "entity": "wreckRoof",
               "at": [
                 44.7,
                 -1.2
@@ -270,7 +279,7 @@
               ]
             },
             {
-              "entity": "wreckRoof",
+              "entity": "wreckCart",
               "at": [
                 47.7,
                 -1.2
@@ -281,51 +290,9 @@
               ]
             },
             {
-              "entity": "wreckCart",
-              "at": [
-                50.7,
-                -1.2
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
-            }
-          ],
-          "autoSpeed": 0.55
-        },
-        {
-          "name": "emberfall",
-          "direction": "Right",
-          "length": 30.0,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "wreckRoof",
-              "at": [
-                53.7,
-                -1.2
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
-            },
-            {
-              "entity": "wreckCart",
-              "at": [
-                56.7,
-                -1.2
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
-            },
-            {
               "entity": "ledge",
               "at": [
-                59.7,
+                50.7,
                 -1.2
               ],
               "scale": [
@@ -336,7 +303,29 @@
             {
               "entity": "wreckCart",
               "at": [
-                62.7,
+                53.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                56.7,
+                -1.2
+              ],
+              "scale": [
+                1.2,
+                1
+              ]
+            },
+            {
+              "entity": "wreckCart",
+              "at": [
+                59.7,
                 -1.2
               ],
               "scale": [
@@ -347,6 +336,26 @@
             {
               "entity": "wreckHay",
               "at": [
+                62.7,
+                -1.2
+              ],
+              "scale": [
+                1.0,
+                1
+              ]
+            }
+          ],
+          "autoSpeed": 0.95
+        },
+        {
+          "name": "signpost",
+          "direction": "Right",
+          "length": 19.0,
+          "turn": 2.0,
+          "spawns": [
+            {
+              "entity": "wreckCart",
+              "at": [
                 65.7,
                 -1.2
               ],
@@ -356,13 +365,13 @@
               ]
             },
             {
-              "entity": "wreckRoof",
+              "entity": "ledge",
               "at": [
                 68.7,
                 -1.2
               ],
               "scale": [
-                1.0,
+                1.2,
                 1
               ]
             },
@@ -409,119 +418,11 @@
                 1.0,
                 1
               ]
-            }
-          ],
-          "autoSpeed": 0.55
-        },
-        {
-          "name": "signpost",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "wreckCart",
-              "at": [
-                83.7,
-                -1.2
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
             },
             {
               "entity": "ledge",
               "at": [
-                86.7,
-                -1.2
-              ],
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "wreckCart",
-              "at": [
-                89.7,
-                -1.2
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
-            },
-            {
-              "entity": "wreckHay",
-              "at": [
-                92.7,
-                -1.2
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
-            },
-            {
-              "entity": "wreckRoof",
-              "at": [
-                95.7,
-                -1.2
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
-            },
-            {
-              "entity": "wreckCart",
-              "at": [
-                98.7,
-                -1.2
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                101.7,
-                -1.2
-              ],
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "wreckCart",
-              "at": [
-                104.7,
-                -1.2
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
-            },
-            {
-              "entity": "wreckHay",
-              "at": [
-                107.7,
-                -1.2
-              ],
-              "scale": [
-                1.0,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                109.4,
+                82.4,
                 -1.2
               ],
               "id": "jam",
@@ -531,7 +432,7 @@
               ]
             }
           ],
-          "autoSpeed": 0.6
+          "autoSpeed": 0.95
         },
         {
           "name": "jam",
@@ -543,7 +444,7 @@
             {
               "entity": "wreckCart",
               "at": [
-                112.4,
+                85.4,
                 0.3
               ],
               "scale": [
@@ -554,7 +455,7 @@
             {
               "entity": "ledge",
               "at": [
-                110.0,
+                83.0,
                 1.6
               ],
               "scale": [
@@ -565,7 +466,7 @@
             {
               "entity": "ladderHaul",
               "at": [
-                110.3,
+                83.3,
                 4.45
               ],
               "scale": [
@@ -577,7 +478,7 @@
             {
               "entity": "ledge",
               "at": [
-                110.0,
+                83.0,
                 6.8
               ],
               "id": "spireFoot",
@@ -592,13 +493,13 @@
         {
           "name": "spire",
           "direction": "Right",
-          "length": 30.0,
+          "length": 22.0,
           "turn": 2.0,
           "spawns": [
             {
               "entity": "ledge",
               "at": [
-                114.0,
+                87.0,
                 6.8
               ],
               "scale": [
@@ -609,7 +510,7 @@
             {
               "entity": "ledge",
               "at": [
-                118.0,
+                91.0,
                 7.4
               ],
               "scale": [
@@ -620,7 +521,7 @@
             {
               "entity": "ledge",
               "at": [
-                122.0,
+                95.0,
                 6.8
               ],
               "scale": [
@@ -631,29 +532,7 @@
             {
               "entity": "ledge",
               "at": [
-                126.0,
-                7.4
-              ],
-              "scale": [
-                1.4,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                130.0,
-                6.8
-              ],
-              "scale": [
-                1.4,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                134.0,
+                99.0,
                 7.4
               ],
               "scale": [
@@ -664,13 +543,13 @@
             {
               "entity": "floorLanding998",
               "at": [
-                139.4,
+                104.4,
                 7.6
               ],
               "id": "landing"
             }
           ],
-          "autoSpeed": 0.55
+          "autoSpeed": 0.95
         }
       ]
     },
@@ -693,10 +572,6 @@
       },
       {
         "name": "heat",
-        "value": 0.0
-      },
-      {
-        "name": "finale",
         "value": 0.0
       },
       {
@@ -925,28 +800,72 @@
         ]
       },
       {
-        "name": "the landing",
+        "name": "Mother Cinder looms over the rain",
         "when": {
-          "type": "allOf",
-          "triggers": [
-            {
-              "type": "playerOn",
-              "target": {
-                "id": "landing"
-              }
-            },
-            {
-              "type": "counter",
-              "name": "finale",
-              "atLeast": 1.0
-            }
-          ]
+          "type": "sectionReached",
+          "section": "emberfall"
         },
         "maxTimes": 1,
         "do": [
           {
             "type": "runSequence",
             "steps": [
+              {
+                "type": "spawn",
+                "entity": "motherCinder",
+                "id": "motherCinder",
+                "anchor": "Camera",
+                "at": [
+                  5.0,
+                  3.4
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.1,
+                "duration": 0.5
+              },
+              {
+                "type": "showText",
+                "text": "Hoooof. ... Fall, little sparks. Fall.",
+                "duration": 3.0,
+                "style": "Subtitle",
+                "color": "#FF8C33"
+              },
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "showText",
+                "text": "Of course the sparks have a mother.",
+                "duration": 2.8,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing",
+        "when": {
+          "type": "playerOn",
+          "target": {
+            "id": "landing"
+          }
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "motherCinder"
+                }
+              },
               {
                 "type": "setFloor",
                 "floor": 997,
@@ -1049,21 +968,6 @@
           {
             "type": "goToPhase",
             "phase": "spire"
-          }
-        ]
-      },
-      {
-        "name": "the spire has had its minutes",
-        "when": {
-          "type": "atTime",
-          "seconds": 250.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "finale",
-            "value": 1.0
           }
         ]
       },

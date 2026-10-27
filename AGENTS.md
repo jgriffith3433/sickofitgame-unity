@@ -70,6 +70,7 @@ Assets/GameConfig/
 - **Rewind is automatic**: entity and director state is saved through `SimHistory`; random numbers come from seeded
   per-entity streams, so a rewind replays the same future. New C# abilities/triggers must save every runtime field in
   `SaveState`/`LoadState` (`SaveStateCoversEveryRuntimeField` checks this).
+- **Rewind on slow devices** (`Core/Rewind`): histories grow toward their capacity as an object lives (`CircularBuffer`), `RewindableAnimator` keeps parameters in one flat pool and skips re-applying an unchanged state, `RewindTimeline` unregisters by swap-remove and records at 10 Hz on a slow device (`ForceLowEnd`, `EffectiveRecordInterval`; also when frames average over 30 ms), a compressed `RewindableAudioSource` fades out instead of seeking, `CircleAmbience` and `SpriteFramePlayer` chunk loading hold still while rewinding. `RewindPerf` counts the timeline's allocations; playtests `rewind-perf` and `rewind-perf-slow` (frames held to 4x their work; checks ratio <= 1.5x, no allocation, same places after a rewind).
 - **Rewind must stay as smooth as play.** `RewindTimeline` restores every rewindable every frame (a thousand on a busy floor:
   spent shots stay registered for the 30 s window), so that loop never allocates (`BaseRewindable.SnapshotTime` is the
   cached delegate; never pass `GetSnapshotTime` as a method group), never searches a list (`ObjectPool` keeps each

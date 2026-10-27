@@ -2,8 +2,8 @@
 """
 Circle X's long bullet-hell floors: Floors 997-992 and 960-952 (Docs/LevelDesign.md "A long bullet-hell floor", Floor 998 is the
 reference). Each floor keeps its own opening (the path the floor had as a 90 s stage: its idea, its new thing, its lines) and
-gets a riser plus five set pieces after it, each a section and a phase with its own banner, then the landing gated on the
-`finale` counter (a fast hero waits for the end).
+gets a riser plus five set pieces after it, each a section and a phase with its own banner, then the landing, which opens
+when the path ends (the camera's pace is the clock: ~150-190 s).
 
   python3 Tools/Levels/long_floors.py [997 996 ...]     (no args: every floor below)
   python3 Tools/Levels/floor_check.py Floor997 ...      (footholds, reach, lava over footholds)
@@ -21,7 +21,7 @@ ENT = os.path.join(ROOT, 'Assets', 'GameConfig', 'content', 'entities')
 BASE = '4bfdbcdb'          # the commit whose Floor<n>.json files are the openings
 GOLD = '#FFD27A'
 ENEMIES = {'imp', 'impGuard', 'impSwing', 'impSwingB', 'impCutter'}
-FINALE_AT = 255.0          # seconds before the landing opens (Floor 998: 250)
+AUTO = 0.95                # the camera's pace on a run piece, units a second (was 0.55: a floor took 285 s and the landing waited for the clock; now the path is the time)
 
 ORDER = [997, 996, 995, 994, 993, 992, 960, 959, 958, 957, 956, 955, 954, 953, 952]
 PITCH = 4.0
@@ -670,7 +670,7 @@ def build(n, report):
             if last:
                 assert length == 30.0
                 spawns.append(sp(spec['landing'], 29.4, -0.4, None, 'landing'))
-            sec = {'name': pname, 'direction': 'Right', 'length': length, 'turn': 2.0, 'autoSpeed': spec.get('auto', 0.55), 'spawns': spawns}
+            sec = {'name': pname, 'direction': 'Right', 'length': length, 'turn': 2.0, 'autoSpeed': spec.get('auto', AUTO), 'spawns': spawns}
         else:
             fn = spec.get('climbfn') or default_climb
             spawns, length = fn(spec, i)
@@ -705,26 +705,23 @@ def build(n, report):
                 print(f'  Floor {n}: rule "{r["name"]}" waited for the removed section {node["section"]}: now {names[4][0]}')
                 node['section'] = names[4][0]
 
-    # the landing waits for the floor's minutes; heat and finale counters (Floor 998's)
-    for r in rules:
-        if r.get('name') == 'the landing':
-            r['when'] = {'type': 'allOf', 'triggers': [r['when'], {'type': 'counter', 'name': 'finale', 'atLeast': 1.0}]}
+    # the landing opens when the path ends (no timer); the heat counter (Floor 998's)
     have = {c['name'] for c in script['counters']}
-    for c in ('heat', 'finale'):
+    for c in ('heat',):
         if c not in have:
             script['counters'].append({'name': c, 'value': 0.0})
     new_rules.append({'name': 'the opening\'s lava stops', 'when': {'type': 'sectionReached', 'section': 'riser'}, 'maxTimes': 1,
                       'do': [{'type': 'setCounter', 'name': 'lavaSpeed', 'value': 0.0}]})
-    new_rules.append({'name': 'the floor has had its minutes', 'when': {'type': 'atTime', 'seconds': FINALE_AT}, 'maxTimes': 1,
-                      'do': [{'type': 'setCounter', 'name': 'finale', 'value': 1.0}]})
-    new_rules.append({'name': 'heat: the floor gets hotter', 'when': {'type': 'every', 'seconds': 20.0, 'startAfter': 40.0, 'maxTimes': 12},
+    new_rules.append({'name': 'heat: the floor gets hotter', 'when': {'type': 'every', 'seconds': 12.0, 'startAfter': 25.0, 'maxTimes': 12},
                       'do': [{'type': 'addCounter', 'name': 'heat', 'amount': 1.0}]})
     for h in (3, 5, 7, 9, 11):
         new_rules.append({'name': f'heat {h}: the cinders hurry', 'when': {'type': 'counter', 'name': 'heat', 'atLeast': float(h)}, 'maxTimes': 1,
                           'do': [{'type': 'modifier', 'target': {'entity': 'cinder'}, 'modifiers': [{'stat': 'MoveSpeed', 'multiply': 1.1}], 'includeFuture': True}]})
     script['rules'] = rules + new_rules
-    script['length'] = 285
-    d['duration'] = 400.0
+    # the expected time: what the camera needs at its pace (a hero who just runs); the duration is 1.4x that
+    secs = sum((0 if s['direction'] == 'Arena' else s['length']) / (s.get('autoSpeed') or 3.0) for s in sections)  # an opening section without a pace is walked at ~3 units a second
+    script['length'] = min(195, int(round(secs / 5.0) * 5))  # under 200: the playtest judges it by its own length
+    d['duration'] = round(script['length'] * 1.4)
     report.append((n, L, est))
     return d
 
