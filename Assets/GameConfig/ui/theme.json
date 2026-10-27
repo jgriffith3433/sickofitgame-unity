@@ -651,6 +651,7 @@
     "deathRewindTouch": "Hold ◄◄ to undo it!",
     "deathNoJuice": "No rewind juice left...",
     "rageQuit": "Rage Quit",
+    "returnForDiamonds": "Return for {0} diamonds",
     "rewindHint": "Ouch! Hold R to undo that.",
     "rewindHintTouch": "Ouch! Hold ◄◄ to undo that.",
     "rewindLocked": "Not now",

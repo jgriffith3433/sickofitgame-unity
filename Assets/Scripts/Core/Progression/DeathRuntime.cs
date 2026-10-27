@@ -16,8 +16,10 @@ namespace SickOfIt.Core.Progression
     /// Config-driven death scene runtime. Reads DeathConfig from GameDefinition
     /// and drives death animation via SpriteFramePlayer (no PlayableDirector).
     /// Over it: "YOU OBVIOUSLY DIED" and Hell's announcer gloating (DeathConfig title and gloats). A death on a floor
-    /// stage ends the run (<see cref="RunFlow.EndRun"/>, as soon as the scene starts, so a Rage Quit can't keep it):
-    /// when the animation is over the Shaft drops the hero back to the Waystone and the next run starts there.
+    /// stage ends the run (<see cref="RunFlow.EndRun"/>) unless he pays for the Return offer (player.json returnCostDiamonds,
+    /// 10 diamonds: the level he died on again, the run kept). The offer comes with the scene, which only loads once the rewind
+    /// window has closed. The run ends when he leaves any other way (animation over, skipped, Rage Quit), so a Rage Quit can't keep it:
+    /// the Shaft drops the hero back to the Waystone and the next run starts there.
     /// Anywhere else (the Meadow, the arcade levels) the level is played again.
     /// 
     /// Added directly to generated scenes by ProjectGenerator / DeathSceneGenerator.
@@ -57,6 +59,12 @@ namespace SickOfIt.Core.Progression
         /// <summary>This death ended the run: the Shaft's drop to the Waystone comes next instead of the level again.</summary>
         public bool RunEnded => runEnded;
         public ShaftStop RunStop => runStop;
+        /// <summary>The Return button is on screen: a floor stage death and the diamonds to pay for it.</summary>
+        public bool ReturnOffered => returnButton != null;
+        /// <summary>He paid: the level reloads with the run kept.</summary>
+        public bool ReturnPaid { get; private set; }
+        public int ReturnCost => RunFlow.ReturnCost();
+        private SickOfIt.Core.UI.Menus.MenuButton returnButton;
 
         private TMPro.TextMeshProUGUI titleText;
 
@@ -84,7 +92,8 @@ namespace SickOfIt.Core.Progression
             Current = this;
             // Hell ends the run here: the death stands once its scene starts.
             levelNumber = PlayerPrefs.GetInt("CurrentLevelNumber", 1);
-            runEnded = RunFlow.EndRun(levelNumber, out runStop);
+            // The run ends when he leaves (CommitEnd), not yet: a paid Return keeps it.
+            runEnded = RunFlow.PreviewEnd(levelNumber, out runStop);
             AskWhyAfterDeaths();
 
             gameClock = gameObject.AddComponent<GameClock>();
@@ -108,6 +117,9 @@ namespace SickOfIt.Core.Progression
         public bool AskedFeedback { get; private set; }
         public int DeathsOnLevel { get; private set; }
         private bool skipHold;
+        private bool userSkipped;
+        /// <summary>How long the offer stays after the animation ends on its own (real seconds); Escape or Skip drops at once.</summary>
+        const float OfferHoldSeconds = 6f;
 
         /// <summary>Analytics: the death screen, and on the third death in a level the thumbs card (Hawkes Analytics' ask).</summary>
         private void AskWhyAfterDeaths()
@@ -141,6 +153,18 @@ namespace SickOfIt.Core.Progression
             // Bottom-right in landscape; top centre on a phone held upright, clear of the rewind/skip row.
             var portrait = menu.Responsive.screens != null ? menu.Responsive.screens.rageQuit : null;
             menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f, 96f), label, style, OnRageQuit, null, portrait);
+
+            // The offer: only on a floor stage death, and only with the diamonds for it (the Shaft's drop stays the default).
+            var roguelite = SickOfIt.Data.RogueliteManager.Instance;
+            int cost = RunFlow.ReturnCost();
+            if (runEnded && roguelite != null && roguelite.GetPoints() >= cost)
+            {
+                string offer = string.Format(menu.Theme.texts != null ? menu.Theme.texts.returnForDiamonds : "Return for {0} diamonds", cost);
+                var offerStyle = menu.Theme.button.Clone();
+                offerStyle.size = new Vector2(440f, 92f);
+                var offerPortrait = MenuPlacement.At(0.5f, 1f, 0f, -230f, 520f, 110f);
+                returnButton = menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f - 170f - 240f, 96f), offer, offerStyle, OnReturn, null, offerPortrait);
+            }
             BuildWords(menu);
         }
 
@@ -185,10 +209,45 @@ namespace SickOfIt.Core.Progression
                 SickOfIt.Core.Audio.Sfx.Play(gloat.sound);
         }
 
+        /// <summary>Pays for the Return: the run is kept and the level he died on starts again, he can't be hurt for a moment.</summary>
+        private void OnReturn()
+        {
+            if (rageQuitting || ReturnPaid || runEndCommitted)
+                return;
+            var roguelite = SickOfIt.Data.RogueliteManager.Instance;
+            int cost = RunFlow.ReturnCost();
+            if (roguelite == null || !roguelite.SpendPoints(cost))
+                return;
+            ReturnPaid = true;
+            deathCompleted = true;
+            StopAllCoroutines();
+            if (gameClock != null && gameClock.IsRewinding)
+                gameClock.StopRewind();
+            ReleaseAudio();
+            RunFlow.Returned(levelNumber, cost, runStop.FromFloor);
+            AnalyticsManager.Track("choice", new Dictionary<string, object> { { "kind", "return" }, { "level", levelNumber }, { "diamonds", cost } });
+            SceneTransitionManager.Instance.LoadLevel(levelNumber);
+        }
+
+        private bool runEndCommitted;
+
+        /// <summary>He is leaving without paying: Hell ends the run now (Grudges and carried health go).</summary>
+        private void CommitEnd()
+        {
+            if (runEndCommitted || ReturnPaid)
+                return;
+            runEndCommitted = true;
+            if (returnButton != null)
+                returnButton.gameObject.SetActive(false);
+            if (runEnded)
+                RunFlow.EndRun(levelNumber, out runStop);
+        }
+
         private void OnRageQuit()
         {
-            if (rageQuitting)
+            if (rageQuitting || ReturnPaid)
                 return;
+            CommitEnd();
             rageQuitting = true;
             deathCompleted = true; // no reload into the level afterwards
             StopAllCoroutines();
@@ -452,6 +511,7 @@ namespace SickOfIt.Core.Progression
 
         public void SkipDeathAnimation()
         {
+            userSkipped = true;
             if (deathCompleted)
             {
                 skipHold = true;
@@ -473,6 +533,10 @@ namespace SickOfIt.Core.Progression
         private IEnumerator ReloadLevelAfterDelay()
         {
             yield return new WaitForSeconds(delayBeforeReload);
+            // The offer waits a while for a choice (the default, the drop, comes after it); a skip is a "no".
+            float offerUntil = Time.unscaledTime + OfferHoldSeconds;
+            while (returnButton != null && !userSkipped && !skipHold && Time.unscaledTime < offerUntil)
+                yield return null;
             // The feedback card is the player's for a moment (never carried into play: it keeps the keyboard).
             float until = Time.unscaledTime + AskHoldSeconds;
             while (AskedFeedback && !skipHold && Time.unscaledTime < until && AnalyticsManager.AskOpen)
@@ -483,6 +547,7 @@ namespace SickOfIt.Core.Progression
 
         private void ReloadLevel()
         {
+            CommitEnd();
             if (!runEnded)
             {
                 SceneTransitionManager.Instance.LoadLevel(levelNumber);

@@ -4,7 +4,7 @@ The story is the design document. Every level, map, enemy, upgrade and line of d
 something on this page. If a request needs something the story doesn't explain yet, add it here first, then build
 it. Agents: read this before adding or changing a level, an enemy, an upgrade or a voice line.
 
-Status: **draft for review** (2026-10-15; the Climbers, a rival and a guide per Circle, 2026-10-25; the Overlord on the far ledge, eight glimpses on Circles X and IX, 2026-10-25; elites and mid-bosses on the x5 floors, 2026-10-25; the hero's moves, a dash and a wall-jump, 2026-10-25; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18; the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
+Status: **draft for review** (2026-10-15; the Climbers, a rival and a guide per Circle, 2026-10-25; the Overlord on the far ledge, eight glimpses on Circles X and IX, 2026-10-25; elites and mid-bosses on the x5 floors, 2026-10-25; the hero's moves, a dash and a wall-jump, 2026-10-25; the six bosses' second look: more phases, minions, longer fights, 2026-10-25; secret floors and gauntlets behind doors on the Heat Stairs, 2026-10-25; Circle IX's authored floors 900-892, 860-852 and 810-802 made hotter long bullet-hell floors of ~5 minutes, 2026-10-25; Circle X's floors 997-992 and 960-952 made long bullet-hell floors of ~5 minutes, same ideas and lines, 2026-10-25; weapons found on floors and kept for good, the launcher's theft on Floor 998, 2026-10-25; Circle X's played route built to Floor 901, 2026-10-19; Circle IX's played route built to the Spire Fiend's door at 802, 2026-10-19; prologue, the Shaft and the floor layout revised 2026-10-18; Waystones and runs 2026-10-18 (Return for 10 diamonds on the death screen, 2026-10-27); the Magma King's three-phase fight, 2026-10-18 (now Floor 901, level 31); Shortcuts and Circle IX's first stretch, Levels 12-18, 2026-10-18; the slime named Yooba, 2026-10-18; **one level = one floor**, 2026-10-18, see [LevelDesign.md](LevelDesign.md); On the website, 2026-10-18; Teasers, 2026-10-18; Circles VIII to IV designed, 2026-10-25; Circles III to I, the final boss and the endings designed, 2026-10-25). Names marked *(working)* are placeholders.
 
 ## The pitch
 
@@ -1576,11 +1576,20 @@ just one more thing in it. A **run** is one climb from a Waystone until Hell kil
 - **Waystones** are the stones where Hell starts its loops over: the **Landing** at Floor 1,000 (the first, reached
   when he lands there) and the top floor of every Circle once its Warden is beaten (Floor 901 when the Magma King
   falls, then 801, ... 101). The highest one reached is saved; it is where every run starts from then on.
-- **Dying on a floor of Hell** (any stage with floors) ends the run. First the death screen: the death video with
+- **Dying on a floor of Hell** (any stage with floors) ends the run, unless he pays to *Return* (below). First the death screen: the death video with
   *"YOU OBVIOUSLY DIED"* over it and Hell's announcer gloating (*"OHHH! HELL TAKES THE ROUND!"*, *"FLATTENED! WHAT A
   FINISH... FOR HELL!"*, *"AND HE'S DOWN! BACK YOU GO!"*, in turn). Then the Shaft: the hero's marker sits on the
   floor he died on, then falls, faster and faster, back down to the Waystone and lands with a slam. The run
   restarts there, with the stage that starts on (or just above) it: from the Landing, Floor 1,000 (Level 2).
+- **Return** (J, 2026-10-27): Hell sells second chances, and it loves the sale. Once the rewind window has closed
+  (hold R beats everything) and the death screen is up, a second button sits beside *Rage Quit*: **"Return for 10
+  diamonds"**, the announcer's offer, in the village's own coin. Only with the diamonds in his pockets (under 10 it
+  isn't there). The Shaft's drop stays the default: do nothing, skip the animation, or Rage Quit, and the run ends as
+  above. Pay, and the run **doesn't end**: no drop, no Waystone. The floor he died on starts again from its first
+  moment with the Grudges and the health he carried in, **1.5 seconds** in which nothing can hurt him, and the
+  rewind juice of any fresh floor. (A floor is one level, so "the floor he died on" is exactly where it restarts; a
+  stage of several floors starts over at its first.) The 10 diamonds are spent for good, never refunded by a rewind.
+  The announcer pockets them without shame. Not on the Meadow or the replay floors: they play again anyway.
 - **The first time** the announcer explains it, in story terms: *"HELL DOESN'T LET YOU DIE. IT LETS YOU DO IT
   AGAIN."* Hero: *"Of course it does."* That first drop can't be skipped. After that, one jeer: *"BACK TO THE
   WAYSTONE! DO IT AGAIN!"* (Yooba, on the next climb, has his own line about it: *"Back again? Hell does that."*)
