@@ -1169,6 +1169,7 @@
                 "count": 1,
                 "interval": 0.8,
                 "anchor": "Camera",
+                "edgeMargin": 5.0,
                 "areaCenter": [
                   0.0,
                   2.2
@@ -1229,6 +1230,7 @@
                 "count": 1,
                 "interval": 0.8,
                 "anchor": "Camera",
+                "edgeMargin": 5.0,
                 "areaCenter": [
                   0.0,
                   2.2
@@ -1308,6 +1310,7 @@
                 "count": 1,
                 "interval": 0.8,
                 "anchor": "Camera",
+                "edgeMargin": 5.0,
                 "areaCenter": [
                   0.0,
                   2.2
@@ -1397,6 +1400,7 @@
                 "count": 1,
                 "interval": 0.8,
                 "anchor": "Camera",
+                "edgeMargin": 5.0,
                 "areaCenter": [
                   0.0,
                   3.0
@@ -1532,6 +1536,7 @@
                 "count": 1,
                 "interval": 0.8,
                 "anchor": "Camera",
+                "edgeMargin": 5.0,
                 "areaCenter": [
                   0.0,
                   2.2

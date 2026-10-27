@@ -255,7 +255,10 @@ namespace SickOfIt.Gameplay
             // Generated pushes come from ahead; on a climb "ahead" is up, so the area turns with the stage.
             if (script.world.camera == CameraMode.Travel && script.world.travelDirection == TravelDirection.Up)
                 local = new Vector2(local.y, local.x);
-            world.Spawn(def.entity, world.CameraCenter + local, options);
+            Vector2 at = world.CameraCenter + local;
+            if (action.edgeMargin > 0f)
+                at = ViewEdge.Place(world, def.entity, at, action.edgeMargin);
+            world.Spawn(def.entity, at, options);
         }
 
         static bool Eligible(int fromFloor, float weight, int floor) => weight > 0f && (fromFloor <= 0 || floor <= fromFloor);

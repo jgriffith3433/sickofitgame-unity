@@ -64,6 +64,9 @@ namespace SickOfIt.Gameplay.Content
         public int health;
         public List<StatModifierDef> modifiers = new List<StatModifierDef>();
         public bool facePlayer = true;
+        [Doc("Place each spawn this far outside the view edge nearest its spot (areaCenter/points still pick which edge and where along it), so it is never visible when it appears. " +
+             "Fliers enter from the side; walkers drop in from above the view, never beyond the Travel barriers. 0 = spawn where the spot says.")]
+        public float edgeMargin;
 
         public override void Run(ActionContext context)
         {
@@ -83,7 +86,10 @@ namespace SickOfIt.Gameplay.Content
                 : areaCenter + new Vector2(context.Random.Range(-0.5f, 0.5f) * areaSize.x, context.Random.Range(-0.5f, 0.5f) * areaSize.y);
             var options = SpawnOptions.From(context, "", tags, health, modifiers);
             options.FacePlayer = facePlayer;
-            context.World.Spawn(entity, context.Resolve(local, anchor), options);
+            Vector2 at = context.Resolve(local, anchor);
+            if (edgeMargin > 0f)
+                at = ViewEdge.Place(context.World, entity, at, edgeMargin);
+            context.World.Spawn(entity, at, options);
         }
     }
 

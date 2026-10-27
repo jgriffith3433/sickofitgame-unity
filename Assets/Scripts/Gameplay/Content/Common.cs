@@ -2,9 +2,59 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SickOfIt.Json;
+using SickOfIt.Gameplay;
 
 namespace SickOfIt.Gameplay.Content
 {
+    /// <summary>
+    /// Places things just outside the camera's view ("view edge plus margin") so they are never visible the moment they exist.
+    /// Built on <c>GameplayWorld.View</c>, so it holds in landscape and portrait. Travel and Scroll floors ride barriers 0.5 units
+    /// outside the view's sides: a walker placed beyond one could never get in, so only kinematic fliers use the sides; everything
+    /// else drops in from above the view.
+    /// </summary>
+    public static class ViewEdge
+    {
+        /// <summary>Margin (world units) that gives rain falling 3.2/s about 1.5 s of warning.</summary>
+        public const float DefaultMargin = 5f;
+        /// <summary>How far in from the view's sides a walker's x is kept, inside the Travel/Scroll barriers.</summary>
+        const float SidePad = 0.6f;
+
+        /// <summary>The point above the view, over x, 'margin' units above its top edge.</summary>
+        public static Vector2 Above(Rect view, float x, float margin)
+        {
+            float pad = Mathf.Min(SidePad, view.width * 0.25f);
+            return new Vector2(Mathf.Clamp(x, view.xMin + pad, view.xMax - pad), view.yMax + margin);
+        }
+
+        /// <summary>
+        /// Moves a wanted spot (world position) out past the nearest view edge by 'margin'. Vertical edges (and the bottom, which is
+        /// lava or floor) become the top; a side is used only by kinematic fliers.
+        /// </summary>
+        public static Vector2 Place(GameplayWorld world, EntityDef def, Vector2 wanted, float margin)
+        {
+            Rect view = world.View;
+            Vector2 c = view.center;
+            float nx = (wanted.x - c.x) / Mathf.Max(0.01f, view.width * 0.5f);
+            float ny = (wanted.y - c.y) / Mathf.Max(0.01f, view.height * 0.5f);
+            bool flier = def != null && def.body != null && def.body.kind == BodyKind.Kinematic;
+            if (flier && Mathf.Abs(nx) > Mathf.Abs(ny))
+            {
+                float x = nx >= 0f ? view.xMax + margin : view.xMin - margin;
+                return new Vector2(x, Mathf.Clamp(wanted.y, view.yMin + 0.5f, view.yMax - 0.5f));
+            }
+            return Above(view, wanted.x, margin);
+        }
+
+        /// <summary>The same, looking the entity up by id.</summary>
+        public static Vector2 Place(GameplayWorld world, string entityId, Vector2 wanted, float margin)
+        {
+            EntityDef def = null;
+            if (!string.IsNullOrEmpty(entityId))
+                world.Content.Entities.TryGetValue(entityId, out def);
+            return Place(world, def, wanted, margin);
+        }
+    }
+
     [Doc("Which side something is on. Entities hurt entities of other teams; Neutral hurts and is hurt by no one unless an ability says so.")]
     public enum Team
     {
