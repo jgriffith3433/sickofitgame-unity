@@ -513,6 +513,8 @@ namespace SickOfIt.Data.Config
         public string deathNoJuice = "No rewind juice left...";
         [Tooltip("Button on the death scene that goes to the main menu.")]
         public string rageQuit = "Rage Quit";
+        [Tooltip("The death scene's Return offer; {0} is the price in diamonds.")]
+        public string returnForDiamonds = "Return for {0} diamonds";
 
         public string rewindHint = "Ouch! Hold R to undo that.";
         public string rewindHintTouch = "Ouch! Hold ◄◄ to undo that.";

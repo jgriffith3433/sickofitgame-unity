@@ -155,6 +155,24 @@ namespace SickOfIt.Core.Progression
         /// </summary>
         public static bool EndRun(int level, out ShaftStop stop)
         {
+            if (!PreviewEnd(level, out stop))
+                return false;
+            WaystoneProgress.DiedOnFloor = 0;
+
+            RogueliteManager.Instance?.EndRun();
+            WaystoneProgress.RunsEnded++;
+            CloseRun("lose", level, stop.FromFloor);
+            WaystoneProgress.RunLevel = stop.NextLevel;
+            Debug.Log($"[Runs] Run {WaystoneProgress.RunsEnded} ended on level {level} at FLOOR {stop.FromFloor}: Grudges reset, back to the Waystone on FLOOR {stop.Waystone}, restarting on level {stop.NextLevel}");
+            return true;
+        }
+
+        /// <summary>
+        /// What <see cref="EndRun"/> would do for a death on 'level', changing nothing: the death screen shows the
+        /// Return offer first (Docs/Story.md, "Waystones and runs"), and the run ends only when he doesn't take it.
+        /// </summary>
+        public static bool PreviewEnd(int level, out ShaftStop stop)
+        {
             stop = default;
             // Endless Floor and the Daily Challenge are not the climb: a death there plays them again.
             if (ReplayModes.IsReplayLevel(level))
@@ -172,15 +190,42 @@ namespace SickOfIt.Core.Progression
             int high = Mathf.Max(start, end), low = Mathf.Min(start, end);
             int died = WaystoneProgress.DiedOnFloor;
             int from = died >= low && died <= high ? died : start;
-            WaystoneProgress.DiedOnFloor = 0;
-
-            RogueliteManager.Instance?.EndRun();
-            WaystoneProgress.RunsEnded++;
-            CloseRun("lose", level, from);
-            WaystoneProgress.RunLevel = restart;
-            Debug.Log($"[Runs] Run {WaystoneProgress.RunsEnded} ended on level {level} at FLOOR {from}: Grudges reset, back to the Waystone on FLOOR {waystone}, restarting on level {restart}");
             stop = new ShaftStop { Kind = ShaftStopKind.AfterDeath, Level = level, NextLevel = restart, FromFloor = from, Waystone = waystone };
             return true;
+        }
+
+        /// <summary>
+        /// A death bought back (Docs/Story.md, "Waystones and runs"): the run goes on, not ended, so no run_end; the
+        /// floor stage starts again with the Grudges and carried health he had. Analytics sees a `return_paid` event.
+        /// </summary>
+        public static void Returned(int level, int diamonds, int floor)
+        {
+            returnInvincible = ReturnInvincibleSeconds();
+            WaystoneProgress.DiedOnFloor = 0;
+            AnalyticsManager.Track("return_paid", new Dictionary<string, object> { { "level", level }, { "floor", floor }, { "diamonds", diamonds } });
+            Debug.Log($"[Runs] Returned to level {level} (FLOOR {floor}) for {diamonds} diamonds: the run goes on");
+        }
+
+        static float returnInvincible;
+
+        /// <summary>The seconds of safety a bought Return gives the level it reloads (taken once, by the hero's health as the level starts).</summary>
+        public static float TakeReturnInvincibility()
+        {
+            float seconds = returnInvincible;
+            returnInvincible = 0f;
+            return seconds;
+        }
+
+        public static int ReturnCost()
+        {
+            var player = GameDefinition.Instance != null ? GameDefinition.Instance.player : null;
+            return player != null ? Mathf.Max(1, player.returnCostDiamonds) : 10;
+        }
+
+        static float ReturnInvincibleSeconds()
+        {
+            var player = GameDefinition.Instance != null ? GameDefinition.Instance.player : null;
+            return player != null ? Mathf.Max(0f, player.returnInvincibleSeconds) : 1.5f;
         }
 
         /// <summary>

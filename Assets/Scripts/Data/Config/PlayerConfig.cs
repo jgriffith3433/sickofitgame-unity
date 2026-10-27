@@ -59,6 +59,9 @@ namespace SickOfIt.Data.Config
         [Header("Combat - Invincibility")]
         public bool hasInvincibilityFrames = true;
         public float invincibilityDuration = 0.5f;
+        [Tooltip("The death screen's Return offer (Docs/Story.md, Waystones and runs): its price in diamonds, and the seconds he can't be hurt after coming back.")]
+        public int returnCostDiamonds = 10;
+        public float returnInvincibleSeconds = 1.5f;
 
         [Header("Movement - Platform")]
         public float dropThroughForce = 5f;

@@ -119,7 +119,7 @@ namespace SickOfIt.Combat.Health
             currentHealth = Mathf.Clamp(
                 RogueliteManager.Instance.GetStartingHealthForLevel(currentLevelNumber),
                 0, maxHealth);
-            invincibilityTimer = 0f;
+            invincibilityTimer = SickOfIt.Core.Progression.RunFlow.TakeReturnInvincibility();
             deathUndoGraceTimer = 0f;
             onHealthChanged?.Invoke(currentHealth);
         }
