@@ -2068,6 +2068,8 @@ namespace SickOfIt.Playtest
                 public bool FloorBoss => OneFloor && Start % 10 == 1;
                 /// <summary>The lava sea's surface (lowest and highest seen) and when the wave first chased him.</summary>
                 public float LavaLow = float.MaxValue, LavaHigh = float.MinValue;
+                // The HUD bar's path fraction on the last frame before the director completed (-1: no path to measure).
+                public float PathProgressLast = -1f;
                 /// <summary>The footholds he stood on, in order (instance id, else entity id), and the ones a still lava (not risen,
                 /// the foothold not sinking) covered: their top inside the lava's box, under its drawn surface and its scald.</summary>
                 public readonly List<string> StoodOn = new List<string>();
@@ -2414,6 +2416,8 @@ namespace SickOfIt.Playtest
                         s.LavaHigh = Mathf.Max(s.LavaHigh, top);
                     }
                     FootholdsDuring(s, world, now);
+                    if (world.Effects != null && world.Director != null && !world.Director.Completed)
+                        s.PathProgressLast = world.Effects.PathProgress;
                 }
 
                 var track = world.Effects != null ? world.Effects.Track : null;
@@ -2787,6 +2791,10 @@ namespace SickOfIt.Playtest
             void FinishFloorIdea(StageWatch s, bool completed)
             {
                 string prefix = "level" + s.Level + ".idea";
+                // The HUD's timeline is the path walked: full when the landing triggers (it snaps to full on completion).
+                if (completed && s.PathProgressLast >= 0f)
+                    s.Check("level" + s.Level + ".progressBar", s.PathProgressLast >= 0.97f,
+                        $"the progress bar read {s.PathProgressLast:P0} on the frame before the landing completed (want 97% or more)");
                 var kitSeen = new List<string>();
                 foreach (var pair in s.Kit)
                     kitSeen.Add($"{pair.Key} x{pair.Value}");
