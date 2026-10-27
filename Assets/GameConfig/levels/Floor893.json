@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "levelName": "Floor893",
-  "displayName": "Floor 893: Seesaw Road",
+  "displayName": "Floor 893: The Stuck Imp",
   "levelNumber": 39,
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 400.0,
+  "duration": 240.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 40,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 893,
-    "length": 285,
+    "length": 60,
     "floors": {
       "start": 893,
       "end": 892,
@@ -38,9 +38,9 @@
       "holdForPushes": false,
       "path": [
         {
-          "name": "seesaws",
-          "direction": "Right",
-          "length": 12.95,
+          "name": "ledges",
+          "direction": "Up",
+          "length": 1.45,
           "turn": 2.0,
           "spawns": [
             {
@@ -52,7 +52,7 @@
               "id": "lavaSea"
             },
             {
-              "entity": "roadSlab",
+              "entity": "ledge",
               "at": [
                 -3.6,
                 -2.45
@@ -64,841 +64,165 @@
               ]
             },
             {
-              "entity": "seesawSlab",
+              "entity": "ledge",
               "at": [
-                0.0,
-                -2.2
-              ],
-              "scale": [
-                1.3,
-                1
-              ]
-            },
-            {
-              "entity": "seesawSlabB",
-              "at": [
-                3.0,
-                -2.2
-              ],
-              "scale": [
-                1.3,
-                1
-              ]
-            },
-            {
-              "entity": "seesawSlab",
-              "at": [
-                6.0,
-                -2.2
-              ],
-              "scale": [
-                1.3,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                6.8,
-                -1.6
-              ],
-              "onEnter": true
-            },
-            {
-              "entity": "seesawSlabB",
-              "at": [
-                9.0,
-                -2.2
-              ],
-              "scale": [
-                1.3,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.0,
-                -2.45
-              ],
-              "id": "seesawEnd",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "damnedSoul",
-              "at": [
-                9.9,
-                -1.5
-              ],
-              "id": "balancingSoul"
-            }
-          ]
-        },
-        {
-          "name": "climb",
-          "direction": "Up",
-          "length": 2.7,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                14.2,
+                -1.2,
                 -1.15
+              ],
+              "scale": [
+                0.9,
+                1
               ]
             },
             {
-              "entity": "settleSlab",
+              "entity": "ledge",
               "at": [
-                12.0,
+                -3.6,
                 0.15
               ],
               "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                14.2,
-                1.45
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.2,
-                2.75
-              ],
-              "scale": [
-                1.1,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                18.4,
-                3.5
-              ],
-              "scale": [
-                0.6,
-                1
-              ]
-            },
-            {
-              "entity": "demonLobber",
-              "at": [
-                18.4,
-                4.2
-              ],
-              "onEnter": true
-            }
-          ]
-        },
-        {
-          "name": "riser",
-          "direction": "Up",
-          "length": 5.6,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                0.0,
-                2.0
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                2.4,
-                3.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                0.0,
-                4.4
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "SeesawRoad1",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "settleSlab",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                8.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "splitSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneDemon",
-              "at": [
-                12.0,
-                -0.5
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc0"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                16.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                19.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc0"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                24.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "TippingPoint2",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "roadSlab",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "splitSlab",
-              "at": [
-                8.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneDemon",
-              "at": [
-                12.0,
-                -0.5
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc1"
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                16.0,
-                -0.7
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                19.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc1"
-              ]
-            },
-            {
-              "entity": "splitSlab",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "KeepYourBalance3",
-          "direction": "Up",
-          "length": 8.0,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "ladder",
-              "at": [
-                0.3,
-                3.05
-              ],
-              "anchor": "Section",
-              "scale": [
                 1.0,
-                8.0
-              ],
-              "id": "ladder893"
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                0.0,
-                6.8
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
                 1
-              ]
-            },
-            {
-              "entity": "impGuard",
-              "at": [
-                -3.0,
-                3.5
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc2"
-              ]
-            },
-            {
-              "entity": "imp",
-              "at": [
-                3.0,
-                5.3
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc2"
               ]
             }
           ]
         },
         {
-          "name": "TheLongTip4",
-          "direction": "Right",
-          "length": 28.0,
+          "name": "step",
+          "direction": "Up",
+          "length": 1.5,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "spawns": []
+        },
+        {
+          "name": "stop",
+          "direction": "Right",
+          "length": 7.2,
+          "turn": 2.0,
           "spawns": [
             {
-              "entity": "roadSlab",
+              "entity": "ledge",
               "at": [
-                4.0,
-                -1.2
+                -2.4,
+                1.65
               ],
-              "anchor": "Section",
               "scale": [
-                1.2,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "settleSlab",
+              "entity": "ledge",
               "at": [
-                8.0,
-                -0.6
+                -0.5999999999999999,
+                1.65
               ],
-              "anchor": "Section",
               "scale": [
-                1.2,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "leadImp",
+              "entity": "ledge",
               "at": [
-                8.0,
-                2.4
+                1.2000000000000002,
+                1.65
               ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
               "scale": [
-                1.2,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "brimstoneDemon",
+              "entity": "ledge",
               "at": [
-                12.0,
-                -0.5
+                3.0000000000000004,
+                1.65
               ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
+              "scale": [
+                0.9,
+                1
               ]
             },
             {
-              "entity": "splitSlab",
+              "entity": "ledge",
               "at": [
-                16.0,
+                4.800000000000001,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                6.6,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                8.4,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                10.2,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                13.6,
                 -0.7
               ],
-              "anchor": "Section",
+              "id": "impLedge",
               "scale": [
-                1.2,
+                1.4,
                 1
               ]
             },
             {
-              "entity": "roadPerch",
+              "entity": "stuckImp",
               "at": [
-                16.0,
-                2.0
+                13.6,
+                -0.25
               ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "demonLobber",
-              "at": [
-                16.0,
-                2.7
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                19.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                21.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneDemon",
-              "at": [
-                24.0,
-                0.1
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
+              "id": "stuck"
             }
           ]
         },
         {
-          "name": "OffTheSeesaw5",
+          "name": "landing",
           "direction": "Right",
-          "length": 30.0,
+          "length": 5.0,
           "turn": 2.0,
-          "autoSpeed": 0.55,
           "spawns": [
-            {
-              "entity": "settleSlab",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneDemon",
-              "at": [
-                4.0,
-                -0.5
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                8.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ricochetImp",
-              "at": [
-                8.0,
-                1.8
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "splitSlab",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneDemon",
-              "at": [
-                12.0,
-                -0.5
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                16.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "roadPerch",
-              "at": [
-                16.0,
-                1.5
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "demonLobber",
-              "at": [
-                16.0,
-                2.2
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "settleSlab",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                19.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "demonWhelp",
-              "at": [
-                21.0,
-                -0.55
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "roadSlab",
-              "at": [
-                24.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "brimstoneDemon",
-              "at": [
-                24.0,
-                -0.5
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
             {
               "entity": "floorLanding893",
               "at": [
-                29.4,
-                -0.4
+                14.1,
+                3.05
               ],
-              "id": "landing",
-              "anchor": "Section"
+              "id": "landing"
             }
           ]
         }
@@ -922,20 +246,16 @@
         "value": 0.0
       },
       {
-        "name": "heat",
-        "value": 0.0
-      },
-      {
-        "name": "finale",
+        "name": "restOver",
         "value": 0.0
       }
     ],
     "rules": [
       {
-        "name": "the seesaws",
+        "name": "stop floor: the quiet, Floor 893",
         "when": {
           "type": "sectionReached",
-          "section": "seesaws"
+          "section": "stop"
         },
         "maxTimes": 1,
         "do": [
@@ -943,42 +263,28 @@
             "type": "runSequence",
             "steps": [
               {
-                "type": "wait",
-                "seconds": 2.8
+                "type": "emit",
+                "signal": "stop:stuckImp:enter"
               },
               {
-                "type": "showText",
-                "text": "Stand in the middle. Got it.",
-                "duration": 3.17,
-                "style": "Subtitle",
-                "sound": "vo_f893_middle"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "the climb: push",
-        "when": {
-          "type": "sectionReached",
-          "section": "climb"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "runSequence",
-            "steps": [
+                "type": "wait",
+                "seconds": 20.0
+              },
               {
-                "type": "playMusic",
-                "clip": "Audio/Music/wastes_push.ogg",
-                "volume": 0.85
+                "type": "setCounter",
+                "name": "restOver",
+                "value": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "stop:stuckImp:calm"
               }
             ]
           }
         ]
       },
       {
-        "name": "the landing",
+        "name": "stop floor: not yet, Floor 893",
         "when": {
           "type": "allOf",
           "triggers": [
@@ -990,7 +296,186 @@
             },
             {
               "type": "counter",
-              "name": "finale",
+              "name": "restOver",
+              "atLeast": 0.0,
+              "below": 1.0
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "I'm not in a hurry.",
+                "duration": 2.2,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "stuck imp: first look",
+        "when": {
+          "type": "sectionReached",
+          "section": "stop"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.5
+              },
+              {
+                "type": "showText",
+                "text": "An imp. Down there.",
+                "duration": 2.4,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "stuck imp: it throws",
+        "when": {
+          "type": "counter",
+          "name": "spawned:stuckEmber",
+          "atLeast": 1.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "emit",
+            "signal": "stop:stuckImp:discovery"
+          }
+        ]
+      },
+      {
+        "name": "stuck imp: same throw",
+        "when": {
+          "type": "counter",
+          "name": "spawned:stuckEmber",
+          "atLeast": 2.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "Same throw.",
+                "duration": 1.8,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "stuck imp: same miss",
+        "when": {
+          "type": "counter",
+          "name": "spawned:stuckEmber",
+          "atLeast": 4.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "Same miss.",
+                "duration": 1.8,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "stuck imp: rewound, still short",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "counter",
+              "name": "spawned:stuckEmber",
+              "atLeast": 3.0
+            },
+            {
+              "type": "heroRewound",
+              "within": 4.0
+            }
+          ]
+        },
+        "maxTimes": 2,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "emit",
+                "signal": "stop:stuckImp:rewound"
+              },
+              {
+                "type": "showText",
+                "text": "Rewound it. Still short.",
+                "duration": 2.8,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "stuck imp: for the record",
+        "when": {
+          "type": "counter",
+          "name": "spawned:stuckEmber",
+          "atLeast": 7.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "I'd feel bad. Almost.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing, Floor 893",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "restOver",
               "atLeast": 1.0
             }
           ]
@@ -1000,6 +485,10 @@
           {
             "type": "runSequence",
             "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:stuckImp:done"
+              },
               {
                 "type": "setFloor",
                 "floor": 892,
@@ -1011,16 +500,10 @@
                 "value": 0.0
               },
               {
-                "type": "playMusic",
-                "clip": "Audio/Music/wastes_loop.ogg",
-                "volume": 0.85
-              },
-              {
                 "type": "showText",
-                "text": "SEESAW ROAD: BALANCED",
-                "duration": 2.7,
+                "text": "THE STUCK IMP: STILL SHORT",
+                "duration": 2.4,
                 "style": "Banner",
-                "sound": "vo_f893_clear",
                 "color": "#FFD27A"
               },
               {
@@ -1034,269 +517,9 @@
               {
                 "type": "setCounter",
                 "name": "cleared",
-                "value": 1
+                "value": 1.0
               }
             ]
-          }
-        ]
-      },
-      {
-        "name": "to SeesawRoad1",
-        "when": {
-          "type": "sectionReached",
-          "section": "SeesawRoad1"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "goToPhase",
-            "phase": "SeesawRoad1"
-          }
-        ]
-      },
-      {
-        "name": "to TippingPoint2",
-        "when": {
-          "type": "sectionReached",
-          "section": "TippingPoint2"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc0"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "TippingPoint2"
-          }
-        ]
-      },
-      {
-        "name": "to KeepYourBalance3",
-        "when": {
-          "type": "sectionReached",
-          "section": "KeepYourBalance3"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc1"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "KeepYourBalance3"
-          }
-        ]
-      },
-      {
-        "name": "to TheLongTip4",
-        "when": {
-          "type": "sectionReached",
-          "section": "TheLongTip4"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc2"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "TheLongTip4"
-          }
-        ]
-      },
-      {
-        "name": "to OffTheSeesaw5",
-        "when": {
-          "type": "sectionReached",
-          "section": "OffTheSeesaw5"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc3"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "OffTheSeesaw5"
-          }
-        ]
-      },
-      {
-        "name": "the opening's rift stops",
-        "when": {
-          "type": "sectionReached",
-          "section": "riser"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "lavaSpeed",
-            "value": 0.0
-          }
-        ]
-      },
-      {
-        "name": "the floor has had its minutes",
-        "when": {
-          "type": "atTime",
-          "seconds": 255.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "finale",
-            "value": 1.0
-          }
-        ]
-      },
-      {
-        "name": "heat: the floor gets hotter",
-        "when": {
-          "type": "every",
-          "seconds": 20.0,
-          "startAfter": 40.0,
-          "maxTimes": 12
-        },
-        "do": [
-          {
-            "type": "addCounter",
-            "name": "heat",
-            "amount": 1.0
-          }
-        ]
-      },
-      {
-        "name": "heat 2: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 2.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 4: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 4.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 6: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 6.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 8: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 8.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 10: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 10.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
           }
         ]
       }
@@ -1310,619 +533,10 @@
             "steps": [
               {
                 "type": "showText",
-                "text": "FLOOR 893: SEESAW ROAD",
-                "duration": 2.77,
+                "text": "FLOOR 893: THE STUCK IMP",
+                "duration": 2.6,
                 "style": "Banner",
-                "sound": "vo_f893_title",
                 "color": "#FFD27A"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "SeesawRoad1",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:SeesawRoad1"
-          },
-          {
-            "type": "showText",
-            "text": "SEESAW ROAD!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.46,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "SEESAW ROAD!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 6.24,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "TippingPoint2",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:TippingPoint2"
-          },
-          {
-            "type": "showText",
-            "text": "TIPPING POINT!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "playMusic",
-            "clip": "Audio/Music/wastes_push.ogg",
-            "volume": 0.85
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.36,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "TIPPING POINT!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.89,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "TIPPING POINT!: a mixed wave",
-            "when": {
-              "type": "every",
-              "seconds": 13.1,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 3,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "KeepYourBalance3",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:KeepYourBalance3"
-          },
-          {
-            "type": "showText",
-            "text": "KEEP YOUR BALANCE!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.26,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "KEEP YOUR BALANCE!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.53,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "KEEP YOUR BALANCE!: a mixed wave",
-            "when": {
-              "type": "every",
-              "seconds": 12.5,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 3,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "TheLongTip4",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:TheLongTip4"
-          },
-          {
-            "type": "showText",
-            "text": "THE LONG TIP!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.16,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 4,
-              "angle": 40
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 3.0,
-            "initialDelay": 2.0
-          }
-        ],
-        "rules": [
-          {
-            "name": "THE LONG TIP!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.17,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "THE LONG TIP!: a mixed wave",
-            "when": {
-              "type": "every",
-              "seconds": 11.9,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 3,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "OffTheSeesaw5",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:OffTheSeesaw5"
-          },
-          {
-            "type": "showText",
-            "text": "OFF THE SEESAW!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "playMusic",
-            "clip": "Audio/Music/wastes_loop.ogg",
-            "volume": 0.85
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 3
-            },
-            "speed": 3.2,
-            "interval": 1.06,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 4,
-              "angle": 40
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 2.84,
-            "initialDelay": 2.0
-          }
-        ],
-        "rules": [
-          {
-            "name": "OFF THE SEESAW!: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 4.81,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 4,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "OFF THE SEESAW!: a mixed wave",
-            "when": {
-              "type": "every",
-              "seconds": 11.3,
-              "startAfter": 4.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.6,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              },
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
               }
             ]
           }

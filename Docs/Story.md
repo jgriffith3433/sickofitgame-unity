@@ -2315,6 +2315,24 @@ glimpses `overlordFar`; the five bystander types `hawkerSoul`, `hecklerSoul`, `c
 damned soul's sheet tinted in their colour and the bystanders the damned soul's sheet, and the Overlord's glimpses the Magma King's idle tinted obsidian. Data is written by `Tools/Levels/companions.py` (edit its table and run it, never the floors by hand;
 `--check` runs with no Unity). New C# is the `heroState` trigger (`Gameplay/Content/HeroState.cs`). Playtest `companions`.
 
+## Stop floors
+
+Hell never lets up, so the four times it does are remembered. A **stop floor** (2026-10-27) is a floor where nothing attacks: the lava sea sits still below, no hazard is
+started, no enemy can reach the ledge, and the hero has about **20 seconds** of quiet with one thing to find (a scene, a soul, a carving or a climber), a heal where it fits, and
+nothing to learn. The landing waits for the quiet to run out (the hero says so if he is early). It still ends with the floor's Grudge pick. They take the place of four long floors
+(same numbers, same level slots), one new idea each, and Circle X and Circle IX get two apiece:
+
+| Floor | Name | Circle | The discovery | Quiet |
+|---|---|---|---|---|
+| 957 | **The Hot Bath** | X | A spring that cooled in the first century. Three damned souls soak in it and are nice about it. One tells the hero to sit in it; it heals a heart. *"It's the one thing down here that isn't trying to burn you."* They have not told the Overlord. | no hazard, no enemy |
+| 959 | **Hell's Graffiti** | X | Six carvings from earlier climbers, one deadpan line each, the last signed by Rook (*"ROOK WAS HERE. SECOND."*). A diamond lies under it. | no hazard, no enemy |
+| 897 | **Rook's Camp** | IX | Rook got here first and lit a fire out of fire. His camp is on a ledge under the road: *drop down and sit* (a heart, and Rook counts it as a win) or *walk on* (two diamonds, and Rook says he is right behind). The hero's reply is where he stands. Sets `rook.camp`. | no hazard, no enemy |
+| 893 | **The Stuck Imp** | IX | An imp on a ledge below keeps lobbing the same ember in the same direction. It fizzles over the lava short of everything, every 3.2 s, forever. Rewind and it throws the same throw: the hero notices. The ember can't reach the ledge (it dies after 0.8 s, 2.4 units out); the imp can't be hurt and drops nothing. | one harmless ember a few seconds, nowhere near him |
+
+Lines are short and the hero's are one-liners. Souls are never the joke's target and nobody mentions work. The floors are written by `Tools/Levels/stop_floors.py`; the long-floor
+generators (`long_floors.py`, `cracked_floors.py`) skip these four. Their lines are audio.json prompts without clips yet (priced, not made: `Tools/Audio/pending_clips.json`), so they
+play as subtitles until the clips exist; art is placeholders until the specs in `Assets/GameConfig/art/` are generated.
+
 ## Rules for levels
 
 - **A level is a place in the story**, named after the place. `displayName` is the place ("The Meadow",

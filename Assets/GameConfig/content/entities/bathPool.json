@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "bath"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      3.6,
+      0.5
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#6FD0C8B0",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": -1,
+    "hurtFlash": false,
+    "deathPop": false,
+    "color": "#FFFFFF",
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "carved",
+      "text": "SOAK.",
+      "words": "NO SPLASHING.",
+      "color": "#BFEFE8",
+      "size": 0.26,
+      "above": 1.15,
+      "onFace": false
+    }
+  ]
+}

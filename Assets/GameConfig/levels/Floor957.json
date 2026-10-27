@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "levelName": "Floor957",
-  "displayName": "Floor 957: Hot Air",
+  "displayName": "Floor 957: The Hot Bath",
   "levelNumber": 15,
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
@@ -16,14 +16,14 @@
     0.0
   ],
   "deathConfigName": "Death1",
-  "duration": 400.0,
+  "duration": 240.0,
   "completionDelay": 2.0,
   "nextVideoNumber": 0,
   "nextLevelNumber": 16,
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 957,
-    "length": 285,
+    "length": 60,
     "floors": {
       "start": 957,
       "end": 956,
@@ -64,7 +64,7 @@
               ]
             },
             {
-              "entity": "crumblingStone",
+              "entity": "ledge",
               "at": [
                 -1.2,
                 -1.15
@@ -88,98 +88,137 @@
           ]
         },
         {
-          "name": "columns",
+          "name": "step",
+          "direction": "Up",
+          "length": 1.5,
+          "turn": 2.0,
+          "spawns": []
+        },
+        {
+          "name": "stop",
           "direction": "Right",
-          "length": 4.4,
+          "length": 7.2,
           "turn": 2.0,
           "spawns": [
             {
-              "entity": "heatUpdraft",
-              "at": [
-                -1.2,
-                0.8
-              ],
-              "id": "draft1"
-            },
-            {
               "entity": "ledge",
               "at": [
-                1.2,
-                1.75
+                -2.4,
+                1.65
               ],
-              "id": "col1",
               "scale": [
                 0.9,
                 1
               ]
             },
             {
-              "entity": "heatUpdraft",
+              "entity": "ledge",
               "at": [
-                3.6,
-                1.9
+                -0.5999999999999999,
+                1.65
               ],
-              "id": "draft2"
+              "scale": [
+                0.9,
+                1
+              ]
             },
             {
               "entity": "ledge",
               "at": [
-                6.0,
-                2.75
+                1.2000000000000002,
+                1.65
               ],
-              "id": "chimneyFoot",
               "scale": [
-                1.2,
+                0.9,
                 1
               ]
-            }
-          ]
-        },
-        {
-          "name": "chimney",
-          "direction": "Up",
-          "length": 8.6,
-          "turn": 2.0,
-          "spawns": [
-            {
-              "entity": "heatUpdraftTall",
-              "at": [
-                8.2,
-                5.75
-              ],
-              "id": "chimney"
             },
             {
               "entity": "ledge",
               "at": [
-                10.4,
-                8.75
+                3.0000000000000004,
+                1.65
               ],
-              "id": "chimneyTop",
               "scale": [
-                1.2,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "crumblingStone",
+              "entity": "ledge",
               "at": [
-                6.2,
-                5.35
+                4.800000000000001,
+                1.65
               ],
               "scale": [
-                0.8,
+                0.9,
                 1
               ]
             },
             {
-              "entity": "imp",
+              "entity": "ledge",
+              "at": [
+                6.6,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                8.4,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "ledge",
+              "at": [
+                10.2,
+                1.65
+              ],
+              "scale": [
+                0.9,
+                1
+              ]
+            },
+            {
+              "entity": "bathPool",
               "at": [
                 5.4,
-                10.55
+                1.98
               ],
-              "id": "chimneyImp",
-              "onEnter": true
+              "id": "pool"
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                4.300000000000001,
+                2.48
+              ],
+              "id": "soaker0"
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                5.4,
+                2.6799999999999997
+              ],
+              "id": "soaker1"
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                6.6000000000000005,
+                2.43
+              ],
+              "id": "soaker2"
             }
           ]
         },
@@ -188,539 +227,14 @@
           "direction": "Right",
           "length": 5.0,
           "turn": 2.0,
-          "spawns": []
-        },
-        {
-          "name": "riser",
-          "direction": "Up",
-          "length": 5.6,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
           "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                -0.16
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                -2.4,
-                0.98
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                2.12
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                -2.4,
-                3.26
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                4.4
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "upUpUp",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                3.6,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "heatUpdraft",
-              "at": [
-                6.0,
-                -1.05
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                8.4,
-                -0.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                11.8,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                15.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "heatUpdraft",
-              "at": [
-                17.4,
-                -1.05
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                19.8,
-                -0.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                23.2,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                25.6,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "theChimney",
-          "direction": "Up",
-          "length": 6.6,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "heatUpdraftTall",
-              "at": [
-                2.4,
-                1.8
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                5.4
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "crumblingStone",
-              "at": [
-                -2.4,
-                2.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.8,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "name": "hotAirHopping",
-          "direction": "Right",
-          "length": 28.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                3.6,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "heatUpdraft",
-              "at": [
-                6.0,
-                -1.05
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                8.4,
-                -0.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                11.8,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                15.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "heatUpdraft",
-              "at": [
-                17.4,
-                -1.05
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                19.8,
-                -0.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.9,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                23.2,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                25.6,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                28.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "imp",
-              "at": [
-                14.0,
-                3.0
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc2"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "chimneyAgain",
-          "direction": "Up",
-          "length": 6.6,
-          "turn": 2.0,
-          "lead": 0.4,
-          "autoSpeed": 0.36,
-          "spawns": [
-            {
-              "entity": "heatUpdraftTall",
-              "at": [
-                2.4,
-                1.8
-              ],
-              "anchor": "Section"
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                0.0,
-                5.4
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "crumblingStone",
-              "at": [
-                -2.4,
-                2.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                0.8,
-                1
-              ]
-            },
-            {
-              "entity": "imp",
-              "at": [
-                -2.6,
-                3.4
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc3"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "theLongDraft",
-          "direction": "Right",
-          "length": 30.0,
-          "turn": 2.0,
-          "autoSpeed": 0.55,
-          "spawns": [
-            {
-              "entity": "ledge",
-              "at": [
-                4.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                8.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                12.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                16.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                20.0,
-                -1.2
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
-            {
-              "entity": "ledge",
-              "at": [
-                24.0,
-                -0.6
-              ],
-              "anchor": "Section",
-              "scale": [
-                1.2,
-                1
-              ]
-            },
             {
               "entity": "floorLanding957",
               "at": [
-                29.4,
-                -0.4
+                14.1,
+                3.05
               ],
-              "anchor": "Section",
               "id": "landing"
-            },
-            {
-              "entity": "imp",
-              "at": [
-                10.0,
-                3.0
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
-            },
-            {
-              "entity": "imp",
-              "at": [
-                20.0,
-                3.0
-              ],
-              "anchor": "Section",
-              "onEnter": true,
-              "tags": [
-                "pc4"
-              ]
             }
           ]
         }
@@ -744,20 +258,16 @@
         "value": 0.0
       },
       {
-        "name": "heat",
-        "value": 0.0
-      },
-      {
-        "name": "finale",
+        "name": "restOver",
         "value": 0.0
       }
     ],
     "rules": [
       {
-        "name": "the first updraft",
+        "name": "stop floor: the quiet, Floor 957",
         "when": {
           "type": "sectionReached",
-          "section": "columns"
+          "section": "stop"
         },
         "maxTimes": 1,
         "do": [
@@ -765,57 +275,28 @@
             "type": "runSequence",
             "steps": [
               {
-                "type": "wait",
-                "seconds": 2.2
-              },
-              {
-                "type": "showText",
-                "text": "Huh. That's actually nice.",
-                "duration": 2.7,
-                "style": "Subtitle",
-                "sound": "vo_f957_nice"
+                "type": "emit",
+                "signal": "stop:hotBath:enter"
               },
               {
                 "type": "wait",
-                "seconds": 2.4
+                "seconds": 20.0
               },
               {
-                "type": "showText",
-                "text": "No. It's still Hell.",
-                "duration": 2.4,
-                "style": "Subtitle",
-                "sound": "vo_f957_hell"
+                "type": "setCounter",
+                "name": "restOver",
+                "value": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "stop:hotBath:calm"
               }
             ]
           }
         ]
       },
       {
-        "name": "the top of the chimney: a planned hang",
-        "when": {
-          "type": "sectionReached",
-          "section": "chimney"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "runSequence",
-            "steps": [
-              {
-                "type": "wait",
-                "seconds": 2.2
-              },
-              {
-                "type": "slowMotion",
-                "scale": 0.35,
-                "duration": 0.8
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "the landing",
+        "name": "stop floor: not yet, Floor 957",
         "when": {
           "type": "allOf",
           "triggers": [
@@ -827,7 +308,198 @@
             },
             {
               "type": "counter",
-              "name": "finale",
+              "name": "restOver",
+              "atLeast": 0.0,
+              "below": 1.0
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "I'm not in a hurry.",
+                "duration": 2.2,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the bath: first look",
+        "when": {
+          "type": "sectionReached",
+          "section": "stop"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.8
+              },
+              {
+                "type": "showText",
+                "text": "It's quiet. I don't like it.",
+                "duration": 2.6,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the bath: the soul speaks, the hero soaks",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            5.4,
+            2.3
+          ],
+          "size": [
+            4.6,
+            2.6
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:hotBath:discovery"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.5
+              },
+              {
+                "type": "showText",
+                "text": "Soul: Careful. It's the one thing down here that isn't trying to burn you.",
+                "duration": 4.2,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.4
+              },
+              {
+                "type": "showText",
+                "text": "It's a puddle.",
+                "duration": 2.0,
+                "style": "Subtitle"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.3
+              },
+              {
+                "type": "showText",
+                "text": "Soul: It's a spring. It cooled a century ago. ...Nobody told the Overlord.",
+                "duration": 4.4,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.7
+              },
+              {
+                "type": "heal",
+                "target": {
+                  "player": true
+                },
+                "amount": 1
+              },
+              {
+                "type": "popText",
+                "text": "+1 heart",
+                "color": "#7FE0D0",
+                "at": [
+                  5.4,
+                  3.4
+                ]
+              },
+              {
+                "type": "emit",
+                "signal": "stop:hotBath:healed"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.0
+              },
+              {
+                "type": "showText",
+                "text": "Fine. That helped.",
+                "duration": 2.4,
+                "style": "Subtitle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the bath: a soul asks for nothing",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerInZone",
+              "center": [
+                5.4,
+                2.3
+              ],
+              "size": [
+                4.6,
+                2.6
+              ],
+              "anchor": "World"
+            },
+            {
+              "type": "counter",
+              "name": "restOver"
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "showText",
+                "text": "Soul: Stay as long as you like. Everyone does.",
+                "duration": 3.4,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "the landing, Floor 957",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "restOver",
               "atLeast": 1.0
             }
           ]
@@ -837,6 +509,10 @@
           {
             "type": "runSequence",
             "steps": [
+              {
+                "type": "emit",
+                "signal": "stop:hotBath:done"
+              },
               {
                 "type": "setFloor",
                 "floor": 956,
@@ -849,10 +525,9 @@
               },
               {
                 "type": "showText",
-                "text": "HOT AIR: RODE IT",
+                "text": "THE HOT BATH: SOAKED",
                 "duration": 2.4,
                 "style": "Banner",
-                "sound": "vo_f957_clear",
                 "color": "#FFD27A"
               },
               {
@@ -866,269 +541,9 @@
               {
                 "type": "setCounter",
                 "name": "cleared",
-                "value": 1
+                "value": 1.0
               }
             ]
-          }
-        ]
-      },
-      {
-        "name": "to upUpUp",
-        "when": {
-          "type": "sectionReached",
-          "section": "upUpUp"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "goToPhase",
-            "phase": "upUpUp"
-          }
-        ]
-      },
-      {
-        "name": "to theChimney",
-        "when": {
-          "type": "sectionReached",
-          "section": "theChimney"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc0"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "theChimney"
-          }
-        ]
-      },
-      {
-        "name": "to hotAirHopping",
-        "when": {
-          "type": "sectionReached",
-          "section": "hotAirHopping"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc1"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "hotAirHopping"
-          }
-        ]
-      },
-      {
-        "name": "to chimneyAgain",
-        "when": {
-          "type": "sectionReached",
-          "section": "chimneyAgain"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc2"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "chimneyAgain"
-          }
-        ]
-      },
-      {
-        "name": "to theLongDraft",
-        "when": {
-          "type": "sectionReached",
-          "section": "theLongDraft"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "despawn",
-            "target": {
-              "tag": "pc3"
-            }
-          },
-          {
-            "type": "goToPhase",
-            "phase": "theLongDraft"
-          }
-        ]
-      },
-      {
-        "name": "the opening's lava stops",
-        "when": {
-          "type": "sectionReached",
-          "section": "riser"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "lavaSpeed",
-            "value": 0.0
-          }
-        ]
-      },
-      {
-        "name": "the floor has had its minutes",
-        "when": {
-          "type": "atTime",
-          "seconds": 255.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "finale",
-            "value": 1.0
-          }
-        ]
-      },
-      {
-        "name": "heat: the floor gets hotter",
-        "when": {
-          "type": "every",
-          "seconds": 20.0,
-          "startAfter": 40.0,
-          "maxTimes": 12
-        },
-        "do": [
-          {
-            "type": "addCounter",
-            "name": "heat",
-            "amount": 1.0
-          }
-        ]
-      },
-      {
-        "name": "heat 3: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 3.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 5: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 5.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 7: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 7.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 9: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 9.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
-          }
-        ]
-      },
-      {
-        "name": "heat 11: the cinders hurry",
-        "when": {
-          "type": "counter",
-          "name": "heat",
-          "atLeast": 11.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "modifier",
-            "target": {
-              "entity": "cinder"
-            },
-            "modifiers": [
-              {
-                "stat": "MoveSpeed",
-                "multiply": 1.1
-              }
-            ],
-            "includeFuture": true
           }
         ]
       }
@@ -1142,568 +557,10 @@
             "steps": [
               {
                 "type": "showText",
-                "text": "FLOOR 957: HOT AIR",
+                "text": "FLOOR 957: THE HOT BATH",
                 "duration": 2.6,
                 "style": "Banner",
-                "sound": "vo_f957_title",
                 "color": "#FFD27A"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "upUpUp",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:upUpUp"
-          },
-          {
-            "type": "showText",
-            "text": "UP, UP, UP!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          }
-        ],
-        "rules": [
-          {
-            "name": "upUpUp: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 7.73,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "upUpUp: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 10.19,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "theChimney",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:theChimney"
-          },
-          {
-            "type": "showText",
-            "text": "THE CHIMNEY!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 1
-            },
-            "speed": 3.2,
-            "interval": 1.58,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "theChimney: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 7.18,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "theChimney: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 9.4,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "hotAirHopping",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:hotAirHopping"
-          },
-          {
-            "type": "showText",
-            "text": "HOT AIR HOPPING!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 1
-            },
-            "speed": 3.2,
-            "interval": 1.42,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          }
-        ],
-        "rules": [
-          {
-            "name": "hotAirHopping: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 6.62,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 2,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "hotAirHopping: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 8.61,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 4,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "hotAirHopping: a brute for the fists",
-            "when": {
-              "type": "every",
-              "seconds": 15.57,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "chimneyAgain",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:chimneyAgain"
-          },
-          {
-            "type": "showText",
-            "text": "ANOTHER CHIMNEY!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.26,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 3,
-              "angle": 34
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 2.54,
-            "initialDelay": 2.0
-          }
-        ],
-        "rules": [
-          {
-            "name": "chimneyAgain: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 6.07,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "chimneyAgain: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 7.81,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 5,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "chimneyAgain: a brute for the fists",
-            "when": {
-              "type": "every",
-              "seconds": 14.3,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "theLongDraft",
-        "onEnter": [
-          {
-            "type": "emit",
-            "signal": "setpiece:theLongDraft"
-          },
-          {
-            "type": "showText",
-            "text": "THE LONG DRAFT!",
-            "duration": 2.4,
-            "style": "Banner",
-            "color": "#FFD27A"
-          },
-          {
-            "type": "startHazard",
-            "id": "rain",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "rain",
-              "count": 2
-            },
-            "speed": 3.2,
-            "interval": 1.1,
-            "initialDelay": 1.5,
-            "rampPerSecond": 0.01
-          },
-          {
-            "type": "startHazard",
-            "id": "aimed",
-            "projectile": "fireball",
-            "pattern": {
-              "type": "spread",
-              "count": 4,
-              "angle": 40
-            },
-            "aim": "Player",
-            "origin": [
-              8.0,
-              0.5
-            ],
-            "anchor": "Camera",
-            "speed": 3.2,
-            "interval": 2.31,
-            "initialDelay": 2.0
-          }
-        ],
-        "rules": [
-          {
-            "name": "theLongDraft: cinders",
-            "when": {
-              "type": "every",
-              "seconds": 5.52,
-              "startAfter": 2.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinder",
-                "count": 3,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "theLongDraft: sparks from the lava",
-            "when": {
-              "type": "every",
-              "seconds": 7.02,
-              "startAfter": 3.5,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderSpark",
-                "count": 5,
-                "interval": 0.25,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  -2.5
-                ],
-                "areaSize": [
-                  14.0,
-                  0.0
-                ],
-                "tags": [
-                  "wave"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "theLongDraft: a brute for the fists",
-            "when": {
-              "type": "every",
-              "seconds": 13.04,
-              "startAfter": 5.0,
-              "maxTimes": 0
-            },
-            "do": [
-              {
-                "type": "spawnWave",
-                "entity": "cinderBrute",
-                "count": 1,
-                "interval": 0.8,
-                "anchor": "Camera",
-                "areaCenter": [
-                  0.0,
-                  2.2
-                ],
-                "areaSize": [
-                  14.0,
-                  1.5
-                ],
-                "tags": [
-                  "brute"
-                ]
               }
             ]
           }
