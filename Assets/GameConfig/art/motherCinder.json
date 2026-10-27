@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "entity": "motherCinder",
+  "name": "Mother Cinder",
+  "description": "a vast will-o'-the-wisp, the burning village grown into one huge teardrop of fire the size of a house, white-yellow core and deep orange-red edges, a calm, heavy, motherly face painted inside the flame (two large half-closed black eyes and a small patient smile), soot-black smoke boiling off her crown, embers shaking loose from her underside",
+  "height": 3.4,
+  "pixels": 400,
+  "poses": {
+    "loom": "hanging in the air high above, flame tip flickering upward, looking down"
+  },
+  "clips": {
+    "idle": {
+      "from": "loom",
+      "action": "hangs and breathes, her flame swelling and settling slowly, a shower of embers shaking loose from beneath her, blinking her heavy eyes",
+      "seconds": 2.5
+    }
+  },
+  "prefix": "MotherCinder",
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  },
+  "note": "Floor 998's background boss (the ember rain's source). Until it is generated the entity wears the Cinder's idle sheet, scaled up; priced in the PR, not approved (no GPU budget)."
+}

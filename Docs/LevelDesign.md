@@ -482,7 +482,13 @@ who runs the hauling.
   and **The Spire** (the finale: rain, aimed fans, cinders and sparks together on a run of ledges to the landing).
   The comedy lines stay: *"That was the baker's cart."* at the sign, *"The hay's following me now."* as the procession
   starts. Recipe: "A long bullet-hell floor" below.
-- **Length:** ~280 s (a long floor).
+- **Length (2026-10-27):** ~130-150 s for a hero who just runs; `script.length` 150, `duration` 210. Camera pace 0.95, the run
+  sections shortened (hayfield 19, emberfall 21, signpost 19, spire 22 units; the set pieces all stay) and **no timer holds the
+  landing** (the `finale` counter and its `atTime` rule are gone). The playtest judges it by its own declared length, not as a 240-360 s long floor.
+- **Mother Cinder (2026-10-27):** from *Ember Rain* on, a huge cinder hangs in the background (`motherCinder`, layer Background2, `screenAnchor`
+  drifting slowly across the top of the screen, non-solid, no health, no contact damage): the village's fire grown up, and the fireballs fall from
+  the top of the screen where she hangs. Spawned by the rule "Mother Cinder looms over the rain" (`sectionReached emberfall`), despawned by the landing.
+  Her line (subtitle): *"Hoooof. ... Fall, little sparks. Fall."* Hero: *"Of course the sparks have a mother."* Art: `art/motherCinder.json`, the Cinder's idle sheet scaled up until generated.
 - **The theft (2026-10-25):** halfway down the river a thief imp bursts out of the hay cart, takes the rocket launcher and runs
   off with it (`launcherThief`, `launcherToss`; rule "the hay hides a thief", `takeWeapon` / `giveWeapon fists`). From here
   to Floor 994 he fights with fists (Docs/Story.md "The Spill's theft"): the hazards stay, the sparks come in larger numbers and
@@ -508,8 +514,8 @@ who runs the hauling.
   air); the roar far below, rising whenever he drops toward it.
 - **Lines:** Announcer: *"FLOOR NINE NINETY-SEVEN! IMP RUN!"* Hero: *"Those are ours."* At the breather: *"One less
   sack for his gate."*
-- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~285 s: a riser, then five set pieces after it, each its own section and phase, in this order: **The Sack Route** (ledges with sack imps swinging over every second gap), **The High Haul** (a climb with imps swinging beside it), **Diamond Shower**, **Chains Everywhere** (an imp over every gap) and **The Lift Stop** (the finale). The idea: the hauling chains' sack imps, only now a whole route of them; fists only (Floors 998-994): the cinders and sparks come with the usual fists brutes. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
-- **Length:** ~285 s (a long floor).
+- **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~150-195 s (the camera at 0.95, no timer on the landing): a riser, then five set pieces after it, each its own section and phase, in this order: **The Sack Route** (ledges with sack imps swinging over every second gap), **The High Haul** (a climb with imps swinging beside it), **Diamond Shower**, **Chains Everywhere** (an imp over every gap) and **The Lift Stop** (the finale). The idea: the hauling chains' sack imps, only now a whole route of them; fists only (Floors 998-994): the cinders and sparks come with the usual fists brutes. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
+- **Length:** ~175 s (declared in the script; `long_floors.py` computes it from the path).
 
 #### Floor 996: The Slag Falls
 

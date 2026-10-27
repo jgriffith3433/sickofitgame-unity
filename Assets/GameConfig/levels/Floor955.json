@@ -23,7 +23,7 @@
   "returnToMainMenuOnComplete": false,
   "script": {
     "seed": 955,
-    "length": 285,
+    "length": 160,
     "floors": {
       "start": 955,
       "end": 954,
@@ -307,7 +307,7 @@
           "direction": "Right",
           "length": 28.0,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -520,7 +520,7 @@
           "direction": "Right",
           "length": 28.0,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -823,7 +823,7 @@
           "direction": "Right",
           "length": 28.0,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -1060,7 +1060,7 @@
           "direction": "Right",
           "length": 30.0,
           "turn": 2.0,
-          "autoSpeed": 0.55,
+          "autoSpeed": 0.95,
           "spawns": [
             {
               "entity": "ledge",
@@ -1185,10 +1185,6 @@
         "value": 0.0
       },
       {
-        "name": "finale",
-        "value": 0.0
-      },
-      {
         "name": "midboss",
         "value": 0.0
       }
@@ -1255,11 +1251,6 @@
               "target": {
                 "id": "landing"
               }
-            },
-            {
-              "type": "counter",
-              "name": "finale",
-              "atLeast": 1.0
             },
             {
               "type": "counter",
@@ -1418,26 +1409,11 @@
         ]
       },
       {
-        "name": "the floor has had its minutes",
-        "when": {
-          "type": "atTime",
-          "seconds": 255.0
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "setCounter",
-            "name": "finale",
-            "value": 1.0
-          }
-        ]
-      },
-      {
         "name": "heat: the floor gets hotter",
         "when": {
           "type": "every",
-          "seconds": 20.0,
-          "startAfter": 40.0,
+          "seconds": 12.0,
+          "startAfter": 25.0,
           "maxTimes": 12
         },
         "do": [
