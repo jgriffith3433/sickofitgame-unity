@@ -99,8 +99,8 @@ namespace SickOfIt.Tests.Editor
             }
             int all = goods.Sum(Price);
             int gated = goods.Where(g => g["requires"] != null && g["requires"].HasValues).Sum(Price);
-            Assert.AreEqual(3565, all, "Docs/Story.md, \"Yooba's prices\": 3,565 diamonds for the older goods (Yooba's rewind goods, the weapon goods and the Slimed Lining included)");
-            Assert.AreEqual(2255, all - gated, "2,255 without the gated goods");
+            Assert.AreEqual(2686, all, "Docs/Story.md, \"Yooba's prices\": 2,686 diamonds for the older goods (Yooba's rewind goods, the weapon goods and the Slimed Lining included)");
+            Assert.AreEqual(1696, all - gated, "1,696 without the gated goods");
             foreach (var g in goods)
                 foreach (var r in g["requires"] ?? new JArray())
                     Assert.IsNull(Requirements.Check((string)r), (string)g["id"]);

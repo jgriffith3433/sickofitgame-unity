@@ -1,25 +1,23 @@
 using UnityEngine;
 using System.Collections.Generic;
 using MobileControllerFramework;
+using UnityEngine.InputSystem.EnhancedTouch;
+using ETouch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 namespace SickOfIt.Core.Input
 {
     /// <summary>
-    /// Detects tap gestures anywhere on the screen and broadcasts jump
-    /// through GameInputManager. Excludes configurable UI regions
-    /// (e.g., fire analog area) so normal controls aren't interrupted.
+    /// Jumps on the finger going DOWN, anywhere on the screen, and broadcasts it
+    /// through GameInputManager. Presses come from the Input System's event stream
+    /// (EnhancedTouch), not from polling in Update, so a tap that begins and ends
+    /// inside one frame, or in a hitch, still jumps; there is no duration or movement gate.
+    /// Excludes configurable UI regions (e.g., fire analog area) so normal controls aren't interrupted.
     /// </summary>
+    [DefaultExecutionOrder(-100)]
     public class GlobalTapJump : MonoBehaviour
     {
         [Header("Input")]
         [SerializeField] private GameInputManager gameInputManager;
-
-        [Header("Tap Detection")]
-        [Tooltip("Maximum duration for a tap (seconds). Longer presses won't trigger jump.")]
-        [SerializeField] private float maxTapDuration = 0.2f;
-
-        [Tooltip("Maximum movement distance (screen pixels) to still count as a tap.")]
-        [SerializeField] private float maxTapMovement = 30f;
 
         [Header("Exclusion Zones")]
         [Tooltip("Don't trigger jump if tap starts in these UI regions (e.g., fire analog area).")]
@@ -28,15 +26,7 @@ namespace SickOfIt.Core.Input
         [Tooltip("Automatically detect and exclude TouchRegionAnalog components.")]
         [SerializeField] private bool autoExcludeTouchRegions = false;
 
-        private readonly Dictionary<int, TouchData> activeTouches = new Dictionary<int, TouchData>();
         [SerializeField] private Canvas parentCanvas;
-
-        private class TouchData
-        {
-            public float startTime;
-            public Vector2 startPosition;
-            public bool isInExcludedRegion;
-        }
 
         private void Awake()
         {
@@ -58,52 +48,26 @@ namespace SickOfIt.Core.Input
             }
         }
 
-        private void Update()
+        private void OnEnable()
         {
-            if (UnityEngine.Input.touchCount > 0)
-            {
-                foreach (Touch touch in UnityEngine.Input.touches)
-                    ProcessPointerInput(touch.fingerId, touch.position, touch.phase);
-            }
-            // Mouse-click fallback removed: on PC, mouse clicks should never
-            // trigger tap-to-jump. Real touch input on mobile is already handled
-            // by the touchCount > 0 branch above, so no fallback is needed.
+            EnhancedTouchSupport.Enable();
+            ETouch.onFingerDown += OnFingerDown;
         }
 
-        private void ProcessPointerInput(int pointerId, Vector2 position, TouchPhase phase)
+        private void OnDisable()
         {
-            switch (phase)
-            {
-                case TouchPhase.Began:
-                    activeTouches[pointerId] = new TouchData
-                    {
-                        startTime = Time.time,
-                        startPosition = position,
-                        // A tap on a HUD button (pause, rewind) presses the button, it doesn't jump.
-                        isInExcludedRegion = IsPositionInExcludedRegion(position) || SickOfIt.Core.UI.Menus.MenuHit.OnButton(position)
-                    };
-                    break;
+            ETouch.onFingerDown -= OnFingerDown;
+            EnhancedTouchSupport.Disable();
+        }
 
-                case TouchPhase.Ended:
-                    if (!activeTouches.TryGetValue(pointerId, out TouchData data))
-                        return;
-
-                    float duration = Time.time - data.startTime;
-                    float movement = Vector2.Distance(position, data.startPosition);
-                    bool isTap = duration <= maxTapDuration && movement <= maxTapMovement;
-
-                    if (isTap && !data.isInExcludedRegion)
-                    {
-                        gameInputManager.RequestJump();
-                    }
-
-                    activeTouches.Remove(pointerId);
-                    break;
-
-                case TouchPhase.Canceled:
-                    activeTouches.Remove(pointerId);
-                    break;
-            }
+        private void OnFingerDown(Finger finger)
+        {
+            Vector2 position = finger.currentTouch.screenPosition;
+            // A tap on a HUD button (pause, rewind) presses the button, it doesn't jump.
+            if (IsPositionInExcludedRegion(position) || SickOfIt.Core.UI.Menus.MenuHit.OnButton(position))
+                return;
+            // The controller drops it during a rewind.
+            gameInputManager.RequestJump();
         }
 
         private bool IsPositionInExcludedRegion(Vector2 screenPosition)

@@ -938,6 +938,9 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(StopFloorsId, "Stop floors (Docs/Story.md \"Stop floors\"): Floors 957 The Hot Bath, 959 Hell's Graffiti, 897 Rook's Camp and 893 The Stuck Imp, each opened directly (a setup shortcut) and played by the bot through real input to its landing. No lava rises, no hazard starts and nothing can hurt him for 20+ s (`calm` 20 s after `enter`); each has a discovery (the bath's soul and heal, six carvings and a diamond, Rook's question answered by where he stands, an imp that throws the same failed ember). The stuck imp is rewound with R after its third throw and must throw the same throw again at the same game time. `stop-floor` events (signal stop:<key>:<beat>), a check per floor: played, discovery, quiet, 20 s, no rising lava, and its own beat", StopFloorsSeconds, "level"));
             list.Add(new PlaytestScenario(CompanionsId, "The Climbers (Docs/Story.md \"The Climbers\"): Rook the rival (Floors 996, 992, 955, 899, 858, 808), Wick the lamplighter (999, 993, 960, 902) and Pointer the fingerpost (900, 895, 860, 810), fourteen floors each opened twice directly (a setup shortcut) and played by the bot through real input until the scene ends: the climber appears ahead, speaks subtitles, then BRANCHES on the hero (hearts, diamonds, deaths, Grudges, the flags earlier scenes wrote), pays a small reward and walks on. The first run has a plain save, the second the save that makes the scene take its other branch (diamonds, deaths, flags set as setup shortcuts; for hearts the hero is hurt down to one heart); the two must differ. `companion` events (signal cmp:<who>:<floor>:<beat>, with branch:<label> and reward:<kind>), a check per floor and per climber (3+ encounters, 6+ branches). The floors run in the climb's order (progress only goes forward); under 10 min: no floor is begun after 5 min of run time, `at` (a floor like \"902\") starts later in the climb", CompanionsSeconds, "level"));
             list.Add(new PlaytestScenario(SpawnEdgeId, "Hazards and enemies appear just outside the view (Docs/GameplayCookbook.md \"Spawning off screen\"): Floor 998 (rain and cinders) and a generated Circle floor (Level 13) opened directly (a setup shortcut) and played by the bot through real input. Every hostile spawn is checked on the frame it exists against the camera's view (landscape or portrait, whichever the device is): never inside it; each fireball and cinder is followed until it first enters the view and must take 1+ s; a walker never sits beyond the Travel barriers. `spawn-edge` events, `check` events spawn-edge <beat>", SpawnEdgeSeconds, "level"));
+            list.Add(new PlaytestScenario(TapJumpId, $"Touch jump on the finger going down: level {TapJumpLevel} loaded directly (setup shortcut), no bot. A virtual touchscreen taps the middle of the screen " +
+                $"{TapJumpTaps} times (30-120 ms down; every tenth tap is down and up inside one frame; every twentieth has the frame stall 150 ms with the finger down): each tap must make exactly one jump. " +
+                "Then a tap while R rewinds must not be latched and must not jump when the rewind ends. Check events, tapJump.* metrics", TapJumpSeconds, "level"));
             list.Add(new PlaytestScenario(RewindJuiceId, "Longer, more rewarding rewind (Docs/GameplayCookbook.md \"The arcade loop\"): Level 1 loaded directly with the shop reset (a setup shortcut): " +
                 "the new game's juice must be 10 s (it was 3). Then Yooba's rewind goods are bought through the shop's own purchase (diamonds given first, a setup shortcut: Loop Jar x5, Bottomless Jar x2, Quick Unwind x3) " +
                 "and Level 1 loads again: the cap must reach 24 s and the rewind runs 75% faster. The bot plays through real input until a clean kill pays juice back: the juice goes up by the refund and the HUD floats " +
@@ -997,6 +1000,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(ShopGoodsId, "Yooba's new goods and the new Grudges: the shop lists 20+ new goods (a card tag each) priced on the retuned curve, every level is bought with the shop's own purchase (setup shortcut: the purse), " +
                 "Level 1 starts with their perks in the hero's hands (totals, full bubbles, plates, bombs and gasps, slower enemy shots, a cheaper rewind), the 8+ new Grudges are granted one by one and each adds its perk, " +
                 "then the bot plays and the perks that fire (crit, bubble pop, plate, slip, fat diamond, burp, bomb, gasp) are logged as `perk` events. Each beat is a check event", ShopGoodsSeconds, "level"));
+            list.Add(new PlaytestScenario(ShopBalanceId, "Yooba's health line: a fresh save with the line's price (setup shortcut), ten Goo Plasters bought with real clicks (+2 hearts each, ~430 diamonds, the purse ends at 0), Level 1 starts with 25 hearts and the HUD health bar is one smooth bar with its count, wide enough to read (run it on 1920x1080 and a 390x844 phone). The other goods' prices are logged. Each beat is a check event", 120, "menus"));
             list.Add(new PlaytestScenario(ShopWeaponsId, "Yooba's weapon goods: the shop hides Slimed Knuckles, Stretchy Wraps and Keep Weapons while no weapon is unlocked, shows them once the fists are, Keep Weapons and Slimed Knuckles bought with real clicks make Yooba accuse the hero of stealing from him (a ShopBuyWeapon line, voiced), and a run ending keeps the fists only with Keep Weapons bought (setup shortcuts: the unlock, the run end). Each beat is a check event", 120, "menus"));
             list.Add(new PlaytestScenario(YoobaAliveId, "Yooba's living shop (Docs/Story.md, \"Yooba's shop\"), clicked with the virtual mouse: the shelf starts with one jar and nine gaps, " +
                 "fills as floors are cleared (setup shortcuts: levels marked cleared, deaths counted) and Yooba points out each new ware, asks for the Lost Things quest, reacts to the deaths " +
@@ -1335,6 +1339,8 @@ namespace SickOfIt.Playtest
                 yield return session.RewindJuiceRun();
             else if (id == SpawnEdgeId)
                 yield return session.SpawnEdgeRun();
+            else if (id == TapJumpId)
+                yield return session.TapJumpRun();
             else if (id == SideFloorsId || id == GauntletsId)
                 yield return session.SideFloorsRun(id == GauntletsId, at);
             else if (id == ReplayModesId)
@@ -1414,6 +1420,8 @@ namespace SickOfIt.Playtest
                 yield return session.ShopGate();
             else if (id == ShopGoodsId)
                 yield return session.ShopGoodsRun();
+            else if (id == ShopBalanceId)
+                yield return session.ShopBalance();
             else if (id == ShopWeaponsId)
                 yield return session.ShopWeapons();
             else if (id == YoobaAliveId)
