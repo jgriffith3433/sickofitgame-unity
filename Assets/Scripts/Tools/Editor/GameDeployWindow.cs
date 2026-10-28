@@ -20,12 +20,17 @@ namespace SickOfIt.Tools.Editor
     public class GameDeployWindow : EditorWindow
     {
         // Paths
-        private const string UnityProjectPath = @"C:\Projects\sickofitgame-unity";
-        private const string WebsiteProjectPath = @"C:\Projects\sickofitgamewebsite";
-        private const string ServerDataWebGL = UnityProjectPath + @"\ServerData\WebGL";
-        private const string GameFolder = WebsiteProjectPath + @"\Game";
-        private const string TemplateFolder = GameFolder + @"\v0000000";
-        private const string AutoStartBat = WebsiteProjectPath + @"\auto-start.bat";
+        // This project is where Unity has it open; the website is HAWKES_SITE_PATH / WEBSITE_PATH when a build server
+        // sets them (Hawkes Gen's Linux build container), else the sickofitgamewebsite folder beside this project.
+        private static readonly string UnityProjectPath = Path.GetDirectoryName(Application.dataPath) ?? "";
+        private static readonly string WebsiteProjectPath = Path.GetFullPath(
+            Environment.GetEnvironmentVariable("HAWKES_SITE_PATH") is { Length: > 0 } site ? site
+            : Environment.GetEnvironmentVariable("WEBSITE_PATH") is { Length: > 0 } web ? web
+            : Path.Combine(UnityProjectPath, "..", "sickofitgamewebsite")).TrimEnd('\\', '/');
+        private static readonly string ServerDataWebGL = Path.Combine(UnityProjectPath, "ServerData", "WebGL");
+        private static readonly string GameFolder = Path.Combine(WebsiteProjectPath, "Game");
+        private static readonly string TemplateFolder = Path.Combine(GameFolder, "v0000000");
+        private static readonly string AutoStartBat = Path.Combine(WebsiteProjectPath, "auto-start.bat");
 
         // State
         private int detectedVersion = -1;
@@ -430,9 +435,9 @@ namespace SickOfIt.Tools.Editor
                 .Where(f =>
                 {
                     // Skip .git folder, node_modules, and the Game version folders themselves
-                    string rel = f.Substring(WebsiteProjectPath.Length);
-                    if (rel.Contains(@"\.git\") || rel.Contains(@"\node_modules\")) return false;
-                    if (rel.Contains(@"\Game\v") && !rel.Contains(@"\Game\v0000000")) return false;
+                    string rel = f.Substring(WebsiteProjectPath.Length).Replace('\\', '/');
+                    if (rel.Contains("/.git/") || rel.Contains("/node_modules/")) return false;
+                    if (rel.Contains("/Game/v") && !rel.Contains("/Game/v0000000")) return false;
 
                     string ext = Path.GetExtension(f).ToLowerInvariant();
                     return extensions.Contains(ext);
