@@ -2,7 +2,7 @@
   "dependencies": {
     "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main",
     "com.hawkes.gen": "file:C:/Projects/hawkesgen/clients/unity/com.hawkes.gen",
-    "com.hawkes.net": "https://github.com/jgriffith3433/hawkesnet-unity.git?path=/Packages/com.hawkes.net#v0.5.1",
+    "com.hawkes.net": "https://github.com/jgriffith3433/hawkesnet-unity.git?path=/Packages/com.hawkes.net#v0.6.0",
     "com.hawkes.playtest": "file:C:/Projects/hawkesstudio/clients/unity/com.hawkes.playtest",
     "com.unity.2d.enhancers": "1.0.0",
     "com.unity.addressables": "2.8.1",
