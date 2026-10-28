@@ -51,7 +51,7 @@ au("a_bd4d069c1c0af8fa",t["suck"],round(x-t["suck"],2),"Hell drone",False,volume
 cap=lambda s,a,b:{"text":s,"start":round(t[a],2),"end":round(t[a]+b,2)}
 caps=[cap("That's a hole.","hole",1.04),cap("So that's where they keep coming from.","where",2.7),cap("Hello?","hello",0.7),
 cap("HELL:\nHello?","echo1",1.4),cap("HELL:\nHello?","echo2",1.4),cap("HELL:\nHELLO.","echo3",1.5),cap("Nope.","nope",1.04),
-cap("Mmf. Wait for meee—","yooba",2.3),cap("FLOOR ONE THOUSAND!","fall",1.9),cap("Made with Hawkes Gen\nhawkesgen.com","endcard",1.5)]
+cap("Mmf. Wait for meee—","yooba",2.3),cap("FLOOR ONE THOUSAND!","fall",1.9),cap("Made with Hawkes Gen\nhawkesgen.ai","endcard",1.5)]
 edit={"width":1080,"height":1920,"fps":24,"burn":True,"fit":"crop","clips":clips,"audio":audio,"captions":caps}
 json.dump(edit,open("edit.json","w"),indent=1,ensure_ascii=False)
 ci=[c["asset"] for c in clips]; ai=[a["asset"] for a in audio]

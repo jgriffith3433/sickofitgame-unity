@@ -87,7 +87,7 @@ mergeInto(LibraryManager.library, {
             };
             var expected = !expect || !!doc.querySelector(expect);
 
-            var gen = doc.querySelector('a[href^="https://hawkesgen.com"]');
+            var gen = doc.querySelector('a[href^="https://hawkesgen.ai"]');
             // Bring the mark into view and ring it for the recording (only in this frame, only now).
             if (gen) {
                 try { gen.scrollIntoView({ block: "center" }); } catch (e) { }
@@ -105,7 +105,7 @@ mergeInto(LibraryManager.library, {
                 try { if (view.hellDescent) floor = view.hellDescent.floor(); } catch (e) { }
                 finish({
                     title: doc.title || "",
-                    gen: link('a[href^="https://hawkesgen.com"]'),
+                    gen: link('a[href^="https://hawkesgen.ai"]'),
                     parent: link('a[href^="https://hawkesbiomedical.com"]'),
                     layout: layout,
                     expected: expected,
@@ -144,6 +144,6 @@ mergeInto(LibraryManager.library, {
 
     // How many Hawkes credit links the game page itself has (it should have none: the game screen is unchanged).
     HawkesSiteGamePageCredits: function () {
-        return document.querySelectorAll('a[href^="https://hawkesgen.com"], a[href^="https://hawkesbiomedical.com"], .hawkes-credit').length;
+        return document.querySelectorAll('a[href^="https://hawkesgen.ai"], a[href^="https://hawkesbiomedical.com"], .hawkes-credit').length;
     }
 });

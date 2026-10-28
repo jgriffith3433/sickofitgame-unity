@@ -35,7 +35,7 @@ designed hum (`audio.voice-design`, 3 previews) for the one note they share. Lin
 
 Look: the Meadow's hand-painted comic-fantasy style with bold ink outlines (Video2, Docs/LevelDesign.md "The art of
 the climb"); each film in its Circle's palette. Format 1280x704, 24 fps, a short end card (the game's name, then
-"Made with Hawkes Gen · hawkesgen.com" small) on the ones played from the video select only.
+"Made with Hawkes Gen · hawkesgen.ai" small) on the ones played from the video select only.
 
 ---
 

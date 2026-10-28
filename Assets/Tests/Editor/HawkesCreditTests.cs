@@ -33,10 +33,10 @@ namespace SickOfIt.Tests.Editor
         public void BlogPagesGetItInTheirFooter()
         {
             string html = GameDeployWindow.InstallCredit(BlogPage, Placement.Footer);
-            Assert.That(Count(html, "href=\"https://hawkesgen.com\""), Is.EqualTo(1));
+            Assert.That(Count(html, "href=\"https://hawkesgen.ai\""), Is.EqualTo(1));
             Assert.That(html, Does.Contain("Powered by <strong>HAWKES GEN</strong>"));
             Assert.That(html, Does.Not.Contain("hawkesbiomedical.com"));
-            int mark = html.IndexOf("hawkesgen.com", System.StringComparison.Ordinal);
+            int mark = html.IndexOf("hawkesgen.ai", System.StringComparison.Ordinal);
             Assert.That(mark, Is.GreaterThan(html.IndexOf("<footer", System.StringComparison.Ordinal)));
             Assert.That(mark, Is.LessThan(html.IndexOf("</footer>", System.StringComparison.Ordinal)));
         }
@@ -47,14 +47,14 @@ namespace SickOfIt.Tests.Editor
             string page = BlogPage.Replace("<footer class=\"bg-black\">\n    <p>&copy; 2026 Sick Of It.</p>\n  </footer>\n", "");
             string html = GameDeployWindow.InstallCredit(page, Placement.Footer);
             Assert.That(html, Does.Contain("hawkes-credit-bar"));
-            Assert.That(html.IndexOf("hawkesgen.com", System.StringComparison.Ordinal), Is.LessThan(html.IndexOf("</body>", System.StringComparison.Ordinal)));
+            Assert.That(html.IndexOf("hawkesgen.ai", System.StringComparison.Ordinal), Is.LessThan(html.IndexOf("</body>", System.StringComparison.Ordinal)));
         }
 
         [Test]
         public void TheLandingPageAlsoLinksTheParentCompanyAndKeepsItsLineEndings()
         {
             string html = GameDeployWindow.InstallCredit(Landing, Placement.Landing);
-            Assert.That(Count(html, "href=\"https://hawkesgen.com\""), Is.EqualTo(1));
+            Assert.That(Count(html, "href=\"https://hawkesgen.ai\""), Is.EqualTo(1));
             Assert.That(Count(html, "href=\"https://hawkesbiomedical.com\""), Is.EqualTo(1));
             Assert.That(html, Does.Contain("hawkes-credit-pinned"));
             Assert.That(Regex.IsMatch(html, "[^\r]\n"), Is.False, "every line ends in CRLF like the page");

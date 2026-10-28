@@ -83,7 +83,7 @@ if WHICH == "count":
     add("c6", d, [lav("0x020204", "0x100810", d)],
         f"[0]drawbox=x=580:y=300:w=40:h='4+10*abs(sin(t*11))':color=0xff2a1a:t=fill:enable='lt(t\\,3)',drawbox=x=670:y=300:w=40:h='4+10*abs(sin(t*11))':color=0xff2a1a:t=fill:enable='lt(t\\,3)',"
         f"drawbox=x=620:y=40:w=40:h=14:color=0xfff0b0:t=fill:enable='lt(t\\,5.0)',{sub('OVERLORD: Mm. ... Quiet.',0,3.0)},"
-        f"{dt('THE COUNT',110,'250','white',en='gt(t\\,4)')},{dt('Made with Hawkes Gen · hawkesgen.com',26,'650','0xa0a0a0',en='gt(t\\,4.3)')},{push(1.0,1.08,d)},{bars()}[v]")
+        f"{dt('THE COUNT',110,'250','white',en='gt(t\\,4)')},{dt('Made with Hawkes Gen · hawkesgen.ai',26,'650','0xa0a0a0',en='gt(t\\,4.3)')},{push(1.0,1.08,d)},{bars()}[v]")
     AUDIO = glob.glob(O + "/tableread/*-dialogue.mp3")[0]; TOTAL = 29.7
 elif WHICH == "market":
     # Y1 0-18.16 (V.O.), Y2 18.16-23.36, Y3 23.36-26.24, Y4 26.24-27.52, hero 27.52-30.16, Y 30.16-30.96, A 30.96-33.44
@@ -120,7 +120,7 @@ elif WHICH == "market":
     d = 3.2
     add("m9", d, [lav("0x6ac0f0", "0xf8e8b0", d)],
         f"[0]drawbox=x=0:y=500:w={W}:h=204:color=0x4a9a3a:t=fill,{dt('THE VILLAGE',90,'200','0x2a4a2a')},{amouth(0,2.5).replace('y=440','y=400')},"
-        f"{sub('ANNOUNCER: THE VILLAGE: IT WAS A VERY NICE VILLAGE!',0,3.2)},{dt('Made with Hawkes Gen · hawkesgen.com',26,'650','0x404040',en='gt(t\\,2)')},{push(1.0,1.06,d)},{bars()}[v]")
+        f"{sub('ANNOUNCER: THE VILLAGE: IT WAS A VERY NICE VILLAGE!',0,3.2)},{dt('Made with Hawkes Gen · hawkesgen.ai',26,'650','0x404040',en='gt(t\\,2)')},{push(1.0,1.06,d)},{bars()}[v]")
     AUDIO = glob.glob(O + "/tableread/*-dialogue.mp3")[0]; TOTAL = 36.4
 else:
     # K1 0-6.16, K2 6.16-9.6, K3 9.6-17.36, K4 17.36-31.84, K5 31.84-35.36, hero 35.36-38.64, K6 38.64-41.44, A 41.44-45.6
@@ -159,7 +159,7 @@ else:
     d = 4.16
     add("k8", d, [lav("0x300800", "0xff6a10", d)],
         f"[0]{amouth(0,3.8).replace('y=440','y=300')},{dt('THE MAGMA KING',80,'100','0xffd08a')},{dt('UNDEFEATED IN SEATING',60,'500','white')},"
-        f"{sub('ANNOUNCER: THE MAGMA KING: UNDEFEATED IN SEATING!',0,4.1)},{dt('Made with Hawkes Gen · hawkesgen.com',24,'650','0xe0c090',en='gt(t\\,2.5)')},{push(1.0,1.06,d)},{bars()}[v]")
+        f"{sub('ANNOUNCER: THE MAGMA KING: UNDEFEATED IN SEATING!',0,4.1)},{dt('Made with Hawkes Gen · hawkesgen.ai',24,'650','0xe0c090',en='gt(t\\,2.5)')},{push(1.0,1.06,d)},{bars()}[v]")
     AUDIO = glob.glob(O + "/tableread/*-dialogue.mp3")[0]; TOTAL = 45.7
 open(O + "/list.txt", "w").write("".join(f"file 'seg_{n}.mp4'\n" for n, _ in segs))
 run("-f", "concat", "-safe", "0", "-i", O + "/list.txt", "-i", AUDIO, "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "aac", "-t", str(TOTAL), O + "/animatic.mp4")

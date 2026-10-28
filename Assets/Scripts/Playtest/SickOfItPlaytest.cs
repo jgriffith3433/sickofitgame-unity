@@ -9343,7 +9343,7 @@ namespace SickOfIt.Playtest
                     }
                     else
                     {
-                        ok &= Expect(name, path, "Powered by HAWKES GEN", "https://hawkesgen.com", check.gen, "powered by hawkes gen");
+                        ok &= Expect(name, path, "Powered by HAWKES GEN", "https://hawkesgen.ai", check.gen, "powered by hawkes gen");
                         if (landing)
                             ok &= Expect(name, path, "Hawkes Biomedical", "https://hawkesbiomedical.com", check.parent, "hawkes biomedical");
                         ok &= SiteLayout(name, path, expect, check);

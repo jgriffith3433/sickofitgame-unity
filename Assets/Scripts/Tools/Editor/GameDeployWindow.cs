@@ -551,11 +551,11 @@ namespace SickOfIt.Tools.Editor
         // Hawkes credit (Powered by HAWKES GEN, and the parent company on the landing page)
         // ─────────────────────────────────────────────
 
-        private const string HawkesGenUrl = "https://hawkesgen.com";
+        private const string HawkesGenUrl = "https://hawkesgen.ai";
         private const string ParentUrl = "https://hawkesbiomedical.com";
 
         /// <summary>
-        /// Puts the small "Powered by HAWKES GEN" mark (linking to hawkesgen.com) on every page of the website except
+        /// Puts the small "Powered by HAWKES GEN" mark (linking to hawkesgen.ai) on every page of the website except
         /// the game (Game/), and on the landing page also the parent company link (hawkesbiomedical.com). It sits in
         /// the page's footer when it has one, else at the bottom of the page (pinned on the one-screen landing and
         /// offline pages). The mark is generated here, so a build of this repo always ships it; the website only

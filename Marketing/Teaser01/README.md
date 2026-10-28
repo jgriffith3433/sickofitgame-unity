@@ -2,7 +2,7 @@
 
 A 45-second YouTube teaser, 1920x1080, 30 fps, H.264 + AAC 48 kHz (J, 2026-10-18). Made from the game's own art
 through Hawkes Gen; how it fits the story is in `Docs/Story.md`, "Teasers". No video files live in git: every piece
-is a Gen library asset (`https://studio.hawkesgen.com/gen/v1/files/<asset id>`).
+is a Gen library asset (`https://studio.hawkesgen.ai/gen/v1/files/<asset id>`).
 
 **The cut: `a_6c86bd62de941236`** (poster `a_8646ed501255c68a`, captions `a_8bc7b1c640ba2bdd`; Gen job `j_296de03dfa66`,
 H.264 4.4 Mbit/s, -14.4 LUFS). The higher-bitrate master it was made from (8 Mbit/s, `assemble.sh`'s output) is

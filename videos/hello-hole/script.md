@@ -16,4 +16,4 @@ HERO: Nope.
 YOOBA: (muffled, mouth full) Mmf. Wait for meee—
 (SHLURP. Yooba is slurped in after him. The circle seals shut. One diamond rolls out and stops.)
 ANNOUNCER (booming 90s arcade voice): FLOOR ONE THOUSAND!
-END CARD: Sick Of It. Made with Hawkes Gen · hawkesgen.com
+END CARD: Sick Of It. Made with Hawkes Gen · hawkesgen.ai
