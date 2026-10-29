@@ -1,5 +1,7 @@
 # Sick Of It — Agent Guide
 
+**Lanes, local dev and deploys:** `LANES.md` (branches dev -> beta -> main; `dev.bat`, `deploy-beta.bat`, `deploy-prod.bat`, `status.bat`, `links.bat`, `sync.bat`; beta and live links).
+
 Unity 6.3 (6000.3.7f1) 2D side-view arcade bullet-dodger with a rewind mechanic and a comedic tone, shipped to WebGL.
 Read `ARCHITECTURE.md` for the runtime and generator design and `CONVENTIONS.md` for C# rules. This file covers how to
 change the game. (`CLAUDE.md` just imports this file; edit this one.)
