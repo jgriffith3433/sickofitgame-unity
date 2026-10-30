@@ -23,7 +23,7 @@ namespace SickOfIt.Core
     public static class AnalyticsManager
     {
         public const string Product = "sickofit";
-        public const string SdkUrl = "https://gen.hawkesgen.ai/sdk/analytics@1.js";
+        public const string SdkUrl = "https://hawkesgen.ai/sdk/analytics@1.js";
         /// <summary>Written by the build (SickOfIt.Tools.Editor.AnalyticsBuildInfo) and removed after it.</summary>
         public const string BuildInfoResource = "HawkesBuildInfo";
 
