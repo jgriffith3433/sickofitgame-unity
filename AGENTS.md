@@ -655,6 +655,12 @@ SickOfIt.Tools.Editor.GameDeployWindow.FullDeployBatch` runs Tools > Run Full De
 each step as `[GameDeploy]`, and exits 0/1. `BUILD_VERSION=<n>` forces the version number. Committing and pushing the
 site is still a separate, asked-for step.
 
+**The cloud build** (Hawkes Studio's `sick-of-it-unity` build, Hawkes Gen's Unity job): `-executeMethod
+SickOfIt.Tools.Editor.GameDeployWindow.CloudBuild` builds the same game config, Addressables (DXT and ASTC) and player
+into the folder in env `HAWKES_OUT`, laid out like the website's `Game/v<n>/` (`SickOfIt/`, `ServerData/`,
+`hawkes-sound.js`), with no website checkout and no website steps. Studio publishes it with `publish.page: "site"`: the
+website's own `Game/index.html` stays, and Studio writes `Game/build.json` (`base`, `version`), which the page plays.
+
 ## How the sync works
 
 `Assets/Scripts/Tools/Editor/GameConfig/GameConfigSync.cs`:
