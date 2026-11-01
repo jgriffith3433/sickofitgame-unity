@@ -40,6 +40,12 @@ namespace SickOfIt.Tools.Editor
         private bool isBusy;
         // Batch mode (FullDeployBatch): no window; every log line goes to the Unity log.
         private bool batch;
+        // Cloud build (CloudBuild): the folder the build goes into (Hawkes Gen's HAWKES_OUT), laid out like the
+        // website's Game/v<n>/. Null for the website deploy.
+        private string cloudOut;
+
+        /// <summary>Where this build's files go: Game/v&lt;n&gt;/ on the website, or HAWKES_OUT in a cloud build.</summary>
+        private string VersionFolder => cloudOut ?? Path.Combine(GameFolder, $"v{newVersion}");
 
         // Step tracking
         private int currentStep;
@@ -74,6 +80,39 @@ namespace SickOfIt.Tools.Editor
             catch (Exception ex)
             {
                 Debug.LogError($"[GameDeploy] Deploy failed: {ex}");
+            }
+            finally
+            {
+                DestroyImmediate(deploy);
+            }
+            EditorApplication.Exit(code);
+        }
+
+        /// <summary>
+        /// The cloud build (Hawkes Studio's project build entry, method
+        /// SickOfIt.Tools.Editor.GameDeployWindow.CloudBuild): Hawkes Gen runs it with env HAWKES_OUT, the folder whose
+        /// contents are the build, and no website checkout. It builds what Full Deploy builds (the game config, the
+        /// Addressables content for desktop and phones, the player) into HAWKES_OUT laid out like Game/v&lt;n&gt;/
+        /// (SickOfIt/, ServerData/, hawkes-sound.js), and changes nothing in a website: the website's Game/index.html
+        /// plays the build its build.json names, which Studio writes (publish.page "site"). Exits 0 or 1.
+        /// </summary>
+        public static void CloudBuild()
+        {
+            var deploy = CreateInstance<GameDeployWindow>();
+            deploy.batch = true;
+            int code = 1;
+            try
+            {
+                string outDir = Environment.GetEnvironmentVariable("HAWKES_OUT");
+                if (string.IsNullOrEmpty(outDir))
+                    throw new Exception("HAWKES_OUT is not set (the cloud build names the folder the build goes into)");
+                deploy.cloudOut = Path.GetFullPath(outDir);
+                deploy.RunCloudPipeline();
+                code = 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GameDeploy] Cloud build failed: {ex}");
             }
             finally
             {
@@ -300,7 +339,7 @@ namespace SickOfIt.Tools.Editor
         private void Step_CheckFileSizes()
         {
             Log($"Step 6b: Checking v{newVersion}'s file sizes (GitHub refuses files over 100 MB)...");
-            BuildOutputGuard.Check(Path.Combine(GameFolder, $"v{newVersion}"), Log);
+            BuildOutputGuard.Check(VersionFolder, Log);
         }
 
         private void Step_BuildAddressables()
@@ -360,12 +399,12 @@ namespace SickOfIt.Tools.Editor
         private void Step_CopyAddressables()
         {
             Log($"Step 5: Copying addressables to v{newVersion}...");
-            AddressablesTextureVariants.CopyToServerData(Path.Combine(GameFolder, $"v{newVersion}", "ServerData"), Log);
+            AddressablesTextureVariants.CopyToServerData(Path.Combine(VersionFolder, "ServerData"), Log);
         }
 
         private void Step_BuildWebGL()
         {
-            string buildPath = Path.Combine(GameFolder, $"v{newVersion}", "SickOfIt");
+            string buildPath = Path.Combine(VersionFolder, "SickOfIt");
 
             Log($"Step 6: Building WebGL to {buildPath}...");
 
@@ -813,6 +852,65 @@ namespace SickOfIt.Tools.Editor
                 Log("");
                 Log("═══════════════════════════════════════");
                 Log("  DEPLOY FAILED");
+                Log($"  Error: {ex.Message}");
+                Log("═══════════════════════════════════════");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// The cloud build's steps: the same game config, Addressables and player as the website deploy, into
+        /// HAWKES_OUT, with no website steps (no version folder, no find-and-replace, no page, site content or credit).
+        /// </summary>
+        private void RunCloudPipeline()
+        {
+            Log("═══════════════════════════════════════");
+            Log("  CLOUD BUILD STARTED into " + cloudOut);
+            Log($"  {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            Log("═══════════════════════════════════════");
+            try
+            {
+                Step_ImportGameConfig();
+                Step_DeleteServerData();
+                try
+                {
+                    Step_SplitPlayerData();
+                    Step_BuildAddressables();
+                    Log("Step 3: Emptying the output folder " + cloudOut + "...");
+                    if (Directory.Exists(cloudOut))
+                    {
+                        foreach (string dir in Directory.GetDirectories(cloudOut)) Directory.Delete(dir, true);
+                        foreach (string file in Directory.GetFiles(cloudOut)) File.Delete(file);
+                    }
+                    Directory.CreateDirectory(cloudOut);
+                    Step_CopyAddressables();
+                    Step_BuildWebGL();
+                }
+                finally
+                {
+                    PlayerDataSplit.End(Log);
+                }
+                Step_CheckFileSizes();
+
+                string source = Path.Combine(UnityProjectPath, "Tools", "Web", SoundPromptFile);
+                if (File.Exists(source))
+                {
+                    File.Copy(source, Path.Combine(cloudOut, SoundPromptFile), true);
+                    Log("Step 7b: Copied " + SoundPromptFile + " into the build.");
+                }
+                else
+                {
+                    Log("Step 7b: WARNING: " + source + " not found; the build has no sound prompt script.");
+                }
+
+                Log("═══════════════════════════════════════");
+                Log("  CLOUD BUILD COMPLETE");
+                Log("═══════════════════════════════════════");
+            }
+            catch (Exception ex)
+            {
+                Log("═══════════════════════════════════════");
+                Log("  CLOUD BUILD FAILED");
                 Log($"  Error: {ex.Message}");
                 Log("═══════════════════════════════════════");
                 throw;
