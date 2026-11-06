@@ -59,6 +59,13 @@ namespace SickOfIt.Core.Progression
         /// <summary>This death ended the run: the Shaft's drop to the Waystone comes next instead of the level again.</summary>
         public bool RunEnded => runEnded;
         public ShaftStop RunStop => runStop;
+        /// <summary>The quip under the title on this death (theme.json texts.deathQuips, one per death in turn), or "".</summary>
+        public string Quip { get; private set; } = "";
+        /// <summary>The instant "Again!" button is on screen.</summary>
+        public bool AgainOffered => againButton != null;
+        /// <summary>Real time (Time.realtimeSinceStartup) he pressed Again, or -1.</summary>
+        public float AgainPressedAt { get; private set; } = -1f;
+        private SickOfIt.Core.UI.Menus.MenuButton againButton;
         /// <summary>The Return button is on screen: a floor stage death and the diamonds to pay for it.</summary>
         public bool ReturnOffered => returnButton != null;
         /// <summary>He paid: the level reloads with the run kept.</summary>
@@ -70,6 +77,7 @@ namespace SickOfIt.Core.Progression
 
         /// <summary>Which gloat comes next (they are said in turn, one per death).</summary>
         private const string GloatTurnKey = "Death_GloatTurn";
+        private const string QuipTurnKey = "Death_QuipTurn";
 
         private void Start()
         {
@@ -165,7 +173,31 @@ namespace SickOfIt.Core.Progression
                 var offerPortrait = MenuPlacement.At(0.5f, 1f, 0f, -230f, 520f, 110f);
                 returnButton = menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f - 170f - 240f, 96f), offer, offerStyle, OnReturn, null, offerPortrait);
             }
+            // The fast restart: no animation, no Shaft drop; the level (or, after a run-ending death, the run's start) loads at once.
+            var againStyle = menu.Theme.button.Clone();
+            againStyle.size = new Vector2(340f, 92f);
+            string again = menu.Theme.texts != null && !string.IsNullOrEmpty(menu.Theme.texts.deathAgain) ? menu.Theme.texts.deathAgain : "Again!";
+            againButton = menu.AddButtonAt(new Vector2(0f, 0f), new Vector2(210f, 96f), again, againStyle, OnAgain, null,
+                MenuPlacement.At(0.5f, 0f, 0f, 150f, 520f, 110f));
             BuildWords(menu);
+        }
+
+        /// <summary>Fast restart: leave the death scene now. A run-ending death still ends the run (Grudges go, the Waystone is where it starts again), only the Shaft's drop is skipped.</summary>
+        public void OnAgain()
+        {
+            if (rageQuitting || ReturnPaid || AgainPressedAt >= 0f)
+                return;
+            AgainPressedAt = Time.realtimeSinceStartup;
+            deathCompleted = true;
+            StopAllCoroutines();
+            if (gameClock != null && gameClock.IsRewinding)
+                gameClock.StopRewind();
+            if (spritePlayer != null)
+                spritePlayer.Release();
+            ReleaseAudio();
+            AnalyticsManager.Track("choice", new Dictionary<string, object> { { "kind", "death_again" }, { "level", levelNumber }, { "deaths", DeathsOnLevel } });
+            CommitEnd();
+            SceneTransitionManager.Instance.LoadLevel(runEnded ? runStop.NextLevel : levelNumber);
         }
 
         /// <summary>"YOU OBVIOUSLY DIED" at the top; the announcer's gloat is heard, not written (the screen was too busy, J 2026-10-26).</summary>
@@ -184,6 +216,19 @@ namespace SickOfIt.Core.Progression
                 PlayerPrefs.SetInt(GloatTurnKey, turn + 1);
                 PlayerPrefs.Save();
             }
+            var quips = theme.texts != null ? theme.texts.deathQuips : null;
+            if (quips != null && quips.Count > 0)
+            {
+                int qturn = PlayerPrefs.GetInt(QuipTurnKey, 0);
+                Quip = quips[Mathf.Abs(qturn) % quips.Count];
+                PlayerPrefs.SetInt(QuipTurnKey, qturn + 1);
+                PlayerPrefs.Save();
+                var quipText = AddLine(menu, "Quip", Quip, theme.subtitle, 48f,
+                    MenuPlacement.At(0.5f, 0.74f, 0f, 0f, 1500f, 90f), MenuPlacement.At(0.5f, 1f, 0f, -400f, 1000f, 110f), null, null, 2f);
+                quipText.fontStyle &= ~TMPro.FontStyles.UpperCase;
+                quipText.textWrappingMode = TMPro.TextWrappingModes.Normal;
+            }
+            Debug.Log($"[Death] quip: \"{Quip}\"");
             Debug.Log($"[Death] \"{title}\"" + (gloat != null ? $", the announcer: \"{gloat.text}\" ({gloat.sound})" : "")
                       + (runEnded ? $"; the run is over: back to the Waystone on FLOOR {runStop.Waystone}, then level {runStop.NextLevel}" : $"; level {levelNumber} again"));
         }

@@ -93,6 +93,8 @@ namespace SickOfIt.Gameplay
             public string outcome;
             public float duration;
             public int kills;
+            /// <summary>Kills with the hero unhurt for `cleanKillSeconds` before them (world counter cleanKills).</summary>
+            public int cleanKills;
             public int spawned;
             public int playerHits;
             public int playerHealthEnd;
@@ -119,6 +121,7 @@ namespace SickOfIt.Gameplay
                 outcome = outcome,
                 duration = world.Now,
                 kills = (int)world.GetCounter("kills"),
+                cleanKills = (int)world.GetCounter("cleanKills"),
                 spawned = (int)world.GetCounter("spawned"),
                 playerHits = (int)world.GetCounter("playerHits"),
                 playerHealthEnd = world.Player != null ? world.Player.Health : 0,

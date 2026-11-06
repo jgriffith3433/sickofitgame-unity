@@ -217,6 +217,7 @@ namespace SickOfIt.Gameplay
             Time.timeScale = 0f;
             GameClock.Instance?.Pause();
             PlayAnalytics.ResultsShown(world);
+            world.Telemetry?.Record("resultsShown", $"time {summary.duration:0.0}", summary.cleanKills, $"kills {summary.kills} cleanKills {summary.cleanKills}");
             Sfx.Play(Sfx.Events.levelClear);
             Sfx.Play(Sfx.Events.levelClearVoice);
 
@@ -231,6 +232,7 @@ namespace SickOfIt.Gameplay
             {
                 (rank.HasValue ? string.Format(Texts.resultsTimePar, FormatTime(rank.Value.Par)) : Texts.resultsTime, FormatTime(summary.duration), Mathf.Max(0, Mathf.FloorToInt(summary.duration)), s => FormatTime(s)),
                 (Texts.resultsKills, summary.kills.ToString(), summary.kills, s => s.ToString()),
+                (Texts.resultsCleanKills, summary.cleanKills.ToString(), summary.cleanKills, s => s.ToString()),
                 (Texts.resultsHits, summary.playerHits.ToString(), summary.playerHits, s => s.ToString()),
             };
             if (rank.HasValue)
