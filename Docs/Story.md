@@ -1590,6 +1590,9 @@ just one more thing in it. A **run** is one climb from a Waystone until Hell kil
   rewind juice of any fresh floor. (A floor is one level, so "the floor he died on" is exactly where it restarts; a
   stage of several floors starts over at its first.) The 10 diamonds are spent for good, never refunded by a rewind.
   The announcer pockets them without shame. Not on the Meadow or the replay floors: they play again anyway.
+- **Again, the quip and the clear** (2026-11-06): the death screen has a written quip under *YOU OBVIOUSLY DIED* (`ui/theme.json` `texts.deathQuips`, 16 lines, a random one that is never the one before; Hell's jeers, no work jokes)
+  and an **Again** button (also Enter / Space) that skips the death scene and starts the next attempt at once: the level again on the Meadow and arcade levels, the next run's level on a floor (no Shaft drop).
+  The first drop of a save is still watched to the end, as above. The level-clear screen lists Time and **Clean Kills** (kills with the hero unhurt for `cleanKillSeconds`; world counter `cleanKills`, saved, so a rewind takes it back). Playtest `death-flow`.
 - **The first time** the announcer explains it, in story terms: *"HELL DOESN'T LET YOU DIE. IT LETS YOU DO IT
   AGAIN."* Hero: *"Of course it does."* That first drop can't be skipped. After that, one jeer: *"BACK TO THE
   WAYSTONE! DO IT AGAIN!"* (Yooba, on the next climb, has his own line about it: *"Back again? Hell does that."*)

@@ -214,6 +214,8 @@ namespace SickOfIt.Gameplay
                     $"level {world.LevelNumber} par {rank.Value.Par:0} time {rank.Value.Seconds:0} hits {rank.Value.Hits} grazes {rank.Value.Grazes} kills {rank.Value.Kills} rewinds {summary.rewinds} best {(newBest ? "new" : now.Letter)} saved {(StyleRanks.TryGet(world.LevelNumber, out var saved) ? saved.Letter + saved.Points : "none")}");
             }
 
+            int cleanKills = Mathf.RoundToInt(world.GetCounter("cleanKills"));
+            world.Telemetry?.Record("resultsStats", "cleanKills", cleanKills, $"time {summary.duration:0.0} kills {summary.kills} cleanKills {cleanKills}");
             Time.timeScale = 0f;
             GameClock.Instance?.Pause();
             PlayAnalytics.ResultsShown(world);
@@ -236,12 +238,13 @@ namespace SickOfIt.Gameplay
             if (rank.HasValue)
                 stats.Add((Texts.resultsGrazes, rank.Value.Grazes.ToString(), rank.Value.Grazes, s => s.ToString()));
             stats.Add((Texts.resultsRewinds, summary.rewinds.ToString(), summary.rewinds, s => s.ToString()));
+            stats.Insert(2, (Texts.resultsCleanKills, cleanKills.ToString(), cleanKills, s => s.ToString()));
             stats.Add((Texts.resultsDiamonds, "♦ " + diamondsGained, diamondsGained, s => "♦ " + s));
             // Landscape: the stats on the left, the grade beside them. Portrait: stats on top, grade under them.
             var screens = Screens;
             for (int i = 0; i < stats.Count; i++)
             {
-                float y = 0.66f - i * 0.085f;
+                float y = 0.66f - i * Mathf.Min(0.085f, 0.5f / Mathf.Max(1, stats.Count - 1));
                 float tallY = screens.resultsStatsTop - i * (stats.Count > 5 ? Mathf.Min(screens.resultsStatsStep, 0.046f) : screens.resultsStatsStep);
                 var label = menu.AddText(inner, "Stat", stats[i].label, theme.heading, new Vector2(0.36f, y), Vector2.zero,
                     new Vector2(520f, 70f), out _, 44f, null, theme.entrance);

@@ -703,12 +703,15 @@ namespace SickOfIt.Gameplay
             var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
             var def = entity.Def;
             float refund = cleanKillRefund + (Perks != null ? Perks.CleanKillBonus : 0f);
-            if (budget == null || cleanKillRefund <= 0f || def == null || def.team != Team.Enemy || entity.IsPlayer)
+            if (def == null || def.team != Team.Enemy || entity.IsPlayer)
                 return;
             if (entity.FindAbility<ProjectileAbility>() != null || Now - lastHeroHurtAt < cleanKillSeconds)
                 return;
-            // Once per creature, even when a rewind replays the kill.
-            if (TryGrantOnce("cleanKill:" + entity.Serial))
+            // Once per creature, even when a rewind replays the kill. The counter "cleanKills" (saved, so a rewind takes it back) feeds the results screen.
+            if (!TryGrantOnce("cleanKill:" + entity.Serial))
+                return;
+            AddCounter("cleanKills", 1f);
+            if (budget != null && cleanKillRefund > 0f)
                 budget.Reward(refund, "CLEAN KILL");
         }
 

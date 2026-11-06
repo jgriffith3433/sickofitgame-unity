@@ -496,6 +496,8 @@ namespace SickOfIt.Data.Config
         public string resultsTitle = "Level Clear!";
         public string resultsTime = "Time";
         public string resultsKills = "Kills";
+        [Tooltip("Kills with the hero unhurt for the clean-kill window.")]
+        public string resultsCleanKills = "Clean Kills";
         public string resultsHits = "Hits Taken";
         public string resultsRewinds = "Rewinds";
         public string resultsDiamonds = "Diamonds";
@@ -512,6 +514,10 @@ namespace SickOfIt.Data.Config
         public string deathRewind = "Hold R to undo it!";
         public string deathRewindTouch = "Hold ◄◄ to undo it!";
         public string deathNoJuice = "No rewind juice left...";
+        [Tooltip("The button that skips the death scene and starts again at once.")]
+        public string deathAgain = "Again";
+        [Tooltip("Written quips under the death title: one per death, never the same twice in a row.")]
+        public System.Collections.Generic.List<string> deathQuips = new System.Collections.Generic.List<string>();
         [Tooltip("Button on the death scene that goes to the main menu.")]
         public string rageQuit = "Rage Quit";
         [Tooltip("The death scene's Return offer; {0} is the price in diamonds.")]

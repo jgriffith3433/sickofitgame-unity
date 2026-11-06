@@ -67,6 +67,16 @@ namespace SickOfIt.Core.Progression
         private SickOfIt.Core.UI.Menus.MenuButton returnButton;
 
         private TMPro.TextMeshProUGUI titleText;
+        private TMPro.TextMeshProUGUI quipText;
+
+        /// <summary>The written quip under the title, as shown (varied: never the same twice in a row).</summary>
+        public string Quip => quipText != null ? quipText.text : "";
+        /// <summary>"Again" was pressed: the death scene was skipped and the level (or the next run's level) loads at once.</summary>
+        public bool AgainPressed { get; private set; }
+        /// <summary>Real seconds from the death scene's start to the load call after "Again", or -1.</summary>
+        public float AgainSeconds { get; private set; } = -1f;
+        private float startedAt;
+        private const string QuipLastKey = "Death_QuipLast";
 
         /// <summary>Which gloat comes next (they are said in turn, one per death).</summary>
         private const string GloatTurnKey = "Death_GloatTurn";
@@ -90,6 +100,7 @@ namespace SickOfIt.Core.Progression
             }
 
             Current = this;
+            startedAt = Time.unscaledTime;
             // Hell ends the run here: the death stands once its scene starts.
             levelNumber = PlayerPrefs.GetInt("CurrentLevelNumber", 1);
             // The run ends when he leaves (CommitEnd), not yet: a paid Return keeps it.
@@ -165,6 +176,10 @@ namespace SickOfIt.Core.Progression
                 var offerPortrait = MenuPlacement.At(0.5f, 1f, 0f, -230f, 520f, 110f);
                 returnButton = menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f - 170f - 240f, 96f), offer, offerStyle, OnReturn, null, offerPortrait);
             }
+            var again = menu.Theme.button.Clone();
+            again.size = new Vector2(340f, 92f);
+            string againLabel = menu.Theme.texts != null && !string.IsNullOrEmpty(menu.Theme.texts.deathAgain) ? menu.Theme.texts.deathAgain : "Again";
+            menu.AddButtonAt(new Vector2(0f, 0f), new Vector2(210f, 96f), againLabel, again, OnAgain, null, MenuPlacement.At(0.5f, 0f, 0f, 330f, 520f, 110f));
             BuildWords(menu);
         }
 
@@ -176,6 +191,19 @@ namespace SickOfIt.Core.Progression
             titleText = AddLine(menu, "Title", title, theme.title, 130f,
                 MenuPlacement.At(0.5f, 0.87f, 0f, 0f, 1500f, 170f), MenuPlacement.At(0.5f, 1f, 0f, -270f, 1000f, 150f), menu.TitleFont,
                 new SickOfIt.Data.Config.MenuMotion { type = SickOfIt.Data.Config.MenuMotionType.Jitter, amount = 5f, speed = 1f }, -3f);
+
+            var quips = theme.texts != null ? theme.texts.deathQuips : null;
+            if (quips != null && quips.Count > 0)
+            {
+                // Varied: a random one that is never the one before (cosmetic, so UnityEngine.Random is fine).
+                int last = PlayerPrefs.GetInt(QuipLastKey, -1);
+                int pick = Random.Range(0, quips.Count);
+                if (quips.Count > 1 && pick == last)
+                    pick = (pick + 1 + Random.Range(0, quips.Count - 1)) % quips.Count;
+                PlayerPrefs.SetInt(QuipLastKey, pick);
+                quipText = AddLine(menu, "Quip", quips[pick], theme.subtitle, 56f,
+                    MenuPlacement.At(0.5f, 0.74f, 0f, 0f, 1600f, 90f), MenuPlacement.At(0.5f, 1f, 0f, -440f, 1000f, 110f), null, null, 2f);
+            }
 
             if (config != null && config.gloats != null && config.gloats.Count > 0)
             {
@@ -230,6 +258,37 @@ namespace SickOfIt.Core.Progression
         }
 
         private bool runEndCommitted;
+
+        /// <summary>
+        /// Fast restart: skips the death scene, the offer and the feedback wait and loads the next attempt at once.
+        /// A death that doesn't end a run reloads the level; one that does goes straight to the next run's level, except the
+        /// first drop in a save, which Hell makes him watch (Docs/Story.md "The first time"). Also Enter / Space.
+        /// </summary>
+        public void OnAgain()
+        {
+            if (rageQuitting || ReturnPaid || AgainPressed)
+                return;
+            bool firstDrop = runEnded && WaystoneProgress.RunsEnded == 0;
+            if (firstDrop)
+            {
+                SkipDeathAnimation();
+                return;
+            }
+            AgainPressed = true;
+            deathCompleted = true;
+            StopAllCoroutines();
+            if (gameClock != null && gameClock.IsRewinding)
+                gameClock.StopRewind();
+            if (spritePlayer != null)
+                spritePlayer.Release();
+            ReleaseAudio();
+            AnalyticsManager.CloseAsk();
+            CommitEnd();
+            int target = runEnded ? runStop.NextLevel : levelNumber;
+            AgainSeconds = Time.unscaledTime - startedAt;
+            Debug.Log($"[Death] Again: level {target} loads {AgainSeconds:0.00}s after the death scene opened");
+            SceneTransitionManager.Instance.LoadLevel(target);
+        }
 
         /// <summary>He is leaving without paying: Hell ends the run now (Grudges and carried health go).</summary>
         private void CommitEnd()
@@ -462,8 +521,21 @@ namespace SickOfIt.Core.Progression
 
         private void Update()
         {
+            if (!deathCompleted && !AgainPressed && Keyboard.current != null &&
+                (Keyboard.current.enterKey.wasPressedThisFrame || Keyboard.current.spaceKey.wasPressedThisFrame))
+            {
+                OnAgain();
+                return;
+            }
             if (deathCompleted)
             {
+                // Also Enter/Space once the animation is over (offer or feedback wait).
+                if (!AgainPressed && Keyboard.current != null &&
+                    (Keyboard.current.enterKey.wasPressedThisFrame || Keyboard.current.spaceKey.wasPressedThisFrame))
+                {
+                    OnAgain();
+                    return;
+                }
                 // Waiting on the feedback card: Escape goes on without it.
                 if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
                     skipHold = true;

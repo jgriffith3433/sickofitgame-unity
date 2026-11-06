@@ -942,6 +942,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(TapJumpId, $"Touch jump on the finger going down: level {TapJumpLevel} loaded directly (setup shortcut), no bot. A virtual touchscreen taps the middle of the screen " +
                 $"{TapJumpTaps} times (30-120 ms down; every tenth tap is down and up inside one frame; every twentieth has the frame stall 150 ms with the finger down): each tap must make exactly one jump. " +
                 "Then a tap while R rewinds must not be latched and must not jump when the rewind ends. Check events, tapJump.* metrics", TapJumpSeconds, "level"));
+            list.Add(new PlaytestScenario(DeathFlowId, "Flow between attempts: the Landing's Waystone reached and one run already ended (setup shortcut), level 3 loaded directly, the bot plays to lose three times: each death screen must show a written quip, never the same twice in a row. After the first two, Enter (real input) restarts: the next attempt is playing again in under 1 s, no Shaft in between. Then level 3 is cleared and its results screen must show Time and Clean Kills rows. check events death-flow <beat>; restart, quip, results events; metrics deathFlow.*", DeathFlowSeconds, "level"));
             list.Add(new PlaytestScenario(DeathReturnId, "The death screen's Return offer (Docs/Story.md \"Waystones and runs\"): the Landing's Waystone reached (setup shortcut), level 3 loaded directly with 25 diamonds and a Grudge, " +
                 "the bot plays to lose; the screen offers \"Return for 10 diamonds\" and the button is clicked: level 3 again, 15 diamonds, a moment of safety, the run and Grudges kept. Then dying with 15 and skipping with Escape " +
                 "(the Shaft drops him, nothing spent, run ended, Grudges gone), then dying with 5 (no offer, the drop). check events death-return <beat>", DeathReturnSeconds, "level"));
@@ -1345,6 +1346,8 @@ namespace SickOfIt.Playtest
                 yield return session.WeaponsRun();
             else if (id == WeaponDropsId)
                 yield return session.WeaponDropsRun();
+            else if (id == DeathFlowId)
+                yield return session.DeathFlowRun();
             else if (id == DeathReturnId)
                 yield return session.DeathReturnRun();
             else if (id == RewindJuiceId)
