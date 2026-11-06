@@ -5205,11 +5205,11 @@ namespace SickOfIt.Playtest
             }
 
             // ─── level-1: the Meadow's ending, the portal scene ─────
-            /// <summary>What the level-1 scenario has seen of the portal scene so far.</summary>
+
             /// <summary>The distinct sheet frames seen for one clip.</summary>
             sealed class FrameSet : HashSet<string> { }
-            /// <summary>What the level-1 scenario has seen of the portal scene so far.</summary>
 
+            /// <summary>What the level-1 scenario has seen of the portal scene so far.</summary>
             sealed class PortalWatch
             {
                 public readonly Queue<string> Signals = new Queue<string>();
