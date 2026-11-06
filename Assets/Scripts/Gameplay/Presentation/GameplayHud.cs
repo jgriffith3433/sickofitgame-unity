@@ -317,6 +317,8 @@ namespace SickOfIt.Gameplay
             rewindTint = MenuGraphics.NewImage(transform, "RewindTint", Color.clear);
             rewindTint.sprite = MenuGraphics.Vignette();
             rewindTint.transform.SetSiblingIndex(flash.transform.GetSiblingIndex() + 1);
+            // Scanlines, colour split, tracking bar, speed streaks and the reversed whirr loop, over the wash.
+            RewindFx.Create(transform, style.rewind, rewindTint.transform.GetSiblingIndex() + 1);
             var place = Landscape.rewinding;
             rewindingText = menu.AddText(menu.Root, "Rewinding", "\u25C4\u25C4  Rewinding", theme.title, place.anchor,
                 place.offset, place.size, out _, Mathf.Min(theme.title.fontSize, 84f), menu.TitleFont, null,

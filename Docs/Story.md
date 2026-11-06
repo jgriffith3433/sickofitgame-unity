@@ -2609,3 +2609,7 @@ now: their ghosts idle and wander the same meadow (wherever their own hero walks
 one spot), and a chip in the corner counts the ones already climbing ("12 climbing right now"). Nobody is ever alone in being sick of it.
 In the game: the menu is its own band in the same room (z 0; a level is its number x 1000, nowhere -1000), `GhostLobby.MenuOpen` while
 `MainMenuManager` is up, the chip's words in mainMenu.json `labels.climbingNow`.
+
+## Rewind that feels amazing (RewindFx)
+
+Rewind is the hook, so holding R turns the picture into a tape being wound back: scanlines crawl up the screen, the edges split into cyan and magenta, a tracking bar sweeps up and speed streaks trail off to the right, over the old teal wash. A reversed tape whirr loops (the `rewind_start` clip played backwards) and its pitch climbs the longer the rewind runs; on release it fades out and the stop click lands. Reduced Flash halves it and stops the wobble. `Gameplay/Presentation/RewindFx.cs`, presentation only (nothing saved or rewound); playtest `rewind-fx`.
