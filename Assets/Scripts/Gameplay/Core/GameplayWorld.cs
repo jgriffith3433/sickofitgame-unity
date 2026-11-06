@@ -96,9 +96,9 @@ namespace SickOfIt.Gameplay
         readonly List<Entity> tickList = new List<Entity>();
         // Who is in live: every entity's LoadState registers it again on each rewind frame, and searching the list was O(n) each time.
         readonly HashSet<Entity> liveSet = new HashSet<Entity>();
-        readonly Dictionary<Collider2D, Entity> byCollider = new Dictionary<Collider2D, Entity>();
+        readonly Dictionary<Collider2D, Entity> byCollider = new();
         readonly Dictionary<string, ObjectPool> pools = new Dictionary<string, ObjectPool>(StringComparer.Ordinal);
-        readonly Dictionary<GameObject, Entity> entityOf = new Dictionary<GameObject, Entity>();
+        readonly Dictionary<GameObject, Entity> entityOf = new();
         readonly HashSet<string> warned = new HashSet<string>(StringComparer.Ordinal);
         readonly HashSet<string> granted = new HashSet<string>(StringComparer.Ordinal);
         Transform templateRoot;
