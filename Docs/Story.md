@@ -2375,6 +2375,28 @@ Climber's scene, an Overlord glimpse, an elite or a weapon pickup are not replac
 **Small finds on the long floors** (`Tools/Levels/ambient_finds.py`, run after the floor writers): each long floor of Circles X and IX gets two **diamond glints** (`diamondGlint`, one diamond) and,
 when it has no damned soul yet, one **soul** hovering over a ledge of its own route (a soul within 1.6 units pays a rewind orb). Spawns carry the id prefix `find_`.
 
+## Why he is sick of it: the opening and the level beats (2026-11-06)
+
+**The frame, in one breath.** He was sick of it all before Hell: the same afternoon, the same chores, the same nothing
+happening. Then the sky opened, and Hell turned out to be the same thing, louder. Every beat below is a small step on that one
+idea: *Hell is repetition, and he has had enough of repetition.* (No office or work jokes; the loop is Hell's.)
+
+- **The opening** is Video1 (*Intro*), played on a fresh save after New Game, **skippable with Escape or a tap**. It is the only
+  opening; it says why he is sick of it by showing the afternoon he already was, then the Overlord.
+- **A beat** is one line of narration at the start of a level, a `Subtitle` in warm grey (`#C9B8A6`, so it never reads as the
+  hero's voice or the announcer's gold title), unvoiced, 3.6 s, after the title and the hero's line. **One beat per level,
+  and no beat is ever used twice.** A floor that has no beat yet has none (never a copy).
+
+| Level | Beat |
+|---|---|
+| 1, The Meadow | He was sick of it all long before the sky opened. Then the sky opened. |
+| Floor 1000 | The bottom of Hell: same lava, same noise, same forever. He is already sick of it. |
+| Floor 999 | One floor up. He is counting out loud, and Hell is counting along. |
+| Floor 998 | They took the village. Now they take the gun. He has hands, and he is sick of being polite. |
+| Floor 997 | Imps haul his village's diamonds up a chain, sack after sack, the same sack. He has seen enough loops. |
+
+Playtest `opening-beats` plays them. Next floors get theirs the same way (an `onEnter` `runSequence` of `wait` + `showText`).
+
 ## Rules for levels
 
 - **A level is a place in the story**, named after the place. `displayName` is the place ("The Meadow",
