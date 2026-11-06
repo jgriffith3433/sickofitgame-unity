@@ -158,6 +158,22 @@
             "duration": 2.5,
             "sound": "vo_meadow_title",
             "color": "#FFD27A"
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 3.0
+              },
+              {
+                "type": "showText",
+                "text": "He was sick of it all long before the sky opened. Then the sky opened.",
+                "duration": 3.6,
+                "style": "Subtitle",
+                "color": "#C9B8A6"
+              }
+            ]
           }
         ],
         "rules": [

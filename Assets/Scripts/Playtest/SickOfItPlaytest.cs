@@ -1189,6 +1189,9 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(Video3Id, "Video3, \"Hell's Ad Break\" (Docs/LoreVideos.md), the film after Floor 1000: its config (after level 2, next level 3), the film loaded directly " +
                 "(setup shortcut: the Shaft's marker at Floor 999, Yooba's save reset, the video unlocked) must play with its clock running for 10 s, Escape must skip it into " +
                 "Yooba's hello on the Shaft, and the main menu's Videos card must list it and replay it to its end and back to the main menu. Each beat is a check event", Video3Seconds, "menus"));
+            list.Add(new PlaytestScenario(BeatsId, "The opening and the level beats (Docs/Story.md \"Why he is sick of it\"): New Game on a fresh save plays Video1, Escape skips it, " +
+                "Level 1 starts and shows its beat line; Floors 1000-997 are loaded directly (setup shortcut) and each shows its own beat. Every beat is a `beat` event, " +
+                "no two alike; `check` events `beats <beat>`", BeatsSeconds, "menus"));
             list.Add(new PlaytestScenario("yooba-shop", "Yooba's shop from the Shaft: the Shaft after Video3 (setup shortcut: Yooba's save reset, the marker " +
                 "at Floor 999, his hello skipped), Visit Yooba beside Continue opens his shop over the Shaft with his animated portrait and voiced welcome, " +
                 "slime-made goods; a card clicked with 0 diamonds (can't afford), then with its price (bought: diamonds spent, level saved); Back (goodbye) " +
@@ -1308,6 +1311,8 @@ namespace SickOfIt.Playtest
                 yield return session.YoobaShopRun();
             else if (id == Video3Id)
                 yield return session.Video3Run();
+            else if (id == BeatsId)
+                yield return session.BeatsRun();
             else if (id == "waystone")
                 yield return session.WaystoneRun();
             else if (id == "wastes-climb")

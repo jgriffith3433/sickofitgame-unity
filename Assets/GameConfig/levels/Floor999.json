@@ -702,6 +702,22 @@
               0.35
             ],
             "facePlayer": false
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 6.6
+              },
+              {
+                "type": "showText",
+                "text": "One floor up. He is counting out loud, and Hell is counting along.",
+                "duration": 3.6,
+                "style": "Subtitle",
+                "color": "#C9B8A6"
+              }
+            ]
           }
         ]
       }

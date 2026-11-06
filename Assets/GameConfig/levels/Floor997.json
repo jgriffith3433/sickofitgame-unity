@@ -1664,6 +1664,22 @@
               0.35
             ],
             "facePlayer": false
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 3.4
+              },
+              {
+                "type": "showText",
+                "text": "Imps haul his village's diamonds up a chain, sack after sack, the same sack. He has seen enough loops.",
+                "duration": 3.6,
+                "style": "Subtitle",
+                "color": "#C9B8A6"
+              }
+            ]
           }
         ]
       },

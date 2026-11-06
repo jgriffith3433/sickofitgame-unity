@@ -447,6 +447,22 @@
                 "sound": "vo_landing_intro"
               }
             ]
+          },
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 6.4
+              },
+              {
+                "type": "showText",
+                "text": "The bottom of Hell: same lava, same noise, same forever. He is already sick of it.",
+                "duration": 3.6,
+                "style": "Subtitle",
+                "color": "#C9B8A6"
+              }
+            ]
           }
         ]
       }
