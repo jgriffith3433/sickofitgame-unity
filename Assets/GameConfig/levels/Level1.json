@@ -129,6 +129,17 @@
     "tracks": []
   },
   "script": {
+    "shotRim": "#2A0A18E6",
+    "ambience": {
+      "depth": [
+        { "name": "far hills", "shape": "Rock", "color": "#1B2A1E55", "size": [7.0, 2.2], "sizeVariation": 0.3, "parallax": [0.9, 0.9], "spacing": [5.0, 0.0], "chance": 0.9, "baseY": -2.4, "sortingOrder": -60 },
+        { "name": "near stones", "shape": "Rock", "color": "#14201855", "size": [2.6, 1.1], "sizeVariation": 0.4, "parallax": [0.6, 0.6], "spacing": [4.0, 0.0], "chance": 0.6, "baseY": -2.5, "sortingOrder": -55 }
+      ],
+      "weather": [
+        { "name": "meadow motes", "kind": "Ash", "count": 24, "color": "#E8E0B07A", "size": [0.04, 0.09], "speed": [0.15, 0.4], "wind": -0.2, "sway": 0.4, "parallax": 0.6 },
+        { "name": "embers from the opened sky", "kind": "Sparks", "count": 18, "color": "#FFB347E6", "size": [0.05, 0.1], "speed": [0.8, 1.6], "wind": -0.1, "sway": 0.25, "parallax": 0.35 }
+      ]
+    },
     "length": 62,
     "markers": [
       {
