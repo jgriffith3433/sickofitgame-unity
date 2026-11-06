@@ -5207,6 +5207,9 @@ namespace SickOfIt.Playtest
             // ─── level-1: the Meadow's ending, the portal scene ─────
 
             /// <summary>What the level-1 scenario has seen of the portal scene so far.</summary>
+            /// <summary>The distinct sheet frames seen for one clip.</summary>
+            sealed class FrameSet : HashSet<string> { }
+
             sealed class PortalWatch
             {
                 public readonly Queue<string> Signals = new Queue<string>();
@@ -5237,12 +5240,12 @@ namespace SickOfIt.Playtest
                 // The hero's scene clips (Curious, Shout, Grabbed): the one the scene just asked for, the distinct
                 // sheet frames seen on screen for each, and frames where something else was showing.
                 public string Anim;
-                public readonly Dictionary<string, HashSet<string>> AnimFrames = new Dictionary<string, HashSet<string>>();
+                public readonly Dictionary<string, FrameSet> AnimFrames = new Dictionary<string, FrameSet>();
                 public readonly Dictionary<string, int> AnimMisses = new Dictionary<string, int>();
                 public string AnimOther;
                 // The portal's and the beam's art (Assets/Art/Effects): the distinct sheet frames seen on screen per
                 // "<entity>.<state>", how often the portal's Loop wrapped round, and entities drawn without art.
-                public readonly Dictionary<string, HashSet<string>> FxFrames = new Dictionary<string, HashSet<string>>();
+                public readonly Dictionary<string, FrameSet> FxFrames = new Dictionary<string, FrameSet>();
                 public int LoopWraps;
                 public int LastLoopFrame = -1;
                 public readonly HashSet<string> FxNoArt = new HashSet<string>();
@@ -5340,7 +5343,7 @@ namespace SickOfIt.Playtest
                 string key = e.DefId + "." + e.Animation.CurrentState;
                 if (!portal.FxFrames.TryGetValue(key, out var seen))
                 {
-                    portal.FxFrames[key] = seen = new HashSet<string>();
+                    portal.FxFrames[key] = seen = new FrameSet();
                     Run.Event("fx", $"{key} starts (sprite {sprite.name})");
                 }
                 seen.Add(sprite.name);
@@ -5508,7 +5511,7 @@ namespace SickOfIt.Playtest
                 if (portal.Anim != null && controller != null)
                 {
                     if (!portal.AnimFrames.TryGetValue(portal.Anim, out var seen))
-                        portal.AnimFrames[portal.Anim] = seen = new HashSet<string>();
+                        portal.AnimFrames[portal.Anim] = seen = new FrameSet();
                     if (controller.ShowsState(portal.Anim, out string sprite))
                     {
                         seen.Add(sprite);
