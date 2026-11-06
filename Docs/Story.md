@@ -2393,6 +2393,7 @@ idea: *Hell is repetition, and he has had enough of repetition.* (No office or w
 
 - **The opening** is Video1 (*Intro*), played on a fresh save after New Game, **skippable with Escape or a tap**. It is the only
   opening; it says why he is sick of it by showing the afternoon he already was, then the Overlord.
+  "First launch" means a new player's first play: a fresh save offers only New Game, which starts Video1 (the main menu never skips it); Continue/New Run come only after a run exists. The owner may later ask to start Video1 on the very first boot instead.
 - **A beat** is one line of narration at the start of a level, a `Subtitle` in warm grey (`#C9B8A6`, so it never reads as the
   hero's voice or the announcer's gold title), unvoiced, 3.6 s, after the title and the hero's line. **One beat per level,
   and no beat is ever used twice.** A floor that has no beat yet has none (never a copy).
