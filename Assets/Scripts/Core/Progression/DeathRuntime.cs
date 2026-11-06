@@ -165,7 +165,55 @@ namespace SickOfIt.Core.Progression
                 var offerPortrait = MenuPlacement.At(0.5f, 1f, 0f, -230f, 520f, 110f);
                 returnButton = menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f - 170f - 240f, 96f), offer, offerStyle, OnReturn, null, offerPortrait);
             }
+            // Again!: the fast restart, always there (no diamonds): the next attempt starts at once.
+            string again = menu.Theme.texts != null && !string.IsNullOrEmpty(menu.Theme.texts.deathAgain) ? menu.Theme.texts.deathAgain : "Again!";
+            var againStyle = menu.Theme.button.Clone();
+            againStyle.size = new Vector2(440f, 92f);
+            var againPortrait = MenuPlacement.At(0.5f, 1f, 0f, -360f, 520f, 110f);
+            againButton = menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(-330f, 96f), again, againStyle, OnAgain, null, againPortrait);
             BuildWords(menu);
+        }
+
+        private SickOfIt.Core.UI.Menus.MenuButton againButton;
+        /// <summary>The Again! button is on screen.</summary>
+        public bool AgainOffered => againButton != null;
+        /// <summary>He pressed Again!: the next attempt is loading (real time of the press, for the playtest).</summary>
+        public float AgainPressedAt { get; private set; } = -1f;
+        /// <summary>The quip under the title, as shown.</summary>
+        public string QuipText => quipText != null ? quipText.text : "";
+        private TMPro.TextMeshProUGUI quipText;
+        private const string QuipLastKey = "Death_QuipLast";
+
+        /// <summary>A line from theme texts.deathQuips, never the same one twice running (presentation only, cosmetic random).</summary>
+        private static string PickQuip(SickOfIt.Data.Config.MenuTheme theme)
+        {
+            var quips = theme != null && theme.texts != null ? theme.texts.deathQuips : null;
+            if (quips == null || quips.Count == 0)
+                return null;
+            int last = PlayerPrefs.GetInt(QuipLastKey, -1);
+            int pick = quips.Count == 1 ? 0 : (last < 0 || last >= quips.Count ? Random.Range(0, quips.Count) : (last + 1 + Random.Range(0, quips.Count - 1)) % quips.Count);
+            PlayerPrefs.SetInt(QuipLastKey, pick);
+            PlayerPrefs.Save();
+            return quips[pick];
+        }
+
+        /// <summary>Again!: ends what must end (the run, when this death ended it), then loads the next attempt without the rest of the scene or the Shaft's drop.</summary>
+        private void OnAgain()
+        {
+            if (rageQuitting || ReturnPaid || AgainPressedAt >= 0f)
+                return;
+            AgainPressedAt = Time.unscaledTime;
+            CommitEnd();
+            deathCompleted = true;
+            StopAllCoroutines();
+            if (gameClock != null && gameClock.IsRewinding)
+                gameClock.StopRewind();
+            ReleaseAudio();
+            AnalyticsManager.CloseAsk();
+            AnalyticsManager.Track("choice", new Dictionary<string, object> { { "kind", "again" }, { "level", levelNumber }, { "deaths", DeathsOnLevel } });
+            int next = runEnded ? runStop.NextLevel : levelNumber;
+            Debug.Log($"[Death] Again!: level {next} now");
+            SceneTransitionManager.Instance.LoadLevel(next);
         }
 
         /// <summary>"YOU OBVIOUSLY DIED" at the top; the announcer's gloat is heard, not written (the screen was too busy, J 2026-10-26).</summary>
@@ -176,6 +224,14 @@ namespace SickOfIt.Core.Progression
             titleText = AddLine(menu, "Title", title, theme.title, 130f,
                 MenuPlacement.At(0.5f, 0.87f, 0f, 0f, 1500f, 170f), MenuPlacement.At(0.5f, 1f, 0f, -270f, 1000f, 150f), menu.TitleFont,
                 new SickOfIt.Data.Config.MenuMotion { type = SickOfIt.Data.Config.MenuMotionType.Jitter, amount = 5f, speed = 1f }, -3f);
+
+            string quip = PickQuip(theme);
+            if (!string.IsNullOrEmpty(quip))
+            {
+                quipText = AddLine(menu, "Quip", quip, theme.subtitle, 48f,
+                    MenuPlacement.At(0.5f, 0.74f, 0f, 0f, 1500f, 90f), MenuPlacement.At(0.5f, 1f, 0f, -400f, 1000f, 100f), null, null, 0f);
+                Debug.Log($"[Death] quip: \"{quip}\"");
+            }
 
             if (config != null && config.gloats != null && config.gloats.Count > 0)
             {

@@ -171,6 +171,10 @@ namespace SickOfIt.Gameplay
         GameObject resultsRoot;
         /// <summary>The end-of-level results screen is up (waiting for Continue).</summary>
         public bool ResultsOpen => resultsRoot != null;
+        /// <summary>The results rows as shown, "Time: 1:23 | Clean Kills: 4 | ...", for the playtest.</summary>
+        public string ResultsSummary { get; private set; } = "";
+        /// <summary>Clean kills on the results screen (kills with the hero unhurt).</summary>
+        public int ResultsCleanKills { get; private set; }
         int pointsAtStart = -1;
 
         static readonly MenuGrade[] DefaultGrades =
@@ -197,6 +201,8 @@ namespace SickOfIt.Gameplay
             int diamondsGained = pointsAtStart >= 0 ? Mathf.Max(0, points - pointsAtStart) : 0;
             // The floor's rank (S/A/B/C: par time, no hits, grazes, rewind use), saved per floor when it is the best.
             var rank = world.Style != null && world.Style.Active ? world.Style.Rank(summary) : (FloorRank?)null;
+            int cleanKills = Mathf.Clamp(Mathf.RoundToInt(world.GetCounter("cleanKills")), 0, summary.kills);
+            world.Telemetry?.Record("cleanKills", "level " + world.LevelNumber, cleanKills, $"kills {summary.kills} time {summary.duration:0.0}");
             int score = Mathf.Clamp(100 - summary.playerHits * 12 - summary.rewinds * 4, 0, 100);
             var grades = theme.grades != null && theme.grades.Count > 0 ? theme.grades : DefaultGrades.ToList();
             var grade = rank.HasValue
@@ -231,12 +237,15 @@ namespace SickOfIt.Gameplay
             {
                 (rank.HasValue ? string.Format(Texts.resultsTimePar, FormatTime(rank.Value.Par)) : Texts.resultsTime, FormatTime(summary.duration), Mathf.Max(0, Mathf.FloorToInt(summary.duration)), s => FormatTime(s)),
                 (Texts.resultsKills, summary.kills.ToString(), summary.kills, s => s.ToString()),
+                (Texts.resultsCleanKills, cleanKills.ToString(), cleanKills, s => s.ToString()),
                 (Texts.resultsHits, summary.playerHits.ToString(), summary.playerHits, s => s.ToString()),
             };
             if (rank.HasValue)
                 stats.Add((Texts.resultsGrazes, rank.Value.Grazes.ToString(), rank.Value.Grazes, s => s.ToString()));
             stats.Add((Texts.resultsRewinds, summary.rewinds.ToString(), summary.rewinds, s => s.ToString()));
             stats.Add((Texts.resultsDiamonds, "♦ " + diamondsGained, diamondsGained, s => "♦ " + s));
+            ResultsSummary = string.Join(" | ", stats.Select(r => r.label + ": " + r.value));
+            ResultsCleanKills = cleanKills;
             // Landscape: the stats on the left, the grade beside them. Portrait: stats on top, grade under them.
             var screens = Screens;
             for (int i = 0; i < stats.Count; i++)
