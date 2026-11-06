@@ -54,6 +54,9 @@ namespace SickOfIt.Gameplay
         public int RewardsShown { get; private set; }
         public string LastRewardShown { get; private set; } = "";
         string pendingRewardLabel;
+        /// <summary>True while the "Rewind N.Ns" readout shows with its dark pill behind it (the rewind-juice playtest reads it).</summary>
+        public bool RewindReadoutHasPill => rewindPill != null && rewindPill.gameObject.activeInHierarchy && rewindPill.color.a >= 0.5f
+            && rewindPill.rectTransform.rect.width > rewindLabel.preferredWidth;
         float juicePopAt = -99f;
 
         string shownBanner = "", shownSubtitle = "";
@@ -726,6 +729,7 @@ namespace SickOfIt.Gameplay
         Image rewindImage;
         RectTransform playhead;
         TextMeshProUGUI rewindLabel;
+        Image rewindPill;
 
         // ─── Floor readout (top-center): FLOOR 973 ───
 
@@ -859,8 +863,16 @@ namespace SickOfIt.Gameplay
             rewindSlot.pivot = new Vector2(1f, 0f);
             rewindSlot.sizeDelta = new Vector2(340f, 36f);
             rewindSlot.anchoredPosition = new Vector2(-6f, 10f);
+            // A dark pill behind the readout (right-aligned, resized to the words each frame) so it reads on bright sky.
+            rewindPill = MenuGraphics.NewImage(rewindSlot, "Pill", new Color(0.08f, 0.04f, 0.1f, 0.78f));
+            MenuGraphics.Apply(rewindPill, MenuShape.Pill, 0f);
+            rewindPill.rectTransform.anchorMin = rewindPill.rectTransform.anchorMax = new Vector2(1f, 0.5f);
+            rewindPill.rectTransform.pivot = new Vector2(1f, 0.5f);
+            rewindPill.rectTransform.anchoredPosition = new Vector2(10f, 0f);
             rewindLabel = MenuGraphics.Text(rewindSlot, "Text", "", theme.caption, menu.Font, 24f);
             rewindLabel.alignment = TextAlignmentOptions.MidlineRight;
+            rewindLabel.outlineWidth = 0.2f;
+            rewindLabel.outlineColor = new Color(0.12f, 0.07f, 0.13f, 1f);
             menu.AddMotion(progressRoot.gameObject, null, theme.entrance, 0f);
             Lay(progressRoot, l => l.progressBar, MenuElementKind.Panel);
         }
@@ -898,6 +910,8 @@ namespace SickOfIt.Gameplay
             if (!limited)
             {
                 MenuGraphics.SetText(rewindLabel, "");
+                if (rewindPill != null)
+                    rewindPill.gameObject.SetActive(false);
                 return;
             }
             // The tail is how far back the juice reaches. On a floor stage, time becomes distance at the average pace so far.
@@ -938,6 +952,12 @@ namespace SickOfIt.Gameplay
             MenuGraphics.SetText(rewindLabel, empty ? "Rewind empty" : $"Rewind {budget.Juice:0.0}s");
             rewindLabel.enableVertexGradient = false;
             rewindLabel.color = empty ? style.rewindEmpty : style.rewind;
+            if (rewindPill != null)
+            {
+                rewindPill.gameObject.SetActive(true);
+                rewindLabel.ForceMeshUpdate();
+                rewindPill.rectTransform.sizeDelta = new Vector2(rewindLabel.preferredWidth + 32f, 38f);
+            }
         }
 
         // ─── Upgrade picker (pauses the game until a card is picked) ───
