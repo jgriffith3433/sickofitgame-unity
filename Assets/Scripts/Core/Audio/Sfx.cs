@@ -145,6 +145,15 @@ namespace SickOfIt.Core.Audio
             return true;
         }
 
+        /// <summary>A sound's clip (null while it has none, or isn't loaded yet).</summary>
+        public static AudioClip ClipOf(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return null;
+            _ = Config;
+            return byId.TryGetValue(id, out var sound) ? sound.clip : null;
+        }
+
         /// <summary>Length in seconds of a sound's clip, or 0 if it has none (yet).</summary>
         public static float LengthOf(string id)
         {

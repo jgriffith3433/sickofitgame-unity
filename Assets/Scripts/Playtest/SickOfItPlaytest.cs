@@ -945,6 +945,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(DeathReturnId, "The death screen's Return offer (Docs/Story.md \"Waystones and runs\"): the Landing's Waystone reached (setup shortcut), level 3 loaded directly with 25 diamonds and a Grudge, " +
                 "the bot plays to lose; the screen offers \"Return for 10 diamonds\" and the button is clicked: level 3 again, 15 diamonds, a moment of safety, the run and Grudges kept. Then dying with 15 and skipping with Escape " +
                 "(the Shaft drops him, nothing spent, run ended, Grudges gone), then dying with 5 (no offer, the drop). check events death-return <beat>", DeathReturnSeconds, "level"));
+            list.Add(new PlaytestScenario(RewindFxId, $"Rewind that feels amazing (RewindFx, Docs/Story.md): level {RewindFxLevel} loaded directly (setup shortcut), played by the bot, then R held {RewindFxHold:0.0} s with the juice topped up (setup shortcut). While held: the screen effect (scanlines, colour split, tracking bar, streaks) is up, a reversed whirr loops with its pitch climbing, and the frame rate stays 30+ fps; on release the sound stops and the screen returns. check events rewind-fx <beat>; metrics rewindFx.*", RewindFxSeconds, "level"));
             list.Add(new PlaytestScenario(RewindJuiceId, "Longer, more rewarding rewind (Docs/GameplayCookbook.md \"The arcade loop\"): Level 1 loaded directly with the shop reset (a setup shortcut): " +
                 "the new game's juice must be 10 s (it was 3). Then Yooba's rewind goods are bought through the shop's own purchase (diamonds given first, a setup shortcut: Loop Jar x5, Bottomless Jar x2, Quick Unwind x3) " +
                 "and Level 1 loads again: the cap must reach 24 s and the rewind runs 75% faster. The bot plays through real input until a clean kill pays juice back: the juice goes up by the refund and the HUD floats " +
@@ -1343,6 +1344,8 @@ namespace SickOfIt.Playtest
                 yield return session.DeathReturnRun();
             else if (id == RewindJuiceId)
                 yield return session.RewindJuiceRun();
+            else if (id == RewindFxId)
+                yield return session.RewindFxRun();
             else if (id == SpawnEdgeId)
                 yield return session.SpawnEdgeRun();
             else if (id == IncomingId)

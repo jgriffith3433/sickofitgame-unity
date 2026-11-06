@@ -85,6 +85,7 @@ Assets/GameConfig/
 - **Rewind juice** (cookbook "The arcade loop"): 10 s at the start and as the base cap; Loop Jar x5 + Bottomless Jar x2 + Déjà Vu x3 reach 30 s (= the 30 s history, `SimHistory` holds 1024 snapshots = 51 s).
   Clean kills (`rewindBudget.cleanKillRefund`, hero unhurt `cleanKillSeconds`; `GameplayWorld.PayCleanKill`, `lastHeroHurtAt` saved) and living `survivalSeconds` after a death-rewind
   (`RewindBudget.ArmSurvival`) pay juice through `RewindBudget.Reward`; the HUD floats the label. Shop `RewindSpeed` (Quick Unwind). Playtest `rewind-juice`.
+- **Rewind look and sound** (Docs/Story.md "Rewind that feels amazing"): `Gameplay/Presentation/RewindFx.cs`, built by `GameplayHud.BuildRewind`: scanlines, colour split, tracking bar and streaks (UI Images, no per-frame allocation, strength fades with `GameClock.IsRewinding`) and a looping reversed `rewind_start` whose pitch ramps 0.8 to 1.9; `RewindFx.Active/SoundPlaying/Pitch` feed playtest `rewind-fx` (frame rate >= 30, sound stops at the end). Reduced Flash tones it down.
 - **Arcade loop**: rewind is limited by juice (`game.json` `rewindBudget`, `RewindBudget`), refilled by `rewindOrb` drops;
   the HUD progress bar shows level progress and juice; levels end with `offerUpgrades` (see the cookbook). Rewards are
   paid once per play via `GameplayWorld.TryGrantOnce`, never re-paid by a rewind.
