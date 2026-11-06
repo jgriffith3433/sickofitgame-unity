@@ -2405,7 +2405,7 @@ idea: *Hell is repetition, and he has had enough of repetition.* (No office or w
 | Floor 998 | They took the village. Now they take the gun. He has hands, and he is sick of being polite. |
 | Floor 997 | Imps haul his village's diamonds up a chain, sack after sack, the same sack. He has seen enough loops. |
 
-Playtest `opening-beats` plays them. Next floors get theirs the same way (an `onEnter` `runSequence` of `wait` + `showText`).
+Playtest `opening-beats` plays them (it is the scenario beta's review runs: Video1 played then skipped, a `beat` event and a `check beats level N` per level, `beats none repeated` last; keep its `BeatLines` in step with this table). Next floors get theirs the same way (an `onEnter` `runSequence` of `wait` + `showText`).
 
 ## Rules for levels
 
