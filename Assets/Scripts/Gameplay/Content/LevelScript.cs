@@ -25,6 +25,10 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Replay modes (Docs/Story.md, \"Again\"): Endless Floor keeps the best floor climbed, the Daily Challenge takes its seed and twist from the date and keeps " +
              "a local score table. Neither ends a run (no Waystone, no Shaft).")] public ReplayKind replay = ReplayKind.None;
         public WorldDef world = new WorldDef();
+        [Doc("Air for a level that is not on a Circle's floors (a meadow, a scene stage): depth layers, weather and distant life, as a Circle's 'ambience'. " +
+             "Ignored when the level's Circle has its own. Empty = none.")] public AmbienceDef ambience = new AmbienceDef();
+        [Doc("Colour of the rim drawn round every hostile shot so it reads against this level's background (alpha 0 = the Circle's, else a pale " +
+             "hot rim). Pick a pale rim for dark backgrounds, an ink rim for bright ones.")] public Color shotRim;
         public FloorsDef floors = new FloorsDef();
         public ObjectiveDef objective = new ObjectiveDef();
         [Doc("Expected length in seconds, for the progress bar (0 = the level's duration).")] public float length;

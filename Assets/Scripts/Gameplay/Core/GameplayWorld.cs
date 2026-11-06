@@ -225,7 +225,13 @@ namespace SickOfIt.Gameplay
             if (setup.Script != null)
                 Effects.BuildTrack(setup.Script, Stage.Circle);
             if (setup.Script != null && string.IsNullOrEmpty(SceneId))
+            {
                 Ambience = CircleAmbience.Create(this, Stage.Circle);
+                if (Ambience == null && setup.Script.ambience != null && !setup.Script.ambience.IsEmpty)
+                    Ambience = CircleAmbience.Create(this, new CircleDef { ambience = setup.Script.ambience });
+            }
+            ShotRim = setup.Script != null && setup.Script.shotRim.a > 0.01f ? setup.Script.shotRim
+                : Stage.Circle != null && Stage.Circle.shotRim.a > 0.01f ? Stage.Circle.shotRim : new Color(1f, 0.93f, 0.7f, 0.9f);
 
             LevelLength = setup.Script != null && setup.Script.length > 0f ? setup.Script.length : Mathf.Max(1f, setup.LevelDuration);
             if (setup.RewindBudget != null && setup.RewindBudget.enabled)
@@ -927,6 +933,8 @@ namespace SickOfIt.Gameplay
 
         /// <summary>The Circle's weather, depth layers and distant life (null without a Circle or without any).</summary>
         public CircleAmbience Ambience { get; private set; }
+        /// <summary>The rim drawn round hostile shots (level's, else the Circle's, else pale hot); presentation only.</summary>
+        public Color ShotRim { get; private set; } = new Color(1f, 0.93f, 0.7f, 0.9f);
 
         public Vector2 CameraCenter => Camera != null ? (Vector2)Effects.CameraBase : Vector2.zero;
 

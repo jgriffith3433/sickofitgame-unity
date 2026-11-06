@@ -1903,6 +1903,16 @@ touches the simulation or the rewind, and all of it is tuned in `game.json` `fee
   (`Glow`), not 2D lights: the game runs the built-in renderer, and on WebGL a few dozen batched quads cost far less than a lighting
   pass. At most 48 on screen at once.
 
+## Readability is fairness (art direction and bullets)
+
+In a dodger every death must be the player's. So a hostile shot is never lost in the picture: each wears two thin rims, a pale one
+beside it (the level's or Circle's `shotRim`; the Ember Wastes' is a hot cream) and an ink one outside it, so it reads on a bright
+meadow and on black slag alike. Settings > Accessibility still adds the heavier outlines and the one-colour high-contrast shots on top.
+Every level has at least two layers of depth: the Circle's `ambience` (silhouettes and weather at their own parallax) or, on a level
+without a Circle like the Meadow, the script's own `ambience`. Palette rule: backdrops stay dark and low in saturation, hazards and shots
+are the only hot orange/yellow on screen. Playtest `readability` (levels 1-5). Still to do: per-bullet-family silhouettes (a ring, a
+shard, a spiral) and a second pass on the Cracked Road and Rune Bridges once their art is regenerated (GPU).
+
 ## Hell's air (weather and the life far away)
 
 Hell is repetition, so even its air repeats: every Circle has its own weather and its own things going about their business a long way off, and

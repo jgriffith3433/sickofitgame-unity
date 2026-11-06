@@ -51,6 +51,9 @@ namespace SickOfIt.Gameplay.Content
         [Doc("The Circle's air: depth layers at their own parallax, weather (ash, sparks, cinders, runes, grit) and distant life (demons, flyers, far-off chases). " +
              "Drawn on every floor stage in the Circle. Empty = clean air.")]
         public AmbienceDef ambience = new AmbienceDef();
+        [Doc("Colour of the rim drawn round every hostile shot so it reads against this Circle's backgrounds (alpha 0 = a pale hot rim). Pale for dark " +
+             "Circles, ink for bright ones. Docs/Story.md, \"Readability is fairness\".")]
+        public Color shotRim;
         [Doc("Pieces of floor the generator fills a path's 'generate' sections with (a climb of sinking stones, a raft ride, a chase).")]
         public List<PathChunkDef> chunks = new List<PathChunkDef>();
 

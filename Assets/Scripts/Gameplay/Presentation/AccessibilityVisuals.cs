@@ -17,11 +17,16 @@ namespace SickOfIt.Gameplay
         static readonly Color LightRim = new Color(1f, 0.97f, 0.85f, 1f);
 
         Entity entity;
-        SpriteRenderer body, rim;
-        Transform rimTransform;
+        SpriteRenderer body, rim, outer;
+        Transform rimTransform, outerTransform;
 
         /// <summary>The rim is on screen (the playtest reads this).</summary>
         public bool RimShown => rim != null && rim.enabled;
+        /// <summary>The baseline's two rims: the pale/level colour next to the shot and an ink one outside it (reads on bright and on dark).</summary>
+        public bool OuterShown => outer != null && outer.enabled;
+        public Color RimColor => rim != null ? rim.color : default;
+        public Color OuterColor => outer != null ? outer.color : default;
+        public SpriteRenderer Body => body;
         /// <summary>The bullet is drawn in the high-contrast colour.</summary>
         public bool HighContrast { get; private set; }
 
@@ -37,12 +42,10 @@ namespace SickOfIt.Gameplay
         {
             bool outlines = GameSettings.BulletOutlines, contrast = GameSettings.HighContrastBullets;
             HighContrast = contrast;
-            if (!outlines && !contrast)
-            {
-                if (rim != null && rim.enabled)
-                    rim.enabled = false;
+            // The baseline (fairness): every hostile shot wears a thin rim in its level's colour, so it reads against any background.
+            bool baseline = !outlines && !contrast;
+            if (baseline && (entity == null || entity.World == null))
                 return;
-            }
             if (body == null)
             {
                 body = entity != null && entity.Sprite != null && entity.Sprite.sprite != null ? entity.Sprite : FindChildBody();
@@ -64,17 +67,39 @@ namespace SickOfIt.Gameplay
             rim.flipY = body.flipY;
             rim.sortingLayerID = body.sortingLayerID;
             rim.sortingOrder = body.sortingOrder - 1;
-            rim.color = contrast || !outlines ? InkRim : LightRim;
+            rim.color = baseline ? entity.World.ShotRim : contrast || !outlines ? InkRim : LightRim;
             rimTransform.localPosition = body.transform == transform ? Vector3.zero : body.transform.localPosition;
             rimTransform.localRotation = body.transform == transform ? Quaternion.identity : body.transform.localRotation;
-            rimTransform.localScale = (body.transform == transform ? Vector3.one : body.transform.localScale) * 1.4f;
+            rimTransform.localScale = (body.transform == transform ? Vector3.one : body.transform.localScale) * (baseline ? 1.25f : 1.4f);
+            if (baseline)
+            {
+                if (outer == null)
+                {
+                    var og = new GameObject("RimOuter");
+                    outerTransform = og.transform;
+                    outerTransform.SetParent(transform, false);
+                    outer = og.AddComponent<SpriteRenderer>();
+                }
+                outer.enabled = true;
+                outer.sprite = body.sprite;
+                outer.flipX = body.flipX;
+                outer.flipY = body.flipY;
+                outer.sortingLayerID = body.sortingLayerID;
+                outer.sortingOrder = body.sortingOrder - 2;
+                outer.color = new Color(InkRim.r, InkRim.g, InkRim.b, 0.85f);
+                outerTransform.localPosition = rimTransform.localPosition;
+                outerTransform.localRotation = rimTransform.localRotation;
+                outerTransform.localScale = (body.transform == transform ? Vector3.one : body.transform.localScale) * 1.55f;
+            }
+            else if (outer != null && outer.enabled)
+                outer.enabled = false;
         }
 
         SpriteRenderer FindChildBody()
         {
             foreach (var r in GetComponentsInChildren<SpriteRenderer>(true))
             {
-                if (r != rim && r.sprite != null)
+                if (r != rim && r != outer && r.sprite != null)
                     return r;
             }
             return null;
