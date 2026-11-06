@@ -3,6 +3,7 @@ using Hawkes.Playtest;
 using UnityEngine;
 using SickOfIt.Core;
 using SickOfIt.Core.Rewind;
+using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 using SickOfIt.Gameplay;
@@ -116,6 +117,8 @@ namespace SickOfIt.Playtest
                 var hud = GameplayWorld.Instance != null ? GameplayWorld.Instance.Hud : null;
                 RewindJuiceCheck("a clean kill refunds juice", refundSeen, $"{rewards} reward(s) paid; juice {lastJuice:0.0} -> {budget.Juice:0.0} s");
                 RewindJuiceCheck("the HUD shows it", hud != null && hud.RewardsShown > 0, hud != null ? $"floated \"{hud.LastRewardShown}\" ({hud.RewardsShown} time(s))" : "no HUD");
+                RewindJuiceCheck("the CLEAN KILL popup sits on a dark pill", HudFloaters.LastHadPill, $"popup \"{HudFloaters.Last}\" drawn over a pill (alpha {HudFloaters.LastPillAlpha:0.00} at spawn target)");
+                RewindJuiceCheck("the REWIND readout sits on a dark pill", hud != null && hud.RewindReadoutHasPill, "the readout's pill is wider than its words and opaque enough to read on bright sky");
 
                 Run.Metric("rewindJuice.passed", rewindJuicePassed);
                 Run.Metric("rewindJuice.failed", rewindJuiceFailed);

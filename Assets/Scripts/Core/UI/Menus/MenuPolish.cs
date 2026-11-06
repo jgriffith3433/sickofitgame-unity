@@ -416,9 +416,15 @@ namespace SickOfIt.Core.UI.Menus
         /// <summary>How many floaters were spawned (the playtest reads it) and the last one's text.</summary>
         public static int Spawned { get; private set; }
         public static string Last { get; private set; } = "";
+        /// <summary>Whether the last floater was spawned with a pill behind it, and the alpha that pill fades to at full strength.</summary>
+        public static bool LastHadPill { get; private set; }
+        public static float LastPillAlpha => PillAlpha;
+        const float PillAlpha = 0.78f;
 
         sealed class Floater
         {
+            public RectTransform Root;
+            public Image Pill;
             public TextMeshProUGUI Text;
             public Vector3 Start;
             public float At;
@@ -446,16 +452,21 @@ namespace SickOfIt.Core.UI.Menus
             if (alive.Count >= MaxAlive)
                 Recycle(alive[0]);
             var f = spare.Count > 0 ? spare.Pop() : Make();
-            f.Text.gameObject.SetActive(true);
+            f.Root.gameObject.SetActive(true);
             f.Text.text = value;
             f.Text.fontSize = size;
+            // A dark pill under the words so they read on bright sky as well as on dark rock.
+            f.Text.ForceMeshUpdate();
+            float padX = size * 0.45f, padY = size * 0.18f;
+            f.Pill.rectTransform.sizeDelta = new Vector2(f.Text.preferredWidth + padX * 2f, size * 1.1f + padY * 2f);
             f.Color = color;
             f.Start = from.TransformPoint(from.rect.center);
             f.At = Time.unscaledTime;
-            f.Text.rectTransform.position = f.Start;
+            f.Root.position = f.Start;
             alive.Add(f);
             Spawned++;
             Last = value;
+            LastHadPill = f.Pill != null && f.Pill.rectTransform.sizeDelta.x > f.Text.preferredWidth;
         }
 
         Floater Make()
@@ -463,7 +474,16 @@ namespace SickOfIt.Core.UI.Menus
             var go = new GameObject("Floater", typeof(RectTransform));
             go.transform.SetParent(parent, false);
             go.AddComponent<LayoutElement>().ignoreLayout = true;
-            var text = go.AddComponent<TextMeshProUGUI>();
+            var root = (RectTransform)go.transform;
+            root.sizeDelta = new Vector2(300f, 70f);
+            var pill = new GameObject("Pill", typeof(RectTransform)).AddComponent<Image>();
+            pill.transform.SetParent(root, false);
+            pill.raycastTarget = false;
+            MenuGraphics.Apply(pill, MenuShape.Pill, 0f);
+            pill.color = new Color(0.08f, 0.04f, 0.1f, 0f);
+            var textGo = new GameObject("Text", typeof(RectTransform));
+            textGo.transform.SetParent(root, false);
+            var text = textGo.AddComponent<TextMeshProUGUI>();
             if (font != null)
                 text.font = font;
             text.alignment = TextAlignmentOptions.Midline;
@@ -473,14 +493,17 @@ namespace SickOfIt.Core.UI.Menus
             text.outlineWidth = 0.25f;
             text.outlineColor = new Color(0.12f, 0.07f, 0.13f, 1f);
             text.raycastTarget = false;
-            text.rectTransform.sizeDelta = new Vector2(300f, 70f);
-            return new Floater { Text = text };
+            var tr = text.rectTransform;
+            tr.anchorMin = Vector2.zero;
+            tr.anchorMax = Vector2.one;
+            tr.offsetMin = tr.offsetMax = Vector2.zero;
+            return new Floater { Root = root, Pill = pill, Text = text };
         }
 
         void Recycle(Floater f)
         {
             alive.Remove(f);
-            f.Text.gameObject.SetActive(false);
+            f.Root.gameObject.SetActive(false);
             spare.Push(f);
         }
 
@@ -497,12 +520,13 @@ namespace SickOfIt.Core.UI.Menus
                 }
                 float rise = 1f - (1f - t) * (1f - t);
                 float pop = t < 0.2f ? Mathf.Lerp(0.6f, 1.15f, t / 0.2f) : Mathf.Lerp(1.15f, 1f, (t - 0.2f) / 0.8f);
-                var rect = f.Text.rectTransform;
+                var rect = f.Root;
                 rect.position = f.Start + new Vector3(0f, rise * 70f * rect.lossyScale.y * 1f, 0f);
                 rect.localScale = new Vector3(pop, pop, 1f);
                 var c = f.Color;
                 c.a = t < 0.6f ? 1f : 1f - (t - 0.6f) / 0.4f;
                 f.Text.color = c;
+                f.Pill.color = new Color(0.08f, 0.04f, 0.1f, PillAlpha * c.a);
             }
         }
     }
