@@ -9320,6 +9320,20 @@ namespace SickOfIt.Playtest
                     Run.Problem(PlaytestSeverity.Polish, $"layout ({screen}, {Screen.width}x{Screen.height}): {warning}");
                 layoutProblems += result.Problems.Count;
                 Run.Metric("layout." + screen.Replace(" ", "") + ".problems", result.Problems.Count);
+                if (screen == "Level 1 HUD" && Camera.main != null
+                    && Camera.main.TryGetComponent(out SickOfIt.Core.Device.AspectRatioController aspect))
+                {
+                    var vp = aspect.LastViewport;
+                    bool portraitScreen = Screen.height > Screen.width;
+                    float top = vp.yMax * Screen.height;
+                    bool ok = vp.width > 0.999f && (portraitScreen
+                        ? vp.yMax >= Screen.safeArea.yMax / Screen.height - 0.001f && vp.height < 0.9f
+                        : vp.height > 0.999f);
+                    Run.Event("layout", $"{screen}: playfield viewport x{vp.x:0.##} y{vp.y:0.##} w{vp.width:0.##} h{vp.height:0.##} " +
+                                        $"({(portraitScreen ? "portrait: full width, top of the screen" : "landscape: fills the screen")})");
+                    if (ok) Run.Event("check", $"playfield viewport {Screen.width}x{Screen.height}: ok (full width, no bars above; portrait anchored to the top)");
+                    else Run.Problem(PlaytestSeverity.Bug, $"playfield viewport {Screen.width}x{Screen.height}: {vp} (top {top:0}px) does not match the layout rule");
+                }
                 Run.Event("layout", $"{screen}: {buttons} buttons and {result.Boxes.Count - buttons} panels/texts checked, " +
                                     (result.Problems.Count == 0 ? "no overlaps, all on screen and thumb-sized" : $"{result.Problems.Count} problem(s)"));
                 if (progress)

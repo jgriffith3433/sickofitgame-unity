@@ -50,6 +50,7 @@ namespace SickOfIt.Core.Device
             // Camera.rect only clears its own rectangle. The skip/rewind UI sits in
             // the rest of the screen, so that area has to be wiped every frame too.
             EnsureClearCamera();
+            EnsureResizeWatcher();
             UpdateCameraRect();
         }
 
@@ -75,12 +76,39 @@ namespace SickOfIt.Core.Device
             clearCamera.depth = cam.depth - 1f;
         }
 
-        private void Update()
+        /// <summary>Share of the screen height the playfield takes on a portrait phone; the rest is for the thumbs.</summary>
+        public const float PortraitPlayfieldFraction = 0.6f;
+
+        /// <summary>Set after every layout: the share of the screen the playfield covers (tests and the playtest read it).</summary>
+        public Rect LastViewport => cam != null ? cam.rect : new Rect(0f, 0f, 1f, 1f);
+
+        // No per-frame poll: a hidden overlay canvas resizes with the window, and its child tells us (a resize,
+        // a rotation, a browser bar sliding away) through OnRectTransformDimensionsChange.
+        private void EnsureResizeWatcher()
         {
-            // Check if screen size changed (e.g., orientation change on mobile)
-            if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight)
+            if (transform.Find("ScreenSizeWatcher") != null) return;
+            var go = new GameObject("ScreenSizeWatcher", typeof(Canvas));
+            go.transform.SetParent(transform, false);
+            var canvas = go.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = -32000;
+            var child = new GameObject("Watch", typeof(RectTransform), typeof(ScreenSizeWatcher));
+            child.transform.SetParent(go.transform, false);
+            var rt = (RectTransform)child.transform;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = rt.offsetMax = Vector2.zero;
+            child.GetComponent<ScreenSizeWatcher>().owner = this;
+        }
+
+        private sealed class ScreenSizeWatcher : MonoBehaviour
+        {
+            public AspectRatioController owner;
+            private void OnRectTransformDimensionsChange()
             {
-                UpdateCameraRect();
+                if (owner != null && owner.isActiveAndEnabled
+                    && (Screen.width != owner.lastScreenWidth || Screen.height != owner.lastScreenHeight))
+                    owner.UpdateCameraRect();
             }
         }
 
@@ -110,10 +138,25 @@ namespace SickOfIt.Core.Device
 
             if (fillPortrait && cam.orthographic && landscapeOrthoSize > 0f)
             {
-                cam.rect = new Rect(0f, 0f, 1f, 1f);
-                cam.orthographicSize = screenAspect < targetAspect
-                    ? landscapeOrthoSize * targetAspect / screenAspect
-                    : landscapeOrthoSize;
+                if (screenAspect < targetAspect)
+                {
+                    // Portrait: the playfield keeps its world width, spans the full screen width and sits at the top
+                    // (below the notch); the lower part of the screen is left to the touch controls.
+                    Rect safe = Screen.safeArea;
+                    float top = Mathf.Clamp01(safe.yMax / Screen.height);
+                    float height = Mathf.Min(PortraitPlayfieldFraction, top);
+                    // Never shorter than the 16:9 strip it replaces.
+                    height = Mathf.Max(height, Mathf.Min(top, screenAspect / targetAspect));
+                    cam.rect = new Rect(0f, top - height, 1f, height);
+                    float viewportAspect = screenAspect / height;
+                    cam.orthographicSize = landscapeOrthoSize * targetAspect / viewportAspect;
+                }
+                else
+                {
+                    // Landscape and wider: fills the screen, no bars.
+                    cam.rect = new Rect(0f, 0f, 1f, 1f);
+                    cam.orthographicSize = landscapeOrthoSize;
+                }
             }
             else if (fitMode == FitMode.FitInside)
             {
