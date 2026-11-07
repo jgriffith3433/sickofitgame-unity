@@ -127,6 +127,14 @@ namespace SickOfIt.Gameplay
             return id;
         }
 
+        /// <summary>The finger <paramref name="id"/> slides to a screen point.</summary>
+        public void TouchMove(int id, Vector2 screenPosition)
+        {
+            if (touchscreen == null || !touchscreen.added || id == 0)
+                return;
+            InputSystem.QueueStateEvent(touchscreen, new TouchState { touchId = id, phase = UnityEngine.InputSystem.TouchPhase.Moved, position = screenPosition, pressure = 1f });
+        }
+
         /// <summary>The finger <paramref name="id"/> lifts.</summary>
         public void TouchUp(int id, Vector2 screenPosition)
         {

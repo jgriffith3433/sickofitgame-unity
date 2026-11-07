@@ -944,6 +944,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(TapJumpId, $"Touch jump on the finger going down: level {TapJumpLevel} loaded directly (setup shortcut), no bot. A virtual touchscreen taps the middle of the screen " +
                 $"{TapJumpTaps} times (30-120 ms down; every tenth tap is down and up inside one frame; every twentieth has the frame stall 150 ms with the finger down): each tap must make exactly one jump. " +
                 "Then a tap while R rewinds must not be latched and must not jump when the rewind ends. Check events, tapJump.* metrics", TapJumpSeconds, "level"));
+            list.Add(new PlaytestScenario(TouchControlsId, "Touch controls: a desktop run shows no touch UI; with the touch UI on (setup shortcut) level 2 shows a move stick outside the playfield, first-run hints, a 48+ px rewind button; a virtual finger drags the stick and the hero walks, a second finger holds rewind while the first still drags, a flick up jumps, and the hints go once used and are remembered. Check events touch-controls <beat>, touch.* metrics", TouchControlsSeconds, "level"));
             list.Add(new PlaytestScenario(DeathRestartId, "Flow between attempts: the Landing's Waystone reached (setup shortcut), level 3 loaded directly, the bot plays to lose four times. Each death screen shows a quip under the title (varied: never the same twice running, 2+ different over the four) and an Again! button; pressing it with the mouse starts the next attempt in under 1 s of real time. Then level 3 is cleared by the bot: the results screen lists Time (m:ss) and Clean Kills. check events death-restart <beat>; metrics deathRestart.*", DeathRestartSeconds, "level"));
             list.Add(new PlaytestScenario(DeathReturnId, "The death screen's Return offer (Docs/Story.md \"Waystones and runs\"): the Landing's Waystone reached (setup shortcut), level 3 loaded directly with 25 diamonds and a Grudge, " +
                 "the bot plays to lose; the screen offers \"Return for 10 diamonds\" and the button is clicked: level 3 again, 15 diamonds, a moment of safety, the run and Grudges kept. Then dying with 15 and skipping with Escape " +
@@ -1366,6 +1367,8 @@ namespace SickOfIt.Playtest
                 yield return session.IncomingRun();
             else if (id == TapJumpId)
                 yield return session.TapJumpRun();
+            else if (id == TouchControlsId)
+                yield return session.TouchControlsRun();
             else if (id == SideFloorsId || id == GauntletsId)
                 yield return session.SideFloorsRun(id == GauntletsId, at);
             else if (id == ReplayModesId)

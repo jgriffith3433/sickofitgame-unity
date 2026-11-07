@@ -64,7 +64,7 @@ namespace SickOfIt.Core.Input
         {
             Vector2 position = finger.currentTouch.screenPosition;
             // A tap on a HUD button (pause, rewind) presses the button, it doesn't jump.
-            if (IsPositionInExcludedRegion(position) || SickOfIt.Core.UI.Menus.MenuHit.OnButton(position))
+            if (IsPositionInExcludedRegion(position) || TouchStickZone.Contains(position) || SickOfIt.Core.UI.Menus.MenuHit.OnButton(position))
                 return;
             // The controller drops it during a rewind.
             gameInputManager.RequestJump();

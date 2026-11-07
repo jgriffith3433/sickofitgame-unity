@@ -1,1 +1,2 @@
-- lesson: Intro is sprite sheets, not VideoPlayer — Video1-3 play through SpriteFramePlayer + PlaybackStartGate; the "black 12 s" is the gate waiting (8 s + 10 s) for on-demand bundles, so fix it with deadlines in VideoRuntime.
+- lesson: Playtest adds a virtual Touchscreen on desktop — never use Touchscreen.current to decide "touch device"; use GameplayHud.TouchUiOn (isMobilePlatform or TouchUiForced).
+- convention: Touch fingers come from EnhancedTouch events; any new touch zone registers its screen rect (like TouchStickZone) so GlobalTapJump doesn't also jump.

@@ -119,6 +119,7 @@ namespace SickOfIt.Gameplay
             BuildWeapon();
             BuildDash();
             BuildTouchPad();
+            BuildTouchStick();
             BuildStyle();
             BuildIncoming();
 
@@ -709,6 +710,7 @@ namespace SickOfIt.Gameplay
             UpdateWeapon();
             UpdateDash();
             UpdateTouchPad();
+            UpdateTouchStick();
             UpdateStyle();
             UpdateIncoming();
             UpdateScreens();
@@ -1107,6 +1109,7 @@ namespace SickOfIt.Gameplay
 
         void OnDestroy()
         {
+            TeardownTouchStick();
             if (rewardBudget != null)
                 rewardBudget.Rewarded -= OnJuiceReward;
             // Never leave the game frozen behind us (picker, pause or results open when the level unloads).
