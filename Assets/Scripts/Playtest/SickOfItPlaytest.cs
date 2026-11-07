@@ -1189,6 +1189,8 @@ namespace SickOfIt.Playtest
                 "hero's one-line reply, then Continue starts Level 3. Then three Shaft previews over the menu (setup shortcuts) where he reacts to the floor: " +
                 "950, a death on the way, the Magma King's door. Then the shop with his portrait: welcome, a card clicked with 0 diamonds (can't afford), " +
                 "the same card with enough (buy), Back (goodbye). Each beat is a check event", YoobaSeconds, "menus"));
+            list.Add(new PlaytestScenario(IntroSkipId, "The intro film (Video1, loaded directly: setup shortcut): it plays or the game moves on within 2 s (no black wait), " +
+                "the on-screen buttons are 48+ px tall, and one click on empty screen skips it within 1 s. Each beat is a check event", IntroSkipSeconds, "menus"));
             list.Add(new PlaytestScenario(Video3Id, "Video3, \"Hell's Ad Break\" (Docs/LoreVideos.md), the film after Floor 1000: its config (after level 2, next level 3), the film loaded directly " +
                 "(setup shortcut: the Shaft's marker at Floor 999, Yooba's save reset, the video unlocked) must play with its clock running for 10 s, Escape must skip it into " +
                 "Yooba's hello on the Shaft, and the main menu's Videos card must list it and replay it to its end and back to the main menu. Each beat is a check event", Video3Seconds, "menus"));
@@ -1312,6 +1314,8 @@ namespace SickOfIt.Playtest
                 yield return session.YoobaRun();
             else if (id == "yooba-shop")
                 yield return session.YoobaShopRun();
+            else if (id == IntroSkipId)
+                yield return session.IntroSkipRun();
             else if (id == Video3Id)
                 yield return session.Video3Run();
             else if (id == BeatsId)

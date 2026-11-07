@@ -46,6 +46,11 @@ namespace SickOfIt.Core.Progression
         private float stalledSeconds;
         private const float StallSecondsBeforeAdvance = 6f;
         private const float AudioDriftSeconds = 0.3f;
+        // A picture that is not ready by then is a black screen: go on to the next scene instead.
+        private const float PictureReadySeconds = 1.75f;
+        private const float StartSeconds = 4f;
+        private const float InputGraceSeconds = 0.2f;
+        private float startedAt;
 
         private void Start()
         {
@@ -85,7 +90,13 @@ namespace SickOfIt.Core.Progression
             SetupPlayback();
             StartExperience();
             if (!leavingScene)
+            {
+                startedAt = Time.unscaledTime;
                 StartCoroutine(PlaybackStartGate.Hold(gameClock, playbackPlayers, playbackAudio, BeginVideoPlayback));
+                // One-shot timers (not polling): the sheets or the soundtrack never arrived -> no black wait.
+                Invoke(nameof(GiveUpIfPictureNotReady), PictureReadySeconds);
+                Invoke(nameof(GiveUpIfNotStarted), StartSeconds);
+            }
         }
 
         private void AutoDiscoverReferences()
@@ -294,9 +305,81 @@ namespace SickOfIt.Core.Progression
             SkipVideo();
         }
 
+        private void GiveUpIfPictureNotReady()
+        {
+            if (videoCompleted || playbackBegun) return;
+            if (spritePlayer != null && spritePlayer.IsReady) return;
+            Debug.LogWarning($"[VideoRuntime] Video {videoNumber}'s picture was not ready in {PictureReadySeconds}s; moving on.");
+            TrackVideo("skip");
+            OnVideoComplete();
+        }
+
+        private void GiveUpIfNotStarted()
+        {
+            if (videoCompleted || playbackBegun) return;
+            Debug.LogWarning($"[VideoRuntime] Video {videoNumber} did not start in {StartSeconds}s; moving on.");
+            TrackVideo("skip");
+            OnVideoComplete();
+        }
+
+        /// <summary>The first tap, click or key press anywhere skips. The rewind key and the rewind button keep their job.</summary>
+        private bool SkipPressed()
+        {
+            if (Time.unscaledTime - startedAt < InputGraceSeconds) return false;
+
+            var kb = Keyboard.current;
+            if (kb != null && kb.anyKey.wasPressedThisFrame && !kb.rKey.isPressed)
+                return true;
+
+            var pad = Gamepad.current;
+            if (pad != null && (pad.buttonSouth.wasPressedThisFrame || pad.startButton.wasPressedThisFrame))
+                return true;
+
+            Vector2 at = default;
+            bool pressed = false;
+            var touch = Touchscreen.current;
+            if (touch != null && touch.primaryTouch.press.wasPressedThisFrame)
+            {
+                pressed = true;
+                at = touch.primaryTouch.position.ReadValue();
+            }
+            else if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                pressed = true;
+                at = Mouse.current.position.ReadValue();
+            }
+            if (!pressed) return false;
+
+            // A press that lands on the rewind button starts a hold; its release still skips when it is the only button.
+            if (rewindButton != null && !rewindAlsoSkips)
+            {
+                var rect = (RectTransform)rewindButton.transform;
+                var canvas = rect.GetComponentInParent<Canvas>();
+                var cam = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+                if (RectTransformUtility.RectangleContainsScreenPoint(rect, at, cam)) return false;
+            }
+            return !rewindAlsoSkips || rewindButton == null || !OverRewind(at);
+        }
+
+        private bool OverRewind(Vector2 at)
+        {
+            var rect = (RectTransform)rewindButton.transform;
+            var canvas = rect.GetComponentInParent<Canvas>();
+            var cam = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+            return RectTransformUtility.RectangleContainsScreenPoint(rect, at, cam);
+        }
+
         private void Update()
         {
             if (videoCompleted) return;
+
+            if (SkipPressed())
+            {
+                if (gameClock != null && gameClock.IsRewinding)
+                    gameClock.StopRewind();
+                SkipVideo();
+                return;
+            }
 
             if (rewindButtonHeld && gameClock != null && !gameClock.IsRewinding &&
                 Time.unscaledTime - rewindPressedAt >= RewindHoldSeconds() && gameClock.Time > 0.05f)

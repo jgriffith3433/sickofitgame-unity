@@ -10,6 +10,7 @@ namespace SickOfIt.Core.Progression
     /// </summary>
     public sealed class TransportButtonLayout : MonoBehaviour
     {
+        const float MinButtonPixels = 56f;
         MobileControllerFramework.Button rewind;
         MobileControllerFramework.Button skip;
         Vector2Int screen;
@@ -47,8 +48,10 @@ namespace SickOfIt.Core.Progression
             var style = gd != null && gd.menuTheme != null ? gd.menuTheme.responsive : null;
             var canvas = rewindRect.GetComponentInParent<Canvas>();
             float pixelsPerUnit = canvas != null && canvas.rootCanvas.scaleFactor > 0f ? canvas.rootCanvas.scaleFactor : 1f;
-            float touch = SickOfIt.Core.UI.Menus.MenuScreen.TouchLayout(style)
-                ? SickOfIt.Core.UI.Menus.MenuScreen.MinTouchPixels(style) / pixelsPerUnit : 0f;
+            // Always at least MinButtonPixels on screen (the intro's skip button was ~40 px on a phone), more on a touch layout.
+            float touchPixels = SickOfIt.Core.UI.Menus.MenuScreen.TouchLayout(style)
+                ? SickOfIt.Core.UI.Menus.MenuScreen.MinTouchPixels(style) : 0f;
+            float touch = Mathf.Max(touchPixels, MinButtonPixels) / pixelsPerUnit;
             Size(rewindRect, rewindSize, touch);
             if (skipRect != null)
                 Size(skipRect, skipSize, touch);
