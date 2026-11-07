@@ -283,9 +283,8 @@ Assets/GameConfig/
 ## Analytics (Hawkes Analytics)
 
 Hawkes Gen's player analytics (`hawkesgen/docs/analytics.md`) is the only tracker; never add another (Umami is gone).
-- **The bridge** is Gen's `com.hawkes.analytics`, **embedded** in `Packages/com.hawkes.analytics` because Gen's copy
-  doesn't compile (raw U+2028/U+2029 in `HawkesAnalytics.cs` char literals; fixed here as `'\u2028'`/`'\u2029'`). When
-  Gen ships the fix, delete the folder and go back to `"com.hawkes.analytics": "file:C:/Projects/hawkesgen/clients/unity/com.hawkes.analytics"`.
+- **The bridge** is `com.hawkes.analytics` v1.3.5, from its public repo by git URL in `Packages/manifest.json`
+  (`https://github.com/jgriffith3433/hawkes-analytics.git?path=Packages/com.hawkes.analytics#v1.3.5`; move the tag to take a release).
   It loads the SDK into the page itself (product `sickofit`), so the website needs no change. Editor and non-WebGL send nothing.
 - **`AnalyticsManager`** (Core, static) is the only caller of the bridge: init, `window.HAWKES_BUILD` (version =
   `Application.version` + `+v<n>` from `Game/v<n>/`, commit and date from `Resources/HawkesBuildInfo.json`, which
