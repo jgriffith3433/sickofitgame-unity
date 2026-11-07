@@ -107,6 +107,8 @@ namespace SickOfIt.Core.Input
             // upright the rewind and pause buttons live in the bars).
             if (!IsInLetterboxArea(screenPos)) return;
             if (SickOfIt.Core.UI.Menus.MenuHit.OnButton(screenPos)) return;
+            // The HUD's own move stick takes fingers that start on it.
+            if (TouchStickZone.Contains(screenPos)) return;
 
             // Determine which analog to control based on horizontal screen position
             bool isLeftSide = screenPos.x < Screen.width * screenSplitRatio;

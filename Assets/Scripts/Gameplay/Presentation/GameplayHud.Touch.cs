@@ -121,10 +121,10 @@ namespace SickOfIt.Gameplay
                 touchRightRoot.gameObject.SetActive(show);
                 touchJumpRoot.gameObject.SetActive(show);
             }
-            if (controller != null)
+            if (controller != null && (show || !stickBuilt))
                 controller.TouchMove = show ? touchRightHeld - touchLeftHeld : 0f;
             bool playing = controller != null && !controller.Suspended && !controller.InputLocked && !Paused && !Blocked;
-            bool touchHintWanted = touchHintPad ? show : playing && !GameSettings.TouchButtons && Application.isMobilePlatform;
+            bool touchHintWanted = touchHintPad ? show : playing && !GameSettings.TouchButtons && Application.isMobilePlatform && !stickBuilt;
             bool hint = touchHintWanted && touchHintOn && Time.unscaledTime - touchBuiltAt < TouchHintSeconds;
             if (touchHint.transform.parent.gameObject.activeSelf != hint)
                 touchHint.transform.parent.gameObject.SetActive(hint);
