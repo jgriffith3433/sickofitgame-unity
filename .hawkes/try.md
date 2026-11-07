@@ -1,3 +1,3 @@
-1. Wait for beta's rebuild of this build to pass.
-2. Open the beta game, start a level and pick up a diamond.
-3. The "+N" floater should show as a small dark pill with readable text.
+1. Open beta.hawkesgames.com/play/sickofit on a phone held upright (or a narrow window).
+2. Start New Game, skip the video, play Level 1.
+3. The playfield should fill the screen height, with the HUD at its edges; the main menu is still a strip.

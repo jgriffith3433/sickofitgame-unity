@@ -1,1 +1,1 @@
-- lesson: Missing using for MenuShape — MenuShape is in SickOfIt.Data.Config, not Core.UI.Menus; new UI files need that using.
+- convention: Portrait camera — AspectRatioController letterboxes to 16:9 unless a level calls FillPortrait (before backgrounds are sized, which read orthographicSize once); videos/death rely on the letterbox.
