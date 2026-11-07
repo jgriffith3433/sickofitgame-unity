@@ -1,0 +1,1 @@
+- lesson: Missing using for MenuShape — MenuShape is in SickOfIt.Data.Config, not Core.UI.Menus; new UI files need that using.
