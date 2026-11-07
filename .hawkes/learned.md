@@ -1,1 +1,1 @@
-- lesson: Video transport buttons only grew on a touch layout — `TransportButtonLayout` now always enforces 48 px; the video's black picture is a separate, unreproduced issue (needs a WebGL playtest).
+- lesson: Intro is sprite sheets, not VideoPlayer — Video1-3 play through SpriteFramePlayer + PlaybackStartGate; the "black 12 s" is the gate waiting (8 s + 10 s) for on-demand bundles, so fix it with deadlines in VideoRuntime.
