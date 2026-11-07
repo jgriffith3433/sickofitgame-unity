@@ -22,6 +22,7 @@ namespace SickOfIt.Gameplay
         MenuButton touchLeft, touchRight, touchJump;
         RectTransform touchLeftRoot, touchRightRoot, touchJumpRoot;
         TextMeshProUGUI touchHint;
+        bool touchHintPad;
         float touchBuiltAt;
         bool touchHintOn;
         int touchLeftHeld, touchRightHeld;
@@ -82,16 +83,21 @@ namespace SickOfIt.Gameplay
             touchJump.Label.fontSize = 34f;
             touchJump.Pressed += OnTouchJump;
 
-            // The hint sits just above the jump button until a few seconds pass; it shows on the first levels only.
+            // The hint sits just above the jump button until a few seconds pass; it shows on the first levels only. With the
+            // pad off on a phone (the default: played by tap and drag) it says how to move instead, so the touch HUD's
+            // only controls (rewind, the weapon chip) are never the whole story.
+            touchHintPad = GameSettings.TouchButtons;
             var hintRect = MenuGraphics.NewRect("TouchHint", menu.Root);
             hintRect.gameObject.SetActive(false);
-            touchHint = MenuGraphics.Text(hintRect, "Text", "Hold ◄ ► to move · JUMP to jump · DASH to dash", theme.chipText, menu.Font, 34f);
+            touchHint = MenuGraphics.Text(hintRect, "Text",
+                touchHintPad ? "Hold ◄ ► to move · JUMP to jump · DASH to dash" : "Drag to move · Tap to jump · Hold ◄◄ to rewind",
+                theme.chipText, menu.Font, 34f);
             touchHint.raycastTarget = false;
             MenuResponsive.Track(hintRect, MenuPlacement.At(0f, 0f, 460f, 520f, 900f, 60f),
                 MenuPlacement.At(0f, 0f, 540f, 560f, 1000f, 60f), MenuElementKind.Text, menu.Responsive);
             touchBuiltAt = Time.unscaledTime;
             touchHintOn = seen < TouchHintLevels;
-            if (touchHintOn && GameSettings.TouchButtons)
+            if (touchHintOn && (touchHintPad || Application.isMobilePlatform))
                 PlayerPrefs.SetInt(TouchHintKey, seen + 1);
         }
 
@@ -117,7 +123,9 @@ namespace SickOfIt.Gameplay
             }
             if (controller != null)
                 controller.TouchMove = show ? touchRightHeld - touchLeftHeld : 0f;
-            bool hint = show && touchHintOn && Time.unscaledTime - touchBuiltAt < TouchHintSeconds;
+            bool playing = controller != null && !controller.Suspended && !controller.InputLocked && !Paused && !Blocked;
+            bool touchHintWanted = touchHintPad ? show : playing && !GameSettings.TouchButtons && Application.isMobilePlatform;
+            bool hint = touchHintWanted && touchHintOn && Time.unscaledTime - touchBuiltAt < TouchHintSeconds;
             if (touchHint.transform.parent.gameObject.activeSelf != hint)
                 touchHint.transform.parent.gameObject.SetActive(hint);
         }
