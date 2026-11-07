@@ -1,2 +1,1 @@
-- lesson: Playtest adds a virtual Touchscreen on desktop — never use Touchscreen.current to decide "touch device"; use GameplayHud.TouchUiOn (isMobilePlatform or TouchUiForced).
-- convention: Touch fingers come from EnhancedTouch events; any new touch zone registers its screen rect (like TouchStickZone) so GlobalTapJump doesn't also jump.
+- convention: Analytics package — com.hawkes.analytics comes from hawkes-analytics by git tag in Packages/manifest.json (v1.3.5), not vendored; GameDeploy/AnalyticsManager use its public API.
