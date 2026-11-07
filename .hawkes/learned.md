@@ -1,1 +1,1 @@
-- convention: Portrait camera — AspectRatioController letterboxes to 16:9 unless a level calls FillPortrait (before backgrounds are sized, which read orthographicSize once); videos/death rely on the letterbox.
+- lesson: Video transport buttons only grew on a touch layout — `TransportButtonLayout` now always enforces 48 px; the video's black picture is a separate, unreproduced issue (needs a WebGL playtest).

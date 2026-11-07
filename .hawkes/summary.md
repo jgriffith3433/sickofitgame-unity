@@ -1,3 +1,9 @@
-Cause: AspectRatioController letterboxed the camera to 16:9 on every screen, so a portrait phone showed a ~26%-tall strip.
-Change: AspectRatioController.FillPortrait(camera) (called by LevelRuntime.Start before the backgrounds are sized) makes the level camera fill the screen and raises its orthographic size so the 16:9 width is kept and more height shows. LevelRuntime.cs gets the one call. Landscape unchanged; videos and the death scene never call it (fixed-size baked sheets stay letterboxed).
-Checked: read only; Unity compile and playtest not run here. Known limits: the main menu is not changed (still a strip); rotating a phone mid-level rescales the camera but not backgrounds already built. Please play `smoke` on phone (390x844).
+# Intro video: tiny skip button, skip needed two taps
+
+Found: `TransportButtonLayout` only enlarged the skip/rewind buttons on a "touch layout", so the phone run kept a ~32 px skip icon.
+Changed:
+- `TransportButtonLayout.cs`: buttons are always at least 48 px on screen.
+- `VideoRuntime.cs`: a tap or click anywhere off the rewind button skips at once (after a 0.6 s grace so the tap that opened the video can't skip it).
+
+Not done: the black picture. The video is a baked sprite sequence (`SpriteFramePlayer`), and I can't render WebGL here to see why the playtest phone saw black. The stall watchdog already moves on if it never plays. J had answered "won't fix" on an earlier intro-video finding (f_f35ed5063d76); this one is a separate finding with no thread, so I limited the change to the skip controls.
+Checked: read the code only. Unity compile not run here. No conflicts.
