@@ -58,13 +58,6 @@ namespace SickOfIt.Gameplay
             stickMoveHintRoot != null && stickMoveHintRoot.gameObject.activeSelf
             || stickRewindHintRoot != null && stickRewindHintRoot.gameObject.activeSelf;
 
-        static Rect ScreenRect(RectTransform rect)
-        {
-            var corners = new Vector3[4];
-            rect.GetWorldCorners(corners); // an overlay canvas: world = screen pixels
-            return Rect.MinMaxRect(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
-        }
-
         /// <summary>Forgets the first-run hints (a playtest's fresh start).</summary>
         public static void ResetTouchHints()
         {
