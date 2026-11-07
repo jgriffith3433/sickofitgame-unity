@@ -1,3 +1,3 @@
-**Wrong:** `MenuPolish.cs` (Readable feedback text, #251) used `MenuShape.Pill` in `HudFloaters.Make`, but `MenuShape` lives in `SickOfIt.Data.Config` and the file had no `using` for it (CS0103).
-**Changed:** added `using SickOfIt.Data.Config;` to `Assets/Scripts/Core/UI/Menus/MenuPolish.cs`. Nothing else.
-**Checked:** `MenuShape` is defined once (`Data/Config/MenuStyleConfig.cs`); no type declared in MenuPolish.cs shares a name with one in `Data/Config`, so the using adds no ambiguity. Unity compile not run here; only the beta rebuild will prove it. No conflicts. No GPU work.
+Cause: AspectRatioController letterboxed the camera to 16:9 on every screen, so a portrait phone showed a ~26%-tall strip.
+Change: AspectRatioController.FillPortrait(camera) (called by LevelRuntime.Start before the backgrounds are sized) makes the level camera fill the screen and raises its orthographic size so the 16:9 width is kept and more height shows. LevelRuntime.cs gets the one call. Landscape unchanged; videos and the death scene never call it (fixed-size baked sheets stay letterboxed).
+Checked: read only; Unity compile and playtest not run here. Known limits: the main menu is not changed (still a strip); rotating a phone mid-level rescales the camera but not backgrounds already built. Please play `smoke` on phone (390x844).

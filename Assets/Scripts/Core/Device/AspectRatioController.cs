@@ -32,6 +32,8 @@ namespace SickOfIt.Core.Device
 
         private Camera cam;
         private Camera clearCamera;
+        private bool fillPortrait;
+        private float landscapeOrthoSize;
         private float lastScreenWidth;
         private float lastScreenHeight;
 
@@ -82,6 +84,19 @@ namespace SickOfIt.Core.Device
             }
         }
 
+        /// <summary>
+        /// Levels call this before they size their backgrounds: on a portrait screen the camera then fills it (no letterbox)
+        /// and shows more height at the same width, instead of a 16:9 strip in the middle. Videos and the death scene never call it.
+        /// </summary>
+        public static void FillPortrait(Camera camera)
+        {
+            if (camera == null || !camera.TryGetComponent(out AspectRatioController controller) || !controller.enabled)
+                return;
+            controller.fillPortrait = true;
+            controller.landscapeOrthoSize = camera.orthographic ? camera.orthographicSize : 0f;
+            controller.UpdateCameraRect();
+        }
+
         private void UpdateCameraRect()
         {
             lastScreenWidth = Screen.width;
@@ -93,7 +108,14 @@ namespace SickOfIt.Core.Device
             // Calculate current screen aspect ratio
             float screenAspect = (float)Screen.width / Screen.height;
 
-            if (fitMode == FitMode.FitInside)
+            if (fillPortrait && cam.orthographic && landscapeOrthoSize > 0f)
+            {
+                cam.rect = new Rect(0f, 0f, 1f, 1f);
+                cam.orthographicSize = screenAspect < targetAspect
+                    ? landscapeOrthoSize * targetAspect / screenAspect
+                    : landscapeOrthoSize;
+            }
+            else if (fitMode == FitMode.FitInside)
             {
                 FitInsideScreen(targetAspect, screenAspect);
             }

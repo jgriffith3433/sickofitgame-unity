@@ -175,6 +175,7 @@ namespace SickOfIt.Core.Progression
             SetupContainers();
             SetupGameClock();
             SetupAudio();
+            SickOfIt.Core.Device.AspectRatioController.FillPortrait(SceneCamera());
             SetupBackgrounds();
             SpawnPlacedSprites();
             StartExperience();
