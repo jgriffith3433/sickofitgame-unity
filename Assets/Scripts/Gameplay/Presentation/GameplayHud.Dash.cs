@@ -16,7 +16,7 @@ namespace SickOfIt.Gameplay
         RectTransform dashRoot;
         string shownDash = "";
 
-        static string DashKeyText => Application.isMobilePlatform ? "Tap: dash" : "Shift: dash";
+        static string DashKeyText => SickOfIt.Core.Device.TouchDevice.IsPrimary ? "Tap: dash" : "Shift: dash";
 
         /// <summary>The dash chip's text (the playtest reads what the player sees).</summary>
         public string DashText => dashButton != null ? dashButton.Label.text : "";

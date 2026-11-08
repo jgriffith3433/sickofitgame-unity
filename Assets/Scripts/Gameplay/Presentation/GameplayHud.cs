@@ -310,7 +310,7 @@ namespace SickOfIt.Gameplay
         bool hintShown;
         int lastHealth = -1;
 
-        static string RewindKeyText => Application.isMobilePlatform ? "Hold: rewind" : "Hold R: rewind";
+        static string RewindKeyText => SickOfIt.Core.Device.TouchDevice.IsPrimary ? "Hold: rewind" : "Hold R: rewind";
 
         void BuildRewind()
         {
@@ -386,7 +386,7 @@ namespace SickOfIt.Gameplay
             rewindKey.rectTransform.offsetMax = new Vector2(-14f, -2f);
 
             // Taught once per level: the first time you get hurt with juice to spend.
-            string hint = Application.isMobilePlatform ? Texts.rewindHintTouch : Texts.rewindHint;
+            string hint = SickOfIt.Core.Device.TouchDevice.IsPrimary ? Texts.rewindHintTouch : Texts.rewindHint;
             place = Landscape.rewindHint;
             rewindHint = menu.AddText(menu.Root, "RewindHint", hint, theme.subtitle, place.anchor, place.offset,
                 place.size, out rewindHintMotion, 34f, null, theme.entrance,
