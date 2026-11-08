@@ -241,6 +241,9 @@ namespace SickOfIt.Core.UI.Menus
         public MenuListMarker Marker;
         public MenuResponsiveStyle Style;
 
+        /// <summary>The shortest a menu button may be on screen, in pixels (48 and a little for the border).</summary>
+        public const float MinButtonPixels = 52f;
+
         public const float Pad = 36f; // room for hover scale and shadows inside the clipping viewport
 
         bool applied;
@@ -269,6 +272,10 @@ namespace SickOfIt.Core.UI.Menus
             var style = Style ?? new MenuResponsiveStyle();
             if (MenuScreen.TouchLayout(style))
                 item = Vector2.Max(item, Vector2.one * style.minTouchSize);
+            // A phone-sized screen (landscape too): a menu button is never under ~52 screen pixels tall.
+            var rootCanvas = GetComponentInParent<Canvas>() != null ? GetComponentInParent<Canvas>().rootCanvas : null;
+            if (rootCanvas != null && rootCanvas.scaleFactor > 0.01f)
+                item.y = Mathf.Max(item.y, MinButtonPixels / rootCanvas.scaleFactor);
             var area = ((RectTransform)transform).rect.size;
             // Never wider than the list itself (a column of buttons on a narrow screen).
             if (area.x > Pad * 2f && Direction != MenuListDirection.Horizontal)
@@ -457,7 +464,8 @@ namespace SickOfIt.Core.UI.Menus
                     var b = result.Boxes[j];
                     bool yoobaOverlap = (a.Transform.name == "Yooba" && b.Transform.name != "Shaft")
                                         || (b.Transform.name == "Yooba" && a.Transform.name != "Shaft");
-                    if (!yoobaOverlap && (a.Kind == MenuElementKind.Text || b.Kind == MenuElementKind.Text))
+                    if (!yoobaOverlap && (a.Kind == MenuElementKind.Text || b.Kind == MenuElementKind.Text)
+                        && !MenuDressing(a, b))
                         continue;
                     if (a.Transform.IsChildOf(b.Transform) || b.Transform.IsChildOf(a.Transform))
                         continue;
@@ -468,6 +476,18 @@ namespace SickOfIt.Core.UI.Menus
                 }
             }
             return result;
+        }
+
+        static bool IsDressing(Box box) =>
+            box.Kind == MenuElementKind.Text && (box.Transform.name == "Title" || box.Transform.name == "Subtitle" || box.Transform.name == "Decoration");
+
+        /// <summary>The main menu's title, tagline and stickers must not overlap a button, and the stickers not each other.</summary>
+        static bool MenuDressing(Box a, Box b)
+        {
+            bool da = IsDressing(a), db = IsDressing(b);
+            if (da && db)
+                return a.Transform.name == "Decoration" && b.Transform.name == "Decoration";
+            return (da && b.Kind == MenuElementKind.Button) || (db && a.Kind == MenuElementKind.Button);
         }
 
         static string Describe(Rect r) => $"x {r.xMin:0}..{r.xMax:0}, y {r.yMin:0}..{r.yMax:0}";
