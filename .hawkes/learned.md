@@ -1,2 +1,0 @@
-- lesson: net-outage warning count — the drop of an open connection (SimulateOutage/OnLeft) warns without being an attempt; count from after it.
-- convention: retry jitter is upward only (NetRetry), so "retrying in N s" is a minimum.

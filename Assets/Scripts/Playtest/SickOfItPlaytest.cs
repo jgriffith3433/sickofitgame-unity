@@ -9301,6 +9301,7 @@ namespace SickOfIt.Playtest
                 yield return Run.Until(() => Object.FindAnyObjectByType<DeathRuntime>() != null && FindButton(texts.rageQuit) != null, 45f, "the death scene");
                 if (Run.Done) yield break;
                 yield return Audit("Death", ++step, steps, 1.5f);
+                DeathScreenChecks();
                 yield return ClickUntil(texts.rageQuit, () => Object.FindAnyObjectByType<MainMenuManager>() != null, 30f);
                 if (Run.Done) yield break;
                 Run.Scene("Main Menu");
@@ -9311,6 +9312,35 @@ namespace SickOfIt.Playtest
             }
 
             int layoutProblems;
+
+            /// <summary>The Death screen's buttons (Return, Again!, Rage Quit) sit below its title and quip with no overlap, and are thumb-tall.</summary>
+            void DeathScreenChecks()
+            {
+                string size = $"{Screen.width}x{Screen.height}";
+                var result = MenuLayoutAudit.Check(GameDefinition.Instance.menuTheme.responsive);
+                MenuLayoutAudit.Box title = null, quip = null;
+                foreach (var box in result.Boxes)
+                {
+                    if (box.Transform.name == "Title") title = box;
+                    else if (box.Transform.name == "Quip") quip = box;
+                }
+                bool portrait = Screen.height > Screen.width;
+                foreach (var box in result.Boxes)
+                {
+                    if (box.Kind != MenuElementKind.Button) continue;
+                    bool ours = box.Name.Contains("Again") || box.Name.Contains("Rage Quit") || box.Name.Contains("Return");
+                    if (!ours) continue;
+                    // Screen y grows upward: "below" means the button's top is under the text's bottom.
+                    bool belowTitle = title == null || !portrait || box.Screen.yMax <= title.Screen.yMin + 1f;
+                    bool belowQuip = quip == null || !portrait || box.Screen.yMax <= quip.Screen.yMin + 1f;
+                    bool clear = (title == null || !box.Screen.Overlaps(title.Screen)) && (quip == null || !box.Screen.Overlaps(quip.Screen));
+                    bool ok = belowTitle && belowQuip && clear;
+                    Run.Event("check", $"death screen {size}: {box.Name} {(ok ? "below the title and quip, no overlap" : "OVERLAPS OR SITS ABOVE THE TITLE/QUIP")} ({box.Screen.height:0} px tall)");
+                    if (!ok)
+                        Run.Problem(PlaytestSeverity.Bug, $"death screen {size}: {box.Name} overlaps or sits above the title/quip");
+                }
+                if (title == null) Run.Problem(PlaytestSeverity.Bug, $"death screen {size}: the title is not on screen");
+            }
 
             /// <summary>The main menu's tagline in full, the stickers clear of every button, and the buttons thumb-tall (criteria of the menu re-layout).</summary>
             void MainMenuDressingChecks(MenuLayoutAudit.Result result)
