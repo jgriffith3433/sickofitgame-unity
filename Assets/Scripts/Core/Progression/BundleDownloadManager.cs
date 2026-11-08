@@ -118,13 +118,33 @@ namespace SickOfIt.Core.Progression
             DontDestroyOnLoad(gameObject);
 
             int level = downloadForCurrentLevel ? CurrentLevelNumber() : 0;
-            if (autoStartOnAwake)
+            if (autoStartOnAwake && GameAssets.Managed)
+            {
+                // A deployed build loads its art on demand (GameAssets) and fetches the hero and the next level behind the menu.
+                // Pre-caching the level, death and video chunk groups here put 42 bundles / 142 requests in front of the menu
+                // (budget 12). They come after the menu is up and the warm-up is done, or when a level is picked.
+                activeLevel = level;
+                BuildLabelList(level);
+                StartCoroutine(BeginAfterMenu(level));
+            }
+            else if (autoStartOnAwake)
                 BeginDownload(level);
             else
             {
                 activeLevel = level;
                 BuildLabelList(level);
             }
+        }
+
+        private IEnumerator BeginAfterMenu(int level)
+        {
+            float until = Time.realtimeSinceStartup + 120f;
+            // Wait for the menu, the late core and the warm-up (or two minutes), so none of it competes with the page's load.
+            while (Time.realtimeSinceStartup < until &&
+                   !(Object.FindAnyObjectByType<MainMenuManager>() != null && GameAssets.LateReady && (GameAssets.WarmDone || !GameAssets.Knows(GameAssets.LateCore))))
+                yield return null;
+            if (!isDownloading && downloadRoutine == null)
+                BeginDownload(level);
         }
 
         /// <summary>
