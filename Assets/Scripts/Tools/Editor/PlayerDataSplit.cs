@@ -42,6 +42,10 @@ namespace SickOfIt.Tools.Editor
         // The definition as it was before the split emptied its references (restored by End).
         static string BackupPath => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp", "GameDefinition.beforeSplit.asset");
 
+        // The frame-set assets (SpriteFramesData) GameDefinition references that sat in a video, death or level group, moved into the
+        // Boot group for the build: "guid<TAB>group name" per line, so End (or Recover after a crash) puts each back.
+        static string MovedPath => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp", "GameDefinition.movedEntries.txt");
+
         /// <summary>Estimated in-memory size per group; its bundle comes out at or under this (LZ4).</summary>
         public const long GroupBudgetBytes = 40L * 1024 * 1024;
 
@@ -83,10 +87,21 @@ namespace SickOfIt.Tools.Editor
             PlayerDataManifest.Write(settings, template, log);
 
             var byFolder = new SortedDictionary<string, List<string>>(StringComparer.Ordinal);
+            var moved = new List<string>();
             foreach (string path in AssetDatabase.GetDependencies(BuildPath, true))
             {
-                if (!Movable(settings, path))
+                bool foreignFrames = !Movable(settings, path) && FrameSetInOtherGroup(settings, path);
+                if (!foreignFrames && !Movable(settings, path))
                     continue;
+                if (foreignFrames)
+                {
+                    // A video, death or level's SpriteFramesData sits in that clip's group (Video2_Group, ...). GameDefinition references it
+                    // directly, so loading GameDefinition fetched the group's bundles (level 1-3, death 1-3 and video 1-3: 42 bundles
+                    // before the menu, budget 12). It is a few KB of numbers and label names (the frames load by label), so it rides in
+                    // the Boot group instead; keeps its address and labels, and End puts it back.
+                    var existing = settings.FindAssetEntry(AssetDatabase.AssetPathToGUID(path));
+                    moved.Add(AssetDatabase.AssetPathToGUID(path) + "\t" + existing.parentGroup.Name);
+                }
                 // One list for all of them: GameDefinition's own dependencies (prefabs, fonts, controller textures, ...) are all loaded
                 // together before the menu, so a bundle per folder (25 of them on beta v27) only made 25 requests where one will do. The
                 // size budget below still splits the group if it ever grows.
@@ -94,6 +109,13 @@ namespace SickOfIt.Tools.Editor
                 if (!byFolder.TryGetValue(folder, out var list))
                     byFolder[folder] = list = new List<string>();
                 list.Add(path);
+            }
+
+            // Written before anything is moved, so a crash can still put them back (Recover).
+            if (moved.Count > 0)
+            {
+                File.WriteAllLines(MovedPath, moved);
+                log($"  {moved.Count} frame sets (SpriteFramesData) of videos, deaths and levels moved from their own groups into the Boot group, so GameDefinition no longer pulls those groups in.");
             }
 
             int groups = 1, assets = 0;
@@ -115,7 +137,8 @@ namespace SickOfIt.Tools.Editor
                         inGroup = 0;
                     }
                     var assetEntry = settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(path), group);
-                    assetEntry.SetAddress(path);
+                    if (!WasMoved(path, moved))
+                        assetEntry.SetAddress(path);
                     inGroup += size;
                     total += size;
                     assets++;
@@ -154,6 +177,8 @@ namespace SickOfIt.Tools.Editor
             }
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings != null)
+                PutFrameSetsBack(settings, log);
+            if (settings != null)
             {
                 foreach (var group in settings.groups.Where(g => g != null && g.Name.StartsWith(GroupPrefix, StringComparison.Ordinal)).ToList())
                     settings.RemoveGroup(group);
@@ -176,7 +201,7 @@ namespace SickOfIt.Tools.Editor
         public static void Recover(Action<string> log)
         {
             bool groupsLeft = AddressableAssetSettingsDefaultObject.Settings?.groups.Any(g => g != null && g.Name.StartsWith(GroupPrefix, StringComparison.Ordinal)) ?? false;
-            if (!File.Exists(BuildPath) && !AssetDatabase.IsValidFolder(BuildFolder) && !groupsLeft)
+            if (!File.Exists(BuildPath) && !AssetDatabase.IsValidFolder(BuildFolder) && !groupsLeft && !File.Exists(MovedPath))
                 return;
             log("  An earlier build left the player data split in place; undoing it first.");
             if (File.Exists(BuildPath) && File.Exists(ResourcesPath))
@@ -245,6 +270,45 @@ namespace SickOfIt.Tools.Editor
             definition.assetRegistry.RemoveAll(e => e != null && e.asset != null && taken.Contains(AssetDatabase.GetAssetPath(e.asset)));
             EditorUtility.SetDirty(definition);
             return taken.Count;
+        }
+
+        /// <summary>A SpriteFramesData asset that has an Addressables entry in a group that isn't ours (a clip's own group).</summary>
+        static bool FrameSetInOtherGroup(AddressableAssetSettings settings, string path)
+        {
+            if (!path.StartsWith("Assets/", StringComparison.Ordinal) || !path.EndsWith(".asset", StringComparison.OrdinalIgnoreCase))
+                return false;
+            var entry = settings.FindAssetEntry(AssetDatabase.AssetPathToGUID(path));
+            if (entry == null || entry.parentGroup == null || entry.parentGroup.Name.StartsWith(GroupPrefix, StringComparison.Ordinal))
+                return false;
+            return AssetDatabase.LoadAssetAtPath<SickOfIt.VideoFrameExtractor.Runtime.SpriteFramesData>(path) != null;
+        }
+
+        static bool WasMoved(string path, List<string> moved)
+        {
+            string guid = AssetDatabase.AssetPathToGUID(path);
+            return moved.Any(line => line.StartsWith(guid + "\t", StringComparison.Ordinal));
+        }
+
+        /// <summary>Puts the frame sets <see cref="Begin"/> moved into the Boot group back into the groups they came from.</summary>
+        static void PutFrameSetsBack(AddressableAssetSettings settings, Action<string> log)
+        {
+            if (!File.Exists(MovedPath))
+                return;
+            int back = 0;
+            foreach (string line in File.ReadAllLines(MovedPath))
+            {
+                string[] parts = line.Split('\t');
+                if (parts.Length != 2)
+                    continue;
+                var group = settings.FindGroup(parts[1]);
+                if (group == null || settings.FindAssetEntry(parts[0]) == null)
+                    continue;
+                settings.CreateOrMoveEntry(parts[0], group); // the entry keeps its address and labels
+                back++;
+            }
+            File.Delete(MovedPath);
+            EditorUtility.SetDirty(settings);
+            log?.Invoke($"  {back} frame sets back in their own groups.");
         }
 
         static bool Movable(AddressableAssetSettings settings, string path)
