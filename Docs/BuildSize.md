@@ -58,3 +58,11 @@ served with `Content-Encoding: br` (the host already does that for `*.br`). That
   `load.menuMB` when the host shows sizes), 30+ fps on the menu and over 30 s of Level 1.
 - The boot (`GameDefinitionBoot`) logs how long the game data and the core took and shows "Climbing out of the lava... N%"
   over its bar.
+
+## Core packed into shared bundles (phone-load, 30 s to the menu)
+
+Phone playtest r_362280a11baf: menu at 30.4 s, 157 files / 142 bundles before it. Every "core" asset (what the boot loads)
+was its own bundle, so the phone made ~140 requests with a handshake each. `PlayerDataManifest.PackCore` now moves every
+core address into `PlayerData_Assets_Core_Art<n>` / `Core_Audio<n>` groups packed together (12 MB per bundle at most); a
+level that reuses a core asset shares that bundle, already loaded. Expect ~142 bundles to become a handful. The compression
+settings (gzip + decompression fallback) are untouched. Measure with the `phone-load` playtest (`bundles before the menu`).

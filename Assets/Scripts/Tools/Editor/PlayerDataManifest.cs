@@ -43,6 +43,7 @@ namespace SickOfIt.Tools.Editor
             var scopes = new Dictionary<string, (List<int> entries, HashSet<string> include)>(StringComparer.Ordinal);
             var groups = new Dictionary<string, AddressableAssetGroup>(StringComparer.Ordinal);
             var addressed = new HashSet<string>(StringComparer.Ordinal);
+            var coreAddresses = new HashSet<string>(StringComparer.Ordinal);
             long bytes = 0;
 
             (List<int> entries, HashSet<string> include) Scope(string id)
@@ -61,7 +62,10 @@ namespace SickOfIt.Tools.Editor
                     bytes += Estimate(entry.address);
                 }
                 entries.Add(entry);
-                Scope(ScopeOf(entry.path, definition, eventSounds)).entries.Add(entries.Count - 1);
+                string scopeId = ScopeOf(entry.path, definition, eventSounds);
+                if (scopeId == "core")
+                    coreAddresses.Add(entry.address);
+                Scope(scopeId).entries.Add(entries.Count - 1);
             }
 
             var serialized = new SerializedObject(definition);
@@ -104,6 +108,9 @@ namespace SickOfIt.Tools.Editor
 
             AddClosures(definition, eventSounds, id => Scope(id).include);
 
+            // The menu's own art and sound: a few shared bundles instead of one request each (142 bundles before the menu).
+            int coreBundles = PackCore(settings, template, groups, coreAddresses);
+
             var manifest = new AssetManifest
             {
                 entries = entries.ToArray(),
@@ -120,7 +127,7 @@ namespace SickOfIt.Tools.Editor
 
             int core = scopes.TryGetValue("core", out var c) ? c.entries.Count : 0;
             log($"  On demand: {entries.Count} references to {addressed.Count} assets ({bytes / (1024 * 1024)} MB in memory) taken out of GameDefinition, " +
-                $"one bundle each in {groups.Count} {GroupPrefix}* groups; {scopes.Count} scopes, {core} references in \"core\" (loaded at boot).");
+                $"one bundle each in {groups.Count} {GroupPrefix}* groups; {scopes.Count} scopes, {core} references in \"core\" (loaded at boot, packed into {coreBundles} shared bundles).");
             return addressed.Count;
         }
 
@@ -414,6 +421,38 @@ namespace SickOfIt.Tools.Editor
             group.GetSchema<BundledAssetGroupSchema>().BundleMode = BundledAssetGroupSchema.BundlePackingMode.PackSeparately;
             groups[folder] = group;
             return group;
+        }
+
+        /// <summary>
+        /// Everything the boot loads ("core") goes into shared groups packed together, art and sound apart, each split by
+        /// size: the browser fetches a handful of files before the menu instead of one per asset. A core asset a level also
+        /// uses is the same bundle (the address is shared), already loaded.
+        /// </summary>
+        static int PackCore(AddressableAssetSettings settings, AddressableAssetGroup template, Dictionary<string, AddressableAssetGroup> groups, HashSet<string> addresses)
+        {
+            const long ChunkBytes = 12L * 1024 * 1024;
+            var chunks = new Dictionary<string, (AddressableAssetGroup group, long size)>(StringComparer.Ordinal);
+            var counts = new Dictionary<string, int>(StringComparer.Ordinal);
+            int made = 0;
+            foreach (string address in addresses.OrderBy(a => a, StringComparer.Ordinal))
+            {
+                string kind = address.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase) || address.EndsWith(".wav", StringComparison.OrdinalIgnoreCase)
+                    || address.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase) ? "Audio" : "Art";
+                long size = new FileInfo(address).Length;
+                if (!chunks.TryGetValue(kind, out var chunk) || chunk.size + size > ChunkBytes)
+                {
+                    counts.TryGetValue(kind, out int n);
+                    counts[kind] = ++n;
+                    var group = PlayerDataSplit.NewGroup(settings, GroupPrefix + "Core_" + kind + n, template);
+                    group.GetSchema<BundledAssetGroupSchema>().BundleMode = BundledAssetGroupSchema.BundlePackingMode.PackTogether;
+                    groups["Core_" + kind + n] = group;
+                    chunk = (group, 0);
+                    made++;
+                }
+                settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(address), chunk.group).SetAddress(address);
+                chunks[kind] = (chunk.group, chunk.size + size);
+            }
+            return made;
         }
 
         static long Estimate(string path)
