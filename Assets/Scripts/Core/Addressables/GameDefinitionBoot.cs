@@ -73,6 +73,8 @@ namespace SickOfIt.Core.Addressables
             // (the menu, the playtest bot registering) can start, so a stop here looks like a game that never boots.
             StartedAt = Time.realtimeSinceStartup;
             Debug.Log($"[GameDefinitionBoot] Loading the game data at {StartedAt:0.0}s since the player started.");
+            // The menu's own bundles download beside the game data instead of after it (the manifest that names them is inside it).
+            StartCoroutine(PrefetchCore());
             for (int attempt = 1; ; attempt++)
             {
                 failure = null;
@@ -90,6 +92,7 @@ namespace SickOfIt.Core.Addressables
                     DefinitionAt = Time.realtimeSinceStartup;
                     SetProgress(DefinitionShare);
                     Debug.Log($"[GameDefinitionBoot] Game data loaded from its bundles (try {attempt}) in {DefinitionAt - StartedAt:0.0}s.");
+                    Debug.Log($"[GameDefinitionBoot] Core prefetch so far: {(prefetchDone ? $"done in {prefetchSeconds:0.0}s" : "still running")}.");
                     GameAssets.Init(handle.Result);
                     yield return GameAssets.Acquire(GameAssets.Core, new[] { GameAssets.Core }, p => SetProgress(DefinitionShare + p * (1f - DefinitionShare)));
                     SetProgress(1f);
@@ -113,6 +116,46 @@ namespace SickOfIt.Core.Addressables
                     failure = "Couldn't load the game yet. Check the connection; still trying.";
                 yield return new WaitForSecondsRealtime(Mathf.Min(RetrySeconds * attempt, 15f));
             }
+        }
+
+        bool prefetchDone;
+        float prefetchSeconds;
+
+        /// <summary>
+        /// Downloads the bundles labelled <see cref="GameAssets.CoreLabel"/> (PlayerDataManifest.PackCore) while the game data
+        /// loads, so the browser has fetched the menu's art and sound by the time <see cref="GameAssets.Acquire"/> asks for it
+        /// (the download is cached; the handle is released at once so the heap doesn't keep a second copy). Any failure is
+        /// ignored: Acquire downloads what is missing, as before.
+        /// </summary>
+        IEnumerator PrefetchCore()
+        {
+            float began = Time.realtimeSinceStartup;
+            var init = AddressablesAPI.InitializeAsync(false);
+            yield return init;
+            bool known = false;
+            if (init.Status == AsyncOperationStatus.Succeeded)
+            {
+                foreach (var locator in AddressablesAPI.ResourceLocators)
+                {
+                    if (locator.Locate(GameAssets.CoreLabel, typeof(object), out var locations) && locations != null && locations.Count > 0)
+                    {
+                        known = true;
+                        break;
+                    }
+                }
+            }
+            if (init.IsValid())
+                AddressablesAPI.Release(init);
+            if (known)
+            {
+                var download = AddressablesAPI.DownloadDependenciesAsync(GameAssets.CoreLabel, false);
+                yield return download;
+                if (download.IsValid())
+                    AddressablesAPI.Release(download);
+            }
+            prefetchSeconds = Time.realtimeSinceStartup - began;
+            prefetchDone = true;
+            Debug.Log($"[GameDefinitionBoot] Core prefetch {(known ? "finished" : "skipped (no label in the catalog)")} after {prefetchSeconds:0.0}s.");
         }
 
         // Cosmetic only: nothing else is on screen while the bundles download.
