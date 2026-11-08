@@ -11,7 +11,8 @@
     "SickOfIt.VideoFrameExtractor.Runtime",
     "Unity.TextMeshPro",
     "Unity.InputSystem",
-    "HawkesPlaytest.Runtime"
+    "HawkesPlaytest.Runtime",
+    "nappin.MobileControllerFramework"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
