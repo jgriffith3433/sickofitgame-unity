@@ -250,14 +250,53 @@ namespace SickOfIt.Core.UI.Menus
         bool appliedPortrait;
         Vector2 areaSize;
         MenuListDirection? direction;
+        int appliedCount = -1;
+        bool? contentAtStart;
 
         bool UsePortrait => MenuScreen.Portrait && Portrait != null && Portrait.use;
 
         void LateUpdate()
         {
             var size = ((RectTransform)transform).rect.size;
-            if (!applied || appliedPortrait != MenuScreen.Portrait || size != areaSize)
+            if (!applied || appliedPortrait != MenuScreen.Portrait || size != areaSize || appliedCount != ActiveItems())
                 Apply();
+            AlignContent();
+        }
+
+        int ActiveItems()
+        {
+            int n = 0;
+            foreach (Transform child in Content)
+                if (child.gameObject.activeSelf) n++;
+            return n;
+        }
+
+        /// <summary>
+        /// A list that fits is centered; one that overflows starts at its first item (a centered overflow is cut at both ends).
+        /// </summary>
+        void AlignContent()
+        {
+            if (direction == MenuListDirection.Grid || Content == null)
+                return;
+            bool horizontal = direction == MenuListDirection.Horizontal;
+            var viewport = Scroll.viewport.rect.size;
+            var content = Content.rect.size;
+            bool overflow = horizontal ? content.x > viewport.x + 0.5f : content.y > viewport.y + 0.5f;
+            if (contentAtStart == overflow)
+                return;
+            contentAtStart = overflow;
+            float anchor = overflow ? (horizontal ? 0f : 1f) : 0.5f;
+            if (horizontal)
+            {
+                Content.anchorMin = Content.anchorMax = new Vector2(anchor, 0.5f);
+                Content.pivot = new Vector2(anchor, 0.5f);
+            }
+            else
+            {
+                Content.anchorMin = Content.anchorMax = new Vector2(0.5f, anchor);
+                Content.pivot = new Vector2(0.5f, anchor);
+            }
+            Content.anchoredPosition = Vector2.zero;
         }
 
         /// <summary>The item size for the current screen shape (what new items are sized to).</summary>
@@ -297,7 +336,18 @@ namespace SickOfIt.Core.UI.Menus
             Vector2 spacing = UsePortrait ? Portrait.spacing : Landscape.spacing;
             int columns = UsePortrait ? Portrait.columns : Landscape.columns;
             Vector2 item = ItemSize();
+            appliedCount = ActiveItems();
+            if (dir == MenuListDirection.Vertical && appliedCount > 0 && areaSize.y > Pad * 2f)
+            {
+                // Shrink the buttons so the whole page fits the window, never under the touch minimum.
+                float fit = (areaSize.y - Pad * 2f - spacing.y * (appliedCount - 1)) / appliedCount;
+                var canvas = GetComponentInParent<Canvas>();
+                float scale = canvas != null && canvas.rootCanvas.scaleFactor > 0.01f ? canvas.rootCanvas.scaleFactor : 1f;
+                float floor = MinButtonPixels / scale;
+                if (fit < item.y) item.y = Mathf.Max(fit, floor);
+            }
             Marker.ItemSize = item;
+            contentAtStart = null;
             Configure(dir, spacing, item, columns);
 
             foreach (Transform child in Content)
