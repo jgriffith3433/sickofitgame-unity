@@ -1220,7 +1220,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, Yooba's shop and settings (Sound off/on, Music -/+) each open and close, " +
                 "then the Shaft (a preview over the menu, setup shortcut, Yooba met) opens, its layout is checked, Visit Yooba opens his shop over it, " +
                 "Back returns to the Shaft and Continue closes it", 150, "menus"));
-            list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu, level select, settings, " +
+            list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu (also resized through 16:9, a narrow desktop, phone portrait and phone landscape: tagline whole, stickers clear, buttons 48 px), level select, settings, " +
                 "level 1's HUD, the pause menu and its settings, the Shaft (a preview over the menu, setup shortcut, with Visit Yooba beside Continue), Yooba's shop over it, and the death scene (loaded directly, a setup shortcut), no button overlaps another " +
                 "or a HUD panel, none leaves the screen, and every button is thumb-sized", 120, "menus"));
             list.Add(new PlaytestScenario("portal-audio", "The prologue's portal scene, by ear, on the main menu: every Overlord line, hero take, " +
@@ -9250,6 +9250,8 @@ namespace SickOfIt.Playtest
                 yield return ToMainMenu();
                 if (Run.Done) yield break;
                 yield return Audit("Main Menu", ++step, steps);
+                yield return MainMenuSizes();
+                if (Run.Done) yield break;
 
                 if (main.showLevelSelectButton)
                 {
@@ -9312,6 +9314,33 @@ namespace SickOfIt.Playtest
             }
 
             int layoutProblems;
+
+            /// <summary>
+            /// The main menu at 16:9, a narrow desktop window, phone portrait and phone landscape (a window resize, a setup
+            /// shortcut: the runner's device is one size). Each size is audited: tagline whole, stickers clear of buttons,
+            /// buttons 48 px tall at phone size. The original size is restored afterwards.
+            /// </summary>
+            IEnumerator MainMenuSizes()
+            {
+                int w0 = Screen.width, h0 = Screen.height;
+                var sizes = new (string name, int w, int h)[]
+                {
+                    ("16:9 desktop", 1920, 1080), ("narrow desktop", 760, 900),
+                    ("phone portrait", 390, 844), ("phone landscape", 844, 390),
+                };
+                foreach (var size in sizes)
+                {
+                    Screen.SetResolution(size.w, size.h, false);
+                    yield return Run.Until(() => Screen.width == size.w && Screen.height == size.h, 6f, $"the window to resize to {size.w}x{size.h}");
+                    if (Run.Done) yield break;
+                    Run.Event("layout-size", $"main menu at {size.name}: {Screen.width}x{Screen.height}");
+                    yield return Audit("Main Menu " + size.name, 0, 0, 1.2f, false);
+                    if (Run.Done) yield break;
+                }
+                Screen.SetResolution(w0, h0, false);
+                yield return Run.Until(() => Screen.width == w0 && Screen.height == h0, 6f, "the window to return to its size");
+                yield return WaitReal(0.5f);
+            }
 
             /// <summary>The Death screen's buttons (Return, Again!, Rage Quit) sit below its title and quip with no overlap, and are thumb-tall.</summary>
             void DeathScreenChecks()
@@ -9407,7 +9436,7 @@ namespace SickOfIt.Playtest
                 foreach (var warning in result.Warnings)
                     Run.Problem(PlaytestSeverity.Polish, $"layout ({screen}, {Screen.width}x{Screen.height}): {warning}");
                 layoutProblems += result.Problems.Count;
-                if (screen == "Main Menu")
+                if (screen.StartsWith("Main Menu"))
                     MainMenuDressingChecks(result);
                 Run.Metric("layout." + screen.Replace(" ", "") + ".problems", result.Problems.Count);
                 if (screen == "Level 1 HUD" && Camera.main != null
