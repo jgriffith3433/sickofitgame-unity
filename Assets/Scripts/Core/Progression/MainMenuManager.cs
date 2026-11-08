@@ -373,6 +373,10 @@ namespace SickOfIt.Core.Progression
             PlayerPrefs.SetInt("ReturnToLevel", 1);
             PlayerPrefs.Save();
 
+            // The intro's art comes in during the house explosion, not behind a black cover after it.
+            if (SceneTransitionManager.Instance != null)
+                SceneTransitionManager.Instance.PreloadVideo(1);
+
             if (bundleDownloadManager != null)
                 bundleDownloadManager.StartDownloadForLevel(1);
             else if (BundleDownloadManager.Instance != null)

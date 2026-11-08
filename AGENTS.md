@@ -374,7 +374,7 @@ instead of generated again. Batch mode fails with "another Unity instance is run
   Shaft, Yooba, thumbnails, the sounds of audio.json's `events`) loads at boot; `hero` (player.json's states) and `level/<name>` before a
   level (SceneTransitionManager.LoadLevel; a level includes every registry asset and sound its script names, directly or through the
   content it reaches: entity ids, `extends`, loot, sequences, its Circle, every weapon, and the global configs), `scene/<id>` with
-  LevelRuntime.PendingScene, `video/<name>` and `death/<name>` before theirs, `codex/<id>` per Codex page, and any other sound on its
+  LevelRuntime.PendingScene, `video/<name>` and `death/<name>` before theirs (New Game starts the intro's `video/<name>` during the house explosion: `SceneTransitionManager.PreloadVideo`, owner `videoPreload`, let go by `LoadVideo`), `codex/<id>` per Codex page, and any other sound on its
   first play (`Sfx` asks GameAssets; an effect plays if it arrives within 0.4 s, a voice always; 48 kept and 40 MB of decoded audio,
   least recently used dropped). Spoken lines never preload (a level's closure has its effects only). An owner's old scopes are
   released *before* its new ones load (never two floors at once; the WebGL heap only grows, so the peak is what kills a phone).
