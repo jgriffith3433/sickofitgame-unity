@@ -1,1 +1,1 @@
-- convention: Analytics package — com.hawkes.analytics comes from hawkes-analytics by git tag in Packages/manifest.json (v1.3.5), not vendored; GameDeploy/AnalyticsManager use its public API.
+- convention: Hawkes Net reconnects — GhostLobby owns the policy (NetRetry); it calls lobby.Leave() from the package's Left event so the pinned package's own retry never runs. Change the policy there, not in the package.

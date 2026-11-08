@@ -1,3 +1,4 @@
-1. Open beta.hawkesgames.com/play/sickofit with the browser console open.
-2. Tap to play; the main menu loads with no console errors.
-3. Start New Game (or `?hawkes-analytics-debug=1`) and play Level 1; analytics requests to Hawkes Gen show in the Network tab.
+1. Open the beta game with the console open while the Hawkes Net server is down.
+2. On the main menu, see a small "Other climbers: offline" chip and at most one short "Hawkes Net:" warning per retry (waits grow 2, 4, 8 s ... 60 s).
+3. Press New Game and play Level 1: no errors, no stalls.
+4. When the server is back, the chip disappears (or shows "N climbing") without a reload. Or run the `net-outage` playtest.

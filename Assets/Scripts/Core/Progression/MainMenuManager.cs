@@ -80,23 +80,27 @@ namespace SickOfIt.Core.Progression
             if (menu == null || Time.unscaledTime < climbingCheckAt)
                 return;
             climbingCheckAt = Time.unscaledTime + 0.5f;
+            bool offline = GhostLobby.Offline;
             int climbing = GhostLobby.Online ? GhostLobby.Climbing : 0;
-            if (climbing == climbingShown)
+            int key = offline ? -2 : climbing;
+            if (key == climbingShown)
                 return;
-            climbingShown = climbing;
-            if (climbing <= 0 && climbingChip == null)
+            climbingShown = key;
+            if (!offline && climbing <= 0 && climbingChip == null)
                 return;
             var labels = GameDefinition.Instance != null && GameDefinition.Instance.mainMenuConfig != null
                 ? GameDefinition.Instance.mainMenuConfig.labels : null;
-            string text = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                labels != null && !string.IsNullOrEmpty(labels.climbingNow) ? labels.climbingNow : new MainMenuLabels().climbingNow,
-                climbing.ToString("N0", System.Globalization.CultureInfo.InvariantCulture));
+            string text = offline
+                ? (labels != null && !string.IsNullOrEmpty(labels.climbingOffline) ? labels.climbingOffline : new MainMenuLabels().climbingOffline)
+                : string.Format(System.Globalization.CultureInfo.InvariantCulture,
+                    labels != null && !string.IsNullOrEmpty(labels.climbingNow) ? labels.climbingNow : new MainMenuLabels().climbingNow,
+                    climbing.ToString("N0", System.Globalization.CultureInfo.InvariantCulture));
             if (climbingChip == null)
                 climbingChip = menu.AddChip(text);
             climbingChip.text = text;
             var chip = climbingChip.transform.parent;
             if (chip != null)
-                chip.gameObject.SetActive(climbing > 0);
+                chip.gameObject.SetActive(offline || climbing > 0);
         }
 
         private void ApplyMenuConfig()
