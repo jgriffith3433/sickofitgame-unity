@@ -1,1 +1,1 @@
-- lesson: New asmdef-split namespaces need references — tests/playtest files using SickOfIt.Core.Progression or nappin types fail with CS0234/CS0246 unless their asmdef lists SickOfIt.Core.Progression / nappin.MobileControllerFramework.
+- lesson: Menu list fit needs padding too — MenuListLayout's 36-unit padding and 10 gaps made 7 buttons overflow the safe-area viewport even at the 52 px floor; Apply now tightens padY/spacing before overflowing.
