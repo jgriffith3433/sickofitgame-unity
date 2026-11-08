@@ -21,6 +21,7 @@ namespace SickOfIt.Playtest
         const float PhoneLoadSeconds = 150f;
         const float PhoneLoadMenuBudget = 20f;
         const float PhoneLoadMinFps = 30f;
+        const int PhoneLoadMenuBundleBudget = 40;
         const float PhoneLoadPlaySeconds = 30f;
 
         /// <summary>
@@ -138,6 +139,9 @@ namespace SickOfIt.Playtest
                 Run.Event("device", $"{Screen.width}x{Screen.height}, mobile platform {Application.isMobilePlatform}, " +
                                     $"texture variant {(TextureVariantRedirect.UsingMobileVariant ? "ASTC (phones)" : "DXT (desktop)")}");
 
+                if (Mathf.Min(Screen.width, Screen.height) > 600)
+                    Run.Event("check", $"phone-load device: NOT A PHONE ({Screen.width}x{Screen.height}); the budget is for 390x844 (run it as phone-load@local:phone)");
+
                 // 1. The menu comes up by itself (the boot opens it); the hook above saw the moment.
                 yield return Run.Until(() => PageLoad.MenuAtReal >= 0f || Object.FindAnyObjectByType<MainMenuManager>() != null, 90f, "the main menu to open by itself");
                 if (Run.Done) yield break;
@@ -200,6 +204,17 @@ namespace SickOfIt.Playtest
                     Run.Metric("load.menuBundles", info.bundles);
                     if (info.sized > 0)
                         Run.Metric("load.menuMB", (float)(info.bytes / 1000000.0));
+                    // beta v27 fetched 50 bundles before the menu, ~20 of them the hero's and the legacy enemies' sheets (GameDefinition's
+                    // prefabs pulled them in). Only meaningful on a build that splits its art out (the editor has no bundles).
+                    if (GameAssets.Managed)
+                        LoadCheck("bundles before the menu", info.bundles <= PhoneLoadMenuBundleBudget,
+                            $"{info.bundles} bundles ({Megabytes(info.bundleBytes)}{(info.sized > 0 ? "" : ", sizes hidden by the host")}) were fetched before the menu, budget {PhoneLoadMenuBundleBudget} (beta v27: 50)");
+                }
+                if (GameAssets.Managed)
+                {
+                    Run.Metric("load.menuBundlesHeld", GameAssets.LoadedCount);
+                    LoadCheck("hero art waits for a level", !GameAssets.Holds(GameAssets.Hero),
+                        $"the hero's sheets and the legacy enemy art are not held at the menu ({GameAssets.Describe()})");
                 }
                 Run.Progress(0.3f);
 

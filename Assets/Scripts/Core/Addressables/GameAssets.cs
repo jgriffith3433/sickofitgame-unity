@@ -59,9 +59,10 @@ namespace SickOfIt.Core.Addressables
             public AsyncOperationHandle<Texture2D> texture;
             public AsyncOperationHandle<IList<Sprite>> sprites;
             public AsyncOperationHandle<AudioClip> clip;
+            public AsyncOperationHandle<GameObject> prefab;
             public int refs;
             public bool done;
-            public bool wantTexture, wantSprites, wantClip;
+            public bool wantTexture, wantSprites, wantClip, wantPrefab;
             public Sprite[] sorted;
         }
 
@@ -316,6 +317,9 @@ namespace SickOfIt.Core.Addressables
             }
         }
 
+        /// <summary>This owner holds scopes now (the playtest asks whether the hero's art waited for a level).</summary>
+        public static bool Holds(string owner) => Managed && owners.ContainsKey(owner);
+
         /// <summary>Loaded bundles and owners, for logs and the playtest.</summary>
         public static string Describe()
         {
@@ -366,7 +370,7 @@ namespace SickOfIt.Core.Addressables
             }
             load = new Load { address = address, refs = 1 };
             loads[address] = load;
-            bool texture = false, sprites = false, clip = false;
+            bool texture = false, sprites = false, clip = false, prefab = false;
             foreach (int index in entriesOf[address])
             {
                 var entry = manifest.entries[index];
@@ -379,6 +383,10 @@ namespace SickOfIt.Core.Addressables
                 {
                     clip = true;
                 }
+                else if (entry.kind == AssetManifestEntry.Prefab)
+                {
+                    prefab = true;
+                }
                 else
                 {
                     sprites = true;
@@ -387,6 +395,7 @@ namespace SickOfIt.Core.Addressables
             load.wantTexture = texture;
             load.wantSprites = sprites;
             load.wantClip = clip;
+            load.wantPrefab = prefab;
             Begin(load);
             Runner.Get().StartCoroutine(Finish(load));
             return load;
@@ -400,12 +409,15 @@ namespace SickOfIt.Core.Addressables
                 load.sprites = AddressablesAPI.LoadAssetAsync<IList<Sprite>>(load.address);
             if (load.wantClip)
                 load.clip = AddressablesAPI.LoadAssetAsync<AudioClip>(load.address);
+            if (load.wantPrefab)
+                load.prefab = AddressablesAPI.LoadAssetAsync<GameObject>(load.address);
         }
 
         static bool Failed(Load load) =>
             (load.texture.IsValid() && (load.texture.Status != AsyncOperationStatus.Succeeded || load.texture.Result == null))
             || (load.sprites.IsValid() && (load.sprites.Status != AsyncOperationStatus.Succeeded || load.sprites.Result == null))
-            || (load.clip.IsValid() && (load.clip.Status != AsyncOperationStatus.Succeeded || load.clip.Result == null));
+            || (load.clip.IsValid() && (load.clip.Status != AsyncOperationStatus.Succeeded || load.clip.Result == null))
+            || (load.prefab.IsValid() && (load.prefab.Status != AsyncOperationStatus.Succeeded || load.prefab.Result == null));
 
         /// <summary>Extra tries for a bundle that failed to download (a CDN's 503), spaced out; Addressables retries first (BundledAssetGroupSchema.RetryCount).</summary>
         const int LoadRetries = 2;
@@ -420,6 +432,8 @@ namespace SickOfIt.Core.Addressables
                     yield return load.sprites;
                 if (load.clip.IsValid())
                     yield return load.clip;
+                if (load.prefab.IsValid())
+                    yield return load.prefab;
                 if (!loads.TryGetValue(load.address, out var current) || current != load)
                     yield break; // released while loading (Unretain let the handles go)
                 if (attempt >= LoadRetries || !Failed(load))
@@ -431,6 +445,8 @@ namespace SickOfIt.Core.Addressables
                     AddressablesAPI.Release(load.sprites);
                 if (load.clip.IsValid())
                     AddressablesAPI.Release(load.clip);
+                if (load.prefab.IsValid())
+                    AddressablesAPI.Release(load.prefab);
                 yield return new WaitForSecondsRealtime(1.5f * (attempt + 1));
                 if (!loads.TryGetValue(load.address, out current) || current != load)
                     yield break; // released during the wait: its handles are already let go
@@ -456,7 +472,9 @@ namespace SickOfIt.Core.Addressables
                 spritesOf[texture] = load.sorted;
             var audio = load.clip.IsValid() && load.clip.Status == AsyncOperationStatus.Succeeded ? load.clip.Result : null;
 
-            bool failed = (load.texture.IsValid() && texture == null) || (load.clip.IsValid() && audio == null) || (load.sprites.IsValid() && load.sorted == null);
+            var prefabAsset = load.prefab.IsValid() && load.prefab.Status == AsyncOperationStatus.Succeeded ? load.prefab.Result : null;
+
+            bool failed = (load.prefab.IsValid() && prefabAsset == null) || (load.texture.IsValid() && texture == null) || (load.clip.IsValid() && audio == null) || (load.sprites.IsValid() && load.sorted == null);
             if (failed)
                 Debug.LogWarning($"[GameAssets] Couldn't load {load.address}: {Failure(load)}");
 
@@ -468,6 +486,7 @@ namespace SickOfIt.Core.Addressables
                 {
                     case AssetManifestEntry.Texture: value = texture; break;
                     case AssetManifestEntry.Clip: value = audio; break;
+                    case AssetManifestEntry.Prefab: value = prefabAsset; break;
                     case AssetManifestEntry.Sprite: value = Named(load.sorted, entry.sprite); break;
                     case AssetManifestEntry.SpriteArray:
                         var array = new Sprite[entry.sprites.Length];
@@ -487,7 +506,8 @@ namespace SickOfIt.Core.Addressables
         {
             var e = (load.texture.IsValid() ? load.texture.OperationException : null)
                 ?? (load.sprites.IsValid() ? load.sprites.OperationException : null)
-                ?? (load.clip.IsValid() ? load.clip.OperationException : null);
+                ?? (load.clip.IsValid() ? load.clip.OperationException : null)
+                ?? (load.prefab.IsValid() ? load.prefab.OperationException : null);
             return e != null ? e.Message : "no asset";
         }
 
@@ -526,6 +546,8 @@ namespace SickOfIt.Core.Addressables
                 AddressablesAPI.Release(load.sprites);
             if (load.clip.IsValid())
                 AddressablesAPI.Release(load.clip);
+            if (load.prefab.IsValid())
+                AddressablesAPI.Release(load.prefab);
         }
 
         static FieldPath Path(string path)
