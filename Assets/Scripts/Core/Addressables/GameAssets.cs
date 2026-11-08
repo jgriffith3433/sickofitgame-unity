@@ -25,6 +25,8 @@ namespace SickOfIt.Core.Addressables
     {
         public const string Core = "core";
         public const string Hero = "hero";
+        /// <summary>The art only screens after the main menu read (select cards, Shaft, Yooba, shop): loaded behind the menu.</summary>
+        public const string LateCore = "core.late";
         public static string Level(string levelName) => "level/" + levelName;
         public static string Scene(string sceneId) => "scene/" + sceneId;
         public static string Video(string videoName) => "video/" + videoName;
@@ -98,6 +100,38 @@ namespace SickOfIt.Core.Addressables
             }
             GameDefinition.LoadedSprites = sheet => sheet != null && spritesOf.TryGetValue(sheet, out var sprites) ? sprites : null;
             Debug.Log($"[GameAssets] {manifest.entries.Length} references in {entriesOf.Count} bundles, {scopes.Count} scopes load on demand.");
+        }
+
+        static bool lateStarted;
+
+        /// <summary>The late core (everything but the menu's own) is in, or there is none to wait for.</summary>
+        public static bool LateReady => !Knows(LateCore) || IsLoaded(LateCore);
+
+        /// <summary>
+        /// Starts the late core once the menu has had <paramref name="delaySeconds"/> to show itself, so its downloads and
+        /// texture uploads don't compete with the boot or the first frames. Held for the rest of the session. Safe to call twice.
+        /// </summary>
+        public static void LoadLateInBackground(float delaySeconds)
+        {
+            if (!Managed || lateStarted || !Knows(LateCore))
+                return;
+            lateStarted = true;
+            Runner.Get().StartCoroutine(LateInBackground(delaySeconds));
+        }
+
+        static IEnumerator LateInBackground(float delaySeconds)
+        {
+            yield return new WaitForSecondsRealtime(delaySeconds);
+            yield return Acquire(LateCore, new[] { LateCore });
+        }
+
+        /// <summary>Waits for the late core (starting it now if the menu hasn't yet); <paramref name="progress"/> gets 0..1.</summary>
+        public static IEnumerator EnsureLate(Action<float> progress = null)
+        {
+            if (LateReady)
+                yield break;
+            lateStarted = true;
+            yield return Acquire(LateCore, new[] { LateCore }, progress);
         }
 
         /// <summary>The manifest has this scope.</summary>

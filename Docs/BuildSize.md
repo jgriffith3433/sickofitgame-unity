@@ -66,3 +66,13 @@ was its own bundle, so the phone made ~140 requests with a handshake each. `Play
 core address into `PlayerData_Assets_Core_Art<n>` / `Core_Audio<n>` groups packed together (12 MB per bundle at most); a
 level that reuses a core asset shares that bundle, already loaded. Expect ~142 bundles to become a handful. The compression
 settings (gzip + decompression fallback) are untouched. Measure with the `phone-load` playtest (`bundles before the menu`).
+
+## Before the menu: only the menu (2026-11-08)
+
+"core" used to be everything not owned by a level, video, death or sound: it carried the Shaft's ten warden and band
+paintings, Yooba's four sheets, the shop's icons and the select cards' thumbnails, all before the menu. Those are now the
+scope `core.late` (`PlayerDataManifest.LatePrefixes`, `.thumbnail`): packed into their own `Core Late` bundles, started
+2 s after the menu is up (`GameAssets.LoadLateInBackground`, from `GameDefinitionBoot`) and awaited by anything that reads
+them (`SceneTransitionManager`: `Prepared` loads, level/video select and the shop; `GameAssets.EnsureLate`). The boot's bar
+now covers the game data and the menu's own art and sound. Playtest `phone-load` checks `late core behind the menu`.
+Add a path prefix to `LatePrefixes` to move more out of the boot; anything the menu itself draws must stay in "core".
