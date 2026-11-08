@@ -5,7 +5,7 @@ namespace SickOfIt.Core.Progression
 {
     /// <summary>
     /// How the game gets its Hawkes Net connection back (GhostLobby): capped exponential backoff with jitter
-    /// (2 s, 4 s, 8 s ... 60 s, each +-25%), scheduled from the failure itself, never polled. A 410 Gone, or the
+    /// (2 s, 4 s, 8 s ... 60 s, each up to 25% longer), scheduled from the failure itself, never polled. A 410 Gone, or the
     /// third 4xx in a row (other than 408/429, which are only "slow down"), ends the session's retrying: the game
     /// asks again on the next scene load or when an online feature opens. Pure logic, no Unity objects (EditMode tests).
     /// </summary>
@@ -49,11 +49,11 @@ namespace SickOfIt.Core.Progression
             return DelayFor(failures);
         }
 
-        /// <summary>Delay before attempt number `failure` (1 = after the first failure): 2, 4, 8 ... 60, jittered.</summary>
+        /// <summary>Delay before attempt number `failure` (1 = after the first failure): 2, 4, 8 ... 60, plus up to 25%.</summary>
         public float DelayFor(int failure)
         {
             float basis = Math.Min(MaxDelay, FirstDelay * (float)Math.Pow(2, Math.Max(0, failure - 1)));
-            float spread = 1f + Jitter * (2f * (float)random.NextDouble() - 1f);
+            float spread = 1f + Jitter * (float)random.NextDouble(); // only later, never sooner than the promised wait
             return basis * spread;
         }
     }
