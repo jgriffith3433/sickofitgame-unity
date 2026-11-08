@@ -10,6 +10,9 @@ using System.Runtime.InteropServices;
 using AOT;
 #endif
 using AddressablesAPI = UnityEngine.AddressableAssets.Addressables;
+using UObject = UnityEngine.Object;
+using BoolCallbackList = System.Collections.Generic.List<System.Action<bool>>;
+using HandleList = System.Collections.Generic.List<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>;
 
 namespace SickOfIt.Core.Addressables
 {
@@ -70,19 +73,19 @@ namespace SickOfIt.Core.Addressables
         [SerializeField] private string previousSceneName = "";
 
         private Dictionary<string, bool> inProgressLabelLoads = new Dictionary<string, bool>();
-        private Dictionary<string, List<System.Action<bool>>> pendingLabelLoadCallbacks = new Dictionary<string, List<System.Action<bool>>>();
+        private Dictionary<string, BoolCallbackList> pendingLabelLoadCallbacks = new Dictionary<string, BoolCallbackList>();
 
         private Dictionary<string, bool> inProgressTypedLabelLoads = new Dictionary<string, bool>();
         private Dictionary<string, bool> inProgressAssetLoads = new Dictionary<string, bool>();
 
         private Dictionary<string, bool> inProgressSceneLoads = new Dictionary<string, bool>();
-        private Dictionary<string, List<System.Action<bool>>> pendingSceneLoadCallbacks = new Dictionary<string, List<System.Action<bool>>>();
+        private Dictionary<string, BoolCallbackList> pendingSceneLoadCallbacks = new Dictionary<string, BoolCallbackList>();
 
         private Dictionary<string, AsyncOperationHandle<SceneInstance>> activeSceneHandles = new Dictionary<string, AsyncOperationHandle<SceneInstance>>();
 
         // Per-scene tracking of asset handles (audio, prefabs, etc.) that callers don't own.
         // Released during scene transitions to prevent memory leaks on WebGL.
-        private Dictionary<string, List<AsyncOperationHandle>> sceneAssetHandles = new Dictionary<string, List<AsyncOperationHandle>>();
+        private Dictionary<string, HandleList> sceneAssetHandles = new Dictionary<string, HandleList>();
 
         private void Awake()
         {
@@ -102,12 +105,12 @@ namespace SickOfIt.Core.Addressables
             StartCoroutine(LoadLabelAsync(label, onComplete));
         }
 
-        public void LoadLabel<T>(string label, System.Action<IList<T>> onComplete) where T : UnityEngine.Object
+        public void LoadLabel<T>(string label, System.Action<IList<T>> onComplete) where T : UObject
         {
             StartCoroutine(LoadLabelAsync<T>(label, onComplete));
         }
 
-        public void LoadLabelWithHandle<T>(string label, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete) where T : UnityEngine.Object
+        public void LoadLabelWithHandle<T>(string label, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete) where T : UObject
         {
             StartCoroutine(LoadLabelWithHandleAsync<T>(label, onComplete));
         }
@@ -116,7 +119,7 @@ namespace SickOfIt.Core.Addressables
         /// Same as LoadLabelWithHandle but also outputs the raw AsyncOperationHandle
         /// immediately so the caller can release it to cancel an in-flight load.
         /// </summary>
-        public void LoadLabelWithHandle<T>(string label, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete, out AsyncOperationHandle<IList<T>> immediateHandle) where T : UnityEngine.Object
+        public void LoadLabelWithHandle<T>(string label, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete, out AsyncOperationHandle<IList<T>> immediateHandle) where T : UObject
         {
             try
             {
@@ -133,7 +136,7 @@ namespace SickOfIt.Core.Addressables
             StartCoroutine(LoadLabelWithHandleTrackingAsync<T>(label, immediateHandle, onComplete));
         }
 
-        public void LoadAsset<T>(string address, System.Action<T> onComplete) where T : UnityEngine.Object
+        public void LoadAsset<T>(string address, System.Action<T> onComplete) where T : UObject
         {
             StartCoroutine(LoadAssetAsync<T>(address, onComplete));
         }
@@ -197,7 +200,7 @@ namespace SickOfIt.Core.Addressables
         {
             string scene = currentSceneName ?? "";
             if (!sceneAssetHandles.ContainsKey(scene))
-                sceneAssetHandles[scene] = new List<AsyncOperationHandle>();
+                sceneAssetHandles[scene] = new HandleList();
             sceneAssetHandles[scene].Add(handle);
         }
 
@@ -316,7 +319,7 @@ namespace SickOfIt.Core.Addressables
             {
                 Log($"[DEDUP] Label '{label}' already loading, queuing callback");
                 if (!pendingLabelLoadCallbacks.ContainsKey(label))
-                    pendingLabelLoadCallbacks[label] = new List<System.Action<bool>>();
+                    pendingLabelLoadCallbacks[label] = new BoolCallbackList();
                 pendingLabelLoadCallbacks[label].Add(onComplete);
                 yield break;
             }
@@ -325,10 +328,10 @@ namespace SickOfIt.Core.Addressables
             activeOperations.Add($"Load: {label}");
             Log($"Loading label '{label}'...");
 
-            AsyncOperationHandle<IList<UnityEngine.Object>> loadHandle;
+            AsyncOperationHandle<IList<UObject>> loadHandle;
             try
             {
-                loadHandle = AddressablesAPI.LoadAssetsAsync<UnityEngine.Object>(label, null);
+                loadHandle = AddressablesAPI.LoadAssetsAsync<UObject>(label, null);
             }
             catch (System.Exception e)
             {
@@ -392,7 +395,7 @@ namespace SickOfIt.Core.Addressables
             }
         }
 
-        private IEnumerator LoadLabelAsync<T>(string label, System.Action<IList<T>> onComplete) where T : UnityEngine.Object
+        private IEnumerator LoadLabelAsync<T>(string label, System.Action<IList<T>> onComplete) where T : UObject
         {
             string key = $"{label}+{typeof(T).Name}";
 
@@ -443,7 +446,7 @@ namespace SickOfIt.Core.Addressables
             onComplete?.Invoke(success ? loadHandle.Result : null);
         }
 
-        private IEnumerator LoadLabelWithHandleAsync<T>(string label, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete) where T : UnityEngine.Object
+        private IEnumerator LoadLabelWithHandleAsync<T>(string label, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete) where T : UObject
         {
             string key = $"{label}+{typeof(T).Name}";
 
@@ -475,7 +478,7 @@ namespace SickOfIt.Core.Addressables
         /// <summary>
         /// Variant that tracks a pre-created handle (used by the out-handle overload).
         /// </summary>
-        private IEnumerator LoadLabelWithHandleTrackingAsync<T>(string label, AsyncOperationHandle<IList<T>> loadHandle, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete) where T : UnityEngine.Object
+        private IEnumerator LoadLabelWithHandleTrackingAsync<T>(string label, AsyncOperationHandle<IList<T>> loadHandle, System.Action<AsyncOperationHandle<IList<T>>, IList<T>> onComplete) where T : UObject
         {
             string key = $"{label}+{typeof(T).Name}";
 
@@ -502,7 +505,7 @@ namespace SickOfIt.Core.Addressables
         /// <summary>
         /// Shared progress-tracking loop for label loads.
         /// </summary>
-        private IEnumerator TrackLoadProgressAsync<T>(string label, AsyncOperationHandle<IList<T>> loadHandle) where T : UnityEngine.Object
+        private IEnumerator TrackLoadProgressAsync<T>(string label, AsyncOperationHandle<IList<T>> loadHandle) where T : UObject
         {
             float elapsed = 0f;
             float lastProgress = 0f;
@@ -526,7 +529,7 @@ namespace SickOfIt.Core.Addressables
             }
         }
 
-        private IEnumerator LoadAssetAsync<T>(string address, System.Action<T> onComplete) where T : UnityEngine.Object
+        private IEnumerator LoadAssetAsync<T>(string address, System.Action<T> onComplete) where T : UObject
         {
             string key = $"{address}+{typeof(T).Name}";
 
@@ -564,7 +567,7 @@ namespace SickOfIt.Core.Addressables
             {
                 Log($"[DEDUP] Scene '{sceneName}' already loading, queuing callback");
                 if (!pendingSceneLoadCallbacks.ContainsKey(sceneName))
-                    pendingSceneLoadCallbacks[sceneName] = new List<System.Action<bool>>();
+                    pendingSceneLoadCallbacks[sceneName] = new BoolCallbackList();
                 pendingSceneLoadCallbacks[sceneName].Add(onComplete);
                 yield break;
             }
