@@ -11,7 +11,7 @@ namespace SickOfIt.Core.Progression
     public sealed class TransportButtonLayout : MonoBehaviour
     {
         /// <summary>The smallest transport button, in CSS pixels (the page's pixels, not the canvas's): 48 is the touch floor, 52 leaves a margin.</summary>
-        public const float MinButtonCssPixels = 52f;
+        public const float MinButtonCssPixels = 56f;
         MobileControllerFramework.Button rewind;
         MobileControllerFramework.Button skip;
         Vector2Int screen;
@@ -86,6 +86,34 @@ namespace SickOfIt.Core.Progression
             Place(rewindRect, 0.5f, y, shift + (skipRect != null ? -gap : 0f));
             if (skipRect != null)
                 Place(skipRect, 0.5f, y, shift + gap);
+
+            // Measure what actually reached the screen (the canvas scaler, its camera and the page's pixel ratio all
+            // sit between a rect's size and its pixels) and grow any button still under the floor. The phone run
+            // measured 44.8 CSS px for a button sized to 52.
+            float wanted = MinButtonCssPixels * DevicePixelRatio();
+            Correct(rewindRect, canvas, wanted);
+            if (skipRect != null)
+                Correct(skipRect, canvas, wanted);
+        }
+
+        static float ScreenHeight(RectTransform rect, Canvas canvas)
+        {
+            var corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            var cam = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+            return Mathf.Abs(RectTransformUtility.WorldToScreenPoint(cam, corners[1]).y - RectTransformUtility.WorldToScreenPoint(cam, corners[0]).y);
+        }
+
+        static void Correct(RectTransform rect, Canvas canvas, float wantedScreenPixels)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                float h = ScreenHeight(rect, canvas);
+                if (h <= 1f || h >= wantedScreenPixels) return;
+                float grow = wantedScreenPixels / h * 1.02f;
+                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rect.rect.width * grow);
+                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rect.rect.height * grow);
+            }
         }
 
         static void Size(RectTransform rect, Vector2 size, float touch)
