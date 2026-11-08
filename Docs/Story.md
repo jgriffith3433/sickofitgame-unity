@@ -2400,11 +2400,11 @@ idea: *Hell is repetition, and he has had enough of repetition.* (No office or w
 
 | Level | Beat |
 |---|---|
-| 1, The Meadow | He was sick of it all long before the sky opened. Then the sky opened. |
-| Floor 1000 | The bottom of Hell: same lava, same noise, same forever. He is already sick of it. |
-| Floor 999 | One floor up. He is counting out loud, and Hell is counting along. |
-| Floor 998 | They took the village. Now they take the gun. He has hands, and he is sick of being polite. |
-| Floor 997 | Imps haul his village's diamonds up a chain, sack after sack, the same sack. He has seen enough loops. |
+| 1, The Meadow | Then the sky opened. |
+| Floor 1000 | The bottom of Hell. He is already sick of it. |
+| Floor 999 | One floor up. Hell is counting along. |
+| Floor 998 | They took the village. Now they take the gun. |
+| Floor 997 | Imps haul his village's diamonds. Same sack, every loop. |
 
 Playtest `opening-beats` plays them (it is the scenario beta's review runs: Video1 played then skipped, a `beat` event and a `check beats level N` per level, `beats none repeated` last; keep its `BeatLines` in step with this table). Next floors get theirs the same way (an `onEnter` `runSequence` of `wait` + `showText`).
 
