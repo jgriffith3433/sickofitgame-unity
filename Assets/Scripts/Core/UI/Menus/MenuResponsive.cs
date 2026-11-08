@@ -252,6 +252,7 @@ namespace SickOfIt.Core.UI.Menus
         MenuListDirection? direction;
         int appliedCount = -1;
         bool? contentAtStart;
+        float padY = Pad; // top/bottom padding of a vertical list; tightened when the page can't fit otherwise
 
         bool UsePortrait => MenuScreen.Portrait && Portrait != null && Portrait.use;
 
@@ -337,6 +338,7 @@ namespace SickOfIt.Core.UI.Menus
             int columns = UsePortrait ? Portrait.columns : Landscape.columns;
             Vector2 item = ItemSize();
             appliedCount = ActiveItems();
+            padY = Pad;
             if (dir == MenuListDirection.Vertical && appliedCount > 0 && areaSize.y > Pad * 2f)
             {
                 // Shrink the buttons so the whole page fits the window, never under the touch minimum.
@@ -344,6 +346,13 @@ namespace SickOfIt.Core.UI.Menus
                 var canvas = GetComponentInParent<Canvas>();
                 float scale = canvas != null && canvas.rootCanvas.scaleFactor > 0.01f ? canvas.rootCanvas.scaleFactor : 1f;
                 float floor = MinButtonPixels / scale;
+                if (fit < floor)
+                {
+                    // Even the smallest buttons overflow: spend less on padding and gaps before cutting a button.
+                    padY = Pad * 0.25f;
+                    spacing.y = Mathf.Min(spacing.y, 4f);
+                    fit = (areaSize.y - padY * 2f - spacing.y * (appliedCount - 1)) / appliedCount;
+                }
                 if (fit < item.y) item.y = Mathf.Max(fit, floor);
             }
             Marker.ItemSize = item;
@@ -362,7 +371,7 @@ namespace SickOfIt.Core.UI.Menus
 
         void Configure(MenuListDirection dir, Vector2 spacing, Vector2 item, int columns)
         {
-            var padding = new RectOffset((int)Pad, (int)Pad, (int)Pad, (int)Pad);
+            var padding = new RectOffset((int)Pad, (int)Pad, (int)padY, (int)padY);
             bool horizontal = dir == MenuListDirection.Horizontal;
             if (direction != dir)
             {
