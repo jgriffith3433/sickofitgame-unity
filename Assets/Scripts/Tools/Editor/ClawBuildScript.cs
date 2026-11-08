@@ -158,7 +158,10 @@ namespace SickOfIt.Tools.Editor
                 options = BuildOptions.None
             };
 
-            var report = BuildPipeline.BuildPlayer(options);
+            UnityEditor.Build.Reporting.BuildReport report;
+            using (WebGLPlayerSettings.Apply(message => Debug.Log("[ClawBuild] " + message)))
+            using (AddressablesTextureVariants.CapTextures())
+                report = BuildPipeline.BuildPlayer(options);
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
                 throw new Exception($"WebGL build failed: {report.summary.result}");
 

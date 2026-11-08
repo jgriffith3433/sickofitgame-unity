@@ -101,5 +101,8 @@ InitTestScene*.unity*
 # Hawkes Analytics build info: written for a player build and removed after it (AnalyticsBuildInfo.cs)
 /Assets/Resources/HawkesBuildInfo.json
 /Assets/Resources/HawkesBuildInfo.json.meta
+# The bundles both texture variants share: written for a WebGL player build and removed after it (TextureVariantSharedList.cs)
+/Assets/Resources/TextureVariantShared.txt
+/Assets/Resources/TextureVariantShared.txt.meta
 
 videos/*/out/

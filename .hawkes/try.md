@@ -1,4 +1,4 @@
-1. Open the beta game with the console open while the Hawkes Net server is down.
-2. On the main menu, see a small "Other climbers: offline" chip and at most one short "Hawkes Net:" warning per retry (waits grow 2, 4, 8 s ... 60 s).
-3. Press New Game and play Level 1: no errors, no stalls.
-4. When the server is back, the chip disappears (or shows "N climbing") without a reload. Or run the `net-outage` playtest.
+1. On your phone, open beta.hawkesgames.com/play/sickofit in a fresh tab.
+2. Watch the page's orange bar fill, then the game's own bar: "Climbing out of the lava... N%" counts up once to 100%. It no longer empties and fills again.
+3. The main menu should be up within about 20 seconds. Start a level: it should play smoothly.
+4. Or ask Studio for the `phone-load` playtest on device "phone": its timeline shows the load times, what was downloaded and the fps checks.

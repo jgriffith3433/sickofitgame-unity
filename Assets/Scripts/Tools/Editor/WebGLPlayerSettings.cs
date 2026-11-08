@@ -1,0 +1,87 @@
+using System;
+using UnityEditor;
+using UnityEditor.Build;
+
+namespace SickOfIt.Tools.Editor
+{
+    /// <summary>
+    /// The WebGL player settings every deploy builds with, set here in code so they can't drift in ProjectSettings.asset
+    /// (an LFS file agents can't read) and are written to the build log. <see cref="Apply"/> sets them and returns a scope
+    /// that puts the project's own values back after the build, so a deploy never dirties ProjectSettings.asset.
+    ///
+    /// Compression: gzip with Unity's decompression fallback. The builds host (sites.hawkesgen.ai) and the game pages
+    /// (Hawkes Games' /play/sickofit, the template page) ask for SickOfIt.*.unityweb and the host sends those without a
+    /// Content-Encoding, so the browser can't decode them and Unity's loader does it in JavaScript. Measured on v17
+    /// (2026-11-08): Brotli would save 3.9 MB of 25.2 MB, but its JavaScript decoder is several times slower than gzip's on
+    /// a phone, which costs more than the download it saves. Brotli pays only without the fallback (SickOfIt.*.br served
+    /// with Content-Encoding: br), which needs the hosted page to ask for .br files first (Docs/BuildSize.md).
+    /// </summary>
+    public static class WebGLPlayerSettings
+    {
+        public sealed class Restore : IDisposable
+        {
+            readonly WebGLCompressionFormat compression;
+            readonly bool fallback, strip, dataCaching, nameAsHashes, development;
+            bool done;
+
+            internal Restore()
+            {
+                compression = PlayerSettings.WebGL.compressionFormat;
+                fallback = PlayerSettings.WebGL.decompressionFallback;
+                strip = PlayerSettings.stripEngineCode;
+                dataCaching = PlayerSettings.WebGL.dataCaching;
+                nameAsHashes = PlayerSettings.WebGL.nameFilesAsHashes;
+                development = EditorUserBuildSettings.development;
+            }
+
+            public void Dispose()
+            {
+                if (done)
+                    return;
+                done = true;
+                PlayerSettings.WebGL.compressionFormat = compression;
+                PlayerSettings.WebGL.decompressionFallback = fallback;
+                PlayerSettings.stripEngineCode = strip;
+                PlayerSettings.WebGL.dataCaching = dataCaching;
+                PlayerSettings.WebGL.nameFilesAsHashes = nameAsHashes;
+                EditorUserBuildSettings.development = development;
+            }
+        }
+
+        /// <summary>Sets the deploy's WebGL settings (logging each one, before and after); dispose the result after the build.</summary>
+        public static Restore Apply(Action<string> log)
+        {
+            var restore = new Restore();
+            log("  WebGL player settings for this build (the project's own values come back after it):");
+            Set(log, "compression", PlayerSettings.WebGL.compressionFormat, WebGLCompressionFormat.Gzip,
+                v => PlayerSettings.WebGL.compressionFormat = v);
+            Set(log, "decompression fallback (.unityweb names, decoded by the loader)", PlayerSettings.WebGL.decompressionFallback, true,
+                v => PlayerSettings.WebGL.decompressionFallback = v);
+            // The pages ask for SickOfIt.data.unityweb and friends by name.
+            Set(log, "file names as hashes", PlayerSettings.WebGL.nameFilesAsHashes, false, v => PlayerSettings.WebGL.nameFilesAsHashes = v);
+            // Unused engine modules out of the wasm (Addressables writes a link.xml for the types its bundles use).
+            Set(log, "strip engine code", PlayerSettings.stripEngineCode, true, v => PlayerSettings.stripEngineCode = v);
+            // A second visit reads SickOfIt.data from the browser's cache instead of downloading it again.
+            Set(log, "data caching", PlayerSettings.WebGL.dataCaching, true, v => PlayerSettings.WebGL.dataCaching = v);
+            Set(log, "development build", EditorUserBuildSettings.development, false, v => EditorUserBuildSettings.development = v);
+            // Not changed on purpose (logged so a build says what it shipped with): managed stripping (the JSON content
+            // types are found by reflection, so a higher level needs Assets/link.xml checked in a WebGL build first), IL2CPP
+            // code generation (the size option shares generic code, which can cost frame time on a phone) and exceptions.
+            log($"    managed stripping {PlayerSettings.GetManagedStrippingLevel(NamedBuildTarget.WebGL)}, " +
+                $"IL2CPP code generation {PlayerSettings.GetIl2CppCodeGeneration(NamedBuildTarget.WebGL)}, " +
+                $"exceptions {PlayerSettings.WebGL.exceptionSupport} (all unchanged)");
+            return restore;
+        }
+
+        static void Set<T>(Action<string> log, string name, T current, T wanted, Action<T> set)
+        {
+            if (Equals(current, wanted))
+            {
+                log($"    {name}: {wanted}");
+                return;
+            }
+            set(wanted);
+            log($"    {name}: {current} -> {wanted}");
+        }
+    }
+}
