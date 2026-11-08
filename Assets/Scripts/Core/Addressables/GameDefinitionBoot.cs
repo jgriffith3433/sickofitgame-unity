@@ -105,8 +105,8 @@ namespace SickOfIt.Core.Addressables
                     int next = SceneManager.GetActiveScene().buildIndex + 1;
                     if (next < SceneManager.sceneCountInBuildSettings)
                         SceneManager.LoadScene(next);
-                    // The select cards, Shaft and shop art come in behind the menu, not before it.
-                    GameAssets.LoadLateInBackground(2f);
+                    // The select cards, Shaft and shop art come in behind the menu, not before it: MainMenuManager starts that
+                    // once the menu is up (a timer here ticked through the menu scene's own load and fetched them before it).
                     Destroy(gameObject);
                     yield break;
                 }
