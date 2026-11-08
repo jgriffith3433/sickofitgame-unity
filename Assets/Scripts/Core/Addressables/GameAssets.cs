@@ -142,8 +142,17 @@ namespace SickOfIt.Core.Addressables
             string[] next = null;
             try { if (ContinueLevelProvider != null) next = SickOfIt.Core.Flow.SceneTransitionManager.LevelScopes(ContinueLevelProvider()); }
             catch (Exception e) { Debug.LogWarning("[GameAssets] warm-up skipped: " + e.Message); }
-            if (next != null)
-                yield return Warm(new[] { Hero }.Concat(next));
+            if (next == null)
+                yield break;
+            yield return Warm(new[] { Hero }.Concat(next));
+            // Downloaded is not loaded: Continue still spent ~11 s decoding and uploading the hero's and Level 1's sheets behind a
+            // black bar. Where the browser has the memory (not a phone: iOS kills a page that holds two floors' art) load them too,
+            // so Continue finds them in (PrepareThenLoad's "inAlready": no cover, no bar). Left alone if the player already left.
+            if (Application.isMobilePlatform || SystemInfo.systemMemorySize <= 2048)
+                yield break;
+            yield return Acquire("hero", new[] { Hero });
+            yield return Acquire("level", next);
+            Debug.Log("[GameAssets] hero and next level held behind the menu.");
         }
 
         /// <summary>Warm-up seconds of the last <see cref="Warm"/> (0 until it ran), for the playtest.</summary>
