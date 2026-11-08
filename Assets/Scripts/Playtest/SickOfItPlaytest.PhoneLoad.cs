@@ -167,6 +167,11 @@ namespace SickOfIt.Playtest
                 {
                     Run.Metric("load.bootDataSeconds", bootData - bootStart);
                     Run.Metric("load.bootCoreSeconds", bootReady - bootData);
+                    if (GameDefinitionBoot.InitAt > 0f)
+                    {
+                        Run.Metric("load.bootCatalogSeconds", GameDefinitionBoot.InitAt - bootStart);
+                        Run.Event("load", $"Addressables init and catalog {GameDefinitionBoot.InitAt - bootStart:0.0} s of the {bootData - bootStart:0.0} s game-data step");
+                    }
                 }
                 LoadCheck("menu in time", menuAt <= PhoneLoadMenuBudget,
                     $"the main menu was up {menuAt:0.0} s after the {(pageClock ? "page opened" : "player started (no page clock here)")}, budget {PhoneLoadMenuBudget:0} s");
