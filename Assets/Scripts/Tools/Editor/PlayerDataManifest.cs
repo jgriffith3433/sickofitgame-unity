@@ -223,7 +223,11 @@ namespace SickOfIt.Tools.Editor
                     if (index >= definition.audio.sounds.Count)
                         return "core";
                     string id = definition.audio.sounds[index].id;
-                    return eventSounds.Contains(id) ? "core" : "sound/" + id;
+                    if (!eventSounds.Contains(id))
+                        return "sound/" + id;
+                    // The menu only clicks, hovers and lets its own hero move; the rest of the events (voices, pickups, rewind,
+                    // banners, stings) first play in a level, which waits for the late core, so they load behind the menu.
+                    return id.StartsWith("ui_", StringComparison.Ordinal) || id.StartsWith("player_", StringComparison.Ordinal) ? "core" : LateCore;
                 default: return "core";
             }
         }
