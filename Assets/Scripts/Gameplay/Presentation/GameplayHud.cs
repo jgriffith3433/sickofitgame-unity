@@ -868,15 +868,21 @@ namespace SickOfIt.Gameplay
             rewindSlot.sizeDelta = new Vector2(340f, 36f);
             rewindSlot.anchoredPosition = new Vector2(-6f, 10f);
             // A dark pill behind the readout (right-aligned, resized to the words each frame) so it reads on bright sky.
-            rewindPill = MenuGraphics.NewImage(rewindSlot, "Pill", new Color(0.08f, 0.04f, 0.1f, 0.78f));
+            rewindPill = MenuGraphics.NewImage(rewindSlot, "Pill", new Color(0.08f, 0.04f, 0.1f, 0.92f));
             MenuGraphics.Apply(rewindPill, MenuShape.Pill, 0f);
             rewindPill.rectTransform.anchorMin = rewindPill.rectTransform.anchorMax = new Vector2(1f, 0.5f);
             rewindPill.rectTransform.pivot = new Vector2(1f, 0.5f);
             rewindPill.rectTransform.anchoredPosition = new Vector2(10f, 0f);
             rewindLabel = MenuGraphics.Text(rewindSlot, "Text", "", theme.caption, menu.Font, 24f);
             rewindLabel.alignment = TextAlignmentOptions.MidlineRight;
-            rewindLabel.outlineWidth = 0.2f;
-            rewindLabel.outlineColor = new Color(0.12f, 0.07f, 0.13f, 1f);
+            rewindLabel.outlineWidth = 0.3f;
+            rewindLabel.outlineColor = new Color(0.08f, 0.04f, 0.1f, 1f);
+            var rewindMat = rewindLabel.fontMaterial;
+            rewindMat.EnableKeyword("UNDERLAY_ON");
+            rewindMat.SetColor("_UnderlayColor", new Color(0f, 0f, 0f, 0.85f));
+            rewindMat.SetFloat("_UnderlayOffsetX", 0.6f);
+            rewindMat.SetFloat("_UnderlayOffsetY", -0.6f);
+            rewindMat.SetFloat("_UnderlaySoftness", 0.15f);
             menu.AddMotion(progressRoot.gameObject, null, theme.entrance, 0f);
             Lay(progressRoot, l => l.progressBar, MenuElementKind.Panel);
         }
@@ -937,7 +943,7 @@ namespace SickOfIt.Gameplay
             {
                 // A reward names itself ("CLEAN KILL +0.5s"); the plain "+Ns" pop below then skips it.
                 juicePopAt = Time.unscaledTime;
-                floaters?.Spawn((RectTransform)rewindLabel.transform.parent, $"{pendingRewardLabel} +{pendingReward:0.#}s", style.rewind, 40f);
+                floaters?.Spawn((RectTransform)rewindLabel.transform.parent, $"{pendingRewardLabel} +{pendingReward:0.#}s", style.rewind, 46f);
                 shownJuice = budget.Juice;
                 RewardsShown++;
                 LastRewardShown = $"{pendingRewardLabel} +{pendingReward:0.#}s";
@@ -946,7 +952,7 @@ namespace SickOfIt.Gameplay
             if (shownJuice >= 0f && budget.Juice > shownJuice + 0.4f && !rewindingNow)
             {
                 juicePopAt = Time.unscaledTime;
-                floaters?.Spawn((RectTransform)rewindLabel.transform.parent, $"+{budget.Juice - shownJuice:0.#}s", style.rewind, 40f);
+                floaters?.Spawn((RectTransform)rewindLabel.transform.parent, $"+{budget.Juice - shownJuice:0.#}s", style.rewind, 46f);
             }
             shownJuice = budget.Juice;
             float juiceAge = Time.unscaledTime - juicePopAt;
