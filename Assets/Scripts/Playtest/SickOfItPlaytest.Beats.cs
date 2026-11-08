@@ -12,7 +12,7 @@ namespace SickOfIt.Playtest
 {
     public static partial class SickOfItPlaytest
     {
-        /// <summary>The opening-beats scenario: Video1 plays and is skipped, then each of the first five levels shows its own beat line.</summary>
+        /// <summary>The opening-beats scenario: New Game goes straight into Level 1, then each of the first five levels shows its own beat line.</summary>
         public const string BeatsId = "opening-beats";
         const float BeatsSeconds = 300f;
 
@@ -63,19 +63,20 @@ namespace SickOfIt.Playtest
                 var seen = new HashSet<string>(BeatLines);
                 BeatsCheck("distinct", seen.Count == BeatLines.Length, $"{seen.Count} different beat lines for {BeatLines.Length} levels");
 
-                // 1. A fresh save: New Game opens Video1, which Escape skips.
+                // 1. A fresh save: New Game goes straight into Level 1 (no film before play), within 20 s of the pick.
                 yield return ToMainMenu();
                 if (Run.Done) yield break;
-                yield return ClickNewGame(() => Object.FindAnyObjectByType<VideoRuntime>() != null);
+                float picked = Time.realtimeSinceStartup;
+                yield return ClickNewGame(() => LevelRunning(1) || Object.FindAnyObjectByType<VideoRuntime>() != null);
                 if (Run.Done) yield break;
-                yield return Run.Until(() => ClockTime > 0.1f, 60f, "Video1 to start playing");
+                bool film = Object.FindAnyObjectByType<VideoRuntime>() != null;
+                BeatsCheck("straight into play", !film, film ? "New Game opened a video before Level 1" : "New Game opened Level 1");
+                if (film) yield return Tap(Key.Escape);
+                yield return Run.Until(() => GameplayWorld.Instance != null && GameplayWorld.Instance.Player != null, 60f, "Level 1 to start");
                 if (Run.Done) yield break;
-                Run.Scene("Opening: Video1");
-                float before = ClockTime;
-                yield return WaitReal(4f);
-                BeatsCheck("opening plays", ClockTime > before + 1f, $"the opening's clock ran from {before:0.0}s to {ClockTime:0.0}s");
-                yield return Tap(Key.Escape);
-                Run.Event("skip", "the opening (Video1)");
+                float toPlay = Time.realtimeSinceStartup - picked;
+                Run.Metric("beats.newGameToPlaySeconds", toPlay);
+                BeatsCheck("playing fast", toPlay <= 20f, $"playing {toPlay:0.0} s after New Game");
 
                 // 2. Level 1 through the real flow, then Floors 1000-997 loaded directly.
                 yield return WatchBeat(0, 1);

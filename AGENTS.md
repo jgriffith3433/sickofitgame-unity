@@ -205,7 +205,7 @@ Assets/GameConfig/
   a script's `playMusic`; `musicLayer` telemetry). Stingers are audio.json sounds: event `weaponSting` (first find of a weapon) and `stingSound` on each `ui/theme.json`
   grade. `Tools/Audio/music_manifest.json` lists the 34 tracks still to make (stand-ins play meanwhile; `python3 Tools/Audio/music_manifest.py --check --price`): replace
   a stand-in's path with the made file. Playtest `music-layers` (~3 min).
-- **Difficulty and accessibility** (Docs/Story.md "How sick of it are you?"): `Data/Difficulty.cs` (Assist/Normal/Hard/Hell Loop, Normal = all 1): New Game opens `SettingsPanel.ShowDifficulty` first (`MainMenuManager.StartNewGame` runs after the pick); the numbers
+- **Difficulty and accessibility** (Docs/Story.md "How sick of it are you?"): `Data/Difficulty.cs` (Assist/Normal/Hard/Hell Loop, Normal = all 1): New Game opens `SettingsPanel.ShowDifficulty` first (`MainMenuManager.StartNewGame` runs after the pick, then the house explodes and Level 1 loads: no Video1 before play, so a new player is playing within seconds); the numbers
   act in `Spawning.Fire` (enemy shot speed), the `shoot` ability (density), `Entity.Damage` (`Difficulty.ScaleHit`, keyed on the shot's serial, never a random stream) and `GameplayWorld`'s rewind budget setup. Accessibility is `GameSettings` (`BulletOutlines`, `HighContrastBullets`, `ReducedFlash`, `ReducedShake`, `HitboxDot`,
   `AimAssist`, `TouchButtons`; page `SettingsPanel.ShowAccessibility`; Touch Buttons is the only switch for the ◄ ► JUMP pad, `GameplayHud.Touch.cs`, off by default on phones too: J plays by tap and drag); `BulletReadability`/`HitboxDot` draw, `GameplayWorld.AssistAim` -> `PlayerController.AimAssist` bends shots inside `AimVolley`. Every playtest New Game click goes through `ClickNewGame` (picks Normal). Playtest `difficulty` (~10 min).
 - **Style** (Docs/Story.md "Style"): `game.json` `style` (`StyleConfig`) + `Gameplay/Core/StyleSystem.cs`: a hostile shot (an `Enemy` entity with a `projectile` ability) that passes within
@@ -374,7 +374,7 @@ instead of generated again. Batch mode fails with "another Unity instance is run
   Shaft, Yooba, thumbnails, the sounds of audio.json's `events`) loads at boot; `hero` (player.json's states) and `level/<name>` before a
   level (SceneTransitionManager.LoadLevel; a level includes every registry asset and sound its script names, directly or through the
   content it reaches: entity ids, `extends`, loot, sequences, its Circle, every weapon, and the global configs), `scene/<id>` with
-  LevelRuntime.PendingScene, `video/<name>` and `death/<name>` before theirs (New Game starts the intro's `video/<name>` during the house explosion: `SceneTransitionManager.PreloadVideo`, owner `videoPreload`, let go by `LoadVideo`), `codex/<id>` per Codex page, and any other sound on its
+  LevelRuntime.PendingScene, `video/<name>` and `death/<name>` before theirs (`SceneTransitionManager.PreloadVideo` can start a video's scope early, owner `videoPreload`, let go by `LoadVideo`), `codex/<id>` per Codex page, and any other sound on its
   first play (`Sfx` asks GameAssets; an effect plays if it arrives within 0.4 s, a voice always; 48 kept and 40 MB of decoded audio,
   least recently used dropped). Spoken lines never preload (a level's closure has its effects only). An owner's old scopes are
   released *before* its new ones load (never two floors at once; the WebGL heap only grows, so the peak is what kills a phone).

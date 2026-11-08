@@ -373,21 +373,20 @@ namespace SickOfIt.Core.Progression
             PlayerPrefs.SetInt("ReturnToLevel", 1);
             PlayerPrefs.Save();
 
-            // The intro's art comes in during the house explosion, not behind a black cover after it.
-            if (SceneTransitionManager.Instance != null)
-                SceneTransitionManager.Instance.PreloadVideo(1);
-
             if (bundleDownloadManager != null)
                 bundleDownloadManager.StartDownloadForLevel(1);
             else if (BundleDownloadManager.Instance != null)
                 BundleDownloadManager.Instance.StartDownloadForLevel(1);
 
+            // Straight into play (quality rule: the hook in the first 30 s is something happening, not a 60 s film):
+            // the house explodes, then Level 1, whose opening is the intro's story told in the level (the sky opens over
+            // the meadow, the imps drop in). Video1 is unlocked by InitializeNewPlayer and stays in Videos.
             StartCoroutine(TransitionThenExecute(() =>
             {
                 if (sceneLoadingManager != null)
-                    sceneLoadingManager.LoadVideo(1);
+                    sceneLoadingManager.LoadLevel(1);
                 else
-                    SceneTransitionManager.Instance.LoadVideo(1);
+                    SceneTransitionManager.Instance.LoadLevel(1);
             }));
         }
 

@@ -45,7 +45,9 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 
 Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
 
-1. **Video1.** A nice afternoon. The Overlord rises over the hills; his imps drop in to loot the village.
+1. **Video1.** A nice afternoon. The Overlord rises over the hills; his imps drop in to loot the village. Since 2026-11-08 New
+   Game skips it and opens Level 1, whose first seconds tell the same beat in play (the sky opens, the imps drop in);
+   Video1 is watchable from Videos.
 2. **Level 1, the Meadow.** The hero clears the imps and the cinders. Diamonds, a first taste of rewind.
 3. **The Grudge pick** (the level's `offerUpgrades`): his first grudge. It happens before the scene, so the scene
    is never interrupted.
@@ -141,7 +143,7 @@ THE MEADOW again                           Ending
   Floor 960) and Floor 951's when the Chimney is (`Level7`-`Level10`, Floors 950-911, then Floor 910; `Level6`, the old
   Loop over 960-951, is played only from the level select). Their places' names now belong to the floors where those
   ideas are introduced.
-- **The path today** (re-pathed 2026-10-19): New Game → Video1 → Level 1, the Meadow → Video2 → **Floor 1000, The
+- **The path today** (re-pathed 2026-10-19; New Game goes straight to Level 1 since 2026-11-08, Video1 stays in Videos): New Game → Level 1, the Meadow → Video2 → **Floor 1000, The
   Landing** → Video3 (Yooba) → **Floors 999-991** → *the Sack Lift* → **Floors 960-951** → *the King's Chimney* →
   **Floors 910-902** → **Floor 901, the Slag Throne** (his Waystone) → the Shaft (Circle IX wakes up) → **Floors
   900-891** → *the Spared Demon* → **Floors 860-851** → *the Hollow Spire* → **Floors 810-802** → the level select,
