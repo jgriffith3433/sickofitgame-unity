@@ -1,9 +1,11 @@
+using System.Collections;
 using System.Collections.Generic;
 using Hawkes;
 using SickOfIt.Core.Input;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SickOfIt.Core.Progression
 {
@@ -47,9 +49,48 @@ namespace SickOfIt.Core.Progression
         /// <summary>In the lobby's room now (WebGL, not turned off).</summary>
         public static bool Online => instance != null && instance.lobby != null && instance.lobby.Ready;
         /// <summary>Set by MainMenuManager while the main menu is up: its hero sends the menu band.</summary>
-        public static bool MenuOpen { get; set; }
-        /// <summary>The lobby's status ("connecting", "online", "offline", "full"...), or "off".</summary>
-        public static string Status => instance != null ? instance.lobby.Status : "off";
+        public static bool MenuOpen
+        {
+            get => menuOpen;
+            // The menu is an online feature: opening it asks a halted connection to try again.
+            set { menuOpen = value; if (value) Wake(); }
+        }
+        static bool menuOpen;
+        /// <summary>"connecting", "online", "offline" (waiting to retry), "halted" (the server said stop: asked again on the
+        /// next scene load or online feature), or "off" (no lobby: not WebGL, or ?ghosts=0).</summary>
+        public static string Status => instance != null ? instance.status : "off";
+        /// <summary>True when there is a lobby that isn't connected: online features show their quiet offline state.</summary>
+        public static bool Offline => instance != null && (instance.status == "offline" || instance.status == "halted");
+        /// <summary>Playtest only: pretend every connection attempt fails with this problem ("502", "410"); null = real.</summary>
+        public static string ForcedFailure { get; set; }
+        /// <summary>Playtest only: the server goes down now (the open connection is dropped) with this problem, or null: it is back
+        /// and a waiting or halted connection tries again at once.</summary>
+        public static void SimulateOutage(string problem)
+        {
+            ForcedFailure = problem;
+            var g = instance;
+            if (g == null || g.lobby == null)
+                return;
+            if (problem == null)
+            {
+                g.lastWake = -100f;
+                if (g.status == "halted") Wake();
+                return;
+            }
+            if (g.status == "online" || g.status == "connecting")
+            {
+                g.quiet = true;
+                try { g.lobby.Leave(); }
+                finally { g.quiet = false; }
+                g.retry.Succeeded();
+                g.Failed(problem);
+            }
+        }
+        /// <summary>Attempts made (real or forced) and warnings logged, for the playtest.</summary>
+        public static int Attempts { get; private set; }
+        public static int Warnings { get; private set; }
+        /// <summary>The seconds the next retry waits (0 when none is scheduled).</summary>
+        public static float NextRetryIn => instance != null && instance.retryAt > 0f ? Mathf.Max(0f, instance.retryAt - Time.realtimeSinceStartup) : 0f;
 
         static GhostLobby instance;
 
@@ -64,6 +105,12 @@ namespace SickOfIt.Core.Progression
         }
 
         HawkesNetLobby lobby;
+        readonly NetRetry retry = new NetRetry();
+        string status = "connecting";
+        float retryAt = -1f, lastWake = -100f;
+        bool quiet; // our own Leave/Join: not a failure
+        Coroutine timer;
+        const float WakeGap = 10f;
         HawkesNetRoom room => lobby.Room;
         readonly Dictionary<string, Ghost> ghosts = new Dictionary<string, Ghost>();
         readonly List<string> drop = new List<string>();
@@ -82,8 +129,93 @@ namespace SickOfIt.Core.Progression
             // A playtest on the live site still plays apart from the players (the test rooms).
             var hosts = HawkesNetLobby.Query("playtest").Length > 0 ? new string[0] : new[] { "sickofitgame.com", "www.sickofitgame.com" };
             instance.lobby = new HawkesNetLobby(new HawkesNetOptions { project = Project, name = "ghost", transport = "auto", log = false }, hosts);
-            instance.lobby.Join("lobby");
+            instance.lobby.Left += instance.OnLeft;
+            instance.lobby.Joined += instance.OnJoined;
+            SceneManager.sceneLoaded += instance.OnSceneLoaded;
+            instance.Connect();
         }
+
+        // ---- the connection: one attempt, and what a failure means (NetRetry). Single-player never waits on any of it.
+
+        void Connect()
+        {
+            timer = null;
+            retryAt = -1f;
+            Attempts++;
+            status = "connecting";
+            if (!string.IsNullOrEmpty(ForcedFailure))
+            {
+                Failed(ForcedFailure);
+                return;
+            }
+            quiet = true;
+            try { lobby.Join("lobby"); }
+            finally { quiet = false; }
+        }
+
+        void OnJoined(HawkesNetRoom r)
+        {
+            retry.Succeeded();
+            status = "online";
+            retryAt = -1f;
+        }
+
+        void OnLeft(HawkesNetRoom r)
+        {
+            if (quiet || instance != this)
+                return;
+            string problem = lobby.LastProblem;
+            if (problem.Contains("full"))
+                return; // the lobby moves to the next shard by itself
+            // Take the connection over from the package's own timer: this class decides when to try again.
+            quiet = true;
+            try { lobby.Leave(); }
+            finally { quiet = false; }
+            Failed(problem);
+        }
+
+        void Failed(string problem)
+        {
+            float wait = retry.Failed(problem);
+            if (wait < 0f)
+            {
+                status = "halted";
+                Warn("Hawkes Net: " + (problem.Length > 0 ? problem : "unreachable") + ". Playing offline; will ask again on the next scene or online screen.");
+                return;
+            }
+            status = "offline";
+            retryAt = Time.realtimeSinceStartup + wait;
+            Warn("Hawkes Net: " + (problem.Length > 0 ? problem : "unreachable") + ". Playing offline; retrying in " + wait.ToString("0") + " s.");
+            if (timer != null)
+                StopCoroutine(timer);
+            timer = StartCoroutine(RetryAfter(wait)); // a timer set by the failure, not a poll
+        }
+
+        IEnumerator RetryAfter(float seconds)
+        {
+            yield return new WaitForSecondsRealtime(seconds);
+            Connect();
+        }
+
+        static void Warn(string text)
+        {
+            Warnings++;
+            Debug.LogWarning(text);
+        }
+
+        /// <summary>Ask a halted (or waiting) connection to try now: called when a scene loads or an online feature opens.
+        /// Only a halted connection tries (a waiting one has its timer), at most once per 10 s.</summary>
+        public static void Wake()
+        {
+            var g = instance;
+            if (g == null || g.status != "halted" || Time.realtimeSinceStartup - g.lastWake < WakeGap)
+                return;
+            g.lastWake = Time.realtimeSinceStartup;
+            g.retry.Succeeded();
+            g.Connect();
+        }
+
+        void OnSceneLoaded(Scene scene, LoadSceneMode mode) => Wake();
 
         void Update()
         {
@@ -274,6 +406,8 @@ namespace SickOfIt.Core.Progression
         {
             if (instance == this)
                 instance = null;
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            quiet = true;
             lobby?.Leave();
         }
     }

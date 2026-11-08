@@ -182,7 +182,8 @@
     "quit": "Rage Quit",
     "rageQuitAgain": "Rage Quit Again",
     "browserQuitHint": "Browsers won't let us close the tab. Do it yourself. We'll wait.",
-    "climbingNow": "{0} climbing right now"
+    "climbingNow": "{0} climbing right now",
+    "climbingOffline": "Other climbers: offline"
   },
   "showBundleDownloadUI": true,
   "idleHouseSprite": null,
