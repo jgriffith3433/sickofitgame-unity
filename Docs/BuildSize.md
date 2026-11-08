@@ -100,3 +100,12 @@ Phone playtest: game data 14.9 s (50 bundles, 65 files), core 0.8 s, menu 26.0 s
 `events` (voices, pickups, rewind, banners, stings...), none of which the menu plays. `PlayerDataManifest.ScopeOf` now keeps only the
 `ui_*` and `player_*` events in "core" (the menu's clicks and its own hero) and puts the rest in `core.late`, which every level load
 already awaits (`SceneTransitionManager`, `GameAssets.EnsureLate`). Not measured here (no Unity/build); the next `phone-load` run says.
+
+## GameDefinition bundle in LZMA (2026-11-08, phone-load menu at 22.4 s, game data 11.4 s)
+
+Phone playtest: game data 11.4 s (was 9.3), 65 files / 50 bundles before the menu. The earlier moves only shifted art and sound
+between scopes; the game-data step is the catalog plus the GameDefinition bundle, whose ~6 MB is content/level-script JSON.
+Bundles are not gzip'd by the host (no Content-Encoding), so that bundle was downloaded at LZ4 size. `PlayerDataSplit` now packs the
+`PlayerData_GameDefinition` group with LZMA (text, one bundle). Not measured here (no Unity/build): the next `phone-load` run says;
+if `load.bootDataSeconds` is still over ~6 s, the catalog is the rest (see `load.bootCatalogSeconds`) and the next step is splitting
+`content` out of GameDefinition into a lazy bundle.
