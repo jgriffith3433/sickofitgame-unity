@@ -421,6 +421,8 @@ namespace SickOfIt.Core.UI.Menus
         public static bool LastHadPill { get; private set; }
         public static float LastPillAlpha => PillAlpha;
         const float PillAlpha = 0.78f;
+        // The pill is fully opaque for the popup's first moment, then settles to PillAlpha before the fade.
+        const float OpaqueUntil = 0.35f;
 
         sealed class Floater
         {
@@ -491,8 +493,15 @@ namespace SickOfIt.Core.UI.Menus
             text.fontStyle = FontStyles.Bold;
             text.textWrappingMode = TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Overflow;
-            text.outlineWidth = 0.25f;
-            text.outlineColor = new Color(0.12f, 0.07f, 0.13f, 1f);
+            text.outlineWidth = 0.32f;
+            text.outlineColor = new Color(0.08f, 0.04f, 0.1f, 1f);
+            // Drop shadow, as on the subtitles.
+            var mat = text.fontMaterial;
+            mat.EnableKeyword("UNDERLAY_ON");
+            mat.SetColor("_UnderlayColor", new Color(0f, 0f, 0f, 0.85f));
+            mat.SetFloat("_UnderlayOffsetX", 0.6f);
+            mat.SetFloat("_UnderlayOffsetY", -0.6f);
+            mat.SetFloat("_UnderlaySoftness", 0.15f);
             text.raycastTarget = false;
             var tr = text.rectTransform;
             tr.anchorMin = Vector2.zero;
@@ -527,7 +536,8 @@ namespace SickOfIt.Core.UI.Menus
                 var c = f.Color;
                 c.a = t < 0.6f ? 1f : 1f - (t - 0.6f) / 0.4f;
                 f.Text.color = c;
-                f.Pill.color = new Color(0.08f, 0.04f, 0.1f, PillAlpha * c.a);
+                float pillA = t < OpaqueUntil ? 1f : Mathf.Lerp(1f, PillAlpha, Mathf.Clamp01((t - OpaqueUntil) / 0.15f));
+                f.Pill.color = new Color(0.08f, 0.04f, 0.1f, pillA * c.a);
             }
         }
     }
