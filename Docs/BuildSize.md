@@ -160,3 +160,17 @@ Not measured here (no Unity or build in this sandbox). Studio's change check pla
 a desktop figure (DXT, slower) is what that check sees: judge the phone figure from `phone-load@local:phone`.
 Next candidates, in order: whatever `bundle requests before the menu by group` shows beyond core/Boot/GameDefinition; move the MainMenu scene's hero
 sheets (raw RGBA32, 22.8 MB of player data) out of the scene (needs Unity to regenerate the scene); move the 6 MB of content/level JSON out of GameDefinition.
+
+## Video, death and level groups no longer ride with GameDefinition (2026-11-08, phone-load: 42 bundles / 142 requests before the menu)
+
+Delaying `BundleDownloadManager` (#301) did not move the count, because nothing downloaded them on purpose: `LoadAssetAsync<GameDefinition>` loads the
+bundles GameDefinition *depends on*, and it held direct references to assets that live in the clips' own Addressables groups (`Level1-3_Group`,
+`Death1-3_Group`, `Video1-3_Group`): each video's and death's `audio` and `thumbnail`, and the `SpriteFramesData` of every video, death and
+background layer. `PlayerDataSplit.Movable` and `PlayerDataManifest.Takeable` both skipped anything "already addressable", so those references stayed hard.
+Now (deploy only, the split's copy):
+- `PlayerDataManifest.Takeable(.., out foreignAddress)`: a Texture2D/Sprite/AudioClip reference to an asset in another group is emptied and put in the manifest
+  under the address it already has (not moved, so its labels and addresses stay); it loads with its scope (`video/<name>`, `death/<name>`, the thumbnails in `core.late`).
+- `PlayerDataSplit`: a `SpriteFramesData` in another group (a few KB, its frames load by label) is moved into the `PlayerData_Boot` group for the build, recorded in
+  `Temp/GameDefinition.movedEntries.txt` and put back by `End`/`Recover`.
+Not measured here (no Unity or build in this sandbox): the next `phone-load@local:phone` says. If bundles from those groups still show in
+`bundle requests before the menu by group`, the next suspect is a scene (MainMenu/Boot) reference, not GameDefinition.
