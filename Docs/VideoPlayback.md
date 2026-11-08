@@ -111,6 +111,13 @@ orthographic size 2.88, and what menu, video and death layouts are tuned for. Re
 must not need camera or scale changes. `LevelRuntime` and `ExperienceRunner` also stretch level backgrounds to
 fill the camera height.
 
+**Portrait phones.** Menu, videos and the death scene call `AspectRatioController.CoverPortrait` once their camera is
+placed, so a screen taller than 16:9 is filled instead of letterboxed. The frames keep their 10.24-unit width; only the
+camera's framing changes, and only on such a screen. Videos and the death scene keep `game.json`
+`cinematicPortraitWidthShare` (0.8) of the picture width in view, and `PortraitBackdrop` fills the bands above and below
+with the same frame, enlarged and dimmed. The main menu crops to the full picture height (`mainMenu.json`
+`portraitWidthShare` 0) and follows the hero (`portraitFocusX` before he is placed). Landscape is unchanged.
+
 **Memory: the sliding window.** The player holds only a few chunks:
 
 | | Desktop / editor | WebGL |

@@ -32,6 +32,7 @@
   "levelCameraOrthoSize": 2.8,
   "cinematicCameraOrthoSize": 2.8,
   "cinematicCameraBackground": "#000000",
+  "cinematicPortraitWidthShare": 0.8,
   "groundY": -3.0,
   "groundColliderSize": [14.0, 1.0],
   "wallX": 7.0,

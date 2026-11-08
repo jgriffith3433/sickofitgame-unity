@@ -9488,6 +9488,16 @@ namespace SickOfIt.Playtest
                     if (ok) Run.Event("check", $"playfield viewport {Screen.width}x{Screen.height}: ok (full width, no bars above; portrait anchored to the top)");
                     else Run.Problem(PlaytestSeverity.Bug, $"playfield viewport {Screen.width}x{Screen.height}: {vp} (top {top:0}px) does not match the layout rule");
                 }
+                if (screen.StartsWith("Main Menu") && Screen.height > Screen.width && Camera.main != null
+                    && Camera.main.TryGetComponent(out SickOfIt.Core.Device.AspectRatioController menuAspect))
+                {
+                    var vp = menuAspect.LastViewport;
+                    bool full = vp.width > 0.999f && vp.height > 0.999f && menuAspect.PortraitCoverActive;
+                    Run.Event("check", $"portrait menu {Screen.width}x{Screen.height}: " +
+                                       (full ? "fills the screen around the hero, no black bars" : $"LETTERBOXED ({vp})"));
+                    if (!full)
+                        Run.Problem(PlaytestSeverity.Bug, $"portrait menu {Screen.width}x{Screen.height} is letterboxed: {vp}");
+                }
                 Run.Event("layout", $"{screen}: {buttons} buttons and {result.Boxes.Count - buttons} panels/texts checked, " +
                                     (result.Problems.Count == 0 ? "no overlaps, all on screen and thumb-sized" : $"{result.Problems.Count} problem(s)"));
                 if (progress)

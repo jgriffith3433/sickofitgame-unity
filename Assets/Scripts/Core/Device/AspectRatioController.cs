@@ -33,6 +33,12 @@ namespace SickOfIt.Core.Device
         private Camera cam;
         private Camera clearCamera;
         private bool fillPortrait;
+        private bool coverPortrait;
+        private bool portraitCoverActive;
+        private float portraitWidthShare = 1f;
+        private float portraitFocusX;
+        private Transform portraitFocus;
+        private Vector3 landscapePosition;
         private float landscapeOrthoSize;
         private float lastScreenWidth;
         private float lastScreenHeight;
@@ -114,15 +120,76 @@ namespace SickOfIt.Core.Device
 
         /// <summary>
         /// Levels call this before they size their backgrounds: on a portrait screen the camera then fills it (no letterbox)
-        /// and shows more height at the same width, instead of a 16:9 strip in the middle. Videos and the death scene never call it.
+        /// and shows more height at the same width, instead of a 16:9 strip in the middle. The menu, videos and the death scene use <see cref="CoverPortrait"/>.
         /// </summary>
         public static void FillPortrait(Camera camera)
         {
             if (camera == null || !camera.TryGetComponent(out AspectRatioController controller) || !controller.enabled)
                 return;
             controller.fillPortrait = true;
+            controller.coverPortrait = false;
             controller.landscapeOrthoSize = camera.orthographic ? camera.orthographicSize : 0f;
             controller.UpdateCameraRect();
+        }
+
+        /// <summary>
+        /// The main menu, videos and the death scene call this once their camera is placed. On a portrait screen the
+        /// camera then fills the screen instead of a 16:9 strip between black bars. <paramref name="widthShare"/> is the
+        /// share of the landscape picture's width still in view: 1 keeps all of it (the bands above and below are the
+        /// film's own <see cref="PortraitBackdrop"/>), 0 is "cover" (the full picture height, the sides cropped). The
+        /// view is centred on <paramref name="focus"/> when given (it follows it), else on <paramref name="focusX"/>,
+        /// and never leaves the picture. Landscape is unchanged. Levels use <see cref="FillPortrait"/> instead.
+        /// </summary>
+        public static void CoverPortrait(Camera camera, float widthShare, float focusX, Transform focus = null)
+        {
+            if (camera == null || !camera.orthographic || !camera.TryGetComponent(out AspectRatioController controller) || !controller.enabled)
+                return;
+            if (!controller.coverPortrait)
+            {
+                // Remember the landscape framing once; a second call must not take the portrait framing as its base.
+                controller.landscapeOrthoSize = camera.orthographicSize;
+                controller.landscapePosition = camera.transform.position;
+            }
+            controller.coverPortrait = true;
+            controller.fillPortrait = false;
+            controller.portraitWidthShare = Mathf.Clamp01(widthShare);
+            controller.portraitFocusX = focusX;
+            controller.portraitFocus = focus;
+            controller.UpdateCameraRect();
+        }
+
+        /// <summary>True while a portrait screen shows the full-screen framing <see cref="CoverPortrait"/> set (the playtest reads it).</summary>
+        public bool PortraitCoverActive => portraitCoverActive;
+
+        private void ApplyPortraitCover(float targetAspect, float screenAspect)
+        {
+            cam.rect = new Rect(0f, 0f, 1f, 1f);
+            // The share of the picture width in view sets the size; never closer than the full picture height.
+            float ortho = landscapeOrthoSize * targetAspect * Mathf.Max(portraitWidthShare, 0.01f) / screenAspect;
+            cam.orthographicSize = Mathf.Max(ortho, landscapeOrthoSize);
+            portraitCoverActive = true;
+            PlacePortraitCamera(snap: true);
+        }
+
+        private void PlacePortraitCamera(bool snap)
+        {
+            float screenAspect = (float)Screen.width / Mathf.Max(1, Screen.height);
+            float pictureHalfWidth = landscapeOrthoSize * (targetAspectWidth / targetAspectHeight);
+            float viewHalfWidth = cam.orthographicSize * screenAspect;
+            float room = Mathf.Max(0f, pictureHalfWidth - viewHalfWidth);
+            float focus = portraitFocus != null ? portraitFocus.position.x : portraitFocusX;
+            float x = landscapePosition.x + Mathf.Clamp(focus - landscapePosition.x, -room, room);
+            var position = cam.transform.position;
+            position.x = snap ? x : Mathf.Lerp(position.x, x, 1f - Mathf.Exp(-6f * Time.unscaledDeltaTime));
+            position.y = landscapePosition.y;
+            cam.transform.position = position;
+        }
+
+        // Follows the focus (the menu's hero) while a portrait screen crops the picture. No work in landscape.
+        private void LateUpdate()
+        {
+            if (portraitCoverActive && portraitFocus != null)
+                PlacePortraitCamera(snap: false);
         }
 
         private void UpdateCameraRect()
@@ -158,12 +225,19 @@ namespace SickOfIt.Core.Device
                     cam.orthographicSize = landscapeOrthoSize;
                 }
             }
+            else if (coverPortrait && cam.orthographic && landscapeOrthoSize > 0f && screenAspect < targetAspect)
+            {
+                // Portrait menu, video or death scene: full screen, no letterbox (CoverPortrait).
+                ApplyPortraitCover(targetAspect, screenAspect);
+            }
             else if (fitMode == FitMode.FitInside)
             {
+                LeavePortraitCover();
                 FitInsideScreen(targetAspect, screenAspect);
             }
             else
             {
+                LeavePortraitCover();
                 FitOutsideScreen(targetAspect, screenAspect);
             }
 
@@ -177,6 +251,16 @@ namespace SickOfIt.Core.Device
                 clearCamera.depth = cam.depth - 1f;
                 clearCamera.enabled = cam.rect.width < 0.999f || cam.rect.height < 0.999f;
             }
+        }
+
+        // Back to landscape after a portrait cover: the camera's own size and place again.
+        private void LeavePortraitCover()
+        {
+            if (!portraitCoverActive)
+                return;
+            portraitCoverActive = false;
+            cam.orthographicSize = landscapeOrthoSize;
+            cam.transform.position = landscapePosition;
         }
 
         private void FitInsideScreen(float targetAspect, float screenAspect)
