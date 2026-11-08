@@ -123,13 +123,18 @@ namespace SickOfIt.Core.Addressables
             Runner.Get().StartCoroutine(LateInBackground(delaySeconds));
         }
 
+        /// <summary>
+        /// The level main menu Continue opens. Set by <c>RunFlow</c> (SickOfIt.Core.Progression references Core, so Core can't name it).
+        /// </summary>
+        public static Func<int> ContinueLevelProvider;
+
         static IEnumerator LateInBackground(float delaySeconds)
         {
             yield return new WaitForSecondsRealtime(delaySeconds);
             yield return Acquire(LateCore, new[] { LateCore });
             // Idle now: fetch what Continue will need (the hero and the level), so tapping it only has to load, not download.
             string[] next = null;
-            try { next = SickOfIt.Core.Flow.SceneTransitionManager.LevelScopes(SickOfIt.Core.Progression.RunFlow.ContinueLevel()); }
+            try { if (ContinueLevelProvider != null) next = SickOfIt.Core.Flow.SceneTransitionManager.LevelScopes(ContinueLevelProvider()); }
             catch (Exception e) { Debug.LogWarning("[GameAssets] warm-up skipped: " + e.Message); }
             if (next != null)
                 yield return Warm(new[] { Hero }.Concat(next));

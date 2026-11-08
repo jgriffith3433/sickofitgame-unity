@@ -256,6 +256,9 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>The level main menu Continue opens: the current run's, else the highest level reached.</summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void RegisterContinueLevel() => SickOfIt.Core.Addressables.GameAssets.ContinueLevelProvider = ContinueLevel;
+
         public static int ContinueLevel()
         {
             var definition = GameDefinition.Instance;
