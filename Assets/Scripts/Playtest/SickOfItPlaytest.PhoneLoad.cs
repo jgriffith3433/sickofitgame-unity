@@ -237,6 +237,15 @@ namespace SickOfIt.Playtest
                     LoadCheck("late core behind the menu", GameAssets.LateReady, $"the Shaft, Yooba, shop and select-card art loaded {lateSeconds:0.0} s after the menu, not before it");
                 }
 
+                // 4c. Idle on the menu, the hero's and Level 1's bundles are fetched behind it, so Continue only has to load them.
+                if (GameAssets.Managed && GameAssets.Knows(GameAssets.LateCore))
+                {
+                    yield return Run.Until(() => GameAssets.WarmDone, 60f, "the hero and level bundles to be fetched behind the menu");
+                    if (Run.Done) yield break;
+                    Run.Metric("load.warmSeconds", GameAssets.WarmSeconds);
+                    LoadCheck("level bundles warmed behind the menu", GameAssets.WarmDone, $"the hero and Level 1 bundles were fetched in {GameAssets.WarmSeconds:0.0} s while the menu idled");
+                }
+
                 // 5. Level 1 (setup shortcut: loaded directly), its bundles loaded on demand, then 30 s of play by the bot.
                 float levelAsked = Time.realtimeSinceStartup;
                 SceneTransitionManager.Instance.LoadLevel(1);
