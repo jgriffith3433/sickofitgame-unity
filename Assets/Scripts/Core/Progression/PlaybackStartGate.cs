@@ -20,7 +20,8 @@ namespace SickOfIt.Core.Flow
             GameClock clock,
             IList<SpriteFramePlayer> players,
             AudioSource source,
-            Action beginPlayback = null)
+            Action beginPlayback = null,
+            float settleSeconds = SettleSeconds)
         {
             if (clock != null)
                 clock.Pause();
@@ -40,7 +41,7 @@ namespace SickOfIt.Core.Flow
                 yield return null;
             }
 
-            yield return new WaitForSecondsRealtime(SettleSeconds);
+            yield return new WaitForSecondsRealtime(settleSeconds);
 
             SnapPlayers(players);
 

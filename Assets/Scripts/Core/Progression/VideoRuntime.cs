@@ -49,6 +49,8 @@ namespace SickOfIt.Core.Progression
         // A picture that is not ready by then is a black screen: go on to the next scene instead.
         private const float PictureReadySeconds = 1.75f;
         private const float StartSeconds = 4f;
+        // A video is black until it starts: the beat before sheets and soundtrack start together is short here (levels keep 0.4 s).
+        private const float VideoSettleSeconds = 0.1f;
         private const float InputGraceSeconds = 0.2f;
         private float startedAt;
         // The intro (Video1) brings the first level's bundles in while it plays, so a skip only activates the level.
@@ -99,7 +101,7 @@ namespace SickOfIt.Core.Progression
             {
                 startedAt = Time.unscaledTime;
                 StartPreload();
-                StartCoroutine(PlaybackStartGate.Hold(gameClock, playbackPlayers, playbackAudio, BeginVideoPlayback));
+                StartCoroutine(PlaybackStartGate.Hold(gameClock, playbackPlayers, playbackAudio, BeginVideoPlayback, VideoSettleSeconds));
                 // One-shot timers (not polling): the sheets or the soundtrack never arrived -> no black wait.
                 Invoke(nameof(GiveUpIfPictureNotReady), PictureReadySeconds);
                 Invoke(nameof(GiveUpIfNotStarted), StartSeconds);
