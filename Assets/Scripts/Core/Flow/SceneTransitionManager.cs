@@ -175,6 +175,12 @@ namespace SickOfIt.Core.Flow
             // The screen goes black while the assets come in, with a bar: the first owner's share is the first half
             // (the hero, usually in already), the second's the rest.
             bool both = firstOwner != null && secondOwner != null;
+            // The art of the screens after the menu normally came in behind it long ago; if not, it is first.
+            if (!GameAssets.LateReady)
+            {
+                SickOfIt.Core.UI.Menus.ScreenTransition.Loading(0f);
+                yield return GameAssets.EnsureLate(p => SickOfIt.Core.UI.Menus.ScreenTransition.Loading(p * 0.3f));
+            }
             // Everything already in (the intro preloaded it): no cover, no bar.
             bool inAlready = GameAssets.Managed && AllLoaded(firstScopes) && AllLoaded(secondScopes);
             if (inAlready)
@@ -197,22 +203,39 @@ namespace SickOfIt.Core.Flow
             AddressablesSceneLoader.Instance.LoadScene(sceneName);
         }
 
+        /// <summary>Loads a base-build screen that reads the late core's art (select cards, shop) once it is in.</summary>
+        void LoadAfterLate(string sceneName)
+        {
+            if (GameAssets.LateReady)
+                SceneManager.LoadScene(sceneName);
+            else
+                StartCoroutine(LateThenLoad(sceneName));
+        }
+
+        IEnumerator LateThenLoad(string sceneName)
+        {
+            SickOfIt.Core.UI.Menus.ScreenTransition.Loading(0f);
+            yield return GameAssets.EnsureLate(p => SickOfIt.Core.UI.Menus.ScreenTransition.Loading(p));
+            SickOfIt.Core.UI.Menus.ScreenTransition.Loading(1f);
+            SceneManager.LoadScene(sceneName);
+        }
+
         public void LoadLevelSelection()
         {
             // Always load LevelSelection normally (not via Addressables) as it's part of the base build
-            SceneManager.LoadScene(LEVEL_SELECTION_SCENE);
+            LoadAfterLate(LEVEL_SELECTION_SCENE);
         }
 
         public void LoadVideoSelection()
         {
             // Always load VideoSelection normally (not via Addressables) as it's part of the base build
-            SceneManager.LoadScene(VIDEO_SELECTION_SCENE);
+            LoadAfterLate(VIDEO_SELECTION_SCENE);
         }
 
         public void LoadUpgradeShop()
         {
             // Always load UpgradeShop normally (not via Addressables) as it's part of the base build
-            SceneManager.LoadScene(UPGRADE_SHOP_SCENE);
+            LoadAfterLate(UPGRADE_SHOP_SCENE);
         }
 
         public void LoadVideo(int videoNumber)

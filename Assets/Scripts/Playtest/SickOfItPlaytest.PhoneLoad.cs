@@ -205,6 +205,18 @@ namespace SickOfIt.Playtest
                 LoadCheck("menu fps", menuFps >= PhoneLoadMinFps, $"{menuFps:0} fps on the main menu (worst second {menuWorst:0})");
                 if (Run.Done) yield break;
 
+                // 4b. The art for the screens after the menu (select cards, Shaft, Yooba, shop) arrives behind it, not before it.
+                if (GameAssets.Managed && GameAssets.Knows(GameAssets.LateCore))
+                {
+                    float lateAsked = Time.realtimeSinceStartup;
+                    yield return Run.Until(() => GameAssets.LateReady, 90f, "the late core art to load behind the menu");
+                    if (Run.Done) yield break;
+                    float lateSeconds = Time.realtimeSinceStartup - menuReal;
+                    Run.Metric("load.lateCoreSeconds", lateSeconds);
+                    Run.Event("load", $"late core art in {lateSeconds:0.0} s after the menu came up ({GameAssets.Describe()})");
+                    LoadCheck("late core behind the menu", GameAssets.LateReady, $"the Shaft, Yooba, shop and select-card art loaded {lateSeconds:0.0} s after the menu, not before it");
+                }
+
                 // 5. Level 1 (setup shortcut: loaded directly), its bundles loaded on demand, then 30 s of play by the bot.
                 float levelAsked = Time.realtimeSinceStartup;
                 SceneTransitionManager.Instance.LoadLevel(1);

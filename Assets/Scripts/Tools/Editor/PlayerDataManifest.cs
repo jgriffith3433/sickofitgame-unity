@@ -44,6 +44,7 @@ namespace SickOfIt.Tools.Editor
             var groups = new Dictionary<string, AddressableAssetGroup>(StringComparer.Ordinal);
             var addressed = new HashSet<string>(StringComparer.Ordinal);
             var coreAddresses = new HashSet<string>(StringComparer.Ordinal);
+            var lateAddresses = new HashSet<string>(StringComparer.Ordinal);
             long bytes = 0;
 
             (List<int> entries, HashSet<string> include) Scope(string id)
@@ -65,6 +66,8 @@ namespace SickOfIt.Tools.Editor
                 string scopeId = ScopeOf(entry.path, definition, eventSounds);
                 if (scopeId == "core")
                     coreAddresses.Add(entry.address);
+                else if (scopeId == LateCore)
+                    lateAddresses.Add(entry.address);
                 Scope(scopeId).entries.Add(entries.Count - 1);
             }
 
@@ -109,7 +112,10 @@ namespace SickOfIt.Tools.Editor
             AddClosures(definition, eventSounds, id => Scope(id).include);
 
             // The menu's own art and sound: a few shared bundles instead of one request each (142 bundles before the menu).
-            int coreBundles = PackCore(settings, template, groups, coreAddresses);
+            // An address the menu needs stays in the boot's bundles even when a later screen uses it too.
+            lateAddresses.ExceptWith(coreAddresses);
+            int coreBundles = PackCore(settings, template, groups, coreAddresses, "");
+            int lateBundles = PackCore(settings, template, groups, lateAddresses, "Late");
 
             var manifest = new AssetManifest
             {
@@ -127,7 +133,7 @@ namespace SickOfIt.Tools.Editor
 
             int core = scopes.TryGetValue("core", out var c) ? c.entries.Count : 0;
             log($"  On demand: {entries.Count} references to {addressed.Count} assets ({bytes / (1024 * 1024)} MB in memory) taken out of GameDefinition, " +
-                $"one bundle each in {groups.Count} {GroupPrefix}* groups; {scopes.Count} scopes, {core} references in \"core\" (loaded at boot, packed into {coreBundles} shared bundles).");
+                $"one bundle each in {groups.Count} {GroupPrefix}* groups; {scopes.Count} scopes, {core} references in \"core\" (loaded at boot, packed into {coreBundles} shared bundles; {lateAddresses.Count} more in \"{LateCore}\", {lateBundles} bundles, loaded behind the menu).");
             return addressed.Count;
         }
 
@@ -181,10 +187,23 @@ namespace SickOfIt.Tools.Editor
         /// <summary>What every level and scene plays with besides its own content (the old enemy and projectile configs).</summary>
         const string Play = "play";
 
+        /// <summary>
+        /// What only a screen after the main menu reads (level and video select cards, the Shaft, Yooba, the shop): loaded behind the
+        /// menu once it is up (GameAssets.LoadLateInBackground), awaited before those screens open. The boot's bar covers only "core".
+        /// </summary>
+        public const string LateCore = "core.late";
+
+        static readonly string[] LatePrefixes = { "shaft.", "yooba.", "upgradeShopConfig.", "levelSelectionConfig.", "videoSelectionConfig.", "player.availableUpgrades." };
+
         static string ScopeOf(string path, GameDefinition definition, HashSet<string> eventSounds)
         {
             if (path.EndsWith(".thumbnail", StringComparison.Ordinal))
-                return "core"; // the level and video select cards
+                return LateCore; // the level and video select cards
+            foreach (string prefix in LatePrefixes)
+            {
+                if (path.StartsWith(prefix, StringComparison.Ordinal))
+                    return LateCore;
+            }
             if (path.StartsWith("player.animationConfig.states.Array.data[", StringComparison.Ordinal))
                 return "hero";
             // The old enemy and projectile configs (the levels without a script, the hero's rocket) only ever play in a level.
@@ -428,7 +447,7 @@ namespace SickOfIt.Tools.Editor
         /// size: the browser fetches a handful of files before the menu instead of one per asset. A core asset a level also
         /// uses is the same bundle (the address is shared), already loaded.
         /// </summary>
-        static int PackCore(AddressableAssetSettings settings, AddressableAssetGroup template, Dictionary<string, AddressableAssetGroup> groups, HashSet<string> addresses)
+        static int PackCore(AddressableAssetSettings settings, AddressableAssetGroup template, Dictionary<string, AddressableAssetGroup> groups, HashSet<string> addresses, string prefix)
         {
             const long ChunkBytes = 12L * 1024 * 1024;
             var chunks = new Dictionary<string, (AddressableAssetGroup group, long size)>(StringComparer.Ordinal);
@@ -443,9 +462,9 @@ namespace SickOfIt.Tools.Editor
                 {
                     counts.TryGetValue(kind, out int n);
                     counts[kind] = ++n;
-                    var group = PlayerDataSplit.NewGroup(settings, GroupPrefix + "Core_" + kind + n, template);
+                    var group = PlayerDataSplit.NewGroup(settings, GroupPrefix + "Core" + prefix + "_" + kind + n, template);
                     group.GetSchema<BundledAssetGroupSchema>().BundleMode = BundledAssetGroupSchema.BundlePackingMode.PackTogether;
-                    groups["Core_" + kind + n] = group;
+                    groups["Core" + prefix + "_" + kind + n] = group;
                     chunk = (group, 0);
                     made++;
                 }
