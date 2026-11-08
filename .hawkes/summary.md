@@ -1,4 +1,0 @@
-Finding: net-outage reported "5 warnings for 4 attempts" and one retry looked early (1.3 s after "retrying in 2 s").
-Causes: (1) the test counted the warning for the dropped open connection (SimulateOutage -> Failed) but not its attempt baseline, so warnings = attempts + 1 by design; (2) NetRetry jitter was +-25%, so a "2 s" wait could be 1.5 s, shorter than promised.
-Changes: NetRetry.DelayFor jitter is now 0..+25% (the wait is a minimum); NetRetryTests lower bound tightened; SickOfItPlaytest.NetOutage.cs starts counting warnings/attempts after the outage drop. No second request source was found: Wake() only acts on a halted connection and the package's own timer is cancelled by Leave() in OnLeft.
-Checked: read the code and the Hawkes Net package (Problem/Close/Leave order). Unity compile and tests not run here.
