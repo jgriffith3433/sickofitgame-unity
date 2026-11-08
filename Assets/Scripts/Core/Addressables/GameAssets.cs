@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using SickOfIt.Data;
 using UnityEngine;
@@ -126,6 +127,37 @@ namespace SickOfIt.Core.Addressables
         {
             yield return new WaitForSecondsRealtime(delaySeconds);
             yield return Acquire(LateCore, new[] { LateCore });
+            // Idle now: fetch what Continue will need (the hero and the level), so tapping it only has to load, not download.
+            string[] next = null;
+            try { next = SickOfIt.Core.Flow.SceneTransitionManager.LevelScopes(SickOfIt.Core.Progression.RunFlow.ContinueLevel()); }
+            catch (Exception e) { Debug.LogWarning("[GameAssets] warm-up skipped: " + e.Message); }
+            if (next != null)
+                yield return Warm(new[] { Hero }.Concat(next));
+        }
+
+        /// <summary>Warm-up seconds of the last <see cref="Warm"/> (0 until it ran), for the playtest.</summary>
+        public static float WarmSeconds { get; private set; }
+        public static bool WarmDone { get; private set; }
+
+        /// <summary>
+        /// Downloads the bundles of these scopes into the browser's cache without loading them (each handle released at once, so
+        /// the heap holds nothing and a later <see cref="Acquire"/> finds them local). Failures are ignored.
+        /// </summary>
+        static IEnumerator Warm(IEnumerable<string> wanted)
+        {
+            float began = Time.realtimeSinceStartup;
+            int count = 0;
+            foreach (string address in AddressesOf(wanted))
+            {
+                var download = AddressablesAPI.DownloadDependenciesAsync(address, false);
+                yield return download;
+                if (download.IsValid())
+                    AddressablesAPI.Release(download);
+                count++;
+            }
+            WarmSeconds = Time.realtimeSinceStartup - began;
+            WarmDone = true;
+            Debug.Log($"[GameAssets] warm-up: {count} bundles fetched behind the menu in {WarmSeconds:0.0} s.");
         }
 
         /// <summary>Waits for the late core (starting it now if the menu hasn't yet); <paramref name="progress"/> gets 0..1.</summary>

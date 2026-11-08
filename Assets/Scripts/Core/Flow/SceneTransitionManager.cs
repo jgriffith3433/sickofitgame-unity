@@ -101,7 +101,7 @@ namespace SickOfIt.Core.Flow
         Coroutine preload;
         bool preloadCancelled;
 
-        static string[] LevelScopes(int levelNumber)
+        public static string[] LevelScopes(int levelNumber)
         {
             var level = GameDefinition.Instance != null ? GameDefinition.Instance.GetLevel(levelNumber) : null;
             var wanted = new System.Collections.Generic.List<string>();
