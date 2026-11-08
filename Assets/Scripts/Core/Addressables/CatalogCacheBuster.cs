@@ -25,6 +25,7 @@ namespace SickOfIt.Core.Addressables
             {
                 string raw = previous != null ? previous(location) : location.InternalId;
                 string id = AddressablesAPI.ResolveInternalId(raw);
+                BundleFetchLog.Note(id);
                 if (string.IsNullOrEmpty(id) || id.IndexOf('?') >= 0)
                     return id;
                 if (id.IndexOf("catalog_", System.StringComparison.Ordinal) < 0)
@@ -50,6 +51,55 @@ namespace SickOfIt.Core.Addressables
             if (!match.Success)
                 return null;
             return "v" + match.Groups[1].Value;
+        }
+    }
+}
+
+namespace SickOfIt.Core.Addressables
+{
+    /// <summary>
+    /// Counts the bundle URLs the page asks for until the main menu is up, by group (the file name before "_assets_"/"_scenes_"),
+    /// so the phone-load playtest can say what the ~50 bundles before the menu are. Counting only: nothing reads it in play.
+    /// </summary>
+    public static class BundleFetchLog
+    {
+        static readonly System.Collections.Generic.SortedDictionary<string, int> perGroup = new System.Collections.Generic.SortedDictionary<string, int>(System.StringComparer.Ordinal);
+        static bool frozen;
+
+        /// <summary>Called by the menu once it is up: later fetches are not "before the menu".</summary>
+        public static void Freeze() => frozen = true;
+
+        public static void Note(string id)
+        {
+            if (frozen || string.IsNullOrEmpty(id))
+                return;
+            int bundle = id.IndexOf(".bundle", System.StringComparison.OrdinalIgnoreCase);
+            if (bundle < 0)
+                return;
+            int slash = id.LastIndexOf('/', bundle);
+            string name = id.Substring(slash + 1, bundle - slash - 1);
+            int cut = name.IndexOf("_assets_", System.StringComparison.Ordinal);
+            if (cut < 0)
+                cut = name.IndexOf("_scenes_", System.StringComparison.Ordinal);
+            if (cut > 0)
+                name = name.Substring(0, cut);
+            perGroup.TryGetValue(name, out int n);
+            perGroup[name] = n + 1;
+        }
+
+        /// <summary>"group x2, group x1 ..." and the total, for the playtest.</summary>
+        public static string Describe(out int total)
+        {
+            total = 0;
+            var text = new System.Text.StringBuilder();
+            foreach (var pair in perGroup)
+            {
+                total += pair.Value;
+                if (text.Length > 0)
+                    text.Append(", ");
+                text.Append(pair.Key).Append(" x").Append(pair.Value);
+            }
+            return text.ToString();
         }
     }
 }

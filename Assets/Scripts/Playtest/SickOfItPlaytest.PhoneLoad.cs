@@ -139,6 +139,7 @@ namespace SickOfIt.Playtest
                 Run.Event("device", $"{Screen.width}x{Screen.height}, mobile platform {Application.isMobilePlatform}, " +
                                     $"texture variant {(TextureVariantRedirect.UsingMobileVariant ? "ASTC (phones)" : "DXT (desktop)")}");
 
+                Run.Metric("load.viewportShortSide", Mathf.Min(Screen.width, Screen.height));
                 if (Mathf.Min(Screen.width, Screen.height) > 600)
                     Run.Event("check", $"phone-load device: NOT A PHONE ({Screen.width}x{Screen.height}); the budget is for 390x844 (run it as phone-load@local:phone)");
 
@@ -200,6 +201,12 @@ namespace SickOfIt.Playtest
                     Run.Event("download", $"before the menu: {info.files} files ({sizes}); player {info.playerFiles} files {Megabytes(info.player)}; " +
                                           $"{info.bundles} bundles {Megabytes(info.bundleBytes)} ({info.astc} from WebGL_ASTC); {info.catalogs} catalog files" +
                                           (string.IsNullOrEmpty(info.error) ? "" : "; " + info.error));
+                    string groups = BundleFetchLog.Describe(out int requested);
+                    if (requested > 0)
+                    {
+                        Run.Event("download", $"bundle requests before the menu by group ({requested}): {groups}");
+                        Run.Metric("load.menuBundleRequests", requested);
+                    }
                     Run.Metric("load.menuFiles", info.files);
                     Run.Metric("load.menuBundles", info.bundles);
                     if (info.sized > 0)
@@ -235,6 +242,13 @@ namespace SickOfIt.Playtest
                     Run.Metric("load.lateCoreSeconds", lateSeconds);
                     Run.Event("load", $"late core art in {lateSeconds:0.0} s after the menu came up ({GameAssets.Describe()})");
                     LoadCheck("late core behind the menu", GameAssets.LateReady, $"the Shaft, Yooba, shop and select-card art loaded {lateSeconds:0.0} s after the menu, not before it");
+                    // Its downloads and texture uploads must not run through the menu scene's own load (the boot's 2 s timer did).
+                    if (GameAssets.LateStartedAt > 0f)
+                    {
+                        float lateStart = GameAssets.LateStartedAt - menuReal;
+                        Run.Metric("load.lateStartAfterMenuSeconds", lateStart);
+                        LoadCheck("late core starts after the menu", lateStart >= 0f, $"the late core's downloads began {lateStart:0.0} s {(lateStart >= 0f ? "after" : "BEFORE")} the main menu came up");
+                    }
                 }
 
                 // 4c. Idle on the menu, the hero's and Level 1's bundles are fetched behind it, so Continue only has to load them.
