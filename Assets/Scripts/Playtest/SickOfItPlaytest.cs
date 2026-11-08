@@ -9306,7 +9306,7 @@ namespace SickOfIt.Playtest
                 DeathScreenChecks();
                 // The same screen at phone portrait (a window resize, a setup shortcut): the criterion is stated at 390x844.
                 int dw = Screen.width, dh = Screen.height;
-                if (dw != 390 || dh != 844)
+                if (CanResizeWindow && (dw != 390 || dh != 844))
                 {
                     Screen.SetResolution(390, 844, false);
                     yield return Run.Until(() => Screen.width == 390 && Screen.height == 844, 6f, "the window to resize to 390x844");
@@ -9331,12 +9331,24 @@ namespace SickOfIt.Playtest
             int layoutProblems;
 
             /// <summary>
+            /// Screen.SetResolution is for standalone windows. In a WebGL page it resizes the canvas away from the browser
+            /// window (v-playtest: the game shrank to 2/3, pinned bottom-left, black bars above and right, and never came back),
+            /// so the layout scenario only resizes in the editor and standalone players.
+            /// </summary>
+            static bool CanResizeWindow => Application.platform != RuntimePlatform.WebGLPlayer;
+
+            /// <summary>
             /// The main menu at 16:9, a narrow desktop window, phone portrait and phone landscape (a window resize, a setup
             /// shortcut: the runner's device is one size). Each size is audited: tagline whole, stickers clear of buttons,
             /// buttons 48 px tall at phone size. The original size is restored afterwards.
             /// </summary>
             IEnumerator MainMenuSizes()
             {
+                if (!CanResizeWindow)
+                {
+                    Run.Event("layout-size", $"main menu kept at {Screen.width}x{Screen.height}: a WebGL page's size is the browser window's, set by the runner's device");
+                    yield break;
+                }
                 int w0 = Screen.width, h0 = Screen.height;
                 var sizes = new (string name, int w, int h)[]
                 {
