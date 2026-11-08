@@ -72,6 +72,7 @@ namespace SickOfIt.Tools.Editor
             }
 
             var serialized = new SerializedObject(definition);
+            var prefabRefs = new List<(string path, UnityEngine.Object prefab)>();
             var property = serialized.GetIterator();
             bool enter = true;
             while (property.Next(enter))
@@ -93,6 +94,11 @@ namespace SickOfIt.Tools.Editor
                 if (property.propertyType != SerializedPropertyType.ObjectReference || property.objectReferenceValue == null)
                     continue;
                 var value = property.objectReferenceValue;
+                if (value is GameObject && PrefabLoadsWithItsScope(property.propertyPath))
+                {
+                    prefabRefs.Add((property.propertyPath, value)); // decided below, once every sheet is known
+                    continue;
+                }
                 int kind = value is Texture2D ? AssetManifestEntry.Texture : value is Sprite ? AssetManifestEntry.Sprite : value is AudioClip ? AssetManifestEntry.Clip : -1;
                 if (kind < 0)
                     continue;
@@ -106,6 +112,20 @@ namespace SickOfIt.Tools.Editor
                     entry.sprite = value.name;
                 property.objectReferenceValue = null;
                 Add(entry, value);
+            }
+            // The hero's and the legacy enemies' prefabs: their animation clips point at big sheets, and a prefab left in GameDefinition
+            // loads all of them with it (beta v27: ~45 MB of RGBA32 sheets in ~25 bundles before the menu, and again for the menu hero's
+            // own copy in the player data). Each becomes an entry of the scope that plays it, put back into its field then.
+            int prefabsTaken = 0;
+            foreach (var (path, prefab) in prefabRefs)
+            {
+                string assetPath = AssetDatabase.GetAssetPath(prefab);
+                var field = serialized.FindProperty(path);
+                if (field == null || !Takeable(settings, assetPath) || !CarriesBigArt(assetPath, addressed))
+                    continue;
+                field.objectReferenceValue = null;
+                Add(new AssetManifestEntry { path = path, address = assetPath, kind = AssetManifestEntry.Prefab }, prefab);
+                prefabsTaken++;
             }
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
@@ -132,6 +152,7 @@ namespace SickOfIt.Tools.Editor
             AssetDatabase.SaveAssets();
 
             int core = scopes.TryGetValue("core", out var c) ? c.entries.Count : 0;
+            log($"  On demand: {prefabsTaken} prefabs whose clips use big sheets (the hero's, the legacy enemies', ...) left out of GameDefinition's boot closure.");
             log($"  On demand: {entries.Count} references to {addressed.Count} assets ({bytes / (1024 * 1024)} MB in memory) taken out of GameDefinition, " +
                 $"one bundle each in {groups.Count} {GroupPrefix}* groups; {scopes.Count} scopes, {core} references in \"core\" (loaded at boot, packed into {coreBundles} shared bundles; {lateAddresses.Count} more in \"{LateCore}\", {lateBundles} bundles, loaded behind the menu).");
             return addressed.Count;
@@ -195,8 +216,34 @@ namespace SickOfIt.Tools.Editor
 
         static readonly string[] LatePrefixes = { "shaft.", "yooba.", "upgradeShopConfig.", "levelSelectionConfig.", "videoSelectionConfig.", "player.availableUpgrades." };
 
+        /// <summary>
+        /// The GameDefinition fields whose prefab only a level uses (LevelRuntime's fallback hero, legacy enemies, the pickup and platform
+        /// prefabs): they load with "hero" / "play" instead of riding with the boot. Menus' and cameras' prefabs stay where they are.
+        /// </summary>
+        static bool PrefabLoadsWithItsScope(string path) =>
+            path == "player.playerPrefab" || path == "pickupPrefab" || path == "platformPrefab" || path.StartsWith("enemyTypes.", StringComparison.Ordinal);
+
+        static readonly string[] SheetExtensions = { ".png", ".jpg", ".jpeg", ".psd", ".tga", ".tif", ".tiff" };
+
+        /// <summary>The prefab's dependencies include a sheet the manifest took (or any picture of half a megabyte or more).</summary>
+        static bool CarriesBigArt(string prefabPath, HashSet<string> taken)
+        {
+            foreach (string dependency in AssetDatabase.GetDependencies(prefabPath, true))
+            {
+                if (taken.Contains(dependency))
+                    return true;
+                if (SheetExtensions.Contains(Path.GetExtension(dependency).ToLowerInvariant()) && File.Exists(dependency) && new FileInfo(dependency).Length >= 512 * 1024)
+                    return true;
+            }
+            return false;
+        }
+
         static string ScopeOf(string path, GameDefinition definition, HashSet<string> eventSounds)
         {
+            if (path == "player.playerPrefab")
+                return "hero";
+            if (path == "pickupPrefab" || path == "platformPrefab")
+                return Play;
             if (path.EndsWith(".thumbnail", StringComparison.Ordinal))
                 return LateCore; // the level and video select cards
             foreach (string prefix in LatePrefixes)

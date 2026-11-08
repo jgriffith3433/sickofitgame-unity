@@ -18,7 +18,12 @@ namespace SickOfIt.Data
     [Serializable]
     public class AssetManifestEntry
     {
-        public const int Texture = 0, Sprite = 1, SpriteArray = 2, Clip = 3;
+        /// <summary>
+        /// <see cref="Prefab"/>: a prefab (the hero's, a legacy enemy's) whose animation clips point at big sprite sheets. Left in
+        /// GameDefinition it dragged every one of those sheets into the boot (45 MB of RGBA32 before the menu); as an entry it loads
+        /// with the scope that plays it (hero, play) and is put back into its field then.
+        /// </summary>
+        public const int Texture = 0, Sprite = 1, SpriteArray = 2, Clip = 3, Prefab = 4;
 
         /// <summary>Unity's property path in GameDefinition ("levels.Array.data[3].music").</summary>
         public string path = "";

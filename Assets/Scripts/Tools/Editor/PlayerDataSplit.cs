@@ -87,7 +87,10 @@ namespace SickOfIt.Tools.Editor
             {
                 if (!Movable(settings, path))
                     continue;
-                string folder = Path.GetDirectoryName(path).Replace('\\', '/');
+                // One list for all of them: GameDefinition's own dependencies (prefabs, fonts, controller textures, ...) are all loaded
+                // together before the menu, so a bundle per folder (25 of them on beta v27) only made 25 requests where one will do. The
+                // size budget below still splits the group if it ever grows.
+                const string folder = "Boot";
                 if (!byFolder.TryGetValue(folder, out var list))
                     byFolder[folder] = list = new List<string>();
                 list.Add(path);

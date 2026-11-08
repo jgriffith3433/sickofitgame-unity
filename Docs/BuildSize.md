@@ -109,3 +109,33 @@ Bundles are not gzip'd by the host (no Content-Encoding), so that bundle was dow
 `PlayerData_GameDefinition` group with LZMA (text, one bundle). Not measured here (no Unity/build): the next `phone-load` run says;
 if `load.bootDataSeconds` is still over ~6 s, the catalog is the rest (see `load.bootCatalogSeconds`) and the next step is splitting
 `content` out of GameDefinition into a lazy bundle.
+
+## What the boot really loaded: the prefabs' sheets (2026-11-08, beta web 27, menu at 21.6 s)
+
+The earlier passes moved art between scopes blind. This one read beta's published build (`ServerData/WebGL/*.bundle`, UnityPy on
+`m_Dependencies`, and `SickOfIt.data.unityweb`). Before the menu, `LoadAssetAsync<GameDefinition>` also loaded the bundles
+GameDefinition *depends on*: `player.playerPrefab` (Character.prefab, its controller and clips) and every legacy
+`enemyTypes[].prefab`, whose clips point at the sprite sheets. Those sheets are **uncompressed RGBA32** (1819x2048 = 14.9 MB each
+in memory: the capped size is not a multiple of 4, so DXT and ASTC both leave them raw; the DXT and ASTC bundles are byte for byte
+the same), so a phone fetched and uploaded about 45 MB of hero and enemy art it does not draw in the menu:
+
+| Before the menu (web 27) | Files | MB |
+|---|---:|---:|
+| the hero's Idle/Walk/Fall/Jump/Fire sheets (Fall 3.7, Fire 4.8, Jump 5.0, Walk 3.9, Idle ~4) | 5 | ~21 |
+| the legacy enemies' sheets (level3enemy x6 17.4, fireball 2.2, fighter x3 1.0, demon2, ...) | ~11 | ~21 |
+| GameDefinition's other dependencies: prefabs, fonts, controller textures, clips | 25 | 1.1 |
+| core art and sound (the menu's own) | 2 | 4.8 |
+| GameDefinition | 1 | 0.5 |
+| two catalogs (local + remote, same 0.9 MB file) | 2 | 1.8 |
+
+`PlayerDataManifest` now takes those prefab references out of the split GameDefinition (`AssetManifestEntry.Prefab`,
+`PrefabLoadsWithItsScope`: `player.playerPrefab` -> scope `hero`; `enemyTypes.*`, `pickupPrefab`, `platformPrefab` -> `play`, and only
+when the prefab's closure holds a taken sheet or a picture >= 512 KB). `GameAssets` loads them with the scope that plays them and puts
+them back into the field, like a sheet. The remaining dependencies share one group, `PlayerData_Boot` (was one bundle per folder, 25).
+Expected before the menu: ~25 files / ~8 MB less ~25 bundles (about 15 files / ~7 MB of bundles). Not measured here (no Unity or
+build in this sandbox): the next `phone-load` run says; it now also checks `bundles before the menu` (<= 40) and `hero art waits for a level`.
+
+Still in the player data (`SickOfIt.data.unityweb`, 22.8 MB): the MainMenu scene's own hero carries the same five sheets as raw RGBA32
+(74 MB in memory) because the scene references them directly. Next candidate: give that hero a compressed or smaller copy, or load
+his sheets through `GameAssets` like the level's. Fix the non-multiple-of-4 cap too (it also leaves most DXT bundles raw: the desktop
+variant is 904 MB against ASTC's 267 MB).
