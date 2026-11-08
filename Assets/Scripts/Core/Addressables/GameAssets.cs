@@ -24,6 +24,8 @@ namespace SickOfIt.Core.Addressables
     public static class GameAssets
     {
         public const string Core = "core";
+        /// <summary>The Addressables label on every bundle of the "core" scope (PlayerDataManifest.PackCore): GameDefinitionBoot prefetches it.</summary>
+        public const string CoreLabel = "soi.core";
         public const string Hero = "hero";
         /// <summary>The art only screens after the main menu read (select cards, Shaft, Yooba, shop): loaded behind the menu.</summary>
         public const string LateCore = "core.late";

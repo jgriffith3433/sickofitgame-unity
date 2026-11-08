@@ -76,3 +76,13 @@ scope `core.late` (`PlayerDataManifest.LatePrefixes`, `.thumbnail`): packed into
 them (`SceneTransitionManager`: `Prepared` loads, level/video select and the shop; `GameAssets.EnsureLate`). The boot's bar
 now covers the game data and the menu's own art and sound. Playtest `phone-load` checks `late core behind the menu`.
 Add a path prefix to `LatePrefixes` to move more out of the boot; anything the menu itself draws must stay in "core".
+
+## Core downloads beside the game data (2026-11-08, phone-load menu at 26.4 s)
+
+Phone playtest r_889e1179cbd5: game data 14.8 s, then core art and sound after it. The core bundles' names are in the manifest
+inside GameDefinition, so they used to start only once it was in. `PackCore` now labels every boot ("core") bundle
+`soi.core` (`GameAssets.CoreLabel`); `GameDefinitionBoot.PrefetchCore` initialises Addressables and downloads that label while
+the game data loads, releasing the handle at once (the download is cached, so `Acquire` then loads from the cache). A build
+without the label skips it. The boot logs `Core prefetch ...` lines. Compression is untouched.
+Not done: no Unity build ran here, so no new seconds were measured; the next phone-load run will say. Next candidates: time
+Addressables init/catalog apart from the GameDefinition bundle (the 14.8 s is both), and split the 6 MB of content/level JSON out of GameDefinition.

@@ -468,7 +468,13 @@ namespace SickOfIt.Tools.Editor
                     chunk = (group, 0);
                     made++;
                 }
-                settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(address), chunk.group).SetAddress(address);
+                var packed = settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(address), chunk.group);
+                packed.SetAddress(address);
+                if (prefix.Length == 0)
+                {
+                    settings.AddLabel(SickOfIt.Core.Addressables.GameAssets.CoreLabel);
+                    packed.SetLabel(SickOfIt.Core.Addressables.GameAssets.CoreLabel, true, true);
+                }
                 chunks[kind] = (chunk.group, chunk.size + size);
             }
             return made;
