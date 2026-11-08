@@ -41,9 +41,11 @@ namespace SickOfIt.Playtest
                     Run.Event("check", "net-outage: no lobby here (not WebGL): the single-player and no-error checks still run");
                 yield return ToMainMenu();
                 if (Run.Done) yield break;
+                // The drop of the open connection warns once without being an attempt, so count from after it:
+                // from here on a warning is a failed attempt, one each at most.
+                GhostLobby.SimulateOutage("502");
                 Application.logMessageReceived += NetLog;
                 int attempts0 = GhostLobby.Attempts;
-                GhostLobby.SimulateOutage("502");
                 // Take the connection down now (setup shortcut): the current one is dropped by the next attempt's failure.
                 Run.Event("shortcut", "the server is down: every connection attempt fails with 502");
 

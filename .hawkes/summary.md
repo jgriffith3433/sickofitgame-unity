@@ -1,4 +1,4 @@
-Main menu list was still clipped at 1280x720 after #273: with 7 buttons (6 + "More >") the safe-area-shrunk list viewport (~537 units) cannot hold 7 buttons at the 52 px floor plus 36-unit top/bottom padding and 10-unit gaps, so the list overflowed and the first/last buttons were cut.
-Change: `MenuListLayout.Apply` (MenuResponsive.cs) now, when even floor-height buttons don't fit, tightens the vertical padding (36 -> 9 units) and gaps (max 4) before giving up, so all seven fit at >= 52 px (the 46.7 px button was also under the 48 px target; now the floor holds). Overflow still anchors at the top.
-Checked: reasoned from the screenshot numbers (7*~68 + 24 + 18 ≈ 515 < 537). Unity compile and the `layout` playtest not run here; please run `layout` at 1280x720 and 390x844.
-No merge conflicts.
+Finding: net-outage reported "5 warnings for 4 attempts" and one retry looked early (1.3 s after "retrying in 2 s").
+Causes: (1) the test counted the warning for the dropped open connection (SimulateOutage -> Failed) but not its attempt baseline, so warnings = attempts + 1 by design; (2) NetRetry jitter was +-25%, so a "2 s" wait could be 1.5 s, shorter than promised.
+Changes: NetRetry.DelayFor jitter is now 0..+25% (the wait is a minimum); NetRetryTests lower bound tightened; SickOfItPlaytest.NetOutage.cs starts counting warnings/attempts after the outage drop. No second request source was found: Wake() only acts on a halted connection and the package's own timer is cancelled by Leave() in OnLeft.
+Checked: read the code and the Hawkes Net package (Problem/Close/Leave order). Unity compile and tests not run here.

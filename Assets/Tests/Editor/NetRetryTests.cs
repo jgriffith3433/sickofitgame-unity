@@ -14,7 +14,7 @@ namespace SickOfIt.Tests.Editor
             for (int i = 0; i < basis.Length; i++)
             {
                 float d = r.Failed("502");
-                Assert.GreaterOrEqual(d, basis[i] * 0.75f - 0.001f, "step " + i);
+                Assert.GreaterOrEqual(d, basis[i] - 0.001f, "step " + i);
                 Assert.LessOrEqual(d, basis[i] * 1.25f + 0.001f, "step " + i);
             }
         }

@@ -1,1 +1,2 @@
-- lesson: Menu list fit needs padding too — MenuListLayout's 36-unit padding and 10 gaps made 7 buttons overflow the safe-area viewport even at the 52 px floor; Apply now tightens padY/spacing before overflowing.
+- lesson: net-outage warning count — the drop of an open connection (SimulateOutage/OnLeft) warns without being an attempt; count from after it.
+- convention: retry jitter is upward only (NetRetry), so "retrying in N s" is a minimum.
