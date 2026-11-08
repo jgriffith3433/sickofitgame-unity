@@ -144,3 +144,19 @@ Still in the player data (`SickOfIt.data.unityweb`, 22.8 MB): the MainMenu scene
 (74 MB in memory) because the scene references them directly. Next candidate: give that hero a compressed or smaller copy, or load
 his sheets through `GameAssets` like the level's. Fix the non-multiple-of-4 cap too (it also leaves most DXT bundles raw: the desktop
 variant is 904 MB against ASTC's 267 MB).
+
+## The late core waits for the menu, not the boot (2026-11-08, attempt 3)
+
+Beta 7afae6d, phone twin: menu at 20.75 s (player 4.8 + boot start + game data 9.9 + core 0.4 + the MainMenu scene's load); the same build on
+desktop (the run a change's check plays: 1280x720, DXT) 24.5 s with game data 13.3 s, and 54-64 files / 39-49 bundles before the menu.
+`GameDefinitionBoot` started the late core (Shaft, Yooba, shop, select cards, gameplay event sounds) with a 2 s timer *at the moment it handed the
+game data over*, and the MainMenu scene then takes ~3.4 s to load, so those downloads (counted "before the menu") and their texture uploads on the
+one WebGL thread ran through the menu scene's own load. `MainMenuManager.Start` now starts it (1.5 s after the menu is up, `GameAssets.LateStartedAt`);
+the boot no longer does. The phone-load playtest checks `late core starts after the menu` and logs `load.lateStartAfterMenuSeconds`.
+Also new: `BundleFetchLog` (in `CatalogCacheBuster`'s transform) counts the bundle URLs asked for until the menu by group name; phone-load reports it as
+a `download` event ("bundle requests before the menu by group") and `load.menuBundleRequests`, because the 39-49 bundles are far more than core (2-3) +
+Boot (1) + GameDefinition (1) should be: the next run names the rest.
+Not measured here (no Unity or build in this sandbox). Studio's change check plays `phone-load` on desktop unless the scenario line carries a device, so
+a desktop figure (DXT, slower) is what that check sees: judge the phone figure from `phone-load@local:phone`.
+Next candidates, in order: whatever `bundle requests before the menu by group` shows beyond core/Boot/GameDefinition; move the MainMenu scene's hero
+sheets (raw RGBA32, 22.8 MB of player data) out of the scene (needs Unity to regenerate the scene); move the 6 MB of content/level JSON out of GameDefinition.

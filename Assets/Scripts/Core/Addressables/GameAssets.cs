@@ -113,7 +113,9 @@ namespace SickOfIt.Core.Addressables
 
         /// <summary>
         /// Starts the late core once the menu has had <paramref name="delaySeconds"/> to show itself, so its downloads and
-        /// texture uploads don't compete with the boot or the first frames. Held for the rest of the session. Safe to call twice.
+        /// texture uploads don't compete with the boot, the menu scene's own load or the first frames. Called by MainMenuManager
+        /// once the menu is up (never by the boot: the scene load runs 3+ s after it on a phone). Held for the rest of the session.
+        /// Safe to call twice.
         /// </summary>
         public static void LoadLateInBackground(float delaySeconds)
         {
@@ -128,9 +130,13 @@ namespace SickOfIt.Core.Addressables
         /// </summary>
         public static Func<int> ContinueLevelProvider;
 
+        /// <summary>Real seconds since startup when the late core's downloads began (0 = not yet). The phone-load playtest checks it is after the menu came up.</summary>
+        public static float LateStartedAt { get; private set; }
+
         static IEnumerator LateInBackground(float delaySeconds)
         {
             yield return new WaitForSecondsRealtime(delaySeconds);
+            LateStartedAt = Time.realtimeSinceStartup;
             yield return Acquire(LateCore, new[] { LateCore });
             // Idle now: fetch what Continue will need (the hero and the level), so tapping it only has to load, not download.
             string[] next = null;
@@ -171,6 +177,8 @@ namespace SickOfIt.Core.Addressables
             if (LateReady)
                 yield break;
             lateStarted = true;
+            if (LateStartedAt <= 0f)
+                LateStartedAt = Time.realtimeSinceStartup;
             yield return Acquire(LateCore, new[] { LateCore }, progress);
         }
 

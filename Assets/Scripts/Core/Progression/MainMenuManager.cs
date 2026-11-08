@@ -63,7 +63,12 @@ namespace SickOfIt.Core.Progression
             SetupBundleDownloadManager();
             // The ghost lobby (Docs/Story.md "Other climbers"): the menu's hero is a ghost on everyone else's menu.
             GhostLobby.MenuOpen = true;
+            SickOfIt.Core.Addressables.BundleFetchLog.Freeze();
+            // The Shaft, Yooba, shop and select-card art arrive behind the menu, never during its load (phone-load, GameDefinitionBoot).
+            SickOfIt.Core.Addressables.GameAssets.LoadLateInBackground(LateCoreDelaySeconds);
         }
+
+        private const float LateCoreDelaySeconds = 1.5f;
 
         private void OnDestroy()
         {
