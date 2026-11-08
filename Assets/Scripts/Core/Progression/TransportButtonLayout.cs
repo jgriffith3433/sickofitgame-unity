@@ -75,11 +75,22 @@ namespace SickOfIt.Core.Progression
 
         static void Size(RectTransform rect, Vector2 size, float touch)
         {
+            // A rect not laid out yet reads 0x0: size it square rather than leave the tiny prefab icon.
             if (size.x <= 0f || size.y <= 0f)
-                return;
+                size = new Vector2(touch, touch);
             float grow = Mathf.Max(1f, touch / Mathf.Min(size.x, size.y)); // keep the button's shape
             rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x * grow);
             rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y * grow);
+            // The glyph is a child image that kept its small prefab size inside the grown button: make it fill it.
+            foreach (var image in rect.GetComponentsInChildren<UnityEngine.UI.Image>(true))
+            {
+                if (image.gameObject.name != "_iconImg") continue;
+                var icon = image.rectTransform;
+                icon.anchorMin = Vector2.zero;
+                icon.anchorMax = Vector2.one;
+                icon.offsetMin = Vector2.zero;
+                icon.offsetMax = Vector2.zero;
+            }
         }
 
         static void Place(RectTransform rect, float x, float y, float offsetX)
