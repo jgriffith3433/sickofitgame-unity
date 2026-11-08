@@ -18,11 +18,11 @@ namespace SickOfIt.Playtest
 
         static readonly string[] BeatLines =
         {
-            "He was sick of it all long before the sky opened. Then the sky opened.",
-            "The bottom of Hell: same lava, same noise, same forever. He is already sick of it.",
-            "One floor up. He is counting out loud, and Hell is counting along.",
-            "They took the village. Now they take the gun. He has hands, and he is sick of being polite.",
-            "Imps haul his village's diamonds up a chain, sack after sack, the same sack. He has seen enough loops.",
+            "Then the sky opened.",
+            "The bottom of Hell. He is already sick of it.",
+            "One floor up. Hell is counting along.",
+            "They took the village. Now they take the gun.",
+            "Imps haul his village's diamonds. Same sack, every loop.",
         };
 
         sealed partial class Session
