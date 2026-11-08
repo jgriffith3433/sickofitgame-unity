@@ -70,9 +70,9 @@ namespace SickOfIt.Tools.Editor
 
             var template = RemoteTemplate(settings);
             var definitionGroup = CreateGroup(settings, GroupPrefix + "GameDefinition", template);
-            // ~6 MB of content and level-script JSON that the phone must download before the menu: the host sends no
-            // Content-Encoding for bundles, so LZMA (text shrinks ~10x, one bundle, unpacked once) is the only compression it gets.
-            definitionGroup.GetSchema<BundledAssetGroupSchema>().Compression = BundledAssetGroupSchema.BundleCompressionMode.LZMA;
+            // LZ4 (chunked, the template's mode), never LZMA: LZMA unpacks the whole ~6 MB bundle at once on the one WebGL thread
+            // and phone-load got slower with it (bootDataSeconds 11.4 -> 12.0, menu 22.4 -> 24.7 s).
+            definitionGroup.GetSchema<BundledAssetGroupSchema>().Compression = BundledAssetGroupSchema.BundleCompressionMode.LZ4;
             var entry = settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(BuildPath), definitionGroup);
             entry.SetAddress(GameDefinition.Address);
 

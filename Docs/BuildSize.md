@@ -110,6 +110,11 @@ Bundles are not gzip'd by the host (no Content-Encoding), so that bundle was dow
 if `load.bootDataSeconds` is still over ~6 s, the catalog is the rest (see `load.bootCatalogSeconds`) and the next step is splitting
 `content` out of GameDefinition into a lazy bundle.
 
+## GameDefinition bundle back to LZ4 (2026-11-08, menu 24.7 s after the LZMA change)
+
+The LZMA pass above made it worse: game data 11.4 -> 12.0 s, player start 4.8 -> 6.3 s, menu 24.7 s. LZMA unpacks the whole bundle on the
+single WebGL thread before the first read. `PlayerData_GameDefinition` is LZ4 again. Not measured here; the next `phone-load` run says.
+
 ## What the boot really loaded: the prefabs' sheets (2026-11-08, beta web 27, menu at 21.6 s)
 
 The earlier passes moved art between scopes blind. This one read beta's published build (`ServerData/WebGL/*.bundle`, UnityPy on
