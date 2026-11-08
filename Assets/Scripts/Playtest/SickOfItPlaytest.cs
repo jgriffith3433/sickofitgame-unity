@@ -9304,6 +9304,21 @@ namespace SickOfIt.Playtest
                 if (Run.Done) yield break;
                 yield return Audit("Death", ++step, steps, 1.5f);
                 DeathScreenChecks();
+                // The same screen at phone portrait (a window resize, a setup shortcut): the criterion is stated at 390x844.
+                int dw = Screen.width, dh = Screen.height;
+                if (dw != 390 || dh != 844)
+                {
+                    Screen.SetResolution(390, 844, false);
+                    yield return Run.Until(() => Screen.width == 390 && Screen.height == 844, 6f, "the window to resize to 390x844");
+                    if (Run.Done) yield break;
+                    Run.Event("layout-size", $"death screen at phone portrait: {Screen.width}x{Screen.height}");
+                    yield return Audit("Death phone portrait", 0, 0, 1.2f, false);
+                    if (Run.Done) yield break;
+                    DeathScreenChecks();
+                    Screen.SetResolution(dw, dh, false);
+                    yield return Run.Until(() => Screen.width == dw && Screen.height == dh, 6f, "the window to return to its size");
+                    yield return WaitReal(0.5f);
+                }
                 yield return ClickUntil(texts.rageQuit, () => Object.FindAnyObjectByType<MainMenuManager>() != null, 30f);
                 if (Run.Done) yield break;
                 Run.Scene("Main Menu");
@@ -9325,7 +9340,7 @@ namespace SickOfIt.Playtest
                 int w0 = Screen.width, h0 = Screen.height;
                 var sizes = new (string name, int w, int h)[]
                 {
-                    ("16:9 desktop", 1920, 1080), ("narrow desktop", 760, 900),
+                    ("16:9 desktop", 1920, 1080), ("small desktop", 1280, 720), ("narrow desktop", 760, 900),
                     ("phone portrait", 390, 844), ("phone landscape", 844, 390),
                 };
                 foreach (var size in sizes)
@@ -9398,13 +9413,21 @@ namespace SickOfIt.Playtest
                     else if (box.Transform.name == "Decoration")
                     {
                         stickers = true;
-                        bool covered = false;
+                        bool covered = false, crowded = false;
                         foreach (var other in result.Boxes)
+                        {
+                            if (other == box) continue;
                             if (other.Kind == MenuElementKind.Button && other.Screen.Overlaps(box.Screen))
                                 covered = true;
-                        Run.Event("check", $"main menu sticker {size}: {(covered ? "OVERLAPPED BY A BUTTON" : "clear of every button")} ({box.Screen})");
+                            string n = other.Transform.name;
+                            if ((n == "Decoration" || n == "Subtitle" || n == "Title") && other.Screen.Overlaps(box.Screen))
+                                crowded = true;
+                        }
+                        Run.Event("check", $"main menu sticker {size}: {(covered ? "OVERLAPPED BY A BUTTON" : crowded ? "OVERLAPS THE TAGLINE, TITLE OR ANOTHER STICKER" : "clear of every button, the tagline, the title and the other sticker")} ({box.Screen})");
                         if (covered)
                             Run.Problem(PlaytestSeverity.Bug, $"main menu sticker {size} is overlapped by a button");
+                        if (crowded)
+                            Run.Problem(PlaytestSeverity.Bug, $"main menu sticker {size} overlaps the tagline, the title or another sticker");
                     }
                 }
                 if (!tagline) Run.Problem(PlaytestSeverity.Bug, $"main menu tagline {size} is not on screen");

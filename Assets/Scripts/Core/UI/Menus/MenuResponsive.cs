@@ -540,12 +540,12 @@ namespace SickOfIt.Core.UI.Menus
         static bool IsDressing(Box box) =>
             box.Kind == MenuElementKind.Text && (box.Transform.name == "Title" || box.Transform.name == "Subtitle" || box.Transform.name == "Decoration");
 
-        /// <summary>The main menu's title, tagline and stickers must not overlap a button, and the stickers not each other.</summary>
+        /// <summary>The main menu's title, tagline and stickers must not overlap a button, and the stickers not the title, the tagline or each other.</summary>
         static bool MenuDressing(Box a, Box b)
         {
             bool da = IsDressing(a), db = IsDressing(b);
             if (da && db)
-                return a.Transform.name == "Decoration" && b.Transform.name == "Decoration";
+                return a.Transform.name == "Decoration" || b.Transform.name == "Decoration";
             return (da && b.Kind == MenuElementKind.Button) || (db && a.Kind == MenuElementKind.Button);
         }
 
