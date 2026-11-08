@@ -10,12 +10,27 @@ namespace SickOfIt.Core.Progression
     /// </summary>
     public sealed class TransportButtonLayout : MonoBehaviour
     {
-        const float MinButtonPixels = 56f;
+        /// <summary>The smallest transport button, in CSS pixels (the page's pixels, not the canvas's): 48 is the touch floor, 52 leaves a margin.</summary>
+        public const float MinButtonCssPixels = 52f;
         MobileControllerFramework.Button rewind;
         MobileControllerFramework.Button skip;
         Vector2Int screen;
         Vector2 rewindSize, skipSize;
         float scale;
+
+        /// <summary>
+        /// Device pixels per CSS pixel. On a WebGL page Unity's Screen.dpi is 96 x devicePixelRatio; elsewhere (or when it
+        /// reports nothing) the canvas is taken as 1:1. A phone at 2x or 3x drew a "56 px" button only 28 or 19 CSS px tall.
+        /// </summary>
+        public static float DevicePixelRatio()
+        {
+            float dpi = Screen.dpi;
+            if (Application.platform != RuntimePlatform.WebGLPlayer || dpi <= 0f) return 1f;
+            return Mathf.Clamp(dpi / 96f, 1f, 4f);
+        }
+
+        /// <summary>A height in screen (backbuffer) pixels as CSS pixels.</summary>
+        public static float ToCssPixels(float screenPixels) => screenPixels / DevicePixelRatio();
 
         public static void Apply(GameObject host, MobileControllerFramework.Button rewind, MobileControllerFramework.Button skip)
         {
@@ -48,10 +63,10 @@ namespace SickOfIt.Core.Progression
             var style = gd != null && gd.menuTheme != null ? gd.menuTheme.responsive : null;
             var canvas = rewindRect.GetComponentInParent<Canvas>();
             float pixelsPerUnit = canvas != null && canvas.rootCanvas.scaleFactor > 0f ? canvas.rootCanvas.scaleFactor : 1f;
-            // Always at least MinButtonPixels on screen (the intro's skip button was ~40 px on a phone), more on a touch layout.
+            // Always at least MinButtonCssPixels on the page (the intro's skip button was ~40 px on a phone), more on a touch layout.
             float touchPixels = SickOfIt.Core.UI.Menus.MenuScreen.TouchLayout(style)
                 ? SickOfIt.Core.UI.Menus.MenuScreen.MinTouchPixels(style) : 0f;
-            float touch = Mathf.Max(touchPixels, MinButtonPixels) / pixelsPerUnit;
+            float touch = Mathf.Max(touchPixels, MinButtonCssPixels * DevicePixelRatio()) / pixelsPerUnit;
             Size(rewindRect, rewindSize, touch);
             if (skipRect != null)
                 Size(skipRect, skipSize, touch);

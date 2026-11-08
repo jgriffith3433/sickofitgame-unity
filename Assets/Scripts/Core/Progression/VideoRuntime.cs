@@ -51,6 +51,12 @@ namespace SickOfIt.Core.Progression
         private const float StartSeconds = 4f;
         private const float InputGraceSeconds = 0.2f;
         private float startedAt;
+        // The intro (Video1) brings the first level's bundles in while it plays, so a skip only activates the level.
+        private const int IntroVideo = 1;
+        private int preloadedLevel;
+        /// <summary>Playtest: real seconds from the tap that skipped the intro to its next scene being asked for, and whether it was the fallback menu.</summary>
+        public static float LastSkipAt { get; private set; } = -1f;
+        public static string LastSkipTarget { get; private set; } = "";
 
         private void Start()
         {
@@ -92,11 +98,29 @@ namespace SickOfIt.Core.Progression
             if (!leavingScene)
             {
                 startedAt = Time.unscaledTime;
+                StartPreload();
                 StartCoroutine(PlaybackStartGate.Hold(gameClock, playbackPlayers, playbackAudio, BeginVideoPlayback));
                 // One-shot timers (not polling): the sheets or the soundtrack never arrived -> no black wait.
                 Invoke(nameof(GiveUpIfPictureNotReady), PictureReadySeconds);
                 Invoke(nameof(GiveUpIfNotStarted), StartSeconds);
             }
+        }
+
+        /// <summary>The level this video leads to, or -1 for the main menu. Reads the return key without clearing it.</summary>
+        private int PeekNextLevel()
+        {
+            if (config.returnToMainMenu) return -1;
+            if (PlayerPrefs.HasKey("ReturnToLevel")) return PlayerPrefs.GetInt("ReturnToLevel");
+            return config.nextLevel > 0 ? config.nextLevel : videoNumber;
+        }
+
+        private void StartPreload()
+        {
+            if (videoNumber != IntroVideo) return;
+            int next = PeekNextLevel();
+            if (next <= 0) return;
+            preloadedLevel = next;
+            SceneTransitionManager.Instance.PreloadLevel(next);
         }
 
         private void AutoDiscoverReferences()
@@ -502,6 +526,23 @@ namespace SickOfIt.Core.Progression
 
             if (!videoWasSkipped)
                 TrackVideo("complete");
+
+            // Skipped (or given up on) before the level's bundles are in: go to the main menu, which is already in the
+            // build, rather than hold a black loading screen for seconds.
+            if ((videoWasSkipped || !playbackBegun) && preloadedLevel > 0 && !SceneTransitionManager.Instance.LevelAssetsReady(preloadedLevel))
+            {
+                Debug.LogWarning($"[VideoRuntime] Level {preloadedLevel} is not loaded yet; the main menu instead of a loading screen.");
+                SceneTransitionManager.Instance.CancelPreload();
+                LastSkipAt = Time.realtimeSinceStartup;
+                LastSkipTarget = "MainMenu";
+                SceneTransitionManager.Instance.LoadMainMenu();
+                return;
+            }
+            if (videoNumber == IntroVideo)
+            {
+                LastSkipAt = Time.realtimeSinceStartup;
+                LastSkipTarget = config.returnToMainMenu ? "MainMenu" : "Level";
+            }
 
             if (config.returnToMainMenu)
             {
