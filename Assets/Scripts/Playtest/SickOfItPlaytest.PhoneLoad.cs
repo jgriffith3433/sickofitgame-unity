@@ -21,7 +21,8 @@ namespace SickOfIt.Playtest
         const float PhoneLoadSeconds = 150f;
         const float PhoneLoadMenuBudget = 20f;
         const float PhoneLoadMinFps = 30f;
-        const int PhoneLoadMenuBundleBudget = 40;
+        // The menu needs the core art and sound (2-3 shared bundles), the Boot dependencies (1) and GameDefinition (1): a dozen is generous.
+        const int PhoneLoadMenuBundleBudget = 12;
         const float PhoneLoadPlaySeconds = 30f;
 
         /// <summary>
@@ -213,9 +214,10 @@ namespace SickOfIt.Playtest
                         Run.Metric("load.menuMB", (float)(info.bytes / 1000000.0));
                     // beta v27 fetched 50 bundles before the menu, ~20 of them the hero's and the legacy enemies' sheets (GameDefinition's
                     // prefabs pulled them in). Only meaningful on a build that splits its art out (the editor has no bundles).
+                    // The failing check carries the group names, so the finding that comes out of a red run says what the bundles are.
                     if (GameAssets.Managed)
                         LoadCheck("bundles before the menu", info.bundles <= PhoneLoadMenuBundleBudget,
-                            $"{info.bundles} bundles ({Megabytes(info.bundleBytes)}{(info.sized > 0 ? "" : ", sizes hidden by the host")}) were fetched before the menu, budget {PhoneLoadMenuBundleBudget} (beta v27: 50)");
+                            $"{info.bundles} bundles ({Megabytes(info.bundleBytes)}{(info.sized > 0 ? "" : ", sizes hidden by the host")}) were fetched before the menu, budget {PhoneLoadMenuBundleBudget} (beta v27: 50); by group ({requested}): {(string.IsNullOrEmpty(groups) ? "none logged" : groups)}");
                 }
                 if (GameAssets.Managed)
                 {
