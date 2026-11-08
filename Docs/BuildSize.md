@@ -93,3 +93,10 @@ The boot now records when Addressables' init and catalog finished (`GameDefiniti
 and the phone-load playtest reports it as `load.bootCatalogSeconds` next to `load.bootDataSeconds`, so the next run says whether the
 ~10-15 s is the catalog or the GameDefinition bundle (6 MB of content/level JSON). Fix that part next: if the catalog, shrink it
 (fewer addresses per bundle); if the bundle, split `content` and the level scripts out of GameDefinition into a lazy bundle.
+
+## Gameplay event sounds behind the menu (2026-11-08, phone-load menu at 26.0 s)
+
+Phone playtest: game data 14.9 s (50 bundles, 65 files), core 0.8 s, menu 26.0 s. "core" still held every sound named in audio.json
+`events` (voices, pickups, rewind, banners, stings...), none of which the menu plays. `PlayerDataManifest.ScopeOf` now keeps only the
+`ui_*` and `player_*` events in "core" (the menu's clicks and its own hero) and puts the rest in `core.late`, which every level load
+already awaits (`SceneTransitionManager`, `GameAssets.EnsureLate`). Not measured here (no Unity/build); the next `phone-load` run says.
