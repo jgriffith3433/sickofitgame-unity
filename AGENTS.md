@@ -18,6 +18,12 @@ with its shortcuts and floor bosses; a page per played floor): build floors from
 level, enemy, upgrade or voice line must fit it; if it doesn't yet, update the story first. No slime enemies (slimes
 are villagers).
 
+**Story is played, not read** (Jaycee's quality rules, Nov 8): tell a beat with something that happens (spawns, a
+`cameraShake`, `flash`, `playSound`, a character walking in, a voiced line) before words on the screen. A `showText` is
+one short line at a time (about 60 characters at most, one thought), never a paragraph or two stacked lines, and a
+line that is only text, with no event or voice under it, is the last resort. When you shorten a line that has an
+unmade voice in `audio.json`, change its `prompt` to the same words so the clip matches the subtitle.
+
 ## The game is defined in JSON
 
 `Assets/GameConfig/` is the **source of truth** for the whole game. It is compiled into
