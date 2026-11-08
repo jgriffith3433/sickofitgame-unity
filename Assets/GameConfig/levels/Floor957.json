@@ -383,7 +383,7 @@
               },
               {
                 "type": "showText",
-                "text": "Soul: Careful. It's the one thing down here that isn't trying to burn you.",
+                "text": "Soul: Careful. It's the one thing here that won't burn you.",
                 "duration": 4.2,
                 "style": "Subtitle",
                 "color": "#B9C4D0"
@@ -404,7 +404,7 @@
               },
               {
                 "type": "showText",
-                "text": "Soul: It's a spring. It cooled a century ago. ...Nobody told the Overlord.",
+                "text": "Soul: A spring. ...Nobody told the Overlord.",
                 "duration": 4.4,
                 "style": "Subtitle",
                 "color": "#B9C4D0"

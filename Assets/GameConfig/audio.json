@@ -15772,7 +15772,7 @@
     {
       "id": "vo_stop957_careful",
       "kind": "Voice",
-      "prompt": "[whispering] Careful. [beat] It's the one thing down here that isn't trying to burn you.",
+      "prompt": "[whispering] Careful. [beat] It's the one thing here that won't burn you.",
       "durationSeconds": 0,
       "promptInfluence": 0.3,
       "loop": false,
@@ -15802,7 +15802,7 @@
     {
       "id": "vo_stop957_spring",
       "kind": "Voice",
-      "prompt": "[whispering] It's a spring. It cooled a century ago. [pause] Nobody told the Overlord.",
+      "prompt": "[whispering] A spring. [pause] Nobody told the Overlord.",
       "durationSeconds": 0,
       "promptInfluence": 0.3,
       "loop": false,
@@ -16027,7 +16027,7 @@
     {
       "id": "vo_stop897_win",
       "kind": "Voice",
-      "prompt": "Five minutes! I'm winning. [pause] Of what, I'll work out later.",
+      "prompt": "Five minutes! I'm winning. [pause] Winning what?",
       "durationSeconds": 0,
       "promptInfluence": 0.3,
       "loop": false,
