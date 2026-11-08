@@ -29,8 +29,8 @@ namespace SickOfIt.Gameplay
         /// <summary>The playtest's way of saying "pretend this is a phone" (a desktop has none of the touch controls).</summary>
         public static bool TouchUiForced;
 
-        /// <summary>The touch controls belong here: a phone or tablet, or the playtest's touch scenarios.</summary>
-        public static bool TouchUiOn => Application.isMobilePlatform || TouchUiForced;
+        /// <summary>The touch controls belong here: a phone or tablet (an iPad in Safari too: TouchDevice), or the playtest's touch scenarios.</summary>
+        public static bool TouchUiOn => SickOfIt.Core.Device.TouchDevice.IsPrimary || TouchUiForced;
 
         RectTransform stickZoneRect, stickRingRect, stickKnobRect;
         Image stickRing, stickKnob;

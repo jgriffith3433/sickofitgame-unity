@@ -97,7 +97,7 @@ namespace SickOfIt.Gameplay
                 MenuPlacement.At(0f, 0f, 540f, 560f, 1000f, 60f), MenuElementKind.Text, menu.Responsive);
             touchBuiltAt = Time.unscaledTime;
             touchHintOn = seen < TouchHintLevels;
-            if (touchHintOn && (touchHintPad || Application.isMobilePlatform))
+            if (touchHintOn && (touchHintPad || SickOfIt.Core.Device.TouchDevice.IsPrimary))
                 PlayerPrefs.SetInt(TouchHintKey, seen + 1);
         }
 
@@ -124,7 +124,7 @@ namespace SickOfIt.Gameplay
             if (controller != null && (show || !stickBuilt))
                 controller.TouchMove = show ? touchRightHeld - touchLeftHeld : 0f;
             bool playing = controller != null && !controller.Suspended && !controller.InputLocked && !Paused && !Blocked;
-            bool touchHintWanted = touchHintPad ? show : playing && !GameSettings.TouchButtons && Application.isMobilePlatform && !stickBuilt;
+            bool touchHintWanted = touchHintPad ? show : playing && !GameSettings.TouchButtons && SickOfIt.Core.Device.TouchDevice.IsPrimary && !stickBuilt;
             bool hint = touchHintWanted && touchHintOn && Time.unscaledTime - touchBuiltAt < TouchHintSeconds;
             if (touchHint.transform.parent.gameObject.activeSelf != hint)
                 touchHint.transform.parent.gameObject.SetActive(hint);
