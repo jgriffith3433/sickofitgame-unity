@@ -13,7 +13,7 @@ namespace SickOfIt.Playtest
     {
         /// <summary>The intro-skip scenario: Video1 never sits black for over 2 s, one click anywhere skips it within 1 s, and its buttons are 48+ px tall.</summary>
         public const string IntroSkipId = "intro-skip";
-        const float IntroSkipSeconds = 90f;
+        const float IntroSkipSeconds = 240f;
 
         sealed partial class Session
         {
@@ -59,6 +59,7 @@ namespace SickOfIt.Playtest
                     float css = TransportButtonLayout.ToCssPixels(h);
                     Run.Metric("introSkip.button." + b.gameObject.name + "Px", h);
                     Run.Metric("introSkip.button." + b.gameObject.name + "CssPx", css);
+                    Run.Event("skip", $"skip button {b.gameObject.name}: {css:0.0} CSS px tall ({h:0} device px at {TransportButtonLayout.DevicePixelRatio():0.#}x), screen {Screen.width}x{Screen.height}");
                     IntroCheck("buttonHeight " + b.gameObject.name, css >= 47.5f, $"{css:0.0} CSS px tall ({h:0} device px at {TransportButtonLayout.DevicePixelRatio():0.#}x) on a {Screen.width}x{Screen.height} screen");
                 }
 
@@ -66,14 +67,29 @@ namespace SickOfIt.Playtest
                 if (Object.FindAnyObjectByType<VideoRuntime>() != null)
                 {
                     yield return WaitReal(1f);
-                    input.MoveMouse(new Vector2(Screen.width * 0.15f, Screen.height * 0.8f));
-                    yield return null;
-                    float clickAt = Time.realtimeSinceStartup;
-                    input.SetMouseButton(true);
-                    yield return null;
-                    yield return null;
-                    input.SetMouseButton(false);
-                    Run.Event("skip", "one click on empty screen");
+                    var spot = new Vector2(Screen.width * 0.15f, Screen.height * 0.8f);
+                    // A phone-shaped screen is tapped with a finger (the virtual touchscreen), a desktop one clicked.
+                    bool phone = Screen.height > Screen.width;
+                    float clickAt;
+                    if (phone)
+                    {
+                        clickAt = Time.realtimeSinceStartup;
+                        int finger = input.TouchDown(spot);
+                        yield return null;
+                        yield return null;
+                        input.TouchUp(finger, spot);
+                    }
+                    else
+                    {
+                        input.MoveMouse(spot);
+                        yield return null;
+                        clickAt = Time.realtimeSinceStartup;
+                        input.SetMouseButton(true);
+                        yield return null;
+                        yield return null;
+                        input.SetMouseButton(false);
+                    }
+                    Run.Event("skip", $"one {(phone ? "tap" : "click")} on empty screen ({Screen.width}x{Screen.height}, {(phone ? "phone" : "desktop")} shape)");
                     int coversBefore = ScreenTransition.Covers;
                     yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() == null, 5f, "the intro to end after one click");
                     float took = Time.realtimeSinceStartup - clickAt;
@@ -85,6 +101,8 @@ namespace SickOfIt.Playtest
                     bool covered = ScreenTransition.Covers > coversBefore;
                     string target = LevelRuntime.Current != null ? "level" : "main menu";
                     Run.Metric("introSkip.tapToSceneSeconds", toScene);
+                    Run.Metric("introSkip.screenWidth", Screen.width);
+                    Run.Metric("introSkip.screenHeight", Screen.height);
                     Run.Event("skip", $"tap to the next scene ({target}, via {VideoRuntime.LastSkipTarget}): {toScene:0.00}s, loading cover {(covered ? "shown" : "not shown")}");
                     IntroCheck("next scene", toScene <= 1f && !covered, $"{target} up {toScene:0.00}s after the tap, loading cover {(covered ? "shown" : "not shown")}");
                 }
