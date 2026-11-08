@@ -65,9 +65,9 @@ namespace SickOfIt.Tools.Editor
             if (settings == null)
                 throw new Exception("Addressables settings are missing.");
 
-            string moved = AssetDatabase.MoveAsset(ResourcesPath, EnsureFolder());
-            if (!string.IsNullOrEmpty(moved))
-                throw new Exception($"Couldn't move {ResourcesPath} out of Resources: {moved}");
+            string moveError = AssetDatabase.MoveAsset(ResourcesPath, EnsureFolder());
+            if (!string.IsNullOrEmpty(moveError))
+                throw new Exception($"Couldn't move {ResourcesPath} out of Resources: {moveError}");
             AssetDatabase.SaveAssets();
             Directory.CreateDirectory(Path.GetDirectoryName(BackupPath));
             File.Copy(BuildPath, BackupPath, true);

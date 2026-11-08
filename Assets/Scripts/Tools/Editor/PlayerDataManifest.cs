@@ -93,7 +93,7 @@ namespace SickOfIt.Tools.Editor
                 if (property.isArray && property.propertyType == SerializedPropertyType.Generic && property.arrayElementType == "PPtr<$Sprite>")
                 {
                     enter = false;
-                    TakeSpriteArray(settings, property, Add);
+                    TakeSpriteArray(settings, property, (e, a) => Add(e, a));
                     continue;
                 }
                 if (property.propertyType != SerializedPropertyType.ObjectReference || property.objectReferenceValue == null)
