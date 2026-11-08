@@ -151,7 +151,14 @@ namespace SickOfIt.Core.Progression
             style.size = new Vector2(340f, 92f);
             string label = menu.Theme.texts != null ? menu.Theme.texts.rageQuit : "Rage Quit";
             // Bottom-right in landscape; top centre on a phone held upright, clear of the rewind/skip row.
-            var portrait = menu.Responsive.screens != null ? menu.Responsive.screens.rageQuit : null;
+            // Held upright, the screen reads top to bottom: title, quip, then the buttons (Return, Again!, Rage Quit), each its own row.
+            bool offerReturn = runEnded && SickOfIt.Data.RogueliteManager.Instance != null && SickOfIt.Data.RogueliteManager.Instance.GetPoints() >= RunFlow.ReturnCost();
+            float row = PortraitFirstButtonY;
+            float returnY = row;
+            if (offerReturn) row -= PortraitButtonStep;
+            float againY = row;
+            row -= PortraitButtonStep;
+            var portrait = MenuPlacement.At(0.5f, 1f, 0f, row, 520f, PortraitButtonHeight);
             menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f, 96f), label, style, OnRageQuit, null, portrait);
 
             // The offer: only on a floor stage death, and only with the diamonds for it (the Shaft's drop stays the default).
@@ -162,18 +169,22 @@ namespace SickOfIt.Core.Progression
                 string offer = string.Format(menu.Theme.texts != null ? menu.Theme.texts.returnForDiamonds : "Return for {0} diamonds", cost);
                 var offerStyle = menu.Theme.button.Clone();
                 offerStyle.size = new Vector2(440f, 92f);
-                var offerPortrait = MenuPlacement.At(0.5f, 1f, 0f, -230f, 520f, 110f);
+                var offerPortrait = MenuPlacement.At(0.5f, 1f, 0f, returnY, 520f, PortraitButtonHeight);
                 returnButton = menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-210f - 170f - 240f, 96f), offer, offerStyle, OnReturn, null, offerPortrait);
             }
             // Again!: the fast restart, always there (no diamonds): the next attempt starts at once.
             string again = menu.Theme.texts != null && !string.IsNullOrEmpty(menu.Theme.texts.deathAgain) ? menu.Theme.texts.deathAgain : "Again!";
             var againStyle = menu.Theme.button.Clone();
             againStyle.size = new Vector2(440f, 92f);
-            var againPortrait = MenuPlacement.At(0.5f, 1f, 0f, -360f, 520f, 110f);
+            var againPortrait = MenuPlacement.At(0.5f, 1f, 0f, againY, 520f, PortraitButtonHeight);
             againButton = menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(-330f, 96f), again, againStyle, OnAgain, null, againPortrait);
             BuildWords(menu);
         }
 
+        // Portrait stack (top-anchored canvas units): title -200, quip -335 (ends about -385), buttons from -520 down, 150 tall (about 54 px on a phone).
+        const float PortraitFirstButtonY = -520f;
+        const float PortraitButtonStep = 180f;
+        const float PortraitButtonHeight = 150f;
         private SickOfIt.Core.UI.Menus.MenuButton againButton;
         /// <summary>The Again! button is on screen.</summary>
         public bool AgainOffered => againButton != null;
@@ -222,14 +233,14 @@ namespace SickOfIt.Core.Progression
             var theme = menu.Theme;
             string title = config != null && !string.IsNullOrEmpty(config.title) ? config.title : "You Obviously Died";
             titleText = AddLine(menu, "Title", title, theme.title, 130f,
-                MenuPlacement.At(0.5f, 0.87f, 0f, 0f, 1500f, 170f), MenuPlacement.At(0.5f, 1f, 0f, -270f, 1000f, 150f), menu.TitleFont,
+                MenuPlacement.At(0.5f, 0.87f, 0f, 0f, 1500f, 170f), MenuPlacement.At(0.5f, 1f, 0f, -200f, 1000f, 150f), menu.TitleFont,
                 new SickOfIt.Data.Config.MenuMotion { type = SickOfIt.Data.Config.MenuMotionType.Jitter, amount = 5f, speed = 1f }, -3f);
 
             string quip = PickQuip(theme);
             if (!string.IsNullOrEmpty(quip))
             {
                 quipText = AddLine(menu, "Quip", quip, theme.subtitle, 48f,
-                    MenuPlacement.At(0.5f, 0.74f, 0f, 0f, 1500f, 90f), MenuPlacement.At(0.5f, 1f, 0f, -400f, 1000f, 100f), null, null, 0f);
+                    MenuPlacement.At(0.5f, 0.74f, 0f, 0f, 1500f, 90f), MenuPlacement.At(0.5f, 1f, 0f, -335f, 1000f, 100f), null, null, 0f);
                 Debug.Log($"[Death] quip: \"{quip}\"");
             }
 
