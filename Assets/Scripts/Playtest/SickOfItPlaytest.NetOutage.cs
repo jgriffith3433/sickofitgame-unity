@@ -9,8 +9,8 @@ namespace SickOfIt.Playtest
     public static partial class SickOfItPlaytest
     {
         /// <summary>The net-outage scenario: the Hawkes Net server is down (a setup shortcut makes every attempt fail with 502, then 410),
-        /// the game warns once per retry and never errors, retries on a growing timer, plays a level meanwhile, shows the quiet offline chip,
-        /// stops on 410 and reconnects (without a reload) when the server comes back.</summary>
+        /// the game warns once per outage (not per retry) and never errors, retries on a growing timer, plays a level meanwhile, shows the
+        /// quiet offline chip, reconnects (without a reload) when the server comes back, and after a 410 stops trying for the session.</summary>
         public const string NetOutageId = "net-outage";
         const float NetOutageSeconds = 240f;
 
@@ -41,20 +41,19 @@ namespace SickOfIt.Playtest
                     Run.Event("check", "net-outage: no lobby here (not WebGL): the single-player and no-error checks still run");
                 yield return ToMainMenu();
                 if (Run.Done) yield break;
-                // The drop of the open connection warns once without being an attempt, so count from after it:
-                // from here on a warning is a failed attempt, one each at most.
-                GhostLobby.SimulateOutage("502");
+                // One warning per outage: the drop of the open connection says it, the retries after it are quiet.
                 Application.logMessageReceived += NetLog;
+                GhostLobby.SimulateOutage("502");
                 int attempts0 = GhostLobby.Attempts;
                 // Take the connection down now (setup shortcut): the current one is dropped by the next attempt's failure.
                 Run.Event("shortcut", "the server is down: every connection attempt fails with 502");
 
-                // 1. Menu with the server down: a warning per retry, growing waits, the quiet chip, no errors.
+                // 1. Menu with the server down: one warning in all, growing waits, the quiet chip, no errors.
                 if (live)
                 {
                     yield return Run.Until(() => GhostLobby.Attempts - attempts0 >= 4, 90f, "four retries on the backoff timer");
                     int tries = GhostLobby.Attempts - attempts0;
-                    NetCheck("warnings", netWarnings <= tries, $"{netWarnings} warnings for {tries} attempts (one each at most)");
+                    NetCheck("warnings", netWarnings <= 1, $"{netWarnings} warnings for {tries} attempts (one per outage at most)");
                     NetCheck("backoff", GhostLobby.Status == "offline" && GhostLobby.NextRetryIn > 3f, $"status {GhostLobby.Status}, next retry in {GhostLobby.NextRetryIn:0.0} s (2, 4, 8 s ... steps)");
                     NetCheck("chip", GhostLobby.Offline, "the menu shows its quiet offline chip while the server is down");
                 }
@@ -68,21 +67,33 @@ namespace SickOfIt.Playtest
                 NetCheck("single-player", ClockTime > before + 10f || ClockTime < before, $"level 1 played with the server down (clock {ClockTime:0.0} s)");
                 NetCheck("no errors in level", netErrors == 0, $"{netErrors} errors logged");
 
-                // 3. A 410 stops retrying for the session.
+                // 3. The server comes back: the next scene load asks again and the game is online with no reload.
                 if (live)
                 {
-                    GhostLobby.SimulateOutage("410");
-                    yield return Run.Until(() => GhostLobby.Status == "halted", 90f, "the 410 to halt the retries");
-                    int halted = GhostLobby.Attempts;
-                    yield return WaitReal(15f);
-                    NetCheck("410 stops", GhostLobby.Attempts == halted, $"no attempt in 15 s after the 410 ({GhostLobby.Attempts - halted} made)");
-
-                    // 4. The server comes back: the next scene load asks again and the game is online with no reload.
                     GhostLobby.SimulateOutage(null);
                     yield return ToMainMenu();
                     yield return Run.Until(() => GhostLobby.Online, 60f, "the game to reconnect by itself");
                     NetCheck("reconnect", GhostLobby.Online, $"status {GhostLobby.Status} without a reload");
                 }
+
+                // 4. A 410 Gone stops trying for the rest of the session: no timer, and neither a scene load nor the menu wakes it.
+                if (live)
+                {
+                    int warnings0 = netWarnings;
+                    GhostLobby.SimulateOutage("410");
+                    yield return Run.Until(() => GhostLobby.Status == "halted", 90f, "the 410 to halt the retries");
+                    int halted = GhostLobby.Attempts;
+                    yield return WaitReal(12f);
+                    SceneTransitionManager.Instance.LoadLevel(1);
+                    yield return WaitReal(4f);
+                    yield return ToMainMenu();
+                    yield return WaitReal(4f);
+                    NetCheck("410 stops", GhostLobby.Attempts == halted && GhostLobby.Status == "halted",
+                        $"{GhostLobby.Attempts - halted} attempts after the 410 across a level and the menu (status {GhostLobby.Status})");
+                    NetCheck("410 warning", netWarnings - warnings0 <= 1, $"{netWarnings - warnings0} warnings for the 410 outage");
+                    GhostLobby.SimulateOutage(null);
+                }
+                NetCheck("no errors at the end", netErrors == 0, $"{netErrors} errors logged");
                 Application.logMessageReceived -= NetLog;
                 Run.Metric("netOutage.warnings", netWarnings);
                 Run.Metric("netOutage.errors", netErrors);

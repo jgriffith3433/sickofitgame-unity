@@ -57,7 +57,8 @@ namespace SickOfIt.Core.Progression
         }
         static bool menuOpen;
         /// <summary>"connecting", "online", "offline" (waiting to retry), "halted" (the server said stop: asked again on the
-        /// next scene load or online feature), or "off" (no lobby: not WebGL, or ?ghosts=0).</summary>
+        /// next scene load or online feature, except after a 410 Gone, which ends trying for the session), or "off" (no lobby:
+        /// not WebGL, or ?ghosts=0). An outage logs one warning, however many retries it takes.</summary>
         public static string Status => instance != null ? instance.status : "off";
         /// <summary>True when there is a lobby that isn't connected: online features show their quiet offline state.</summary>
         public static bool Offline => instance != null && (instance.status == "offline" || instance.status == "halted");
@@ -75,6 +76,13 @@ namespace SickOfIt.Core.Progression
             {
                 g.lastWake = -100f;
                 if (g.status == "halted") Wake();
+                else if (g.status == "offline")
+                {
+                    // A waiting connection tries at once (its timer would only try later).
+                    if (g.timer != null) { g.StopCoroutine(g.timer); g.timer = null; }
+                    g.retry.Succeeded();
+                    g.Connect();
+                }
                 return;
             }
             if (g.status == "online" || g.status == "connecting")
@@ -109,6 +117,8 @@ namespace SickOfIt.Core.Progression
         string status = "connecting";
         float retryAt = -1f, lastWake = -100f;
         bool quiet; // our own Leave/Join: not a failure
+        bool warned; // this outage has had its one warning (cleared when the connection is back)
+        bool gone;   // the server answered 410 Gone: no more attempts this session, whatever wakes us
         Coroutine timer;
         const float WakeGap = 10f;
         HawkesNetRoom room => lobby.Room;
@@ -158,6 +168,7 @@ namespace SickOfIt.Core.Progression
             retry.Succeeded();
             status = "online";
             retryAt = -1f;
+            warned = false;
         }
 
         void OnLeft(HawkesNetRoom r)
@@ -177,15 +188,19 @@ namespace SickOfIt.Core.Progression
         void Failed(string problem)
         {
             float wait = retry.Failed(problem);
+            string what = problem.Length > 0 ? problem : "unreachable";
             if (wait < 0f)
             {
                 status = "halted";
-                Warn("Hawkes Net: " + (problem.Length > 0 ? problem : "unreachable") + ". Playing offline; will ask again on the next scene or online screen.");
+                if (NetRetry.StatusOf(problem) == 410)
+                    gone = true; // the server is gone for good: stay offline for the rest of the session
+                // One warning per outage: the first failure says it, the rest are quiet.
+                WarnOnce("Hawkes Net: " + what + (gone ? ". Playing offline for this session." : ". Playing offline; will ask again on the next scene or online screen."));
                 return;
             }
             status = "offline";
             retryAt = Time.realtimeSinceStartup + wait;
-            Warn("Hawkes Net: " + (problem.Length > 0 ? problem : "unreachable") + ". Playing offline; retrying in " + wait.ToString("0") + " s.");
+            WarnOnce("Hawkes Net: " + what + ". Playing offline; retrying quietly in the background.");
             if (timer != null)
                 StopCoroutine(timer);
             timer = StartCoroutine(RetryAfter(wait)); // a timer set by the failure, not a poll
@@ -197,8 +212,11 @@ namespace SickOfIt.Core.Progression
             Connect();
         }
 
-        static void Warn(string text)
+        void WarnOnce(string text)
         {
+            if (warned)
+                return;
+            warned = true;
             Warnings++;
             Debug.LogWarning(text);
         }
@@ -208,7 +226,7 @@ namespace SickOfIt.Core.Progression
         public static void Wake()
         {
             var g = instance;
-            if (g == null || g.status != "halted" || Time.realtimeSinceStartup - g.lastWake < WakeGap)
+            if (g == null || g.gone || g.status != "halted" || Time.realtimeSinceStartup - g.lastWake < WakeGap)
                 return;
             g.lastWake = Time.realtimeSinceStartup;
             g.retry.Succeeded();
