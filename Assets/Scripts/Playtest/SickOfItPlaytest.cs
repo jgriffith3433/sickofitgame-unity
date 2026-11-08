@@ -9306,6 +9306,51 @@ namespace SickOfIt.Playtest
 
             int layoutProblems;
 
+            /// <summary>The main menu's tagline in full, the stickers clear of every button, and the buttons thumb-tall (criteria of the menu re-layout).</summary>
+            void MainMenuDressingChecks(MenuLayoutAudit.Result result)
+            {
+                string size = $"{Screen.width}x{Screen.height}";
+                var screen = new Rect(0f, 0f, Screen.width, Screen.height);
+                float minHeight = float.MaxValue;
+                foreach (var box in result.Boxes)
+                    if (box.Kind == MenuElementKind.Button)
+                        minHeight = Mathf.Min(minHeight, box.Screen.height);
+                bool tagline = false, stickers = false;
+                foreach (var box in result.Boxes)
+                {
+                    if (box.Transform.name == "Subtitle")
+                    {
+                        tagline = true;
+                        bool inside = box.Screen.xMin >= -2f && box.Screen.yMin >= -2f && box.Screen.xMax <= screen.xMax + 2f && box.Screen.yMax <= screen.yMax + 2f;
+                        bool covered = false;
+                        foreach (var other in result.Boxes)
+                            if (other.Kind == MenuElementKind.Button && other.Screen.Overlaps(box.Screen))
+                                covered = true;
+                        Run.Event("check", $"main menu tagline {size}: {(inside && !covered ? "fully visible, no button over it" : "COVERED OR OFF SCREEN")} ({box.Screen})");
+                        if (!inside || covered)
+                            Run.Problem(PlaytestSeverity.Bug, $"main menu tagline {size} is covered or off screen");
+                    }
+                    else if (box.Transform.name == "Decoration")
+                    {
+                        stickers = true;
+                        bool covered = false;
+                        foreach (var other in result.Boxes)
+                            if (other.Kind == MenuElementKind.Button && other.Screen.Overlaps(box.Screen))
+                                covered = true;
+                        Run.Event("check", $"main menu sticker {size}: {(covered ? "OVERLAPPED BY A BUTTON" : "clear of every button")} ({box.Screen})");
+                        if (covered)
+                            Run.Problem(PlaytestSeverity.Bug, $"main menu sticker {size} is overlapped by a button");
+                    }
+                }
+                if (!tagline) Run.Problem(PlaytestSeverity.Bug, $"main menu tagline {size} is not on screen");
+                if (!stickers) Run.Problem(PlaytestSeverity.Bug, $"main menu stickers {size} are not on screen");
+                Run.Metric("mainMenu.minButtonHeightPx", minHeight < float.MaxValue ? minHeight : 0f);
+                bool tall = minHeight >= 48f;
+                Run.Event("check", $"main menu buttons {size}: shortest {minHeight:0} px ({(tall ? "at least 48 px" : "UNDER 48 px")})");
+                if (!tall && Mathf.Min(Screen.width, Screen.height) <= 900)
+                    Run.Problem(PlaytestSeverity.Bug, $"main menu buttons {size}: shortest is {minHeight:0} px, under 48");
+            }
+
             /// <summary>Lets the screen settle (entrances), then checks its layout and reports each problem once per screen.</summary>
             IEnumerator Audit(string screen, int step, int steps, float settle = 1.5f, bool progress = true)
             {
@@ -9326,6 +9371,8 @@ namespace SickOfIt.Playtest
                 foreach (var warning in result.Warnings)
                     Run.Problem(PlaytestSeverity.Polish, $"layout ({screen}, {Screen.width}x{Screen.height}): {warning}");
                 layoutProblems += result.Problems.Count;
+                if (screen == "Main Menu")
+                    MainMenuDressingChecks(result);
                 Run.Metric("layout." + screen.Replace(" ", "") + ".problems", result.Problems.Count);
                 if (screen == "Level 1 HUD" && Camera.main != null
                     && Camera.main.TryGetComponent(out SickOfIt.Core.Device.AspectRatioController aspect))
