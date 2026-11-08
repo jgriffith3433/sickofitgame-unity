@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using AddressablesAPI = UnityEngine.AddressableAssets.Addressables;
 
@@ -10,12 +11,17 @@ namespace SickOfIt.Core.Addressables
     /// and bundle URL is pointed at the ASTC folder. Local bundles of the ASTC build live in its "local" subfolder,
     /// because the player's StreamingAssets only holds the DXT ones.
     /// Add ?tex=astc or ?tex=dxt to the page URL to force a variant.
+    /// Bundles that come out the same in both builds (sound, scenes, scripts: no texture) are kept once, in the DXT folder
+    /// (AddressablesTextureVariants.DropSharedCopies); the player build carries their names in Resources/TextureVariantShared.txt
+    /// and those keep their DXT address on phones too.
     /// </summary>
     public static class TextureVariantRedirect
     {
         public const string DesktopFolder = "WebGL";
         public const string MobileFolder = "WebGL_ASTC";
         public const string LocalSubfolder = "local";
+        /// <summary>The Resources text asset listing the bundles both variants share (one file name a line).</summary>
+        public const string SharedListName = "TextureVariantShared";
 
         private static bool installed;
 
@@ -41,6 +47,10 @@ namespace SickOfIt.Core.Addressables
             string localFrom = AddressablesAPI.RuntimePath + "/" + DesktopFolder + "/";
             string localTo = Application.streamingAssetsPath + "/../../ServerData/" + MobileFolder + "/" + LocalSubfolder + "/";
 
+            var shared = LoadShared();
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+                Debug.Log($"[TextureVariant] {shared.Count} bundles shared with the DXT content (fetched from {DesktopFolder})");
+
             var previous = AddressablesAPI.ResourceManager.InternalIdTransformFunc;
             AddressablesAPI.ResourceManager.InternalIdTransformFunc = location =>
             {
@@ -48,6 +58,12 @@ namespace SickOfIt.Core.Addressables
                 string id = AddressablesAPI.ResolveInternalId(raw);
                 if (string.IsNullOrEmpty(id))
                     return id;
+                if (shared.Count > 0 && id.EndsWith(".bundle", System.StringComparison.Ordinal))
+                {
+                    int slash = id.LastIndexOf('/');
+                    if (shared.Contains(slash >= 0 ? id.Substring(slash + 1) : id))
+                        return id;
+                }
 
                 int remote = id.IndexOf(remoteFrom, System.StringComparison.Ordinal);
                 if (remote >= 0)
@@ -59,6 +75,23 @@ namespace SickOfIt.Core.Addressables
 
                 return id;
             };
+        }
+
+        /// <summary>The shared bundle names the deploy put in the player (none in the editor or an older build).</summary>
+        private static HashSet<string> LoadShared()
+        {
+            var names = new HashSet<string>(System.StringComparer.Ordinal);
+            var list = Resources.Load<TextAsset>(SharedListName);
+            if (list == null)
+                return names;
+            foreach (string line in list.text.Split('\n'))
+            {
+                string name = line.Trim();
+                if (name.Length > 0)
+                    names.Add(name);
+            }
+            Resources.UnloadAsset(list);
+            return names;
         }
 
         private static bool ChooseMobileVariant()

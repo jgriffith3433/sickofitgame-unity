@@ -435,7 +435,10 @@ namespace SickOfIt.Tools.Editor
                 options = BuildOptions.None
             };
 
-            var report = BuildPipeline.BuildPlayer(buildOptions);
+            UnityEditor.Build.Reporting.BuildReport report;
+            using (WebGLPlayerSettings.Apply(Log))
+            using (AddressablesTextureVariants.CapTextures())
+                report = BuildPipeline.BuildPlayer(buildOptions);
 
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
             {

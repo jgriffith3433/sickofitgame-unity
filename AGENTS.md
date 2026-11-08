@@ -389,6 +389,13 @@ instead of generated again. Batch mode fails with "another Unity instance is run
   (`PlayerSheets`, fists too). Phones' (ASTC) content is imported at most 2048 px (`AddressablesTextureVariants.PhoneMaxTextureSize`:
   the hero's 3624x4080 sheets were 6 MB each), phones never pre-cache bundles at the main menu (`BundleDownloadManager`: in WebGL a
   downloaded bundle sits in the heap), and a texture the game uses is never imported uncompressed. `?dev=1` logs the largest textures by name after every load.
+- **Build size** (Docs/BuildSize.md; v17 was 1,267.4 MB in 3,658 files): both texture variants are capped at 2048 (`AddressablesTextureVariants.MaxTextureSize`,
+  the player build too: `CapTextures`); ASTC bundles byte for byte the same as the DXT ones are dropped and listed in `ServerData/TextureVariantShared.txt`,
+  which the player carries as `Resources/TextureVariantShared.txt` (written and removed by `TextureVariantSharedList`) so `TextureVariantRedirect` fetches them
+  from `WebGL` on phones too; `WebGLPlayerSettings.Apply` pins gzip + decompression fallback (the pages ask for `.unityweb`; the host sends no Content-Encoding),
+  engine stripping and data caching, logs every value and puts the project's back after. Every build writes `build-size.json` and `Build size:` log lines.
+  The boot bar says "Climbing out of the lava... N%" (`GameDefinitionBoot.Progress`); playtest `phone-load` (device "phone") checks the bars, the menu within 20 s
+  of the page opening (`Plugins/WebGL/SickOfItLoad.jslib`: page clock, Resource Timing) and 30+ fps on the menu and Level 1.
 - **Tests:** `-runTests -testPlatform EditMode` and `-runTests -testPlatform PlayMode` (add `-testResults <file>`).
 - **Playtest every level with a bot** (real Level scene, ~1 min per level; omit `-nographics`):
   `-runTests -testPlatform PlayMode -testCategory Playtest -testResults Logs/Playtest/results.xml`, then read

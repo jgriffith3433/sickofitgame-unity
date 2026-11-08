@@ -21,8 +21,30 @@ namespace SickOfIt.Core.Addressables
 
         static AsyncOperationHandle<GameDefinition> handle;
 
+        /// <summary>The bar's share for the game data bundle; the rest is the "core" art and sound every screen uses.</summary>
+        const float DefinitionShare = 0.3f;
+
+        /// <summary>When the boot began, the game data arrived and the core was in (real seconds since startup; 0 = not yet).</summary>
+        public static float StartedAt { get; private set; }
+        public static float DefinitionAt { get; private set; }
+        public static float ReadyAt { get; private set; }
+        /// <summary>The bar's fill (0..1, never goes back) and how many times it moved: the playtest's "a bar with progress".</summary>
+        public static float Progress { get; private set; }
+        public static int ProgressSteps { get; private set; }
+
         float progress;
         string failure;
+        GUIStyle labelStyle;
+
+        void SetProgress(float value)
+        {
+            value = Mathf.Clamp01(value);
+            if (value <= progress + 0.0001f)
+                return;
+            progress = value;
+            Progress = value;
+            ProgressSteps++;
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         static void Decide()
@@ -49,13 +71,15 @@ namespace SickOfIt.Core.Addressables
         {
             // Never gives up: a CDN's 503 or a dropped connection passes, and until the definition arrives nothing else
             // (the menu, the playtest bot registering) can start, so a stop here looks like a game that never boots.
+            StartedAt = Time.realtimeSinceStartup;
+            Debug.Log($"[GameDefinitionBoot] Loading the game data at {StartedAt:0.0}s since the player started.");
             for (int attempt = 1; ; attempt++)
             {
                 failure = null;
                 handle = AddressablesAPI.LoadAssetAsync<GameDefinition>(GameDefinition.Address);
                 while (!handle.IsDone)
                 {
-                    progress = handle.GetDownloadStatus().Percent;
+                    SetProgress(handle.GetDownloadStatus().Percent * DefinitionShare);
                     yield return null;
                 }
 
@@ -63,9 +87,15 @@ namespace SickOfIt.Core.Addressables
                 {
                     // Never released: the game reads it until the page closes. Its art and sound are not in it: only what
                     // every screen uses ("core") loads now; the rest when a level, video or screen needs it (GameAssets).
-                    Debug.Log($"[GameDefinitionBoot] Game data loaded from its bundles (try {attempt}).");
+                    DefinitionAt = Time.realtimeSinceStartup;
+                    SetProgress(DefinitionShare);
+                    Debug.Log($"[GameDefinitionBoot] Game data loaded from its bundles (try {attempt}) in {DefinitionAt - StartedAt:0.0}s.");
                     GameAssets.Init(handle.Result);
-                    yield return GameAssets.Acquire(GameAssets.Core, new[] { GameAssets.Core }, p => progress = p);
+                    yield return GameAssets.Acquire(GameAssets.Core, new[] { GameAssets.Core }, p => SetProgress(DefinitionShare + p * (1f - DefinitionShare)));
+                    SetProgress(1f);
+                    ReadyAt = Time.realtimeSinceStartup;
+                    Debug.Log($"[GameDefinitionBoot] Core art and sound in after {ReadyAt - DefinitionAt:0.0}s; the boot took {ReadyAt - StartedAt:0.0}s " +
+                              $"({ReadyAt:0.0}s since the player started), the bar moved {ProgressSteps} times.");
                     GameDefinition.Provide(handle.Result);
                     int next = SceneManager.GetActiveScene().buildIndex + 1;
                     if (next < SceneManager.sceneCountInBuildSettings)
@@ -93,11 +123,17 @@ namespace SickOfIt.Core.Addressables
             GUI.DrawTexture(bar, Texture2D.whiteTexture);
             GUI.color = new Color(1f, 0.45f, 0.1f);
             GUI.DrawTexture(new Rect(bar.x, bar.y, bar.width * Mathf.Clamp01(progress), bar.height), Texture2D.whiteTexture);
+            if (labelStyle == null)
+                labelStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
+            labelStyle.fontSize = Mathf.RoundToInt(Mathf.Max(14f, Mathf.Min(w, h) * 0.035f));
+            float lineH = labelStyle.fontSize * 1.6f;
+            // The words above the bar: what is loading and how far it got (the page's own bar covered the download before).
+            GUI.color = new Color(1f, 0.82f, 0.6f);
+            GUI.Label(new Rect(0f, bar.y - lineH * 1.4f, w, lineH), $"Climbing out of the lava... {Mathf.RoundToInt(Mathf.Clamp01(progress) * 100f)}%", labelStyle);
             if (failure != null)
             {
                 GUI.color = Color.white;
-                var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.RoundToInt(Mathf.Max(14f, h * 0.025f)) };
-                GUI.Label(new Rect(0f, bar.yMax + barH * 2f, w, h * 0.1f), failure, style);
+                GUI.Label(new Rect(0f, bar.yMax + barH * 2f, w, h * 0.1f), failure, labelStyle);
             }
         }
     }
