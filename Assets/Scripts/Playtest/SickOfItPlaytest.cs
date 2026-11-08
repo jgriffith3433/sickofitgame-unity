@@ -1220,7 +1220,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, Yooba's shop and settings (Sound off/on, Music -/+) each open and close, " +
                 "then the Shaft (a preview over the menu, setup shortcut, Yooba met) opens, its layout is checked, Visit Yooba opens his shop over it, " +
                 "Back returns to the Shaft and Continue closes it", 150, "menus"));
-            list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu (also resized through 16:9, a narrow desktop, phone portrait and phone landscape: tagline whole, stickers clear, buttons 48 px), level select, settings, " +
+            list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu (in the editor and standalone also resized through 16:9, a narrow desktop, phone portrait and phone landscape; a WebGL page is never resized by the game, the runner's device sets its size: tagline whole, stickers clear, buttons 48 px), level select, settings, " +
                 "level 1's HUD, the pause menu and its settings, the Shaft (a preview over the menu, setup shortcut, with Visit Yooba beside Continue), Yooba's shop over it, and the death scene (loaded directly, a setup shortcut), no button overlaps another " +
                 "or a HUD panel, none leaves the screen, and every button is thumb-sized", 120, "menus"));
             list.Add(new PlaytestScenario("portal-audio", "The prologue's portal scene, by ear, on the main menu: every Overlord line, hero take, " +
