@@ -56,8 +56,10 @@ namespace SickOfIt.Playtest
                     var canvas = rect.GetComponentInParent<Canvas>();
                     var cam = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
                     float h = Mathf.Abs(RectTransformUtility.WorldToScreenPoint(cam, corners[1]).y - RectTransformUtility.WorldToScreenPoint(cam, corners[0]).y);
+                    float css = TransportButtonLayout.ToCssPixels(h);
                     Run.Metric("introSkip.button." + b.gameObject.name + "Px", h);
-                    IntroCheck("buttonHeight " + b.gameObject.name, h >= 47.5f, $"{h:0} px tall on a {Screen.width}x{Screen.height} screen");
+                    Run.Metric("introSkip.button." + b.gameObject.name + "CssPx", css);
+                    IntroCheck("buttonHeight " + b.gameObject.name, css >= 47.5f, $"{css:0.0} CSS px tall ({h:0} device px at {TransportButtonLayout.DevicePixelRatio():0.#}x) on a {Screen.width}x{Screen.height} screen");
                 }
 
                 // 3. One click on empty screen (top-left, off every button) skips it.
@@ -72,10 +74,19 @@ namespace SickOfIt.Playtest
                     yield return null;
                     input.SetMouseButton(false);
                     Run.Event("skip", "one click on empty screen");
+                    int coversBefore = ScreenTransition.Covers;
                     yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() == null, 5f, "the intro to end after one click");
                     float took = Time.realtimeSinceStartup - clickAt;
                     IntroCheck("skip", Object.FindAnyObjectByType<VideoRuntime>() == null && took <= 1f, $"one click ended the intro in {took:0.00}s");
                     Run.Metric("introSkip.skipSeconds", took);
+                    // The next scene (level or main menu) must be up, not a loading screen: time from the tap to it.
+                    yield return Run.Until(() => LevelRuntime.Current != null || Object.FindAnyObjectByType<MainMenuManager>() != null, 60f, "the next scene after the intro");
+                    float toScene = Time.realtimeSinceStartup - clickAt;
+                    bool covered = ScreenTransition.Covers > coversBefore;
+                    string target = LevelRuntime.Current != null ? "level" : "main menu";
+                    Run.Metric("introSkip.tapToSceneSeconds", toScene);
+                    Run.Event("skip", $"tap to the next scene ({target}, via {VideoRuntime.LastSkipTarget}): {toScene:0.00}s, loading cover {(covered ? "shown" : "not shown")}");
+                    IntroCheck("next scene", toScene <= 1f && !covered, $"{target} up {toScene:0.00}s after the tap, loading cover {(covered ? "shown" : "not shown")}");
                 }
                 Run.Progress(1f);
                 End(introFailed == 0 ? PlaytestOutcome.Won : PlaytestOutcome.Done);

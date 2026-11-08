@@ -98,6 +98,54 @@ namespace SickOfIt.Core.Flow
             }
         }
 
+        Coroutine preload;
+        bool preloadCancelled;
+
+        static string[] LevelScopes(int levelNumber)
+        {
+            var level = GameDefinition.Instance != null ? GameDefinition.Instance.GetLevel(levelNumber) : null;
+            var wanted = new System.Collections.Generic.List<string>();
+            if (level != null)
+                wanted.Add(GameAssets.Level(level.levelName));
+            if (!string.IsNullOrEmpty(GameAssets.PendingLevelScene))
+                wanted.Add(GameAssets.Scene(GameAssets.PendingLevelScene));
+            return wanted.ToArray();
+        }
+
+        /// <summary>The hero's and the level's bundles are in, so <see cref="LoadLevel"/> needs no loading screen.</summary>
+        public bool LevelAssetsReady(int levelNumber)
+        {
+            if (!GameAssets.Managed) return true;
+            if (!GameAssets.IsLoaded(GameAssets.Hero)) return false;
+            foreach (string scope in LevelScopes(levelNumber))
+            {
+                if (!GameAssets.IsLoaded(scope)) return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Starts bringing a level's bundles in behind whatever is on screen (the intro), so leaving it only has to
+        /// activate the level. No cover, no bar. Safe to call twice; <see cref="CancelPreload"/> stops following it.
+        /// </summary>
+        public void PreloadLevel(int levelNumber)
+        {
+            if (!GameAssets.Managed || preload != null || LevelAssetsReady(levelNumber)) return;
+            preloadCancelled = false;
+            preload = StartCoroutine(Preloading(levelNumber));
+        }
+
+        public void CancelPreload() => preloadCancelled = true;
+
+        IEnumerator Preloading(int levelNumber)
+        {
+            var hero = GameAssets.Acquire("hero", new[] { GameAssets.Hero });
+            while (!preloadCancelled && hero.MoveNext()) yield return hero.Current;
+            var level = GameAssets.Acquire("level", LevelScopes(levelNumber));
+            while (!preloadCancelled && level.MoveNext()) yield return level.Current;
+            preload = null;
+        }
+
         /// <summary>
         /// Loads an Addressables scene once its assets are in (GameAssets): each (owner, scopes) acquired, then the owners in
         /// <paramref name="release"/> let go. A build without managed assets loads it at once.
@@ -112,11 +160,32 @@ namespace SickOfIt.Core.Flow
             StartCoroutine(PrepareThenLoad(sceneName, first, second, release));
         }
 
+        static bool AllLoaded(string[] scopes)
+        {
+            if (scopes == null) return true;
+            foreach (string scope in scopes)
+            {
+                if (!GameAssets.IsLoaded(scope)) return false;
+            }
+            return true;
+        }
+
         IEnumerator PrepareThenLoad(string sceneName, (string owner, string[] scopes) first, (string owner, string[] scopes) second, string[] release)
         {
             // The screen goes black while the assets come in, with a bar: the first owner's share is the first half
             // (the hero, usually in already), the second's the rest.
             bool both = first.owner != null && second.owner != null;
+            // Everything already in (the intro preloaded it): no cover, no bar.
+            bool inAlready = GameAssets.Managed && AllLoaded(first.scopes) && AllLoaded(second.scopes);
+            if (inAlready)
+            {
+                if (first.owner != null) yield return GameAssets.Acquire(first.owner, first.scopes);
+                if (second.owner != null) yield return GameAssets.Acquire(second.owner, second.scopes);
+                foreach (string owner in release)
+                    GameAssets.Release(owner);
+                AddressablesSceneLoader.Instance.LoadScene(sceneName);
+                yield break;
+            }
             SickOfIt.Core.UI.Menus.ScreenTransition.Loading(0f);
             if (first.owner != null)
                 yield return GameAssets.Acquire(first.owner, first.scopes, p => SickOfIt.Core.UI.Menus.ScreenTransition.Loading(both ? p * 0.3f : p));
