@@ -28,6 +28,8 @@ namespace SickOfIt.Core.Addressables
         public static float StartedAt { get; private set; }
         public static float DefinitionAt { get; private set; }
         public static float ReadyAt { get; private set; }
+        /// <summary>Real seconds since startup when Addressables' init (runtime data and catalog) finished; 0 = not yet. Splits the game-data time into catalog and bundle.</summary>
+        public static float InitAt { get; private set; }
         /// <summary>The bar's fill (0..1, never goes back) and how many times it moved: the playtest's "a bar with progress".</summary>
         public static float Progress { get; private set; }
         public static int ProgressSteps { get; private set; }
@@ -132,6 +134,8 @@ namespace SickOfIt.Core.Addressables
             float began = Time.realtimeSinceStartup;
             var init = AddressablesAPI.InitializeAsync(false);
             yield return init;
+            InitAt = Time.realtimeSinceStartup;
+            Debug.Log($"[GameDefinitionBoot] Addressables init (catalog) done after {InitAt - began:0.0}s.");
             bool known = false;
             if (init.Status == AsyncOperationStatus.Succeeded)
             {

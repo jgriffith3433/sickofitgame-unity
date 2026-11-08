@@ -86,3 +86,10 @@ the game data loads, releasing the handle at once (the download is cached, so `A
 without the label skips it. The boot logs `Core prefetch ...` lines. Compression is untouched.
 Not done: no Unity build ran here, so no new seconds were measured; the next phone-load run will say. Next candidates: time
 Addressables init/catalog apart from the GameDefinition bundle (the 14.8 s is both), and split the 6 MB of content/level JSON out of GameDefinition.
+
+## Game-data step split in two (2026-11-08)
+
+The boot now records when Addressables' init and catalog finished (`GameDefinitionBoot.InitAt`, log `Addressables init (catalog) done`)
+and the phone-load playtest reports it as `load.bootCatalogSeconds` next to `load.bootDataSeconds`, so the next run says whether the
+~10-15 s is the catalog or the GameDefinition bundle (6 MB of content/level JSON). Fix that part next: if the catalog, shrink it
+(fewer addresses per bundle); if the bundle, split `content` and the level scripts out of GameDefinition into a lazy bundle.
