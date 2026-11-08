@@ -116,6 +116,8 @@ namespace SickOfIt.Core.Flow
         public bool LevelAssetsReady(int levelNumber)
         {
             if (!GameAssets.Managed) return true;
+            // LoadLevel shows a loading cover while the late core is out, so it counts as part of "ready".
+            if (!GameAssets.LateReady) return false;
             if (!GameAssets.IsLoaded(GameAssets.Hero)) return false;
             foreach (string scope in LevelScopes(levelNumber))
             {
@@ -139,6 +141,8 @@ namespace SickOfIt.Core.Flow
 
         IEnumerator Preloading(int levelNumber)
         {
+            var late = GameAssets.EnsureLate();
+            while (!preloadCancelled && late.MoveNext()) yield return late.Current;
             var hero = GameAssets.Acquire("hero", new[] { GameAssets.Hero });
             while (!preloadCancelled && hero.MoveNext()) yield return hero.Current;
             var level = GameAssets.Acquire("level", LevelScopes(levelNumber));
