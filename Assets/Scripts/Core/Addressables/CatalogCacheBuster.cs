@@ -58,12 +58,17 @@ namespace SickOfIt.Core.Addressables
 namespace SickOfIt.Core.Addressables
 {
     /// <summary>
-    /// Counts the bundle URLs the page asks for until the main menu is up, by group (the file name before "_assets_"/"_scenes_"),
-    /// so the phone-load playtest can say what the ~50 bundles before the menu are. Counting only: nothing reads it in play.
+    /// Counts the bundles the page asks for until the main menu is up, by group (the file name before "_assets_"/"_scenes_"),
+    /// so the phone-load playtest can say what the bundles before the menu are. Counting only: nothing reads it in play.
+    /// A bundle is counted once however often Addressables passes its location through the id transform: the transform runs for every
+    /// asset location that depends on a bundle (the menu hero's Idle sheet is one 4.5 MB bundle with ~90 sprite locations, which
+    /// the first count of 76 "playerdata requests" really was), so "calls" is shown beside it.
     /// </summary>
     public static class BundleFetchLog
     {
-        static readonly System.Collections.Generic.SortedDictionary<string, int> perGroup = new System.Collections.Generic.SortedDictionary<string, int>(System.StringComparer.Ordinal);
+        static readonly System.Collections.Generic.SortedDictionary<string, System.Collections.Generic.HashSet<string>> perGroup =
+            new System.Collections.Generic.SortedDictionary<string, System.Collections.Generic.HashSet<string>>(System.StringComparer.Ordinal);
+        static readonly System.Collections.Generic.Dictionary<string, int> calls = new System.Collections.Generic.Dictionary<string, int>(System.StringComparer.Ordinal);
         static bool frozen;
 
         /// <summary>Called by the menu once it is up: later fetches are not "before the menu".</summary>
@@ -77,27 +82,35 @@ namespace SickOfIt.Core.Addressables
             if (bundle < 0)
                 return;
             int slash = id.LastIndexOf('/', bundle);
-            string name = id.Substring(slash + 1, bundle - slash - 1);
-            int cut = name.IndexOf("_assets_", System.StringComparison.Ordinal);
+            string file = id.Substring(slash + 1, bundle - slash - 1);
+            string name = file;
+            // "playerdata_assets_core_art1_assets_all_<hash>": the group is what comes before the LAST "_assets_"/"_scenes_" marker, so
+            // the core and per-asset groups of PlayerData_Assets_* stay apart (cutting at the first one lumped them all as "playerdata").
+            int cut = name.LastIndexOf("_assets_", System.StringComparison.Ordinal);
             if (cut < 0)
-                cut = name.IndexOf("_scenes_", System.StringComparison.Ordinal);
+                cut = name.LastIndexOf("_scenes_", System.StringComparison.Ordinal);
             if (cut > 0)
                 name = name.Substring(0, cut);
-            perGroup.TryGetValue(name, out int n);
-            perGroup[name] = n + 1;
+            if (!perGroup.TryGetValue(name, out var files))
+                perGroup[name] = files = new System.Collections.Generic.HashSet<string>(System.StringComparer.Ordinal);
+            files.Add(file);
+            calls.TryGetValue(name, out int n);
+            calls[name] = n + 1;
         }
 
-        /// <summary>"group x2, group x1 ..." and the total, for the playtest.</summary>
+        /// <summary>"group x2 (5 calls), group x1 ..." and the number of different bundles, for the playtest.</summary>
         public static string Describe(out int total)
         {
             total = 0;
             var text = new System.Text.StringBuilder();
             foreach (var pair in perGroup)
             {
-                total += pair.Value;
+                total += pair.Value.Count;
                 if (text.Length > 0)
                     text.Append(", ");
-                text.Append(pair.Key).Append(" x").Append(pair.Value);
+                text.Append(pair.Key).Append(" x").Append(pair.Value.Count);
+                if (calls.TryGetValue(pair.Key, out int n) && n != pair.Value.Count)
+                    text.Append(" (").Append(n).Append(" calls)");
             }
             return text.ToString();
         }
