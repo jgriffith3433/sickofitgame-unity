@@ -150,7 +150,14 @@ namespace SickOfIt.Core.Addressables
             // so Continue finds them in (PrepareThenLoad's "inAlready": no cover, no bar). Left alone if the player already left.
             if (Application.isMobilePlatform || SystemInfo.systemMemorySize <= 2048)
                 yield break;
+            // The player may already have pressed New Game or Continue while the warm-up ran: the level's own Acquire holds "hero" and
+            // "level" now (with the level he chose, not the one Continue would have opened), and this one would drop its loads from
+            // under it. Left alone, as the comment above says.
+            if (Holds("hero") || Holds("level"))
+                yield break;
             yield return Acquire("hero", new[] { Hero });
+            if (Holds("level"))
+                yield break;
             yield return Acquire("level", next);
             Debug.Log("[GameAssets] hero and next level held behind the menu.");
         }
@@ -226,12 +233,20 @@ namespace SickOfIt.Core.Addressables
                         Unretain(address);
                 }
             }
+            // Wait for every bundle of these scopes, not only the ones this call started: another owner or an earlier call of the
+            // same owner (the menu's warm-up holds "hero" and "level" too) may have started some, and a call that found them already
+            // retained used to return at once with their art still on its way.
             var added = new List<Load>();
+            int startedCount = 0;
             foreach (string address in next)
             {
-                if (before != null && before.Contains(address))
+                if (before != null && before.Contains(address) && loads.TryGetValue(address, out var held))
+                {
+                    added.Add(held);
                     continue;
+                }
                 added.Add(Retain(address));
+                startedCount++;
             }
             owners[owner] = next;
 
@@ -241,7 +256,8 @@ namespace SickOfIt.Core.Addressables
                 int done = 0;
                 foreach (var load in added)
                 {
-                    if (load.done)
+                    // A load let go while it was coming in (another owner's Acquire dropped it) never finishes: don't wait for it.
+                    if (load.done || !loads.TryGetValue(load.address, out var current) || current != load)
                         done++;
                 }
                 progress?.Invoke(added.Count == 0 ? 1f : done / (float)added.Count);
@@ -249,9 +265,9 @@ namespace SickOfIt.Core.Addressables
                     break;
                 yield return null;
             }
-            if (added.Count > 0)
+            if (startedCount > 0)
             {
-                Debug.Log($"[GameAssets] {owner}: {added.Count} bundles in {Time.realtimeSinceStartup - started:0.0} s ({Describe()}).");
+                Debug.Log($"[GameAssets] {owner}: {startedCount} bundles in {Time.realtimeSinceStartup - started:0.0} s ({Describe()}).");
                 MemoryReport.Log("after loading " + owner);
             }
         }
@@ -473,26 +489,70 @@ namespace SickOfIt.Core.Addressables
             || (load.clip.IsValid() && (load.clip.Status != AsyncOperationStatus.Succeeded || load.clip.Result == null))
             || (load.prefab.IsValid() && (load.prefab.Status != AsyncOperationStatus.Succeeded || load.prefab.Result == null));
 
-        /// <summary>Extra tries for a bundle that failed to download (a CDN's 503), spaced out; Addressables retries first (BundledAssetGroupSchema.RetryCount).</summary>
+        /// <summary>Extra tries for a bundle that failed to download (a CDN's 503) or stalled, spaced out; Addressables retries first (BundledAssetGroupSchema.RetryCount).</summary>
         const int LoadRetries = 2;
+
+        /// <summary>
+        /// A bundle whose load reports no progress for this long is a hung request (no error, no failure: the bar sat at 28% for good).
+        /// It is logged and tried again like a failed one; after the last try the load ends as failed so the game goes on without
+        /// that art instead of waiting forever. Progress, not total time, so a big bundle on a slow line is never cut off.
+        /// </summary>
+        const float LoadStallSeconds = 40f;
+
+        static bool HandlesDone(Load load) =>
+            (!load.texture.IsValid() || load.texture.IsDone) && (!load.sprites.IsValid() || load.sprites.IsDone)
+            && (!load.clip.IsValid() || load.clip.IsDone) && (!load.prefab.IsValid() || load.prefab.IsDone);
+
+        static float HandleProgress(Load load) =>
+            (load.texture.IsValid() ? load.texture.PercentComplete : 0f) + (load.sprites.IsValid() ? load.sprites.PercentComplete : 0f)
+            + (load.clip.IsValid() ? load.clip.PercentComplete : 0f) + (load.prefab.IsValid() ? load.prefab.PercentComplete : 0f);
+
+        /// <summary>Waits until the load's handles are done or it was let go; true if they sat without any progress for <see cref="LoadStallSeconds"/>.</summary>
+        static IEnumerator WaitForHandles(Load load, Action<bool> stalled)
+        {
+            float best = -1f;
+            float at = Time.realtimeSinceStartup;
+            while (!HandlesDone(load))
+            {
+                if (!loads.TryGetValue(load.address, out var current) || current != load)
+                {
+                    stalled(false);
+                    yield break;
+                }
+                float now = Time.realtimeSinceStartup;
+                float p = HandleProgress(load);
+                if (p > best)
+                {
+                    best = p;
+                    at = now;
+                }
+                else if (now - at > LoadStallSeconds)
+                {
+                    stalled(true);
+                    yield break;
+                }
+                yield return null;
+            }
+            stalled(false);
+        }
 
         static IEnumerator Finish(Load load)
         {
             for (int attempt = 0; ; attempt++)
             {
-                if (load.texture.IsValid())
-                    yield return load.texture;
-                if (load.sprites.IsValid())
-                    yield return load.sprites;
-                if (load.clip.IsValid())
-                    yield return load.clip;
-                if (load.prefab.IsValid())
-                    yield return load.prefab;
+                bool stalled = false;
+                yield return WaitForHandles(load, s => stalled = s);
                 if (!loads.TryGetValue(load.address, out var current) || current != load)
                     yield break; // released while loading (Unretain let the handles go)
-                if (attempt >= LoadRetries || !Failed(load))
+                if (attempt >= LoadRetries || (!stalled && !Failed(load)))
+                {
+                    if (stalled)
+                        Debug.LogError($"[GameAssets] {load.address} made no progress for {LoadStallSeconds:0} s on {attempt + 1} tries; going on without it.");
                     break;
-                Debug.LogWarning($"[GameAssets] {load.address} failed ({Failure(load)}); trying again ({attempt + 1} of {LoadRetries})");
+                }
+                Debug.LogWarning(stalled
+                    ? $"[GameAssets] {load.address} made no progress for {LoadStallSeconds:0} s; trying again ({attempt + 1} of {LoadRetries})"
+                    : $"[GameAssets] {load.address} failed ({Failure(load)}); trying again ({attempt + 1} of {LoadRetries})");
                 if (load.texture.IsValid())
                     AddressablesAPI.Release(load.texture);
                 if (load.sprites.IsValid())
