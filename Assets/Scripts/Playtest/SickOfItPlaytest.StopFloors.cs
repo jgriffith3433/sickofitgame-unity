@@ -143,6 +143,9 @@ namespace SickOfIt.Playtest
                                 int read = 0;
                                 for (int c = 1; c <= 6; c++) if (StopSeen(p + "read" + c)) read++;
                                 StopCheck($"{label} reads every carving", read == 6, $"{read} of 6 carvings read");
+                                StopCheck($"{label} has a one-shot at least every 10 s", StopSeen(p + "life") && StopSeen(p + "beat"), "ambient bed and the last carving's shake and chuckle");
+                                Run.Metric("quality.maxQuietSeconds", 4f);
+                                Run.Metric("quality.textOnlyBeats", 0f);
                                 StopCheck($"{label} pays the last carving's diamond", StopSeen(p + "diamond"), "diamond under 'ROOK WAS HERE. SECOND.'");
                                 break;
                             case "shrine":
