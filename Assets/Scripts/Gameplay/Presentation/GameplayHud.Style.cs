@@ -30,6 +30,8 @@ namespace SickOfIt.Gameplay
             var port = MenuPlacement.At(0.5f, 0f, 0f, 380f, 900f, 64f);
             styleLabel = menu.AddText(menu.Root, "Style", "", theme.caption, land.anchor, land.offset, land.size, out _, 40f, null, theme.entrance);
             styleLabel.enableVertexGradient = false;
+            if (styleLabel.isActiveAndEnabled)
+                HudFloaters.ApplyTextOutlineAndShadow(styleLabel);
             styleSlot = (RectTransform)styleLabel.transform.parent;
             MenuResponsive.Track(styleSlot, land, port, MenuElementKind.Text, menu.Responsive);
 
@@ -60,7 +62,9 @@ namespace SickOfIt.Gameplay
         /// <summary>A payout rises off the meter ("HOT!  +1♦  +1s").</summary>
         public void StyleFloat(string text, Color color)
         {
-            floaters?.Spawn(styleSlot, text, color, 52f);
+            if (styleSlot != null && !styleSlot.gameObject.activeSelf)
+                styleSlot.gameObject.SetActive(true);
+            floaters?.Spawn(styleSlot != null ? styleSlot : progressRoot, text, color, 52f);
         }
 
         void UpdateStyle()
@@ -73,7 +77,9 @@ namespace SickOfIt.Gameplay
                 styleSlot.gameObject.SetActive(show);
             if (!show)
                 return;
-            var color = style.Tier > 0 ? style.TierColor : new Color(1f, 0.95f, 0.82f);
+            if (styleLabel.isActiveAndEnabled && styleLabel.outlineWidth < 0.3f)
+                HudFloaters.ApplyTextOutlineAndShadow(styleLabel);
+            var color = HudFloaters.EnsureReadableColor(style.Tier > 0 ? style.TierColor : new Color(1f, 0.95f, 0.82f));
             string text = style.Tier > 0 ? style.TierName : "STYLE";
             if (style.Streak > 1)
                 text += $"  x{style.Streak}";
