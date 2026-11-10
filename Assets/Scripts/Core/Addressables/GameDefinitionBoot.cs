@@ -124,10 +124,12 @@ namespace SickOfIt.Core.Addressables
         float prefetchSeconds;
 
         /// <summary>
-        /// Downloads the bundles labelled <see cref="GameAssets.CoreLabel"/> (PlayerDataManifest.PackCore) while the game data
-        /// loads, so the browser has fetched the menu's art and sound by the time <see cref="GameAssets.Acquire"/> asks for it
-        /// (the download is cached; the handle is released at once so the heap doesn't keep a second copy). Any failure is
-        /// ignored: Acquire downloads what is missing, as before.
+        /// Downloads the bundles labelled <see cref="GameAssets.CoreLabel"/> (PlayerDataManifest.PackCore) and
+        /// <see cref="GameAssets.MenuLabel"/> (PlayerDataSplit.LabelMenuGroup) while the game data loads, so the browser has
+        /// fetched the menu's art and sound — and the MainMenu scene's background/explosion sheets — by the time
+        /// <see cref="GameAssets.Acquire"/> and the MainMenu scene ask for them (the download is cached; the handle is
+        /// released at once so the heap doesn't keep a second copy). Any failure is ignored: Acquire / the scene download
+        /// what is missing, as before.
         /// </summary>
         IEnumerator PrefetchCore()
         {
@@ -136,30 +138,35 @@ namespace SickOfIt.Core.Addressables
             yield return init;
             InitAt = Time.realtimeSinceStartup;
             Debug.Log($"[GameDefinitionBoot] Addressables init (catalog) done after {InitAt - began:0.0}s.");
-            bool known = false;
+            var keys = new System.Collections.Generic.List<object>(2);
             if (init.Status == AsyncOperationStatus.Succeeded)
             {
-                foreach (var locator in AddressablesAPI.ResourceLocators)
+                foreach (string label in new[] { GameAssets.CoreLabel, GameAssets.MenuLabel })
                 {
-                    if (locator.Locate(GameAssets.CoreLabel, typeof(object), out var locations) && locations != null && locations.Count > 0)
+                    foreach (var locator in AddressablesAPI.ResourceLocators)
                     {
-                        known = true;
-                        break;
+                        if (locator.Locate(label, typeof(object), out var locations) && locations != null && locations.Count > 0)
+                        {
+                            keys.Add(label);
+                            break;
+                        }
                     }
                 }
             }
             if (init.IsValid())
                 AddressablesAPI.Release(init);
-            if (known)
+            if (keys.Count > 0)
             {
-                var download = AddressablesAPI.DownloadDependenciesAsync(GameAssets.CoreLabel, false);
+                var download = AddressablesAPI.DownloadDependenciesAsync(keys, AddressablesAPI.MergeMode.Union, false);
                 yield return download;
                 if (download.IsValid())
                     AddressablesAPI.Release(download);
             }
             prefetchSeconds = Time.realtimeSinceStartup - began;
             prefetchDone = true;
-            Debug.Log($"[GameDefinitionBoot] Core prefetch {(known ? "finished" : "skipped (no label in the catalog)")} after {prefetchSeconds:0.0}s.");
+            string which = keys.Count == 0 ? "skipped (no label in the catalog)"
+                : "finished (" + string.Join(", ", keys) + ")";
+            Debug.Log($"[GameDefinitionBoot] Core/menu prefetch {which} after {prefetchSeconds:0.0}s.");
         }
 
         // Cosmetic only: nothing else is on screen while the bundles download.

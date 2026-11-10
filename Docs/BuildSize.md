@@ -197,3 +197,11 @@ Phone playtest r_7a4d29a65c20: menu 20.47 s = player start 5.1 + game data 9.0 (
 - Left: the 7 s between catalog and game data is mostly the 0.8 MB boot bundle (the legacy enemies' controllers and clips GameDefinition depends
   on) and the 6 MB of JSON being read; and `mainmenu_group` (the menu's background and explosion sheets) is fetched only as the menu scene
   loads (about 3.4 s): prefetching it beside the game data is the next step.
+
+## MainMenu sheets prefetch beside the game data (2026-11-10)
+
+Phone-load still spent ~3.4 s after the boot on `SceneManager.LoadScene(MainMenu)` while `mainmenu_group` (background + explosion
+sheets) downloaded. `PlayerDataSplit.LabelMenuGroup` now labels every entry of `MainMenu_Group` with `soi.menu` for the player build
+only (guids in `Temp/Addressables.menuLabel.txt`, cleared by `End`/`Recover`), and `GameDefinitionBoot.PrefetchCore` downloads
+`soi.core` and `soi.menu` together while GameDefinition loads. The MainMenu scene then finds those bundles cached. Not measured here
+(no Unity/build); the next `phone-load@local:phone` reports `load.menuSeconds`.

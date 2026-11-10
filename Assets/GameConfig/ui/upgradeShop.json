@@ -79,13 +79,13 @@
       }
     },
     "list": {
-      "anchor": [0.5, 0.485],
+      "anchor": [0.5, 0.475],
       "offset": [0.0, 0.0],
-      "size": [1700.0, 400.0],
+      "size": [1700.0, 460.0],
       "direction": "Grid",
       "columns": 0,
       "spacing": [28.0, 16.0],
-      "itemSize": [360.0, 240.0],
+      "itemSize": [360.0, 198.0],
       "portrait": {
         "use": true,
         "anchor": [0.5, 0.48],

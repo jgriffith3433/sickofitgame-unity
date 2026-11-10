@@ -70,13 +70,18 @@ namespace SickOfIt.Core.Addressables
             new System.Collections.Generic.SortedDictionary<string, System.Collections.Generic.HashSet<string>>(System.StringComparer.Ordinal);
         static readonly System.Collections.Generic.Dictionary<string, int> calls = new System.Collections.Generic.Dictionary<string, int>(System.StringComparer.Ordinal);
         static bool frozen;
+        static int resolving;
+
+        /// <summary>Resolving a bundle's URL (a catalog lookup, nothing fetched) must not count as a fetch.</summary>
+        public static void BeginResolve() => resolving++;
+        public static void EndResolve() { if (resolving > 0) resolving--; }
 
         /// <summary>Called by the menu once it is up: later fetches are not "before the menu".</summary>
         public static void Freeze() => frozen = true;
 
         public static void Note(string id)
         {
-            if (frozen || string.IsNullOrEmpty(id))
+            if (frozen || resolving > 0 || string.IsNullOrEmpty(id))
                 return;
             int bundle = id.IndexOf(".bundle", System.StringComparison.OrdinalIgnoreCase);
             if (bundle < 0)
