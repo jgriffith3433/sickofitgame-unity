@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "village"
+  ],
+  "body": {
+    "radius": 0.25,
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#C9B8A6",
+    "placeholderSize": 0.45,
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 1,
+    "hurtFlash": false,
+    "deathPop": false,
+    "color": "#FFFFFF",
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 600
+    }
+  ]
+}

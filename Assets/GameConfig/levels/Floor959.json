@@ -246,42 +246,62 @@
             {
               "entity": "campFire",
               "at": [
+                -0.2,
+                2.1
+              ],
+              "id": "restFire"
+            },
+            {
+              "entity": "fairStall",
+              "at": [
+                5.2,
+                2.25
+              ],
+              "id": "depotStack",
+              "scale": [
+                1.4,
+                1.4
+              ]
+            },
+            {
+              "entity": "ashHen",
+              "at": [
+                2.6,
+                2.0
+              ],
+              "id": "hen"
+            },
+            {
+              "entity": "hayBale",
+              "at": [
+                7.4,
+                2.05
+              ],
+              "id": "hay"
+            },
+            {
+              "entity": "paradeSoul",
+              "at": [
                 1.2,
-                2.15
+                2.35
               ],
-              "id": "wallFire"
+              "id": "villager1"
             },
             {
-              "entity": "damnedSoul",
+              "entity": "paradeSoul",
               "at": [
-                3.4,
-                2.65
+                9.0,
+                2.35
               ],
-              "id": "reader0"
+              "id": "villager2"
             },
             {
-              "entity": "damnedSoul",
+              "entity": "paradeSoul",
               "at": [
-                8.8,
-                2.75
+                11.8,
+                2.35
               ],
-              "id": "reader1"
-            },
-            {
-              "entity": "damnedSoul",
-              "at": [
-                14.2,
-                2.65
-              ],
-              "id": "reader2"
-            },
-            {
-              "entity": "damnedSoul",
-              "at": [
-                17.8,
-                2.75
-              ],
-              "id": "reader3"
+              "id": "villager3"
             }
           ]
         },
@@ -622,7 +642,7 @@
         ]
       },
       {
-        "name": "graffiti: ambient bed",
+        "name": "village: a day of small life",
         "when": {
           "type": "sectionReached",
           "section": "stop"
@@ -634,7 +654,7 @@
             "steps": [
               {
                 "type": "wait",
-                "seconds": 4.0
+                "seconds": 2.0
               },
               {
                 "type": "playSound",
@@ -642,47 +662,33 @@
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:fire"
               },
               {
                 "type": "wait",
                 "seconds": 4.0
               },
               {
-                "type": "playSound",
-                "sound": "lava_burst"
+                "type": "walkEntityTo",
+                "target": "villager1",
+                "anchor": "World",
+                "x": 1.2,
+                "speed": 1.3
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "hen",
+                "anchor": "World",
+                "x": 2.0,
+                "speed": 1.6
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:walk"
               },
               {
                 "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_bubble"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_burst"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
+                "seconds": 3.5
               },
               {
                 "type": "playSound",
@@ -690,47 +696,40 @@
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:sound"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "villager2",
+                "anchor": "World",
+                "x": 10.0,
+                "speed": 1.1
               },
               {
                 "type": "wait",
                 "seconds": 4.0
               },
               {
-                "type": "playSound",
-                "sound": "lava_burst"
+                "type": "walkEntityTo",
+                "target": "villager1",
+                "anchor": "World",
+                "x": 4.0,
+                "speed": 1.3
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "hen",
+                "anchor": "World",
+                "x": 3.0,
+                "speed": 1.6
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:walk"
               },
               {
                 "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_bubble"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_burst"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
+                "seconds": 3.5
               },
               {
                 "type": "playSound",
@@ -738,47 +737,40 @@
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:sound"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "villager2",
+                "anchor": "World",
+                "x": 7.2,
+                "speed": 1.1
               },
               {
                 "type": "wait",
                 "seconds": 4.0
               },
               {
-                "type": "playSound",
-                "sound": "lava_burst"
+                "type": "walkEntityTo",
+                "target": "villager1",
+                "anchor": "World",
+                "x": 1.2,
+                "speed": 1.3
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "hen",
+                "anchor": "World",
+                "x": 4.0,
+                "speed": 1.6
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:walk"
               },
               {
                 "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_bubble"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_burst"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
+                "seconds": 3.5
               },
               {
                 "type": "playSound",
@@ -786,47 +778,40 @@
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:sound"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "villager2",
+                "anchor": "World",
+                "x": 10.0,
+                "speed": 1.1
               },
               {
                 "type": "wait",
                 "seconds": 4.0
               },
               {
-                "type": "playSound",
-                "sound": "lava_burst"
+                "type": "walkEntityTo",
+                "target": "villager1",
+                "anchor": "World",
+                "x": 4.0,
+                "speed": 1.3
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "hen",
+                "anchor": "World",
+                "x": 2.0,
+                "speed": 1.6
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:walk"
               },
               {
                 "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_bubble"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_burst"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
+                "seconds": 3.5
               },
               {
                 "type": "playSound",
@@ -834,47 +819,40 @@
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:sound"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "villager2",
+                "anchor": "World",
+                "x": 7.2,
+                "speed": 1.1
               },
               {
                 "type": "wait",
                 "seconds": 4.0
               },
               {
-                "type": "playSound",
-                "sound": "lava_burst"
+                "type": "walkEntityTo",
+                "target": "villager1",
+                "anchor": "World",
+                "x": 1.2,
+                "speed": 1.3
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "hen",
+                "anchor": "World",
+                "x": 3.0,
+                "speed": 1.6
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:walk"
               },
               {
                 "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_bubble"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_burst"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
+                "seconds": 3.5
               },
               {
                 "type": "playSound",
@@ -882,47 +860,40 @@
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:sound"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "villager2",
+                "anchor": "World",
+                "x": 10.0,
+                "speed": 1.1
               },
               {
                 "type": "wait",
                 "seconds": 4.0
               },
               {
-                "type": "playSound",
-                "sound": "lava_burst"
+                "type": "walkEntityTo",
+                "target": "villager1",
+                "anchor": "World",
+                "x": 4.0,
+                "speed": 1.3
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "hen",
+                "anchor": "World",
+                "x": 4.0,
+                "speed": 1.6
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:walk"
               },
               {
                 "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_bubble"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_burst"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
+                "seconds": 3.5
               },
               {
                 "type": "playSound",
@@ -930,47 +901,40 @@
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:sound"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "villager2",
+                "anchor": "World",
+                "x": 7.2,
+                "speed": 1.1
               },
               {
                 "type": "wait",
                 "seconds": 4.0
               },
               {
-                "type": "playSound",
-                "sound": "lava_burst"
+                "type": "walkEntityTo",
+                "target": "villager1",
+                "anchor": "World",
+                "x": 1.2,
+                "speed": 1.3
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "hen",
+                "anchor": "World",
+                "x": 2.0,
+                "speed": 1.6
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:walk"
               },
               {
                 "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_bubble"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_burst"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
-              },
-              {
-                "type": "wait",
-                "seconds": 4.0
+                "seconds": 3.5
               },
               {
                 "type": "playSound",
@@ -978,35 +942,30 @@
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:life"
+                "signal": "stop:graffiti:life:sound"
               },
               {
-                "type": "wait",
-                "seconds": 4.0
-              },
-              {
-                "type": "playSound",
-                "sound": "lava_burst"
-              },
-              {
-                "type": "emit",
-                "signal": "stop:graffiti:life"
+                "type": "walkEntityTo",
+                "target": "villager2",
+                "anchor": "World",
+                "x": 10.0,
+                "speed": 1.1
               }
             ]
           }
         ]
       },
       {
-        "name": "graffiti: the last carving shakes",
+        "name": "village: the hen startles",
         "when": {
           "type": "playerInZone",
           "center": [
-            17.4,
+            2.6,
             2.65
           ],
           "size": [
-            3.0,
-            2.2
+            2.0,
+            2.0
           ],
           "anchor": "World"
         },
@@ -1016,21 +975,160 @@
             "type": "runSequence",
             "steps": [
               {
-                "type": "wait",
-                "seconds": 0.3
+                "type": "playSound",
+                "sound": "lava_bubble"
               },
               {
                 "type": "cameraShake",
-                "intensity": 0.1,
-                "duration": 0.6
+                "amount": 0.05,
+                "duration": 0.2
               },
               {
-                "type": "playSound",
-                "sound": "vo_mk_chuckle"
+                "type": "walkEntityTo",
+                "target": "hen",
+                "anchor": "World",
+                "x": 3.8,
+                "speed": 3.0
               },
               {
                 "type": "emit",
-                "signal": "stop:graffiti:beat"
+                "signal": "stop:graffiti:interact:hen"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "village: the hay",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            7.4,
+            2.65
+          ],
+          "size": [
+            2.0,
+            2.0
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "popText",
+                "text": "+1",
+                "color": "#FFD27A",
+                "at": [
+                  7.4,
+                  3.4
+                ]
+              },
+              {
+                "type": "spawn",
+                "entity": "diamond",
+                "anchor": "World",
+                "at": [
+                  7.4,
+                  3.05
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:interact:hay"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "village: warm by the fire",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            -0.2,
+            2.65
+          ],
+          "size": [
+            2.0,
+            2.0
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "heal",
+                "target": {
+                  "player": true
+                },
+                "amount": 1
+              },
+              {
+                "type": "popText",
+                "text": "+1 heart",
+                "color": "#7FE0D0",
+                "at": [
+                  -0.2,
+                  3.4
+                ]
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:interact:fire"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "village: the Depot",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            5.2,
+            2.65
+          ],
+          "size": [
+            2.2,
+            2.0
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "cameraShake",
+                "amount": 0.08,
+                "duration": 0.5
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.8
+              },
+              {
+                "type": "showText",
+                "text": "Soul: Everything the village owned. Take nothing.",
+                "duration": 3.2,
+                "style": "Subtitle",
+                "color": "#B9C4D0"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:beat:depot"
               }
             ]
           }

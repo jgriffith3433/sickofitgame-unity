@@ -15772,7 +15772,7 @@
     {
       "id": "vo_stop957_careful",
       "kind": "Voice",
-      "prompt": "[whispering] Careful. [beat] It's the one thing here that won't burn you.",
+      "prompt": "[whispering] Careful. [beat] It's the one thing down here that isn't trying to burn you.",
       "durationSeconds": 0,
       "promptInfluence": 0.3,
       "loop": false,
@@ -15802,7 +15802,7 @@
     {
       "id": "vo_stop957_spring",
       "kind": "Voice",
-      "prompt": "[whispering] A spring. [pause] Nobody told the Overlord.",
+      "prompt": "[whispering] It's a spring. It cooled a century ago. [pause] Nobody told the Overlord.",
       "durationSeconds": 0,
       "promptInfluence": 0.3,
       "loop": false,
@@ -16027,7 +16027,7 @@
     {
       "id": "vo_stop897_win",
       "kind": "Voice",
-      "prompt": "Five minutes! I'm winning. [pause] Winning what?",
+      "prompt": "Five minutes! I'm winning. [pause] Of what, I'll work out later.",
       "durationSeconds": 0,
       "promptInfluence": 0.3,
       "loop": false,
@@ -16722,6 +16722,21 @@
       "promptInfluence": 0.3,
       "loop": false,
       "voice": "player",
+      "voiceId": "",
+      "clip": "",
+      "volume": 1,
+      "pitchVariation": 0,
+      "maxVoices": 1,
+      "cooldown": 0.5
+    },
+    {
+      "id": "vo_stop959_depot",
+      "kind": "Voice",
+      "prompt": "[whispering] Everything the village owned. [pause] Take nothing.",
+      "durationSeconds": 0,
+      "promptInfluence": 0.3,
+      "loop": false,
+      "voice": "soul",
       "voiceId": "",
       "clip": "",
       "volume": 1,

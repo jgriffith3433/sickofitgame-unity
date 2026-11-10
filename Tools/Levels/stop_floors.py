@@ -266,17 +266,38 @@ def graffiti():
         rules.append(rule(f'graffiti {i + 1}', zone(x, WALK_Y + 1.0, 3.0, 2.2), seq(*steps)))
     rules.insert(0, rule('graffiti: first look', section('stop'),
                          seq(wait(1.6), say(f, 'walls', 'hero', 'Somebody had time.', '[flat] Somebody had time.', 2.4))))
-    # the living bar: souls and a fire along the wall, a one-shot every ~4 s, a gap probe signal every 4 s
-    props = [{'entity': 'campFire', 'at': [-2.4 + 2 * STEP, WALK_Y + 0.5], 'id': 'wallFire'}]
-    for i, dx in enumerate([3, 6, 9, 11]):
-        props.append({'entity': 'damnedSoul', 'at': [-2.4 + dx * STEP + 0.4, WALK_Y + 1.0 + 0.1 * (i % 2)], 'id': f'reader{i}'})
-    beats = []
-    for i in range(30):
-        beats += [wait(4.0), {'type': 'playSound', 'sound': ('lava_bubble', 'lava_burst')[i % 2]}, emit('stop:graffiti:life')]
-    rules.append(rule('graffiti: ambient bed', section('stop'), seq(*beats)))
-    rules.append(rule('graffiti: the last carving shakes', zone(-2.4 + 11 * STEP, WALK_Y + 1.0, 3.0, 2.2),
-                      seq(wait(0.3), {'type': 'cameraShake', 'intensity': 0.1, 'duration': 0.6},
-                          {'type': 'playSound', 'sound': 'vo_mk_chuckle'}, emit('stop:graffiti:beat'))))
+    # The vertical slice: the rest of the village, dressed and alive (docs/world-bible.md "The vertical slice")
+    props = [
+        {'entity': 'campFire', 'at': [-0.2, WALK_Y + 0.45], 'id': 'restFire'},
+        {'entity': 'fairStall', 'at': [5.2, WALK_Y + 0.6], 'id': 'depotStack', 'scale': [1.4, 1.4]},
+        {'entity': 'ashHen', 'at': [2.6, WALK_Y + 0.35], 'id': 'hen'},
+        {'entity': 'hayBale', 'at': [7.4, WALK_Y + 0.4], 'id': 'hay'},
+        {'entity': 'paradeSoul', 'at': [1.2, WALK_Y + 0.7], 'id': 'villager1'},
+        {'entity': 'paradeSoul', 'at': [9.0, WALK_Y + 0.7], 'id': 'villager2'},
+        {'entity': 'paradeSoul', 'at': [11.8, WALK_Y + 0.7], 'id': 'villager3'},
+    ]
+    life = [wait(2.0), {'type': 'playSound', 'sound': 'lava_bubble'}, emit('stop:graffiti:life:fire')]
+    for n in range(7):
+        a, b = (1.2, 4.0) if n % 2 == 0 else (4.0, 1.2)
+        life += [wait(4.0), {'type': 'walkEntityTo', 'target': 'villager1', 'anchor': 'World', 'x': a, 'speed': 1.3},
+                 {'type': 'walkEntityTo', 'target': 'hen', 'anchor': 'World', 'x': 2.0 + (n % 3), 'speed': 1.6},
+                 emit('stop:graffiti:life:walk')]
+        life += [wait(3.5), {'type': 'playSound', 'sound': 'lava_bubble'}, emit('stop:graffiti:life:sound'),
+                 {'type': 'walkEntityTo', 'target': 'villager2', 'anchor': 'World', 'x': b + 6.0, 'speed': 1.1}]
+    rules.append(rule('village: a day of small life', section('stop'), seq(*life)))
+    hen_zone, hay_zone, fire_zone = zone(2.6, WALK_Y + 1.0, 2.0, 2.0), zone(7.4, WALK_Y + 1.0, 2.0, 2.0), zone(-0.2, WALK_Y + 1.0, 2.0, 2.0)
+    rules += [
+        rule('village: the hen startles', hen_zone, seq({'type': 'playSound', 'sound': 'lava_bubble'}, {'type': 'cameraShake', 'amount': 0.05, 'duration': 0.2},
+             {'type': 'walkEntityTo', 'target': 'hen', 'anchor': 'World', 'x': 3.8, 'speed': 3.0}, emit('stop:graffiti:interact:hen'))),
+        rule('village: the hay', hay_zone, seq({'type': 'popText', 'text': '+1', 'color': '#FFD27A', 'at': [7.4, 3.4]}, spawn('diamond', (7.4, WALK_Y + 1.4)),
+             emit('stop:graffiti:interact:hay'))),
+        rule('village: warm by the fire', fire_zone, seq({'type': 'heal', 'target': {'player': True}, 'amount': 1},
+             {'type': 'popText', 'text': '+1 heart', 'color': '#7FE0D0', 'at': [-0.2, 3.4]}, emit('stop:graffiti:interact:fire'))),
+        rule('village: the Depot', zone(5.2, WALK_Y + 1.0, 2.2, 2.0),
+             seq({'type': 'cameraShake', 'amount': 0.08, 'duration': 0.5}, {'type': 'playSound', 'sound': 'lava_bubble'},
+                 wait(0.8), say(f, 'depot', 'soul', 'Everything the village owned. Take nothing.', '[whispering] Everything the village owned. [pause] Take nothing.', 3.2, SOUL),
+                 emit('stop:graffiti:beat:depot'))),
+    ]
     return dict(floor=f, key='graffiti', name="Hell's Graffiti", circle='emberWastes', walk=walk, props=props, rules=rules,
                 titlePrompt="[shouting] Floor nine fifty-nine! [pause] Hell's Graffiti!", clear="HELL'S GRAFFITI: READ",
                 clearPrompt="[shouting] Hell's Graffiti... READ!")
@@ -532,6 +553,14 @@ def write_content():
                        'sortingOrder': 0, 'hurtFlash': False, 'deathPop': False, 'color': '#FFFFFF', 'facesLeft': False},
             'healthBar': {'show': False}, 'abilities': []}
     entity('campFire', fire)
+    entity('ashHen', {'team': 'Neutral', 'health': 0, 'shootable': False, 'tags': ['village'], 'body': {'radius': 0.25, 'solid': False},
+                      'visual': {'scale': 1.0, 'placeholderColor': '#C9B8A6', 'placeholderSize': 0.45, 'placeholderLabel': False, 'layer': 'Player',
+                                 'sortingOrder': 1, 'hurtFlash': False, 'deathPop': False, 'color': '#FFFFFF', 'facesLeft': False},
+                      'healthBar': {'show': False}, 'abilities': [{'type': 'lifetime', 'seconds': 600}]})
+    entity('hayBale', {'team': 'Neutral', 'health': 0, 'shootable': False, 'tags': ['village'], 'body': {'shape': 'Box', 'size': [0.8, 0.6], 'solid': False},
+                       'visual': {'scale': 1.0, 'placeholderColor': '#D9B45AE0', 'placeholderShape': 'Box', 'placeholderLabel': False, 'layer': 'Player',
+                                  'sortingOrder': -1, 'hurtFlash': False, 'deathPop': False, 'color': '#FFFFFF', 'facesLeft': False},
+                       'healthBar': {'show': False}, 'abilities': []})
     for i, (a, b, _) in enumerate(GRAFFITI):
         entity(f'graffiti{i + 1}', {'extends': 'loopCarving', 'abilities': [
             {'type': 'carved', 'text': a, 'words': b, 'color': '#E0A060', 'size': 0.26, 'above': 0.95, 'onFace': False}]})
