@@ -268,22 +268,40 @@ namespace SickOfIt.Playtest
                 if (Run.Done)
                     yield break;
 
-                float popSpawnMark = Time.realtimeSinceStartup;
-                float peakScaleSeen = HudFloaters.LastCurrentScale;
                 var hud = GameplayWorld.Instance != null ? GameplayWorld.Instance.Hud : null;
                 RewindJuiceCheck("a clean kill refunds juice", refundSeen, $"{rewards} reward(s) paid; juice {lastJuice:0.0} -> {budget.Juice:0.0} s");
                 RewindJuiceCheck("the HUD shows it", hud != null && hud.RewardsShown > 0, hud != null ? $"floated \"{hud.LastRewardShown}\" ({hud.RewardsShown} time(s))" : "no HUD");
                 RewindJuiceCheck("the CLEAN KILL popup sits on a dark pill", HudFloaters.LastHadPill, $"popup \"{HudFloaters.Last}\" drawn over a pill (alpha {HudFloaters.LastPillAlpha:0.00})");
                 RewindJuiceCheck("the REWIND readout sits on a dark pill", hud != null && hud.RewindReadoutHasPill, "the readout's pill is wider than its words and opaque enough to read on bright sky");
 
+                // Fresh reward so scale-pop and hold are measured from a known spawn (the in-level kill may already have eased).
+                yield return WaitReal(HudFloaters.Life + 0.05f);
+                if (Run.Done)
+                    yield break;
+                budget = RewindBudget.Instance;
+                if (budget == null)
+                {
+                    RewindJuiceCheck("rewind budget still alive for pop measure", false, "RewindBudget gone after Level 1 clean kill");
+                    End(PlaytestOutcome.Error);
+                    yield break;
+                }
+                budget.Configure(Mathf.Max(1f, budget.Max - 3f), budget.Max, 1f);
+                budget.Reward(0.5f, "CLEAN KILL");
+                float popSpawnMark = Time.realtimeSinceStartup;
+                float peakScaleSeen = HudFloaters.LastCurrentScale;
                 // Measure scale-pop during first ~0.3 s and capture the popup + REWIND readout over Level 1's bright sky/grass.
-                yield return null;
-                peakScaleSeen = Mathf.Max(peakScaleSeen, HudFloaters.LastCurrentScale);
+                for (int frame = 0; frame < 8; frame++)
+                {
+                    yield return null;
+                    peakScaleSeen = Mathf.Max(peakScaleSeen, HudFloaters.LastCurrentScale);
+                    if (Time.realtimeSinceStartup - popSpawnMark >= HudFloaters.PopSeconds)
+                        break;
+                }
                 RewindJuiceCheck("popup pops in larger during first 0.3 s", peakScaleSeen > 1.08f, $"peak scale {peakScaleSeen:0.00}x over {HudFloaters.PopSeconds:0.00} s");
-                yield return WaitReal(0.12f);
+                yield return WaitReal(0.08f);
                 yield return RewindJuiceCapturePass("Level 1 sky CLEAN KILL", "rewindJuice.sky");
 
-                // Hold until >= 0.62 s after spawn to prove full opacity holds >= 0.6 s in real time (and keep the scene frame up for the recorder).
+                // Hold until >= 0.62 s after this spawn to prove full opacity holds >= 0.6 s in real time.
                 float elapsedSinceSpawn = Time.realtimeSinceStartup - popSpawnMark;
                 if (elapsedSinceSpawn < 0.62f)
                     yield return WaitReal(0.62f - elapsedSinceSpawn);
@@ -337,49 +355,63 @@ namespace SickOfIt.Playtest
                 }
                 Run.Progress(0.75f);
 
-                // 5. Dark floor (Floor 955, Ember Wastes cavern): trigger a real-input clean kill and capture popup + REWIND readout.
+                // 5. Dark floor (Floor 955, Ember Wastes cavern): try a real-input clean kill, then force a labeled
+                // reward so contrast captures always run even when the bot can't clean-kill an elite floor in time.
                 int darkLevel = ResolveAt(RewindJuiceDarkFloor, out string darkWhat);
                 if (darkLevel > 0)
                 {
                     bool darkRefund = false;
-                    for (int attempt = 0; attempt < 2 && !darkRefund && !Run.Done; attempt++)
-                    {
-                        Prepare(darkLevel, attempt == 0);
-                        Run.Event("shortcut", $"load dark floor ({darkWhat}, try {attempt + 1}) for dark-background CLEAN KILL capture");
-                        var prevWorld = GameplayWorld.Instance;
-                        load = LoadLevel(darkLevel);
-                        if (load != null)
-                            yield return load;
-                        yield return Run.Until(() => GameplayWorld.Instance != prevWorld && LevelRunning(darkLevel) && RewindBudget.Instance != null, 60f, "dark floor to start");
-                        if (Run.Done)
-                            yield break;
-
-                        budget = RewindBudget.Instance;
-                        System.Action<float, string> onDarkReward = (seconds, label) =>
-                        {
-                            Run.Event("juice", $"dark floor: {label} +{seconds:0.0} s");
-                            if (label == "CLEAN KILL")
-                                darkRefund = true;
-                        };
-                        budget.Rewarded += onDarkReward;
-                        budget.Configure(Mathf.Max(1f, budget.Max - 3f), budget.Max, 1f);
-                        var darkWorld = GameplayWorld.Instance;
-                        int rewardsBefore = darkWorld.Hud.RewardsShown;
-                        yield return PlayLevel(darkLevel, 0f, now => null, 0f, 1f, 35f,
-                            until: () => darkRefund && darkWorld.Hud.RewardsShown > rewardsBefore);
-                        budget.Rewarded -= onDarkReward;
-                        StopBot();
-                    }
+                    Prepare(darkLevel, true);
+                    Run.Event("shortcut", $"load dark floor ({darkWhat}) for dark-background CLEAN KILL capture");
+                    var prevWorld = GameplayWorld.Instance;
+                    load = LoadLevel(darkLevel);
+                    if (load != null)
+                        yield return load;
+                    yield return Run.Until(() => GameplayWorld.Instance != prevWorld && LevelRunning(darkLevel) && RewindBudget.Instance != null, 60f, "dark floor to start");
                     if (Run.Done)
                         yield break;
 
-                    RewindJuiceCheck("clean kill triggered over dark floor", darkRefund, $"{darkWhat}: cleanKill={darkRefund}");
+                    budget = RewindBudget.Instance;
+                    System.Action<float, string> onDarkReward = (seconds, label) =>
+                    {
+                        Run.Event("juice", $"dark floor: {label} +{seconds:0.0} s");
+                        if (label == "CLEAN KILL")
+                            darkRefund = true;
+                    };
+                    budget.Rewarded += onDarkReward;
+                    budget.Configure(Mathf.Max(1f, budget.Max - 3f), budget.Max, 1f);
+                    var darkWorld = GameplayWorld.Instance;
+                    int rewardsBefore = darkWorld.Hud.RewardsShown;
+                    yield return PlayLevel(darkLevel, 0f, now => null, 0f, 1f, 20f,
+                        until: () => darkRefund && darkWorld.Hud.RewardsShown > rewardsBefore);
+                    budget.Rewarded -= onDarkReward;
+                    StopBot();
+                    if (Run.Done)
+                        yield break;
+
+                    RewindJuiceCheck("clean kill triggered over dark floor", darkRefund,
+                        darkRefund ? $"{darkWhat}: real clean kill" : $"{darkWhat}: bot missed; forcing a CLEAN KILL reward for capture");
+                    if (!darkRefund)
+                    {
+                        budget = RewindBudget.Instance;
+                        if (budget != null)
+                        {
+                            budget.Configure(Mathf.Max(1f, budget.Max - 3f), budget.Max, 1f);
+                            budget.Reward(0.5f, "CLEAN KILL");
+                            darkRefund = true;
+                            yield return WaitReal(0.08f);
+                        }
+                    }
                     if (darkRefund)
                     {
                         yield return WaitReal(0.12f);
                         yield return RewindJuiceCapturePass("Dark floor CLEAN KILL", "rewindJuice.dark");
                         yield return WaitReal(0.55f);
                         yield return RewindJuiceResizeCaptures("Dark floor CLEAN KILL", "rewindJuice.dark");
+                    }
+                    else
+                    {
+                        RewindJuiceCheck("dark floor CLEAN KILL popup ready", false, "no RewindBudget after dark floor load");
                     }
                 }
                 else
