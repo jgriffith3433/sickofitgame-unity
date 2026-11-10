@@ -1221,8 +1221,9 @@ namespace SickOfIt.Playtest
                 "then the Shaft (a preview over the menu, setup shortcut, Yooba met) opens, its layout is checked, Visit Yooba opens his shop over it, " +
                 "Back returns to the Shaft and Continue closes it", 150, "menus"));
             list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu (in the editor and standalone also resized through 16:9, a narrow desktop, phone portrait and phone landscape; a WebGL page is never resized by the game, the runner's device sets its size: tagline whole, stickers clear, buttons 48 px), level select, settings, " +
-                "level 1's HUD, the pause menu and its settings, the Shaft (a preview over the menu, setup shortcut, with Visit Yooba beside Continue), Yooba's shop over it, and the death scene (loaded directly, a setup shortcut), no button overlaps another " +
-                "or a HUD panel, none leaves the screen, and every button is thumb-sized", 120, "menus"));
+                "level 1's HUD, the pause menu and its settings, the Shaft (a preview over the menu, setup shortcut, with Visit Yooba beside Continue), Yooba's shop over it " +
+                "(also resized to 1280x720 and 390x844: pip strips clear of each card's name, last row fully visible after a scroll to the bottom, no Decoration/Subtitle overlaps), " +
+                "and the death scene (loaded directly, a setup shortcut), no button overlaps another or a HUD panel, none leaves the screen, and every button is thumb-sized", 180, "menus"));
             list.Add(new PlaytestScenario("portal-audio", "The prologue's portal scene, by ear, on the main menu: every Overlord line, hero take, " +
                 "Hell's echo (three repeats, each deeper) and effect plays in scene order, then the Meadow's lines; any without a clip is a bug", 150, "menus", "audio"));
             list.Add(new PlaytestScenario("sound-audit", "The sound audit on the main menu: every sound in audio.json has a clip (a missing one is a bug, " +
@@ -8205,7 +8206,13 @@ namespace SickOfIt.Playtest
                 Run.Event("shop-goods", string.Join(", ", goods));
                 check("shopGoods", goods.Count > 0, $"{goods.Count} goods on the counter: {string.Join(", ", goods)}");
                 if (!string.IsNullOrEmpty(audit))
+                {
                     yield return Audit(audit, step, steps, 0.5f, progress: step > 0);
+                    if (Run.Done) yield break;
+                    // Layout scenario: the shop at desktop and phone sizes, top and scrolled-to-bottom (acceptance criteria).
+                    if (step > 0)
+                        yield return ShopLayoutSizes();
+                }
             }
 
             /// <summary>Back out of Yooba's shop: his goodbye, and the same Shaft again with Continue (and Visit Yooba) up.</summary>

@@ -83,15 +83,32 @@ namespace SickOfIt.Core.UI.Menus
                 }
             }
 
-            float captionTop = picture ? 0.4f : 1f;
-            float titleTop = picture ? 0.3f : 0.8f;
-            float titleBottom = picture ? 0.13f : 0.58f;
+            // Bands never share area: a pip/caption strip that overlaps the title is the shop's "●●● over the name" bug.
+            // Picture cards keep the old proportions; no-picture cards (Yooba's goods) give the pip strip its own top line
+            // and leave the top-right clear when a corner icon sits there.
             var view = new MenuCardView { Button = card };
-            view.Caption = AddText(menu, content, "Caption", data.Caption, theme.caption, theme.muted, 0f, titleTop - 0.01f, 1f, captionTop);
-            view.Title = AddText(menu, content, "Title", data.Title, theme.heading, null, 0f, titleBottom, 1f, titleTop);
-            if (!picture)
-                view.Description = AddText(menu, content, "Description", data.Description, theme.body, null, 0f, 0.2f, 1f, 0.58f);
-            view.Status = AddText(menu, content, "Status", data.Status, theme.caption, data.StatusColor ?? theme.accent, 0f, 0f, 1f, picture ? 0.13f : 0.2f);
+            if (picture)
+            {
+                const float captionTop = 0.4f, titleTop = 0.3f, titleBottom = 0.13f;
+                view.Caption = AddText(menu, content, "Caption", data.Caption, theme.caption, theme.muted, 0f, titleTop, 1f, captionTop);
+                view.Title = AddText(menu, content, "Title", data.Title, theme.heading, null, 0f, titleBottom, 1f, titleTop);
+                view.Status = AddText(menu, content, "Status", data.Status, theme.caption, data.StatusColor ?? theme.accent, 0f, 0f, 1f, titleBottom);
+            }
+            else
+            {
+                const float captionBottom = 0.86f, titleTop = 0.84f, titleBottom = 0.58f, statusTop = 0.2f;
+                float captionRight = data.Icon != null ? 0.70f : 1f;
+                view.Caption = AddText(menu, content, "Caption", data.Caption, theme.caption, theme.muted, 0f, captionBottom, captionRight, 1f);
+                view.Title = AddText(menu, content, "Title", data.Title, theme.heading, null, 0f, titleBottom, 1f, titleTop);
+                view.Description = AddText(menu, content, "Description", data.Description, theme.body, null, 0f, statusTop, 1f, titleBottom);
+                view.Status = AddText(menu, content, "Status", data.Status, theme.caption, data.StatusColor ?? theme.accent, 0f, 0f, 1f, statusTop);
+            }
+            // Pips stay on one line inside their strip (ten ● for Goo Plaster); never wrap into the title.
+            if (view.Caption != null)
+            {
+                view.Caption.textWrappingMode = TextWrappingModes.NoWrap;
+                view.Caption.overflowMode = TextOverflowModes.Ellipsis;
+            }
 
             if (!string.IsNullOrEmpty(data.Badge))
             {
